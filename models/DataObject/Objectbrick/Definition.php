@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Objectbrick;
 
+use Exception;
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface;
@@ -60,11 +62,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         return $this->classDefinitions;
     }
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function getByKey(string $key): ?Definition
     {
         $brick = null;
@@ -73,9 +70,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         try {
             $brick = RuntimeCache::get($cacheKey);
             if (!$brick) {
-                throw new \Exception('ObjectBrick in Registry is not valid');
+                throw new Exception('ObjectBrick in Registry is not valid');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $def = new Definition();
             $def->setKey($key);
             $fieldFile = $def->getDefinitionFile();
@@ -94,7 +91,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function checkTablenames(): void
     {
@@ -135,27 +132,26 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
             $length = strlen($longestTablename);
             if ($length > 64) {
-                throw new \Exception('table name ' . $longestTablename . ' would be too long. Max length is 64. Current length would be ' .  $length . '.');
+                throw new Exception('table name ' . $longestTablename . ' would be too long. Max length is 64. Current length would be ' .  $length . '.');
             }
         }
     }
 
     /**
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(bool $saveDefinitionFile = true): void
     {
         if (!$this->getKey()) {
-            throw new \Exception('A object-brick needs a key to be saved!');
+            throw new Exception('A object-brick needs a key to be saved!');
         }
 
-        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $this->getKey()) || $this->isForbiddenName()) {
-            throw new \Exception(sprintf('Invalid key for object-brick: %s', $this->getKey()));
+        if ($this->isForbiddenName()) {
+            throw new Exception(sprintf('Invalid key for object-brick: %s', $this->getKey()));
         }
 
         if ($this->getParentClass() && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\]*$/', $this->getParentClass())) {
-            throw new \Exception(sprintf('Invalid parentClass value for class definition: %s',
+            throw new Exception(sprintf('Invalid parentClass value for class definition: %s',
                 $this->getParentClass()));
         }
 
@@ -173,7 +169,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
             if ($fd->isForbiddenName()) {
-                throw new \Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
+                throw new Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
             }
 
             if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
@@ -219,7 +215,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @param DataObject\ClassDefinition\Data[] $fds
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function enforceBlockRules(array $fds, array $found = []): void
     {
@@ -229,7 +225,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 $childParams['block'] = true;
             } elseif ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                 if ($found['block'] ?? false) {
-                    throw new \Exception('A localizedfield cannot be nested inside a block');
+                    throw new Exception('A localizedfield cannot be nested inside a block');
                 }
             }
             if (method_exists($fd, 'getFieldDefinitions')) {
@@ -276,7 +272,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             $filesystem->dumpFile($definitionFile, $data);
         }
 
-        \Pimcore::getContainer()->get(PHPObjectBrickClassDumperInterface::class)->dumpPHPClasses($this);
+        Pimcore::getContainer()->get(PHPObjectBrickClassDumperInterface::class)->dumpPHPClasses($this);
     }
 
     private function buildClassList(array $definitions): array
@@ -390,9 +386,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
      * @internal
-     *
      */
     public function getAllowedTypesWithFieldname(DataObject\ClassDefinition $class): array
     {
@@ -413,7 +407,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function createContainerClasses(): void
     {
@@ -423,12 +417,12 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             foreach ($this->classDefinitions as $cl) {
                 $class = DataObject\ClassDefinition::getByName($cl['classname']);
                 if (!$class) {
-                    throw new \Exception('Could not load class ' . $cl['classname']);
+                    throw new Exception('Could not load class ' . $cl['classname']);
                 }
 
                 $fd = $class->getFieldDefinition($cl['fieldname']);
                 if (!$fd instanceof DataObject\ClassDefinition\Data\Objectbricks) {
-                    throw new \Exception('Could not resolve field definition for ' . $cl['fieldname']);
+                    throw new Exception('Could not resolve field definition for ' . $cl['fieldname']);
                 }
 
                 $old = $this->getAllowedTypesWithFieldname($class);
@@ -452,12 +446,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             }
         }
 
-        \Pimcore::getContainer()->get(PHPObjectBrickContainerClassDumperInterface::class)->dumpContainerClasses($this);
+        Pimcore::getContainer()->get(PHPObjectBrickContainerClassDumperInterface::class)->dumpContainerClasses($this);
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function getContainerClassName(string $classname, string $fieldname): string
@@ -466,8 +458,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function getContainerNamespace(string $classname, string $fieldname): string
@@ -476,8 +466,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function getContainerClassFolder(string $classname): string
@@ -487,9 +475,14 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * Delete Brick Definition
+     *
+     * @throws DataObject\Exception\DefinitionWriteException
      */
     public function delete(): void
     {
+        if (!$this->isWritable() && file_exists($this->getDefinitionFile())) {
+            throw new DataObject\Exception\DefinitionWriteException();
+        }
         $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::PRE_DELETE);
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());
@@ -558,8 +551,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function getDefinitionFile(string $key = null): string
@@ -569,7 +560,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @internal
-     *
      */
     public function getPhpClassFile(): string
     {

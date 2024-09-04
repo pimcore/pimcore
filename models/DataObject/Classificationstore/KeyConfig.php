@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Exception;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DataObjectClassificationStoreEvents;
@@ -61,9 +62,9 @@ final class KeyConfig extends Model\AbstractModel
 
     protected ?int $modificationDate = null;
 
-    protected string $definition;
+    protected string $definition = '[]';
 
-    protected bool $enabled;
+    protected bool $enabled = false;
 
     public static function getById(int $id, ?bool $force = false): ?KeyConfig
     {
@@ -93,7 +94,7 @@ final class KeyConfig extends Model\AbstractModel
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByName(string $name, int $storeId = 1, ?bool $force = false): ?KeyConfig
     {

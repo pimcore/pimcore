@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use DOMElement;
+use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
@@ -52,7 +54,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     private static function getWysiwygSanitizer(): HtmlSanitizer
     {
-        return self::$pimcoreWysiwygSanitizer ??= \Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
+        return self::$pimcoreWysiwygSanitizer ??= Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
     }
 
     public function setToolbarConfig(string $toolbarConfig): void
@@ -70,6 +72,9 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->excludeFromSearchIndex;
     }
 
+    /**
+     * @return $this
+     */
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex): static
     {
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;
@@ -243,7 +248,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
             $html = new DomCrawler($data);
             $es = $html->filter('a[pimcore_id], img[pimcore_id]');
 
-            /** @var \DOMElement $el */
+            /** @var DOMElement $el */
             foreach ($es as $el) {
                 if ($el->hasAttribute('href') || $el->hasAttribute('src')) {
                     $type = $el->getAttribute('pimcore_type');
@@ -302,5 +307,13 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function getFieldType(): string
     {
         return 'wysiwyg';
+    }
+
+    /**
+     * @see Data::getVersionPreview
+     */
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    {
+        return self::getWysiwygSanitizer()->sanitizeFor('body', (string) $data);
     }
 }

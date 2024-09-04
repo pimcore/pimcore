@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Support\Test\DataType;
 
+use Exception;
+use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\DataObject\Consent\Service;
 use Pimcore\Db;
@@ -63,18 +66,18 @@ abstract class AbstractDataTypeTestCase extends TestCase
         }
 
         if (!is_array($fields)) {
-            throw new \InvalidArgumentException('Fields needs to be an array');
+            throw new InvalidArgumentException('Fields needs to be an array');
         }
 
         foreach ($fields as $field) {
             $method = $field['method'];
 
             if (!$method) {
-                throw new \InvalidArgumentException(sprintf('Need a method to call'));
+                throw new InvalidArgumentException(sprintf('Need a method to call'));
             }
 
             if (!method_exists($this->testDataHelper, $method)) {
-                throw new \InvalidArgumentException(sprintf('Method %s does not exist', $method));
+                throw new InvalidArgumentException(sprintf('Method %s does not exist', $method));
             }
 
             $methodArguments = [$object, $field['field'], $this->seed];
@@ -200,7 +203,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject();
 
-        $service = \Pimcore::getContainer()->get(Service::class);
+        $service = Pimcore::getContainer()->get(Service::class);
         $service->giveConsent($this->testObject, 'consent', 'some consent content');
 
         $this->refreshObject();
@@ -780,7 +783,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         try {
             $this->testObject->save();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $ex = $e;
         }
         $this->assertNotNull($ex, 'duplicate slug, expected an exception');

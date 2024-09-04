@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\CoreBundle;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\AreabrickPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\CacheFallbackPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\FlysystemVisibilityPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\HtmlSanitizerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LongRunningHelperPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MessageBusPublicPass;
@@ -66,11 +65,10 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new HtmlSanitizerPass());
         $container->addCompilerPass(new TranslationSanitizerPass());
         $container->addCompilerPass(new SerializerPass());
-        $container->addCompilerPass(new FlysystemVisibilityPass());
     }
 
     public function getPath(): string
     {
-        return \dirname(__DIR__);
+        return dirname(__DIR__);
     }
 }

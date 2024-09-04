@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
+use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -237,7 +239,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
@@ -261,7 +263,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             return ',' . implode(',', $d) . ',';
         }
 
-        throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
+        throw new Exception('invalid data passed to getDataForQueryResource - must be array');
     }
 
     /**
@@ -471,18 +473,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             $data = $container->getObjectVar($this->getName());
         }
 
-        if (DataObject::doHideUnpublished() && is_array($data)) {
-            $publishedList = [];
-            foreach ($data as $listElement) {
-                if (Element\Service::isPublished($listElement)) {
-                    $publishedList[] = $listElement;
-                }
-            }
-
-            return $publishedList;
-        }
-
-        return is_array($data) ? $data : [];
+        return $this->filterUnpublishedElements($data);
     }
 
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
@@ -780,7 +771,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         }
 
         if (!isset($data['id'], $data['type'])) {
-            throw new \InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
+            throw new InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
         }
 
         if ($operator === '=') {
@@ -789,7 +780,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             return $listing;
         }
 
-        throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
+        throw new InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 
     /**

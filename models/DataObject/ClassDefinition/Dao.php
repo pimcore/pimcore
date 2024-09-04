@@ -15,7 +15,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
-use Doctrine\DBAL\Exception\DriverException;
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -45,7 +45,7 @@ class Dao extends Model\Dao\AbstractDao
                     return $name;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         return null;
@@ -64,7 +64,7 @@ class Dao extends Model\Dao\AbstractDao
             if (!empty($name)) {
                 $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', [$name]);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         if (empty($id)) {
@@ -78,7 +78,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(bool $isUpdate = true): void
     {
@@ -90,7 +90,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(): void
     {
@@ -253,7 +253,7 @@ class Dao extends Model\Dao\AbstractDao
         try {
             //$this->db->executeQuery('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `objects` left JOIN `' . $objectTable . '` ON `objects`.`id` = `' . $objectTable . '`.`oo_id` WHERE `objects`.`classId` = ' . $this->model->getId() . ';');
             $this->db->executeQuery('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`id` = `' . $objectTable . '`.`oo_id`;');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::debug((string) $e);
         }
 
@@ -291,12 +291,12 @@ class Dao extends Model\Dao\AbstractDao
         $objectDatastoreTableRelation = 'object_relations_' . $this->model->getId();
         $objectMetadataTable = 'object_metadata_' . $this->model->getId();
 
-        $this->db->executeQuery('DROP TABLE `' . $objectTable . '`');
-        $this->db->executeQuery('DROP TABLE `' . $objectDatastoreTable . '`');
-        $this->db->executeQuery('DROP TABLE `' . $objectDatastoreTableRelation . '`');
+        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectTable . '`');
+        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectDatastoreTable . '`');
+        $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectDatastoreTableRelation . '`');
         $this->db->executeQuery('DROP TABLE IF EXISTS `' . $objectMetadataTable . '`');
 
-        $this->db->executeQuery('DROP VIEW `object_' . $this->model->getId() . '`');
+        $this->db->executeQuery('DROP VIEW IF EXISTS `object_' . $this->model->getId() . '`');
 
         // delete data
         $this->db->delete('objects', ['classId' => $this->model->getId()]);
@@ -327,7 +327,7 @@ class Dao extends Model\Dao\AbstractDao
         $allTables = $this->db->fetchAllAssociative("SHOW TABLES LIKE 'object\_brick\_%\_" . $this->model->getId() . "'");
         foreach ($allTables as $table) {
             $brickTable = current($table);
-            $this->db->executeQuery('DROP TABLE `'.$brickTable.'`');
+            $this->db->executeQuery('DROP TABLE IF EXISTS `'.$brickTable.'`');
         }
 
         $this->db->executeQuery('DROP TABLE IF EXISTS object_classificationstore_data_'.$this->model->getId());

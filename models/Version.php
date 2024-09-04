@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
+use __PHP_Incomplete_Class;
+use Exception;
+use Pimcore;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\VersionEvents;
@@ -79,7 +82,7 @@ final class Version extends AbstractModel
 
     public function __construct()
     {
-        $this->storageAdapter = \Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
+        $this->storageAdapter = Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
     }
 
     public static function getById(int $id): ?Version
@@ -100,8 +103,6 @@ final class Version extends AbstractModel
     /**
      * disables the versioning for the current process, this is useful for importers, ...
      * There are no new versions created, the read continues to operate normally
-     *
-     * @static
      */
     public static function disable(): void
     {
@@ -111,8 +112,6 @@ final class Version extends AbstractModel
     /**
      * see @ self::disable()
      * just enabled the creation of versioning in the current process
-     *
-     * @static
      */
     public static function enable(): void
     {
@@ -140,7 +139,7 @@ final class Version extends AbstractModel
 
         // get stack trace, if enabled
         if ($this->getGenerateStackTrace()) {
-            $this->stackTrace = (new \Exception())->getTraceAsString();
+            $this->stackTrace = (new Exception())->getTraceAsString();
         }
 
         $data = $this->getData();
@@ -280,8 +279,8 @@ final class Version extends AbstractModel
         if ($this->getSerialized()) {
             $data = Serialize::unserialize($data);
             //clear runtime cache to avoid dealing with marshalled data
-            \Pimcore::collectGarbage();
-            if ($data instanceof \__PHP_Incomplete_Class) {
+            Pimcore::collectGarbage();
+            if ($data instanceof __PHP_Incomplete_Class) {
                 Logger::err('Version: cannot read version data from file system because of incompatible class.');
 
                 return null;

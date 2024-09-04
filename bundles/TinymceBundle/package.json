@@ -11,6 +11,6 @@
     "build": "encore production --progress"
   },
   "dependencies": {
-    "tinymce": "^6.7.2"
+    "tinymce": "^6.8.3"
   }
 }

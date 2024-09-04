@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Redirect;
 
+use DateTime;
+use InvalidArgumentException;
 use League\Csv\EncloseField;
 use League\Csv\Reader;
 use League\Csv\Statement;
@@ -28,6 +30,7 @@ use Pimcore\Tool\Admin;
 use Pimcore\Tool\ArrayNormalizer;
 use Pimcore\Tool\Text;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Throwable;
 
 /**
  * @internal
@@ -86,7 +89,7 @@ class Csv
 
             $expiry = null;
             if ($redirect->getExpiry()) {
-                $expiry = (new \DateTime('@' . $redirect->getExpiry()))->format('c');
+                $expiry = (new DateTime('@' . $redirect->getExpiry()))->format('c');
             }
 
             $data = [
@@ -119,7 +122,7 @@ class Csv
     public function import(string $filename): array
     {
         if (!file_exists($filename) || !is_readable($filename)) {
-            throw new \InvalidArgumentException(sprintf('`%s`: failed to open stream: No such file or directory', $filename));
+            throw new InvalidArgumentException(sprintf('`%s`: failed to open stream: No such file or directory', $filename));
         }
 
         // reading the whole content and converting it to UTF-8 I didn't get the stream filter to work properly
@@ -152,7 +155,7 @@ class Csv
                 $this->processImportData($data, $stats);
 
                 $stats['imported']++;
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $stats['errored']++;
                 $errors[$line] = $e->getMessage();
             }

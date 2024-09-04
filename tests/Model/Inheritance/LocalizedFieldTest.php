@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Inheritance;
 
+use Exception;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Inheritance;
@@ -248,7 +249,7 @@ class LocalizedFieldTest extends ModelTestCase
 
     public function testInvalidLocaleList(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->markTestSkipped('TODO: the following test should fail, but no exception is thrown');
 
         // invalid locale

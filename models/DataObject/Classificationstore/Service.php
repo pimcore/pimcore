@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Exception;
+use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
@@ -42,7 +44,7 @@ class Service
      *
      * @return EncryptedField|Data|null
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getFieldDefinitionFromKeyConfig(KeyConfig|KeyGroupRelation $keyConfig): DataObject\ClassDefinition\Data\EncryptedField|DataObject\ClassDefinition\Data|null
     {
@@ -51,7 +53,7 @@ class Service
         } elseif ($keyConfig instanceof KeyGroupRelation) {
             $cacheId = $keyConfig->getKeyId();
         } else {
-            throw new \Exception('$keyConfig should be KeyConfig or KeyGroupRelation');
+            throw new Exception('$keyConfig should be KeyConfig or KeyGroupRelation');
         }
 
         if (array_key_exists($cacheId, self::$definitionsCache)) {
@@ -77,7 +79,7 @@ class Service
             $type = 'input';
         }
 
-        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
+        $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
 
         /** @var DataObject\ClassDefinition\Data $dataDefinition */
         $dataDefinition = $loader->build($type);

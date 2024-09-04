@@ -15,8 +15,11 @@
 
 namespace Pimcore\Model\Tool\Email\Log;
 
+use DateTimeInterface;
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
+use stdClass;
 
 /**
  * @internal
@@ -34,6 +37,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
+     * @throws Model\Exception\NotFoundException
      */
     public function getById(int $id = null): void
     {
@@ -42,6 +46,9 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $data = $this->db->fetchAssociative('SELECT * FROM email_log WHERE id = ?', [$this->model->getId()]);
+        if (!$data) {
+            throw new Model\Exception\NotFoundException('email log with id ' . $id . ' not found');
+        }
         $this->assignVariablesToModel($data);
     }
 
@@ -84,7 +91,7 @@ class Dao extends Model\Dao\AbstractDao
 
         try {
             $this->db->update(self::$dbTable, $data, ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::emerg('Could not Save emailLog with the id "'.$this->model->getId().'" ');
         }
     }
@@ -109,7 +116,7 @@ class Dao extends Model\Dao\AbstractDao
     protected function createJsonLoggingObject(array|string $data): array|string
     {
         if (!is_array($data)) {
-            return json_encode(new \stdClass());
+            return json_encode(new stdClass());
         } else {
             $loggingData = [];
             foreach ($data as $key => $value) {
@@ -126,15 +133,15 @@ class Dao extends Model\Dao\AbstractDao
      *
      *
      */
-    protected function prepareLoggingData(string $key, mixed $value): \stdClass
+    protected function prepareLoggingData(string $key, mixed $value): stdClass
     {
-        $class = new \stdClass();
+        $class = new stdClass();
         $class->key = $key; // key has to be a string otherwise the treeGrid won't work
 
         if (is_string($value) || is_int($value) || is_null($value)) {
             $class->data = ['type' => 'simple',
                 'value' => $value, ];
-        } elseif ($value instanceof \DateTimeInterface) {
+        } elseif ($value instanceof DateTimeInterface) {
             $class->data = ['type' => 'simple',
                 'value' => $value->format('Y-m-d H:i'), ];
         } elseif (is_object($value) && method_exists($value, 'getId')) {

@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
+use const JSON_PRETTY_PRINT;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -97,7 +98,7 @@ class ListCommand extends AbstractBundleCommand
 
         if ($input->getOption('json')) {
             $jsonData = array_map(fn ($row) => array_combine($returnData['headers'], $row), $returnData['rows']);
-            $output->write(\json_encode($jsonData, \JSON_PRETTY_PRINT));
+            $output->write(json_encode($jsonData, JSON_PRETTY_PRINT));
         } else {
             $table = new Table($output);
 

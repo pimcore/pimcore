@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Tool;
@@ -30,7 +31,7 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function configureOptions(): void
     {
@@ -59,6 +60,9 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
         return $this->onlySystemLanguages;
     }
 
+    /**
+     * @return $this
+     */
     public function setOnlySystemLanguages(bool|int|null $value): static
     {
         $this->onlySystemLanguages = (bool) $value;

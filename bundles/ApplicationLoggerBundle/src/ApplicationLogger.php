@@ -18,11 +18,14 @@ namespace Pimcore\Bundle\ApplicationLoggerBundle;
 
 use Monolog\Level;
 use Monolog\Logger;
+use Pimcore;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Psr\Log\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Stringable;
+use Throwable;
 
 class ApplicationLogger implements LoggerInterface
 {
@@ -40,7 +43,7 @@ class ApplicationLogger implements LoggerInterface
 
     public static function getInstance(string $component = 'default', bool $initDbHandler = false): ApplicationLogger
     {
-        $container = \Pimcore::getContainer();
+        $container = Pimcore::getContainer();
         $containerId = 'pimcore.app_logger.' . $component;
 
         if ($container->has($containerId)) {
@@ -106,7 +109,7 @@ class ApplicationLogger implements LoggerInterface
         }
     }
 
-    public function log(mixed $level, string|\Stringable $message, array $context = []): void
+    public function log(mixed $level, string|Stringable $message, array $context = []): void
     {
         if (!isset($context['component'])) {
             $context['component'] = $this->component;
@@ -221,42 +224,42 @@ class ApplicationLogger implements LoggerInterface
         return $source;
     }
 
-    public function emergency(string|\Stringable $message, array $context = []): void
+    public function emergency(string|Stringable $message, array $context = []): void
     {
         $this->handleLog('emergency', $message, func_get_args());
     }
 
-    public function critical(string|\Stringable $message, array $context = []): void
+    public function critical(string|Stringable $message, array $context = []): void
     {
         $this->handleLog('critical', $message, func_get_args());
     }
 
-    public function error(string|\Stringable $message, array $context = []): void
+    public function error(string|Stringable $message, array $context = []): void
     {
         $this->handleLog('error', $message, func_get_args());
     }
 
-    public function alert(string|\Stringable $message, array $context = []): void
+    public function alert(string|Stringable $message, array $context = []): void
     {
         $this->handleLog('alert', $message, func_get_args());
     }
 
-    public function warning(string|\Stringable $message, array $context = []): void
+    public function warning(string|Stringable $message, array $context = []): void
     {
         $this->handleLog('warning', $message, func_get_args());
     }
 
-    public function notice(string|\Stringable $message, array $context = []): void
+    public function notice(string|Stringable $message, array $context = []): void
     {
         $this->handleLog('notice', $message, func_get_args());
     }
 
-    public function info(string|\Stringable $message, array $context = []): void
+    public function info(string|Stringable $message, array $context = []): void
     {
         $this->handleLog('info', $message, func_get_args());
     }
 
-    public function debug(string|\Stringable $message, array $context = []): void
+    public function debug(string|Stringable $message, array $context = []): void
     {
         $this->handleLog('debug', $message, func_get_args());
     }
@@ -289,7 +292,7 @@ class ApplicationLogger implements LoggerInterface
         $this->log($level, $message, $context);
     }
 
-    public function logException(string $message, \Throwable $exceptionObject, ?string $priority = 'alert', \Pimcore\Model\DataObject\AbstractObject $relatedObject = null, string $component = null): void
+    public function logException(string $message, Throwable $exceptionObject, ?string $priority = 'alert', \Pimcore\Model\DataObject\AbstractObject $relatedObject = null, string $component = null): void
     {
         if (is_null($priority)) {
             $priority = 'alert';
@@ -313,7 +316,7 @@ class ApplicationLogger implements LoggerInterface
     public static function logExceptionObject(
         LoggerInterface $logger,
         string $message,
-        \Throwable $exception,
+        Throwable $exception,
         int|string|Level $level = Level::Alert,
         \Pimcore\Model\DataObject\AbstractObject $relatedObject = null,
         array $context = []
@@ -328,7 +331,7 @@ class ApplicationLogger implements LoggerInterface
         ], $context));
     }
 
-    private static function exceptionToString(\Throwable $exceptionObject, bool $includeStackTrace, bool $includePrevious = false): string
+    private static function exceptionToString(Throwable $exceptionObject, bool $includeStackTrace, bool $includePrevious = false): string
     {
         $data = [
             $exceptionObject->getMessage(),
@@ -348,7 +351,7 @@ class ApplicationLogger implements LoggerInterface
         return implode("\n", $data);
     }
 
-    private static function createExceptionFileObject(\Throwable $exceptionObject): FileObject
+    private static function createExceptionFileObject(Throwable $exceptionObject): FileObject
     {
         $data = self::exceptionToString($exceptionObject, true, true);
 

@@ -15,6 +15,8 @@
 
 namespace Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 
+use Exception;
+use Pimcore;
 use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
@@ -31,8 +33,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     public function configure(): void
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore_static_routes.config_location');
-        $definitions = \Pimcore::getContainer()->getParameter('pimcore_static_routes.definitions');
+        $config = Pimcore::getContainer()->getParameter('pimcore_static_routes.config_location');
+        $definitions = Pimcore::getContainer()->getParameter('pimcore_static_routes.definitions');
 
         $storageConfig = $config[self::CONFIG_KEY];
 
@@ -91,8 +93,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
         $name = $this->model->getName();
 
-        $totalList = new Listing();
-        $totalList = $totalList->load();
+        $listing = new Listing();
+        $totalList = $listing->load();
 
         $data = array_filter($totalList, function (Staticroute $row) use ($name, $siteId) {
             if ($row->getName() == $name) {
@@ -134,7 +136,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {

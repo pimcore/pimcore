@@ -17,12 +17,14 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Carbon\Carbon;
+use DateTimeInterface;
 use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use Pimcore\Tool\UserTimezone;
 
 class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -38,6 +40,11 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @internal
      */
     public bool $useCurrentDate = false;
+
+    /**
+     * @internal
+     */
+    public bool $respectTimezone = true;
 
     /**
      * @internal
@@ -132,6 +139,10 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
             return $this->getDateFromTimestamp($data / 1000);
         }
 
+        if (is_string($data)) {
+            return Carbon::parse($data);
+        }
+
         return null;
     }
 
@@ -139,9 +150,9 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param Model\DataObject\Concrete|null $object
      *
      */
-    public function getDataFromGridEditor(float $data, Concrete $object = null, array $params = []): Carbon|null
+    public function getDataFromGridEditor(float|string $data, Concrete $object = null, array $params = []): Carbon|null
     {
-        if ($data) {
+        if ($data && is_float($data)) {
             $data = $data * 1000;
         }
 
@@ -169,8 +180,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
-        if ($data instanceof \DateTimeInterface) {
-            return $data->format('Y-m-d H:i:s');
+        if ($data instanceof DateTimeInterface) {
+            return $this->applyTimezone($data)->format('Y-m-d H:i:s');
         }
 
         return '';
@@ -179,8 +190,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof \DateTimeInterface) {
-            return $data->format('Y-m-d H:i');
+        if ($data instanceof DateTimeInterface) {
+            return $this->applyTimezone($data)->format('Y-m-d H:i');
         }
 
         return '';
@@ -196,6 +207,9 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->defaultValue;
     }
 
+    /**
+     * @return $this
+     */
     public function setDefaultValue(mixed $defaultValue): static
     {
         if (strlen((string)$defaultValue) > 0) {
@@ -209,6 +223,9 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setUseCurrentDate(bool $useCurrentDate): static
     {
         $this->useCurrentDate = $useCurrentDate;
@@ -219,6 +236,18 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function isUseCurrentDate(): bool
     {
         return $this->useCurrentDate;
+    }
+
+    public function isRespectTimezone(): bool
+    {
+        return $this->respectTimezone;
+    }
+
+    public function setRespectTimezone(bool $respectTimezone): static
+    {
+        $this->respectTimezone = $respectTimezone;
+
+        return $this;
     }
 
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
@@ -321,8 +350,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
-        $oldValue = $oldValue instanceof \DateTimeInterface ? $oldValue->format('Y-m-d H:i:s') : null;
-        $newValue = $newValue instanceof \DateTimeInterface ? $newValue->format('Y-m-d H:i:s') : null;
+        $oldValue = $oldValue instanceof DateTimeInterface ? $oldValue->format('Y-m-d H:i:s') : null;
+        $newValue = $newValue instanceof DateTimeInterface ? $newValue->format('Y-m-d H:i:s') : null;
 
         return $oldValue === $newValue;
     }
@@ -396,5 +425,14 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function setColumnType(string $columnType): void
     {
         $this->columnType = $columnType;
+    }
+
+    private function applyTimezone(DateTimeInterface $date): DateTimeInterface
+    {
+        if ($this->isRespectTimezone()) {
+            $date = UserTimezone::applyTimezone($date);
+        }
+
+        return $date;
     }
 }

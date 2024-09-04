@@ -39,12 +39,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating;
 
+use Pimcore;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware;
 use Pimcore\Twig\Extension\Templating\Placeholder\Container;
 use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Pimcore\Twig\Extension\Templating\Placeholder\Exception;
 use Pimcore\Twig\Extension\Templating\Traits\WebLinksTrait;
+use stdClass;
 use Symfony\Bridge\Twig\Extension\WebLinkExtension;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -179,9 +181,16 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * @param string $captureType
      * @param string $type
      *
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureStart($captureType = Container::APPEND, $type = 'text/javascript', array $attrs = []): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureStart()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         if ($this->_captureLock) {
             throw new Exception('Cannot nest headScript captures');
         }
@@ -196,9 +205,16 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * End capture action and store
      *
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureEnd(): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureEnd()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         $content = ob_get_clean();
         $type = $this->_captureScriptType;
         $attrs = $this->_captureScriptAttrs;
@@ -259,7 +275,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
                 }
             }
 
-            $content = $args[0];
+            $content = is_null($args[0]) ? null : (string) $args[0];
 
             if (isset($args[1])) {
                 $type = (string) $args[1];
@@ -324,7 +340,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      */
     protected function _isValid(mixed $value): bool
     {
-        if ((!$value instanceof \stdClass)
+        if ((!$value instanceof stdClass)
             || !isset($value->type)
             || (!isset($value->source) && !isset($value->attributes))) {
             return false;
@@ -420,7 +436,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      *
      */
-    public function itemToString(\stdClass $item, string $indent, string $escapeStart, string $escapeEnd): string
+    public function itemToString(stdClass $item, string $indent, string $escapeStart, string $escapeEnd): string
     {
         $attrString = '';
 
@@ -446,10 +462,10 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
             }
         }
 
-        $container = \Pimcore::getContainer();
+        $container = Pimcore::getContainer();
 
         //@phpstan-ignore-next-line
-        if($container->has('pimcore_admin_bundle.content_security_policy_handler')) {
+        if ($container->has('pimcore_admin_bundle.content_security_policy_handler')) {
             $cspHandler = $container->get('pimcore_admin_bundle.content_security_policy_handler');
             $attrString .= $cspHandler->getNonceHtmlAttribute();
         }
@@ -543,7 +559,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
             $event = new GenericEvent($this, [
                 'item' => $item,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::VIEW_HELPER_HEAD_SCRIPT);
+            Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::VIEW_HELPER_HEAD_SCRIPT);
 
             if (isset($item->attributes) && is_array($item->attributes)) {
                 $source = (string)($item->attributes['src'] ?? '');
@@ -565,9 +581,9 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      *
      */
-    public function createData(string $type, array $attributes, string $content = null): \stdClass
+    public function createData(string $type, array $attributes, string $content = null): stdClass
     {
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->type = $type;
         $data->attributes = $attributes;
         $data->source = $content;

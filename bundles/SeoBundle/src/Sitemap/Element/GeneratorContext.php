@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Sitemap\Element;
 
+use ArrayIterator;
+use Iterator;
 use Presta\SitemapBundle\Service\UrlContainerInterface;
 
 class GeneratorContext implements GeneratorContextInterface
@@ -64,9 +66,9 @@ class GeneratorContext implements GeneratorContextInterface
         return array_key_exists($key, $this->parameters);
     }
 
-    public function getIterator(): \Iterator
+    public function getIterator(): Iterator
     {
-        return new \ArrayIterator($this->parameters);
+        return new ArrayIterator($this->parameters);
     }
 
     public function count(): int

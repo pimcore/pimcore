@@ -1,0 +1,12 @@
+gee_job_run_permission: Job Run Overview
+gee_see_all_job_runs_permission: See all Job Runs
+gee_error_no_job_definition: No Job definition found for Job Run ID %job_run_id%.
+gee_error_missing_message_implementation: Step message implementation %message% of Job %job_run_name% not found.
+gee_error_no_steps: Job definition %job_run_name% has no steps defined.
+gee_job_cancelled: Job Run %job_run_name% (%job_run_id%) cancelled
+gee_job_failed: Job Run %job_run_name% (%job_run_id%) failed.
+gee_middleware_step_condition_not_met: Skipping step %stepName% with id %stepId% in %jobName%, condition not met.
+gee_job_started: Job Run %job_run_name% (%job_run_id%) started.
+gee_job_finished: Job Run %job_run_name% (%job_run_id%) completed successfully.
+gee_job_finished_with_errors: Job Run %job_run_name% (%job_run_id%) completed with errors.
+gee_updated_selected_elements: 'Updated selected elements. (Was: %fromCount%, Now: %toCount%)'

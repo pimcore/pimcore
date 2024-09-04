@@ -4,25 +4,38 @@
 
 Similar to Textarea and Input you can use the WYSIWYG editable in the templates to provide rich-text editing. TinyMce is installed by default in our demo. Another editor can be installed via the wysiwyg-events you find in `events.js`
 
-## Enable TinyMce
+## Configuration
 
-Add the bundle in your `config/bundles.php` file:
+| Name           | Type     | Description                                                                                                                               |
+|----------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `height`       | bool     | Set true to reload the page in editmode after selecting an item                                                                           |
+| `width`        | integer  | Width of the select box in pixel                                                                                                          |
+| `class`        | string   | A CSS class that is added to the surrounding container of this element in editmode                                                        |
+| `placeholder`  | string   | A text shown in the field when it is empty to guide the user about the expected type of input.                                            |
+| `defaultValue` | string   | A default value for the available options. Note: This value needs to be saved before calling getData() or use setDataFromResource().      |
+| `required`     | boolean  | (default: false) set to true to make field value required for publish                                                                     |
 
-```php
-\Pimcore\Bundle\TinymceBundle\PimcoreTinymceBundle::class => ['all' => true],
+## Example
+
+```twig
+{{ pimcore_wysiwyg("myWYSIWYG", {
+    "height": 600,
+    "width": 1100,
+    "placeholder": "Enter you content"
+}) }}
 ```
 
-After this, make sure PimcoreTinymceBundle is installed with `bin/console pimcore:bundle:list`.
-If it is not installed, you can install it with `bin/console pimcore:bundle:install PimcoreTinymceBundle`.
+## Enable TinyMce
+In Pimcore 11 the default editor changed from CKEditor to TinyMCE and has been moved into [PimcoreTinymceBundle](https://github.com/pimcore/pimcore/blob/11.x/bundles/TinymceBundle/README.md). Check the bundle readme for installation instructions.
 
 ## Add a Custom Editor
-Make sure that you add the Editor to `pimcore.wysiwyg.editors`. This array can be used to have different editors for different use cases(documents, objects ...):
+Make sure that you add the Editor to `pimcore.wysiwyg.editors`. This array can be used to have different editors for different use cases (documents, objects ...):
 ```javascript
 if(!parent.pimcore.wysiwyg) {
     parent.pimcore.wysiwyg = {};
     parent.pimcore.wysiwyg.editors = [];
 }
-parent.pimcore.wysiwyg.editors.push('Custom_Editor');
+parent.pimcore.wysiwyg.editors.push("Custom_Editor");
 ```
 
 The Editor als needs to dispatch the `pimcore.events.changeWysiwyg` to set the value from the WYSIWYG-Field in the core.
@@ -67,5 +80,3 @@ If you want to adapt this configuration please have a look at the [symfony docum
 
 > Note: When using API to set WYSIWYG data, please pass encoded characters for html entities e.g. `<`,`>`, `&` etc.
 > The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API.
-
-> Note: By default, HTML sanitizer truncates content at 20.000 characters. To change that, see [symfony documentation](https://symfony.com/doc/current/html_sanitizer.html#max-input-length). 

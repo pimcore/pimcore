@@ -18,6 +18,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Exception;
+use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -90,12 +92,12 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     private function encrypt(mixed $data, Model\DataObject\Concrete $object = null, array $params): ?string
     {
         if (!is_null($data)) {
-            $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
+            $key = Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
 
             try {
                 $key = Key::loadFromAsciiSafeString($key);
-            } catch (\Exception $e) {
-                throw new \Exception('Could not find config "pimcore.encryption.secret". Please run "vendor/bin/generate-defuse-key" from command line and add the result to config/config.yaml');
+            } catch (Exception $e) {
+                throw new Exception('Could not find config "pimcore.encryption.secret". Please run "vendor/bin/generate-defuse-key" from command line and add the result to config/config.yaml');
             }
             // store it in raw binary mode to preserve space
             if ($this->delegate instanceof BeforeEncryptionMarshallerInterface || method_exists($this->delegate, 'marshalBeforeEncryption')) {
@@ -111,24 +113,24 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function decrypt(?string $data, Model\DataObject\Concrete $object = null, array $params): ?string
     {
         if ($data) {
             try {
-                $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
+                $key = Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
 
                 try {
                     $key = Key::loadFromAsciiSafeString($key);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     if (!self::isStrictMode()) {
                         Logger::error('failed to load key');
 
                         return null;
                     }
 
-                    throw new \Exception('could not load key');
+                    throw new Exception('could not load key');
                 }
 
                 $rawBinary = (isset($params['asString']) && $params['asString']) ? false : true;
@@ -142,10 +144,10 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
                 }
 
                 return $data;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error((string) $e);
                 if (self::isStrictMode()) {
-                    throw new \Exception('encrypted field ' . $this->getName() . ' cannot be decoded');
+                    throw new Exception('encrypted field ' . $this->getName() . ' cannot be decoded');
                 }
             }
         }
@@ -329,7 +331,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     {
         $this->delegate = null;
 
-        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
+        $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
         if ($this->getDelegateDatatype()) {
             if ($loader->supports($this->getDelegateDatatype())) {
                 $delegate = $loader->build($this->getDelegateDatatype());

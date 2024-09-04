@@ -139,6 +139,10 @@ services:
         shared: false
         public: true
 
+    Pimcore\Helper\SymfonyExpression\ExpressionServiceInterface:
+        public: true
+        class: Pimcore\Helper\SymfonyExpression\ExpressionService
+
     Pimcore\Image\Adapter\GD:
         shared: false
         public: true

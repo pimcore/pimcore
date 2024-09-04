@@ -16,9 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\DefinitionModifier;
 use Pimcore\Tests\Support\Test\ModelTestCase;
+use ReflectionClass;
+use ReflectionMethod;
 
 class DefinitionModifierTest extends ModelTestCase
 {
@@ -127,7 +130,7 @@ class DefinitionModifierTest extends ModelTestCase
     private function getDefinitionByType(string $type, bool $collectGarbage = true): ClassDefinition\Layout
     {
         if ($collectGarbage) {
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
         }
 
         if ($type === self::_CLASS) {
@@ -424,9 +427,9 @@ class DefinitionModifierTest extends ModelTestCase
         $this->assertTrue($layoutDef->getChildren()[0]->getChildren()[2] === $keepElements[2]);
     }
 
-    private static function getMethod(object|string $class, string $name): \ReflectionMethod
+    private static function getMethod(object|string $class, string $name): ReflectionMethod
     {
-        $class = new \ReflectionClass($class);
+        $class = new ReflectionClass($class);
 
         return $class->getMethod($name);
     }

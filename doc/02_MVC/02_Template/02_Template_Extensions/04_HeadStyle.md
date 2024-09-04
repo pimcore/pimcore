@@ -91,3 +91,16 @@ you will need to pass `SET` or `PREPEND`, respectively, as the first argument to
 If you wish to specify any additional attributes for the `<style>` tag, pass them in an array as the second argument to 
 `captureStart()`.
 
+**Note:** The `captureStart()` and `captureEnd()` methods are deprecated as of Pimcore 11.4.0. Use a combination of `set` and `pimcore_head_style` to achieve the same result.
+
+```twig
+{% set inlineStyle %}
+    body {
+        background-color: red
+    }
+{% endset %}
+{% do pimcore_head_style().appendStyle(inlineStyle) %}
+
+{# Example if you wish to specify additional attributes for the <style> tag #}
+{% do pimcore_head_style().appendStyle(inlineStyle, {"media": "screen"}) %}
+```

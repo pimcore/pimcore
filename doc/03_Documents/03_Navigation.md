@@ -358,12 +358,7 @@ class NavigationExtension extends AbstractExtension
 ```
 
 ```twig
-{% set mainNav = pimcore_build_nav({
-    active: document,
-    root: mainNavStartNode,
-}) %}
-
-{% set mainNavigation =  app_navigation_news_links(document, navStartNode) %}
+{% set navigation = app_navigation_news_links(document, navStartNode) %}
 
 <div class="my-navigation">
     {{ pimcore_render_nav(navigation, 'menu', 'renderMenu', {
@@ -482,8 +477,8 @@ You can disable the navigation cache by setting the `cache` argument to `false`.
 
 **A document does not show up in the navigation. Why?**
 
-Please make sure that the documents and its parent documents are published and that the document it self as well as all it's parents have a navigation name set. 
-Neither the document itself nor one of it's parent documents may have activated **Exclude From Navigation** in their properties. (`Document properties -> System properties`)
+Please make sure that the documents and its parent documents are published and that the document itself as well as all its parents have a navigation name set. 
+Neither the document itself nor one of its parent documents may have activated **Exclude From Navigation** in their properties. (`Document properties -> System properties`)
 
 **Why is the navigation not appearing?**
 

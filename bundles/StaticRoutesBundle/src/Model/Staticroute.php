@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\StaticRoutesBundle\Model;
 
+use Exception;
+use Pimcore;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
@@ -64,35 +66,24 @@ final class Staticroute extends AbstractModel
     /**
      * Associative array filled on match() that holds matched path values
      * for given variable names.
-     *
      */
     protected array $_values = [];
 
     /**
      * this is a small per request cache to know which route is which is, this info is used in self::getByName()
-     *
      */
     protected static array $nameIdMappingCache = [];
 
     /**
      * contains the static route which the current request matches (it he does), this is used in the view to get the current route
-     *
      */
     protected static ?Staticroute $_currentRoute = null;
 
-    /**
-     * @static
-     *
-     */
     public static function setCurrentRoute(?Staticroute $route): void
     {
         self::$_currentRoute = $route;
     }
 
-    /**
-     * @static
-     *
-     */
     public static function getCurrentRoute(): ?Staticroute
     {
         return self::$_currentRoute;
@@ -100,8 +91,6 @@ final class Staticroute extends AbstractModel
 
     /**
      * Static helper to retrieve an instance of Staticroute by the given ID
-     *
-     *
      */
     public static function getById(string $id): ?Staticroute
     {
@@ -110,9 +99,9 @@ final class Staticroute extends AbstractModel
         try {
             $route = \Pimcore\Cache\RuntimeCache::get($cacheKey);
             if (!$route) {
-                throw new \Exception('Route in registry is null');
+                throw new Exception('Route in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $route = new self();
                 $route->setId($id);
@@ -127,9 +116,7 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     *
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByName(string $name, int $siteId = null): ?Staticroute
     {
@@ -357,7 +344,6 @@ final class Staticroute extends AbstractModel
 
     /**
      * @internal
-     * @internal
      */
     public function assemble(array $urlOptions = [], bool $encode = true): string
     {
@@ -370,7 +356,7 @@ final class Staticroute extends AbstractModel
 
         // merge with defaults
         // merge router.request_context params e.g. "_locale"
-        $requestParameters = \Pimcore::getContainer()->get('pimcore.routing.router.request_context')->getParameters();
+        $requestParameters = Pimcore::getContainer()->get('pimcore.routing.router.request_context')->getParameters();
         $urlParams = array_merge($defaultValues, $requestParameters, $urlOptions);
 
         $parametersInReversePattern = [];
@@ -443,7 +429,7 @@ final class Staticroute extends AbstractModel
             'params' => $urlParams,
             'encode' => $encode,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::STATICROUTE_PATH);
+        Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::STATICROUTE_PATH);
         $url = $event->getArgument('frontendPath');
 
         return $url;
@@ -452,7 +438,7 @@ final class Staticroute extends AbstractModel
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function match(string $path, array $params = []): false|array
     {
@@ -505,7 +491,7 @@ final class Staticroute extends AbstractModel
     {
         if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
-            foreach($methods as $key => $method) {
+            foreach ($methods as $key => $method) {
                 $methods[$key] = trim($method);
             }
         }

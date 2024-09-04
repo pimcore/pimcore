@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -158,7 +159,7 @@ HTML;
     private function getErrorCode(string $message = ''): string
     {
         // only display error message in debug mode
-        if (!\Pimcore::inDebugMode()) {
+        if (!Pimcore::inDebugMode()) {
             $message = '';
         }
 

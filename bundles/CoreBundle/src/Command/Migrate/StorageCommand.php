@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Migrate;
 
+use Exception;
 use League\Flysystem\StorageAttributes;
 use Pimcore\Console\AbstractCommand;
 use Psr\Container\ContainerInterface;
@@ -51,6 +52,7 @@ class StorageCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $errors = [];
         $storages = $input->getArgument('storage');
 
         foreach ($storages as $storageName) {
@@ -60,7 +62,7 @@ class StorageCommand extends AbstractCommand
             try {
                 $sourceStorage = $this->locator->get($storageSourceName);
                 $targetStorage = $this->locator->get($storageTargetName);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->io->warning(sprintf('Skipped migrating storage "%s": please make sure "%s" and "%s" configuration exists.', $storageName, $storageSourceName, $storageTargetName));
 
                 continue;
@@ -88,8 +90,9 @@ class StorageCommand extends AbstractCommand
                         } else {
                             $progressBar->setMessage(sprintf('Skipping %s: %s', $storageName, $item->path()));
                         }
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         $progressBar->setMessage(sprintf('Skipping %s: %s', $storageName, $item->path()));
+                        $errors[] = $e->getMessage();
                     }
                     $progressBar->advance();
                 }
@@ -99,6 +102,11 @@ class StorageCommand extends AbstractCommand
         }
 
         $this->io->success('Finished Migrating Storage!');
+
+        if ($errors) {
+            $this->io->warning('Some errors occoured during migrating certain files:');
+            $this->io->writeLn(implode("\n", $errors));
+        }
 
         return 0;
     }

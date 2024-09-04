@@ -59,7 +59,7 @@ class Dao extends Model\Document\DocType\Dao
     public static function sortByPriority(DocType $a, DocType $b): int
     {
         if ($a->getPriority() === $b->getPriority()) {
-            return \strcasecmp($a->getGroup() . $a->getName(), $b->getGroup() . $b->getName());
+            return strcasecmp($a->getGroup() . $a->getName(), $b->getGroup() . $b->getName());
         }
 
         return $a->getPriority() <=> $b->getPriority();

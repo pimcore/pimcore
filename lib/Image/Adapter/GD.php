@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Image\Adapter;
 
+use GdImage;
 use Pimcore\Image\Adapter;
 
 class GD extends Adapter
@@ -23,7 +24,7 @@ class GD extends Adapter
     protected string $path;
 
     /**
-     * @var resource|\GdImage|false
+     * @var resource|GdImage|false
      */
     protected mixed $resource = null;
 
@@ -132,7 +133,7 @@ class GD extends Adapter
         }
     }
 
-    private function createImage(int $width, int $height): \GdImage
+    private function createImage(int $width, int $height): GdImage
     {
         $newImg = imagecreatetruecolor($width, $height);
 

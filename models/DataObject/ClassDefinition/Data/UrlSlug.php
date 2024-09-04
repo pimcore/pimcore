@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Exception;
 use Pimcore\Db;
 use Pimcore\Event\Model\DataObject\ClassDefinition\UrlSlugEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
@@ -38,13 +39,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * @internal
-     *
      */
     public ?int $domainLabelWidth = null;
 
     /**
      * @internal
-     *
      */
     public string $action;
 
@@ -59,7 +58,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @see Data::getDataForEditmode
      *
      * @param null|Model\DataObject\Concrete $object
-     *
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -89,7 +87,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     *
      * @return Model\DataObject\Data\UrlSlug[]
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
@@ -145,7 +142,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                         throw new Model\Element\ValidationException('Slug must be at least 2 characters long and start with slash');
                     }
 
-                    if(preg_match_all('([?#])', $item->getSlug(), $matches)) {
+                    if (preg_match_all('([?#])', $item->getSlug(), $matches)) {
                         throw new Model\Element\ValidationException('Slug contains reserved characters! [' . implode(' ', array_unique($matches[0])) . ']');
                     }
                 }
@@ -164,6 +161,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->action;
     }
 
+    /**
+     * @return $this
+     */
     public function setAction(?string $action): static
     {
         $this->action = $action;
@@ -203,7 +203,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                     // relation needs to be an array with src_id, dest_id, type, fieldname
                     try {
                         $db->insert(Model\DataObject\Data\UrlSlug::TABLE_NAME, $slug);
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         Logger::error((string)$e);
                         if ($e instanceof UniqueConstraintViolationException) {
                             // check if the slug action can be resolved.
@@ -214,14 +214,14 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                                 // retrying the transaction should success the next time
                                 try {
                                     $existingSlug->getAction();
-                                } catch (\Exception $e) {
+                                } catch (Exception $e) {
                                     $db->insert(Model\DataObject\Data\UrlSlug::TABLE_NAME, $slug);
 
                                     return;
                                 }
 
                                 // if now exception is thrown then the slug is owned by a diffrent object/field
-                                throw new \Exception('Unique constraint violated. Slug "' . $slug['slug'] . '" is already used by object '
+                                throw new Exception('Unique constraint violated. Slug "' . $slug['slug'] . '" is already used by object '
                                     . $existingSlug->getObjectId() . ', fieldname: ' . $existingSlug->getFieldname());
                             }
                         }
@@ -237,7 +237,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * @param Model\DataObject\Concrete|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Localizedfield|null $object
-     *
      */
     public function prepareDataForPersistence(mixed $data, Localizedfield|AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): ?array
     {
@@ -250,7 +249,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
 
         if ($data && !is_array($data)) {
-            throw new \Exception('Slug data not valid');
+            throw new Exception('Slug data not valid');
         }
 
         if (is_array($data) && count($data) > 0) {
@@ -264,7 +263,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                         'siteId' => $slugItem->getSiteId() ?? 0,
                     ];
                 } else {
-                    throw new \Exception('expected instance of UrlSlug');
+                    throw new Exception('expected instance of UrlSlug');
                 }
             }
 
@@ -411,8 +410,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * @param null|Model\DataObject\Data\UrlSlug[] $data
-     * @param Model\DataObject\Concrete|null $object
-     *
      */
     public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): array
     {
@@ -426,9 +423,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * returns sql query statement to filter according to this data types value(s)
-     *
-     *
-     *
      */
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
     {
@@ -466,6 +460,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->domainLabelWidth;
     }
 
+    /**
+     * @return $this
+     */
     public function setDomainLabelWidth(?int $domainLabelWidth): static
     {
         $this->domainLabelWidth = $domainLabelWidth;

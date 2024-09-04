@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
+use JsonSerializable;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -25,6 +27,7 @@ use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOption
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use Throwable;
 
 class Multiselect extends Data implements
     ResourcePersistenceAwareInterface,
@@ -32,7 +35,7 @@ class Multiselect extends Data implements
     TypeDeclarationSupportInterface,
     EqualComparisonInterface,
     VarExporterInterface,
-    \JsonSerializable,
+    JsonSerializable,
     NormalizerInterface,
     LayoutDefinitionEnrichmentInterface,
     FieldDefinitionEnrichmentInterface,
@@ -260,7 +263,7 @@ class Multiselect extends Data implements
     {
         if (is_array($data)) {
             return implode(',', array_map(function ($v) {
-                return htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+                return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
             }, $data));
         }
 
@@ -486,7 +489,7 @@ class Multiselect extends Data implements
 
             try {
                 $options = $optionsProvider->getOptions($context, $this);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 // error from getOptions => no values => no comma => no problems
                 $options = null;
             }
@@ -496,7 +499,7 @@ class Multiselect extends Data implements
         if (is_array($options) && array_reduce($options, static function ($containsComma, $option) {
             return $containsComma || str_contains((string)$option['value'], ',');
         }, false)) {
-            throw new \Exception("Field {$this->getName()}: Multiselect option values may not contain commas (,) for now, see <a href='https://github.com/pimcore/pimcore/issues/5010' target='_blank'>issue #5010</a>.");
+            throw new Exception("Field {$this->getName()}: Multiselect option values may not contain commas (,) for now, see <a href='https://github.com/pimcore/pimcore/issues/5010' target='_blank'>issue #5010</a>.");
         }
     }
 
@@ -505,9 +508,6 @@ class Multiselect extends Data implements
         // nothing to do
     }
 
-    /**
-     * @return $this
-     */
     public function enrichFieldDefinition(array $context = []): static
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),

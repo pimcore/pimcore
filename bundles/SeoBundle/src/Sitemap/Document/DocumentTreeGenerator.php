@@ -17,6 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Sitemap\Document;
 
+use Exception;
+use Generator;
+use Pimcore;
 use Pimcore\Bundle\SeoBundle\Sitemap\Element\AbstractElementGenerator;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -74,7 +77,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         if ($this->options['handleMainDomain'] && (null === $section || $section === 'default')) {
             $rootDocument = Document::getById($this->options['rootId']);
 
-            if($rootDocument instanceof Document) {
+            if ($rootDocument instanceof Document) {
                 $this->populateCollection($urlContainer, $rootDocument, 'default');
             }
         }
@@ -87,7 +90,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
                     $siteSection = sprintf('site_%s', $currentSite->getId());
                     $this->populateCollection($urlContainer, $rootDocument, $siteSection, $currentSite);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error('Cannot determine current domain for sitemap generation');
             }
         }
@@ -134,9 +137,9 @@ class DocumentTreeGenerator extends AbstractElementGenerator
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    private function visit(Document $document, DocumentGeneratorContext $context): \Generator
+    private function visit(Document $document, DocumentGeneratorContext $context): Generator
     {
         if ($document instanceof Document\Hardlink) {
             $document = Document\Hardlink\Service::wrap($document);
@@ -150,7 +153,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
 
             if (++$this->currentBatchCount >= $this->options['garbageCollectThreshold']) {
                 $this->currentBatchCount = 0;
-                \Pimcore::collectGarbage();
+                Pimcore::collectGarbage();
             }
         }
 

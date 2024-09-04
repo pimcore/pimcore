@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -70,7 +71,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      *
      * @return mixed|void
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __call(string $method, array $args)
     {
@@ -84,7 +85,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
                 return isset($this->data[$correctedKey]) ? $this->data[$correctedKey] : null;
             }
 
-            throw new \Exception("Requested data $key not available");
+            throw new Exception("Requested data $key not available");
         }
 
         if (str_starts_with($method, 'set')) {
@@ -96,7 +97,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
                 $this->data[$correctedKey] = $args[0];
                 $this->markMeDirty();
             } else {
-                throw new \Exception("Requested data $key not available");
+                throw new Exception("Requested data $key not available");
             }
         }
     }

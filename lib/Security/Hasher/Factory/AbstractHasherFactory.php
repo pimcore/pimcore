@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Security\Hasher\Factory;
 
+use ReflectionClass;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
@@ -37,7 +38,7 @@ abstract class AbstractHasherFactory implements PasswordHasherFactoryInterface
      */
     protected mixed $arguments = [];
 
-    protected ?\ReflectionClass $reflector = null;
+    protected ?ReflectionClass $reflector = null;
 
     public function __construct(string $className, mixed $arguments = null)
     {
@@ -54,7 +55,7 @@ abstract class AbstractHasherFactory implements PasswordHasherFactoryInterface
         $this->arguments = $arguments;
     }
 
-    protected function buildPasswordHasher(\ReflectionClass $reflectionClass): PasswordHasherInterface
+    protected function buildPasswordHasher(ReflectionClass $reflectionClass): PasswordHasherInterface
     {
         /** @var PasswordHasherInterface $hasher */
         $hasher = $reflectionClass->newInstanceArgs($this->arguments);
@@ -62,10 +63,10 @@ abstract class AbstractHasherFactory implements PasswordHasherFactoryInterface
         return $hasher;
     }
 
-    protected function getReflector(): \ReflectionClass
+    protected function getReflector(): ReflectionClass
     {
         if (null === $this->reflector) {
-            $this->reflector = new \ReflectionClass($this->className);
+            $this->reflector = new ReflectionClass($this->className);
         }
 
         return $this->reflector;

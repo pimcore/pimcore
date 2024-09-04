@@ -15,6 +15,9 @@
 
 namespace Pimcore\Model\Document\Editable;
 
+use Exception;
+use Generator;
+use Pimcore;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
@@ -114,7 +117,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         }
     }
 
-    public function getIterator(): \Generator
+    public function getIterator(): Generator
     {
         while ($this->loop()) {
             yield $this->getCurrentIndex();
@@ -243,7 +246,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     protected function getEditableHandler(): EditableHandler
     {
         // TODO inject area handler via DI when editables are built through container
-        return \Pimcore::getContainer()->get(EditableHandler::class);
+        return Pimcore::getContainer()->get(EditableHandler::class);
     }
 
     public function setDataFromResource(mixed $data): static
@@ -377,7 +380,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             'data-hidden' => $hidden,
         ];
 
-        $areabrickManager = \Pimcore::getContainer()->get(AreabrickManagerInterface::class);
+        $areabrickManager = Pimcore::getContainer()->get(AreabrickManagerInterface::class);
 
         $dialogConfig = null;
         $brick = $areabrickManager->getBrick($this->indices[$this->current]['type']);
@@ -402,7 +405,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
         $dialogHtml = '';
         if ($dialogConfig) {
-            $editableRenderer = \Pimcore::getContainer()->get(EditableRenderer::class);
+            $editableRenderer = Pimcore::getContainer()->get(EditableRenderer::class);
             $items = $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId(), $dialogHtml);
             $dialogConfig->setItems($items);
         }
@@ -420,7 +423,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      * This method needs to be `protected` as it is used in other bundles such as pimcore/headless-documents
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
@@ -429,7 +432,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         if ($config instanceof BlockInterface || $config instanceof Area) {
             // Unsupported element was passed (e.g., Block, Areablock, ...)
             // or an Areas was passed, which is not supported to avoid too long editable names
-            throw new \Exception(sprintf('Using editables of type "%s" for the editable dialog "%s" is not supported.', get_debug_type($config), $dialogId));
+            throw new Exception(sprintf('Using editables of type "%s" for the editable dialog "%s" is not supported.', get_debug_type($config), $dialogId));
         } elseif ($config instanceof Document\Editable) {
             // Map editable to array config
             $config = [
@@ -449,7 +452,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         } elseif (isset($config['name']) && isset($config['type'])) {
             $editable = $editableRenderer->getEditable($this->getDocument(), $config['type'], $config['name'], $config['config'] ?? []);
             if (!$editable instanceof Document\Editable) {
-                throw new \Exception(sprintf('Invalid editable type "%s" configured for Dialog Box', $config['type']));
+                throw new Exception(sprintf('Invalid editable type "%s" configured for Dialog Box', $config['type']));
             }
 
             $editable->setInDialogBox($dialogId);
