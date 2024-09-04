@@ -16,13 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
-use InvalidArgumentException;
 use Pimcore\Logger;
 use Pimcore\Model;
-use Pimcore\Model\Asset;
-use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -110,21 +106,10 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
 
     public function setDataFromResource(mixed $data): static
     {
-        if (is_array($data)) {
-            $processedData = $data;
-        } elseif (is_string($data)) {
-            $unserializedData = Serialize::unserialize($data);
-            if (!is_array($unserializedData)) {
-                throw new InvalidArgumentException('Unserialized data must be an array.');
-            }
-            $processedData = $unserializedData;
-        } else {
-            throw new InvalidArgumentException('Data must be a string or an array.');
-        }
-
-        $this->id = $processedData['id'] ?? null;
-        $this->type = $processedData['type'] ?? null;
-        $this->subtype = $processedData['subtype'] ?? null;
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->id = $unserializedData['id'] ?? null;
+        $this->type = $unserializedData['type'] ?? null;
+        $this->subtype = $unserializedData['subtype'] ?? null;
 
         $this->setElement();
 

@@ -16,13 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
-use InvalidArgumentException;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Tool;
-use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -331,23 +329,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
     public function setDataFromResource(mixed $data): static
     {
-        if (is_array($data)) {
-            $processedData = $data;
-        } elseif (is_string($data)) {
-            $unserializedData = Serialize::unserialize($data);
-            if (!is_array($unserializedData)) {
-                throw new InvalidArgumentException('Unserialized data must be an array.');
-            }
-            $processedData = $unserializedData;
-        } else {
-            throw new InvalidArgumentException('Data must be a string or an array.');
-        }
-
-        $this->id = $processedData['id'] ?? null;
-        $this->type = $processedData['type'] ?? null;
-        $this->poster = $processedData['poster'] ?? null;
-        $this->title = $processedData['title'] ?? '';
-        $this->description = $processedData['description'] ?? '';
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->id = $unserializedData['id'] ?? null;
+        $this->type = $unserializedData['type'] ?? null;
+        $this->poster = $unserializedData['poster'] ?? null;
+        $this->title = $unserializedData['title'] ?? '';
+        $this->description = $unserializedData['description'] ?? '';
 
         return $this;
     }

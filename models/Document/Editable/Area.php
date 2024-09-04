@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
-use InvalidArgumentException;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
@@ -24,7 +23,6 @@ use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Model;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool\HtmlUtils;
-use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -209,19 +207,8 @@ class Area extends Model\Document\Editable
 
     public function setDataFromResource(mixed $data): static
     {
-        if (is_array($data)) {
-            $processedData = $data;
-        } elseif (is_string($data)) {
-            $unserializedData = Serialize::unserialize($data);
-            if (!is_array($unserializedData)) {
-                throw new InvalidArgumentException('Unserialized data must be an array.');
-            }
-            $processedData = $unserializedData;
-        } else {
-            throw new InvalidArgumentException('Data must be a string or an array.');
-        }
-
-        $this->type = $processedData['type'] ?? null;
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->type = $unserializedData['type'] ?? null;
 
         return $this;
     }

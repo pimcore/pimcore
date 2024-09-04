@@ -16,9 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
-use InvalidArgumentException;
 use Pimcore\Model;
-use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -67,19 +65,8 @@ class Table extends Model\Document\Editable
 
     public function setDataFromResource(mixed $data): static
     {
-        if (is_array($data)) {
-            $processedData = $data;
-        } elseif (is_string($data)) {
-            $unserializedData = Serialize::unserialize($data);
-            if (!is_array($unserializedData)) {
-                throw new InvalidArgumentException('Unserialized data must be an array.');
-            }
-            $processedData = $unserializedData;
-        } else {
-            throw new InvalidArgumentException('Data must be a string or an array.');
-        }
-
-        $this->data = $processedData;
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->data = $unserializedData;
 
         return $this;
     }
