@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Definition;
 
-use Doctrine\DBAL\Exception\DriverException;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
