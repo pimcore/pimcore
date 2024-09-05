@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model;
 
 use Exception;
-use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\WebsiteSettingEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
@@ -78,11 +77,6 @@ final class WebsiteSetting extends AbstractModel
         }
 
         RuntimeCache::set($cacheKey, $setting);
-
-        Pimcore::getEventDispatcher()->dispatch(
-            new WebsiteSettingEvent($setting),
-            WebsiteSettingEvents::POST_LOAD
-        );
 
         return $setting;
     }

@@ -129,15 +129,6 @@ final class WebsiteSettingEvents
      * @var string
      */
     public const POST_DELETE = 'pimcore.websiteSetting.postDelete';
-
-    /**
-     * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
-     *
-     * Load event is triggered after the website setting is loaded from the database.
-     *
-     * @var string
-     */
-    public const POST_LOAD = 'pimcore.websiteSetting.postLoad';
 }
 ```
 
