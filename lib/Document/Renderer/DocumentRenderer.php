@@ -93,14 +93,16 @@ class DocumentRenderer implements DocumentRendererInterface
         } catch (Exception $e) {
 
             $host = null;
+            $url = $document->getFullPath();
             if ($site = Frontend::getSiteForDocument($document)) {
                 Site::setCurrentSite($site);
                 $host = $site->getMainDomain();
+                $url = preg_replace('@^' . $site->getRootPath() . '/?@', '/', $url);
             } elseif ($systemMainDomain = Tool::getHostname()) {
                 $host = $systemMainDomain;
             }
 
-            $request = $this->requestHelper->createRequestWithContext(host: $host);
+            $request = $this->requestHelper->createRequestWithContext(uri: $url, host: $host);
         }
 
         if ($attributes['pimcore_static_page_generator'] ?? false) {
