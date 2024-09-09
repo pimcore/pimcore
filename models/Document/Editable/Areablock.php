@@ -25,7 +25,6 @@ use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\EditableRenderer;
-use Pimcore\Tool;
 use Pimcore\Tool\HtmlUtils;
 
 /**
@@ -251,13 +250,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
     public function setDataFromResource(mixed $data): static
     {
-        $unserializedData = Tool\Serialize::unserialize($data);
-
-        if (is_array($unserializedData)) {
-            $this->indices = $unserializedData;
-        } else {
-            $this->indices = [];
-        }
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->indices = $unserializedData;
 
         return $this;
     }
