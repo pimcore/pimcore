@@ -72,7 +72,8 @@ class Block extends Model\Document\Editable implements BlockInterface
 
     public function setDataFromResource(mixed $data): static
     {
-        $this->indices = \Pimcore\Tool\Serialize::unserialize($data);
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->indices = $unserializedData;
 
         return $this;
     }

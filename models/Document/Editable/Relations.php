@@ -114,9 +114,8 @@ class Relations extends Model\Document\Editable implements Iterator, IdRewriterI
 
     public function setDataFromResource(mixed $data): static
     {
-        if ($data = \Pimcore\Tool\Serialize::unserialize($data)) {
-            $this->setDataFromEditmode($data);
-        }
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->setDataFromEditmode($unserializedData);
 
         return $this;
     }
