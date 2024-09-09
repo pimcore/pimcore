@@ -70,7 +70,7 @@ class CacheClearCommand extends AbstractCommand
         $io = new SymfonyStyle($input, $output);
         $io->newLine();
 
-        if ($input->getOption('tags')) {
+        if($input->getOption('tags')) {
             $tags = $this->prepareTags($input->getOption('tags'));
             Cache::clearTags($tags);
             $io->success('Pimcore data cache cleared tags: ' . implode(',', $tags));
