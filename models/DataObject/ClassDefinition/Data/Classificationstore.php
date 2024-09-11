@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -141,7 +142,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @param Concrete|null $object
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @see Data::getDataForEditmode
      */
@@ -518,7 +519,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function preGetData(mixed $container, array $params = []): mixed
     {
         if (!$container instanceof DataObject\Concrete) {
-            throw new \Exception('Classification store fields are only valid in Objects');
+            throw new Exception('Classification store fields are only valid in Objects');
         }
 
         if (!$container->getObjectVar($this->getName()) instanceof DataObject\Classificationstore) {
@@ -642,7 +643,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                             try {
                                 $keyDef->checkValidity($value, false, $params);
-                            } catch (\Exception $exception) {
+                            } catch (Exception $exception) {
                                 $subItems[] = new Model\Element\ValidationException(
                                     $exception->getMessage() . ' (' . $validLanguage . ')',
                                     $exception->getCode(),
@@ -671,19 +672,19 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getDiffDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
-        throw new \Exception('not supported');
+        throw new Exception('not supported');
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getDiffDataFromEditmode(array $data, Concrete $object = null, array $params = []): mixed
     {
-        throw new \Exception('not supported');
+        throw new Exception('not supported');
     }
 
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool

@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Routing\Dynamic;
 
+use LogicException;
 use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\Request\Resolver\StaticPageResolver;
@@ -210,7 +211,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         try {
             $request = $context ? $context->getRequest() : $this->requestHelper->getMainRequest();
             $isAdminRequest = $this->requestHelper->isFrontendRequestByAdmin($request);
-        } catch (\LogicException $e) {
+        } catch (LogicException $e) {
             // catch logic exception here - when the exception fires, it is no admin request
             $isAdminRequest = false;
         }

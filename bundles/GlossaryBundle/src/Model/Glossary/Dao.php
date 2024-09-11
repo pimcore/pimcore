@@ -14,8 +14,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace  Pimcore\Bundle\GlossaryBundle\Model\Glossary;
+namespace Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 
+use Exception;
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Exception\NotFoundException;
@@ -49,7 +50,7 @@ class Dao extends AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {
@@ -69,7 +70,7 @@ class Dao extends AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(): void
     {

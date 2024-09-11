@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -26,6 +27,7 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
+use stdClass;
 
 class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreSetDataInterface
 {
@@ -171,9 +173,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * gets recursively attribute data from parent and fills objectData and metaData
      */
-    private function getDataForField(Objectbrick\Data\AbstractData $item, string $key, Data $fielddefinition, int $level, ?DataObject\Concrete $baseObject, string $getter, ?array $params): \stdClass
+    private function getDataForField(Objectbrick\Data\AbstractData $item, string $key, Data $fielddefinition, int $level, ?DataObject\Concrete $baseObject, string $getter, ?array $params): stdClass
     {
-        $result = new \stdClass();
+        $result = new stdClass();
         if ($baseObject) {
             $parent = DataObject\Service::hasInheritableParentObject($baseObject);
         }
@@ -542,7 +544,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                                         $fd->checkValidity($item->$getter(), $omitMandatoryCheck, $params);
 
                                         DataObject::setGetInheritedValues($getInheritedValues);
-                                    } catch (\Exception $e) {
+                                    } catch (Exception $e) {
                                         if (!$e instanceof Model\Element\ValidationException) {
                                             throw $e;
                                         }
@@ -833,7 +835,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                         && $fd instanceof DataObject\ClassDefinition\Data) {
                         $result[$type][$fd->getName()] = $fd->normalize($value, $params);
                     } else {
-                        throw new \Exception($fd->getName() . ' does not implement NormalizerInterface');
+                        throw new Exception($fd->getName() . ' does not implement NormalizerInterface');
                     }
                 }
             }

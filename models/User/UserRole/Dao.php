@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\User\UserRole;
 
+use Exception;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 
@@ -28,7 +29,7 @@ class Dao extends Model\User\AbstractUser\Dao
 {
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getById(int $id): void
     {
@@ -41,7 +42,7 @@ class Dao extends Model\User\AbstractUser\Dao
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getByName(string $name): void
     {

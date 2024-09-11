@@ -56,4 +56,3 @@ The Core Framework documentation is divided into three sections that aim to guid
   for your own implementations.
 - [Pimcore Academy](https://pimcore.com/academy): The training platform Pimcore Academy offers on-demand video courses
   about many Pimcore topics. 
-

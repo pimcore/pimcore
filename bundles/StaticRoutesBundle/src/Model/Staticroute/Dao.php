@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 
+use Exception;
+use Pimcore;
 use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
@@ -32,8 +34,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     public function configure(): void
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore_static_routes.config_location');
-        $definitions = \Pimcore::getContainer()->getParameter('pimcore_static_routes.definitions');
+        $config = Pimcore::getContainer()->getParameter('pimcore_static_routes.config_location');
+        $definitions = Pimcore::getContainer()->getParameter('pimcore_static_routes.definitions');
 
         $storageConfig = $config[self::CONFIG_KEY];
 
@@ -135,7 +137,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {

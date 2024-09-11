@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Exception;
+use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
@@ -45,7 +47,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {
@@ -129,7 +131,7 @@ class Dao extends Model\Dao\AbstractDao
                         ]);
 
                         /** @var MarshallerService $marshallerService */
-                        $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+                        $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
 
                         if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
                             $marshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());
@@ -193,18 +195,18 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function load(): void
     {
         $classificationStore = $this->model;
         $object = $this->model->getObject();
         $dataTableName = $this->getDataTableName();
-        $objectId = $object->getId();
+        $objectId = $object->getId() ?? 0;
         $fieldname = $this->model->getFieldname();
         $groupsTableName = $this->getGroupsTableName();
 
-        $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
+        $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE id = ' . $objectId . ' AND fieldname = ' . $this->db->quote($fieldname);
 
         $data = $this->db->fetchAllAssociative($query);
         $list = [];
@@ -213,7 +215,7 @@ class Dao extends Model\Dao\AbstractDao
             $list[$item['groupId']] = true;
         }
 
-        $query = 'SELECT * FROM ' . $dataTableName . ' WHERE id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
+        $query = 'SELECT * FROM ' . $dataTableName . ' WHERE id = ' . $objectId . ' AND fieldname = ' . $this->db->quote($fieldname);
 
         $data = $this->db->fetchAllAssociative($query);
 
@@ -245,7 +247,7 @@ class Dao extends Model\Dao\AbstractDao
 
             if ($fd instanceof NormalizerInterface) {
                 /** @var MarshallerService $marshallerService */
-                $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+                $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
 
                 if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
                     $unmarshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());

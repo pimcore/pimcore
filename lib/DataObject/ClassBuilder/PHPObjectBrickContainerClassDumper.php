@@ -63,7 +63,7 @@ class PHPObjectBrickContainerClassDumper implements PHPObjectBrickContainerClass
                 }
 
                 foreach ($cd as $fieldname => $brickKeys) {
-                    $cd = $this->classBuilder->buildContainerClass($definition, $class, $fieldname, $brickKeys);
+                    $containerClass = $this->classBuilder->buildContainerClass($definition, $class, $fieldname, $brickKeys);
                     $folder = $definition->getContainerClassFolder($class->getName());
 
                     if (!is_dir($folder)) {
@@ -71,7 +71,7 @@ class PHPObjectBrickContainerClassDumper implements PHPObjectBrickContainerClass
                     }
 
                     $file = $folder . '/' . ucfirst($fieldname) . '.php';
-                    $this->filesystem->dumpFile($file, $cd);
+                    $this->filesystem->dumpFile($file, $containerClass);
                 }
             }
         }

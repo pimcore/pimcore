@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\QuantityValue\Unit\Listing;
 
+use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -48,7 +49,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM '.DataObject\QuantityValue\Unit\Dao::TABLE_NAME.' ' . $this->getCondition(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }

@@ -16,7 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore;
 
+use Exception;
 use League\HTMLToMarkdown\HtmlConverter;
+use Pimcore;
 use Pimcore\Event\MailEvents;
 use Pimcore\Event\Model\MailEvent;
 use Pimcore\Helper\Mail as MailHelper;
@@ -161,7 +163,7 @@ class Mail extends Email
      */
     public function init(string $type = 'email', ?array $config = null): void
     {
-        if(empty($config)) {
+        if (empty($config)) {
             $config = Config::getSystemConfiguration($type);
         }
 
@@ -205,7 +207,7 @@ class Mail extends Email
             return true;
         }
 
-        return \Pimcore::inDebugMode() && $this->ignoreDebugMode === false;
+        return Pimcore::inDebugMode() && $this->ignoreDebugMode === false;
     }
 
     /**
@@ -456,7 +458,7 @@ class Mail extends Email
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function sendWithoutRendering(MailerInterface $mailer = null): static
     {
@@ -490,8 +492,8 @@ class Mail extends Email
         if ($mailer === null) {
             try {
                 //if no mailer given, get default mailer from container
-                $mailer = \Pimcore::getContainer()->get(Mailer::class);
-            } catch (\Exception $e) {
+                $mailer = Pimcore::getContainer()->get(Mailer::class);
+            } catch (Exception $e) {
                 $sendingFailedException = $e;
             }
         }
@@ -505,33 +507,33 @@ class Mail extends Email
             'mailer' => $mailer,
         ]);
 
-        \Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_SEND);
+        Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_SEND);
 
         if ($event->hasArgument('mailer') && !$sendingFailedException) {
             $mailer = $event->getArgument('mailer');
 
             try {
                 $mailer->send($this);
-            } catch (\Exception $e) {
-                $sendingFailedException = new \Exception($e->getMessage(), 0, $e);
+            } catch (Exception $e) {
+                $sendingFailedException = new Exception($e->getMessage(), 0, $e);
             }
         }
 
         if ($this->loggingIsEnabled()) {
-            if (\Pimcore::inDebugMode() && !$this->ignoreDebugMode) {
+            if (Pimcore::inDebugMode() && !$this->ignoreDebugMode) {
                 $recipients = $this->getDebugMailRecipients($recipients);
             }
 
-            \Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_LOG);
+            Pimcore::getEventDispatcher()->dispatch($event, MailEvents::PRE_LOG);
 
             try {
                 $this->lastLogEntry = MailHelper::logEmail($this, $recipients, $sendingFailedException === null ? null : $sendingFailedException->getMessage());
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::emerg("Couldn't log Email");
             }
         }
 
-        if ($sendingFailedException instanceof \Exception) {
+        if ($sendingFailedException instanceof Exception) {
             throw $sendingFailedException;
         }
 
@@ -593,7 +595,7 @@ class Mail extends Email
 
     private function renderParams(string $string, string $context): string
     {
-        $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
+        $templatingEngine = Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
 
         try {
             $twig = $templatingEngine->getTwigEnvironment(true);
@@ -603,7 +605,7 @@ class Mail extends Email
         } catch (SecurityError $e) {
             Logger::err((string) $e);
 
-            throw new \Exception(sprintf('Failed rendering the %s: %s. Please check your twig sandbox security policy or contact the administrator.',
+            throw new Exception(sprintf('Failed rendering the %s: %s. Please check your twig sandbox security policy or contact the administrator.',
                 $context, substr($e->getMessage(), 0, strpos($e->getMessage(), ' in "__string'))));
         } finally {
             $templatingEngine->disableSandboxExtensionFromTwigEnvironment();
@@ -697,7 +699,7 @@ class Mail extends Email
                 unset($html);
 
                 $content = $this->html2Text($htmlContent);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::err((string) $e);
                 $content = '';
             }
@@ -710,7 +712,7 @@ class Mail extends Email
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setDocument(int|Model\Document|string|null $document): static
     {
@@ -727,7 +729,7 @@ class Mail extends Email
             $this->setDocumentId($document instanceof Model\Document ? $document->getId() : null);
             $this->setDocumentSettings();
         } else {
-            throw new \Exception("$document is not an instance of " . Model\Document\Email::class);
+            throw new Exception("$document is not an instance of " . Model\Document\Email::class);
         }
 
         return $this;
@@ -786,7 +788,7 @@ class Mail extends Email
                 $converter = new HtmlConverter();
                 $converter->getConfig()->merge($this->getHtml2TextOptions());
                 $content = $converter->convert($htmlContent);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::warning('Converting HTML to plain text failed, no plain text part will be attached to the sent email');
             }
         }

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
+use Exception;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DataObjectCustomLayoutEvents;
@@ -63,9 +64,9 @@ class CustomLayout extends Model\AbstractModel
         try {
             $customLayout = RuntimeCache::get($cacheKey);
             if (!$customLayout) {
-                throw new \Exception('Custom Layout in registry is null');
+                throw new Exception('Custom Layout in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $customLayout = new self();
                 $customLayout->getDao()->getById($id);
@@ -79,9 +80,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     *
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByName(string $name): ?CustomLayout
     {
@@ -90,9 +89,9 @@ class CustomLayout extends Model\AbstractModel
         try {
             $customLayout = RuntimeCache::get($cacheKey);
             if (!$customLayout) {
-                throw new \Exception('Custom Layout in registry is null');
+                throw new Exception('Custom Layout in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $customLayout = new self();
                 $customLayout->getDao()->getByName($name);
@@ -106,9 +105,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     *
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByNameAndClassId(string $name, string $classId): ?CustomLayout
     {
@@ -190,13 +187,12 @@ class CustomLayout extends Model\AbstractModel
         // empty custom layout cache
         try {
             Cache::clearTag('customlayout_' . $this->getId());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
     }
 
     /**
      * @internal
-     *
      */
     protected function getInfoDocBlock(): string
     {
@@ -215,10 +211,6 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
-     *
-     *
      */
     public static function getIdentifier(string $classId): ?UuidV4
     {
@@ -226,7 +218,7 @@ class CustomLayout extends Model\AbstractModel
             $customLayout = new self();
 
             return $customLayout->getDao()->getLatestIdentifier($classId);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
 
             return null;
@@ -245,13 +237,13 @@ class CustomLayout extends Model\AbstractModel
         // empty object cache
         try {
             Cache::clearTag('customlayout_' . $this->getId());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         // empty output cache
         try {
             Cache::clearTag('output');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         $this->getDao()->delete();
@@ -297,6 +289,9 @@ class CustomLayout extends Model\AbstractModel
         return $this->userModification;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(string $id): static
     {
         $this->id = $id;
@@ -304,6 +299,9 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -326,6 +324,9 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = $creationDate;
@@ -333,6 +334,9 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = $modificationDate;
@@ -340,6 +344,9 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setUserOwner(int $userOwner): static
     {
         $this->userOwner = $userOwner;
@@ -347,6 +354,9 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setUserModification(int $userModification): static
     {
         $this->userModification = $userModification;
@@ -354,9 +364,12 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDescription(string $description): static
     {
-        $this->description = (string) $description;
+        $this->description = $description;
 
         return $this;
     }

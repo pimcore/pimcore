@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Translation;
 
+use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Model\Translation;
@@ -68,7 +69,7 @@ class TranslatorTest extends TestCase
     {
         parent::setUp();
 
-        $this->translator = \Pimcore::getContainer()->get(TranslatorInterface::class);
+        $this->translator = Pimcore::getContainer()->get(TranslatorInterface::class);
         $this->addTranslations();
     }
 

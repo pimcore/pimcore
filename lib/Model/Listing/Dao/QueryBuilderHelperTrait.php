@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Listing\Dao;
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use Exception;
 use Pimcore\Model\DataObject;
 
 trait QueryBuilderHelperTrait
@@ -130,7 +131,7 @@ trait QueryBuilderHelperTrait
     {
         $originalSelect = $queryBuilder->getQueryPart('select');
         $queryBuilder->select('COUNT(*)');
-        $queryBuilder->resetQueryPart('orderBy');
+        $queryBuilder->resetOrderBy();
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
 
@@ -160,7 +161,7 @@ trait QueryBuilderHelperTrait
             if ($query->getQueryPart($part)) {
                 return true;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // do nothing
         }
 

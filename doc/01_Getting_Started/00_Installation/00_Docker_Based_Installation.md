@@ -32,7 +32,7 @@ docker run -u `id -u`:`id -g` --rm -v `pwd`:/var/www/html pimcore/pimcore:php8.2
     * Open the `docker-compose.yaml` file in an editor, uncomment all the `user: '1000:1000'` lines and update the ids if necessary
     * Start the needed services with `docker compose up -d`
 
-4. Install pimcore and initialize the DB
+4. Install Pimcore and initialize the DB
     `docker compose exec php vendor/bin/pimcore-install --mysql-host-socket=db --mysql-username=pimcore --mysql-password=pimcore --mysql-database=pimcore` (for demo package the installation can take a while)
 
 :::info
@@ -42,7 +42,7 @@ If you choose to install backend search (which is installed by default), you mus
 
 :::
 
-5. :heavy_check_mark: DONE - You can now visit your pimcore instance:
+5. :heavy_check_mark: DONE - You can now visit your Pimcore instance:
     * The frontend: [localhost](http://localhost)
     * The admin interface, using the credentials you have chosen above:
       [Admin interface](http://localhost/admin)

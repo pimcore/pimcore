@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use stdClass;
 
 class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -58,6 +59,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this->labelWidth;
     }
 
+    /**
+     * @return $this
+     */
     public function setLabelWidth(int $labelWidth): static
     {
         $this->labelWidth = $labelWidth;
@@ -65,6 +69,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setLabelFirstCell(string $labelFirstCell): static
     {
         $this->labelFirstCell = $labelFirstCell;
@@ -82,6 +89,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this->cols;
     }
 
+    /**
+     * @return $this
+     */
     public function setCols(array $cols): static
     {
         if (isset($cols['key'])) {
@@ -104,6 +114,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this->rows;
     }
 
+    /**
+     * @return $this
+     */
     public function setRows(array $rows): static
     {
         if (isset($rows['key'])) {
@@ -327,7 +340,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
             foreach ($cols as $c) {
                 $name = $r['key'] . '#' . $c['key'];
 
-                $col = new \stdClass();
+                $col = new stdClass();
                 $col->name = $name;
                 $length = 0;
                 if (isset($c['length']) && $c['length']) {

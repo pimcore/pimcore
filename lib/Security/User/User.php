@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Security\User;
 
+use Pimcore;
 use Pimcore\Model\User as PimcoreUser;
 use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface as GoogleTwoFactorInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
@@ -118,7 +119,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
             $secret = $this->user->getTwoFactorAuthentication('secret');
             if (!$secret) {
                 // we return a dummy token
-                $twoFactorService = \Pimcore::getContainer()->get('scheb_two_factor.security.google_authenticator');
+                $twoFactorService = Pimcore::getContainer()->get('scheb_two_factor.security.google_authenticator');
 
                 return $twoFactorService->generateSecret();
             }

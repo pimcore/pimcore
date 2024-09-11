@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Listing;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -66,7 +67,7 @@ class Dao extends Model\DataObject\ClassDefinition\CustomLayout\Dao
             }
 
             return count($layouts);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Image;
 
+use InvalidArgumentException;
 use Pimcore\Exception\ImageOptimizationFailedException;
 use Pimcore\File;
 use Pimcore\Image\Optimizer\OptimizerInterface;
@@ -76,7 +77,7 @@ class Optimizer implements ImageOptimizerInterface
     public function registerOptimizer(OptimizerInterface $optimizer): void
     {
         if (in_array($optimizer, $this->optimizers)) {
-            throw new \InvalidArgumentException(sprintf('Optimizer of class %s has already been registered',
+            throw new InvalidArgumentException(sprintf('Optimizer of class %s has already been registered',
                 get_class($optimizer)));
         }
 

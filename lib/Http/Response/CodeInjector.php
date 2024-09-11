@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Http\Response;
 
+use InvalidArgumentException;
 use Pimcore\Http\ResponseHelper;
 use Pimcore\Tool\DomCrawler;
 use Symfony\Component\HttpFoundation\Response;
@@ -75,7 +76,7 @@ class CodeInjector
     public function injectIntoHtml(string $html, string $code, string $selector, string $position, string $charset = 'UTF-8'): string
     {
         if (!in_array($position, self::$validPositions)) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Invalid position. Supported positions are: %s',
                 implode(', ', self::$validPositions)
             ));

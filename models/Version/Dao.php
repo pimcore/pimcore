@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Version;
 
+use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -87,7 +88,7 @@ class Dao extends Model\Dao\AbstractDao
 
     public function isVersionUsedInScheduler(Model\Version $version): bool
     {
-        $exists = $this->db->fetchOne('SELECT id FROM schedule_tasks WHERE version = ?', [$version->getId()]);
+        $exists = $this->db->fetchOne('SELECT id FROM schedule_tasks WHERE active = 1 AND version = ?', [$version->getId()]);
 
         return (bool) $exists;
     }
@@ -148,7 +149,7 @@ class Dao extends Model\Dao\AbstractDao
 
                         // call the garbage collector if memory consumption is > 100MB
                         if (memory_get_usage() > 100000000 && ($count % 100 == 0)) {
-                            \Pimcore::collectGarbage();
+                            Pimcore::collectGarbage();
                         }
 
                         if (count($versionIds) > 1000) {

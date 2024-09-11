@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Security\Hasher;
 
 use Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory;
+use RuntimeException;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherAwareInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
@@ -61,7 +62,7 @@ class PasswordHasherFactory implements PasswordHasherFactoryInterface
 
         if ($user instanceof PasswordHasherFactoryAwareInterface && (null !== $factoryName = $user->getHasherFactoryName())) {
             if (!array_key_exists($factoryName, $this->passwordHasherFactories)) {
-                throw new \RuntimeException(sprintf('The hasher factory "%s" was not configured.', $factoryName));
+                throw new RuntimeException(sprintf('The hasher factory "%s" was not configured.', $factoryName));
             }
 
             $factoryKey = $factoryName;

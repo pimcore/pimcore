@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Model\Redirect;
 
+use Exception;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectUrlPartResolver;
 use Pimcore\Model;
@@ -65,7 +66,7 @@ class Dao extends Model\Dao\AbstractDao
             ) AND active = 1 AND (regex IS NULL OR regex = 0) AND (expiry > UNIX_TIMESTAMP() OR expiry IS NULL)';
 
         if ($siteId) {
-            $sql .= ' AND sourceSite = ' . $this->db->quote($siteId);
+            $sql .= ' AND sourceSite = ' . $siteId;
         } else {
             $sql .= ' AND sourceSite IS NULL';
         }
@@ -94,7 +95,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {

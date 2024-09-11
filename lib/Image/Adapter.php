@@ -158,10 +158,12 @@ abstract class Adapter
         }
         $ratio = $this->getWidth() / $this->getHeight();
 
-        if (($width / $height) > $ratio) {
-            $this->scaleByWidth($width, $forceResize);
-        } else {
-            $this->scaleByHeight($height, $forceResize);
+        if (!is_array($orientation) || !isset($orientation['x'])) {
+            if (($width / $height) > $ratio) {
+                $this->scaleByWidth($width, $forceResize);
+            } else {
+                $this->scaleByHeight($height, $forceResize);
+            }
         }
 
         if ($orientation === 'center') {

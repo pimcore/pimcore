@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\ClassBuilder;
 
+use Exception;
 use Pimcore\Model\DataObject\SelectOptions\Config;
 use Pimcore\Model\DataObject\SelectOptions\Data\SelectOption;
 use Pimcore\Model\DataObject\SelectOptions\Traits\EnumGetValuesTrait;
@@ -51,7 +52,7 @@ class SelectOptionsEnumBuilder implements SelectOptionsEnumBuilderInterface
         $implements = [];
         foreach ($interfaces as $interface) {
             if (!interface_exists($interface)) {
-                throw new \Exception('Interface ' . $interface . ' does not exist', 1676878234790);
+                throw new Exception('Interface ' . $interface . ' does not exist', 1676878234790);
             }
 
             if (is_subclass_of($interface, $baseInterface)) {
@@ -84,7 +85,7 @@ class SelectOptionsEnumBuilder implements SelectOptionsEnumBuilderInterface
         $uses = [];
         foreach ($traits as $trait) {
             if (!trait_exists($trait)) {
-                throw new \Exception('Trait ' . $trait . ' does not exist', 1676878234791);
+                throw new Exception('Trait ' . $trait . ' does not exist', 1676878234791);
             }
             $uses[] = strtr($template, ['%trait%' => $trait]);
         }
@@ -112,7 +113,7 @@ class SelectOptionsEnumBuilder implements SelectOptionsEnumBuilderInterface
         foreach ($config->getSelectOptions() as $selectOption) {
             $caseName = $this->generateCaseName($selectOption);
             if (isset($caseNames[$caseName])) {
-                throw new \Exception(
+                throw new Exception(
                     sprintf(
                         'Case \'%s\' for value \'%s\' already exists for value \'%s\'. Configure a name or ensure the alphanumeric characters are unique.',
                         $caseName,
@@ -188,7 +189,7 @@ class SelectOptionsEnumBuilder implements SelectOptionsEnumBuilderInterface
 
         // Start with a letter or underscore, followed by zero or more alphanumeric and underscore characters
         if (!preg_match('/^[A-Z-a-z_][A-Za-z0-9_]*$/', $selectOptionName)) {
-            throw new \Exception(
+            throw new Exception(
                 sprintf(
                     'Invalid name \'%s\' for option with value \'%s\'. Must be alphanumeric and start with a letter (underscores allowed). Configure a name or use a different value.',
                     $selectOptionName,
@@ -217,7 +218,7 @@ class SelectOptionsEnumBuilder implements SelectOptionsEnumBuilderInterface
         $caseName = $this->toUpperCamelCase($caseName);
 
         if (empty($caseName) && $caseName !== '0') {
-            throw new \Exception(
+            throw new Exception(
                 'Unable to convert value \'' . $value . '\' to case name. Configure a name or use a different value.',
                 1676895007458
             );

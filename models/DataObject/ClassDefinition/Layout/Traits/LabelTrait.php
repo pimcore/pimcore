@@ -35,6 +35,9 @@ trait LabelTrait
      */
     public string $labelAlign = 'left';
 
+    /**
+     * @return $this
+     */
     public function setLabelWidth(int $labelWidth): static
     {
         $this->labelWidth = $labelWidth;
@@ -47,9 +50,12 @@ trait LabelTrait
         return $this->labelWidth;
     }
 
+    /**
+     * @return $this
+     */
     public function setLabelAlign(string $labelAlign): static
     {
-        if (!empty($labelAlign)) {
+        if ($labelAlign) {
             $this->labelAlign = $labelAlign;
         }
 

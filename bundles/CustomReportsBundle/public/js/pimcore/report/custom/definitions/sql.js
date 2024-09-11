@@ -139,7 +139,7 @@ pimcore.bundle.customreports.custom.definition.sql = Class.create({
                     value: (sourceDefinitionData ? sourceDefinitionData.orderbydir : ""),
                     enableKeyEvents: true,
                     listeners: {
-                        keyup: this.onSqlEditorKeyup.bind(this)
+                        change: this.onSqlEditorKeyup.bind(this)
                     }
                 }
             ]
@@ -205,6 +205,17 @@ pimcore.bundle.customreports.custom.definition.sql = Class.create({
                     sqlText += "<br>GROUP BY ";
                 }
                 sqlText += values.groupby;
+            }
+
+            if(values.orderby) {
+                if(values.orderby.trim().indexOf("ORDER BY") !== 0) {
+                    sqlText += "<br>ORDER BY ";
+                }
+                sqlText += values.orderby;
+
+                if(values.orderbydir) {
+                    sqlText += " " + values.orderbydir;
+                }
             }
 
             this.sqlText.setValue(sqlText);

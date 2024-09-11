@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
+use Exception;
+use Imagick;
+use Pimcore;
 use Pimcore\Config;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
@@ -59,7 +62,7 @@ class Image extends Model\Asset
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
@@ -78,7 +81,7 @@ class Image extends Model\Asset
                 return false;
             }
 
-            $imagick = new \Imagick($path);
+            $imagick = new Imagick($path);
             $imagick->setImageFormat('jpg');
             $imagick->setOption('jpeg:extent', '1kb');
             $width = $imagick->getImageWidth();
@@ -127,7 +130,7 @@ EOT;
             'storagePath' => $storagePath,
             'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
+        Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
         $path = $event->getArgument('frontendPath');
 
         return $path;
@@ -151,7 +154,7 @@ EOT;
 
         try {
             $dataUri = 'data:image/svg+xml;base64,' . base64_encode(Storage::get('thumbnail')->read($this->getLowQualityPreviewStoragePath()));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $dataUri = null;
         }
 
@@ -191,19 +194,19 @@ EOT;
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      *
      */
     public static function getImageTransformInstance(): ?\Pimcore\Image\Adapter
     {
         try {
             $image = \Pimcore\Image::getInstance();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $image = null;
         }
 
         if (!$image instanceof \Pimcore\Image\Adapter) {
-            throw new \Exception("Couldn't get instance of image tranform processor.");
+            throw new Exception("Couldn't get instance of image tranform processor.");
         }
 
         return $image;
@@ -223,7 +226,7 @@ EOT;
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getDimensions(string $path = null, bool $force = false): ?array
     {
@@ -251,7 +254,7 @@ EOT;
 
         //try to get the dimensions with getimagesize because it is much faster than e.g. the Imagick-Adapter
         if (is_readable($path)) {
-            $imageSize = getimagesize($path);
+            $imageSize = @getimagesize($path);
             if ($imageSize && $imageSize[0] && $imageSize[1]) {
                 $dimensions = [
                     'width' => $imageSize[0],

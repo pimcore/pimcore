@@ -84,7 +84,7 @@ class Dao extends Model\Dao\AbstractDao
             ->setParameter('uuid', $uuid, Types::STRING);
 
         $data = $queryBuilder
-            ->execute()
+            ->executeQuery()
             ->fetchAssociative();
 
         $model = new UUID();
@@ -103,7 +103,7 @@ class Dao extends Model\Dao\AbstractDao
             ->setParameter('uuid', $uuid, Types::STRING);
 
         $result = $queryBuilder
-            ->execute()
+            ->executeQuery()
             ->fetchOne();
 
         return (bool) $result;

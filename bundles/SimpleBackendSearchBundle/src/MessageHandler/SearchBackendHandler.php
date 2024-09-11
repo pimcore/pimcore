@@ -23,6 +23,7 @@ use Pimcore\Model\Element;
 use Symfony\Component\Messenger\Handler\Acknowledger;
 use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
 use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
+use Throwable;
 
 /**
  * @internal
@@ -62,7 +63,7 @@ class SearchBackendHandler implements BatchHandlerInterface
                 }
 
                 $ack->ack($message);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $ack->nack($e);
             }
         }
@@ -70,6 +71,6 @@ class SearchBackendHandler implements BatchHandlerInterface
 
     private function shouldFlush(): bool
     {
-        return 50 <= \count($this->jobs);
+        return 50 <= count($this->jobs);
     }
 }

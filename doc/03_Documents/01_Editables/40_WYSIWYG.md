@@ -29,7 +29,7 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 In Pimcore 11 the default editor changed from CKEditor to TinyMCE and has been moved into [PimcoreTinymceBundle](https://github.com/pimcore/pimcore/blob/11.x/bundles/TinymceBundle/README.md). Check the bundle readme for installation instructions.
 
 ## Add a Custom Editor
-Make sure that you add the Editor to `pimcore.wysiwyg.editors`. This array can be used to have different editors for different use cases(documents, objects ...):
+Make sure that you add the Editor to `pimcore.wysiwyg.editors`. This array can be used to have different editors for different use cases (documents, objects ...):
 ```javascript
 if(!parent.pimcore.wysiwyg) {
     parent.pimcore.wysiwyg = {};
@@ -80,5 +80,3 @@ If you want to adapt this configuration please have a look at the [symfony docum
 
 > Note: When using API to set WYSIWYG data, please pass encoded characters for html entities e.g. `<`,`>`, `&` etc.
 > The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API.
-
-> Note: By default, HTML sanitizer truncates content at 20.000 characters. To change that, see [symfony documentation](https://symfony.com/doc/current/html_sanitizer.html#max-input-length). 

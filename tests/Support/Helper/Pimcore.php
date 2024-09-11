@@ -22,6 +22,7 @@ use Codeception\Module;
 use Codeception\TestInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Exception;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Cache;
 use Pimcore\Event\TestEvents;
@@ -30,6 +31,7 @@ use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Pimcore\Model\Document;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Tests\Support\Util\TestHelper;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
@@ -211,7 +213,7 @@ class Pimcore extends Module\Symfony
         ]);
 
         if ($errors) {
-            throw new \Exception('Setup Database failed: ' . implode("\n", $errors));
+            throw new Exception('Setup Database failed: ' . implode("\n", $errors));
         }
 
         $this->debug(sprintf('[DB] Initialized the test DB %s', $dbName));
@@ -220,7 +222,7 @@ class Pimcore extends Module\Symfony
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function initializeSystemSettings(): void
     {
@@ -230,7 +232,7 @@ class Pimcore extends Module\Symfony
 
         $path = TestHelper::resolveFilePath('system_settings.json');
         if (!file_exists($path)) {
-            throw new \RuntimeException(sprintf('System settings file in %s was not found', $path));
+            throw new RuntimeException(sprintf('System settings file in %s was not found', $path));
         }
         $data = file_get_contents($path);
         SettingsStore::set('system_settings', $data, 'string', 'pimcore_system_settings');
@@ -270,11 +272,15 @@ class Pimcore extends Module\Symfony
      */
     protected function connectDb(Connection $connection): void
     {
-        if (!$connection->isConnected()) {
-            $connection->connect();
+        try {
+            if (!$connection->isConnected()) {
+                // doesn't do anything, just to trigger a `->connect()` call (which can't be done directly anymore, because visibility is protected since dbal v4)
+                $connection->getNativeConnection();
+            }
+            $this->debug(sprintf('[DB] Successfully connected to DB %s', $connection->getDatabase()));
+        } catch (Exception) {
+            $this->debug(sprintf('[DB] Failed to connect to DB %s', $connection->getDatabase()));
         }
-
-        $this->debug(sprintf('[DB] Successfully connected to DB %s', $connection->getDatabase()));
     }
 
     /**

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -56,6 +57,9 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setOwnerClassName(string $ownerClassName): static
     {
         $this->ownerClassName = $ownerClassName;
@@ -72,10 +76,10 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
                     return null;
                 }
                 $class = DataObject\ClassDefinition::getById($this->ownerClassId);
-                if($class instanceof DataObject\ClassDefinition) {
+                if ($class instanceof DataObject\ClassDefinition) {
                     $this->ownerClassName = $class->getName();
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error($e->getMessage());
             }
         }
@@ -94,7 +98,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
                     return null;
                 }
                 $this->ownerClassId = $class->getId();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error($e->getMessage());
             }
         }
@@ -181,7 +185,9 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
 
     public function preGetData(mixed $container, array $params = []): array
     {
-        return $this->load($container);
+        $data = $this->load($container);
+
+        return $this->filterUnpublishedElements($data);
     }
 
     /**
@@ -199,7 +205,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
 
     public function getClasses(): array
     {
-        if($this->ownerClassId) {
+        if ($this->getOwnerClassId()) {
             return Model\Element\Service::fixAllowedTypes([$this->ownerClassName], 'classes');
         }
 

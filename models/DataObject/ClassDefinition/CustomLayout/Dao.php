@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
+use Exception;
 use Pimcore\Config;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
@@ -142,7 +143,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * Save custom layout
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {

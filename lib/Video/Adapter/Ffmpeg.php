@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Video\Adapter;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
 use Pimcore\Video\Adapter;
@@ -44,7 +45,7 @@ class Ffmpeg extends Adapter
             if ($ffmpeg && $phpCli) {
                 return true;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::warning((string) $e);
         }
 
@@ -53,7 +54,7 @@ class Ffmpeg extends Adapter
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getFfmpegCli(): false|string
     {
@@ -70,7 +71,7 @@ class Ffmpeg extends Adapter
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): bool
     {
@@ -148,8 +149,12 @@ class Ffmpeg extends Adapter
                 array_push($command, '-adaptation_sets', 'id=0,streams=v id=1,streams=a');
                 array_push($command, '-single_file', '1');
                 array_push($command, '-f', 'dash');
+            } elseif ($this->getFormat() === 'mpg') {
+                array_push($command, '-c:v', 'mpeg2video');
+                array_push($command, '-c:a', 'mp2');
+                array_push($command, '-f', 'vob');
             } else {
-                throw new \Exception('Unsupported video output format: ' . $this->getFormat());
+                throw new Exception('Unsupported video output format: ' . $this->getFormat());
             }
 
             // add some global arguments
@@ -197,7 +202,7 @@ class Ffmpeg extends Adapter
                 }
             }
         } else {
-            throw new \Exception('There is no destination file for video converter');
+            throw new Exception('There is no destination file for video converter');
         }
 
         return $success;
@@ -222,7 +227,7 @@ class Ffmpeg extends Adapter
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getVideoInfo(): string
     {
@@ -260,10 +265,10 @@ class Ffmpeg extends Adapter
                 return $duration;
             }
 
-            throw new \Exception(
+            throw new Exception(
                 'Could not read duration with FFMPEG Adapter. File: ' . $this->file . '. Output: ' . $output
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error($e->getMessage());
         }
 
@@ -282,10 +287,10 @@ class Ffmpeg extends Adapter
                 return ['width' => $width, 'height' => $height];
             }
 
-            throw new \Exception(
+            throw new Exception(
                 'Could not read dimensions with FFMPEG Adapter. File: ' . $this->file . '. Output: ' . $output
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error($e->getMessage());
         }
 

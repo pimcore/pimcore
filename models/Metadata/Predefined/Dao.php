@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Metadata\Predefined;
 
+use Exception;
 use Pimcore\Config;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
@@ -67,7 +68,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getByNameAndLanguage(string $name = null, string $language = null): void
     {
@@ -93,7 +94,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {

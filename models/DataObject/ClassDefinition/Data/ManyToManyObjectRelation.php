@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
+use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
@@ -132,7 +134,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
@@ -156,7 +158,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             return ',' . implode(',', $ids) . ',';
         }
 
-        throw new \Exception('invalid data passed to getDataForQueryResource - must be array and it is: ' . print_r($data, true));
+        throw new Exception('invalid data passed to getDataForQueryResource - must be array and it is: ' . print_r($data, true));
     }
 
     /**
@@ -338,18 +340,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             $data = $container->getObjectVar($this->getName());
         }
 
-        if (DataObject::doHideUnpublished() && is_array($data)) {
-            $publishedList = [];
-            foreach ($data as $listElement) {
-                if (Element\Service::isPublished($listElement)) {
-                    $publishedList[] = $listElement;
-                }
-            }
-
-            return $publishedList;
-        }
-
-        return is_array($data) ? $data : [];
+        return $this->filterUnpublishedElements($data);
     }
 
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
@@ -451,7 +442,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
         $this->visibleFieldDefinitions = [];
 
-        $translator = \Pimcore::getContainer()->get('translator');
+        $translator = Pimcore::getContainer()->get('translator');
 
         $visibleFields = explode(',', $this->visibleFields);
         foreach ($visibleFields as $field) {

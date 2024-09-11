@@ -8,8 +8,8 @@ Pimcore offers different types of documents and each of them offers functionalit
 |----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Page           | Represents a typical web-page, the path in the tree is equal to the address in the browser.                                                                 |
 | Snippet        | Makes it easier to extract often used contents into reusable containers. Can be embedded in pages or nested into other snippets.                            |
-| Link           | A simple web-link to be used in navigation.                                                                                                                |
-| Email          | A document like the page, but with special functionality for transactional emails.                                                                        |                                                         |
+| Link           | A simple web-link to be used in navigation.                                                                                                                 |
+| Email          | A document like the page, but with special functionality for transactional emails.                                                                          |
 | Hardlink       | Create links to other document structures and reuse them within a different structure / context. (see [Hard link](https://en.wikipedia.org/wiki/Hard_link)) |
 | Folder         | Just like the folders you know from your local filesystem.                                                                                                  |
 
@@ -23,11 +23,11 @@ They are directly specified in the document settings in the admin interface:
 
 Not all of them are necessary, the table below shows which configurations are possible:
 
-| Type | Controller  | Template | Description                                                                                                                                        |
-|------|------------ |----------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| 1    | X           |          | The specified controller/action is executed. If the action returns a response object, it is used for rendering.|
+| Type | Controller  | Template | Description                                                                                                                            |
+|------|------------ |----------|----------------------------------------------------------------------------------------------------------------------------------------|
+| 1    | X           |          | The specified controller/action is executed. If the action returns a response object, it is used for rendering.                        |
 | 2    | X           | X        | Same as above but the template specified is rendered and not the auto-discovered template (only if action does not return a response). |
-| 3    |             | X        | Renders the template with the default controller/action, this is practical if there is only templating stuff. |
+| 3    |             | X        | Renders the template with the default controller/action, this is practical if there is only templating stuff.                          |
 
 
 Pimcore is shipped with a default controller containing a default action, which is called when only a template is given to the document.
@@ -69,7 +69,7 @@ Working with documents is described in detail in our [Create a First Project](..
 ## Cleanup Documents Types
 Uninstalling bundles may not always clean up data or database tables in the process to avoid data loss.
 Running the following command removes type specific tables and enum types from the documents table.
-The following types are protected and cannot be cleaned up via this command: `page, link, snippet, folder,hardlink ,email`
+The following types are protected and cannot be cleaned up via this command: `page, link, snippet, folder, hardlink, email`
 
 You can clean up multiple types at once.
 ```bash
@@ -83,4 +83,3 @@ bin/console pimcore:documents:cleanup <type1> <type2> <type3>
 - [Inheritance](./11_Inheritance.md)
 - [Working with the PHP API](./09_Working_with_PHP_API.md) 
 - [Predefined Document Types](./07_Predefined_Document_Types.md)
-

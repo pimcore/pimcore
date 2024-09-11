@@ -16,7 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Cache;
 
-class RuntimeCache extends \ArrayObject
+use ArrayObject;
+use Exception;
+use Pimcore;
+
+class RuntimeCache extends ArrayObject
 {
     private const SERVICE_ID = __CLASS__;
 
@@ -36,8 +40,8 @@ class RuntimeCache extends \ArrayObject
             return self::$instance;
         }
 
-        if (\Pimcore::hasContainer()) {
-            $container = \Pimcore::getContainer();
+        if (Pimcore::hasContainer()) {
+            $container = Pimcore::getContainer();
 
             /** @var self $instance */
             $instance = null;
@@ -75,8 +79,6 @@ class RuntimeCache extends \ArrayObject
     /**
      * disables the caching for the current process, this is useful for importers, ...
      * There are no new objects will be cached after that
-     *
-     * @static
      */
     public static function disable(): void
     {
@@ -86,8 +88,6 @@ class RuntimeCache extends \ArrayObject
     /**
      * see @ self::disable()
      * just enabled the caching in the current process
-     *
-     * @static
      */
     public static function enable(): void
     {
@@ -108,14 +108,14 @@ class RuntimeCache extends \ArrayObject
      *
      * @param string $index - get the value associated with $index
      *
-     * @throws \Exception if no entry is registered for $index.
+     * @throws Exception if no entry is registered for $index.
      */
     public static function get(string $index): mixed
     {
         $instance = self::getInstance();
 
         if (!$instance->offsetExists($index)) {
-            throw new \Exception("No entry is registered for key '$index'");
+            throw new Exception("No entry is registered for key '$index'");
         }
 
         return $instance->offsetGet($index);
@@ -205,7 +205,7 @@ class RuntimeCache extends \ArrayObject
             }
         }
 
-        \Pimcore::getContainer()->set(self::SERVICE_ID, $newInstance);
+        Pimcore::getContainer()->set(self::SERVICE_ID, $newInstance);
         self::$instance = $newInstance;
     }
 }

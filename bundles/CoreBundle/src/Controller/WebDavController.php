@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
+use Exception;
+use PDO;
 use Pimcore\Controller\Controller;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -36,7 +38,7 @@ class WebDavController extends Controller
             $server->setBaseUri($this->generateUrl('pimcore_webdav', ['path' => '/']));
 
             // lock plugin
-            /** @var \PDO $pdo */
+            /** @var PDO $pdo */
             $pdo = \Pimcore\Db::get()->getNativeConnection();
             $lockBackend = new \Sabre\DAV\Locks\Backend\PDO($pdo);
             $lockBackend->tableName = 'webdav_locks';
@@ -48,7 +50,7 @@ class WebDavController extends Controller
             $server->addPlugin(new \Sabre\DAV\Browser\Plugin());
 
             $server->start();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string)$e);
         }
 

@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
+use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -194,7 +196,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($collectionRaw['type']);
                 /** @var DataObject\Fieldcollection\Data\AbstractData $collection */
-                $collection = \Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
+                $collection = Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
                 $collection->setObject($object);
                 $collection->setIndex($count);
                 $collection->setFieldname($this->getName());
@@ -267,7 +269,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
             $container->save($object, $params);
         } else {
-            throw new \Exception('Invalid value for field "' . $this->getName()."\" provided. You have to pass a DataObject\\Fieldcollection or 'null'");
+            throw new Exception('Invalid value for field "' . $this->getName()."\" provided. You have to pass a DataObject\\Fieldcollection or 'null'");
         }
     }
 
@@ -410,7 +412,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function preGetData(mixed $container, array $params = []): mixed
     {
         if (!$container instanceof DataObject\Concrete) {
-            throw new \Exception('Field Collections are only valid in Objects');
+            throw new Exception('Field Collections are only valid in Objects');
         }
 
         $data = $container->getObjectVar($this->getName());
@@ -738,7 +740,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($type);
                 /** @var DataObject\Fieldcollection\Data\AbstractData $collection */
-                $collection = \Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
+                $collection = Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
                 $collection->setObject($params['object'] ?? null);
                 $collection->setIndex($idx);
                 $collection->setFieldname($params['fieldname'] ?? null);

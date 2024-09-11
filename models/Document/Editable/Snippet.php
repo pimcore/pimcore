@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use Pimcore;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Cache;
 use Pimcore\Document\Editable\EditableHandler;
@@ -78,7 +79,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     public function frontend()
     {
         // TODO inject services via DI when editables are built through container
-        $container = \Pimcore::getContainer();
+        $container = Pimcore::getContainer();
 
         $editableHandler = $container->get(EditableHandler::class);
 

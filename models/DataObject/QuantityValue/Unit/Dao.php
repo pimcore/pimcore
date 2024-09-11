@@ -70,19 +70,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     *
-     * @throws Model\Exception\NotFoundException
-     */
-    public function getById(int $id): void
-    {
-        $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
-        if (!$classRaw) {
-            throw new Model\Exception\NotFoundException('Unit ' . $id . ' not found.');
-        }
-        $this->assignVariablesToModel($classRaw);
-    }
-
-    /**
      * Create a new record for the object in database
      */
     public function create(): void

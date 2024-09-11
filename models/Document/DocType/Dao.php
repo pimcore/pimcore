@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\DocType;
 
+use Exception;
 use Pimcore\Config;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
@@ -46,7 +47,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      * Get the data for the object from database for the given id
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getById(?string $id = null): void
     {
@@ -67,7 +68,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {

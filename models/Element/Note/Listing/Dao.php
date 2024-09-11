@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element\Note\Listing;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -72,7 +73,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
                 $this->model->getConditionVariables(),
                 $this->model->getConditionVariableTypes()
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }

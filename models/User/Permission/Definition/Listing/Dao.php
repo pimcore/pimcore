@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\User\Permission\Definition\Listing;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -48,7 +49,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM users_permission_definitions ' . $this->getCondition(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }

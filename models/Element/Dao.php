@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\User;
@@ -30,7 +31,7 @@ abstract class Dao extends Model\Dao\AbstractDao
     /**
      * @return int[]
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getParentIds(): array
     {
@@ -44,7 +45,7 @@ abstract class Dao extends Model\Dao\AbstractDao
                     break;
                 }
                 if (in_array($obj->getId(), $parentIds)) {
-                    throw new \Exception('detected infinite loop while resolving all parents from ' . $this->model->getId() . ' on ' . $obj->getId());
+                    throw new Exception('detected infinite loop while resolving all parents from ' . $this->model->getId() . ' on ' . $obj->getId());
                 }
 
                 $parentIds[] = $obj->getId();

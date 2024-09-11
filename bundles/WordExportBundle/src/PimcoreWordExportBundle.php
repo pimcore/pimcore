@@ -48,6 +48,6 @@ class PimcoreWordExportBundle extends AbstractPimcoreBundle implements PimcoreBu
 
     public function getPath(): string
     {
-        return \dirname(__DIR__);
+        return dirname(__DIR__);
     }
 }

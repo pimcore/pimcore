@@ -29,4 +29,3 @@ As mentioned above, custom layouts can be made available to standard users throu
 If no layout is selected for the given class, then the data will be presented using the main layout. Otherwise, the user will have the choice between the selected layouts.
 
 ![Custom Layouts](../../../img/classes-custom-layouts3.png)
-

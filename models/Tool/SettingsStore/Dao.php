@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Tool\SettingsStore;
 
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Tool\SettingsStore;
@@ -40,7 +41,7 @@ class Dao extends Model\Dao\AbstractDao
             ], $this->getPrimaryKey(self::TABLE_NAME));
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }

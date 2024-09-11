@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
+use Pimcore;
+use Throwable;
+
 final class Serialize
 {
     protected static array $loopFilterProcessedObjects = [];
@@ -42,7 +45,7 @@ final class Serialize
      */
     public static function getAdminSerializer(): \Symfony\Component\Serializer\Serializer
     {
-        return \Pimcore::getContainer()->get('pimcore_admin.serializer');
+        return Pimcore::getContainer()->get('pimcore_admin.serializer');
     }
 
     /**
@@ -69,7 +72,7 @@ final class Serialize
         } elseif (is_object($element)) {
             try {
                 $clone = clone $element; // do not modify the original object
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 return sprintf('"* NON-CLONEABLE (%s): %s *"', get_class($element), $e->getMessage());
             }
 

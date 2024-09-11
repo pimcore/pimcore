@@ -20,13 +20,11 @@ class Document extends AbstractWorkspace
 {
     /**
      * @internal
-     *
      */
     protected bool $save = false;
 
     /**
      * @internal
-     *
      */
     protected bool $unpublish = false;
 
