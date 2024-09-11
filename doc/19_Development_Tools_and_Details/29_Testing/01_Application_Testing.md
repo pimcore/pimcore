@@ -355,6 +355,7 @@ suite to use the `\Pimcore\Tests\Support\Helper\Pimcore` helper:
 actor: FunctionalTester
 modules:
     enabled:
+        - \Tests\Support\Helper\Functional
         - \Pimcore\Tests\Support\Helper\Pimcore:
             # CAUTION: the following config means the test runner
             # will drop and re-create the Pimcore DB and purge var/classes
