@@ -67,11 +67,11 @@ class LogMailMaintenanceTask implements TaskInterface
 
             $query = 'SELECT * FROM '
                 . ApplicationLoggerDb::TABLE_NAME
-                . " WHERE maintenanceChecked IS NULL "
-                . "AND priority IN("
+                . ' WHERE maintenanceChecked IS NULL '
+                . 'AND priority IN('
                 . implode(',', $logLevels)
-                . ") "
-                . "ORDER BY id DESC";
+                . ') '
+                . 'ORDER BY id DESC';
 
             $rows = $this->db->fetchAllAssociative($query);
             $limit = 100;
