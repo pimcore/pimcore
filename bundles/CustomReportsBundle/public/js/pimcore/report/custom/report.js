@@ -282,18 +282,26 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
                 store: drillDownStore,
                 listeners: {
                     select: function(fieldname, combo, record, index) {
-                        var value = combo.getValue();
+                        let value = combo.getValue();
+
+                        const lastQuery = combo.lastQuery;
+                        // check last query
+                        if(value == null && lastQuery && this.store.findExact(fieldname, lastQuery)) {
+                            value = lastQuery;
+                            combo.setValue(value)
+                        }
+
                         this.drillDownFilters[fieldname] = value;
 
-                        var proxy = this.store.getProxy();
+                        const proxy = this.store.getProxy();
                         proxy.extraParams['drillDownFilters[' + fieldname + ']'] = value;
                         if(this.chartStore) {
-                            var chartProxy = this.chartStore.getProxy();
+                            let chartProxy = this.chartStore.getProxy();
                             chartProxy.extraParams['drillDownFilters[' + fieldname + ']'] = value;
                         }
-                        for(var j = 0; j < this.drillDownStores.length; j++) {
+                        for(let j = 0; j < this.drillDownStores.length; j++) {
                             if(this.drillDownStores[j] != combo.getStore()) {
-                                var drillDownProxy = this.drillDownStores[j].getProxy();
+                                let drillDownProxy = this.drillDownStores[j].getProxy();
                                 drillDownProxy.extraParams['drillDownFilters[' + fieldname + ']'] = value;
                             } else {
                                 this.drillDownStores[j].notReload = true;
@@ -304,7 +312,7 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
                     }.bind(this, this.drillDownFilterDefinitions[i]["name"])
                 },
                 valueField: 'value',
-                displayField: 'value'
+                displayField: 'name'
             });
             if(i < this.drillDownFilterDefinitions.length-1) {
                 drillDownFilterComboboxes.push('-');
