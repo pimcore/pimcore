@@ -1,0 +1,11 @@
+{% do pimcore_placeholder('foo').captureStart() %}
+{% for datum in data %}
+<div class="foo">
+    <h2>{{ datum.title }}</h2>
+    <p>{{ datum.content }}</p>
+</div>
+{% endfor %}
+{% do pimcore_placeholder('foo').captureEnd() %}
+{{ pimcore_placeholder('foo') }}
+AND AGAIN
+{{ pimcore_placeholder('foo') }}

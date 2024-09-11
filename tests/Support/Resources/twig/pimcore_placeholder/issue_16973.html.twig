@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Example</title>
+</head>
+
+<body>
+{# Default capture: append #}
+{% set data = [{"title": "title1", "content": "content1"}, {"title": "title2", "content": "content2"}] %}
+
+{% do pimcore_placeholder('foo').captureStart() %}
+
+{# If placeholder is working this section is not rendered directly but captured into placeholder#}
+
+{% for datum in data %}
+    <div class="foo">
+        <h2>{{ datum.title }}</h2>
+        <p>{{ datum.content }}</p>
+    </div>
+{% endfor %}
+
+{% do pimcore_placeholder('foo').captureEnd() %}
+
+{# If placeholder is working it should render three sections of same content #}
+
+<h3>First copy:</h3>
+{{ pimcore_placeholder('foo') }}
+<br/>
+<hr/>
+<h3>Second copy:</h3>
+{{ pimcore_placeholder('foo') }}
+<br/>
+<hr/>
+<h3>Third copy:</h3>
+{{ pimcore_placeholder('foo') }}
+<br/>
+<hr/>
+</body>
+</html>

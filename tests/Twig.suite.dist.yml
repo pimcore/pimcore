@@ -1,0 +1,6 @@
+actor: TwigTester
+modules:
+    enabled:
+        - \Pimcore\Tests\Support\Helper\Pimcore:
+              connect_db: true
+        - \Pimcore\Tests\Support\Helper\Unit

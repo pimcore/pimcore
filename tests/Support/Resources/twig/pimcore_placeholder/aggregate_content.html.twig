@@ -1,0 +1,9 @@
+{% do pimcore_placeholder('foo').setPrefix("<ul>\n<li>")
+    .setSeparator("</li>\n<li>")
+    .setIndent(4)
+    .setPostfix("</li>\n</ul>")
+%}
+{% for datum in data %}{% do pimcore_placeholder('foo').append(datum.title) %}{% endfor %}
+{{ pimcore_placeholder('foo') }}
+AND AGAIN
+{{ pimcore_placeholder('foo') }}
