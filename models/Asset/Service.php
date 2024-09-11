@@ -561,7 +561,7 @@ class Service extends Model\Element\Service
                         }
                     }
 
-                    if(!empty($thumbnailFormats[$config['file_extension']]['quality'] ?? null)) {
+                    if (!empty($thumbnailFormats[$config['file_extension']]['quality'] ?? null)) {
                         $thumbnailConfig->setQuality($thumbnailFormats[$config['file_extension']]['quality']);
                     }
                 }
@@ -683,7 +683,7 @@ class Service extends Model\Element\Service
         $storagePath = urldecode($uri);
 
         $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
-        if($prefix) {
+        if ($prefix) {
             $storagePath = preg_replace('/^' . preg_quote($prefix, '/') . '/', '', $storagePath);
         }
 

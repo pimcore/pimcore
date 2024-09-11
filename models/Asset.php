@@ -175,7 +175,7 @@ class Asset extends Element\AbstractElement
             // for caching asset
             $blockedVars = array_merge($blockedVars, ['children', 'properties']);
 
-            if($this->customSettingsCanBeCached === false) {
+            if ($this->customSettingsCanBeCached === false) {
                 $blockedVars[] = 'customSettings';
             }
         }
@@ -186,7 +186,7 @@ class Asset extends Element\AbstractElement
     public function __sleep(): array
     {
         $blockedVars = parent::__sleep();
-        if(in_array('customSettings', $blockedVars)) {
+        if (in_array('customSettings', $blockedVars)) {
             $this->customSettingsNeedRefresh = true;
         }
 
@@ -732,7 +732,7 @@ class Asset extends Element\AbstractElement
 
                 try {
                     $mimeType = $storage->mimeType($path);
-                } catch(UnableToRetrieveMetadata $e) {
+                } catch (UnableToRetrieveMetadata $e) {
                     $mimeType = 'application/octet-stream';
                 }
                 $this->setMimeType($mimeType);
@@ -1254,7 +1254,7 @@ class Asset extends Element\AbstractElement
 
     private function refreshCustomSettings(): void
     {
-        if($this->customSettingsNeedRefresh === true) {
+        if ($this->customSettingsNeedRefresh === true) {
             $customSettings = $this->getDao()->getCustomSettings();
             $this->setCustomSettings($customSettings);
             $this->customSettingsNeedRefresh = false;
@@ -1298,7 +1298,7 @@ class Asset extends Element\AbstractElement
     public function setCustomSettings(mixed $customSettings): static
     {
         if (is_string($customSettings)) {
-            if(strlen($customSettings) > 10e6) {
+            if (strlen($customSettings) > 10e6) {
                 $this->customSettingsCanBeCached = false;
             }
 
@@ -1591,7 +1591,7 @@ class Asset extends Element\AbstractElement
             $this->renewInheritedProperties();
         }
 
-        if(!$this->isInDumpState() && $this->customSettingsCanBeCached === false) {
+        if (!$this->isInDumpState() && $this->customSettingsCanBeCached === false) {
             $this->customSettingsNeedRefresh = true;
         }
 

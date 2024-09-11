@@ -74,7 +74,7 @@ class SystemSettingsConfig
         // If the read target is settings-store and no data is found there,
         // load the data from the container config
         // Please see https://github.com/pimcore/pimcore/issues/15596 for more information
-        if(!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
+        if (!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
             $data = self::getConfigValuesFromContainer()['config'];
             $data['writeable'] = $repository->isWriteable();
         }

@@ -505,7 +505,7 @@ final class Staticroute extends AbstractModel
     {
         if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
-            foreach($methods as $key => $method) {
+            foreach ($methods as $key => $method) {
                 $methods[$key] = trim($method);
             }
         }
