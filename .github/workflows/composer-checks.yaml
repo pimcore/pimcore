@@ -19,3 +19,5 @@ jobs:
             php-version: ${{ matrix.php-version }}
             branch: ${{ matrix.branch }}
             ignore-list: "public"
+        secrets:
+            TEAMS_COMPOSER_VULNERABILITY_URI: ${{ secrets.TEAMS_COMPOSER_VULNERABILITY_URI }}
