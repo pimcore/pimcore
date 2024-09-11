@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Twig;
 
+use Pimcore;
 use Pimcore\Templating\TwigDefaultDelegatingEngine;
 use Pimcore\Tests\Support\Test\TestCase;
 use Twig\Loader\ArrayLoader;
@@ -30,7 +31,7 @@ class PimcorePlaceholderTest extends TestCase
         parent::setUp();
 
         /** @var TwigDefaultDelegatingEngine $templatingEngine */
-        $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
+        $templatingEngine = Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
 
         $this->engine = $templatingEngine;
     }
