@@ -40,7 +40,6 @@ class LogMailMaintenanceTask implements TaskInterface
     public function execute(): void
     {
 
-
         if (!empty($this->config['applicationlog']['mail_notification']['send_log_summary'])) {
             $receivers = preg_split('/,|;/', $this->config['applicationlog']['mail_notification']['mail_receiver']);
 
@@ -50,23 +49,23 @@ class LogMailMaintenanceTask implements TaskInterface
 
             // getting the enums from priority
             $priorityColumnDefinition = $this->db->fetchAllAssociative(
-                "SHOW COLUMNS FROM " .ApplicationLoggerDb::TABLE_NAME. " LIKE 'priority'"
+                'SHOW COLUMNS FROM ' .ApplicationLoggerDb::TABLE_NAME. " LIKE 'priority'"
             );
 
             // type is the actual enum values
             $columnType = reset($priorityColumnDefinition)['Type'];
 
             // remove unnecessary noise
-            $enumValue = explode(',',str_replace(['enum(', ')'], '', $columnType));
+            $enumValue = explode(',', str_replace(['enum(', ')'], '', $columnType));
 
             $logLevel = (int)($this->config['applicationlog']['mail_notification']['filter_priority'] ?? null);
 
             $logLevels = [];
-            for($i = 0; $i < $logLevel + 1; $i++) {
+            for ($i = 0; $i < $logLevel + 1; $i++) {
                 $logLevels[] = $enumValue[$i];
             }
 
-            $query = 'SELECT * FROM '.ApplicationLoggerDb::TABLE_NAME." WHERE maintenanceChecked IS NULL AND priority IN(" . implode(',', $logLevels) . ") ORDER BY id DESC";
+            $query = 'SELECT * FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE maintenanceChecked IS NULL AND priority IN(' . implode(',', $logLevels) . ') ORDER BY id DESC';
             $rows = $this->db->fetchAllAssociative($query);
             $limit = 100;
             $rowsProcessed = 0;
