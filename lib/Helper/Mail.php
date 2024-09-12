@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper;
 
+use Exception;
+use Net_URL2;
 use Pimcore\Mail as MailClient;
 use Pimcore\Model;
 use Pimcore\Tool;
@@ -28,14 +30,14 @@ use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 class Mail
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getDebugInformation(string $type, MailClient $mail): string
     {
         $type = strtolower($type);
 
         if ($type != 'html' && $type != 'text') {
-            throw new \Exception('$type has to be "html" or "text"');
+            throw new Exception('$type has to be "html" or "text"');
         }
 
         //generating html debug info
@@ -200,7 +202,7 @@ CSS;
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function setAbsolutePaths(string $string, ?Model\Document $document = null, string $hostUrl = null): string
     {
@@ -238,7 +240,7 @@ CSS;
                 if ($path[0] == '?') {
                     $absolutePath = $hostUrl . $document . $path;
                 }
-                $netUrl = new \Net_URL2($absolutePath);
+                $netUrl = new Net_URL2($absolutePath);
                 $absolutePath = $netUrl->getNormalizedURL();
             }
 
@@ -271,7 +273,7 @@ CSS;
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function embedAndModifyCss(string $string, ?Model\Document $document = null): string
     {
@@ -334,7 +336,7 @@ CSS;
                 $imageUrl = $hostUrl . $path;
             } else {
                 $imageUrl = dirname($fileInfo['fileUrlNormalized']) . "/$path";
-                $netUrl = new \Net_URL2($imageUrl);
+                $netUrl = new Net_URL2($imageUrl);
                 $imageUrl = $netUrl->getNormalizedURL();
             }
 
@@ -345,7 +347,7 @@ CSS;
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getNormalizedFileInfo(string $path, ?Model\Document $document = null): array
     {
@@ -358,7 +360,7 @@ CSS;
         }
 
         $fileInfo['fileExtension'] = substr($path, strrpos($path, '.') + 1);
-        $netUrl = new \Net_URL2($fileInfo['fileUrl']);
+        $netUrl = new Net_URL2($fileInfo['fileUrl']);
         $fileInfo['fileUrlNormalized'] = $netUrl->getNormalizedURL();
 
         $fileInfo['filePathNormalized'] = PIMCORE_WEB_ROOT . preg_replace('@^/cache-buster\-\d+\/@', '/', str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']));

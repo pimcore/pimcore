@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Hardlink;
 
+use Exception;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Hardlink\Wrapper\Hardlink;
 use Pimcore\Tool\Serialize;
@@ -23,7 +24,7 @@ use Pimcore\Tool\Serialize;
 class Service
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function wrap(Document $doc): Wrapper\WrapperInterface|Wrapper\Hardlink|null
     {
@@ -75,7 +76,7 @@ class Service
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      *
@@ -106,7 +107,7 @@ class Service
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */

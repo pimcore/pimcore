@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore\Model\DataObject;
+use function count;
 
 /**
  * @internal
@@ -200,7 +201,7 @@ trait Dao
             ]
         );
 
-        return (\count($exist) > 0) && ($exist[0] > 0);
+        return (count($exist) > 0) && ($exist[0] > 0);
     }
 
     protected function indexDoesNotExist(string $table, string $prefix, string $indexName): bool
