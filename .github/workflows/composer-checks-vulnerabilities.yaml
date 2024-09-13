@@ -21,3 +21,4 @@ jobs:
             php-version: ${{ matrix.php-version }}
             branch: ${{ matrix.branch }}
             ignore-list: "public"
+        secrets: inherit
