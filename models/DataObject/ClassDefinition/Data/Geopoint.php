@@ -208,7 +208,7 @@ class Geopoint extends AbstractGeo implements
             }
         }
 
-        if (!$omitMandatoryCheck && $this->getMandatory() && $isEmpty) {
+        if ($isEmpty && !$omitMandatoryCheck && $this->getMandatory()) {
             throw new ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
     }
