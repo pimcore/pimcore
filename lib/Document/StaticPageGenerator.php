@@ -51,7 +51,7 @@ class StaticPageGenerator
             $mainDomain = '/' . $systemConfig['general']['domain'];
             $returnPath = '';
             $pathInfo = pathinfo($path);
-            if($pathInfo['dirname'] != '') {
+            if ($pathInfo['dirname'] != '') {
                 $directories = explode('/', $pathInfo['dirname']);
                 $directories = array_filter($directories);
                 $pathString = '';
