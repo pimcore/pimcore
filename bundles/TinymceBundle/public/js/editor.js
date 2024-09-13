@@ -86,6 +86,19 @@ pimcore.bundle.tinymce.editor = Class.create({
         }
 
         const maxChars = this.maxChars;
+        let changedContent = false;
+
+        function checkCharCount() {
+            tinymce.activeEditor.getBody().style.border = '';
+            tinymce.activeEditor.getElement().setAttribute('title', '');
+
+            const charCount = tinymce.activeEditor.plugins.wordcount.body.getCharacterCount();
+
+            if (maxChars !== -1 && charCount > maxChars) {
+                tinymce.activeEditor.getBody().style.border = '1px solid red';
+                tinymce.activeEditor.getElement().setAttribute('title', t('maximum_length_is') + ' ' + maxChars);
+            }
+        }
 
         tinymce.init(Object.assign({
             selector: `#${this.textareaId}`,
@@ -103,16 +116,11 @@ pimcore.bundle.tinymce.editor = Class.create({
             convert_unsafe_embeds: true,
             extended_valid_elements: 'a[class|name|href|target|title|pimcore_id|pimcore_type],img[class|style|longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align|pimcore_id|pimcore_type]',
             init_instance_callback: function (editor) {
+                // Do an initial check for character count based on the initial content before there is any user input
+                checkCharCount();
+
                 editor.on('input', function (eChange) {
-                    tinymce.activeEditor.getBody().style.border = '';
-                    tinymce.activeEditor.getElement().setAttribute('title', '');
-
-                    const charCount = tinymce.activeEditor.plugins.wordcount.body.getCharacterCount();
-
-                    if (maxChars !== -1 && charCount > maxChars) {
-                        tinymce.activeEditor.getBody().style.border = '1px solid red';
-                        tinymce.activeEditor.getElement().setAttribute('title', t('maximum_length_is') + ' ' + maxChars);
-                    }
+                    checkCharCount();
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
                         detail: {
                             e: eChange,
@@ -121,7 +129,14 @@ pimcore.bundle.tinymce.editor = Class.create({
                         }
                     }));
                 }.bind(this));
+                editor.on('change', function (eChange) {
+                    changedContent = true;
+                }.bind(this));
                 editor.on('blur', function (eChange) {
+                    if (!changedContent) {
+                        return;
+                    }
+                    changedContent = false;
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
                         detail: {
                             e: eChange,

@@ -471,18 +471,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             $data = $container->getObjectVar($this->getName());
         }
 
-        if (DataObject::doHideUnpublished() && is_array($data)) {
-            $publishedList = [];
-            foreach ($data as $listElement) {
-                if (Element\Service::isPublished($listElement)) {
-                    $publishedList[] = $listElement;
-                }
-            }
-
-            return $publishedList;
-        }
-
-        return is_array($data) ? $data : [];
+        return $this->filterUnpublishedElements($data);
     }
 
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
