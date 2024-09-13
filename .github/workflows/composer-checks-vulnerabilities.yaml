@@ -1,17 +1,16 @@
-
-name: "Composer outdated check"
+name: "Composer vulnerabilities check"
 
 on:
     workflow_dispatch:
     schedule:
-        - cron:  '0 7 * * 5'
+        - cron:  '0 7 * * *'
 
 permissions:
   contents: read
 
 jobs:
     composer-checks:
-        uses: pimcore/workflows-collection-public/.github/workflows/reusable-composer-checks.yaml@main
+        uses: pimcore/workflows-collection-public/.github/workflows/reusable-composer-vulnerabilities.yaml@main
         strategy:
             fail-fast: false
             matrix:
@@ -22,5 +21,3 @@ jobs:
             php-version: ${{ matrix.php-version }}
             branch: ${{ matrix.branch }}
             ignore-list: "public"
-        secrets:
-            TEAMS_COMPOSER_OUTDATED_URI: ${{ secrets.TEAMS_COMPOSER_OUTDATED_URI }}
