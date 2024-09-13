@@ -198,12 +198,14 @@ class Geopoint extends AbstractGeo implements
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;
-
         if ($data) {
             if (!$data instanceof DataObject\Data\GeoCoordinates) {
                 throw new ValidationException('Expected an instance of GeoCoordinates');
             }
-            $isEmpty = false;
+
+            if ($data->getLatitude() !== null && $data->getLongitude() !== null) {
+                $isEmpty = false;
+            }
         }
 
         if (!$omitMandatoryCheck && $this->getMandatory() && $isEmpty) {
