@@ -149,7 +149,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->creationDate;
     }
 
-    public function setCreationDate(?int $creationDate): static
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = $creationDate;
 
@@ -161,7 +161,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->modificationDate;
     }
 
-    public function setModificationDate(?int $modificationDate): static
+    public function setModificationDate(int $modificationDate): static
     {
         if ($this->modificationDate != $modificationDate) {
             $this->markFieldDirty('modificationDate');

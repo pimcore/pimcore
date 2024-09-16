@@ -8,8 +8,8 @@ CREATE TABLE `assets` (
   `filename` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '',
   `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `mimetype` varchar(190) DEFAULT NULL,
-  `creationDate` INT(11) UNSIGNED DEFAULT NULL,
-  `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
+  `creationDate` INT(11) UNSIGNED DEFAULT '0',
+  `modificationDate` INT(11) UNSIGNED DEFAULT '0',
   `dataModificationDate` INT(11) UNSIGNED DEFAULT NULL,
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE `assets_image_thumbnail_cache` (
     `cid` int(11) unsigned NOT NULL,
     `name` varchar(190) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
     `filename` varchar(190) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-    `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
+    `modificationDate` INT(11) UNSIGNED DEFAULT '0',
     `filesize` INT(11) UNSIGNED DEFAULT NULL,
     `width` SMALLINT UNSIGNED DEFAULT NULL,
     `height` SMALLINT UNSIGNED DEFAULT NULL,
@@ -80,8 +80,8 @@ CREATE TABLE `documents` (
   `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `index` int(11) unsigned DEFAULT '0',
   `published` tinyint(1) unsigned DEFAULT '1',
-  `creationDate` INT(11) UNSIGNED DEFAULT NULL,
-  `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
+  `creationDate` INT(11) UNSIGNED DEFAULT '0',
+  `modificationDate` INT(11) UNSIGNED DEFAULT '0',
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
   `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
@@ -199,8 +199,8 @@ CREATE TABLE `edit_lock` (
 DROP TABLE IF EXISTS `email_blocklist`;
 CREATE TABLE `email_blocklist` (
   `address` varchar(190) NOT NULL DEFAULT '',
-  `creationDate` int(11) unsigned DEFAULT NULL,
-  `modificationDate` int(11) unsigned DEFAULT NULL,
+  `creationDate` INT(11) UNSIGNED DEFAULT '0',
+  `modificationDate` INT(11) UNSIGNED DEFAULT '0',
   PRIMARY KEY (`address`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -273,8 +273,8 @@ CREATE TABLE `objects` (
   `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `index` int(11) unsigned DEFAULT '0',
   `published` tinyint(1) unsigned DEFAULT '1',
-  `creationDate` int(11) unsigned DEFAULT NULL,
-  `modificationDate` int(11) unsigned DEFAULT NULL,
+  `creationDate` INT(11) UNSIGNED DEFAULT '0',
+  `modificationDate` INT(11) UNSIGNED DEFAULT '0',
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
   `classId` VARCHAR(50) NULL DEFAULT NULL,
@@ -432,8 +432,8 @@ CREATE TABLE `translations_messages` (
   `type` varchar(10) DEFAULT NULL,
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
-  `creationDate` int(11) unsigned DEFAULT NULL,
-  `modificationDate` int(11) unsigned DEFAULT NULL,
+  `creationDate` INT(11) UNSIGNED DEFAULT '0',
+  `modificationDate` INT(11) UNSIGNED DEFAULT '0',
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`key`,`language`),
