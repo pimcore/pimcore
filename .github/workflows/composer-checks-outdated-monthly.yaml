@@ -22,3 +22,4 @@ jobs:
             branch: ${{ matrix.branch }}
             ignore-list: "public"
             version-type: "-m"
+        secrets: inherit
