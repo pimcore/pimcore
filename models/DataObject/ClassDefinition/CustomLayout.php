@@ -346,7 +346,7 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @return $this
      */
-    public function setUserOwner(int $userOwner): static
+    public function setUserOwner(?int $userOwner): static
     {
         $this->userOwner = $userOwner;
 
@@ -356,7 +356,7 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @return $this
      */
-    public function setUserModification(int $userModification): static
+    public function setUserModification(?int $userModification): static
     {
         $this->userModification = $userModification;
 
