@@ -443,7 +443,7 @@ class Installer
         }
 
         if (in_array('clear_cache', $stepsToRun) || in_array('install_assets', $stepsToRun)) {
-            Pimcore::setKernel($kernel);
+            \Pimcore::setKernel($kernel);
             $kernel->boot();
         }
 
@@ -724,8 +724,8 @@ class Installer
 
         // close connections and collection garbage ... in order to avoid too many connections error
         // when installing demos
-        if (Pimcore::getKernel() instanceof \Pimcore\Kernel) {
-            Pimcore::collectGarbage();
+        if (\Pimcore::getKernel() instanceof \Pimcore\Kernel) {
+            \Pimcore::collectGarbage();
         }
 
         return $errors;
