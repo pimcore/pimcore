@@ -23,7 +23,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Tool;
-use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -332,15 +331,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
     public function setDataFromResource(mixed $data): static
     {
-        if (is_string($data) && $data) {
-            $data = Serialize::unserialize($data);
-        }
-
-        $this->id = $data['id'] ?? null;
-        $this->type = $data['type'] ?? null;
-        $this->poster = $data['poster'] ?? null;
-        $this->title = $data['title'] ?? '';
-        $this->description = $data['description'] ?? '';
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->id = $unserializedData['id'] ?? null;
+        $this->type = $unserializedData['type'] ?? null;
+        $this->poster = $unserializedData['poster'] ?? null;
+        $this->title = $unserializedData['title'] ?? '';
+        $this->description = $unserializedData['description'] ?? '';
 
         return $this;
     }

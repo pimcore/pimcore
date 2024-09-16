@@ -36,8 +36,8 @@ final class Version20240222143211 extends AbstractMigration
     {
         $this->addSql('SET foreign_key_checks = 0');
 
-        foreach($schema->getTables() as $table) {
-            if($table->hasColumn('id')) {
+        foreach ($schema->getTables() as $table) {
+            if ($table->hasColumn('id')) {
                 $tableName = $table->getName();
 
                 if (
@@ -64,8 +64,8 @@ final class Version20240222143211 extends AbstractMigration
     {
         $this->addSql('SET foreign_key_checks = 0');
 
-        foreach($schema->getTables() as $table) {
-            if($table->hasColumn('id')) {
+        foreach ($schema->getTables() as $table) {
+            if ($table->hasColumn('id')) {
                 $tableName = $table->getName();
 
                 if (

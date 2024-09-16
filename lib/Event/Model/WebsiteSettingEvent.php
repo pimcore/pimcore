@@ -14,15 +14,22 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\DataObject\SelectOptions\Traits;
+namespace Pimcore\Event\Model;
 
-trait EnumGetValuesTrait
+use Pimcore\Model\WebsiteSetting;
+use Symfony\Contracts\EventDispatcher\Event;
+
+final class WebsiteSettingEvent extends Event
 {
-    /**
-     * @return string[]
-     */
-    public function getValues(): array
+    private WebsiteSetting $websiteSetting;
+
+    public function __construct(WebsiteSetting $websiteSetting)
     {
-        return array_column(static::cases(), 'value');
+        $this->websiteSetting = $websiteSetting;
+    }
+
+    public function getWebsiteSetting(): WebsiteSetting
+    {
+        return $this->websiteSetting;
     }
 }

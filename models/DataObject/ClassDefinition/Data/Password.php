@@ -75,7 +75,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function setAlgorithm(string $algorithm): void
     {
-        if($algorithm !== self::HASH_FUNCTION_PASSWORD_HASH) {
+        if ($algorithm !== self::HASH_FUNCTION_PASSWORD_HASH) {
             trigger_deprecation(
                 'pimcore/pimcore',
                 '11.2',
@@ -138,7 +138,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
 
         // is already a hashed string? Then do not re-hash
-        if($this->getAlgorithm() === self::HASH_FUNCTION_PASSWORD_HASH) {
+        if ($this->getAlgorithm() === self::HASH_FUNCTION_PASSWORD_HASH) {
             $info = password_get_info($data);
             if ($info['algo'] !== null && $info['algo'] !== 0) {
                 return $data;
