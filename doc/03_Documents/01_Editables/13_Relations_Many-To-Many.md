@@ -9,15 +9,15 @@ The relations editable provides many to many relation to other Pimcore elements 
 | Name                  | Type      | Description                                                                                                                                                     |
 |-----------------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `width`               | integer   | Width for the widget in pixels (optional)                                                                                                                       |
-| `height`              | integer   | Height for the widget in pixels  (optional)                                                                                                                     |
+| `height`              | integer   | Height for the widget in pixels (optional)                                                                                                                      |
 | `title`               | string    | Title for the input-widget                                                                                                                                      |
 | `uploadPath`          | string    | Target path for (inline) uploaded assets                                                                                                                        |
 | `disableInlineUpload` | boolean   | Disable the inline upload for assets. If set to true, the inline upload functionality will be disabled.                                                         |
 | `types`               | array     | Allowed types (document, asset, object), if empty all types are allowed                                                                                         |
 | `subtypes`            | array     | Allowed subtypes grouped by type (folder, page, snippet, image, video, object, ...), if empty all subtypes are allowed (see example below)                      |
 | `classes`             | array     | Allowed object class names, if empty all classes are allowed                                                                                                    |
-| `class`               | string    | A CSS class that is added to the surrounding container of this element in editmode   
-| `reload`     | boolean | `true` triggers page reload on each change    |
+| `class`               | string    | A CSS class that is added to the surrounding container of this element in editmode                                                                              |
+| `reload`              | boolean   | `true` triggers page reload on each change                                                                                                                      |
 
 ## Methods
 
@@ -85,4 +85,3 @@ For example:
 ```
 
 Now, a user is not able to add other elements than specified in the types configuration part.
-

@@ -71,7 +71,7 @@ Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:
 
 Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter:
     arguments:
-        $database_connection: '@doctrine.dbal.versioning_connection'
+        $databaseConnection: '@doctrine.dbal.versioning_connection'
 ```
 
 The database needs to contain a table called `versionsData`. The following script can be used to create the table including the necessary columns.
@@ -135,7 +135,7 @@ user is shown in version history.
 When you set `userModification` to `0` Pimcore shows `system` as user in the version history. 
 
 
-```
+```php
 $object->setUserModification(0);
 $object->save();
 ```

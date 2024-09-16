@@ -4,7 +4,7 @@
 
 The block element is an iterating component which is really powerful.
 Basically a block is only a loop, but you can use other editables within this loop, so it's possible to repeat a set of 
-editables to create structured content (eg. a link list, or a image gallery).
+editables to create structured content (eg. a link list, or an image gallery).
 The items in the loop as well as their order can be defined by the editor with the block controls provided in the editmode. 
 
 ## Configuration
@@ -37,9 +37,9 @@ The items in the loop as well as their order can be defined by the editor with t
 ## Basic Usage
 
 ```twig
-{% for i in pimcore_block('contentblock').iterator %}
-    <h2>{{ pimcore_input('subline') }}</h2>
-    {{ pimcore_wysiwyg('content') }}
+{% for i in pimcore_block("contentblock").iterator %}
+    <h2>{{ pimcore_input("subline") }}</h2>
+    {{ pimcore_wysiwyg("content") }}
 {% endfor %}
 ```
 
@@ -54,13 +54,14 @@ And in the frontend of the application:
 ### Example for `getCurrent()`
 
 ```twig
-{% set myBlock = pimcore_block('contentblock', {'reload': true}) %}
+{% set myBlock = pimcore_block("contentblock", {"reload": true}) %}
 {% for i in myBlock.iterator %}
     {% if myBlock.current > 0 %}
         Insert this line only after the first iteration<br />
         <br />
     {% endif %}
-    <h2>{{ pimcore_input('subline') }}</h2>
+
+    <h2>{{ pimcore_input("subline") }}</h2>
 {% endfor %}
 ```
 
@@ -72,7 +73,7 @@ And in the frontend of the application:
 The manual mode offers you the possibility to deal with block the way you like, this is for example useful with tables: 
 
 ```twig
-{% set block = pimcore_block('gridblock', {'manual' : true, 'limit' : 6}).start() %}
+{% set block = pimcore_block("gridblock", {"manual": true, "limit": 6}).start() %}
 <table>
     <tr>
         {% for b in block.iterator %}
@@ -125,7 +126,7 @@ If you want to wrap buttons in a div or change the Position.
 <div>
     {% for b in block.iterator %}
         {% do block.blockConstruct() %}
-            {% do block.blockStart(true, false, 'my-additional-class') %}
+            {% do block.blockStart(true, false, "my-additional-class") %}
                 Add additional class 'my-addional-class' to editmode-div
             {% do block.blockEnd() %}
         {% do block.blockDestruct() %}
@@ -140,7 +141,6 @@ If you want to wrap buttons in a div or change the Position.
 Bricks and structure refer to the CMS demo (content/default template).
 
 ```twig
-
 {# load document #}
 {% set document = pimcore_document_by_path('/en/More-Stuff/Developers-Corner/Galleries') %}
 

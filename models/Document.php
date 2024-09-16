@@ -89,7 +89,7 @@ class Document extends Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['versions', 'scheduledTasks', 'parent', 'fullPathCache'];
+        $blockedVars = ['versions', 'scheduledTasks', 'fullPathCache'];
 
         if (!$this->isInDumpState()) {
             // this is if we want to cache the object
@@ -371,6 +371,13 @@ class Document extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
+            if ($differentOldPath) {
+                $this->renewInheritedProperties();
+            }
+
+            // add to queue that saves dependencies
+            $this->addToDependenciesQueue();
+
             $postEvent = new DocumentEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
@@ -482,21 +489,6 @@ class Document extends Element\AbstractElement
                 }
             }
         }
-
-        // save dependencies
-        $d = new Dependency();
-        $d->setSourceType('document');
-        $d->setSourceId($this->getId());
-
-        foreach ($this->resolveDependencies() as $requirement) {
-            if ($requirement['id'] == $this->getId() && $requirement['type'] == 'document') {
-                // don't add a reference to yourself
-                continue;
-            } else {
-                $d->addRequirement((int)$requirement['id'], $requirement['type']);
-            }
-        }
-        $d->save();
 
         $this->getDao()->update();
 
@@ -815,7 +807,7 @@ class Document extends Element\AbstractElement
     {
         // check for site, if so rewrite the path for output
         try {
-            if (Tool::isFrontend() && Site::isSiteRequest()) {
+            if ($this->path && Tool::isFrontend() && Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
                 if ($site instanceof Site) {
                     if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {
@@ -855,9 +847,6 @@ class Document extends Element\AbstractElement
 
     /**
      * Set the parent id of the document.
-     *
-     *
-     * @return $this
      */
     public function setParentId(?int $id): static
     {
@@ -897,9 +886,6 @@ class Document extends Element\AbstractElement
 
     /**
      * Set the document type.
-     *
-     *
-     * @return $this
      */
     public function setType(string $type): static
     {
@@ -920,6 +906,7 @@ class Document extends Element\AbstractElement
 
     public function setPublished(bool $published): static
     {
+        $this->markFieldDirty('published');
         $this->published = $published;
 
         return $this;
@@ -934,9 +921,6 @@ class Document extends Element\AbstractElement
 
     /**
      * Set the parent document instance.
-     *
-     *
-     * @return $this
      */
     public function setParent(?ElementInterface $parent): static
     {

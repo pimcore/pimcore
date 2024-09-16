@@ -16,14 +16,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Config;
 use Pimcore\Event\ElementEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
+use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
+use Pimcore\Workflow\Manager;
 
 /**
  * @method Model\Document\Dao|Model\Asset\Dao|Model\DataObject\AbstractObject\Dao getDao()
@@ -159,7 +163,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function setModificationDate(?int $modificationDate): static
     {
-        if($this->modificationDate != $modificationDate) {
+        if ($this->modificationDate != $modificationDate) {
             $this->markFieldDirty('modificationDate');
             $this->modificationDate = $modificationDate;
         }
@@ -179,10 +183,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    /**
-     * enum('self','propagate') nullable
-     *
-     */
     public function getLocked(): ?string
     {
         if (empty($this->locked)) {
@@ -192,12 +192,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->locked;
     }
 
-    /**
-     * enum('self','propagate') nullable
-     *
-     *
-     * @return $this
-     */
     public function setLocked(?string $locked): static
     {
         $this->locked = $locked;
@@ -400,7 +394,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @internal
      *
      */
-    protected function resolveDependencies(): array
+    public function resolveDependencies(): array
     {
         $dependencies = [[]];
 
@@ -410,6 +404,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         return array_merge(...$dependencies);
+    }
+
+    protected function addToDependenciesQueue(): void
+    {
+        if (Config::getSystemConfiguration()['dependency']['enabled']) {
+            Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                new ElementDependenciesMessage(Service::getElementType($this), $this->getId())
+            );
+        }
     }
 
     public function isLocked(): bool
@@ -483,10 +486,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
             return false;
         }
+        /** @var Manager $workflowManager */
+        $workflowManager = Pimcore::getContainer()->get(Manager::class);
+        $isDeniedInWorkflow = $workflowManager->isDeniedInWorkflow($this, $type);
 
-        //everything is allowed for admin
+        //everything is allowed for admin except if it is denied in workflow
         if ($user->isAdmin()) {
-            return true;
+            return !$isDeniedInWorkflow;
         }
 
         if (!$user->isAllowed(Service::getElementType($this) . 's')) {
@@ -494,8 +500,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
         $isAllowed = $this->getDao()->isAllowed($type, $user);
 
+        if ($isDeniedInWorkflow) {
+            $isAllowed = false;
+        }
+
         $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
-        \Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);
+        Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);
 
         return (bool) $event->getArgument('isAllowed');
     }
@@ -634,7 +644,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $this->removeInheritedProperties();
         }
 
-        return array_diff(parent::__sleep(), $this->getBlockedVars());
+        return array_diff(parent::__sleep(), $this->getBlockedVars(), self::getBlockedVars());
     }
 
     public function __wakeup(): void

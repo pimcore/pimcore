@@ -48,7 +48,7 @@ class PublicServicesController extends Controller
 
         try {
             $response = Asset\Service::getStreamedResponseForThumbnail($config, $request->getPathInfo());
-            if($response) {
+            if ($response) {
                 return $response;
             }
 

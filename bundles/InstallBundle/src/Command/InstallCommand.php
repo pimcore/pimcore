@@ -446,7 +446,7 @@ class InstallCommand extends Command
     {
         $installableBundleKeys = array_keys($bundleSetupEvent->getBundles());
         $recommendedBundles = [];
-        foreach($bundleSetupEvent->getRecommendedBundles() as $recBundle) {
+        foreach ($bundleSetupEvent->getRecommendedBundles() as $recBundle) {
             $recommendedBundles[] = array_search($recBundle, $installableBundleKeys);
         }
 

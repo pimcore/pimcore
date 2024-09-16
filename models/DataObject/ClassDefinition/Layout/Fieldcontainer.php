@@ -27,22 +27,22 @@ class Fieldcontainer extends Model\DataObject\ClassDefinition\Layout
      * Static type of this element
      *
      * @internal
-     *
      */
     public string $fieldtype = 'fieldcontainer';
 
     /**
      * @internal
-     *
      */
     public string $layout = 'hbox';
 
     /**
      * @internal
-     *
      */
     public string $fieldLabel;
 
+    /**
+     * @return $this
+     */
     public function setLayout(string $layout): static
     {
         $this->layout = $layout;
@@ -55,6 +55,9 @@ class Fieldcontainer extends Model\DataObject\ClassDefinition\Layout
         return $this->layout;
     }
 
+    /**
+     * @return $this
+     */
     public function setFieldLabel(string $fieldLabel): static
     {
         $this->fieldLabel = $fieldLabel;

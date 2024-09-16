@@ -53,5 +53,4 @@ pimcore_custom_reports:
 ## Custom JS Class for Report Visualization
 If you need to fully customize the appearance of the report, you can specify a custom java script class that should 
 be used when opening the report in Pimcore Backend. This class can be specified in `Report Class` option and should extend
-the default java script class for the reports which is `pimcore.bundle.customreports.custom.report`. 
-
+the default java script class for the reports which is `pimcore.bundle.customreports.custom.report`.
