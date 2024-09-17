@@ -335,7 +335,7 @@ class Processor
                 }
 
                 $tmpFsPath = File::getLocalTempFilePath($fileExtension);
-                
+
                 $fileHandle = null;
 
                 if ($format === 'original') {
