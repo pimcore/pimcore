@@ -14,11 +14,12 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                include:
-                    - { php-version: 8.3, branch: 11.x }
+               include:
+                    - { php-version: 8.3, branch: default }
                     - { php-version: 8.3, branch: 11.3 }
         with:
             php-version: ${{ matrix.php-version }}
-            branch: ${{ matrix.branch }}
+            branch: ${{ matrix.branch == 'default' && github.event.repository.default_branch || matrix.branch }}
+            private-repo: ${{ github.event.repository.private }}
             ignore-list: "public"
         secrets: inherit
