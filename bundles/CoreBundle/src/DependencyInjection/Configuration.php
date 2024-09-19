@@ -333,6 +333,7 @@ final class Configuration implements ConfigurationInterface
                                 ->integerNode('filter_priority')
                                     ->info('Filter threshold for email summary, choose one of: 7 (debug), 6 (info), 5 (notice), 4 (warning), 3 (error), 2 (critical), 1 (alert) ,0 (emerg)')
                                     ->defaultNull()
+                                    ->allowNull()
                                 ->end()
                                 ->scalarNode('mail_receiver')
                                 ->info('Log summary receivers. Separate multiple email receivers by using ;')
