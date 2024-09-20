@@ -330,7 +330,7 @@ final class Configuration implements ConfigurationInterface
                                     ->end()
                                     ->defaultFalse()
                                 ->end()
-                                ->integerNode('filter_priority')
+                                ->scalarNode('filter_priority')
                                     ->info('Filter threshold for email summary, choose one of: 7 (debug), 6 (info), 5 (notice), 4 (warning), 3 (error), 2 (critical), 1 (alert) ,0 (emerg)')
                                     ->defaultNull()
                                 ->end()
