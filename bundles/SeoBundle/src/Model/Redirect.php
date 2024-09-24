@@ -156,11 +156,12 @@ final class Redirect extends AbstractModel
         $redirectTarget = $this->target;
         $targetDocumentPath = Document::getById($this->target)?->getFullPath();
 
-        $resolvedPath = ($targetDocumentPath ?? $redirectTarget) ?? "";
+        $resolvedPath = ($targetDocumentPath ?? $redirectTarget) ?? '';
 
-        if(!str_starts_with($resolvedPath, "/")) {
-            return "/".$resolvedPath;
+        if (!str_starts_with($resolvedPath, '/')) {
+            return '/'.$resolvedPath;
         }
+
         return $resolvedPath;
     }
 
