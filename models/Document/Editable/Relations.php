@@ -86,7 +86,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
             if ($element instanceof DataObject\Concrete) {
                 $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, $element->getClassName()];
             } elseif ($element instanceof DataObject\AbstractObject) {
-                $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER];
+                $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER];
             } elseif ($element instanceof Asset) {
                 $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
             } elseif ($element instanceof Document) {
@@ -113,9 +113,8 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
 
     public function setDataFromResource(mixed $data): static
     {
-        if ($data = \Pimcore\Tool\Serialize::unserialize($data)) {
-            $this->setDataFromEditmode($data);
-        }
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->setDataFromEditmode($unserializedData);
 
         return $this;
     }

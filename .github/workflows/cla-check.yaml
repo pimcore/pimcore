@@ -1,0 +1,14 @@
+name: CLA check
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_target:
+    types: [opened, closed, synchronize]
+
+jobs:
+  cla-workflow:
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-cla-check.yaml@v1.3.0
+    if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
+    secrets:
+      CLA_ACTION_ACCESS_TOKEN: ${{ secrets.CLA_ACTION_ACCESS_TOKEN }}

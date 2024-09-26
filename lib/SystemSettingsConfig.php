@@ -74,7 +74,7 @@ class SystemSettingsConfig
         // If the read target is settings-store and no data is found there,
         // load the data from the container config
         // Please see https://github.com/pimcore/pimcore/issues/15596 for more information
-        if(!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
+        if (!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
             $data = self::getConfigValuesFromContainer()['config'];
             $data['writeable'] = $repository->isWriteable();
         }
@@ -146,6 +146,7 @@ class SystemSettingsConfig
         $fallbackLanguages = [];
         $localizedErrorPages = [];
         $languages = explode(',', $values['general.validLanguages']);
+        $requiredLanguages = explode(',', $values['general.requiredLanguages']);
         $filteredLanguages = [];
         $existingValues = self::get();
 
@@ -173,9 +174,9 @@ class SystemSettingsConfig
             'general' => [
                 'domain' => $values['general.domain'],
                 'redirect_to_maindomain' => $values['general.redirect_to_maindomain'],
-                'language' => $values['general.language'],
                 'valid_languages' => $filteredLanguages,
                 'fallback_languages' => $fallbackLanguages,
+                'required_languages' => $requiredLanguages,
                 'default_language' => $values['general.defaultLanguage'],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
             ],

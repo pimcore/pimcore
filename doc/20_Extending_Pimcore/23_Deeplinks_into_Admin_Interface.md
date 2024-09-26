@@ -29,4 +29,3 @@ https://acme.com/admin/login/deeplink?object_24_object
 https://acme.com/admin/login/deeplink?object_98_variant 
 https://acme.com/admin/login/deeplink?object_66_folder
 ```
-

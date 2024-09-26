@@ -239,9 +239,9 @@ class Processor
 
             // add PCRE delimiter and modifiers
             if ($d['exactmatch']) {
-                $d['text'] = '/<a.*\/a>(*SKIP)(*FAIL)|(?<!\w)' . preg_quote($d['text'], '/') . '(?!\w)/';
+                $d['text'] = '/<a.*?\/a>(*SKIP)(*FAIL)|(?<!\w)' . preg_quote($d['text'], '/') . '(?!\w)/';
             } else {
-                $d['text'] = '/<a.*\/a>(*SKIP)(*FAIL)|' . preg_quote($d['text'], '/') . '/';
+                $d['text'] = '/<a.*?\/a>(*SKIP)(*FAIL)|' . preg_quote($d['text'], '/') . '/';
             }
 
             if (!$d['casesensitive']) {

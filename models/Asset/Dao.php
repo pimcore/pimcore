@@ -51,6 +51,7 @@ class Dao extends Model\Element\Dao
                 WHERE assets.id = ?", [$id]);
 
         if ($data) {
+            $data['hasMetaData'] = (bool)$data['hasMetaData'];
             $this->assignVariablesToModel($data);
 
             if ($data['hasMetaData']) {

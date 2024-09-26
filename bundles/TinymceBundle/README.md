@@ -82,11 +82,31 @@ configuration in a file in the `Resources/public` directory  of your bundle (e.g
 pimcore.document.editables.wysiwyg = pimcore.document.editables.wysiwyg || {};
 pimcore.document.editables.wysiwyg.defaultEditorConfig = { menubar: true };
 ```
+This will show you the default menubar from TinyMCE in all document editables.
 
-This will show you the default menubar from TinyMCE in all editables.
+For the data object settings, you should put them in the `startup.js` in your bundle.
+```
+pimcore.registerNS("pimcore.plugin.YourTinymceEditorConfigBundle");
 
-To load that file in editmode, you need to implement `getEditmodeJsPaths` in your bundle class. Given your bundle is named
-`AppAdminBundle` and your `editmode.js` created before was saved to `src/AppAdminBundle/public/js/editmode.js`:
+pimcore.plugin.YourTinymceEditorConfigBundle = Class.create({
+
+    initialize: function () {
+        document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
+    },
+
+    pimcoreReady: function (e) {
+        pimcore.object.tags.wysiwyg = pimcore.document.editables.wysiwyg || {};
+        pimcore.object.tags.wysiwyg.defaultEditorConfig = { menubar: true };
+    }
+});
+
+const YourTinymceEditorConfigBundlePlugin = new pimcore.plugin.YourTinymceEditorConfigBundle();    
+```
+
+
+
+To load the `editmode.js` file in editmode, you need to implement `getEditmodeJsPaths` in your bundle class. Given your bundle is named
+`AppAdminBundle` and your `editmode.js` and `startup.js` created before was saved to `src/AppAdminBundle/public/js/editmode.js` and `src/AppAdminBundle/public/js/startup.js`:
 
 ```php
 <?php
@@ -97,10 +117,17 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 
 class AppAdminBundle extends AbstractPimcoreBundle
 {
-    public function getEditmodeJsPaths()
+    public function getEditmodeJsPaths(): array
     {
         return [
             '/bundles/appadmin/js/pimcore/editmode.js'
+        ];
+    }
+    
+    public function getJsPaths()
+    {
+        return [
+            '/bundles/appadmin/js/pimcore/startup.js'
         ];
     }
 }
@@ -133,11 +160,11 @@ class EditmodeListener implements EventSubscriberInterface
         ];
     }
 
-    public function onEditmodeJsPaths(PathsEvent $event)
+    public function onEditmodeJsPaths(PathsEvent $event): void
     {
-        $event->setPaths(array_merge($event->getPaths(), [
+        $event->addPaths([
             '/bundles/app/js/pimcore/editmode.js'
-        ]));
+        ]);
     }
 }
 ```

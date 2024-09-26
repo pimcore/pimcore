@@ -23,7 +23,7 @@ for details).
 
 ```yaml
 PrestaSitemapBundle:
-    resource: "@PrestaSitemapBundle/config/routing.yaml"
+    resource: "@PrestaSitemapBundle/config/routing.yml"
     prefix:   /
 ```
 
@@ -106,7 +106,7 @@ generator to query for this information). For example the [PropertiesFilter](htt
 excludes elements with a property `sitemaps_exclude`. A **processor** can enhance an entry before it is added to the container. For example, the [ModificationDateProcessor](https://github.com/pimcore/pimcore/blob/11.x/bundles/SeoBundle/src/Sitemap/Element/Processor/ModificationDateProcessor.php)
 adds the modification date of an element to the url.
 
-Which filters and processors to use can be defined on the generator level. For example, the [`DocumentTreeGenerator`](#page_The-DocumentTreeGenerator)
+Which filters and processors to use can be defined on the generator level. For example, the [`DocumentTreeGenerator`](#the-documenttreegenerator)
 which is enabled by default is defined as follows:
 
 ```yaml
@@ -149,8 +149,8 @@ as service and can directly be consumed.
 
 Pimcore ships a default generator for documents implemented in [`DocumentTreeGenerator`](https://github.com/pimcore/pimcore/blob/11.x/bundles/SeoBundle/src/Sitemap/Document/DocumentTreeGenerator.php).
 This generator iterates the whole document tree and adds entries for every document while taking care of handling sites and
-hardlinks. It uses the the host names configured as main/site domain and falls back to the request context host by using
-the [url generator service](#page_Generating-absolute-URLs). You can either disable the default generator completely as shown in the example above or define your own service using the
+hardlinks. It uses the host names configured as main/site domain and falls back to the request context host by using
+the [url generator service](#generating-absolute-urls). You can either disable the default generator completely as shown in the example above or define your own service using the
 `DocumentTreeGenerator` class with your own filters/processors. The default service definition can be found in
 [sitemaps.yaml in the CoreBundle](https://github.com/pimcore/pimcore/blob/11.x/bundles/CoreBundle/config/sitemaps.yaml).
 
@@ -421,4 +421,3 @@ class RandomPathProcessor implements ProcessorInterface
     }
 }
 ```
-

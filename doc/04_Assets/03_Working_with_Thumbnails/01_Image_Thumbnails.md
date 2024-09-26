@@ -274,7 +274,7 @@ you can download them for free here: [Adobe ICC Profiles](https://www.adobe.com/
 or here: [ICC (color.org)](http://www.color.org/profiles.xalter).
 
 After downloading the profiles put them into your project folder or anywhere else on your sever
-(eg. `/usr/share/color/icc`). Then configure the path in the pimcore config file:
+(eg. `/usr/share/color/icc`). Then configure the path in the Pimcore config file:
 
 ```yaml
 pimcore:
@@ -291,7 +291,7 @@ pimcore:
 Pimcore auto-generates a thumbnail if requested but doesn't exist on the file system and is directly called via it's file path (not using any of
 the `getThumbnail()` methods).
 For example: Call `https://example.com/examples/panama/6644/image-thumb__6644__contentimages/img_0037.jpeg`
-(`/examples/panama/` is the path to the source asset, `6644` is the ID of the source asset, `contentimages` is the name of the thumbnail configuration, `img_0037.jpeg` the filename of the source asset) directly in your browser. Now pimcore checks
+(`/examples/panama/` is the path to the source asset, `6644` is the ID of the source asset, `contentimages` is the name of the thumbnail configuration, `img_0037.jpeg` the filename of the source asset) directly in your browser. Now Pimcore checks
 if the asset with the ID 6644 and the thumbnail with the key "contentimages" exists, if yes the thumbnail is
 generated on-the-fly and delivered to the client. When requesting the images again the image is directly served by
 the webserver (Apache, Nginx), because the file already exists (just the same way it works with the getThumbnail() methods).
@@ -405,7 +405,7 @@ Pimcore will then dynamically generate the thumbnails accordingly.
 
 ## Media Queries in Thumbnail Configuration
 
-If your're using media queries in your thumbnail configuration pimcore automatically generates a `<picture>` tag when calling `$asset->getThumbnail("example")->getHtml()`.
+If your're using media queries in your thumbnail configuration Pimcore automatically generates a `<picture>` tag when calling `$asset->getThumbnail("example")->getHtml()`.
 But in some cases it is necessary to get single thumbnails for certain media queries out of the thumbnail object, which is described in the examples below.
 
 ```php

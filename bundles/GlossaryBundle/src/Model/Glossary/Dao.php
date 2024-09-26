@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace  Pimcore\Bundle\GlossaryBundle\Model\Glossary;
+namespace Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Model\Dao\AbstractDao;

@@ -29,8 +29,6 @@ final class Version20220120162621 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $schema->hasExplicitForeignKeyIndexes();
-
         //disable foreign key checks
         $this->addSql('SET foreign_key_checks = 0');
 

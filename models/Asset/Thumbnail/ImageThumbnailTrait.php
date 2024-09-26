@@ -433,9 +433,17 @@ trait ImageThumbnailTrait
     private function checkAllowedFormats(string $format, ?Asset $asset = null): bool
     {
         $format = strtolower($format);
-        if($asset) {
+        if ($asset) {
+            if (
+                $format === 'original' ||
+                $format === 'source'
+            ) {
+                return true;
+            }
+
             $original = strtolower(pathinfo($asset->getRealFullPath(), PATHINFO_EXTENSION));
-            if ($format === $original || $format === 'source') {
+
+            if ($format === $original) {
                 return true;
             }
         }

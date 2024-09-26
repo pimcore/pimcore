@@ -43,6 +43,8 @@ final class User extends User\UserRole implements UserInterface
 
     protected string $language = 'en';
 
+    protected ?string $datetimeLocale = null;
+
     protected bool $admin = false;
 
     protected bool $active = true;
@@ -79,7 +81,7 @@ final class User extends User\UserRole implements UserInterface
      */
     protected ?array $mergedWebsiteTranslationLanguagesView = null;
 
-    protected int $lastLogin;
+    protected ?int $lastLogin = null;
 
     protected ?string $keyBindings = null;
 
@@ -467,7 +469,7 @@ final class User extends User\UserRole implements UserInterface
                 $targetFile = File::getLocalTempFilePath('png');
 
                 $image = \Pimcore\Image::getInstance();
-                if($image->load($localFile)) {
+                if ($image->load($localFile)) {
                     $image->cover($width, $height);
                     $image->save($targetFile, 'png');
                     $storage->write($this->getThumbnailImageStoragePath(), file_get_contents($targetFile));
@@ -641,7 +643,7 @@ final class User extends User\UserRole implements UserInterface
         return $mergedWebsiteTranslationLanguagesView;
     }
 
-    public function getLastLogin(): int
+    public function getLastLogin(): ?int
     {
         return $this->lastLogin;
     }
@@ -727,5 +729,17 @@ final class User extends User\UserRole implements UserInterface
     protected function getFallbackImage(): string
     {
         return PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/avatar.png';
+    }
+
+    public function getDatetimeLocale(): ?string
+    {
+        return $this->datetimeLocale;
+    }
+
+    public function setDatetimeLocale(?string $datetimeLocale): static
+    {
+        $this->datetimeLocale = $datetimeLocale;
+
+        return $this;
     }
 }
