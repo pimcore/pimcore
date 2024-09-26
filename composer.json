@@ -124,16 +124,17 @@
     "symfony/workflow": "^6.4",
     "symfony/yaml": "^6.4",
     "tijsverkoyen/css-to-inline-styles": "^2.2.3",
-    "twig/extra-bundle": "^3.13",
-    "twig/string-extra": "^3.13",
-    "twig/twig": "^3.14",
+    "twig/extra-bundle": "^3.4.0",
+    "twig/string-extra": "^3.3.5",
+    "twig/twig": "^3.3.9",
     "umpirsky/country-list": "^2.0.6"
   },
   "conflict": {
     "pimcore/admin-ui-classic-bundle": "<1.5",
     "sabre/dav": "4.2.2",
     "symfony/symfony": "*",
-    "thecodingmachine/safe": "<2.0"
+    "thecodingmachine/safe": "<2.0",
+    "twig/twig": ">=3.9.0 <3.14.0"
   },
   "require-dev": {
     "codeception/codeception": "^5.0.3",
