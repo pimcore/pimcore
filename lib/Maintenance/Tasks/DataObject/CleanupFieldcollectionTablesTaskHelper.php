@@ -40,7 +40,7 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
         $collectionNames =
             $this->helper->getCollectionNames(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY);
 
-        if(empty($collectionNames)) {
+        if (empty($collectionNames)) {
             return;
         }
 

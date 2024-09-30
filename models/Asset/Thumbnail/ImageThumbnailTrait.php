@@ -435,7 +435,7 @@ trait ImageThumbnailTrait
     private function checkAllowedFormats(string $format, ?Asset $asset = null): bool
     {
         $format = strtolower($format);
-        if($asset) {
+        if ($asset) {
             if (
                 $format === 'original' ||
                 $format === 'source'

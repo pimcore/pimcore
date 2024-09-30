@@ -132,7 +132,6 @@ class Block extends Model\Document\Editable implements BlockInterface
             $templateEditableDefinitions = $editableDefCollector->getDefinitions();
             $editableDefCollector->stashPull();
 
-
             $this->config['template'] = [
                 'html' => $blockStartHtml . ($this->config['template']['html']) . $blockEndHtml,
                 'editables' => $templateEditableDefinitions,

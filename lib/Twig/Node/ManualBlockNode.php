@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Node;
 
-use Pimcore\Model\Document;
 use Pimcore\Twig\Extension\DocumentEditableExtension;
 use Twig\Compiler;
 use Twig\Node\CaptureNode;
@@ -41,7 +40,7 @@ final class ManualBlockNode extends Node
         parent::__construct([
             'start' => $start,
             'body' => new CaptureNode($body, $body->getTemplateLine()),
-            'end' => $end
+            'end' => $end,
         ], [], $lineno, $tag);
     }
 

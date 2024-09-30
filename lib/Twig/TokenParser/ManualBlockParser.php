@@ -18,24 +18,16 @@ declare(strict_types=1);
 namespace Pimcore\Twig\TokenParser;
 
 use Countable;
-use LogicException;
-use Pimcore\Model\Document;
 use Pimcore\Twig\Extension\DocumentEditableExtension;
-use Pimcore\Twig\Node\BlockNode;
-use Pimcore\Twig\Node\CacheNode;
 use Pimcore\Twig\Node\ManualBlockNode;
-use Pimcore\ValueObject\Collection\ArrayOfStrings;
 use Twig\Error\SyntaxError;
 use Twig\Node\Expression\ArrayExpression;
 use Twig\Node\Node;
 use Twig\Token;
 use Twig\TokenParser\AbstractTokenParser;
 use Twig\TokenStream;
-use ValueError;
 use function count;
 use function in_array;
-use function is_int;
-use function is_null;
 use function sprintf;
 
 /**
@@ -67,8 +59,7 @@ class ManualBlockParser extends AbstractTokenParser
 {
     public function __construct(
         private DocumentEditableExtension $documentEditableExtension
-    )
-    {
+    ) {
 
     }
 
@@ -99,7 +90,6 @@ class ManualBlockParser extends AbstractTokenParser
         }
         $stream->expect(Token::BLOCK_END_TYPE);
 
-
         $start = $this->parser->subparse([$this, 'decideIterateStart'], true);
         $stream->expect(Token::BLOCK_END_TYPE);
 
@@ -117,11 +107,11 @@ class ManualBlockParser extends AbstractTokenParser
     {
         return $token->test('blockiterate');
     }
+
     public function decideIterateEnd(Token $token): bool
     {
         return $token->test('endblockiterate');
     }
-
 
     public function decideIfEnd(Token $token): bool
     {

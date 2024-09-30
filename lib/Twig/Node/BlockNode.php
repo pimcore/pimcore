@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Node;
 
-use Pimcore\Model\Document;
 use Pimcore\Twig\Extension\DocumentEditableExtension;
 use Twig\Compiler;
 use Twig\Node\CaptureNode;
