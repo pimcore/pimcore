@@ -19,6 +19,7 @@ jobs:
                     - { php-version: 8.3, branch: 11.4 }
         with:
             php-version: ${{ matrix.php-version }}
-            branch: ${{ matrix.branch }}
+            branch: ${{ matrix.branch == 'default' && github.event.repository.default_branch || matrix.branch }}
+            private-repo: ${{ github.event.repository.private }}
             ignore-list: "public"
         secrets: inherit
