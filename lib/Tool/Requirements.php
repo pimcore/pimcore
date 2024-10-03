@@ -493,7 +493,7 @@ final class Requirements
         $memoryLimitMessage = '';
 
         // check bytes of memory limit if it's not set to unlimited ('-1')
-        // http://php.net/manual/en/ini.core.php#ini.memory-limit
+        // https://php.net/manual/en/ini.core.php#ini.memory-limit
         if ($memoryLimit !== '-1') {
             $memoryLimit = filesize2bytes($memoryLimit . 'B');
             if ($memoryLimit < 67108000) {
