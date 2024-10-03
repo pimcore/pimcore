@@ -493,7 +493,7 @@ final class Requirements
         $memoryLimitMessage = '';
 
         // check bytes of memory limit if it's not set to unlimited ('-1')
-        // http://php.net/manual/en/ini.core.php#ini.memory-limit
+        // https://php.net/manual/en/ini.core.php#ini.memory-limit
         if ($memoryLimit !== '-1') {
             $memoryLimit = filesize2bytes($memoryLimit . 'B');
             if ($memoryLimit < 67108000) {
@@ -507,7 +507,7 @@ final class Requirements
 
         $checks[] = new Check([
             'name' => 'memory_limit (in php.ini)',
-            'link' => 'http://www.php.net/memory_limit',
+            'link' => 'https://www.php.net/manual/en/ini.core.php#ini.memory-limit',
             'state' => $memoryLimitState,
             'message' => $memoryLimitMessage,
         ]);
@@ -515,77 +515,77 @@ final class Requirements
         // pdo_mysql
         $checks[] = new Check([
             'name' => 'PDO MySQL',
-            'link' => 'http://www.php.net/pdo_mysql',
+            'link' => 'https://www.php.net/pdo_mysql',
             'state' => @constant('PDO::MYSQL_ATTR_FOUND_ROWS') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // iconv
         $checks[] = new Check([
             'name' => 'iconv',
-            'link' => 'http://www.php.net/iconv',
+            'link' => 'https://www.php.net/iconv',
             'state' => function_exists('iconv') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // dom
         $checks[] = new Check([
             'name' => 'Document Object Model (DOM)',
-            'link' => 'http://www.php.net/dom',
+            'link' => 'https://www.php.net/dom',
             'state' => class_exists('DOMDocument') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // simplexml
         $checks[] = new Check([
             'name' => 'SimpleXML',
-            'link' => 'http://www.php.net/simplexml',
+            'link' => 'https://www.php.net/simplexml',
             'state' => class_exists('SimpleXMLElement') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // gd
         $checks[] = new Check([
             'name' => 'GD',
-            'link' => 'http://www.php.net/gd',
+            'link' => 'https://www.php.net/gd',
             'state' => function_exists('gd_info') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // exif
         $checks[] = new Check([
             'name' => 'EXIF',
-            'link' => 'http://www.php.net/exif',
+            'link' => 'https://www.php.net/exif',
             'state' => function_exists('exif_read_data') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // multibyte support
         $checks[] = new Check([
             'name' => 'Multibyte String (mbstring)',
-            'link' => 'http://www.php.net/mbstring',
+            'link' => 'https://www.php.net/mbstring',
             'state' => function_exists('mb_strcut') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // file_info support
         $checks[] = new Check([
             'name' => 'File Information (file_info)',
-            'link' => 'http://www.php.net/file_info',
+            'link' => 'https://www.php.net/file_info',
             'state' => function_exists('finfo_open') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // zip
         $checks[] = new Check([
             'name' => 'zip',
-            'link' => 'http://www.php.net/zip',
+            'link' => 'https://www.php.net/zip',
             'state' => class_exists('ZipArchive') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // gzip
         $checks[] = new Check([
             'name' => 'zlib / gzip',
-            'link' => 'http://www.php.net/zlib',
+            'link' => 'https://www.php.net/zlib',
             'state' => function_exists('gzcompress') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // Intl
         $checks[] = new Check([
             'name' => 'Intl',
-            'link' => 'http://www.php.net/intl',
+            'link' => 'https://www.php.net/intl',
             'state' => extension_loaded('intl') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
@@ -614,7 +614,7 @@ final class Requirements
         // Imagick
         $checks[] = new Check([
             'name' => 'Imagick',
-            'link' => 'http://www.php.net/imagick',
+            'link' => 'https://www.php.net/imagick',
             'state' => class_exists('Imagick') ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
@@ -646,7 +646,7 @@ final class Requirements
         // APCu
         $checks[] = new Check([
             'name' => 'APCu',
-            'link' => 'http://www.php.net/apcu',
+            'link' => 'https://www.php.net/apcu',
             'state' => (function_exists('apcu_fetch') && ini_get('apc.enabled')) ? Check::STATE_OK : Check::STATE_WARNING,
             'message' => "It's highly recommended to have the APCu extension installed and enabled.",
         ]);
@@ -654,7 +654,7 @@ final class Requirements
         // OPcache
         $checks[] = new Check([
             'name' => 'OPcache',
-            'link' => 'http://www.php.net/opcache',
+            'link' => 'https://www.php.net/opcache',
             'state' => function_exists('opcache_reset') ? Check::STATE_OK : Check::STATE_WARNING,
             'message' => "It's highly recommended to have the OPCache extension installed and enabled.",
         ]);
@@ -669,7 +669,7 @@ final class Requirements
         // curl for google api sdk
         $checks[] = new Check([
             'name' => 'curl',
-            'link' => 'http://www.php.net/curl',
+            'link' => 'https://www.php.net/curl',
             'state' => function_exists('curl_init') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
