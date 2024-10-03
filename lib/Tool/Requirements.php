@@ -507,7 +507,7 @@ final class Requirements
 
         $checks[] = new Check([
             'name' => 'memory_limit (in php.ini)',
-            'link' => 'https://www.php.net/manual/de/ini.core.php#ini.memory-limit',
+            'link' => 'https://www.php.net/manual/en/ini.core.php#ini.memory-limit',
             'state' => $memoryLimitState,
             'message' => $memoryLimitMessage,
         ]);
