@@ -32,7 +32,7 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 - [mbstring](http://php.net/mbstring)
 - [zlib](http://php.net/zlib)
 - [zip](http://php.net/zip)
-- [intl](http://www.php.net/intl)
+- [intl](https://www.php.net/intl)
 - [opcache](http://php.net/opcache)
 - [curl](http://php.net/curl)
 - CLI SAPI (for Cron Jobs)
