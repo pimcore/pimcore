@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
+use const JSON_PRETTY_PRINT;
 use JsonException;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -26,7 +27,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use function json_encode;
 use function Symfony\Component\String\s;
-use const JSON_PRETTY_PRINT;
 
 /**
  * @internal
@@ -81,7 +81,7 @@ class ListCommand extends AbstractBundleCommand
             $row = [
                 $input->getOption('fully-qualified-classnames')
                     ? $bundleClass
-                    : $this->getShortClassName($bundleClass)
+                    : $this->getShortClassName($bundleClass),
             ];
 
             try {
