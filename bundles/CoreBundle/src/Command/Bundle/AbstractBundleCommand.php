@@ -113,12 +113,7 @@ abstract class AbstractBundleCommand extends AbstractCommand
 
     protected function setupInstaller(PimcoreBundleInterface $bundle): ?InstallerInterface
     {
-        $installer = $this->bundleManager->getInstaller($bundle);
-        if (null === $installer) {
-            return null;
-        }
-
-        return $installer;
+        return $this->bundleManager->getInstaller($bundle);
     }
 
     protected function normalizeBundleIdentifier(string $bundleIdentifier): string
