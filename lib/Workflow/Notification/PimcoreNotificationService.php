@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow\Notification;
 
+use Exception;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification\Service\NotificationService;
 use Symfony\Component\Workflow\Workflow;
@@ -70,7 +71,7 @@ class PimcoreNotificationService extends AbstractNotificationService
                     $this->notificationService->sendToUser($recipient->getId(), 0, $title, $message, $subject);
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \Pimcore\Logger::error('Error sending Workflow change notification.');
         }
     }

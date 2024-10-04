@@ -16,15 +16,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\MetaData;
 
+use Exception;
 use Pimcore\Logger;
+use Pimcore\Tool\Console;
+use RuntimeException;
 use Symfony\Component\Process\Process;
 
 trait EmbeddedMetaDataTrait
 {
     /**
-     *
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getEmbeddedMetaData(bool $force, bool $useExifTool = true): array
     {
@@ -38,7 +39,7 @@ trait EmbeddedMetaDataTrait
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function handleEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): void
     {
@@ -48,13 +49,12 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
-     *
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function readEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): array
     {
-        $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
+        $exiftool = Console::getExecutable('exiftool');
+        $embeddedMetaData = [];
 
         if (!$filePath) {
             $filePath = $this->getLocalFile();
@@ -64,17 +64,20 @@ trait EmbeddedMetaDataTrait
             $process = new Process([$exiftool, '-j', $filePath]);
             $process->run();
             $output = $process->getOutput();
-            $embeddedMetaData = $this->flattenArray((array) json_decode($output)[0]);
+            $outputArray = json_decode($output, true);
+            if ($outputArray) {
+                $embeddedMetaData = $this->flattenArray($outputArray[0]);
 
-            foreach (['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
-                if (isset($embeddedMetaData[$removeKey])) {
-                    unset($embeddedMetaData[$removeKey]);
+                foreach (['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
+                    if (isset($embeddedMetaData[$removeKey])) {
+                        unset($embeddedMetaData[$removeKey]);
+                    }
                 }
             }
         } else {
             try {
                 $xmp = $this->flattenArray($this->getXMPData($filePath));
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $xmp = [];
                 Logger::error('Problem reading XMP metadata of the image with ID ' . $this->getId() . ' Reason: '
                     . $e->getMessage());
@@ -125,9 +128,7 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
-     *
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getXMPData(?string $filePath = null): array
     {
@@ -141,7 +142,7 @@ trait EmbeddedMetaDataTrait
             $chunkSize = 1024;
 
             if (($file_pointer = fopen($filePath, 'rb')) === false) {
-                throw new \RuntimeException('Could not open file for reading');
+                throw new RuntimeException('Could not open file for reading');
             }
 
             $tag = '<x:xmpmeta';
@@ -177,7 +178,7 @@ trait EmbeddedMetaDataTrait
 
                 if ($position === false) {
                     // this would mean the open tag was found, but the close tag was not.  Maybe file corruption?
-                    throw new \RuntimeException('No close tag found.  Possibly corrupted file.');
+                    throw new RuntimeException('No close tag found.  Possibly corrupted file.');
                 } else {
                     $buffer = substr($buffer, 0, $position + $tagLength);
                 }

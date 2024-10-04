@@ -19,8 +19,10 @@ namespace Pimcore;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Installer\PackageEvent;
 use Composer\Script\Event;
+use RuntimeException;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
+use Throwable;
 
 /**
  * @internal
@@ -67,7 +69,7 @@ class Composer
     {
         try {
             static::executeCommand($event, $consoleDir, ['pimcore:cache:clear'], 60);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $event->getIO()->write('<comment>Unable to perform command pimcore:cache:clear</comment>');
         }
     }
@@ -133,7 +135,7 @@ class Composer
             }
         });
         if (!$process->isSuccessful()) {
-            throw new \RuntimeException(sprintf("An error occurred when executing the \"%s\" command:\n\nExit code: %d\n\n%s\n\n%s", implode(' ', $command), $process->getExitCode(), self::removeDecoration($process->getOutput()), self::removeDecoration($process->getErrorOutput())));
+            throw new RuntimeException(sprintf("An error occurred when executing the \"%s\" command:\n\nExit code: %d\n\n%s\n\n%s", implode(' ', $command), $process->getExitCode(), self::removeDecoration($process->getOutput()), self::removeDecoration($process->getErrorOutput())));
         }
 
         return $process;
@@ -146,7 +148,7 @@ class Composer
     {
         $phpFinder = new PhpExecutableFinder();
         if (!$phpPath = $phpFinder->find($includeArgs)) {
-            throw new \RuntimeException('The php executable could not be found, add it to your PATH environment variable and try again');
+            throw new RuntimeException('The php executable could not be found, add it to your PATH environment variable and try again');
         }
 
         return $phpPath;
@@ -162,7 +164,7 @@ class Composer
         $phpFinder = new PhpExecutableFinder();
         $arguments = $phpFinder->findArguments();
 
-        if(!empty($_SERVER['COMPOSER_ORIGINAL_INIS'])) {
+        if (!empty($_SERVER['COMPOSER_ORIGINAL_INIS'])) {
             $paths = explode(PATH_SEPARATOR, $_SERVER['COMPOSER_ORIGINAL_INIS']);
             $ini = array_shift($paths);
         } else {
@@ -183,11 +185,11 @@ class Composer
     {
         $options = array_merge(static::$options, $event->getComposer()->getPackage()->getExtra());
 
-        if(!empty($_SERVER['SYMFONY_ASSETS_INSTALL'])) {
+        if (!empty($_SERVER['SYMFONY_ASSETS_INSTALL'])) {
             $options['symfony-assets-install'] = $_SERVER['SYMFONY_ASSETS_INSTALL'];
         }
 
-        if(!empty($_SERVER['SYMFONY_CACHE_WARMUP'])) {
+        if (!empty($_SERVER['SYMFONY_CACHE_WARMUP'])) {
             $options['symfony-cache-warmup'] = $_SERVER['SYMFONY_CACHE_WARMUP'];
         }
 

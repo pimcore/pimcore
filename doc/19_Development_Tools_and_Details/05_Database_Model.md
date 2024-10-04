@@ -5,9 +5,9 @@ there are quite a lot of tables around and finding the correct data might be a b
 the beginning. 
 
 Basically, there are two types of tables
-* Default tables with are created during install - for all sorts of data like assets, documents
+* Default tables which are created during install - for all sorts of data like assets, documents
 logs, versions, ... 
-* Dynamically created tables during object data model configuration - mainly for all object related
+* Dynamically created tables which are created during object data model configuration - mainly for all object related
 data. 
 
 

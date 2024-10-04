@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -76,7 +77,7 @@ final class Editlock extends Model\AbstractModel
             $lock->getDao()->clearSession($sessionId);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }

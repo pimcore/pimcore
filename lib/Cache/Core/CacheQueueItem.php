@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Cache\Core;
 
+use DateInterval;
+
 /**
  * @internal
  */
@@ -31,9 +33,9 @@ class CacheQueueItem
     protected array $tags = [];
 
     /**
-     * @param int|\DateInterval|null $lifetime
+     * @param int|DateInterval|null $lifetime
      */
-    protected int|null|\DateInterval $lifetime = null;
+    protected int|null|DateInterval $lifetime = null;
 
     protected int $priority = 0;
 
@@ -42,7 +44,7 @@ class CacheQueueItem
     /**
      * @param string[] $tags
      */
-    public function __construct(string $key, mixed $data, array $tags = [], \DateInterval|int $lifetime = null, ?int $priority = 0, bool $force = false)
+    public function __construct(string $key, mixed $data, array $tags = [], DateInterval|int $lifetime = null, ?int $priority = 0, bool $force = false)
     {
         $this->key = $key;
         $this->data = $data;
@@ -75,7 +77,7 @@ class CacheQueueItem
         return $this->tags;
     }
 
-    public function getLifetime(): \DateInterval|int|null
+    public function getLifetime(): DateInterval|int|null
     {
         return $this->lifetime;
     }

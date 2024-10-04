@@ -87,7 +87,7 @@ When you're finally ready to output all scripts in your layout script, simply ec
 
 `{{ pimcore_head_script() }}`
 
-### Capturing Scripts Using the HeadScript Helper
+### Capturing Scripts Using the HeadScript Helper (deprecated)
 
 Sometimes you need to generate client-side scripts programmatically. While you could use string concatenation, 
 heredocs, and the like, often it's easier just to do so by creating the script and sprinkling in Twig tags. 
@@ -111,6 +111,18 @@ pass it as the second argument to `captureStart()`.
 If you wish to specify any additional attributes for the `<script>` tag, pass them in an array as the third 
 argument to `captureStart()`.
 
+**Note:** The `captureStart()` and `captureEnd()` methods are deprecated as of Pimcore 11.4.0. Use a combination of `set` and `pimcore_head_script` to achieve the same result.
+
+```twig
+{% set inlineScript %}
+    var action = '{{ baseUrl }}';
+    $('#foo_form').attr("action", action);
+{% endset %}
+{% do pimcore_head_script().appendScript(inlineScript) %}
+
+{# Example if you wish to specify additional attributes for the <script> tag #}
+{% do pimcore_head_script().appendScript(inlineScript, "text/javascript", {"async": "async"}) %}
+```
 
 ## HTTP/2 Push Support
 

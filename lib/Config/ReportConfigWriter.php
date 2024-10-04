@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Config;
 
+use Exception;
 use Pimcore\Event\Report\SettingsEvent;
 use Pimcore\Event\ReportEvents;
 use Pimcore\Model\Tool\SettingsStore;
@@ -41,7 +42,7 @@ final class ReportConfigWriter
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function write(array $settings): void
     {

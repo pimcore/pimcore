@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document;
 
+use Exception;
+use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
@@ -27,6 +30,9 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Tool\HtmlUtils;
+use Pimcore\Tool\Serialize;
+use RuntimeException;
+use Throwable;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -112,7 +118,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * @return string|void
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
@@ -194,7 +200,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $config = $this->getEditmodeDefinition();
 
         if (!isset($config['id'])) {
-            throw new \RuntimeException(sprintf('Expected an "id" option to be set on the "%s" editable config array', $this->getName()));
+            throw new RuntimeException(sprintf('Expected an "id" option to be set on the "%s" editable config array', $this->getName()));
         }
 
         $attributes = array_merge($this->getEditmodeBlockStateAttributes(), [
@@ -441,8 +447,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
         try {
             $result = $this->render();
-        } catch (\Throwable $e) {
-            if (\Pimcore::inDebugMode()) {
+        } catch (Throwable $e) {
+            if (Pimcore::inDebugMode()) {
                 // the __toString method isn't allowed to throw exceptions
                 $result = '<b style="color:#f00">' . $e->getMessage().' File: ' . $e->getFile().' Line: '. $e->getLine().'</b><br/>'.$e->getTraceAsString();
 
@@ -526,7 +532,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     protected function getBlockStateStack(): BlockStateStack
     {
-        return \Pimcore::getContainer()->get(BlockStateStack::class);
+        return Pimcore::getContainer()->get(BlockStateStack::class);
     }
 
     /**
@@ -535,14 +541,14 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function buildEditableName(string $type, string $name, Document $document = null): string
     {
         // do NOT allow dots (.) and colons (:) here as they act as delimiters
         // for block hierarchy in the new naming scheme (see #1467)!
         if (!preg_match("@^[a-zA-Z0-9\-_]+$@", $name)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Only valid CSS class selectors are allowed as the name for an editable (which is basically [a-zA-Z0-9\-_]+). Your name was: ' . $name
             );
         }
@@ -550,7 +556,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         // @todo add document-id to registry key | for example for embeded snippets
         // set suffixes if the editable is inside a block
 
-        $container = \Pimcore::getContainer();
+        $container = Pimcore::getContainer();
         $blockState = $container->get(BlockStateStack::class)->getCurrentState();
 
         // if element not nested inside a hierarchical element (e.g. block), add the
@@ -568,12 +574,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $editableName = self::doBuildName($name, $type, $blockState, $targetGroupEditableName);
 
         $event = new EditableNameEvent($type, $name, $blockState, $editableName, $document);
-        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::EDITABLE_NAME);
+        Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::EDITABLE_NAME);
 
         $editableName = $event->getEditableName();
 
         if (strlen($editableName) > 750) {
-            throw new \Exception(sprintf(
+            throw new Exception(sprintf(
                 'Composite name for editable "%s" is longer than 750 characters. Use shorter names for your editables or reduce amount of nesting levels. Name is: %s',
                 $name,
                 $editableName
@@ -620,7 +626,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     private static function buildHierarchicalName(string $name, array $blocks, array $indexes): string
     {
         if (count($indexes) > count($blocks)) {
-            throw new \RuntimeException(sprintf('Index count %d is greater than blocks count %d', count($indexes), count($blocks)));
+            throw new RuntimeException(sprintf('Index count %d is greater than blocks count %d', count($indexes), count($blocks)));
         }
 
         $parts = [];
@@ -642,12 +648,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function buildChildEditableName(string $name, string $type, array $parentBlockNames, int $index): string
     {
         if (count($parentBlockNames) === 0) {
-            throw new \Exception(sprintf(
+            throw new Exception(sprintf(
                 'Failed to build child tag name for %s %s at index %d as no parent name was passed',
                 $type,
                 $name,
@@ -665,7 +671,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     public static function buildEditableRealName(string $name, Document $document): string
     {
-        $blockState = \Pimcore::getContainer()->get(BlockStateStack::class)->getCurrentState();
+        $blockState = Pimcore::getContainer()->get(BlockStateStack::class)->getCurrentState();
 
         // if element not nested inside a hierarchical element (e.g. block), add the
         // targeting prefix if configured on the document. hasBlocks() determines if
@@ -710,5 +716,22 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $this->editableDefinitionCollector = $editableDefinitionCollector;
 
         return $this;
+    }
+
+    protected function getUnserializedData(mixed $data): ?array
+    {
+        if (is_array($data) || is_null($data)) {
+            return $data;
+        }
+        if (is_string($data)) {
+            $unserializedData = Serialize::unserialize($data);
+            if (!is_array($unserializedData) && !is_null($unserializedData)) {
+                throw new InvalidArgumentException('Unserialized data must be an array or null.');
+            }
+
+            return $unserializedData;
+        }
+
+        throw new InvalidArgumentException('Data must be a string, an array or null.');
     }
 }

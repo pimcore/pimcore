@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Exception;
+use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
@@ -44,7 +46,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {
@@ -65,7 +67,17 @@ class Dao extends Model\Dao\AbstractDao
         $items = $this->model->getItems();
         $activeGroups = $this->model->getActiveGroups();
 
-        $collectionMapping = $this->model->getGroupCollectionMappings();
+        $collectionMapping = $collectionToAdd = $this->model->getGroupCollectionMappings();
+
+        // when the field is inheritable, check the parent collection mappings and skip the ones that are meant to be inherited
+        $allowInherit = $this->model->getClass()->getAllowInherit();
+
+        // check and exclude if an object is the top of the hierarchy
+        // otherwise it wouldn't be able to distinguish whether the exact collections are from itself, rather from a common parent
+        if ($allowInherit && DataObject\Service::hasInheritableParentObject($object)) {
+            $parentCollectionMapping = DataObject\Service::useInheritedValues(true, $this->model->getGroupCollectionMappings(...));
+            $collectionToAdd = array_diff($collectionToAdd, $parentCollectionMapping);
+        }
 
         $groupsTable = $this->getGroupsTableName();
 
@@ -85,6 +97,9 @@ class Dao extends Model\Dao\AbstractDao
                 Helper::upsert($this->db, $groupsTable, $data, $this->getPrimaryKey($groupsTable));
             }
         }
+
+        $alreadySavedGroups = [];
+        $alreadySavedKeyIds = [];
 
         foreach ($items as $groupId => $group) {
             foreach ($group as $keyId => $keyData) {
@@ -115,7 +130,7 @@ class Dao extends Model\Dao\AbstractDao
                         ]);
 
                         /** @var MarshallerService $marshallerService */
-                        $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+                        $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
 
                         if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
                             $marshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());
@@ -130,6 +145,37 @@ class Dao extends Model\Dao\AbstractDao
                     $data['value2'] = $encodedData['value2'] ?? null;
 
                     Helper::upsert($this->db, $dataTable, $data, $this->getPrimaryKey($dataTable));
+                    $alreadySavedGroups[] = $groupId;
+                    $alreadySavedKeyIds[] = $keyId;
+                }
+            }
+        }
+
+        // Adds a placeholder to persist collectionId by adding the first field of the group
+        // that belongs to a collection with NULL values
+        foreach ($collectionToAdd as $groupId => $collectionId) {
+            // Ignore the groups that are already saved and those without any collection id
+            if ($collectionId && !in_array($groupId, $alreadySavedGroups)) {
+                $group = GroupConfig::getById($groupId);
+                $groupKeys = $group->getRelations();
+                // make sure that any of the group keys are not among those already saved
+                // if so, skip as there no need for a placeholder
+                if (!in_array(array_keys($groupKeys), $alreadySavedKeyIds)) {
+                    $firstKey = reset($groupKeys);
+                    $keyId = $firstKey->getKeyId();
+                    $keyConfig = DefinitionCache::get($keyId);
+                    $data = [
+                        'id' => $objectId,
+                        'collectionId' => $collectionId,
+                        'groupId' => $groupId,
+                        'keyId' => $keyId,
+                        'fieldname' => $fieldname,
+                        'language' => 'default',
+                        'type' => $keyConfig->getType(),
+                        'value' => null,
+                        'value2' => null,
+                    ];
+                    $this->db->insert($dataTable, $data);
                 }
             }
         }
@@ -148,18 +194,18 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function load(): void
     {
         $classificationStore = $this->model;
         $object = $this->model->getObject();
         $dataTableName = $this->getDataTableName();
-        $objectId = $object->getId();
+        $objectId = $object->getId() ?? 0;
         $fieldname = $this->model->getFieldname();
         $groupsTableName = $this->getGroupsTableName();
 
-        $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
+        $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE id = ' . $objectId . ' AND fieldname = ' . $this->db->quote($fieldname);
 
         $data = $this->db->fetchAllAssociative($query);
         $list = [];
@@ -168,7 +214,7 @@ class Dao extends Model\Dao\AbstractDao
             $list[$item['groupId']] = true;
         }
 
-        $query = 'SELECT * FROM ' . $dataTableName . ' WHERE id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
+        $query = 'SELECT * FROM ' . $dataTableName . ' WHERE id = ' . $objectId . ' AND fieldname = ' . $this->db->quote($fieldname);
 
         $data = $this->db->fetchAllAssociative($query);
 
@@ -200,7 +246,7 @@ class Dao extends Model\Dao\AbstractDao
 
             if ($fd instanceof NormalizerInterface) {
                 /** @var MarshallerService $marshallerService */
-                $marshallerService = \Pimcore::getContainer()->get(MarshallerService::class);
+                $marshallerService = Pimcore::getContainer()->get(MarshallerService::class);
 
                 if ($marshallerService->supportsFielddefinition('classificationstore', $fd->getFieldtype())) {
                     $unmarshaller = $marshallerService->buildFieldefinitionMarshaller('classificationstore', $fd->getFieldtype());

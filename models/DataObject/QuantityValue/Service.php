@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\QuantityValue;
 
+use Exception;
+use Pimcore\Cache;
+use Pimcore\Logger;
 use Pimcore\Model\Translation;
 
 class Service
@@ -47,7 +50,7 @@ class Service
             foreach ($units as $unit) {
                 $unit->save();
             }
-        } catch (\Exception $e) {
+        } catch (Exception) {
             return false;
         }
 
@@ -73,11 +76,53 @@ class Service
                         true));
                 }
                 $result[] = $unit->getObjectVars();
-            } catch (\Exception $e) {
+            } catch (Exception) {
                 return false;
             }
         }
 
         return json_encode($result, JSON_PRETTY_PRINT);
+    }
+
+    /**
+     * @internal
+     *
+     * @return array<string, Unit>|null
+     */
+    public static function getQuantityValueUnitsTable(): ?array
+    {
+        try {
+            $table = null;
+            if (Cache\RuntimeCache::isRegistered(Unit::CACHE_KEY)) {
+                $table = Cache\RuntimeCache::get(Unit::CACHE_KEY);
+            }
+
+            if (!is_array($table)) {
+                $table = Cache::load(Unit::CACHE_KEY);
+                if (is_array($table)) {
+                    Cache\RuntimeCache::set(Unit::CACHE_KEY, $table);
+                }
+            }
+
+            if (!is_array($table)) {
+                $table = [];
+                $list = new Unit\Listing();
+                $list->setOrderKey(['baseunit', 'factor', 'abbreviation']);
+                $list->setOrder(['ASC', 'ASC', 'ASC']);
+
+                foreach ($list->getUnits() as $item) {
+                    $table[$item->getId()] = $item;
+                }
+
+                Cache::save($table, Unit::CACHE_KEY, [], null, 995, true);
+                Cache\RuntimeCache::set(Unit::CACHE_KEY, $table);
+            }
+
+            return $table;
+        } catch (Exception $e) {
+            Logger::error((string) $e);
+
+            return null;
+        }
     }
 }

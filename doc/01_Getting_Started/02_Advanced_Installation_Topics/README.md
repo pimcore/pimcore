@@ -167,8 +167,8 @@ pimcore_install:
             port:                 "%env(DB_PORT)%"
 ```
 
-## Set a Timezone
-Make sure to set the corresponding timezone in your configuration. 
+## Set a Time Zone
+Make sure to set the corresponding time zone in your configuration. 
 It will be used for displaying date/time values in the admin backend.
 
 ```yaml
@@ -177,6 +177,6 @@ pimcore:
         timezone: Europe/Berlin
 ```
 
-## Office document preview
+## Office Document Preview
 
 The feature for displaying a [preview of documents](../../04_Assets/03_Working_with_Thumbnails/05_Document_Thumbnails.md) directly in Pimcore is optional. To use it, you must install either [Gotenberg](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#gotenberg) or [LibreOffice](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#libreoffice-pdftotext-inkscape-) according to your preference.

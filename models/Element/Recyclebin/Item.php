@@ -17,7 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Model\Element\Recyclebin;
 
 use DeepCopy\TypeMatcher\TypeMatcher;
+use Exception;
 use League\Flysystem\StorageAttributes;
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -56,10 +58,6 @@ class Item extends Model\AbstractModel
 
     protected string $deletedby;
 
-    /**
-     * @static
-     *
-     */
     public static function create(Element\ElementInterface $element, Model\User $user = null): void
     {
         $item = new self();
@@ -67,11 +65,6 @@ class Item extends Model\AbstractModel
         $item->save($user);
     }
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function getById(int $id): ?Item
     {
         try {
@@ -85,13 +78,12 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public function restore(Model\User $user = null): void
     {
         $dummy = null;
-        $raw = Storage::get('recycle_bin')->read($this->getStoreageFile());
+        $raw = Storage::get('recycle_bin')->read($this->getStorageFile());
         $element = Serialize::unserialize($raw);
 
         // check for element with the same name
@@ -116,7 +108,7 @@ class Item extends Model\AbstractModel
             Model\Version::disable();
             $className = get_class($element);
             /** @var Document|Asset|AbstractObject $dummy */
-            $dummy = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+            $dummy = Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
             $dummy->setId($element->getId());
             $dummy->setParentId($element->getParentId() ?: 1);
             $dummy->setKey($element->getKey());
@@ -130,7 +122,7 @@ class Item extends Model\AbstractModel
         if (\Pimcore\Tool\Admin::getCurrentUser()) {
             $parent = $element->getParent();
             if ($parent && !$parent->isAllowed('publish')) {
-                throw new \Exception('Not sufficient permissions');
+                throw new Exception('Not sufficient permissions');
             }
         }
 
@@ -141,7 +133,7 @@ class Item extends Model\AbstractModel
             $this->doRecursiveRestore($element);
 
             DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
             if ($dummy) {
                 $dummy->delete();
@@ -175,7 +167,7 @@ class Item extends Model\AbstractModel
         $this->getDao()->save();
 
         $storage = Storage::get('recycle_bin');
-        $storage->write($this->getStoreageFile(), $data);
+        $storage->write($this->getStorageFile(), $data);
 
         $saveBinaryData = function ($element, $rec, self $scope) use ($storage) {
             // assets are kind of special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
@@ -197,7 +189,7 @@ class Item extends Model\AbstractModel
     public function delete(): void
     {
         $storage = Storage::get('recycle_bin');
-        $storage->delete($this->getStoreageFile());
+        $storage->delete($this->getStorageFile());
 
         $files = $storage->listContents($this->getType())->filter(function (StorageAttributes $item) {
             return (bool) strpos($item->path(), '/' . $this->getId() . '_');
@@ -246,8 +238,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function doRecursiveRestore(Element\ElementInterface $element): void
     {
@@ -269,7 +260,7 @@ class Item extends Model\AbstractModel
             $element->markAllLazyLoadedKeysAsLoaded();
             $element->setOmitMandatoryCheck(true);
         }
-        $element->save();
+        $element->save(['isRecycleBinRestore' => true]);
 
         if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
@@ -358,9 +349,18 @@ class Item extends Model\AbstractModel
         return $copier->copy($data);
     }
 
-    public function getStoreageFile(): string
+    public function getStorageFile(): string
     {
         return sprintf('%s/%s.psf', $this->getType(), $this->getId());
+    }
+
+    /**
+     * @deprecated since pimcore 11.3 and will be removed in 12.0
+     * @see Item::getStorageFile()
+     */
+    public function getStoreageFile(): string
+    {
+        return $this->getStorageFile();
     }
 
     protected function getStorageFileBinary(Element\ElementInterface $element): string

@@ -58,7 +58,8 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
 
     public function setDataFromResource(mixed $data): static
     {
-        $this->values = \Pimcore\Tool\Serialize::unserialize($data);
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->values = $unserializedData;
 
         return $this;
     }

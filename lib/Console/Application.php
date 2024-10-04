@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Console;
 
 use Doctrine\Migrations\Tools\Console\Command\DoctrineCommand;
+use Pimcore;
 use Pimcore\Event\System\ConsoleEvent;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Migrations\FilteredMigrationsRepository;
@@ -24,6 +25,7 @@ use Pimcore\Migrations\FilteredTableMetadataStorage;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Pimcore\Version;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LazyCommand;
 use Symfony\Component\Console\ConsoleEvents;
@@ -60,7 +62,7 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
         setlocale(LC_ALL, ['en.utf8', 'en.UTF-8', 'en_US.utf8', 'en_US.UTF-8', 'en_GB.utf8', 'en_GB.UTF-8']);
 
         // allow to register commands here (e.g. through plugins)
-        $dispatcher = \Pimcore::getEventDispatcher();
+        $dispatcher = Pimcore::getEventDispatcher();
         $event = new ConsoleEvent($this);
         $dispatcher->dispatch($event, SystemEvents::CONSOLE_INIT);
 
@@ -72,7 +74,7 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
             if (($maintenanceModeHelper->isActive() || Admin::isInMaintenanceMode()) &&
                 !$event->getInput()->getOption('ignore-maintenance-mode')
             ) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     'In maintenance mode - set the flag --ignore-maintenance-mode to force execution!'
                 );
             }

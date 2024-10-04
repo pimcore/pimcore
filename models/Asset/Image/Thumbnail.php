@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Asset\Image;
 
 use Exception;
+use Pimcore;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
@@ -24,6 +25,8 @@ use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Model\Asset\Thumbnail\ImageThumbnailTrait;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Exception\ThumbnailFormatNotSupportedException;
+use Pimcore\Model\Exception\ThumbnailMaxScalingFactorException;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -81,7 +84,7 @@ final class Thumbnail implements ThumbnailInterface
                 'pathReference' => $pathReference,
                 'frontendPath' => $path,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
+            Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
             $path = $event->getArgument('frontendPath');
         }
 
@@ -91,7 +94,7 @@ final class Thumbnail implements ThumbnailInterface
     protected function hasListeners(string $eventName): bool
     {
         if (!isset(self::$hasListenersCache[$eventName])) {
-            self::$hasListenersCache[$eventName] = \Pimcore::getEventDispatcher()->hasListeners($eventName);
+            self::$hasListenersCache[$eventName] = Pimcore::getEventDispatcher()->hasListeners($eventName);
         }
 
         return self::$hasListenersCache[$eventName];
@@ -103,10 +106,15 @@ final class Thumbnail implements ThumbnailInterface
     }
 
     /**
+     * @throws ThumbnailFormatNotSupportedException
+     * @throws ThumbnailMaxScalingFactorException
+     *
      * @internal
      */
     public function generate(bool $deferredAllowed = true): void
     {
+        $this->validate();
+
         $deferred = false;
         $generated = false;
 
@@ -139,7 +147,7 @@ final class Thumbnail implements ThumbnailInterface
                 'deferred' => $deferred,
                 'generated' => $generated,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::IMAGE_THUMBNAIL);
+            Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::IMAGE_THUMBNAIL);
         }
     }
 
@@ -446,5 +454,23 @@ final class Thumbnail implements ThumbnailInterface
         }
 
         return implode(', ', $srcSetValues);
+    }
+
+    /**
+     * @throws ThumbnailFormatNotSupportedException
+     * @throws ThumbnailMaxScalingFactorException
+     */
+    private function validate(): void
+    {
+        if (!$this->asset || !$this->config) {
+            return;
+        }
+        if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
+            throw new ThumbnailFormatNotSupportedException();
+        }
+
+        if (!$this->checkMaxScalingFactor($this->config->getHighResolution())) {
+            throw new ThumbnailMaxScalingFactorException();
+        }
     }
 }

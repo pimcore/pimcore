@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow\Place;
 
+use Exception;
 use Pimcore\Helper\ContrastColor;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
@@ -40,7 +41,7 @@ class OptionsProvider implements SelectOptionsProviderInterface
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getOptions(array $context, Data $fieldDefinition): array
     {
@@ -49,7 +50,7 @@ class OptionsProvider implements SelectOptionsProviderInterface
             $workflowName = $fieldDefinition->getOptionsProviderData();
         }
         if (!$workflowName) {
-            throw new \Exception('setup workflow name as options provider data');
+            throw new Exception('setup workflow name as options provider data');
         }
 
         $options = [];

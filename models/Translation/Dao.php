@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Translation;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -178,7 +179,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->fetchOne(sprintf('SELECT * FROM translations_%s LIMIT 1;', $domain));
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
@@ -188,7 +189,7 @@ class Dao extends Model\Dao\AbstractDao
         $table = $this->getDatabaseTableName();
 
         if ($table == self::TABLE_PREFIX) {
-            throw new \Exception('Domain is missing to create new translation domain');
+            throw new Exception('Domain is missing to create new translation domain');
         }
 
         $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $table . "` (

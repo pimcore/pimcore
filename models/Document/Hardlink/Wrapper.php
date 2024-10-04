@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Hardlink;
 
+use Exception;
+use Pimcore;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Listing;
 
@@ -33,7 +35,7 @@ trait Wrapper
     /**
      * OVERWRITTEN METHODS
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(array $parameters = []): static
     {
@@ -42,7 +44,7 @@ trait Wrapper
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function update(array $params = []): void
     {
@@ -50,7 +52,7 @@ trait Wrapper
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {
@@ -130,7 +132,7 @@ trait Wrapper
         if (!isset($this->children[$cacheKey])) {
             $hardLink = $this->getHardLinkSource();
             $children = [];
-            if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
+            if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !Pimcore::inAdmin()) {
                 foreach (parent::getChildren($includingUnpublished) as $c) {
                     $c = Service::wrap($c);
                     if ($c instanceof Document\Hardlink\Wrapper\WrapperInterface) {
@@ -154,16 +156,16 @@ trait Wrapper
     {
         $hardLink = $this->getHardLinkSource();
 
-        if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
+        if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !Pimcore::inAdmin()) {
             return parent::hasChildren($includingUnpublished);
         }
 
         return false;
     }
 
-    protected function getHardlinkError(): \Exception
+    protected function getHardlinkError(): Exception
     {
-        return new \Exception('Method not supported by hard linked documents');
+        return new Exception('Method not supported by hard linked documents');
     }
 
     public function setHardLinkSource(Document\Hardlink $hardLinkSource): static

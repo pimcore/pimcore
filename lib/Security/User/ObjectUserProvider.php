@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Security\User;
 
 use Pimcore\Model\DataObject\AbstractObject;
+use ReflectionClass;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -65,7 +66,7 @@ class ObjectUserProvider implements UserProviderInterface
             throw new InvalidArgumentException(sprintf('User class %s does not exist', $className));
         }
 
-        $reflector = new \ReflectionClass($className);
+        $reflector = new ReflectionClass($className);
         if (!$reflector->isSubclassOf(AbstractObject::class)) {
             throw new InvalidArgumentException(sprintf('User class %s must be a subclass of %s', $className, AbstractObject::class));
         }

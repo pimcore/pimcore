@@ -16,13 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Maintenance\Tasks;
 
-use Pimcore\Config;
+use Pimcore;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Version;
+use Pimcore\SystemSettingsConfig;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -30,14 +31,8 @@ use Psr\Log\LoggerInterface;
  */
 class VersionsCleanupTask implements TaskInterface
 {
-    private LoggerInterface $logger;
-
-    private Config $config;
-
-    public function __construct(LoggerInterface $logger, Config $config)
+    public function __construct(private LoggerInterface $logger, private SystemSettingsConfig $config)
     {
-        $this->logger = $logger;
-        $this->config = $config;
     }
 
     public function execute(): void
@@ -66,9 +61,12 @@ class VersionsCleanupTask implements TaskInterface
 
     private function doVersionCleanup(): void
     {
-        $conf['document'] = $this->config['documents']['versions'] ?? null;
-        $conf['asset'] = $this->config['assets']['versions'] ?? null;
-        $conf['object'] = $this->config['objects']['versions'] ?? null;
+        $systemSettingsConfig = $this->config->getSystemSettingsConfig();
+        $conf = [
+            'document' => $systemSettingsConfig['documents']['versions'] ?? null,
+            'asset' => $systemSettingsConfig['assets']['versions'] ?? null,
+            'object' => $systemSettingsConfig['objects']['versions'] ?? null,
+        ];
 
         $elementTypes = [];
 
@@ -167,7 +165,7 @@ class VersionsCleanupTask implements TaskInterface
 
                 // call the garbage collector if memory consumption is > 100MB
                 if (memory_get_usage() > 100000000) {
-                    \Pimcore::collectGarbage();
+                    Pimcore::collectGarbage();
                 }
             }
         }

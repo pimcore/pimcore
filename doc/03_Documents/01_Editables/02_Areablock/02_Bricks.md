@@ -89,9 +89,9 @@ The template location defines the base path which will be used to find your temp
 locations. `<bundlePath>` is the filesystem path of the bundle the brick resides in, `<brickId>` the ID of the brick 
 as registered on the areabrick manager (see below).
 
-| Location | Path                                                                                                                                                                                       |
-|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| global   | `templates/areas/<brickId>/`                                                                                                                                                               |
+| Location | Path                                                                                                                                                                                        |
+|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| global   | `templates/areas/<brickId>/`                                                                                                                                                                |
 | bundle   | `<bundlePath>/Resources/views/areas/<brickId>/` for legacy (Symfony \<= 4) bundle structure<br/>or<br/>`<bundlePath>/templates/areas/<brickId>/` for modern (Symfony >= 5) bundle structure |
 
 Depending on the template location, the following files will be used. You can always completely control locations by 
@@ -172,35 +172,35 @@ brick metadata.
 ```twig
 /* templates/areas/iframe/view.html.twig */
 
-{% set urlField = pimcore_input('iframe_url') %}
-{% set widthField = pimcore_numeric('iframe_width') %}
-{% set heightField = pimcore_numeric('iframe_height') %}
-{% set transparentField = pimcore_checkbox('iframe_transparent') %}
+{% set urlField = pimcore_input("iframe_url") %}
+{% set widthField = pimcore_numeric("iframe_width") %}
+{% set heightField = pimcore_numeric("iframe_height") %}
+{% set transparentField = pimcore_checkbox("iframe_transparent") %}
 
 {% if editmode %}
     <div>
         <h2>IFrame</h2>
         <div>
-            URL: {{ urlField }}
+            URL: {{ urlField|raw }}
         </div>
         <br/>
         <b>Advanced Configuration</b>
         <div>
-            Width: {{ widthField }}px (default: 100%)
+            Width: {{ widthField|raw }}px (default: 100%)
         </div>
         <div>
-            Height: {{ heightField }}px (default: 400px)
+            Height: {{ heightField|raw }}px (default: 400px)
         </div>
         <div>
-            Transparent: {{ transparentField }} (default: false)
+            Transparent: {{ transparentField|raw }} (default: false)
         </div>
     </div>
 {% else %}
     {% if not urlField.isEmpty() %}
         
-        {% set transparent = 'false' %}
-        {% set width = '100%' %}
-        {% set height = '400' %}
+        {% set transparent = "false" %}
+        {% set width = "100%" %}
+        {% set height = "400" %}
 
         {% if not widthField.isEmpty() %}
             {% set width = widthField.data %}    
@@ -211,7 +211,7 @@ brick metadata.
         {% endif %}
 
         {% if transparentField.isChecked() %}
-            {% set transparent = 'true' %}    
+            {% set transparent = "true" %}    
         {% endif %}
 
         <iframe src="{{ urlField }}" width="{{ width }}" height="{{ height }}" allowtransparency="{{ transparent }}" frameborder="0"></iframe>

@@ -29,26 +29,16 @@ class PimcoreAdminListener
 {
     public function addCSSFiles(PathsEvent $event): void
     {
-        $event->setPaths(
-            array_merge(
-                $event->getPaths(),
-                [
-                    '/admin-static/css/admin-style.css'
-                ]
-            )
-        );
+        $event->addPaths([
+            '/admin-static/css/admin-style.css',
+        ]);
     }
 
     public function addJSFiles(PathsEvent $event): void
     {
-        $event->setPaths(
-            array_merge(
-                $event->getPaths(),
-                [
-                    '/admin-static/js/startup.js'
-                ]
-            )
-        );
+        $event->addPaths([
+            '/admin-static/js/startup.js',
+        ]);
     }
 }
 ```
@@ -116,8 +106,6 @@ pimcore.plugin.mybundle = Class.create({
         // the event contains the existing menu
         let menu = e.detail.menu;
 
-        
-        
         let items = [];
         // the property name is used as id with the prefix pimcore_menu_ in the html markup e.g. pimcore_menu_mybundle
         menu.mybundle = {

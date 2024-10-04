@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Symfony\Contracts\Service\ResetInterface;
+use Throwable;
 
 /**
  * @internal
@@ -33,11 +34,12 @@ class PimcoreDataCollector extends DataCollector implements ResetInterface
     ) {
     }
 
-    public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
+    public function collect(Request $request, Response $response, ?Throwable $exception = null): void
     {
         $this->data = [
             'version' => Version::getVersion(),
             'revision' => Version::getRevision(),
+            'platform_version' => Version::getPlatformVersion(),
             'context' => $this->contextResolver->getPimcoreContext($request),
         ];
     }
@@ -65,5 +67,10 @@ class PimcoreDataCollector extends DataCollector implements ResetInterface
     public function getRevision(): string
     {
         return $this->data['revision'];
+    }
+
+    public function getPlatformVersion(): ?string
+    {
+        return $this->data['platform_version'];
     }
 }

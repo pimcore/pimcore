@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Exception;
+use Pimcore;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 
 class InputQuantityValue extends AbstractQuantityValue
@@ -40,16 +42,16 @@ class InputQuantityValue extends AbstractQuantityValue
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function __toString(): string
     {
         $value = $this->getValue();
         if ($this->getUnit() instanceof Unit) {
-            $translator = \Pimcore::getContainer()->get('translator');
+            $translator = Pimcore::getContainer()->get('translator');
             $value .= ' ' . $translator->trans($this->getUnit()->getAbbreviation(), [], 'admin');
         }
 
-        return $value;
+        return $value ?? '';
     }
 }

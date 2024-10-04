@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ExportDataExtractorService\DataExtractor;
 
+use Exception;
 use Pimcore\Bundle\XliffBundle\AttributeSet\Attribute;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItem;
@@ -37,7 +38,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
     /**
      * @param string[] $targetLanguages
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function extract(TranslationItem $translationItem, string $sourceLanguage, array $targetLanguages): AttributeSet
     {
@@ -46,7 +47,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
         $result = parent::extract($translationItem, $sourceLanguage, $targetLanguages);
 
         if (!$document instanceof Document) {
-            throw new \Exception('only documents allowed');
+            throw new Exception('only documents allowed');
         }
 
         $this

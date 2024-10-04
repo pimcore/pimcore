@@ -16,7 +16,7 @@ jobs:
               env:
                   MESSAGE: |
                       ### Review Checklist
-                      - [ ] Target branch (`11.2` for bug fixes, others `11.x`)
+                      - [ ] Target branch (`11.4` for bug fixes, others `11.x`)
                       - [ ] Tests (if it's testable code, there should be a test for it - [get help](https://pimcore.com/docs/pimcore/current/Development_Documentation/Development_Tools_and_Details/Testing/Core_Tests.html))
                       - [ ] Docs (every functionality needs to be documented, [see here](https://github.com/pimcore/pimcore/tree/11.x/doc)) 
                       - [ ] [Migration](https://pimcore.com/docs/pimcore/current/Development_Documentation/Development_Tools_and_Details/Migrations.html) incl. `install.sql` (e.g. if the database schema changes, ...) 
@@ -32,4 +32,3 @@ jobs:
                         repo: context.repo.repo,
                         body: `${MESSAGE}`
                       })
-                      

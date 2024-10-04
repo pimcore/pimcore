@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use InvalidArgumentException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -94,6 +95,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->objectsAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setObjectsAllowed(bool $objectsAllowed): static
     {
         $this->objectsAllowed = $objectsAllowed;
@@ -106,6 +110,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->documentsAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setDocumentsAllowed(bool $documentsAllowed): static
     {
         $this->documentsAllowed = $documentsAllowed;
@@ -118,6 +125,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->documentTypes ?: [];
     }
 
+    /**
+     * @return $this
+     */
     public function setDocumentTypes(array $documentTypes): static
     {
         $this->documentTypes = Element\Service::fixAllowedTypes($documentTypes, 'documentTypes');
@@ -130,6 +140,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->assetsAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setAssetsAllowed(bool $assetsAllowed): static
     {
         $this->assetsAllowed = $assetsAllowed;
@@ -142,6 +155,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->assetTypes ?: [];
     }
 
+    /**
+     * @return $this
+     */
     public function setAssetTypes(array $assetTypes): static
     {
         $this->assetTypes = Element\Service::fixAllowedTypes($assetTypes, 'assetTypes');
@@ -383,6 +399,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->assetInlineDownloadAllowed;
     }
 
+    /**
+     * @return $this
+     */
     public function setAssetUploadPath(string $assetUploadPath): static
     {
         $this->assetUploadPath = $assetUploadPath;
@@ -495,7 +514,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         if (!isset($data['id'], $data['type'])) {
-            throw new \InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
+            throw new InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
         }
 
         if ($operator === '=') {
@@ -504,7 +523,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             return $listing;
         }
 
-        throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
+        throw new InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 
     public function getPhpdocInputType(): ?string

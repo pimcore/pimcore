@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use __PHP_Incomplete_Class;
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -246,7 +248,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         }
 
         foreach ($this->items as $key => $item) {
-            if ($item instanceof \__PHP_Incomplete_Class) {
+            if ($item instanceof __PHP_Incomplete_Class) {
                 unset($this->items[$key]);
                 Logger::error('brick item ' . $key . ' does not exist anymore');
             }
@@ -265,7 +267,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */

@@ -3,7 +3,7 @@
     "tinymce": {
       "js": [
         "/bundles/pimcoretinymce/build/tinymce/runtime.js",
-        "/bundles/pimcoretinymce/build/tinymce/271.js",
+        "/bundles/pimcoretinymce/build/tinymce/548.js",
         "/bundles/pimcoretinymce/build/tinymce/tinymce.js"
       ]
     }

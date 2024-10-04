@@ -16,8 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\SelectOptions\Config;
 
+use InvalidArgumentException;
 use Pimcore\Config;
 use Pimcore\Model;
+use RuntimeException;
 
 /**
  * @internal
@@ -52,7 +54,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             $data['id'] = $id;
         }
 
-        if (empty($data)) {
+        if (!$data) {
             throw new Model\Exception\NotFoundException(
                 sprintf(
                     'Select options with ID "%s" does not exist.',
@@ -108,11 +110,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $id = $this->model->getId();
         if (empty($id)) {
-            throw new \InvalidArgumentException('A select options definition needs an ID to be saved!', 1676639722696);
+            throw new InvalidArgumentException('A select options definition needs an ID to be saved!', 1676639722696);
         }
 
         if (!preg_match('/[A-Z][a-zA-Z0-9]+/', $id)) {
-            throw new \InvalidArgumentException('Invalid ID: Must start with capital letter, followed by alphanumeric characters', 1676639634486);
+            throw new InvalidArgumentException('Invalid ID: Must start with capital letter, followed by alphanumeric characters', 1676639634486);
         }
     }
 
@@ -150,7 +152,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             $report[] = $className . ': ' . implode(', ', $fieldNames);
         }
 
-        throw new \RuntimeException(
+        throw new RuntimeException(
             'Select options are still used by ' . implode(' / ', $report),
             1676887977650
         );

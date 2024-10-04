@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
+use Closure;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -28,7 +29,7 @@ use Symfony\Component\Process\Process;
  */
 class AssetsInstaller
 {
-    private ?\Closure $runCallback = null;
+    private ?Closure $runCallback = null;
 
     private ?string $composerJsonSetting = null;
 
@@ -96,7 +97,7 @@ class AssetsInstaller
         return $resolver->resolve($options);
     }
 
-    public function setRunCallback(\Closure $runCallback = null): void
+    public function setRunCallback(Closure $runCallback = null): void
     {
         $this->runCallback = $runCallback;
     }
@@ -132,11 +133,11 @@ class AssetsInstaller
             }
         }
 
-        if(in_array($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null, ['symlink', 'relative'])) {
+        if (in_array($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null, ['symlink', 'relative'])) {
             $defaults['symlink'] = true;
         }
 
-        if(($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null) === 'relative') {
+        if (($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null) === 'relative') {
             $defaults['relative'] = true;
         }
 

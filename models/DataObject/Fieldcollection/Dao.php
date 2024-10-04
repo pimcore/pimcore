@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
+use Exception;
+use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -55,13 +57,13 @@ class Dao extends Model\Dao\AbstractDao
 
             try {
                 $results = $this->db->fetchAllAssociative('SELECT * FROM ' . $tableName . ' WHERE id = ? AND fieldname = ? ORDER BY `index` ASC', [$object->getId(), $this->model->getFieldname()]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $results = [];
             }
 
             $fieldDefinitions = $definition->getFieldDefinitions(['suppressEnrichment' => true]);
             $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($type);
-            $modelFactory = \Pimcore::getContainer()->get('pimcore.model.factory');
+            $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
 
             foreach ($results as $result) {
                 /** @var DataObject\Fieldcollection\Data\AbstractData $collection */
@@ -143,8 +145,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete(DataObject\Concrete $object, bool $saveMode = false): array
     {
-        // empty or create all relevant tables
-
         /** @var DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
         $hasLocalizedFields = false;
@@ -168,7 +168,7 @@ class Dao extends Model\Dao\AbstractDao
                         'fieldname' => $this->model->getFieldname(),
                     ]);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // create definition if it does not exist
                 $definition->createUpdateTable($object->getClass());
             }
@@ -185,7 +185,7 @@ class Dao extends Model\Dao\AbstractDao
                             'fieldname' => $this->model->getFieldname(),
                         ]);
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Logger::error((string) $e);
                 }
             }

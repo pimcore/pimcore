@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
 use Doctrine\DBAL\Connection;
+use Exception;
+use Pimcore\Db\Helper;
 use Pimcore\Model\DataObject;
 
 /**
@@ -148,7 +150,7 @@ class InheritanceHelper
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function doUpdate(int $oo_id, bool $createMissingChildrenRows = false, array $params = []): void
     {
@@ -233,10 +235,11 @@ class InheritanceHelper
                 $missingIds = $this->db->fetchFirstColumn($query);
 
                 // create entries for children that don't have an entry yet
-                $originalEntry = $this->db->fetchAssociative('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' = ?', [$oo_id]);
+                $originalEntry = Helper::quoteDataIdentifiers($this->db, $this->db->fetchAssociative('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' = ?', [$oo_id]));
+
                 foreach ($missingIds as $id) {
-                    $originalEntry[$this->idField] = $id;
-                    $this->db->insert($this->querytable, $originalEntry);
+                    $originalEntry[$this->db->quoteIdentifier($this->idField)] = $id;
+                    $this->db->insert($this->db->quoteIdentifier($this->querytable), $originalEntry);
                 }
             }
         }
@@ -572,7 +575,7 @@ class InheritanceHelper
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function updateQueryTable(int $oo_id, array $ids, string $fieldname): void
     {

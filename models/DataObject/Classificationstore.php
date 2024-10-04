@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreGetDataInterface;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
@@ -94,7 +95,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function getItems(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
-        if(!$doGetInheritedValues) {
+        if (!$doGetInheritedValues) {
             return $this->items;
         }
 
@@ -152,16 +153,16 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setLocalizedKeyValue(int $groupId, int $keyId, mixed $value, string $language = null): static
     {
         if (!$groupId) {
-            throw new \Exception('groupId not valid');
+            throw new Exception('groupId not valid');
         }
 
         if (!$keyId) {
-            throw new \Exception('keyId not valid');
+            throw new Exception('keyId not valid');
         }
 
         $language = $this->getLanguage($language);
@@ -257,7 +258,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function getActiveGroups(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
-        if(!$doGetInheritedValues) {
+        if (!$doGetInheritedValues) {
             return $this->activeGroups;
         }
 
@@ -321,7 +322,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getLocalizedKeyValue(int $groupId, int $keyId, string $language = 'default', bool $ignoreFallbackLanguage = false, bool $ignoreDefaultLanguage = false): mixed
     {
@@ -408,7 +409,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function getGroupCollectionMappings(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
-        if(!$doGetInheritedValues) {
+        if (!$doGetInheritedValues) {
             return $this->groupCollectionMapping;
         }
 
@@ -486,9 +487,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
     private function mergeArrays(array $a1, array $a2): array
     {
-        foreach($a1 as $key => $value) {
-            if(array_key_exists($key, $a2)) {
-                if(is_array($value)) {
+        foreach ($a1 as $key => $value) {
+            if (array_key_exists($key, $a2)) {
+                if (is_array($value)) {
                     $a2[$key] = $this->mergeArrays($a2[$key], $value);
                 } else {
                     $a2[$key] = $value;

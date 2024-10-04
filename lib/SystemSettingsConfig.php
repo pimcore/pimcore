@@ -16,6 +16,7 @@
 namespace Pimcore;
 
 use Exception;
+use InvalidArgumentException;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Event\SystemEvents;
@@ -74,7 +75,7 @@ class SystemSettingsConfig
         // If the read target is settings-store and no data is found there,
         // load the data from the container config
         // Please see https://github.com/pimcore/pimcore/issues/15596 for more information
-        if(!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
+        if (!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
             $data = self::getConfigValuesFromContainer()['config'];
             $data['writeable'] = $repository->isWriteable();
         }
@@ -146,6 +147,7 @@ class SystemSettingsConfig
         $fallbackLanguages = [];
         $localizedErrorPages = [];
         $languages = explode(',', $values['general.validLanguages']);
+        $requiredLanguages = explode(',', $values['general.requiredLanguages']);
         $filteredLanguages = [];
         $existingValues = self::get();
 
@@ -169,12 +171,17 @@ class SystemSettingsConfig
             $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
         }
 
+        if ($values['general.domain'] && !filter_var($values['general.domain'], FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+            throw new InvalidArgumentException(sprintf('Invalid main domain name "%s"', $values['general.domain']));
+        }
+
         $settings[self::CONFIG_ID] = [
             'general' => [
                 'domain' => $values['general.domain'],
                 'redirect_to_maindomain' => $values['general.redirect_to_maindomain'],
                 'valid_languages' => $filteredLanguages,
                 'fallback_languages' => $fallbackLanguages,
+                'required_languages' => $requiredLanguages,
                 'default_language' => $values['general.defaultLanguage'],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
             ],
@@ -220,7 +227,7 @@ class SystemSettingsConfig
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function checkFallbackLanguageLoop(string $source, array $definitions, array $fallbacks = []): void
     {
@@ -230,7 +237,7 @@ class SystemSettingsConfig
                 $target = trim($l);
                 if ($target) {
                     if (in_array($target, $fallbacks)) {
-                        throw new \Exception("Language `$source` | `$target` causes an infinte loop.");
+                        throw new Exception("Language `$source` | `$target` causes an infinte loop.");
                     }
                     $fallbacks[] = $target;
 
@@ -238,7 +245,7 @@ class SystemSettingsConfig
                 }
             }
         } else {
-            throw new \Exception("Language `$source` doesn't exist");
+            throw new Exception("Language `$source` doesn't exist");
         }
     }
 

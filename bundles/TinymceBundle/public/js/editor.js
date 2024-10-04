@@ -26,6 +26,8 @@ pimcore.bundle.tinymce.editor = Class.create({
         if (e.detail.context === 'object') {
             if (!isNaN(e.detail.config.maxCharacters) && e.detail.config.maxCharacters > 0) {
                 this.maxChars = e.detail.config.maxCharacters;
+            }else{
+                this.maxChars = -1;
             }
         }
 
@@ -49,16 +51,21 @@ pimcore.bundle.tinymce.editor = Class.create({
             language = userLanguage;
         }
         if(language !== 'en') {
-            language = {language: language};
+            language = {
+                language_url: '/bundles/pimcoretinymce/js/langs/' + language + '.js',
+                language: language,
+            };
         } else {
             language = {};
         }
 
         const toolbar1 = 'undo redo | blocks | ' +
             'bold italic | alignleft aligncenter ' +
-            'alignright alignjustify | link';
+            'alignright alignjustify | link hr charmap';
 
-        const toolbar2 = 'table | bullist numlist outdent indent | removeformat | code | help';
+        const toolbar2 = 'table | bullist numlist outdent indent | removeformat | ' +
+            'code | searchreplace visualblocks help';
+
         let toolbar;
         if (e.detail.context === 'translation') {
             toolbar = {
@@ -83,26 +90,42 @@ pimcore.bundle.tinymce.editor = Class.create({
             defaultConfig = pimcore[e.detail.context][subSpace].wysiwyg ? pimcore[e.detail.context][subSpace].wysiwyg.defaultEditorConfig : {};
         }
 
-        tinymce.init(Object.assign({
+        const maxChars = this.maxChars;
+        let changedContent = false;
+
+        function checkCharCount() {
+            tinymce.activeEditor.getBody().style.border = '';
+            tinymce.activeEditor.getElement().setAttribute('title', '');
+
+            const charCount = tinymce.activeEditor.plugins.wordcount.body.getCharacterCount();
+
+            if (maxChars !== -1 && charCount > maxChars) {
+                tinymce.activeEditor.getBody().style.border = '1px solid red';
+                tinymce.activeEditor.getElement().setAttribute('title', t('maximum_length_is') + ' ' + maxChars);
+            }
+        }
+
+        const finalConfig = Object.assign({
             selector: `#${this.textareaId}`,
             height: 500,
             menubar: false,
             plugins: [
-                'autolink', 'lists', 'link', 'image', 'code',
-                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                'advlist', 'autolink', 'charmap', 'code', 'help', 'image', 'link', 'lists',
+                'media', 'searchreplace', 'table', 'visualblocks', 'wordcount'
             ],
             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
             inline: true,
             base_url: '/bundles/pimcoretinymce/build/tinymce',
             suffix: '.min',
             convert_urls: false,
+            convert_unsafe_embeds: true,
             extended_valid_elements: 'a[class|name|href|target|title|pimcore_id|pimcore_type],img[class|style|longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align|pimcore_id|pimcore_type]',
             init_instance_callback: function (editor) {
+                // Do an initial check for character count based on the initial content before there is any user input
+                checkCharCount();
+
                 editor.on('input', function (eChange) {
-                    const charCount = tinymce.activeEditor.plugins.wordcount.body.getCharacterCount();
-                    if (this.maxChars !== -1 && charCount > this.maxChars) {
-                        pimcore.helpers.showNotification(t('error'), t('char_count_limit_reached'), 'error');
-                    }
+                    checkCharCount();
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
                         detail: {
                             e: eChange,
@@ -111,7 +134,14 @@ pimcore.bundle.tinymce.editor = Class.create({
                         }
                     }));
                 }.bind(this));
+                editor.on('change', function (eChange) {
+                    changedContent = true;
+                }.bind(this));
                 editor.on('blur', function (eChange) {
+                    if (!changedContent) {
+                        return;
+                    }
+                    changedContent = false;
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
                         detail: {
                             e: eChange,
@@ -121,8 +151,16 @@ pimcore.bundle.tinymce.editor = Class.create({
                     }));
                 }.bind(this));
             }.bind(this)
+        }, language, toolbar, defaultConfig, this.config);
 
-        }, language, toolbar, defaultConfig, this.config));
+        document.dispatchEvent(new CustomEvent(pimcore.events.createWysiwygConfig, {
+            detail: {
+                data: finalConfig,
+                context: e.detail.context
+            }
+        }));
+
+        tinymce.init(finalConfig);
 
     },
 

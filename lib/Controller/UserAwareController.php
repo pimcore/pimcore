@@ -22,6 +22,7 @@ use Pimcore\Security\User\User as UserProxy;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Contracts\Service\Attribute\Required;
+use Throwable;
 
 abstract class UserAwareController extends Controller
 {
@@ -67,7 +68,7 @@ abstract class UserAwareController extends Controller
 
     protected function createAccessDeniedHttpException(
         string $message = 'Access Denied.',
-        \Throwable $previous = null,
+        Throwable $previous = null,
         int $code = 0,
         array $headers = []
     ): AccessDeniedHttpException {

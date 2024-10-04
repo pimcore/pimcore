@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Thumbnail;
 
+use Exception;
+use Pimcore\Config as PimcoreConfig;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
@@ -186,7 +188,7 @@ trait ImageThumbnailTrait
                         $dimensions['height'] = $thumbnail['height'];
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // noting to do
             }
         }
@@ -313,7 +315,7 @@ trait ImageThumbnailTrait
     public function getFrontendPath(): string
     {
         $path = $this->getPath(['deferredAllowed' => true, 'frontend' => true]);
-        if (!\preg_match('@^(https?|data):@', $path)) {
+        if (!preg_match('@^(https?|data):@', $path)) {
             $path = \Pimcore\Tool::getHostUrl() . $path;
         }
 
@@ -323,7 +325,7 @@ trait ImageThumbnailTrait
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getLocalFile(): ?string
     {
@@ -427,5 +429,43 @@ trait ImageThumbnailTrait
         $thumb->reset();
 
         return $thumb;
+    }
+
+    private function checkAllowedFormats(string $format, ?Asset $asset = null): bool
+    {
+        $format = strtolower($format);
+        if ($asset) {
+            if (
+                $format === 'original' ||
+                $format === 'source'
+            ) {
+                return true;
+            }
+
+            $original = strtolower(pathinfo($asset->getRealFullPath(), PATHINFO_EXTENSION));
+
+            if ($format === $original) {
+                return true;
+            }
+        }
+
+        $assetConfig = PimcoreConfig::getSystemConfiguration('assets');
+
+        return in_array(
+            $format,
+            $assetConfig['thumbnails']['allowed_formats'],
+            true
+        );
+    }
+
+    private function checkMaxScalingFactor(?float $scalingFactor = null): bool
+    {
+        if ($scalingFactor === null) {
+            return true;
+        }
+
+        $assetConfig = PimcoreConfig::getSystemConfiguration('assets');
+
+        return $scalingFactor <= $assetConfig['thumbnails']['max_scaling_factor'];
     }
 }

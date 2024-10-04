@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Exception;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\TemplateResolver;
@@ -99,7 +100,7 @@ class ContentTemplateListener implements EventSubscriberInterface
         $duplicateKeys = array_unique(array_diff_assoc($mergedArray, array_unique($mergedArray)));
 
         if ($duplicateKeys) {
-            throw new \Exception('Duplicate keys found: '.implode(', ', array_values($duplicateKeys)).'. Please use unique names for your controller arguments, controller results and template variables.');
+            throw new Exception('Duplicate keys found: '.implode(', ', array_values($duplicateKeys)).'. Please use unique names for your controller arguments, controller results and template variables.');
         }
 
         return array_merge($controllerArguments, $controllerResults, $vars);

@@ -15,8 +15,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Pimcore\Db\Helper;
 use Pimcore\Model\DataObject;
 
 /**
@@ -52,9 +50,9 @@ trait Dao
                                 $columnName .= ',`fieldname`';
                             }
                         }
-                        Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
-                            [UniqueConstraintViolationException::class]
-                        );
+                        if ($this->indexDoesNotExist($table, $prefix, $indexName)) {
+                            $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName . '` (' . $columnName . ');');
+                        }
                     }
                 } else {
                     // single -column field
@@ -67,21 +65,25 @@ trait Dao
                             $columnName .= ',`fieldname`';
                         }
                     }
-                    Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
-                        [UniqueConstraintViolationException::class]
-                    );
+                    if ($this->indexDoesNotExist($table, $prefix, $indexName)) {
+                        $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName . '` (' . $columnName . ');');
+                    }
                 }
             } else {
                 if (is_array($columnType)) {
                     // multicolumn field
                     foreach ($columnType as $fkey => $fvalue) {
-                        $columnName = $field->getName().'__'.$fkey;
-                        Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `'. $prefix . $columnName.'`;');
+                        $indexName = $field->getName().'__'.$fkey;
+                        if ($this->indexExists($table, $prefix, $indexName)) {
+                            $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $indexName . '`;');
+                        }
                     }
                 } else {
                     // single -column field
-                    $columnName = $field->getName();
-                    Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `'. $prefix . $columnName.'`;');
+                    $indexName = $field->getName();
+                    if ($this->indexExists($table, $prefix, $indexName)) {
+                        $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $indexName . '`;');
+                    }
                 }
             }
         }
@@ -119,6 +121,7 @@ trait Dao
             //if (!in_array($value, $protectedColumns)) {
             if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
                 $dropColumns[] = 'DROP COLUMN `' . $value . '`';
+                $this->removeIndices($table, [$value], []);
             }
         }
         if ($dropColumns) {
@@ -172,11 +175,36 @@ trait Dao
         if ($columnsToRemove) {
             $lowerCaseColumns = array_map('strtolower', $protectedColumns);
             foreach ($columnsToRemove as $value) {
-                if (!in_array(strtolower($value), $lowerCaseColumns)) {
-                    Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `u_index_'. $value . '`;');
+                if (!in_array(strtolower($value), $lowerCaseColumns) && $this->indexExists($table, 'u_index_', $value)) {
+                    $this->db->executeQuery('ALTER TABLE `'.$table.'` DROP INDEX `u_index_'. $value . '`;');
                 }
             }
             $this->resetValidTableColumnsCache($table);
         }
+    }
+
+    /**
+     * For MariaDB, it would be possible to use 'ADD/DROP INDEX IF EXISTS' but this is not supported by MySQL
+     */
+    protected function indexExists(string $table, string $prefix, string $indexName): bool
+    {
+        $exist = $this->db->fetchFirstColumn(
+            'SELECT COUNT(*)
+            FROM information_schema.statistics
+            WHERE table_name = ?
+                AND index_name = ?
+                AND table_schema = DATABASE();',
+            [
+                $table,
+                $prefix . $indexName,
+            ]
+        );
+
+        return (count($exist) > 0) && ($exist[0] > 0);
+    }
+
+    protected function indexDoesNotExist(string $table, string $prefix, string $indexName): bool
+    {
+        return !$this->indexExists($table, $prefix, $indexName);
     }
 }

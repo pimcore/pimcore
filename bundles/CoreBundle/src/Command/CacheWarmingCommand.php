@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use InvalidArgumentException;
 use Pimcore\Cache\Tool\Warming;
 use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -117,7 +118,7 @@ class CacheWarmingCommand extends AbstractCommand
             $assetTypes = $this->getArrayOption('assetTypes', 'validAssetTypes', 'asset type') ?? [];
             $objectTypes = $this->getArrayOption('objectTypes', 'validObjectTypes', 'object type') ?? [];
             $objectClasses = $this->input->getOption('classes') ?? [];
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             $this->writeError($e->getMessage());
 
             return 1;
@@ -205,7 +206,7 @@ class CacheWarmingCommand extends AbstractCommand
                 if (!in_array($value, $this->$property)) {
                     $message = sprintf('Invalid %s: %s', $singular, $value);
 
-                    throw new \InvalidArgumentException($message);
+                    throw new InvalidArgumentException($message);
                 }
             }
         }

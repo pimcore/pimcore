@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Metadata\Predefined;
 
+use Exception;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\CallableFilterListingInterface;
 use Pimcore\Model\Listing\CallableOrderListingInterface;
@@ -66,12 +67,12 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
      *
      * @return \Pimcore\Model\Metadata\Predefined[]|null
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByTargetType(string $type, array|string $subTypes = null): ?array
     {
         if ($type !== 'asset') {
-            throw new \Exception('other types than assets are currently not supported');
+            throw new Exception('other types than assets are currently not supported');
         }
 
         $list = new self();

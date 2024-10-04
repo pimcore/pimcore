@@ -24,25 +24,26 @@ In addition to the standard Twig extensions, Pimcore adds some additional powerf
 
 All Twig extension functions are described below in detail, the following tables give just a short overview of all available extensions.
 
-| Extension                                | Description                                                       |
-|------------------------------------------|-------------------------------------------------------------------|
-| `pimcore_cache()`         | Simple in-template caching functionality                                         |
-| `pimcore_device()`        | Helps implementing adaptive designs                                              |
-| `pimcore_glossary`        | Twig Filter: Apply filter on content to pass it to Glossary engine               |
-| `pimcore_placeholder()`   | Adding and embedding custom placeholders, e.g. for special header tags, etc.     |
-| `pimcore_head_link()`     | Embeding / managing referenced stylesheets (alternative to `assets()`)           |
-| `pimcore_head_meta()`     | Managing your \<meta\> elements in your HTML document                            |
-| `pimcore_head_script()`   | Managing your \<scripts\> elements                                               |
-| `pimcore_head_style()`    | Managing inline styles (pendant to `headLink()` for inline styles)               |
-| `pimcore_head_title()`    | Create and store the HTML document's `<title>` for later retrieval and output    |
-| `pimcore_inc()`           | Use this function to directly include a Pimcore document                         |
-| `pimcore_inline_script`   | Managing inline scripts (pendant to `headScript()` for inline scripts)           |
-| `pimcore_build_nav()`, `pimcore_render_nav()`, `pimcore_nav_renderer()`   | Embed and build navigations based on the document structure                             |
-| `pimcore_url()`           | An alternative to `url()` and `path()`                                           |
-| `pimcore_website_config()`| Fetch website settings or specific setting (first param: key) for the current site |
-| `pimcore_image_thumbnail()` | Returns a path to a given thumbnail on image                                   |
-| `pimcore_image_thumbnail_html()` | Returns html for displaying the thumbnail image                           |
-| `pimcore_supported_locales()` | Use this function to get a list of supported locales                         |
+| Extension                                                               | Description                                                                       |
+|-------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| `pimcorecache`                                                          | Simple in-template caching functionality                                          |
+| `pimcore_cache()` (deprecated)                                          | Simple in-template caching functionality (deprecated legacy version)              |
+| `pimcore_device()`                                                      | Helps implementing adaptive designs                                               |
+| `pimcore_glossary`                                                      | Twig Filter: Apply filter on content to pass it to Glossary engine                |
+| `pimcore_placeholder()`                                                 | Adding and embedding custom placeholders, e.g. for special header tags, etc.      |
+| `pimcore_head_link()`                                                   | Embeding / managing referenced stylesheets (alternative to `assets()`)            |
+| `pimcore_head_meta()`                                                   | Managing your \<meta\> elements in your HTML document                             |
+| `pimcore_head_script()`                                                 | Managing your \<scripts\> elements                                                |
+| `pimcore_head_style()`                                                  | Managing inline styles (pendant to `headLink()` for inline styles)                |
+| `pimcore_head_title()`                                                  | Create and store the HTML document's `<title>` for later retrieval and output     |
+| `pimcore_inc()`                                                         | Use this function to directly include a Pimcore document                          |
+| `pimcore_inline_script`                                                 | Managing inline scripts (pendant to `headScript()` for inline scripts)            |
+| `pimcore_build_nav()`, `pimcore_render_nav()`, `pimcore_nav_renderer()` | Embed and build navigations based on the document structure                       |
+| `pimcore_url()`                                                         | An alternative to `url()` and `path()`                                            |
+| `pimcore_website_config()`                                              | Fetch website settings or specific setting (first param: key) for the current site |
+| `pimcore_image_thumbnail()`                                             | Returns a path to a given thumbnail on image                                      |
+| `pimcore_image_thumbnail_html()`                                        | Returns html for displaying the thumbnail image                                   |
+| `pimcore_supported_locales()`                                           | Use this function to get a list of supported locales                              |
 
 Pimcore also adds some Twig tests for evaluating boolean conditions e.g.
 ```twig
@@ -102,11 +103,42 @@ The following tests are only available if the [PimcoreNewsletterBundle](https://
 You can also create your own custom Twig Extension to make certain functionalities available to your views.  
 Here you can find an example how to [create](https://symfony.com/doc/current/templating/twig_extension.html)
 your own Twig Extension.
-    
-### `pimcore_cache`
-This is an implementation of an in-template cache. You can use this to cache some parts directly in the template, 
-independent of the other global definable caching functionality. This can be useful for templates which need a lot 
+
+### `pimcorecache`
+
+This is an implementation of an in-template cache. You can use this to cache some parts directly in the template,
+independent of the other global definable caching functionality. This can be useful for templates which need a lot
 of calculation or require a huge amount of objects (like navigations, ...).
+
+`{% pimcorecache "cache_key" tags([...]) ttl(int) force(bool) %}`
+
+
+| Name        | Type             | Description                                                                                                                                                                                                                              |
+|-------------|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `cache_key` | string           | Key/name of cache item                                                                                                                                                                                                                   |
+| `tags`      | string, string[] | One or multiple additional cache tags. The `in_template` cache tag is automatically added to all items. When no ttl is defined the `output` cache tag is additionally added.                                                             |
+| `ttl`       | int              | Time to life - lifetime in seconds. If you define no ttl the behavior is like the output cache, so if you make any change in Pimcore, the cache will be flushed. When specifying a lifetime this is independent from changes in the CMS. |
+| `force`     | bool             | Force caching, even when request is done within Pimcore admin interface                                                                                                                                                                  |
+
+##### Examples
+
+```twig
+{% pimcorecache "test_cache_key" ttl(60) %}
+    <h1>This is some cached microtime</h1>
+    {{ 'now'|date('U') }}
+{% endpimcorecache %}
+```
+
+```twig
+{# example with all options #}
+{% pimcorecache "test_cache_key" ttl(60) tags(['custom_tag']) force(true) %}
+    <h1>This is some cached microtime</h1>
+    {{ 'now'|date('U') }}
+{% endpimcorecache %}
+```
+    
+### `pimcore_cache` (deprecated)
+This is a deprecated alternative approach to the `pimcorecache` extension. Use `pimcorecache` instead.
 
 `pimcore_cache( name, lifetime, force)`
 

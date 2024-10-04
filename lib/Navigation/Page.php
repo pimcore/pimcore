@@ -39,6 +39,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Navigation;
 
+use Exception;
 use Pimcore\Navigation\Page\Url;
 
 abstract class Page extends Container
@@ -163,7 +164,7 @@ abstract class Page extends Container
      *
      * @return Url|Page        a page instance
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function factory(array $options): Url|Page
     {
@@ -184,7 +185,7 @@ abstract class Page extends Container
 
                 $page = new $type($options);
                 if (!$page instanceof self) {
-                    throw new \Exception(sprintf(
+                    throw new Exception(sprintf(
                         'Invalid argument: Detected type "%s", which is not an instance of Page',
                         $type
                     ));
@@ -204,7 +205,7 @@ abstract class Page extends Container
                 $message .= ' (Page label: ' . $options['label'] . ')';
             }
 
-            throw new \Exception($message);
+            throw new Exception($message);
         }
     }
 
@@ -213,7 +214,7 @@ abstract class Page extends Container
      *
      * @param array|null $options   [optional] page options. Default is null, which should set defaults.
      *
-     * @throws \Exception    if invalid options are given
+     * @throws Exception    if invalid options are given
      */
     public function __construct(array $options = null)
     {
@@ -245,7 +246,7 @@ abstract class Page extends Container
      *
      * @return $this       fluent interface, returns self
      *
-     * @throws \Exception  if invalid options are given
+     * @throws Exception  if invalid options are given
      */
     public function setOptions(array $options): static
     {
@@ -361,7 +362,7 @@ abstract class Page extends Container
      *
      * @return $this fluent interface, returns self
      *
-     * @throws \Exception  if not given string or null
+     * @throws Exception  if not given string or null
      */
     public function setTitle(?string $title = null): static
     {
@@ -411,12 +412,12 @@ abstract class Page extends Container
      *
      * @return $this fluent interface, returns self
      *
-     * @throws \Exception if the string length not equal to one
+     * @throws Exception if the string length not equal to one
      */
     public function setAccesskey(?string $character = null): static
     {
         if (is_string($character) && 1 !== strlen($character)) {
-            throw new \Exception('Invalid argument: $character must be a single character or null');
+            throw new Exception('Invalid argument: $character must be a single character or null');
         }
 
         $this->_accesskey = $character;
@@ -494,7 +495,7 @@ abstract class Page extends Container
      *
      * @return $this fluent interface, returns self
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setRev(?array $relations = null): static
     {
@@ -624,7 +625,7 @@ abstract class Page extends Container
      *
      * @return $this       fluent interface, returns self
      *
-     * @throws \Exception  if order is not integer or null
+     * @throws Exception  if order is not integer or null
      */
     public function setOrder(int|string $order = null): static
     {
@@ -636,7 +637,7 @@ abstract class Page extends Container
         }
 
         if (null !== $order && !is_int($order)) {
-            throw new \Exception('Invalid argument: $order must be an integer or null, ' .
+            throw new Exception('Invalid argument: $order must be an integer or null, ' .
                     'or a string that casts to an integer');
         }
 
@@ -769,12 +770,12 @@ abstract class Page extends Container
      *
      * @return $this fluent interface, returns self
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setParent(?Container $parent = null): static
     {
         if ($parent === $this) {
-            throw new \Exception('A page cannot have itself as a parent');
+            throw new Exception('A page cannot have itself as a parent');
         }
 
         // return if the given parent already is parent
@@ -819,12 +820,12 @@ abstract class Page extends Container
      *
      * @return $this       fluent interface, returns self
      *
-     * @throws \Exception  if property name is invalid
+     * @throws Exception  if property name is invalid
      */
     public function set(string $property, mixed $value): static
     {
         if (empty($property)) {
-            throw new \Exception('Invalid argument: $property must be a non-empty string');
+            throw new Exception('Invalid argument: $property must be a non-empty string');
         }
 
         $method = 'set' . self::_normalizePropertyName($property);
@@ -849,12 +850,12 @@ abstract class Page extends Container
      *
      * @return mixed                      the property's value or null
      *
-     * @throws \Exception  if property name is invalid
+     * @throws Exception  if property name is invalid
      */
     public function get(string $property): mixed
     {
         if (empty($property)) {
-            throw new \Exception('Invalid argument: $property must be a non-empty string');
+            throw new Exception('Invalid argument: $property must be a non-empty string');
         }
 
         $method = 'get' . self::_normalizePropertyName($property);
@@ -876,7 +877,7 @@ abstract class Page extends Container
      *
      * Magic overload for enabling <code>$page->propname = $value</code>.
      *
-     * @throws \Exception  if property name is invalid
+     * @throws Exception  if property name is invalid
      */
     public function __set(string $name, mixed $value): void
     {
@@ -892,7 +893,7 @@ abstract class Page extends Container
      *
      * @return mixed                      property value or null
      *
-     * @throws \Exception  if property name is invalid
+     * @throws Exception  if property name is invalid
      */
     public function __get(string $name)
     {
@@ -931,13 +932,13 @@ abstract class Page extends Container
      *
      * @return void
      *
-     * @throws \Exception  if the property is native
+     * @throws Exception  if the property is native
      */
     public function __unset(string $name)
     {
         $method = 'set' . self::_normalizePropertyName($name);
         if (method_exists($this, $method)) {
-            throw new \Exception(sprintf('Unsetting native property "%s" is not allowed', $name));
+            throw new Exception(sprintf('Unsetting native property "%s" is not allowed', $name));
         }
 
         unset($this->_properties[$name]);
@@ -1056,7 +1057,7 @@ abstract class Page extends Container
      */
     final public function hashCode(): int
     {
-        return \spl_object_id($this);
+        return spl_object_id($this);
     }
 
     public function toArray(): array

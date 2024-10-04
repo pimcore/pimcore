@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
+use Pimcore;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
@@ -138,7 +140,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
                     if ($source instanceof DataObject\Concrete) {
                         /** @var DataObject\Data\ObjectMetadata $metaData */
-                        $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
+                        $metaData = Pimcore::getContainer()->get('pimcore.model.factory')
                             ->build(DataObject\Data\ObjectMetadata::class, [
                                 'fieldname' => $this->getName(),
                                 'columns' => $this->getColumnKeys(),
@@ -194,7 +196,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
             return ',' . implode(',', $ids) . ',';
         }
 
-        throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
+        throw new Exception('invalid data passed to getDataForQueryResource - must be array');
     }
 
     /**
@@ -223,7 +225,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
                         try {
                             $columnData[$c['key']] = $metaObject->$getter();
-                        } catch (\Exception $e) {
+                        } catch (Exception $e) {
                             Logger::debug('Meta column '.$c['key'].' does not exist');
                         }
                     }
@@ -257,7 +259,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $o = DataObject\Concrete::getById($relation['id']);
                 if ($o && $o->getClassName() == $this->getAllowedClassId()) {
                     /** @var DataObject\Data\ObjectMetadata $metaData */
-                    $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
+                    $metaData = Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
                             'columns' => $this->getColumnKeys(),
@@ -311,6 +313,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $items = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
+                if (!($metaObject instanceof DataObject\Data\ObjectMetadata)) {
+                    continue;
+                }
                 $o = $metaObject->getObject();
 
                 if (!$o) {
@@ -535,7 +540,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
         if (isset($context['containerType'], $context['subContainerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick') && $context['subContainerType'] === 'localizedfield') {
             if ($context['containerType'] === 'objectbrick') {
-                throw new \Exception('deletemeta not implemented');
+                throw new Exception('deletemeta not implemented');
             }
             $containerName = $context['fieldname'] ?? null;
             $index = $context['index'];
@@ -566,6 +571,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setAllowedClassId(?string $allowedClassId): static
     {
         $this->allowedClassId = $allowedClassId;
@@ -648,7 +656,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         /** @var DataObject\Data\ObjectMetadata $temp */
-        $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
+        $temp = Pimcore::getContainer()->get('pimcore.model.factory')
             ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                 'fieldname' => null,
             ]);
@@ -715,7 +723,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
         $this->visibleFieldDefinitions = [];
 
-        $translator = \Pimcore::getContainer()->get('translator');
+        $translator = Pimcore::getContainer()->get('translator');
 
         $visibleFields = explode(',', $this->visibleFields);
         foreach ($visibleFields as $field) {
@@ -890,6 +898,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this->allowMultipleAssignments;
     }
 
+    /**
+     * @return $this
+     */
     public function setAllowMultipleAssignments(bool $allowMultipleAssignments): static
     {
         $this->allowMultipleAssignments = $allowMultipleAssignments;

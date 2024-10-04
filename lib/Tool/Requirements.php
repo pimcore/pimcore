@@ -16,10 +16,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
+use DateTime;
+use DateTimeZone;
 use Doctrine\DBAL\Connection;
+use Exception;
+use IntlDateFormatter;
 use Pimcore\Helper\GotenbergHelper;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
+use ReflectionClass;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
@@ -58,7 +63,7 @@ final class Requirements
                     'state' => $varWritable ? Check::STATE_OK : Check::STATE_ERROR,
                     'message' => str_replace(PIMCORE_PROJECT_ROOT, '', $varDir) . ' needs to be writable by PHP',
                 ]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $checks[] = new Check([
                     'name' => str_replace(PIMCORE_PROJECT_ROOT, '', $varDir) . ' (not checked - too many files)',
                     'state' => Check::STATE_WARNING,
@@ -127,7 +132,7 @@ final class Requirements
                   field varchar(190) DEFAULT NULL,
                   PRIMARY KEY (id)
                 ) DEFAULT CHARSET=utf8mb4;');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -141,7 +146,7 @@ final class Requirements
 
         try {
             $db->executeQuery('ALTER TABLE __pimcore_req_check ADD COLUMN alter_field varchar(190) NULL DEFAULT NULL');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -156,7 +161,7 @@ final class Requirements
         try {
             $db->executeQuery('CREATE INDEX field_alter_field ON __pimcore_req_check (field, alter_field);');
             $db->executeQuery('DROP INDEX field_alter_field ON __pimcore_req_check;');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -170,7 +175,7 @@ final class Requirements
 
         try {
             $db->executeQuery('ALTER TABLE __pimcore_req_check ADD FULLTEXT INDEX `fulltextFieldIndex` (`field`)');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -187,7 +192,7 @@ final class Requirements
                 'field' => uniqid(),
                 'alter_field' => uniqid(),
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -204,7 +209,7 @@ final class Requirements
                 'field' => uniqid(),
                 'alter_field' => uniqid(),
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -218,7 +223,7 @@ final class Requirements
 
         try {
             $db->fetchAllAssociative('SELECT * FROM __pimcore_req_check');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -232,7 +237,7 @@ final class Requirements
 
         try {
             $db->executeQuery('CREATE OR REPLACE VIEW __pimcore_req_check_view AS SELECT * FROM __pimcore_req_check');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -246,7 +251,7 @@ final class Requirements
 
         try {
             $db->fetchAllAssociative('SELECT * FROM __pimcore_req_check_view');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -260,7 +265,7 @@ final class Requirements
 
         try {
             $db->executeQuery('DELETE FROM __pimcore_req_check');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -274,7 +279,7 @@ final class Requirements
 
         try {
             $db->executeQuery('SHOW CREATE VIEW __pimcore_req_check_view');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -288,7 +293,7 @@ final class Requirements
 
         try {
             $db->executeQuery('SHOW CREATE TABLE __pimcore_req_check');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -302,7 +307,7 @@ final class Requirements
 
         try {
             $db->executeQuery('DROP VIEW __pimcore_req_check_view');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -316,7 +321,7 @@ final class Requirements
 
         try {
             $db->executeQuery('DROP TABLE __pimcore_req_check');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -335,7 +340,7 @@ final class Requirements
                 )
                 SELECT * from counter'
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $queryCheck = false;
         }
 
@@ -357,7 +362,7 @@ final class Requirements
         // PHP CLI BIN
         try {
             $phpCliBin = (bool) \Pimcore\Tool\Console::getPhpCli();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $phpCliBin = false;
         }
 
@@ -375,7 +380,7 @@ final class Requirements
         // FFMPEG BIN
         try {
             $ffmpegBin = (bool) \Pimcore\Video\Adapter\Ffmpeg::getFfmpegCli();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $ffmpegBin = false;
         }
 
@@ -387,7 +392,7 @@ final class Requirements
         // Chromium or Gotenberg
         try {
             $htmlToImage = \Pimcore\Image\HtmlToImage::isSupported();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $htmlToImage = false;
         }
 
@@ -399,7 +404,7 @@ final class Requirements
         // ghostscript BIN
         try {
             $ghostscriptBin = (bool) \Pimcore\Document\Adapter\Ghostscript::getGhostscriptCli();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $ghostscriptBin = false;
         }
 
@@ -410,10 +415,10 @@ final class Requirements
 
         // LibreOffice BIN
         $libreofficeGotenberg = GotenbergHelper::isAvailable();
-        if(!$libreofficeGotenberg) {
+        if (!$libreofficeGotenberg) {
             try {
                 $libreofficeGotenberg = (bool)\Pimcore\Document\Adapter\LibreOffice::getLibreOfficeCli();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $libreofficeGotenberg = false;
             }
         }
@@ -427,7 +432,7 @@ final class Requirements
         foreach (['jpegoptim', 'pngquant', 'optipng', 'exiftool'] as $optimizerName) {
             try {
                 $optimizerAvailable = \Pimcore\Tool\Console::getExecutable($optimizerName);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $optimizerAvailable = false;
             }
 
@@ -440,7 +445,7 @@ final class Requirements
         // timeout binary
         try {
             $timeoutBin = (bool) \Pimcore\Tool\Console::getTimeoutBinary();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $timeoutBin = false;
         }
 
@@ -452,7 +457,7 @@ final class Requirements
         // pdftotext binary
         try {
             $pdftotextBin = (bool) \Pimcore\Document\Adapter\Ghostscript::getPdftotextCli();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $pdftotextBin = false;
         }
 
@@ -463,7 +468,7 @@ final class Requirements
 
         try {
             $graphvizAvailable = \Pimcore\Tool\Console::getExecutable('dot');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $graphvizAvailable = false;
         }
 
@@ -488,7 +493,7 @@ final class Requirements
         $memoryLimitMessage = '';
 
         // check bytes of memory limit if it's not set to unlimited ('-1')
-        // http://php.net/manual/en/ini.core.php#ini.memory-limit
+        // https://php.net/manual/en/ini.core.php#ini.memory-limit
         if ($memoryLimit !== '-1') {
             $memoryLimit = filesize2bytes($memoryLimit . 'B');
             if ($memoryLimit < 67108000) {
@@ -502,7 +507,7 @@ final class Requirements
 
         $checks[] = new Check([
             'name' => 'memory_limit (in php.ini)',
-            'link' => 'http://www.php.net/memory_limit',
+            'link' => 'https://www.php.net/manual/en/ini.core.php#ini.memory-limit',
             'state' => $memoryLimitState,
             'message' => $memoryLimitMessage,
         ]);
@@ -510,87 +515,87 @@ final class Requirements
         // pdo_mysql
         $checks[] = new Check([
             'name' => 'PDO MySQL',
-            'link' => 'http://www.php.net/pdo_mysql',
+            'link' => 'https://www.php.net/pdo_mysql',
             'state' => @constant('PDO::MYSQL_ATTR_FOUND_ROWS') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // iconv
         $checks[] = new Check([
             'name' => 'iconv',
-            'link' => 'http://www.php.net/iconv',
+            'link' => 'https://www.php.net/iconv',
             'state' => function_exists('iconv') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // dom
         $checks[] = new Check([
             'name' => 'Document Object Model (DOM)',
-            'link' => 'http://www.php.net/dom',
+            'link' => 'https://www.php.net/dom',
             'state' => class_exists('DOMDocument') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // simplexml
         $checks[] = new Check([
             'name' => 'SimpleXML',
-            'link' => 'http://www.php.net/simplexml',
+            'link' => 'https://www.php.net/simplexml',
             'state' => class_exists('SimpleXMLElement') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // gd
         $checks[] = new Check([
             'name' => 'GD',
-            'link' => 'http://www.php.net/gd',
+            'link' => 'https://www.php.net/gd',
             'state' => function_exists('gd_info') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // exif
         $checks[] = new Check([
             'name' => 'EXIF',
-            'link' => 'http://www.php.net/exif',
+            'link' => 'https://www.php.net/exif',
             'state' => function_exists('exif_read_data') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // multibyte support
         $checks[] = new Check([
             'name' => 'Multibyte String (mbstring)',
-            'link' => 'http://www.php.net/mbstring',
+            'link' => 'https://www.php.net/mbstring',
             'state' => function_exists('mb_strcut') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // file_info support
         $checks[] = new Check([
             'name' => 'File Information (file_info)',
-            'link' => 'http://www.php.net/file_info',
+            'link' => 'https://www.php.net/file_info',
             'state' => function_exists('finfo_open') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // zip
         $checks[] = new Check([
             'name' => 'zip',
-            'link' => 'http://www.php.net/zip',
+            'link' => 'https://www.php.net/zip',
             'state' => class_exists('ZipArchive') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // gzip
         $checks[] = new Check([
             'name' => 'zlib / gzip',
-            'link' => 'http://www.php.net/zlib',
+            'link' => 'https://www.php.net/zlib',
             'state' => function_exists('gzcompress') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // Intl
         $checks[] = new Check([
             'name' => 'Intl',
-            'link' => 'http://www.php.net/intl',
+            'link' => 'https://www.php.net/intl',
             'state' => extension_loaded('intl') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
         // Locales
         if (extension_loaded('intl')) {
-            $fmt = new \IntlDateFormatter('de', \IntlDateFormatter::FULL, \IntlDateFormatter::FULL, 'Europe/Vienna', \IntlDateFormatter::GREGORIAN, 'EEEE');
+            $fmt = new IntlDateFormatter('de', IntlDateFormatter::FULL, IntlDateFormatter::FULL, 'Europe/Vienna', IntlDateFormatter::GREGORIAN, 'EEEE');
             $checks[] = new Check([
                 'name' => 'locales-all',
                 'link' => 'https://packages.debian.org/en/stable/locales-all',
-                'state' => ($fmt->format(new \DateTime('next tuesday', new \DateTimeZone('Europe/Vienna'))) == 'Dienstag') ? Check::STATE_OK : Check::STATE_WARNING,
+                'state' => ($fmt->format(new DateTime('next tuesday', new DateTimeZone('Europe/Vienna'))) == 'Dienstag') ? Check::STATE_OK : Check::STATE_WARNING,
                 'message' => "It's recommended to have the GNU C Library locale data installed (eg. apt-get install locales-all).",
             ]);
         }
@@ -609,7 +614,7 @@ final class Requirements
         // Imagick
         $checks[] = new Check([
             'name' => 'Imagick',
-            'link' => 'http://www.php.net/imagick',
+            'link' => 'https://www.php.net/imagick',
             'state' => class_exists('Imagick') ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
@@ -641,7 +646,7 @@ final class Requirements
         // APCu
         $checks[] = new Check([
             'name' => 'APCu',
-            'link' => 'http://www.php.net/apcu',
+            'link' => 'https://www.php.net/apcu',
             'state' => (function_exists('apcu_fetch') && ini_get('apc.enabled')) ? Check::STATE_OK : Check::STATE_WARNING,
             'message' => "It's highly recommended to have the APCu extension installed and enabled.",
         ]);
@@ -649,7 +654,7 @@ final class Requirements
         // OPcache
         $checks[] = new Check([
             'name' => 'OPcache',
-            'link' => 'http://www.php.net/opcache',
+            'link' => 'https://www.php.net/opcache',
             'state' => function_exists('opcache_reset') ? Check::STATE_OK : Check::STATE_WARNING,
             'message' => "It's highly recommended to have the OPCache extension installed and enabled.",
         ]);
@@ -664,7 +669,7 @@ final class Requirements
         // curl for google api sdk
         $checks[] = new Check([
             'name' => 'curl',
-            'link' => 'http://www.php.net/curl',
+            'link' => 'https://www.php.net/curl',
             'state' => function_exists('curl_init') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
@@ -675,7 +680,7 @@ final class Requirements
             $imageAdapter = new Image\Adapter\GD();
         }
 
-        $reflect = new \ReflectionClass($imageAdapter);
+        $reflect = new ReflectionClass($imageAdapter);
         $imageAdapterType = $reflect->getShortName();
         $checks[] = new Check([
             'name' => 'WebP (via ' . $imageAdapterType . ')',
@@ -695,7 +700,7 @@ final class Requirements
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected static function rscandir(string $base = '', array &$data = []): array
     {
@@ -704,7 +709,7 @@ final class Requirements
         }
 
         if (count($data) > 2000) {
-            throw new \Exception('limit of 2000 files reached');
+            throw new Exception('limit of 2000 files reached');
         }
 
         $array = array_diff(scandir($base), ['.', '..', '.svn']);

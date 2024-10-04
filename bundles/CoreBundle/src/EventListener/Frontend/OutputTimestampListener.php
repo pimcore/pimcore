@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore;
 use Pimcore\Http\Request\Resolver\OutputTimestampResolver;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -48,7 +49,7 @@ class OutputTimestampListener implements EventSubscriberInterface
         }
 
         if ($overrideTimestamp = (int)$event->getRequest()->query->get(self::TIMESTAMP_OVERRIDE_PARAM_NAME)) {
-            if (\Pimcore::inDebugMode() || Authentication::authenticateSession($event->getRequest())) {
+            if (Pimcore::inDebugMode() || Authentication::authenticateSession($event->getRequest())) {
                 $this->outputTimestampResolver->setOutputTimestamp($overrideTimestamp);
             }
         }

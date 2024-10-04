@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
+use Exception;
 use Pimcore\Bundle\SeoBundle\Config;
 use Pimcore\Controller\Controller;
 use Pimcore\Logger;
@@ -48,12 +49,12 @@ class PublicServicesController extends Controller
 
         try {
             $response = Asset\Service::getStreamedResponseForThumbnail($config, $request->getPathInfo());
-            if($response) {
+            if ($response) {
                 return $response;
             }
 
-            throw new \Exception('Unable to generate '.$config['type'].' thumbnail, see logs for details.');
-        } catch (\Exception $e) {
+            throw new Exception('Unable to generate '.$config['type'].' thumbnail, see logs for details.');
+        } catch (Exception $e) {
             Logger::error($e->getMessage());
 
             return new RedirectResponse('/bundles/pimcoreadmin/img/filetype-not-supported.svg');

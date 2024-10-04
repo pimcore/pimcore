@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Document\Email;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -41,7 +42,7 @@ class Dao extends Model\Document\PageSnippet\Dao
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                 WHERE documents.id = ?", [$this->model->getId()]);
 
-        if (!empty($data['id'])) {
+        if ($data) {
             $data['published'] = (bool)$data['published'];
             $this->assignVariablesToModel($data);
         } else {
@@ -59,7 +60,7 @@ class Dao extends Model\Document\PageSnippet\Dao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {

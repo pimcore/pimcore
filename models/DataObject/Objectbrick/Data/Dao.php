@@ -15,9 +15,9 @@
 
 namespace Pimcore\Model\DataObject\Objectbrick\Data;
 
+use Exception;
 use Pimcore\Db;
 use Pimcore\Db\Helper;
-use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
@@ -35,7 +35,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(DataObject\Concrete $object, array $params = []): void
     {
@@ -56,40 +56,7 @@ class Dao extends Model\Dao\AbstractDao
         $data['fieldname'] = $this->model->getFieldname();
 
         $dirtyRelations = [];
-
-        // remove all relations
         $db = Db::get();
-
-        try {
-            $where = 'src_id = ' . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')";
-            // if the model supports dirty detection then only delete the dirty fields
-            // as a consequence, only do inserts only on dirty fields
-            if (!DataObject::isDirtyDetectionDisabled() && $this->model instanceof  Model\Element\DirtyIndicatorInterface) {
-                foreach ($fieldDefinitions as $key => $fd) {
-                    if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-                        if ($fd->supportsDirtyDetection()) {
-                            if ($this->model->isFieldDirty('_self')) {
-                                $this->model->markFieldDirty($key);
-                            }
-
-                            if ($this->model->isFieldDirty($key)) {
-                                $dirtyRelations[] = $db->quote($key);
-                            }
-                        } else {
-                            $dirtyRelations[] = $db->quote($key);
-                        }
-                    }
-                }
-                if ($dirtyRelations) {
-                    $where .= ' AND fieldname IN (' . implode(',', $dirtyRelations) . ')';
-                    $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);
-                }
-            } else {
-                $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);
-            }
-        } catch (\Exception $e) {
-            Logger::warning('Error during removing old relations: ' . $e);
-        }
 
         if (($params['isUpdate'] ?? false) === false && $this->model->getObject()->getClass()->getAllowInherit()) {
             // if this is a fresh object, then we don't need the check
@@ -108,13 +75,6 @@ class Dao extends Model\Dao\AbstractDao
             $getter = 'get' . ucfirst($fd->getName());
 
             if ($fd instanceof CustomResourcePersistingInterface) {
-                if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !DataObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
-                    // ownerNameList contains the dirty stuff
-                    if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !in_array($db->quote($fieldName), $dirtyRelations)) {
-                        continue;
-                    }
-                }
-
                 // for fieldtypes which have their own save algorithm eg. relational data-types, ...
                 $fd->save($this->model,
                     array_merge($params, [

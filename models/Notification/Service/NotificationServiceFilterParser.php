@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Notification\Service;
 
+use Carbon\Carbon;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -48,25 +50,23 @@ class NotificationServiceFilterParser
 
     private Request $request;
 
-    private array $properties;
+    private array $properties = [
+        'title' => 'title',
+        'timestamp' => 'creationDate',
+    ];
 
-    /**
-     * ExtJSFilterParser constructor.
-     *
-     */
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->properties = [
-            'title' => 'title',
-            'date' => 'creationDate',
-        ];
     }
 
+    /**
+     * @return array<string, array{condition: string, conditionVariables: array<string, mixed>}>
+     */
     public function parse(): array
     {
         $result = [];
-        $filter = $this->request->get(self::KEY_FILTER, '[]');
+        $filter = $this->request->request->get(self::KEY_FILTER, '[]');
         $items = json_decode($filter, true);
 
         foreach ($items as $item) {
@@ -74,13 +74,19 @@ class NotificationServiceFilterParser
 
             switch ($type) {
                 case self::TYPE_STRING:
-                    [$key, $value] = $this->parseString($item);
-                    $result[$key] = $value;
+                    [$key, $condition, $conditionVariables] = $this->parseString($item);
+                    $result[$key] = [
+                        'condition' => $condition,
+                        'conditionVariables' => $conditionVariables,
+                    ];
 
                     break;
                 case self::TYPE_DATE:
-                    [$key, $value] = $this->parseDate($item);
-                    $result[$key] = $value;
+                    [$key, $condition, $conditionVariables] = $this->parseDate($item);
+                    $result[$key] = [
+                        'condition' => $condition,
+                        'conditionVariables' => $conditionVariables,
+                    ];
 
                     break;
             }
@@ -90,7 +96,9 @@ class NotificationServiceFilterParser
     }
 
     /**
-     * @throws \Exception
+     * @return array{0: string, 1: string, 2: array<string, mixed>}
+     *
+     * @throws Exception
      */
     private function parseString(array $item): array
     {
@@ -100,44 +108,69 @@ class NotificationServiceFilterParser
 
         switch ($item[self::KEY_OPERATOR]) {
             case self::OPERATOR_LIKE:
-                $result = ["{$property} LIKE ?", "%{$value}%"];
+                $key = $property . '_like';
+                $result = [
+                    $key,
+                    "{$property} LIKE :{$key}",
+                    [$key => "%{$value}%"],
+                ];
 
                 break;
         }
 
         if (is_null($result)) {
-            throw new \Exception();
+            throw new Exception();
         }
 
         return $result;
     }
 
     /**
-     * @throws \Exception
+     * @return array{0: string, 1: string, 2: array<string, mixed>}
+     *
+     * @throws Exception
      */
     private function parseDate(array $item): array
     {
         $result = null;
         $property = $this->getDbProperty($item);
-        $value = strtotime($item[self::KEY_VALUE]);
+        $value = new Carbon($item[self::KEY_VALUE]);
 
         switch ($item[self::KEY_OPERATOR]) {
             case self::OPERATOR_EQ:
-                $result = ["{$property} BETWEEN ? AND ?", [$value, $value + (86400 - 1)]];
+                $key = $property . '_eq';
+                $result = [
+                    $key,
+                    "{$property} BETWEEN :{$key}_start AND :{$key}_end",
+                    [
+                        $key . '_start' => $value->toDateTimeString(),
+                        $key . '_end' => $value->addDay()->subSecond()->toDateTimeString(),
+                    ],
+                ];
 
                 break;
             case self::OPERATOR_GT:
-                $result = ["{$property} > ?", [$value]];
+                $key = $property . '_gt';
+                $result = [
+                    $key,
+                    "{$property} > :{$key}",
+                    [$key => $value->toDateTimeString()],
+                ];
 
                 break;
             case self::OPERATOR_LT:
-                $result = ["{$property} < ?", [$value]];
+                $key = $property . '_lt';
+                $result = [
+                    $key,
+                    "{$property} < :{$key}",
+                    [$key => $value->addDay()->subSecond()->toDateTimeString()],
+                ];
 
                 break;
         }
 
         if (is_null($result)) {
-            throw new \Exception();
+            throw new Exception();
         }
 
         return $result;

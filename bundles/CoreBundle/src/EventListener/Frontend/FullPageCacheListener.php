@@ -16,6 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use DateInterval;
+use DateTime;
+use DateTimeInterface;
+use Exception;
+use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
 use Pimcore\Cache;
@@ -168,7 +173,7 @@ class FullPageCacheListener
                     return;
                 }
 
-                if (\Pimcore::inDebugMode()) {
+                if (Pimcore::inDebugMode()) {
                     $this->disable('Debug flag DISABLE_FULL_PAGE_CACHE is enabled');
 
                     return;
@@ -212,7 +217,7 @@ class FullPageCacheListener
 
                 return;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
 
             $this->disable('ERROR: Exception (see log files in /var/log)');
@@ -321,13 +326,13 @@ class FullPageCacheListener
                     $response->headers->set('Cache-Control', 'public, max-age=' . $this->lifetime, true);
 
                     // add expire header
-                    $date = new \DateTime('now');
-                    $date->add(new \DateInterval('PT' . $this->lifetime . 'S'));
-                    $response->headers->set('Expires', $date->format(\DateTimeInterface::RFC1123), true);
+                    $date = new DateTime('now');
+                    $date->add(new DateInterval('PT' . $this->lifetime . 'S'));
+                    $response->headers->set('Expires', $date->format(DateTimeInterface::RFC1123), true);
                 }
 
-                $now = new \DateTime('now');
-                $response->headers->set('X-Pimcore-Cache-Date', $now->format(\DateTimeInterface::ATOM));
+                $now = new DateTime('now');
+                $response->headers->set('X-Pimcore-Cache-Date', $now->format(DateTimeInterface::ATOM));
 
                 $cacheKey = $this->defaultCacheKey;
                 $deviceDetector = Tool\DeviceDetector::getInstance();
@@ -346,7 +351,7 @@ class FullPageCacheListener
                 }
 
                 Cache::save($cacheItem, $cacheKey, $tags, $this->lifetime, 1000, true);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error((string) $e);
 
                 return;

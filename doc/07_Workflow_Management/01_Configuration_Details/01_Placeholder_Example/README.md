@@ -111,4 +111,3 @@ Example cloned workflows:
         <<: *local_workflow_transitions_ref
 ```
 ...
-
