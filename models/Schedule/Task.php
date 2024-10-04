@@ -122,7 +122,7 @@ class Task extends Model\AbstractModel
     /**
      * @return $this
      */
-    public function setCid(int $cid): static
+    public function setCid(?int $cid): static
     {
         $this->cid = $cid;
 
@@ -132,7 +132,7 @@ class Task extends Model\AbstractModel
     /**
      * @return $this
      */
-    public function setCtype(string $ctype): static
+    public function setCtype(?string $ctype): static
     {
         $this->ctype = $ctype;
 
