@@ -17,9 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
+use JsonException;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -56,6 +57,9 @@ class ListCommand extends AbstractBundleCommand
         );
     }
 
+    /**
+     * @throws JsonException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $details = $input->getOption('details');
@@ -117,13 +121,10 @@ class ListCommand extends AbstractBundleCommand
             );
 
             $this->io->write(
-                json_encode(
-                    $jsonData,
-                    JSON_PRETTY_PRINT
-                )
+                json_encode($jsonData, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
             );
 
-            return self::SUCCESS;
+            return Command::SUCCESS;
         }
 
         $rows  = array_map(
@@ -152,6 +153,6 @@ class ListCommand extends AbstractBundleCommand
 
         $this->io->table($headers, $rows);
 
-        return self::SUCCESS;
+        return Command::SUCCESS;
     }
 }
