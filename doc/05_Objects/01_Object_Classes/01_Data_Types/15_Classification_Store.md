@@ -134,7 +134,7 @@ The `ClassificationStore::getGroups()` method returns an array of `Group` object
 
 ```php
 /** @var \Pimcore\Model\DataObject\Classificationstore $classificationStore */
-$classificationStore = $dataObject->getClassificationStoreFieldName();
+$classificationStore = $dataObject->get<YOUR_CLASSIFICATION_FIELD>();
 
 foreach ($classificationStore->getGroups() as $group) {
     var_dump($group->getConfiguration()->getName());
