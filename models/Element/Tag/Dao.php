@@ -19,10 +19,6 @@ use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
-use function count;
-use function in_array;
-use function is_null;
-use function strlen;
 
 /**
  * @internal
@@ -102,23 +98,26 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Exception
      */
-    public function delete(): void
+    public function delete(): array
     {
         $this->db->beginTransaction();
 
         try {
-            $this->db->delete('tags_assignment', ['tagid' => $this->model->getId()]);
-            $this->db->executeStatement('DELETE FROM tags_assignment WHERE ' . Helper::quoteInto($this->db, 'tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)', Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
+            $toRemoveTagIds = $this->db->fetchFirstColumn('SELECT id FROM tags WHERE ' . Helper::quoteInto($this->db, 'idPath LIKE ?', Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
+            $toRemoveTagIds[] = $this->model->getId();
+            $implodedTagIds = implode(',', $toRemoveTagIds);
 
-            $this->db->delete('tags', ['id' => $this->model->getId()]);
-            $this->db->executeStatement('DELETE FROM tags WHERE ' . Helper::quoteInto($this->db, 'idPath LIKE ?', Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
-
+            $this->db->executeStatement('DELETE FROM tags_assignment WHERE tagid IN (' . $implodedTagIds . ')');
+            $this->db->executeStatement('DELETE FROM tags WHERE id IN (' . $implodedTagIds . ')');
             $this->db->commit();
+
+            return $toRemoveTagIds;
         } catch (Exception $e) {
             $this->db->rollBack();
 
             throw $e;
         }
+
     }
 
     /**

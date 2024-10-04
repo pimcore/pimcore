@@ -24,17 +24,12 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Request;
-use function count;
-use function in_array;
-use function is_array;
-use function is_string;
 
 final class Tool
 {
     /**
      * Sets the current request to use when resolving request at early
      * stages (before container is loaded)
-     *
      */
     private static ?Request $currentRequest = null;
 
@@ -46,7 +41,6 @@ final class Tool
 
     /**
      * Sets the current request to operate on
-     *
      *
      * @internal
      */
@@ -68,11 +62,6 @@ final class Tool
      * settings at "Localization & Internationalization (i18n/l10n)".
      * Returns true, if the language is valid or no language is
      * configured at all, false otherwise.
-     *
-     * @static
-     *
-     * @param ?string $language
-     *
      */
     public static function isValidLanguage(?string $language): bool
     {
@@ -95,8 +84,6 @@ final class Tool
      * Returns an array of language codes that configured for this system
      * in pimcore's system settings at "Localization & Internationalization (i18n/l10n)".
      * An empty array is returned if no languages are configured.
-     *
-     * @static
      *
      * @return string[]
      */
@@ -166,7 +153,6 @@ final class Tool
      * Returns the default language for this system. If no default is set,
      * returns the first language, or null, if no languages are configured
      * at all.
-     *
      */
     public static function getDefaultLanguage(): ?string
     {
@@ -297,8 +283,6 @@ final class Tool
 
     /**
      * eg. editmode, preview, version preview, always when it is a "frontend-request", but called out of the admin
-     *
-     *
      */
     public static function isFrontendRequestByAdmin(Request $request = null): bool
     {
@@ -315,8 +299,6 @@ final class Tool
 
     /**
      * Verify element request (eg. editmode, preview, version preview) called within admin, with permissions.
-     *
-     *
      */
     public static function isElementRequestByAdmin(Request $request, Element\ElementInterface $element): bool
     {
@@ -331,8 +313,6 @@ final class Tool
 
     /**
      * @internal
-     *
-     *
      */
     public static function useFrontendOutputFilters(Request $request = null): bool
     {
@@ -365,8 +345,6 @@ final class Tool
 
     /**
      * @internal
-     *
-     *
      */
     public static function getHostname(Request $request = null): ?string
     {
@@ -384,7 +362,6 @@ final class Tool
 
     /**
      * @internal
-     *
      */
     public static function getRequestScheme(Request $request = null): string
     {
@@ -401,7 +378,6 @@ final class Tool
      * Returns the host URL
      *
      * @param string|null $useProtocol use a specific protocol
-     *
      */
     public static function getHostUrl(string $useProtocol = null, Request $request = null): string
     {
@@ -441,8 +417,6 @@ final class Tool
 
     /**
      * @internal
-     *
-     *
      */
     public static function getClientIp(Request $request = null): ?string
     {
@@ -470,8 +444,6 @@ final class Tool
 
     /**
      * @internal
-     *
-     *
      */
     public static function getAnonymizedClientIp(Request $request = null): ?string
     {
@@ -487,8 +459,6 @@ final class Tool
     }
 
     /**
-     *
-     *
      * @throws Exception
      */
     public static function getMail(array|string $recipients = null, string $subject = null): Mail
@@ -556,8 +526,6 @@ final class Tool
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function classExists(string $class): bool
@@ -566,8 +534,6 @@ final class Tool
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function interfaceExists(string $class): bool
@@ -576,8 +542,6 @@ final class Tool
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function traitExists(string $class): bool

@@ -21,8 +21,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
-use function in_array;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\DataObject\Data\ObjectMetadata\Dao getDao()

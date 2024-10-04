@@ -16,18 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
-use function in_array;
-
 /**
  * @internal
  */
 class Transliteration
 {
-    /**
-     * @static
-     *
-     *
-     */
     public static function toASCII(string $value, string $language = null): string
     {
         if ($language !== null && in_array($language.'-ASCII', transliterator_list_ids())) {

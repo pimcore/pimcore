@@ -20,8 +20,6 @@ namespace Pimcore\Bundle\SeoBundle\Sitemap\Element;
 use ArrayIterator;
 use Iterator;
 use Presta\SitemapBundle\Service\UrlContainerInterface;
-use function array_key_exists;
-use function count;
 
 class GeneratorContext implements GeneratorContextInterface
 {

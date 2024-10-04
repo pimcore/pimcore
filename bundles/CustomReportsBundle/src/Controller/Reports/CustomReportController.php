@@ -31,10 +31,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
-use function count;
-use function in_array;
-use function is_array;
-use function strlen;
 
 /**
  * @Route("/custom-report")
@@ -280,7 +276,7 @@ class CustomReportController extends UserAwareController
         $items = $list->getDao()->loadForGivenUser($this->getPimcoreUser());
 
         foreach ($items as $report) {
-            if($report->getDataSourceConfig() !== null) {
+            if ($report->getDataSourceConfig() !== null) {
                 $reports[] = [
                     'name' => htmlspecialchars($report->getName()),
                     'niceName' => htmlspecialchars($report->getNiceName()),
@@ -490,7 +486,7 @@ class CustomReportController extends UserAwareController
      */
     public function isValidConfigName(string $configName): void
     {
-        if(!preg_match('/^[a-zA-Z0-9_\-]+$/', $configName)) {
+        if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $configName)) {
             throw new Exception('The customer report name is invalid');
         }
     }
@@ -501,7 +497,7 @@ class CustomReportController extends UserAwareController
         $sortingSettings = null;
         $sort = null;
         $dir = null;
-        if(class_exists('\Pimcore\Bundle\AdminBundle\Helper\QueryParams')) {
+        if (class_exists('\Pimcore\Bundle\AdminBundle\Helper\QueryParams')) {
             $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         }
         if (is_array($sortingSettings) && $sortingSettings['orderKey']) {

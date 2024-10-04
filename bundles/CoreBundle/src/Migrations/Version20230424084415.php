@@ -18,8 +18,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Db;
-use function array_key_exists;
-use function is_array;
 
 class Version20230424084415 extends AbstractMigration
 {
@@ -30,7 +28,7 @@ class Version20230424084415 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if($schema->hasTable('documents_editables')) {
+        if ($schema->hasTable('documents_editables')) {
             $db = Db::get();
             $db->executeStatement('SET foreign_key_checks = 0');
 

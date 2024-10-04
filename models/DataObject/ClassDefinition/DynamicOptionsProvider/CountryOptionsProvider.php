@@ -20,8 +20,6 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Country;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Countrymultiselect;
-use function in_array;
-use function strlen;
 
 class CountryOptionsProvider implements SelectOptionsProviderInterface
 {

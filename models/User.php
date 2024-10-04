@@ -21,10 +21,6 @@ use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\User\Role;
 use Pimcore\Tool;
-use function in_array;
-use function is_array;
-use function is_string;
-use function strlen;
 
 /**
  * @method User\Dao getDao()
@@ -473,7 +469,7 @@ final class User extends User\UserRole implements UserInterface
                 $targetFile = File::getLocalTempFilePath('png');
 
                 $image = \Pimcore\Image::getInstance();
-                if($image->load($localFile)) {
+                if ($image->load($localFile)) {
                     $image->cover($width, $height);
                     $image->save($targetFile, 'png');
                     $storage->write($this->getThumbnailImageStoragePath(), file_get_contents($targetFile));

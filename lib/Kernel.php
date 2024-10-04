@@ -46,8 +46,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
-use function in_array;
-use function ini_get;
 
 abstract class Kernel extends SymfonyKernel
 {
@@ -105,7 +103,7 @@ abstract class Kernel extends SymfonyKernel
                 $readTargetConf = $containerConfig[LocationAwareConfigRepository::CONFIG_LOCATION][$configKey][LocationAwareConfigRepository::READ_TARGET] ?? null;
 
                 $configDir = null;
-                if($readTargetConf !== null) {
+                if ($readTargetConf !== null) {
                     if ($readTargetConf[LocationAwareConfigRepository::TYPE] === LocationAwareConfigRepository::LOCATION_SETTINGS_STORE ||
                         ($readTargetConf[LocationAwareConfigRepository::TYPE] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG && $writeTargetConf[LocationAwareConfigRepository::TYPE] !== LocationAwareConfigRepository::LOCATION_SYMFONY_CONFIG)
                     ) {
@@ -117,7 +115,7 @@ abstract class Kernel extends SymfonyKernel
                     }
                 }
 
-                if($configDir === null) {
+                if ($configDir === null) {
                     $configDir = rtrim($writeTargetConf[LocationAwareConfigRepository::OPTIONS][LocationAwareConfigRepository::DIRECTORY], '/\\');
                 }
                 $configDir = "$configDir/";

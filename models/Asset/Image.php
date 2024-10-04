@@ -26,10 +26,6 @@ use Pimcore\Model;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use function array_key_exists;
-use function function_exists;
-use function in_array;
-use function is_array;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()

@@ -22,9 +22,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\User;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
-use function count;
-use function in_array;
-use function is_array;
 
 /**
  * @internal

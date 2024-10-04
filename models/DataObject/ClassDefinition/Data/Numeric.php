@@ -22,8 +22,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
-use function in_array;
-use function is_null;
 
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreSetDataInterface
 {
@@ -121,6 +119,9 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return null;
     }
 
+    /**
+     * @return $this
+     */
     public function setDefaultValue(float|int|string|null $defaultValue): static
     {
         if ((string)$defaultValue !== '') {

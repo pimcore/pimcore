@@ -214,14 +214,14 @@ class Sql extends AbstractAdapter
         $filteredData = [];
         foreach ($data as $d) {
             if (!empty($d[$field]) || $d[$field] === 0) {
-                $filteredData[] = ['value' => $d[$field]];
+                $filteredData[] = ['name' => $d[$field], 'value' => $d[$field]];
             }
         }
 
         return [
             'data' => array_merge(
                 [
-                    ['value' => null],
+                    ['name' => 'empty', 'value' => null],
                 ],
                 $filteredData
             ),

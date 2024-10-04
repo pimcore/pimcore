@@ -17,9 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Security;
 
-use function array_key_exists;
-use function is_string;
-
 /**
  * @internal
  */
@@ -27,7 +24,7 @@ class SecurityHelper
 {
     public static function convertHtmlSpecialChars(?string $text): ?string
     {
-        if(is_string($text)) {
+        if (is_string($text)) {
             return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
         }
 

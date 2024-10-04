@@ -33,9 +33,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use function count;
-use function explode;
-use function implode;
 
 /**
  * @method Application getApplication()
@@ -448,7 +445,7 @@ class InstallCommand extends Command
     {
         $installableBundleKeys = array_keys($bundleSetupEvent->getBundles());
         $recommendedBundles = [];
-        foreach($bundleSetupEvent->getRecommendedBundles() as $recBundle) {
+        foreach ($bundleSetupEvent->getRecommendedBundles() as $recBundle) {
             $recommendedBundles[] = array_search($recBundle, $installableBundleKeys);
         }
 

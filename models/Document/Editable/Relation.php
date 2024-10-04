@@ -18,11 +18,7 @@ namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Logger;
 use Pimcore\Model;
-use Pimcore\Model\Asset;
-use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use function array_key_exists;
-use function in_array;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -110,13 +106,10 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
 
     public function setDataFromResource(mixed $data): static
     {
-        if (!empty($data)) {
-            $data = \Pimcore\Tool\Serialize::unserialize($data);
-        }
-
-        $this->id = $data['id'] ?? null;
-        $this->type = $data['type'] ?? null;
-        $this->subtype = $data['subtype'] ?? null;
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->id = $unserializedData['id'] ?? null;
+        $this->type = $unserializedData['type'] ?? null;
+        $this->subtype = $unserializedData['subtype'] ?? null;
 
         $this->setElement();
 

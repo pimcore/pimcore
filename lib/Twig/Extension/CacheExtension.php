@@ -23,6 +23,8 @@ use Twig\TwigFunction;
 
 /**
  * @internal
+ *
+ * @deprecated
  */
 class CacheExtension extends AbstractExtension
 {
@@ -57,6 +59,12 @@ class CacheExtension extends AbstractExtension
      */
     public function init(string $name, int $lifetime = null, bool $force = false): static
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            '"pimcore_cache" twig extension is deprecated. Use the "pimcorecache" tag instead.'
+        );
+
         $this->key = 'pimcore_viewcache_' . $name;
         $this->force = $force;
 

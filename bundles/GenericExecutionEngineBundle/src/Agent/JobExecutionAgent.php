@@ -19,19 +19,19 @@ namespace Pimcore\Bundle\GenericExecutionEngineBundle\Agent;
 use Doctrine\DBAL\Exception;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Configuration\ExecutionContextInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
-use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\InvalidErrorHandlingModeException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\Job;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobRunStates;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepositoryInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\ErrorHandlingMode;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\SelectionProcessingMode;
 use Pimcore\Helper\StopMessengerWorkersTrait;
+use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Translation\Translator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
-use function count;
 
 /**
  * @internal
@@ -97,7 +97,9 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             return;
         }
 
-        $this->incrementProcessedElements($jobRun);
+        if ($jobRun->getTotalElements() > 0) {
+            $this->incrementProcessedElements($jobRun);
+        }
 
         if (!$throwable) {
             $this->handleNextMessage($message);
@@ -146,13 +148,28 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
         return $jobRun->getState() === JobRunStates::RUNNING;
     }
 
+    private function getSelectionProcessingModeFromJobRun(JobRun $jobRun): SelectionProcessingMode
+    {
+        $steps = $jobRun->getJob()?->getSteps();
+        if ($steps !== null) {
+            $step = $steps[$jobRun->getCurrentStep()] ?? null;
+            if ($step) {
+                return $step->getSelectionProcessingMode();
+            }
+        }
+
+        return SelectionProcessingMode::FOR_EACH;
+    }
+
     /**
      * @throws Exception
      */
     private function handleNextMessage(GenericExecutionEngineMessageInterface $message): void
     {
         $jobRun = $this->jobRunRepository->getJobRunById($message->getJobRunId());
-        if ($jobRun->getProcessedElementsForStep() === $jobRun->getTotalElements()) {
+
+        if ($this->getSelectionProcessingModeFromJobRun($jobRun) === SelectionProcessingMode::ONCE ||
+            $jobRun->getProcessedElementsForStep() === $jobRun->getTotalElements()) {
             $this->continueJobStepExecution($message);
         }
     }
@@ -224,25 +241,41 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $errorMessage,
         );
 
+        match
+        (
+            $this->getErrorHandlingMode(
+                $jobRun,
+                $this->getSelectionProcessingModeFromJobRun($jobRun)
+            )
+        ) {
+            ErrorHandlingMode::STOP_ON_FIRST_ERROR =>
+            $this->stopJobExecutionOnError(
+                $jobRun,
+                $errorMessage
+            ),
+            ErrorHandlingMode::CONTINUE_ON_ERROR =>
+            $this->continueJobExecutionOnError(
+                $jobRun,
+                $message,
+                $errorMessage
+            )
+        };
+    }
+
+    private function getErrorHandlingMode(
+        JobRun $jobRun,
+        SelectionProcessingMode $selectionProcessingMode
+    ): ErrorHandlingMode {
+        if ($selectionProcessingMode === SelectionProcessingMode::ONCE) {
+            return ErrorHandlingMode::STOP_ON_FIRST_ERROR;
+        }
+
         $errorHandling = $this->executionContext->getErrorHandlingFromContext($jobRun->getExecutionContext());
         if ($errorHandling === null) {
             $errorHandling = $this->errorHandlingMode;
         }
 
-        match ($errorHandling) {
-            ErrorHandlingMode::STOP_ON_FIRST_ERROR->value =>
-            $this->stopJobExecutionOnError(
-                $jobRun,
-                $errorMessage
-            ),
-            ErrorHandlingMode::CONTINUE_ON_ERROR->value =>
-            $this->continueJobExecutionOnError(
-                $jobRun,
-                $message,
-                $errorMessage
-            ),
-            default => throw new InvalidErrorHandlingModeException(),
-        };
+        return ErrorHandlingMode::from($errorHandling);
     }
 
     /**
@@ -354,21 +387,13 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             return;
         }
 
-        $selectedElements = $job->getSelectedElements();
-        if (empty($selectedElements)) {
-            $this->executionEngineBus->dispatch(new $messageString($jobRun->getId(), $jobRun->getCurrentStep()));
-
-            return;
-        }
-
-        foreach ($selectedElements as $selectedElement) {
-            $this->executionEngineBus->dispatch(new $messageString(
-                $jobRun->getId(),
-                $jobRun->getCurrentStep(),
-                $selectedElement
-            )
-            );
-        }
+        $this->dispatchSelectedElements(
+            $jobRun->getId(),
+            $jobRun->getCurrentStep(),
+            $messageString,
+            $this->getSelectionProcessingModeFromJobRun($jobRun),
+            $job->getSelectedElements()
+        );
     }
 
     private function getLogParams(JobRun $jobRun): array
@@ -391,15 +416,15 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $jobRun->getCurrentStep()
         );
 
-        if(count($logs) === $jobRun->getTotalElements()) {
+        if (count($logs) === $jobRun->getTotalElements()) {
             $jobRun->setState(JobRunStates::FAILED);
             $message = 'gee_job_failed';
-        } elseif(count($logs) > 0) {
+        } elseif (count($logs) > 0) {
             $jobRun->setState(JobRunStates::FINISHED_WITH_ERRORS);
             $message = 'gee_job_finished_with_errors';
         }
 
-        if(empty($logs)) {
+        if (empty($logs)) {
             $jobRun->setCurrentMessage(null);
             $jobRun->setState(JobRunStates::FINISHED);
             $message = 'gee_job_finished';
@@ -410,5 +435,35 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             $message,
             $this->getLogParams($jobRun)
         );
+    }
+
+    /**
+     * @param ElementDescriptor[] $selectedElements
+     */
+    private function dispatchSelectedElements(
+        int $jobRunId,
+        int $currentStepId,
+        string $messageString,
+        SelectionProcessingMode $selectionProcessingMode,
+        array $selectedElements = []
+    ): void {
+        if (empty($selectedElements) || $selectionProcessingMode === SelectionProcessingMode::ONCE) {
+            $this->executionEngineBus->dispatch(new $messageString(
+                $jobRunId,
+                $currentStepId
+            )
+            );
+
+            return;
+        }
+
+        foreach ($selectedElements as $selectedElement) {
+            $this->executionEngineBus->dispatch(new $messageString(
+                $jobRunId,
+                $currentStepId,
+                $selectedElement
+            )
+            );
+        }
     }
 }

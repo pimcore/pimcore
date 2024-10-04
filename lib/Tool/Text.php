@@ -24,10 +24,6 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Site;
 use Pimcore\Tool;
-use function array_key_exists;
-use function chr;
-use function count;
-use function strlen;
 
 class Text
 {
@@ -86,7 +82,9 @@ class Text
 
                             $site = Frontend::getSiteForDocument($element);
                             if ($site instanceof Site) {
-                                $path = Tool::getRequestScheme() . '://' . $site->getMainDomain() . preg_replace('~^' . preg_quote($site->getRootPath(), '~') . '~', '', $path);
+                                if (preg_match('~^' . preg_quote($site->getRootPath(), '~') . '~', $path)) {
+                                    $path = Tool::getRequestScheme() . '://' . $site->getMainDomain() . preg_replace('~^' . preg_quote($site->getRootPath(), '~') . '~', '', $path);
+                                }
                             }
 
                         } elseif ($element instanceof Concrete) {

@@ -21,9 +21,6 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Sabre\DAV;
-use function array_key_exists;
-use function count;
-use function dirname;
 
 /**
  * @internal

@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Model;
-use function count;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -66,7 +65,8 @@ class Table extends Model\Document\Editable
 
     public function setDataFromResource(mixed $data): static
     {
-        $this->data = \Pimcore\Tool\Serialize::unserialize($data);
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->data = $unserializedData;
 
         return $this;
     }

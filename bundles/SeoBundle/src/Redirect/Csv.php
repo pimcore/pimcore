@@ -31,8 +31,6 @@ use Pimcore\Tool\ArrayNormalizer;
 use Pimcore\Tool\Text;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Throwable;
-use function count;
-use function is_string;
 
 /**
  * @internal

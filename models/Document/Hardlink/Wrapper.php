@@ -20,8 +20,6 @@ use Exception;
 use Pimcore;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Listing;
-use function array_key_exists;
-use function func_get_args;
 
 /**
  * @internal

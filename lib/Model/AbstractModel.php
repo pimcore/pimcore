@@ -15,19 +15,13 @@
 
 namespace Pimcore\Model;
 
+use BadMethodCallException;
 use Exception;
 use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Dao\DaoInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
-use function array_key_exists;
-use function call_user_func_array;
-use function count;
-use function get_class;
-use function in_array;
-use function is_array;
-use function is_callable;
 
 /**
  * @method void beginTransaction()
@@ -214,31 +208,22 @@ abstract class AbstractModel implements ModelInterface
     /**
      * @throws Exception
      *
-     * @return mixed|void
+     * @return mixed
      */
     public function __call(string $method, array $args)
     {
         // protected / private methods shouldn't be delegated to the dao -> this can have dangerous effects
         if (!is_callable([$this, $method])) {
-            throw new Exception("Unable to call private/protected method '" . $method . "' on object " . get_class($this));
+            throw new BadMethodCallException("Unable to call private/protected method '" . $method . "' on object " . get_class($this));
         }
 
-        // check if the method is defined in ´dao
-        if (method_exists($this->getDao(), $method)) {
-            try {
-                $r = call_user_func_array([$this->getDao(), $method], $args);
-
-                return $r;
-            } catch (Exception $e) {
-                Logger::emergency((string) $e);
-
-                throw $e;
-            }
-        } else {
-            Logger::error('Class: ' . get_class($this) . ' => call to undefined method ' . $method);
-
-            throw new Exception('Call to undefined method ' . $method . ' in class ' . get_class($this));
+        // check if the method is defined in dao
+        $dao = $this->getDao();
+        if (method_exists($dao, $method)) {
+            return call_user_func_array([$dao, $method], $args);
         }
+
+        throw new BadMethodCallException('Call to undefined method ' . $method . ' in class ' . get_class($this));
     }
 
     public function __clone(): void

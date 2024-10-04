@@ -50,11 +50,6 @@ use stdClass;
 use Symfony\Bridge\Twig\Extension\WebLinkExtension;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Twig\Extension\RuntimeExtensionInterface;
-use function array_key_exists;
-use function count;
-use function in_array;
-use function is_array;
-use function is_string;
 
 /**
  * @method $this appendFile($src, $type = 'text/javascript', array $attrs = array())
@@ -186,9 +181,16 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * @param string $captureType
      * @param string $type
      *
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureStart($captureType = Container::APPEND, $type = 'text/javascript', array $attrs = []): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureStart()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         if ($this->_captureLock) {
             throw new Exception('Cannot nest headScript captures');
         }
@@ -203,9 +205,16 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * End capture action and store
      *
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureEnd(): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureEnd()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         $content = ob_get_clean();
         $type = $this->_captureScriptType;
         $attrs = $this->_captureScriptAttrs;
@@ -266,7 +275,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
                 }
             }
 
-            $content = $args[0];
+            $content = is_null($args[0]) ? null : (string) $args[0];
 
             if (isset($args[1])) {
                 $type = (string) $args[1];
@@ -456,7 +465,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
         $container = Pimcore::getContainer();
 
         //@phpstan-ignore-next-line
-        if($container->has('pimcore_admin_bundle.content_security_policy_handler')) {
+        if ($container->has('pimcore_admin_bundle.content_security_policy_handler')) {
             $cspHandler = $container->get('pimcore_admin_bundle.content_security_policy_handler');
             $attrString .= $cspHandler->getNonceHtmlAttribute();
         }

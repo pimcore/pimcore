@@ -21,7 +21,6 @@ use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Tests\Support\Test\TestCase;
 use UnderflowException;
-use function count;
 
 /**
  * @covers BlockState

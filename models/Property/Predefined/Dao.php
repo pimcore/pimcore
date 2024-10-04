@@ -19,8 +19,6 @@ use Exception;
 use Pimcore\Config;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
-use function count;
-use function in_array;
 
 /**
  * @internal

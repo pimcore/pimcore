@@ -23,11 +23,6 @@ use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use function array_key_exists;
-use function in_array;
-use function is_array;
-use function is_string;
-use function strlen;
 
 /**
  * @method bool isWriteable()
@@ -71,35 +66,24 @@ final class Staticroute extends AbstractModel
     /**
      * Associative array filled on match() that holds matched path values
      * for given variable names.
-     *
      */
     protected array $_values = [];
 
     /**
      * this is a small per request cache to know which route is which is, this info is used in self::getByName()
-     *
      */
     protected static array $nameIdMappingCache = [];
 
     /**
      * contains the static route which the current request matches (it he does), this is used in the view to get the current route
-     *
      */
     protected static ?Staticroute $_currentRoute = null;
 
-    /**
-     * @static
-     *
-     */
     public static function setCurrentRoute(?Staticroute $route): void
     {
         self::$_currentRoute = $route;
     }
 
-    /**
-     * @static
-     *
-     */
     public static function getCurrentRoute(): ?Staticroute
     {
         return self::$_currentRoute;
@@ -107,8 +91,6 @@ final class Staticroute extends AbstractModel
 
     /**
      * Static helper to retrieve an instance of Staticroute by the given ID
-     *
-     *
      */
     public static function getById(string $id): ?Staticroute
     {
@@ -134,8 +116,6 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     *
-     *
      * @throws Exception
      */
     public static function getByName(string $name, int $siteId = null): ?Staticroute
@@ -364,7 +344,6 @@ final class Staticroute extends AbstractModel
 
     /**
      * @internal
-     * @internal
      */
     public function assemble(array $urlOptions = [], bool $encode = true): string
     {
@@ -512,7 +491,7 @@ final class Staticroute extends AbstractModel
     {
         if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
-            foreach($methods as $key => $method) {
+            foreach ($methods as $key => $method) {
                 $methods[$key] = trim($method);
             }
         }

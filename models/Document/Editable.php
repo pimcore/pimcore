@@ -30,13 +30,9 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Tool\HtmlUtils;
+use Pimcore\Tool\Serialize;
 use RuntimeException;
 use Throwable;
-use function count;
-use function in_array;
-use function is_array;
-use function is_string;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -720,5 +716,22 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $this->editableDefinitionCollector = $editableDefinitionCollector;
 
         return $this;
+    }
+
+    protected function getUnserializedData(mixed $data): ?array
+    {
+        if (is_array($data) || is_null($data)) {
+            return $data;
+        }
+        if (is_string($data)) {
+            $unserializedData = Serialize::unserialize($data);
+            if (!is_array($unserializedData) && !is_null($unserializedData)) {
+                throw new InvalidArgumentException('Unserialized data must be an array or null.');
+            }
+
+            return $unserializedData;
+        }
+
+        throw new InvalidArgumentException('Data must be a string, an array or null.');
     }
 }

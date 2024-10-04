@@ -27,10 +27,6 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use function array_key_exists;
-use function count;
-use function in_array;
-use function is_array;
 
 class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewriterInterface, PreGetDataInterface, ClassSavedInterface
 {
@@ -414,6 +410,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $items = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
+                if (!($metaObject instanceof DataObject\Data\ElementMetadata)) {
+                    continue;
+                }
+
                 $o = $metaObject->getElement();
                 if (!$o) {
                     continue;
@@ -670,6 +670,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setColumns(array $columns): static
     {
         if (isset($columns['key'])) {
@@ -913,6 +916,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $this->allowMultipleAssignments;
     }
 
+    /**
+     * @return $this
+     */
     public function setAllowMultipleAssignments(bool|int|null $allowMultipleAssignments): static
     {
         $this->allowMultipleAssignments = (bool) $allowMultipleAssignments;

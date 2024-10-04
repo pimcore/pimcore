@@ -27,7 +27,6 @@ use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use function count;
 
 class NotificationEmailService extends AbstractNotificationService
 {

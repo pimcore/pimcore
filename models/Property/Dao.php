@@ -17,8 +17,6 @@ namespace Pimcore\Model\Property;
 
 use Pimcore\Db\Helper;
 use Pimcore\Model;
-use function is_array;
-use function is_object;
 
 /**
  * @internal
@@ -47,9 +45,9 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $cpath = $this->model->getCpath();
-        if(empty($cpath)) {
+        if (empty($cpath)) {
             $element = Model\Element\Service::getElementById($this->model->getCtype(), $this->model->getCid());
-            if($element instanceof Model\Element\ElementInterface) {
+            if ($element instanceof Model\Element\ElementInterface) {
                 $cpath = $element->getRealFullPath();
             }
         }

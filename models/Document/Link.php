@@ -22,9 +22,6 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use function array_key_exists;
-use function in_array;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\Document\Link\Dao getDao()

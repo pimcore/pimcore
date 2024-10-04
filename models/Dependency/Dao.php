@@ -24,9 +24,6 @@ use Pimcore\Messenger\SanityCheckMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
-use function count;
-use function in_array;
-use function is_int;
 
 /**
  * @internal

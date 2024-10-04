@@ -24,7 +24,6 @@ use Pimcore\Model\Translation;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use function count;
 
 class TranslatorTest extends TestCase
 {

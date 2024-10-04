@@ -17,10 +17,6 @@ namespace Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 
 use Exception;
 use Pimcore\Model;
-use function in_array;
-use function is_array;
-use function is_bool;
-use function is_object;
 
 /**
  * @internal

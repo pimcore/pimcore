@@ -21,7 +21,6 @@ use Pimcore;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Model;
 use Pimcore\Tool\HtmlUtils;
-use function count;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -73,7 +72,8 @@ class Block extends Model\Document\Editable implements BlockInterface
 
     public function setDataFromResource(mixed $data): static
     {
-        $this->indices = \Pimcore\Tool\Serialize::unserialize($data);
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->indices = $unserializedData;
 
         return $this;
     }

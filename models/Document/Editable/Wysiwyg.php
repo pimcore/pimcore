@@ -22,7 +22,6 @@ use Pimcore\Model;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
-use function is_string;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -133,7 +132,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
 
     public function save(): void
     {
-        if(is_string($this->text)) {
+        if (is_string($this->text)) {
             $helper = self::getWysiwygSanitizer();
             $this->text = $helper->sanitizeFor('body', $this->text);
         }

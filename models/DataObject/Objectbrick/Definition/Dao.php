@@ -18,8 +18,6 @@ namespace Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use function in_array;
-use function is_array;
 
 /**
  * @internal

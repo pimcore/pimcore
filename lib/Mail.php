@@ -31,8 +31,6 @@ use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Header\MailboxListHeader;
 use Symfony\Component\Mime\Part\AbstractPart;
 use Twig\Sandbox\SecurityError;
-use function is_array;
-use function is_string;
 
 class Mail extends Email
 {
@@ -165,7 +163,7 @@ class Mail extends Email
      */
     public function init(string $type = 'email', ?array $config = null): void
     {
-        if(empty($config)) {
+        if (empty($config)) {
             $config = Config::getSystemConfiguration($type);
         }
 

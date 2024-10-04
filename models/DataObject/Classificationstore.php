@@ -21,11 +21,6 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreGetDataInterface;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
-use function array_key_exists;
-use function is_array;
-use function is_null;
-use function is_string;
-use function strlen;
 
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\Dao createUpdateTable()
@@ -100,7 +95,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function getItems(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
-        if(!$doGetInheritedValues) {
+        if (!$doGetInheritedValues) {
             return $this->items;
         }
 
@@ -263,7 +258,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function getActiveGroups(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
-        if(!$doGetInheritedValues) {
+        if (!$doGetInheritedValues) {
             return $this->activeGroups;
         }
 
@@ -414,7 +409,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function getGroupCollectionMappings(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
-        if(!$doGetInheritedValues) {
+        if (!$doGetInheritedValues) {
             return $this->groupCollectionMapping;
         }
 
@@ -492,9 +487,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
     private function mergeArrays(array $a1, array $a2): array
     {
-        foreach($a1 as $key => $value) {
-            if(array_key_exists($key, $a2)) {
-                if(is_array($value)) {
+        foreach ($a1 as $key => $value) {
+            if (array_key_exists($key, $a2)) {
+                if (is_array($value)) {
                     $a2[$key] = $this->mergeArrays($a2[$key], $value);
                 } else {
                     $a2[$key] = $value;

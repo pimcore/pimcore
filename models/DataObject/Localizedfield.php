@@ -27,11 +27,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\PreSetDataInterface;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
-use function array_key_exists;
-use function count;
-use function in_array;
-use function is_array;
-use function is_null;
 
 /**
  * @method Localizedfield\Dao getDao()*

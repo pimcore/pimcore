@@ -19,7 +19,6 @@ namespace Pimcore\Maintenance\Tasks\DataObject;
 use Doctrine\DBAL\Connection;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Psr\Log\LoggerInterface;
-use function strlen;
 
 /**
  * @internal
@@ -40,7 +39,7 @@ class CleanupBrickTablesTaskHelper implements ConcreteTaskHelperInterface
         $collectionNames =
             $this->helper->getCollectionNames(self::PIMCORE_OBJECTBRICK_CLASS_DIRECTORY);
 
-        if(empty($collectionNames)) {
+        if (empty($collectionNames)) {
             return;
         }
 

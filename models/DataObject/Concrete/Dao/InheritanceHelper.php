@@ -20,10 +20,6 @@ use Doctrine\DBAL\Connection;
 use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model\DataObject;
-use function count;
-use function in_array;
-use function is_array;
-use function is_null;
 
 /**
  * @internal

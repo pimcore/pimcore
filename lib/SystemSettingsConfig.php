@@ -25,8 +25,6 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use function array_key_exists;
-use function in_array;
 
 class SystemSettingsConfig
 {
@@ -77,7 +75,7 @@ class SystemSettingsConfig
         // If the read target is settings-store and no data is found there,
         // load the data from the container config
         // Please see https://github.com/pimcore/pimcore/issues/15596 for more information
-        if(!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
+        if (!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
             $data = self::getConfigValuesFromContainer()['config'];
             $data['writeable'] = $repository->isWriteable();
         }

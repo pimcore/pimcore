@@ -20,7 +20,6 @@ use InvalidArgumentException;
 use Pimcore\Config;
 use Pimcore\Model;
 use RuntimeException;
-use function in_array;
 
 /**
  * @internal

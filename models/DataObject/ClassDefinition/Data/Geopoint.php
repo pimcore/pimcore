@@ -21,7 +21,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
-use function is_array;
 
 class Geopoint extends AbstractGeo implements
     ResourcePersistenceAwareInterface,
@@ -199,15 +198,17 @@ class Geopoint extends AbstractGeo implements
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;
-
         if ($data) {
             if (!$data instanceof DataObject\Data\GeoCoordinates) {
                 throw new ValidationException('Expected an instance of GeoCoordinates');
             }
-            $isEmpty = false;
+
+            if ($data->getLatitude() !== null && $data->getLongitude() !== null) {
+                $isEmpty = false;
+            }
         }
 
-        if (!$omitMandatoryCheck && $this->getMandatory() && $isEmpty) {
+        if ($isEmpty && !$omitMandatoryCheck && $this->getMandatory()) {
             throw new ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
     }

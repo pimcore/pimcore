@@ -26,7 +26,6 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\UserTimezone;
-use function is_array;
 
 class DateRange extends Data implements
     ResourcePersistenceAwareInterface,
@@ -361,7 +360,7 @@ class DateRange extends Data implements
      */
     public function setColumnType(string|array $columnType): void
     {
-        if(is_array($columnType)) {
+        if (is_array($columnType)) {
             $this->columnType = $columnType;
         } else {
             $this->columnType = [

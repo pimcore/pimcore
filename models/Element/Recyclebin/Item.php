@@ -34,7 +34,6 @@ use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
-use function get_class;
 
 /**
  * @internal
@@ -59,10 +58,6 @@ class Item extends Model\AbstractModel
 
     protected string $deletedby;
 
-    /**
-     * @static
-     *
-     */
     public static function create(Element\ElementInterface $element, Model\User $user = null): void
     {
         $item = new self();
@@ -70,11 +65,6 @@ class Item extends Model\AbstractModel
         $item->save($user);
     }
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function getById(int $id): ?Item
     {
         try {
@@ -88,7 +78,6 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     *
      * @throws Exception
      */
     public function restore(Model\User $user = null): void
@@ -249,7 +238,6 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     *
      * @throws Exception
      */
     protected function doRecursiveRestore(Element\ElementInterface $element): void
@@ -272,7 +260,7 @@ class Item extends Model\AbstractModel
             $element->markAllLazyLoadedKeysAsLoaded();
             $element->setOmitMandatoryCheck(true);
         }
-        $element->save();
+        $element->save(['isRecycleBinRestore' => true]);
 
         if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {

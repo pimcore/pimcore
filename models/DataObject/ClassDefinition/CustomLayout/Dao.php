@@ -20,12 +20,6 @@ use Pimcore\Config;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
 use Symfony\Component\Uid\UuidV4;
-use function count;
-use function in_array;
-use function is_array;
-use function is_bool;
-use function is_object;
-use function is_string;
 
 /**
  * @internal

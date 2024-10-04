@@ -22,11 +22,10 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecut
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStepInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
 use Pimcore\Helper\SymfonyExpression\ExpressionServiceInterface;
+use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
-use function array_key_exists;
-use function in_array;
 
 final class JobRunExtractor implements JobRunExtractorInterface
 {
@@ -114,13 +113,14 @@ final class JobRunExtractor implements JobRunExtractorInterface
         array $types = [JobRunExtractorInterface::ASSET_TYPE]
     ): ?ElementInterface {
         $elementDescriptor = $message->getElement();
-        if (!$elementDescriptor || !in_array($elementDescriptor->getType(), $types, true)) {
+        if (!$elementDescriptor) {
             return null;
         }
 
-        $element = $this->getElement(
+        $element = $this->getElementByType(
             $elementDescriptor->getType(),
-            $elementDescriptor->getId()
+            $elementDescriptor->getId(),
+            $types
         );
 
         if (!$element) {
@@ -128,6 +128,31 @@ final class JobRunExtractor implements JobRunExtractorInterface
         }
 
         return $element;
+    }
+
+    public function getElementsFromMessage(
+        GenericExecutionEngineMessageInterface $message,
+        array $types = [JobRunExtractorInterface::ASSET_TYPE]
+    ): array {
+
+        $elementsToProcess = [];
+        $jobRun = $this->getJobRun($message);
+
+        /** @var ElementDescriptor[] $elementDescriptors */
+        $elementDescriptors = $jobRun->getJob()?->getSelectedElements();
+
+        foreach ($elementDescriptors as $elementDescriptor) {
+            $element = $this->getElementByType(
+                $elementDescriptor->getType(),
+                $elementDescriptor->getId(),
+                $types
+            );
+            if ($element !== null) {
+                $elementsToProcess[] = $element;
+            }
+        }
+
+        return $elementsToProcess;
     }
 
     private function getElement(string $type, int $id): ?ElementInterface
@@ -139,5 +164,18 @@ final class JobRunExtractor implements JobRunExtractorInterface
         }
 
         return $element;
+    }
+
+    private function getElementByType(
+        string $elementType,
+        int $elementId,
+        array $typesToLookFor = [JobRunExtractorInterface::ASSET_TYPE]): ?ElementInterface
+    {
+
+        if (!in_array($elementType, $typesToLookFor, true)) {
+            return null;
+        }
+
+        return $this->getElement($elementType, $elementId);
     }
 }

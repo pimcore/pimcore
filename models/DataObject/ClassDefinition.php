@@ -32,13 +32,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
-use function array_key_exists;
-use function count;
-use function dirname;
-use function in_array;
-use function is_array;
-use function is_object;
-use function is_string;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()

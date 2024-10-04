@@ -25,7 +25,6 @@ use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Mime\MimeTypes;
-use function in_array;
 
 trait ImageThumbnailTrait
 {
@@ -435,7 +434,7 @@ trait ImageThumbnailTrait
     private function checkAllowedFormats(string $format, ?Asset $asset = null): bool
     {
         $format = strtolower($format);
-        if($asset) {
+        if ($asset) {
             if (
                 $format === 'original' ||
                 $format === 'source'

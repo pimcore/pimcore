@@ -24,10 +24,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Symfony\Component\PasswordHasher\Hasher\CheckPasswordLengthTrait;
-use function array_key_exists;
-use function in_array;
-use function is_string;
-use function strlen;
 
 class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -79,7 +75,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function setAlgorithm(string $algorithm): void
     {
-        if($algorithm !== self::HASH_FUNCTION_PASSWORD_HASH) {
+        if ($algorithm !== self::HASH_FUNCTION_PASSWORD_HASH) {
             trigger_deprecation(
                 'pimcore/pimcore',
                 '11.2',
@@ -142,7 +138,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
 
         // is already a hashed string? Then do not re-hash
-        if($this->getAlgorithm() === self::HASH_FUNCTION_PASSWORD_HASH) {
+        if ($this->getAlgorithm() === self::HASH_FUNCTION_PASSWORD_HASH) {
             $info = password_get_info($data);
             if ($info['algo'] !== null && $info['algo'] !== 0) {
                 return $data;

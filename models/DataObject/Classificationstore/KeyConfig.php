@@ -62,9 +62,9 @@ final class KeyConfig extends Model\AbstractModel
 
     protected ?int $modificationDate = null;
 
-    protected string $definition;
+    protected string $definition = '[]';
 
-    protected bool $enabled;
+    protected bool $enabled = false;
 
     public static function getById(int $id, ?bool $force = false): ?KeyConfig
     {

@@ -23,7 +23,6 @@ use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use function is_array;
 
 class SettingsController extends UserAwareController
 {

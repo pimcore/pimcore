@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Model;
-use function is_array;
-use function is_string;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -60,7 +58,8 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
 
     public function setDataFromResource(mixed $data): static
     {
-        $this->values = \Pimcore\Tool\Serialize::unserialize($data);
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->values = $unserializedData;
 
         return $this;
     }

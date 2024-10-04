@@ -22,7 +22,6 @@ use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Dao\AbstractDao;
-use function is_array;
 
 /**
  * @internal

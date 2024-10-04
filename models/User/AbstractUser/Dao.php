@@ -19,10 +19,6 @@ use DateTime;
 use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
-use function in_array;
-use function is_array;
-use function is_bool;
-use function strlen;
 
 /**
  * @internal

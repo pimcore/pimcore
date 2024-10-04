@@ -7,6 +7,14 @@
 #### [Twig Deferred Extension]
 - Removed `rybakit/twig-deferred-extension` dependency and `Twig\DeferredExtension\DeferredExtension` service.
   If you use deferred twig blocks, please add the dependency to your own `composer.json` and the service to your own `service.yaml`.
+#### [Twig Extension Deprecations]
+- `pimcore_cache` Twig extension is deprecated. Use `pimcorecache` twig tag instead.
+- `pimcore_placeholder`, `pimcore_head_script`, `pimcore_head_style` 
+  - `captureStart()` and `captureEnd()` methods are deprecated. Use native twig `set` tag instead. Take a look at the related docs of each twig extension for an example.
+
+#### [Notification]
+- Extending notifications for studio adding flag `isStudio` column and a `payload` column with according getters and setters.
+  Make sure to run the migration `bin/console doctrine:migrations:execute Pimcore\\Bundle\\CoreBundle\\Migrations\\Version20240813085200`.
 
 ## Pimcore 11.3.0
 ### General

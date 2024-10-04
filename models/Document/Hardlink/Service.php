@@ -20,15 +20,10 @@ use Exception;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Hardlink\Wrapper\Hardlink;
 use Pimcore\Tool\Serialize;
-use function dirname;
-use function get_class;
-use function strlen;
 
 class Service
 {
     /**
-     *
-     *
      * @throws Exception
      */
     public static function wrap(Document $doc): Wrapper\WrapperInterface|Wrapper\Hardlink|null
@@ -59,8 +54,6 @@ class Service
     /**
      * @internal
      *
-     * @static
-     *
      * @return Document\Hardlink\Wrapper\WrapperInterface
      */
     public static function upperCastDocument(Document $doc): Wrapper\WrapperInterface
@@ -83,8 +76,6 @@ class Service
     }
 
     /**
-     *
-     *
      * @throws Exception
      *
      * @internal
@@ -116,8 +107,6 @@ class Service
     }
 
     /**
-     *
-     *
      * @throws Exception
      *
      * @internal

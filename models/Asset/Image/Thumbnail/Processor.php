@@ -29,14 +29,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
-use function array_key_exists;
-use function call_user_func_array;
-use function function_exists;
-use function in_array;
-use function is_array;
-use function is_resource;
-use function ltrim;
-use function md5;
 
 /**
  * @internal

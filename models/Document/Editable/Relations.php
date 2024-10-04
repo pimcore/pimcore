@@ -22,10 +22,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use function array_key_exists;
-use function count;
-use function in_array;
-use function is_array;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -118,9 +114,8 @@ class Relations extends Model\Document\Editable implements Iterator, IdRewriterI
 
     public function setDataFromResource(mixed $data): static
     {
-        if ($data = \Pimcore\Tool\Serialize::unserialize($data)) {
-            $this->setDataFromEditmode($data);
-        }
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->setDataFromEditmode($unserializedData);
 
         return $this;
     }

@@ -39,7 +39,6 @@ use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use function is_array;
 
 class FullPageCacheListener
 {

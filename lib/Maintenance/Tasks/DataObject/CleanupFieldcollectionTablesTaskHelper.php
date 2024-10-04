@@ -18,7 +18,6 @@ namespace Pimcore\Maintenance\Tasks\DataObject;
 
 use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
-use function strlen;
 
 /**
  * @internal
@@ -40,7 +39,7 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
         $collectionNames =
             $this->helper->getCollectionNames(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY);
 
-        if(empty($collectionNames)) {
+        if (empty($collectionNames)) {
             return;
         }
 

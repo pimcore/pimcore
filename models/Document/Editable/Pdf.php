@@ -20,7 +20,6 @@ use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
-use function array_key_exists;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -111,11 +110,8 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
 
     public function setDataFromResource(mixed $data): static
     {
-        if (!empty($data)) {
-            $data = \Pimcore\Tool\Serialize::unserialize($data);
-        }
-
-        $this->id = $data['id'];
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->id = $unserializedData['id'] ?? null;
 
         return $this;
     }

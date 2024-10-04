@@ -23,7 +23,6 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
-use function count;
 
 /**
  * Class ObjectTest
