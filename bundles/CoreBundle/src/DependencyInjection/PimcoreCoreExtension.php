@@ -89,7 +89,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
             // check if domain is valid, when not an env variable
             if (!str_starts_with($config['general']['domain'], 'env_')) {
-                if ($config['general']['domain'] && !filter_var($config['general']['domain'], FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+                if (!filter_var($config['general']['domain'], FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
                     throw new InvalidArgumentException(sprintf('Invalid main domain name "%s"', $config['general']['domain']));
                 }
             }
