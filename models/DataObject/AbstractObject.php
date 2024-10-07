@@ -119,6 +119,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @var string|null
+     */
+    protected $classId = null;
+
+    /**
+     * @internal
+     *
      */
     protected ?array $__rawRelationData = null;
 
@@ -975,6 +982,26 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         return $this->childrenSortOrder ?? self::OBJECT_CHILDREN_SORT_ORDER_DEFAULT;
     }
+
+    /**
+     * @return $this
+     */
+    public function setClassId(string $classId): static
+    {
+        $this->classId = $classId;
+
+        return $this;
+    }
+
+    public function getClassId(): ?string
+    {
+        if (isset($this->classId)) {
+            return (string)$this->classId;
+        }
+
+        return null;
+    }
+
 
     /**
      * @internal
