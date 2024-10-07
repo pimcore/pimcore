@@ -253,12 +253,13 @@ final class Installer extends SettingsStoreAwareInstaller
     private function executeDiffSql(Schema $newSchema): void
     {
         $currentSchema = $this->db->createSchemaManager()->introspectSchema();
-        $schemaComparator = new Comparator($this->db->getDatabasePlatform());
-        $schemaDiff = $schemaComparator->compareSchemas($currentSchema, $newSchema);
+
         $dbPlatform = $this->db->getDatabasePlatform();
         if (!$dbPlatform instanceof AbstractPlatform) {
             throw new InstallationException('Could not get database platform.');
         }
+        $schemaComparator = new Comparator($dbPlatform);
+        $schemaDiff = $schemaComparator->compareSchemas($currentSchema, $newSchema);
 
         $sqlStatements = $dbPlatform->getAlterSchemaSQL($schemaDiff);
 
