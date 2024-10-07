@@ -1002,7 +1002,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return null;
     }
 
-
     /**
      * @internal
      *
