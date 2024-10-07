@@ -39,7 +39,6 @@ class LogMailMaintenanceTask implements TaskInterface
 
     public function execute(): void
     {
-        $db = $this->db;
 
         if (!empty($this->config['applicationlog']['mail_notification']['send_log_summary'])) {
             $receivers = preg_split('/,|;/', $this->config['applicationlog']['mail_notification']['mail_receiver']);
@@ -48,11 +47,33 @@ class LogMailMaintenanceTask implements TaskInterface
                 $value = trim($value);
             });
 
-            $logLevel = (int) ($this->config['applicationlog']['mail_notification']['filter_priority'] ?? null);
+            // getting the enums from priority
+            $priorityColumnDefinition = $this->db->fetchAllAssociative(
+                'SHOW COLUMNS FROM ' .ApplicationLoggerDb::TABLE_NAME. " LIKE 'priority'"
+            );
 
-            $query = 'SELECT * FROM '.ApplicationLoggerDb::TABLE_NAME." WHERE maintenanceChecked IS NULL AND priority <= $logLevel order by id desc";
+            // type is the actual enum values
+            $columnType = reset($priorityColumnDefinition)['Type'];
 
-            $rows = $db->fetchAllAssociative($query);
+            // remove unnecessary noise
+            $enumValue = explode(',', str_replace(['enum(', ')'], '', $columnType));
+
+            $logLevel = (int)($this->config['applicationlog']['mail_notification']['filter_priority'] ?? null);
+
+            $logLevels = [];
+            for ($i = 0; $i < $logLevel + 1; $i++) {
+                $logLevels[] = $enumValue[$i];
+            }
+
+            $query = 'SELECT * FROM '
+                . ApplicationLoggerDb::TABLE_NAME
+                . ' WHERE maintenanceChecked IS NULL '
+                . 'AND priority IN('
+                . implode(',', $logLevels)
+                . ') '
+                . 'ORDER BY id DESC';
+
+            $rows = $this->db->fetchAllAssociative($query);
             $limit = 100;
             $rowsProcessed = 0;
 
@@ -88,6 +109,12 @@ class LogMailMaintenanceTask implements TaskInterface
         // flag them as checked, regardless if email notifications are enabled or not
         // otherwise, when activating email notifications, you'll receive all log-messages from the past and not
         // since the point when you enabled the notifications
-        $db->executeQuery('UPDATE '.ApplicationLoggerDb::TABLE_NAME.' set maintenanceChecked = 1 WHERE maintenanceChecked != 1 OR maintenanceChecked IS NULL');
+        $this->db->executeQuery(
+            'UPDATE '
+            . ApplicationLoggerDb::TABLE_NAME
+            . ' SET maintenanceChecked = 1 '
+            . 'WHERE maintenanceChecked != 1 '
+            . 'OR maintenanceChecked IS NULL'
+        );
     }
 }

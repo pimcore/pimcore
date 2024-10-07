@@ -1,0 +1,25 @@
+name: "Composer vulnerabilities check"
+
+on:
+    workflow_dispatch:
+    schedule:
+        - cron:  '0 7 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+    composer-checks:
+        uses: pimcore/workflows-collection-public/.github/workflows/reusable-composer-vulnerabilities.yaml@main
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - { php-version: 8.3, branch: 11.x }
+                    - { php-version: 8.3, branch: 11.4 }
+        with:
+            php-version: ${{ matrix.php-version }}
+            branch: ${{ matrix.branch == 'default' && github.event.repository.default_branch || matrix.branch }}
+            private-repo: ${{ github.event.repository.private }}
+            ignore-list: "public"
+        secrets: inherit

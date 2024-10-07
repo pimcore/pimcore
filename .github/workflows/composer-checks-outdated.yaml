@@ -1,8 +1,9 @@
-
-name: "Composer Audit & Outdated"
+name: "Composer outdated check"
 
 on:
     workflow_dispatch:
+    schedule:
+        - cron:  '0 7 * * 5'
 
 permissions:
   contents: read
@@ -14,8 +15,10 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    - { php-version: 8.1, branch: 10.6 }
-                    - { php-version: 8.2, branch: 11.x }
+                    - { php-version: 8.3, branch: 11.x }
+                    - { php-version: 8.3, branch: 11.4 }
         with:
             php-version: ${{ matrix.php-version }}
             branch: ${{ matrix.branch }}
+            ignore-list: "public"
+        secrets: inherit
