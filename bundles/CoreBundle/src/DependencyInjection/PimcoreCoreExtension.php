@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
+use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
@@ -85,6 +86,13 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         // set default domain for router to main domain if configured
         // this will be overridden from the request in web context but is handy for CLI scripts
         if (!empty($config['general']['domain'])) {
+
+            // check if domain is valid, when not an env variable
+            if (!str_starts_with($config['general']['domain'], 'env_')) {
+                if ($config['general']['domain'] && !filter_var($config['general']['domain'], FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+                    throw new InvalidArgumentException(sprintf('Invalid main domain name "%s"', $config['general']['domain']));
+                }
+            }
             $container->setParameter('router.request_context.host', $config['general']['domain']);
         }
 
