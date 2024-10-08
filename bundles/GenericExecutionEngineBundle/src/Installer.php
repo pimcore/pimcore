@@ -25,6 +25,7 @@ use Doctrine\DBAL\Schema\SchemaException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Constants\PermissionConstants;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Constants\TableConstants;
+use Pimcore\Db;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -35,7 +36,6 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 final class Installer extends SettingsStoreAwareInstaller
 {
     public function __construct(
-        private readonly Connection $db,
         BundleInterface $bundle,
 
     ) {
@@ -72,7 +72,7 @@ final class Installer extends SettingsStoreAwareInstaller
      */
     private function installBundle(): void
     {
-        $currentSchema = $this->db->createSchemaManager()->introspectSchema();
+        $currentSchema = Db::get()->createSchemaManager()->introspectSchema();
 
         $this->installJobRunTable($currentSchema);
         $this->installLogTable($currentSchema);
@@ -85,7 +85,7 @@ final class Installer extends SettingsStoreAwareInstaller
      */
     private function uninstallBundle(): void
     {
-        $currentSchema = $this->db->createSchemaManager()->introspectSchema();
+        $currentSchema = Db::get()->createSchemaManager()->introspectSchema();
 
         $this->executeDiffSql($currentSchema);
         $this->removeUserPermission($currentSchema);
@@ -191,7 +191,7 @@ final class Installer extends SettingsStoreAwareInstaller
     private function removeJobRunTable(Schema $schema): void
     {
         if ($schema->hasTable(TableConstants::JOB_RUN_TABLE)) {
-            $this->db->executeStatement('DROP TABLE ' . TableConstants::JOB_RUN_TABLE);
+            Db::get()->executeStatement('DROP TABLE ' . TableConstants::JOB_RUN_TABLE);
         }
     }
 
@@ -201,7 +201,7 @@ final class Installer extends SettingsStoreAwareInstaller
     private function removeLogTable(Schema $schema): void
     {
         if ($schema->hasTable(TableConstants::ERROR_LOG_TABLE)) {
-            $this->db->executeStatement('DROP TABLE ' . TableConstants::ERROR_LOG_TABLE);
+            Db::get()->executeStatement('DROP TABLE ' . TableConstants::ERROR_LOG_TABLE);
         }
     }
 
@@ -212,12 +212,12 @@ final class Installer extends SettingsStoreAwareInstaller
     {
         if ($schema->hasTable(TableConstants::USER_PERMISSION_DEF_TABLE)) {
             foreach (self::USER_PERMISSIONS as $permission) {
-                $queryBuilder = $this->db->createQueryBuilder();
+                $queryBuilder = Db::get()->createQueryBuilder();
                 $queryBuilder
                     ->insert(TableConstants::USER_PERMISSION_DEF_TABLE)
                     ->values([
-                        $this->db->quoteIdentifier('key') => ':key',
-                        $this->db->quoteIdentifier('category') => ':category',
+                        Db::get()->quoteIdentifier('key') => ':key',
+                        Db::get()->quoteIdentifier('category') => ':category',
                     ])
                     ->setParameters([
                         'key' => $permission,
@@ -236,10 +236,10 @@ final class Installer extends SettingsStoreAwareInstaller
     {
         if ($schema->hasTable(TableConstants::USER_PERMISSION_DEF_TABLE)) {
             foreach (self::USER_PERMISSIONS as $permission) {
-                $queryBuilder = $this->db->createQueryBuilder();
+                $queryBuilder = Db::get()->createQueryBuilder();
                 $queryBuilder
                     ->delete(TableConstants::USER_PERMISSION_DEF_TABLE)
-                    ->where($this->db->quoteIdentifier('key') . ' = :key')
+                    ->where(Db::get()->quoteIdentifier('key') . ' = :key')
                     ->setParameter('key', $permission);
 
                 $queryBuilder->executeStatement();
@@ -253,9 +253,9 @@ final class Installer extends SettingsStoreAwareInstaller
     private function executeDiffSql(Schema $newSchema): void
     {
         return;
-        $currentSchema = $this->db->createSchemaManager()->introspectSchema();
+        $currentSchema = Db::get()->createSchemaManager()->introspectSchema();
 
-        $dbPlatform = $this->db->getDatabasePlatform();
+        $dbPlatform = Db::get()->getDatabasePlatform();
         if (!$dbPlatform instanceof AbstractPlatform) {
             throw new InstallationException('Could not get database platform.');
         }
@@ -265,7 +265,7 @@ final class Installer extends SettingsStoreAwareInstaller
         $sqlStatements = $dbPlatform->getAlterSchemaSQL($schemaDiff);
 
         if (!empty($sqlStatements)) {
-            $this->db->executeStatement(implode(';', $sqlStatements));
+            Db::get()->executeStatement(implode(';', $sqlStatements));
         }
     }
 }
