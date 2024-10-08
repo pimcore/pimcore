@@ -229,15 +229,17 @@ final class Site extends AbstractModel
         if (is_string($domains)) {
             $domains = Serialize::unserialize($domains);
         }
-        array_map(static function ($domain) {
-            //replace all wildcards with a placeholder dummy string
-            $wildCardLessDomain = str_replace('*', 'anystring', $domain);
-            if (!filter_var($wildCardLessDomain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
-                throw new InvalidArgumentException(sprintf('Invalid domain name "%s"', $domain));
-            }
-        }, $domains);
-        $this->domains = $domains;
-
+        if (is_array($domains)){
+            $domains = array_filter($domains);
+            array_map(static function ($domain) {
+                //replace all wildcards with a placeholder dummy string
+                $wildCardLessDomain = str_replace('*', 'anystring', $domain);
+                if ($wildCardLessDomain && !filter_var($wildCardLessDomain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+                    throw new InvalidArgumentException(sprintf('Invalid domain name "%s"', $domain));
+                }
+            }, $domains);
+            $this->domains = $domains;
+        }
         return $this;
     }
 
