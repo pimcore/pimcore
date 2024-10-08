@@ -998,7 +998,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this->classId;
     }
 
-
     /**
      * @internal
      *
