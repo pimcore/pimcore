@@ -995,11 +995,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     public function getClassId(): ?string
     {
-        if (isset($this->classId)) {
-            return (string)$this->classId;
-        }
-
-        return null;
+        return $this->classId;
     }
 
 
