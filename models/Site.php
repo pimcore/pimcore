@@ -229,7 +229,7 @@ final class Site extends AbstractModel
         if (is_string($domains)) {
             $domains = Serialize::unserialize($domains);
         }
-        if (is_array($domains)){
+        if (is_array($domains)) {
             $domains = array_filter($domains);
             array_map(static function ($domain) {
                 //replace all wildcards with a placeholder dummy string
@@ -240,6 +240,7 @@ final class Site extends AbstractModel
             }, $domains);
             $this->domains = $domains;
         }
+
         return $this;
     }
 
