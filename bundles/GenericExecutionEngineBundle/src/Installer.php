@@ -252,6 +252,7 @@ final class Installer extends SettingsStoreAwareInstaller
      */
     private function executeDiffSql(Schema $newSchema): void
     {
+        return;
         $currentSchema = $this->db->createSchemaManager()->introspectSchema();
 
         $dbPlatform = $this->db->getDatabasePlatform();
