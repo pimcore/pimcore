@@ -85,13 +85,11 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         // set default domain for router to main domain if configured
         // this will be overridden from the request in web context but is handy for CLI scripts
-        if (!empty($config['general']['domain'])) {
-
-            // check if domain is valid, when not an env variable
-            if (!str_starts_with($config['general']['domain'], 'env_')) {
-                if (!filter_var($config['general']['domain'], FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
-                    throw new InvalidArgumentException(sprintf('Invalid main domain name "%s"', $config['general']['domain']));
-                }
+        $domain = $config['general']['domain'] ?? '';
+        if ($domain) {
+            // when not an env variable, check if the domain is valid
+            if (!str_starts_with($domain, 'env_') && !filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+                throw new InvalidArgumentException(sprintf('Invalid main domain name "%s"', $generalDomain));                
             }
             $container->setParameter('router.request_context.host', $config['general']['domain']);
         }
