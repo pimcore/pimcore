@@ -16,12 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle\Controller\Reports;
 
+use Exception;
 use Pimcore\Bundle\CustomReportsBundle\Tool;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
+use stdClass;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -130,7 +132,7 @@ class CustomReportController extends UserAwareController
         $this->isValidConfigName($newName);
         $report = Tool\Config::getByName($newName);
         if ($report) {
-            throw new \Exception('report already exists');
+            throw new Exception('report already exists');
         }
 
         $report = Tool\Config::getByName($request->get('name'));
@@ -248,7 +250,7 @@ class CustomReportController extends UserAwareController
             }
 
             $success = true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $errorMessage = $e->getMessage();
         }
 
@@ -480,17 +482,17 @@ class CustomReportController extends UserAwareController
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function isValidConfigName(string $configName): void
     {
         if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $configName)) {
-            throw new \Exception('The customer report name is invalid');
+            throw new Exception('The customer report name is invalid');
         }
     }
 
     // gets the sort, direction, filters, drilldownfilters from grid or initial config
-    private function getSortAndFilters(Request $request, \stdClass $configuration): array
+    private function getSortAndFilters(Request $request, stdClass $configuration): array
     {
         $sortingSettings = null;
         $sort = null;

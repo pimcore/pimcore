@@ -15,30 +15,32 @@
 
 namespace Pimcore\Model\Notification;
 
+use Doctrine\DBAL\Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Dao\AbstractDao;
-use Pimcore\Model\Element;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
-
 use Pimcore\Model\Notification;
 use Pimcore\Model\User;
+use UnexpectedValueException;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\Notification $model
+ * @property Notification $model
  */
 class Dao extends AbstractDao
 {
-    const DB_TABLE_NAME = 'notifications';
+    public const DB_TABLE_NAME = 'notifications';
 
     /**
      *
      * @throws NotFoundException
+     * @throws Exception
      */
     public function getById(int $id): void
     {
-        $sql = sprintf('SELECT * FROM `%s` WHERE id = ?', static::DB_TABLE_NAME);
+        $sql = sprintf('SELECT * FROM `%s` WHERE id = ?', self::DB_TABLE_NAME);
         $data = $this->db->fetchAssociative($sql, [$id]);
 
         if ($data === false) {
@@ -52,6 +54,8 @@ class Dao extends AbstractDao
 
     /**
      * Save notification
+     *
+     * @throws Exception
      */
     public function save(): void
     {
@@ -62,7 +66,12 @@ class Dao extends AbstractDao
             $model->setCreationDate($model->getModificationDate());
         }
 
-        Helper::upsert($this->db, static::DB_TABLE_NAME, $this->getData($model), $this->getPrimaryKey(static::DB_TABLE_NAME));
+        Helper::upsert(
+            $this->db,
+            self::DB_TABLE_NAME,
+            $this->getData($model),
+            $this->getPrimaryKey(self::DB_TABLE_NAME)
+        );
 
         if ($model->getId() === null) {
             $model->setId((int) $this->db->lastInsertId());
@@ -71,10 +80,12 @@ class Dao extends AbstractDao
 
     /**
      * Delete notification
+     *
+     * @throws Exception
      */
     public function delete(): void
     {
-        $this->db->delete(static::DB_TABLE_NAME, [
+        $this->db->delete(self::DB_TABLE_NAME, [
             'id' => $this->getModel()->getId(),
         ]);
     }
@@ -101,21 +112,21 @@ class Dao extends AbstractDao
         }
 
         if (!$recipient instanceof User) {
-            throw new \UnexpectedValueException(sprintf('No user found with the ID %d', $data['recipient']));
+            throw new UnexpectedValueException(sprintf('No user found with the ID %d', $data['recipient']));
         }
 
-        if (empty($data['title'])) {
-            throw new \UnexpectedValueException('Title of the Notification cannot be empty');
+        if (!isset($data['title']) || !is_string($data['title']) || $data['title'] === '') {
+            throw new UnexpectedValueException('Title of the Notification cannot be empty');
         }
 
-        if (empty($data['message'])) {
-            throw new \UnexpectedValueException('Message text of the Notification cannot be empty');
+        if (!isset($data['message']) || !is_string($data['message']) || $data['message'] === '') {
+            throw new UnexpectedValueException('Message text of the Notification cannot be empty');
         }
 
         $linkedElement = null;
 
         if ($data['linkedElement']) {
-            $linkedElement = Element\Service::getElementById($data['linkedElementType'], $data['linkedElement']);
+            $linkedElement = Service::getElementById($data['linkedElementType'], $data['linkedElement']);
         }
 
         $model->setId((int)$data['id']);
@@ -124,10 +135,12 @@ class Dao extends AbstractDao
         $model->setSender($sender);
         $model->setRecipient($recipient);
         $model->setTitle($data['title']);
-        $model->setType($data['type']);
+        $model->setType($data['type'] ?? 'info');
         $model->setMessage($data['message']);
         $model->setLinkedElement($linkedElement);
-        $model->setRead($data['read'] == 1 ? true : false);
+        $model->setRead($data['read'] === 1);
+        $model->setPayload($data['payload']);
+        $model->setIsStudio($data['isStudio'] === 1); // TODO: Remove with end of Classic-UI
     }
 
     protected function getData(Notification $model): array
@@ -135,14 +148,17 @@ class Dao extends AbstractDao
         return [
             'id' => $model->getId(),
             'creationDate' => $model->getCreationDate(),
+            'type' => $model->getType() ?? 'info',
             'modificationDate' => $model->getModificationDate(),
-            'sender' => $model->getSender() ? $model->getSender()->getId() : null,
-            'recipient' => $model->getRecipient()->getId(),
+            'sender' => $model->getSender()?->getId(),
+            'recipient' => $model->getRecipient()?->getId(),
             'title' => $model->getTitle(),
             'message' => $model->getMessage(),
-            'linkedElement' => $model->getLinkedElement() ? $model->getLinkedElement()->getId() : null,
+            'linkedElement' => $model->getLinkedElement()?->getId(),
             'linkedElementType' => $model->getLinkedElementType(),
             'read' => (int) $model->isRead(),
+            'payload' => $model->getPayload(),
+            'isStudio' => (int) $model->isStudio(), // TODO: Remove with end of Classic-UI
         ];
     }
 

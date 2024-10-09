@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use stdClass;
 
 class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -339,7 +340,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
             foreach ($cols as $c) {
                 $name = $r['key'] . '#' . $c['key'];
 
-                $col = new \stdClass();
+                $col = new stdClass();
                 $col->name = $name;
                 $length = 0;
                 if (isset($c['length']) && $c['length']) {

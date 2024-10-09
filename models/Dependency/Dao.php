@@ -16,6 +16,8 @@
 namespace Pimcore\Model\Dependency;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Exception;
+use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Messenger\SanityCheckMessage;
@@ -187,13 +189,13 @@ class Dao extends Model\Dao\AbstractDao
             //schedule for sanity check
             $data = $this->db->fetchAllAssociative('SELECT `sourceid`, `sourcetype` FROM dependencies WHERE targettype = ? AND targetid = ?', [$type, $id]);
             foreach ($data as $row) {
-                \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                     new SanityCheckMessage($row['sourcetype'], $row['sourceid'])
                 );
             }
 
             Helper::selectAndDeleteWhere($this->db, 'dependencies', 'id', Helper::quoteInto($this->db, 'sourceid = ?', $id) . ' AND  ' . Helper::quoteInto($this->db, 'sourcetype = ?', $type));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
         }
     }
@@ -206,7 +208,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         try {
             Helper::selectAndDeleteWhere($this->db, 'dependencies', 'id', Helper::quoteInto($this->db, 'sourceid = ?', $this->model->getSourceId()) . ' AND  ' . Helper::quoteInto($this->db, 'sourcetype = ?', $this->model->getSourceType()));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
         }
     }

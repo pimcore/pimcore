@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Exception;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Service;
@@ -37,7 +38,7 @@ class ObjectTest extends ModelTestCase
      */
     public function testParentIdentical(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
         $savedObject = TestHelper::createEmptyObject();
         $this->assertTrue($savedObject->getId() > 0);
@@ -62,7 +63,7 @@ class ObjectTest extends ModelTestCase
      */
     public function testParentIs0(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
         $savedObject = TestHelper::createEmptyObject('', false);
         $this->assertTrue($savedObject->getId() == 0);
@@ -78,7 +79,7 @@ class ObjectTest extends ModelTestCase
      */
     public function testParentNotFound(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('ParentID not found.');
         $savedObject = TestHelper::createEmptyObject('', false);
         $this->assertTrue($savedObject->getId() == 0);

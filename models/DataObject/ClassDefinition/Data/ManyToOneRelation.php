@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use InvalidArgumentException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -513,7 +514,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         if (!isset($data['id'], $data['type'])) {
-            throw new \InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
+            throw new InvalidArgumentException('Please provide an array with keys "id" and "type" or an object which implements '.Element\ElementInterface::class);
         }
 
         if ($operator === '=') {
@@ -522,7 +523,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             return $listing;
         }
 
-        throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
+        throw new InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 
     public function getPhpdocInputType(): ?string

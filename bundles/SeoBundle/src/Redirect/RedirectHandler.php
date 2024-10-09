@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Redirect;
 
+use Exception;
 use Pimcore\Bundle\SeoBundle\Event\Model\RedirectEvent;
 use Pimcore\Bundle\SeoBundle\Event\RedirectEvents;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
@@ -73,7 +74,7 @@ final class RedirectHandler
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function checkForRedirect(Request $request, bool $override = false, Site $sourceSite = null): ?Response
     {
@@ -104,7 +105,7 @@ final class RedirectHandler
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function matchRegexRedirect(
         Redirect $redirect,
@@ -144,7 +145,7 @@ final class RedirectHandler
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function buildRedirectResponse(Redirect $redirect, Request $request, array $matches = []): ?Response
     {
@@ -257,7 +258,7 @@ final class RedirectHandler
                     $this->redirects = $list->load();
 
                     Cache::save($this->redirects, $cacheKey, ['system', 'redirect', 'route'], null, 998, true);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $this->logger->error('Failed to load redirects');
                 }
             }

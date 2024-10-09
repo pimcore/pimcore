@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
+use Exception;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\TagEvent;
 use Pimcore\Event\TagEvents;
@@ -68,7 +69,7 @@ final class Tag extends Model\AbstractModel
 
         try {
             $tag = RuntimeCache::get($cacheKey);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             try {
                 $tag = new self();
                 $tag->getDao()->getById($id);
@@ -169,7 +170,7 @@ final class Tag extends Model\AbstractModel
     {
         try {
             return (new self)->getDao()->getByPath($path);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }
@@ -340,7 +341,7 @@ final class Tag extends Model\AbstractModel
     /**
      * Deletes a tag
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {

@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Navigation;
 
+use CallbackFilterIterator;
+use Closure;
+use Exception;
 use Pimcore\Cache as CacheManager;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Logger;
@@ -24,6 +27,7 @@ use Pimcore\Model\Site;
 use Pimcore\Navigation\Iterator\PrefixRecursiveFilterIterator;
 use Pimcore\Navigation\Page\Document as DocumentPage;
 use Pimcore\Navigation\Page\Url;
+use RecursiveIteratorIterator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Builder
@@ -74,8 +78,8 @@ class Builder
 
         $options->setAllowedTypes('root', [Document::class, 'null']);
         $options->setAllowedTypes('htmlMenuPrefix', ['string', 'null']);
-        $options->setAllowedTypes('pageCallback', [\Closure::class, 'null']);
-        $options->setAllowedTypes('rootCallback', [\Closure::class, 'null']);
+        $options->setAllowedTypes('pageCallback', [Closure::class, 'null']);
+        $options->setAllowedTypes('rootCallback', [Closure::class, 'null']);
         $options->setAllowedTypes('cache', ['string', 'bool']);
         $options->setAllowedTypes('cacheLifetime', ['int', 'null']);
         $options->setAllowedTypes('maxDepth', ['int', 'null']);
@@ -101,7 +105,7 @@ class Builder
      *     markActiveTrail?: bool
      * } $params
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getNavigation(array $params): Container
     {
@@ -140,7 +144,7 @@ class Builder
                 $cacheKeys[] = 'custom__' . $cache;
             }
 
-            if ($pageCallback instanceof \Closure) {
+            if ($pageCallback instanceof Closure) {
                 $cacheKeys[] = 'pageCallback_' . closureHash($pageCallback);
             }
 
@@ -162,7 +166,7 @@ class Builder
                 $navigation->addPages($rootPage);
             }
 
-            if ($rootCallback instanceof \Closure) {
+            if ($rootCallback instanceof Closure) {
                 $rootCallback($navigation);
             }
 
@@ -230,7 +234,7 @@ class Builder
 
         if ($activeDocument) {
             // we didn't find the active document, so we try to build the trail on our own
-            $allPages = new \RecursiveIteratorIterator($navigation, \RecursiveIteratorIterator::SELF_FIRST);
+            $allPages = new RecursiveIteratorIterator($navigation, RecursiveIteratorIterator::SELF_FIRST);
 
             foreach ($allPages as $page) {
                 if (!$page instanceof Url || !$page->getUri()) {
@@ -261,14 +265,14 @@ class Builder
     protected function findActivePages(Container $navigation, string $property, string $value): array
     {
         $filterByPrefix = new PrefixRecursiveFilterIterator($navigation, $property, $value);
-        $flatten = new \RecursiveIteratorIterator($filterByPrefix, \RecursiveIteratorIterator::SELF_FIRST);
-        $filterMatches = new \CallbackFilterIterator($flatten, static fn (Page $page): bool => $page->get($property) === $value);
+        $flatten = new RecursiveIteratorIterator($filterByPrefix, RecursiveIteratorIterator::SELF_FIRST);
+        $filterMatches = new CallbackFilterIterator($flatten, static fn (Page $page): bool => $page->get($property) === $value);
 
         return iterator_to_array($filterMatches, false);
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
@@ -334,7 +338,7 @@ class Builder
     /**
      * @return Page[]
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
@@ -399,7 +403,7 @@ class Builder
                     $page->setPages($childPages);
                 }
 
-                if ($pageCallback instanceof \Closure) {
+                if ($pageCallback instanceof Closure) {
                     $pageCallback($page, $child);
                 }
 

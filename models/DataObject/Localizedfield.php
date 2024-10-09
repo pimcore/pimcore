@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use Exception;
+use Pimcore;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -210,7 +212,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setObject(Model\Element\ElementDescriptor|Concrete|null $object): static
     {
@@ -219,7 +221,7 @@ final class Localizedfield extends Model\AbstractModel implements
         }
 
         if (!is_null($object) && !$object instanceof Concrete) {
-            throw new \Exception('must be instance of object concrete');
+            throw new Exception('must be instance of object concrete');
         }
 
         $this->markAllLanguagesAsDirty();
@@ -252,7 +254,7 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      *
      *
      */
@@ -264,13 +266,13 @@ final class Localizedfield extends Model\AbstractModel implements
 
         // try to get the language from the service container
         try {
-            $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->getLocale();
+            $locale = Pimcore::getContainer()->get(LocaleServiceInterface::class)->getLocale();
 
             if (isset($locale) && Tool::isValidLanguage($locale)) {
                 return $locale;
             }
 
-            if (\Pimcore::inAdmin()) {
+            if (Pimcore::inAdmin()) {
                 foreach (Tool::getValidLanguages() as $validLocale) {
                     if (str_starts_with($validLocale, $locale.'_')) {
                         return $validLocale;
@@ -278,8 +280,8 @@ final class Localizedfield extends Model\AbstractModel implements
                 }
             }
 
-            throw new \Exception('Not supported language');
-        } catch (\Exception $e) {
+            throw new Exception('Not supported language');
+        } catch (Exception $e) {
             return Tool::getDefaultLanguage();
         }
     }
@@ -321,7 +323,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @return ClassDefinition\Data[]
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getFieldDefinitions(array $context = [], array $params = []): array
     {
@@ -379,7 +381,7 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      * @throws Model\Exception\NotFoundException
      */
     public function getLocalizedValue(string $name, string $language = null, bool $ignoreFallbackLanguage = false): mixed
@@ -494,7 +496,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setLocalizedValue(string $name, mixed $value, string $language = null, bool $markFieldAsDirty = true): static
     {
@@ -504,7 +506,7 @@ final class Localizedfield extends Model\AbstractModel implements
 
         if (self::$strictMode) {
             if (!$language || !in_array($language, Tool::getValidLanguages())) {
-                throw new \Exception('Language '.$language.' not accepted in strict mode');
+                throw new Exception('Language '.$language.' not accepted in strict mode');
             }
         }
 
@@ -742,7 +744,7 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getLazyLoadedFieldNames(): array
     {

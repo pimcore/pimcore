@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\SeoBundle\Sitemap\Document;
 use Pimcore\Bundle\SeoBundle\Sitemap\UrlGeneratorInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use RuntimeException;
 
 /**
  * URL generator specific to documents with site support.
@@ -89,7 +90,7 @@ class DocumentUrlGenerator implements DocumentUrlGeneratorInterface
         }
 
         if (empty($host)) {
-            throw new \RuntimeException(sprintf('Failed to resolve host for site %d', $site->getId()));
+            throw new RuntimeException(sprintf('Failed to resolve host for site %d', $site->getId()));
         }
 
         return $host;

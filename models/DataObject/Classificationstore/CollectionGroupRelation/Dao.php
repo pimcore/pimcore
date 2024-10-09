@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore\CollectionGroupRelation;
 
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -60,7 +61,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {
@@ -79,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(): void
     {

@@ -15,6 +15,10 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
+use Closure;
+use Exception;
+use JsonSerializable;
+use LogicException;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -22,8 +26,9 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use ReflectionMethod;
 
-abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface, \JsonSerializable
+abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface, JsonSerializable
 {
     use DataObject\ClassDefinition\Helper\VarExport;
 
@@ -102,7 +107,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * Checks if data is valid for current data field
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
@@ -981,7 +986,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= '* Filter by ' . str_replace(['/**', '*/', '//'], '', $key) . ' (' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . ")\n";
 
         $dataParamDoc = 'mixed $data';
-        $reflectionMethod = new \ReflectionMethod($this, 'addListingFilter');
+        $reflectionMethod = new ReflectionMethod($this, 'addListingFilter');
         $docComment = $reflectionMethod->getDocComment();
         if ($docComment && preg_match('/@param\s+([^\s]+)\s+\$data(.*)/', $docComment, $dataParam)) {
             $dataParamDoc = $dataParam[1].' $data '.$dataParam[2];
@@ -1109,7 +1114,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getDataFromObjectParam(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): mixed
     {
@@ -1170,7 +1175,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                                     return $data;
                                 }
 
-                                throw new \Exception('object seems to be modified, item with orginal index ' . $originalIndex . ' not found, new index: ' . $index);
+                                throw new Exception('object seems to be modified, item with orginal index ' . $originalIndex . ' not found, new index: ' . $index);
                             } else {
                                 return null;
                             }
@@ -1260,7 +1265,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @throws \LogicException
+     * @throws LogicException
      *
      * TODO Change return type to array in Pimcore 12
      */
@@ -1270,7 +1275,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @throws \LogicException
+     * @throws LogicException
      *
      * TODO Change return type to array in Pimcore 12
      */
@@ -1335,7 +1340,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public function jsonSerialize(): mixed
     {
-        $data = \Closure::bind(fn ($obj) => get_object_vars($obj), null, null)($this); // only get public properties
+        $data = Closure::bind(fn ($obj) => get_object_vars($obj), null, null)($this); // only get public properties
         $data['fieldtype'] = $this->getFieldType();
         $data['datatype'] = 'data';
         unset($data['blockedVarsForExport']);

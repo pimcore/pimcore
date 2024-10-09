@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use function is_array;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Model;

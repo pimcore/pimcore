@@ -16,10 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ExportService\Exporter;
 
+use DOMDocument;
+use Pimcore;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\Escaper\Xliff12Escaper;
 use Pimcore\Bundle\XliffBundle\Event\Model\TranslationXliffEvent;
 use Pimcore\Bundle\XliffBundle\Event\XliffEvents;
+use SimpleXMLElement;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Xliff12Exporter implements ExporterInterface
@@ -28,7 +31,7 @@ class Xliff12Exporter implements ExporterInterface
 
     private Xliff12Escaper $xliffEscaper;
 
-    private ?\SimpleXMLElement $xliffFile = null;
+    private ?SimpleXMLElement $xliffFile = null;
 
     public function __construct(
         Xliff12Escaper $xliffEscaper,
@@ -43,7 +46,7 @@ class Xliff12Exporter implements ExporterInterface
         $exportFile = $this->getExportFilePath($exportId);
 
         $event = new TranslationXliffEvent($attributeSet);
-        \Pimcore::getEventDispatcher()->dispatch($event, XliffEvents::XLIFF_ATTRIBUTE_SET_EXPORT);
+        Pimcore::getEventDispatcher()->dispatch($event, XliffEvents::XLIFF_ATTRIBUTE_SET_EXPORT);
 
         $attributeSet = $event->getAttributeSet();
 
@@ -96,7 +99,7 @@ class Xliff12Exporter implements ExporterInterface
     protected function prepareExportFile(string $exportFilePath): void
     {
         if ($this->xliffFile === null) {
-            $dom = new \DOMDocument();
+            $dom = new DOMDocument();
             $dom->loadXML(file_get_contents($exportFilePath));
             $this->xliffFile = simplexml_import_dom($dom);
         }
@@ -107,7 +110,7 @@ class Xliff12Exporter implements ExporterInterface
         return 'application/x-xliff+xml';
     }
 
-    protected function addTransUnitNode(\SimpleXMLElement $xml, string $name, string $sourceContent, string $sourceLang, ?string $targetContent, string $targetLang): void
+    protected function addTransUnitNode(SimpleXMLElement $xml, string $name, string $sourceContent, string $sourceLang, ?string $targetContent, string $targetLang): void
     {
         $transUnit = $xml->addChild('trans-unit');
         $transUnit->addAttribute('id', htmlentities($name));

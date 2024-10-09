@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use Exception;
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
@@ -206,7 +208,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     private array $deletedDataComponents = [];
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getById(string $id, bool $force = false): ?ClassDefinition
     {
@@ -214,31 +216,31 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
 
         try {
             if ($force) {
-                throw new \Exception('Forced load');
+                throw new Exception('Forced load');
             }
             $class = RuntimeCache::get($cacheKey);
             if (!$class) {
-                throw new \Exception('Class in registry is null');
+                throw new Exception('Class in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $class = new self();
                 $name = $class->getDao()->getNameById($id);
                 if (!$name) {
-                    throw new \Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
+                    throw new Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
                 }
 
                 $definitionFile = $class->getDefinitionFile($name);
                 $class = @include $definitionFile;
 
                 if (!$class instanceof self) {
-                    throw new \Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
+                    throw new Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
                 }
 
                 $class->setId($id);
 
                 RuntimeCache::set($cacheKey, $class);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::info($e->getMessage());
 
                 return null;
@@ -249,7 +251,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByName(string $name): ?ClassDefinition
     {
@@ -322,10 +324,6 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         return is_string($name);
     }
 
-    /**
-     * @throws \Exception
-     * @throws DataObject\Exception\DefinitionWriteException
-     */
     public function save(bool $saveDefinitionFile = true): void
     {
         if ($saveDefinitionFile && !$this->isWritable()) {
@@ -335,7 +333,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
             if ($fd->isForbiddenName()) {
-                throw new \Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
+                throw new Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
             }
 
             if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
@@ -351,17 +349,17 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         }
 
         if (!preg_match('/[a-zA-Z][a-zA-Z0-9_]+/', $this->getName())) {
-            throw new \Exception(sprintf('Invalid name for class definition: %s', $this->getName()));
+            throw new Exception(sprintf('Invalid name for class definition: %s', $this->getName()));
         }
 
         if (!preg_match('/[a-zA-Z0-9]([a-zA-Z0-9_]+)?/', $this->getId())) {
-            throw new \Exception(sprintf('Invalid ID `%s` for class definition %s', $this->getId(), $this->getName()));
+            throw new Exception(sprintf('Invalid ID `%s` for class definition %s', $this->getId(), $this->getName()));
         }
 
         foreach (['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {
             $propertyValue = $this->{'get'.ucfirst($propertyName)}();
             if ($propertyValue && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\ ,]*$/', $propertyValue)) {
-                throw new \Exception(sprintf('Invalid %s value for class definition: %s', $propertyName,
+                throw new Exception(sprintf('Invalid %s value for class definition: %s', $propertyName,
                     $this->getParentClass()));
             }
         }
@@ -392,7 +390,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         // empty object cache
         try {
             Cache::clearTag('class_'.$this->getId());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         foreach ($fieldDefinitions as $fd) {
@@ -411,19 +409,19 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
     public function generateClassFiles(bool $generateDefinitionFile = true): void
     {
-        \Pimcore::getContainer()->get(PHPClassDumperInterface::class)->dumpPHPClasses($this);
+        Pimcore::getContainer()->get(PHPClassDumperInterface::class)->dumpPHPClasses($this);
 
         if ($generateDefinitionFile) {
             // save definition as a php file
             $definitionFile = $this->getDefinitionFile();
             if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
-                throw new \Exception(
+                throw new Exception(
                     'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
                 );
             }
@@ -470,7 +468,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         $cd .= " *\n";
         $cd .= " * Fields Summary:\n";
 
-        $fieldDefinitionDocBlockBuilder = \Pimcore::getContainer()->get(FieldDefinitionDocBlockBuilderInterface::class);
+        $fieldDefinitionDocBlockBuilder = Pimcore::getContainer()->get(FieldDefinitionDocBlockBuilderInterface::class);
         foreach ($this->getFieldDefinitions() as $fieldDefinition) {
             $cd .= ' * ' . str_replace("\n", "\n * ", trim($fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition))) . "\n";
         }
@@ -480,9 +478,6 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         return $cd;
     }
 
-    /**
-     * @throws Exception\DefinitionWriteException
-     */
     public function delete(): void
     {
         if (!$this->isWritable() && file_exists($this->getDefinitionFile())) {
@@ -504,13 +499,13 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         // empty object cache
         try {
             Cache::clearTag('class_'.$this->getId());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         // empty output cache
         try {
             Cache::clearTag('output');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         $customLayouts = new ClassDefinition\CustomLayout\Listing();
@@ -1194,17 +1189,17 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             $class = new self();
             $name = $class->getDao()->getNameByIdIgnoreCase($id);
             if ($name === null) {
-                throw new \Exception('Class definition with ID ' . $id . ' does not exist');
+                throw new Exception('Class definition with ID ' . $id . ' does not exist');
             }
             $definitionFile = $class->getDefinitionFile($name);
             $class = @include $definitionFile;
 
             if (!$class instanceof self) {
-                throw new \Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
+                throw new Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
             }
 
             $class->setId($id);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::info($e->getMessage());
 
             return null;

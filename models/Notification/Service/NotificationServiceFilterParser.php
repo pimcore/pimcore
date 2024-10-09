@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Notification\Service;
 
 use Carbon\Carbon;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -97,7 +98,7 @@ class NotificationServiceFilterParser
     /**
      * @return array{0: string, 1: string, 2: array<string, mixed>}
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function parseString(array $item): array
     {
@@ -118,7 +119,7 @@ class NotificationServiceFilterParser
         }
 
         if (is_null($result)) {
-            throw new \Exception();
+            throw new Exception();
         }
 
         return $result;
@@ -127,7 +128,7 @@ class NotificationServiceFilterParser
     /**
      * @return array{0: string, 1: string, 2: array<string, mixed>}
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function parseDate(array $item): array
     {
@@ -169,7 +170,7 @@ class NotificationServiceFilterParser
         }
 
         if (is_null($result)) {
-            throw new \Exception();
+            throw new Exception();
         }
 
         return $result;

@@ -119,7 +119,8 @@ If you'd like to get also all the unpublished documents, set the following flag:
 
 | Method                  | Arguments                           | Description                                                                                 |
 |-------------------------|-------------------------------------|---------------------------------------------------------------------------------------------|
-| `getTotalCount()`       |                                     | Returns total number of selected rows.                                                      |
+| `getCount()`            |                                     | Returns total number of selected rows.                                                      |
+| `getTotalCount()`       |                                     | Returns total number of selected rows (excluding offset and limit).                         |
 | `getPaginatorAdapter()` |                                     | List implements `\Iterator`, you could use the list as a paginator.                         |
 | `getItems()`            | int $offset, int $itemsCountPerPage | as arguments you have to specify the limit of rows and the offset.                          |
 | `loadIdList()`          |                                     | Returns complete array with id as a row.                                                    |

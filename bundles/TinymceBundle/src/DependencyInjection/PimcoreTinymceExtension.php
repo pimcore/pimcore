@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\TinymceBundle\DependencyInjection;
 
+use Pimcore;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -27,7 +28,7 @@ final class PimcoreTinymceExtension extends ConfigurableExtension
     {
         // on container build the shutdown handler shouldn't be called
         // for details please see https://github.com/pimcore/pimcore/issues/4709
-        \Pimcore::disableShutdown();
+        Pimcore::disableShutdown();
 
         $loader = new YamlFileLoader(
             $container,

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document\Editable;
 
 use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Document\Editable\EditableHandler;
@@ -93,7 +94,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     public function frontend()
     {
         // TODO inject services via DI when editables are built through container
-        $container = \Pimcore::getContainer();
+        $container = Pimcore::getContainer();
         $editableHandler = $container->get(EditableHandler::class);
 
         if (empty($this->config['controller']) && !empty($this->config['template'])) {

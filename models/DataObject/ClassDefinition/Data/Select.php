@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use InvalidArgumentException;
+use JsonSerializable;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -30,7 +31,7 @@ class Select extends Data implements
     TypeDeclarationSupportInterface,
     EqualComparisonInterface,
     VarExporterInterface,
-    \JsonSerializable,
+    JsonSerializable,
     NormalizerInterface,
     LayoutDefinitionEnrichmentInterface,
     FieldDefinitionEnrichmentInterface,

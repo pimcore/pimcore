@@ -21,8 +21,10 @@ use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\DriverManager;
-use function in_array;
+use Exception;
+use InvalidArgumentException;
 use PDO;
+use Pimcore;
 use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
 use Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle;
 use Pimcore\Bundle\GenericExecutionEngineBundle\PimcoreGenericExecutionEngineBundle;
@@ -56,6 +58,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use Throwable;
 
 /**
  * @internal
@@ -265,7 +268,7 @@ class Installer
     private function dispatchStepEvent(string $type, string $message = null): InstallerStepEvent
     {
         if (!isset($this->stepEvents[$type])) {
-            throw new \InvalidArgumentException(sprintf('Trying to dispatch unsupported event type "%s"', $type));
+            throw new InvalidArgumentException(sprintf('Trying to dispatch unsupported event type "%s"', $type));
         }
 
         $message = $message ?? $this->stepEvents[$type];
@@ -305,7 +308,7 @@ class Installer
             if (count($errors) > 0) {
                 return $errors;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $errors[] = sprintf('Couldn\'t establish connection to MySQL: %s', $e->getMessage());
 
             return $errors;
@@ -334,7 +337,7 @@ class Installer
                 ],
                 $db
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error((string) $e);
 
             return [
@@ -440,7 +443,7 @@ class Installer
         }
 
         if (in_array('clear_cache', $stepsToRun) || in_array('install_assets', $stepsToRun)) {
-            \Pimcore::setKernel($kernel);
+            Pimcore::setKernel($kernel);
             $kernel->boot();
         }
 
@@ -711,7 +714,7 @@ class Installer
 
                     $this->createOrUpdateUser($db, $userCredentials);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->logger->error((string) $e);
                 $errors[] = $e->getMessage();
             }
@@ -721,8 +724,8 @@ class Installer
 
         // close connections and collection garbage ... in order to avoid too many connections error
         // when installing demos
-        if (\Pimcore::getKernel() instanceof \Pimcore\Kernel) {
-            \Pimcore::collectGarbage();
+        if (Pimcore::getKernel() instanceof \Pimcore\Kernel) {
+            Pimcore::collectGarbage();
         }
 
         return $errors;
@@ -757,7 +760,7 @@ class Installer
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function insertDatabaseDump(Connection $db, string $file): void
     {
@@ -784,7 +787,7 @@ class Installer
                     $batchQueries[] = $sql . ';';
                 }
 
-                if (\count($batchQueries) > 500) {
+                if (count($batchQueries) > 500) {
                     $db->executeStatement(implode("\n", $batchQueries));
                     $batchQueries = [];
                 }

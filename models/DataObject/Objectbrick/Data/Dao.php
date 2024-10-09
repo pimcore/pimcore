@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Objectbrick\Data;
 
+use Exception;
 use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
@@ -34,7 +35,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(DataObject\Concrete $object, array $params = []): void
     {

@@ -39,7 +39,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating\Placeholder;
 
-class Container extends \ArrayObject
+use ArrayObject;
+
+class Container extends ArrayObject
 {
     /**
      * Whether or not to override all contents of placeholder
@@ -256,9 +258,17 @@ class Container extends \ArrayObject
      * @param int|string $type How to capture content into placeholder; append, prepend, or set
      *
      * @throws Exception
+     *
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureStart(int|string $type = self::APPEND, mixed $key = null): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureStart()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         if ($this->_captureLock) {
             throw new Exception('Cannot nest placeholder captures for the same placeholder');
         }
@@ -274,9 +284,16 @@ class Container extends \ArrayObject
     /**
      * End content capture
      *
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureEnd(): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureStart()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         $data = ob_get_clean();
         $key = null;
         $this->_captureLock = false;

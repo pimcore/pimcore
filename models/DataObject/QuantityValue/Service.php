@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\QuantityValue;
 
 use Exception;
-use function is_array;
 use Pimcore\Cache;
 use Pimcore\Logger;
 use Pimcore\Model\Translation;

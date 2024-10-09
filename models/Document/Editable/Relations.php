@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use Iterator;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -25,7 +26,7 @@ use Pimcore\Model\Element;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Relations extends Model\Document\Editable implements \Iterator, IdRewriterInterface, EditmodeDataInterface, LazyLoadingInterface
+class Relations extends Model\Document\Editable implements Iterator, IdRewriterInterface, EditmodeDataInterface, LazyLoadingInterface
 {
     /**
      * @internal

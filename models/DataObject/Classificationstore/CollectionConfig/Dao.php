@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore\CollectionConfig;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -87,7 +88,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(): void
     {

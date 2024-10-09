@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -50,7 +51,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getByName(string $name = null): void
     {
@@ -74,7 +75,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {
@@ -94,7 +95,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(): void
     {

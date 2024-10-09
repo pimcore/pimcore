@@ -22,28 +22,28 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 #### Required Settings and Modules & Extensions
 - `memory_limit` >= 128M
 - `upload_max_filesize` and `post_max_size` >= 100M (depending on your data) 
-- [pdo_mysql](http://php.net/pdo-mysql)
-- [iconv](http://php.net/iconv)
-- [dom](http://php.net/dom)
-- [simplexml](http://php.net/simplexml)
-- [gd](http://php.net/gd)
-- [exif](http://php.net/exif)
-- [file_info](http://php.net/fileinfo) 
-- [mbstring](http://php.net/mbstring)
-- [zlib](http://php.net/zlib)
-- [zip](http://php.net/zip)
-- [intl](http://www.php.net/intl)
-- [opcache](http://php.net/opcache)
-- [curl](http://php.net/curl)
+- [pdo_mysql](https://php.net/pdo-mysql)
+- [iconv](https://php.net/iconv)
+- [dom](https://php.net/dom)
+- [simplexml](https://php.net/simplexml)
+- [gd](https://php.net/gd)
+- [exif](https://php.net/exif)
+- [file_info](https://php.net/fileinfo) 
+- [mbstring](https://php.net/mbstring)
+- [zlib](https://php.net/zlib)
+- [zip](https://php.net/zip)
+- [intl](https://www.php.net/intl)
+- [opcache](https://php.net/opcache)
+- [curl](https://php.net/curl)
 - CLI SAPI (for Cron Jobs)
 - [Composer 2](https://getcomposer.org/) (added to `$PATH` - see also [Additional Tools Installation](./03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md))
 
 #### Recommended or Optional Modules & Extensions 
-- [imagick](http://php.net/imagick) (if not installed *gd* is used instead, but with less supported image types)
+- [imagick](https://php.net/imagick) (if not installed *gd* is used instead, but with less supported image types)
   - LCMS delegate for Image Magick to prevent negative colors for CMYK images
 - [phpredis](https://github.com/phpredis/phpredis) (recommended cache backend adapter)
 - [graphviz](https://www.graphviz.org/) (for rendering workflow overview)
-- [mysqli](http://php.net/mysqli) (PDO although is still required for parameter mappings)
+- [mysqli](https://php.net/mysqli) (PDO although is still required for parameter mappings)
   
 ### Database Server
 - MariaDB >= 10.3

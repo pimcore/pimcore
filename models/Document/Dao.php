@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Document;
 
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -95,7 +96,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(): void
     {
@@ -165,7 +166,7 @@ class Dao extends Model\Element\Dao
     /**
      * Delete the row from the database. (based on the model id)
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {
@@ -175,7 +176,7 @@ class Dao extends Model\Element\Dao
     /**
      * Update document workspaces..
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function updateWorkspaces(): void
     {
@@ -226,7 +227,7 @@ class Dao extends Model\Element\Dao
 
         try {
             $path = $this->db->fetchOne('SELECT CONCAT(`path`,`key`) as `path` FROM documents WHERE id = ?', [$this->model->getId()]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error('could not  get current document path from DB');
         }
 
@@ -252,7 +253,7 @@ class Dao extends Model\Element\Dao
     /**
      * Returns properties for the object from the database
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getProperties(bool $onlyInherited = false, bool $onlyDirect = false): array
     {
@@ -306,7 +307,7 @@ class Dao extends Model\Element\Dao
                 }
 
                 $properties[$propertyRaw['name']] = $property;
-            } catch (\Exception) {
+            } catch (Exception) {
                 Logger::error(
                     "can't add property " . $propertyRaw['name'] . ' to document ' . $this->model->getRealFullPath()
                 );
@@ -423,7 +424,7 @@ class Dao extends Model\Element\Dao
      * Checks if the document is locked.
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function isLocked(): bool
     {
@@ -449,7 +450,7 @@ class Dao extends Model\Element\Dao
     /**
      * Update the lock value for the document.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function updateLocks(): void
     {
@@ -530,7 +531,7 @@ class Dao extends Model\Element\Dao
                     return true;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::warn('Unable to get permission ' . $type . ' for document ' . $this->model->getId());
         }
 

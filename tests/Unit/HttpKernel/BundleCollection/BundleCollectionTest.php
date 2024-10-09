@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\HttpKernel\BundleCollection;
 
+use InvalidArgumentException;
 use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\HttpKernel\BundleCollection\Item;
@@ -123,7 +124,7 @@ class BundleCollectionTest extends TestCase
 
     public function testGetItemThrowsException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Bundle "Pimcore\Tests\Unit\HttpKernel\BundleCollection\BundleA" is not registered');
         $item = new Item($this->bundles[0]);
 

@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Asset\Image;
 
 use Exception;
+use Pimcore;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
@@ -83,7 +84,7 @@ final class Thumbnail implements ThumbnailInterface
                 'pathReference' => $pathReference,
                 'frontendPath' => $path,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
+            Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
             $path = $event->getArgument('frontendPath');
         }
 
@@ -93,7 +94,7 @@ final class Thumbnail implements ThumbnailInterface
     protected function hasListeners(string $eventName): bool
     {
         if (!isset(self::$hasListenersCache[$eventName])) {
-            self::$hasListenersCache[$eventName] = \Pimcore::getEventDispatcher()->hasListeners($eventName);
+            self::$hasListenersCache[$eventName] = Pimcore::getEventDispatcher()->hasListeners($eventName);
         }
 
         return self::$hasListenersCache[$eventName];
@@ -146,7 +147,7 @@ final class Thumbnail implements ThumbnailInterface
                 'deferred' => $deferred,
                 'generated' => $generated,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::IMAGE_THUMBNAIL);
+            Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::IMAGE_THUMBNAIL);
         }
     }
 

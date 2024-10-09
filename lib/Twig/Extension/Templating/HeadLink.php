@@ -39,12 +39,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating;
 
+use Pimcore;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware;
 use Pimcore\Twig\Extension\Templating\Placeholder\Container;
 use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Pimcore\Twig\Extension\Templating\Placeholder\Exception;
 use Pimcore\Twig\Extension\Templating\Traits\WebLinksTrait;
+use stdClass;
 use Symfony\Bridge\Twig\Extension\WebLinkExtension;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -206,7 +208,7 @@ class HeadLink extends CacheBusterAware
      */
     protected function _isValid(mixed $value): bool
     {
-        if (!$value instanceof \stdClass) {
+        if (!$value instanceof stdClass) {
             return false;
         }
 
@@ -223,7 +225,7 @@ class HeadLink extends CacheBusterAware
     /**
      * append()
      *
-     * @param  \stdClass $value
+     * @param  stdClass $value
      *
      */
     public function append($value): void
@@ -253,7 +255,7 @@ class HeadLink extends CacheBusterAware
     /**
      * prepend()
      *
-     * @param \stdClass $value
+     * @param stdClass $value
      */
     public function prepend($value): void
     {
@@ -267,7 +269,7 @@ class HeadLink extends CacheBusterAware
     /**
      * set()
      *
-     * @param \stdClass $value
+     * @param stdClass $value
      */
     public function set($value): void
     {
@@ -283,7 +285,7 @@ class HeadLink extends CacheBusterAware
      *
      *
      */
-    public function itemToString(\stdClass $item): string
+    public function itemToString(stdClass $item): string
     {
         $attributes = (array) $item;
         $link = '<link ';
@@ -359,7 +361,7 @@ class HeadLink extends CacheBusterAware
             $event = new GenericEvent($this, [
                 'item' => $item,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::VIEW_HELPER_HEAD_LINK);
+            Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::VIEW_HELPER_HEAD_LINK);
 
             $source = $item->href ?? '';
             $itemAttributes = isset($item->extras) ? $item->extras : [];
@@ -379,7 +381,7 @@ class HeadLink extends CacheBusterAware
      *
      *
      */
-    public function createData(array $attributes): \stdClass
+    public function createData(array $attributes): stdClass
     {
         $data = (object) $attributes;
 
@@ -389,9 +391,9 @@ class HeadLink extends CacheBusterAware
     /**
      * Create item for stylesheet link item
      *
-     * @return \stdClass|false Returns false if stylesheet is a duplicate
+     * @return stdClass|false Returns false if stylesheet is a duplicate
      */
-    public function createDataStylesheet(array $args): bool|\stdClass
+    public function createDataStylesheet(array $args): bool|stdClass
     {
         $rel = 'stylesheet';
         $type = 'text/css';
@@ -450,7 +452,7 @@ class HeadLink extends CacheBusterAware
      *
      *
      */
-    public function createDataAlternate(array $args): \stdClass
+    public function createDataAlternate(array $args): stdClass
     {
         if (3 > count($args)) {
             throw new Exception(sprintf('Alternate tags require 3 arguments; %s provided', count($args)));

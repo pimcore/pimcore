@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
+use Exception;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -428,7 +429,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
@@ -465,7 +466,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         foreach ($permissions as $type => $isAllowed) {
             $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
-            \Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);
+            Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);
 
             $permissions[$type] = $event->getArgument('isAllowed');
         }
@@ -531,12 +532,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function validatePathLength(): void
     {
         if (mb_strlen($this->getRealFullPath()) > 765) {
-            throw new \Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
+            throw new Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
         }
     }
 
@@ -563,7 +564,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      *

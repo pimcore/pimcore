@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Carbon\Carbon;
+use DateTimeInterface;
 use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -173,7 +174,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
-        if ($data instanceof \DateTimeInterface) {
+        if ($data instanceof DateTimeInterface) {
             return $this->applyTimezone($data)->format('Y-m-d');
         }
 
@@ -208,7 +209,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof \DateTimeInterface) {
+        if ($data instanceof DateTimeInterface) {
             return $this->applyTimezone($data)->format('Y-m-d');
         }
 
@@ -329,8 +330,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
-        $oldValue = $oldValue instanceof \DateTimeInterface ? $oldValue->format('Y-m-d') : null;
-        $newValue = $newValue instanceof \DateTimeInterface ? $newValue->format('Y-m-d') : null;
+        $oldValue = $oldValue instanceof DateTimeInterface ? $oldValue->format('Y-m-d') : null;
+        $newValue = $newValue instanceof DateTimeInterface ? $newValue->format('Y-m-d') : null;
 
         return $oldValue === $newValue;
     }
@@ -406,7 +407,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         $this->columnType = $columnType;
     }
 
-    private function applyTimezone(\DateTimeInterface $date): \DateTimeInterface
+    private function applyTimezone(DateTimeInterface $date): DateTimeInterface
     {
         if ($this->columnType !== 'date') {
             $date = UserTimezone::applyTimezone($date);

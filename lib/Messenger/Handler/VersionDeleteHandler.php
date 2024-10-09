@@ -16,12 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Messenger\Handler;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Messenger\VersionDeleteMessage;
 use Pimcore\Model\Version;
 use Symfony\Component\Messenger\Handler\Acknowledger;
 use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
 use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
+use Throwable;
 
 /**
  * @internal
@@ -49,13 +51,13 @@ class VersionDeleteHandler implements BatchHandlerInterface
                 foreach ($versions as $version) {
                     try {
                         $version->delete();
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         Logger::err(sprintf('Problem deleting the version with Id: %s, reason: %s', $version->getId(), $e->getMessage()));
                     }
                 }
 
                 $ack->ack($message);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $ack->nack($e);
             }
         }

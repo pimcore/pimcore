@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
+use const PASSWORD_ARGON2I;
+use const PASSWORD_ARGON2ID;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
@@ -1115,8 +1117,8 @@ final class Configuration implements ConfigurationInterface
                                     ->values(array_filter([
                                         PASSWORD_DEFAULT,
                                         PASSWORD_BCRYPT,
-                                        defined('PASSWORD_ARGON2I') ? \PASSWORD_ARGON2I : null,
-                                        defined('PASSWORD_ARGON2ID') ? \PASSWORD_ARGON2ID : null,
+                                        defined('PASSWORD_ARGON2I') ? PASSWORD_ARGON2I : null,
+                                        defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : null,
                                     ]))
                                     ->defaultValue(PASSWORD_DEFAULT)
                                 ->end()

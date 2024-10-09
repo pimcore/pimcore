@@ -18,6 +18,7 @@ namespace Pimcore\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Pimcore;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 
 abstract class BundleAwareMigration extends AbstractMigration
@@ -26,7 +27,7 @@ abstract class BundleAwareMigration extends AbstractMigration
 
     protected function checkBundleInstalled(): bool
     {
-        $bundle = \Pimcore::getKernel()->getBundle($this->getBundleName());
+        $bundle = Pimcore::getKernel()->getBundle($this->getBundleName());
         if ($bundle instanceof PimcoreBundleInterface) {
             $installer = $bundle->getInstaller();
             $this->skipIf($installer && !$installer->isInstalled(), 'Bundle not installed.');

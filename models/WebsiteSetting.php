@@ -16,16 +16,22 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
+use Exception;
+use Pimcore\Cache\RuntimeCache;
+use Pimcore\Event\Model\WebsiteSettingEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
+use Pimcore\Event\WebsiteSettingEvents;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
- * @method void save()
  */
 final class WebsiteSetting extends AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     protected ?int $id = null;
 
     protected string $name = '';
@@ -58,20 +64,19 @@ final class WebsiteSetting extends AbstractModel
     {
         $cacheKey = 'website_setting_' . $id;
 
-        try {
-            $setting = \Pimcore\Cache\RuntimeCache::get($cacheKey);
-            if (!$setting) {
-                throw new \Exception('Website setting in registry is null');
-            }
-        } catch (\Exception $e) {
-            try {
-                $setting = new self();
-                $setting->getDao()->getById($id);
-                \Pimcore\Cache\RuntimeCache::set($cacheKey, $setting);
-            } catch (NotFoundException $e) {
-                return null;
-            }
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            return RuntimeCache::get($cacheKey);
         }
+
+        $setting = new self();
+
+        try {
+            $setting->getDao()->getById($id);
+        } catch (NotFoundException) {
+            return null;
+        }
+
+        RuntimeCache::set($cacheKey, $setting);
 
         return $setting;
     }
@@ -82,7 +87,7 @@ final class WebsiteSetting extends AbstractModel
      * @param string|null $language language, if property cannot be found the value of property without language is returned
      * @param string|null $fallbackLanguage fallback language
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByName(string $name, int $siteId = null, string $language = null, string $fallbackLanguage = null): ?WebsiteSetting
     {
@@ -273,6 +278,24 @@ final class WebsiteSetting extends AbstractModel
             unset(self::$nameIdMappingCache[$nameCacheKey]);
         }
 
+        $event = new WebsiteSettingEvent($this);
+
+        $this->dispatchEvent($event, WebsiteSettingEvents::PRE_DELETE);
+
         $this->getDao()->delete();
+
+        $this->dispatchEvent($event, WebsiteSettingEvents::POST_DELETE);
+    }
+
+    public function save(): void
+    {
+        $event = new WebsiteSettingEvent($this);
+        $isAdd = $this->id === null;
+
+        $this->dispatchEvent($event, $isAdd ? WebsiteSettingEvents::PRE_ADD : WebsiteSettingEvents::PRE_UPDATE);
+
+        $this->getDao()->save();
+
+        $this->dispatchEvent($event, $isAdd ? WebsiteSettingEvents::POST_ADD : WebsiteSettingEvents::POST_UPDATE);
     }
 }

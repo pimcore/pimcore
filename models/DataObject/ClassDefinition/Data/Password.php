@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
 use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -391,7 +392,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      *
-     * @throws Model\Element\ValidationException|\Exception
+     * @throws Model\Element\ValidationException|Exception
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {

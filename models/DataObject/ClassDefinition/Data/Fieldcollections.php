@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
+use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -194,7 +196,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($collectionRaw['type']);
                 /** @var DataObject\Fieldcollection\Data\AbstractData $collection */
-                $collection = \Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
+                $collection = Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
                 $collection->setObject($object);
                 $collection->setIndex($count);
                 $collection->setFieldname($this->getName());
@@ -267,7 +269,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
             $container->save($object, $params);
         } else {
-            throw new \Exception('Invalid value for field "' . $this->getName()."\" provided. You have to pass a DataObject\\Fieldcollection or 'null'");
+            throw new Exception('Invalid value for field "' . $this->getName()."\" provided. You have to pass a DataObject\\Fieldcollection or 'null'");
         }
     }
 
@@ -410,7 +412,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function preGetData(mixed $container, array $params = []): mixed
     {
         if (!$container instanceof DataObject\Concrete) {
-            throw new \Exception('Field Collections are only valid in Objects');
+            throw new Exception('Field Collections are only valid in Objects');
         }
 
         $data = $container->getObjectVar($this->getName());
@@ -441,13 +443,48 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $data;
     }
 
-    /**
-     * @param DataObject\Concrete|null $object
-     *
-     */
-    public function getDataForGrid(?DataObject\Fieldcollection $data, Concrete $object = null, array $params = []): string
+    public function getDataForGrid(?DataObject\Fieldcollection $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
-        return 'NOT SUPPORTED';
+        if (null === $data) {
+            return null;
+        }
+
+        $dataForGrid = [];
+
+        foreach ($data as $item) {
+            if (!$item instanceof DataObject\Fieldcollection\Data\AbstractData) {
+                continue;
+            }
+
+            $itemData = [];
+            $collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType());
+            if ($collectionDef instanceof DataObject\Fieldcollection\Definition) {
+                foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                    if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                        foreach ($fd->getFieldDefinitions() as $localizedFieldDefinition) {
+                            $getter = 'get'.ucfirst($localizedFieldDefinition->getName());
+                            $itemData[$localizedFieldDefinition->getName()] = [
+                                'title' => $localizedFieldDefinition->getTitle(),
+                                'value' => $localizedFieldDefinition->getVersionPreview($item->$getter(), $object, $params),
+                            ];
+                        }
+                    } else {
+                        $getter = 'get'.ucfirst($fd->getName());
+                        $itemData[$fd->getName()] = [
+                            'title' => $fd->getTitle(),
+                            'value' => $fd->getVersionPreview($item->$getter(), $object, $params),
+                        ];
+                    }
+                }
+            }
+
+            $dataForGrid[] = [
+                'type' => $collectionDef->getKey(),
+                'data' => $itemData,
+            ];
+        }
+
+        return $dataForGrid;
     }
 
     public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
@@ -738,7 +775,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($type);
                 /** @var DataObject\Fieldcollection\Data\AbstractData $collection */
-                $collection = \Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
+                $collection = Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
                 $collection->setObject($params['object'] ?? null);
                 $collection->setIndex($idx);
                 $collection->setFieldname($params['fieldname'] ?? null);
