@@ -37,13 +37,10 @@ class PimcoreDateTest extends TestCase
         $this->engine = $templatingEngine;
     }
 
-    /**
-     * @requires PHP < 8.3
-     */
     public function testPimcoreDateOutputFormat(): void
     {
         $backupLocale = setlocale(LC_TIME, '0');
-        setlocale(LC_TIME, 'de_DE.utf8');
+        setlocale(LC_TIME, 'de_DE.UTF-8', 'de_DE.utf8', 'de_DE@euro', 'de_DE', 'deu_deu');
 
         $this->engine->getTwigEnvironment()->setLoader(new ArrayLoader([
             'twig' => <<<TWIG
