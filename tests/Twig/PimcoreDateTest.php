@@ -37,21 +37,17 @@ class PimcoreDateTest extends TestCase
         $this->engine = $templatingEngine;
     }
 
-    public function testPimcoreDateOutputFormats(): void
+    /**
+     * @requires PHP < 8.3
+     */
+    public function testPimcoreDateOutputFormat(): void
     {
-        $backupCarbonLocale = Carbon::getLocale();
-        Carbon::setLocale('de_DE.utf8');
         $backupLocale = setlocale(LC_TIME, '0');
         setlocale(LC_TIME, 'de_DE.utf8');
 
         $this->engine->getTwigEnvironment()->setLoader(new ArrayLoader([
             'twig' => <<<TWIG
-            outputIsoFormat: {{ pimcore_date("myDate", {
-                "format": "d.m.Y",
-                "outputIsoFormat": "dddd, MMMM D, YYYY h:mm"
-            }) }}
-
-            outputFormat: {{ pimcore_date("myDate", {
+            {{ pimcore_date("myDate", {
                 "format": "d.m.Y",
                 "outputFormat": "%A, %B %e, %Y %I:%M"
             }) }}
@@ -71,15 +67,40 @@ class PimcoreDateTest extends TestCase
             ]
         );
 
-        $this->assertEquals(<<<EXPECTED
-            outputIsoFormat: Mittwoch, Dezember 11, 2024 10:09
-
-            outputFormat: Mittwoch, Dezember 11, 2024 10:09
-            EXPECTED,
-            $result
-        );
+        $this->assertEquals('Mittwoch, Dezember 11, 2024 10:09', $result);
 
         setlocale(LC_TIME, $backupLocale);
+    }
+
+    public function testPimcoreDateOutputIsoFormat(): void
+    {
+        $backupCarbonLocale = Carbon::getLocale();
+        Carbon::setLocale('de_DE.utf8');
+
+        $this->engine->getTwigEnvironment()->setLoader(new ArrayLoader([
+            'twig' => <<<TWIG
+            {{ pimcore_date("myDate", {
+                "format": "d.m.Y",
+                "outputIsoFormat": "dddd, MMMM D, YYYY h:mm"
+            }) }}
+            TWIG,
+        ]));
+        $snippet = new Pimcore\Model\Document\Snippet();
+        $date = (new Pimcore\Model\Document\Editable\Date())
+            ->setName('myDate')
+            ->setDataFromResource(1733954969)
+        ;
+        $snippet->setEditable($date);
+
+        $result = $this->engine->render(
+            'twig',
+            [
+                'document' => $snippet,
+            ]
+        );
+
+        $this->assertEquals('Mittwoch, Dezember 11, 2024 10:09', $result);
+
         Carbon::setLocale($backupCarbonLocale);
     }
 }
