@@ -39,10 +39,10 @@ class PimcoreDateTest extends TestCase
 
     public function testPimcoreDateOutputFormats(): void
     {
-        $backupLocale = setlocale(LC_TIME, '0');
         $backupCarbonLocale = Carbon::getLocale();
-        setlocale(LC_TIME, 'de_DE.utf8');
         Carbon::setLocale('de_DE.utf8');
+        $backupLocale = setlocale(LC_TIME, '0');
+        setlocale(LC_TIME, 'de_DE.utf8');
 
         $this->engine->getTwigEnvironment()->setLoader(new ArrayLoader([
             'twig' => <<<TWIG
@@ -53,7 +53,7 @@ class PimcoreDateTest extends TestCase
 
             outputFormat: {{ pimcore_date("myDate", {
                 "format": "d.m.Y",
-                "outputFormat": "%A, %B %e, %Y %l:%M"
+                "outputFormat": "%A, %B %e, %Y %I:%M"
             }) }}
             TWIG,
         ]));
@@ -79,7 +79,7 @@ class PimcoreDateTest extends TestCase
             $result
         );
 
-        Carbon::setLocale($backupCarbonLocale);
         setlocale(LC_TIME, $backupLocale);
+        Carbon::setLocale($backupCarbonLocale);
     }
 }
