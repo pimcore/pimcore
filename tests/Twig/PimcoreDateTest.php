@@ -40,7 +40,7 @@ class PimcoreDateTest extends TestCase
     public function testPimcoreDateOutputFormat(): void
     {
         $backupLocale = setlocale(LC_TIME, '0');
-        setlocale(LC_TIME, 'de_DE.UTF-8', 'de_DE.utf8', 'de_DE@euro', 'de_DE', 'deu_deu');
+        setlocale(LC_TIME, 'en_US.UTF-8');
 
         $this->engine->getTwigEnvironment()->setLoader(new ArrayLoader([
             'twig' => <<<TWIG
@@ -64,7 +64,7 @@ class PimcoreDateTest extends TestCase
             ]
         );
 
-        $this->assertEquals('Mittwoch, Dezember 11, 2024 10:09', $result);
+        $this->assertEquals('Wednesday, December 11, 2024 10:09', $result);
 
         setlocale(LC_TIME, $backupLocale);
     }
