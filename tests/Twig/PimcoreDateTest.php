@@ -37,11 +37,11 @@ class PimcoreDateTest extends TestCase
         $this->engine = $templatingEngine;
     }
 
-    public function testOutputIsoFormat(): void
+    public function testPimcoreDateOutputFormats(): void
     {
         $backupLocale = setlocale(LC_TIME, '0');
         $backupCarbonLocale = Carbon::getLocale();
-        setlocale(LC_TIME, "de_DE.utf8");
+        setlocale(LC_TIME, 'de_DE.utf8');
         Carbon::setLocale('de_DE.utf8');
 
         $this->engine->getTwigEnvironment()->setLoader(new ArrayLoader([
