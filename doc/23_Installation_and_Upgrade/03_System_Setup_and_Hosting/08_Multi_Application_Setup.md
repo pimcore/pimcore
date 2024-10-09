@@ -12,7 +12,7 @@ Imagine you run a web shop app on http://example.org and Pimcore on http://pim.e
 
 First one is from the web shop, second one from Pimcore.
 When trying to log in at http://example.org/admin you will get a 403 Forbidden error.
-(The reason why Magento sets the cookie for `.example.org` instead of `example.org` probably is to also support subdomains.)
+(The reason why the web shop sets the cookie for `.example.org` instead of `example.org` probably is to also support subdomains.)
 
 You can prevent this problem with the following config in your `config.yaml`. This way the session cookies do not conflict anymore and you will be able to log in to both applications at the same time.
 ```yaml
