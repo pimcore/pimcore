@@ -95,7 +95,7 @@ pimcore.plugin.YourTinymceEditorConfigBundle = Class.create({
     },
 
     pimcoreReady: function (e) {
-        pimcore.object.tags.wysiwyg = pimcore.document.editables.wysiwyg || {};
+        pimcore.object.tags.wysiwyg = pimcore.object.tags.wysiwyg || {};
         pimcore.object.tags.wysiwyg.defaultEditorConfig = { menubar: true };
     }
 });
