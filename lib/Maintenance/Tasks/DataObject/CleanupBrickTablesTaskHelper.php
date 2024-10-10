@@ -58,7 +58,7 @@ class CleanupBrickTablesTaskHelper implements ConcreteTaskHelperInterface
                 $fieldDescriptor = substr($tableName, strlen($prefix));
                 $idx = strpos($fieldDescriptor, '_');
                 $brickType = substr($fieldDescriptor, 0, $idx);
-                $brickType = $collectionNames[$brickType] ?? $brickType;
+                $brickType = $collectionNames[strtolower($brickType)] ?? $brickType;
 
                 if (!$this->checkIfBrickExists($brickType, $tableName)) {
                     continue;
