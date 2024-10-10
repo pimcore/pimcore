@@ -95,7 +95,7 @@ pimcore.plugin.YourTinymceEditorConfigBundle = Class.create({
     },
 
     pimcoreReady: function (e) {
-        pimcore.object.tags.wysiwyg = pimcore.document.editables.wysiwyg || {};
+        pimcore.object.tags.wysiwyg = pimcore.object.tags.wysiwyg || {};
         pimcore.object.tags.wysiwyg.defaultEditorConfig = { menubar: true };
     }
 });
@@ -166,5 +166,27 @@ class EditmodeListener implements EventSubscriberInterface
             '/bundles/app/js/pimcore/editmode.js'
         ]);
     }
+}
+```
+
+### Loading additional TinyMCE plugins that are not shipped with this bundle
+
+You can load additional plugins that are not shipped by default with Pimcore's TinyMCE bundle.
+
+The following example adds the plugin `charmap` (Note: Included since Pimcore 11.4):
+
+1) [Download](https://www.tiny.cloud/get-tiny/) a TinyMCE dist package matching the version the bundle is currently shipped with.
+2) Extract the desired plugin from the TinyMCE dist package and place it in your app's or bundle's resource folder, 
+   e.g. copy `js/tinymce/plugins/charmap/plugin.min.js` to `public/static/js/tinymce_plugins/charmap/plugin.min.js`.
+3) Use TinyMCE's config option [`external_plugins`](https://www.tiny.cloud/docs/tinymce/latest/editor-important-options/#external_plugins)
+   to load the plugin:
+```javascript
+{
+    // ...
+    external_plugins: {
+        charmap: '/static/js/tinymce_plugins/charmap/plugin.min.js',
+    },
+    // ...
+    charmap: [/* ... */],  // plugin's configuration
 }
 ```
