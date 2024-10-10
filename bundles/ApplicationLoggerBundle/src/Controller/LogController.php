@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * @internal
@@ -47,11 +47,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         }
     }
 
-    /**
-     * @Route("/log/show", name="pimcore_admin_bundle_applicationlogger_log_show", methods={"GET", "POST"})
-     *
-     *
-     */
+    #[Route(path: '/log/show', name: 'pimcore_admin_bundle_applicationlogger_log_show', methods: ['GET', 'POST'])]
     public function showAction(Request $request, Connection $db): JsonResponse
     {
         $this->checkPermission('application_logging');
@@ -169,11 +165,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         return $dateTime;
     }
 
-    /**
-     * @Route("/log/priority-json", name="pimcore_admin_bundle_applicationlogger_log_priorityjson", methods={"GET"})
-     *
-     *
-     */
+    #[Route(path: '/log/priority-json', name: 'pimcore_admin_bundle_applicationlogger_log_priorityjson', methods: ['GET'])]
     public function priorityJsonAction(Request $request): JsonResponse
     {
         $this->checkPermission('application_logging');
@@ -186,11 +178,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         return $this->jsonResponse(['priorities' => $priorities]);
     }
 
-    /**
-     * @Route("/log/component-json", name="pimcore_admin_bundle_applicationlogger_log_componentjson", methods={"GET"})
-     *
-     *
-     */
+    #[Route(path: '/log/component-json', name: 'pimcore_admin_bundle_applicationlogger_log_componentjson', methods: ['GET'])]
     public function componentJsonAction(Request $request): JsonResponse
     {
         $this->checkPermission('application_logging');
@@ -203,9 +191,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         return $this->jsonResponse(['components' => $components]);
     }
 
-    /**
-     * @Route("/log/show-file-object", name="pimcore_admin_bundle_applicationlogger_log_showfileobject", methods={"GET"})
-     */
+    #[Route(path: '/log/show-file-object', name: 'pimcore_admin_bundle_applicationlogger_log_showfileobject', methods: ['GET'])]
     public function showFileObjectAction(Request $request): StreamedResponse
     {
         $this->checkPermission('application_logging');

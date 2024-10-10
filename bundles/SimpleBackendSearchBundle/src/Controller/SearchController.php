@@ -42,20 +42,18 @@ use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * @Route("/search")
- *
  * @internal
  */
+#[Route(path: '/search')]
 class SearchController extends UserAwareController
 {
     use JsonHelperTrait;
 
     /**
-     * @Route("/find", name="pimcore_bundle_search_search_find", methods={"GET", "POST"})
      *
      * @todo: $conditionTypeParts could be undefined
      *
@@ -65,6 +63,7 @@ class SearchController extends UserAwareController
      *
      * @todo: $data could be undefined
      */
+    #[Route(path: '/find', name: 'pimcore_bundle_search_search_find', methods: ['GET', 'POST'])]
     public function findAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService): JsonResponse
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
@@ -480,11 +479,7 @@ class SearchController extends UserAwareController
         return $query;
     }
 
-    /**
-     * @Route("/quicksearch", name="pimcore_bundle_search_search_quicksearch", methods={"GET"})
-     *
-     *
-     */
+    #[Route(path: '/quicksearch', name: 'pimcore_bundle_search_search_quicksearch', methods: ['GET'])]
     public function quickSearchAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $query = $this->filterQueryParam($request->get('query', ''));
@@ -552,11 +547,7 @@ class SearchController extends UserAwareController
         return $this->jsonResponse($result);
     }
 
-    /**
-     * @Route("/quicksearch-get-by-id", name="pimcore_bundle_search_search_quicksearch_by_id", methods={"GET"})
-     *
-     *
-     */
+    #[Route(path: '/quicksearch-get-by-id', name: 'pimcore_bundle_search_search_quicksearch_by_id', methods: ['GET'])]
     public function quickSearchByIdAction(Request $request, Config $config): JsonResponse
     {
         $type = $request->get('type');

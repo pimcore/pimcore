@@ -18,14 +18,12 @@ namespace App\Controller;
 use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use \Pimcore\Controller\FrontendController;
 
 class CustomRestController extends FrontendController
 {
-    /**
-     * @Route("/custom-pimcore-webservice/rest/get-products")
-     */
+    #[Route(path: '/custom-pimcore-webservice/rest/get-products')]
     public function defaultAction(Request $request): JsonResponse
     {
         // do some authorization here ...

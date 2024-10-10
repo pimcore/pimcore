@@ -24,22 +24,17 @@ use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * @Route("/settings")
- *
  * @internal
  */
+#[Route(path: '/settings')]
 class SettingsController extends UserAwareController
 {
     use JsonHelperTrait;
 
-    /**
-     * @Route("/glossary", name="pimcore_bundle_glossary_settings_glossary", methods={"POST"})
-     *
-     *
-     */
+    #[Route(path: '/glossary', name: 'pimcore_bundle_glossary_settings_glossary', methods: ['POST'])]
     public function glossaryAction(Request $request): JsonResponse
     {
         // check glossary permissions

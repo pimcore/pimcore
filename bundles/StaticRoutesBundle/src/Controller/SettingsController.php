@@ -22,17 +22,13 @@ use Pimcore\Controller\UserAwareController;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class SettingsController extends UserAwareController
 {
     use JsonHelperTrait;
 
-    /**
-     * @Route("/staticroutes", name="pimcore_bundle_staticroutes_settings_staticroutes", methods={"POST"})
-     *
-     *
-     */
+    #[Route(path: '/staticroutes', name: 'pimcore_bundle_staticroutes_settings_staticroutes', methods: ['POST'])]
     public function staticroutesAction(Request $request): JsonResponse
     {
         if ($request->get('data')) {

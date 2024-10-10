@@ -35,12 +35,10 @@ class AnnotatedRouteControllerLoader extends BaseAnnotatedRouteControllerLoader
             'pimcore_admin_admin_' => 'pimcore_admin_',
         ];
 
-        $routeName = str_replace(
+        return str_replace(
             array_keys($replacements),
             array_values($replacements),
             $routeName
         );
-
-        return $routeName;
     }
 }

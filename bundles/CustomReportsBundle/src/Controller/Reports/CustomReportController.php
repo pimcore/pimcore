@@ -29,23 +29,18 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 
 /**
- * @Route("/custom-report")
- *
  * @internal
  */
+#[Route(path: '/custom-report')]
 class CustomReportController extends UserAwareController
 {
     use JsonHelperTrait;
 
-    /**
-     * @Route("/tree", name="pimcore_bundle_customreports_customreport_tree", methods={"GET", "POST"})
-     *
-     *
-     */
+    #[Route(path: '/tree', name: 'pimcore_bundle_customreports_customreport_tree', methods: ['GET', 'POST'])]
     public function treeAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports_config');
@@ -54,11 +49,7 @@ class CustomReportController extends UserAwareController
         return $this->jsonResponse($reports);
     }
 
-    /**
-     * @Route("/portlet-report-list", name="pimcore_bundle_customreports_customreport_portletreportlist", methods={"GET", "POST"})
-     *
-     *
-     */
+    #[Route(path: '/portlet-report-list', name: 'pimcore_bundle_customreports_customreport_portletreportlist', methods: ['GET', 'POST'])]
     public function portletReportListAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
@@ -67,11 +58,7 @@ class CustomReportController extends UserAwareController
         return $this->jsonResponse(['data' => $reports]);
     }
 
-    /**
-     * @Route("/add", name="pimcore_bundle_customreports_customreport_add", methods={"POST"})
-     *
-     *
-     */
+    #[Route(path: '/add', name: 'pimcore_bundle_customreports_customreport_add', methods: ['POST'])]
     public function addAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports_config');
@@ -97,11 +84,7 @@ class CustomReportController extends UserAwareController
         return $this->jsonResponse(['success' => $success, 'id' => $report->getName()]);
     }
 
-    /**
-     * @Route("/delete", name="pimcore_bundle_customreports_customreport_delete", methods={"DELETE"})
-     *
-     *
-     */
+    #[Route(path: '/delete', name: 'pimcore_bundle_customreports_customreport_delete', methods: ['DELETE'])]
     public function deleteAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports_config');
@@ -119,11 +102,7 @@ class CustomReportController extends UserAwareController
         return $this->jsonResponse(['success' => true]);
     }
 
-    /**
-     * @Route("/clone", name="pimcore_bundle_customreports_customreport_clone", methods={"POST"})
-     *
-     *
-     */
+    #[Route(path: '/clone', name: 'pimcore_bundle_customreports_customreport_clone', methods: ['POST'])]
     public function cloneAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports_config');
@@ -157,11 +136,7 @@ class CustomReportController extends UserAwareController
         return $this->jsonResponse(['success' => true]);
     }
 
-    /**
-     * @Route("/get", name="pimcore_bundle_customreports_customreport_get", methods={"GET"})
-     *
-     *
-     */
+    #[Route(path: '/get', name: 'pimcore_bundle_customreports_customreport_get', methods: ['GET'])]
     public function getAction(Request $request): JsonResponse
     {
         $this->checkPermissionsHasOneOf(['reports_config', 'reports']);
@@ -176,11 +151,7 @@ class CustomReportController extends UserAwareController
         return $this->jsonResponse($data);
     }
 
-    /**
-     * @Route("/update", name="pimcore_bundle_customreports_customreport_update", methods={"PUT"})
-     *
-     *
-     */
+    #[Route(path: '/update', name: 'pimcore_bundle_customreports_customreport_update', methods: ['PUT'])]
     public function updateAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports_config');
@@ -211,11 +182,7 @@ class CustomReportController extends UserAwareController
         return $this->jsonResponse(['success' => true]);
     }
 
-    /**
-     * @Route("/column-config", name="pimcore_bundle_customreports_customreport_columnconfig", methods={"POST"})
-     *
-     *
-     */
+    #[Route(path: '/column-config', name: 'pimcore_bundle_customreports_customreport_columnconfig', methods: ['POST'])]
     public function columnConfigAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports_config');
@@ -261,11 +228,7 @@ class CustomReportController extends UserAwareController
         ]);
     }
 
-    /**
-     * @Route("/get-report-config", name="pimcore_bundle_customreports_customreport_getreportconfig", methods={"GET"})
-     *
-     *
-     */
+    #[Route(path: '/get-report-config', name: 'pimcore_bundle_customreports_customreport_getreportconfig', methods: ['GET'])]
     public function getReportConfigAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
@@ -295,11 +258,7 @@ class CustomReportController extends UserAwareController
         ]);
     }
 
-    /**
-     * @Route("/data", name="pimcore_bundle_customreports_customreport_data", methods={"GET", "POST"})
-     *
-     *
-     */
+    #[Route(path: '/data', name: 'pimcore_bundle_customreports_customreport_data', methods: ['GET', 'POST'])]
     public function dataAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
@@ -324,11 +283,7 @@ class CustomReportController extends UserAwareController
         ]);
     }
 
-    /**
-     * @Route("/drill-down-options", name="pimcore_bundle_customreports_customreport_drilldownoptions", methods={"GET", "POST"})
-     *
-     *
-     */
+    #[Route(path: '/drill-down-options', name: 'pimcore_bundle_customreports_customreport_drilldownoptions', methods: ['GET', 'POST'])]
     public function drillDownOptionsAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
@@ -352,11 +307,7 @@ class CustomReportController extends UserAwareController
         ]);
     }
 
-    /**
-     * @Route("/chart", name="pimcore_bundle_customreports_customreport_chart", methods={"GET", "POST"})
-     *
-     *
-     */
+    #[Route(path: '/chart', name: 'pimcore_bundle_customreports_customreport_chart', methods: ['GET', 'POST'])]
     public function chartAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
@@ -386,11 +337,7 @@ class CustomReportController extends UserAwareController
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $exportFileName;
     }
 
-    /**
-     * @Route("/create-csv", name="pimcore_bundle_customreports_customreport_createcsv", methods={"GET"})
-     *
-     *
-     */
+    #[Route(path: '/create-csv', name: 'pimcore_bundle_customreports_customreport_createcsv', methods: ['GET'])]
     public function createCsvAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
@@ -460,11 +407,7 @@ class CustomReportController extends UserAwareController
         ]);
     }
 
-    /**
-     * @Route("/download-csv", name="pimcore_bundle_customreports_customreport_downloadcsv", methods={"GET"})
-     *
-     *
-     */
+    #[Route(path: '/download-csv', name: 'pimcore_bundle_customreports_customreport_downloadcsv', methods: ['GET'])]
     public function downloadCsvAction(Request $request): BinaryFileResponse
     {
         $this->checkPermission('reports');

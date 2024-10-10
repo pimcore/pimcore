@@ -26,14 +26,13 @@ use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * @Route("/document")
- *
  * @internal
  */
+#[Route(path: '/document')]
 class DocumentController extends UserAwareController
 {
     use JsonHelperTrait;
@@ -41,11 +40,7 @@ class DocumentController extends UserAwareController
 
     private const DOCUMENT_ROOT_ID = 1;
 
-    /**
-     * @Route("/seopanel-tree-root", name="pimcore_bundle_seo_document_document_seopaneltreeroot", methods={"GET"})
-     *
-     *
-     */
+    #[Route(path: '/seopanel-tree-root', name: 'pimcore_bundle_seo_document_document_seopaneltreeroot', methods: ['GET'])]
     public function seopanelTreeRootAction(DocumentRouteHandler $documentRouteHandler): JsonResponse
     {
         $this->checkPermission('seo_document_editor');
@@ -64,11 +59,7 @@ class DocumentController extends UserAwareController
         throw $this->createAccessDeniedHttpException();
     }
 
-    /**
-     * @Route("/seopanel-tree", name="pimcore_bundle_seo_document_document_seopaneltree", methods={"GET"})
-     *
-     *
-     */
+    #[Route(path: '/seopanel-tree', name: 'pimcore_bundle_seo_document_document_seopaneltree', methods: ['GET'])]
     public function seopanelTreeAction(
         Request $request,
         EventDispatcherInterface $eventDispatcher,
