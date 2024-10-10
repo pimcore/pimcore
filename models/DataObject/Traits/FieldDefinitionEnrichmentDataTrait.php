@@ -27,7 +27,7 @@ trait FieldDefinitionEnrichmentDataTrait
     use FieldDefinitionEnrichmentModelTrait;
 
     /**
-     * @params array<string, Data> $fields
+     * @param array<string, Data> $fields
      *
      * @return array<string, Data>
      */
