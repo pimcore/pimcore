@@ -28,7 +28,11 @@ class MiscController extends UserAwareController
 {
     use JsonHelperTrait;
 
-    #[Route(path: '/http-error-log', name: 'pimcore_bundle_seo_misc_httperrorlog', methods: ['POST'])]
+    #[Route(
+        path: '/http-error-log',
+        name: 'pimcore_bundle_seo_misc_httperrorlog',
+        methods: ['POST']
+    )]
     public function httpErrorLogAction(Request $request): JsonResponse
     {
         $this->checkPermission('http_errors');
@@ -75,7 +79,11 @@ class MiscController extends UserAwareController
         ]);
     }
 
-    #[Route(path: '/http-error-log-detail', name: 'pimcore_bundle_seo_misc_httperrorlogdetail', methods: ['GET'])]
+    #[Route(
+        path: '/http-error-log-detail',
+        name: 'pimcore_bundle_seo_misc_httperrorlogdetail',
+        methods: ['GET']
+    )]
     public function httpErrorLogDetailAction(Request $request, ?Profiler $profiler): Response
     {
         $this->checkPermission('http_errors');
@@ -96,7 +104,11 @@ class MiscController extends UserAwareController
         return $this->render('@PimcoreSeo/misc/http_error_log_detail.html.twig', ['data' => $data]);
     }
 
-    #[Route(path: '/http-error-log-flush', name: 'pimcore_bundle_seo_misc_httperrorlogflush', methods: ['DELETE'])]
+    #[Route(
+        path: '/http-error-log-flush',
+        name: 'pimcore_bundle_seo_misc_httperrorlogflush',
+        methods: ['DELETE']
+    )]
     public function httpErrorLogFlushAction(Request $request): JsonResponse
     {
         $this->checkPermission('http_errors');

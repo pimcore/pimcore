@@ -24,7 +24,11 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class DataObjectController extends UserAwareController
 {
-    #[Route(path: '/relation-objects-list', name: 'pimcore_bundle_search_dataobject_relation_objects_list', methods: ['GET'])]
+    #[Route(
+        path: '/relation-objects-list',
+        name: 'pimcore_bundle_search_dataobject_relation_objects_list',
+        methods: ['GET']
+    )]
     public function optionsAction(Request $request): JsonResponse
     {
         $fieldConfig = json_decode($request->get('fieldConfig'), true);

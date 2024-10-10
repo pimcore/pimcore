@@ -44,7 +44,11 @@ class RedirectsController extends UserAwareController
 {
     use JsonHelperTrait;
 
-    #[Route(path: '/list', name: 'pimcore_bundle_seo_redirects_redirects', methods: ['POST'])]
+    #[Route(
+        path: '/list',
+        name: 'pimcore_bundle_seo_redirects_redirects',
+        methods: ['POST']
+    )]
     public function redirectsAction(Request $request, RedirectHandler $redirectHandler): JsonResponse
     {
         // check permission for both update and listing
@@ -181,7 +185,11 @@ class RedirectsController extends UserAwareController
         return $this->jsonResponse(['success' => false]);
     }
 
-    #[Route(path: '/csv-export', name: 'pimcore_bundle_seo_redirects_csvexport', methods: ['GET'])]
+    #[Route(
+        path: '/csv-export',
+        name: 'pimcore_bundle_seo_redirects_csvexport',
+        methods: ['GET']
+    )]
     public function csvExportAction(Csv $csv): Response
     {
         $this->checkPermission('redirects');
@@ -206,7 +214,11 @@ class RedirectsController extends UserAwareController
         return $response;
     }
 
-    #[Route(path: '/csv-import', name: 'pimcore_bundle_seo_redirects_csvimport', methods: ['POST'])]
+    #[Route(
+        path: '/csv-import',
+        name: 'pimcore_bundle_seo_redirects_csvimport',
+        methods: ['POST']
+    )]
     public function csvImportAction(Request $request, Csv $csv): Response
     {
         $this->checkPermission('redirects');
@@ -226,7 +238,11 @@ class RedirectsController extends UserAwareController
         ]);
     }
 
-    #[Route(path: '/cleanup', name: 'pimcore_bundle_seo_redirects_cleanup', methods: ['DELETE'])]
+    #[Route(
+        path: '/cleanup',
+        name: 'pimcore_bundle_seo_redirects_cleanup',
+        methods: ['DELETE']
+    )]
     public function cleanupAction(): JsonResponse
     {
         $this->checkPermission('redirects');
@@ -249,7 +265,11 @@ class RedirectsController extends UserAwareController
         }
     }
 
-    #[Route(path: '/get-statuscodes', name: 'pimcore_bundle_seo_redirects_statuscodes', methods: ['GET'])]
+    #[Route(
+        path: '/get-statuscodes',
+        name: 'pimcore_bundle_seo_redirects_statuscodes',
+        methods: ['GET']
+    )]
     public function statusCodesAction(): JsonResponse
     {
         $this->checkPermission('redirects');

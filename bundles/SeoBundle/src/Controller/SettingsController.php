@@ -28,7 +28,11 @@ class SettingsController extends UserAwareController
 {
     use JsonHelperTrait;
 
-    #[Route(path: '/robots-txt', name: 'pimcore_bundle_seo_settings_robotstxtget', methods: ['GET'])]
+    #[Route(
+        path: '/robots-txt',
+        name: 'pimcore_bundle_seo_settings_robotstxtget',
+        methods: ['GET']
+    )]
     public function robotsTxtGetAction(): JsonResponse
     {
         $this->checkPermission('robots.txt');
@@ -42,7 +46,11 @@ class SettingsController extends UserAwareController
         ]);
     }
 
-    #[Route(path: '/robots-txt', name: 'pimcore_bundle_seo_settings_robotstxtput', methods: ['PUT'])]
+    #[Route(
+        path: '/robots-txt',
+        name: 'pimcore_bundle_seo_settings_robotstxtput',
+        methods: ['PUT']
+    )]
     public function robotsTxtPutAction(Request $request): JsonResponse
     {
         $this->checkPermission('robots.txt');

@@ -28,7 +28,11 @@ class SettingsController extends UserAwareController
 {
     use JsonHelperTrait;
 
-    #[Route(path: '/staticroutes', name: 'pimcore_bundle_staticroutes_settings_staticroutes', methods: ['POST'])]
+    #[Route(
+        path: '/staticroutes',
+        name: 'pimcore_bundle_staticroutes_settings_staticroutes',
+        methods: ['POST']
+    )]
     public function staticroutesAction(Request $request): JsonResponse
     {
         if ($request->get('data')) {

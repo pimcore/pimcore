@@ -40,7 +40,11 @@ class DocumentController extends UserAwareController
 
     private const DOCUMENT_ROOT_ID = 1;
 
-    #[Route(path: '/seopanel-tree-root', name: 'pimcore_bundle_seo_document_document_seopaneltreeroot', methods: ['GET'])]
+    #[Route(
+        path: '/seopanel-tree-root',
+        name: 'pimcore_bundle_seo_document_document_seopaneltreeroot',
+        methods: ['GET']
+    )]
     public function seopanelTreeRootAction(DocumentRouteHandler $documentRouteHandler): JsonResponse
     {
         $this->checkPermission('seo_document_editor');
@@ -59,7 +63,11 @@ class DocumentController extends UserAwareController
         throw $this->createAccessDeniedHttpException();
     }
 
-    #[Route(path: '/seopanel-tree', name: 'pimcore_bundle_seo_document_document_seopaneltree', methods: ['GET'])]
+    #[Route(
+        path: '/seopanel-tree',
+        name: 'pimcore_bundle_seo_document_document_seopaneltree',
+        methods: ['GET']
+    )]
     public function seopanelTreeAction(
         Request $request,
         EventDispatcherInterface $eventDispatcher,
