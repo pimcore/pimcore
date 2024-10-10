@@ -14,7 +14,8 @@ permissions:
     contents: write
 
 jobs:
-    php-style:
+    php-cs-fixer:
+        if: github.repository_owner == 'pimcore'
         uses: pimcore/workflows-collection-public/.github/workflows/reusable-php-cs-fixer.yaml@main
         secrets:
             PHP_CS_FIXER_GITHUB_TOKEN: ${{ secrets.PHP_CS_FIXER_GITHUB_TOKEN }}
