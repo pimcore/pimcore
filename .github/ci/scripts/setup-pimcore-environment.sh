@@ -7,6 +7,7 @@ mkdir -p var/config
 cp -r .github/ci/files/config/. config
 mkdir -p config/local/
 cp -r .github/ci/files/templates/. templates
+cp -r .github/ci/files/translations/. translations
 cp -r .github/ci/files/bin/console bin/console
 cp -r .github/ci/files/src/. src
 cp -r .github/ci/files/public/. public
