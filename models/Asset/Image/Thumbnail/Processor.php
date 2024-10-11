@@ -335,11 +335,20 @@ class Processor
                 }
 
                 $tmpFsPath = File::getLocalTempFilePath($fileExtension);
-                $image->save($tmpFsPath, $format, $config->getQuality());
-                $stream = fopen($tmpFsPath, 'rb');
-                $storage->writeStream($storagePath, $stream);
-                if (is_resource($stream)) {
-                    fclose($stream);
+
+                $fileHandle = null;
+
+                if ($format === 'original') {
+                    $fileHandle = fopen($asset->getLocalFile(), 'rb');
+                } else {
+                    $image->save($tmpFsPath, $format, $config->getQuality());
+                    $fileHandle = fopen($tmpFsPath, 'rb');
+                }
+
+                $storage->writeStream($storagePath, $fileHandle);
+
+                if (is_resource($fileHandle)) {
+                    fclose($fileHandle);
                 }
 
                 if ($statusCacheEnabled && $asset instanceof Asset\Image) {
