@@ -31,11 +31,11 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Constants\TableConstants;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Translation\Translator;
 use Psr\Log\LoggerInterface;
+use Pimcore\Db;
 
 final class JobRunRepository implements JobRunRepositoryInterface
 {
     public function __construct(
-        private readonly Connection $db,
         private readonly CurrentMessageProviderInterface $currentMessageProvider,
         private readonly EntityManagerInterface $pimcoreEntityManager,
         private readonly ExecutionContextInterface $executionContext,
@@ -115,7 +115,7 @@ final class JobRunRepository implements JobRunRepositoryInterface
     public function updateLog(JobRun $jobRun, string $message): void
     {
 
-        $this->db->executeStatement(
+        Db::get()->executeStatement(
             'UPDATE ' .
             TableConstants::JOB_RUN_TABLE .
             ' SET log = IF(ISNULL(log),:message,CONCAT(log, "\n", :message)) WHERE id = :id',
