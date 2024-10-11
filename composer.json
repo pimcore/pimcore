@@ -208,7 +208,7 @@
     "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",
     "post-install-cmd": [
       "Pimcore\\Composer::postInstall",
-      "Pimcore\\Composer::installAssets"
+      "@pimcore-scripts"
     ],
     "post-update-cmd": [
       "Pimcore\\Composer::postUpdate",
