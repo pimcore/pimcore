@@ -74,7 +74,7 @@ final class Installer extends SettingsStoreAwareInstaller
     {
         $currentSchema = Db::get()->createSchemaManager()->introspectSchema();
 
-        $this->installJobRunTable($currentSchema);
+        // $this->installJobRunTable($currentSchema);
         //$this->installLogTable($currentSchema);
         //$this->addUserPermission($currentSchema);
         //$this->executeDiffSql($currentSchema);
