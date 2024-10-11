@@ -64,8 +64,8 @@ class Dao extends Model\Dao\AbstractDao
                 (source = :sourceEntireUri AND `type` = :typeEntireUri)
             ) AND active = 1 AND (regex IS NULL OR regex = 0) AND (expiry > UNIX_TIMESTAMP() OR expiry IS NULL)';
 
-        if ($siteId) {
-            $sql .= ' AND sourceSite = ' . $siteId;
+        if ($siteId !== null) {
+            $sql .= ' AND (sourceSite IS NULL OR sourceSite = '.$siteId.')';
         } else {
             $sql .= ' AND sourceSite IS NULL';
         }
