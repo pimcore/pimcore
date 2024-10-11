@@ -29,16 +29,12 @@ use Symfony\Component\Routing\Attribute\Route;
 /**
  * @internal
  */
-#[Route(path: '/settings')]
+#[Route(path: '/settings', name: 'pimcore_bundle_glossary_settings_')]
 class SettingsController extends UserAwareController
 {
     use JsonHelperTrait;
 
-    #[Route(
-        path: '/glossary',
-        name: 'pimcore_bundle_glossary_settings_glossary',
-        methods: ['POST']
-    )]
+    #[Route(path: '/glossary', name: 'glossary', methods: ['POST'])]
     public function glossaryAction(Request $request): JsonResponse
     {
         // check glossary permissions

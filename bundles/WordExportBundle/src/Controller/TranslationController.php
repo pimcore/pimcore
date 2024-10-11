@@ -34,18 +34,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route(path: '/translation')]
+#[Route(path: '/translation', name: 'pimcore_bundle_wordexport_translation_')]
 class TranslationController extends UserAwareController
 {
     use JsonHelperTrait;
 
     private const PERMISSION = 'word_export';
 
-    #[Route(
-        path: '/word-export',
-        name: 'pimcore_bundle_wordexport_translation_wordexport',
-        methods: ['POST']
-    )]
+    #[Route(path: '/word-export', name: 'wordexport', methods: ['POST'])]
     public function wordExportAction(Request $request, Filesystem $filesystem): JsonResponse
     {
         $this->checkPermission(self::PERMISSION);
@@ -246,11 +242,7 @@ class TranslationController extends UserAwareController
         ]);
     }
 
-    #[Route(
-        path: '/word-export-download',
-        name: 'pimcore_bundle_wordexport_translation_wordexportdownload',
-        methods: ['GET']
-    )]
+    #[Route(path: '/word-export-download', name: 'wordexportdownload', methods: ['GET'])]
     public function wordExportDownloadAction(Request $request): Response
     {
         $this->checkPermission(self::PERMISSION);

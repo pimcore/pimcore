@@ -24,15 +24,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route(name: 'pimcore_bundle_staticroutes_settings_')]
 class SettingsController extends UserAwareController
 {
     use JsonHelperTrait;
 
-    #[Route(
-        path: '/staticroutes',
-        name: 'pimcore_bundle_staticroutes_settings_staticroutes',
-        methods: ['POST']
-    )]
+    #[Route(path: '/staticroutes', name: 'staticroutes', methods: ['POST'])]
     public function staticroutesAction(Request $request): JsonResponse
     {
         if ($request->get('data')) {
