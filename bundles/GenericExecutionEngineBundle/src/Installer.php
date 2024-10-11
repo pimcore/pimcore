@@ -35,13 +35,6 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
  */
 final class Installer extends SettingsStoreAwareInstaller
 {
-    public function __construct(
-        BundleInterface $bundle,
-
-    ) {
-        parent::__construct($bundle);
-    }
-
     public const USER_PERMISSIONS_CATEGORY = 'Pimcore Generic Execution Engine';
 
     protected const USER_PERMISSIONS = [
@@ -72,12 +65,12 @@ final class Installer extends SettingsStoreAwareInstaller
      */
     private function installBundle(): void
     {
-        //$currentSchema = Db::get()->createSchemaManager()->introspectSchema();
+        $currentSchema = Db::get()->createSchemaManager()->introspectSchema();
 
-        // $this->installJobRunTable($currentSchema);
-        //$this->installLogTable($currentSchema);
-        //$this->addUserPermission($currentSchema);
-        //$this->executeDiffSql($currentSchema);
+        $this->installJobRunTable($currentSchema);
+        $this->installLogTable($currentSchema);
+        $this->addUserPermission($currentSchema);
+        $this->executeDiffSql($currentSchema);
     }
 
     /**
