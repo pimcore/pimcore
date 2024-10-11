@@ -20,13 +20,12 @@ use Pimcore\Controller\UserAwareController;
 use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
+#[Route(name: 'pimcore_bundle_search_dataobject_')]
 class DataObjectController extends UserAwareController
 {
-    /**
-     * @Route("/relation-objects-list", name="pimcore_bundle_search_dataobject_relation_objects_list", methods={"GET"})
-     */
+    #[Route(path: '/relation-objects-list', name: 'relation_objects_list', methods: ['GET'])]
     public function optionsAction(Request $request): JsonResponse
     {
         $fieldConfig = json_decode($request->get('fieldConfig'), true);

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
 use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
+use Pimcore\Routing\Loader\AttributeRouteControllerLoader;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -33,11 +34,13 @@ final class RoutingLoaderPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->hasDefinition('routing.loader.annotation')) {
-            return;
+        if ($container->hasDefinition('routing.loader.attribute')) {
+            $definition = $container->getDefinition('routing.loader.attribute');
+            $definition->setClass(AttributeRouteControllerLoader::class);
         }
-
-        $definition = $container->getDefinition('routing.loader.annotation');
-        $definition->setClass(AnnotatedRouteControllerLoader::class);
+        if ($container->hasDefinition('routing.loader.annotation')) {
+            $definition = $container->getDefinition('routing.loader.annotation');
+            $definition->setClass(AnnotatedRouteControllerLoader::class);
+        }
     }
 }
