@@ -375,7 +375,7 @@ final class Redirect extends AbstractModel
         return $this->userModification;
     }
 
-    public function setUserModification(int $userModification): void
+    public function setUserModification(?int $userModification): void
     {
         $this->userModification = $userModification;
     }
