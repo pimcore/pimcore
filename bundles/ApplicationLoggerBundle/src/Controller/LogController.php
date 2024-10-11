@@ -48,7 +48,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         }
     }
 
-    #[Route(path: '/log/show', name: 'show', methods: ['GET', 'POST'])]
+    #[Route(path: '/show', name: 'show', methods: ['GET', 'POST'])]
     public function showAction(Request $request, Connection $db): JsonResponse
     {
         $this->checkPermission('application_logging');
@@ -166,7 +166,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         return $dateTime;
     }
 
-    #[Route(path: '/log/priority-json', name: 'priorityjson', methods: ['GET'])]
+    #[Route(path: '/priority-json', name: 'priorityjson', methods: ['GET'])]
     public function priorityJsonAction(Request $request): JsonResponse
     {
         $this->checkPermission('application_logging');
@@ -179,7 +179,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         return $this->jsonResponse(['priorities' => $priorities]);
     }
 
-    #[Route(path: '/log/component-json', name: 'componentjson', methods: ['GET'])]
+    #[Route(path: '/component-json', name: 'componentjson', methods: ['GET'])]
     public function componentJsonAction(Request $request): JsonResponse
     {
         $this->checkPermission('application_logging');
@@ -192,7 +192,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         return $this->jsonResponse(['components' => $components]);
     }
 
-    #[Route(path: '/log/show-file-object', name: 'showfileobject', methods: ['GET'])]
+    #[Route(path: '/show-file-object', name: 'showfileobject', methods: ['GET'])]
     public function showFileObjectAction(Request $request): StreamedResponse
     {
         $this->checkPermission('application_logging');
