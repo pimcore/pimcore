@@ -178,7 +178,7 @@ final class Configuration implements ConfigurationInterface
                 ->children()
                     ->integerNode('cleanup_tmp_files_atime_older_than')
                         ->info('Integer value in seconds.')
-                        ->defaultValue(7_776_000) // 90 days
+                        ->defaultValue(86400) // 1 day
                     ->end()
                     ->integerNode('cleanup_profiler_files_atime_older_than')
                         ->info('Integer value in seconds.')

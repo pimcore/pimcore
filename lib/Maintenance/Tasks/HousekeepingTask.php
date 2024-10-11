@@ -44,6 +44,8 @@ class HousekeepingTask implements TaskInterface
 
             $this->deleteFilesInFolderOlderThanSeconds($profilerDir, $this->profilerTime);
         }
+
+        $this->deleteFilesInFolderOlderThanSeconds(PIMCORE_SYSTEM_TEMP_DIRECTORY, $this->tmpFileTime);
     }
 
     private function deleteFilesInFolderOlderThanSeconds(string $folder, int $seconds): void
