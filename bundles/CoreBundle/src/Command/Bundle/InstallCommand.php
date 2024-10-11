@@ -20,7 +20,10 @@ namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 use Exception;
 use Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Completion\CompletionInput;
+use Symfony\Component\Console\Completion\CompletionSuggestions;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,23 +31,35 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
+#[AsCommand(
+    name: 'pimcore:bundle:install',
+    description: 'Installs a bundle'
+)]
 class InstallCommand extends AbstractBundleCommand
 {
-    public function __construct(PimcoreBundleManager $bundleManager, private PostStateChange $postStateChangeHelper)
-    {
+    public function __construct(
+        protected PimcoreBundleManager $bundleManager,
+        private readonly PostStateChange $postStateChangeHelper
+    ) {
         parent::__construct($bundleManager);
     }
 
     protected function configure(): void
     {
-        $this
-            ->setName($this->buildName('install'))
-            ->configureDescriptionAndHelp('Installs a bundle')
-            ->addArgument('bundle', InputArgument::REQUIRED, 'The bundle to install')
-            ->configureFailWithoutErrorOption()
-        ;
+        $this->addArgument(
+            'bundle',
+            InputArgument::REQUIRED,
+            'The bundle to install'
+        )->configureFailWithoutErrorOption();
 
         PostStateChange::configureStateChangeCommandOptions($this);
+    }
+
+    public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    {
+        parent::complete($input, $suggestions);
+
+        $this->completeBundleArgument($input, $suggestions);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
