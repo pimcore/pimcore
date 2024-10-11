@@ -72,7 +72,7 @@ final class Installer extends SettingsStoreAwareInstaller
      */
     private function installBundle(): void
     {
-        $currentSchema = Db::get()->createSchemaManager()->introspectSchema();
+        //$currentSchema = Db::get()->createSchemaManager()->introspectSchema();
 
         // $this->installJobRunTable($currentSchema);
         //$this->installLogTable($currentSchema);
