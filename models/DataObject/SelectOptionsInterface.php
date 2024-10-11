@@ -23,7 +23,7 @@ interface SelectOptionsInterface
     /**
      * @return string[]
      */
-    public function getValues(): array;
+    public static function getValues(): array;
 
     public static function tryFromNullable(?string $value): ?static;
 }
