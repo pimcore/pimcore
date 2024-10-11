@@ -70,7 +70,12 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
                     __CLASS__
                 );
 
-                return $this->date->formatLocalized($this->config['outputFormat']);
+                $format = $this->config['outputFormat'];
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    $format = preg_replace('#(?<!%)((?:%%)*)%e#', '\1%#d', $format);
+                }
+
+                return strftime($format, $this->date->getTimestamp());
             } else {
                 if (isset($this->config['format']) && $this->config['format']) {
                     $format = $this->config['format'];
