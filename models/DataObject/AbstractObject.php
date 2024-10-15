@@ -118,8 +118,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     *
+     * @var string|null
      */
-    protected ?string $classId = null;
+    protected $classId = null;
 
     /**
      * @internal
