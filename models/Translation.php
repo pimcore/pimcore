@@ -349,13 +349,15 @@ final class Translation extends AbstractModel
         return $translation->getDao()->isAValidDomain($domain);
     }
 
-    public function save(): void
+    public function save(array $parameters = []): void
     {
-        $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
+        $preTranslationEvent = new TranslationEvent($this, $parameters);
+        $this->dispatchEvent($preTranslationEvent, TranslationEvents::PRE_SAVE);
+        $parameters = $preTranslationEvent->getArguments();
 
         $this->getDao()->save();
 
-        $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::POST_SAVE);
+        $this->dispatchEvent(new TranslationEvent($this, $parameters), TranslationEvents::POST_SAVE);
 
         self::clearDependentCache();
     }
