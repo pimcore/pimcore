@@ -487,7 +487,7 @@ class CustomReportController extends UserAwareController
     public function isValidConfigName(string $configName): void
     {
         if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $configName)) {
-            throw new \Exception('The customer report name is invalid');
+            throw new Exception('The customer report name is invalid');
         }
     }
 
