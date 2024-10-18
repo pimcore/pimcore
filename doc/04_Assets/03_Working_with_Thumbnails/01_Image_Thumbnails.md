@@ -447,10 +447,11 @@ Images with an embedded clipping path (8BIM / Adobe profile meta data) are autom
 If you do not want to use thumbnail auto clipping, you can disable the support by adding the following config option:
 
 ```yml
-assets:
-    image:
-        thumbnails:
-            clip_auto_support: false
+pimcore:
+    assets:
+        image:
+            thumbnails:
+                clip_auto_support: false
 ```
 
 ### Note on using WebP with Imagick using delegates
