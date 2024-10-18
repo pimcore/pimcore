@@ -45,12 +45,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     */
-    protected ?array $__rawRelationData = null;
-
-    /**
-     * @internal
-     *
      * Necessary for assigning object reference to corresponding fields while wakeup
      *
      */
@@ -73,13 +67,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * @internal
      */
     protected ?ClassDefinition $class = null;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
-    protected $classId = null;
 
     /**
      * @internal
@@ -401,25 +388,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this->class;
     }
 
-    public function getClassId(): ?string
-    {
-        if (isset($this->classId)) {
-            return (string)$this->classId;
-        }
-
-        return null;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setClassId(string $classId): static
-    {
-        $this->classId = $classId;
-
-        return $this;
-    }
-
     public function getClassName(): ?string
     {
         return $this->className;
@@ -667,8 +635,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         try {
             parent::save($parameters);
-            //Reset Relational data to force a reload
-            $this->__rawRelationData = null;
 
             if ($this instanceof DirtyIndicatorInterface) {
                 $this->resetDirtyMap();
@@ -842,19 +808,5 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         $filteredData = array_filter($unfilteredData, $filterFn);
 
         return $filteredData;
-    }
-
-    /**
-     * @internal
-     *
-     */
-    public function __getRawRelationData(): array
-    {
-        if ($this->__rawRelationData === null) {
-            $db = Db::get();
-            $this->__rawRelationData = $db->fetchAllAssociative('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
-        }
-
-        return $this->__rawRelationData;
     }
 }

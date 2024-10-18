@@ -23,6 +23,7 @@ use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
@@ -117,6 +118,19 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @internal
      */
     protected ?string $childrenSortOrder = null;
+
+    /**
+     * @internal
+     *
+     * @var string|null
+     */
+    protected $classId = null;
+
+    /**
+     * @internal
+     *
+     */
+    protected ?array $__rawRelationData = null;
 
     protected function getBlockedVars(): array
     {
@@ -596,6 +610,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             // add to queue that saves dependencies
             $this->addToDependenciesQueue();
 
+            //Reset Relational data to force a reload
+            $this->__rawRelationData = null;
+
             $postEvent = new DataObjectEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
@@ -967,6 +984,35 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function getChildrenSortOrder(): string
     {
         return $this->childrenSortOrder ?? self::OBJECT_CHILDREN_SORT_ORDER_DEFAULT;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setClassId(string $classId): static
+    {
+        $this->classId = $classId;
+
+        return $this;
+    }
+
+    public function getClassId(): ?string
+    {
+        return $this->classId;
+    }
+
+    /**
+     * @internal
+     *
+     */
+    public function __getRawRelationData(): array
+    {
+        if ($this->__rawRelationData === null) {
+            $db = Db::get();
+            $this->__rawRelationData = $db->fetchAllAssociative('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
+        }
+
+        return $this->__rawRelationData;
     }
 
     /**
