@@ -86,7 +86,7 @@ like CloudFront for your resources.
 ### Example: AWS S3 Adapter for Assets
 First, install AWS S3 Adapter with command:
 ```
-composer require league/flysystem-aws-s3-v3:^2.0
+composer require league/flysystem-aws-s3-v3
 ````
 
 Next step is to configure AWS S3 client service for class `Aws\S3\S3Client` with following required arguments:
