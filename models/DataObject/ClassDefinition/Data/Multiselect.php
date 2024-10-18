@@ -279,6 +279,43 @@ class Multiselect extends Data implements
         if (!is_array($data) && !empty($data)) {
             throw new Model\Element\ValidationException("Invalid multiselect data on field [ {$this->getName()} ]");
         }
+
+        if (is_array($data)) {
+            // Ensure options providers are resolved
+            if ($this->getOptions() === null) {
+                $this->enrichFieldDefinition($params['context'] ?? []);
+            }
+
+            foreach ($data as $value) {
+                if (!$this->isValidOption($value)) {
+                    throw new Model\Element\ValidationException(
+                        sprintf("Invalid multiselect option '%s' on field [ %s ]", $value, $this->getName())
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * Validates if the provided data matches any of the available options.
+     *
+     * @param mixed $data
+     * @return bool
+     */
+    public function isValidOption(mixed $data): bool
+    {
+        $matches = array_filter(
+            $this->getOptions() ?? [],
+            function (array $option) use ($data) {
+                if (!array_key_exists('value', $option)) {
+                    return false;
+                }
+
+                return $option['value'] == $data;
+            }
+        );
+
+        return !empty($matches);
     }
 
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
