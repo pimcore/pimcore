@@ -25,26 +25,28 @@ class ResolveUploadTargetEvent extends Event
 
     protected string $filename;
 
-    protected array $context;
+    protected array $context = [];
 
     protected int $parentId;
 
     /**
      * ResolveUploadTargetEvent constructor.
      *
-     * @param array $context contextual information
+     * @param array|null $context contextual information
      */
-    public function __construct(int $parentId, string $filename, array $context)
+    public function __construct(int $parentId, string $filename, ?array $context)
     {
         $this->parentId = $parentId;
         $this->filename = $filename;
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '11.5.0',
-            'The context property is deprecated and will be removed in 12.0.0.
+        if ($context) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.5.0',
+                'The context property is deprecated and will be removed in 12.0.0.
             Use setArgument() from the ArgumentsAwareTrait instead.'
-        );
-        $this->context = $context;
+            );
+            $this->context = $context;
+        }
     }
 
     public function getFilename(): string
