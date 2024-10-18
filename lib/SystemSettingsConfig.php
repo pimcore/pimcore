@@ -171,7 +171,10 @@ class SystemSettingsConfig
             $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
         }
 
-        if ($values['general.domain'] && !filter_var($values['general.domain'], FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+        if (
+            $values['general.domain'] &&
+            !filter_var(idn_to_ascii($values['general.domain']), FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)
+        ) {
             throw new InvalidArgumentException(sprintf('Invalid main domain name "%s"', $values['general.domain']));
         }
 
