@@ -243,8 +243,6 @@ class Select extends Data implements
     /**
      * Validates if the provided data matches any of the available options.
      *
-     * @param mixed $data
-     * @return bool
      */
     public function isValidOption(mixed $data): bool
     {
