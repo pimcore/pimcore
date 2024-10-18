@@ -15,14 +15,13 @@ use Pimcore\Controller\UserAwareController;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class AdminController extends UserAwareController
 {
     use JsonHelperTrait;
-    /**
-     * @Route("/admin/my-admin-action")
-     */
+
+    #[Route(path: 'admin/my-admin-action')]
     public function myAdminAction(Request $request): Response
     {
         $pimcoreUser = $this->getPimcoreUser();

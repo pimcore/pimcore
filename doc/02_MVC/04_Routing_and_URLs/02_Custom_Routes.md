@@ -79,11 +79,11 @@ To use the param resolver, simply type hint the argument (Symfony routing exampl
 
 ```php
     use Symfony\Component\HttpFoundation\Request;
-    use Symfony\Component\Routing\Annotation\Route;
+    use Symfony\Component\Routing\Attribute\Route;
     ....
 
-     #[Template('/news/test')]
-     #[Route('/news/{news}')]
+    #[Template('/news/test')]
+    #[Route('/news/{news}')]
     public function detailAction(DataObject\News $news): array
     {
         return [
