@@ -38,6 +38,12 @@ class ResolveUploadTargetEvent extends Event
     {
         $this->parentId = $parentId;
         $this->filename = $filename;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.5.0',
+            'The context property is deprecated and will be removed in 12.0.0.
+            Use setArgument() from the ArgumentsAwareTrait instead.'
+        );
         $this->context = $context;
     }
 
