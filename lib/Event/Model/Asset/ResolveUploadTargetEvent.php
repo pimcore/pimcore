@@ -45,6 +45,7 @@ class ResolveUploadTargetEvent extends Event
                 'The context property is deprecated and will be removed in 12.0.0.
             Use setArgument() from the ArgumentsAwareTrait instead.'
             );
+
             $this->context = $context;
         }
     }
@@ -61,11 +62,25 @@ class ResolveUploadTargetEvent extends Event
 
     public function getContext(): array
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.5.0',
+            'The context property is deprecated and will be removed in 12.0.0.
+            Use getArgument() from the ArgumentsAwareTrait instead.'
+        );
+
         return $this->context;
     }
 
     public function setContext(array $context): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.5.0',
+            'The context property is deprecated and will be removed in 12.0.0.
+            Use setArgument() from the ArgumentsAwareTrait instead.'
+        );
+
         $this->context = $context;
     }
 
