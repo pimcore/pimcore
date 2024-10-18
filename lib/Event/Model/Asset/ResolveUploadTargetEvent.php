@@ -25,6 +25,9 @@ class ResolveUploadTargetEvent extends Event
 
     protected string $filename;
 
+    /**
+     * @deprecated Will be removed in Pimcore 12
+     */
     protected array $context = [];
 
     protected int $parentId;
@@ -60,6 +63,9 @@ class ResolveUploadTargetEvent extends Event
         $this->filename = $filename;
     }
 
+    /**
+     * @deprecated Will be removed in Pimcore 12
+     */
     public function getContext(): array
     {
         trigger_deprecation(
@@ -72,6 +78,9 @@ class ResolveUploadTargetEvent extends Event
         return $this->context;
     }
 
+    /**
+     * @deprecated Will be removed in Pimcore 12
+     */
     public function setContext(array $context): void
     {
         trigger_deprecation(
