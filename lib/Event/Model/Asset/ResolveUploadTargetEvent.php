@@ -34,11 +34,11 @@ class ResolveUploadTargetEvent extends Event
      *
      * @param array|null $context contextual information
      */
-    public function __construct(int $parentId, string $filename, ?array $context)
+    public function __construct(int $parentId, string $filename, ?array $context = null)
     {
         $this->parentId = $parentId;
         $this->filename = $filename;
-        if ($context) {
+        if ($context !== null) {
             trigger_deprecation(
                 'pimcore/pimcore',
                 '11.5.0',
