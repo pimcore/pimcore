@@ -86,7 +86,10 @@ final class Frontend
         if (!$siteMapping) {
             $siteMapping = [];
             $sites = new Site\Listing();
-            $sites->setOrderKey('(SELECT LENGTH(`path`) FROM documents WHERE documents.id = sites.rootId) DESC', false);
+            $sites->setOrderKey(
+                '(SELECT LENGTH(CONCAT(`path`, `key`)) FROM documents WHERE documents.id = sites.rootId) DESC',
+                false
+            );
             $sites = $sites->load();
             foreach ($sites as $site) {
                 $siteMapping[$site->getRootPath()] = $site->getId();
