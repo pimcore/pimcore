@@ -286,19 +286,20 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             throw new ValidationException('Expected an instance of QuantityValueRange');
         }
 
+        $minimum = $data->getMinimum();
+        $maximum = $data->getMaximum();
+
         if ($omitMandatoryCheck === false && $this->getMandatory()
             && ($data === null
-                || $data->getMinimum() === null
-                || $data->getMaximum() === null
+                || $minimum === null
+                || $maximum === null
                 || $data->getUnitId() === null
             )
         ) {
             throw new ValidationException(sprintf('Empty mandatory field [ %s ]', $fieldName));
         }
 
-        if (!empty($data)) {
-            $minimum = $data->getMinimum();
-            $maximum = $data->getMaximum();
+        if ($minimum || $maximum) {
 
             if (!is_numeric($minimum) || !is_numeric($maximum)) {
                 throw new ValidationException(sprintf('Invalid dimension unit data: %s', $fieldName));
