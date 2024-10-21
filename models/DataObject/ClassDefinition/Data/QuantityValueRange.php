@@ -296,7 +296,10 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             throw new ValidationException(sprintf('Empty mandatory field [ %s ]', $fieldName));
         }
 
-        if (!empty($data)) {
+        $minimum = $data?->getMinimum();
+        $maximum = $data?->getMaximum();
+
+        if ($minimum || $maximum) {
             $minimum = $data->getMinimum();
             $maximum = $data->getMaximum();
 
