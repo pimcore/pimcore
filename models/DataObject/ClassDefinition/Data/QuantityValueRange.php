@@ -286,8 +286,8 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             throw new ValidationException('Expected an instance of QuantityValueRange');
         }
 
-        $minimum = $data->getMinimum();
-        $maximum = $data->getMaximum();
+        $minimum = $data?->getMinimum();
+        $maximum = $data?->getMaximum();
 
         if ($omitMandatoryCheck === false && $this->getMandatory()
             && ($data === null
