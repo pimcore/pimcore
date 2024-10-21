@@ -288,7 +288,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
 
         $minimum = $data->getMinimum();
         $maximum = $data->getMaximum();
-        
+
         if ($omitMandatoryCheck === false && $this->getMandatory()
             && ($data === null
                 || $minimum === null
