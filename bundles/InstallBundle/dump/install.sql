@@ -92,7 +92,7 @@ CREATE TABLE `documents` (
   KEY `key` (`key`),
   KEY `published` (`published`),
   KEY `modificationDate` (`modificationDate`),
-  KEY `versionCount` (`versionCount`),
+  KEY `versionCount` (`versionCount`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `documents_editables`;
@@ -293,7 +293,7 @@ CREATE TABLE `objects` (
   KEY `type_path_classId` (`type`, `path`, `classId`),
   KEY `modificationDate` (`modificationDate`),
   KEY `classId` (`classId`),
-  KEY `versionCount` (`versionCount`),
+  KEY `versionCount` (`versionCount`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `properties`;
@@ -592,7 +592,7 @@ CREATE TABLE `versions` (
   KEY `binaryFileHash` (`binaryFileHash`),
   KEY `autoSave` (`autoSave`),
   KEY `stackTrace` (`stackTrace`(1)),
-  KEY `versionCount` (`versionCount`),
+  KEY `versionCount` (`versionCount`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `website_settings`;
