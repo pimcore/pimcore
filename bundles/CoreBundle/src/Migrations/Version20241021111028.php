@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 
 final class Version20241021111028 extends AbstractMigration
 {
@@ -29,6 +28,7 @@ final class Version20241021111028 extends AbstractMigration
         'objects',
         'versions',
     ];
+
     public function getDescription(): string
     {
         return 'Add versionCount index to elements and versions table';
@@ -36,7 +36,7 @@ final class Version20241021111028 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        foreach ($this->tables as $table){
+        foreach ($this->tables as $table) {
             $dbTable = $schema->getTable($table);
             if (!$dbTable->hasIndex('versionCount')) {
                 $dbTable->addIndex(['versionCount'], 'versionCount');
@@ -46,7 +46,7 @@ final class Version20241021111028 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        foreach ($this->tables as $table){
+        foreach ($this->tables as $table) {
             $dbTable = $schema->getTable($table);
             if ($dbTable->hasIndex('versionCount')) {
                 $dbTable->dropIndex('versionCount');
