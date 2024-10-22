@@ -95,9 +95,6 @@ class Select extends Data implements
         return $this->getColumnType();
     }
 
-    /**
-     * @return array|null
-     */
     public function getOptions(): ?array
     {
         return $this->options;

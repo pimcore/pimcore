@@ -80,9 +80,6 @@ class Multiselect extends Data implements
      */
     public ?array $defaultValue = null;
 
-    /**
-     * @return array|null
-     */
     public function getOptions(): ?array
     {
         return $this->options;
