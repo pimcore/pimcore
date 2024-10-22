@@ -302,6 +302,11 @@ class Multiselect extends Data implements
      */
     public function isValidOption(mixed $data): bool
     {
+        // If no options are defined yet, skip the validation
+        if(empty($this->getOptions())){
+            return true;
+        }
+
         $matches = array_filter(
             $this->getOptions() ?? [],
             function (array $option) use ($data) {
