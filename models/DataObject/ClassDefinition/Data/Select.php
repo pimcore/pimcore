@@ -252,7 +252,7 @@ class Select extends Data implements
         }
 
         $matches = array_filter(
-            $this->getOptions() ?? [],
+            $this->getOptions(),
             function (array $option) use ($data) {
                 if (!array_key_exists('value', $option)) {
                     return false;
