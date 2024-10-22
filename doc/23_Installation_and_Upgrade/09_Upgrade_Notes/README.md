@@ -3,6 +3,11 @@
 ### [Events]
 - `context` property of `ResolveUploadTargetEvent` is deprecated. Use `setArgument()` method instead.
 
+## Pimcore 11.5.0
+### General
+#### [Database]
+- Added an index on `versionCount` columns
+
 ## Pimcore 11.4.0
 ### General
 #### [Logging]
