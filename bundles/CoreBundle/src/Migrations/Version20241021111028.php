@@ -19,9 +19,16 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 
 final class Version20241021111028 extends AbstractMigration
 {
+    protected array $tables = [
+        'assets',
+        'documents',
+        'objects',
+        'versions',
+    ];
     public function getDescription(): string
     {
         return 'Add versionCount index to elements and versions table';
@@ -29,17 +36,21 @@ final class Version20241021111028 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE `assets` ADD INDEX `versionCount` (`versionCount`)');
-        $this->addSql('ALTER TABLE `documents` ADD INDEX `versionCount` (`versionCount`)');
-        $this->addSql('ALTER TABLE `objects` ADD INDEX `versionCount` (`versionCount`)');
-        $this->addSql('ALTER TABLE `versions` ADD INDEX `versionCount` (`versionCount`)');
+        foreach ($this->tables as $table){
+            $dbTable = $schema->getTable($table);
+            if (!$dbTable->hasIndex('versionCount')) {
+                $dbTable->addIndex(['versionCount'], 'versionCount');
+            }
+        }
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE `assets` DROP INDEX `versionCount` (`versionCount`)');
-        $this->addSql('ALTER TABLE `documents` DROP INDEX `versionCount` (`versionCount`)');
-        $this->addSql('ALTER TABLE `objects` DROP INDEX `versionCount` (`versionCount`)');
-        $this->addSql('ALTER TABLE `versions` DROP INDEX `versionCount` (`versionCount`)');
+        foreach ($this->tables as $table){
+            $dbTable = $schema->getTable($table);
+            if ($dbTable->hasIndex('versionCount')) {
+                $dbTable->dropIndex('versionCount');
+            }
+        }
     }
 }
