@@ -47,9 +47,9 @@ class CustomLayout extends Model\AbstractModel
 
     protected ?int $modificationDate = null;
 
-    protected int $userOwner;
+    protected ?int $userOwner = null;
 
-    protected int $userModification;
+    protected ?int $userModification = null;
 
     protected string $classId;
 
@@ -279,12 +279,12 @@ class CustomLayout extends Model\AbstractModel
         return $this->modificationDate;
     }
 
-    public function getUserOwner(): int
+    public function getUserOwner(): ?int
     {
         return $this->userOwner;
     }
 
-    public function getUserModification(): int
+    public function getUserModification(): ?int
     {
         return $this->userModification;
     }
@@ -347,7 +347,7 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @return $this
      */
-    public function setUserOwner(int $userOwner): static
+    public function setUserOwner(?int $userOwner): static
     {
         $this->userOwner = $userOwner;
 
@@ -357,7 +357,7 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @return $this
      */
-    public function setUserModification(int $userModification): static
+    public function setUserModification(?int $userModification): static
     {
         $this->userModification = $userModification;
 
