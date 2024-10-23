@@ -303,7 +303,7 @@ class Multiselect extends Data implements
     public function isValidOption(mixed $data): bool
     {
         // If no options are defined yet, skip the validation
-        if (empty($this->getOptions())) {
+        if (!$this->getOptions()) {
             return true;
         }
 
@@ -318,7 +318,7 @@ class Multiselect extends Data implements
             }
         );
 
-        return !empty($matches);
+        return count($matches) > 0;
     }
 
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
