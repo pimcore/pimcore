@@ -52,6 +52,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 use UnitEnum;
+use function phpamqp\re;
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
@@ -567,7 +568,7 @@ class Service extends Model\AbstractModel
     {
         //check in case of recursion
         $found = false;
-        foreach ($target->getChildren() as $child) {
+        foreach ($target->getChildren()->load() as $child) {
             if ($child->getId() == $new->getId()) {
                 $found = true;
 
