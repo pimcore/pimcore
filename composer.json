@@ -78,7 +78,7 @@
     "scheb/2fa-google-authenticator": "^6.0",
     "spatie/image-optimizer": "^1.6.2",
     "symfony-cmf/routing-bundle": "^3.0",
-    "symfony/cache": "^6.4",
+    "symfony/cache": "^6.4.12",
     "symfony/config": "^6.4",
     "symfony/console": "^6.4",
     "symfony/contracts": "^3.2",
