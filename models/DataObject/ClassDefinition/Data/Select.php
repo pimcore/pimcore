@@ -244,7 +244,7 @@ class Select extends Data implements
      * Validates if the provided data matches any of the available options.
      *
      */
-    public function isValidOption(mixed $data): bool
+    private function isValidOption(mixed $data): bool
     {
         // If no options are defined yet, skip the validation
         if (!$this->getOptions()) {
