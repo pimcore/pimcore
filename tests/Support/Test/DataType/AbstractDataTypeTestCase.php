@@ -242,7 +242,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject([
             [
-                'method' => 'fillMultiSelect',
+                'method' => 'fillCountryMultiSelect',
                 'field' => 'countries',
             ],
         ]);
@@ -471,13 +471,13 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject([
             [
-                'method' => 'fillMultiSelect',
+                'method' => 'fillLanguageMultiSelect',
                 'field' => 'languages',
             ],
         ]);
 
         $this->refreshObject();
-        $this->testDataHelper->assertCountryMultiSelect($this->testObject, 'languages', $this->seed);
+        $this->testDataHelper->assertLanguageMultiSelect($this->testObject, 'languages', $this->seed);
     }
 
     public function testLastname(): void

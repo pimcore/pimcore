@@ -225,6 +225,44 @@ class Select extends Data implements
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
+
+        if (!$this->isEmpty($data)) {
+            // Ensure options providers are resolved
+            if ($this->getOptions() === null) {
+                $this->enrichFieldDefinition($params['context'] ?? []);
+            }
+
+            if (!$this->isValidOption($data)) {
+                throw new Model\Element\ValidationException(
+                    sprintf("Invalid option '%s' for field [ %s ]", $data, $this->getName())
+                );
+            }
+        }
+    }
+
+    /**
+     * Validates if the provided data matches any of the available options.
+     *
+     */
+    private function isValidOption(mixed $data): bool
+    {
+        // If no options are defined yet, skip the validation
+        if (!$this->getOptions()) {
+            return true;
+        }
+
+        $matches = array_filter(
+            $this->getOptions(),
+            function (array $option) use ($data) {
+                if (!array_key_exists('value', $option)) {
+                    return false;
+                }
+
+                return $option['value'] == $data;
+            }
+        );
+
+        return count($matches) > 0;
     }
 
     public function isEmpty(mixed $data): bool
