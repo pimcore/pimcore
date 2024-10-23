@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore\Model\DataObject;
+use function Symfony\Component\String\s;
 
 /**
  * @internal
@@ -121,9 +122,23 @@ trait Dao
             //if (!in_array($value, $protectedColumns)) {
             if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
                 $dropColumns[] = 'DROP COLUMN `' . $value . '`';
+
+                if (s($value)->endsWith('__unit') === true
+                    && $this->foreignKeyExists($table, self::getForeignKeyName($table, $value))
+                ) {
+                    $this->db->executeQuery(
+                        sprintf(
+                            'ALTER TABLE `%s` DROP FOREIGN KEY %s',
+                            $table,
+                            self::getForeignKeyName($table, $value)
+                        )
+                    );
+                }
+
                 $this->removeIndices($table, [$value], []);
             }
         }
+
         if ($dropColumns) {
             $this->db->executeQuery('ALTER TABLE `' . $table . '` ' . implode(', ', $dropColumns) . ';');
             $this->resetValidTableColumnsCache($table);
@@ -206,5 +221,27 @@ trait Dao
     protected function indexDoesNotExist(string $table, string $prefix, string $indexName): bool
     {
         return !$this->indexExists($table, $prefix, $indexName);
+    }
+
+    protected function foreignKeyExists(string $table, string $foreignKeyName): bool
+    {
+        $exists = $this->db->fetchFirstColumn(
+            'SELECT COUNT(*)
+            FROM information_schema.referential_constraints
+            WHERE table_name = ?
+                AND constraint_name = ?
+                AND constraint_schema = DATABASE();',
+            [
+                $table,
+                $foreignKeyName,
+            ]
+        );
+
+        return (count($exists) > 0) && ($exists[0] > 0);
+    }
+
+    protected function foreignKeyDoesNotExist(string $table, string $foreignKeyName): bool
+    {
+        return !$this->foreignKeyExists($table, $foreignKeyName);
     }
 }
