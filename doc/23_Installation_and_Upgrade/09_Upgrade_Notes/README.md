@@ -8,6 +8,13 @@
 #### [Database]
 - Added an index on `versionCount` columns
 
+## Pimcore 11.5.0
+
+### General
+
+#### [Configuration] :
+- The `pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than` parameter which was previously unused is now used to delete system temp files (var/tmp), with the default retention period of 1 day.
+
 ## Pimcore 11.4.0
 ### General
 #### [Logging]
