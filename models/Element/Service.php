@@ -52,7 +52,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 use UnitEnum;
-use function phpamqp\re;
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
