@@ -34,7 +34,7 @@ use function sprintf;
  * @internal
  *
  * example:
- *  % pimcoremanualblock "testblock" %}
+ *  {% pimcoremanualblock "testblock" %}
     <div style="border: 1px solid green; ">
         {% blockiterate %}
 
