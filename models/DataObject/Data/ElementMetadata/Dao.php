@@ -29,6 +29,14 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
     {
         $table = $this->getTablename($object);
 
+        /* 
+         * Switch back to old primary keys (before migration "Version20230616085142"), as "auto_id" is not properly implemented yet. 
+         * The auto_id field is missing in the data and causes an error in Helper::upsert when an attempt is made to update the data.
+         * Displayed error message -> 'Key "`auto_id`" passed for upsert not found in data'
+         */
+        $primaryKeys = ['id', 'dest_id', 'fieldname', 'ownertype', 'ownername', 'index', 'position', 'type', 'column'];
+        //$primaryKeys = $this->getPrimaryKey($table);
+
         $dataTemplate = ['id' => $object->getId(),
             'dest_id' => $this->model->getElement()->getId(),
             'fieldname' => $this->model->getFieldname(),
@@ -43,7 +51,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
             $data = $dataTemplate;
             $data['column'] = $column;
             $data['data'] = $this->model->$getter();
-            Helper::upsert($this->db, $table, $data, $this->getPrimaryKey($table));
+            Helper::upsert($this->db, $table, $data, $primaryKeys);
         }
     }
 
