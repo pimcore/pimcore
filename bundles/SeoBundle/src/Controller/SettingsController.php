@@ -22,16 +22,14 @@ use Pimcore\Controller\UserAwareController;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
+#[Route(name: 'pimcore_bundle_seo_settings_')]
 class SettingsController extends UserAwareController
 {
     use JsonHelperTrait;
 
-    /**
-     * @Route("/robots-txt", name="pimcore_bundle_seo_settings_robotstxtget", methods={"GET"})
-     *
-     */
+    #[Route(path: '/robots-txt', name: 'robotstxtget', methods: ['GET'])]
     public function robotsTxtGetAction(): JsonResponse
     {
         $this->checkPermission('robots.txt');
@@ -45,11 +43,7 @@ class SettingsController extends UserAwareController
         ]);
     }
 
-    /**
-     * @Route("/robots-txt", name="pimcore_bundle_seo_settings_robotstxtput", methods={"PUT"})
-     *
-     *
-     */
+    #[Route(path: '/robots-txt', name: 'robotstxtput', methods: ['PUT'])]
     public function robotsTxtPutAction(Request $request): JsonResponse
     {
         $this->checkPermission('robots.txt');
