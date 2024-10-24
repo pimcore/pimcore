@@ -36,6 +36,7 @@ class TranslatorTest extends TestCase
     protected array $locales = [
         'en' => '',
         'de' => 'en',
+        'de_AT' => 'de',
         'fr' => '',
     ];
 
@@ -51,10 +52,32 @@ class TranslatorTest extends TestCase
             'count_plural_n' => '%count% Items',
             'case_key' => 'Lower Case Key',
             'CASE_KEY' => 'Upper Case Key',
+            'fallback_to_EN' => 'EN',
+            'fallback_to_DE' => 'wrong: EN DB',
+            'fallback_to_YML_EN' => '',
+            'fallback_to_YML_DE' => 'wrong: EN DB',
+            'fallback_to_YML_AT' => '',
         ],
         'de' => [
             'simple_key' => 'DE Text',
             'fallback_key' => '',
+            'fallback_to_EN' => '',
+            'fallback_to_DE' => 'DE',
+            'fallback_to_YML_EN' => '',
+            'fallback_to_YML_DE' => '',
+            'fallback_to_YML_AT' => '',
+            'Text As Key' => '',
+            'text_params' => '',
+            'count_key' => '',
+        ],
+        'de_AT' => [
+            'simple_key' => 'AT Text',
+            'fallback_key' => '',
+            'fallback_to_EN' => '',
+            'fallback_to_DE' => '',
+            'fallback_to_YML_EN' => '',
+            'fallback_to_YML_DE' => '',
+            'fallback_to_YML_AT' => '',
             'Text As Key' => '',
             'text_params' => '',
             'count_key' => '',
@@ -243,6 +266,21 @@ class TranslatorTest extends TestCase
         $afterAdd = $translationsListing->load();
 
         $this->assertCount(count($beforeAdd) + 1, $afterAdd);
+    }
+
+    public function testFallbackBetweenYMLandDB(): void
+    {
+        $this->translator->setLocale('de_AT');
+        $this->assertEquals('YML AT', $this->translator->trans('fallback_to_YML_AT'));
+
+        //fallback to german translation when no de_AT is set
+        $this->assertEquals('DE', $this->translator->trans('fallback_to_DE'));
+        $this->assertEquals('YML DE', $this->translator->trans('fallback_to_YML_DE'));
+
+        //fallback to english translation when no de_AT nor german is set
+        $this->translator->setLocale('de_AT');
+        $this->assertEquals('EN', $this->translator->trans('fallback_to_EN'));
+        $this->assertEquals('YML EN', $this->translator->trans('fallback_to_YML_EN'));
     }
 
     public function testSanitizedTranslation(): void
