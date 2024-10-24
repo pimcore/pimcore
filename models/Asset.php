@@ -526,6 +526,10 @@ class Asset extends Element\AbstractElement
 
                         try {
                             $storage->move($oldPath, $this->getRealFullPath());
+
+                            $this->getDao()->updateWorkspaces();
+                            $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
+
                         } catch (UnableToMoveFile $e) {
                             //update children, if unable to move parent
                             $this->updateChildPaths($storage, $oldPath);
@@ -1674,21 +1678,28 @@ class Asset extends Element\AbstractElement
         if ($newPath === null) {
             $newPath = $this->getRealFullPath();
         }
+        $unableToMove = []
+        $children = $storage->listContents($oldPath, true);
+        foreach ($children as $child) {
+            if ($child['type'] === 'file') {
+                $src  = $child['path'];
+                $dest = str_replace($oldPath, $newPath, '/' . $src);
 
-        try {
-            $children = $storage->listContents($oldPath, true);
-            foreach ($children as $child) {
-                if ($child['type'] === 'file') {
-                    $src  = $child['path'];
-                    $dest = str_replace($oldPath, $newPath, '/' . $src);
+                try {
                     $storage->move($src, $dest);
+                    //TODO: $this->getDao()->updatePath($src); same as DAO->updateChildPaths() but only for that single file that got moved OR collect the single asset in an array and do a mass update, but the former is more anti-dead-lock(?)
+                } catch (UnableToMoveFile $e) {
+                    $unableToMove[] = $src;
+                    // log and return $unableToMove as array for output
                 }
+                //} catch (AnyDBrelatedException $e){
+                // todo: revert the physical file rename if the DB change cannot be saved   
+                //}
             }
-
-            $storage->deleteDirectory($oldPath);
-        } catch (UnableToMoveFile $e) {
-            // noting to do
         }
+        //iirc this function is for the storages that don't have actual folder but they exists as soon as there is a file under a given path (similar to git)
+        //by commenting this out, the files that for any reason didn't got moved, won't get deleted. So at least gives the possibility to manually intervene on the files that got left out
+        // ~ $storage->deleteDirectory($oldPath); ~
     }
 
     /**
