@@ -39,6 +39,7 @@ use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOption
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Translation;
 use Pimcore\Tool;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Tool\Session;
@@ -1633,6 +1634,8 @@ class Service extends Model\Element\Service
     }
 
     /**
+     * @throws Exception
+     *
      * @internal
      */
     public static function getCsvDataForObject(Concrete $object, string $requestedLanguage, array $fields, array $helperDefinitions, LocaleServiceInterface $localeService, string $header, bool $returnMappedFieldNames = false, array $context = []): array
@@ -1669,6 +1672,21 @@ class Service extends Model\Element\Service
         if ($returnMappedFieldNames) {
             $tmp = [];
             foreach ($mappedFieldnames as $key => $value) {
+                $titleTranslation = Translation::getByKey(
+                    $key,
+                    Translation::DOMAIN_ADMIN
+                );
+
+                if (
+                    !empty($titleTranslation)
+                    && $titleTranslation->hasTranslation($requestedLanguage)
+                    && !empty($titleTranslation->getTranslation($requestedLanguage))
+                ) {
+                    $tmp[] = '"' . $titleTranslation->getTranslation($requestedLanguage) . '"';
+
+                    continue;
+                }
+
                 $tmp[$value] = $objectData[$key];
             }
             $objectData = $tmp;
