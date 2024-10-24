@@ -24,6 +24,12 @@
 - Extending notifications for studio adding flag `isStudio` column and a `payload` column with according getters and setters.
   Make sure to run the migration `bin/console doctrine:migrations:execute Pimcore\\Bundle\\CoreBundle\\Migrations\\Version20240813085200`.
 
+### [SEO Bundle]
+
+#### [Redirects]
+
+- Source site is now optional. Redirects without source site get applied for all domains. Previously, redirects without source site did not get applied at all.
+
 ## Pimcore 11.3.0
 ### General
 #### [System Settings]

@@ -96,10 +96,10 @@ pimcore.settings.redirects = Class.create({
             url,
             [
                 {name: 'id'},
-                {name: 'type', allowBlank: false},
-                {name: 'source', allowBlank: false},
+                {name: 'type'},
+                {name: 'source'},
                 {name: 'sourceSite'},
-                {name: 'target', allowBlank: false},
+                {name: 'target'},
                 {name: 'targetSite'},
                 {name: 'statusCode'},
                 {name: 'priority', type:'int'},
@@ -165,7 +165,8 @@ pimcore.settings.redirects = Class.create({
                 store: pimcore.globalmanager.get("sites"),
                 valueField: "id",
                 displayField: "domain",
-                editable: false,
+                editable: true,
+                forceSelection: true,
                 triggerAction: "all"
             }), renderer: function (siteId) {
                 var store = pimcore.globalmanager.get("sites");
@@ -179,7 +180,7 @@ pimcore.settings.redirects = Class.create({
                 flex: 200,
                 sortable: true,
                 dataIndex: 'source',
-                editor: new Ext.form.TextField({}),
+                editor: new Ext.form.TextField({ allowBlank: false}),
                 renderer: function (value) {
                     return Ext.util.Format.htmlEncode(value);
                 }
@@ -190,7 +191,8 @@ pimcore.settings.redirects = Class.create({
                     store: pimcore.globalmanager.get("sites"),
                     valueField: "id",
                     displayField: "domain",
-                    editable: false,
+                    editable: true,
+                    forceSelection: true,
                     triggerAction: "all"
                 }), renderer: function (siteId) {
                     var store = pimcore.globalmanager.get("sites");
@@ -206,6 +208,7 @@ pimcore.settings.redirects = Class.create({
                     xtype: 'textfield',
                     id: 'targetEditor',
                     fieldCls: "input_drop_target",
+                    allowBlank: false,
                 },
                 tdCls: "input_drop_target",
                 renderer: function (value) {

@@ -120,7 +120,6 @@ final class RedirectHandler
         $matchPart = $partResolver->getRequestUriPart($redirect->getType());
         $matches = [];
 
-        $doesMatch = false;
         if ($redirect->isRegex()) {
             $doesMatch = (bool)@preg_match($redirect->getSource(), $matchPart, $matches);
         } else {
@@ -133,8 +132,12 @@ final class RedirectHandler
         }
 
         // check for a site
-        if ($redirect->getSourceSite() || $sourceSite) {
-            if (!$sourceSite || $sourceSite->getId() !== $redirect->getSourceSite()) {
+        if ($redirect->getSourceSite() !== null) {
+            if (!$sourceSite) {
+                return null;
+            }
+
+            if ($sourceSite->getId() !== $redirect->getSourceSite()) {
                 return null;
             }
         }
