@@ -1024,11 +1024,6 @@ class Imagick extends Adapter
     {
         try {
             // we can't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
-            $fs = new Filesystem();
-            if (!$fs->exists(PIMCORE_SYSTEM_TEMP_DIRECTORY)) {
-                $fs->mkdir(PIMCORE_SYSTEM_TEMP_DIRECTORY, 0775);
-            }
-
             $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-format-support-detection-' . uniqid() . '.' . $format;
             $image = new \Imagick();
             $image->newImage(1, 1, new ImagickPixel('red'));

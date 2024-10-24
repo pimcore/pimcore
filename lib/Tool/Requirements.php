@@ -675,6 +675,10 @@ final class Requirements
 
         // WebP for active image adapter
         if (extension_loaded('imagick')) {
+            $fs = new Filesystem();
+            if (!$fs->exists(PIMCORE_SYSTEM_TEMP_DIRECTORY)) {
+                $fs->mkdir(PIMCORE_SYSTEM_TEMP_DIRECTORY, 0775);
+            }
             $imageAdapter = new Image\Adapter\Imagick();
         } else {
             $imageAdapter = new Image\Adapter\GD();
