@@ -471,7 +471,9 @@ final class Localizedfield extends Model\AbstractModel implements
             foreach (Tool::getFallbackLanguagesFor($language) as $l) {
                 // fallback-language may not exist yet for lazy-loaded field (relation)
                 if ($this->languageExists($l) || ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading())) {
-                    if ($data = $this->getLocalizedValue($name, $l)) {
+                    $data = $this->getLocalizedValue($name, $l);
+
+                    if (!$fieldDefinition->isEmpty($data)) {
                         break;
                     }
                 }
