@@ -211,4 +211,16 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
 
         return [];
     }
+
+    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
+    {
+        $name = $params['name'] ?: $this->name;
+
+        // TODO: handle null
+        // TODO: check operator
+        // TODO: what is $name for
+
+        // we are looking for membership in the reverse relation
+        return "id IN (". 'SELECT dest_id FROM object_relations_'. $this->getOwnerClassId() . " WHERE src_id = '" . $value . "' AND fieldname = '". $this->getOwnerFieldName() . "' AND ownertype = 'object'" . ")";
+    }
 }
