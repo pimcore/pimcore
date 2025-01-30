@@ -28,7 +28,15 @@ interface CustomReportAdapterInterface
      * @param array|null $drillDownFilters - if set, additional filters are set
      *
      */
-    public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, array $fields = null, array $drillDownFilters = null): array;
+    public function getData(
+        ?array $filters,
+        ?string $sort,
+        ?string $dir,
+        ?int $offset,
+        ?int $limit,
+        ?array $fields,
+        ?array $drillDownFilters
+    ): array;
 
     /**
      * returns available columns for given configuration
