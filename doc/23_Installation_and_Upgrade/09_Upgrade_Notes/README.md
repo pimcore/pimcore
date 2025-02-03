@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 12.0.0
+#### [Documents]
+- Date Editable: Removed deprecated outputFormat config.
+- 
+
 ## Pimcore 11.6.0
 ### Elements
 #### [Documents]

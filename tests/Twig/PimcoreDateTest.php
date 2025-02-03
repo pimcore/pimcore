@@ -37,38 +37,6 @@ class PimcoreDateTest extends TestCase
         $this->engine = $templatingEngine;
     }
 
-    public function testPimcoreDateOutputFormat(): void
-    {
-        $backupLocale = setlocale(LC_TIME, '0');
-        setlocale(LC_TIME, 'en_US.UTF-8');
-
-        $this->engine->getTwigEnvironment()->setLoader(new ArrayLoader([
-            'twig' => <<<TWIG
-            {{ pimcore_date("myDate", {
-                "format": "d.m.Y",
-                "outputFormat": "%A, %B %e, %Y %I:%M"
-            }) }}
-            TWIG,
-        ]));
-        $snippet = new Pimcore\Model\Document\Snippet();
-        $date = (new Pimcore\Model\Document\Editable\Date())
-            ->setName('myDate')
-            ->setDataFromResource(1733954969)
-        ;
-        $snippet->setEditable($date);
-
-        $result = $this->engine->render(
-            'twig',
-            [
-                'document' => $snippet,
-            ]
-        );
-
-        $this->assertEquals('Wednesday, December 11, 2024 10:09', $result);
-
-        setlocale(LC_TIME, $backupLocale);
-    }
-
     public function testPimcoreDateOutputIsoFormat(): void
     {
         $backupCarbonLocale = Carbon::getLocale();
