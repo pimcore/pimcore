@@ -276,6 +276,11 @@ parameters:
 			path: lib/Image/Adapter/Imagick.php
 
 		-
+			message: "#^If condition is always false\\.$#"
+			count: 1
+			path: lib/Image/Chromium.php
+
+		-
 			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
 			count: 1
 			path: lib/Model/AbstractModel.php
@@ -334,6 +339,17 @@ parameters:
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Console.php
+
+		-
+			message: "#^Offset 'DELEGATES' does not exist on string\\.$#"
+			count: 1
+			path: lib/Tool/Requirements.php
+
+		-
+			message: "#^Static call to instance method Imagick\\:\\:getConfigureOptions\\(\\)\\.$#"
+			count: 1
+			path: lib/Tool/Requirements.php
+
 		-
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
@@ -953,7 +969,3 @@ parameters:
 			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
 			count: 1
 			path: models/WebsiteSetting/Listing/Dao.php
-		-
-			message: "#^If condition is always false\\.$#"
-			count: 1
-			path: lib/Image/Chromium.php
