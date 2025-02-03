@@ -19,15 +19,18 @@ parameters:
 
     ignoreErrors:
         - '~^Unsafe usage of new static\(\)~'
+        -
+            identifier: missingType.iterableValue
+        -
+            identifier: missingType.generics
 
     # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
         - Pimcore\Config\Config
         - Pimcore\Templating\Model\ViewModel
 
-    checkGenericClassInNonGenericObjectType: false
-    checkMissingIterableValueType: false
     checkAlwaysTrueCheckTypeFunctionCall: true
+    reportUnmatchedIgnoredErrors: false
 
     ergebnis:
         final:
