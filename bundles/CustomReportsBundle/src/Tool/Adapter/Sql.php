@@ -79,11 +79,6 @@ class Sql extends AbstractAdapter
     {
         $columns = $this->getColumns($configuration);
 
-        /*return array_map(
-            fn($column) => new ColumnInformation($column),
-            $columns
-        );*/
-
         foreach($columns as $column) {
             if($column == 'filename') {
 
