@@ -70,7 +70,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
                     __CLASS__
                 );
 
-                return $this->date->formatLocalized($this->config['outputFormat']);
+                return $this->date->isoFormat($this->config['outputFormat']);
             } else {
                 if (isset($this->config['format']) && $this->config['format']) {
                     $format = $this->config['format'];
