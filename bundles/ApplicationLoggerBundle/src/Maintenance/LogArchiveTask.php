@@ -107,7 +107,7 @@ class LogArchiveTask implements TaskInterface
         );
         foreach ($archiveTables as $archiveTable) {
             if (preg_match('/^'.ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_(\d{4})_(\d{2})$/', $archiveTable, $matches)) {
-                $deleteArchiveLogDate = Carbon::createFromFormat('Y/m', $matches[1].'/'.$matches[2], date_default_timezone_get());
+                $deleteArchiveLogDate = Carbon::createFromFormat('Y/m', $matches[1].'/'.$matches[2]);
                 if ($deleteArchiveLogDate->add(new DateInterval('P'.($this->config['applicationlog']['delete_archive_threshold'] ?? 6).'M')) < new DateTimeImmutable()) {
                     $db->executeStatement('DROP TABLE IF EXISTS `'.($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()).'`.'.$archiveTable);
 
