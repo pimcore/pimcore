@@ -280,7 +280,7 @@ class CustomReportController extends UserAwareController
     }
 
     /**
-     * @Route("/data", name="pimcore_bundle_customreports_customreport_data", methods={"GET", "POST"})
+     * @Route("/data", name="pimcore_bundle_customreports_customreport_data", methods={"POST"})
      */
     public function dataAction(Request $request): JsonResponse
     {
@@ -307,7 +307,7 @@ class CustomReportController extends UserAwareController
     }
 
     /**
-     * @Route("/drill-down-options", name="pimcore_bundle_customreports_customreport_drilldownoptions", methods={"GET", "POST"})
+     * @Route("/drill-down-options", name="pimcore_bundle_customreports_customreport_drilldownoptions", methods={"POST"})
      */
     public function drillDownOptionsAction(Request $request): JsonResponse
     {
