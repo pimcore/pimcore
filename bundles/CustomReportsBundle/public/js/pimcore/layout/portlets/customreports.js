@@ -209,6 +209,12 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                     reader: {
                         type: 'json',
                         rootProperty: 'data'
+                    },
+                    actionMethods: {
+                        create: 'POST',
+                        read: 'POST',
+                        update: 'POST',
+                        destroy: 'POST'
                     }
                 },
                 fields: storeFields
