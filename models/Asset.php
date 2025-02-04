@@ -286,7 +286,9 @@ class Asset extends Element\AbstractElement
                 }
 
                 RuntimeCache::set($cacheKey, $asset);
-                $asset->__setDataVersionTimestamp($asset->getModificationDate());
+                if ($asset->getModificationDate() !== null) {
+                    $asset->__setDataVersionTimestamp($asset->getModificationDate());
+                }
 
                 $asset->resetDirtyMap();
 
