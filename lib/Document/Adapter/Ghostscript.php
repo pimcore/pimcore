@@ -180,7 +180,7 @@ class Ghostscript extends Adapter
             Console::addLowProcessPriority($cmd);
             $process = new Process($cmd);
             $process->setTimeout(240);
-            $process->run();
+            $process->mustRun();
 
             return $this;
         } catch (Exception $e) {
