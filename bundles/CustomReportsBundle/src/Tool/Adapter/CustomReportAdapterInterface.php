@@ -34,8 +34,8 @@ interface CustomReportAdapterInterface
         ?string $dir,
         ?int $offset,
         ?int $limit,
-        ?array $fields,
-        ?array $drillDownFilters
+        ?array $fields = null,
+        ?array $drillDownFilters = null
     ): array;
 
     /**

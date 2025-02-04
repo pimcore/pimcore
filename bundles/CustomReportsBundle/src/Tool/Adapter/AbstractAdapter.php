@@ -37,8 +37,8 @@ abstract class AbstractAdapter implements CustomReportAdapterInterface
         ?string $dir,
         ?int $offset,
         ?int $limit,
-        ?array $fields,
-        ?array $drillDownFilters
+        ?array $fields = null,
+        ?array $drillDownFilters = null
     ): array;
 
     abstract public function getColumns(?stdClass $configuration): array;
