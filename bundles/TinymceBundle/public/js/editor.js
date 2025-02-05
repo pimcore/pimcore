@@ -97,11 +97,13 @@ pimcore.bundle.tinymce.editor = Class.create({
             tinymce.activeEditor.getBody().style.border = '';
             tinymce.activeEditor.getElement().setAttribute('title', '');
 
-            const charCount = tinymce.activeEditor.plugins.wordcount.body.getCharacterCount();
+            if (tinymce.activeEditor.plugins.wordcount) {
+                const charCount = tinymce.activeEditor.plugins.wordcount.body.getCharacterCount();
 
-            if (maxChars !== -1 && charCount > maxChars) {
-                tinymce.activeEditor.getBody().style.border = '1px solid red';
-                tinymce.activeEditor.getElement().setAttribute('title', t('maximum_length_is') + ' ' + maxChars);
+                if (maxChars !== -1 && charCount > maxChars) {
+                    tinymce.activeEditor.getBody().style.border = '1px solid red';
+                    tinymce.activeEditor.getElement().setAttribute('title', t('maximum_length_is') + ' ' + maxChars);
+                }
             }
         }
 
