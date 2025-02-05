@@ -172,7 +172,7 @@ class Ghostscript extends Adapter
         return $this->version;
     }
 
-    public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): mixed
+    public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): bool
     {
         try {
             $localFile = self::getLocalFileFromStream($this->getPdf());
@@ -182,7 +182,7 @@ class Ghostscript extends Adapter
             $process->setTimeout(240);
             $process->mustRun();
 
-            return $this;
+            return true;
         } catch (Exception $e) {
             Logger::error((string) $e);
 

@@ -47,7 +47,7 @@ abstract class Adapter
 
     abstract public function load(Asset\Document $asset): static;
 
-    abstract public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): mixed;
+    abstract public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): bool;
 
     /**
      * @return resource
