@@ -17,12 +17,16 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Data;
 
 use Iterator;
+use Pimcore\Model\DataObject\InheritanceAwareFieldInterface;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\InheritanceAwareFieldTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use Pimcore\Model\Element\Service;
 
-class ImageGallery implements Iterator, OwnerAwareFieldInterface
+class ImageGallery implements Iterator, OwnerAwareFieldInterface, InheritanceAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
+    //use InheritanceAwareFieldTrait;
 
     /**
      * @var array<int, Hotspotimage|null>
@@ -90,5 +94,14 @@ class ImageGallery implements Iterator, OwnerAwareFieldInterface
         }
 
         return false;
+    }
+
+    public function cloneValue(object $data): object
+    {
+        $context = [
+            'source' => __METHOD__,
+            'conversion' => false,
+        ];
+        return Service::getDeepCopyInstance($data, $context)->copy($data);
     }
 }

@@ -58,6 +58,10 @@ class Geopoint extends AbstractGeo implements
      */
     public function getDataFromResource(mixed $data, ?Concrete $object = null, array $params = []): ?DataObject\Data\GeoCoordinates
     {
+        if ($data === null){
+            return null;
+        }
+
         if ($data[$this->getName() . '__longitude'] && $data[$this->getName() . '__latitude']) {
             $geopoint = new DataObject\Data\GeoCoordinates($data[$this->getName() . '__latitude'], $data[$this->getName() . '__longitude']);
 

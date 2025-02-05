@@ -265,6 +265,8 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
+        $clone = clone $data;
+
         if ($data instanceof DataObject\Data\ImageGallery) {
             return base64_encode(Serialize::serialize($data));
         }
