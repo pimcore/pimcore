@@ -211,6 +211,7 @@ class Ffmpeg extends Adapter
     public function saveImage(string $file, int $timeOffset = null): bool
     {
         $timeOffset = (string) ($timeOffset ?? 5);
+
         try {
             $cmd = [
                 self::getFfmpegCli(),
