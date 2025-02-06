@@ -48,8 +48,7 @@ class NotificationEmailService extends AbstractNotificationService
         RouterInterface $router,
         TranslatorInterface $translator,
         EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
         $this->template = $template;
         $this->translator = $translator;
         $this->router = $router;
