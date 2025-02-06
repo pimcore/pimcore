@@ -25,10 +25,10 @@ use Pimcore\Model\DataObject;
  * @method \Pimcore\Model\DataObject\Data\ElementMetadata\Dao getDao()
  */
 class ElementMetadata extends Model\AbstractModel
-    implements DataObject\OwnerAwareFieldInterface, DataObject\InheritanceAwareFieldInterface
+    implements DataObject\OwnerAwareFieldInterface, DataObject\ReferenceAwareFieldInterface
 {
     use DataObject\Traits\OwnerAwareFieldTrait;
-    use DataObject\Traits\InheritanceAwareFieldTrait;
+    use DataObject\Traits\ReferenceAwareFieldTrait;
 
     protected ?string $elementType = null;
 

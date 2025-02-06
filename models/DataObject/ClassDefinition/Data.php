@@ -529,7 +529,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= "\t\t" . '$data = $data->getPlain();' . "\n";
         $code .= "\t" . '}' . "\n\n";
 
-        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\InheritanceAwareFieldInterface) {' . "\n";
+        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\ReferenceAwareFieldInterface) {' . "\n";
         $code .= "\t\t" . 'return $data->cloneValue($data);' . "\n";
         $code .= "\t" . '}' . "\n\n";
 

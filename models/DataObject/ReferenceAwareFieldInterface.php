@@ -14,18 +14,12 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\DataObject\Traits;
-
-use Pimcore\Model\DataObject\Localizedfield;
-use Pimcore\Model\Element\DirtyIndicatorInterface;
+namespace Pimcore\Model\DataObject;
 
 /**
  * @internal
  */
-trait InheritanceAwareFieldTrait
+interface ReferenceAwareFieldInterface
 {
-    public function cloneValue(object $object): object
-    {
-        return clone $object;
-    }
+    public function cloneValue(object $data): object;
 }

@@ -26,18 +26,18 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
-use Pimcore\Model\DataObject\InheritanceAwareFieldInterface;
+use Pimcore\Model\DataObject\ReferenceAwareFieldInterface;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
-use Pimcore\Model\DataObject\Traits\InheritanceAwareFieldTrait;
+use Pimcore\Model\DataObject\Traits\ReferenceAwareFieldTrait;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
-class UrlSlug implements OwnerAwareFieldInterface, InheritanceAwareFieldInterface
+class UrlSlug implements OwnerAwareFieldInterface, ReferenceAwareFieldInterface
 {
     use ObjectVarTrait;
     use OwnerAwareFieldTrait;
-    use InheritanceAwareFieldTrait;
+    use ReferenceAwareFieldTrait;
 
     public const TABLE_NAME = 'object_url_slugs';
 

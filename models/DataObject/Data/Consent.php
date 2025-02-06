@@ -16,16 +16,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
-use Pimcore\Model\DataObject\InheritanceAwareFieldInterface;
+use Pimcore\Model\DataObject\ReferenceAwareFieldInterface;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
-use Pimcore\Model\DataObject\Traits\InheritanceAwareFieldTrait;
+use Pimcore\Model\DataObject\Traits\ReferenceAwareFieldTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Element\Note;
 
-class Consent implements OwnerAwareFieldInterface, InheritanceAwareFieldInterface
+class Consent implements OwnerAwareFieldInterface, ReferenceAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-    use InheritanceAwareFieldTrait;
+    use ReferenceAwareFieldTrait;
 
     protected bool $consent = false;
 

@@ -14,12 +14,23 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\DataObject;
+namespace Pimcore\Model\DataObject\Traits;
+
+use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
+use Pimcore\Model\Element\Service;
 
 /**
  * @internal
  */
-interface InheritanceAwareFieldInterface
+trait ReferenceAwareFieldTrait
 {
-    public function cloneValue(object $data): object;
+    public function cloneValue(object $object): object
+    {
+        $context = [
+            'source' => __METHOD__,
+            'conversion' => false,
+        ];
+        return Service::getDeepCopyInstance($object, $context)->copy($object);
+    }
 }
