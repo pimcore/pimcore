@@ -61,9 +61,11 @@ Symfony workflow module comes with a bunch of events that can be used for custom
 default workflow functionality. See [Symfony docs](https://symfony.com/doc/current/workflow/usage.html#using-events)
 for details. 
 
-In addition to the Symfony events, Pimcore provides two additional events for global actions: 
+In addition to the Symfony events, Pimcore provides additional events for global actions: 
 - `pimcore.workflow.preGlobalAction`
 - `pimcore.workflow.postGlobalAction`
+- `pimcore.workflow.preNotificationSending`
+
 See [WorkflowEvents](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/WorkflowEvents.php) for details. 
 
 ### Using Additional Data in Events
