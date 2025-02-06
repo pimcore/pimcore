@@ -65,7 +65,15 @@ class NotificationEmailService extends AbstractNotificationService
             $recipients = $this->getNotificationUsersByName($users, $roles);
 
             $event = new NotificationEmailEvent(
-                $users, $roles, $workflow, $subjectType, $subject, $action, $mailType, $mailPath, $recipients
+                $users,
+                $roles,
+                $workflow,
+                $subjectType,
+                $subject,
+                $action,
+                $mailType,
+                $mailPath,
+                $recipients
             );
             $event = $this->eventDispatcher->dispatch($event, WorkflowEvents::PRE_NOTIFICATION_SENDING);
 
