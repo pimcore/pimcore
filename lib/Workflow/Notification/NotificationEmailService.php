@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Workflow\Notification;
 
 use Exception;
+use Pimcore\Event\Workflow\NotificationEmailEvent;
+use Pimcore\Event\WorkflowEvents;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User;
@@ -25,6 +27,7 @@ use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Workflow\Workflow;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -38,11 +41,18 @@ class NotificationEmailService extends AbstractNotificationService
 
     protected TranslatorInterface $translator;
 
-    public function __construct(EngineInterface $template, RouterInterface $router, TranslatorInterface $translator)
-    {
+    protected EventDispatcherInterface $eventDispatcher;
+
+    public function __construct(
+        EngineInterface $template,
+        RouterInterface $router,
+        TranslatorInterface $translator,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->template = $template;
         $this->translator = $translator;
         $this->router = $router;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -53,6 +63,14 @@ class NotificationEmailService extends AbstractNotificationService
     {
         try {
             $recipients = $this->getNotificationUsersByName($users, $roles);
+
+            $event = new NotificationEmailEvent(
+                $users, $roles, $workflow, $subjectType, $subject, $action, $mailType, $mailPath, $recipients
+            );
+            $event = $this->eventDispatcher->dispatch($event, WorkflowEvents::PRE_NOTIFICATION_SENDING);
+
+            $recipients = $event->getRecipients();
+
             if (!count($recipients)) {
                 return;
             }

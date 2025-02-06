@@ -37,4 +37,14 @@ final class WorkflowEvents
      * @var string
      */
     const POST_GLOBAL_ACTION = 'pimcore.workflow.postGlobalAction';
+
+    /**
+     * Fired BEFORE emails are sent to users or roles that should be notified when a workflow transition occurs.
+     * Use this to modify the recipient list, i.e., include object's `userOwner` in the list.
+     *
+     * @Event("Pimcore\Event\Workflow\NotificationEmailEvent")
+     *
+     * @var string
+     */
+    const PRE_NOTIFICATION_SENDING = 'pimcore.workflow.preNotificationSending';
 }
