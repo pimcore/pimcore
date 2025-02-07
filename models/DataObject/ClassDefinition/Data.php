@@ -520,7 +520,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $code .= "\t\t" . 'try {' . "\n";
             $code .= "\t\t\t" . '$parentData = $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t\t\t" . 'return' . "\n";
-            $code .= "\t\t\t\t" . '($parentData instanceof \Pimcore\Model\DataObject\ReferenceAwareFieldInterface) ?' . "\n";
+            $code .= "\t\t\t\t" . '($parentData instanceof \Pimcore\Model\DataObject\InheritanceAwareFieldInterface) ?' . "\n";
             $code .= "\t\t\t\t\t" . '$parentData->cloneValue() : $parentData;' . "\n";
             $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
             $code .= "\t\t\t" . '// no data from parent available, continue ...' . "\n";
