@@ -1644,20 +1644,18 @@ class Service extends Model\Element\Service
         foreach ($fields as $field) {
             $key = $field['key'];
             if (static::isHelperGridColumnConfig($key)) {
-                $validLanguages = static::expandGridColumnForExport($helperDefinitions, $key);
-                if ($validLanguages) {
-                    $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions, $header);
+                $validLanguages = static::expandGridColumnForExport($helperDefinitions, $key) ?? [];
+                $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions, $header);
 
-                    foreach ($validLanguages as $validLanguage) {
-                        $localeService->setLocale($validLanguage);
-                        $fieldData = self::getCsvFieldData($currentLocale, $key, $object, $validLanguage, $helperDefinitions);
-                        $localizedFieldKey = $key . '-' . $validLanguage;
-                        if ($returnMappedFieldNames && !isset($mappedFieldnames[$localizedFieldKey])) {
-                            $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
-                            $objectData[$mappedFieldnames[$localizedFieldKey]] = $fieldData;
-                        } else {
-                            $objectData[$localizedFieldKey] = $fieldData;
-                        }
+                foreach ($validLanguages as $validLanguage) {
+                    $localeService->setLocale($validLanguage);
+                    $fieldData = self::getCsvFieldData($currentLocale, $key, $object, $validLanguage, $helperDefinitions);
+                    $localizedFieldKey = $key . '-' . $validLanguage;
+                    if ($returnMappedFieldNames && !isset($mappedFieldnames[$localizedFieldKey])) {
+                        $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
+                        $objectData[$mappedFieldnames[$localizedFieldKey]] = $fieldData;
+                    } else {
+                        $objectData[$localizedFieldKey] = $fieldData;
                     }
                 }
             } else {
