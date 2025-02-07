@@ -20,7 +20,7 @@ namespace Pimcore\Model\DataObject\Traits;
 /**
  * @internal
  */
-trait ReferenceAwareFieldTrait
+trait InheritanceAwareFieldTrait
 {
     public function cloneValue(): static
     {

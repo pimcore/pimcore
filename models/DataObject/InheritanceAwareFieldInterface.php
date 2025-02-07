@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject;
 /**
  * @internal
  */
-interface ReferenceAwareFieldInterface
+interface InheritanceAwareFieldInterface
 {
     public function cloneValue(): static;
 }

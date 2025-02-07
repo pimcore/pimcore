@@ -17,15 +17,15 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Data;
 
 use Exception;
-use Pimcore\Model\DataObject\ReferenceAwareFieldInterface;
+use Pimcore\Model\DataObject\InheritanceAwareFieldInterface;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
-use Pimcore\Model\DataObject\Traits\ReferenceAwareFieldTrait;
+use Pimcore\Model\DataObject\Traits\InheritanceAwareFieldTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
-class StructuredTable implements OwnerAwareFieldInterface, ReferenceAwareFieldInterface
+class StructuredTable implements OwnerAwareFieldInterface, InheritanceAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-    use ReferenceAwareFieldTrait;
+    use InheritanceAwareFieldTrait;
 
     protected array $data = [];
 

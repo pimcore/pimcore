@@ -16,15 +16,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
-use Pimcore\Model\DataObject\ReferenceAwareFieldInterface;
+use Pimcore\Model\DataObject\InheritanceAwareFieldInterface;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
-use Pimcore\Model\DataObject\Traits\ReferenceAwareFieldTrait;
+use Pimcore\Model\DataObject\Traits\InheritanceAwareFieldTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
-class NumericRange implements OwnerAwareFieldInterface, ReferenceAwareFieldInterface
+class NumericRange implements OwnerAwareFieldInterface, InheritanceAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-    use ReferenceAwareFieldTrait;
+    use InheritanceAwareFieldTrait;
 
     protected int|null|float $minimum = null;
 

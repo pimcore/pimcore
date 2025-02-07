@@ -518,7 +518,10 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit() && $this->supportsInheritance()) {
             $code .= "\t" . 'if (\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
             $code .= "\t\t" . 'try {' . "\n";
-            $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t\t" . '$parentData = $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t\t" . 'return' . "\n";
+            $code .= "\t\t\t\t" . '($parentData instanceof \Pimcore\Model\DataObject\ReferenceAwareFieldInterface) ?' . "\n";
+            $code .= "\t\t\t\t\t" . '$parentData->cloneValue() : $parentData;' . "\n";
             $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
             $code .= "\t\t\t" . '// no data from parent available, continue ...' . "\n";
             $code .= "\t\t" . '}' . "\n";
@@ -527,10 +530,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
         $code .= "\t\t" . '$data = $data->getPlain();' . "\n";
-        $code .= "\t" . '}' . "\n\n";
-
-        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\ReferenceAwareFieldInterface) {' . "\n";
-        $code .= "\t\t" . 'return $data->cloneValue($data);' . "\n";
         $code .= "\t" . '}' . "\n\n";
 
         $code .= "\t" . 'return $data;' . "\n";

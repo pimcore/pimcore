@@ -16,15 +16,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
-use Pimcore\Model\DataObject\ReferenceAwareFieldInterface;
+use Pimcore\Model\DataObject\InheritanceAwareFieldInterface;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
-use Pimcore\Model\DataObject\Traits\ReferenceAwareFieldTrait;
+use Pimcore\Model\DataObject\Traits\InheritanceAwareFieldTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
-class GeoCoordinates implements OwnerAwareFieldInterface, ReferenceAwareFieldInterface
+class GeoCoordinates implements OwnerAwareFieldInterface, InheritanceAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-    use ReferenceAwareFieldTrait;
+    use InheritanceAwareFieldTrait;
 
     protected ?float $longitude = null;
 
