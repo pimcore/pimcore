@@ -58,7 +58,7 @@ class Geopoint extends AbstractGeo implements
      */
     public function getDataFromResource(mixed $data, ?Concrete $object = null, array $params = []): ?DataObject\Data\GeoCoordinates
     {
-        if ($data === null){
+        if ($data === null) {
             return null;
         }
 

@@ -16,21 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Traits;
 
-use Pimcore\Model\DataObject\Localizedfield;
-use Pimcore\Model\Element\DirtyIndicatorInterface;
-use Pimcore\Model\Element\Service;
 
 /**
  * @internal
  */
 trait ReferenceAwareFieldTrait
 {
-    public function cloneValue(object $object): object
+    public function cloneValue(): static
     {
-        $context = [
-            'source' => __METHOD__,
-            'conversion' => false,
-        ];
-        return Service::getDeepCopyInstance($object, $context)->copy($object);
+        return clone $this;
     }
 }

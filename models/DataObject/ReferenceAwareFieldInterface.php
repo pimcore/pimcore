@@ -21,5 +21,5 @@ namespace Pimcore\Model\DataObject;
  */
 interface ReferenceAwareFieldInterface
 {
-    public function cloneValue(object $data): object;
+    public function cloneValue(): static;
 }

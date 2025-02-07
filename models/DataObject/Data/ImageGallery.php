@@ -95,4 +95,12 @@ class ImageGallery implements Iterator, OwnerAwareFieldInterface, ReferenceAware
 
         return false;
     }
+
+    public function cloneValue(): static {
+        $context = [
+            'source' => __METHOD__,
+            'conversion' => false,
+        ];
+        return Service::getDeepCopyInstance($this, $context)->copy($this);
+    }
 }
