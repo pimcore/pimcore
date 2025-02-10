@@ -96,11 +96,12 @@ class ImageGallery implements Iterator, OwnerAwareFieldInterface, InheritanceAwa
         return false;
     }
 
-    public function cloneValue(): static {
-        $context = [
-            'source' => __METHOD__,
-            'conversion' => false,
-        ];
-        return Service::getDeepCopyInstance($this, $context)->copy($this);
+    public function __clone(): void
+    {
+        foreach($this->items as $key => $item) {
+            if ($item instanceof Hotspotimage) {
+                $this->items[$key] = clone $item;
+            }
+        }
     }
 }
