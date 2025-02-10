@@ -36,7 +36,7 @@ class SanityCheckHandler implements BatchHandlerInterface
     use BatchHandlerTrait;
     use HandlerHelperTrait;
 
-    public function __invoke(SanityCheckMessage $message, Acknowledger $ack = null): mixed
+    public function __invoke(SanityCheckMessage $message, ?Acknowledger $ack = null): mixed
     {
         return $this->handle($message, $ack);
     }

@@ -20,7 +20,7 @@ use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 
 interface ExporterInterface
 {
-    public function export(AttributeSet $attributeSet, string $exportId = null): string;
+    public function export(AttributeSet $attributeSet, ?string $exportId = null): string;
 
     public function getExportFilePath(string $exportId): string;
 

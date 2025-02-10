@@ -25,7 +25,7 @@ abstract class AbstractAdapter implements CustomReportAdapterInterface
 
     protected ?Config $fullConfig = null;
 
-    public function __construct(stdClass $config, ?Config $fullConfig)
+    public function __construct(stdClass $config, ?Config $fullConfig = null)
     {
         $this->config = $config;
         $this->fullConfig = $fullConfig;

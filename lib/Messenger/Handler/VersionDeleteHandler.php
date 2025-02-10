@@ -32,7 +32,7 @@ class VersionDeleteHandler implements BatchHandlerInterface
 {
     use BatchHandlerTrait;
 
-    public function __invoke(VersionDeleteMessage $message, Acknowledger $ack = null): mixed
+    public function __invoke(VersionDeleteMessage $message, ?Acknowledger $ack = null): mixed
     {
         return $this->handle($message, $ack);
     }

@@ -250,7 +250,7 @@ final class Tool
         return $languageOptions;
     }
 
-    private static function resolveRequest(Request $request = null): ?Request
+    private static function resolveRequest(?Request $request = null): ?Request
     {
         if (null === $request) {
             // do an extra check for the container as we might be in a state where no container is set yet
@@ -266,7 +266,7 @@ final class Tool
         return $request;
     }
 
-    public static function isFrontend(Request $request = null): bool
+    public static function isFrontend(?Request $request = null): bool
     {
         if (null === $request) {
             $request = Pimcore::getContainer()->get('request_stack')->getMainRequest();
@@ -284,7 +284,7 @@ final class Tool
     /**
      * eg. editmode, preview, version preview, always when it is a "frontend-request", but called out of the admin
      */
-    public static function isFrontendRequestByAdmin(Request $request = null): bool
+    public static function isFrontendRequestByAdmin(?Request $request = null): bool
     {
         $request = self::resolveRequest($request);
 
@@ -314,7 +314,7 @@ final class Tool
     /**
      * @internal
      */
-    public static function useFrontendOutputFilters(Request $request = null): bool
+    public static function useFrontendOutputFilters(?Request $request = null): bool
     {
         $request = self::resolveRequest($request);
 
@@ -346,7 +346,7 @@ final class Tool
     /**
      * @internal
      */
-    public static function getHostname(Request $request = null): ?string
+    public static function getHostname(?Request $request = null): ?string
     {
         $request = self::resolveRequest($request);
 
@@ -363,7 +363,7 @@ final class Tool
     /**
      * @internal
      */
-    public static function getRequestScheme(Request $request = null): string
+    public static function getRequestScheme(?Request $request = null): string
     {
         $request = self::resolveRequest($request);
 
@@ -379,7 +379,7 @@ final class Tool
      *
      * @param string|null $useProtocol use a specific protocol
      */
-    public static function getHostUrl(string $useProtocol = null, Request $request = null): string
+    public static function getHostUrl(?string $useProtocol = null, ?Request $request = null): string
     {
         $request = self::resolveRequest($request);
 
@@ -418,7 +418,7 @@ final class Tool
     /**
      * @internal
      */
-    public static function getClientIp(Request $request = null): ?string
+    public static function getClientIp(?Request $request = null): ?string
     {
         $request = self::resolveRequest($request);
         if ($request) {
@@ -445,7 +445,7 @@ final class Tool
     /**
      * @internal
      */
-    public static function getAnonymizedClientIp(Request $request = null): ?string
+    public static function getAnonymizedClientIp(?Request $request = null): ?string
     {
         $request = self::resolveRequest($request);
 
@@ -461,7 +461,7 @@ final class Tool
     /**
      * @throws Exception
      */
-    public static function getMail(array|string $recipients = null, string $subject = null): Mail
+    public static function getMail(array|string|null $recipients = null, ?string $subject = null): Mail
     {
         $mail = new Mail();
 

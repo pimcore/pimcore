@@ -67,7 +67,7 @@ class Placeholder extends AbstractExtension
      *
      *
      */
-    public function __invoke(string $containerName = null): Container
+    public function __invoke(?string $containerName = null): Container
     {
         $containerName = (string) $containerName;
         if (empty($this->containers[$containerName])) {

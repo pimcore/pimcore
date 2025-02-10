@@ -38,7 +38,7 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
     /**
      * @throws NotFoundException
      */
-    public function __construct(Unit|string $unit = null)
+    public function __construct(Unit|string|null $unit = null)
     {
         if ($unit instanceof Unit) {
             $this->unit = $unit;

@@ -60,7 +60,7 @@ class Service extends Model\Element\Service
      */
     protected array $nearestPathCache;
 
-    public function __construct(Model\User $user = null)
+    public function __construct(?Model\User $user = null)
     {
         $this->_user = $user;
     }
@@ -298,7 +298,7 @@ class Service extends Model\Element\Service
         return $doc;
     }
 
-    public static function pathExists(string $path, string $type = null): bool
+    public static function pathExists(string $path, ?string $type = null): bool
     {
         if (!$path) {
             return false;
@@ -530,7 +530,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function generatePagePreview(int $id, Request $request = null, string $hostUrl = null): bool
+    public static function generatePagePreview(int $id, ?Request $request = null, ?string $hostUrl = null): bool
     {
         $filesystem = new Filesystem();
         $doc = Document\Page::getById($id);

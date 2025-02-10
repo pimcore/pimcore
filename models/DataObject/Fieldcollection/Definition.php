@@ -268,7 +268,7 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      */
-    public function getDefinitionFile(string $key = null): string
+    public function getDefinitionFile(?string $key = null): string
     {
         return $this->locateDefinitionFile($key ?? $this->getKey(), 'fieldcollections/%s.php');
     }

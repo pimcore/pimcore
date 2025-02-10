@@ -216,7 +216,7 @@ abstract class Page extends Container
      *
      * @throws Exception    if invalid options are given
      */
-    public function __construct(array $options = null)
+    public function __construct(?array $options = null)
     {
         if (is_array($options)) {
             $this->setOptions($options);
@@ -627,7 +627,7 @@ abstract class Page extends Container
      *
      * @throws Exception  if order is not integer or null
      */
-    public function setOrder(int|string $order = null): static
+    public function setOrder(int|string|null $order = null): static
     {
         if (is_string($order)) {
             $temp = (int) $order;

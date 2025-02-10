@@ -124,7 +124,7 @@ class Select extends Data implements
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): null|string|int
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): null|string|int
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -136,7 +136,7 @@ class Select extends Data implements
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): null|string|int
+    public function getDataFromResource(mixed $data, ?Concrete $object = null, array $params = []): null|string|int
     {
         return $data;
     }
@@ -146,7 +146,7 @@ class Select extends Data implements
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -157,7 +157,7 @@ class Select extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): null|string|int
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): null|string|int
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -168,7 +168,7 @@ class Select extends Data implements
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): null|string|int
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): null|string|int
     {
         return $this->getDataFromResource($data, $object, $params);
     }
@@ -179,7 +179,7 @@ class Select extends Data implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return htmlspecialchars((string) $data, ENT_QUOTES, 'UTF-8');
     }
@@ -192,7 +192,7 @@ class Select extends Data implements
     /** See parent class.
      *
      */
-    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $result = [];
 
@@ -279,7 +279,7 @@ class Select extends Data implements
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDataForGrid(mixed $data, Concrete $object = null, array $params = []): array|string|int|null
+    public function getDataForGrid(mixed $data, ?Concrete $object = null, array $params = []): array|string|int|null
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),

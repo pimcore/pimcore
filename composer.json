@@ -28,7 +28,7 @@
     "docs": "https://pimcore.com/docs/latest/"
   },
   "require": {
-    "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+    "php": "~8.3.0 || ~8.4.0",
     "ext-SimpleXML": "*",
     "ext-curl": "*",
     "ext-dom": "*",
@@ -54,7 +54,6 @@
     "doctrine/orm": "^2.15 || ^3.0",
     "doctrine/persistence": "^3.0.3",
     "egulias/email-validator": "^3.0 || ^4.0",
-    "endroid/qr-code": "^4 || ^5.1",
     "friendsofsymfony/jsrouting-bundle": "^3.2.1",
     "guzzlehttp/guzzle": "^7.8",
     "http-interop/http-factory-guzzle": "^1.0.0",
@@ -129,7 +128,11 @@
     "umpirsky/country-list": "^2.0.6"
   },
   "conflict": {
+    "doctrine/doctrine-migrations-bundle": "3.4.0",
     "pimcore/admin-ui-classic-bundle": "<1.5",
+    "pimcore/output-data-config-toolkit-bundle": "<5.0",
+    "pimcore/translations-provider-interfaces": "<3.0",
+    "pimcore/web2print-tools-bundle": "<5.0",
     "phpstan/phpdoc-parser": ">=2.0",
     "sabre/dav": "4.2.2",
     "symfony/symfony": "*",

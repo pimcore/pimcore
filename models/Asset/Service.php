@@ -59,7 +59,7 @@ class Service extends Model\Element\Service
      */
     protected array $_copyRecursiveIds = [];
 
-    public function __construct(Model\User $user = null)
+    public function __construct(?Model\User $user = null)
     {
         $this->_user = $user;
     }
@@ -200,7 +200,7 @@ class Service extends Model\Element\Service
         return $target;
     }
 
-    public static function pathExists(string $path, string $type = null): bool
+    public static function pathExists(string $path, ?string $type = null): bool
     {
         if (!$path) {
             return false;

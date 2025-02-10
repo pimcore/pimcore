@@ -108,7 +108,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
         $this->autoConvert = $autoConvert;
     }
 
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -125,12 +125,12 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
         ];
     }
 
-    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): array
+    public function getDataForQueryResource(mixed $data, ?Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return [
@@ -142,7 +142,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
         return null;
     }
 
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             $unit = '';
@@ -172,7 +172,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
     /**
      * display the quantity value field data in the grid
      */
-    public function getDataForGrid(mixed $data, Concrete $object = null, array $params = []): ?array
+    public function getDataForGrid(mixed $data, ?Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             $unit = $data->getUnit();

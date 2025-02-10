@@ -91,7 +91,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
         throw new RouteNotFoundException(sprintf("Route for name '%s' was not found", $name));
     }
 
-    public function getRoutesByNames(array $names = null): array
+    public function getRoutesByNames(?array $names = null): array
     {
         // TODO needs performance optimizations
         // TODO really return all routes here as documentation states? where is this used?

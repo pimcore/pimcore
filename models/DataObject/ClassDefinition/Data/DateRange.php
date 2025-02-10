@@ -50,7 +50,7 @@ class DateRange extends Data implements
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $startDateKey = $this->getName() . '__start_date';
         $endDateKey = $this->getName() . '__end_date';
@@ -77,7 +77,7 @@ class DateRange extends Data implements
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
     {
         $startDateKey = $this->getName() . '__start_date';
         $endDateKey = $this->getName() . '__end_date';
@@ -102,7 +102,7 @@ class DateRange extends Data implements
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -113,7 +113,7 @@ class DateRange extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof CarbonPeriod) {
             $endDate = $data->getEndDate();
@@ -132,7 +132,7 @@ class DateRange extends Data implements
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
     {
         if (is_array($data) && isset($data['start_date'], $data['end_date'])) {
             $startDate = $this->getDateFromTimestamp($data['start_date'] / 1000);
@@ -144,7 +144,7 @@ class DateRange extends Data implements
         return null;
     }
 
-    public function getDataFromGridEditor(array $data, DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
+    public function getDataFromGridEditor(array $data, ?DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
     {
         if ($data['start_date']) {
             $data['start_date'] *= 1000;
@@ -157,7 +157,7 @@ class DateRange extends Data implements
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    public function getDataForGrid(?CarbonPeriod $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForGrid(?CarbonPeriod $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
@@ -168,7 +168,7 @@ class DateRange extends Data implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof CarbonPeriod) {
             /** @var CarbonInterface $startDate */

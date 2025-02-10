@@ -87,7 +87,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws \Exception
      */
-    public function update(bool $isUpdate = null): void
+    public function update(?bool $isUpdate = null): void
     {
         $object = $this->model->getObjectVars();
 
@@ -379,7 +379,7 @@ class Dao extends Model\Element\Dao
      * @param Model\User|null $user
      *
      */
-    public function getChildAmount(?array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], User $user = null): int
+    public function getChildAmount(?array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], ?User $user = null): int
     {
         if (!$this->model->getId()) {
             return 0;

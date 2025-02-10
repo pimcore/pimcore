@@ -57,7 +57,7 @@ class CacheExtension extends AbstractExtension
      *
      * @return $this
      */
-    public function init(string $name, int $lifetime = null, bool $force = false): static
+    public function init(string $name, ?int $lifetime = null, bool $force = false): static
     {
         trigger_deprecation(
             'pimcore/pimcore',
