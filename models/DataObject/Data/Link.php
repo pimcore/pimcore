@@ -26,11 +26,11 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
-class Link implements OwnerAwareFieldInterface, DataObject\InheritanceAwareFieldInterface
+class Link implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
     use ObjectVarTrait;
-    use DataObject\Traits\InheritanceAwareFieldTrait;
+
 
     protected string $text = '';
 

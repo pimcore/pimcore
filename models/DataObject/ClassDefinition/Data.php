@@ -518,10 +518,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit() && $this->supportsInheritance()) {
             $code .= "\t" . 'if (\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
             $code .= "\t\t" . 'try {' . "\n";
-            $code .= "\t\t\t" . '$parentData = $this->getValueFromParent("' . $key . '");' . "\n";
-            $code .= "\t\t\t" . 'return' . "\n";
-            $code .= "\t\t\t\t" . '($parentData instanceof \Pimcore\Model\DataObject\InheritanceAwareFieldInterface) ?' . "\n";
-            $code .= "\t\t\t\t\t" . '$parentData->cloneValue() : $parentData;' . "\n";
+            $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
             $code .= "\t\t\t" . '// no data from parent available, continue ...' . "\n";
             $code .= "\t\t" . '}' . "\n";

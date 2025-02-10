@@ -17,16 +17,15 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Data;
 
 use Iterator;
-use Pimcore\Model\DataObject\InheritanceAwareFieldInterface;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
-use Pimcore\Model\DataObject\Traits\InheritanceAwareFieldTrait;
+
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Element\Service;
 
-class ImageGallery implements Iterator, OwnerAwareFieldInterface, InheritanceAwareFieldInterface
+class ImageGallery implements Iterator, OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-    use InheritanceAwareFieldTrait;
+
 
     /**
      * @var array<int, Hotspotimage|null>
@@ -94,14 +93,5 @@ class ImageGallery implements Iterator, OwnerAwareFieldInterface, InheritanceAwa
         }
 
         return false;
-    }
-
-    public function __clone(): void
-    {
-        foreach($this->items as $key => $item) {
-            if ($item instanceof Hotspotimage) {
-                $this->items[$key] = clone $item;
-            }
-        }
     }
 }

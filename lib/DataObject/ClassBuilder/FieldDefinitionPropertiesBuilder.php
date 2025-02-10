@@ -26,6 +26,7 @@ class FieldDefinitionPropertiesBuilder implements FieldDefinitionPropertiesBuild
 
         $cd .= 'protected $classId = "' . $classDefinition->getId(). "\";\n";
         $cd .= 'protected $className = "'.$classDefinition->getName().'"'.";\n";
+        $cd .= 'public bool $parentMode = false' . ";\n";
 
         foreach ($classDefinition->getFieldDefinitions() as $key => $def) {
             if (!$def instanceof ClassDefinition\Data\ReverseObjectRelation && !$def instanceof ClassDefinition\Data\CalculatedValue

@@ -19,20 +19,20 @@ namespace Pimcore\Model\DataObject\Data;
 use Exception;
 use InvalidArgumentException;
 use Pimcore;
-use Pimcore\Model\DataObject\InheritanceAwareFieldInterface;
+
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
-use Pimcore\Model\DataObject\Traits\InheritanceAwareFieldTrait;
+
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Exception\NotFoundException;
 
-abstract class AbstractQuantityValue implements OwnerAwareFieldInterface, InheritanceAwareFieldInterface
+abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 {
     use ObjectVarTrait;
     use OwnerAwareFieldTrait;
-    use InheritanceAwareFieldTrait;
+
 
     protected string|null $unitId = null;
 

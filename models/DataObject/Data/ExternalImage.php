@@ -16,15 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
-use Pimcore\Model\DataObject\InheritanceAwareFieldInterface;
+
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
-use Pimcore\Model\DataObject\Traits\InheritanceAwareFieldTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
-class ExternalImage implements OwnerAwareFieldInterface, InheritanceAwareFieldInterface
+class ExternalImage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-    use InheritanceAwareFieldTrait;
 
     protected ?string $url = null;
 

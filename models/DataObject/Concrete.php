@@ -450,7 +450,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         if ($parent) {
             $method = 'get' . $key;
             if (method_exists($parent, $method)) {
-                return $parent->$method($params);
+                $parent->parentMode = true;
+                $value = $parent->$method($params);
+                $parent->parentMode = false;
+                return $value;
             }
 
             throw new InheritanceParentNotFoundException(sprintf('Parent object does not have a method called `%s()`, unable to retrieve value for key `%s`', $method, $key));
