@@ -193,11 +193,6 @@ parameters:
 		-
 			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
 			count: 1
-			path: bundles/TinymceBundle/src/DependencyInjection/Configuration.php
-
-		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
-			count: 1
 			path: bundles/UuidBundle/src/DependencyInjection/Configuration.php
 
 		-
