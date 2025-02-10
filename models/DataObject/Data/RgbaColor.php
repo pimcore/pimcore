@@ -17,15 +17,12 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Data;
 
 use Exception;
-
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
-
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 class RgbaColor implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-
 
     protected int $r;
 

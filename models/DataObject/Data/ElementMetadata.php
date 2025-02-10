@@ -24,11 +24,9 @@ use Pimcore\Model\DataObject;
 /**
  * @method \Pimcore\Model\DataObject\Data\ElementMetadata\Dao getDao()
  */
-class ElementMetadata extends Model\AbstractModel
-    implements DataObject\OwnerAwareFieldInterface
+class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwareFieldInterface
 {
     use DataObject\Traits\OwnerAwareFieldTrait;
-
 
     protected ?string $elementType = null;
 

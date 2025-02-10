@@ -16,15 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
-
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
-
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 class GeoCoordinates implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-
 
     protected ?float $longitude = null;
 
@@ -83,5 +80,4 @@ class GeoCoordinates implements OwnerAwareFieldInterface
     {
         return $this->latitude . '; ' . $this->longitude;
     }
-
 }

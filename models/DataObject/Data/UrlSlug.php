@@ -26,10 +26,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
-
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
-
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
@@ -37,7 +35,6 @@ class UrlSlug implements OwnerAwareFieldInterface
 {
     use ObjectVarTrait;
     use OwnerAwareFieldTrait;
-
 
     public const TABLE_NAME = 'object_url_slugs';
 

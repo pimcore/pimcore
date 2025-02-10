@@ -31,7 +31,6 @@ class Link implements OwnerAwareFieldInterface
     use OwnerAwareFieldTrait;
     use ObjectVarTrait;
 
-
     protected string $text = '';
 
     protected ?string $internalType = null;

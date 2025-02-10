@@ -25,11 +25,9 @@ use Pimcore\Model\DataObject\Concrete;
 /**
  * @method \Pimcore\Model\DataObject\Data\ObjectMetadata\Dao getDao()
  */
-class ObjectMetadata extends Model\AbstractModel
-    implements DataObject\OwnerAwareFieldInterface
+class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwareFieldInterface
 {
     use DataObject\Traits\OwnerAwareFieldTrait;
-
 
     protected ?DataObject\AbstractObject $object = null;
 

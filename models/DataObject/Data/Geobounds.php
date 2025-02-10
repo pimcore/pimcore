@@ -16,15 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
-
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
-
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 class Geobounds implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-
 
     protected ?GeoCoordinates $northEast = null;
 

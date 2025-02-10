@@ -18,14 +18,11 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Iterator;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
-
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
-use Pimcore\Model\Element\Service;
 
 class ImageGallery implements Iterator, OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-
 
     /**
      * @var array<int, Hotspotimage|null>

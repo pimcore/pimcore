@@ -17,9 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\Asset;
-
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
-
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\Service;
@@ -27,7 +25,6 @@ use Pimcore\Model\Element\Service;
 class Hotspotimage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-
 
     protected ElementDescriptor|Asset\Image|null $image = null;
 

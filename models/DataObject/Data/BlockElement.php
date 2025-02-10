@@ -23,9 +23,7 @@ use DeepCopy\Reflection\ReflectionHelper;
 use Pimcore\Cache\Core\CacheMarshallerInterface;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\AbstractModel;
-
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
-
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\DeepCopy\UnmarshalMatcher;
@@ -36,11 +34,9 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\Version\SetDumpStateFilter;
 use ReflectionProperty;
 
-class BlockElement extends AbstractModel
-    implements OwnerAwareFieldInterface, CacheMarshallerInterface
+class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, CacheMarshallerInterface
 {
     use OwnerAwareFieldTrait;
-
 
     protected string $name;
 
