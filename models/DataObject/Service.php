@@ -1658,6 +1658,7 @@ class Service extends Model\Element\Service
                         $objectData[$localizedFieldKey] = $fieldData;
                     }
                 }
+                $localeService->setLocale($currentLocale);    
             } else {
                 $fieldData = self::getCsvFieldData($requestedLanguage, $key, $object, $requestedLanguage, $helperDefinitions);
                 if ($returnMappedFieldNames && !isset($mappedFieldnames[$key])) {
@@ -1668,8 +1669,6 @@ class Service extends Model\Element\Service
                 }
             }
         }
-
-        $localeService->setLocale($currentLocale);
 
         $event = new DataObjectEvent($object, ['objectData' => $objectData,
             'context' => $context,
