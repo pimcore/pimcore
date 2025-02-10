@@ -84,6 +84,7 @@ class Sql extends AbstractAdapter
 
     public function getColumnsWithMetadata(?stdClass $configuration): array
     {
+        $columnsWithMetadata = [];
         $columns = $this->getColumns($configuration);
 
         foreach($columns as $column) {
