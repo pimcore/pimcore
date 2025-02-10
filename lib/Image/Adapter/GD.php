@@ -24,7 +24,7 @@ class GD extends Adapter
     protected string $path;
 
     /**
-     * @var resource|GdImage|false
+     * @var resource|GdImage|false|null
      */
     protected mixed $resource = null;
 
