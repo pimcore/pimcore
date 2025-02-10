@@ -1658,7 +1658,7 @@ class Service extends Model\Element\Service
                         $objectData[$localizedFieldKey] = $fieldData;
                     }
                 }
-                $localeService->setLocale($currentLocale);    
+                $localeService->setLocale($currentLocale);
             } else {
                 $fieldData = self::getCsvFieldData($requestedLanguage, $key, $object, $requestedLanguage, $helperDefinitions);
                 if ($returnMappedFieldNames && !isset($mappedFieldnames[$key])) {
