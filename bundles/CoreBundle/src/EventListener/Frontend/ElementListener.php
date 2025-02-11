@@ -260,6 +260,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     private function getLatestVersion(int $id, UserInterface $user): ?Concrete
     {
+        /** @var Concrete|null $dataObject */
         $dataObject = Service::getElementById('object', $id);
 
         if ($dataObject === null) {
@@ -269,7 +270,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         $version = $dataObject->getLatestVersion($user->getId());
 
         if ($version === null || !$version->getData() instanceof Concrete) {
-            return null;
+            return $dataObject;
         }
 
         return $version->getData();
