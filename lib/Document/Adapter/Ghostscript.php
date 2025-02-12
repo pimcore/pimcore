@@ -24,6 +24,8 @@ use Pimcore\Model\Asset;
 use Pimcore\Tool\Console;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use function rtrim;
+use function sprintf;
 
 /**
  * @internal
@@ -268,5 +270,15 @@ class Ghostscript extends Adapter
         unlink($textFile);
 
         return $text;
+    }
+
+    protected function getTemporaryPdfStorageFilePath(Asset $asset): string
+    {
+        return sprintf(
+            '%s/%s/pdf-thumb__%s__libreoffice-document.pdf',
+            rtrim($asset->getRealPath(), '/'),
+            $asset->getId(),
+            $asset->getId(),
+        );
     }
 }
