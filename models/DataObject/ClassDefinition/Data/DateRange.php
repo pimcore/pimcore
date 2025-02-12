@@ -32,7 +32,8 @@ class DateRange extends Data implements
     QueryResourcePersistenceAwareInterface,
     EqualComparisonInterface,
     VarExporterInterface,
-    NormalizerInterface
+    NormalizerInterface,
+    CustomVersionMarshalInterface
 {
     use DataObject\Traits\DataWidthTrait;
 
@@ -368,5 +369,14 @@ class DateRange extends Data implements
                 'end_date' => $columnType,
             ];
         }
+    }
+    public function marshalVersion(Concrete $object, mixed $data): mixed
+    {
+        return $data;
+    }
+
+    public function unmarshalVersion(Concrete $object, mixed $data): mixed
+    {
+       return $data;
     }
 }

@@ -17,11 +17,15 @@ declare(strict_types=1);
 namespace Pimcore\Model\Element;
 
 use __PHP_Incomplete_Class;
+use Carbon\CarbonPeriod;
+use DatePeriod;
 use DeepCopy\DeepCopy;
 use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use DeepCopy\Matcher\PropertyTypeMatcher;
+use DeepCopy\TypeFilter\TypeFilter;
+use DeepCopy\TypeMatcher\TypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Exception;
@@ -705,7 +709,7 @@ class Service extends Model\AbstractModel
             return $data;
         }
         if (is_object($data)) {
-            if ($data instanceof UnitEnum) {
+            if ($data instanceof UnitEnum || $data instanceof DatePeriod) {
                 return $data;
             }
 
@@ -1379,6 +1383,16 @@ class Service extends Model\AbstractModel
             $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher('Psr\Container\ContainerInterface'));
             $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher('Pimcore\Model\DataObject\ClassDefinition'));
         }
+
+        $copier->prependTypeFilter(
+            new class implements TypeFilter {
+                public function apply($element): CarbonPeriod
+                {
+                    return CarbonPeriod::instance($element);
+                }
+            },
+            new TypeMatcher(CarbonPeriod::class),
+        );
 
         $event = new GenericEvent(null, [
             'copier' => $copier,
