@@ -146,7 +146,7 @@
     "composer/composer": "*",
     "ergebnis/phpstan-rules": "^2.6.1",
     "gotenberg/gotenberg-php": "^2.4",
-    "phpstan/phpstan": "2.1.4",
+    "phpstan/phpstan": "2.1.5",
     "phpstan/phpstan-symfony": "^2.0.2",
     "phpunit/phpunit": "^9.3",
     "symfony/dotenv": "^6.4",
