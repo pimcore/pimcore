@@ -461,7 +461,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $title = !empty($fieldDefinition->title) ? $fieldDefinition->title : $fieldDefinition->getName();
                     $html .= '<tr><td>&nbsp;</td><td>'.$title.'</td><td>';
 
-                    $blockElement = $item[$fieldDefinition->getName()];
+                    $blockElement = $item[$fieldDefinition->getName()] ?? null;
                     if ($blockElement instanceof DataObject\Data\BlockElement) {
                         $html .= $fieldDefinition->getVersionPreview($blockElement->getData(), $object, $params);
                     } else {
