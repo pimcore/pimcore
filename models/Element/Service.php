@@ -17,11 +17,15 @@ declare(strict_types=1);
 namespace Pimcore\Model\Element;
 
 use __PHP_Incomplete_Class;
+use Carbon\CarbonPeriod;
+use DatePeriod;
 use DeepCopy\DeepCopy;
 use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use DeepCopy\Matcher\PropertyTypeMatcher;
+use DeepCopy\TypeFilter\TypeFilter;
+use DeepCopy\TypeMatcher\TypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Exception;
@@ -704,60 +708,61 @@ class Service extends Model\AbstractModel
 
             return $data;
         }
-        if (is_object($data)) {
-            if ($data instanceof UnitEnum) {
-                return $data;
-            }
 
-            if ($data instanceof ElementInterface && !$initial) {
-                return self::getElementById(self::getElementType($data), $data->getId());
-            }
-
-            // if this is the initial element set the correct path and key
-            if ($data instanceof ElementInterface && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
-                $originalElement = self::getElementById(self::getElementType($data), $data->getId());
-
-                if ($originalElement) {
-                    //do not override filename for Assets https://github.com/pimcore/pimcore/issues/8316
-                    //                    if ($data instanceof Asset) {
-                    //                        /** @var Asset $originalElement */
-                    //                        $data->setFilename($originalElement->getFilename());
-                    //                    } else
-                    if ($data instanceof Document) {
-                        /** @var Document $originalElement */
-                        $data->setKey($originalElement->getKey());
-                    } elseif ($data instanceof DataObject\AbstractObject) {
-                        /** @var AbstractObject $originalElement */
-                        $data->setKey($originalElement->getKey());
-                    }
-
-                    $data->setPath($originalElement->getRealPath());
-                }
-            }
-
-            if ($data instanceof Model\AbstractModel) {
-                $properties = $data->getObjectVars();
-                foreach ($properties as $name => $value) {
-                    //do not renew object reference of ObjectAwareFieldInterface - as object might point to a
-                    //specific version of the object and must not be reloaded with DB version of object
-                    if ($data instanceof ObjectAwareFieldInterface && $name === 'object') {
-                        continue;
-                    }
-
-                    $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
-                }
-            } else {
-                $properties = method_exists($data, 'getObjectVars') ? $data->getObjectVars() : get_object_vars($data);
-                foreach ($properties as $name => $value) {
-                    if (method_exists($data, 'setObjectVar')) {
-                        $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
-                    } else {
-                        $data->$name = self::renewReferences($value, false, $name);
-                    }
-                }
-            }
-
+        if (!is_object($data)) {
             return $data;
+        }
+
+        if ($data instanceof UnitEnum || $data instanceof DatePeriod) {
+            return $data;
+        }
+
+        if ($data instanceof ElementInterface && !$initial) {
+            return self::getElementById(self::getElementType($data), $data->getId());
+        }
+
+        // if this is the initial element set the correct path and key
+        if ($data instanceof ElementInterface && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
+            $originalElement = self::getElementById(self::getElementType($data), $data->getId());
+
+            if ($originalElement) {
+                //do not override filename for Assets https://github.com/pimcore/pimcore/issues/8316
+                //                    if ($data instanceof Asset) {
+                //                        /** @var Asset $originalElement */
+                //                        $data->setFilename($originalElement->getFilename());
+                //                    } else
+                if ($data instanceof Document) {
+                    /** @var Document $originalElement */
+                    $data->setKey($originalElement->getKey());
+                } elseif ($data instanceof DataObject\AbstractObject) {
+                    /** @var AbstractObject $originalElement */
+                    $data->setKey($originalElement->getKey());
+                }
+
+                $data->setPath($originalElement->getRealPath());
+            }
+        }
+
+        if ($data instanceof Model\AbstractModel) {
+            $properties = $data->getObjectVars();
+            foreach ($properties as $name => $value) {
+                //do not renew object reference of ObjectAwareFieldInterface - as object might point to a
+                //specific version of the object and must not be reloaded with DB version of object
+                if ($data instanceof ObjectAwareFieldInterface && $name === 'object') {
+                    continue;
+                }
+
+                $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
+            }
+        } else {
+            $properties = method_exists($data, 'getObjectVars') ? $data->getObjectVars() : get_object_vars($data);
+            foreach ($properties as $name => $value) {
+                if (method_exists($data, 'setObjectVar')) {
+                    $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
+                } else {
+                    $data->$name = self::renewReferences($value, false, $name);
+                }
+            }
         }
 
         return $data;
@@ -1379,6 +1384,16 @@ class Service extends Model\AbstractModel
             $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher('Psr\Container\ContainerInterface'));
             $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher('Pimcore\Model\DataObject\ClassDefinition'));
         }
+
+        $copier->prependTypeFilter(
+            new class implements TypeFilter {
+                public function apply($element): CarbonPeriod
+                {
+                    return CarbonPeriod::instance($element);
+                }
+            },
+            new TypeMatcher(CarbonPeriod::class),
+        );
 
         $event = new GenericEvent(null, [
             'copier' => $copier,

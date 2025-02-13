@@ -62,24 +62,15 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         if ($this->date instanceof Carbon) {
             if (isset($this->config['outputIsoFormat']) && $this->config['outputIsoFormat']) {
                 return $this->date->isoFormat($this->config['outputIsoFormat']);
-            } elseif (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '11.2',
-                    'Using "outputFormat" config for %s editable is deprecated, use "outputIsoFormat" config instead.',
-                    __CLASS__
-                );
-
-                return $this->date->formatLocalized($this->config['outputFormat']);
-            } else {
-                if (isset($this->config['format']) && $this->config['format']) {
-                    $format = $this->config['format'];
-                } else {
-                    $format = DateTimeInterface::ATOM;
-                }
-
-                return $this->date->format($format);
             }
+
+            if (isset($this->config['format']) && $this->config['format']) {
+                $format = $this->config['format'];
+            } else {
+                $format = DateTimeInterface::ATOM;
+            }
+
+            return $this->date->format($format);
         }
 
         return '';
