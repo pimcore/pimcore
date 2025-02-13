@@ -21,15 +21,6 @@ on:
             - 'doc/**'
             - 'bundles/**/public/**'
 
-env:
-    PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
-    APP_ENV: test
-    PIMCORE_TEST: 1
-    PIMCORE_TEST_DB_DSN: "mysql://root@127.0.0.1:33006/pimcore_test"
-    PIMCORE_TEST_REDIS_DSN: "redis://127.0.0.1:63379"
-    MINIO_ACCESS_KEY: "PIMCORE_OBJECT_STORAGE_ACCESS_KEY"
-    MINIO_SECRET_KEY: "PIMCORE_OBJECT_STORAGE_SECRET_KEY"
-
 permissions:
   contents: read
 
@@ -51,4 +42,11 @@ jobs:
             storage: ${{ matrix.storage }}
             symfony: ${{ matrix.symfony }}
             composer-options: ${{ matrix.composer-options }}
-            repository: ${{ github.repository}}
+            repository: ${{ github.repository }}
+            PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
+            APP_ENV: "test"
+            PIMCORE_TEST: 1
+            PIMCORE_TEST_DB_DSN: "mysql://root@127.0.0.1:33006/pimcore_test"
+            PIMCORE_TEST_REDIS_DSN: "redis://127.0.0.1:63379"
+            MINIO_ACCESS_KEY: "PIMCORE_OBJECT_STORAGE_ACCESS_KEY"
+            MINIO_SECRET_KEY: "PIMCORE_OBJECT_STORAGE_SECRET_KEY"
