@@ -52,10 +52,3 @@ jobs:
             symfony: ${{ matrix.symfony }}
             composer-options: ${{ matrix.composer-options }}
             repository: ${{ github.repository}}
-            PIMCORE_PROJECT_ROOT: ${{ github.env.PIMCORE_PROJECT_ROOT }}
-            APP_ENV: ${{ github.env.APP_ENV }}
-            PIMCORE_TEST: ${{ github.env.PIMCORE_TEST }}
-            PIMCORE_TEST_DB_DSN: ${{ github.env.PIMCORE_TEST_DB_DSN }}
-            PIMCORE_TEST_REDIS_DSN: ${{ github.env.PIMCORE_TEST_REDIS_DSN }}
-            MINIO_ACCESS_KEY: ${{ github.env.MINIO_ACCESS_KEY }}
-            MINIO_SECRET_KEY: ${{ github.env.MINIO_SECRET_KEY }}
