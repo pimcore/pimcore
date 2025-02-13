@@ -28,7 +28,7 @@ class UserProvider implements UserProviderInterface
         $pimcoreUser = PimcoreUser::getByName($identifier);
 
         if ($pimcoreUser) {
-            return new User($pimcoreUser);
+            return $this->buildUser($pimcoreUser);
         }
 
         throw new UserNotFoundException(sprintf('User %s was not found', $identifier));
