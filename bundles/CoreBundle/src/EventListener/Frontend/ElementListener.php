@@ -263,7 +263,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         /** @var Concrete|null $dataObject */
         $dataObject = Service::getElementById('object', $id);
 
-        if ($dataObject === null) {
+        if (!$dataObject instanceof Concrete) {
             return null;
         }
 
