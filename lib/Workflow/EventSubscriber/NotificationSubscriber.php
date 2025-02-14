@@ -142,7 +142,7 @@ class NotificationSubscriber implements EventSubscriberInterface
             $workflow,
             $subjectType,
             $subject,
-            $transition->getLabel(),
+            $transition,
             $mailType,
             $mailPath
         );
@@ -162,7 +162,7 @@ class NotificationSubscriber implements EventSubscriberInterface
             $workflow,
             $subjectType,
             $subject,
-            $transition->getLabel()
+            $transition
         );
     }
 

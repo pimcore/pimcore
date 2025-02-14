@@ -29,6 +29,7 @@ use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Pimcore\Workflow\Transition;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -59,7 +60,7 @@ class NotificationEmailService extends AbstractNotificationService
         WorkflowInterface $workflow,
         string $subjectType,
         ElementInterface $subject,
-        string $action,
+        Transition $transition,
         string $mailType,
         string $mailPath
     ): void {
@@ -98,7 +99,7 @@ class NotificationEmailService extends AbstractNotificationService
                             $subjectType,
                             $subject,
                             $workflow,
-                            $action,
+                            $transition->getLabel(),
                             $language,
                             $localizedMailPath,
                             $deeplink
@@ -113,7 +114,7 @@ class NotificationEmailService extends AbstractNotificationService
                             $subjectType,
                             $subject,
                             $workflow,
-                            $action,
+                            $transition->getLabel(),
                             $language,
                             $localizedMailPath,
                             $deeplink
