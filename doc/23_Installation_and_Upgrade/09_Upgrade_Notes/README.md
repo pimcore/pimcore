@@ -3,7 +3,9 @@
 ## Pimcore 12.0.0
 #### [Documents]
 - Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
-- 
+
+### [Events]
+- Removed `context` property of `ResolveUploadTargetEvent`.
 
 ## Pimcore 11.6.0
 ### Elements
