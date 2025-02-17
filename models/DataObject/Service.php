@@ -1041,7 +1041,7 @@ class Service extends Model\Element\Service
         }
 
         if ($layout instanceof ClassDefinition\Data) {
-            $fieldname = $layout->name;
+            $fieldname = $layout->getName();
             if (empty($mainDefinition[$fieldname])) {
                 return false;
             }
@@ -1356,7 +1356,11 @@ class Service extends Model\Element\Service
             $layout->enrichLayoutDefinition($object, $context);
         }
 
-        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
+        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields ||
+            (
+                $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore &&
+                $layout->isLocalized() === true
+            )) {
             $user = AdminTool::getCurrentUser();
             if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig' && $object) {
                 $allowedView = self::getLanguagePermissions($object, $user, 'lView');
@@ -1395,7 +1399,11 @@ class Service extends Model\Element\Service
      */
     public static function enrichLayoutPermissions(ClassDefinition\Data &$layout, ?array $allowedView, ?array $allowedEdit): void
     {
-        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
+        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields ||
+            (
+                $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore &&
+                $layout->isLocalized() === true
+            )) {
             if (is_array($allowedView) && count($allowedView) > 0) {
                 $haveAllowedViewDefault = null;
                 if ($layout->getFieldtype() === 'localizedfields') {

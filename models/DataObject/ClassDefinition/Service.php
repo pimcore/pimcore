@@ -83,7 +83,7 @@ class Service
                 foreach ($children as $child) {
                     if ($child instanceof DataObject\ClassDefinition\Data\Select) {
                         if (!$child->useConfiguredOptions() && $child->getOptionsProviderClass()) {
-                            $child->options = null;
+                            $child->setOptions(null);
                         }
                     }
                     self::removeDynamicOptionsFromLayoutDefinition($child);
