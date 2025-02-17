@@ -47,14 +47,14 @@ abstract class AbstractRelations extends Data implements
      * @internal
      *
      */
-    public array $classes = [];
+    protected array $classes = [];
 
     /**
      * Optional display mode
      *
      * @internal
      */
-    public ?string $displayMode = null;
+    protected ?string $displayMode = null;
 
     /**
      * Optional path formatter class
@@ -62,7 +62,7 @@ abstract class AbstractRelations extends Data implements
      * @internal
      *
      */
-    public ?string $pathFormatterClass = null;
+    protected ?string $pathFormatterClass = null;
 
     /**
      * @return array<array{classes: string}>

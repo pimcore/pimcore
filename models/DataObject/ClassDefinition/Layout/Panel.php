@@ -30,17 +30,17 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
      *
      * @internal
      */
-    public string $fieldtype = 'panel';
+    protected string $fieldtype = 'panel';
 
     /**
      * @internal
      */
-    public ?string $layout = null;
+    protected ?string $layout = null;
 
     /**
      * @internal
      */
-    public bool $border = false;
+    protected bool $border = false;
 
     /**
      * @return $this

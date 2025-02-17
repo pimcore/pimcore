@@ -28,19 +28,19 @@ class Iframe extends Model\DataObject\ClassDefinition\Layout implements LayoutDe
      * @internal
      *
      */
-    public string $fieldtype = 'iframe';
+    protected string $fieldtype = 'iframe';
 
     /**
      * @internal
      *
      */
-    public string $iframeUrl;
+    protected string $iframeUrl;
 
     /**
      * @internal
      *
      */
-    public string $renderingData;
+    protected string $renderingData;
 
     public function getIframeUrl(): string
     {

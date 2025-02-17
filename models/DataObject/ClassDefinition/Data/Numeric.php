@@ -49,34 +49,34 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @internal
      *
      */
-    public string|int|null|float $defaultValue = null;
+    protected string|int|null|float $defaultValue = null;
 
     /**
      * @internal
      */
-    public bool $integer = false;
+    protected bool $integer = false;
 
     /**
      * @internal
      */
-    public bool $unsigned = false;
-
-    /**
-     * @internal
-     *
-     */
-    public ?float $minValue = null;
+    protected bool $unsigned = false;
 
     /**
      * @internal
      *
      */
-    public ?float $maxValue = null;
+    protected ?float $minValue = null;
+
+    /**
+     * @internal
+     *
+     */
+    protected ?float $maxValue = null;
 
     /**
      * @internal
      */
-    public bool $unique = false;
+    protected bool $unique = false;
 
     /**
      * This is the x part in DECIMAL(x, y) and denotes the total amount of digits. In MySQL this is called precision
@@ -86,7 +86,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @internal
      *
      */
-    public ?int $decimalSize = null;
+    protected ?int $decimalSize = null;
 
     /**
      * This is the y part in DECIMAL(x, y) and denotes amount of digits after a comma. In MySQL this is called scale. See
@@ -95,7 +95,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @internal
      *
      */
-    public ?int $decimalPrecision = null;
+    protected ?int $decimalPrecision = null;
 
     private function getPhpdocType(): string
     {

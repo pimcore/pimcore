@@ -30,26 +30,26 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     /**
      * @internal
      */
-    public ?string $ownerClassName = null;
+    protected ?string $ownerClassName = null;
 
     /**
      * @internal
      *
      */
-    public ?string $ownerClassId = null;
+    protected ?string $ownerClassId = null;
 
     /**
      * @internal
      *
      */
-    public string $ownerFieldName;
+    protected string $ownerFieldName;
 
     /**
      * ReverseObjectRelation must be lazy loading!
      *
      * @internal
      */
-    public bool $lazyLoading = true;
+    protected bool $lazyLoading = true;
 
     public function setClasses(array $classes): static
     {

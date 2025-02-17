@@ -38,34 +38,34 @@ class Input extends Data implements
     /**
      * @internal
      */
-    public ?string $defaultValue = null;
+    protected ?string $defaultValue = null;
 
     /**
      * Column length
      *
      * @internal
      */
-    public int $columnLength = 190;
+    protected int $columnLength = 190;
 
     /**
      * @internal
      */
-    public string $regex = '';
+    protected string $regex = '';
 
     /**
      * @internal
      */
-    public array $regexFlags = [];
+    protected array $regexFlags = [];
 
     /**
      * @internal
      */
-    public bool $unique = false;
+    protected bool $unique = false;
 
     /**
      * @internal
      */
-    public bool $showCharCount = false;
+    protected bool $showCharCount = false;
 
     /**
      * @param null|Model\DataObject\Concrete $object

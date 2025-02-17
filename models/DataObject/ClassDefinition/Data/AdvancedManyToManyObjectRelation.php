@@ -38,7 +38,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      * @internal
      *
      */
-    public ?string $allowedClassId = null;
+    protected ?string $allowedClassId = null;
 
     /**
      * @internal
@@ -51,7 +51,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      * @internal
      *
      */
-    public array $columns = [];
+    protected array $columns = [];
 
     /**
      * @internal
@@ -63,19 +63,19 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * @internal
      */
-    public bool $enableBatchEdit = false;
+    protected bool $enableBatchEdit = false;
 
     /**
      * @internal
      */
-    public bool $allowMultipleAssignments = false;
+    protected bool $allowMultipleAssignments = false;
 
     /**
      * @internal
      *
      * @var array<string, array<string, mixed>>
      */
-    public array $visibleFieldDefinitions = [];
+    protected array $visibleFieldDefinitions = [];
 
     protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
     {

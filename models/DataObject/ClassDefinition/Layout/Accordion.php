@@ -26,13 +26,13 @@ class Accordion extends Model\DataObject\ClassDefinition\Layout
      * @internal
      *
      */
-    public string $fieldtype = 'accordion';
+    protected string $fieldtype = 'accordion';
 
     /**
      * @internal
      *
      */
-    public bool $border = false;
+    protected bool $border = false;
 
     public function getBorder(): bool
     {

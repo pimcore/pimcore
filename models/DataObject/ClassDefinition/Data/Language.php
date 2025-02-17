@@ -25,7 +25,7 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @internal
      */
-    public bool $onlySystemLanguages = false;
+    protected bool $onlySystemLanguages = false;
 
     /**
      * @internal

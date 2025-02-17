@@ -33,27 +33,27 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
     /**
      * @internal
      */
-    public string|int|null $unitWidth = null;
+    protected string|int|null $unitWidth = null;
 
     /**
      * @internal
      */
-    public ?string $defaultUnit = null;
+    protected ?string $defaultUnit = null;
 
     /**
      * @internal
      */
-    public array $validUnits = [];
+    protected array $validUnits = [];
 
     /**
      * @internal
      */
-    public bool $unique = false;
+    protected bool $unique = false;
 
     /**
      * @internal
      */
-    public bool $autoConvert = false;
+    protected bool $autoConvert = false;
 
     public function getUnitWidth(): int|string|null
     {

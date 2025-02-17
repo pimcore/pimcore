@@ -33,23 +33,23 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @internal
      *
      */
-    public string $uploadPath;
+    protected string $uploadPath;
 
     /**
      * @internal
      */
-    public ?int $ratioX = null;
+    protected ?int $ratioX = null;
 
     /**
      * @internal
      */
-    public ?int $ratioY = null;
+    protected ?int $ratioY = null;
 
     /**
      * @internal
      *
      */
-    public string $predefinedDataTemplates;
+    protected string $predefinedDataTemplates;
 
     public function setRatioX(int $ratioX): void
     {

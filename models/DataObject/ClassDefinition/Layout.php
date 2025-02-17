@@ -27,69 +27,69 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * @internal
      */
-    public ?string $name = null;
+    protected ?string $name = null;
 
     /**
      * @internal
      */
-    public ?string $type = null;
+    protected ?string $type = null;
 
     /**
      * @internal
      */
-    public ?string $region = null;
+    protected ?string $region = null;
 
     /**
      * @internal
      */
-    public ?string $title = null;
+    protected ?string $title = null;
 
     /**
      * @internal
      */
-    public string|int|null $width = 0;
+    protected string|int|null $width = 0;
 
     /**
      * @internal
      */
-    public string|int|null $height = 0;
-
-    /**
-     * @internal
-     *
-     */
-    public bool $collapsible = false;
-
-    /**
-     * @internal
-     */
-    public bool $collapsed = false;
-
-    /**
-     * @internal
-     */
-    public ?string $bodyStyle = null;
+    protected string|int|null $height = 0;
 
     /**
      * @internal
      *
      */
-    public string $datatype = 'layout';
+    protected bool $collapsible = false;
 
     /**
      * @internal
      */
-    public array|string|null $permissions;
+    protected bool $collapsed = false;
 
     /**
      * @internal
      */
-    public array $children = [];
+    protected ?string $bodyStyle = null;
+
+    /**
+     * @internal
+     *
+     */
+    protected string $datatype = 'layout';
 
     /**
      * @internal
      */
-    public bool $locked = false;
+    protected array|string|null $permissions;
+
+    /**
+     * @internal
+     */
+    protected array $children = [];
+
+    /**
+     * @internal
+     */
+    protected bool $locked = false;
 
     public function getName(): ?string
     {

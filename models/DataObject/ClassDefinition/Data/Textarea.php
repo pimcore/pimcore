@@ -33,17 +33,17 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @internal
      *
      */
-    public ?int $maxLength = null;
+    protected ?int $maxLength = null;
 
     /**
      * @internal
      */
-    public bool $showCharCount = false;
+    protected bool $showCharCount = false;
 
     /**
      * @internal
      */
-    public bool $excludeFromSearchIndex = false;
+    protected bool $excludeFromSearchIndex = false;
 
     public function getMaxLength(): ?int
     {

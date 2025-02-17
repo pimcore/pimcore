@@ -28,7 +28,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @internal
      */
-    public bool $unique = false;
+    protected bool $unique = false;
 
     /**
      * @internal

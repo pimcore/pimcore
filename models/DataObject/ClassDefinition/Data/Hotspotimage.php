@@ -34,19 +34,19 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      * @internal
      *
      */
-    public int $ratioX;
+    protected int $ratioX;
 
     /**
      * @internal
      *
      */
-    public int $ratioY;
+    protected int $ratioY;
 
     /**
      * @internal
      *
      */
-    public string $predefinedDataTemplates;
+    protected string $predefinedDataTemplates;
 
     public function setRatioX(int $ratioX): void
     {

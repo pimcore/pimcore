@@ -25,7 +25,7 @@ trait IconTrait
      * @internal
      *
      */
-    public ?string $icon = null;
+    protected ?string $icon = null;
 
     public function getIcon(): ?string
     {

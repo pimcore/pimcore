@@ -34,17 +34,17 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @internal
      *
      */
-    public ?int $defaultValue = null;
+    protected ?int $defaultValue = null;
 
     /**
      * @internal
      */
-    public bool $useCurrentDate = false;
+    protected bool $useCurrentDate = false;
 
     /**
      * @internal
      */
-    public string $columnType = 'bigint(20)';
+    protected string $columnType = 'bigint(20)';
 
     /**
      *

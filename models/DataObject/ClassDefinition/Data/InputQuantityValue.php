@@ -34,7 +34,7 @@ class InputQuantityValue extends AbstractQuantityValue
     /**
      * @internal
      */
-    public string|null $defaultValue = null;
+    protected string|null $defaultValue = null;
 
     public function getDefaultValue(): string|null
     {

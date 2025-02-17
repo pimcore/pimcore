@@ -64,7 +64,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      */
-    public static bool $doNotRestoreKeyAndPath = false;
+    protected static bool $doNotRestoreKeyAndPath = false;
 
     /**
      * @internal

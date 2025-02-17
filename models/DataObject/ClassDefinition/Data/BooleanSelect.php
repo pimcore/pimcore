@@ -70,19 +70,19 @@ class BooleanSelect extends Data implements
      * @internal
      *
      */
-    public string $yesLabel;
+    protected string $yesLabel;
 
     /**
      * @internal
      *
      */
-    public string $noLabel;
+    protected string $noLabel;
 
     /**
      * @internal
      *
      */
-    public string $emptyLabel;
+    protected string $emptyLabel;
 
     /**
      * @internal

@@ -41,52 +41,52 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * @internal
      */
-    public array $children = [];
+    protected array $children = [];
 
     /**
      * @internal
      */
-    public ?string $name = null;
+    protected ?string $name = null;
 
     /**
      * @internal
      */
-    public string|null $region = null;
+    protected string|null $region = null;
 
     /**
      * @internal
      */
-    public string|null $layout = null;
+    protected string|null $layout = null;
 
     /**
      * @internal
      */
-    public ?string $title = null;
+    protected ?string $title = null;
 
     /**
      * @internal
      */
-    public int|null $maxTabs = null;
+    protected int|null $maxTabs = null;
 
     /**
      * @internal
      */
-    public bool $border = false;
+    protected bool $border = false;
 
     /**
      * @internal
      */
-    public bool $provideSplitView = false;
+    protected bool $provideSplitView = false;
 
     /**
      * @internal
      */
-    public ?string $tabPosition = 'top';
+    protected ?string $tabPosition = 'top';
 
     /**
      * @internal
      */
-    public ?int $hideLabelsWhenTabsReached = null;
+    protected ?int $hideLabelsWhenTabsReached = null;
 
     /**
      * contains further localized field definitions if there are more than one localized fields in on class
@@ -98,12 +98,12 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * @internal
      */
-    public ?array $permissionView = null;
+    protected ?array $permissionView = null;
 
     /**
      * @internal
      */
-    public ?array $permissionEdit = null;
+    protected ?array $permissionEdit = null;
 
     public function getDataForEditmode(mixed $localizedField, ?DataObject\Concrete $object = null, array $params = []): array
     {

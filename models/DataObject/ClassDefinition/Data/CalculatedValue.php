@@ -43,23 +43,23 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @internal
      *
      */
-    public string $elementType = 'input';
+    protected string $elementType = 'input';
 
     /**
      * @internal
      */
-    public string $calculatorType = self::CALCULATOR_TYPE_CLASS;
+    protected string $calculatorType = self::CALCULATOR_TYPE_CLASS;
 
     /**
      * @internal
      */
-    public ?string $calculatorExpression = null;
+    protected ?string $calculatorExpression = null;
 
     /**
      * @internal
      *
      */
-    public string $calculatorClass;
+    protected string $calculatorClass;
 
     /**
      * Column length
@@ -67,7 +67,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @internal
      *
      */
-    public int $columnLength = 190;
+    protected int $columnLength = 190;
 
     public function getElementType(): string
     {

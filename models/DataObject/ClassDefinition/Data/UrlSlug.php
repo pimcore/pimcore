@@ -40,19 +40,19 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * @internal
      */
-    public ?int $domainLabelWidth = null;
+    protected ?int $domainLabelWidth = null;
 
     /**
      * @internal
      */
-    public string $action;
+    protected string $action;
 
     /**
      * @internal
      *
      * @var null|int[]
      */
-    public ?array $availableSites = null;
+    protected ?array $availableSites = null;
 
     /**
      * @see Data::getDataForEditmode

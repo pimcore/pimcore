@@ -41,33 +41,33 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @internal
      */
-    public bool $assetInlineDownloadAllowed = false;
+    protected bool $assetInlineDownloadAllowed = false;
 
     /**
      * @internal
      *
      */
-    public string $assetUploadPath;
+    protected string $assetUploadPath;
 
     /**
      * @internal
      */
-    public bool $allowToClearRelation = true;
+    protected bool $allowToClearRelation = true;
 
     /**
      * @internal
      */
-    public bool $relationType = true;
+    protected bool $relationType = true;
 
     /**
      * @internal
      */
-    public bool $objectsAllowed = false;
+    protected bool $objectsAllowed = false;
 
     /**
      * @internal
      */
-    public bool $assetsAllowed = false;
+    protected bool $assetsAllowed = false;
 
     /**
      * Allowed asset types
@@ -75,12 +75,12 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @internal
      *
      */
-    public array $assetTypes = [];
+    protected array $assetTypes = [];
 
     /**
      * @internal
      */
-    public bool $documentsAllowed = false;
+    protected bool $documentsAllowed = false;
 
     /**
      * Allowed document types
@@ -88,7 +88,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @internal
      *
      */
-    public array $documentTypes = [];
+    protected array $documentTypes = [];
 
     public function getObjectsAllowed(): bool
     {

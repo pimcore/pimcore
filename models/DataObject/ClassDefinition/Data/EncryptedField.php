@@ -51,12 +51,12 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * @internal
      */
-    public string $delegateDatatype;
+    protected string $delegateDatatype;
 
     /**
      * @internal
      */
-    public Data|array|null $delegate = null;
+    protected Data|array|null $delegate = null;
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource

@@ -52,7 +52,7 @@ final class Config extends Model\AbstractModel
      * @internal
      *
      */
-    public array $medias = [];
+    protected array $medias = [];
 
     /**
      * @internal
@@ -100,7 +100,7 @@ final class Config extends Model\AbstractModel
      * @internal
      *
      */
-    public ?string $filenameSuffix = null;
+    protected ?string $filenameSuffix = null;
 
     /**
      *

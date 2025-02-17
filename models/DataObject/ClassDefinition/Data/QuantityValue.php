@@ -30,27 +30,27 @@ class QuantityValue extends AbstractQuantityValue
     /**
      * @internal
      */
-    public float|int|string|null $defaultValue = null;
+    protected float|int|string|null $defaultValue = null;
 
     /**
      * @internal
      */
-    public bool $integer = false;
+    protected bool $integer = false;
 
     /**
      * @internal
      */
-    public bool $unsigned = false;
+    protected bool $unsigned = false;
 
     /**
      * @internal
      */
-    public ?float $minValue = null;
+    protected ?float $minValue = null;
 
     /**
      * @internal
      */
-    public ?float $maxValue = null;
+    protected ?float $maxValue = null;
 
     /**
      * This is the x part in DECIMAL(x, y) and denotes the total amount of digits. In MySQL this is called precision
@@ -59,7 +59,7 @@ class QuantityValue extends AbstractQuantityValue
      *
      * @internal
      */
-    public ?int $decimalSize = null;
+    protected ?int $decimalSize = null;
 
     /**
      * This is the y part in DECIMAL(x, y) and denotes amount of digits after a comma. In MySQL this is called scale. See
@@ -67,7 +67,7 @@ class QuantityValue extends AbstractQuantityValue
      *
      * @internal
      */
-    public ?int $decimalPrecision = null;
+    protected ?int $decimalPrecision = null;
 
     public function getDefaultValue(): float|int|string|null
     {

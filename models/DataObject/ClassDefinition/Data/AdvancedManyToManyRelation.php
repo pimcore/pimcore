@@ -37,7 +37,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @internal
      *
      */
-    public array $columns;
+    protected array $columns;
 
     /**
      * @internal
@@ -52,22 +52,22 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @internal
      *
      */
-    public string $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
+    protected string $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
 
     /**
      * @internal
      */
-    public bool $optimizedAdminLoading = false;
+    protected bool $optimizedAdminLoading = false;
 
     /**
      * @internal
      */
-    public bool $enableBatchEdit = false;
+    protected bool $enableBatchEdit = false;
 
     /**
      * @internal
      */
-    public bool $allowMultipleAssignments = false;
+    protected bool $allowMultipleAssignments = false;
 
     protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
     {

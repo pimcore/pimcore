@@ -39,18 +39,18 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @internal
      */
-    public string $toolbarConfig = '';
+    protected string $toolbarConfig = '';
 
     /**
      * @internal
      */
-    public bool $excludeFromSearchIndex = false;
+    protected bool $excludeFromSearchIndex = false;
 
     /**
      * @internal
      *
      */
-    public string|int $maxCharacters = 0;
+    protected string|int $maxCharacters = 0;
 
     private static function getWysiwygSanitizer(): HtmlSanitizer
     {

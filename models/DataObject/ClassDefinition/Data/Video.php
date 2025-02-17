@@ -49,19 +49,19 @@ class Video extends Data implements
     /**
      * @internal
      */
-    public string $uploadPath = '';
+    protected string $uploadPath = '';
 
     /**
      * @internal
      *
      */
-    public ?array $allowedTypes = null;
+    protected ?array $allowedTypes = null;
 
     /**
      * @internal
      *
      */
-    public array $supportedTypes = [
+    protected array $supportedTypes = [
         self::TYPE_ASSET,
         self::TYPE_YOUTUBE,
         self::TYPE_VIMEO,

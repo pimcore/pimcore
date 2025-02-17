@@ -31,7 +31,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @internal
      *
      */
-    public int $defaultValue = 0;
+    protected int $defaultValue = 0;
 
     /**
      * @param null|DataObject\Concrete $object

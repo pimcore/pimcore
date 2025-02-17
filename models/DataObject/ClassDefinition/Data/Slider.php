@@ -33,30 +33,30 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @internal
      *
      */
-    public ?float $minValue = null;
+    protected ?float $minValue = null;
 
     /**
      * @internal
      *
      */
-    public ?float $maxValue = null;
+    protected ?float $maxValue = null;
 
     /**
      * @internal
      */
-    public bool $vertical = false;
-
-    /**
-     * @internal
-     *
-     */
-    public ?float $increment = null;
+    protected bool $vertical = false;
 
     /**
      * @internal
      *
      */
-    public ?int $decimalPrecision = null;
+    protected ?float $increment = null;
+
+    /**
+     * @internal
+     *
+     */
+    protected ?int $decimalPrecision = null;
 
     public function getMinValue(): ?float
     {

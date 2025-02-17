@@ -31,7 +31,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @internal
      *
      */
-    public ?int $defaultValue = null;
+    protected ?int $defaultValue = null;
 
     public function getDefaultValue(): ?int
     {

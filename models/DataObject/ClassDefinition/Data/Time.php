@@ -28,25 +28,25 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      * @internal
      *
      */
-    public int $columnLength = 5;
+    protected int $columnLength = 5;
 
     /**
      * @internal
      *
      */
-    public ?string $minValue = null;
+    protected ?string $minValue = null;
 
     /**
      * @internal
      *
      */
-    public ?string $maxValue = null;
+    protected ?string $maxValue = null;
 
     /**
      * @internal
      *
      */
-    public int $increment = 15 ;
+    protected int $increment = 15 ;
 
     public function getMinValue(): ?string
     {

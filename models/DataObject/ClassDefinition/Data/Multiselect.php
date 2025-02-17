@@ -56,29 +56,29 @@ class Multiselect extends Data implements
      * @internal
      *
      */
-    public ?array $options = null;
+    protected ?array $options = null;
 
     /**
      * @internal
      *
      */
-    public ?int $maxItems = null;
+    protected ?int $maxItems = null;
 
     /**
      * @internal
      *
      */
-    public ?string $renderType = null;
+    protected ?string $renderType = null;
 
     /**
      * @internal
      */
-    public bool $dynamicOptions = false;
+    protected bool $dynamicOptions = false;
 
     /**
      * @internal
      */
-    public ?array $defaultValue = null;
+    protected ?array $defaultValue = null;
 
     public function getOptions(): ?array
     {

@@ -50,13 +50,13 @@ class Select extends Data implements
      * @internal
      *
      */
-    public ?array $options = null;
+    protected ?array $options = null;
 
     /**
      * @internal
      *
      */
-    public ?string $defaultValue = null;
+    protected ?string $defaultValue = null;
 
     /**
      * Column length
@@ -64,12 +64,12 @@ class Select extends Data implements
      * @internal
      *
      */
-    public int $columnLength = 190;
+    protected int $columnLength = 190;
 
     /**
      * @internal
      */
-    public bool $dynamicOptions = false;
+    protected bool $dynamicOptions = false;
 
     public function getColumnLength(): int
     {

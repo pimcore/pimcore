@@ -29,27 +29,27 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     /**
      * @internal
      */
-    public string|int $unitWidth = 0;
+    protected string|int $unitWidth = 0;
 
     /**
      * @internal
      */
-    public ?string $defaultUnit = null;
+    protected ?string $defaultUnit = null;
 
     /**
      * @internal
      */
-    public array $validUnits = [];
+    protected array $validUnits = [];
 
     /**
      * @internal
      */
-    public ?int $decimalPrecision = null;
+    protected ?int $decimalPrecision = null;
 
     /**
      * @internal
      */
-    public bool $autoConvert = false;
+    protected bool $autoConvert = false;
 
     public function getUnitWidth(): string|int
     {

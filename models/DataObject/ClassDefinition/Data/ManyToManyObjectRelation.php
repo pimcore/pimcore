@@ -39,45 +39,45 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @internal
      *
      */
-    public ?int $maxItems = null;
+    protected ?int $maxItems = null;
 
     /**
      * @internal
      */
-    public bool $relationType = true;
+    protected bool $relationType = true;
 
     /**
      * @internal
      *
      * @var string[]|string|null
      */
-    public array|string|null $visibleFields = null;
+    protected array|string|null $visibleFields = null;
 
     /**
      * @internal
      */
-    public bool $allowToCreateNewObject = true;
+    protected bool $allowToCreateNewObject = true;
 
     /**
      * @internal
      */
-    public bool $allowToClearRelation = true;
+    protected bool $allowToClearRelation = true;
 
     /**
      * @internal
      */
-    public bool $optimizedAdminLoading = false;
+    protected bool $optimizedAdminLoading = false;
 
     /**
      * @internal
      */
-    public bool $enableTextSelection = false;
+    protected bool $enableTextSelection = false;
 
     /**
      * @internal
      *
      */
-    public array $visibleFieldDefinitions = [];
+    protected array $visibleFieldDefinitions = [];
 
     public function getObjectsAllowed(): bool
     {

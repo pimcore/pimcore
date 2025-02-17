@@ -27,13 +27,13 @@ trait LabelTrait
      * @internal
      *
      */
-    public int $labelWidth = 100;
+    protected int $labelWidth = 100;
 
     /**
      * @internal
      *
      */
-    public string $labelAlign = 'left';
+    protected string $labelAlign = 'left';
 
     /**
      * @return $this

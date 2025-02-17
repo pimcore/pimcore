@@ -34,22 +34,22 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @internal
      *
      */
-    public ?int $defaultValue = null;
+    protected ?int $defaultValue = null;
 
     /**
      * @internal
      */
-    public bool $useCurrentDate = false;
+    protected bool $useCurrentDate = false;
 
     /**
      * @internal
      */
-    public bool $respectTimezone = true;
+    protected bool $respectTimezone = true;
 
     /**
      * @internal
      */
-    public string $columnType = 'bigint(20)';
+    protected string $columnType = 'bigint(20)';
 
     /**
      * @param null|Model\DataObject\Concrete $object

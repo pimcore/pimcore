@@ -28,19 +28,19 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @internal
      *
      */
-    public ?int $previewWidth = null;
+    protected ?int $previewWidth = null;
 
     /**
      * @internal
      *
      */
-    public ?int $inputWidth = null;
+    protected ?int $inputWidth = null;
 
     /**
      * @internal
      *
      */
-    public ?int $previewHeight = null;
+    protected ?int $previewHeight = null;
 
     public function getPreviewWidth(): ?int
     {

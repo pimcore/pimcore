@@ -30,31 +30,31 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
      * @internal
      *
      */
-    public string $fieldtype = 'text';
+    protected string $fieldtype = 'text';
 
     /**
      * @internal
      *
      */
-    public string $html = '';
+    protected string $html = '';
 
     /**
      * @internal
      *
      */
-    public string $renderingClass = '';
+    protected string $renderingClass = '';
 
     /**
      * @internal
      *
      */
-    public string $renderingData;
+    protected string $renderingData;
 
     /**
      * @internal
      *
      */
-    public bool $border = false;
+    protected bool $border = false;
 
     public function getHtml(): string
     {

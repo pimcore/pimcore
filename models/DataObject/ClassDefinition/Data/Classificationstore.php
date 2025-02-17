@@ -36,64 +36,64 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @internal
      *
      */
-    public array $children = [];
+    protected array $children = [];
 
     /**
      * @internal
      *
      */
-    public ?string $name = null;
+    protected ?string $name = null;
 
     /**
      * @internal
      *
      */
-    public string $region;
+    protected string $region;
 
     /**
      * @internal
      *
      */
-    public string $layout;
+    protected string $layout;
 
     /**
      * @internal
      *
      */
-    public ?string $title = null;
+    protected ?string $title = null;
 
     /**
      * @internal
      *
      */
-    public int $maxTabs;
+    protected int $maxTabs;
 
     /**
      * @internal
      *
      */
-    public int $labelWidth = 0;
+    protected int $labelWidth = 0;
 
     /**
      * @internal
      */
-    public bool $localized = false;
+    protected bool $localized = false;
 
     /**
      * @internal
      *
      */
-    public int $storeId;
+    protected int $storeId;
 
     /**
      * @internal
      */
-    public bool $hideEmptyData = false;
+    protected bool $hideEmptyData = false;
 
     /**
      * @internal
      */
-    public bool $disallowAddRemove = false;
+    protected bool $disallowAddRemove = false;
 
     /**
      * contains further localized field definitions if there are more than one localized fields in on class
@@ -107,37 +107,37 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @internal
      *
      */
-    public ?array $fieldDefinitionsCache = null;
+    protected ?array $fieldDefinitionsCache = null;
 
     /**
      * @internal
      *
      */
-    public array $allowedGroupIds;
+    protected array $allowedGroupIds;
 
     /**
      * @internal
      *
      */
-    public array $activeGroupDefinitions = [];
+    protected array $activeGroupDefinitions = [];
 
     /**
      * @internal
      *
      */
-    public ?int $maxItems = null;
+    protected ?int $maxItems = null;
 
     /**
      * @internal
      *
      */
-    public array $permissionView;
+    protected array $permissionView;
 
     /**
      * @internal
      *
      */
-    public array $permissionEdit;
+    protected array $permissionEdit;
 
     /**
      * @param Concrete|null $object

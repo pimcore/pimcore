@@ -35,43 +35,43 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @internal
      *
      */
-    public array $allowedTypes = [];
+    protected array $allowedTypes = [];
 
     /**
      * @internal
      */
-    public bool $lazyLoading = false;
+    protected bool $lazyLoading = false;
 
     /**
      * @internal
      *
      */
-    public ?int $maxItems = null;
+    protected ?int $maxItems = null;
 
     /**
      * @internal
      */
-    public bool $disallowAddRemove = false;
+    protected bool $disallowAddRemove = false;
 
     /**
      * @internal
      */
-    public bool $disallowReorder = false;
+    protected bool $disallowReorder = false;
 
     /**
      * @internal
      */
-    public bool $collapsed = false;
+    protected bool $collapsed = false;
 
     /**
      * @internal
      */
-    public bool $collapsible = false;
+    protected bool $collapsible = false;
 
     /**
      * @internal
      */
-    public bool $border = false;
+    protected bool $border = false;
 
     public function getLazyLoading(): bool
     {

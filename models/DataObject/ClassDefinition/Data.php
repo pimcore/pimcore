@@ -32,36 +32,36 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 {
     use DataObject\ClassDefinition\Helper\VarExport;
 
-    public ?string $name = null;
+    protected ?string $name = null;
 
-    public ?string $title = null;
+    protected ?string $title = null;
 
-    public ?string $tooltip = null;
+    protected ?string $tooltip = null;
 
-    public bool $mandatory = false;
+    protected bool $mandatory = false;
 
-    public bool $noteditable = false;
+    protected bool $noteditable = false;
 
-    public bool $index = false;
+    protected bool $index = false;
 
-    public bool $locked = false;
+    protected bool $locked = false;
 
-    public ?string $style = null;
+    protected ?string $style = null;
 
-    public array|string|null $permissions = null;
+    protected array|string|null $permissions = null;
 
     /**
      * @deprecated Will be removed in Pimcore 12, use getFieldType() instead.
      */
-    public string $fieldtype = '';
+    protected string $fieldtype = '';
 
-    public bool $relationType = false;
+    protected bool $relationType = false;
 
-    public bool $invisible = false;
+    protected bool $invisible = false;
 
-    public bool $visibleGridView = true;
+    protected bool $visibleGridView = true;
 
-    public bool $visibleSearch = true;
+    protected bool $visibleSearch = true;
 
     public static array $validFilterOperators = [
         'LIKE',

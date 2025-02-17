@@ -41,51 +41,51 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @internal
      */
-    public bool $lazyLoading = false;
+    protected bool $lazyLoading = false;
 
     /**
      * @internal
      */
-    public bool $disallowAddRemove = false;
+    protected bool $disallowAddRemove = false;
 
     /**
      * @internal
      */
-    public bool $disallowReorder = false;
+    protected bool $disallowReorder = false;
 
     /**
      * @internal
      */
-    public bool $collapsible = false;
+    protected bool $collapsible = false;
 
     /**
      * @internal
      */
-    public bool $collapsed = false;
-
-    /**
-     * @internal
-     *
-     */
-    public ?int $maxItems = null;
+    protected bool $collapsed = false;
 
     /**
      * @internal
      *
      */
-    public string $styleElement = '';
+    protected ?int $maxItems = null;
 
     /**
      * @internal
      *
      */
-    public array $children = [];
+    protected string $styleElement = '';
 
     /**
      * @internal
      *
      */
-    public ?array $layout = null;
+    protected array $children = [];
+
+    /**
+     * @internal
+     *
+     */
+    protected ?array $layout = null;
 
     /**
      * contains further child field definitions if there are more than one localized fields in on class

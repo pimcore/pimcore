@@ -46,71 +46,71 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     /**
      * @internal
      */
-    public ?string $id = null;
+    protected ?string $id = null;
 
     /**
      * @internal
      */
-    public ?string $name = null;
+    protected ?string $name = null;
 
     /**
      * @internal
      */
-    public string $title = '';
+    protected string $title = '';
 
     /**
      * @internal
      */
-    public string $description = '';
+    protected string $description = '';
 
     /**
      * @internal
      */
-    public ?int $creationDate = null;
+    protected ?int $creationDate = null;
 
     /**
      * @internal
      */
-    public ?int $modificationDate = null;
+    protected ?int $modificationDate = null;
 
     /**
      * @internal
      */
-    public ?int $userOwner = null;
+    protected ?int $userOwner = null;
 
     /**
      * @internal
      */
-    public ?int $userModification = null;
+    protected ?int $userModification = null;
 
     /**
      * @internal
      */
-    public string $parentClass = '';
+    protected string $parentClass = '';
 
     /**
      * Comma separated list of interfaces
      *
      * @internal
      */
-    public ?string $implementsInterfaces = null;
+    protected ?string $implementsInterfaces = null;
 
     /**
      * Name of the listing parent class if set
      *
      * @internal
      */
-    public string $listingParentClass = '';
+    protected string $listingParentClass = '';
 
     /**
      * @internal
      */
-    public string $useTraits = '';
+    protected string $useTraits = '';
 
     /**
      * @internal
      */
-    public string $listingUseTraits = '';
+    protected string $listingUseTraits = '';
 
     /**
      * @internal
@@ -125,62 +125,62 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     /**
      * @internal
      */
-    public bool $allowInherit = false;
+    protected bool $allowInherit = false;
 
     /**
      * @internal
      */
-    public bool $allowVariants = false;
+    protected bool $allowVariants = false;
 
     /**
      * @internal
      */
-    public bool $showVariants = false;
+    protected bool $showVariants = false;
 
     /**
      * @internal
      */
-    public ?ClassDefinition\Layout $layoutDefinitions = null;
+    protected ?ClassDefinition\Layout $layoutDefinitions = null;
 
     /**
      * @internal
      */
-    public ?string $icon = null;
+    protected ?string $icon = null;
 
     /**
      * @internal
      */
-    public ?string $group = null;
+    protected ?string $group = null;
 
     /**
      * @internal
      */
-    public bool $showAppLoggerTab = false;
+    protected bool $showAppLoggerTab = false;
 
     /**
      * @internal
      */
-    public ?string $linkGeneratorReference = null;
+    protected ?string $linkGeneratorReference = null;
 
     /**
      * @internal
      */
-    public ?string $previewGeneratorReference = null;
+    protected ?string $previewGeneratorReference = null;
 
     /**
      * @internal
      */
-    public array $compositeIndices = [];
+    protected array $compositeIndices = [];
 
     /**
      * @internal
      */
-    public bool $showFieldLookup = false;
+    protected bool $showFieldLookup = false;
 
     /**
      * @internal
      */
-    public array $propertyVisibility = [
+    protected array $propertyVisibility = [
         'grid' => [
             'id' => true,
             'path' => true,
@@ -200,7 +200,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     /**
      * @internal
      */
-    public bool $enableGridLocking = false;
+    protected bool $enableGridLocking = false;
 
     /**
      * @var ClassDefinition\Data[]

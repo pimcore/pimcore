@@ -37,23 +37,23 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @internal
      *
      */
-    public ?int $cols = null;
+    protected ?int $cols = null;
 
     /**
      * @internal
      */
-    public bool $colsFixed = false;
+    protected bool $colsFixed = false;
 
     /**
      * @internal
      *
      */
-    public ?int $rows = null;
+    protected ?int $rows = null;
 
     /**
      * @internal
      */
-    public bool $rowsFixed = false;
+    protected bool $rowsFixed = false;
 
     /**
      * Default data
@@ -61,18 +61,18 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @internal
      *
      */
-    public string $data = '';
+    protected string $data = '';
 
     /**
      * @internal
      */
-    public bool $columnConfigActivated = false;
+    protected bool $columnConfigActivated = false;
 
     /**
      * @internal
      *
      */
-    public array $columnConfig = [];
+    protected array $columnConfig = [];
 
     /**
      * @internal
