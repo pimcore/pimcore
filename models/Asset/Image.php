@@ -162,28 +162,6 @@ EOT;
     }
 
     /**
-     * Legacy method for backwards compatibility. Use getThumbnail($config)->getConfig() instead.
-     *
-     * @internal
-     *
-     * @deprecated Will be removed in Pimcore 12
-     */
-    public function getThumbnailConfig(array|string|Image\Thumbnail\Config|null $config): ?Image\Thumbnail\Config
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '11.1',
-            'Using "%s" is deprecated and will be removed in Pimcore 12, use "%s" instead.',
-            __METHOD__,
-            'getThumbnail($config)->getConfig()'
-        );
-
-        $thumbnail = $this->getThumbnail($config);
-
-        return $thumbnail->getConfig();
-    }
-
-    /**
      * Returns a path to a given thumbnail or a thumbnail configuration.
      */
     public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\ThumbnailInterface
