@@ -10,6 +10,8 @@
 #### [Documents]
 - Video Editable: Passing an invalid allowedTypes config will throw an exception.
 
+#### [Mail]
+- If sender is not set in the mail, instead of setting a default `from` address, an exception is now thrown.
 ## Pimcore 11.5.0
 ### General
 #### [Database]
