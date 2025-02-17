@@ -1,6 +1,9 @@
 # Upgrade Notes
 
 ## Pimcore 12.0.0
+#### [Bundle]
+- Removed compatibility layer static `$bundleManager`
+
 #### [Documents]
 - Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
 - 
