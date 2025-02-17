@@ -3,7 +3,9 @@
 ## Pimcore 12.0.0
 #### [Documents]
 - Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
-- 
+
+#### [Commands]
+- Removed deprecated option `generator` from `Pimcore\Bundle\CoreBundle\Command\LowQualityImagePreviewCommand`.
 
 ## Pimcore 11.6.0
 ### Elements
