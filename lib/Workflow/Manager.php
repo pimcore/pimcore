@@ -203,8 +203,17 @@ class Manager
         return $workflow;
     }
 
+    /**
+     * @deprecated will return ?WorkflowInterface in 12.0.0
+     */
     public function getWorkflowByName(string $workflowName): ?object
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.5.4',
+            'Method will return ?WorkflowInterface in 12.0.0'
+        );
+
         $config = $this->getWorkflowConfig($workflowName);
 
         return Pimcore::getContainer()->get($config->getType() . '.' . $workflowName);
