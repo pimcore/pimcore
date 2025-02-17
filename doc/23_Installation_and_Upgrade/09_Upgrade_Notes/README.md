@@ -3,15 +3,15 @@
 ## Pimcore 12.0.0
 #### [Documents]
 - Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
-- 
+
+#### [Mail]
+- If sender is not set in the mail, instead of setting a default `from` address, an exception is now thrown.
 
 ## Pimcore 11.6.0
 ### Elements
 #### [Documents]
 - Video Editable: Passing an invalid allowedTypes config will throw an exception.
 
-#### [Mail]
-- If sender is not set in the mail, instead of setting a default `from` address, an exception is now thrown.
 ## Pimcore 11.5.0
 ### General
 #### [Database]
