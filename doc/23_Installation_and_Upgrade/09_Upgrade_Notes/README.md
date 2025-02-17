@@ -6,7 +6,7 @@
 
 
 #### [DataObjects]
-- Removed deprecated unserialize() method from `Pimcore\Model\DataObject\Data\Link`. If not the data is not migrated to the new format, to the new default values, please execute a simple script to resave all links.
+- Removed deprecated `unserialize()` method from `Pimcore\Model\DataObject\Data\Link`. If not the data is not migrated to the new format, to the new default values, please execute a simple script to resave all links.
 
 ## Pimcore 11.6.0
 ### Elements
