@@ -976,6 +976,8 @@ class Model extends AbstractDefinitionHelper
         $json = ClassDefinition\Service::generateFieldCollectionJson($def);
         $cm->saveJson($filename, $json);
 
+        throw new Exception('Field collection json: ' . $json);
+
         return $cm->setupFieldcollection($name, $filename);
     }
 
