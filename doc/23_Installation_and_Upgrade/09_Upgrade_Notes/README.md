@@ -3,7 +3,9 @@
 ## Pimcore 12.0.0
 #### [Documents]
 - Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
-- 
+
+#### [Lib]
+- Removed deprecated class `Pimcore\Helper\CsvFormulaFormatter`. Use `\League\Csv\EscapeFormula` instead. 
 
 ## Pimcore 11.6.0
 ### Elements
