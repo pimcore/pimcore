@@ -5,6 +5,9 @@
 - Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
 - 
 
+#### [Templates]
+- Removed `key_value_table.html.twig` from `CoreBundle`
+
 ## Pimcore 11.6.0
 ### Elements
 #### [Documents]
