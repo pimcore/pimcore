@@ -3,7 +3,9 @@
 ## Pimcore 12.0.0
 #### [Documents]
 - Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
-- 
+
+#### [DataObjects]
+- Removed deprecated `getThumbnailConfig()` method from `Pimcore\Model\Asset\Image`.
 
 ## Pimcore 11.6.0
 ### Elements
