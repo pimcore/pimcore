@@ -10,9 +10,7 @@
 - Removed deprecated `getThumbnailConfig()` method from `Pimcore\Model\Asset\Image`.
 
 #### [Lib]
-- Removed deprecated class `Pimcore\Helper\CsvFormulaFormatter`. Use `\League\Csv\EscapeFormula` instead. 
-
-#### [Lib]
+- Removed deprecated class `Pimcore\Helper\CsvFormulaFormatter`. Use `\League\Csv\EscapeFormula` instead.
 - Removed deprecated `getCachedSymfonyEnvironments()` method from `Pimcore\Tool`.
 
 ## Pimcore 11.6.0
