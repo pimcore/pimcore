@@ -3,7 +3,9 @@
 ## Pimcore 12.0.0
 #### [Documents]
 - Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
-- 
+
+#### [Navigation]
+- Remove deprecated `$_defaultPageType` from `Pimcore\Navigation\Page`.
 
 ## Pimcore 11.6.0
 ### Elements
