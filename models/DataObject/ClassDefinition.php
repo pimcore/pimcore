@@ -16,7 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use Closure;
 use Exception;
+use JsonSerializable;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -36,7 +38,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
  */
-final class ClassDefinition extends Model\AbstractModel implements ClassDefinitionInterface
+final class ClassDefinition extends Model\AbstractModel implements ClassDefinitionInterface, JsonSerializable
 {
     use DataObject\ClassDefinition\Helper\VarExport;
     use DataObject\Traits\LocateFileTrait;
@@ -1206,5 +1208,10 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         }
 
         return $class;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return Closure::bind(fn ($obj) => get_object_vars($obj), $this, $this)($this); //public + protected properties
     }
 }
