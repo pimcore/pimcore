@@ -209,7 +209,7 @@ class Manager
 
         $workflow = Pimcore::getContainer()?->get($config->getType() . '.' . $workflowName);
 
-        if(!$workflow instanceof WorkflowInterface) {
+        if (!$workflow instanceof WorkflowInterface) {
             return null;
         }
 

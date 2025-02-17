@@ -112,9 +112,10 @@ class NotificationSubscriber implements EventSubscriberInterface
 
                 if (in_array(
                     self::NOTIFICATION_CHANNEL_PIMCORE_NOTIFICATION,
-                    $notificationSetting['channelType'])
-                ) {
-                    $this->handleNotifyPostWorkflowPimcoreNotification($transition,
+                    $notificationSetting['channelType']
+                )) {
+                    $this->handleNotifyPostWorkflowPimcoreNotification(
+                        $transition,
                         $workflow,
                         $subject,
                         $notifyUsers,
