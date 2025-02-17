@@ -124,6 +124,8 @@ class ClassManager extends Module
 
             $json = $this->loadJson($filename);
 
+            $this->debug(sprintf('[CLASSMANAGER] Setting up fieldcollection json: %s', $json));
+
             ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $json, true);
         }
 
