@@ -24,7 +24,7 @@ use Pimcore\Workflow\Notification\NotificationEmailService;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
-use Symfony\Component\Workflow\Workflow as SymfonyWorkflow;
+use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -73,9 +73,11 @@ class NotificationSubscriber implements EventSubscriberInterface
         $subject = $event->getSubject();
         /** @var Transition $transition */
         $transition = $event->getTransition();
+
+
         $workflow = $this->workflowManager->getWorkflowByName($event->getWorkflowName());
 
-        if ( !$workflow instanceof SymfonyWorkflow) {
+        if ($workflow  === null) {
             return;
         }
 
@@ -98,7 +100,7 @@ class NotificationSubscriber implements EventSubscriberInterface
         }
     }
 
-    private function handleNotifyPostWorkflowEmail(Transition $transition, SymfonyWorkflow $workflow, ElementInterface $subject, string $mailType, string $mailPath, array $notifyUsers, array $notifyRoles): void
+    private function handleNotifyPostWorkflowEmail(Transition $transition, WorkflowInterface $workflow, ElementInterface $subject, string $mailType, string $mailPath, array $notifyUsers, array $notifyRoles): void
     {
         //notify users
         $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getElementType($subject));
@@ -115,7 +117,7 @@ class NotificationSubscriber implements EventSubscriberInterface
         );
     }
 
-    private function handleNotifyPostWorkflowPimcoreNotification(Transition $transition, SymfonyWorkflow $workflow, ElementInterface $subject, array $notifyUsers, array $notifyRoles): void
+    private function handleNotifyPostWorkflowPimcoreNotification(Transition $transition, WorkflowInterface $workflow, ElementInterface $subject, array $notifyUsers, array $notifyRoles): void
     {
         $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getElementType($subject));
         $this->pimcoreNotificationService->sendPimcoreNotification(
