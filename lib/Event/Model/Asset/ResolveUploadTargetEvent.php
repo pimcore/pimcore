@@ -26,12 +26,6 @@ class ResolveUploadTargetEvent extends Event
     protected string $filename;
 
     protected int $parentId;
-
-    /**
-     * ResolveUploadTargetEvent constructor.
-     *
-     * @param array|null $context contextual information
-     */
     public function __construct(int $parentId, string $filename)
     {
         $this->parentId = $parentId;
