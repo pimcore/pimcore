@@ -203,11 +203,17 @@ class Manager
         return $workflow;
     }
 
-    public function getWorkflowByName(string $workflowName): ?object
+    public function getWorkflowByName(string $workflowName): ?WorkflowInterface
     {
         $config = $this->getWorkflowConfig($workflowName);
 
-        return Pimcore::getContainer()->get($config->getType() . '.' . $workflowName);
+        $workflow = Pimcore::getContainer()?->get($config->getType() . '.' . $workflowName);
+
+        if(!$workflow instanceof WorkflowInterface) {
+            return null;
+        }
+
+        return $workflow;
     }
 
     /**
