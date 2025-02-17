@@ -5,6 +5,9 @@
 - Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
 - 
 
+#### [Lib]
+- Removed deprecated `getCachedSymfonyEnvironments()` method from `Pimcore\Tool`.
+
 ## Pimcore 11.6.0
 ### Elements
 #### [Documents]
