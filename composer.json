@@ -128,7 +128,7 @@
     "umpirsky/country-list": "^2.0.6"
   },
   "conflict": {
-    "doctrine/doctrine-migrations-bundle": "3.4.0",
+    "doctrine/doctrine-migrations-bundle": ">=3.4.0",
     "pimcore/admin-ui-classic-bundle": "<1.5",
     "pimcore/output-data-config-toolkit-bundle": "<5.0",
     "pimcore/translations-provider-interfaces": "<3.0",

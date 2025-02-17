@@ -7,6 +7,7 @@
 
 #### [DataObjects]
 - Removed deprecated `unserialize()` method from `Pimcore\Model\DataObject\Data\Link`. If not the data is not migrated to the new format, to the new default values, please execute a simple script to resave all links.
+- Parameter `$index` of method `setIndex` is not nullable anymore in `Pimcore\Model\DataObject\ClassDefinition\Data`
 
 ## Pimcore 11.6.0
 ### Elements
