@@ -39,7 +39,14 @@ class PimcoreNotificationService extends AbstractNotificationService
         $this->translator = $translator;
     }
 
-    public function sendPimcoreNotification(array $users, array $roles, WorkflowInterface $workflow, string $subjectType, ElementInterface $subject, string $action): void
+    public function sendPimcoreNotification(
+        array $users,
+        array $roles,
+        WorkflowInterface $workflow,
+        string $subjectType,
+        ElementInterface $subject,
+        string $action
+    ): void
     {
         try {
             $recipients = $this->getNotificationUsersByName($users, $roles, true);
@@ -48,7 +55,12 @@ class PimcoreNotificationService extends AbstractNotificationService
             }
 
             foreach ($recipients as $language => $recipientsPerLanguage) {
-                $title = $this->translator->trans('workflow_change_email_notification_subject', [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()], 'admin', $language);
+                $title = $this->translator->trans(
+                    'workflow_change_email_notification_subject',
+                    [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()],
+                    'admin',
+                    $language
+                );
                 $message = $this->translator->trans(
                     'workflow_change_email_notification_text',
                     [

@@ -53,7 +53,16 @@ class NotificationEmailService extends AbstractNotificationService
      * Sends an Mail
      *
      */
-    public function sendWorkflowEmailNotification(array $users, array $roles, WorkflowInterface $workflow, string $subjectType, ElementInterface $subject, string $action, string $mailType, string $mailPath): void
+    public function sendWorkflowEmailNotification(
+        array $users,
+        array $roles,
+        WorkflowInterface $workflow,
+        string $subjectType,
+        ElementInterface $subject,
+        string $action,
+        string $mailType,
+        string $mailPath
+    ): void
     {
         try {
             $recipients = $this->getNotificationUsersByName($users, $roles);
@@ -75,7 +84,8 @@ class NotificationEmailService extends AbstractNotificationService
                     $type = $subject->getType();
                 }
 
-                $deeplink = $hostUrl . $this->router->generate('pimcore_admin_login_deeplink') . '?'.$objectType.'_' . $subject->getId() . '_'. $type;
+                $deeplink = $hostUrl . $this->router->generate('pimcore_admin_login_deeplink');
+                $deeplink .= '?'.$objectType.'_' . $subject->getId() . '_'. $type;
             }
 
             foreach ($recipients as $language => $recipientsPerLanguage) {
@@ -121,9 +131,30 @@ class NotificationEmailService extends AbstractNotificationService
     /**
      * @param User[] $recipients
      */
-    protected function sendPimcoreDocumentMail(array $recipients, string $subjectType, ElementInterface $subject, WorkflowInterface $workflow, string $action, string $language, string $mailPath, string $deeplink): void
+    protected function sendPimcoreDocumentMail(
+        array $recipients,
+        string $subjectType,
+        ElementInterface $subject,
+        WorkflowInterface $workflow,
+        string $action,
+        string $language,
+        string $mailPath,
+        string $deeplink
+    ): void
     {
-        $mail = new Mail(['document' => $mailPath, 'params' => $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)]);
+        $mail = new Mail(
+            [
+                'document' => $mailPath,
+                'params' => $this->getNotificationEmailParameters(
+                    $subjectType,
+                    $subject,
+                    $workflow,
+                    $action,
+                    $deeplink,
+                    $language
+                )
+            ]
+        );
 
         foreach ($recipients as $user) {
             $mail->addTo($user->getEmail(), $user->getName());
@@ -135,7 +166,16 @@ class NotificationEmailService extends AbstractNotificationService
     /**
      * @param User[] $recipients
      */
-    protected function sendTemplateMail(array $recipients, string $subjectType, ElementInterface $subject, WorkflowInterface $workflow, string $action, string $language, string $mailPath, string $deeplink): void
+    protected function sendTemplateMail(
+        array $recipients,
+        string $subjectType,
+        ElementInterface $subject,
+        WorkflowInterface $workflow,
+        string $action,
+        string $language,
+        string $mailPath,
+        string $deeplink
+    ): void
     {
         $mail = new Mail();
 
@@ -144,7 +184,12 @@ class NotificationEmailService extends AbstractNotificationService
         }
 
         $mail->subject(
-            $this->translator->trans('workflow_change_email_notification_subject', [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()], 'admin', $language)
+            $this->translator->trans(
+                'workflow_change_email_notification_subject',
+                [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()],
+                'admin',
+                $language
+            )
         );
 
         $mail->html($this->getHtmlBody($subjectType, $subject, $workflow, $action, $language, $mailPath, $deeplink));
@@ -152,7 +197,15 @@ class NotificationEmailService extends AbstractNotificationService
         $mail->send();
     }
 
-    protected function getHtmlBody(string $subjectType, ElementInterface $subject, WorkflowInterface $workflow, string $action, string $language, string $mailPath, string $deeplink): string
+    protected function getHtmlBody(
+        string $subjectType,
+        ElementInterface $subject,
+        WorkflowInterface $workflow,
+        string $action,
+        string $language,
+        string $mailPath,
+        string $deeplink
+    ): string
     {
         $translatorLocaleBackup = null;
         if ($this->translator instanceof LocaleAwareInterface) {
@@ -174,7 +227,14 @@ class NotificationEmailService extends AbstractNotificationService
         }
     }
 
-    protected function getNotificationEmailParameters(string $subjectType, ElementInterface $subject, WorkflowInterface $workflow, string $action, string $deeplink, string $language): array
+    protected function getNotificationEmailParameters(
+        string $subjectType,
+        ElementInterface $subject,
+        WorkflowInterface $workflow,
+        string $action,
+        string $deeplink,
+        string $language
+    ): array
     {
         $noteDescription = $this->getNoteInfo($subject->getId());
 
