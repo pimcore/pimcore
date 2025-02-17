@@ -5,6 +5,8 @@
 - Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
 
 #### [DataObjects]
+- Removed deprecated `unserialize()` method from `Pimcore\Model\DataObject\Data\Link`. If not the data is not migrated to the new format, to the new default values, please execute a simple script to resave all links.
+- Parameter `$index` of method `setIndex` is not nullable anymore in `Pimcore\Model\DataObject\ClassDefinition\Data`
 - Removed deprecated `getThumbnailConfig()` method from `Pimcore\Model\Asset\Image`.
 
 ## Pimcore 11.6.0
