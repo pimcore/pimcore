@@ -453,20 +453,4 @@ class Link implements OwnerAwareFieldInterface
     {
         return $this->getHtml();
     }
-
-    /**
-     * @internal
-     *
-     * https://github.com/pimcore/pimcore/pull/15926
-     * used for non-nullable properties stored with null
-     *
-     * @TODO: Remove in Pimcore 12
-     *
-     */
-    public function __unserialize(array $data): void
-    {
-        foreach (get_object_vars($this) as $property => $value) {
-            $this->$property = $data["\0*\0".$property] ?? $value;
-        }
-    }
 }

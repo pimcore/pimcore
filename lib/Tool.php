@@ -588,26 +588,4 @@ final class Tool
 
         return $exists;
     }
-
-    /**
-     * @internal
-     *
-     * @return string[]
-     *
-     * @deprecated. Remove in Pimcore 12
-     */
-    public static function getCachedSymfonyEnvironments(): array
-    {
-        $dirs = glob(PIMCORE_SYMFONY_CACHE_DIRECTORY . '/*', GLOB_ONLYDIR);
-        if (($key = array_search(PIMCORE_CACHE_DIRECTORY, $dirs)) !== false) {
-            unset($dirs[$key]);
-        }
-        $dirs = array_map('basename', $dirs);
-        $dirs = array_filter($dirs, function ($value) {
-            // this filters out "old" build directories, which end with a ~
-            return !(bool) preg_match('/~$/', $value);
-        });
-
-        return array_values($dirs);
-    }
 }
