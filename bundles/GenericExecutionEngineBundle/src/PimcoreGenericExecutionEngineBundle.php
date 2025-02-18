@@ -16,13 +16,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle;
 
+use Pimcore\Bundle\GenericExecutionEngineBundle\DependencyInjection\PimcoreGenericExecutionEngineExtension;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Installer\InstallerInterface;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
 class PimcoreGenericExecutionEngineBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
+
+    public function getContainerExtension(): ExtensionInterface
+    {
+        return new PimcoreGenericExecutionEngineExtension();
+    }
 
     public function getPath(): string
     {

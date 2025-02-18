@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle;
 
+use Pimcore\Bundle\InstallBundle\DependencyInjection\PimcoreInstallExtension;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -24,6 +26,11 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class PimcoreInstallBundle extends Bundle
 {
+    public function getContainerExtension(): ExtensionInterface
+    {
+        return new PimcoreInstallExtension();
+    }
+
     public function getPath(): string
     {
         return dirname(__DIR__);
