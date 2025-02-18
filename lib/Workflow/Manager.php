@@ -217,9 +217,6 @@ class Manager
     }
 
     /**
-     *
-     *
-     * @throws ValidationException
      * @throws Exception
      */
     public function applyWithAdditionalData(

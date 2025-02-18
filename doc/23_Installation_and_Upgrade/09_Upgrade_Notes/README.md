@@ -31,6 +31,9 @@
 #### [Templates]
 - Removed `key_value_table.html.twig` from `CoreBundle`
 
+#### [Workflow]
+- Method `getWorkflowByName()` now returns `?WorkflowInterface` instead of `?object`. This also affected the `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php`.
+
 ## Pimcore 11.6.0
 ### Elements
 #### [Documents]
