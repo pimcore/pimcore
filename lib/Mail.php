@@ -498,9 +498,8 @@ class Mail extends Email
             }
         }
 
-        if (empty($this->getFrom()) && $hostname = Tool::getHostname()) {
-            // set default "from" address
-            $this->from('no-reply@' . $hostname);
+        if (empty($this->getFrom())) {
+            $sendingFailedException = new Exception('Missing mandatory mail parameter: From.');
         }
 
         $event = new MailEvent($this, [

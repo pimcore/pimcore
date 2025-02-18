@@ -247,16 +247,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * @return $this
      */
-    public function setIndex(?bool $index): static
+    public function setIndex(bool $index): static
     {
-        if (null === $index) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '11.0.7',
-                sprintf('Passing null to method %s is deprecated', __METHOD__)
-            );
-            $index = false;
-        }
         $this->index = $index;
 
         return $this;
