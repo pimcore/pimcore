@@ -329,6 +329,10 @@ EOT;
         return $this->current - 1;
     }
 
+    /**
+     * @internal
+     *
+     */
     public function setCurrent(int $current): void
     {
         $this->current = $current + 1;
