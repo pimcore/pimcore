@@ -84,8 +84,8 @@ And in the frontend of the application:
 {% endfor %}
 ```
 > **WARNING**
-> If you want to display the block index, please use _block.getCurrentIndex() instead, 
-> _block.current is the auto-incremental index (key) in the array iterator.
+> If you need the block index, please use `_block.getCurrentIndex()` instead, 
+> `_block.current` is the auto-incremental index (key) in the array iterator.
 
 > **IMPORTANT**
 > If you want to change content structure dynamically for each index in editmode, then it is required to use `reload=true` config.
