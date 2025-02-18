@@ -94,7 +94,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $editmodeData = [];
         $idx = -1;
@@ -144,7 +144,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Fieldcollection
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): DataObject\Fieldcollection
     {
         $values = [];
         $count = 0;
@@ -219,7 +219,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return $this->getDiffVersionPreview($data, $object, $params)['html'];
     }
@@ -443,13 +443,48 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $data;
     }
 
-    /**
-     * @param DataObject\Concrete|null $object
-     *
-     */
-    public function getDataForGrid(?DataObject\Fieldcollection $data, Concrete $object = null, array $params = []): string
+    public function getDataForGrid(?DataObject\Fieldcollection $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
-        return 'NOT SUPPORTED';
+        if (null === $data) {
+            return null;
+        }
+
+        $dataForGrid = [];
+
+        foreach ($data as $item) {
+            if (!$item instanceof DataObject\Fieldcollection\Data\AbstractData) {
+                continue;
+            }
+
+            $itemData = [];
+            $collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType());
+            if ($collectionDef instanceof DataObject\Fieldcollection\Definition) {
+                foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                    if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                        foreach ($fd->getFieldDefinitions() as $localizedFieldDefinition) {
+                            $getter = 'get'.ucfirst($localizedFieldDefinition->getName());
+                            $itemData[$localizedFieldDefinition->getName()] = [
+                                'title' => $localizedFieldDefinition->getTitle(),
+                                'value' => $localizedFieldDefinition->getVersionPreview($item->$getter(), $object, $params),
+                            ];
+                        }
+                    } else {
+                        $getter = 'get'.ucfirst($fd->getName());
+                        $itemData[$fd->getName()] = [
+                            'title' => $fd->getTitle(),
+                            'value' => $fd->getVersionPreview($item->$getter(), $object, $params),
+                        ];
+                    }
+                }
+            }
+
+            $dataForGrid[] = [
+                'type' => $collectionDef->getKey(),
+                'data' => $itemData,
+            ];
+        }
+
+        return $dataForGrid;
     }
 
     public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
@@ -510,7 +545,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDiffVersionPreview(?DataObject\Fieldcollection $data, Concrete $object = null, array $params = []): array
+    public function getDiffVersionPreview(?DataObject\Fieldcollection $data, ?Concrete $object = null, array $params = []): array
     {
         $html = '';
         if ($data instanceof DataObject\Fieldcollection) {

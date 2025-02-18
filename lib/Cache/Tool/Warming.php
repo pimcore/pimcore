@@ -33,11 +33,7 @@ class Warming
 
     protected static int $timoutBetweenIteration = 2;
 
-    /**
-     * @static
-     *
-     */
-    public static function documents(array $types = null): void
+    public static function documents(?array $types = null): void
     {
         if (empty($types)) {
             $types = ['page', 'snippet', 'folder', 'link'];
@@ -49,11 +45,7 @@ class Warming
         self::loadToCache($list);
     }
 
-    /**
-     * @static
-     *
-     */
-    public static function objects(array $types = null, array $classes = null): void
+    public static function objects(?array $types = null, ?array $classes = null): void
     {
         if (empty($types)) {
             $types = DataObject::$types;
@@ -70,11 +62,7 @@ class Warming
         self::loadToCache($list);
     }
 
-    /**
-     * @static
-     *
-     */
-    public static function assets(array $types = null): void
+    public static function assets(?array $types = null): void
     {
         if (empty($types)) {
             $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];
@@ -88,7 +76,6 @@ class Warming
 
     /**
      * Adds a Pimcore Object/Asset/Document to the cache
-     *
      */
     public static function loadElementToCache(Element\ElementInterface $element): void
     {

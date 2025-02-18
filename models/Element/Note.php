@@ -30,7 +30,6 @@ final class Note extends Model\AbstractModel
 {
     /**
      * @internal
-     *
      */
     protected ?int $id = null;
 
@@ -46,7 +45,6 @@ final class Note extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     protected string $ctype;
 
@@ -57,7 +55,6 @@ final class Note extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     protected ?int $user = null;
 
@@ -73,7 +70,6 @@ final class Note extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     protected array $data = [];
 
@@ -84,11 +80,6 @@ final class Note extends Model\AbstractModel
      */
     protected bool $locked = true;
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function getById(int $id): ?Note
     {
         try {

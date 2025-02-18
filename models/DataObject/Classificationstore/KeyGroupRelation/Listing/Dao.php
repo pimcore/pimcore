@@ -49,6 +49,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $resource = $entry->getDao();
             $dataItem['enabled'] = (bool)$dataItem['enabled'];
             $dataItem['mandatory'] = (bool)$dataItem['mandatory'];
+
+            $definition = json_decode($dataItem['definition'], true);
+            $definition['mandatory'] = $dataItem['mandatory'];
+            $dataItem['definition'] = json_encode($definition);
+
             $resource->assignVariablesToModel($dataItem);
 
             $configData[] = $entry;

@@ -29,7 +29,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws NotFoundException
      */
-    public function getById(int $id = null): void
+    public function getById(?int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -47,7 +47,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws NotFoundException
      */
-    public function getByName(string $name = null, int $siteId = null, string $language = null): void
+    public function getByName(?string $name = null, ?int $siteId = null, ?string $language = null): void
     {
         if ($name != null) {
             $this->model->setName($name);

@@ -25,10 +25,6 @@ class Service
 {
     /**
      * Mapping between database types and pimcore class names
-     *
-     * @static
-     *
-     *
      */
     public static function getClassNameForType(string $type): ?string
     {

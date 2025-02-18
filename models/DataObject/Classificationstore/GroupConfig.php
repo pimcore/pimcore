@@ -275,7 +275,7 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Calculate cache key
      */
-    private static function getCacheKey(int $id, string $name = null): string
+    private static function getCacheKey(int $id, ?string $name = null): string
     {
         $cacheKey = 'cs_groupconfig_' . $id;
         if ($name !== null) {

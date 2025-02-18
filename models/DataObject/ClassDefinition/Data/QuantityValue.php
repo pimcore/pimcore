@@ -227,7 +227,7 @@ class QuantityValue extends AbstractQuantityValue
         return sprintf('DECIMAL(%d, %d)', $precision, $scale);
     }
 
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
         $dataValue = $data[$this->getName() . '__value'];
         $dataUnit =  $data[$this->getName() . '__unit'];
@@ -252,12 +252,12 @@ class QuantityValue extends AbstractQuantityValue
         return null;
     }
 
-    public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
+    public function getDataFromGridEditor(array $data, ?Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
         if (strlen((string)$data['value']) > 0 || $data['unit']) {
             if (empty($data['unit']) || $data['unit'] == -1) {

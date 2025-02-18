@@ -187,7 +187,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
         return $this->doMatch($pathinfo);
     }
 
-    protected function doMatch(string $pathinfo, Request $request = null): array
+    protected function doMatch(string $pathinfo, ?Request $request = null): array
     {
         $pathinfo = urldecode($pathinfo);
 

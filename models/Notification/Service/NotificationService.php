@@ -28,9 +28,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use UnexpectedValueException;
 
 /**
- * @internal
- * With the end of Classic-UI this service will be deprecated.
- * Functionality will then be moved from studio to the core again
+ * Please note that for Studio Bundle you have to use the service bundled there.
  */
 class NotificationService
 {

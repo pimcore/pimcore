@@ -30,6 +30,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Tool\HtmlUtils;
+use Pimcore\Tool\Serialize;
 use RuntimeException;
 use Throwable;
 
@@ -542,7 +543,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @throws Exception
      */
-    public static function buildEditableName(string $type, string $name, Document $document = null): string
+    public static function buildEditableName(string $type, string $name, ?Document $document = null): string
     {
         // do NOT allow dots (.) and colons (:) here as they act as delimiters
         // for block hierarchy in the new naming scheme (see #1467)!
@@ -715,5 +716,22 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $this->editableDefinitionCollector = $editableDefinitionCollector;
 
         return $this;
+    }
+
+    protected function getUnserializedData(mixed $data): ?array
+    {
+        if (is_array($data) || is_null($data)) {
+            return $data;
+        }
+        if (is_string($data)) {
+            $unserializedData = Serialize::unserialize($data);
+            if (!is_array($unserializedData) && !is_null($unserializedData)) {
+                throw new InvalidArgumentException('Unserialized data must be an array or null.');
+            }
+
+            return $unserializedData;
+        }
+
+        throw new InvalidArgumentException('Data must be a string, an array or null.');
     }
 }

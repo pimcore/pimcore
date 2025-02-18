@@ -62,8 +62,6 @@ final class Tool
      * settings at "Localization & Internationalization (i18n/l10n)".
      * Returns true, if the language is valid or no language is
      * configured at all, false otherwise.
-     *
-     * @static
      */
     public static function isValidLanguage(?string $language): bool
     {
@@ -86,8 +84,6 @@ final class Tool
      * Returns an array of language codes that configured for this system
      * in pimcore's system settings at "Localization & Internationalization (i18n/l10n)".
      * An empty array is returned if no languages are configured.
-     *
-     * @static
      *
      * @return string[]
      */
@@ -254,7 +250,7 @@ final class Tool
         return $languageOptions;
     }
 
-    private static function resolveRequest(Request $request = null): ?Request
+    private static function resolveRequest(?Request $request = null): ?Request
     {
         if (null === $request) {
             // do an extra check for the container as we might be in a state where no container is set yet
@@ -270,7 +266,7 @@ final class Tool
         return $request;
     }
 
-    public static function isFrontend(Request $request = null): bool
+    public static function isFrontend(?Request $request = null): bool
     {
         if (null === $request) {
             $request = Pimcore::getContainer()->get('request_stack')->getMainRequest();
@@ -288,7 +284,7 @@ final class Tool
     /**
      * eg. editmode, preview, version preview, always when it is a "frontend-request", but called out of the admin
      */
-    public static function isFrontendRequestByAdmin(Request $request = null): bool
+    public static function isFrontendRequestByAdmin(?Request $request = null): bool
     {
         $request = self::resolveRequest($request);
 
@@ -318,7 +314,7 @@ final class Tool
     /**
      * @internal
      */
-    public static function useFrontendOutputFilters(Request $request = null): bool
+    public static function useFrontendOutputFilters(?Request $request = null): bool
     {
         $request = self::resolveRequest($request);
 
@@ -350,7 +346,7 @@ final class Tool
     /**
      * @internal
      */
-    public static function getHostname(Request $request = null): ?string
+    public static function getHostname(?Request $request = null): ?string
     {
         $request = self::resolveRequest($request);
 
@@ -367,7 +363,7 @@ final class Tool
     /**
      * @internal
      */
-    public static function getRequestScheme(Request $request = null): string
+    public static function getRequestScheme(?Request $request = null): string
     {
         $request = self::resolveRequest($request);
 
@@ -383,7 +379,7 @@ final class Tool
      *
      * @param string|null $useProtocol use a specific protocol
      */
-    public static function getHostUrl(string $useProtocol = null, Request $request = null): string
+    public static function getHostUrl(?string $useProtocol = null, ?Request $request = null): string
     {
         $request = self::resolveRequest($request);
 
@@ -422,7 +418,7 @@ final class Tool
     /**
      * @internal
      */
-    public static function getClientIp(Request $request = null): ?string
+    public static function getClientIp(?Request $request = null): ?string
     {
         $request = self::resolveRequest($request);
         if ($request) {
@@ -449,7 +445,7 @@ final class Tool
     /**
      * @internal
      */
-    public static function getAnonymizedClientIp(Request $request = null): ?string
+    public static function getAnonymizedClientIp(?Request $request = null): ?string
     {
         $request = self::resolveRequest($request);
 
@@ -465,7 +461,7 @@ final class Tool
     /**
      * @throws Exception
      */
-    public static function getMail(array|string $recipients = null, string $subject = null): Mail
+    public static function getMail(array|string|null $recipients = null, ?string $subject = null): Mail
     {
         $mail = new Mail();
 
@@ -591,27 +587,5 @@ final class Tool
         }
 
         return $exists;
-    }
-
-    /**
-     * @internal
-     *
-     * @return string[]
-     *
-     * @deprecated. Remove in Pimcore 12
-     */
-    public static function getCachedSymfonyEnvironments(): array
-    {
-        $dirs = glob(PIMCORE_SYMFONY_CACHE_DIRECTORY . '/*', GLOB_ONLYDIR);
-        if (($key = array_search(PIMCORE_CACHE_DIRECTORY, $dirs)) !== false) {
-            unset($dirs[$key]);
-        }
-        $dirs = array_map('basename', $dirs);
-        $dirs = array_filter($dirs, function ($value) {
-            // this filters out "old" build directories, which end with a ~
-            return !(bool) preg_match('/~$/', $value);
-        });
-
-        return array_values($dirs);
     }
 }

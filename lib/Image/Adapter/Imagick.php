@@ -181,7 +181,7 @@ class Imagick extends Adapter
         return $format;
     }
 
-    public function save(string $path, string $format = null, int $quality = null): static
+    public function save(string $path, ?string $format = null, ?int $quality = null): static
     {
         if (!$format) {
             $format = 'png32';
@@ -282,7 +282,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    private function checkPreserveAnimation(string $format = '', \Imagick $i = null, bool $checkNumberOfImages = true): bool
+    private function checkPreserveAnimation(string $format = '', ?\Imagick $i = null, bool $checkNumberOfImages = true): bool
     {
         if (!$this->isPreserveAnimation()) {
             return false;
@@ -676,7 +676,7 @@ class Imagick extends Adapter
         $this->resource->compositeImage($mask, \Imagick::COMPOSITE_DSTIN, 0, 0);
     }
 
-    public function setBackgroundImage(string $image, string $mode = null): static
+    public function setBackgroundImage(string $image, ?string $mode = null): static
     {
         $this->preModify();
 
@@ -1024,11 +1024,9 @@ class Imagick extends Adapter
     {
         try {
             // we can't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
-            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-format-support-detection-' . uniqid() . '.' . $format;
             $image = new \Imagick();
             $image->newImage(1, 1, new ImagickPixel('red'));
-            $image->writeImage($format . ':' . $tmpFile);
-            unlink($tmpFile);
+            $image->writeImageFile(tmpfile(), $format);
 
             return true;
         } catch (Exception $e) {

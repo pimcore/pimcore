@@ -229,12 +229,22 @@ final class Site extends AbstractModel
         if (is_string($domains)) {
             $domains = Serialize::unserialize($domains);
         }
-        array_map(static function ($domain) {
-            if (!filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
-                throw new InvalidArgumentException(sprintf('Invalid domain name "%s"', $domain));
-            }
-        }, $domains);
-        $this->domains = $domains;
+        if (is_array($domains)) {
+            $domains = array_filter($domains);
+            array_map(static function ($domain) {
+                //replace all wildcards with a placeholder dummy string
+                $wildCardLessDomain = str_replace('*', 'anystring', $domain);
+                if (
+                    $wildCardLessDomain &&
+                    !filter_var(idn_to_ascii($wildCardLessDomain), FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)
+                ) {
+                    throw new InvalidArgumentException(sprintf('Invalid domain name "%s"', $domain));
+                }
+            }, $domains);
+            $this->domains = $domains;
+        } else {
+            $this->domains = [];
+        }
 
         return $this;
     }
@@ -310,7 +320,7 @@ final class Site extends AbstractModel
 
     public function setMainDomain(string $mainDomain): void
     {
-        if ($mainDomain && !filter_var($mainDomain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+        if ($mainDomain && !filter_var(idn_to_ascii($mainDomain), FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
             throw new InvalidArgumentException(sprintf('Invalid main domain name "%s"', $mainDomain));
         }
         $this->mainDomain = $mainDomain;

@@ -20,8 +20,9 @@ use Pimcore\Model\Version;
 
 interface VersionStorageAdapterInterface
 {
-    public function getStorageType(int $metaDataSize = null,
-        int $binaryDataSize = null): string;
+    public function getStorageType(
+        ?int $metaDataSize = null,
+        ?int $binaryDataSize = null): string;
 
     /**
      * @param resource|null $binaryDataStream

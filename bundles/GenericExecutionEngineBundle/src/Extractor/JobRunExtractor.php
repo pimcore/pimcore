@@ -147,7 +147,7 @@ final class JobRunExtractor implements JobRunExtractorInterface
                 $elementDescriptor->getId(),
                 $types
             );
-            if($element !== null) {
+            if ($element !== null) {
                 $elementsToProcess[] = $element;
             }
         }

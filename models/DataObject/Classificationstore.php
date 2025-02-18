@@ -70,7 +70,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     protected array $groupCollectionMapping = [];
 
-    public function __construct(array $items = null)
+    public function __construct(?array $items = null)
     {
         if ($items) {
             $this->setItems($items);
@@ -95,7 +95,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function getItems(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
-        if(!$doGetInheritedValues) {
+        if (!$doGetInheritedValues) {
             return $this->items;
         }
 
@@ -140,7 +140,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->class;
     }
 
-    public function getLanguage(string $language = null): string
+    public function getLanguage(?string $language = null): string
     {
         if ($language) {
             return $language;
@@ -155,7 +155,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @throws Exception
      */
-    public function setLocalizedKeyValue(int $groupId, int $keyId, mixed $value, string $language = null): static
+    public function setLocalizedKeyValue(int $groupId, int $keyId, mixed $value, ?string $language = null): static
     {
         if (!$groupId) {
             throw new Exception('groupId not valid');
@@ -258,7 +258,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function getActiveGroups(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
-        if(!$doGetInheritedValues) {
+        if (!$doGetInheritedValues) {
             return $this->activeGroups;
         }
 
@@ -409,7 +409,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     public function getGroupCollectionMappings(): array
     {
         $doGetInheritedValues = Model\DataObject::doGetInheritedValues();
-        if(!$doGetInheritedValues) {
+        if (!$doGetInheritedValues) {
             return $this->groupCollectionMapping;
         }
 
@@ -424,7 +424,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $this->groupCollectionMapping = $groupCollectionMapping;
     }
 
-    public function setGroupCollectionMapping(int $groupId = null, int $collectionId = null): void
+    public function setGroupCollectionMapping(?int $groupId = null, ?int $collectionId = null): void
     {
         if ($groupId && $collectionId) {
             $this->groupCollectionMapping[$groupId] = $collectionId;
@@ -487,9 +487,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
     private function mergeArrays(array $a1, array $a2): array
     {
-        foreach($a1 as $key => $value) {
-            if(array_key_exists($key, $a2)) {
-                if(is_array($value)) {
+        foreach ($a1 as $key => $value) {
+            if (array_key_exists($key, $a2)) {
+                if (is_array($value)) {
                     $a2[$key] = $this->mergeArrays($a2[$key], $value);
                 } else {
                     $a2[$key] = $value;

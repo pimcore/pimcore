@@ -94,11 +94,8 @@ class Embed extends Model\Document\Editable
 
     public function setDataFromResource(mixed $data): static
     {
-        if (!empty($data)) {
-            $data = \Pimcore\Tool\Serialize::unserialize($data);
-        }
-
-        $this->url = $data['url'];
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->url = $unserializedData['url'] ?? null;
 
         return $this;
     }

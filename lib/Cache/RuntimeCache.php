@@ -79,8 +79,6 @@ class RuntimeCache extends ArrayObject
     /**
      * disables the caching for the current process, this is useful for importers, ...
      * There are no new objects will be cached after that
-     *
-     * @static
      */
     public static function disable(): void
     {
@@ -90,8 +88,6 @@ class RuntimeCache extends ArrayObject
     /**
      * see @ self::disable()
      * just enabled the caching in the current process
-     *
-     * @static
      */
     public static function enable(): void
     {

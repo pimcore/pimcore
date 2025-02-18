@@ -38,7 +38,7 @@ class ExportService implements ExportServiceInterface
         $this->translationExporter = $translationExporter;
     }
 
-    public function exportTranslationItems(TranslationItemCollection $translationItems, string $sourceLanguage, array $targetLanguages, string $exportId = null): string
+    public function exportTranslationItems(TranslationItemCollection $translationItems, string $sourceLanguage, array $targetLanguages, ?string $exportId = null): string
     {
         $exportId = empty($exportId) ? uniqid() : $exportId;
 

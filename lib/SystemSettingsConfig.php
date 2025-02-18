@@ -75,7 +75,7 @@ class SystemSettingsConfig
         // If the read target is settings-store and no data is found there,
         // load the data from the container config
         // Please see https://github.com/pimcore/pimcore/issues/15596 for more information
-        if(!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
+        if (!$data && $loadType === $repository::LOCATION_SETTINGS_STORE) {
             $data = self::getConfigValuesFromContainer()['config'];
             $data['writeable'] = $repository->isWriteable();
         }
@@ -171,7 +171,10 @@ class SystemSettingsConfig
             $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
         }
 
-        if ($values['general.domain'] && !filter_var($values['general.domain'], FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+        if (
+            $values['general.domain'] &&
+            !filter_var(idn_to_ascii($values['general.domain']), FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)
+        ) {
             throw new InvalidArgumentException(sprintf('Invalid main domain name "%s"', $values['general.domain']));
         }
 

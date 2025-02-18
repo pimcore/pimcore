@@ -65,7 +65,8 @@ class Table extends Model\Document\Editable
 
     public function setDataFromResource(mixed $data): static
     {
-        $this->data = \Pimcore\Tool\Serialize::unserialize($data);
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->data = $unserializedData;
 
         return $this;
     }

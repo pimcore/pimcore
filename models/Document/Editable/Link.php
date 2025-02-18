@@ -21,7 +21,6 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -290,12 +289,8 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
     public function setDataFromResource(mixed $data): static
     {
-        if (is_string($data)) {
-            $data = Serialize::unserialize($data);
-        }
-        if (is_array($data) || is_null($data)) {
-            $this->data = $data;
-        }
+        $unserializedData = $this->getUnserializedData($data);
+        $this->data = $unserializedData;
 
         return $this;
     }

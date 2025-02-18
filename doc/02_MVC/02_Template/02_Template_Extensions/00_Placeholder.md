@@ -47,7 +47,7 @@ the current setting is.
 
 ```
 
-### Capture Content
+### Capture Content (deprecated)
 Occasionally you may have content for a placeholder in a view script that is easiest to template. The `Placeholder` extension allows you to capture arbitrary content for later rendering using the following API.
 
 - `captureStart($type, $key)` begins capturing content.
@@ -90,4 +90,29 @@ list of current content in the placeholder. If `SET`, captured content is used a
 {% do pimcore_placeholder('foo').captureEnd() %}
 
 {{ pimcore_placeholder('foo').data | raw }}
+```
+
+**Note:** The `captureStart()` and `captureEnd()` methods are deprecated as of Pimcore 11.4.0. Use a combination of `set` and `pimcore_placeholder` to achieve the same result.
+
+```twig
+{% set placeholderData %}
+    {% for datum in data %}
+        <div class="foo">
+            <h2>{{ datum.title }}</h2>
+            <p>{{ datum.content }}</p>
+        </div>
+    {% endfor %}
+{% endset %}
+
+{% do pimcore_placeholder('foo').set(placeholderData) %}
+{{ pimcore_placeholder('foo') }}
+```
+
+```twig
+{% set placeholderData %}
+    Test to append some additional content
+{% endset %}
+
+{% do pimcore_placeholder('foo').append(placeholderData) %}
+{{ pimcore_placeholder('foo') }}
 ```

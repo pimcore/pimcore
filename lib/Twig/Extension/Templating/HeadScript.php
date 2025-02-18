@@ -160,7 +160,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @return $this
      */
-    public function __invoke(string $mode = self::FILE, string $spec = null, string $placement = 'APPEND', array $attrs = [], string $type = 'text/javascript'): static
+    public function __invoke(string $mode = self::FILE, ?string $spec = null, string $placement = 'APPEND', array $attrs = [], string $type = 'text/javascript'): static
     {
         if (is_string($spec)) {
             $action = ucfirst(strtolower($mode));
@@ -181,9 +181,16 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * @param string $captureType
      * @param string $type
      *
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureStart($captureType = Container::APPEND, $type = 'text/javascript', array $attrs = []): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureStart()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         if ($this->_captureLock) {
             throw new Exception('Cannot nest headScript captures');
         }
@@ -198,9 +205,16 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * End capture action and store
      *
+     * @deprecated Use twig set tag for output capturing instead.
      */
     public function captureEnd(): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.4',
+            'Using "captureEnd()" is deprecated. Use twig set tag for output capturing instead.'
+        );
+
         $content = ob_get_clean();
         $type = $this->_captureScriptType;
         $attrs = $this->_captureScriptAttrs;
@@ -261,7 +275,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
                 }
             }
 
-            $content = $args[0];
+            $content = is_null($args[0]) ? null : (string) $args[0];
 
             if (isset($args[1])) {
                 $type = (string) $args[1];
@@ -451,7 +465,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
         $container = Pimcore::getContainer();
 
         //@phpstan-ignore-next-line
-        if($container->has('pimcore_admin_bundle.content_security_policy_handler')) {
+        if ($container->has('pimcore_admin_bundle.content_security_policy_handler')) {
             $cspHandler = $container->get('pimcore_admin_bundle.content_security_policy_handler');
             $attrString .= $cspHandler->getNonceHtmlAttribute();
         }
@@ -496,7 +510,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      *
      */
-    public function toString(int|string $indent = null): string
+    public function toString(int|string|null $indent = null): string
     {
         $this->prepareEntries();
 
@@ -567,7 +581,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      *
      */
-    public function createData(string $type, array $attributes, string $content = null): stdClass
+    public function createData(string $type, array $attributes, ?string $content = null): stdClass
     {
         $data = new stdClass();
         $data->type = $type;

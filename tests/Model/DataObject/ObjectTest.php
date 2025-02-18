@@ -19,6 +19,7 @@ namespace Pimcore\Tests\Model\DataObject;
 use Exception;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -66,9 +67,23 @@ class ObjectTest extends ModelTestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
         $savedObject = TestHelper::createEmptyObject('', false);
-        $this->assertTrue($savedObject->getId() == 0);
+        $this->assertNull($savedObject->getId());
 
         $savedObject->setParentId(0);
+        $savedObject->save();
+    }
+
+    /**
+     * Parent ID of a new object cannot be null
+     */
+    public function testParentIsNull(): void
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
+        $savedObject = TestHelper::createEmptyObject('', false);
+        $this->assertNull($savedObject->getId());
+
+        $savedObject->setParentId(null);
         $savedObject->save();
     }
 
@@ -268,7 +283,7 @@ class ObjectTest extends ModelTestCase
         $object->setTextarea('TextareaValue');
         $object->setWysiwyg('WysiwygValue');
         $object->setPassword('PasswordValue');
-        $iqv = new \Pimcore\Model\DataObject\Data\InputQuantityValue('1', 'km');
+        $iqv = new \Pimcore\Model\DataObject\Data\InputQuantityValue('1', Unit::getByAbbreviation('km')->getId());
         $object->setInputQuantityValue($iqv);
         $object->save();
 

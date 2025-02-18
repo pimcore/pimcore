@@ -41,7 +41,7 @@ class HtmlToImage
 
     private static function getSupportedAdapter(): string
     {
-        if(self::$supportedAdapter !== null) {
+        if (self::$supportedAdapter !== null) {
             return self::$supportedAdapter;
         }
 
@@ -50,7 +50,7 @@ class HtmlToImage
         if (GotenbergHelper::isAvailable()) {
             /** @var GotenbergAPI|object $chrome */
             $chrome = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url']);
-            if(method_exists($chrome, 'screenshot')) {
+            if (method_exists($chrome, 'screenshot')) {
                 // only v2 of Gotenberg lib is supported
                 self::$supportedAdapter = 'gotenberg';
             }
@@ -60,7 +60,7 @@ class HtmlToImage
             $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
             if (!empty($chromiumUri)) {
                 try {
-                    if((new Connection($chromiumUri))->connect()) {
+                    if ((new Connection($chromiumUri))->connect()) {
                         self::$supportedAdapter = 'chromium';
                     }
                 } catch (Exception $e) {
@@ -69,7 +69,7 @@ class HtmlToImage
                 }
             }
 
-            if(self::getChromiumBinary()) {
+            if (self::getChromiumBinary()) {
                 self::$supportedAdapter = 'chromium';
             }
         }
@@ -95,7 +95,7 @@ class HtmlToImage
     public static function convert(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
     {
         $adapter = self::getSupportedAdapter();
-        if($adapter === 'gotenberg') {
+        if ($adapter === 'gotenberg') {
             return self::convertGotenberg(...func_get_args());
         } elseif ($adapter === 'chromium') {
             return self::convertChromium(...func_get_args());
@@ -112,7 +112,7 @@ class HtmlToImage
         try {
             /** @var GotenbergAPI|object $request */
             $request = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url']);
-            if(method_exists($request, 'screenshot')) {
+            if (method_exists($request, 'screenshot')) {
                 $sizes = explode(',', $windowSize);
                 $urlResponse = $request->screenshot()
                     ->width((int) $sizes[0])

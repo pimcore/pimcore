@@ -33,7 +33,7 @@ trait PreviewRequestTrait
             return true;
         }
 
-        if ($request->get('pimcore_preview') === 'true') {
+        if ($request->query->getBoolean('pimcore_preview')) {
             return true;
         }
 

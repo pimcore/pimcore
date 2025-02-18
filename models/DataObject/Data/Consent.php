@@ -30,7 +30,7 @@ class Consent implements OwnerAwareFieldInterface
 
     protected ?Note $note = null;
 
-    public function __construct(bool $consent = false, int $noteId = null)
+    public function __construct(bool $consent = false, ?int $noteId = null)
     {
         $this->consent = $consent;
         $this->noteId = $noteId;

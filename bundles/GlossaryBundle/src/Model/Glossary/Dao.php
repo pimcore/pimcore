@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace  Pimcore\Bundle\GlossaryBundle\Model\Glossary;
+namespace Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 
 use Exception;
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
@@ -33,7 +33,7 @@ class Dao extends AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById(int $id = null): void
+    public function getById(?int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);

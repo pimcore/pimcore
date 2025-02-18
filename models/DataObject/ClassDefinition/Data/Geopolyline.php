@@ -36,7 +36,7 @@ class Geopolyline extends AbstractGeo implements
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return Serialize::serialize($data);
     }
@@ -46,7 +46,7 @@ class Geopolyline extends AbstractGeo implements
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         return Serialize::unserialize($data);
     }
@@ -56,7 +56,7 @@ class Geopolyline extends AbstractGeo implements
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -98,7 +98,7 @@ class Geopolyline extends AbstractGeo implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (!empty($data)) {
             if (is_array($data)) {
@@ -123,7 +123,7 @@ class Geopolyline extends AbstractGeo implements
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (is_array($data)) {
             $points = [];
@@ -143,7 +143,7 @@ class Geopolyline extends AbstractGeo implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return $this->getDiffVersionPreview($data, $object, $params);
     }
@@ -182,7 +182,7 @@ class Geopolyline extends AbstractGeo implements
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): string
+    public function getDiffVersionPreview(?array $data, ?Concrete $object = null, array $params = []): string
     {
         $line = [];
 

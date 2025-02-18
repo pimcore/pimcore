@@ -22,13 +22,13 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DocumentResolver extends AbstractRequestResolver
 {
-    public function getDocument(Request $request = null): ?Document
+    public function getDocument(?Request $request = null): ?Document
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();
         }
 
-        $content = $request->get(DynamicRouter::CONTENT_KEY);
+        $content = $request->attributes->get(DynamicRouter::CONTENT_KEY);
         if ($content instanceof Document) {
             return $content;
         }

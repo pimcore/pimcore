@@ -80,7 +80,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $editmodeData = [];
 
@@ -245,7 +245,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Objectbrick
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): Objectbrick
     {
         $container = $this->getDataFromObjectParam($object);
 
@@ -302,7 +302,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         // this is handled directly in the template
         // https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/templates/admin/data_object/data_object/preview_version.html.twig
@@ -578,7 +578,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDataForGrid(?Objectbrick $data, Concrete $object = null, array $params = []): string
+    public function getDataForGrid(?Objectbrick $data, ?Concrete $object = null, array $params = []): string
     {
         return 'NOT SUPPORTED';
     }
@@ -647,7 +647,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /** See parent class.
      *
      */
-    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $editmodeData = [];
 
@@ -672,7 +672,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      *
      */
-    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): mixed
+    public function getDiffDataFromEditmode(array $data, ?DataObject\Concrete $object = null, array $params = []): mixed
     {
         $valueGetter = 'get' . ucfirst($this->getName());
         $valueSetter = 'set' . ucfirst($this->getName());

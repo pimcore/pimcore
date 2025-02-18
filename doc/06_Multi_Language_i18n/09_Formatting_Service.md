@@ -1,7 +1,7 @@
 # Formatting Service
 
 Pimcore ships a service for international formatting of numbers, currencies and date time. The service is basically a 
-factory and wrapper of the [`IntlDateFormatter` component of php](http://php.net/manual/de/class.intldateformatter.php).
+factory and wrapper of the [`IntlDateFormatter` component of php](https://php.net/manual/de/class.intldateformatter.php).
   
 #### Usage Example
  

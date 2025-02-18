@@ -17,11 +17,15 @@ declare(strict_types=1);
 namespace Pimcore\Model\Element;
 
 use __PHP_Incomplete_Class;
+use Carbon\CarbonPeriod;
+use DatePeriod;
 use DeepCopy\DeepCopy;
 use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use DeepCopy\Matcher\PropertyTypeMatcher;
+use DeepCopy\TypeFilter\TypeFilter;
+use DeepCopy\TypeMatcher\TypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Exception;
@@ -62,8 +66,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function getIdPath(ElementInterface $element): string
     {
@@ -131,7 +133,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
      * @return int[]
      *
      * @internal
@@ -158,8 +159,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function getRequiredByDependenciesForFrontend(Dependency $d, ?int $offset, ?int $limit): array
@@ -182,8 +181,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function getRequiresDependenciesForFrontend(Dependency $d, ?int $offset, ?int $limit): array
@@ -207,7 +204,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     public static function getFilterRequiresForFrontend(array $elements): array
     {
@@ -228,7 +224,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     public static function getFilterRequiredByPathForFrontend(array $elements): array
     {
@@ -277,11 +272,9 @@ class Service extends Model\AbstractModel
     /**
      * determines whether an element is published
      *
-     *
-     *
      * @internal
      */
-    public static function isPublished(ElementInterface $element = null): bool
+    public static function isPublished(?ElementInterface $element = null): bool
     {
         if ($element instanceof ElementInterface) {
             if (method_exists($element, 'isPublished')) {
@@ -295,8 +288,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @throws Exception
      *
      * @internal
@@ -378,8 +369,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @throws Exception
      *
      * @internal
@@ -439,7 +428,7 @@ class Service extends Model\AbstractModel
         return $sourceKey;
     }
 
-    public static function pathExists(string $path, string $type = null): bool
+    public static function pathExists(string $path, ?string $type = null): bool
     {
         return match ($type) {
             'asset' => Asset\Service::pathExists($path),
@@ -471,8 +460,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function prepareGetByIdParams(array $params): array
     {
@@ -486,11 +473,6 @@ class Service extends Model\AbstractModel
         return $resolver->resolve($params);
     }
 
-    /**
-     * @static
-     *
-     *
-     */
     public static function getElementType(ElementInterface $element): ?string
     {
         return match (true) {
@@ -503,8 +485,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function getElementTypeByClassName(string $className): ?string
     {
@@ -520,8 +500,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function getElementHash(ElementInterface $element): ?string
     {
@@ -534,8 +512,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function minimizePropertiesForEditmode(array $props): array
@@ -595,7 +571,7 @@ class Service extends Model\AbstractModel
     {
         //check in case of recursion
         $found = false;
-        foreach ($target->getChildren() as $child) {
+        foreach ($target->getChildren()->load() as $child) {
             if ($child->getId() == $new->getId()) {
                 $found = true;
 
@@ -614,7 +590,6 @@ class Service extends Model\AbstractModel
      * @todo remove in pimcore/pimcore 12.0
      *
      * @internal
-     *
      */
     public static function gridElementData(ElementInterface $element): array
     {
@@ -716,11 +691,9 @@ class Service extends Model\AbstractModel
     /**
      * renews all references, for example after unserializing an ElementInterface
      *
-     *
-     *
      * @internal
      */
-    public static function renewReferences(mixed $data, bool $initial = true, string $key = null): mixed
+    public static function renewReferences(mixed $data, bool $initial = true, ?string $key = null): mixed
     {
         if ($data instanceof __PHP_Incomplete_Class) {
             Logger::err(sprintf('Renew References: Cannot read data (%s) of incomplete class.', is_null($key) ? 'not available' : $key));
@@ -735,60 +708,61 @@ class Service extends Model\AbstractModel
 
             return $data;
         }
-        if (is_object($data)) {
-            if ($data instanceof UnitEnum) {
-                return $data;
-            }
 
-            if ($data instanceof ElementInterface && !$initial) {
-                return self::getElementById(self::getElementType($data), $data->getId());
-            }
-
-            // if this is the initial element set the correct path and key
-            if ($data instanceof ElementInterface && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
-                $originalElement = self::getElementById(self::getElementType($data), $data->getId());
-
-                if ($originalElement) {
-                    //do not override filename for Assets https://github.com/pimcore/pimcore/issues/8316
-                    //                    if ($data instanceof Asset) {
-                    //                        /** @var Asset $originalElement */
-                    //                        $data->setFilename($originalElement->getFilename());
-                    //                    } else
-                    if ($data instanceof Document) {
-                        /** @var Document $originalElement */
-                        $data->setKey($originalElement->getKey());
-                    } elseif ($data instanceof DataObject\AbstractObject) {
-                        /** @var AbstractObject $originalElement */
-                        $data->setKey($originalElement->getKey());
-                    }
-
-                    $data->setPath($originalElement->getRealPath());
-                }
-            }
-
-            if ($data instanceof Model\AbstractModel) {
-                $properties = $data->getObjectVars();
-                foreach ($properties as $name => $value) {
-                    //do not renew object reference of ObjectAwareFieldInterface - as object might point to a
-                    //specific version of the object and must not be reloaded with DB version of object
-                    if ($data instanceof ObjectAwareFieldInterface && $name === 'object') {
-                        continue;
-                    }
-
-                    $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
-                }
-            } else {
-                $properties = method_exists($data, 'getObjectVars') ? $data->getObjectVars() : get_object_vars($data);
-                foreach ($properties as $name => $value) {
-                    if (method_exists($data, 'setObjectVar')) {
-                        $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
-                    } else {
-                        $data->$name = self::renewReferences($value, false, $name);
-                    }
-                }
-            }
-
+        if (!is_object($data)) {
             return $data;
+        }
+
+        if ($data instanceof UnitEnum || $data instanceof DatePeriod) {
+            return $data;
+        }
+
+        if ($data instanceof ElementInterface && !$initial) {
+            return self::getElementById(self::getElementType($data), $data->getId());
+        }
+
+        // if this is the initial element set the correct path and key
+        if ($data instanceof ElementInterface && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
+            $originalElement = self::getElementById(self::getElementType($data), $data->getId());
+
+            if ($originalElement) {
+                //do not override filename for Assets https://github.com/pimcore/pimcore/issues/8316
+                //                    if ($data instanceof Asset) {
+                //                        /** @var Asset $originalElement */
+                //                        $data->setFilename($originalElement->getFilename());
+                //                    } else
+                if ($data instanceof Document) {
+                    /** @var Document $originalElement */
+                    $data->setKey($originalElement->getKey());
+                } elseif ($data instanceof DataObject\AbstractObject) {
+                    /** @var AbstractObject $originalElement */
+                    $data->setKey($originalElement->getKey());
+                }
+
+                $data->setPath($originalElement->getRealPath());
+            }
+        }
+
+        if ($data instanceof Model\AbstractModel) {
+            $properties = $data->getObjectVars();
+            foreach ($properties as $name => $value) {
+                //do not renew object reference of ObjectAwareFieldInterface - as object might point to a
+                //specific version of the object and must not be reloaded with DB version of object
+                if ($data instanceof ObjectAwareFieldInterface && $name === 'object') {
+                    continue;
+                }
+
+                $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
+            }
+        } else {
+            $properties = method_exists($data, 'getObjectVars') ? $data->getObjectVars() : get_object_vars($data);
+            foreach ($properties as $name => $value) {
+                if (method_exists($data, 'setObjectVar')) {
+                    $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
+                } else {
+                    $data->$name = self::renewReferences($value, false, $name);
+                }
+            }
         }
 
         return $data;
@@ -796,8 +770,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function correctPath(string $path): string
     {
@@ -818,8 +790,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function loadAllFields(ElementInterface $element): ElementInterface
     {
@@ -847,8 +817,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @throws Exception
      */
     public static function createFolderByPath(string $path, array $options = []): Asset\Folder|DataObject\Folder|Document\Folder|null
@@ -1023,8 +991,6 @@ class Service extends Model\AbstractModel
     /**
      * returns a unique key for an element
      *
-     *
-     *
      * @throws Exception
      */
     public static function getUniqueKey(ElementInterface $element, int $nr = 0): ?string
@@ -1045,8 +1011,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function fixAllowedTypes(array $data, string $type): array
@@ -1169,9 +1133,13 @@ class Service extends Model\AbstractModel
             DataObject\Service::loadAllObjectFields($element);
         }
 
+        /** @var ElementInterface $theCopy */
         $theCopy = $deepCopy->copy($element);
         $theCopy->setId(null);
         $theCopy->setParent(null);
+        if ($theCopy instanceof AbstractElement) {
+            $theCopy->markFieldDirty('properties');
+        }
 
         return $theCopy;
     }
@@ -1195,8 +1163,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function getNoteData(Note $note): array
     {
@@ -1267,8 +1233,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function getSessionKey(string $type, int $elementId, string $sessionId, ?string $postfix = ''): string
@@ -1371,8 +1335,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function getDeepCopyInstance(mixed $element, ?array $context = []): DeepCopy
     {
@@ -1423,6 +1385,16 @@ class Service extends Model\AbstractModel
             $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher('Pimcore\Model\DataObject\ClassDefinition'));
         }
 
+        $copier->prependTypeFilter(
+            new class implements TypeFilter {
+                public function apply($element): CarbonPeriod
+                {
+                    return CarbonPeriod::instance($element);
+                }
+            },
+            new TypeMatcher(CarbonPeriod::class),
+        );
+
         $event = new GenericEvent(null, [
             'copier' => $copier,
             'element' => $element,
@@ -1436,8 +1408,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     *
      */
     public static function escapeCsvRecord(array $rowData): array
     {
@@ -1461,8 +1431,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     *
-     *
      * @internal
      */
     public static function getElementCacheTag(string $type, int|string|null $id): string

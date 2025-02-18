@@ -97,12 +97,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * Returns the data for the editmode
      */
-    abstract public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed;
+    abstract public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): mixed;
 
     /**
      * Converts data from editmode to internal eg. Image-Id to Asset\Image object
      */
-    abstract public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed;
+    abstract public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): mixed;
 
     /**
      * Checks if data is valid for current data field
@@ -247,16 +247,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * @return $this
      */
-    public function setIndex(?bool $index): static
+    public function setIndex(bool $index): static
     {
-        if (null === $index) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '11.0.7',
-                sprintf('Passing null to method %s is deprecated', __METHOD__)
-            );
-            $index = false;
-        }
         $this->index = $index;
 
         return $this;
@@ -1041,7 +1033,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return strlen((string) $number) === 0 ? null : (float)$number;
     }
 
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return 'no preview';
     }
@@ -1065,7 +1057,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *  - "key" => the key of the data element
      *  - "data" => the data
      */
-    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): mixed
+    public function getDiffDataFromEditmode(array $data, ?DataObject\Concrete $object = null, array $params = []): mixed
     {
         $thedata = $this->getDataFromEditmode($data[0]['data'], $object, $params);
 
@@ -1084,7 +1076,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *      - "disabled" => whether the data element can be edited or not
      *      - "title" => pretty name describing the data element
      */
-    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $diffdata = [];
         $diffdata['data'] = $this->getDataForEditmode($data, $object, $params);

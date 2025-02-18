@@ -154,7 +154,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
      *
      *
      */
-    public function buildRouteForDocument(Document $document, DynamicRequestContext $context = null): ?DocumentRoute
+    public function buildRouteForDocument(Document $document, ?DynamicRequestContext $context = null): ?DocumentRoute
     {
         // check for direct hardlink
         if ($document instanceof Document\Hardlink) {
@@ -205,7 +205,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     private function handleDirectRouteDocument(
         Document\PageSnippet $document,
         DocumentRoute $route,
-        DynamicRequestContext $context = null
+        ?DynamicRequestContext $context = null
     ): ?DocumentRoute {
         // if we have a request in context, we're currently in match mode (not generating URLs) -> only match when frontend request by admin
         try {
@@ -258,7 +258,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     private function handleDirectRouteRedirect(
         Document\PageSnippet $document,
         DocumentRoute $route,
-        DynamicRequestContext $context = null
+        ?DynamicRequestContext $context = null
     ): ?DocumentRoute {
         $redirectTargetUrl = $context->getOriginalPath();
 

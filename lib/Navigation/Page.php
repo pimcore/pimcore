@@ -137,14 +137,6 @@ abstract class Page extends Container
      */
     protected array $_customHtmlAttribs = [];
 
-    /**
-     * @deprecated will be removed in Pimcore 12.
-     *
-     * The type of page to use when it wasn't set
-     *
-     */
-    protected static ?string $_defaultPageType = null;
-
     // Initialization:
 
     /**
@@ -170,8 +162,6 @@ abstract class Page extends Container
     {
         if (isset($options['type'])) {
             $type = $options['type'];
-        } elseif (self::$_defaultPageType != null) {
-            $type = self::$_defaultPageType;
         }
 
         if (isset($type)) {
@@ -216,7 +206,7 @@ abstract class Page extends Container
      *
      * @throws Exception    if invalid options are given
      */
-    public function __construct(array $options = null)
+    public function __construct(?array $options = null)
     {
         if (is_array($options)) {
             $this->setOptions($options);
@@ -627,7 +617,7 @@ abstract class Page extends Container
      *
      * @throws Exception  if order is not integer or null
      */
-    public function setOrder(int|string $order = null): static
+    public function setOrder(int|string|null $order = null): static
     {
         if (is_string($order)) {
             $temp = (int) $order;

@@ -487,7 +487,7 @@ class SearchController extends UserAwareController
      */
     public function quickSearchAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $query = $this->filterQueryParam($request->get('query', ''));
+        $query = $this->filterQueryParam($request->query->getString('query'));
         if (!preg_match('/[\+\-\*"]/', $query)) {
             // check for a boolean operator (which was not filtered by filterQueryParam()),
             // if present, do not add asterisk at the end of the query
@@ -559,9 +559,8 @@ class SearchController extends UserAwareController
      */
     public function quickSearchByIdAction(Request $request, Config $config): JsonResponse
     {
-        $type = $request->get('type');
-        $id = $request->get('id');
-        $db = \Pimcore\Db::get();
+        $type = $request->query->getString('type');
+        $id = $request->query->getInt('id');
         $searcherList = new Data\Listing();
 
         $searcherList->addConditionParam('id = :id', ['id' => $id]);
@@ -627,7 +626,7 @@ class SearchController extends UserAwareController
      *
      * @throws Exception
      */
-    protected function addAdminStyle(ElementInterface $element, int $context = null, array &$data = []): void
+    protected function addAdminStyle(ElementInterface $element, ?int $context = null, array &$data = []): void
     {
         $event = new ElementAdminStyleEvent($element, new AdminStyle($element), $context);
         Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);

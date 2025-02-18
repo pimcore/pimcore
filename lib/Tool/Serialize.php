@@ -85,7 +85,7 @@ final class Serialize
             $propCollection = get_object_vars($clone);
 
             foreach ($propCollection as $name => $propValue) {
-                if (!str_starts_with($name, "\0")) {
+                if (!str_starts_with((string) $name, "\0")) {
                     $clone->$name = self::loopFilterCycles($propValue);
                 }
             }

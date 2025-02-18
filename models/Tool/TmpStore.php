@@ -94,7 +94,7 @@ final class TmpStore extends Model\AbstractModel
         return $instance->getDao()->add($id, $data, $tag, $lifetime);
     }
 
-    public static function set(string $id, mixed $data, string $tag = null, int $lifetime = null): bool
+    public static function set(string $id, mixed $data, ?string $tag = null, ?int $lifetime = null): bool
     {
         $instance = self::getInstance();
 
@@ -193,7 +193,7 @@ final class TmpStore extends Model\AbstractModel
         $this->expiryDate = $expiryDate;
     }
 
-    public function update(int $lifetime = null): bool
+    public function update(?int $lifetime = null): bool
     {
         if (!$lifetime) {
             $lifetime = 86400;

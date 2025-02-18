@@ -25,7 +25,7 @@ function xmlToArray(string $file): array
     return $array;
 }
 
-function gzcompressfile(string $source, int $level = null, string $target = null): false|string
+function gzcompressfile(string $source, ?int $level = null, ?string $target = null): false|string
 {
     // this is a very memory efficient way of gzipping files
     if ($target) {

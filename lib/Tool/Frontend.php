@@ -65,7 +65,7 @@ final class Frontend
         $siteMapping = self::getSiteMapping();
 
         foreach ($siteMapping as $sitePath => $id) {
-            if (str_starts_with($document->getRealFullPath(), $sitePath)) {
+            if (str_starts_with($document->getRealFullPath() . '/', $sitePath . '/')) {
                 return $id;
             }
         }
@@ -86,7 +86,10 @@ final class Frontend
         if (!$siteMapping) {
             $siteMapping = [];
             $sites = new Site\Listing();
-            $sites->setOrderKey('(SELECT LENGTH(`path`) FROM documents WHERE documents.id = sites.rootId) DESC', false);
+            $sites->setOrderKey(
+                '(SELECT LENGTH(CONCAT(`path`, `key`)) FROM documents WHERE documents.id = sites.rootId) DESC',
+                false
+            );
             $sites = $sites->load();
             foreach ($sites as $site) {
                 $siteMapping[$site->getRootPath()] = $site->getId();

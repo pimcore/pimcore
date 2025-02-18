@@ -24,8 +24,6 @@ use Pimcore\Tool\Serialize;
 class Service
 {
     /**
-     *
-     *
      * @throws Exception
      */
     public static function wrap(Document $doc): Wrapper\WrapperInterface|Wrapper\Hardlink|null
@@ -56,8 +54,6 @@ class Service
     /**
      * @internal
      *
-     * @static
-     *
      * @return Document\Hardlink\Wrapper\WrapperInterface
      */
     public static function upperCastDocument(Document $doc): Wrapper\WrapperInterface
@@ -80,8 +76,6 @@ class Service
     }
 
     /**
-     *
-     *
      * @throws Exception
      *
      * @internal
@@ -113,8 +107,6 @@ class Service
     }
 
     /**
-     *
-     *
      * @throws Exception
      *
      * @internal

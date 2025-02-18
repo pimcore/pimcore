@@ -20,7 +20,9 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
+use function is_array;
 
 trait ManyToManyRelationTrait
 {
@@ -57,5 +59,25 @@ trait ManyToManyRelationTrait
         }
 
         parent::save($object, $params);
+    }
+
+    protected function filterUnpublishedElements(mixed $data): array
+    {
+        if (!is_array($data)) {
+            return [];
+        }
+
+        if (DataObject::doHideUnpublished()) {
+            $publishedList = [];
+            foreach ($data as $listElement) {
+                if (Element\Service::isPublished($listElement)) {
+                    $publishedList[] = $listElement;
+                }
+            }
+
+            return $publishedList;
+        }
+
+        return $data;
     }
 }

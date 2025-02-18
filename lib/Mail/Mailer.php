@@ -35,13 +35,13 @@ class Mailer implements MailerInterface
         $this->redirectPlugin = $redirectPlugin;
     }
 
-    public function send(RawMessage $message, Envelope $envelope = null): void
+    public function send(RawMessage $message, ?Envelope $envelope = null): void
     {
         if ($message instanceof Mail) {
             $this->redirectPlugin->beforeSendPerformed($message);
         }
 
-        if($message instanceof Message && !$message->getHeaders()->has('X-Transport')) {
+        if ($message instanceof Message && !$message->getHeaders()->has('X-Transport')) {
             $message->getHeaders()->addTextHeader('X-Transport', 'main');
         }
 

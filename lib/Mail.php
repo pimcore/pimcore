@@ -123,7 +123,7 @@ class Mail extends Email
      * @param array|Headers|null $headers
      * @param AbstractPart|null $body
      */
-    public function __construct($headers = null, $body = null, string $contentType = null)
+    public function __construct($headers = null, $body = null, ?string $contentType = null)
     {
         if (is_array($headers)) {
             $options = $headers;
@@ -163,7 +163,7 @@ class Mail extends Email
      */
     public function init(string $type = 'email', ?array $config = null): void
     {
-        if(empty($config)) {
+        if (empty($config)) {
             $config = Config::getSystemConfiguration($type);
         }
 
@@ -425,7 +425,7 @@ class Mail extends Email
      *
      * @return $this Provides fluent interface
      */
-    public function send(MailerInterface $mailer = null): static
+    public function send(?MailerInterface $mailer = null): static
     {
         $bodyHtmlRendered = $this->getBodyHtmlRendered();
         if ($bodyHtmlRendered) {
@@ -460,7 +460,7 @@ class Mail extends Email
      *
      * @throws Exception
      */
-    public function sendWithoutRendering(MailerInterface $mailer = null): static
+    public function sendWithoutRendering(?MailerInterface $mailer = null): static
     {
         // filter email addresses
 
@@ -498,9 +498,8 @@ class Mail extends Email
             }
         }
 
-        if (empty($this->getFrom()) && $hostname = Tool::getHostname()) {
-            // set default "from" address
-            $this->from('no-reply@' . $hostname);
+        if (empty($this->getFrom())) {
+            $sendingFailedException = new Exception('Missing mandatory mail parameter: From.');
         }
 
         $event = new MailEvent($this, [

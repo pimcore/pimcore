@@ -30,7 +30,7 @@ final class CurrentMessageProvider implements CurrentMessageProviderInterface
     ) {
     }
 
-    public function getTranslationMessages(string $key, array $parameters = [], string $domain = null): MessageInterface
+    public function getTranslationMessages(string $key, array $parameters = [], ?string $domain = null): MessageInterface
     {
         return new TranslationMessage($key, $parameters, $domain, $this->translator);
     }

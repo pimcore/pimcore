@@ -86,7 +86,7 @@ class JobRun
     #[ORM\Column(type: 'integer')]
     private int $processedElementsForStep = 0;
 
-    public function __construct(int $ownerId = null)
+    public function __construct(?int $ownerId = null)
     {
         $this->creationDate = time();
         $this->ownerId = $ownerId;

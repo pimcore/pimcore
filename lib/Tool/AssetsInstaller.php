@@ -97,7 +97,7 @@ class AssetsInstaller
         return $resolver->resolve($options);
     }
 
-    public function setRunCallback(Closure $runCallback = null): void
+    public function setRunCallback(?Closure $runCallback = null): void
     {
         $this->runCallback = $runCallback;
     }
@@ -133,11 +133,11 @@ class AssetsInstaller
             }
         }
 
-        if(in_array($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null, ['symlink', 'relative'])) {
+        if (in_array($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null, ['symlink', 'relative'])) {
             $defaults['symlink'] = true;
         }
 
-        if(($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null) === 'relative') {
+        if (($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null) === 'relative') {
             $defaults['relative'] = true;
         }
 

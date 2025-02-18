@@ -56,7 +56,7 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
             return;
         }
 
-        if ($request->get('disableBlockClearing')) {
+        if ($request->query->get('disableBlockClearing') || $request->request->get('disableBlockClearing')) {
             return;
         }
 
@@ -78,7 +78,7 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
             return;
         }
 
-        if ($request->get('disableBlockClearing')) {
+        if ($request->query->get('disableBlockClearing') || $request->request->get('disableBlockClearing')) {
             return;
         }
 

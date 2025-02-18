@@ -25,7 +25,6 @@ use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Model;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool\HtmlUtils;
-use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -210,13 +209,8 @@ class Area extends Model\Document\Editable
 
     public function setDataFromResource(mixed $data): static
     {
-        if (is_string($data) && strlen($data) > 2) {
-            $data = Serialize::unserialize($data);
-        }
-
-        if (is_array($data)) {
-            $this->type = $data['type'] ?? null;
-        }
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->type = $unserializedData['type'] ?? null;
 
         return $this;
     }
