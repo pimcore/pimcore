@@ -63,16 +63,11 @@ class LowQualityImagePreviewCommand extends AbstractCommand
                 'f',
                 InputOption::VALUE_NONE,
                 'generate preview regardless if it already exists or not'
-            )
-            ->addOption('generator', 'g', InputOption::VALUE_OPTIONAL, 'Force a generator, either `svg` or `imagick`');
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if ($input->hasOption('generator')) {
-            trigger_deprecation('pimcore/pimcore', '11.2.0', 'Using the "generator" option is deprecated and will be removed in Pimcore 12.');
-        }
-
         $conditionVariables = [];
 
         // get only images
