@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
 use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Config\ColumnInformation;
 use stdClass;
 
 abstract class AbstractAdapter implements CustomReportAdapterInterface
@@ -42,6 +43,24 @@ abstract class AbstractAdapter implements CustomReportAdapterInterface
     ): array;
 
     abstract public function getColumns(?stdClass $configuration): array;
+
+    public function getColumnsWithMetadata(?stdClass $configuration): array
+    {
+        $columnsWithMetadata = [];
+        $columns = $this->getColumns($configuration);
+
+        foreach($columns as $column) {
+            $columnsWithMetadata[] = new ColumnInformation(
+                $column,
+                false,
+                false,
+                false,
+                false
+            );
+        }
+
+        return $columnsWithMetadata;
+    }
 
     abstract public function getAvailableOptions(array $filters, string $field, array $drillDownFilters): array;
 

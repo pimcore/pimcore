@@ -82,36 +82,6 @@ class Sql extends AbstractAdapter
         throw new Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
     }
 
-    public function getColumnsWithMetadata(?stdClass $configuration): array
-    {
-        $columnsWithMetadata = [];
-        $columns = $this->getColumns($configuration);
-
-        foreach($columns as $column) {
-            if($column == 'filename') {
-
-                $columnsWithMetadata[] = new ColumnInformation(
-                    $column,
-                    true,
-                    true,
-                    true,
-                    true
-                );
-            } else {
-
-                $columnsWithMetadata[] = new ColumnInformation(
-                    $column,
-                    false,
-                    false,
-                    false,
-                    false
-                );
-            }
-        }
-
-        return $columnsWithMetadata;
-    }
-
     protected function buildQueryString(stdClass $config, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): string
     {
         $config = (array)$config;
