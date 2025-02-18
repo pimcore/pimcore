@@ -85,7 +85,7 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
                 $timeLimit = (int) $event->getInput()->getOption('time-limit');
                 $db = Pimcore\Db::get();
                 $result = $db->fetchAssociative("SHOW VARIABLES LIKE 'wait_timeout'");
-                if($result['Value'] < $timeLimit) {
+                if ($result['Value'] < $timeLimit) {
                     $db->executeQuery('SET SESSION wait_timeout = ' . $timeLimit);
                 }
             }
