@@ -15,7 +15,7 @@
 - Parameter `$index` of method `setIndex` is not nullable anymore in `Pimcore\Model\DataObject\ClassDefinition\Data`.
 - Removed deprecated `getThumbnailConfig()` method from `Pimcore\Model\Asset\Image`.
 
-### [Events]
+#### [Events]
 - Removed `context` property of `ResolveUploadTargetEvent`.
 
 #### [Lib]
