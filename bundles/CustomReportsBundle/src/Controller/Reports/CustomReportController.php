@@ -371,10 +371,23 @@ class CustomReportController extends UserAwareController
         $sortFilters = $this->getSortAndFilters($request, $configuration);
         $result = $adapter->getData($sortFilters['filters'], $sortFilters['sort'], $sortFilters['dir'], null, null, null, $sortFilters['drillDownFilters']);
 
+        // sum up values for same x-axis values
+        $groupedResult = [];
+        foreach ($result['data'] as $record) {
+            $xAxisValue = $record[$config->getXAxis()];
+            if (isset($resultEnhanced[$xAxisValue])) {
+                foreach ($config->getYAxis() as $yAxisField) {
+                    $groupedResult[$xAxisValue][$yAxisField] += $record[$yAxisField];
+                }
+            } else {
+                $groupedResult[$xAxisValue] = $record;
+            }
+        }
+
         return $this->jsonResponse([
             'success' => true,
-            'data' => $result['data'],
-            'total' => $result['total'],
+            'data' => array_values($groupedResult),
+            'total' => count($groupedResult),
         ]);
     }
 
