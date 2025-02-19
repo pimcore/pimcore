@@ -16,8 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Cache\Core;
 
+use Carbon\CarbonPeriod;
 use Closure;
 use DateInterval;
+use DeepCopy\TypeFilter\TypeFilter;
 use DeepCopy\TypeMatcher\TypeMatcher;
 use Pimcore\Event\CoreCacheEvents;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
@@ -481,6 +483,16 @@ class CoreCacheHandler implements LoggerAwareInterface
             ];
             $copier = Service::getDeepCopyInstance($data, $context);
             $copier->addFilter(new SetDumpStateFilter(false), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
+
+            $copier->prependTypeFilter(
+                new class implements TypeFilter {
+                    public function apply($element): CarbonPeriod
+                    {
+                        return CarbonPeriod::instance($element);
+                    }
+                },
+                new TypeMatcher(CarbonPeriod::class),
+            );
 
             $copier->addTypeFilter(
                 new \DeepCopy\TypeFilter\ReplaceFilter(

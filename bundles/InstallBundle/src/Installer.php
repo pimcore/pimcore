@@ -37,7 +37,6 @@ use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Bundle\SimpleBackendSearchBundle\PimcoreSimpleBackendSearchBundle;
 use Pimcore\Bundle\StaticRoutesBundle\PimcoreStaticRoutesBundle;
-use Pimcore\Bundle\TinymceBundle\PimcoreTinymceBundle;
 use Pimcore\Bundle\UuidBundle\PimcoreUuidBundle;
 use Pimcore\Bundle\WordExportBundle\PimcoreWordExportBundle;
 use Pimcore\Bundle\XliffBundle\PimcoreXliffBundle;
@@ -74,7 +73,6 @@ class Installer
         'PimcoreSeoBundle' => PimcoreSeoBundle::class,
         'PimcoreSimpleBackendSearchBundle' => PimcoreSimpleBackendSearchBundle::class,
         'PimcoreStaticRoutesBundle' => PimcoreStaticRoutesBundle::class,
-        'PimcoreTinymceBundle' => PimcoreTinymceBundle::class,
         'PimcoreUuidBundle' => PimcoreUuidBundle::class,
         'PimcoreWordExportBundle' => PimcoreWordExportBundle::class,
         'PimcoreXliffBundle' => PimcoreXliffBundle::class,
@@ -153,8 +151,8 @@ class Installer
         'setup_database' => 'Running database setup...',
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes...',
-        'install_bundles' => 'Installing bundles...',
         'migrations' => 'Marking all migrations as done...',
+        'install_bundles' => 'Installing bundles...',
         'complete' => 'Install complete!',
     ];
 
@@ -163,8 +161,8 @@ class Installer
         'setup_database',
         'install_assets',
         'install_classes',
-        'install_bundles',
         'mark_migrations_as_done',
+        'install_bundles',
         'clear_cache',
     ];
 
@@ -470,11 +468,6 @@ class Installer
             $this->installAssets($kernel);
         }
 
-        if (!empty($this->bundlesToInstall) && in_array('install_bundles', $stepsToRun)) {
-            $this->dispatchStepEvent('install_bundles');
-            $this->installBundles();
-        }
-
         if (in_array('install_classes', $stepsToRun)) {
             $this->dispatchStepEvent('install_classes');
             $this->installClasses();
@@ -483,6 +476,11 @@ class Installer
         if (in_array('mark_migrations_as_done', $stepsToRun)) {
             $this->dispatchStepEvent('migrations');
             $this->markMigrationsAsDone();
+        }
+
+        if (!empty($this->bundlesToInstall) && in_array('install_bundles', $stepsToRun)) {
+            $this->dispatchStepEvent('install_bundles');
+            $this->installBundles();
         }
 
         if (in_array('clear_cache', $stepsToRun)) {

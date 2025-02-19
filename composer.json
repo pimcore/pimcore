@@ -65,9 +65,9 @@
     "matthiasmullie/minify": "^1.3",
     "monolog/monolog": "^3.2.0",
     "mpratt/embera": "^2.0.14",
-    "myclabs/deep-copy": "^1.11",
+    "myclabs/deep-copy": "^1.13",
     "neitanod/forceutf8": "^2.0.4",
-    "nesbot/carbon": "^2.72",
+    "nesbot/carbon": "^2.72 || ^3.8.4",
     "onnov/detect-encoding": "^2.0",
     "pear/net_url2": "^2.2",
     "presta/sitemap-bundle": "^3.3 || ^4.1",
@@ -128,7 +128,7 @@
     "umpirsky/country-list": "^2.0.6"
   },
   "conflict": {
-    "doctrine/doctrine-migrations-bundle": "3.4.0",
+    "doctrine/doctrine-migrations-bundle": ">=3.4.0",
     "pimcore/admin-ui-classic-bundle": "<1.5",
     "pimcore/output-data-config-toolkit-bundle": "<5.0",
     "pimcore/translations-provider-interfaces": "<3.0",
@@ -146,7 +146,7 @@
     "composer/composer": "*",
     "ergebnis/phpstan-rules": "^2.0",
     "gotenberg/gotenberg-php": "^1.1 || ^2.4",
-    "phpstan/phpstan": "1.12.15",
+    "phpstan/phpstan": "1.12.16",
     "phpstan/phpstan-symfony": "^1.3.5",
     "phpunit/phpunit": "^9.3",
     "symfony/dotenv": "^6.4",
@@ -185,7 +185,6 @@
       "Pimcore\\Bundle\\CustomReportsBundle\\": "bundles/CustomReportsBundle/src/",
       "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/",
       "Pimcore\\Bundle\\WordExportBundle\\": "bundles/WordExportBundle/src/",
-      "Pimcore\\Bundle\\TinymceBundle\\": "bundles/TinymceBundle/src/",
       "Pimcore\\Bundle\\GenericExecutionEngineBundle\\": "bundles/GenericExecutionEngineBundle/src/"
     },
     "classmap": [

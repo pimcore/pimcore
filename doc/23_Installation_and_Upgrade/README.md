@@ -11,5 +11,4 @@
 - [Upgrade Notes](09_Upgrade_Notes/README.md)
 
 ## Advanced Topics
-- [Cluster Setup](03_System_Setup_and_Hosting/07_Cluster_Setup.md)
 - [Performance Guide](03_System_Setup_and_Hosting/09_Performance_Guide.md)

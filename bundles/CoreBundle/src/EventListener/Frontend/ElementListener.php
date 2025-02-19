@@ -262,14 +262,14 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     {
         $dataObject = Service::getElementById('object', $id);
 
-        if ($dataObject === null) {
+        if (!$dataObject instanceof Concrete) {
             return null;
         }
 
         $version = $dataObject->getLatestVersion($user->getId());
 
         if ($version === null || !$version->getData() instanceof Concrete) {
-            return null;
+            return $dataObject;
         }
 
         return $version->getData();

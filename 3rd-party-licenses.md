@@ -14,11 +14,7 @@ The specific verions of a library are documented in
 ### ExtJS by Sencha Inc.
 License: GPLv3  
 pimcore includes the GPLv3 version of the ExtJS JavaScript framework.  
-http://www.sencha.com/license/  
-
-### TinyMCE
-License: MIT
-https://github.com/tinymce/tinymce/blob/develop/LICENSE.TXT
+http://www.sencha.com/license/
 
 ### Leaflet 
 License: BSD  

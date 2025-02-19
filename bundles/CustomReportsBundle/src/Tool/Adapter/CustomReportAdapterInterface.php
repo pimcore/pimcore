@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
+use Pimcore\Bundle\CustomReportsBundle\Tool\Config\ColumnInformation;
 use stdClass;
 
 interface CustomReportAdapterInterface
@@ -27,7 +28,15 @@ interface CustomReportAdapterInterface
      * @param array|null $drillDownFilters - if set, additional filters are set
      *
      */
-    public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, ?array $fields = null, ?array $drillDownFilters = null): array;
+    public function getData(
+        ?array $filters,
+        ?string $sort,
+        ?string $dir,
+        ?int $offset,
+        ?int $limit,
+        ?array $fields = null,
+        ?array $drillDownFilters = null
+    ): array;
 
     /**
      * returns available columns for given configuration
@@ -37,9 +46,21 @@ interface CustomReportAdapterInterface
     public function getColumns(?stdClass $configuration): array;
 
     /**
+     * returns available columns for given configuration
+     *
+     * @return ColumnInformation[]
+     */
+    public function getColumnsWithMetadata(?stdClass $configuration): array;
+
+    /**
      * returns all available values for given field with given filters and drillDownFilters
      *
      *
      */
     public function getAvailableOptions(array $filters, string $field, array $drillDownFilters): array;
+
+    /**
+     * returns if pagination is activated or deactivated
+     */
+    public function getPagination(): bool;
 }

@@ -1,5 +1,51 @@
 # Upgrade Notes
 
+## Pimcore 12.0.0
+#### [Bundle]
+- Removed compatibility layer static `$bundleManager`
+
+#### [Commands]
+- Removed deprecated option `generator` from `Pimcore\Bundle\CoreBundle\Command\LowQualityImagePreviewCommand`.
+
+#### [Documents]
+- Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
+
+#### [DataObjects]
+- Removed deprecated `unserialize()` method from `Pimcore\Model\DataObject\Data\Link`. If not the data is not migrated to the new format, to the new default values, please execute a simple script to resave all links.
+- Parameter `$index` of method `setIndex` is not nullable anymore in `Pimcore\Model\DataObject\ClassDefinition\Data`.
+- Removed deprecated `getThumbnailConfig()` method from `Pimcore\Model\Asset\Image`.
+
+#### [Events]
+- Removed `context` property of `ResolveUploadTargetEvent`.
+
+#### [Lib]
+- Removed deprecated class `Pimcore\Helper\CsvFormulaFormatter`. Use `\League\Csv\EscapeFormula` instead.
+- Removed deprecated `getCachedSymfonyEnvironments()` method from `Pimcore\Tool`.
+
+#### [Mail]
+- If sender is not set in the mail, instead of setting a default `from` address, an exception is now thrown.
+
+#### [Models]
+- Method `getById()` now only accepts `int` as the first parameter. 
+- Interface `ElementInterface` now has `array $params = []` as the second parameter for `getById()`.
+
+#### [Navigation]
+- Remove deprecated `$_defaultPageType` from `Pimcore\Navigation\Page`.
+
+#### [Select Options]
+- Add 'Admin only' configuration to restrict access to admin users
+
+#### [Templates]
+- Removed `key_value_table.html.twig` from `CoreBundle`
+
+#### [Workflow]
+- Method `getWorkflowByName()` now returns `?WorkflowInterface` instead of `?object`. This also affected the `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php`.
+
+### Custom Reports
+- add function `getColumnsWithMetadata` to `bundles/CustomReportsBundle/src/Tool/Adapter/CustomReportAdapterInterface.php`
+- add function `getPagination` to `bundles/CustomReportsBundle/src/Tool/Adapter/CustomReportAdapterInterface.php`
+- change parameter types of `getData` in `bundles/CustomReportsBundle/src/Tool/Adapter/AbstractAdapter.php`
+
 ## Pimcore 11.6.0
 ### Elements
 #### [Documents]
