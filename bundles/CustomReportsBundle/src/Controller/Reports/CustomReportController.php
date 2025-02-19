@@ -375,7 +375,7 @@ class CustomReportController extends UserAwareController
         $groupedResult = [];
         foreach ($result['data'] as $record) {
             $xAxisValue = $record[$config->getXAxis()];
-            if (isset($groupedResult[$xAxisValue])) {
+            if (isset($groupedResult[$xAxisValue]) && is_array($config->getYAxis())) {
                 foreach ($config->getYAxis() as $yAxisField) {
                     $groupedResult[$xAxisValue][$yAxisField] += $record[$yAxisField];
                 }
