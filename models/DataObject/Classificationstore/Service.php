@@ -87,7 +87,7 @@ class Service
         $dataDefinition->setValues($definition);
         $className = get_class($dataDefinition);
 
-        $dataDefinition = $className::__set_state((array) $dataDefinition);
+        $dataDefinition = $className::__set_state(json_decode(json_encode($dataDefinition), true));
 
         if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             $delegateDefinitionRaw = $dataDefinition->getDelegate();
