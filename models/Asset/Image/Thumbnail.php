@@ -83,6 +83,8 @@ final class Thumbnail implements ThumbnailInterface
             $event = new GenericEvent($this, [
                 'pathReference' => $pathReference,
                 'frontendPath' => $path,
+                'asset' => $this->getAsset(),
+                'config' => $this->getConfig(),
             ]);
             Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
             $path = $event->getArgument('frontendPath');
@@ -162,7 +164,7 @@ final class Thumbnail implements ThumbnailInterface
     private function addCacheBuster(string $path, array $options, Asset $asset): string
     {
         if (isset($options['cacheBuster']) && $options['cacheBuster']) {
-            if (!str_starts_with($path, 'http')) {
+            if (!str_starts_with($path, 'http') && !str_starts_with($path, '/cache-buster-')) {
                 $path = '/cache-buster-' . $asset->getVersionCount() . $path;
             }
         }
