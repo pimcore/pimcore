@@ -48,7 +48,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * Necessary for assigning object reference to corresponding fields while wakeup
      *
      */
-    public array $__objectAwareFields = [];
+    protected array $__objectAwareFields = [];
 
     /**
      * @internal
@@ -113,7 +113,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         foreach ($fieldDefinitions as $fd) {
             try {
                 if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                    $this->__objectAwareFields['localizedfields'] = true;
+                    $this->addObjectAwareField('localizedfields');
                 }
 
                 $getter = 'get' . ucfirst($fd->getName());
@@ -227,6 +227,23 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         $this->getDao()->deleteAllTasks();
 
         parent::doDelete();
+    }
+
+    public function getObjectAwareFields(): array
+    {
+        return $this->__objectAwareFields;
+    }
+
+    public function setObjectAwareFields(array $_objectAwareFields): void
+    {
+        $this->__objectAwareFields = $_objectAwareFields;
+    }
+
+    public function addObjectAwareField(string $fieldName): void
+    {
+        if(!in_array($fieldName, $this->__objectAwareFields)) {
+            $this->__objectAwareFields[] = $fieldName;
+        }
     }
 
     /**
@@ -721,7 +738,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         } else {
             // We're reloading from cache, optimize by only reloading known object aware fields (instead of verifying
             // all fields within this object).
-            foreach ($this->__objectAwareFields as $objectAwareField => $exists) {
+            foreach ($this->getObjectAwareFields() as $objectAwareField) {
                 if (isset($this->$objectAwareField) && $this->$objectAwareField instanceof ObjectAwareFieldInterface) {
                     $this->$objectAwareField->setObject($this);
                 }

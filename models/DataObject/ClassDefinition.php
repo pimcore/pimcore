@@ -1212,6 +1212,16 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
 
     public function jsonSerialize(): mixed
     {
-        return Closure::bind(fn ($obj) => get_object_vars($obj), $this, $this)($this); //public + protected properties
+        $data = Closure::bind(fn ($obj) => get_object_vars($obj), $this, $this)($this); //public + protected properties
+        //unset protected properties.
+        foreach ($this->getProtectedProperties() as $property) {
+            unset($data[$property]);
+        }
+        return $data;
+    }
+
+    protected function getProtectedProperties(): array
+    {
+        return ['encryption', 'encryptedTables', 'dao'];
     }
 }

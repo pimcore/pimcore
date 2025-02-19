@@ -614,7 +614,7 @@ class Dao extends Model\Dao\AbstractDao
                 ]
             );
         } else {
-            $object->__objectAwareFields['localizedfields'] = true;
+            $object->addObjectAwareField('localizedfields');
             $container = $this->model->getClass();
             $data = $this->db->fetchAllAssociative(
                 'SELECT * FROM '.$this->getTableName().' WHERE ooo_id = ? AND language IN ('.implode(
