@@ -21,11 +21,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
  */
 trait OptionsProviderTrait
 {
-    public ?string $optionsProviderType = null;
+    protected ?string $optionsProviderType = null;
 
-    public ?string $optionsProviderClass = null;
+    protected ?string $optionsProviderClass = null;
 
-    public ?string $optionsProviderData = null;
+    protected ?string $optionsProviderData = null;
 
     public function getOptionsProviderType(): ?string
     {

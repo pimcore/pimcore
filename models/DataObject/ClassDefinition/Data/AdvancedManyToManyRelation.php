@@ -44,7 +44,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      *
      * @var string[]
      */
-    public array $columnKeys;
+    protected array $columnKeys;
 
     /**
      * Type for the generated phpdoc

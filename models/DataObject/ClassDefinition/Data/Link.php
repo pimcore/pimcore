@@ -33,17 +33,17 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @var null|string[]
      */
-    public ?array $allowedTypes = null;
+    protected ?array $allowedTypes = null;
 
     /**
      * @var null|string[]
      */
-    public ?array $allowedTargets = null;
+    protected ?array $allowedTargets = null;
 
     /**
      * @var null|string[]
      */
-    public ?array $disabledFields = null;
+    protected ?array $disabledFields = null;
 
     /**
      *

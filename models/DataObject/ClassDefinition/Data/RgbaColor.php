@@ -26,7 +26,6 @@ use Pimcore\Tool\Serialize;
 class RgbaColor extends Data implements
     ResourcePersistenceAwareInterface,
     QueryResourcePersistenceAwareInterface,
-    TypeDeclarationSupportInterface,
     EqualComparisonInterface,
     VarExporterInterface,
     NormalizerInterface,

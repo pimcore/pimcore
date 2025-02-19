@@ -1046,4 +1046,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     {
         return 'localizedfields';
     }
+
+    protected function getProtectedProperties(): array
+    {
+        $arr = ['referencedFields'];
+        return array_merge($arr, parent::getProtectedProperties());
+    }
 }

@@ -39,7 +39,7 @@ abstract class AbstractRelations extends Data implements
     use DataObject\Traits\ContextPersistenceTrait;
     use Data\Extension\Relation;
 
-    const RELATION_ID_SEPARATOR = '$$';
+    protected const RELATION_ID_SEPARATOR = '$$';
 
     /**
      * Set of allowed classes

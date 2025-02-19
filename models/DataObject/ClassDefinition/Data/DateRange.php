@@ -42,7 +42,7 @@ class DateRange extends Data implements
      *
      * @var string[] $columnType
      */
-    public array $columnType = [
+    protected array $columnType = [
         'start_date' => 'bigint(20)',
         'end_date' => 'bigint(20)',
     ];

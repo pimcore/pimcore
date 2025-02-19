@@ -38,7 +38,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
     public function init(): void
     {
-        return;
     }
 
     protected function getInheritanceHelper(): Dao\InheritanceHelper

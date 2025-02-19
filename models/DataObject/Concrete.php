@@ -55,7 +55,17 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @var array
      */
-    public const SYSTEM_COLUMN_NAMES = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname', 'index'];
+    public const array SYSTEM_COLUMN_NAMES = [
+        'id',
+        'fullpath',
+        'key',
+        'published',
+        'creationDate',
+        'modificationDate',
+        'filename',
+        'classname',
+        'index'
+    ];
 
     /**
      * @internal

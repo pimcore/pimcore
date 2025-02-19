@@ -40,7 +40,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @deprecated since pimcore 11.2, will be removed in pimcore 12
      *
      */
-    public string $algorithm = self::HASH_FUNCTION_PASSWORD_HASH;
+    protected string $algorithm = self::HASH_FUNCTION_PASSWORD_HASH;
 
     /**
      * @internal
@@ -48,7 +48,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @deprecated since pimcore 11.2, will be removed in pimcore 12
      *
      */
-    public string $salt = '';
+    protected string $salt = '';
 
     /**
      * @internal
@@ -56,9 +56,9 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @deprecated since pimcore 11.2, will be removed in pimcore 12
      *
      */
-    public string $saltlocation = '';
+    protected string $saltlocation = '';
 
-    public ?int $minimumLength = null;
+    protected ?int $minimumLength = null;
 
     public function getMinimumLength(): ?int
     {

@@ -29,7 +29,7 @@ use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
  */
 trait DefaultValueTrait
 {
-    public string $defaultValueGenerator = '';
+    protected string $defaultValueGenerator = '';
 
     abstract protected function doGetDefaultValue(Concrete $object, array $context = []): mixed;
 

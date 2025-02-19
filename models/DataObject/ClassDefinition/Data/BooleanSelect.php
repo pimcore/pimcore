@@ -89,7 +89,7 @@ class BooleanSelect extends Data implements
      *
      * @var array<int, array{key: string, value: int}>
      */
-    public array $options = self::DEFAULT_OPTIONS;
+    protected array $options = self::DEFAULT_OPTIONS;
 
     public function getOptions(): array
     {

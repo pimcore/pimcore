@@ -1343,8 +1343,15 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $data = Closure::bind(fn ($obj) => get_object_vars($obj), $this, $this)($this); //public + protected properties
         $data['fieldtype'] = $this->getFieldType();
         $data['datatype'] = 'data';
-        unset($data['blockedVarsForExport']);
+        foreach ($this->getProtectedProperties() as $property) {
+            unset($data[$property]);
+        }
 
         return $data;
+    }
+
+    protected function getProtectedProperties(): array
+    {
+        return ['blockedVarsForExport'];
     }
 }

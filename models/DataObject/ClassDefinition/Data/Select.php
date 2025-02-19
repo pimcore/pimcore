@@ -28,7 +28,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Select extends Data implements
     ResourcePersistenceAwareInterface,
     QueryResourcePersistenceAwareInterface,
-    TypeDeclarationSupportInterface,
     EqualComparisonInterface,
     VarExporterInterface,
     JsonSerializable,

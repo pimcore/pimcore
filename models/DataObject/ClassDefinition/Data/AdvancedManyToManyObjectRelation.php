@@ -45,7 +45,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      *
      * @var string[]|string|null
      */
-    public array|string|null $visibleFields = null;
+    protected array|string|null $visibleFields = null;
 
     /**
      * @internal
@@ -58,7 +58,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      *
      * @var string[]
      */
-    public array $columnKeys = [];
+    protected array $columnKeys = [];
 
     /**
      * @internal

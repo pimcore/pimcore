@@ -32,10 +32,8 @@ use Throwable;
 class Multiselect extends Data implements
     ResourcePersistenceAwareInterface,
     QueryResourcePersistenceAwareInterface,
-    TypeDeclarationSupportInterface,
     EqualComparisonInterface,
     VarExporterInterface,
-    JsonSerializable,
     NormalizerInterface,
     LayoutDefinitionEnrichmentInterface,
     FieldDefinitionEnrichmentInterface,
