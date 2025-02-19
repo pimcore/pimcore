@@ -40,7 +40,7 @@
 
 #### [Workflow]
 - Method `getWorkflowByName()` now returns `?WorkflowInterface` instead of `?object`. This also affected the `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php`.
-- Methods `sendPimcoreNotification` and `sendWorkflowEmailNotification` in `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php` now accept the `Transition` object itself, rather than the `string` label.
+- Methods `sendPimcoreNotification` and `sendWorkflowEmailNotification` in `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php` now accept the `Transition` itself, rather than the `string` label.
 
 ## Pimcore 11.6.0
 ### Elements
