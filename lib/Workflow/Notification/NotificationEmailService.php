@@ -30,7 +30,6 @@ use Pimcore\Tool;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
-use Symfony\Component\Workflow\Workflow;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;

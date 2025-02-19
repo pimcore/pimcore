@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Event\Workflow;
 
 use Pimcore\Model\Element\ElementInterface;
-use Symfony\Component\Workflow\Workflow;
+use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class NotificationEmailEvent extends Event
@@ -25,7 +25,7 @@ class NotificationEmailEvent extends Event
     public function __construct(
         private readonly array $users,
         private readonly array $roles,
-        private readonly Workflow $workflow,
+        private readonly WorkflowInterface $workflow,
         private readonly string $subjectType,
         private readonly ElementInterface $subject,
         private readonly string $action,
@@ -45,7 +45,7 @@ class NotificationEmailEvent extends Event
         return $this->roles;
     }
 
-    public function getWorkflow(): Workflow
+    public function getWorkflow(): WorkflowInterface
     {
         return $this->workflow;
     }
