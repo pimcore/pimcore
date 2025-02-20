@@ -16,33 +16,34 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\ApplicationLoggerBundle\DependencyInjection;
 
+use Monolog\Level;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-class PimcoreApplicationLoggerExtension extends Extension implements PrependExtensionInterface
+class PimcoreApplicationLoggerExtension extends Extension
 {
-    public function load(array $configs, \Symfony\Component\DependencyInjection\ContainerBuilder $container): void
+    public function load(array $configs, ContainerBuilder $container): void
     {
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
+
+        $container->setParameter(
+            'pimcore_application_logger_db_min_level_or_list',
+            $config['db']['min_level_or_list'] ?? Level::Error
+        );
+
+        $container->setParameter(
+            'pimcore_application_logger_db_max_level',
+            $config['db']['max_level'] ?? Level::Emergency
+        );
+
         $loader = new YamlFileLoader(
             $container,
             new FileLocator(__DIR__ . '/../../config')
         );
 
         $loader->load('services.yaml');
-    }
-
-    public function prepend(ContainerBuilder $container): void
-    {
-        if ($container->hasExtension('pimcore_admin')) {
-            $loader = new YamlFileLoader(
-                $container,
-                new FileLocator(__DIR__ . '/../../config')
-            );
-
-            $loader->load('admin-classic.yaml');
-        }
     }
 }

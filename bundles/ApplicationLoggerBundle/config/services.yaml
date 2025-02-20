@@ -48,7 +48,14 @@ services:
     Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger:
         public: true
         calls:
-            - [ addWriter, [ '@Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb' ] ]
+            - [
+                addWriter,
+                [
+                    '@Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb',
+                    '%pimcore_application_logger_db_min_level_or_list%',
+                    '%pimcore_application_logger_db_max_level%'
+                ]
+            ]
 
     Pimcore\Log\ApplicationLogger:
         public: true
