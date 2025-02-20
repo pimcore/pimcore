@@ -1643,30 +1643,33 @@ class Service extends Model\Element\Service
 
         foreach ($fields as $field) {
             $key = $field['key'];
-            $validLanguages = static::expandGridColumnForExport($helperDefinitions, $key);
-            if (static::isHelperGridColumnConfig($key) && $validLanguages) {
-                $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions, $header);
+            if (static::isHelperGridColumnConfig($key)) {
+                $validLanguages = static::expandGridColumnForExport($helperDefinitions, $key);
+                if ($validLanguages) {
+                    $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions, $header);
 
-                foreach ($validLanguages as $validLanguage) {
-                    $localeService->setLocale($validLanguage);
-                    $fieldData = self::getCsvFieldData($currentLocale, $key, $object, $validLanguage, $helperDefinitions);
-                    $localizedFieldKey = $key . '-' . $validLanguage;
-                    if ($returnMappedFieldNames && !isset($mappedFieldnames[$localizedFieldKey])) {
-                        $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
-                        $objectData[$mappedFieldnames[$localizedFieldKey]] = $fieldData;
-                    } else {
-                        $objectData[$localizedFieldKey] = $fieldData;
+                    foreach ($validLanguages as $validLanguage) {
+                        $localeService->setLocale($validLanguage);
+                        $fieldData = self::getCsvFieldData($currentLocale, $key, $object, $validLanguage, $helperDefinitions);
+                        $localizedFieldKey = $key . '-' . $validLanguage;
+                        if ($returnMappedFieldNames && !isset($mappedFieldnames[$localizedFieldKey])) {
+                            $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
+                            $objectData[$mappedFieldnames[$localizedFieldKey]] = $fieldData;
+                        } else {
+                            $objectData[$localizedFieldKey] = $fieldData;
+                        }
                     }
+                    $localeService->setLocale($currentLocale);
+                    continue;
                 }
-                $localeService->setLocale($currentLocale);
+            }
+
+            $fieldData = self::getCsvFieldData($requestedLanguage, $key, $object, $requestedLanguage, $helperDefinitions);
+            if ($returnMappedFieldNames && !isset($mappedFieldnames[$key])) {
+                $mappedFieldnames[$key] = self::mapFieldname($field, $helperDefinitions, $header);
+                $objectData[$mappedFieldnames[$key]] = $fieldData;
             } else {
-                $fieldData = self::getCsvFieldData($requestedLanguage, $key, $object, $requestedLanguage, $helperDefinitions);
-                if ($returnMappedFieldNames && !isset($mappedFieldnames[$key])) {
-                    $mappedFieldnames[$key] = self::mapFieldname($field, $helperDefinitions, $header);
-                    $objectData[$mappedFieldnames[$key]] = $fieldData;
-                } else {
-                    $objectData[$key] = $fieldData;
-                }
+                $objectData[$key] = $fieldData;
             }
         }
 
