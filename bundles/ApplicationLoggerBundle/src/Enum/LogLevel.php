@@ -31,14 +31,14 @@ enum LogLevel: int
 
     public static function getLogLevel(string|int $value): self {
         if(is_int($value)) {
-            $enum = self::tryFrom($value);
+            $enum = static::tryFrom($value);
             if($enum !== null) {
                 return $enum;
             }
             throw new LogLevelNotFoundException();
         }
 
-        foreach(self::cases() as $case) {
+        foreach(static::cases() as $case) {
             if($case->name === $value) {
                 return $case;
             }
