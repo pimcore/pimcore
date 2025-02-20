@@ -1660,6 +1660,7 @@ class Service extends Model\Element\Service
                         }
                     }
                     $localeService->setLocale($currentLocale);
+
                     continue;
                 }
             }
