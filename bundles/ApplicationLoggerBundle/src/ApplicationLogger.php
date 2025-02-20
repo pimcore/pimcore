@@ -59,7 +59,7 @@ class ApplicationLogger implements LoggerInterface
     public static function getInstance(string $component = 'default', bool $initDbHandler = false): ApplicationLogger
     {
         $container = Pimcore::getContainer();
-        if(!($container instanceof ContainerInterface)) {
+        if (!($container instanceof ContainerInterface)) {
             throw new ContainerNotFoundException();
         }
 
@@ -88,7 +88,7 @@ class ApplicationLogger implements LoggerInterface
         bool $bubble = true
     ): void
     {
-        if($writer instanceof LoggerInterface) {
+        if ($writer instanceof LoggerInterface) {
             $this->loggers[] = $writer;
 
             return;
