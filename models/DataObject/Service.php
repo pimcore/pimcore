@@ -1643,8 +1643,7 @@ class Service extends Model\Element\Service
 
         foreach ($fields as $field) {
             $key = $field['key'];
-            if (static::isHelperGridColumnConfig($key)) {
-                $validLanguages = static::expandGridColumnForExport($helperDefinitions, $key) ?? [];
+            if (static::isHelperGridColumnConfig($key) && $validLanguages = static::expandGridColumnForExport($helperDefinitions, $key)) {
                 $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions, $header);
 
                 foreach ($validLanguages as $validLanguage) {
