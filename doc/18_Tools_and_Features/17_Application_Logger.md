@@ -28,17 +28,19 @@ The application logger allows configuration of minimum, maximum or fixed log lev
 
 Example configuration for logging all messages with a level of *debug* or *info*.
 ```yaml
-pimcore_application_logger:
-    db:
-        min_level_or_list: ['debug', 'info']        
+applicationlog:
+    loggers:
+        db:
+            min_level_or_list: ['debug', 'info']        
 ```
 
 Example configuration for logging all messages with minimum level *info* and maximum level *emergency*.
 ```yaml
-pimcore_application_logger:
-    db:
-        min_level_or_list: 'info'
-        max_level: 'emergency'
+applicationlog:
+    loggers:
+        db:
+            min_level_or_list: 'info'
+            max_level: 'emergency'
 ```
 
 ## How to create log entries
