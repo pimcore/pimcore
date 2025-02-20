@@ -164,7 +164,14 @@ final class Thumbnail implements ThumbnailInterface
     private function addCacheBuster(string $path, array $options, Asset $asset): string
     {
         if (isset($options['cacheBuster']) && $options['cacheBuster']) {
-            if (!str_starts_with($path, 'http') && !str_starts_with($path, '/cache-buster-')) {
+             if (
+            isset($options['cacheBuster']) && 
+            $options['cacheBuster'] && 
+            !str_starts_with($path, 'http') && 
+            !str_starts_with($path, '/cache-buster-')
+        ) {
+            $path = '/cache-buster-' . $asset->getVersionCount() . $path;
+        }
                 $path = '/cache-buster-' . $asset->getVersionCount() . $path;
             }
         }
