@@ -104,11 +104,6 @@ class RoutingListener implements EventSubscriberInterface
     {
         $site = null;
 
-//        var_dump('resolve site');
-//        var_dump($path);
-//        var_dump(!$this->requestHelper->isFrontendRequestByAdmin($request));
-//        var_dump($this->requestHelper->isObjectPreviewRequestByAdmin($request));
-
         // check for a registered site
         // do not initialize a site if it is a "special" admin request
         if (!$this->requestHelper->isFrontendRequestByAdmin($request)) {
@@ -116,18 +111,10 @@ class RoutingListener implements EventSubscriberInterface
             $host = $request->getHost();
             $site = Site::getByDomain($host);
         } elseif ($this->requestHelper->isObjectPreviewRequestByAdmin($request)) {
-            var_dump('isObjectPreview');
-
             // When rendering an object's preview tab, resolve the site via a parameter
             $siteId = $request->query->getInt(PreviewGeneratorInterface::PARAMETER_SITE);
-//            var_dump($siteId);
-//            exit();
-
             $site = Site::getById($siteId);
         }
-
-//        var_dump($site);
-//        exit;
 
         if ($site) {
             $path = $site->getRootPath() . $path;
@@ -175,9 +162,9 @@ class RoutingListener implements EventSubscriberInterface
                     $hostRedirect = $site->getMainDomain();
                 }
             } else {
-                //if (!$this->requestHelper->isFrontendRequestByAdmin()) {
+                if (!$this->requestHelper->isFrontendRequestByAdmin()) {
                     $hostRedirect = $this->resolveConfigDomainRedirectHost($request);
-                //}
+                }
             }
         }
 
