@@ -20,14 +20,14 @@ use Pimcore\Bundle\ApplicationLoggerBundle\Exception\LogLevelNotFoundException;
 
 enum LogLevel: int
 {
-    case Emergency = 0;
-    case Alert = 1;
-    case Critical = 2;
-    case Error = 3;
-    case Warning = 4;
-    case Notice = 5;
-    case Info = 6;
-    case Debug = 7;
+    case Emergency = 1;
+    case Alert = 2;
+    case Critical = 3;
+    case Error = 4;
+    case Warning = 5;
+    case Notice = 6;
+    case Info = 7;
+    case Debug = 8;
 
     public static function getLogLevel(string|int $value): self
     {
@@ -47,5 +47,17 @@ enum LogLevel: int
         }
 
         throw new LogLevelNotFoundException();
+    }
+
+    public static function toArray(): array {
+        return array_map(
+            static function($case) {
+                return [
+                    'key' => $case->value,
+                    'value' => $case->name
+                ];
+            },
+            static::cases()
+        );
     }
 }

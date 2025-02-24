@@ -80,3 +80,6 @@ services:
             - '@doctrine.dbal.default_connection'
         tags:
             - { name: pimcore.maintenance.task, type: logmaintenance }
+
+    Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface:
+        class: Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationService

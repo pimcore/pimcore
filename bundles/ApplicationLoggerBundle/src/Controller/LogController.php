@@ -19,8 +19,10 @@ namespace Pimcore\Bundle\ApplicationLoggerBundle\Controller;
 use Carbon\Carbon;
 use DateTime;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Types;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
+use Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
@@ -48,33 +50,23 @@ class LogController extends UserAwareController implements KernelControllerEvent
     }
 
     /**
-     * @Route("/log/show", name="pimcore_admin_bundle_applicationlogger_log_show", methods={"GET", "POST"})
+     * @Route("/log/show", name="pimcore_admin_bundle_applicationlogger_log_show", methods={"POST"})
      *
      *
      */
-    public function showAction(Request $request, Connection $db): JsonResponse
+    public function showAction(
+        Request $request,
+        Connection $db,
+        TranslationServiceInterface $translationService
+    ): JsonResponse
     {
         $requestSource = $request->request;
-
-        //TODO: Remove the GET method support in Pimcore 12
-        if ($request->isMethod('GET')) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '11.5.0',
-                sprintf('Calling route "%s" (%s) via "GET" method is deprecated and will not be supported anymore in 12.
-                Please use "POST" method instead.',
-                    'pimcore_admin_bundle_applicationlogger_log_show',
-                    __METHOD__
-                )
-            );
-            $requestSource = $request->query;
-        }
 
         $this->checkPermission('application_logging');
 
         $qb = $db->createQueryBuilder();
         $qb
-            ->select('*')
+            ->select('*, priority + 0 AS priority_key')
             ->from(ApplicationLoggerDb::TABLE_NAME)
             ->setFirstResult($requestSource->getInt('start', 0))
             ->setMaxResults($requestSource->getInt('limit', 50));
@@ -95,7 +87,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $priority = $requestSource->getString('priority');
         if (!empty($priority)) {
             $qb->andWhere($qb->expr()->eq('priority', ':priority'));
-            $qb->setParameter('priority', $priority);
+            $qb->setParameter('priority', $priority, ParameterType::INTEGER);
         }
 
         if ($fromDate = $this->parseDateObject($requestSource->getString('fromDate'), $requestSource->getString('fromTime'))) {
@@ -148,7 +140,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
                 'message' => $row['message'],
                 'date' => $row['timestamp'],
                 'timestamp' => $carbonTs->getTimestamp(),
-                'priority' => $row['priority'],
+                'priority' => $translationService->getTranslatedLogLevel($row['priority_key']),
                 'fileobject' => $fileobject,
                 'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],
@@ -190,14 +182,20 @@ class LogController extends UserAwareController implements KernelControllerEvent
      *
      *
      */
-    public function priorityJsonAction(Request $request): JsonResponse
+    public function priorityJsonAction(
+        TranslationServiceInterface $translationService
+    ): JsonResponse
     {
         $this->checkPermission('application_logging');
 
-        $priorities[] = ['key' => '', 'value' => '-'];
-        foreach (ApplicationLoggerDb::getPriorities() as $key => $p) {
-            $priorities[] = ['key' => $key, 'value' => $p];
-        }
+        $priorities = $translationService->getTranslatedLogLevels();
+        $priorities = [
+            [
+                'key' => '',
+                'value' => '-'
+            ],
+            ... $priorities
+        ];
 
         return $this->jsonResponse(['priorities' => $priorities]);
     }

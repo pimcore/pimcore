@@ -350,14 +350,14 @@ final class Configuration implements ConfigurationInterface
                                 ->scalarNode('filter_priority')
                                     ->info(
                                         'Filter threshold for email summary, choose one of: '
-                                        . '7 (debug),'
-                                        . '6 (info),'
-                                        . '5 (notice),'
-                                        . '4 (warning),'
-                                        . '3 (error),'
-                                        . '2 (critical),'
-                                        . '1 (alert),'
-                                        . ' 0 (emerg).'
+                                        . '8 (debug),'
+                                        . '7 (info),'
+                                        . '6 (notice),'
+                                        . '5 (warning),'
+                                        . '4 (error),'
+                                        . '3 (critical),'
+                                        . '2 (alert),'
+                                        . '1 (emerg).'
                                         .' You can use the integer or the string representation.'
                                     )
                                     ->defaultNull()

@@ -1,6 +1,22 @@
 # Upgrade Notes
 
 ## Pimcore 12.0.0
+
+#### [ApplicationLoggerBundle]
+
+- Log levels can be translated now. The keys are based on the integer representation of the log level:
+`application_logger_log_level_1` = Emergency,
+`application_logger_log_level_2` = Alert,
+`application_logger_log_level_3` = Critical,
+`application_logger_log_level_4` = Error,
+`application_logger_log_level_5` = Warning,
+`application_logger_log_level_6` = Notice,
+`application_logger_log_level_7` = Info,
+`application_logger_log_level_8` = Debug,  
+Please make sure to add translations for log levels.
+
+- `filter_priority` configuration changed. LogLevels now start at 1 (emergency) - 8 (debug) instead of 0 (emergency) - 7 (debug). Please adjust your configuration accordingly.
+
 #### [Bundle]
 - Removed compatibility layer static `$bundleManager`
 
