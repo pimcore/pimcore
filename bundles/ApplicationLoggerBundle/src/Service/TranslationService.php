@@ -29,14 +29,13 @@ readonly class TranslationService implements TranslationServiceInterface
 
     public function getTranslatedLogLevels(): array
     {
-        $logLevels = LogLevel::toArray();
+        $logLevels = LogLevel::cases();
         $translatedLogLevels = [];
 
         foreach ($logLevels as $logLevel) {
-            $key = $logLevel['key'];
-            $translatedValue = $this->getTranslatedLogLevel($key);
+            $translatedValue = $this->getTranslatedLogLevel($logLevel->value);
             $translatedLogLevels[] = [
-                'key' => $key,
+                'key' => $logLevel->value,
                 'value' => $translatedValue
             ];
         }

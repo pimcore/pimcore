@@ -66,9 +66,4 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
         return $components;
     }
-
-    public static function getPriorities(): array
-    {
-        return LogLevel::toArray();
-    }
 }
