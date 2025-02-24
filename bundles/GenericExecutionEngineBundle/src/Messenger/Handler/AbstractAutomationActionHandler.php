@@ -204,11 +204,12 @@ abstract class AbstractAutomationActionHandler
             );
         }
 
-        if(is_array($configValue)) {
+        if (is_array($configValue)) {
             $replacedValue = [];
-            foreach($configValue as $key => $value) {
+            foreach ($configValue as $key => $value) {
                 $replacedValue[$key] = $this->recursivelyReplaceConfigValuesWithEnvVariables($message, $value);
             }
+
             return $replacedValue;
         }
 
