@@ -15,9 +15,6 @@ namespace Pimcore\Bundle\ApplicationLoggerBundle\Service;
 
 interface TranslationServiceInterface
 {
-    /**
-     * @return array<int, string>
-     */
     public function getTranslatedLogLevels(): array;
 
     public function getTranslatedLogLevel(int $key): string;

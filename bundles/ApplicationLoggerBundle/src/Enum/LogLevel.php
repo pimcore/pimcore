@@ -49,8 +49,9 @@ enum LogLevel: int
         throw new LogLevelNotFoundException();
     }
 
-    public static function toArray(): array {
-        return array_map(
+    public static function toArray(): array
+    {
+        return array_map (
             static function($case) {
                 return [
                     'key' => $case->value,
