@@ -21,9 +21,11 @@ use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
+use Pimcore\Model\UserInterface;
 use Pimcore\Model\Version;
 use Pimcore\Security\User\UserLoader;
 use Psr\Log\LoggerAwareInterface;
@@ -94,7 +96,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             // editmode, pimcore_preview & pimcore_version
             if ($user) {
                 $document = $this->handleAdminUserDocumentParams($request, $document, $user);
-                $this->handleObjectParams($request);
+                $this->handleObjectParams($request, $user);
             }
 
             if ($document) {
@@ -214,20 +216,75 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    protected function handleObjectParams(Request $request): void
+    protected function handleObjectParams(Request $request, UserInterface $user): void
     {
-        // object preview
-        if ($objectId = $request->query->getInt('pimcore_object_preview')) {
-            if ($object = Service::getElementFromSession('object', $objectId, $request->getSession()->getId())) {
-                $this->logger->debug('Loading object {object} ({objectId}) from session', [
-                    'object' => $object->getFullPath(),
-                    'objectId' => $object->getId(),
-                ]);
 
-                // TODO remove \Pimcore\Cache\Runtime
-                // add the object to the registry so every call to DataObject::getById() will return this object instead of the real one
-                RuntimeCache::set('object_' . $object->getId(), $object);
-            }
+        if ($request->query->has('pimcore_studio_preview')) {
+            $this->handleStudioPreview($request->query->getInt('pimcore_object_preview'), $user);
+
+            return;
         }
+
+        $this->handleClassicAdminPreview($request, $request->query->getInt('pimcore_object_preview'));
+    }
+
+    private function handleClassicAdminPreview(Request $request, int $id): void
+    {
+        $object = Service::getElementFromSession('object', $id, $request->getSession()->getId());
+        if (!$object instanceof Concrete) {
+            return;
+        }
+
+        $this->logObjectLoading(
+            $object,
+            'Loading object {object} ({objectId}) for classic admin preview from session'
+        );
+
+        $this->cacheObject($object);
+    }
+
+    private function handleStudioPreview(int $id, UserInterface $user): void
+    {
+        $object = $this->getLatestVersion($id, $user);
+        if (!$object instanceof Concrete) {
+            return;
+        }
+
+        $this->logObjectLoading(
+            $object,
+            'Loading object {object} ({objectId}) for studio preview'
+        );
+
+        $this->cacheObject($object);
+    }
+
+    private function getLatestVersion(int $id, UserInterface $user): ?Concrete
+    {
+        $dataObject = Service::getElementById('object', $id);
+
+        if (!$dataObject instanceof Concrete) {
+            return null;
+        }
+
+        $version = $dataObject->getLatestVersion($user->getId());
+
+        if ($version === null || !$version->getData() instanceof Concrete) {
+            return $dataObject;
+        }
+
+        return $version->getData();
+    }
+
+    private function logObjectLoading(Concrete $object, string $message): void
+    {
+        $this->logger->debug($message, [
+            'object' => $object->getFullPath(),
+            'objectId' => $object->getId(),
+        ]);
+    }
+
+    private function cacheObject(Concrete $object): void
+    {
+        RuntimeCache::set('object_' . $object->getId(), $object);
     }
 }

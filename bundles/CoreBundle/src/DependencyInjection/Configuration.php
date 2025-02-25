@@ -319,6 +319,21 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('applicationlog')
                 ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('loggers')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('db')
+                                    ->children()
+                                        ->variableNode('min_level_or_list')
+                                            ->defaultValue('debug')
+                                        ->end()
+                                        ->scalarNode('max_level')
+                                            ->defaultValue('emergency')
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
                         ->arrayNode('mail_notification')
                             ->children()
                                 ->booleanNode('send_log_summary')
@@ -332,7 +347,18 @@ final class Configuration implements ConfigurationInterface
                                     ->defaultFalse()
                                 ->end()
                                 ->scalarNode('filter_priority')
-                                    ->info('Filter threshold for email summary, choose one of: 7 (debug), 6 (info), 5 (notice), 4 (warning), 3 (error), 2 (critical), 1 (alert) ,0 (emerg)')
+                                    ->info(
+                                        'Filter threshold for email summary, choose one of: '
+                                        . '8 (debug),'
+                                        . '7 (info),'
+                                        . '6 (notice),'
+                                        . '5 (warning),'
+                                        . '4 (error),'
+                                        . '3 (critical),'
+                                        . '2 (alert),'
+                                        . '1 (emerg).'
+                                        .' You can use the integer or the string representation.'
+                                    )
                                     ->defaultNull()
                                 ->end()
                                 ->scalarNode('mail_receiver')
@@ -791,6 +817,9 @@ final class Configuration implements ConfigurationInterface
                                         ->children()
                                             ->scalarNode('id')->end()
                                             ->scalarNode('group')->end()
+                                            ->booleanNode('adminOnly')
+                                                ->defaultFalse()
+                                            ->end()
                                             ->scalarNode('useTraits')->end()
                                             ->scalarNode('implementsInterfaces')->end()
                                             ->arrayNode('selectOptions')

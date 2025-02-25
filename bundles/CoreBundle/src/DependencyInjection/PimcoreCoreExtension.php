@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
 use InvalidArgumentException;
+use Monolog\Level;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
@@ -143,6 +144,16 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             static function (ChildDefinition $definition, AsAreabrick $attribute): void {
                 $definition->addTag('pimcore.area.brick', ['id' => $attribute->id]);
             },
+        );
+
+        $container->setParameter(
+            'pimcore_application_logger_db_min_level_or_list',
+            $config['applicationlog']['loggers']['db']['min_level_or_list'] ?? Level::Debug
+        );
+
+        $container->setParameter(
+            'pimcore_application_logger_db_max_level',
+            $config['applicationlog']['loggers']['db']['max_level'] ?? Level::Emergency
         );
     }
 
