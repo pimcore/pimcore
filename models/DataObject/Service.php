@@ -1659,14 +1659,14 @@ class Service extends Model\Element\Service
                     }
                 }
                 $localeService->setLocale($currentLocale);
+            }
+
+            $fieldData = self::getCsvFieldData($requestedLanguage, $key, $object, $requestedLanguage, $helperDefinitions);
+            if ($returnMappedFieldNames && !isset($mappedFieldnames[$key])) {
+                $mappedFieldnames[$key] = self::mapFieldname($field, $helperDefinitions, $header);
+                $objectData[$mappedFieldnames[$key]] = $fieldData;
             } else {
-                $fieldData = self::getCsvFieldData($requestedLanguage, $key, $object, $requestedLanguage, $helperDefinitions);
-                if ($returnMappedFieldNames && !isset($mappedFieldnames[$key])) {
-                    $mappedFieldnames[$key] = self::mapFieldname($field, $helperDefinitions, $header);
-                    $objectData[$mappedFieldnames[$key]] = $fieldData;
-                } else {
-                    $objectData[$key] = $fieldData;
-                }
+                $objectData[$key] = $fieldData;
             }
         }
 
