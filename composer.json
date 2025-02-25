@@ -143,7 +143,7 @@
     "codeception/codeception": "^5.0.3",
     "codeception/module-symfony": "^3.1.0",
     "composer/composer": "*",
-    "ergebnis/phpstan-rules": "^2.6.1",
+    "ergebnis/phpstan-rules": "^2.8.0",
     "gotenberg/gotenberg-php": "^2.4",
     "phpstan/phpstan": "2.1.6",
     "phpstan/phpstan-symfony": "^2.0.2",
