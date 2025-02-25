@@ -355,12 +355,6 @@ parameters:
 			path: lib/Image/Adapter/Imagick.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: lib/Image/Chromium.php
-
-		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
 			identifier: ergebnis.declareStrictTypes
 			count: 1

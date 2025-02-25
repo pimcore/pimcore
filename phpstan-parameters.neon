@@ -35,6 +35,8 @@ parameters:
             enabled: false
         finalInAbstractClass:
             enabled: false
+        noAssignByReference:
+            enabled: false
         noCompact:
             enabled: false
         noConstructorParameterWithDefaultValue:
@@ -49,11 +51,15 @@ parameters:
             enabled: false
         noNullableReturnTypeDeclaration:
             enabled: false
+        noParameterPassedByReference:
+            enabled: false
         noParameterWithContainerTypeDeclaration:
             enabled: false
         noParameterWithNullableTypeDeclaration:
             enabled: false
         noParameterWithNullDefaultValue:
+            enabled: false
+        noReturnByReference:
             enabled: false
         noSwitch:
             enabled: false
