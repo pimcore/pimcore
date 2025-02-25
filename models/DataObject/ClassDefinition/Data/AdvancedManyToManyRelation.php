@@ -71,9 +71,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
     protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
     {
-        $return = [];
 
         if (is_array($data)) {
+            $return = [];
             $counter = 1;
             foreach ($data as $metaObject) {
                 $element = $metaObject->getElement();
@@ -87,9 +87,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                 }
                 $counter++;
             }
+
+            return $return;
         }
 
-        return $return;
+        return null;
     }
 
     protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed

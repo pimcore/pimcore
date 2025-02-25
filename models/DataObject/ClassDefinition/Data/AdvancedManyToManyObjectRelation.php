@@ -79,9 +79,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
     protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
     {
-        $return = [];
-
         if (is_array($data)) {
+            $return = [];
             $counter = 1;
             foreach ($data as $metaObject) {
                 $object = $metaObject->getObject();
@@ -95,9 +94,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 }
                 $counter++;
             }
+
+            return $return;
         }
 
-        return $return;
+        return null;
     }
 
     protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed

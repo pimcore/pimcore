@@ -183,9 +183,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
     {
-        $return = [];
-
         if (is_array($data)) {
+            $return = [];
             $counter = 1;
             foreach ($data as $object) {
                 if ($object instanceof Element\ElementInterface) {
@@ -198,9 +197,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 }
                 $counter++;
             }
+
+            return $return;
         }
 
-        return $return;
+        return null;
     }
 
     protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
