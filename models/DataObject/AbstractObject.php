@@ -278,8 +278,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return DataObject\Listing
-     *
      * @throws Exception
      */
     public static function getList(array $config = []): Listing

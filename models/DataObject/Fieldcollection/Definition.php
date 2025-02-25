@@ -98,7 +98,7 @@ class Definition extends Model\AbstractModel
 
         try {
             $fc = RuntimeCache::get($cacheKey);
-            if (!$fc) {
+            if (!$fc instanceof Definition) {
                 throw new Exception('FieldCollection in registry is not valid');
             }
         } catch (Exception $e) {

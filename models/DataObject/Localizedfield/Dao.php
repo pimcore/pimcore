@@ -893,8 +893,8 @@ QUERY;
                 if ($container instanceof DataObject\Objectbrick\Definition) {
                     $containerKey = $context['containerKey'];
                     $container = DataObject\Objectbrick\Definition::getByKey($containerKey);
-                    $localizedfields = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
 
+                    $localizedfields = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
                     if ($localizedfields instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                         $fieldDefinitions = $localizedfields->getFieldDefinitions(['suppressEnrichment' => true]);
                     }
