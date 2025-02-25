@@ -24,7 +24,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
 use Pimcore\Workflow\MarkingStore\StateTableMarkingStore;
@@ -202,11 +201,17 @@ class Manager
         return $workflow;
     }
 
-    public function getWorkflowByName(string $workflowName): ?object
+    public function getWorkflowByName(string $workflowName): ?WorkflowInterface
     {
         $config = $this->getWorkflowConfig($workflowName);
 
-        return Pimcore::getContainer()->get($config->getType() . '.' . $workflowName);
+        $workflow = Pimcore::getContainer()?->get($config->getType() . '.' . $workflowName);
+
+        if (!$workflow instanceof WorkflowInterface) {
+            return null;
+        }
+
+        return $workflow;
     }
 
     /**

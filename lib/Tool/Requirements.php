@@ -389,7 +389,7 @@ final class Requirements
             'state' => $ffmpegBin ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
-        // Chromium or Gotenberg
+        // Gotenberg
         try {
             $htmlToImage = \Pimcore\Image\HtmlToImage::isSupported();
         } catch (Exception $e) {

@@ -93,6 +93,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             Model\DataObject\SelectOptions\Config::PROPERTY_USE_TRAITS,
             Model\DataObject\SelectOptions\Config::PROPERTY_IMPLEMENTS_INTERFACES,
             Model\DataObject\SelectOptions\Config::PROPERTY_GROUP,
+            Model\DataObject\SelectOptions\Config::PROPERTY_ADMIN_ONLY,
         ];
 
         foreach ($dataRaw as $key => $value) {

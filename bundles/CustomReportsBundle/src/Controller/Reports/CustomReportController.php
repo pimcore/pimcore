@@ -31,6 +31,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
+use function array_key_exists;
+use function count;
+use function is_array;
+use function strlen;
 
 /**
  * @Route("/custom-report")
@@ -187,6 +191,10 @@ class CustomReportController extends UserAwareController
             $data['yAxis'] = strlen($data['yAxis'] ?? '') ? [$data['yAxis']] : [];
         }
 
+        $adapter = Tool\Config::getAdapter($report->getDataSourceConfig());
+        $pagination = $adapter->getPagination();
+        $data['pagination'] = $pagination;
+
         foreach ($data as $key => $value) {
             $setter = 'set' . ucfirst($key);
             if (method_exists($report, $setter)) {
@@ -222,16 +230,18 @@ class CustomReportController extends UserAwareController
 
         try {
             $adapter = Tool\Config::getAdapter($configuration);
-            $columns = $adapter->getColumns($configuration);
+            $columns = $adapter->getColumnsWithMetadata($configuration);
+            $columnNames = array_map(fn ($column) => $column->getName(), $columns);
+            $columnMap = array_combine($columnNames, $columns);
 
             foreach ($columnConfiguration as $item) {
                 $name = $item['name'];
-                if (in_array($name, $columns)) {
-                    $result[] = $name;
-                    array_splice($columns, array_search($name, $columns), 1);
+                if (array_key_exists($name, $columnMap)) {
+                    $result[] = $columnMap[$name];
+                    unset($columnMap[$name]);
                 }
             }
-            foreach ($columns as $remainingColumn) {
+            foreach ($columnMap as $remainingColumn) {
                 $result[] = $remainingColumn;
             }
 
