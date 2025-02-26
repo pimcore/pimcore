@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\HttpKernel\BundleCollection;
 
+use InvalidArgumentException;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -40,7 +41,7 @@ class LazyLoadedItem extends AbstractItem
         string $source = self::SOURCE_PROGRAMATICALLY
     ) {
         if (!class_exists($className)) {
-            throw new \InvalidArgumentException(sprintf('The class "%s" does not exist', $className));
+            throw new InvalidArgumentException(sprintf('The class "%s" does not exist', $className));
         }
 
         $this->className = $className;

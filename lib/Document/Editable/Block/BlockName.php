@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Editable\Block;
 
+use JsonSerializable;
 use Pimcore\Model\Document\Editable;
 
 /**
@@ -25,7 +26,7 @@ use Pimcore\Model\Document\Editable;
  * Simple value object containing both name and real name of
  * a block.
  */
-final class BlockName implements \JsonSerializable
+final class BlockName implements JsonSerializable
 {
     private string $name;
 

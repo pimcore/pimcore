@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Adapter;
 
+use Exception;
+use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Console;
@@ -35,7 +37,7 @@ class LibreOffice extends Ghostscript
             if ($lo && parent::isAvailable()) { // LibreOffice and GhostScript is necessary
                 return true;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::notice($e->getMessage());
         }
 
@@ -54,7 +56,7 @@ class LibreOffice extends Ghostscript
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getLibreOfficeCli(): string
     {
@@ -73,7 +75,7 @@ class LibreOffice extends Ghostscript
             $message = "Couldn't load document " . $asset->getRealFullPath() . ' only Microsoft/Libre/Open-Office/PDF documents are currently supported';
             Logger::error($message);
 
-            throw new \Exception($message);
+            throw new Exception($message);
         }
 
         $this->asset = $asset;
@@ -100,7 +102,7 @@ class LibreOffice extends Ghostscript
             if (parent::isFileTypeSupported($asset->getFilename())) {
                 return parent::getPdf($asset);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // nothing to do, delegate to libreoffice
         }
 
@@ -112,7 +114,7 @@ class LibreOffice extends Ghostscript
         );
         $storage = Storage::get('asset_cache');
 
-        $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('soffice');
+        $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock('soffice');
         if (!$storage->fileExists($storagePath)) {
             $localAssetTmpPath = $asset->getLocalFile();
 
@@ -153,7 +155,7 @@ class LibreOffice extends Ghostscript
                 $message = "Couldn't convert document to PDF: " . $asset->getRealFullPath() . " with the command: '" . $process->getCommandLine() . "'";
                 Logger::error($message);
 
-                throw new \Exception($message);
+                throw new Exception($message);
             }
         }
 
@@ -177,7 +179,7 @@ class LibreOffice extends Ghostscript
             }
 
             return parent::getText($page, $asset, $path);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::debug($e->getMessage());
 
             return ''; // default empty string

@@ -17,6 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Composer;
 
+use JsonException;
+use RuntimeException;
+
 /**
  * @internal
  */
@@ -29,7 +32,7 @@ class PackageInfo
      *
      *
      */
-    public function getInstalledPackages(array|string $type = null): array
+    public function getInstalledPackages(array|string|null $type = null): array
     {
         $packages = $this->readInstalledPackages();
 
@@ -63,8 +66,8 @@ class PackageInfo
         if (is_file($path) && is_readable($path)) {
             try {
                 return json_decode(file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
-            } catch (\JsonException $e) {
-                throw new \RuntimeException(sprintf('Failed to parse composer file %s', $path), previous: $e);
+            } catch (JsonException $e) {
+                throw new RuntimeException(sprintf('Failed to parse composer file %s', $path), previous: $e);
             }
         }
 

@@ -29,6 +29,12 @@ class PimcoreTinymceBundle extends AbstractPimcoreBundle implements PimcoreBundl
 
     public function getCssPaths(): array
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '11.5.0',
+            'TinyMCE is deprecated, please use Quill (pimcore/quill-bundle) instead'
+        );
+
         return [
             '/bundles/pimcoretinymce/css/editor.css',
         ];
@@ -58,7 +64,7 @@ class PimcoreTinymceBundle extends AbstractPimcoreBundle implements PimcoreBundl
 
     public function getPath(): string
     {
-        return \dirname(__DIR__);
+        return dirname(__DIR__);
     }
 
     private function getAllJsPaths(): array

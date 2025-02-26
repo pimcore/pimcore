@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
+use const PASSWORD_ARGON2I;
+use const PASSWORD_ARGON2ID;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
@@ -330,7 +332,7 @@ final class Configuration implements ConfigurationInterface
                                     ->end()
                                     ->defaultFalse()
                                 ->end()
-                                ->integerNode('filter_priority')
+                                ->scalarNode('filter_priority')
                                     ->info('Filter threshold for email summary, choose one of: 7 (debug), 6 (info), 5 (notice), 4 (warning), 3 (error), 2 (critical), 1 (alert) ,0 (emerg)')
                                     ->defaultNull()
                                 ->end()
@@ -602,6 +604,10 @@ final class Configuration implements ConfigurationInterface
                                 ->defaultTrue()
                                 ->info('Scan PDF documents for unsafe JavaScript.')
                             ->end()
+                            ->enumNode('open_pdf_in_new_tab')
+                                ->values(['all-pdfs', 'only-unsafe', 'none'])
+                                ->defaultValue('only-unsafe')
+                            ->end()
                         ->end()
                     ->end()
                     ->arrayNode('versions')
@@ -648,6 +654,18 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('metadata')
                 ->addDefaultsIfNotSet()
                     ->children()
+                        ->scalarNode('alt')
+                            ->info('Set to replace the default metadata used for auto alt functionality in frontend')
+                            ->defaultValue('')
+                        ->end()
+                        ->scalarNode('copyright')
+                            ->info('Set to replace the default metadata used for copyright in frontend')
+                            ->defaultValue('')
+                        ->end()
+                        ->scalarNode('title')
+                            ->info('Set to replace the default metadata used for title in frontend')
+                            ->defaultValue('')
+                        ->end()
                         ->arrayNode('predefined')
                             ->addDefaultsIfNotSet()
                             ->children()
@@ -1115,8 +1133,8 @@ final class Configuration implements ConfigurationInterface
                                     ->values(array_filter([
                                         PASSWORD_DEFAULT,
                                         PASSWORD_BCRYPT,
-                                        defined('PASSWORD_ARGON2I') ? \PASSWORD_ARGON2I : null,
-                                        defined('PASSWORD_ARGON2ID') ? \PASSWORD_ARGON2ID : null,
+                                        defined('PASSWORD_ARGON2I') ? PASSWORD_ARGON2I : null,
+                                        defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : null,
                                     ]))
                                     ->defaultValue(PASSWORD_DEFAULT)
                                 ->end()

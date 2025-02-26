@@ -1,7 +1,7 @@
 {
   "TinymceBundle/build/tinymce.js": "/bundles/pimcoretinymce/build/tinymce/tinymce.js",
   "TinymceBundle/build/runtime.js": "/bundles/pimcoretinymce/build/tinymce/runtime.js",
-  "TinymceBundle/build/999.js": "/bundles/pimcoretinymce/build/tinymce/999.js",
+  "TinymceBundle/build/548.js": "/bundles/pimcoretinymce/build/tinymce/548.js",
   "TinymceBundle/build/skins/ui/tinymce-5/skin.js": "/bundles/pimcoretinymce/build/tinymce/skins/ui/tinymce-5//skin.js",
   "TinymceBundle/build/skins/ui/tinymce-5-dark/skin.js": "/bundles/pimcoretinymce/build/tinymce/skins/ui/tinymce-5-dark//skin.js",
   "TinymceBundle/build/skins/ui/tinymce-5/skin.css": "/bundles/pimcoretinymce/build/tinymce/skins/ui/tinymce-5//skin.css",

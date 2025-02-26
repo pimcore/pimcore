@@ -17,8 +17,7 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
 use Exception;
-use function in_array;
-use function is_array;
+use InvalidArgumentException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
@@ -55,7 +54,6 @@ use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
 use stdClass;
-use function strlen;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mime\MimeTypes;
@@ -278,7 +276,7 @@ class Asset extends Element\AbstractElement
             try {
                 $asset->getDao()->getById($id);
 
-                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($asset->getType());
+                $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($asset->getType());
                 /** @var Asset $newAsset */
                 $newAsset = self::getModelFactory()->build($className);
 
@@ -301,7 +299,7 @@ class Asset extends Element\AbstractElement
         }
 
         if ($asset && static::typeMatch($asset)) {
-            \Pimcore::getEventDispatcher()->dispatch(
+            Pimcore::getEventDispatcher()->dispatch(
                 new AssetEvent($asset, ['params' => $params]),
                 AssetEvents::POST_LOAD
             );
@@ -333,7 +331,7 @@ class Asset extends Element\AbstractElement
                 $mimeTypeGuessData = $tmpFile;
 
                 if (!str_starts_with($tmpFile, PIMCORE_SYSTEM_TEMP_DIRECTORY)) {
-                    throw new \InvalidArgumentException('Invalid filename');
+                    throw new InvalidArgumentException('Invalid filename');
                 }
 
                 if (array_key_exists('data', $data)) {
@@ -382,7 +380,7 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
+        $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
 
         /** @var Asset $asset */
         $asset = self::getModelFactory()->build($className);
@@ -753,7 +751,7 @@ class Asset extends Element\AbstractElement
                 }
 
                 // not only check if the type is set but also if the implementation can be found
-                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
+                $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
 
                 if (!self::getModelFactory()->supports($className)) {
                     throw new Exception('unable to resolve asset implementation with type: ' . $this->getType());
@@ -813,7 +811,7 @@ class Asset extends Element\AbstractElement
      *
      * @throws Exception
      */
-    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, string $versionNote = null): ?Version
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null): ?Version
     {
         try {
             // hook should be also called if "save only new version" is selected
@@ -1402,7 +1400,7 @@ class Asset extends Element\AbstractElement
      *
      * @return $this
      */
-    public function addMetadata(string $name, string $type, mixed $data = null, string $language = null): static
+    public function addMetadata(string $name, string $type, mixed $data = null, ?string $language = null): static
     {
         if ($name && $type) {
             $tmp = [];
@@ -1671,25 +1669,33 @@ class Asset extends Element\AbstractElement
     /**
      * @throws FilesystemException
      */
-    private function updateChildPaths(FilesystemOperator $storage, string $oldPath, string $newPath = null): void
+    private function updateChildPaths(FilesystemOperator $storage, string $oldPath, ?string $newPath = null): void
     {
         if ($newPath === null) {
             $newPath = $this->getRealFullPath();
         }
 
         try {
+            $movedFiles = [];
             $children = $storage->listContents($oldPath, true);
             foreach ($children as $child) {
                 if ($child['type'] === 'file') {
                     $src  = $child['path'];
                     $dest = str_replace($oldPath, $newPath, '/' . $src);
                     $storage->move($src, $dest);
+                    $movedFiles[$dest] = $src;
                 }
             }
 
             $storage->deleteDirectory($oldPath);
         } catch (UnableToMoveFile $e) {
-            // noting to do
+            // rollback moved files
+            foreach ($movedFiles as $src => $dest) {
+                $storage->move($src, $dest);
+            }
+
+            // trigger database rollback
+            throw $e;
         }
     }
 
@@ -1766,7 +1772,7 @@ class Asset extends Element\AbstractElement
     public function getFrontendPath(): string
     {
         $path = $this->getFullPath();
-        if (!\preg_match('@^(https?|data):@', $path)) {
+        if (!preg_match('@^(https?|data):@', $path)) {
             $path = \Pimcore\Tool::getHostUrl() . $path;
         }
 

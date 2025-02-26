@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
+use Exception;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DataObjectCustomLayoutEvents;
@@ -63,9 +64,9 @@ class CustomLayout extends Model\AbstractModel
         try {
             $customLayout = RuntimeCache::get($cacheKey);
             if (!$customLayout) {
-                throw new \Exception('Custom Layout in registry is null');
+                throw new Exception('Custom Layout in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $customLayout = new self();
                 $customLayout->getDao()->getById($id);
@@ -79,7 +80,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByName(string $name): ?CustomLayout
     {
@@ -88,9 +89,9 @@ class CustomLayout extends Model\AbstractModel
         try {
             $customLayout = RuntimeCache::get($cacheKey);
             if (!$customLayout) {
-                throw new \Exception('Custom Layout in registry is null');
+                throw new Exception('Custom Layout in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $customLayout = new self();
                 $customLayout->getDao()->getByName($name);
@@ -104,7 +105,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByNameAndClassId(string $name, string $classId): ?CustomLayout
     {
@@ -186,7 +187,7 @@ class CustomLayout extends Model\AbstractModel
         // empty custom layout cache
         try {
             Cache::clearTag('customlayout_' . $this->getId());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
     }
 
@@ -217,7 +218,7 @@ class CustomLayout extends Model\AbstractModel
             $customLayout = new self();
 
             return $customLayout->getDao()->getLatestIdentifier($classId);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
 
             return null;
@@ -236,13 +237,13 @@ class CustomLayout extends Model\AbstractModel
         // empty object cache
         try {
             Cache::clearTag('customlayout_' . $this->getId());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         // empty output cache
         try {
             Cache::clearTag('output');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         $this->getDao()->delete();

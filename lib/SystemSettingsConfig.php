@@ -16,6 +16,7 @@
 namespace Pimcore;
 
 use Exception;
+use InvalidArgumentException;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Event\SystemEvents;
@@ -170,6 +171,13 @@ class SystemSettingsConfig
             $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
         }
 
+        if (
+            $values['general.domain'] &&
+            !filter_var(idn_to_ascii($values['general.domain']), FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)
+        ) {
+            throw new InvalidArgumentException(sprintf('Invalid main domain name "%s"', $values['general.domain']));
+        }
+
         $settings[self::CONFIG_ID] = [
             'general' => [
                 'domain' => $values['general.domain'],
@@ -222,7 +230,7 @@ class SystemSettingsConfig
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function checkFallbackLanguageLoop(string $source, array $definitions, array $fallbacks = []): void
     {
@@ -232,7 +240,7 @@ class SystemSettingsConfig
                 $target = trim($l);
                 if ($target) {
                     if (in_array($target, $fallbacks)) {
-                        throw new \Exception("Language `$source` | `$target` causes an infinte loop.");
+                        throw new Exception("Language `$source` | `$target` causes an infinte loop.");
                     }
                     $fallbacks[] = $target;
 
@@ -240,7 +248,7 @@ class SystemSettingsConfig
                 }
             }
         } else {
-            throw new \Exception("Language `$source` doesn't exist");
+            throw new Exception("Language `$source` doesn't exist");
         }
     }
 

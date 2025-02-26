@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Exception;
 
-class InheritanceParentNotFoundException extends \Exception
+use Exception;
+
+class InheritanceParentNotFoundException extends Exception
 {
 }

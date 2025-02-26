@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Model;
 
+use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\SelectionProcessingMode;
+
 interface JobStepInterface
 {
     public function getName(): string;
@@ -25,4 +27,6 @@ interface JobStepInterface
     public function getConfig(): array;
 
     public function getCondition(): string;
+
+    public function getSelectionProcessingMode(): SelectionProcessingMode;
 }

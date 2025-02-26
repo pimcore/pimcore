@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Pimcore;
 use Symfony\Component\Filesystem\Filesystem;
 
 final class Version20230525131748 extends AbstractMigration
@@ -64,7 +65,7 @@ final class Version20230525131748 extends AbstractMigration
 
     private function renameConfigFolder(array $folders, string $search, string $replace): void
     {
-        $configDir = \Pimcore::getContainer()->getParameter('kernel.project_dir') . '/var/config/';
+        $configDir = Pimcore::getContainer()->getParameter('kernel.project_dir') . '/var/config/';
         foreach ($folders as $folder) {
             if (is_dir($configDir . $folder)) {
                 rename($configDir . $folder, $configDir . str_replace($search, $replace, $folder));
@@ -74,7 +75,7 @@ final class Version20230525131748 extends AbstractMigration
 
     private function moveConfigFromFolders(array $folders): void
     {
-        $configDir = \Pimcore::getContainer()->getParameter('kernel.project_dir') . '/var/config/';
+        $configDir = Pimcore::getContainer()->getParameter('kernel.project_dir') . '/var/config/';
         $filesystem = new Filesystem();
         foreach ($folders as $srcFolder => $targetFolder) {
             $configFolder = $configDir . $srcFolder;

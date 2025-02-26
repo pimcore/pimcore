@@ -19,12 +19,13 @@ namespace Pimcore\Tests\Unit\Tool;
 
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool\ClassUtils;
+use SplFileInfo;
 
 class ClassUtilsTest extends TestCase
 {
     public function testFindClassName(): void
     {
-        $file = new \SplFileInfo(__FILE__);
+        $file = new SplFileInfo(__FILE__);
         $className = ClassUtils::findClassName($file);
 
         $this->assertEquals($className, self::class);
@@ -33,13 +34,13 @@ class ClassUtilsTest extends TestCase
     public function testFindNamespaceClassName(): void
     {
         //find classname for DummyNamespace/ClassX
-        $file = new \SplFileInfo(__DIR__ . '/../../Support/Resources/dummyfiles/ClassX.php');
+        $file = new SplFileInfo(__DIR__ . '/../../Support/Resources/dummyfiles/ClassX.php');
         $className = ClassUtils::findClassName($file);
 
         $this->assertEquals('DummyNamespace\\ClassX', $className);
 
         //find classname for DummyNamespace/ClassY
-        $file = new \SplFileInfo(__DIR__ . '/../../Support/Resources/dummyfiles/ClassY.php');
+        $file = new SplFileInfo(__DIR__ . '/../../Support/Resources/dummyfiles/ClassY.php');
         $className = ClassUtils::findClassName($file);
 
         $this->assertEquals('Pimcore\\DummyNamespace\\ClassY', $className);

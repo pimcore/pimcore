@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Thumbnail;
 
+use Exception;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\Asset;
@@ -187,7 +188,7 @@ trait ImageThumbnailTrait
                         $dimensions['height'] = $thumbnail['height'];
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // noting to do
             }
         }
@@ -314,7 +315,7 @@ trait ImageThumbnailTrait
     public function getFrontendPath(): string
     {
         $path = $this->getPath(['deferredAllowed' => true, 'frontend' => true]);
-        if (!\preg_match('@^(https?|data):@', $path)) {
+        if (!preg_match('@^(https?|data):@', $path)) {
             $path = \Pimcore\Tool::getHostUrl() . $path;
         }
 
@@ -324,7 +325,7 @@ trait ImageThumbnailTrait
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getLocalFile(): ?string
     {

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Pimcore;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Logger;
@@ -155,7 +156,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         }
 
         while (!$finished) {
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
 
             $video = Asset\Video::getById($videoId);
 

@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Exception;
 
-class NotFoundException extends \RuntimeException
+use RuntimeException;
+
+class NotFoundException extends RuntimeException
 {
 }

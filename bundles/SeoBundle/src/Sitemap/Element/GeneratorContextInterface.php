@@ -17,12 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Sitemap\Element;
 
+use IteratorAggregate;
 use Presta\SitemapBundle\Service\UrlContainerInterface;
 
 /**
  * Context which is passed to every filter/processor
  */
-interface GeneratorContextInterface extends \IteratorAggregate, \Countable
+interface GeneratorContextInterface extends IteratorAggregate, \Countable
 {
     public function getUrlContainer(): UrlContainerInterface;
 

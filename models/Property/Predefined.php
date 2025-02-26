@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Property;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -70,9 +71,9 @@ final class Predefined extends Model\AbstractModel
         try {
             $property = \Pimcore\Cache\RuntimeCache::get($cacheKey);
             if (!$property) {
-                throw new \Exception('Predefined property in registry is null');
+                throw new Exception('Predefined property in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $property = new self();
                 $property->getDao()->getByKey($key);

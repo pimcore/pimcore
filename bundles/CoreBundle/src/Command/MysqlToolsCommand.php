@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Exception;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Logger;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -63,7 +64,7 @@ class MysqlToolsCommand extends AbstractCommand
                 try {
                     Logger::debug('Running: OPTIMIZE TABLE ' . $t);
                     $db->executeQuery('OPTIMIZE TABLE ' . $t);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Logger::error((string) $e);
                 }
             }
@@ -77,7 +78,7 @@ class MysqlToolsCommand extends AbstractCommand
                     Logger::debug("Running: SELECT COUNT(*) FROM $t");
                     $res = $db->fetchOne("SELECT COUNT(*) FROM $t");
                     Logger::debug('Result: ' . $res);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Logger::error((string) $e);
                 }
             }

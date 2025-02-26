@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\DependencyInjection\Compiler;
 
+use Exception;
 use Pimcore\Bundle\XliffBundle\ExportDataExtractorService\ExportDataExtractorServiceInterface;
 use Pimcore\Bundle\XliffBundle\ImporterService\ImporterServiceInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -40,7 +41,7 @@ final class TranslationServicesPass implements CompilerPassInterface
         foreach ($providers as $id => $tags) {
             foreach ($tags as $attributes) {
                 if (empty($attributes['type'])) {
-                    throw new \Exception('service with tag "pimcore.translation.data-extractor" but without type registered');
+                    throw new Exception('service with tag "pimcore.translation.data-extractor" but without type registered');
                 }
                 $definition = $container->getDefinition(ExportDataExtractorServiceInterface::class);
                 $definition->addMethodCall('registerDataExtractor', [$attributes['type'], new Reference($id)]);
@@ -52,7 +53,7 @@ final class TranslationServicesPass implements CompilerPassInterface
         foreach ($providers as $id => $tags) {
             foreach ($tags as $attributes) {
                 if (empty($attributes['type'])) {
-                    throw new \Exception('service with tag "pimcore.translation.data-extractor" but without type registered');
+                    throw new Exception('service with tag "pimcore.translation.data-extractor" but without type registered');
                 }
                 $definition = $container->getDefinition(ImporterServiceInterface::class);
                 $definition->addMethodCall('registerImporter', [$attributes['type'], new Reference($id)]);

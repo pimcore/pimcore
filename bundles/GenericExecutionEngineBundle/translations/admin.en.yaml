@@ -9,3 +9,4 @@ gee_middleware_step_condition_not_met: Skipping step %stepName% with id %stepId%
 gee_job_started: Job Run %job_run_name% (%job_run_id%) started.
 gee_job_finished: Job Run %job_run_name% (%job_run_id%) completed successfully.
 gee_job_finished_with_errors: Job Run %job_run_name% (%job_run_id%) completed with errors.
+gee_updated_selected_elements: 'Updated selected elements. (Was: %fromCount%, Now: %toCount%)'

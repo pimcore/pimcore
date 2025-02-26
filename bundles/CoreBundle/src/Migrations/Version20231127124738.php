@@ -19,6 +19,8 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Exception;
+use Pimcore;
 use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface;
@@ -47,14 +49,14 @@ final class Version20231127124738 extends AbstractMigration implements Container
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function regenerate(): void
     {
-        $classDumper = $this->container->get(PHPClassDumperInterface::class);
-        $brickClassDumper = $this->container->get(PHPObjectBrickClassDumperInterface::class);
-        $brickContainerClassDumper = $this->container->get(PHPObjectBrickContainerClassDumperInterface::class);
-        $collectionClassDumper = $this->container->get(PHPFieldCollectionClassDumperInterface::class);
+        $classDumper = Pimcore::getContainer()->get(PHPClassDumperInterface::class);
+        $brickClassDumper = Pimcore::getContainer()->get(PHPObjectBrickClassDumperInterface::class);
+        $brickContainerClassDumper = Pimcore::getContainer()->get(PHPObjectBrickContainerClassDumperInterface::class);
+        $collectionClassDumper = Pimcore::getContainer()->get(PHPFieldCollectionClassDumperInterface::class);
 
         $listing = new DataObject\ClassDefinition\Listing();
         foreach ($listing->getClasses() as $class) {

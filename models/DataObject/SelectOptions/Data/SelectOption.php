@@ -16,7 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\SelectOptions\Data;
 
-class SelectOption implements \JsonSerializable
+use JsonSerializable;
+
+class SelectOption implements JsonSerializable
 {
     public const PROPERTY_VALUE = 'value';
 

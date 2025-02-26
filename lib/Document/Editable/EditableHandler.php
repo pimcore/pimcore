@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Editable;
 
+use Exception;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
@@ -132,7 +133,7 @@ class EditableHandler implements LoggerAwareInterface
                         // build URL to icon
                         $icon = $this->webPathResolver->getPath($bundle, 'areas/' . $brick->getId(), 'icon.png');
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $icon = '';
                 }
             }

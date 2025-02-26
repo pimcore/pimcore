@@ -108,8 +108,9 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     protected function handleVersion(Request $request, Document $document): Document
     {
-        if ($v = $request->get('v')) {
-            if ($version = Version::getById((int) $v)) {
+        $v = $request->query->getInt('v');
+        if ($v) {
+            if ($version = Version::getById($v)) {
                 if ($version->getPublic()) {
                     $this->logger->info('Setting version to {version} for document {document}', [
                         'version' => $version->getId(),
@@ -120,7 +121,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 }
             } else {
                 $this->logger->notice('Failed to load {version} for document {document}', [
-                    'version' => $request->get('v'),
+                    'version' => $v,
                     'document' => $document->getFullPath(),
                 ]);
             }
@@ -141,7 +142,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         }
 
         // document preview
-        if ($request->get('pimcore_preview')) {
+        if ($request->query->getBoolean('pimcore_preview')) {
             // get document from session
 
             // TODO originally, this was the following call. What was in this->getParam('document') and
@@ -158,9 +159,10 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         }
 
         // for version preview
-        if ($request->get('pimcore_version')) {
+        if ($request->query->has('pimcore_version')) {
+            $versionId = $request->query->getInt('pimcore_version');
             // TODO there was a check with a registry flag here - check if the main request handling is sufficient
-            $version = Version::getById((int) $request->get('pimcore_version'));
+            $version = Version::getById($versionId);
             if ($documentVersion = $version?->getData()) {
                 $document = $documentVersion;
                 $this->logger->debug('Loading version {version} for document {document} from pimcore_version parameter', [
@@ -169,13 +171,13 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 ]);
             } else {
                 $this->logger->warning('Failed to load {version} for document {document} from pimcore_version parameter', [
-                    'version' => $request->get('pimcore_version'),
+                    'version' => $versionId,
                     'document' => $document->getFullPath(),
                 ]);
 
                 throw new NotFoundHttpException(
                     sprintf('Failed to load %s for document %s from pimcore_version parameter',
-                        $request->get('pimcore_version'), $document->getFullPath()));
+                        $versionId, $document->getFullPath()));
             }
         }
 
@@ -215,7 +217,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     protected function handleObjectParams(Request $request): void
     {
         // object preview
-        if ($objectId = $request->get('pimcore_object_preview')) {
+        if ($objectId = $request->query->getInt('pimcore_object_preview')) {
             if ($object = Service::getElementFromSession('object', $objectId, $request->getSession()->getId())) {
                 $this->logger->debug('Loading object {object} ({objectId}) from session', [
                     'object' => $object->getFullPath(),

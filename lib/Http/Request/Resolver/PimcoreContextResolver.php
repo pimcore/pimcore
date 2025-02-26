@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Http\Request\Resolver;
 
+use InvalidArgumentException;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -46,7 +47,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
      *
      *
      */
-    public function getPimcoreContext(Request $request = null): ?string
+    public function getPimcoreContext(?Request $request = null): ?string
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();
@@ -88,7 +89,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
         }
 
         if (empty($context)) {
-            throw new \InvalidArgumentException('Can\'t match against empty pimcore context');
+            throw new InvalidArgumentException('Can\'t match against empty pimcore context');
         }
 
         $resolvedContext = $this->getPimcoreContext($request);

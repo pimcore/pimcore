@@ -25,6 +25,7 @@ services:
     Pimcore\Twig\Extension\DumpExtension: ~
 
     Pimcore\Twig\Extension\CacheExtension: ~
+    Pimcore\Twig\Extension\CacheTagExtension: ~
 
     Pimcore\Twig\Extension\Templating\PimcoreUrl:
         arguments:
@@ -66,11 +67,6 @@ services:
     Pimcore\Twig\Extension\DocumentHelperExtensions: ~
 
     Pimcore\Twig\Extension\ImageThumbnailExtension: ~
-
-    # the deferred extension is needed for placeholder helpers to work
-    # as otherwise the placeholder block would be rendered before any
-    # content was added (e.g. headTitle)
-    Twig\DeferredExtension\DeferredExtension: ~
 
     Pimcore\Twig\Sandbox\SecurityPolicy:
         arguments:

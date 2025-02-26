@@ -16,10 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use DateTime;
+use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Tool;
 
 /**
@@ -444,7 +447,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
                 if ($thumbnail['status'] === 'inprogress') {
                     // disable the output-cache if enabled
-                    $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
+                    $cacheService = Pimcore::getContainer()->get(FullPageCacheListener::class);
                     $cacheService->disable('Video rendering in progress');
 
                     return $this->getProgressCode((string)$image);
@@ -521,7 +524,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         }
 
         // only display error message in debug mode
-        if (!\Pimcore::inDebugMode()) {
+        if (!Pimcore::inDebugMode()) {
             $message = '';
         }
 
@@ -648,12 +651,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                 if (in_array($key, $validYoutubeParams)) {
                     if (is_bool($value)) {
                         if ($value) {
-                            $additionalParams .= '&'.$key.'=1';
+                            $additionalParams .= '&amp;'.$key.'=1';
                         } else {
-                            $additionalParams .= '&'.$key.'=0';
+                            $additionalParams .= '&amp;'.$key.'=0';
                         }
                     } else {
-                        $additionalParams .= '&'.$key.'='.$value;
+                        $additionalParams .= '&amp;'.$key.'='.$value;
                     }
                 }
             }
@@ -726,19 +729,19 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                     if (in_array($key, $validVimeoParams)) {
                         if (is_bool($value)) {
                             if ($value) {
-                                $additionalParams .= '&'.$key.'=1';
+                                $additionalParams .= '&amp;'.$key.'=1';
                             } else {
-                                $additionalParams .= '&'.$key.'=0';
+                                $additionalParams .= '&amp;'.$key.'=0';
                             }
                         } else {
-                            $additionalParams .= '&'.$key.'='.$value;
+                            $additionalParams .= '&amp;'.$key.'='.$value;
                         }
                     }
                 }
             }
 
             $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
-                <iframe src="https://player.vimeo.com/video/' . $vimeoId . '?dnt=1&title=0&amp;byline=0&amp;portrait=0' . $additionalParams . '" width="' . $width . '" height="' . $height . '" title="Vimeo video" allow="fullscreen" data-type="pimcore_video_editable"></iframe>
+                <iframe src="https://player.vimeo.com/video/' . $vimeoId . '?dnt=1&amp;title=0&amp;byline=0&amp;portrait=0' . $additionalParams . '" width="' . $width . '" height="' . $height . '" title="Vimeo video" allow="fullscreen" data-type="pimcore_video_editable"></iframe>
             </div>';
 
             return $code;
@@ -798,12 +801,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                     if (in_array($key, $validDailymotionParams)) {
                         if (is_bool($value)) {
                             if ($value) {
-                                $additionalParams .= '&'.$key.'=1';
+                                $additionalParams .= '&amp;'.$key.'=1';
                             } else {
-                                $additionalParams .= '&'.$key.'=0';
+                                $additionalParams .= '&amp;'.$key.'=0';
                             }
                         } else {
-                            $additionalParams .= '&'.$key.'='.$value;
+                            $additionalParams .= '&amp;'.$key.'='.$value;
                         }
                     }
                 }
@@ -822,14 +825,14 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
     private function getHtml5Code(
         array $urls = [],
-        Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface $thumbnail = null
+        Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface|null $thumbnail = null
     ): string {
         $code = '';
         $video = $this->getVideoAsset();
         if ($video) {
             $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">' . "\n";
 
-            $uploadDate = new \DateTime();
+            $uploadDate = new DateTime();
             $uploadDate->setTimestamp($video->getCreationDate());
 
             $jsonLd = [
@@ -949,7 +952,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return implode('', $durationParts);
     }
 
-    private function getProgressCode(string $thumbnail = null): string
+    private function getProgressCode(?string $thumbnail = null): string
     {
         $uid = $this->getUniqId();
         $code = '
@@ -987,16 +990,24 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_editable_video_empty" id="' . $uid . '" style="width: ' . $this->getWidthWithUnit() . '; height: ' . $this->getHeightWithUnit() . ';"></div></div>';
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     private function updateAllowedTypesFromConfig(array $config): void
     {
-        $this->allowedTypes = self::ALLOWED_TYPES;
-
-        if (
-            isset($config['allowedTypes']) === true
-            && empty($config['allowedTypes']) === false
-            && empty(array_diff($config['allowedTypes'], self::ALLOWED_TYPES))
-        ) {
+        if (isset($config['allowedTypes'])) {
+            if (!is_array($config['allowedTypes'])) {
+                throw new InvalidConfigException('Video config "allowedTypes" must be an array');
+            }
+            if (!$config['allowedTypes']) {
+                throw new InvalidConfigException('Video config "allowedTypes" must not be empty');
+            }
+            if (array_diff($config['allowedTypes'], self::ALLOWED_TYPES)) {
+                throw new InvalidConfigException('Unsupported types in video config "allowedTypes"');
+            }
             $this->allowedTypes = $config['allowedTypes'];
+        } else {
+            $this->allowedTypes = self::ALLOWED_TYPES;
         }
     }
 

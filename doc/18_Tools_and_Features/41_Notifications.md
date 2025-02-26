@@ -15,49 +15,71 @@ User can use `Share via Notifications` button in order to open a new notificatio
 ### Overview 
 
 For accessing and working with tags via API, take a look into `Pimcore\Model\Notification\Service\NotificationService`.
+Be aware that the service is tagged as internal and can change in future releases.
 ```php
 <?php
- /**
-     * @param int $id
-     * @return Notification
-     * @throws \UnexpectedValueException
+    /**
+     * @throws UnexpectedValueException
      */
     public function find(int $id): Notification
     {
         $notification = Notification::getById($id);
 
         if (!$notification instanceof Notification) {
-            throw new \UnexpectedValueException("Notification with the ID {$id} doesn't exists");
+            throw new UnexpectedValueException("Notification with the ID {$id} doesn't exists");
         }
 
         return $notification;
     }
     
     /**
-     * @param array $filter
-     * @param array $options
-     * @return array
+     * @param array<string, mixed> $filter
+     * @param array{offset?: int|string, limit?: int|string|null} $options
+     *
+     * @return array{total: int, data: Notification[]}
+     *
+     * @throws Exception
      */
     public function findAll(array $filter = [], array $options = []): array
     {
         $listing = new Listing();
 
-        if (!empty($filter)) {
-            $condition          = implode(' AND ', array_keys($filter));
-            $conditionVariables = array_values($filter);
-            $listing->setCondition($condition, $conditionVariables);
+        $filter  = [...$filter, ...['isStudio' => 0]];
+
+        $conditions = [];
+        $conditionVariables = [];
+        foreach ($filter as $key => $value) {
+            if (isset($value['condition'])) {
+                $conditions[] = $value['condition'];
+                $conditionVariables[] = $value['conditionVariables'] ?? [];
+            } else {
+                $conditions[] = $key . ' = :' . $key;
+                $conditionVariables[] = [$key => $value];
+            }
         }
+
+        $condition = implode(' AND ', $conditions);
+        $listing->setCondition($condition, array_merge(...$conditionVariables));
 
         $listing->setOrderKey('creationDate');
         $listing->setOrder('DESC');
-        $offset = (int) $options['offset'] ?? 0;
-        $limit  = (int) $options['limit'] ?? 0;
+        $offset = $options['offset'] ?? 0;
+        $limit = $options['limit'] ?? null;
+
+        if (is_string($offset)) {
+            //TODO: Trigger deprecation
+            $offset = (int) $offset;
+        }
+        if (is_string($limit)) {
+            //TODO: Trigger deprecation
+            $limit = (int) $limit;
+        }
 
         $this->beginTransaction();
 
         $result = [
             'total' => $listing->count(),
-            'data' => $listing->getItems($offset, $limit)
+            'data' => $listing->getItems($offset, $limit),
         ];
 
         $this->commit();

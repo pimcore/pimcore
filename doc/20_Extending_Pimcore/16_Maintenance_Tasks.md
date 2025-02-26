@@ -1,7 +1,7 @@
 # Maintenance Tasks
 
 Pimcore offers you to run scheduled maintenance tasks. This allows you to periodically do stuff like cleanups. 
-It is essential that the maintenance cron job is set up perperly, see: [install guide](../01_Getting_Started/00_Installation/00_Docker_Based_Installation.md).  
+It is essential that the maintenance cron job is set up perperly, see: [install guide](../01_Getting_Started/00_Installation/01_Webserver_Installation.md#5-maintenance-cron-job).  
 
 ## Register a new Maintenance Task
 

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document\Editable;
 
 use Carbon\Carbon;
+use DateTimeInterface;
 use Pimcore\Model;
 
 /**
@@ -74,7 +75,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
                 if (isset($this->config['format']) && $this->config['format']) {
                     $format = $this->config['format'];
                 } else {
-                    $format = \DateTimeInterface::ATOM;
+                    $format = DateTimeInterface::ATOM;
                 }
 
                 return $this->date->format($format);

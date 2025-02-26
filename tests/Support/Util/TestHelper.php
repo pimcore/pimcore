@@ -16,7 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Support\Util;
 
+use DateTimeInterface;
 use Exception;
+use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -32,8 +35,12 @@ use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Support\Helper\DataType\TestDataHelper;
 use Pimcore\Tool;
+use ReflectionClass;
+use ReflectionException;
+use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Traversable;
 
 class TestHelper
 {
@@ -79,7 +86,7 @@ class TestHelper
                         $propertiesStringArray['property_' . $key . '_' . $value->getType()] = 'property_' . $key . '_' . $value->getType() . ': null';
                     }
                 } elseif ($value->getType() === 'date') {
-                    if ($value->getData() instanceof \DateTimeInterface) {
+                    if ($value->getData() instanceof DateTimeInterface) {
                         $propertiesStringArray['property_' . $key . '_' . $value->getType()] = 'property_' . $key . '_' . $value->getType() . ':' . $value->getData()->getTimestamp();
                     }
                 } elseif ($value->getType() === 'bool') {
@@ -273,7 +280,7 @@ class TestHelper
                 return [];
             }
 
-            $localeService = \Pimcore::getContainer()->get(LocaleServiceInterface::class);
+            $localeService = Pimcore::getContainer()->get(LocaleServiceInterface::class);
             $localeBackup = $localeService->getLocale();
 
             $validLanguages = Tool::getValidLanguages();
@@ -551,7 +558,7 @@ class TestHelper
         if (!$data) {
             $path = static::resolveFilePath($filePath);
             if (!file_exists($path)) {
-                throw new \RuntimeException(sprintf('Path %s was not found', $path));
+                throw new RuntimeException(sprintf('Path %s was not found', $path));
             }
 
             $data = file_get_contents($path);
@@ -590,7 +597,7 @@ class TestHelper
         if (!$data) {
             $path = static::resolveFilePath('assets/document/sonnenblume.pdf');
             if (!file_exists($path)) {
-                throw new \RuntimeException(sprintf('Path %s was not found', $path));
+                throw new RuntimeException(sprintf('Path %s was not found', $path));
             }
 
             $data = file_get_contents($path);
@@ -629,7 +636,7 @@ class TestHelper
         if (!$data) {
             $path = static::resolveFilePath('assets/video/example.mp4');
             if (!file_exists($path)) {
-                throw new \RuntimeException(sprintf('Path %s was not found', $path));
+                throw new RuntimeException(sprintf('Path %s was not found', $path));
             }
 
             $data = file_get_contents($path);
@@ -708,10 +715,10 @@ class TestHelper
     /**
      * Clean up directory, deleting files one by one
      */
-    public static function cleanupDirectory(string|\Traversable|Finder $directory): void
+    public static function cleanupDirectory(string|Traversable|Finder $directory): void
     {
         $files = null;
-        if ($directory instanceof \Traversable) {
+        if ($directory instanceof Traversable) {
             $files = $directory;
         } else {
             $files = new Finder();
@@ -731,7 +738,7 @@ class TestHelper
         bool $cleanAssets = true,
         bool $cleanTags = true
     ): void {
-        \Pimcore::collectGarbage();
+        Pimcore::collectGarbage();
 
         if (!static::supportsDbTests()) {
             return;
@@ -756,11 +763,11 @@ class TestHelper
             if ($cleanTags) {
                 static::cleanUpTags();
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error((string) $e);
         }
 
-        \Pimcore::collectGarbage();
+        Pimcore::collectGarbage();
     }
 
     /**
@@ -769,7 +776,7 @@ class TestHelper
     public static function cleanUpTree(?ElementInterface $root, string $type): void
     {
         if (!($root instanceof AbstractObject || $root instanceof Document || $root instanceof Asset)) {
-            throw new \InvalidArgumentException(sprintf('Cleanup root type for %s needs to be one of: AbstractObject, Document, Asset', $type));
+            throw new InvalidArgumentException(sprintf('Cleanup root type for %s needs to be one of: AbstractObject, Document, Asset', $type));
         }
 
         if ($root instanceof AbstractObject) {
@@ -905,11 +912,11 @@ class TestHelper
     /**
      * This function allows to call private and protected methods
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function callMethod(object|string $obj, string $name, array $args): mixed
     {
-        $class = new \ReflectionClass($obj);
+        $class = new ReflectionClass($obj);
         $method = $class->getMethod($name);
 
         return $method->invokeArgs($obj, $args);

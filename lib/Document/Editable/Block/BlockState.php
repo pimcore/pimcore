@@ -17,6 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Editable\Block;
 
+use JsonSerializable;
+use UnderflowException;
+
 /**
  * @internal
  *
@@ -26,7 +29,7 @@ namespace Pimcore\Document\Editable\Block;
  * On sub requests, a new BlockState is added to the state stack which is valid
  * for the sub request.
  */
-final class BlockState implements \JsonSerializable
+final class BlockState implements JsonSerializable
 {
     /**
      * @var BlockName[]
@@ -59,7 +62,7 @@ final class BlockState implements \JsonSerializable
     public function popBlock(): BlockName
     {
         if (empty($this->blocks)) {
-            throw new \UnderflowException('There are no blocks to pop from as blocks list is empty');
+            throw new UnderflowException('There are no blocks to pop from as blocks list is empty');
         }
 
         return array_pop($this->blocks);
@@ -91,7 +94,7 @@ final class BlockState implements \JsonSerializable
     public function popIndex(): int
     {
         if (empty($this->indexes)) {
-            throw new \UnderflowException('There are no indexes to pop from as index list is empty');
+            throw new UnderflowException('There are no indexes to pop from as index list is empty');
         }
 
         return array_pop($this->indexes);

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Exception;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
@@ -35,7 +36,7 @@ class RgbaColor implements OwnerAwareFieldInterface
      * RgbaColor constructor.
      *
      */
-    public function __construct(int $r = null, int $g = null, int $b = null, int $a = null)
+    public function __construct(?int $r = null, ?int $g = null, ?int $b = null, ?int $a = null)
     {
         $this->setR($r);
         $this->setG($g);
@@ -127,7 +128,7 @@ class RgbaColor implements OwnerAwareFieldInterface
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setHex(string $hexValue): void
     {
@@ -145,12 +146,12 @@ class RgbaColor implements OwnerAwareFieldInterface
             $this->setB($b);
             $this->setA($a);
         } else {
-            throw new \Exception('Format must be either hex6 or hex8 with or without leading hash');
+            throw new Exception('Format must be either hex6 or hex8 with or without leading hash');
         }
         $this->markMeDirty();
     }
 
-    public function setRgba(int $r = null, int $g = null, int $b = null, int $a = null): void
+    public function setRgba(?int $r = null, ?int $g = null, ?int $b = null, ?int $a = null): void
     {
         $this->setR($r);
         $this->setG($g);

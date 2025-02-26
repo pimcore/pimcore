@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -103,7 +104,7 @@ class DocType extends Model\AbstractModel
             $docType->getDao()->getById($id);
 
             return $docType;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
     }

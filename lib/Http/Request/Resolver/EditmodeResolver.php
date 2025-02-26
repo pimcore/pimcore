@@ -50,7 +50,7 @@ class EditmodeResolver extends AbstractRequestResolver implements LoggerAwareInt
         return $this;
     }
 
-    public function isEditmode(Request $request = null): bool
+    public function isEditmode(?Request $request = null): bool
     {
         if ($this->forceEditmode) {
             $this->logger->debug('Resolved editmode to true as force editmode is set');
@@ -76,7 +76,7 @@ class EditmodeResolver extends AbstractRequestResolver implements LoggerAwareInt
 
         // read editmode from request params
         $result = false;
-        if ($request->query->get('pimcore_editmode')) {
+        if ($request->query->has('pimcore_editmode')) {
             $logData['param'] = true;
             $result = true;
         }

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -26,6 +27,7 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
+use stdClass;
 
 class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreSetDataInterface
 {
@@ -78,7 +80,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $editmodeData = [];
 
@@ -171,9 +173,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * gets recursively attribute data from parent and fills objectData and metaData
      */
-    private function getDataForField(Objectbrick\Data\AbstractData $item, string $key, Data $fielddefinition, int $level, ?DataObject\Concrete $baseObject, string $getter, ?array $params): \stdClass
+    private function getDataForField(Objectbrick\Data\AbstractData $item, string $key, Data $fielddefinition, int $level, ?DataObject\Concrete $baseObject, string $getter, ?array $params): stdClass
     {
-        $result = new \stdClass();
+        $result = new stdClass();
         if ($baseObject) {
             $parent = DataObject\Service::hasInheritableParentObject($baseObject);
         }
@@ -243,7 +245,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Objectbrick
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): Objectbrick
     {
         $container = $this->getDataFromObjectParam($object);
 
@@ -300,7 +302,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         // this is handled directly in the template
         // https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/templates/admin/data_object/data_object/preview_version.html.twig
@@ -542,7 +544,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                                         $fd->checkValidity($item->$getter(), $omitMandatoryCheck, $params);
 
                                         DataObject::setGetInheritedValues($getInheritedValues);
-                                    } catch (\Exception $e) {
+                                    } catch (Exception $e) {
                                         if (!$e instanceof Model\Element\ValidationException) {
                                             throw $e;
                                         }
@@ -576,7 +578,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDataForGrid(?Objectbrick $data, Concrete $object = null, array $params = []): string
+    public function getDataForGrid(?Objectbrick $data, ?Concrete $object = null, array $params = []): string
     {
         return 'NOT SUPPORTED';
     }
@@ -645,7 +647,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /** See parent class.
      *
      */
-    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $editmodeData = [];
 
@@ -670,7 +672,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      *
      */
-    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): mixed
+    public function getDiffDataFromEditmode(array $data, ?DataObject\Concrete $object = null, array $params = []): mixed
     {
         $valueGetter = 'get' . ucfirst($this->getName());
         $valueSetter = 'set' . ucfirst($this->getName());
@@ -833,7 +835,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                         && $fd instanceof DataObject\ClassDefinition\Data) {
                         $result[$type][$fd->getName()] = $fd->normalize($value, $params);
                     } else {
-                        throw new \Exception($fd->getName() . ' does not implement NormalizerInterface');
+                        throw new Exception($fd->getName() . ' does not implement NormalizerInterface');
                     }
                 }
             }

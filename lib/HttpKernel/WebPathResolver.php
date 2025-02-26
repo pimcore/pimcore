@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\HttpKernel;
 
+use InvalidArgumentException;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 /**
@@ -32,14 +33,14 @@ class WebPathResolver
      *
      * @param BundleInterface $bundle Bundle to fetch in
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      * @return string Prefix
      */
     public function getPrefix(BundleInterface $bundle): string
     {
         if (!is_dir($bundle->getPath() . '/Resources/public') && !is_dir($bundle->getPath() . '/public')) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Bundle %s does not have Resources/public folder',
                 $bundle->getName()
             ));

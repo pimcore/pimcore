@@ -18,6 +18,7 @@ namespace Pimcore\Model\Paginator\EventSubscriber;
 
 use Knp\Component\Pager\Event\ItemsEvent;
 use Pimcore\Model\Paginator\PaginateListingInterface;
+use RuntimeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PaginateListingSubscriber implements EventSubscriberInterface
@@ -34,7 +35,7 @@ class PaginateListingSubscriber implements EventSubscriberInterface
         }
 
         if (!$event->isPropagationStopped()) {
-            throw new \RuntimeException('Paginator only accepts instances of the type ' .
+            throw new RuntimeException('Paginator only accepts instances of the type ' .
                 PaginateListingInterface::class . ' or types defined here: https://github.com/KnpLabs/KnpPaginatorBundle#controller');
         }
     }

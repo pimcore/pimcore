@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\HttpKernel\BundleCollection;
 
+use InvalidArgumentException;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class BundleCollection
@@ -60,7 +61,7 @@ class BundleCollection
     public function getItem(string $identifier): ItemInterface
     {
         if (!$this->hasItem($identifier)) {
-            throw new \InvalidArgumentException(sprintf('Bundle "%s" is not registered', $identifier));
+            throw new InvalidArgumentException(sprintf('Bundle "%s" is not registered', $identifier));
         }
 
         return $this->items[$identifier];
@@ -97,7 +98,7 @@ class BundleCollection
      *
      * @return string[]
      */
-    public function getIdentifiers(string $environment = null): array
+    public function getIdentifiers(?string $environment = null): array
     {
         return array_map(
             static fn (ItemInterface $item): string => $item->getBundleIdentifier(),
@@ -121,7 +122,7 @@ class BundleCollection
     /**
      * Adds a bundle
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      * @return $this
      */

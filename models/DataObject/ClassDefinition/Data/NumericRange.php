@@ -121,7 +121,7 @@ class NumericRange extends Data implements
 
     public function setDecimalSize(?int $decimalSize): void
     {
-        if (!\is_numeric($decimalSize)) {
+        if (!is_numeric($decimalSize)) {
             $decimalSize = null;
         }
 
@@ -198,15 +198,15 @@ class NumericRange extends Data implements
         }
 
         if ($scale > $precision) {
-            throw new InvalidArgumentException(\sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Decimal scale can\'t be larger than precision (%d)',
                 $precision
             ));
         }
 
         return [
-            'minimum' => \sprintf('DECIMAL(%d, %d)', $precision, $scale),
-            'maximum' => \sprintf('DECIMAL(%d, %d)', $precision, $scale),
+            'minimum' => sprintf('DECIMAL(%d, %d)', $precision, $scale),
+            'maximum' => sprintf('DECIMAL(%d, %d)', $precision, $scale),
         ];
     }
 
@@ -216,7 +216,7 @@ class NumericRange extends Data implements
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data instanceof DataObject\Data\NumericRange) {
             return [
@@ -237,13 +237,21 @@ class NumericRange extends Data implements
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\NumericRange
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\NumericRange
     {
         if (isset($data[$this->getName() . '__minimum'], $data[$this->getName() . '__maximum'])) {
-            $numericRange = new DataObject\Data\NumericRange(
-                $data[$this->getName() . '__minimum'],
-                $data[$this->getName() . '__maximum']
-            );
+            $minimum = $data[$this->getName() . '__minimum'];
+            $maximum = $data[$this->getName() . '__maximum'];
+
+            if (is_string($minimum)) {
+                $minimum = (float) $minimum;
+            }
+
+            if (is_string($maximum)) {
+                $maximum = (float) $maximum;
+            }
+
+            $numericRange = new DataObject\Data\NumericRange($minimum, $maximum);
 
             if (isset($params['owner'])) {
                 $numericRange->_setOwner($params['owner']);
@@ -262,7 +270,7 @@ class NumericRange extends Data implements
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): array
+    public function getDataForQueryResource(mixed $data, ?Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -273,7 +281,7 @@ class NumericRange extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof DataObject\Data\NumericRange) {
             return [
@@ -290,16 +298,16 @@ class NumericRange extends Data implements
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\NumericRange
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\NumericRange
     {
-        if (\is_array($data) && (isset($data['minimum']) || isset($data['maximum']))) {
+        if (is_array($data) && (isset($data['minimum']) || isset($data['maximum']))) {
             return new DataObject\Data\NumericRange($data['minimum'], $data['maximum']);
         }
 
         return null;
     }
 
-    public function getDataFromGridEditor(array $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\NumericRange
+    public function getDataFromGridEditor(array $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\NumericRange
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -310,7 +318,7 @@ class NumericRange extends Data implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DataObject\Data\NumericRange) {
             return $data->__toString();
@@ -356,7 +364,7 @@ class NumericRange extends Data implements
 
     public function denormalize(mixed $value, array $params = []): ?DataObject\Data\NumericRange
     {
-        if (\is_array($value)) {
+        if (is_array($value)) {
             return new DataObject\Data\NumericRange($value['minimum'], $value['maximum']);
         }
 
@@ -365,7 +373,7 @@ class NumericRange extends Data implements
 
     public function getDataForGrid(
         ?DataObject\Data\NumericRange $data,
-        DataObject\Concrete $object = null,
+        ?DataObject\Concrete $object = null,
         array $params = []
     ): ?array {
         return $this->getDataForEditmode($data, $object, $params);
@@ -386,7 +394,7 @@ class NumericRange extends Data implements
         $fieldName = $this->getName();
 
         if (true === $isEmpty && false === $omitMandatoryCheck && $this->getMandatory()) {
-            throw new ValidationException(\sprintf('Empty mandatory field [ %s ]', $fieldName));
+            throw new ValidationException(sprintf('Empty mandatory field [ %s ]', $fieldName));
         }
 
         if (false === $isEmpty && false === $omitMandatoryCheck) {
@@ -399,7 +407,7 @@ class NumericRange extends Data implements
 
             if ($this->getInteger() && str_contains((string) $data, '.')) {
                 throw new ValidationException(
-                    \sprintf('Either the minimum or maximum value in field [ %s ] is not an integer', $fieldName)
+                    sprintf('Either the minimum or maximum value in field [ %s ] is not an integer', $fieldName)
                 );
             }
 
@@ -407,13 +415,13 @@ class NumericRange extends Data implements
 
             if (null !== $minimumThreshold && $minimum < $minimumThreshold) {
                 throw new ValidationException(
-                    \sprintf('Minimum value in field [ %s ] is not at least %d', $fieldName, $minimumThreshold)
+                    sprintf('Minimum value in field [ %s ] is not at least %d', $fieldName, $minimumThreshold)
                 );
             }
 
             if (null !== $minimumThreshold && $maximum < $minimumThreshold) {
                 throw new ValidationException(
-                    \sprintf('Maximum value in field [ %s ] is not at least %d', $fieldName, $minimumThreshold)
+                    sprintf('Maximum value in field [ %s ] is not at least %d', $fieldName, $minimumThreshold)
                 );
             }
 
@@ -421,25 +429,25 @@ class NumericRange extends Data implements
 
             if (null !== $maximumThreshold && $minimum > $maximumThreshold) {
                 throw new ValidationException(
-                    \sprintf('Minimum value in field [ %s ] is bigger than %d', $fieldName, $maximumThreshold)
+                    sprintf('Minimum value in field [ %s ] is bigger than %d', $fieldName, $maximumThreshold)
                 );
             }
 
             if (null !== $maximumThreshold && $maximum > $maximumThreshold) {
                 throw new ValidationException(
-                    \sprintf('Maximum value in field [ %s ] is bigger than %s', $fieldName, $maximumThreshold)
+                    sprintf('Maximum value in field [ %s ] is bigger than %s', $fieldName, $maximumThreshold)
                 );
             }
 
             if ($minimum > $maximum) {
                 throw new ValidationException(
-                    \sprintf('Minimum value in field [ %s ] is bigger than the maximum value', $fieldName)
+                    sprintf('Minimum value in field [ %s ] is bigger than the maximum value', $fieldName)
                 );
             }
 
             if ($minimum < 0 && $this->getUnsigned()) {
                 throw new ValidationException(
-                    \sprintf('Value in field [ %s ] is not unsigned (bigger than 0)', $fieldName)
+                    sprintf('Value in field [ %s ] is not unsigned (bigger than 0)', $fieldName)
                 );
             }
         }

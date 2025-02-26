@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Objectbrick;
 
+use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
@@ -46,7 +47,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
             try {
                 $results = $this->db->fetchAllAssociative('SELECT * FROM '.$tableName.' WHERE id = ? AND fieldname = ?', [$object->getId(), $this->model->getFieldname()]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $results = [];
             }
 

@@ -60,7 +60,7 @@ class ResponseHeaderListener implements EventSubscriberInterface
     public function onKernelControllerArguments(ControllerArgumentsEvent $event): void
     {
         $request = $event->getRequest();
-        if (!\is_array($attributes = $event->getAttributes()[ResponseHeader::class] ?? null)) {
+        if (!is_array($attributes = $event->getAttributes()[ResponseHeader::class] ?? null)) {
             return;
         }
 

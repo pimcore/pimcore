@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\SeoBundle\Model\Redirect;
 
+use Exception;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectUrlPartResolver;
 use Pimcore\Model;
@@ -33,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById(int $id = null): void
+    public function getById(?int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -93,7 +94,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {

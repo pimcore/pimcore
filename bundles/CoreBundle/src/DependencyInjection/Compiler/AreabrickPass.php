@@ -22,6 +22,7 @@ use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManager;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use Pimcore\Templating\Renderer\EditableRenderer;
+use ReflectionClass;
 use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -61,7 +62,7 @@ final class AreabrickPass implements CompilerPassInterface
         foreach ($taggedServices as $id => $tags) {
             $definition = $container->getDefinition($id);
             $class = $definition->getClass();
-            $reflector = new \ReflectionClass($class);
+            $reflector = new ReflectionClass($class);
             $taggedAreas[] = $class;
 
             foreach ($tags as $tag) {
@@ -119,7 +120,7 @@ final class AreabrickPass implements CompilerPassInterface
             $bundleAreas = $this->findBundleBricks($container, $bundleName, $bundleMetadata, $excludedClasses);
 
             foreach ($bundleAreas as $bundleArea) {
-                /** @var \ReflectionClass $reflector */
+                /** @var ReflectionClass $reflector */
                 $reflector = $bundleArea['reflector'];
 
                 $definition = new Definition($reflector->getName());
@@ -149,7 +150,7 @@ final class AreabrickPass implements CompilerPassInterface
         return $locatorMapping;
     }
 
-    private function handleEditableRendererCall(Definition $definition, \ReflectionClass $reflector): void
+    private function handleEditableRendererCall(Definition $definition, ReflectionClass $reflector): void
     {
         if ($reflector->hasMethod('setEditableRenderer')) {
             $definition->addMethodCall('setEditableRenderer', [new Reference(EditableRenderer::class)]);
@@ -159,7 +160,7 @@ final class AreabrickPass implements CompilerPassInterface
     /**
      * Adds setContainer() call to bricks implementing ContainerAwareInterface
      */
-    private function handleContainerAwareDefinition(Definition $definition, \ReflectionClass $reflector): void
+    private function handleContainerAwareDefinition(Definition $definition, ReflectionClass $reflector): void
     {
         if ($reflector->implementsInterface(ContainerAwareInterface::class)) {
             $definition->addMethodCall('setContainer', [new Reference('service_container')]);
@@ -214,7 +215,7 @@ final class AreabrickPass implements CompilerPassInterface
             }
 
             if (class_exists($className)) {
-                $reflector = new \ReflectionClass($className);
+                $reflector = new ReflectionClass($className);
                 if ($reflector->isInstantiable() && $reflector->implementsInterface(AreabrickInterface::class)) {
                     $brickId = $this->generateBrickId($reflector);
                     $serviceId = $this->generateServiceId($name, $subNamespace, $shortClassName);
@@ -235,7 +236,7 @@ final class AreabrickPass implements CompilerPassInterface
      * Tries to read the ID from the `AsAreabrick` attribute and falls back to auto-generation if not defined:
      * GalleryTeaserRow -> gallery-teaser-row
      */
-    private function generateBrickId(\ReflectionClass $reflector): string
+    private function generateBrickId(ReflectionClass $reflector): string
     {
         $attribute = $reflector->getAttributes(AsAreabrick::class)[0] ?? null;
 

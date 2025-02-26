@@ -67,20 +67,20 @@ final class SecurityPolicy implements SecurityPolicyInterface
     public function checkSecurity($tags, $filters, $functions): void
     {
         foreach ($tags as $tag) {
-            if (!\in_array($tag, $this->allowedTags)) {
+            if (!in_array($tag, $this->allowedTags)) {
                 throw new SecurityNotAllowedTagError(sprintf('Tag "%s" is not allowed.', $tag), $tag);
             }
         }
 
         foreach ($filters as $filter) {
-            if (!\in_array($filter, $this->allowedFilters)) {
+            if (!in_array($filter, $this->allowedFilters)) {
                 throw new SecurityNotAllowedFilterError(sprintf('Filter "%s" is not allowed.', $filter), $filter);
             }
         }
 
         foreach ($functions as $function) {
             //check if a function is allowed or a pimcore twig functions
-            if (!\in_array($function, $this->allowedFunctions) && !str_starts_with($function, 'pimcore_')) {
+            if (!in_array($function, $this->allowedFunctions) && !str_starts_with($function, 'pimcore_')) {
                 throw new SecurityNotAllowedFunctionError(sprintf('Function "%s" is not allowed.', $function), $function);
             }
         }

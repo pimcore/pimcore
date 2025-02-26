@@ -16,10 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool\Requirements;
 
+use ArrayAccess;
+
 /**
  * @internal
  */
-final class Check implements \ArrayAccess
+final class Check implements ArrayAccess
 {
     const STATE_OK = 1;
 

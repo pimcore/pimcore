@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -27,6 +28,7 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
+use stdClass;
 
 class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface, VarExporterInterface, FieldDefinitionEnrichmentModelInterface
 {
@@ -103,7 +105,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public ?array $permissionEdit = null;
 
-    public function getDataForEditmode(mixed $localizedField, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $localizedField, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $fieldData = [];
         $metaData = [];
@@ -249,7 +251,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $result;
     }
 
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Localizedfield
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): Localizedfield
     {
         $localizedFields = $this->getDataFromObjectParam($object, $params);
 
@@ -280,9 +282,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $localizedFields;
     }
 
-    public function getDataForGrid(?Localizedfield $data, Concrete $object = null, array $params = []): \stdClass
+    public function getDataForGrid(?Localizedfield $data, ?Concrete $object = null, array $params = []): stdClass
     {
-        $result = new \stdClass();
+        $result = new stdClass();
         foreach ($this->getFieldDefinitions() as $fd) {
             $key = $fd->getName();
             $context = $params['context'] ?? null;
@@ -299,7 +301,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $result;
     }
 
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         // this is handled directly in the template
         // https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/templates/admin/data_object/data_object/preview_version.html.twig
@@ -469,7 +471,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
             !$container instanceof DataObject\Fieldcollection\Data\AbstractData &&
             !$container instanceof DataObject\Objectbrick\Data\AbstractData
         ) {
-            throw new \Exception('Localized Fields are only valid in Objects, Fieldcollections and Objectbricks');
+            throw new Exception('Localized Fields are only valid in Objects, Fieldcollections and Objectbricks');
         }
 
         $lf = $container->getObjectVar('localizedfields');
@@ -613,12 +615,12 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setName(string $name): static
     {
         if ($name !== 'localizedfields') {
-            throw new \Exception('Localizedfields can only be named `localizedfields`, no other names are allowed');
+            throw new Exception('Localizedfields can only be named `localizedfields`, no other names are allowed');
         }
 
         $this->name = $name;
@@ -656,7 +658,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                 $dataForValidityCheck[$language][$fd->getName()] = null;
                             }
                             $fd->checkValidity($dataForValidityCheck[$language][$fd->getName()], false, $params);
-                        } catch (\Exception $e) {
+                        } catch (Exception $e) {
                             if ($data->getObject()->getClass()->getAllowInherit() && $fd->supportsInheritance() && $fd->isEmpty($dataForValidityCheck[$language][$fd->getName()])) {
                                 //try again with parent data when inheritance is activated
                                 try {
@@ -679,7 +681,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
                                     $fd->checkValidity($value, $omitMandatoryCheck, $params);
                                     DataObject::setGetInheritedValues($getInheritedValues);
-                                } catch (\Exception $e) {
+                                } catch (Exception $e) {
                                     if (!$e instanceof Model\Element\ValidationException) {
                                         throw $e;
                                     }
@@ -735,7 +737,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $data;
     }
 
-    public function getDiffDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDiffDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $return = [];
 
@@ -778,7 +780,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $return;
     }
 
-    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): Localizedfield
+    public function getDiffDataFromEditmode(array $data, ?DataObject\Concrete $object = null, array $params = []): Localizedfield
     {
         $localFields = $this->getDataFromObjectParam($object, $params);
         $localData = [];

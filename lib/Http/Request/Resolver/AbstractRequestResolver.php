@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Http\Request\Resolver;
 
+use LogicException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -34,7 +35,7 @@ abstract class AbstractRequestResolver
     protected function getCurrentRequest(): Request
     {
         if (!$this->requestStack->getCurrentRequest()) {
-            throw new \LogicException('A request must be available.');
+            throw new LogicException('A request must be available.');
         }
 
         return $this->requestStack->getCurrentRequest();
@@ -43,7 +44,7 @@ abstract class AbstractRequestResolver
     protected function getMainRequest(): Request
     {
         if (!$this->requestStack->getMainRequest()) {
-            throw new \LogicException('A main request must be available.');
+            throw new LogicException('A main request must be available.');
         }
 
         return $this->requestStack->getMainRequest();

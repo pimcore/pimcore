@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ExportDataExtractorService;
 
+use Exception;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\ExportDataExtractorService\DataExtractor\DataExtractorInterface;
 use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItem;
@@ -30,7 +31,7 @@ class ExportDataExtractorService implements ExportDataExtractorServiceInterface
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function extract(TranslationItem $translationItem, string $sourceLanguage, array $targetLanguages): AttributeSet
     {
@@ -51,7 +52,7 @@ class ExportDataExtractorService implements ExportDataExtractorServiceInterface
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getDataExtractor(string $type): DataExtractorInterface
     {
@@ -59,6 +60,6 @@ class ExportDataExtractorService implements ExportDataExtractorServiceInterface
             return $this->dataExtractors[$type];
         }
 
-        throw new \Exception(sprintf('no data extractor for type "%s" registered', $type));
+        throw new Exception(sprintf('no data extractor for type "%s" registered', $type));
     }
 }

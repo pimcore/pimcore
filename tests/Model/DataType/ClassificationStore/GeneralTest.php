@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Carbon\Carbon;
+use Exception;
+use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Model\DataObject\Classificationstore;
@@ -34,7 +36,7 @@ class GeneralTest extends AbstractClassificationStoreTest
     {
         parent::setUp();
 
-        \Pimcore::setAdminMode();
+        Pimcore::setAdminMode();
         TestHelper::cleanUp();
     }
 
@@ -155,7 +157,7 @@ class GeneralTest extends AbstractClassificationStoreTest
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function createCsObject(): \Pimcore\Model\DataObject\Csstore
     {

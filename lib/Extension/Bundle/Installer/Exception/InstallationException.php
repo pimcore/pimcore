@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle\Installer\Exception;
 
-class InstallationException extends \RuntimeException
+use RuntimeException;
+
+class InstallationException extends RuntimeException
 {
 }

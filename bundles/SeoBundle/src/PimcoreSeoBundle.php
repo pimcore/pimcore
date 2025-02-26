@@ -54,7 +54,7 @@ class PimcoreSeoBundle extends AbstractPimcoreBundle implements DependentBundleI
 
     public function getPath(): string
     {
-        return \dirname(__DIR__);
+        return dirname(__DIR__);
     }
 
     public static function registerDependentBundles(BundleCollection $collection): void

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\User\Permission\Definition;
 
+use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -33,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
                 'key' => $this->model->getKey(),
                 'category' => $this->model->getCategory() ? $this->model->getCategory() : '',
             ], $this->getPrimaryKey('users_permission_definitions'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::warn((string) $e);
         }
     }

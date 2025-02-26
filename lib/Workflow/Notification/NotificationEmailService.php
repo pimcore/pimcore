@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow\Notification;
 
+use Exception;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User;
@@ -108,7 +109,7 @@ class NotificationEmailService extends AbstractNotificationService
                         break;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             \Pimcore\Logger::error('Error sending Workflow change notification email.');
         }
     }

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Version;
 
+use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -147,7 +148,7 @@ class Dao extends Model\Dao\AbstractDao
 
                         // call the garbage collector if memory consumption is > 100MB
                         if (memory_get_usage() > 100000000 && ($count % 100 == 0)) {
-                            \Pimcore::collectGarbage();
+                            Pimcore::collectGarbage();
                         }
 
                         if (count($versionIds) > 1000) {

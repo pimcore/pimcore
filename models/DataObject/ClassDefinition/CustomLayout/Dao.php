@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
+use Exception;
 use Pimcore\Config;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
@@ -49,7 +50,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(string $id = null): void
+    public function getById(?string $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -141,7 +142,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * Save custom layout
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {

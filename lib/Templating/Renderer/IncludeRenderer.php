@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Templating\Renderer;
 
+use DOMElement;
+use Exception;
 use Pimcore\Cache;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
@@ -55,13 +57,13 @@ class IncludeRenderer
         if (is_numeric($include)) {
             try {
                 $include = Model\Document::getById($include);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $include = $originalInclude;
             }
         } elseif (is_string($include)) {
             try {
                 $include = Model\Document::getByPath($include);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $include = $originalInclude;
             }
         }
@@ -143,7 +145,7 @@ class IncludeRenderer
         try {
             $html = new DomCrawler($content);
             $children = $html->filterXPath('//' . DomCrawler::FRAGMENT_WRAPPER_TAG . '/*'); // FRAGMENT_WRAPPER_TAG is added by DomCrawler for fragments
-            /** @var \DOMElement $child */
+            /** @var DOMElement $child */
             foreach ($children as $child) {
                 $child->setAttribute('class', $child->getAttribute('class') . $editmodeClass);
                 $child->setAttribute('pimcore_type', $include->getType());
@@ -153,7 +155,7 @@ class IncludeRenderer
 
             $html->clear();
             unset($html);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // add a div container if the include doesn't contain markup/html
             $content = '<div class="' . $editmodeClass . '" pimcore_id="' . $include->getId() . '" pimcore_type="' . $include->getType() . '">' . $content . '</div>';
         }

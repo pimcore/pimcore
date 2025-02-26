@@ -54,7 +54,7 @@ class StatusInfo
         );
     }
 
-    public function getAllPalacesHtml(object $subject, string $workflowName = null): string
+    public function getAllPalacesHtml(object $subject, ?string $workflowName = null): string
     {
         $places = $this->getAllPlaces($subject, false, $workflowName);
 
@@ -68,7 +68,7 @@ class StatusInfo
         );
     }
 
-    public function getAllPlacesForCsv(object $subject, string $workflowName = null): string
+    public function getAllPlacesForCsv(object $subject, ?string $workflowName = null): string
     {
         $places = $this->getAllPlaces($subject, false, $workflowName);
         $result = [];
@@ -83,7 +83,7 @@ class StatusInfo
     /**
      * @return PlaceConfig[]
      */
-    private function getAllPlaces(object $subject, bool $visibleInHeaderOnly = false, string $workflowName = null): array
+    private function getAllPlaces(object $subject, bool $visibleInHeaderOnly = false, ?string $workflowName = null): array
     {
         $places = [];
 

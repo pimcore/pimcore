@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
+use Exception;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -124,7 +125,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function setParentId(?int $parentId): static
     {
-        $parentId = (int) $parentId;
         $this->parentId = $parentId;
         $this->parent = null;
 
@@ -215,8 +215,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function getParent(): ?AbstractElement
     {
-        if ($this->parent === null && $this->getParentId() !== null) {
-            $parent = Service::getElementById(Service::getElementType($this), $this->getParentId());
+        $parentId = $this->getParentId();
+        if ($this->parent === null && $parentId !== null && $parentId !== 0) {
+            $parent = Service::getElementById(Service::getElementType($this), $parentId);
             $this->setParent($parent);
         }
 
@@ -428,7 +429,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
@@ -465,7 +466,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         foreach ($permissions as $type => $isAllowed) {
             $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
-            \Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);
+            Pimcore::getEventDispatcher()->dispatch($event, ElementEvents::ELEMENT_PERMISSION_IS_ALLOWED);
 
             $permissions[$type] = $event->getArgument('isAllowed');
         }
@@ -531,12 +532,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function validatePathLength(): void
     {
         if (mb_strlen($this->getRealFullPath()) > 765) {
-            throw new \Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
+            throw new Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
         }
     }
 
@@ -563,12 +564,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      *
      */
-    protected function doSaveVersion(string $versionNote = null, bool $saveOnlyVersion = true, bool $saveStackTrace = true, bool $isAutoSave = false): Model\Version
+    protected function doSaveVersion(?string $versionNote = null, bool $saveOnlyVersion = true, bool $saveStackTrace = true, bool $isAutoSave = false): Model\Version
     {
         $version = null;
 
@@ -677,7 +678,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @internal
      */
-    public function deleteAutoSaveVersions(int $userId = null): void
+    public function deleteAutoSaveVersions(?int $userId = null): void
     {
         $list = new Model\Version\Listing();
         $list->setLoadAutoSave(true);

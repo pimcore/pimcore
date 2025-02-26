@@ -9,4 +9,5 @@
 
 ## Advanced Topics
 - [Cluster Setup](07_Cluster_Setup.md)
+- [Multi-application setup](08_Multi_Application_Setup.md)
 - [Performance Guide](09_Performance_Guide.md)

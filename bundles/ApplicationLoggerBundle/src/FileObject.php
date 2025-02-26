@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\ApplicationLoggerBundle;
 
+use const PIMCORE_PROJECT_ROOT;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToWriteFile;
 use Pimcore\Logger;
@@ -27,7 +28,7 @@ final class FileObject
 
     protected string $data;
 
-    public function __construct(string $data, string $filename = null)
+    public function __construct(string $data, ?string $filename = null)
     {
         $this->data = $data;
         $this->filename = $filename;
@@ -51,7 +52,7 @@ final class FileObject
 
     public function getFilename(): string
     {
-        return preg_replace('/^'.preg_quote(\PIMCORE_PROJECT_ROOT, '/').'/', '', $this->filename);
+        return preg_replace('/^'.preg_quote(PIMCORE_PROJECT_ROOT, '/').'/', '', $this->filename);
     }
 
     public function getData(): string

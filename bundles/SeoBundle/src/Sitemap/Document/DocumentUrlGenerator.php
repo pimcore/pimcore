@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\SeoBundle\Sitemap\Document;
 use Pimcore\Bundle\SeoBundle\Sitemap\UrlGeneratorInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use RuntimeException;
 
 /**
  * URL generator specific to documents with site support.
@@ -38,7 +39,7 @@ class DocumentUrlGenerator implements DocumentUrlGeneratorInterface
         return $this->urlGenerator->generateUrl($path, $options);
     }
 
-    public function generateDocumentUrl(Document $document, Site $site = null, array $options = []): string
+    public function generateDocumentUrl(Document $document, ?Site $site = null, array $options = []): string
     {
         if ($document instanceof Document\Page && $document->getPrettyUrl()) {
             $prettyUrlSet = true;
@@ -57,7 +58,7 @@ class DocumentUrlGenerator implements DocumentUrlGeneratorInterface
         return $this->urlGenerator->generateUrl($path, $options);
     }
 
-    protected function prepareOptions(array $options, Site $site = null): array
+    protected function prepareOptions(array $options, ?Site $site = null): array
     {
         if (!isset($options['host'])) {
             // set site host as default value if it is not explicitely set via options
@@ -89,7 +90,7 @@ class DocumentUrlGenerator implements DocumentUrlGeneratorInterface
         }
 
         if (empty($host)) {
-            throw new \RuntimeException(sprintf('Failed to resolve host for site %d', $site->getId()));
+            throw new RuntimeException(sprintf('Failed to resolve host for site %d', $site->getId()));
         }
 
         return $host;

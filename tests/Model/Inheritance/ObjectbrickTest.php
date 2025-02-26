@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Inheritance;
 
+use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -34,7 +35,7 @@ class ObjectbrickTest extends ModelTestCase
     {
         parent::setUp();
         TestHelper::cleanUp();
-        \Pimcore::setAdminMode();
+        Pimcore::setAdminMode();
     }
 
     /**

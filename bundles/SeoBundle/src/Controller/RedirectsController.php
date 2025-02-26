@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Controller;
 
+use Exception;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\Csv;
@@ -54,9 +55,10 @@ class RedirectsController extends UserAwareController
         // check permission for both update and listing
         $this->checkPermission('redirects');
 
-        if ($request->get('data')) {
-            if ($request->get('xaction') === 'destroy') {
-                $data = $this->decodeJson($request->get('data'));
+        if ($request->request->has('data')) {
+            $data = $this->decodeJson($request->request->getString('data'));
+
+            if ($request->query->getString('xaction') === 'destroy') {
 
                 $id = $data['id'] ?? null;
                 if ($id) {
@@ -66,9 +68,7 @@ class RedirectsController extends UserAwareController
 
                 return $this->jsonResponse(['success' => true, 'data' => []]);
             }
-            if ($request->get('xaction') === 'update') {
-                $data = $this->decodeJson($request->get('data'));
-
+            if ($request->query->getString('xaction') === 'update') {
                 // save redirect
                 $redirect = Redirect::getById($data['id']);
 
@@ -99,8 +99,7 @@ class RedirectsController extends UserAwareController
 
                 return $this->jsonResponse(['data' => $redirect->getObjectVars(), 'success' => true]);
             }
-            if ($request->get('xaction') === 'create') {
-                $data = $this->decodeJson($request->get('data'));
+            if ($request->query->getString('xaction') === 'create') {
                 unset($data['id']);
 
                 // save route
@@ -137,8 +136,8 @@ class RedirectsController extends UserAwareController
             // get list of routes
 
             $list = new Redirect\Listing();
-            $list->setLimit((int)$request->get('limit', 50));
-            $list->setOffset((int)$request->get('start', 0));
+            $list->setLimit($request->request->getInt('limit', 50));
+            $list->setOffset($request->request->getInt('start'));
 
             $sortingSettings = QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {
@@ -146,7 +145,7 @@ class RedirectsController extends UserAwareController
                 $list->setOrder($sortingSettings['order']);
             }
 
-            if ($filterValue = $request->get('filter')) {
+            if ($filterValue = $request->request->getString('filter')) {
                 if (is_numeric($filterValue)) {
                     $list->setCondition('id = ?', [$filterValue]);
                 } elseif (preg_match('@^https?://@', $filterValue)) {
@@ -257,7 +256,7 @@ class RedirectsController extends UserAwareController
             }
 
             return $this->jsonResponse(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error($e->getMessage());
 
             return $this->jsonResponse(['success' => false]);

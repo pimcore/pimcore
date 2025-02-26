@@ -39,12 +39,12 @@ class MiscController extends UserAwareController
 
         $db = Db::get();
 
-        $limit = (int)$request->get('limit');
-        $offset = (int)$request->get('start');
-        $sortInfo = ($request->get('sort') ? json_decode($request->get('sort'), true)[0] : []);
+        $limit = $request->request->getInt('limit');
+        $offset = $request->request->getInt('start');
+        $sortInfo = ($request->request->has('sort') ? json_decode($request->request->getString('sort'), true)[0] : []);
         $sort = $sortInfo['property'] ?? null;
         $dir = $sortInfo['direction'] ?? null;
-        $filter = $request->get('filter');
+        $filter = $request->request->getString('filter');
         if (!$limit) {
             $limit = 20;
         }
@@ -93,7 +93,7 @@ class MiscController extends UserAwareController
         }
 
         $db = Db::get();
-        $data = $db->fetchAssociative('SELECT * FROM http_error_log WHERE uri = ?', [$request->get('uri')]);
+        $data = $db->fetchAssociative('SELECT * FROM http_error_log WHERE uri = ?', [$request->query->getString('uri')]);
 
         foreach ($data as $key => &$value) {
             if (in_array($key, ['parametersGet', 'parametersPost', 'serverVars', 'cookies'])) {

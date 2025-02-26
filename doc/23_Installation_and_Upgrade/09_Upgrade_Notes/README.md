@@ -1,5 +1,47 @@
 # Upgrade Notes
 
+## Pimcore 11.6.0
+### Elements
+#### [Documents]
+- Video Editable: Passing an invalid allowedTypes config will throw an exception.
+
+## Pimcore 11.5.0
+### General
+#### [Database]
+- Adding index to `users_workspaces_asset`, `users_workspaces_document` and `users_workspaces_object` tables on `userId`, `cpath` and `list` to improve permission checks.  
+  Make sure to run the migration `bin/console doctrine:migrations:execute Pimcore\\Bundle\\CoreBundle\\Migrations\\Version20241114142759`.
+- Added an index on `versionCount` columns
+#### [Events]
+- `context` property of `ResolveUploadTargetEvent` is deprecated. Use `setArgument()` method instead.
+- `pimcore_block` Twig extension is deprecated. Use `pimcoreblock` or `pimcoremanualblock` instead.
+#### [Controllers]
+- Replaced all `$request->get()` with their explicit input source.
+#### [Dependencies]
+- Added support to `doctrine/orm` `v3` and `symfony/webpack-encore-bundle` `v2`.
+#### [WYSIWYG-Editor]
+- `TinyMCE` is deprecated. Use `Quill` (`pimcore/quill-bundle`) instead.
+### Elements
+#### [Assets]
+- Introduced `pimcore.assets.metadata.alt`, `pimcore.assets.metadata.copyright`, `pimcore.assets.metadata.title` configuration to allow defining which metadata should be used when rending the image tag.
+#### [DataObjects]
+- Passing an non-existing or invalid unit when programmatically setting QuantityValue related object types will throw an exception.
+
+## Pimcore 11.4.0
+### General
+#### [Logging]
+- Changed log file names. In the `dev` environment, the file names are now `dev-debug.log` and `dev-error.log`. In the `prod` environment, only `prod-error.log` is written.
+#### [Twig Deferred Extension]
+- Removed `rybakit/twig-deferred-extension` dependency and `Twig\DeferredExtension\DeferredExtension` service.
+  If you use deferred twig blocks, please add the dependency to your own `composer.json` and the service to your own `service.yaml`.
+#### [Twig Extension Deprecations]
+- `pimcore_cache` Twig extension is deprecated. Use `pimcorecache` twig tag instead.
+- `pimcore_placeholder`, `pimcore_head_script`, `pimcore_head_style` 
+  - `captureStart()` and `captureEnd()` methods are deprecated. Use native twig `set` tag instead. Take a look at the related docs of each twig extension for an example.
+
+#### [Notification]
+- Extending notifications for studio adding flag `isStudio` column and a `payload` column with according getters and setters.
+  Make sure to run the migration `bin/console doctrine:migrations:execute Pimcore\\Bundle\\CoreBundle\\Migrations\\Version20240813085200`.
+
 ## Pimcore 11.3.0
 ### General
 #### [System Settings]

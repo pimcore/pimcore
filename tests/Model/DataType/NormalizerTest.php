@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataType;
 
 use Carbon\Carbon;
+use Exception;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Model\DataObject\Data\Link;
@@ -366,7 +367,7 @@ class NormalizerTest extends ModelTestCase
     {
         $unit = DataObject\QuantityValue\Unit::getByAbbreviation('cm');
         if (!$unit) {
-            throw new \Exception('unknown id');
+            throw new Exception('unknown id');
         }
         $originalValue = new DataObject\Data\InputQuantityValue('123', $unit);
         $fd = new DataObject\ClassDefinition\Data\InputQuantityValue();
@@ -519,7 +520,7 @@ class NormalizerTest extends ModelTestCase
     {
         $unit = DataObject\QuantityValue\Unit::getByAbbreviation('cm');
         if (!$unit) {
-            throw new \Exception('unknown id');
+            throw new Exception('unknown id');
         }
         $originalValue = new DataObject\Data\QuantityValue(123.4, $unit);
         $fd = new DataObject\ClassDefinition\Data\QuantityValue();

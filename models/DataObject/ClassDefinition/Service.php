@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
+use Exception;
+use Pimcore;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
@@ -284,7 +286,7 @@ class Service
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
@@ -293,17 +295,17 @@ class Service
         if ($array) {
             if ($title = $array['title'] ?? false) {
                 if (preg_match('/<.+?>/', $title)) {
-                    throw new \Exception('not a valid title:' . htmlentities($title));
+                    throw new Exception('not a valid title:' . htmlentities($title));
                 }
             }
             if ($name = $array['name'] ?? false) {
                 if (preg_match('/<.+?>/', $name)) {
-                    throw new \Exception('not a valid name:' . htmlentities($name));
+                    throw new Exception('not a valid name:' . htmlentities($name));
                 }
             }
 
             /** @var LoaderInterface $loader */
-            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
+            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
 
             if ($loader->supports($array['fieldtype'])) {
                 /** @var Data|Layout $item */
@@ -326,7 +328,7 @@ class Service
                                 $item->addChild($childO);
                             } else {
                                 if ($throwException) {
-                                    throw new \Exception('Could not add child ' . var_export($child, true));
+                                    throw new Exception('Could not add child ' . var_export($child, true));
                                 }
 
                                 Logger::err('Could not add child ' . var_export($child, true));
@@ -353,7 +355,7 @@ class Service
             }
         }
         if ($throwException) {
-            throw new \Exception('Could not add child ' . var_export($array, true));
+            throw new Exception('Could not add child ' . var_export($array, true));
         }
 
         return false;
@@ -422,7 +424,7 @@ class Service
     /**
      * @param string|null $newInterfaces A comma separated list of interfaces
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
@@ -435,7 +437,7 @@ class Service
                 if (Tool::interfaceExists($interface)) {
                     $implementsParts[] = $interface;
                 } else {
-                    throw new \Exception("interface '" . $interface . "' does not exist");
+                    throw new Exception("interface '" . $interface . "' does not exist");
                 }
             }
         }
@@ -450,7 +452,7 @@ class Service
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */
@@ -463,7 +465,7 @@ class Service
                 if (Tool::traitExists($trait)) {
                     $useParts[] = $trait;
                 } else {
-                    throw new \Exception("trait '" . $trait . "' does not exist");
+                    throw new Exception("trait '" . $trait . "' does not exist");
                 }
             }
         }
@@ -474,7 +476,7 @@ class Service
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
      */

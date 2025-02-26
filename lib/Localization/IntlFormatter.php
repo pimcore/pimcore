@@ -16,6 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Localization;
 
+use DateTimeInterface;
+use IntlDateFormatter;
+use NumberFormatter;
+use RuntimeException;
+
 /**
  * Formatting service for dates, times and numbers
  */
@@ -44,14 +49,14 @@ class IntlFormatter
     private LocaleServiceInterface $localeService;
 
     /**
-     * @var \IntlDateFormatter[]
+     * @var IntlDateFormatter[]
      */
     protected array $dateFormatters = [];
 
-    protected ?\NumberFormatter $numberFormatter = null;
+    protected ?NumberFormatter $numberFormatter = null;
 
     /**
-     * @var \NumberFormatter[]
+     * @var NumberFormatter[]
      */
     protected array $currencyFormatters = [];
 
@@ -99,57 +104,57 @@ class IntlFormatter
     /**
      *
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
-    protected function buildDateTimeFormatters(string $format): \IntlDateFormatter
+    protected function buildDateTimeFormatters(string $format): IntlDateFormatter
     {
         return match ($format) {
-            self::DATE_SHORT => \IntlDateFormatter::create(
+            self::DATE_SHORT => IntlDateFormatter::create(
                 $this->getLocale(),
-                \IntlDateFormatter::SHORT,
-                \IntlDateFormatter::NONE
+                IntlDateFormatter::SHORT,
+                IntlDateFormatter::NONE
             ),
-            self::DATE_MEDIUM => \IntlDateFormatter::create(
+            self::DATE_MEDIUM => IntlDateFormatter::create(
                 $this->getLocale(),
-                \IntlDateFormatter::MEDIUM,
-                \IntlDateFormatter::NONE
+                IntlDateFormatter::MEDIUM,
+                IntlDateFormatter::NONE
             ),
-            self::DATE_LONG => \IntlDateFormatter::create(
+            self::DATE_LONG => IntlDateFormatter::create(
                 $this->getLocale(),
-                \IntlDateFormatter::LONG,
-                \IntlDateFormatter::NONE
+                IntlDateFormatter::LONG,
+                IntlDateFormatter::NONE
             ),
-            self::DATETIME_SHORT => \IntlDateFormatter::create(
+            self::DATETIME_SHORT => IntlDateFormatter::create(
                 $this->getLocale(),
-                \IntlDateFormatter::SHORT,
-                \IntlDateFormatter::SHORT
+                IntlDateFormatter::SHORT,
+                IntlDateFormatter::SHORT
             ),
-            self::DATETIME_MEDIUM => \IntlDateFormatter::create(
+            self::DATETIME_MEDIUM => IntlDateFormatter::create(
                 $this->getLocale(),
-                \IntlDateFormatter::MEDIUM,
-                \IntlDateFormatter::MEDIUM
+                IntlDateFormatter::MEDIUM,
+                IntlDateFormatter::MEDIUM
             ),
-            self::DATETIME_LONG => \IntlDateFormatter::create(
+            self::DATETIME_LONG => IntlDateFormatter::create(
                 $this->getLocale(),
-                \IntlDateFormatter::LONG,
-                \IntlDateFormatter::LONG
+                IntlDateFormatter::LONG,
+                IntlDateFormatter::LONG
             ),
-            self::TIME_SHORT => \IntlDateFormatter::create(
+            self::TIME_SHORT => IntlDateFormatter::create(
                 $this->getLocale(),
-                \IntlDateFormatter::NONE,
-                \IntlDateFormatter::SHORT
+                IntlDateFormatter::NONE,
+                IntlDateFormatter::SHORT
             ),
-            self::TIME_MEDIUM => \IntlDateFormatter::create(
+            self::TIME_MEDIUM => IntlDateFormatter::create(
                 $this->getLocale(),
-                \IntlDateFormatter::NONE,
-                \IntlDateFormatter::MEDIUM
+                IntlDateFormatter::NONE,
+                IntlDateFormatter::MEDIUM
             ),
-            self::TIME_LONG => \IntlDateFormatter::create(
+            self::TIME_LONG => IntlDateFormatter::create(
                 $this->getLocale(),
-                \IntlDateFormatter::NONE,
-                \IntlDateFormatter::LONG
+                IntlDateFormatter::NONE,
+                IntlDateFormatter::LONG
             ),
-            default => throw new \RuntimeException("Invalid format '{$format}' for date formatter."),
+            default => throw new RuntimeException("Invalid format '{$format}' for date formatter."),
         };
     }
 
@@ -158,7 +163,7 @@ class IntlFormatter
      *
      * @return false|string
      */
-    public function formatDateTime(\DateTimeInterface|int|string $dateTime, string $format = self::DATETIME_MEDIUM): bool|string
+    public function formatDateTime(DateTimeInterface|int|string $dateTime, string $format = self::DATETIME_MEDIUM): bool|string
     {
         $formatter = $this->dateFormatters[$format] ??= $this->buildDateTimeFormatters($format);
 
@@ -172,7 +177,7 @@ class IntlFormatter
      */
     public function formatNumber(float|int $value): bool|string
     {
-        $this->numberFormatter ??= new \NumberFormatter($this->getLocale(), \NumberFormatter::DECIMAL);
+        $this->numberFormatter ??= new NumberFormatter($this->getLocale(), NumberFormatter::DECIMAL);
 
         return $this->numberFormatter->format($value);
     }
@@ -185,7 +190,7 @@ class IntlFormatter
     public function formatCurrency(float $value, string $currency, string $pattern = 'default'): string
     {
         if (empty($this->currencyFormatters[$pattern])) {
-            $formatter = new \NumberFormatter($this->getLocale(), \NumberFormatter::CURRENCY);
+            $formatter = new NumberFormatter($this->getLocale(), NumberFormatter::CURRENCY);
 
             if ($pattern !== 'default') {
                 $formatter->setPattern($pattern);

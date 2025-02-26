@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Editable;
 
+use Exception;
+use JsonException;
 use Pimcore\Model\Document\Editable;
 
 /**
@@ -32,7 +34,7 @@ final class EditmodeEditableDefinitionCollector
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function add(Editable $editable): void
     {
@@ -105,7 +107,7 @@ final class EditmodeEditableDefinitionCollector
 
     /**
      *
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function getHtml(): string
     {

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore\GroupConfig;
 
+use Exception;
 use Pimcore\Model;
 
 /**
@@ -32,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(int $id = null): void
+    public function getById(?int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -49,9 +50,9 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function getByName(string $name = null): void
+    public function getByName(?string $name = null): void
     {
         if ($name != null) {
             $this->model->setName($name);
@@ -79,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(): void
     {
@@ -99,7 +100,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(): void
     {

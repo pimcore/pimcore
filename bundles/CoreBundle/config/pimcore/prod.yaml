@@ -2,11 +2,7 @@ monolog:
     handlers:
         main:
             type:  stream
-            path:  "%kernel.logs_dir%/%kernel.environment%.log"
-            level: error
-        error:
-            type: stream
-            path: "%kernel.logs_dir%/php.log"
+            path:  "%kernel.logs_dir%/%kernel.environment%-error.log"
             level: error
         console:
             type: console

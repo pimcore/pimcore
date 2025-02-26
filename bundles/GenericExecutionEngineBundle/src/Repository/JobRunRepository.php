@@ -23,6 +23,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Configuration\ExecutionContextInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\CurrentMessage\CurrentMessageProviderInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\JobNotFoundException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\Job;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobRunStates;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Security\PermissionServiceInterface;
@@ -44,7 +45,7 @@ final class JobRunRepository implements JobRunRepositoryInterface
     ) {
     }
 
-    public function createFromJob(Job $job, int $ownerId = null): JobRun
+    public function createFromJob(Job $job, ?int $ownerId = null): JobRun
     {
         $jobRun = new JobRun($ownerId);
 
@@ -157,7 +158,7 @@ final class JobRunRepository implements JobRunRepositoryInterface
      *
      */
     public function getJobRunsByUserId(
-        int $ownerId = null,
+        ?int $ownerId = null,
         array $orderBy = [],
         int $limit = 100,
         int $offset = 0
@@ -210,5 +211,27 @@ final class JobRunRepository implements JobRunRepositoryInterface
         }
 
         return $result[0];
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function updateSelectedElements(JobRun $jobRun, array $selectedElements): void
+    {
+        $job = $jobRun->getJob();
+        if (!$job) {
+            throw new JobNotFoundException('Job not found for JobRun with id: ' . $jobRun->getId());
+        }
+        $currentlySelectedElements = $job->getSelectedElements();
+        $job->setSelectedElements($selectedElements);
+        $this->update($jobRun);
+        $this->updateLogLocalizedWithDomain(
+            $jobRun,
+            'gee_updated_selected_elements',
+            [
+                '%fromCount%' => count($currentlySelectedElements),
+                '%toCount%' => count($selectedElements),
+            ]
+        );
     }
 }

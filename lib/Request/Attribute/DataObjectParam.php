@@ -16,10 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Request\Attribute;
 
+use Attribute;
+
 /**
  * Argument to resolve a DataObject.
  */
-#[\Attribute(\Attribute::TARGET_PARAMETER)]
+#[Attribute(Attribute::TARGET_PARAMETER)]
 class DataObjectParam
 {
     public function __construct(

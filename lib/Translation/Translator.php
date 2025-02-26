@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Translation;
 
+use Exception;
 use Pimcore\Cache;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
@@ -57,7 +58,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->translator = $translator;
     }
 
-    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string
+    public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
     {
         $id = trim($id);
 
@@ -117,7 +118,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return \Pimcore\Tool::getDefaultLanguage();
     }
 
-    public function getCatalogue(string $locale = null): MessageCatalogueInterface
+    public function getCatalogue(?string $locale = null): MessageCatalogueInterface
     {
         return $this->translator->getCatalogue($locale);
     }
@@ -211,7 +212,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function checkForEmptyTranslation(string $id, string $translated, array $parameters, string $domain, string $locale): string
     {
@@ -238,7 +239,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                 }
             } elseif (Translation::isAValidDomain($domain)) {
                 if (strlen($id) > 190) {
-                    throw new \Exception("Message ID's longer than 190 characters are invalid!");
+                    throw new Exception("Message ID's longer than 190 characters are invalid!");
                 }
 
                 // no translation found create key
@@ -284,10 +285,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                 }
 
                 if ($fallbackValue && $normalizedId != $fallbackValue) {
+                    $isIntl = $catalogue->defines($normalizedId, $domain . $catalogue::INTL_DOMAIN_SUFFIX);
                     // update fallback value in original catalogue otherwise multiple calls to the same id will not work
-                    $this->getCatalogue($locale)->set($normalizedId, $fallbackValue, $domain);
+                    $this->getCatalogue($locale)->set($normalizedId, $fallbackValue, $domain . ($isIntl ? $catalogue::INTL_DOMAIN_SUFFIX : ''));
 
-                    return strtr($fallbackValue, $parameters);
+                    return $this->translator->trans($normalizedId, $parameters, $domain, $locale);
                 }
             }
         }

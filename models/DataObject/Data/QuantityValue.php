@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Exception;
+use NumberFormatter;
+use Pimcore;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 
@@ -23,7 +26,7 @@ class QuantityValue extends AbstractQuantityValue
 {
     protected float|int|string|null $value = null;
 
-    public function __construct(float|int|string|null $value = null, Unit|string $unit = null)
+    public function __construct(float|int|string|null $value = null, Unit|string|null $unit = null)
     {
         $this->value = $value;
         parent::__construct($unit);
@@ -41,22 +44,22 @@ class QuantityValue extends AbstractQuantityValue
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function __toString(): string
     {
         $value = $this->getValue();
         if (is_numeric($value)) {
-            $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
+            $locale = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
 
             if ($locale) {
-                $formatter = new \NumberFormatter($locale, \NumberFormatter::DECIMAL);
+                $formatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
                 $value = $formatter->format((float) $value);
             }
         }
 
         if ($this->getUnit() instanceof Unit) {
-            $translator = \Pimcore::getContainer()->get('translator');
+            $translator = Pimcore::getContainer()->get('translator');
             $value .= ' ' . $translator->trans($this->getUnit()->getAbbreviation(), [], 'admin');
         }
 

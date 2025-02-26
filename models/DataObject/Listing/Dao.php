@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\Listing;
 
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
+use Exception;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
@@ -37,7 +38,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @param string|string[]|null $columns
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {

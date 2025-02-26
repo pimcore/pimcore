@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\User\Permission;
 
+use Exception;
 use Pimcore\Logger;
 use Pimcore\Model;
 
@@ -67,12 +68,12 @@ class Definition extends Model\AbstractModel
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByKey(string $permission): ?Definition
     {
         if (!$permission) {
-            throw new \Exception('No permisson defined.');
+            throw new Exception('No permisson defined.');
         }
         $list = new Definition\Listing();
         $list->setCondition('`key`=?', [$permission]);
@@ -89,12 +90,12 @@ class Definition extends Model\AbstractModel
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function create(string $permission): self|static
     {
         if (!$permission) {
-            throw new \Exception('No permisson defined.');
+            throw new Exception('No permisson defined.');
         }
         $permissionDefinition = static::getByKey($permission);
         if ($permissionDefinition instanceof self) {

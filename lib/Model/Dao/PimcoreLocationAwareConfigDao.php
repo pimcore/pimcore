@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Dao;
 
+use Exception;
 use Pimcore\Config;
 
 abstract class PimcoreLocationAwareConfigDao implements DaoInterface
@@ -93,7 +94,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function saveData(string $id, array $data): void
     {
@@ -117,7 +118,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
     /**
      * @return string Can be either yaml (var/config/...) or "settings-store". defaults to "yaml"
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getWriteTarget(): string
     {
@@ -131,7 +132,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function deleteData(string $id): void
     {

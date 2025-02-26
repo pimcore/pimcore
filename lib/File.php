@@ -50,7 +50,7 @@ class File
         $filesystem = new Filesystem();
         $filesystem->dumpFile($path, $data);
 
-        if (\function_exists('opcache_invalidate')) {
+        if (function_exists('opcache_invalidate')) {
             opcache_invalidate($path);
         }
     }

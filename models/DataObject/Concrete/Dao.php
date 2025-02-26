@@ -132,7 +132,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function getData(): void
     {
-        if (!$data = $this->db->fetchAssociative('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', [$this->model->getId()])) {
+        if (!$data = $this->db->fetchAssociative('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ? FOR UPDATE', [$this->model->getId()])) {
             return;
         }
 
@@ -176,7 +176,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      * Save changes to database, it's an good idea to use save() instead
      *
      */
-    public function update(bool $isUpdate = null): void
+    public function update(?bool $isUpdate = null): void
     {
         parent::update($isUpdate);
 

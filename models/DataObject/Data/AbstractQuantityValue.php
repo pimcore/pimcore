@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Exception;
 use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
@@ -23,6 +24,7 @@ use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use Pimcore\Model\Exception\NotFoundException;
 
 abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 {
@@ -33,21 +35,40 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 
     protected ?Unit $unit = null;
 
-    public function __construct(Unit|string $unit = null)
+    /**
+     * @throws NotFoundException
+     */
+    public function __construct(Unit|string|null $unit = null)
     {
         if ($unit instanceof Unit) {
             $this->unit = $unit;
-            $this->unitId = $unit->getId();
         } elseif ($unit) {
-            $this->unitId = $unit;
+            $existingUnit = Unit::getById($unit);
+            if ($existingUnit) {
+                $this->unit = $existingUnit;
+            } else {
+                throw new NotFoundException('Unit ' . $unit . ' was not found.');
+            }
         }
+        $this->unitId = $this->unit?->getId();
         $this->markMeDirty();
     }
 
+    /**
+     * @throws NotFoundException
+     */
     public function setUnitId(string $unitId): void
     {
-        $this->unitId = $unitId;
+        $this->unitId = null;
         $this->unit = null;
+        $unit = Unit::getById($unitId);
+
+        if ($unit) {
+            $this->unitId = $unitId;
+            $this->unit = $unit;
+        } else {
+            throw new NotFoundException('Unit Id ' . $unitId . ' was not found.');
+        }
         $this->markMeDirty();
     }
 
@@ -68,7 +89,7 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
     /**
      * @param string|Unit $unit target unit. if string provided, unit is tried to be found by abbreviation
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function convertTo(Unit|string $unit): AbstractQuantityValue
     {

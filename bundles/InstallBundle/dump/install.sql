@@ -20,7 +20,8 @@ CREATE TABLE `assets` (
   UNIQUE KEY `fullpath` (`path`,`filename`),
   KEY `parentId` (`parentId`),
   KEY `filename` (`filename`),
-  KEY `modificationDate` (`modificationDate`)
+  KEY `modificationDate` (`modificationDate`),
+  KEY `versionCount` (`versionCount`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `assets_metadata`;
@@ -90,7 +91,8 @@ CREATE TABLE `documents` (
   KEY `parentId` (`parentId`),
   KEY `key` (`key`),
   KEY `published` (`published`),
-  KEY `modificationDate` (`modificationDate`)
+  KEY `modificationDate` (`modificationDate`),
+  KEY `versionCount` (`versionCount`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `documents_editables`;
@@ -290,7 +292,8 @@ CREATE TABLE `objects` (
   KEY `parentId` (`parentId`),
   KEY `type_path_classId` (`type`, `path`, `classId`),
   KEY `modificationDate` (`modificationDate`),
-  KEY `classId` (`classId`)
+  KEY `classId` (`classId`),
+  KEY `versionCount` (`versionCount`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `properties`;
@@ -513,6 +516,7 @@ CREATE TABLE `users_workspaces_asset` (
   PRIMARY KEY (`cid`, `userId`),
   KEY `userId` (`userId`),
   UNIQUE INDEX `cpath_userId` (`cpath`,`userId`),
+  UNIQUE INDEX `idx_users_workspaces_list_permission` (`userId`, `cpath`, `list`),
   CONSTRAINT `fk_users_workspaces_asset_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT `fk_users_workspaces_asset_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
@@ -536,6 +540,7 @@ CREATE TABLE `users_workspaces_document` (
   PRIMARY KEY (`cid`, `userId`),
   KEY `userId` (`userId`),
   UNIQUE INDEX `cpath_userId` (`cpath`,`userId`),
+  UNIQUE INDEX `idx_users_workspaces_list_permission` (`userId`, `cpath`, `list`),
   CONSTRAINT `fk_users_workspaces_document_documents` FOREIGN KEY (`cid`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT `fk_users_workspaces_document_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
@@ -562,6 +567,7 @@ CREATE TABLE `users_workspaces_object` (
   PRIMARY KEY (`cid`, `userId`),
   KEY `userId` (`userId`),
   UNIQUE INDEX `cpath_userId` (`cpath`,`userId`),
+  UNIQUE INDEX `idx_users_workspaces_list_permission` (`userId`, `cpath`, `list`),
   CONSTRAINT `fk_users_workspaces_object_objects` FOREIGN KEY (`cid`) REFERENCES `objects` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT `fk_users_workspaces_object_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
@@ -588,7 +594,8 @@ CREATE TABLE `versions` (
   KEY `date` (`date`),
   KEY `binaryFileHash` (`binaryFileHash`),
   KEY `autoSave` (`autoSave`),
-  KEY `stackTrace` (`stackTrace`(1))
+  KEY `stackTrace` (`stackTrace`(1)),
+  KEY `versionCount` (`versionCount`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `website_settings`;
@@ -803,10 +810,11 @@ CREATE TABLE `notifications` (
   `modificationDate` TIMESTAMP NULL,
   `linkedElementType` ENUM('document', 'asset', 'object') NULL,
   `linkedElement` INT(11) NULL,
+  `payload` LONGTEXT NULL,
+  `isStudio` TINYINT(1) DEFAULT 0 NOT NULL, -- TODO: Remove with end of Classic-UI
   INDEX `recipient` (`recipient`)
-)
-DEFAULT CHARSET=utf8mb4;
-;
+) DEFAULT CHARSET=utf8mb4;
+
 
 DROP TABLE IF EXISTS `object_url_slugs`;
 CREATE TABLE `object_url_slugs` (

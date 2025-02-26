@@ -19,6 +19,9 @@ namespace Pimcore\Migrations;
 use Doctrine\Migrations\Configuration\Configuration;
 use Doctrine\Migrations\Version\Comparator;
 use Doctrine\Migrations\Version\Version;
+use ErrorException;
+use ReflectionClass;
+use ReflectionException;
 
 /**
  * Orders versions by their namespaces in registration order.
@@ -37,20 +40,20 @@ final class DirectoryAwareVersionComparator implements Comparator
     {
         try {
             return $this->getOrder($a) <=> $this->getOrder($b);
-        } catch (\ReflectionException|\ErrorException) {
+        } catch (ReflectionException|ErrorException) {
             return (string) $a <=> (string) $b;
         }
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \ErrorException if the migration file is not found
+     * @throws ReflectionException
+     * @throws ErrorException if the migration file is not found
      *
      * @return array{int, string}
      */
     private function getOrder(Version $version): array
     {
-        $class = new \ReflectionClass((string) $version);
+        $class = new ReflectionClass((string) $version);
         $className = $class->getShortName();
         $namespace = $class->getNamespaceName();
         $namespaceOrder = $this->orderByNamespace[$namespace] ?? 0;

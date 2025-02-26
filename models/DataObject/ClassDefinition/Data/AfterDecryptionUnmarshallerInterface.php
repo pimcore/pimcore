@@ -20,5 +20,5 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface AfterDecryptionUnmarshallerInterface
 {
-    public function unmarshalAfterDecryption(mixed $value, Concrete $object = null, array $params = []): mixed;
+    public function unmarshalAfterDecryption(mixed $value, ?Concrete $object = null, array $params = []): mixed;
 }

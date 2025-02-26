@@ -18,6 +18,8 @@ namespace Pimcore\DataObject\BlockDataMarshaller;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Exception;
+use Pimcore;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
 use Pimcore\Marshaller\MarshallerInterface;
@@ -89,12 +91,12 @@ class EncryptedField implements MarshallerInterface
         if (!is_null($data)) {
             $object = $params['object'] ?? null;
 
-            $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
+            $key = Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
 
             try {
                 $key = Key::loadFromAsciiSafeString($key);
-            } catch (\Exception $e) {
-                throw new \Exception('could not load key');
+            } catch (Exception $e) {
+                throw new Exception('could not load key');
             }
             // store it in raw binary mode to preserve space
 
@@ -114,7 +116,7 @@ class EncryptedField implements MarshallerInterface
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function decrypt(?string $data, array $params = []): ?string
     {
@@ -124,12 +126,12 @@ class EncryptedField implements MarshallerInterface
             $delegateFd = $fd->getDelegate();
 
             try {
-                $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
+                $key = Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
 
                 try {
                     $key = Key::loadFromAsciiSafeString($key);
-                } catch (\Exception $e) {
-                    throw new \Exception('could not load key');
+                } catch (Exception $e) {
+                    throw new Exception('could not load key');
                 }
 
                 if (!(isset($params['skipDecryption']) && $params['skipDecryption'])) {
@@ -141,10 +143,10 @@ class EncryptedField implements MarshallerInterface
                 }
 
                 return $data;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Logger::error((string) $e);
 
-                throw new \Exception('encrypted field ' . $delegateFd->getName() . ' cannot be decoded');
+                throw new Exception('encrypted field ' . $delegateFd->getName() . ' cannot be decoded');
             }
         }
 

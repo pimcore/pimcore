@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use DateTime;
+use Exception;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Tool\Email;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -49,12 +51,12 @@ class EmailLogsCleanupCommand extends AbstractCommand
         $daysAgo = $input->getOption('older-than-days');
 
         if (!isset($daysAgo)) {
-            throw new \Exception('Missing option "--older-than-days"');
+            throw new Exception('Missing option "--older-than-days"');
         } elseif (!is_numeric($daysAgo)) {
-            throw new \Exception('The "--older-than-days" option value should be numeric');
+            throw new Exception('The "--older-than-days" option value should be numeric');
         }
 
-        $date = new \DateTime("-{$daysAgo} days");
+        $date = new DateTime("-{$daysAgo} days");
         $dateTimestamp = $date->getTimestamp();
         $emailLogs = new Email\Log\Listing();
         $emailLogs->setCondition("sentDate < $dateTimestamp");

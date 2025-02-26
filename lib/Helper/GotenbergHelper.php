@@ -16,10 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper;
 
-use function class_exists;
+use Exception;
 use Gotenberg\Gotenberg as GotenbergAPI;
 use Gotenberg\Stream;
-use function method_exists;
 use Pimcore\Config;
 
 /**
@@ -31,7 +30,7 @@ class GotenbergHelper
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function isAvailable(): bool
     {
@@ -60,7 +59,7 @@ class GotenbergHelper
                 self::$validPing = true;
 
                 return true;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // nothing to do
             }
         }

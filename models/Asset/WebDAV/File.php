@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\WebDAV;
 
+use Exception;
 use Pimcore\File as FileHelper;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
@@ -45,7 +46,7 @@ class File extends DAV\File
      * @return $this
      *
      * @throws DAV\Exception\Forbidden
-     * @throws \Exception
+     * @throws Exception
      */
     public function setName($name): static
     {
@@ -64,7 +65,7 @@ class File extends DAV\File
 
     /**
      * @throws DAV\Exception\Forbidden
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {
@@ -100,7 +101,7 @@ class File extends DAV\File
      * @param resource $data
      *
      * @throws DAV\Exception\Forbidden
-     * @throws \Exception
+     * @throws Exception
      *
      * @return null
      */

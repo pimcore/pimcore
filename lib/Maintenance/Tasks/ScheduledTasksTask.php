@@ -16,10 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Maintenance\Tasks;
 
+use Exception;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\Recyclebin;
 use Pimcore\Model\Schedule\Task\Listing;
 use Pimcore\Model\User;
 use Pimcore\Model\Version;
@@ -69,6 +71,7 @@ class ScheduledTasksTask implements TaskInterface
                             $document->setPublished(false);
                             $document->save();
                         } elseif ($task->getAction() === 'delete' && $document->isAllowed('delete', $taskUser)) {
+                            Recyclebin\Item::create($document);
                             $document->delete();
                         }
                     }
@@ -88,6 +91,7 @@ class ScheduledTasksTask implements TaskInterface
                                 $this->logger->error('Schedule\\Task\\Executor: Version [ '.$task->getVersion().' ] does not exist.');
                             }
                         } elseif ($task->getAction() === 'delete' && $asset->isAllowed('delete', $taskUser)) {
+                            Recyclebin\Item::create($asset);
                             $asset->delete();
                         }
                     }
@@ -114,6 +118,7 @@ class ScheduledTasksTask implements TaskInterface
                             $object->setPublished(false);
                             $object->save();
                         } elseif ($task->getAction() === 'delete' && $object->isAllowed('delete', $taskUser)) {
+                            Recyclebin\Item::create($object);
                             $object->delete();
                         }
                     }
@@ -121,7 +126,7 @@ class ScheduledTasksTask implements TaskInterface
 
                 $task->setActive(false);
                 $task->save();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->logger->error('There was a problem with the scheduled task ID: '.$task->getId());
                 $this->logger->error((string) $e);
             }

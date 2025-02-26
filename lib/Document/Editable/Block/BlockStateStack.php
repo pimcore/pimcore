@@ -17,12 +17,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Editable\Block;
 
+use Countable;
+use JsonSerializable;
+use LogicException;
+use RuntimeException;
+
 /**
  * @internal
  *
  * Handles block state (current block level, current block index)
  */
-final class BlockStateStack implements \Countable, \JsonSerializable
+final class BlockStateStack implements Countable, JsonSerializable
 {
     /**
      * @var BlockState[]
@@ -39,7 +44,7 @@ final class BlockStateStack implements \Countable, \JsonSerializable
      * Adds a new state to the stack
      *
      */
-    public function push(BlockState $blockState = null): void
+    public function push(?BlockState $blockState = null): void
     {
         if (null === $blockState) {
             $blockState = new BlockState();
@@ -55,7 +60,7 @@ final class BlockStateStack implements \Countable, \JsonSerializable
     public function pop(): BlockState
     {
         if (count($this->states) <= 1) {
-            throw new \LogicException('Can\'t pop the last state off the stack');
+            throw new LogicException('Can\'t pop the last state off the stack');
         }
 
         return array_pop($this->states);
@@ -69,7 +74,7 @@ final class BlockStateStack implements \Countable, \JsonSerializable
     {
         if (empty($this->states)) {
             // this should never happen
-            throw new \RuntimeException('State stack is empty');
+            throw new RuntimeException('State stack is empty');
         }
 
         return array_slice($this->states, -1)[0];

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\Video\Thumbnail;
 
+use Exception;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model;
 
@@ -104,7 +105,7 @@ final class Config extends Model\AbstractModel
     /**
      *
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByName(string $name): ?Config
     {
@@ -113,9 +114,9 @@ final class Config extends Model\AbstractModel
         try {
             $thumbnail = RuntimeCache::get($cacheKey);
             if (!$thumbnail) {
-                throw new \Exception('Thumbnail in registry is null');
+                throw new Exception('Thumbnail in registry is null');
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $thumbnail = new self();
                 /** @var Model\Asset\Video\Thumbnail\Config\Dao $dao */
@@ -166,7 +167,7 @@ final class Config extends Model\AbstractModel
      *
      * @internal
      */
-    public function addItem(string $name, array $parameters, string $media = null): bool
+    public function addItem(string $name, array $parameters, ?string $media = null): bool
     {
         $item = [
             'method' => $name,

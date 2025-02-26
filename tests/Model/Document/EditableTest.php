@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Document;
 
+use InvalidArgumentException;
 use Pimcore\Model\Document\Page;
 use Pimcore\Tests\Support\Helper\Document\TestDataHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -183,18 +184,18 @@ class EditableTest extends ModelTestCase
         }
 
         if (!is_array($fields)) {
-            throw new \InvalidArgumentException('Fields needs to be an array');
+            throw new InvalidArgumentException('Fields needs to be an array');
         }
 
         foreach ($fields as $field) {
             $method = $field['method'];
 
             if (!$method) {
-                throw new \InvalidArgumentException(sprintf('Need a method to call'));
+                throw new InvalidArgumentException(sprintf('Need a method to call'));
             }
 
             if (!method_exists($this->testDataHelper, $method)) {
-                throw new \InvalidArgumentException(sprintf('Method %s does not exist', $method));
+                throw new InvalidArgumentException(sprintf('Method %s does not exist', $method));
             }
 
             $methodArguments = [$document, $field['field'], $this->seed];

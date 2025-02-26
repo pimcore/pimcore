@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Exception;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Unittest;
@@ -31,7 +32,7 @@ class CompositeIndexTest extends ModelTestCase
         try {
             $db->executeQuery('ALTER TABLE `object_query_' . $classId . '` DROP INDEX `mycomposite`');
             $this->fail('expected that the index does not exist yet');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
 
         $definition = ClassDefinition::getById($classId);

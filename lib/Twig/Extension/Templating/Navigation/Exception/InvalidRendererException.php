@@ -17,9 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating\Navigation\Exception;
 
+use LogicException;
 use Pimcore\Navigation\Renderer\RendererInterface;
 
-class InvalidRendererException extends \LogicException
+class InvalidRendererException extends LogicException
 {
     public static function create(string $name, mixed $renderer): static
     {

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\File;
 use Pimcore\Messenger\AssetPreviewImageMessage;
@@ -147,7 +148,7 @@ class Folder extends Model\Asset
                         // only generate if all necessary thumbs are available
                         $skipped = true;
 
-                        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                        Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                             new AssetPreviewImageMessage($this->getId())
                         );
 

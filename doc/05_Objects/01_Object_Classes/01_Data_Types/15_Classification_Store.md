@@ -134,7 +134,7 @@ The `ClassificationStore::getGroups()` method returns an array of `Group` object
 
 ```php
 /** @var \Pimcore\Model\DataObject\Classificationstore $classificationStore */
-$classificationStore = $dataObject->getClassificationStoreFieldName();
+$classificationStore = $dataObject->get<YOUR_CLASSIFICATION_FIELD>();
 
 foreach ($classificationStore->getGroups() as $group) {
     var_dump($group->getConfiguration()->getName());
@@ -179,6 +179,7 @@ $definition->setName("height");
 $definition->setTitle("Height");
 
 $keyConfig = new \Pimcore\Model\DataObject\Classificationstore\KeyConfig();
+$keyConfig->setStoreId($storeId);
 $keyConfig->setName($name);
 $keyConfig->setDescription($description);
 $keyConfig->setEnabled(true);
@@ -188,19 +189,27 @@ $keyConfig->save();
 
 // Group
 $groupConfig = new \Pimcore\Model\DataObject\Classificationstore\GroupConfig();
+$groupConfig->setStoreId($storeId);
 $groupConfig->setName($name);
 $groupConfig->setDescription($description);
 $groupConfig->save();
 
 // Collection
 $collectionConfig = new \Pimcore\Model\DataObject\Classificationstore\CollectionConfig();
+$collectionConfig->setStoreId($storeId);
 $collectionConfig->setName($name);
 $collectionConfig->setDescription($description);
 $collectionConfig->save();
 
+// Add a key to group
+$keyRel = new \Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation();
+$keyRel->setGroupId($groupConfig->getId());
+$keyRel->setKeyId($keyConfig->getId());
+$keyRel->save();
+
 // Add a group to a collection
-$rel = new CollectionGroupRelation();
-$rel->setGroupId($groupConfig->getId());
-$rel->setColId($collectionConfig->getId());
-$rel->save();
+$groupRel = new \Pimcore\Model\DataObject\Classificationstore\CollectionGroupRelation();
+$groupRel->setGroupId($groupConfig->getId());
+$groupRel->setColId($collectionConfig->getId());
+$groupRel->save();
 ```

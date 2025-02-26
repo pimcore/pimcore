@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\Consent;
 
+use Exception;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Data\Consent;
 use Pimcore\Model\Element\Note;
@@ -78,13 +79,13 @@ class Service
      * @param string $consentContent - message that should be stored into the notes description
      * @param array $metaData - array of key/values that should be attached as details to the note
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function giveConsent(AbstractObject $object, string $fieldname, string $consentContent, array $metaData = []): Note
     {
         $setter = 'set' . ucfirst($fieldname);
         if (!method_exists($object, $setter)) {
-            throw new \Exception("Method $setter does not exist in given object.");
+            throw new Exception("Method $setter does not exist in given object.");
         }
 
         $note = $this->insertConsentNote($object, $fieldname, $consentContent, $metaData);
@@ -101,13 +102,13 @@ class Service
      * @param AbstractObject $object - object to revoke the consent from
      * @param string $fieldname - fieldname of consent field
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function revokeConsent(AbstractObject $object, string $fieldname): Note
     {
         $setter = 'set' . ucfirst($fieldname);
         if (!method_exists($object, $setter)) {
-            throw new \Exception("Method $setter does not exist in given object.");
+            throw new Exception("Method $setter does not exist in given object.");
         }
 
         $note = $this->insertRevokeNote($object, $fieldname);

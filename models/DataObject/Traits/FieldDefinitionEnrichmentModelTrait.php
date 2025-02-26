@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Traits;
 
+use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
@@ -43,7 +44,7 @@ trait FieldDefinitionEnrichmentModelTrait
 
     public function suppressEnrichment(array $context): bool
     {
-        return !\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment']);
+        return !Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment']);
     }
 
     /**

@@ -21,6 +21,7 @@ use Pimcore\Model\Asset;
 use Symfony\Component\Messenger\Handler\Acknowledger;
 use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
 use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
+use Throwable;
 
 /**
  * @internal
@@ -30,7 +31,7 @@ class CleanupThumbnailsHandler implements BatchHandlerInterface
     use BatchHandlerTrait;
     use HandlerHelperTrait;
 
-    public function __invoke(CleanupThumbnailsMessage $message, Acknowledger $ack = null): mixed
+    public function __invoke(CleanupThumbnailsMessage $message, ?Acknowledger $ack = null): mixed
     {
         return $this->handle($message, $ack);
     }
@@ -51,7 +52,7 @@ class CleanupThumbnailsHandler implements BatchHandlerInterface
                 $thumbConfig->clearTempFiles();
 
                 $ack->ack($message);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $ack->nack($e);
             }
         }
