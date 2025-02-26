@@ -36,6 +36,7 @@ class Dao extends Model\Dao\AbstractDao
         if (!$data) {
             throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
+        $data['redirectToMainDomain'] = (bool) $data['redirectToMainDomain'];
         $this->assignVariablesToModel($data);
     }
 
@@ -49,6 +50,7 @@ class Dao extends Model\Dao\AbstractDao
         if (!$data) {
             throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
+        $data['redirectToMainDomain'] = (bool) $data['redirectToMainDomain'];
         $this->assignVariablesToModel($data);
     }
 
