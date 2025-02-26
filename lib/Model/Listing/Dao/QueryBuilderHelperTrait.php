@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Listing\Dao;
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Query\QueryException;
 use Exception;
 use Pimcore\Model\DataObject;
 
@@ -129,8 +130,6 @@ trait QueryBuilderHelperTrait
 
     protected function prepareQueryBuilderForTotalCount(QueryBuilder $queryBuilder, string $identifierColumn): void
     {
-        $originalSelect = $queryBuilder->getQueryPart('select');
-        $queryBuilder->select('COUNT(*)');
         $queryBuilder->resetOrderBy();
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
@@ -140,29 +139,42 @@ trait QueryBuilderHelperTrait
         }
 
         if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
-            $queryBuilder->select(!empty($originalSelect) ? $originalSelect : $identifierColumn);
-
-            // Rewrite to 'SELECT COUNT(*) FROM (' . $queryBuilder . ') XYZ'
-            $innerQuery = (string)$queryBuilder;
-            $queryBuilder
-                ->resetQueryParts()
-                ->select('COUNT(*)')
-                ->from('(' . $innerQuery . ')', 'XYZ')
-            ;
+            return;
         } elseif ($this->isQueryBuilderPartInUse($queryBuilder, 'distinct')) {
             $countIdentifier = 'DISTINCT ' . $identifierColumn;
             $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
+        } else {
+            $queryBuilder->select('COUNT(*)');
         }
     }
 
-    protected function isQueryBuilderPartInUse(QueryBuilder $query, string $part): bool
+    protected function isQueryBuilderPartInUse(QueryBuilder $queryBuilder, string $part): bool
     {
+        $mapping = [
+            'groupBy' => 'GROUP BY ',
+            'having' => 'HAVING ',
+            'distinct'=> 'DISTINCT ',
+            'select' => 'SELECT ',
+        ];
+        $pattern = '/' . $mapping[$part] . '/i';
+
         try {
-            if ($query->getQueryPart($part)) {
-                return true;
+            $query = $queryBuilder->getSql();
+        } catch (QueryException $e) {
+            if (str_contains($e->getMessage(), 'No SELECT expressions given')) {
+                if ($part === 'select') {
+                    return false;
+                }
+                $newQueryBuilder = clone $queryBuilder;
+                $newQueryBuilder->select('*');
+                $query = $newQueryBuilder->getSQL();
+            }else{
+                $query = $queryBuilder->getSQL();
             }
-        } catch (Exception $e) {
-            // do nothing
+        }
+
+        if (preg_match($pattern, $query, $matches)) {
+            return true;
         }
 
         return false;

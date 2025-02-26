@@ -911,7 +911,14 @@ class Service extends Model\AbstractModel
                     $select->andWhere($where);
                 }
 
-                $fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'] ;
+
+                $query = (string)$select;
+                $pattern = "/(?i)\bFROM\s+(?:(\(\s*SELECT.*?\))\s+AS\s+(\w+)|(`?\w+`?)(?:\s+(?:AS\s+)?(\w+))?)/";
+
+                $fromAlias = '';
+                if (preg_match($pattern, $query, $matches)) {
+                    $fromAlias = !empty($matches[2]) ? $matches[2] : (!empty($matches[4]) ? $matches[4] : $matches[3]);
+                }
 
                 $customViewJoins = $cv['joins'] ?? null;
                 if ($customViewJoins) {
@@ -925,7 +932,9 @@ class Service extends Model\AbstractModel
 
                         $condition = $joinConfig['condition'];
                         $columns = $joinConfig['columns'];
-                        $select->add('select', $columns, true);
+                        foreach ($columns as $column) {
+                            $select->addSelect($column);
+                        }
                         $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
                     }
                 }
