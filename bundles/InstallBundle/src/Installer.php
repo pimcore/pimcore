@@ -452,16 +452,14 @@ class Installer
 
             if (!$this->skipDatabaseConfig && in_array('write_database_config', $stepsToRun)) {
                 // now we're able to write the server version to the database.yaml
-                if ($db instanceof Connection) {
-                    $connection = $db->getNativeConnection();
-                    if ($connection instanceof ServerVersionProvider ||
-                        (class_Exists('Doctrine\DBAL\Driver\ServerInfoAwareConnection') &&
-                        is_subclass_of($connection, 'Doctrine\DBAL\Driver\ServerInfoAwareConnection'))
-                    ) {
-                        $writer = new ConfigWriter();
-                        $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
-                        $writer->writeDbConfig($doctrineConfig);
-                    }
+                $connection = $db->getNativeConnection();
+                if ($connection instanceof ServerVersionProvider ||
+                    (class_Exists('Doctrine\DBAL\Driver\ServerInfoAwareConnection') &&
+                    is_subclass_of($connection, 'Doctrine\DBAL\Driver\ServerInfoAwareConnection'))
+                ) {
+                    $writer = new ConfigWriter();
+                    $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
+                    $writer->writeDbConfig($doctrineConfig);
                 }
             }
         }
