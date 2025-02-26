@@ -24,7 +24,7 @@ use Pimcore\Model\Element\ElementDescriptor;
 
 interface JobRunRepositoryInterface
 {
-    public function createFromJob(Job $job, int $ownerId = null): JobRun;
+    public function createFromJob(Job $job, ?int $ownerId = null): JobRun;
 
     public function update(JobRun $jobRun): JobRun;
 
@@ -61,7 +61,7 @@ interface JobRunRepositoryInterface
      * @return JobRun[]
      */
     public function getJobRunsByUserId(
-        int $ownerId = null,
+        ?int $ownerId = null,
         array $orderBy = [],
         int $limit = 100,
         int $offset = 0

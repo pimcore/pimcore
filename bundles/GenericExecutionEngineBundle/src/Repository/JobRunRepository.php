@@ -45,7 +45,7 @@ final class JobRunRepository implements JobRunRepositoryInterface
     ) {
     }
 
-    public function createFromJob(Job $job, int $ownerId = null): JobRun
+    public function createFromJob(Job $job, ?int $ownerId = null): JobRun
     {
         $jobRun = new JobRun($ownerId);
 
@@ -158,7 +158,7 @@ final class JobRunRepository implements JobRunRepositoryInterface
      *
      */
     public function getJobRunsByUserId(
-        int $ownerId = null,
+        ?int $ownerId = null,
         array $orderBy = [],
         int $limit = 100,
         int $offset = 0

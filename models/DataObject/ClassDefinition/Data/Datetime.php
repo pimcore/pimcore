@@ -57,7 +57,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): int|string|null
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): int|string|null
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -78,7 +78,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Carbon
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?Carbon
     {
         if ($data) {
             if ($this->getColumnType() == 'datetime') {
@@ -99,7 +99,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): int|string|null
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): int|string|null
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -110,7 +110,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?int
     {
         if ($data) {
             return $data->getTimestamp();
@@ -133,7 +133,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Carbon
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?Carbon
     {
         if (is_numeric($data)) {
             return $this->getDateFromTimestamp($data / 1000);
@@ -150,7 +150,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param Model\DataObject\Concrete|null $object
      *
      */
-    public function getDataFromGridEditor(float|string $data, Concrete $object = null, array $params = []): Carbon|null
+    public function getDataFromGridEditor(float|string $data, ?Concrete $object = null, array $params = []): Carbon|null
     {
         if ($data && is_float($data)) {
             $data = $data * 1000;
@@ -163,7 +163,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param Model\DataObject\Concrete|null $object
      *
      */
-    public function getDataForGrid(?\DateTime $data, Concrete $object = null, array $params = []): ?int
+    public function getDataForGrid(?\DateTime $data, ?Concrete $object = null, array $params = []): ?int
     {
         if ($data) {
             return $data->getTimestamp();
@@ -178,7 +178,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DateTimeInterface) {
             return $this->applyTimezone($data)->format('Y-m-d H:i:s');
@@ -259,7 +259,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      *
      */
-    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): ?Carbon
+    public function getDiffDataFromEditmode(array $data, ?DataObject\Concrete $object = null, array $params = []): ?Carbon
     {
         $thedata = $data[0]['data'];
         if ($thedata) {
@@ -273,7 +273,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param Model\DataObject\Concrete|null $object
      *
      */
-    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $result = [];
 

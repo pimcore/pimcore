@@ -58,7 +58,7 @@ class Item extends Model\AbstractModel
 
     protected string $deletedby;
 
-    public static function create(Element\ElementInterface $element, Model\User $user = null): void
+    public static function create(Element\ElementInterface $element, ?Model\User $user = null): void
     {
         $item = new self();
         $item->setElement($element);
@@ -80,7 +80,7 @@ class Item extends Model\AbstractModel
     /**
      * @throws Exception
      */
-    public function restore(Model\User $user = null): void
+    public function restore(?Model\User $user = null): void
     {
         $dummy = null;
         $raw = Storage::get('recycle_bin')->read($this->getStorageFile());
@@ -145,7 +145,7 @@ class Item extends Model\AbstractModel
         $this->delete();
     }
 
-    public function save(Model\User $user = null): void
+    public function save(?Model\User $user = null): void
     {
         $this->setType(Element\Service::getElementType($this->getElement()));
         $this->setSubtype($this->getElement()->getType());

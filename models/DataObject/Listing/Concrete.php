@@ -127,7 +127,7 @@ abstract class Concrete extends Model\DataObject\Listing
      *
      * @throws Exception
      */
-    public function addFieldCollection(string $type, string $fieldname = null): void
+    public function addFieldCollection(string $type, ?string $fieldname = null): void
     {
         $this->setData(null);
 

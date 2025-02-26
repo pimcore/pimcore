@@ -425,6 +425,7 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('date'));
             $panel->addChild($this->createDataChild('datetime'));
+            $panel->addChild($this->createDataChild('dateRange'));
 
             $panel->addChild($this->createDataChild('email'));
 

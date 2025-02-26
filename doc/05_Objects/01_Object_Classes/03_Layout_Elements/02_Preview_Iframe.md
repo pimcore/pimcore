@@ -25,7 +25,7 @@ class IFrameController extends \Pimcore\Controller\FrontendController
      */
     public function summaryAction(Request $request): Response
     {
-        $context = json_decode($request->get("context"), true);
+        $context = json_decode($request->query->getString("context"), true);
         $objectId = $context["objectId"];
         $language = $context["language"];
 

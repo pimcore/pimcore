@@ -246,16 +246,8 @@ class Asset extends Element\AbstractElement
         return true;
     }
 
-    public static function getById(int|string $id, array $params = []): ?static
+    public static function getById(int $id, array $params = []): ?static
     {
-        if (is_string($id)) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '11.0',
-                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
-            );
-            $id = is_numeric($id) ? (int) $id : 0;
-        }
         if ($id < 1) {
             return null;
         }
@@ -812,7 +804,7 @@ class Asset extends Element\AbstractElement
      *
      * @throws Exception
      */
-    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, string $versionNote = null): ?Version
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null): ?Version
     {
         try {
             // hook should be also called if "save only new version" is selected
@@ -1401,7 +1393,7 @@ class Asset extends Element\AbstractElement
      *
      * @return $this
      */
-    public function addMetadata(string $name, string $type, mixed $data = null, string $language = null): static
+    public function addMetadata(string $name, string $type, mixed $data = null, ?string $language = null): static
     {
         if ($name && $type) {
             $tmp = [];
@@ -1670,25 +1662,33 @@ class Asset extends Element\AbstractElement
     /**
      * @throws FilesystemException
      */
-    private function updateChildPaths(FilesystemOperator $storage, string $oldPath, string $newPath = null): void
+    private function updateChildPaths(FilesystemOperator $storage, string $oldPath, ?string $newPath = null): void
     {
         if ($newPath === null) {
             $newPath = $this->getRealFullPath();
         }
 
         try {
+            $movedFiles = [];
             $children = $storage->listContents($oldPath, true);
             foreach ($children as $child) {
                 if ($child['type'] === 'file') {
                     $src  = $child['path'];
                     $dest = str_replace($oldPath, $newPath, '/' . $src);
                     $storage->move($src, $dest);
+                    $movedFiles[$dest] = $src;
                 }
             }
 
             $storage->deleteDirectory($oldPath);
         } catch (UnableToMoveFile $e) {
-            // noting to do
+            // rollback moved files
+            foreach ($movedFiles as $src => $dest) {
+                $storage->move($src, $dest);
+            }
+
+            // trigger database rollback
+            throw $e;
         }
     }
 

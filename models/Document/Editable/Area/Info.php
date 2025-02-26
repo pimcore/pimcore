@@ -145,14 +145,12 @@ class Info
         return $this->index;
     }
 
-    public function getDocument(): Document\PageSnippet
+    public function getDocument(): ?Document\PageSnippet
     {
-        return $this->editable->getDocument();
+        return $this->editable?->getDocument();
     }
 
     /**
-     *
-     *
      * @throws Exception
      */
     public function getDocumentElement(string $name, string $type = ''): ?Editable

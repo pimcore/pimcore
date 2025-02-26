@@ -45,20 +45,18 @@ class SettingsController extends UserAwareController
         // check glossary permissions
         $this->checkPermission('glossary');
 
-        if ($request->get('data')) {
+        if ($request->request->has('data')) {
+            $data = $this->decodeJson($request->request->getString('data'));
 
             Cache::clearTag('glossary');
 
-            if ($request->get('xaction') === 'destroy') {
-                $data = $this->decodeJson($request->get('data'));
+            if ($request->query->getString('xaction') === 'destroy') {
                 $id = $data['id'];
                 $glossary = Glossary::getById($id);
                 $glossary->delete();
 
                 return $this->jsonResponse(['success' => true, 'data' => []]);
-            } elseif ($request->get('xaction') === 'update') {
-                $data = $this->decodeJson($request->get('data'));
-
+            } elseif ($request->query->getString('xaction') === 'update') {
                 // save glossary
                 $glossary = Glossary::getById($data['id']);
 
@@ -81,8 +79,7 @@ class SettingsController extends UserAwareController
                 }
 
                 return $this->jsonResponse(['data' => $glossary, 'success' => true]);
-            } elseif ($request->get('xaction') == 'create') {
-                $data = $this->decodeJson($request->get('data'));
+            } elseif ($request->query->getString('xaction') == 'create') {
                 unset($data['id']);
 
                 // save glossary
@@ -114,8 +111,8 @@ class SettingsController extends UserAwareController
             }
 
             $list = new Glossary\Listing();
-            $list->setLimit((int) $request->get('limit', 50));
-            $list->setOffset((int) $request->get('start', 0));
+            $list->setLimit($request->request->getInt('limit', 50));
+            $list->setOffset($request->request->getInt('start'));
 
             $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {
@@ -123,8 +120,8 @@ class SettingsController extends UserAwareController
                 $list->setOrder($sortingSettings['order']);
             }
 
-            if ($request->get('filter')) {
-                $list->setCondition('`text` LIKE ' . $list->quote('%'.$request->get('filter').'%'));
+            if ($request->request->has('filter')) {
+                $list->setCondition('`text` LIKE ' . $list->quote('%'.$request->request->getString('filter').'%'));
             }
 
             $list->load();

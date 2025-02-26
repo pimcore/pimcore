@@ -88,7 +88,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws \Exception
      */
-    public function update(bool $isUpdate = null): void
+    public function update(?bool $isUpdate = null): void
     {
         $object = $this->model->getObjectVars();
 
@@ -320,7 +320,7 @@ class Dao extends Model\Element\Dao
             $sql .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
         }
 
-        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
+        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && DataObject::doHideUnpublished())) {
             $sql .= ' AND published = 1';
         }
 
@@ -359,7 +359,7 @@ class Dao extends Model\Element\Dao
             $params[] = $this->model->getId();
         }
 
-        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
+        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && DataObject::doHideUnpublished())) {
             $sql .= ' AND published = 1';
         }
 
@@ -380,7 +380,7 @@ class Dao extends Model\Element\Dao
      * @param Model\User|null $user
      *
      */
-    public function getChildAmount(?array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], User $user = null): int
+    public function getChildAmount(?array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], ?User $user = null): int
     {
         if (!$this->model->getId()) {
             return 0;
@@ -520,7 +520,7 @@ class Dao extends Model\Element\Dao
             }
 
             // exception for list permission
-            if (empty($permissionsParent) && $type === 'list') {
+            if ($type === 'list') {
                 // check for children with permissions
                 $path = $this->model->getRealFullPath() . '/';
                 if ($this->model->getId() == 1) {

@@ -62,7 +62,7 @@ pimcore.bundle.search.element.selector.asset = Class.create(pimcore.bundle.searc
                 }
             }, new Ext.Button({
                 handler: function () {
-                    window.open("http://dev.mysql.com/doc/refman/5.6/en/fulltext-boolean.html");
+                    window.open("https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html");
                 },
                 iconCls: "pimcore_icon_help"
             })]

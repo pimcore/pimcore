@@ -181,12 +181,12 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return null;
     }
 
-    public function get(string $fieldName, string $language = null): mixed
+    public function get(string $fieldName, ?string $language = null): mixed
     {
         return $this->{'get'.ucfirst($fieldName)}($language);
     }
 
-    public function set(string $fieldName, mixed $value, string $language = null): mixed
+    public function set(string $fieldName, mixed $value, ?string $language = null): mixed
     {
         return $this->{'set'.ucfirst($fieldName)}($value, $language);
     }
@@ -200,9 +200,10 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         $lazyLoadedFieldNames = [];
         $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if ($field instanceof LazyLoadingSupportInterface
-                && $field instanceof DataObject\ClassDefinition\Data
-                && $field->getLazyLoading()) {
+            if (
+                $field instanceof LazyLoadingSupportInterface &&
+                $field->getLazyLoading()
+            ) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }

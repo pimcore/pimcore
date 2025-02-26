@@ -104,7 +104,7 @@ class Data extends AbstractModel
 
     protected string $properties;
 
-    public function __construct(Element\ElementInterface $element = null)
+    public function __construct(?Element\ElementInterface $element = null)
     {
         if ($element instanceof Element\ElementInterface) {
             $this->setDataFromElement($element);
@@ -360,16 +360,14 @@ class Data extends AbstractModel
                 $this->published = $element->isPublished();
                 $editables = $element->getEditables();
                 foreach ($editables as $editable) {
-                    if ($editable instanceof Document\Editable\EditableInterface) {
-                        // areabrick elements are handled by getElementTypes()/getElements() as they return area elements as well
-                        if ($editable instanceof Document\Editable\Area || $editable instanceof Document\Editable\Areablock) {
-                            continue;
-                        }
-
-                        ob_start();
-                        $this->data .= strip_tags((string) $editable->frontend()).' ';
-                        $this->data .= ob_get_clean();
+                    // areabrick elements are handled by getElementTypes()/getElements() as they return area elements as well
+                    if ($editable instanceof Document\Editable\Area || $editable instanceof Document\Editable\Areablock) {
+                        continue;
                     }
+
+                    ob_start();
+                    $this->data .= strip_tags((string) $editable->frontend()).' ';
+                    $this->data .= ob_get_clean();
                 }
                 if ($element instanceof Document\Page) {
                     $this->published = $element->isPublished();

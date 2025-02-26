@@ -93,13 +93,12 @@ class Definition extends Model\AbstractModel
      */
     public static function getByKey(string $key): ?Definition
     {
-        /** @var Definition $fc */
         $fc = null;
         $cacheKey = 'fieldcollection_' . $key;
 
         try {
             $fc = RuntimeCache::get($cacheKey);
-            if (!$fc) {
+            if (!$fc instanceof Definition) {
                 throw new Exception('FieldCollection in registry is not valid');
             }
         } catch (Exception $e) {
@@ -113,7 +112,7 @@ class Definition extends Model\AbstractModel
             }
         }
 
-        if ($fc) {
+        if ($fc instanceof Definition) {
             return $fc;
         }
 
@@ -268,7 +267,7 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      */
-    public function getDefinitionFile(string $key = null): string
+    public function getDefinitionFile(?string $key = null): string
     {
         return $this->locateDefinitionFile($key ?? $this->getKey(), 'fieldcollections/%s.php');
     }

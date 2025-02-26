@@ -18,14 +18,12 @@ namespace Pimcore\Bundle\GenericExecutionEngineBundle;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Constants\PermissionConstants;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Constants\TableConstants;
-use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
@@ -253,12 +251,9 @@ final class Installer extends SettingsStoreAwareInstaller
     private function executeDiffSql(Schema $newSchema): void
     {
         $currentSchema = $this->db->createSchemaManager()->introspectSchema();
-        $schemaComparator = new Comparator($this->db->getDatabasePlatform());
-        $schemaDiff = $schemaComparator->compareSchemas($currentSchema, $newSchema);
         $dbPlatform = $this->db->getDatabasePlatform();
-        if (!$dbPlatform instanceof AbstractPlatform) {
-            throw new InstallationException('Could not get database platform.');
-        }
+        $schemaComparator = new Comparator($dbPlatform);
+        $schemaDiff = $schemaComparator->compareSchemas($currentSchema, $newSchema);
 
         $sqlStatements = $dbPlatform->getAlterSchemaSQL($schemaDiff);
 

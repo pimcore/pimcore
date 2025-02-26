@@ -25,20 +25,12 @@ class ResolveUploadTargetEvent extends Event
 
     protected string $filename;
 
-    protected array $context;
-
     protected int $parentId;
 
-    /**
-     * ResolveUploadTargetEvent constructor.
-     *
-     * @param array $context contextual information
-     */
-    public function __construct(int $parentId, string $filename, array $context)
+    public function __construct(int $parentId, string $filename)
     {
         $this->parentId = $parentId;
         $this->filename = $filename;
-        $this->context = $context;
     }
 
     public function getFilename(): string
@@ -49,16 +41,6 @@ class ResolveUploadTargetEvent extends Event
     public function setFilename(string $filename): void
     {
         $this->filename = $filename;
-    }
-
-    public function getContext(): array
-    {
-        return $this->context;
-    }
-
-    public function setContext(array $context): void
-    {
-        $this->context = $context;
     }
 
     public function getParentId(): int

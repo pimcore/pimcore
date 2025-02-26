@@ -70,7 +70,7 @@ class ContentTemplateListener implements EventSubscriberInterface
             return;
         }
 
-        $parameters = $this->resolveParameters($event, $attribute?->vars ?? []);
+        $parameters = $this->resolveParameters($event, $attribute->vars ?? []);
         $status = 200;
 
         if (interface_exists('Symfony\\Component\\Form\\FormInterface')) {

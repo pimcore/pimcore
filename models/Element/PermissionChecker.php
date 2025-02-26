@@ -200,7 +200,6 @@ class PermissionChecker
             if (!$user->getPermission($permissionKey)) {
                 // check roles
                 foreach ($user->getRoles() as $roleId) {
-                    /** @var User\UserRole $role */
                     $role = User\Role::getById($roleId);
                     if ($role->getPermission($permissionKey)) {
                         $entry = self::createDetail($user, $permissionKey, true, $role->getType(), $role->getName());

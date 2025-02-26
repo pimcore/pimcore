@@ -29,7 +29,7 @@ class DataObjectController extends UserAwareController
      */
     public function optionsAction(Request $request): JsonResponse
     {
-        $fieldConfig = json_decode($request->get('fieldConfig'), true);
+        $fieldConfig = json_decode($request->query->getString('fieldConfig'), true);
 
         $options = [];
         $classes = [];
@@ -46,18 +46,46 @@ class DataObjectController extends UserAwareController
         }
 
         $searchRequest = $request;
-        $searchRequest->request->set('type', 'object');
-        $searchRequest->request->set('subtype', 'object,variant');
+        if ($fieldConfig['fieldtype'] === 'manyToOneRelation') {
+            $types = [];
+            $subtypes = [];
+            if ($fieldConfig['documentsAllowed']) {
+                $types[] = 'document';
+                foreach ($fieldConfig['documentTypes'] as $documentTypes) {
+                    $subtypes[] = $documentTypes['documentTypes'];
+                }
+            }
+            if ($fieldConfig['assetsAllowed']) {
+                $types[] = 'asset';
+                foreach ($fieldConfig['assetTypes'] as $assetTypes) {
+                    $subtypes[] = $assetTypes['assetTypes'];
+                }
+            }
+            if ($fieldConfig['objectsAllowed']) {
+                $types[] = 'object';
+                $subtypes[] = 'object';
+                $subtypes[] = 'variant';
+            }
+            $searchRequest->request->set('type', implode(',', $types));
+            $searchRequest->request->set('subtype', implode(',', $subtypes));
+        } else {
+            $searchRequest->request->set('type', 'object');
+            $searchRequest->request->set('subtype', 'object,variant');
+        }
         $searchRequest->request->set('class', implode(',', $classes));
         $searchRequest->request->set('fields', $visibleFields);
-        $searchRequest->attributes->set('unsavedChanges', $request->get('unsavedChanges', ''));
+
+        $searchRequest->attributes->set('unsavedChanges', $request->query->getString('unsavedChanges'));
         $res = $this->forward(SearchController::class.'::findAction', ['request' => $searchRequest]);
         $objects = json_decode($res->getContent(), true)['data'];
 
-        if ($request->get('data')) {
-            foreach (json_decode($request->get('data'), true) as $preSelectedElement) {
-                if (isset($preSelectedElement['id'], $preSelectedElement['type'])) {
-                    $objects[] = ['id' => $preSelectedElement['id'], 'type' => $preSelectedElement['type']];
+        if ($request->query->has('data')) {
+            $dataArray = json_decode($request->query->getString('data'), true);
+            if (is_array($dataArray)) {
+                foreach ($dataArray as $preSelectedElement) {
+                    if (isset($preSelectedElement['id'], $preSelectedElement['type'])) {
+                        $objects[] = ['id' => $preSelectedElement['id'], 'type' => $preSelectedElement['type']];
+                    }
                 }
             }
         }

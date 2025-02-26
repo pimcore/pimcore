@@ -1,4 +1,96 @@
 # Upgrade Notes
+## Pimcore 12.0.0
+### [Documents]
+- Removed deprecated Headless Chrome Processor.
+- Dropped support of `gotenberg/gotenberg-php` `v1.1` in favor of just supporting `v2` which bundles Chromium functionalities that refrain from requiring a standalone chromium binary.
+
+## Pimcore 12.0.0
+
+#### [ApplicationLoggerBundle]
+
+- Log levels can be translated now. The keys are based on the integer representation of the log level:
+`application_logger_log_level_1` = Emergency,
+`application_logger_log_level_2` = Alert,
+`application_logger_log_level_3` = Critical,
+`application_logger_log_level_4` = Error,
+`application_logger_log_level_5` = Warning,
+`application_logger_log_level_6` = Notice,
+`application_logger_log_level_7` = Info,
+`application_logger_log_level_8` = Debug,  
+Please make sure to add translations for log levels.
+
+- `filter_priority` configuration changed. LogLevels now start at 1 (emergency) - 8 (debug) instead of 0 (emergency) - 7 (debug). Please adjust your configuration accordingly.
+
+#### [Bundle]
+- Removed compatibility layer static `$bundleManager`
+
+#### [Commands]
+- Removed deprecated option `generator` from `Pimcore\Bundle\CoreBundle\Command\LowQualityImagePreviewCommand`.
+
+#### [Documents]
+- Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
+
+#### [DataObjects]
+- Removed deprecated `unserialize()` method from `Pimcore\Model\DataObject\Data\Link`. If not the data is not migrated to the new format, to the new default values, please execute a simple script to resave all links.
+- Parameter `$index` of method `setIndex` is not nullable anymore in `Pimcore\Model\DataObject\ClassDefinition\Data`.
+- Removed deprecated `getThumbnailConfig()` method from `Pimcore\Model\Asset\Image`.
+
+#### [Events]
+- Removed `context` property of `ResolveUploadTargetEvent`.
+
+#### [Lib]
+- Removed deprecated class `Pimcore\Helper\CsvFormulaFormatter`. Use `\League\Csv\EscapeFormula` instead.
+- Removed deprecated `getCachedSymfonyEnvironments()` method from `Pimcore\Tool`.
+
+#### [Mail]
+- If sender is not set in the mail, instead of setting a default `from` address, an exception is now thrown.
+
+#### [Models]
+- Method `getById()` now only accepts `int` as the first parameter. 
+- Interface `ElementInterface` now has `array $params = []` as the second parameter for `getById()`.
+
+#### [Navigation]
+- Remove deprecated `$_defaultPageType` from `Pimcore\Navigation\Page`.
+
+#### [Select Options]
+- Add 'Admin only' configuration to restrict access to admin users
+
+#### [Templates]
+- Removed `key_value_table.html.twig` from `CoreBundle`
+
+#### [Workflow]
+- Method `getWorkflowByName()` now returns `?WorkflowInterface` instead of `?object`. This also affected the `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php`.
+
+### Custom Reports
+- add function `getColumnsWithMetadata` to `bundles/CustomReportsBundle/src/Tool/Adapter/CustomReportAdapterInterface.php`
+- add function `getPagination` to `bundles/CustomReportsBundle/src/Tool/Adapter/CustomReportAdapterInterface.php`
+- change parameter types of `getData` in `bundles/CustomReportsBundle/src/Tool/Adapter/AbstractAdapter.php`
+
+## Pimcore 11.6.0
+### Elements
+#### [Documents]
+- Video Editable: Passing an invalid allowedTypes config will throw an exception.
+
+## Pimcore 11.5.0
+### General
+#### [Database]
+- Adding index to `users_workspaces_asset`, `users_workspaces_document` and `users_workspaces_object` tables on `userId`, `cpath` and `list` to improve permission checks.  
+  Make sure to run the migration `bin/console doctrine:migrations:execute Pimcore\\Bundle\\CoreBundle\\Migrations\\Version20241114142759`.
+- Added an index on `versionCount` columns
+#### [Events]
+- `context` property of `ResolveUploadTargetEvent` is deprecated. Use `setArgument()` method instead.
+- `pimcore_block` Twig extension is deprecated. Use `pimcoreblock` or `pimcoremanualblock` instead.
+#### [Controllers]
+- Replaced all `$request->get()` with their explicit input source.
+#### [Dependencies]
+- Added support to `doctrine/orm` `v3` and `symfony/webpack-encore-bundle` `v2`.
+#### [WYSIWYG-Editor]
+- `TinyMCE` is deprecated. Use `Quill` (`pimcore/quill-bundle`) instead.
+### Elements
+#### [Assets]
+- Introduced `pimcore.assets.metadata.alt`, `pimcore.assets.metadata.copyright`, `pimcore.assets.metadata.title` configuration to allow defining which metadata should be used when rending the image tag.
+#### [DataObjects]
+- Passing an non-existing or invalid unit when programmatically setting QuantityValue related object types will throw an exception.
 
 ## Pimcore 11.4.0
 ### General
@@ -7,6 +99,11 @@
 #### [Twig Deferred Extension]
 - Removed `rybakit/twig-deferred-extension` dependency and `Twig\DeferredExtension\DeferredExtension` service.
   If you use deferred twig blocks, please add the dependency to your own `composer.json` and the service to your own `service.yaml`.
+#### [Twig Extension Deprecations]
+- `pimcore_cache` Twig extension is deprecated. Use `pimcorecache` twig tag instead.
+- `pimcore_placeholder`, `pimcore_head_script`, `pimcore_head_style` 
+  - `captureStart()` and `captureEnd()` methods are deprecated. Use native twig `set` tag instead. Take a look at the related docs of each twig extension for an example.
+
 #### [Notification]
 - Extending notifications for studio adding flag `isStudio` column and a `payload` column with according getters and setters.
   Make sure to run the migration `bin/console doctrine:migrations:execute Pimcore\\Bundle\\CoreBundle\\Migrations\\Version20240813085200`.

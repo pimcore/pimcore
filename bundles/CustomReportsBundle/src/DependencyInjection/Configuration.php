@@ -64,6 +64,7 @@ class Configuration implements ConfigurationInterface
                                     ->prototype('variable')
                                     ->end()
                                 ->end()
+                                ->booleanNode('pagination')->end()
                             ->end()
                         ->end()
                     ->end()

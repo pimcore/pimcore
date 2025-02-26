@@ -111,9 +111,7 @@ class Dao extends Model\Dao\AbstractDao
                     $this->model->set($fieldName, $fd->getDataFromResource($insertData, $object, $fieldDefinitionParams));
                 }
 
-                if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
-                    $this->model->markFieldDirty($fieldName, false);
-                }
+                $this->model->markFieldDirty($fieldName, false);
             }
         }
 
@@ -149,8 +147,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if ($fd instanceof QueryResourcePersistenceAwareInterface
-                && $fd instanceof DataObject\ClassDefinition\Data) {
+            if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                 $method = 'get' . $key;
                 $fieldValue = $this->model->$method();
                 $insertData = $fd->getDataForQueryResource($fieldValue, $object);

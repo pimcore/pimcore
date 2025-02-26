@@ -125,7 +125,7 @@ abstract class UserRole extends AbstractUser implements UserRoleInterface
      *
      * @return $this
      */
-    public function setPermission(string $permissionName, bool $value = null): static
+    public function setPermission(string $permissionName, ?bool $value = null): static
     {
         if (!in_array($permissionName, $this->permissions) && $value) {
             $this->permissions[] = $permissionName;

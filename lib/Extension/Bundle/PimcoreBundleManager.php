@@ -454,7 +454,7 @@ class PimcoreBundleManager
      *
      * @return string[]
      */
-    protected function resolvePaths(string $type, string $mode = null): array
+    protected function resolvePaths(string $type, ?string $mode = null): array
     {
         $type = ucfirst($type);
 

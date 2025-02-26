@@ -61,7 +61,7 @@ trait OwnerAwareFieldTrait
     /**
      * @internal
      *
-     * @return $this;
+     * @return $this
      */
     public function _setOwnerFieldname(?string $fieldname): static
     {

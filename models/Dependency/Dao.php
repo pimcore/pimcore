@@ -38,7 +38,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      *
      */
-    public function getBySourceId(int $id = null, string $type = null): void
+    public function getBySourceId(?int $id = null, ?string $type = null): void
     {
         if ($id && $type) {
             $this->model->setSourceId($id);
@@ -61,11 +61,11 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     public function getFilterRequiresByPath(
-        int $offset = null,
-        int $limit = null,
-        string $value = null,
-        string $orderBy = null,
-        string $orderDirection = null): array
+        ?int $offset = null,
+        ?int $limit = null,
+        ?string $value = null,
+        ?string $orderBy = null,
+        ?string $orderDirection = null): array
     {
 
         $sourceId = (int)$this->model->getSourceId();
@@ -119,11 +119,11 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     public function getFilterRequiredByPath(
-        int $offset = null,
-        int $limit = null,
-        string $value = null,
-        string $orderBy = null,
-        string $orderDirection = null
+        ?int $offset = null,
+        ?int $limit = null,
+        ?string $value = null,
+        ?string $orderBy = null,
+        ?string $orderDirection = null
     ): array {
 
         $targetId = (int)$this->model->getSourceId();
@@ -286,7 +286,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      *
      */
-    public function getRequiredBy(int $offset = null, int $limit = null): array
+    public function getRequiredBy(?int $offset = null, ?int $limit = null): array
     {
         $query = '
             SELECT dependencies.sourceid, dependencies.sourcetype FROM dependencies
@@ -315,7 +315,7 @@ class Dao extends Model\Dao\AbstractDao
         return $requiredBy;
     }
 
-    public function getRequiredByWithPath(int $offset = null, int $limit = null, string $orderBy = null, string $orderDirection = null): array
+    public function getRequiredByWithPath(?int $offset = null, ?int $limit = null, ?string $orderBy = null, ?string $orderDirection = null): array
     {
         $targetId = $this->model->getSourceId();
 

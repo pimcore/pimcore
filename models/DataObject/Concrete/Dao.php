@@ -133,7 +133,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function getData(): void
     {
-        if (!$data = $this->db->fetchAssociative('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', [$this->model->getId()])) {
+        if (!$data = $this->db->fetchAssociative('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ? FOR UPDATE', [$this->model->getId()])) {
             return;
         }
 
@@ -177,7 +177,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      * Save changes to database, it's an good idea to use save() instead
      *
      */
-    public function update(bool $isUpdate = null): void
+    public function update(?bool $isUpdate = null): void
     {
         parent::update($isUpdate);
 
@@ -194,7 +194,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
 
             if (!DataObject::isDirtyDetectionDisabled() && $fd->supportsDirtyDetection()) {
-                if ($this->model instanceof Model\Element\DirtyIndicatorInterface && !$this->model->isFieldDirty($fieldName)) {
+                if (!$this->model->isFieldDirty($fieldName)) {
                     if (!in_array($fieldName, $untouchable)) {
                         $untouchable[] = $fieldName;
                     }
@@ -210,21 +210,18 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         foreach ($fieldDefinitions as $fieldName => $fd) {
             $getter = 'get' . ucfirst($fieldName);
 
-            if ($fd instanceof CustomResourcePersistingInterface
-                && $fd instanceof DataObject\ClassDefinition\Data) {
+            if ($fd instanceof CustomResourcePersistingInterface) {
                 // for fieldtypes which have their own save algorithm eg. fieldcollections, relational data-types, ...
-                $saveParams = ['isUntouchable' => in_array($fd->getName(), $untouchable),
+                $saveParams = [
+                    'isUntouchable' => in_array($fd->getName(), $untouchable),
                     'isUpdate' => $isUpdate,
                     'context' => [
                         'containerType' => 'object',
                     ],
                     'owner' => $this->model,
                     'fieldname' => $fieldName,
-                ]
-                ;
-                if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
-                    $saveParams['newParent'] = $this->model->isFieldDirty('parentId');
-                }
+                ];
+                $saveParams['newParent'] = $this->model->isFieldDirty('parentId');
                 $fd->save($this->model, $saveParams);
             }
             if ($fd instanceof ResourcePersistenceAwareInterface) {
@@ -247,9 +244,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     $this->model->set($fieldName, $fd->getDataFromResource($insertData, $this->model, $fieldDefinitionParams));
                 }
 
-                if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
-                    $this->model->markFieldDirty($fieldName, false);
-                }
+                $this->model->markFieldDirty($fieldName, false);
             }
         }
         $tableName = 'object_store_' . $this->model->getClassId();
@@ -279,8 +274,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if ($fd instanceof QueryResourcePersistenceAwareInterface
-                && $fd instanceof DataObject\ClassDefinition\Data) {
+            if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                 //exclude untouchables if value is not an array - this means data has not been loaded
                 if (!in_array($key, $untouchable)) {
                     $method = 'get' . $key;

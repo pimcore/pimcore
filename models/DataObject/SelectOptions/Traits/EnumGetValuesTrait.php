@@ -21,7 +21,7 @@ trait EnumGetValuesTrait
     /**
      * @return string[]
      */
-    public function getValues(): array
+    public static function getValues(): array
     {
         return array_column(static::cases(), 'value');
     }

@@ -36,7 +36,7 @@ class OptimizeImageHandler implements BatchHandlerInterface
     {
     }
 
-    public function __invoke(OptimizeImageMessage $message, Acknowledger $ack = null): mixed
+    public function __invoke(OptimizeImageMessage $message, ?Acknowledger $ack = null): mixed
     {
         return $this->handle($message, $ack);
     }

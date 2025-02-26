@@ -44,7 +44,6 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object by id from database and assign it to the object (model)
      *
-     *
      * @throws Model\Exception\NotFoundException
      */
     public function getById(int $id): void
@@ -87,7 +86,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Get the data for the asset from database for the given path
-     *
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -138,30 +136,28 @@ class Dao extends Model\Element\Dao
 
         $data['hasMetaData'] = 0;
         $metadataItems = [];
-        if (!empty($metadata)) {
-            foreach ($metadata as $metadataItem) {
-                $metadataItem['cid'] = $this->model->getId();
-                unset($metadataItem['config']);
+        foreach ($metadata as $metadataItem) {
+            $metadataItem['cid'] = $this->model->getId();
+            unset($metadataItem['config']);
 
-                $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
-                $dataForResource = $metadataItem['data'];
+            $dataForResource = $metadataItem['data'];
 
-                try {
-                    /** @var Data $instance */
-                    $instance = $loader->build($metadataItem['type']);
-                    $dataForResource = $instance->getDataForResource($metadataItem['data'], $metadataItem);
-                } catch (UnsupportedException $e) {
-                }
+            try {
+                /** @var Data $instance */
+                $instance = $loader->build($metadataItem['type']);
+                $dataForResource = $instance->getDataForResource($metadataItem['data'], $metadataItem);
+            } catch (UnsupportedException $e) {
+            }
 
-                $metadataItem['data'] = $dataForResource;
+            $metadataItem['data'] = $dataForResource;
 
-                $metadataItem['language'] = (string) $metadataItem['language']; // language column cannot be NULL -> see SQL schema
+            $metadataItem['language'] = (string) $metadataItem['language']; // language column cannot be NULL -> see SQL schema
 
-                if (is_scalar($metadataItem['data'])) {
-                    $data['hasMetaData'] = 1;
-                    $metadataItems[] = $metadataItem;
-                }
+            if (is_scalar($metadataItem['data'])) {
+                $data['hasMetaData'] = 1;
+                $metadataItems[] = $metadataItem;
             }
         }
 
@@ -198,8 +194,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     *
-     *
      * @internal
      */
     public function updateChildPaths(string $oldPath): array
@@ -326,11 +320,8 @@ class Dao extends Model\Element\Dao
 
     /**
      * quick test if there are children
-     *
-     * @param Model\User|null $user
-     *
      */
-    public function hasChildren(User $user = null): bool
+    public function hasChildren(?User $user = null): bool
     {
         if (!$this->model->getId()) {
             return false;
@@ -360,7 +351,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Quick test if there are siblings
-     *
      */
     public function hasSiblings(): bool
     {
@@ -385,11 +375,8 @@ class Dao extends Model\Element\Dao
 
     /**
      * returns the amount of directly children (not recursivly)
-     *
-     * @param Model\User|null $user
-     *
      */
-    public function getChildAmount(User $user = null): int
+    public function getChildAmount(?User $user = null): int
     {
         if (!$this->model->getId()) {
             return 0;
@@ -442,8 +429,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     *
-     *
      * @throws \Doctrine\DBAL\Exception
      */
     public function isInheritingPermission(string $type, array $userIds): int
@@ -478,7 +463,7 @@ class Dao extends Model\Element\Dao
             }
 
             // exception for list permission
-            if (empty($permissionsParent) && $type == 'list') {
+            if ($type == 'list') {
                 // check for children with permissions
                 $path = $this->model->getRealFullPath() . '/';
                 if ($this->model->getId() == 1) {

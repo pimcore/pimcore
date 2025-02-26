@@ -47,7 +47,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws Exception
      */
-    public function getByName(string $id = null): void
+    public function getByName(?string $id = null): void
     {
         if ($id != null) {
             $this->model->setName($id);

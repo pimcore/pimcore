@@ -49,10 +49,10 @@ class XliffTranslationController extends UserAwareController
     {
         $this->checkPermission('xliff_import_export');
 
-        $id = $request->get('id');
-        $data = $this->decodeJson($request->get('data'));
-        $source = $request->get('source');
-        $target = $request->get('target');
+        $id = $request->request->getString('id');
+        $data = $this->decodeJson($request->request->getString('data'));
+        $source = $request->request->getString('source');
+        $target = $request->request->getString('target');
 
         $translationItems = new TranslationItemCollection();
 
@@ -77,7 +77,7 @@ class XliffTranslationController extends UserAwareController
     {
         $this->checkPermission('xliff_import_export');
 
-        $id = $request->get('id');
+        $id = $request->query->getString('id');
         $exportFile = $exportService->getTranslationExporter()->getExportFilePath($id);
 
         $response = new BinaryFileResponse($exportFile);
@@ -136,8 +136,8 @@ class XliffTranslationController extends UserAwareController
     {
         $this->checkPermission('xliff_import_export');
 
-        $id = $request->get('id');
-        $step = (int) $request->get('step');
+        $id = $request->request->getString('id');
+        $step = $request->request->getInt('step');
 
         try {
             $attributeSet = $importDataExtractor->extractElement($id, $step);

@@ -24,7 +24,7 @@ class GD extends Adapter
     protected string $path;
 
     /**
-     * @var resource|GdImage|false
+     * @var resource|GdImage|false|null
      */
     protected mixed $resource = null;
 
@@ -64,7 +64,7 @@ class GD extends Adapter
         return $format;
     }
 
-    public function save(string $path, string $format = null, int $quality = null): static
+    public function save(string $path, ?string $format = null, ?int $quality = null): static
     {
         if (!$format || $format == 'png32') {
             $format = 'png';
@@ -228,7 +228,7 @@ class GD extends Adapter
         return $this;
     }
 
-    public function setBackgroundImage(string $image, string $mode = null): static
+    public function setBackgroundImage(string $image, ?string $mode = null): static
     {
         $this->preModify();
 

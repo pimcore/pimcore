@@ -42,26 +42,16 @@ class GotenbergHelper
             return false;
         }
 
-        $request = null;
-
-        /** @var GotenbergAPI|object $chrome */
         $chrome = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url']);
-        if (method_exists($chrome, 'html')) {
-            // gotenberg/gotenberg-php API Client v1
-            $request = $chrome->html(Stream::string('dummy.html', '<body></body>'));
-        } elseif (method_exists($chrome, 'screenshot')) {
-            $request = $chrome->screenshot()->html(Stream::string('dummy.html', '<body></body>'));
-        }
+        $request = $chrome->screenshot()->html(Stream::string('dummy.html', '<body></body>'));
 
-        if ($request) {
-            try {
-                GotenbergAPI::send($request);
-                self::$validPing = true;
+        try {
+            GotenbergAPI::send($request);
+            self::$validPing = true;
 
-                return true;
-            } catch (Exception $e) {
-                // nothing to do
-            }
+            return true;
+        } catch (Exception $e) {
+            // nothing to do
         }
 
         return false;
