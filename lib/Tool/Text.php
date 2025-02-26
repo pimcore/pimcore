@@ -176,7 +176,13 @@ class Text
                         if (!empty($additionalAttributes)) {
                             $replacement .= ' ' . array_to_html_attribute_string($additionalAttributes);
                         }
-                        $newTag = preg_replace($pattern, $replacement, $oldTag);
+
+                        $newTag = $oldTag;
+                        if (!str_contains($oldTag, 'href')) {
+                            $newTag = str_replace('<a', '<a href="/"', $newTag);
+                        }
+
+                        $newTag = preg_replace($pattern, $replacement, $newTag);
 
                         $text = str_replace($oldTag, $newTag, $text);
                     }
