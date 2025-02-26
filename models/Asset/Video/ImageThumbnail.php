@@ -116,7 +116,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
                 }
 
                 // fallback
-                if (!is_numeric($timeOffset) && $this->asset instanceof Model\Asset\Video) {
+                if (!is_numeric($timeOffset)) {
                     $timeOffset = ceil($this->asset->getDuration() / 3);
                 }
 

@@ -83,6 +83,9 @@ And in the frontend of the application:
     <h2>{{ pimcore_input("subline") }}</h2>
 {% endfor %}
 ```
+> **WARNING**
+> If you need the block index, please use `_block.getCurrentIndex()` instead, 
+> `_block.current` is the auto-incremental index (key) of the array iterator.
 
 > **IMPORTANT**
 > If you want to change content structure dynamically for each index in editmode, then it is required to use `reload=true` config.

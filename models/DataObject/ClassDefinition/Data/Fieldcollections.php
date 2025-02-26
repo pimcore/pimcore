@@ -492,7 +492,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         // getter, no inheritance here, that's the only difference
         $key = $this->getName();
 
-        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+        if ($this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -590,8 +590,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        if ($fd instanceof IdRewriterInterface
-                            && $fd instanceof DataObject\ClassDefinition\Data) {
+                        if ($fd instanceof IdRewriterInterface) {
                             $d = $fd->rewriteIds($item, $idMapping, $params);
                             $setter = 'set' . ucfirst($fd->getName());
                             $item->$setter($d);

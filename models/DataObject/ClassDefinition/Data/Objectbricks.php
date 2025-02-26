@@ -455,7 +455,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         // getter
 
-        if ($this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -503,7 +503,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             $allowedTypes = $this->getAllowedTypes();
             foreach ($allowedTypes as $allowedType) {
                 $getter = 'get' . ucfirst($allowedType);
-                /** @var DataObject\Objectbrick\Data\AbstractData $item */
                 $item = $data->$getter();
 
                 if ($item instanceof DataObject\Objectbrick\Data\AbstractData) {
@@ -735,8 +734,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if ($fd instanceof IdRewriterInterface
-                    && $fd instanceof DataObject\ClassDefinition\Data) {
+                    if ($fd instanceof IdRewriterInterface) {
                         $d = $fd->rewriteIds($item, $idMapping, $params);
                         $setter = 'set' . ucfirst($fd->getName());
                         $item->$setter($d);
@@ -819,7 +817,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         if ($value instanceof Objectbrick) {
             $result = [];
             $value = $value->getObjectVars();
-            /** @var Objectbrick\Data\AbstractData $item */
             foreach ($value as $item) {
                 if (!$item instanceof DataObject\Objectbrick\Data\AbstractData) {
                     continue;
@@ -831,8 +828,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 $fds = $brickDef->getFieldDefinitions();
                 foreach ($fds as $fd) {
                     $value = $item->{'get' . $fd->getName()}();
-                    if ($fd instanceof NormalizerInterface
-                        && $fd instanceof DataObject\ClassDefinition\Data) {
+                    if ($fd instanceof NormalizerInterface) {
                         $result[$type][$fd->getName()] = $fd->normalize($value, $params);
                     } else {
                         throw new Exception($fd->getName() . ' does not implement NormalizerInterface');

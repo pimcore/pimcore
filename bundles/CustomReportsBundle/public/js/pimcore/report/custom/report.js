@@ -146,13 +146,19 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
 
     },
 
-    createGrid: function() {
-        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
+    createGrid: function(data) {
+        let itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
+        if (!data.pagination) {
+            itemsPerPage = -1;
+        }
         var url = Routing.generate('pimcore_bundle_customreports_customreport_data');
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url, this.storeFields, itemsPerPage
         );
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
+        if (!data.pagination) {
+            this.pagingtoolbar = null;
+        }
 
         var proxy = this.store.getProxy();
         proxy.extraParams.name = this.config["name"];
@@ -247,7 +253,7 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
 
     initGrid: function (data) {
         this.prepareGridConfig(data);
-        return this.createGrid();
+        return this.createGrid(data);
     },
 
     buildTopBar: function(drillDownFilterDefinitions) {

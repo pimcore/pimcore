@@ -102,10 +102,7 @@ class Dao extends Model\Dao\AbstractDao
 
                             if ($value === 0 || !empty($value)) {
                                 $collection->setValue($key, $value);
-
-                                if ($collection instanceof Model\Element\DirtyIndicatorInterface) {
-                                    $collection->markFieldDirty($key, false);
-                                }
+                                $collection->markFieldDirty($key, false);
                             }
                         }
                     }
@@ -193,7 +190,7 @@ class Dao extends Model\Dao\AbstractDao
             $childDefinitions = $definition->getFieldDefinitions(['suppressEnrichment' => true]);
 
             foreach ($childDefinitions as $fd) {
-                if (!DataObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
+                if (!DataObject::isDirtyDetectionDisabled()) {
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !$this->model->isFieldDirty(
                         '_self'
                     )) {

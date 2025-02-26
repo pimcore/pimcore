@@ -16,12 +16,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\ApplicationLoggerBundle;
 
+use Monolog\Handler\FilterHandler;
+use Monolog\Handler\HandlerInterface;
 use Monolog\Level;
 use Monolog\Logger;
 use Pimcore;
+use Pimcore\Bundle\ApplicationLoggerBundle\Exception\ContainerNotFoundException;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Stringable;
@@ -41,9 +47,22 @@ class ApplicationLogger implements LoggerInterface
 
     protected static array $instances = [];
 
+    public function __construct()
+    {
+        $this->loggers['default-monolog'] = new Logger('app');
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public static function getInstance(string $component = 'default', bool $initDbHandler = false): ApplicationLogger
     {
         $container = Pimcore::getContainer();
+        if (!($container instanceof ContainerInterface)) {
+            throw new ContainerNotFoundException();
+        }
+
         $containerId = 'pimcore.app_logger.' . $component;
 
         if ($container->has($containerId)) {
@@ -62,17 +81,26 @@ class ApplicationLogger implements LoggerInterface
         return $logger;
     }
 
-    public function addWriter(object $writer): void
-    {
-        if ($writer instanceof \Monolog\Handler\HandlerInterface) {
-            if (!isset($this->loggers['default-monolog'])) {
-                // auto init Monolog logger
-                $this->loggers['default-monolog'] = new Logger('app');
-            }
-            $this->loggers['default-monolog']->pushHandler($writer);
-        } elseif ($writer instanceof \Psr\Log\LoggerInterface) {
+    public function addWriter(
+        HandlerInterface|LoggerInterface $writer,
+        int|string|Level|array $minLevelOrList = Level::Debug,
+        int|string|Level $maxLevel = Level::Emergency,
+        bool $bubble = true
+    ): void {
+        if ($writer instanceof LoggerInterface) {
             $this->loggers[] = $writer;
+
+            return;
         }
+
+        $filterHandler = new FilterHandler(
+            $writer,
+            $minLevelOrList,
+            $maxLevel,
+            $bubble
+        );
+
+        $this->loggers['default-monolog']->pushHandler($filterHandler);
     }
 
     public function setComponent(string $component): void

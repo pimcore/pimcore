@@ -109,3 +109,23 @@ class Special extends DataObject\Concrete implements DataObject\PreGetValueHookI
 ## Overriding Pimcore Models
 In addition to parent classes, it is also possible to override Pimcore object classes with custom classes and tell Pimcore 
 to use the custom classes instead of the generated object classes. This can be done by using [model overrides](../../../20_Extending_Pimcore/03_Overriding_Models.md).
+
+## Modifying values from getters when using inheritance
+When inheritance is enabled, the values returned by getters may be references to objects from the parent. 
+Consequently, modifying these values could also alter the parent object. 
+To prevent this, clone the returned object before making any changes.
+
+```php
+$silverCar = Car::getById(262);
+if ($silverCar instanceof Car) {
+    $location = $silverCar->getLocation();
+    if($location === null) {
+        throw new RuntimeException("...");
+    }
+    $locationClone = clone $location;
+    $locationClone->setLongitude(99);
+    $locationClone->setLatitude(99);
+    $silverCar->setLocation($locationClone);
+    $silverCar->save();    
+}
+```

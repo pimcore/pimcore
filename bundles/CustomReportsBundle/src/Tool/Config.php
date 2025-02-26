@@ -69,6 +69,8 @@ class Config extends Model\AbstractModel implements JsonSerializable
 
     protected bool $shareGlobally = true;
 
+    protected bool $pagination = true;
+
     /**
      * @var string[]
      */
@@ -335,6 +337,16 @@ class Config extends Model\AbstractModel implements JsonSerializable
     public function setShareGlobally(bool $shareGlobally): void
     {
         $this->shareGlobally = $shareGlobally;
+    }
+
+    public function getPagination(): bool
+    {
+        return $this->pagination;
+    }
+
+    public function setPagination(bool $pagination): void
+    {
+        $this->pagination = $pagination;
     }
 
     /**

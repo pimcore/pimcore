@@ -35,3 +35,9 @@ With [Custom Layouts](../05_Objects/01_Object_Classes/05_Class_Settings/15_Custo
 the tips of [Showing Custom Layouts based on Object Data](83_Showing_Custom_Layouts_based_on_Object_Data.md) it is even  
 possible to deliver a different object editor mask for virtual products with additional explanation texts and showing
 only attributes that should be modified on the current level by the editor.
+
+**Modifying inherited data**
+
+Please make sure to understand the concept of [Data Inheritance](../05_Objects/01_Object_Classes/05_Class_Settings/25_Inheritance.md)
+in general and to take a deeper look at the `Modifying values from getters when using inheritance` section in the mentioned documentation.
+
