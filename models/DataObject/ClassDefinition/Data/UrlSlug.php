@@ -480,9 +480,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 $container->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($container);
 
-                if ($container instanceof Model\Element\DirtyIndicatorInterface) {
-                    $container->markFieldDirty($this->getName(), false);
-                }
+                $container->markFieldDirty($this->getName(), false);
             }
         } elseif ($container instanceof Model\DataObject\Localizedfield) {
             $data = $params['data'];

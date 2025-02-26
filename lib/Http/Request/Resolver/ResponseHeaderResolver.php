@@ -40,7 +40,7 @@ class ResponseHeaderResolver extends AbstractRequestResolver
             $request = $this->getCurrentRequest();
         }
 
-        return $request->attributes->get(static::ATTRIBUTE_RESPONSE_HEADER, []);
+        return $request->attributes->all(static::ATTRIBUTE_RESPONSE_HEADER);
     }
 
     /**

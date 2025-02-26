@@ -64,22 +64,18 @@ class HtmlToImage
     public static function convertGotenberg(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
     {
         try {
-            /** @var GotenbergAPI|object $request */
             $request = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url']);
-            if (method_exists($request, 'screenshot')) {
-                $sizes = explode(',', $windowSize);
-                $urlResponse = $request->screenshot()
-                    ->width((int) $sizes[0])
-                    ->height((int) $sizes[1])
-                    ->png()
-                    ->url($url);
+            $sizes = explode(',', $windowSize);
+            $urlResponse = $request->screenshot()
+                ->width((int) $sizes[0])
+                ->height((int) $sizes[1])
+                ->png()
+                ->url($url);
 
-                $file = GotenbergAPI::save($urlResponse, PIMCORE_SYSTEM_TEMP_DIRECTORY);
+            $file = GotenbergAPI::save($urlResponse, PIMCORE_SYSTEM_TEMP_DIRECTORY);
 
-                return rename(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $file, $outputFile);
-            }
-
-        } catch (Exception $e) {
+            return rename(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $file, $outputFile);
+        } catch (Exception) {
             // nothing to do
         }
 

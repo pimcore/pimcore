@@ -222,10 +222,8 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
 
     public function setSnippet(Document\Snippet $snippet): void
     {
-        if ($snippet instanceof Document\Snippet) {
-            $this->id = $snippet->getId();
-            $this->snippet = $snippet;
-        }
+        $this->id = $snippet->getId();
+        $this->snippet = $snippet;
     }
 
     public function getSnippet(): ?Document\Snippet

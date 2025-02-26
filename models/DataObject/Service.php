@@ -599,9 +599,7 @@ class Service extends Model\Element\Service
             $permission = $permission[$type];
             if ($permission) {
                 $permission = explode(',', $permission);
-                if ($languageAllowed === null) {
-                    $languageAllowed = [];
-                }
+                $languageAllowed = [];
 
                 foreach ($permission as $language) {
                     $languageAllowed[$language] = 1;
@@ -623,9 +621,7 @@ class Service extends Model\Element\Service
             $permission = $permissionSet['layouts'];
             if ($permission) {
                 $permission = explode(',', $permission);
-                if ($layoutPermissions === null) {
-                    $layoutPermissions = [];
-                }
+                $layoutPermissions = [];
 
                 foreach ($permission as $p) {
                     if (preg_match(sprintf('#^(%s)_(.*)#', $classId), $p, $setting)) {
@@ -888,8 +884,7 @@ class Service extends Model\Element\Service
             $fields = $object->getClass()->getFieldDefinitions();
 
             foreach ($fields as $field) {
-                if ($field instanceof IdRewriterInterface
-                    && $field instanceof DataObject\ClassDefinition\Data) {
+                if ($field instanceof IdRewriterInterface) {
                     $setter = 'set' . ucfirst($field->getName());
                     if (method_exists($object, $setter)) { // check for non-owner-objects
                         $object->$setter($field->rewriteIds($object, $rewriteConfig));
@@ -964,9 +959,7 @@ class Service extends Model\Element\Service
         }
 
         foreach ($list as $customLayout) {
-            if ($customLayout instanceof ClassDefinition\CustomLayout) {
-                $resultList[$customLayout->getId()] = $customLayout;
-            }
+            $resultList[$customLayout->getId()] = $customLayout;
         }
 
         return $resultList;
@@ -1602,14 +1595,11 @@ class Service extends Model\Element\Service
 
     public static function recursiveResetDirtyMap(AbstractObject $object): void
     {
-        if ($object instanceof DirtyIndicatorInterface) {
-            $object->resetDirtyMap();
-        }
+        $object->resetDirtyMap();
 
         if ($object instanceof Concrete) {
-            if (($class = $object->getClass()) !== null) {
-                self::doResetDirtyMap($object, $class);
-            }
+            $class = $object->getClass();
+            self::doResetDirtyMap($object, $class);
         }
     }
 

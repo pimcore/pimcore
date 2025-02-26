@@ -87,10 +87,7 @@ class DateRange extends Data implements
             $startDate = $this->getDateFromTimestamp($data[$startDateKey]);
             $endDate = $this->getDateFromTimestamp($data[$endDateKey]);
             $period = CarbonPeriod::create()->setStartDate($startDate);
-
-            if ($endDate instanceof Carbon) {
-                $period->setEndDate($endDate);
-            }
+            $period->setEndDate($endDate);
 
             return $period;
         }
@@ -263,9 +260,9 @@ class DateRange extends Data implements
             $startDate = $data->getStartDate();
             $endDate = $data->getEndDate();
 
-            if (!$startDate instanceof CarbonInterface || !$endDate instanceof CarbonInterface) {
+            if (!$endDate instanceof CarbonInterface) {
                 throw new ValidationException(
-                    sprintf('Either the start or end value in field [ %s ] is not a date', $fieldName)
+                    sprintf('The end value in field [ %s ] is not a date', $fieldName)
                 );
             }
 

@@ -141,6 +141,7 @@ class Bootstrap
         // before the kernel is loaded - e.g. to set trusted proxies on the request object
         $startupFile = PIMCORE_PROJECT_ROOT . '/config/pimcore/startup.php';
         if (file_exists($startupFile)) {
+            // @phpstan-ignore-next-line
             include_once $startupFile;
         }
 
@@ -178,6 +179,7 @@ class Bootstrap
         // load custom constants
         $customConstantsFile = PIMCORE_PROJECT_ROOT . '/config/pimcore/constants.php';
         if (file_exists($customConstantsFile)) {
+            // @phpstan-ignore-next-line
             include_once $customConstantsFile;
         }
 

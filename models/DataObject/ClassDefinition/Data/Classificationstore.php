@@ -399,15 +399,16 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
                 foreach ($keys as $keyId => $values) {
                     $keyConfig = $this->getKeyConfiguration($keyId);
-                    /** @var ResourcePersistenceAwareInterface $fieldDefinition */
                     $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
-                    foreach ($values as $language => $value) {
-                        $value = $fieldDefinition->getDataForResource($value, $object, $params);
-                        if (is_array($value)) {
-                            $value = implode(',', $value);
+                    if ($fieldDefinition instanceof ResourcePersistenceAwareInterface) {
+                        foreach ($values as $value) {
+                            $value = $fieldDefinition->getDataForResource($value, $object, $params);
+                            if (is_array($value)) {
+                                $value = implode(',', $value);
+                            }
+                            $dataString .= $value . ' ';
                         }
-                        $dataString .= $value . ' ';
                     }
                 }
             }
@@ -1118,7 +1119,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $key = $this->getName();
 
         $typeDeclaration = '';
-        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+        if ($this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         }
 

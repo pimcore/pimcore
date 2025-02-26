@@ -57,6 +57,6 @@ class SiteResolver extends AbstractRequestResolver
     {
         $site = $this->getSite($request);
 
-        return null !== $site && $site instanceof Site;
+        return $site instanceof Site;
     }
 }
