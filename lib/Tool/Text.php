@@ -177,10 +177,7 @@ class Text
                             $replacement .= ' ' . array_to_html_attribute_string($additionalAttributes);
                         }
 
-                        $newTag = $oldTag;
-                        if (!str_contains($oldTag, 'href')) {
-                            $newTag = str_replace('<a', '<a href="/"', $newTag);
-                        }
+                        $newTag = self::addHrefAttributeToTag($oldTag);
 
                         $newTag = preg_replace($pattern, $replacement, $newTag);
 
@@ -202,6 +199,15 @@ class Text
         }
 
         return $text;
+    }
+
+    private static function addHrefAttributeToTag(string $oldTag): string
+    {
+        if (!str_contains($oldTag, 'href')) {
+            return str_replace('<a', '<a href="/"', $oldTag);
+        }
+
+        return $oldTag;
     }
 
     private static function getElementsTagsInWysiwyg(string $text): array
