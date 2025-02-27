@@ -139,7 +139,9 @@ trait QueryBuilderHelperTrait
         }
 
         if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
-            return;
+            if (!$this->isQueryBuilderPartInUse($queryBuilder, 'select')){
+                $queryBuilder->select($identifierColumn);
+            }
         } elseif ($this->isQueryBuilderPartInUse($queryBuilder, 'distinct')) {
             $countIdentifier = 'DISTINCT ' . $identifierColumn;
             $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
