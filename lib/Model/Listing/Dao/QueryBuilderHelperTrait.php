@@ -148,7 +148,7 @@ trait QueryBuilderHelperTrait
         }
     }
 
-    protected function isQueryBuilderPartInUse(QueryBuilder $queryBuilder, string $part): bool
+    protected function isQueryBuilderPartInUse(QueryBuilder $query, string $part): bool
     {
         $mapping = [
             'groupBy' => 'GROUP BY ',
@@ -159,21 +159,21 @@ trait QueryBuilderHelperTrait
         $pattern = '/' . $mapping[$part] . '/i';
 
         try {
-            $query = $queryBuilder->getSql();
+            $querySQL = $query->getSql();
         } catch (QueryException $e) {
             if (str_contains($e->getMessage(), 'No SELECT expressions given')) {
                 if ($part === 'select') {
                     return false;
                 }
-                $newQueryBuilder = clone $queryBuilder;
+                $newQueryBuilder = clone $query;
                 $newQueryBuilder->select('*');
-                $query = $newQueryBuilder->getSQL();
+                $querySQL = $newQueryBuilder->getSQL();
             }else{
-                $query = $queryBuilder->getSQL();
+                $querySQL = $query->getSQL();
             }
         }
 
-        if (preg_match($pattern, $query, $matches)) {
+        if (preg_match($pattern, $querySQL, $matches)) {
             return true;
         }
 

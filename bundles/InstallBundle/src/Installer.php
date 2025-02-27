@@ -20,7 +20,6 @@ namespace Pimcore\Bundle\InstallBundle;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\ServerVersionProvider;
 use Exception;
 use InvalidArgumentException;
 use PDO;
