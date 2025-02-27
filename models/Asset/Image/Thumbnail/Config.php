@@ -770,7 +770,7 @@ final class Config extends Model\AbstractModel
         foreach ($this->items as &$item) {
             if (in_array($item['method'], ['addOverlay', 'addOverlayFit'])) {
                 if (isset($item['arguments']['id'])) {
-                    $img = Model\Asset\Image::getById($item['arguments']['id']);
+                    $img = Model\Asset\Image::getById((int)$item['arguments']['id']);
                     if ($img) {
                         $item['arguments']['path'] = $img->getFullPath();
                     }
