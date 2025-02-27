@@ -155,7 +155,7 @@ trait QueryBuilderHelperTrait
         $mapping = [
             'groupBy' => 'GROUP BY ',
             'having' => 'HAVING ',
-            'distinct'=> 'DISTINCT ',
+            'distinct'=> ' DISTINCT ',
             'select' => 'SELECT ',
         ];
         $pattern = '/' . $mapping[$part] . '/i';
