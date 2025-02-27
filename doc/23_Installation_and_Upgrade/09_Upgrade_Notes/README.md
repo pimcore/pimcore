@@ -34,6 +34,7 @@ Please make sure to add translations for log levels.
 - Removed deprecated `unserialize()` method from `Pimcore\Model\DataObject\Data\Link`. If not the data is not migrated to the new format, to the new default values, please execute a simple script to resave all links.
 - Parameter `$index` of method `setIndex` is not nullable anymore in `Pimcore\Model\DataObject\ClassDefinition\Data`.
 - Removed deprecated `getThumbnailConfig()` method from `Pimcore\Model\Asset\Image`.
+- Removed deprecated hashing algorithms from `Pimcore\Model\DataObject\Data\Password`.
 
 #### [Events]
 - Removed `context` property of `ResolveUploadTargetEvent`.
