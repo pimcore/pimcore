@@ -177,7 +177,8 @@ class Text
                             $replacement .= ' ' . array_to_html_attribute_string($additionalAttributes);
                         }
 
-                        $newTag = self::addHrefAttributeToTag($oldTag);
+                        //if the html-sanitizer removes required link attribute add it here again
+                        $newTag = self::addAttributeToTag($oldTag, $linkAttr);
 
                         $newTag = preg_replace($pattern, $replacement, $newTag);
 
@@ -201,10 +202,11 @@ class Text
         return $text;
     }
 
-    private static function addHrefAttributeToTag(string $oldTag): string
+    private static function addAttributeToTag(string $oldTag, string $attribute, string $defaultValue = '/'): string
     {
-        if (!str_contains($oldTag, 'href')) {
-            return str_replace('<a', '<a href="/"', $oldTag);
+        if (!str_contains($oldTag, $attribute)) {
+            $openTag = explode(' ', $oldTag)[0];
+            return str_replace($openTag, $openTag . ' ' . $attribute . '="' . $defaultValue . '"', $oldTag);
         }
 
         return $oldTag;
