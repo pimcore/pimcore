@@ -31,6 +31,7 @@ use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
+use Pimcore\Helper\MimeTypeHelper;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Localization\LocaleServiceInterface;
@@ -349,14 +350,15 @@ class Asset extends Element\AbstractElement
                         }
                     }
                 }
-                $mimeType = MimeTypes::getDefault()->guessMimeType($mimeTypeGuessData);
+                //TODO can probably improved by using the stream directly
+                $mimeType = MimeTypeHelper::guessMimeTypeFromFile($mimeTypeGuessData);
             } else {
                 if (!is_dir($data['sourcePath'])) {
                     $mimeTypeGuessData = $data['sourcePath'];
                     if (is_file($data['sourcePath'])) {
                         $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
                     }
-                    $mimeType = MimeTypes::getDefault()->guessMimeType($mimeTypeGuessData);
+                    $mimeType = MimeTypeHelper::guessMimeTypeFromFile($mimeTypeGuessData);
                 }
                 unset($data['sourcePath']);
             }
@@ -726,14 +728,12 @@ class Asset extends Element\AbstractElement
                     $storage->delete($dbPath);
                 }
 
-                $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
-
-                try {
-                    $mimeType = $storage->mimeType($path);
-                } catch (UnableToRetrieveMetadata $e) {
-                    $mimeType = 'application/octet-stream';
+                if (!is_resource($src)) {
+                    $src = $this->getStream();
                 }
+                $mimeType = MimeTypeHelper::guessMimeTypeFromStream($src);
                 $this->setMimeType($mimeType);
+                $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
                 // set type
                 $type = self::getTypeFromMimeMapping($mimeType, $this->getFilename());

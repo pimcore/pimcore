@@ -19,6 +19,7 @@ namespace Pimcore\Twig\Extension;
 
 use Exception;
 use Pimcore\Document;
+use Pimcore\Helper\MimeTypeHelper;
 use Pimcore\Twig\Extension\Templating\PimcoreUrl;
 use Pimcore\Video;
 use Symfony\Component\Mime\MimeTypes;
@@ -106,7 +107,7 @@ class HelpersExtension extends AbstractExtension
      */
     public function getAssetVersionPreview(string $file): string
     {
-        $dataUri = 'data:'.MimeTypes::getDefault()->guessMimeType($file).';base64,'.base64_encode(file_get_contents($file));
+        $dataUri = 'data:'.MimeTypeHelper::guessMimeTypeFromFile($file).';base64,'.base64_encode(file_get_contents($file));
         unlink($file);
 
         return $dataUri;
