@@ -27,9 +27,6 @@ final class MimeTypeHelper implements MimeTypeHelperInterface
         return MimeTypes::getDefault()->guessMimeType($filePath);
     }
 
-    /**
-     * @var resource $stream
-    */
     public static function guessMimeTypeFromStream(mixed $stream): ?string
     {
         $fpPosition = false;
@@ -38,7 +35,7 @@ final class MimeTypeHelper implements MimeTypeHelperInterface
             throw new InvalidArgumentException('The provided stream is not a valid stream resource.');
         }
 
-        $seekable = stream_get_meta_data($stream)['seekable'] ?? false;
+        $seekable = stream_get_meta_data($stream)['seekable'];
         if($seekable) {
             $fpPosition = ftell($stream);
             fseek($stream, 0);
