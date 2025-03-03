@@ -17,6 +17,7 @@ use Doctrine\DBAL\Connection;
 use Exception;
 use InvalidArgumentException;
 use Pimcore;
+use Pimcore\Cache;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Model\Tool\TmpStore;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -73,11 +74,17 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
 
     protected function addEntry(string $sessionId): void
     {
+        Cache::save($sessionId, self::ENTRY_ID, lifetime: null);
         TmpStore::add(self::ENTRY_ID, $sessionId);
     }
 
     protected function getEntry(): ?string
     {
+        $entryId = Cache::load(self::ENTRY_ID);
+        if ($entryId){
+            return $entryId;
+        }
+
         try {
             $tmpStore = TmpStore::get(self::ENTRY_ID);
         } catch (Exception $e) {
@@ -91,6 +98,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     protected function removeEntry(): void
     {
         try {
+            Cache::remove(self::ENTRY_ID);
             TmpStore::delete(self::ENTRY_ID);
         } catch (Exception $e) {
             //nothing to log as the tmp doesn't exist
