@@ -55,12 +55,14 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
 
     public function isActive(?string $matchSessionId = null): bool
     {
-        try {
-            if (!$this->db->isConnected()) {
-                $this->db->getNativeConnection();
+        if (!Cache::load(self::ENTRY_ID)) {
+            try {
+                if (!$this->db->isConnected()) {
+                    $this->db->connect();
+                }
+            } catch (Exception) {
+                return false;
             }
-        } catch (Exception) {
-            return false;
         }
 
         if ($maintenanceModeEntry = $this->getEntry()) {
