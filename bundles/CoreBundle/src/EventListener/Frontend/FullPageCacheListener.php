@@ -28,6 +28,7 @@ use Pimcore\Cache\FullPage\SessionStatus;
 use Pimcore\Config;
 use Pimcore\Event\Cache\FullPage\CacheResponseEvent;
 use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
+use Pimcore\Event\Cache\FullPage\PrepareTagsEvent;
 use Pimcore\Event\FullPageCacheEvents;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Logger;
@@ -342,13 +343,13 @@ class FullPageCacheListener
 
                 $event = new PrepareResponseEvent($request, $response);
                 $this->eventDispatcher->dispatch($event, FullPageCacheEvents::PREPARE_RESPONSE);
-
                 $cacheItem = $event->getResponse();
 
-                $tags = ['output'];
-                if ($this->lifetime) {
-                    $tags = ['output_lifetime'];
-                }
+                $event = new PrepareTagsEvent($request, $response);
+                $this->eventDispatcher->dispatch($event, FullPageCacheEvents::PREPARE_TAGS);
+                $tags = $event->getTags();
+
+                $tags[] = $this->lifetime ? 'output_lifetime': 'output';
 
                 Cache::save($cacheItem, $cacheKey, $tags, $this->lifetime, 1000, true);
             } catch (Exception $e) {
