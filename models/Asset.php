@@ -731,7 +731,7 @@ class Asset extends Element\AbstractElement
                 if (!is_resource($src)) {
                     $src = $this->getStream();
                 }
-                $mimeType = MimeTypeHelper::guessMimeTypeFromStream($src);
+                $mimeType = MimeTypeHelper::guessMimeTypeFromStream($src) ?? 'application/octet-stream';
                 $this->setMimeType($mimeType);
                 $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
