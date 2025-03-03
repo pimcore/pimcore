@@ -49,7 +49,7 @@ class DataObjectParamResolver implements ValueResolverInterface
             return [];
         }
 
-        $value = $request->attributes->get($param);
+        $value = $request->attributes->getInt($param);
 
         if (!$value && $argument->isNullable()) {
             $request->attributes->set($param, null);
