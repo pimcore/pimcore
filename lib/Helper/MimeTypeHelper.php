@@ -22,8 +22,9 @@ use Symfony\Component\Mime\MimeTypes;
 
 final class MimeTypeHelper implements MimeTypeHelperInterface
 {
+
     /**
-     * @var $file resource|string
+     * @param string|resource $file
      */
     public function guessMimeType(mixed $file): ?string
     {
