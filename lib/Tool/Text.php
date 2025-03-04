@@ -206,6 +206,7 @@ class Text
     {
         if (!str_contains($oldTag, $attribute)) {
             $openTag = explode(' ', $oldTag)[0];
+
             return str_replace($openTag, $openTag . ' ' . $attribute . '="' . $defaultValue . '"', $oldTag);
         }
 
@@ -231,7 +232,9 @@ class Text
 
         return $matches;
     }
-    private static function extractPimcoreAttributes($html): array {
+
+    private static function extractPimcoreAttributes($html): array
+    {
         $pattern = '@<(a|img)[^>]*\bpimcore_id="([\d]+)"[^>]*\bpimcore_type="(asset|document|object)"|<(a|img)[^>]*\bpimcore_type="(asset|document|object)"[^>]*\bpimcore_id="([\d]+)"@msUi';
 
         preg_match_all($pattern, $html, $matches, PREG_SET_ORDER);
