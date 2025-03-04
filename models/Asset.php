@@ -331,27 +331,12 @@ class Asset extends Element\AbstractElement
                     $filesystem = new Filesystem();
                     $filesystem->dumpFile($tmpFile, $data['data']);
                 } else {
-                    $streamMeta = stream_get_meta_data($data['stream']);
-                    if (file_exists($streamMeta['uri'])) {
-                        // stream is a local file, so we don't have to write a tmp file
-                        $mimeTypeGuessData = $streamMeta['uri'];
-                    } else {
-                        // write a tmp file because the stream isn't a pointer to the local filesystem
-                        $isRewindable = @rewind($data['stream']);
-                        $dest = fopen($tmpFile, 'w+', false, File::getContext());
-                        stream_copy_to_stream($data['stream'], $dest);
-                        $mimeTypeGuessData = $tmpFile;
-
-                        if (!$isRewindable) {
-                            $data['stream'] = $dest;
-                        } else {
-                            fclose($dest);
-                            unlink($tmpFile);
-                        }
-                    }
+                    // guess mime type from stream directly
+                    $mimeTypeGuessData = $data['stream'];
+                    $mimeType = MimeTypeHelper::guessMimeTypeFromStream(
+                        $mimeTypeGuessData
+                    );
                 }
-                //TODO can probably improved by using the stream directly
-                $mimeType = MimeTypeHelper::guessMimeTypeFromFile($mimeTypeGuessData);
             } else {
                 if (!is_dir($data['sourcePath'])) {
                     $mimeTypeGuessData = $data['sourcePath'];
@@ -393,24 +378,40 @@ class Asset extends Element\AbstractElement
         return $asset;
     }
 
-    private static function checkMaxPixels(string $localPath, array $data): void
+    private static function getImageSizeFromStream(mixed $stream): array
+    {
+        if(!is_resource($stream)) {
+            return [];
+        }
+        $size = getimagesizefromstring(
+            @stream_get_contents($stream)
+        );
+
+        return $size === false ? [] : $size;
+    }
+
+    private static function checkMaxPixels(mixed $localPathOrStream, array $data): void
     {
         // this check is intentionally done in Asset::create() because in Asset::update() it would result
         // in an additional download from remote storage if configured, so in terms of performance
         // this is the more efficient way
         $maxPixels = (int)Config::getSystemConfiguration('assets')['image']['max_pixels'];
-        if ($maxPixels && $size = @getimagesize($localPath)) {
-            $imagePixels = (int)($size[0] * $size[1]);
+        if(is_string($localPathOrStream)) {
+            $size = @getimagesize($localPathOrStream);
+        }
+        else {
+            $size = self::getImageSizeFromStream($localPathOrStream);
+        }
+        if ($maxPixels && $size) {
+            $imagePixels = ($size[0] * $size[1]);
             if ($imagePixels > $maxPixels) {
-                Logger::error("Image to be created {$localPath} (temp. path) exceeds max pixel size of {$maxPixels}, you can change the value in config pimcore.assets.image.max_pixels");
+                Logger::error("Image to be created {$localPathOrStream} (temp. path) exceeds max pixel size of {$maxPixels}, you can change the value in config pimcore.assets.image.max_pixels");
 
                 $diff = sqrt(1 + $imagePixels / $maxPixels);
                 $suggestion_0 = (int)round($size[0] / $diff, -2, PHP_ROUND_HALF_DOWN);
                 $suggestion_1 = (int)round($size[1] / $diff, -2, PHP_ROUND_HALF_DOWN);
 
                 $mp = $maxPixels / 1_000_000;
-                // unlink file before throwing exception
-                unlink($localPath);
 
                 throw new ValidationException("<p>Image dimensions of <em>{$data['filename']}</em> are too large.</p>
 <p>Max size: <code>{$mp}</code> <abbr title='Million pixels'>Megapixels</abbr></p>
