@@ -957,3 +957,7 @@ parameters:
 			message: "#^If condition is always false\\.$#"
 			count: 1
 			path: lib/Image/Chromium.php
+		-
+			message: "#^Ternary operator condition is always true\\.$#"
+			count: 1
+			path: lib/Tool/Text.php

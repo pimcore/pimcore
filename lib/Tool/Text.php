@@ -233,7 +233,7 @@ class Text
         return $matches;
     }
 
-    private static function extractPimcoreAttributes($html): array
+    private static function extractPimcoreAttributes(string $html): array
     {
         $pattern = '@<(a|img)[^>]*\bpimcore_id="([\d]+)"[^>]*\bpimcore_type="(asset|document|object)"|<(a|img)[^>]*\bpimcore_type="(asset|document|object)"[^>]*\bpimcore_id="([\d]+)"@msUi';
 
