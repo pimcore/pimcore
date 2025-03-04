@@ -235,6 +235,7 @@ class Text
 
     private static function extractPimcoreAttributes(string $html): array
     {
+        //getting all links and images with pimcore_id and pimcore_type attribute with ignoring the order
         $pattern = '@<(a|img)[^>]*\bpimcore_id="([\d]+)"[^>]*\bpimcore_type="(asset|document|object)"|<(a|img)[^>]*\bpimcore_type="(asset|document|object)"[^>]*\bpimcore_id="([\d]+)"@msUi';
 
         preg_match_all($pattern, $html, $matches, PREG_SET_ORDER);
