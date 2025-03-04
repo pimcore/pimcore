@@ -237,6 +237,10 @@ class Text
         preg_match_all($pattern, $html, $matches, PREG_SET_ORDER);
 
         $results = [];
+        $results[0] = [];
+        $results[1] = [];
+        $results[2] = [];
+        $results[3] = [];
         for ($i = 0; $i < count($matches); $i++) {
             $match = $matches[$i];
 
