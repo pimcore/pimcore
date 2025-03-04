@@ -224,11 +224,33 @@ class Text
         }
 
         //$text = Pimcore_Tool_Text::removeLineBreaks($text);
-        preg_match_all("@\<(a|img)[^>]*(pimcore_id=\"[0-9]+\")[^>]*(pimcore_type=\"[asset|document|object]+\")[^>]*\>@msUi", $text, $matches);
+
+        $matches = self::extractPimcoreAttributes($text);
 
         RuntimeCache::set($hash, $matches);
 
         return $matches;
+    }
+    private static function extractPimcoreAttributes($html): array {
+        $pattern = '@<(a|img)[^>]*\bpimcore_id="([\d]+)"[^>]*\bpimcore_type="(asset|document|object)"|<(a|img)[^>]*\bpimcore_type="(asset|document|object)"[^>]*\bpimcore_id="([\d]+)"@msUi';
+
+        preg_match_all($pattern, $html, $matches, PREG_SET_ORDER);
+
+        $results = [];
+        for ($i = 0; $i < count($matches); $i++) {
+            $match = $matches[$i];
+
+            $tag = $match[1] ?: $match[4];
+            $pimcore_id = $match[2] ?: $match[6];
+            $pimcore_type = $match[3] ?: $match[5];
+
+            $results[0][$i] = $match[0];
+            $results[1][$i] = $tag;
+            $results[2][$i] = 'pimcore_id="' . $pimcore_id . '"';
+            $results[3][$i] = 'pimcore_type="' .$pimcore_type . '"';
+        }
+
+        return $results;
     }
 
     private static function getElementsInWysiwyg(string $text): array
