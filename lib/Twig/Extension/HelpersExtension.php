@@ -108,7 +108,7 @@ class HelpersExtension extends AbstractExtension
     public function getAssetVersionPreview(string $file): string
     {
         $dataUri = 'data:'
-            .MimeTypeHelper::guessMimeTypeFromFile($file)
+            .(new MimeTypeHelper())->guessMimeType($file)
             .';base64,'
             .base64_encode(
                 file_get_contents($file)

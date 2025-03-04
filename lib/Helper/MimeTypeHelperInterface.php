@@ -17,16 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-
-/** @internal  */
 interface MimeTypeHelperInterface
 {
-    public static function guessMimeTypeFromFile(string $filePath): ?string;
-
-    /**
-     * @param resource $stream
-     */
-    public static function guessMimeTypeFromStream(mixed $stream): ?string;
+    public function guessMimeType(mixed $file): ?string;
 }

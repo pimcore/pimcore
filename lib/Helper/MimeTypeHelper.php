@@ -22,12 +22,28 @@ use Symfony\Component\Mime\MimeTypes;
 
 final class MimeTypeHelper implements MimeTypeHelperInterface
 {
-    public static function guessMimeTypeFromFile(string $filePath): ?string
+    /**
+     * @var $file resource|string
+     */
+    public function guessMimeType(mixed $file): ?string
+    {
+        if (is_string($file)) {
+            return $this->guessMimeTypeFromFile($file);
+        }
+
+        if (is_resource($file) && get_resource_type($file) === 'stream') {
+            return $this->guessMimeTypeFromStream($file);
+        }
+
+        throw new InvalidArgumentException('The provided file must be a string or a stream resource.');
+    }
+
+    private function guessMimeTypeFromFile(string $filePath): ?string
     {
         return MimeTypes::getDefault()->guessMimeType($filePath);
     }
 
-    public static function guessMimeTypeFromStream(mixed $stream): ?string
+    private function guessMimeTypeFromStream(mixed $stream): ?string
     {
         $fpPosition = false;
 

@@ -317,6 +317,7 @@ class Asset extends Element\AbstractElement
                 array_key_exists('stream', $data)
             )
         ) {
+            $mimeTypeHelper = new MimeTypeHelper();
             $mimeType = 'directory';
             $mimeTypeGuessData = null;
             if (array_key_exists('data', $data) || array_key_exists('stream', $data)) {
@@ -333,7 +334,7 @@ class Asset extends Element\AbstractElement
                 } else {
                     // guess mime type from stream directly
                     $mimeTypeGuessData = $data['stream'];
-                    $mimeType = MimeTypeHelper::guessMimeTypeFromStream(
+                    $mimeType = $mimeTypeHelper->guessMimeType(
                         $mimeTypeGuessData
                     );
                 }
@@ -343,7 +344,7 @@ class Asset extends Element\AbstractElement
                     if (is_file($data['sourcePath'])) {
                         $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
                     }
-                    $mimeType = MimeTypeHelper::guessMimeTypeFromFile($mimeTypeGuessData);
+                    $mimeType = $mimeTypeHelper->guessMimeType($mimeTypeGuessData);
                 }
                 unset($data['sourcePath']);
             }
@@ -732,7 +733,7 @@ class Asset extends Element\AbstractElement
                 if (!is_resource($src)) {
                     $src = $this->getStream();
                 }
-                $mimeType = MimeTypeHelper::guessMimeTypeFromStream($src) ?? 'application/octet-stream';
+                $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
                 $this->setMimeType($mimeType);
                 $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
