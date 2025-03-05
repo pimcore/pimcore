@@ -218,28 +218,28 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         $name = $params['name'] ?: $this->name;
 
         if ($value === null || $value === 'null') {
-            return "1 = 0";
+            return '1 = 0';
         }
 
         if ($operator === '=') {
-            $subFilter = '`' . "src_id" . '`' . " = '" . $value . "'";
-        } else if ($operator === 'like' || $operator === 'in') {
+            $subFilter = '`' . 'src_id' . '`' . " = '" . $value . "'";
+        } elseif ($operator === 'like' || $operator === 'in') {
             $values = explode(',', $value);
             // not a real like for now
             $fieldConditions = array_map(function ($value) use ($name) {
-                return '`' . "src_id" . '`' . " = '" . $value . "'";
+                return '`' . 'src_id' . '`' . " = '" . $value . "'";
             }, array_filter($values));
             if (!empty($fieldConditions)) {
                 // we use OR
                 $subFilter = '(' . implode(' OR ', $fieldConditions) . ')';
             } else {
-                return "1 = 0";
+                return '1 = 0';
             }
         } else {
-            return "1 = 0";
+            return '1 = 0';
         }
 
         // we are looking for membership in the reverse relation
-        return "id IN (". 'SELECT dest_id FROM object_relations_'. $this->getOwnerClassId() . " WHERE ". $subFilter . " AND fieldname = '". $this->getOwnerFieldName() . "' AND ownertype = 'object'" . ")";
+        return 'id IN ('. 'SELECT dest_id FROM object_relations_'. $this->getOwnerClassId() . ' WHERE '. $subFilter . " AND fieldname = '". $this->getOwnerFieldName() . "' AND ownertype = 'object'" . ')';
     }
 }
