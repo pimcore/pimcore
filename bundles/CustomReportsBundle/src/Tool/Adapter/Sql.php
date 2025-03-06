@@ -25,8 +25,15 @@ use stdClass;
  */
 class Sql extends AbstractAdapter
 {
-    public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, array $fields = null, array $drillDownFilters = null): array
-    {
+    public function getData(
+        ?array $filters,
+        ?string $sort,
+        ?string $dir,
+        ?int $offset,
+        ?int $limit,
+        ?array $fields = null,
+        ?array $drillDownFilters = null
+    ): array {
         $db = Db::get();
 
         $baseQuery = $this->getBaseQuery($filters ?? [], $fields ?? [], false, $drillDownFilters ?? []);
@@ -74,7 +81,7 @@ class Sql extends AbstractAdapter
         throw new Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
     }
 
-    protected function buildQueryString(stdClass $config, bool $ignoreSelectAndGroupBy = false, array $drillDownFilters = null, string $selectField = null): string
+    protected function buildQueryString(stdClass $config, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): string
     {
         $config = (array)$config;
         $sql = '';
@@ -127,7 +134,7 @@ class Sql extends AbstractAdapter
         return $sql;
     }
 
-    protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, array $drillDownFilters = null, string $selectField = null): ?array
+    protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): ?array
     {
         $db = Db::get();
         $condition = ['1 = 1'];

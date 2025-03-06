@@ -825,7 +825,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
     private function getHtml5Code(
         array $urls = [],
-        Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface $thumbnail = null
+        Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface|null $thumbnail = null
     ): string {
         $code = '';
         $video = $this->getVideoAsset();
@@ -952,7 +952,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return implode('', $durationParts);
     }
 
-    private function getProgressCode(string $thumbnail = null): string
+    private function getProgressCode(?string $thumbnail = null): string
     {
         $uid = $this->getUniqId();
         $code = '

@@ -45,7 +45,9 @@ class Service extends Model\Element\Service
      *
      * @var array
      */
-    public const GRID_SYSTEM_COLUMNS = ['preview', 'id', 'type', 'fullpath', 'filename', 'creationDate', 'modificationDate', 'size'];
+    public const GRID_SYSTEM_COLUMNS = [
+        'preview', 'id', 'type', 'fullpath', 'filename', 'creationDate', 'modificationDate', 'size', 'mimetype',
+    ];
 
     /**
      * @internal
@@ -57,7 +59,7 @@ class Service extends Model\Element\Service
      */
     protected array $_copyRecursiveIds = [];
 
-    public function __construct(Model\User $user = null)
+    public function __construct(?Model\User $user = null)
     {
         $this->_user = $user;
     }
@@ -198,7 +200,7 @@ class Service extends Model\Element\Service
         return $target;
     }
 
-    public static function pathExists(string $path, string $type = null): bool
+    public static function pathExists(string $path, ?string $type = null): bool
     {
         if (!$path) {
             return false;

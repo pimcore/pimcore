@@ -25,32 +25,12 @@ class ResolveUploadTargetEvent extends Event
 
     protected string $filename;
 
-    /**
-     * @deprecated Will be removed in Pimcore 12
-     */
-    protected array $context = [];
-
     protected int $parentId;
 
-    /**
-     * ResolveUploadTargetEvent constructor.
-     *
-     * @param array|null $context contextual information
-     */
-    public function __construct(int $parentId, string $filename, ?array $context = null)
+    public function __construct(int $parentId, string $filename)
     {
         $this->parentId = $parentId;
         $this->filename = $filename;
-        if ($context !== null) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '11.5.0',
-                'The context property is deprecated and will be removed in 12.0.0.
-            Use setArgument() from the ArgumentsAwareTrait instead.'
-            );
-
-            $this->context = $context;
-        }
     }
 
     public function getFilename(): string
@@ -63,36 +43,6 @@ class ResolveUploadTargetEvent extends Event
         $this->filename = $filename;
     }
 
-    /**
-     * @deprecated Will be removed in Pimcore 12
-     */
-    public function getContext(): array
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '11.5.0',
-            'The context property is deprecated and will be removed in 12.0.0.
-            Use getArgument() from the ArgumentsAwareTrait instead.'
-        );
-
-        return $this->context;
-    }
-
-    /**
-     * @deprecated Will be removed in Pimcore 12
-     */
-    public function setContext(array $context): void
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '11.5.0',
-            'The context property is deprecated and will be removed in 12.0.0.
-            Use setArgument() from the ArgumentsAwareTrait instead.'
-        );
-
-        $this->context = $context;
-    }
-
     public function getParentId(): int
     {
         return $this->parentId;
@@ -101,21 +51,5 @@ class ResolveUploadTargetEvent extends Event
     public function setParentId(int $parentId): void
     {
         $this->parentId = $parentId;
-    }
-
-    /**
-     * Will be removed in Pimcore 12
-     *
-     * Override setArgument to handle the deprecated context property.
-     */
-    public function setArgument(string $key, mixed $value): static
-    {
-        if ($key === 'context' && is_array($value)) {
-            $this->context = $value;
-        }
-
-        $this->arguments[$key] = $value;
-
-        return $this;
     }
 }

@@ -44,7 +44,7 @@ class CacheQueueItem
     /**
      * @param string[] $tags
      */
-    public function __construct(string $key, mixed $data, array $tags = [], DateInterval|int $lifetime = null, ?int $priority = 0, bool $force = false)
+    public function __construct(string $key, mixed $data, array $tags = [], DateInterval|int|null $lifetime = null, ?int $priority = 0, bool $force = false)
     {
         $this->key = $key;
         $this->data = $data;

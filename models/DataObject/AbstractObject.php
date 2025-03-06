@@ -172,7 +172,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return self::$getInheritedValues;
     }
 
-    public static function doGetInheritedValues(Concrete $object = null): bool
+    public static function doGetInheritedValues(?Concrete $object = null): bool
     {
         if (self::$getInheritedValues && $object !== null) {
             $class = $object->getClass();
@@ -191,16 +191,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * Static helper to get an object by the passed ID
      */
-    public static function getById(int|string $id, array $params = []): ?static
+    public static function getById(int $id, array $params = []): ?static
     {
-        if (is_string($id)) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '11.0',
-                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
-            );
-            $id = is_numeric($id) ? (int) $id : 0;
-        }
         if ($id < 1) {
             return null;
         }
@@ -286,8 +278,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return DataObject\Listing
-     *
      * @throws Exception
      */
     public static function getList(array $config = []): Listing
@@ -295,7 +285,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $className = DataObject::class;
         // get classname
         if (!in_array(static::class, [__CLASS__, Concrete::class, Folder::class], true)) {
-            /** @var Concrete $tmpObject */
             $tmpObject = new static();
             if ($tmpObject instanceof Concrete) {
                 $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
@@ -461,7 +450,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             //clear parent data from registry
             $parentCacheKey = self::getCacheKey($this->getParentId());
             if (RuntimeCache::isRegistered($parentCacheKey)) {
-                /** @var AbstractObject $parent * */
                 $parent = RuntimeCache::get($parentCacheKey);
                 if ($parent instanceof self) {
                     $parent->setChildren(null);
@@ -698,7 +686,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @internal
      */
-    protected function update(bool $isUpdate = null, array $params = []): void
+    protected function update(?bool $isUpdate = null, array $params = []): void
     {
         $this->updateModificationInfos();
 
@@ -900,7 +888,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @throws Exception
      */
-    public function get(string $fieldName, string $language = null): mixed
+    public function get(string $fieldName, ?string $language = null): mixed
     {
         if (!$fieldName) {
             throw new Exception('Field name must not be empty.');
@@ -912,7 +900,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @throws Exception
      */
-    public function set(string $fieldName, mixed $value, string $language = null): mixed
+    public function set(string $fieldName, mixed $value, ?string $language = null): mixed
     {
         if (!$fieldName) {
             throw new Exception('Field name must not be empty.');

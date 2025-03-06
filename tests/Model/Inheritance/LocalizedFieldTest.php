@@ -25,7 +25,6 @@ use Pimcore\Tests\Support\Helper\Pimcore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool;
-use Pimcore\Version;
 
 class LocalizedFieldTest extends ModelTestCase
 {
@@ -39,24 +38,14 @@ class LocalizedFieldTest extends ModelTestCase
         TestHelper::cleanUp();
         \Pimcore::setAdminMode();
 
-        if (Version::getMajorVersion() >= 11) {
-            $pimcoreModule = $this->getModule('\\'.Pimcore::class);
-            $this->config = $pimcoreModule->grabService(SystemSettingsConfig::class);
-            $this->originalConfig = $this->config->get();
-        } else {
-            $this->originalConfig = \Pimcore\Config::getSystemConfiguration();
-        }
-
+        $pimcoreModule = $this->getModule('\\'.Pimcore::class);
+        $this->config = $pimcoreModule->grabService(SystemSettingsConfig::class);
+        $this->originalConfig = $this->config->get();
     }
 
     public function tearDown(): void
     {
-        if (Version::getMajorVersion() >= 11) {
-            $this->config->testSave($this->originalConfig);
-        } else {
-            \Pimcore\Config::setSystemConfiguration($this->originalConfig);
-        }
-
+        $this->config->testSave($this->originalConfig);
         parent::tearDown();
     }
 
@@ -65,11 +54,8 @@ class LocalizedFieldTest extends ModelTestCase
         $configuration = $this->originalConfig;
         $configuration['general']['fallback_languages']['de'] = 'en';
 
-        if (Version::getMajorVersion() >= 11) {
-            $this->config->testSave($configuration);
-        } else {
-            \Pimcore\Config::setSystemConfiguration($configuration);
-        }
+        $this->config->testSave($configuration);
+
         // create root -> one -> two -> three
         $one = new Inheritance();
         $one->setKey('one');

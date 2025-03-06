@@ -277,7 +277,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -294,7 +294,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         if (is_numeric($data)) {
             return $this->toNumeric($data);
@@ -309,7 +309,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): float|int|string|null
+    public function getDataForQueryResource(mixed $data, ?Concrete $object = null, array $params = []): float|int|string|null
     {
         //TODO same fallback as above
 
@@ -321,7 +321,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @see Data::getDataForEditmode
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -331,7 +331,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         return $this->getDataFromResource($data, $object, $params);
     }
@@ -341,7 +341,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @see Data::getVersionPreview
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return (string) $data;
     }

@@ -291,7 +291,7 @@ abstract class AbstractListing extends AbstractModel implements Iterator, Counta
      *
      * @return $this
      */
-    public function setCondition(string $condition, float|array|bool|int|string $conditionVariables = null): static
+    public function setCondition(string $condition, float|array|bool|int|string|null $conditionVariables = null): static
     {
         $this->setData(null);
 
@@ -358,7 +358,7 @@ abstract class AbstractListing extends AbstractModel implements Iterator, Counta
         return $db->quoteIdentifier($value);
     }
 
-    public function quote(mixed $value, int $type = null): string
+    public function quote(mixed $value, ?int $type = null): string
     {
         $db = Db::get();
 

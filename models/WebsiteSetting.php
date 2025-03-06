@@ -55,7 +55,7 @@ final class WebsiteSetting extends AbstractModel
      */
     protected static array $nameIdMappingCache = [];
 
-    protected static function getCacheKey(string $name, int $siteId = null, string $language = null): string
+    protected static function getCacheKey(string $name, ?int $siteId = null, ?string $language = null): string
     {
         return $name . '~~~' . $siteId . '~~~' . $language;
     }
@@ -89,7 +89,7 @@ final class WebsiteSetting extends AbstractModel
      *
      * @throws Exception
      */
-    public static function getByName(string $name, int $siteId = null, string $language = null, string $fallbackLanguage = null): ?WebsiteSetting
+    public static function getByName(string $name, ?int $siteId = null, ?string $language = null, ?string $fallbackLanguage = null): ?WebsiteSetting
     {
         $nameCacheKey = static::getCacheKey($name, $siteId, $language);
 

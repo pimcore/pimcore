@@ -42,31 +42,26 @@ final class SettingsStore extends Model\AbstractModel
 
     /**
      * @internal
-     *
      */
     protected string $id;
 
     /**
      * @internal
-     *
      */
     protected ?string $scope = null;
 
     /**
      * @internal
-     *
      */
     protected string $type = '';
 
     /**
      * @internal
-     *
      */
     protected mixed $data = null;
 
     /**
      * @internal
-     *
      */
     protected static ?self $instance = null;
 
@@ -154,7 +149,7 @@ final class SettingsStore extends Model\AbstractModel
         $this->scope = (string) $scope;
     }
 
-    public function getType(): ?string
+    public function getType(): string
     {
         return $this->type;
     }

@@ -1,3 +1,7 @@
+
+[![PI25-Visuals-GitHub_16x9](https://github.com/user-attachments/assets/d5246851-9603-45d9-ac21-42ce74621577)](https://pimcore.com/en/inspire-2025)
+
+
 ![Pimcore - Own the digital World](./doc/img/logo-readme.svg)
   
   

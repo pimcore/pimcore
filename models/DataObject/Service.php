@@ -79,7 +79,7 @@ class Service extends Model\Element\Service
                                                                 'classid', 'childrensortby', 'classname', 'childrensortorder',
                                                                 'versioncount', ];
 
-    public function __construct(Model\User $user = null)
+    public function __construct(?Model\User $user = null)
     {
         $this->_user = $user;
     }
@@ -297,7 +297,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function gridObjectData(AbstractObject $object, array $fields = null, string $requestedLanguage = null, array $params = []): array
+    public static function gridObjectData(AbstractObject $object, ?array $fields = null, ?string $requestedLanguage = null, array $params = []): array
     {
         if (class_exists(GridData\DataObject::class)) {
             return GridData\DataObject::getData($object, $fields, $requestedLanguage, $params);
@@ -599,9 +599,7 @@ class Service extends Model\Element\Service
             $permission = $permission[$type];
             if ($permission) {
                 $permission = explode(',', $permission);
-                if ($languageAllowed === null) {
-                    $languageAllowed = [];
-                }
+                $languageAllowed = [];
 
                 foreach ($permission as $language) {
                     $languageAllowed[$language] = 1;
@@ -623,9 +621,7 @@ class Service extends Model\Element\Service
             $permission = $permissionSet['layouts'];
             if ($permission) {
                 $permission = explode(',', $permission);
-                if ($layoutPermissions === null) {
-                    $layoutPermissions = [];
-                }
+                $layoutPermissions = [];
 
                 foreach ($permission as $p) {
                     if (preg_match(sprintf('#^(%s)_(.*)#', $classId), $p, $setting)) {
@@ -656,7 +652,7 @@ class Service extends Model\Element\Service
      *
      * @return stdClass value and objectid where the value comes from
      */
-    private static function getValueForObject(Concrete $object, string $key, string $brickType = null, string $brickKey = null, ClassDefinition\Data $fieldDefinition = null, array $context = [], array $brickDescriptor = null, string $requestedLanguage = null): stdClass
+    private static function getValueForObject(Concrete $object, string $key, ?string $brickType = null, ?string $brickKey = null, ?ClassDefinition\Data $fieldDefinition = null, array $context = [], ?array $brickDescriptor = null, ?string $requestedLanguage = null): stdClass
     {
         $getter = 'get' . ucfirst($key);
         $value = null;
@@ -840,7 +836,7 @@ class Service extends Model\Element\Service
         return self::getOptionsForSelectField($object, $fieldname);
     }
 
-    public static function pathExists(string $path, string $type = null): bool
+    public static function pathExists(string $path, ?string $type = null): bool
     {
         if (!$path) {
             return false;
@@ -888,8 +884,7 @@ class Service extends Model\Element\Service
             $fields = $object->getClass()->getFieldDefinitions();
 
             foreach ($fields as $field) {
-                if ($field instanceof IdRewriterInterface
-                    && $field instanceof DataObject\ClassDefinition\Data) {
+                if ($field instanceof IdRewriterInterface) {
                     $setter = 'set' . ucfirst($field->getName());
                     if (method_exists($object, $setter)) { // check for non-owner-objects
                         $object->$setter($field->rewriteIds($object, $rewriteConfig));
@@ -964,9 +959,7 @@ class Service extends Model\Element\Service
         }
 
         foreach ($list as $customLayout) {
-            if ($customLayout instanceof ClassDefinition\CustomLayout) {
-                $resultList[$customLayout->getId()] = $customLayout;
-            }
+            $resultList[$customLayout->getId()] = $customLayout;
         }
 
         return $resultList;
@@ -1344,7 +1337,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function enrichLayoutDefinition(ClassDefinition\Data|ClassDefinition\Layout|null &$layout, Concrete $object = null, array $context = []): void
+    public static function enrichLayoutDefinition(ClassDefinition\Data|ClassDefinition\Layout|null &$layout, ?Concrete $object = null, array $context = []): void
     {
         if (is_null($layout)) {
             return;
@@ -1602,14 +1595,11 @@ class Service extends Model\Element\Service
 
     public static function recursiveResetDirtyMap(AbstractObject $object): void
     {
-        if ($object instanceof DirtyIndicatorInterface) {
-            $object->resetDirtyMap();
-        }
+        $object->resetDirtyMap();
 
         if ($object instanceof Concrete) {
-            if (($class = $object->getClass()) !== null) {
-                self::doResetDirtyMap($object, $class);
-            }
+            $class = $object->getClass();
+            self::doResetDirtyMap($object, $class);
         }
     }
 
@@ -1639,39 +1629,39 @@ class Service extends Model\Element\Service
     {
         $objectData = [];
         $mappedFieldnames = [];
+        $currentLocale = $localeService->getLocale();
+
         foreach ($fields as $field) {
             $key = $field['key'];
-            if (static::isHelperGridColumnConfig($key) && $validLanguages = static::expandGridColumnForExport($helperDefinitions, $key)) {
-                $currentLocale = $localeService->getLocale();
-                $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions, $header);
+            if (static::isHelperGridColumnConfig($key)) {
+                $validLanguages = static::expandGridColumnForExport($helperDefinitions, $key);
+                if ($validLanguages) {
+                    $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions, $header);
 
-                foreach ($validLanguages as $validLanguage) {
-                    $localeService->setLocale($validLanguage);
-                    $fieldData = self::getCsvFieldData($currentLocale, $key, $object, $validLanguage, $helperDefinitions);
-                    $localizedFieldKey = $key . '-' . $validLanguage;
-                    if (!isset($mappedFieldnames[$localizedFieldKey])) {
-                        $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
+                    foreach ($validLanguages as $validLanguage) {
+                        $localeService->setLocale($validLanguage);
+                        $fieldData = self::getCsvFieldData($currentLocale, $key, $object, $validLanguage, $helperDefinitions);
+                        $localizedFieldKey = $key . '-' . $validLanguage;
+                        if ($returnMappedFieldNames && !isset($mappedFieldnames[$localizedFieldKey])) {
+                            $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
+                            $objectData[$mappedFieldnames[$localizedFieldKey]] = $fieldData;
+                        } else {
+                            $objectData[$localizedFieldKey] = $fieldData;
+                        }
                     }
-                    $objectData[$localizedFieldKey] = $fieldData;
-                }
+                    $localeService->setLocale($currentLocale);
 
-                $localeService->setLocale($currentLocale);
+                    continue;
+                }
+            }
+
+            $fieldData = self::getCsvFieldData($requestedLanguage, $key, $object, $requestedLanguage, $helperDefinitions);
+            if ($returnMappedFieldNames && !isset($mappedFieldnames[$key])) {
+                $mappedFieldnames[$key] = self::mapFieldname($field, $helperDefinitions, $header);
+                $objectData[$mappedFieldnames[$key]] = $fieldData;
             } else {
-                $fieldData = self::getCsvFieldData($requestedLanguage, $key, $object, $requestedLanguage, $helperDefinitions);
-                if (!isset($mappedFieldnames[$key])) {
-                    $mappedFieldnames[$key] = self::mapFieldname($field, $helperDefinitions, $header);
-                }
-
                 $objectData[$key] = $fieldData;
             }
-        }
-
-        if ($returnMappedFieldNames) {
-            $tmp = [];
-            foreach ($mappedFieldnames as $key => $value) {
-                $tmp[$value] = $objectData[$key];
-            }
-            $objectData = $tmp;
         }
 
         $event = new DataObjectEvent($object, ['objectData' => $objectData,
@@ -1698,16 +1688,17 @@ class Service extends Model\Element\Service
     public static function getCsvData(string $requestedLanguage, LocaleServiceInterface $localeService, Listing $list, array $fields, string $header = '', bool $addTitles = true, array $context = []): array
     {
         $data = [];
-        Logger::debug('objects in list:' . count($list->getObjects()));
+        Logger::debug('objects in list:' . $list->getCount());
 
-        if (class_exists(GridData\DataObject::class)) {
-            $helperDefinitions = GridData\DataObject::getHelperDefinitions();
-        } else {
-            $helperDefinitions = self::getHelperDefinitions();
-        }
+        if ($fields) {
+            if (class_exists(GridData\DataObject::class)) {
+                $helperDefinitions = GridData\DataObject::getHelperDefinitions();
+            } else {
+                $helperDefinitions = self::getHelperDefinitions();
+            }
 
-        foreach ($list->getObjects() as $object) {
-            if ($fields) {
+            $objects = $list->getObjects();
+            foreach ($objects as $object) {
                 if ($addTitles && empty($data)) {
                     $tmp = [];
                     $mapped = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $header, true, $context);

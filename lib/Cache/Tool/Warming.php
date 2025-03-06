@@ -33,7 +33,7 @@ class Warming
 
     protected static int $timoutBetweenIteration = 2;
 
-    public static function documents(array $types = null): void
+    public static function documents(?array $types = null): void
     {
         if (empty($types)) {
             $types = ['page', 'snippet', 'folder', 'link'];
@@ -45,7 +45,7 @@ class Warming
         self::loadToCache($list);
     }
 
-    public static function objects(array $types = null, array $classes = null): void
+    public static function objects(?array $types = null, ?array $classes = null): void
     {
         if (empty($types)) {
             $types = DataObject::$types;
@@ -62,7 +62,7 @@ class Warming
         self::loadToCache($list);
     }
 
-    public static function assets(array $types = null): void
+    public static function assets(?array $types = null): void
     {
         if (empty($types)) {
             $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];

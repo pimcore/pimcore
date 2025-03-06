@@ -48,7 +48,7 @@ class Document extends Model\Asset
      *
      * @internal
      */
-    public function processPageCount(string $path = null): bool
+    public function processPageCount(?string $path = null): bool
     {
         if (!$this->isPageCountProcessingEnabled()) {
             return false;
@@ -130,7 +130,7 @@ class Document extends Model\Asset
     /**
      * @throws Exception
      */
-    public function getText(int $page = null): ?string
+    public function getText(?int $page = null): ?string
     {
         if (!$this->isTextProcessingEnabled()) {
             return null;

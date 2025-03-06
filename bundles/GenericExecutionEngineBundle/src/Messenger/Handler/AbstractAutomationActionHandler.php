@@ -163,7 +163,6 @@ abstract class AbstractAutomationActionHandler
         string $value,
         array $variables
     ): mixed {
-        /** @var $matches array */
         if (!preg_match_all("/job_env\('([^']*)'\)/", $value, $matches)) {
             return $value;
         }
@@ -188,14 +187,32 @@ abstract class AbstractAutomationActionHandler
         }
 
         $value = $config[$key];
-        if (is_string($value)) {
-            $value = $this->replaceConfigValueWithEnvVariable(
-                $value,
+
+        return $this->recursivelyReplaceConfigValuesWithEnvVariables($message, $value);
+    }
+
+    protected function recursivelyReplaceConfigValuesWithEnvVariables(
+        GenericExecutionEngineMessageInterface $message,
+        mixed $configValue
+    ): mixed {
+
+        if (is_string($configValue)) {
+            return $this->replaceConfigValueWithEnvVariable(
+                $configValue,
                 $this->getEnvironmentVariables($message)
             );
         }
 
-        return $value;
+        if (is_array($configValue)) {
+            $replacedValue = [];
+            foreach ($configValue as $key => $value) {
+                $replacedValue[$key] = $this->recursivelyReplaceConfigValuesWithEnvVariables($message, $value);
+            }
+
+            return $replacedValue;
+        }
+
+        return $configValue;
     }
 
     protected function updateJobRunContext(

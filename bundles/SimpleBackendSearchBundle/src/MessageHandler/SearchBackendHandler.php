@@ -33,7 +33,7 @@ class SearchBackendHandler implements BatchHandlerInterface
     use BatchHandlerTrait;
     use HandlerHelperTrait;
 
-    public function __invoke(SearchBackendMessage $message, Acknowledger $ack = null): mixed
+    public function __invoke(SearchBackendMessage $message, ?Acknowledger $ack = null): mixed
     {
         return $this->handle($message, $ack);
     }
@@ -54,13 +54,12 @@ class SearchBackendHandler implements BatchHandlerInterface
                 }
 
                 $searchEntry = Data::getForElement($element);
-                if ($searchEntry instanceof Data && $searchEntry->getId() instanceof Data\Id) {
+                if ($searchEntry->getId()) {
                     $searchEntry->setDataFromElement($element);
-                    $searchEntry->save();
                 } else {
                     $searchEntry = new Data($element);
-                    $searchEntry->save();
                 }
+                $searchEntry->save();
 
                 $ack->ack($message);
             } catch (Throwable $e) {

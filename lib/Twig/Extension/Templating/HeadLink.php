@@ -325,7 +325,7 @@ class HeadLink extends CacheBusterAware
      *
      *
      */
-    public function toString(int|string $indent = null): string
+    public function toString(int|string|null $indent = null): string
     {
         $this->prepareEntries();
 

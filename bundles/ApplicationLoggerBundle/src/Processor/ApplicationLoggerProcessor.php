@@ -72,17 +72,15 @@ class ApplicationLoggerProcessor
         $relatedObject = $context['relatedObject'];
         $relatedObjectType = $context['relatedObjectType'] ?? null;
 
-        if (null !== $relatedObject && is_object($relatedObject)) {
-            if ($relatedObject instanceof AbstractObject) {
-                $relatedObject = $relatedObject->getId();
-                $relatedObjectType = 'object';
-            } elseif ($relatedObject instanceof Asset) {
-                $relatedObject = $relatedObject->getId();
-                $relatedObjectType = 'asset';
-            } elseif ($relatedObject instanceof Document) {
-                $relatedObject = $relatedObject->getId();
-                $relatedObjectType = 'document';
-            }
+        if ($relatedObject instanceof AbstractObject) {
+            $relatedObject = $relatedObject->getId();
+            $relatedObjectType = 'object';
+        } elseif ($relatedObject instanceof Asset) {
+            $relatedObject = $relatedObject->getId();
+            $relatedObjectType = 'asset';
+        } elseif ($relatedObject instanceof Document) {
+            $relatedObject = $relatedObject->getId();
+            $relatedObjectType = 'document';
         }
 
         $context['relatedObject'] = $relatedObject;

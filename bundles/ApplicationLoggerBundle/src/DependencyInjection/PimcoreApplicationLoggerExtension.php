@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\ApplicationLoggerBundle\DependencyInjection;
 
+use Exception;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -24,6 +25,9 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class PimcoreApplicationLoggerExtension extends Extension implements PrependExtensionInterface
 {
+    /**
+     * @throws Exception
+     */
     public function load(array $configs, \Symfony\Component\DependencyInjection\ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader(

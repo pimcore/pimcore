@@ -30,7 +30,7 @@ class AttributeSet
     private array $targetLanguages = [];
 
     /**
-     * @var Attribute[];
+     * @var Attribute[]
      */
     private array $attributes = [];
 

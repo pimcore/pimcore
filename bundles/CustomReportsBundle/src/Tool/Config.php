@@ -69,6 +69,8 @@ class Config extends Model\AbstractModel implements JsonSerializable
 
     protected bool $shareGlobally = true;
 
+    protected bool $pagination = true;
+
     /**
      * @var string[]
      */
@@ -99,7 +101,7 @@ class Config extends Model\AbstractModel implements JsonSerializable
         }
     }
 
-    public static function getReportsList(Model\User $user = null): array
+    public static function getReportsList(?Model\User $user = null): array
     {
         $reports = [];
 
@@ -127,7 +129,7 @@ class Config extends Model\AbstractModel implements JsonSerializable
      *
      * @deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
      */
-    public static function getAdapter(?stdClass $configuration, Config $fullConfig = null): Adapter\CustomReportAdapterInterface
+    public static function getAdapter(?stdClass $configuration, ?Config $fullConfig = null): Adapter\CustomReportAdapterInterface
     {
         if ($configuration === null) {
             $configuration = new stdClass();
@@ -335,6 +337,16 @@ class Config extends Model\AbstractModel implements JsonSerializable
     public function setShareGlobally(bool $shareGlobally): void
     {
         $this->shareGlobally = $shareGlobally;
+    }
+
+    public function getPagination(): bool
+    {
+        return $this->pagination;
+    }
+
+    public function setPagination(bool $pagination): void
+    {
+        $this->pagination = $pagination;
     }
 
     /**

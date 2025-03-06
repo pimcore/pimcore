@@ -97,7 +97,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data instanceof DataObject\Data\ImageGallery) {
             $hotspots = [];
@@ -134,7 +134,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
     {
         if (!is_array($data)) {
             return $this->createEmptyImageGallery($params);
@@ -197,7 +197,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): array
+    public function getDataForQueryResource(mixed $data, ?Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -208,7 +208,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $result = [];
         if ($data instanceof DataObject\Data\ImageGallery) {
@@ -227,7 +227,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
     {
         $resultItems = [];
 
@@ -242,7 +242,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return new DataObject\Data\ImageGallery($resultItems);
     }
 
-    public function getDataFromGridEditor(?array $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
+    public function getDataFromGridEditor(?array $data, ?DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -253,7 +253,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DataObject\Data\ImageGallery) {
             return count($data->getItems()) . ' items';
@@ -305,7 +305,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return $dependencies;
     }
 
-    public function getDataForGrid(?DataObject\Data\ImageGallery $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForGrid(?DataObject\Data\ImageGallery $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }

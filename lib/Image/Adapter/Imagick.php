@@ -181,7 +181,7 @@ class Imagick extends Adapter
         return $format;
     }
 
-    public function save(string $path, string $format = null, int $quality = null): static
+    public function save(string $path, ?string $format = null, ?int $quality = null): static
     {
         if (!$format) {
             $format = 'png32';
@@ -199,14 +199,13 @@ class Imagick extends Adapter
             $format = 'png32';
         }
 
-        $originalFilename = null;
         $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
 
         if (in_array($format, ['jpeg', 'pjpeg', 'jpg']) && $this->isAlphaPossible) {
             // set white background for transparent pixels
             $i->setImageBackgroundColor('#ffffff');
 
-            if ($i->getImageAlphaChannel() !== 0) { // Note: returns (int) 0 if there's no AlphaChannel, PHP Docs are wrong. See: https://www.imagemagick.org/api/channel.php
+            if ($i->getImageAlphaChannel()) {
                 // Imagick version compatibility
                 $alphaChannel = 11; // This works at least as far back as version 3.1.0~rc1-1
                 if (defined('Imagick::ALPHACHANNEL_REMOVE')) {
@@ -282,7 +281,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    private function checkPreserveAnimation(string $format = '', \Imagick $i = null, bool $checkNumberOfImages = true): bool
+    private function checkPreserveAnimation(string $format = '', ?\Imagick $i = null, bool $checkNumberOfImages = true): bool
     {
         if (!$this->isPreserveAnimation()) {
             return false;
@@ -608,11 +607,14 @@ class Imagick extends Adapter
         return $newImage;
     }
 
+    /**
+     * @param \Imagick::COMPOSITE_* $composite
+     */
     private function createCompositeImageFromResource(int $width, int $height, int $x, int $y, string $color = 'transparent', int $composite = \Imagick::COMPOSITE_DEFAULT): \Imagick
     {
         $newImage = null;
         if ($this->checkPreserveAnimation()) {
-            foreach ($this->resource as $i => $frame) {
+            foreach ($this->resource as $frame) {
                 $imageFrame = $this->createImage($width, $height, $color);
                 $imageFrame->compositeImage($frame, $composite, $x, $y);
                 if (!$newImage) {
@@ -676,7 +678,7 @@ class Imagick extends Adapter
         $this->resource->compositeImage($mask, \Imagick::COMPOSITE_DSTIN, 0, 0);
     }
 
-    public function setBackgroundImage(string $image, string $mode = null): static
+    public function setBackgroundImage(string $image, ?string $mode = null): static
     {
         $this->preModify();
 

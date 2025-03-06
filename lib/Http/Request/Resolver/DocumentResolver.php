@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DocumentResolver extends AbstractRequestResolver
 {
-    public function getDocument(Request $request = null): ?Document
+    public function getDocument(?Request $request = null): ?Document
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();

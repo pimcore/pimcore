@@ -38,7 +38,7 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
     /**
      * @throws NotFoundException
      */
-    public function __construct(Unit|string $unit = null)
+    public function __construct(Unit|string|null $unit = null)
     {
         if ($unit instanceof Unit) {
             $this->unit = $unit;
@@ -99,10 +99,6 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
                 throw new InvalidArgumentException('Unit with abbreviation "'.$unit.'" does not exist');
             }
             $unit = $unitObject;
-        }
-
-        if (!$unit instanceof Unit) {
-            throw new InvalidArgumentException('Please provide unit as '.Unit::class.' object or as string');
         }
 
         /** @var UnitConversionService $converter */

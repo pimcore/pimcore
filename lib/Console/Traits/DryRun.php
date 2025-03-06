@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Console\Traits;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
@@ -28,19 +26,15 @@ trait DryRun
     /**
      * Configure --dry-run
      *
-     *
      * @return $this
      */
-    protected function configureDryRunOption(string $description = null): static
+    protected function configureDryRunOption(?string $description = null): static
     {
-        /** @var Command $command */
-        $command = $this;
-
         if (null === $description) {
             $description = 'Simulate only (do not change anything)';
         }
 
-        $command->addOption(
+        $this->addOption(
             'dry-run',
             'N',
             InputOption::VALUE_NONE,
@@ -52,16 +46,11 @@ trait DryRun
 
     protected function isDryRun(): bool
     {
-        /** @var Input $input */
-        $input = $this->input;
-
-        return (bool) $input->getOption('dry-run');
+        return (bool) $this->input->getOption('dry-run');
     }
 
     /**
      * Prefix message with DRY-RUN
-     *
-     *
      */
     protected function prefixDryRun(string $message, string $prefix = 'DRY-RUN'): string
     {
@@ -74,8 +63,6 @@ trait DryRun
 
     /**
      * Prefix message with dry run if in dry-run mode
-     *
-     *
      */
     protected function dryRunMessage(string $message, string $prefix = 'DRY-RUN'): string
     {

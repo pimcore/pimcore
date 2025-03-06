@@ -29,6 +29,9 @@ pimcore:
             process_page_count: false #disable processing page count
             process_text: false #disable processing text extraction
             scan_pdf: false #disable scanning PDF documents for unsafe JavaScript.
+            open_pdf_in_new_tab: all-pdfs #show only thumbnail for every pdf 
+            #open_pdf_in_new_tab: only-unsafe #show only thumbnail for pdf with JavaScript
+            #open_pdf_in_new_tab: none #show every pdf (not recommended)
 ```
 
 The sub chapters of this chapter provide insight into details for

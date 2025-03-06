@@ -152,7 +152,7 @@ interface AdapterInterface
     /**
      * @return $this
      */
-    public function save(string $path, string $format = null, int $quality = null): static;
+    public function save(string $path, ?string $format = null, ?int $quality = null): static;
 
     public function getContentOptimizedFormat(): string;
 

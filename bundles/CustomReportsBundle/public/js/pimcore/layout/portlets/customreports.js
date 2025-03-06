@@ -209,6 +209,12 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                     reader: {
                         type: 'json',
                         rootProperty: 'data'
+                    },
+                    actionMethods: {
+                        create: 'POST',
+                        read: 'POST',
+                        update: 'POST',
+                        destroy: 'POST'
                     }
                 },
                 fields: storeFields
@@ -241,6 +247,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                 width: '100%',
                 height: 350,
                 insetPadding: 5,
+                downloadServerUrl: '/disabled-server-url/',
                 innerPadding: 10,
                 legend: {
                     docked: 'bottom'
@@ -289,6 +296,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
 
             var chart = Ext.create('Ext.chart.PolarChart', {
                 xtype: "polar",
+                downloadServerUrl: '/disabled-server-url/',
                 store: chartStore,
                 theme: 'default-gradients',
                 width: '100%',

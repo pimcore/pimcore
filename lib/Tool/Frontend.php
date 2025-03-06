@@ -41,9 +41,8 @@ final class Frontend
     {
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();
-            if ($site instanceof Site) {
-                return self::isDocumentInSite($site, $document);
-            }
+
+            return self::isDocumentInSite($site, $document);
         }
 
         return true;

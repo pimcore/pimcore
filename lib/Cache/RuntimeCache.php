@@ -43,8 +43,6 @@ class RuntimeCache extends ArrayObject
         if (Pimcore::hasContainer()) {
             $container = Pimcore::getContainer();
 
-            /** @var self $instance */
-            $instance = null;
             if ($container->initialized(self::SERVICE_ID)) {
                 $instance = $container->get(self::SERVICE_ID);
             } else {

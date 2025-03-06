@@ -397,7 +397,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected->getHotspots(), $value->getHotspots());
     }
 
-    private function createHotspots(int $idx = null, int $seed = 0): array
+    private function createHotspots(?int $idx = null, ?int $seed = 0): array
     {
         $result = [];
 

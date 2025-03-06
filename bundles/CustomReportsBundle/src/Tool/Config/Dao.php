@@ -47,7 +47,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByName(string $id = null): void
+    public function getByName(?string $id = null): void
     {
         if ($id != null) {
             $this->model->setName($id);
@@ -84,8 +84,9 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $dataRaw = $this->model->getObjectVars();
         $data = [];
         $allowedProperties = ['name', 'sql', 'dataSourceConfig', 'columnConfiguration', 'niceName', 'group', 'xAxis',
-            'groupIconClass', 'iconClass', 'reportClass', 'creationDate', 'modificationDate', 'menuShortcut', 'chartType', 'pieColumn',
-            'pieLabelColumn', 'yAxis', 'shareGlobally', 'sharedUserNames', 'sharedRoleNames', ];
+            'groupIconClass', 'iconClass', 'reportClass', 'creationDate', 'modificationDate', 'menuShortcut',
+            'chartType', 'pagination', 'pieColumn', 'pieLabelColumn', 'yAxis', 'shareGlobally', 'sharedUserNames',
+            'sharedRoleNames'];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {
