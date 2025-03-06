@@ -217,8 +217,10 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         // TODO: what is $name for
         $name = $params['name'] ?: $this->name;
 
+        $noResult = '1 = 0';
+
         if ($value === null || $value === 'null') {
-            return '1 = 0';
+            return $noResult;
         }
 
         $db = \Pimcore\Db::get();
@@ -235,13 +237,18 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
                 // we use OR
                 $subFilter = '(' . implode(' OR ', $fieldConditions) . ')';
             } else {
-                return '1 = 0';
+                return $noResult;
             }
         } else {
-            return '1 = 0';
+            return $noResult;
         }
 
         // we are looking for membership in the reverse relation
-        return 'id IN ('. 'SELECT dest_id FROM object_relations_'. $this->getOwnerClassId() . ' WHERE '. $subFilter . " AND fieldname = '". $this->getOwnerFieldName() . "' AND ownertype = 'object'" . ')';
+        return 'id IN ('
+            . 'SELECT dest_id FROM object_relations_'. $this->getOwnerClassId()
+            . ' WHERE '. $subFilter
+            . " AND fieldname = '". $this->getOwnerFieldName()
+            . "' AND ownertype = 'object'"
+        . ')';
     }
 }
