@@ -61,6 +61,7 @@ Please make sure to add translations for log levels.
 
 #### [Workflow]
 - Method `getWorkflowByName()` now returns `?WorkflowInterface` instead of `?object`. This also affected the `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php`.
+- Methods `sendPimcoreNotification` and `sendWorkflowEmailNotification` in `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php` now accept the `Transition` itself, rather than the `string` label.
 
 ### Custom Reports
 - add function `getColumnsWithMetadata` to `bundles/CustomReportsBundle/src/Tool/Adapter/CustomReportAdapterInterface.php`
