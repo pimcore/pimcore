@@ -63,7 +63,7 @@ By default, here's what's included in the Recommended Bundles list:
 - [PimcoreStaticRoutesBundle](../../02_MVC/04_Routing_and_URLs/02_Custom_Routes.md)
 - [PimcoreQuillBundle](https://github.com/pimcore/quill-bundle/blob/1.x/README.md) (for default WYSIWYG editor)
 - [PimcoreUuidBundle](../../19_Development_Tools_and_Details/19_UUID_Support.md)
-- PimcoreWordExportBundle (for import/export functionality for translations in Word format)
+- PimcoreWordExportBundle (for export functionality for translations in Word format)
 - PimcoreXliffBundle (for import/export functionality for translations in Xliff format)
 
 #### Automating Bundle Installation
