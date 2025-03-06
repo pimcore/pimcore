@@ -247,8 +247,8 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return 'id IN ('
             . 'SELECT dest_id FROM object_relations_'. $this->getOwnerClassId()
             . ' WHERE '. $subFilter
-            . " AND fieldname = '". $this->getOwnerFieldName()
-            . "' AND ownertype = 'object'"
+            . " AND fieldname = '". $this->getOwnerFieldName() . "'"
+            . " AND ownertype = 'object'"
         . ')';
     }
 }
