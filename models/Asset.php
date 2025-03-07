@@ -550,7 +550,8 @@ class Asset extends Element\AbstractElement
                 } catch (Exception $e) {
                     try {
                         $this->rollBack();
-                        // TODO: we should rollback any files that were moved here, assuming a prior revert has not been done
+                        // TODO: we should rollback any files that were moved here,
+                        // assuming a prior revert has not been done.
                     } catch (Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
                         Logger::error((string) $er);
@@ -1670,7 +1671,12 @@ class Asset extends Element\AbstractElement
     /**
      * @throws FilesystemException
      */
-    private function updateChildPaths(FilesystemOperator $storage, string $oldPath, ?string $newPath = null, bool $skipError = false): void
+    private function updateChildPaths(
+        FilesystemOperator $storage,
+        string $oldPath,
+        ?string $newPath = null,
+        bool $skipError = false
+    ): void
     {
         if ($newPath === null) {
             $newPath = $this->getRealFullPath();
