@@ -1676,8 +1676,7 @@ class Asset extends Element\AbstractElement
         string $oldPath,
         ?string $newPath = null,
         bool $skipError = false
-    ): void
-    {
+    ): void {
         if ($newPath === null) {
             $newPath = $this->getRealFullPath();
         }
