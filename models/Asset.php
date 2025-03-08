@@ -540,7 +540,7 @@ class Asset extends Element\AbstractElement
                         } catch (UnableToMoveFile $e) {
                             //update children, if unable to move parent
                             $this->updateChildPaths($storage, $oldPath);
-                        }                        
+                        }
                     }
 
                     // lastly create a new version if necessary
