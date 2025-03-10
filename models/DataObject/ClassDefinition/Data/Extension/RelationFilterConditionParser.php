@@ -40,7 +40,7 @@ trait RelationFilterConditionParser
         }
         $values = explode(',', $value);
         $fieldConditions = array_map(function ($value) use ($name, $db) {
-            $quotedValue = $db->quote('%' . Helper::escapeLike($value) . '%');
+            $quotedValue = $db->quote('%,' . Helper::escapeLike($value) . ',%');
             return $db->quoteIdentifier($name) . ' LIKE ' . $quotedValue . ' ';
         }, array_filter($values));
         if (!empty($fieldConditions)) {
