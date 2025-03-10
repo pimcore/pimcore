@@ -69,16 +69,6 @@ class Service extends Model\Element\Service
      */
     protected static array $systemFields = ['path', 'key', 'id', 'published', 'creationDate', 'modificationDate', 'fullpath'];
 
-    /**
-     * TODO Bc layer for bundles to support both Pimcore 10 & 11, remove with Pimcore 12
-     *
-     * @var string[]
-     */
-    private const BC_VERSION_DEPENDENT_DATABASE_COLUMNS = ['id', 'parentid', 'type', 'key', 'path', 'index', 'published',
-                                                                'creationdate', 'modificationdate', 'userowner', 'usermodification',
-                                                                'classid', 'childrensortby', 'classname', 'childrensortorder',
-                                                                'versioncount', ];
-
     public function __construct(?Model\User $user = null)
     {
         $this->_user = $user;
@@ -1903,31 +1893,6 @@ class Service extends Model\Element\Service
         }
 
         return '';
-    }
-
-    /**
-     * TODO Bc layer for bundles to support both Pimcore 10 & 11, remove with Pimcore 12
-     *
-     * Returns the version dependent field name for all system fields defined in $versionDependentSystemFields.
-     *
-     * E.g.
-     * Pass o_id in Pimcore 10, get o_id
-     * Pass id in Pimcore 10, get o_id
-     * Pass o_id in Pimcore 11, get id
-     * Pass id in Pimcore 11, get id
-     */
-    public static function getVersionDependentDatabaseColumnName(string $fieldName): string
-    {
-        $newFieldName = $fieldName;
-        if (str_starts_with($newFieldName, 'o_')) {
-            $newFieldName = substr($newFieldName, 2);
-        }
-
-        if (in_array(strtolower($newFieldName), self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
-            return $newFieldName;
-        }
-
-        return $fieldName;
     }
 
     /**
