@@ -149,7 +149,7 @@ doctrine:
                 default_table_options:
                     charset: UTF8MB4
                     engine: InnoDB
-                    collate: utf8mb4_general_ci
+                    collate: utf8mb4_unicode_520_ci
 
 # Monolog Configuration
 monolog:
