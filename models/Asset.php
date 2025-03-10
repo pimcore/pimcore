@@ -549,6 +549,7 @@ class Asset extends Element\AbstractElement
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
                 } catch (Exception $e) {
                     Logger::error('Unable to save Asset: ' . (string) $e);
+
                     try {
                         $this->rollBack();
                     } catch (Exception $er) {
