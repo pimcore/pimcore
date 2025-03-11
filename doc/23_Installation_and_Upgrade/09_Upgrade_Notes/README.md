@@ -30,6 +30,26 @@ Please make sure to add translations for log levels.
 #### [Documents]
 - Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
 
+#### [Database]
+- Change of default collation to `utf8mb4_unicode_520_ci` from `utf8mb4_general_ci`.
+- Make sure to update your database accordingly. You can use the following statements to generate the `ALTER TABLE` statements.
+```sql
+-- Change database collation
+ALTER DATABASE `your_database_name` COLLATE utf8mb4_unicode_520_ci;
+-- For tables
+SELECT CONCAT('ALTER TABLE `', TABLE_NAME, '` COLLATE utf8mb4_unicode_520_ci;') 
+FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_SCHEMA = 'your_database_name' 
+  AND TABLE_COLLATION = 'utf8mb4_general_ci'
+ORDER BY TABLE_NAME;    
+-- For columns
+SELECT CONCAT('ALTER TABLE `', TABLE_NAME, '` CHANGE `', COLUMN_NAME, '` `', COLUMN_NAME, '` ', COLUMN_TYPE, ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;')
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'your_database_name'
+  AND COLLATION_NAME = 'utf8mb4_general_ci'
+ORDER BY TABLE_NAME;
+```
+
 #### [DataObjects]
 - Removed deprecated `unserialize()` method from `Pimcore\Model\DataObject\Data\Link`. If not the data is not migrated to the new format, to the new default values, please execute a simple script to resave all links.
 - Parameter `$index` of method `setIndex` is not nullable anymore in `Pimcore\Model\DataObject\ClassDefinition\Data`.
