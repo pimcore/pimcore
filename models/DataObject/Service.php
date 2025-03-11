@@ -1916,7 +1916,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * TODO Bc layer for bundles to support both Pimcore 10 & 11, remove with Pimcore 12
+     * @depreacted Bc layer to support Pimcore 10 & 11, will be removed with Pimcore 12.
+     * With Pimcore 12 you can use the column names directly instead.
      *
      * Returns the version dependent field name for all system fields defined in $versionDependentSystemFields.
      *
