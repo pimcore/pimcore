@@ -32,7 +32,7 @@ Please make sure to add translations for log levels.
 
 #### [Database]
 - Change of default collation to `utf8mb4_unicode_520_ci` from `utf8mb4_general_ci`.
-- Make sure to update your database accordingly. You can use the following statements to generate the `ALTER TABLE` statements.
+- Make sure to update your database accordingly but be careful which tables you adapt. You can use the following statements to generate the `ALTER TABLE` statements for all tables. Please exclude tables you do not want to update.
 ```sql
 -- Change database collation
 ALTER DATABASE `your_database_name` COLLATE utf8mb4_unicode_520_ci;
