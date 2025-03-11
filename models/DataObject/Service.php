@@ -1917,7 +1917,7 @@ class Service extends Model\Element\Service
 
     /**
      * @depreacted Bc layer to support Pimcore 10 & 11, will be removed with Pimcore 12.
-     * With Pimcore 12 you can use the column names directly instead.
+     * With Pimcore 11 & 12 you can use the column names directly instead.
      *
      * Returns the version dependent field name for all system fields defined in $versionDependentSystemFields.
      *
