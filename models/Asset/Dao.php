@@ -493,7 +493,6 @@ class Dao extends Model\Element\Dao
 
     public function updateCustomSettings(): void
     {
-        //$customSettingsData = Serialize::serialize($this->model->getCustomSettings());
         $customSettingsData = Serialize::toJson($this->model->getCustomSettings());
         $this->db->update('assets', ['customSettings' => $customSettingsData], ['id' => $this->model->getId()]);
     }
