@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Tool;
 
 use Pimcore;
+use Pimcore\Serializer\Serializer;
 use Throwable;
 
 final class Serialize
@@ -46,6 +47,20 @@ final class Serialize
     public static function getAdminSerializer(): \Symfony\Component\Serializer\Serializer
     {
         return Pimcore::getContainer()->get('pimcore_admin.serializer');
+    }
+
+    public static function getSerializer(): Serializer{
+        return Pimcore::getContainer()->get('pimcore.serializer');
+    }
+
+    public static function toJson(array $data, int $options = 0): string
+    {
+        return self::getSerializer()->encode($data, 'json', ['json_encode_options' => $options]);
+    }
+
+    public static function fromJson(string $json): array
+    {
+        return self::getSerializer()->decode($json, 'json');
     }
 
     /**

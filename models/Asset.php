@@ -1303,7 +1303,7 @@ class Asset extends Element\AbstractElement
                 $this->customSettingsCanBeCached = false;
             }
 
-            $customSettings = Serialize::unserialize($customSettings);
+            $customSettings = Serialize::fromJson($customSettings);
         }
 
         if ($customSettings instanceof stdClass) {
