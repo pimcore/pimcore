@@ -24,6 +24,7 @@ use Doctrine\DBAL\Schema\SchemaException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Constants\PermissionConstants;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Constants\TableConstants;
+use Pimcore\Db\RetroCompatibleQueryBuilder;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
@@ -210,7 +211,7 @@ final class Installer extends SettingsStoreAwareInstaller
     {
         if ($schema->hasTable(TableConstants::USER_PERMISSION_DEF_TABLE)) {
             foreach (self::USER_PERMISSIONS as $permission) {
-                $queryBuilder = $this->db->createQueryBuilder();
+                $queryBuilder = new RetroCompatibleQueryBuilder($this->db);
                 $queryBuilder
                     ->insert(TableConstants::USER_PERMISSION_DEF_TABLE)
                     ->values([
@@ -234,7 +235,7 @@ final class Installer extends SettingsStoreAwareInstaller
     {
         if ($schema->hasTable(TableConstants::USER_PERMISSION_DEF_TABLE)) {
             foreach (self::USER_PERMISSIONS as $permission) {
-                $queryBuilder = $this->db->createQueryBuilder();
+                $queryBuilder = new RetroCompatibleQueryBuilder($this->db);
                 $queryBuilder
                     ->delete(TableConstants::USER_PERMISSION_DEF_TABLE)
                     ->where($this->db->quoteIdentifier('key') . ' = :key')

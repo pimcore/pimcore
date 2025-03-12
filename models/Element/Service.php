@@ -32,6 +32,7 @@ use Exception;
 use League\Csv\EscapeFormula;
 use Pimcore;
 use Pimcore\Db;
+use Pimcore\Db\RetroCompatibleQueryBuilder;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -911,7 +912,10 @@ class Service extends Model\AbstractModel
                     $select->andWhere($where);
                 }
 
-                $fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'] ;
+                $fromAlias = '';
+                if ($select instanceof RetroCompatibleQueryBuilder) {
+                    $fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'];
+                }
 
                 $customViewJoins = $cv['joins'] ?? null;
                 if ($customViewJoins) {
@@ -925,7 +929,7 @@ class Service extends Model\AbstractModel
 
                         $condition = $joinConfig['condition'];
                         $columns = $joinConfig['columns'];
-                        $select->add('select', $columns, true);
+                        $select->addSelect($columns);
                         $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
                     }
                 }

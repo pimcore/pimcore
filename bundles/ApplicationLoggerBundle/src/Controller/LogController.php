@@ -26,6 +26,7 @@ use Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
+use Pimcore\Db\RetroCompatibleQueryBuilder;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -63,7 +64,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
 
         $this->checkPermission('application_logging');
 
-        $qb = $db->createQueryBuilder();
+        $qb = new RetroCompatibleQueryBuilder($db);
         $qb
             ->select('*, priority + 0 AS priority_key')
             ->from(ApplicationLoggerDb::TABLE_NAME)

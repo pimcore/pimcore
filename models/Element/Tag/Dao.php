@@ -17,6 +17,7 @@ namespace Pimcore\Model\Element\Tag;
 
 use Exception;
 use Pimcore\Db\Helper;
+use Pimcore\Db\RetroCompatibleQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
 
@@ -230,7 +231,9 @@ class Dao extends Model\Dao\AbstractDao
             'object' => ['objects', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
-        $select = $this->db->createQueryBuilder()->select('*')
+        $queryBuilder = new RetroCompatibleQueryBuilder($this->db);
+
+        $select = $queryBuilder->select('*')
                            ->from('tags_assignment')
                            ->andWhere('tags_assignment.ctype = :ctype')->setParameter('ctype', $type);
 

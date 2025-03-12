@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Asset\Listing;
 
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
+use Pimcore\Db\RetroCompatibleQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
 
@@ -58,7 +59,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {
-        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder = new RetroCompatibleQueryBuilder($this->db);
         $queryBuilder->select(...$columns)->from('assets');
 
         $this->applyListingParametersToQueryBuilder($queryBuilder);

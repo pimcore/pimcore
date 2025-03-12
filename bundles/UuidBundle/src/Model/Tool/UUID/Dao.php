@@ -19,6 +19,7 @@ use Doctrine\DBAL\Types\Types;
 use Exception;
 use Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
 use Pimcore\Db\Helper;
+use Pimcore\Db\RetroCompatibleQueryBuilder;
 use Pimcore\Model;
 
 /**
@@ -75,7 +76,7 @@ class Dao extends Model\Dao\AbstractDao
 
     public function getByUuid(string $uuid): UUID
     {
-        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder = new RetroCompatibleQueryBuilder($this->db);
         $queryBuilder
             ->select('*')
             ->from(self::TABLE_NAME)
@@ -94,7 +95,7 @@ class Dao extends Model\Dao\AbstractDao
 
     public function exists(string $uuid): bool
     {
-        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder = new RetroCompatibleQueryBuilder($this->db);
         $queryBuilder
             ->select('uuid')
             ->from(self::TABLE_NAME)

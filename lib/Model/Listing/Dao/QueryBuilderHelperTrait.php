@@ -18,6 +18,7 @@ namespace Pimcore\Model\Listing\Dao;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Exception;
+use Pimcore\Db\RetroCompatibleQueryBuilder;
 use Pimcore\Model\DataObject;
 
 trait QueryBuilderHelperTrait
@@ -129,7 +130,10 @@ trait QueryBuilderHelperTrait
 
     protected function prepareQueryBuilderForTotalCount(QueryBuilder $queryBuilder, string $identifierColumn): void
     {
-        $originalSelect = $queryBuilder->getQueryPart('select');
+        $originalSelect = '';
+        if ($queryBuilder instanceof RetroCompatibleQueryBuilder) {
+            $originalSelect = $queryBuilder->getQueryPart('select');
+        }
         $queryBuilder->select('COUNT(*)');
         $queryBuilder->resetOrderBy();
         $queryBuilder->setMaxResults(null);
