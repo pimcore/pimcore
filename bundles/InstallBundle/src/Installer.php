@@ -452,15 +452,7 @@ class Installer
             if (!$this->skipDatabaseConfig && in_array('write_database_config', $stepsToRun)) {
                 // now we're able to write the server version to the database.yaml
                 $writer = new ConfigWriter();
-                // @phpstan-ignore-next-line
-                if (is_callable([$db, 'getServerVersion'])) {
-                    $serverVersion = $db->getServerVersion();
-                } else {
-                    //DBAL v3 compatibility
-                    if (method_exists($db->getNativeConnection(), 'getServerVersion')) {
-                        $serverVersion = $db->getNativeConnection()->getServerVersion();
-                    }
-                }
+                $serverVersion = $db->getServerVersion();
 
                 $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $serverVersion;
                 $writer->writeDbConfig($doctrineConfig);
