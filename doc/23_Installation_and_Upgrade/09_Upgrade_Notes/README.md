@@ -21,6 +21,9 @@ Please make sure to add translations for log levels.
 
 - `filter_priority` configuration changed. LogLevels now start at 1 (emergency) - 8 (debug) instead of 0 (emergency) - 7 (debug). Please adjust your configuration accordingly.
 
+#### [Assets]
+- `customSettings` column in `assets` table is now a JSON column. 
+
 #### [Bundle]
 - Removed compatibility layer static `$bundleManager`
 
