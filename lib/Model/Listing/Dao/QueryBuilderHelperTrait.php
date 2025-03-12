@@ -130,11 +130,6 @@ trait QueryBuilderHelperTrait
 
     protected function prepareQueryBuilderForTotalCount(QueryBuilder $queryBuilder, string $identifierColumn): void
     {
-        $originalSelect = '';
-        if ($queryBuilder instanceof RetroCompatibleQueryBuilder) {
-            $originalSelect = $queryBuilder->getQueryPart('select');
-        }
-        $queryBuilder->select('COUNT(*)');
         $queryBuilder->resetOrderBy();
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
@@ -144,25 +139,25 @@ trait QueryBuilderHelperTrait
         }
 
         if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
-            $queryBuilder->select(!empty($originalSelect) ? $originalSelect : $identifierColumn);
-
-            // Rewrite to 'SELECT COUNT(*) FROM (' . $queryBuilder . ') XYZ'
-            $innerQuery = (string)$queryBuilder;
-            $queryBuilder
-                ->resetQueryParts()
-                ->select('COUNT(*)')
-                ->from('(' . $innerQuery . ')', 'XYZ')
-            ;
+            if ($queryBuilder instanceof RetroCompatibleQueryBuilder) {
+                $originalSelect = $queryBuilder->getQueryPart('select');
+                if (!$originalSelect) {
+                    $queryBuilder->select($identifierColumn);
+                }
+            }
         } elseif ($this->isQueryBuilderPartInUse($queryBuilder, 'distinct')) {
             $countIdentifier = 'DISTINCT ' . $identifierColumn;
             $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
+        }else{
+            $queryBuilder->select('COUNT(*)');
         }
     }
 
     protected function isQueryBuilderPartInUse(QueryBuilder $query, string $part): bool
     {
+
         try {
-            if ($query->getQueryPart($part)) {
+            if ($query instanceof RetroCompatibleQueryBuilder && $query->getQueryPart($part)) {
                 return true;
             }
         } catch (Exception $e) {
