@@ -18,14 +18,13 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\Migrations\AbstractMigration;
 
 final class Version20250312132759 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Migration various asset columns from php serialized to json';
+        return 'Migrate various asset columns from php serialized to json';
     }
 
     /**
