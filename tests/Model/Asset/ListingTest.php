@@ -123,10 +123,14 @@ class ListingTest extends ModelTestCase
                 'assets',
                 'tags_assignment',
                 'ta',
-                $expressionBuilder->and(
+                $expressionBuilder->comparison(
                     $expressionBuilder->in('ta.tagid', $tagIds),
-                    $expressionBuilder->eq('ta.ctype', $expressionBuilder->literal('asset')),
-                    $expressionBuilder->eq('ta.cid', 'assets.id')
+                    'AND',
+                    $expressionBuilder->comparison(
+                        $expressionBuilder->eq('ta.ctype', $expressionBuilder->literal('asset')),
+                        'AND',
+                        $expressionBuilder->eq('ta.cid', 'assets.id')
+                    )
                 )
             )
             ->groupBy('assets.id')
