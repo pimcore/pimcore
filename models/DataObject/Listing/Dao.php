@@ -17,7 +17,7 @@ namespace Pimcore\Model\DataObject\Listing;
 
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Exception;
-use Pimcore\Db\RetroCompatibleQueryBuilder;
+use Pimcore\Db\CompatibilityQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Listing\Dao\QueryBuilderHelperTrait;
@@ -43,7 +43,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getQueryBuilder(...$columns): DoctrineQueryBuilder
     {
-        $queryBuilder = new RetroCompatibleQueryBuilder($this->db);
+        $queryBuilder = new CompatibilityQueryBuilder($this->db);
         $queryBuilder->select(...$columns)->from($this->getTableName());
 
         // apply joins

@@ -32,7 +32,7 @@ use Exception;
 use League\Csv\EscapeFormula;
 use Pimcore;
 use Pimcore\Db;
-use Pimcore\Db\RetroCompatibleQueryBuilder;
+use Pimcore\Db\CompatibilityQueryBuilder;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -913,7 +913,7 @@ class Service extends Model\AbstractModel
                 }
 
                 $fromAlias = '';
-                if ($select instanceof RetroCompatibleQueryBuilder) {
+                if ($select instanceof CompatibilityQueryBuilder) {
                     $fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'];
                 }
 

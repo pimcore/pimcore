@@ -18,7 +18,7 @@ namespace Pimcore\Model\Listing\Dao;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Exception;
-use Pimcore\Db\RetroCompatibleQueryBuilder;
+use Pimcore\Db\CompatibilityQueryBuilder;
 use Pimcore\Model\DataObject;
 
 trait QueryBuilderHelperTrait
@@ -139,7 +139,7 @@ trait QueryBuilderHelperTrait
         }
 
         if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
-            if ($queryBuilder instanceof RetroCompatibleQueryBuilder) {
+            if ($queryBuilder instanceof CompatibilityQueryBuilder) {
                 $originalSelect = $queryBuilder->getQueryPart('select');
                 if (!$originalSelect) {
                     $queryBuilder->select($identifierColumn);
@@ -157,7 +157,7 @@ trait QueryBuilderHelperTrait
     {
 
         try {
-            if ($query instanceof RetroCompatibleQueryBuilder && $query->getQueryPart($part)) {
+            if ($query instanceof CompatibilityQueryBuilder && $query->getQueryPart($part)) {
                 return true;
             }
         } catch (Exception $e) {

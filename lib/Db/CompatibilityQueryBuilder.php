@@ -16,18 +16,19 @@ declare(strict_types=1);
 namespace Pimcore\Db;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Connection;
+use ReflectionClass;
 
-class RetroCompatibleQueryBuilder extends QueryBuilder
+final class CompatibilityQueryBuilder extends QueryBuilder
 {
     /**
-     * Gets a query part by its name.
-     *
-     * @return mixed
+     * Gets a query part by its name like in DBAL3.
+     * getQueryPart was removed with DBAL4
+     * Adding method via reflection to keep compatibility with current state of code
+     * Should be refactored and removed with the next major version e.g. Pimcore 13
      */
-    public function getQueryPart(string $queryPartName)
+    public function getQueryPart(string $queryPartName): mixed
     {
-        $reflection = new \ReflectionClass($this);
+        $reflection = new ReflectionClass($this);
         $property = $reflection->getParentClass()->getProperty($queryPartName);
         $property->setAccessible(true);
 

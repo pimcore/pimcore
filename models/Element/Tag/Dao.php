@@ -17,7 +17,7 @@ namespace Pimcore\Model\Element\Tag;
 
 use Exception;
 use Pimcore\Db\Helper;
-use Pimcore\Db\RetroCompatibleQueryBuilder;
+use Pimcore\Db\CompatibilityQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
 
@@ -231,7 +231,7 @@ class Dao extends Model\Dao\AbstractDao
             'object' => ['objects', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
-        $queryBuilder = new RetroCompatibleQueryBuilder($this->db);
+        $queryBuilder = new CompatibilityQueryBuilder($this->db);
 
         $select = $queryBuilder->select('*')
                            ->from('tags_assignment')
