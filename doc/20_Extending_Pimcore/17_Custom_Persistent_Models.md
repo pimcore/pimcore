@@ -372,9 +372,9 @@ class Dao extends Listing\Dao\AbstractDao
         return $this->tableName;
     }
 
-    public function getQueryBuilder(): CompatibilityQueryBuilder
+    public function getQueryBuilder(): DoctrineQueryBuilder
     {
-        $queryBuilder = new CompatibilityQueryBuilder($this->db);
+        $queryBuilder = $this->db->createQueryBuilder();
         $field = $this->getTableName().'.id';
         $queryBuilder->select(sprintf('SQL_CALC_FOUND_ROWS %s as id', $field));
         $queryBuilder->from($this->getTableName());

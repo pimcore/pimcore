@@ -23,14 +23,13 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use InvalidArgumentException;
 use Iterator;
 use Pimcore\Db;
-use Pimcore\Db\CompatibilityQueryBuilder;
 use Pimcore\Db\Helper;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\Dao\AbstractDao;
 
 /**
  * @method AbstractDao getDao()
- * @method CompatibilityQueryBuilder getQueryBuilder()
+ * @method QueryBuilder getQueryBuilder()
  */
 abstract class AbstractListing extends AbstractModel implements Iterator, Countable
 {
