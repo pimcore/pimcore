@@ -33,7 +33,6 @@ final class CompatibilityQueryBuilder extends QueryBuilder
     {
         $reflection = new ReflectionClass($this);
         $property = $reflection->getParentClass()->getProperty($queryPartName);
-        $property->setAccessible(true);
 
         return $property->getValue($this);
     }
