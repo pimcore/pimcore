@@ -148,7 +148,7 @@ trait QueryBuilderHelperTrait
         } elseif ($this->isQueryBuilderPartInUse($queryBuilder, 'distinct')) {
             $countIdentifier = 'DISTINCT ' . $identifierColumn;
             $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
-        }else{
+        } else {
             $queryBuilder->select('COUNT(*)');
         }
     }
