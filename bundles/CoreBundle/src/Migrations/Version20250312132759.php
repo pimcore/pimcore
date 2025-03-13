@@ -47,7 +47,8 @@ final class Version20250312132759 extends AbstractMigration
 
     /**
      *
-     *  When migrating from json to serialized, we need to change the column type first, to get rid of the json_valid check.
+     *  When migrating from json to serialized, we need to change the column type first,
+     *  to get rid of the json_valid check.
      *  Afterward, we need to convert the data in the columns.
      *
      * @throws \JsonException
