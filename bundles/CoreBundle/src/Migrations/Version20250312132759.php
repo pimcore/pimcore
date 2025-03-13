@@ -22,26 +22,40 @@ use Doctrine\Migrations\AbstractMigration;
 
 final class Version20250312132759 extends AbstractMigration
 {
+    private const string ASSET_TABLE = 'assets';
+    private const string SETTINGS_COLUMN = 'customSettings';
+    private const string ID_COLUMN = 'id';
+
     public function getDescription(): string
     {
-        return 'Migrate various asset columns from php serialized to json';
+        return 'Migrate customSettings asset column from php serialized to json';
     }
 
     /**
+     *
+     * When migrating from serialized to json, we need to convert the data in the columns first.
+     * Afterward, we need to change the column type.
+     *
      * @throws \JsonException
      * @throws Exception
      */
     public function up(Schema $schema): void
     {
-        $this->migrateAssets();
+       $this->migrateAssets();
+       $this->alterColumn();
     }
 
     /**
+     *
+     *  When migrating from json to serialized, we need to change the column type first, to get rid of the json_valid check.
+     *  Afterward, we need to convert the data in the columns.
+     *
      * @throws \JsonException
      * @throws Exception
      */
     public function down(Schema $schema): void
     {
+        $this->alterColumn(false);
         $this->migrateAssets(false);
     }
 
@@ -51,7 +65,14 @@ final class Version20250312132759 extends AbstractMigration
      */
     private function migrateAssets(bool $up = true): void
     {
-        $assets = $this->connection->fetchAllAssociative('select * from assets');
+        $assets = $this->connection->fetchAllAssociative(
+            sprintf(
+            'select %s, %s from assets',
+                $this->connection->quoteIdentifier(self::ID_COLUMN),
+                $this->connection->quoteIdentifier(self::SETTINGS_COLUMN)
+            )
+        );
+
         foreach($assets as $asset) {
             $this->migrateAsset($asset, $up);
         }
@@ -60,15 +81,13 @@ final class Version20250312132759 extends AbstractMigration
     /**
      * @throws \JsonException
      */
-    private function migrateAsset(array $asset, bool $up = true): void
+    private function migrateAsset(array $assetData, bool $up = true): void
     {
-        foreach($asset as $column => $value) {
+        foreach($assetData as $column => $value) {
             if (
                 !is_string($value) ||
-                (
-                    ($up === true && !preg_match('/^a:\d+:\{.*\}$/', $value)) ||
-                    ($up === false && !preg_match('/^\{.*\}$/', $value))
-                )
+                empty($value) ||
+                !$this->isTargetColumn($value, $up)
             ) {
                 continue;
             }
@@ -81,13 +100,36 @@ final class Version20250312132759 extends AbstractMigration
                 json_encode($data, JSON_THROW_ON_ERROR) :
                 serialize($data);
 
+
             $this->addSql(
-                'update assets set ' . $column . ' = ? where id = ?',
+                sprintf(
+                    'UPDATE %s SET %s = ? WHERE id = ?',
+                    $this->connection->quoteIdentifier(self::ASSET_TABLE),
+                    $this->connection->quoteIdentifier($column)
+                ),
                 [
                     $data,
-                    $asset['id']
+                    $assetData['id']
                 ]
             );
         }
+    }
+
+    private function isTargetColumn(string $value, bool $up): bool
+    {
+        return ($up === true && preg_match('/^a:\d+:\{.*\}$/', $value)) ||
+            ($up === false && preg_match('/^\{.*\}$/', $value));
+    }
+
+    private function alterColumn(bool $up = true): void
+    {
+        $this->addSql(
+            sprintf(
+                'ALTER TABLE %s MODIFY COLUMN %s %s',
+                $this->connection->quoteIdentifier(self::ASSET_TABLE),
+                $this->connection->quoteIdentifier(self::SETTINGS_COLUMN),
+                $up ? 'json' : 'longtext'
+            )
+        );
     }
 }
