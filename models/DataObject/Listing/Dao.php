@@ -80,11 +80,18 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $queryBuilder = $this->getQueryBuilder();
         $this->prepareQueryBuilderForTotalCount($queryBuilder, $this->getTableName() . '.id');
 
-        if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
+        if (
+            $this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') ||
+            $this->isQueryBuilderPartInUse($queryBuilder, 'having')
+        ) {
             return (int)$this->db->fetchOne('SELECT COUNT(*)  FROM (' . $queryBuilder->getSQL() . ') as XYZ');
-        } else {
-            return (int)$this->db->fetchOne($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
         }
+
+        return (int)$this->db->fetchOne(
+            $queryBuilder->getSql(),
+            $queryBuilder->getParameters(),
+            $queryBuilder->getParameterTypes()
+        );
     }
 
     public function getCount(): int
@@ -105,8 +112,15 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList(): array
     {
-        $queryBuilder = $this->getQueryBuilder(sprintf('%s as id', $this->getTableName() . '.id'), sprintf('%s as `type`', $this->getTableName() . '.type'));
-        $objectIds = $this->db->fetchFirstColumn($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
+        $queryBuilder = $this->getQueryBuilder(
+            sprintf('%s as id', $this->getTableName() . '.id'),
+            sprintf('%s as `type`', $this->getTableName() . '.type')
+        );
+        $objectIds = $this->db->fetchFirstColumn(
+            $queryBuilder->getSql(),
+            $queryBuilder->getParameters(),
+            $queryBuilder->getParameterTypes()
+        );
 
         return array_map('intval', $objectIds);
     }

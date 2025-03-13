@@ -297,13 +297,11 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
                 $condition = $db->quoteIdentifier($params['name']) . ' = '. $db->quote($value);
 
                 return $condition;
-            } else {
-                $maxTime = $timestamp + (86400 - 1); //specifies the top point of the range used in the condition
-                $filterField = $params['name'] ? $params['name'] : $this->getName();
-                $condition = '`' . $filterField . '` BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote((string)$maxTime);
-
-                return $condition;
             }
+
+            $maxTime = $timestamp + (86400 - 1); //specifies the top point of the range used in the condition
+            $filterField = $params['name'] ?: $this->getName();
+            return '`' . $filterField . '` BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote((string)$maxTime);
         }
 
         return parent::getFilterConditionExt($value, $operator, $params);
