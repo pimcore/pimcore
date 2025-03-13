@@ -18,6 +18,9 @@ namespace Pimcore\Db;
 use Doctrine\DBAL\Query\QueryBuilder;
 use ReflectionClass;
 
+/**
+ * @internal
+ */
 final class CompatibilityQueryBuilder extends QueryBuilder
 {
     /**
@@ -27,7 +30,7 @@ final class CompatibilityQueryBuilder extends QueryBuilder
      * Should be refactored and removed with the next major version e.g. Pimcore 13
      */
     // @phpstan-ignore-next-line
-    public function getQueryPart($queryPartName): mixed
+    public function getQueryPart(string $queryPartName): mixed
     {
         $reflection = new ReflectionClass($this);
         $property = $reflection->getParentClass()->getProperty($queryPartName);
