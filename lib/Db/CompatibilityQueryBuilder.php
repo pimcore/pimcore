@@ -26,7 +26,7 @@ final class CompatibilityQueryBuilder extends QueryBuilder
      * Adding method via reflection to keep compatibility with current state of code
      * Should be refactored and removed with the next major version e.g. Pimcore 13
      */
-    public function getQueryPart(string $queryPartName): mixed
+    public function getQueryPart($queryPartName): mixed
     {
         $reflection = new ReflectionClass($this);
         $property = $reflection->getParentClass()->getProperty($queryPartName);
