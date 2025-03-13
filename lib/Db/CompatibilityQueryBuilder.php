@@ -26,6 +26,7 @@ final class CompatibilityQueryBuilder extends QueryBuilder
      * Adding method via reflection to keep compatibility with current state of code
      * Should be refactored and removed with the next major version e.g. Pimcore 13
      */
+    // @phpstan-ignore-next-line
     public function getQueryPart($queryPartName): mixed
     {
         $reflection = new ReflectionClass($this);
