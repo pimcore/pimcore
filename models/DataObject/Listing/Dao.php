@@ -41,7 +41,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @throws Exception
      */
-    public function getQueryBuilder(...$columns): DoctrineQueryBuilder
+    public function getQueryBuilder(...$columns): CompatibilityQueryBuilder
     {
         $queryBuilder = new CompatibilityQueryBuilder($this->db);
         $queryBuilder->select(...$columns)->from($this->getTableName());
