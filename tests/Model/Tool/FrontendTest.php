@@ -24,7 +24,9 @@ use Pimcore\Tool\Frontend;
 class FrontendTest extends ModelTestCase
 {
     private Site $site1;
+
     private Site $site2;
+
     private Document\Page $testingDocument;
 
     protected function setUp(): void
