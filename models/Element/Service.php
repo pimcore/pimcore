@@ -904,21 +904,29 @@ class Service extends Model\AbstractModel
      */
     public static function addTreeFilterJoins(array $cv, Asset\Listing|DataObject\Listing|Document\Listing $childrenList): void
     {
-        if ($cv) {
-            $childrenList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
+        match (true) {
+            $childrenList instanceof Asset\Listing => $fromName = 'asset',
+            $childrenList instanceof DataObject\Listing => $fromName = $childrenList->getDao()->getTableName(),
+            $childrenList instanceof Document\Listing => $fromName = 'documents'
+        };
+
+        if (!empty($cv)) {
+            $childrenList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv, $fromName) {
                 $where = $cv['where'] ?? null;
                 if ($where) {
                     $select->andWhere($where);
                 }
 
 
-                $query = (string)$select;
+                /*$query = (string)$select;
                 $pattern = "/(?i)\bFROM\s+(?:(\(\s*SELECT.*?\))\s+AS\s+(\w+)|(`?\w+`?)(?:\s+(?:AS\s+)?(\w+))?)/";
 
                 $fromAlias = '';
                 if (preg_match($pattern, $query, $matches)) {
                     $fromAlias = !empty($matches[2]) ? $matches[2] : (!empty($matches[4]) ? $matches[4] : $matches[3]);
-                }
+                }*/
+
+                //$fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'] ;
 
                 $customViewJoins = $cv['joins'] ?? null;
                 if ($customViewJoins) {
@@ -935,7 +943,7 @@ class Service extends Model\AbstractModel
                         foreach ($columns as $column) {
                             $select->addSelect($column);
                         }
-                        $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
+                        $select->$method($fromName, $joinTable, $joinAlias, $condition);
                     }
                 }
 
