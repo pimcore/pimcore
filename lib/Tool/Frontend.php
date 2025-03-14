@@ -29,7 +29,7 @@ final class Frontend
         $inSite = true;
 
         if ($site && $site->getRootDocument() instanceof Document\Page) {
-            if (!str_starts_with($document->getRealFullPath(), $site->getRootDocument()->getRealFullPath() . '/')) {
+            if (!str_starts_with($document->getRealFullPath() . '/', $site->getRootDocument()->getRealFullPath() . '/')) {
                 $inSite = false;
             }
         }
