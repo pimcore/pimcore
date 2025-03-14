@@ -32,32 +32,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
 
-    const HASH_FUNCTION_PASSWORD_HASH = 'password_hash';
-
-    /**
-     * @internal
-     *
-     * @deprecated since pimcore 11.2, will be removed in pimcore 12
-     *
-     */
-    public string $algorithm = self::HASH_FUNCTION_PASSWORD_HASH;
-
-    /**
-     * @internal
-     *
-     * @deprecated since pimcore 11.2, will be removed in pimcore 12
-     *
-     */
-    public string $salt = '';
-
-    /**
-     * @internal
-     *
-     * @deprecated since pimcore 11.2, will be removed in pimcore 12
-     *
-     */
-    public string $saltlocation = '';
-
     public ?int $minimumLength = null;
 
     public function getMinimumLength(): ?int
@@ -71,62 +45,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @deprecated since pimcore 11.2, will be removed in pimcore 12
-     */
-    public function setAlgorithm(string $algorithm): void
-    {
-        if ($algorithm !== self::HASH_FUNCTION_PASSWORD_HASH) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '11.2',
-                'Password algorithms other than "password_hash" are deprecated and will be removed in Pimcore 12. Please use "password_hash" instead.'
-            );
-        }
-
-        $this->algorithm = $algorithm;
-    }
-
-    /**
-     * @deprecated since pimcore 11.2, will be removed in pimcore 12
-     */
-    public function getAlgorithm(): string
-    {
-        return $this->algorithm;
-    }
-
-    /**
-     * @deprecated since pimcore 11.2, will be removed in pimcore 12
-     */
-    public function setSalt(string $salt): void
-    {
-        $this->salt = $salt;
-    }
-
-    /**
-     * @deprecated since pimcore 11.2, will be removed in pimcore 12
-     */
-    public function getSalt(): string
-    {
-        return $this->salt;
-    }
-
-    /**
-     * @deprecated since pimcore 11.2, will be removed in pimcore 12
-     */
-    public function setSaltlocation(string $saltlocation): void
-    {
-        $this->saltlocation = $saltlocation;
-    }
-
-    /**
-     * @deprecated since pimcore 11.2, will be removed in pimcore 12
-     */
-    public function getSaltlocation(): string
-    {
-        return $this->saltlocation;
-    }
-
-    /**
      *
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
@@ -137,30 +55,9 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             return null;
         }
 
-        // is already a hashed string? Then do not re-hash
-        if ($this->getAlgorithm() === self::HASH_FUNCTION_PASSWORD_HASH) {
-            $info = password_get_info($data);
-            if ($info['algo'] !== null && $info['algo'] !== 0) {
-                return $data;
-            }
-        } else {
-            // password_get_info() will not detect older, less secure, hashing algos.
-            // It might not detect some less common ones as well.
-            $maybeHash = preg_match('/^[a-f0-9]{32,}$/i', $data);
-            $hashLenghts = [
-                32,  // MD2, MD4, MD5, RIPEMD-128, Snefru 128, Tiger/128, HAVAL128
-                40,  // SHA-1, HAS-160, RIPEMD-160, Tiger/160, HAVAL160
-                48,  // Tiger/192, HAVAL192
-                56,  // SHA-224, HAVAL224
-                64,  // SHA-256, BLAKE-256, GOST, GOST CryptoPro, HAVAL256, RIPEMD-256, Snefru 256
-                96,  // SHA-384
-                128, // SHA-512, BLAKE-512, SWIFFT
-            ];
-
-            if ($maybeHash && in_array(strlen($data), $hashLenghts, true)) {
-                // Probably already a hashed string
-                return $data;
-            }
+        $info = password_get_info($data);
+        if ($info['algo'] !== null && $info['algo'] !== 0) {
+            return $data;
         }
 
         $hashed = $this->calculateHash($data);
@@ -174,7 +71,11 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             ? $params['owner']
             : ($object ?: null);
 
-        if (null !== $passwordModel && !$passwordModel instanceof DataObject\Classificationstore && !$passwordModel instanceof DataObject\Localizedfield) {
+        if (
+            null !== $passwordModel &&
+            !$passwordModel instanceof DataObject\Classificationstore &&
+            !$passwordModel instanceof DataObject\Localizedfield
+        ) {
             $setter = 'set' . ucfirst($this->getName());
             $passwordModel->$setter($hashed);
         }
@@ -191,30 +92,9 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function calculateHash(string $data): string
     {
-        if ($this->algorithm === static::HASH_FUNCTION_PASSWORD_HASH) {
-            $config = Config::getSystemConfiguration()['security']['password'];
+        $config = Config::getSystemConfiguration()['security']['password'];
 
-            $hash = password_hash($data, $config['algorithm'], $config['options']);
-        } else {
-
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '11.2',
-                'Password algorithms other than "password_hash" are deprecated and will be removed in Pimcore 12. Please use "password_hash" instead.'
-            );
-
-            if (!empty($this->salt)) {
-                $data = match ($this->saltlocation) {
-                    'back' => $data . $this->salt,
-                    'front' => $this->salt . $data,
-                    default => $data,
-                };
-            }
-
-            $hash = hash($this->algorithm, $data);
-        }
-
-        return $hash;
+        return password_hash($data, $config['algorithm'], $config['options']);
     }
 
     /**
@@ -238,29 +118,17 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             return false;
         }
 
-        if ($this->getAlgorithm() === static::HASH_FUNCTION_PASSWORD_HASH) {
-            $result = password_verify($password, $objectHash);
+        $result = password_verify($password, $objectHash);
 
-            if ($result && $updateHash) {
-                $config = Config::getSystemConfiguration()['security']['password'];
+        if ($result && $updateHash) {
+            $config = Config::getSystemConfiguration()['security']['password'];
 
-                if (password_needs_rehash($objectHash, $config['algorithm'], $config['options'])) {
-                    $newHash = $this->calculateHash($password);
+            if (password_needs_rehash($objectHash, $config['algorithm'], $config['options'])) {
+                $newHash = $this->calculateHash($password);
 
-                    $object->$setter($newHash);
-                    $object->save();
-                }
+                $object->$setter($newHash);
+                $object->save();
             }
-        } else {
-
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '11.2',
-                'Password algorithms other than "password_hash" are deprecated and will be removed in Pimcore 12. Please use "password_hash" instead.'
-            );
-
-            $hash = $this->calculateHash($password);
-            $result = hash_equals($objectHash, $hash);
         }
 
         return $result;
@@ -358,16 +226,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $result[] = $diffdata;
 
         return $result;
-    }
-
-    /**
-     * @param DataObject\ClassDefinition\Data\Password $mainDefinition
-     */
-    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
-    {
-        $this->algorithm = $mainDefinition->algorithm;
-        $this->salt = $mainDefinition->salt;
-        $this->saltlocation = $mainDefinition->saltlocation;
     }
 
     public function getParameterTypeDeclaration(): ?string

@@ -2052,6 +2052,9 @@ final class Configuration implements ConfigurationInterface
                         ->scalarNode('base_url')
                             ->defaultValue('http://gotenberg:3000')
                         ->end()
+                        ->scalarNode('ping_cache_ttl')
+                            ->defaultValue(60)
+                        ->end()
                     ->end()
                 ->end()
             ->end();

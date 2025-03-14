@@ -226,7 +226,7 @@ class Processor
                 $linkTarget = $d['link'];
 
                 if ((int)$d['link']) {
-                    if ($doc = Document::getById($d['link'])) {
+                    if ($doc = Document::getById((int)$d['link'])) {
                         $d['link'] = $doc->getFullPath();
 
                         $linkType = 'internal';

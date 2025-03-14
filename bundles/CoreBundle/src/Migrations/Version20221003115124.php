@@ -40,10 +40,10 @@ final class Version20221003115124 extends AbstractMigration
         $this->addSql('ALTER TABLE objects CHANGE o_modificationDate modificationDate int(11) unsigned DEFAULT NULL NULL;');
         $this->addSql('ALTER TABLE objects CHANGE o_userOwner userOwner int(11) unsigned DEFAULT NULL NULL;');
         $this->addSql('ALTER TABLE objects CHANGE o_userModification userModification int(11) unsigned DEFAULT NULL NULL;');
-        $this->addSql('ALTER TABLE objects CHANGE o_classId classId varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;');
-        $this->addSql('ALTER TABLE objects CHANGE o_className className varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;');
-        $this->addSql("ALTER TABLE objects CHANGE o_childrenSortBy childrenSortBy enum('key','index') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE o_childrenSortOrder childrenSortOrder enum('ASC','DESC') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
+        $this->addSql('ALTER TABLE objects CHANGE o_classId classId varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE o_className className varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;');
+        $this->addSql("ALTER TABLE objects CHANGE o_childrenSortBy childrenSortBy enum('key','index') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;");
+        $this->addSql("ALTER TABLE objects CHANGE o_childrenSortOrder childrenSortOrder enum('ASC','DESC') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;");
         $this->addSql('ALTER TABLE objects CHANGE o_versionCount versionCount int(10) unsigned DEFAULT 0 NOT NULL;');
 
         $tableListObject = $this->connection->fetchAllAssociative("SHOW TABLES LIKE 'object_brick_%'");
@@ -80,10 +80,10 @@ final class Version20221003115124 extends AbstractMigration
         $this->addSql('ALTER TABLE objects CHANGE modificationDate o_modificationDate int(11) unsigned DEFAULT NULL NULL;');
         $this->addSql('ALTER TABLE objects CHANGE userOwner o_userOwner int(11) unsigned DEFAULT NULL NULL;');
         $this->addSql('ALTER TABLE objects CHANGE userModification o_userModification int(11) unsigned DEFAULT NULL NULL;');
-        $this->addSql('ALTER TABLE objects CHANGE classId o_classId varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;');
-        $this->addSql('ALTER TABLE objects CHANGE className o_className varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;');
-        $this->addSql("ALTER TABLE objects CHANGE childrenSortBy o_childrenSortBy enum('key','index') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE childrenSortOrder o_childrenSortOrder enum('ASC','DESC') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
+        $this->addSql('ALTER TABLE objects CHANGE classId o_classId varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE className o_className varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;');
+        $this->addSql("ALTER TABLE objects CHANGE childrenSortBy o_childrenSortBy enum('key','index') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;");
+        $this->addSql("ALTER TABLE objects CHANGE childrenSortOrder o_childrenSortOrder enum('ASC','DESC') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;");
         $this->addSql('ALTER TABLE objects CHANGE versionCount o_versionCount int(10) unsigned DEFAULT 0 NOT NULL;');
 
         $tableListObject = $this->connection->fetchAllAssociative("SHOW TABLES LIKE 'object_brick_%'");

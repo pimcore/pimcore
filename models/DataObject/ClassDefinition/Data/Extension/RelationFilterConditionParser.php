@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
+use Pimcore\Db\Helper;
+
 /**
  * Trait RelationFilterConditionParser
  *
@@ -28,16 +30,19 @@ trait RelationFilterConditionParser
      */
     public function getRelationFilterCondition(?string $value, string $operator, string $name): string
     {
-        $result = '`' . $name . '` IS NULL';
+        $db = \Pimcore\Db::get();
+        $result = $db->quoteIdentifier($name) . ' IS NULL';
         if ($value === null || $value === 'null') {
             return $result;
         }
         if ($operator === '=') {
-            return '`' . $name . '` = ' . "'" . $value . "'";
+            return $db->quoteIdentifier($name) . ' = ' . $db->quote($value);
         }
         $values = explode(',', $value);
-        $fieldConditions = array_map(function ($value) use ($name) {
-            return '`' . $name . "` LIKE '%," . $value . ",%' ";
+        $fieldConditions = array_map(function ($value) use ($name, $db) {
+            $quotedValue = $db->quote('%,' . Helper::escapeLike($value) . ',%');
+
+            return $db->quoteIdentifier($name) . ' LIKE ' . $quotedValue . ' ';
         }, array_filter($values));
         if (!empty($fieldConditions)) {
             $result = '(' . implode(' AND ', $fieldConditions) . ')';
