@@ -26,7 +26,6 @@ use InvalidArgumentException;
 use PDO;
 use Pimcore;
 use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
-use Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle;
 use Pimcore\Bundle\GenericExecutionEngineBundle\PimcoreGenericExecutionEngineBundle;
 use Pimcore\Bundle\GlossaryBundle\PimcoreGlossaryBundle;
 use Pimcore\Bundle\InstallBundle\BundleConfig\BundleWriter;
@@ -68,7 +67,6 @@ class Installer
 
     public const INSTALLABLE_BUNDLES = [
         'PimcoreApplicationLoggerBundle' => PimcoreApplicationLoggerBundle::class,
-        'PimcoreCustomReportsBundle' => PimcoreCustomReportsBundle::class,
         'PimcoreGlossaryBundle' => PimcoreGlossaryBundle::class,
         'PimcoreSeoBundle' => PimcoreSeoBundle::class,
         'PimcoreSimpleBackendSearchBundle' => PimcoreSimpleBackendSearchBundle::class,

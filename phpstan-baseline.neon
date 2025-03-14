@@ -52,42 +52,6 @@ parameters:
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
 			identifier: ergebnis.declareStrictTypes
 			count: 1
-			path: bundles/CustomReportsBundle/src/DependencyInjection/Configuration.php
-
-		-
-			message: '#^Call to method addSetting\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\Event\\IndexActionSettingsEvent\.$#'
-			identifier: class.notFound
-			count: 1
-			path: bundles/CustomReportsBundle/src/EventListener/IndexSettingsListener.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/CustomReportsBundle/src/EventListener/IndexSettingsListener.php
-
-		-
-			message: '#^Parameter \$settingsEvent of method Pimcore\\Bundle\\CustomReportsBundle\\EventListener\\IndexSettingsListener\:\:indexSettings\(\) has invalid type Pimcore\\Bundle\\AdminBundle\\Event\\IndexActionSettingsEvent\.$#'
-			identifier: class.notFound
-			count: 1
-			path: bundles/CustomReportsBundle/src/EventListener/IndexSettingsListener.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/CustomReportsBundle/src/Tool/Config/Dao.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/CustomReportsBundle/src/Tool/Config/Listing/Dao.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
 			path: bundles/GlossaryBundle/src/DependencyInjection/Configuration.php
 
 		-

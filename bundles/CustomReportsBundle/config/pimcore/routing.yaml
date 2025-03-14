@@ -1,6 +1,0 @@
-_pimcore_reports:
-    resource: "@PimcoreCustomReportsBundle/src/Controller/"
-    type: annotation
-    prefix: /admin/bundle/customreports
-    options:
-        expose: true
