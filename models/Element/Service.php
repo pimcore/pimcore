@@ -29,6 +29,7 @@ use DeepCopy\TypeMatcher\TypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Exception;
+use InvalidArgumentException;
 use League\Csv\EscapeFormula;
 use Pimcore;
 use Pimcore\Db;
@@ -907,7 +908,8 @@ class Service extends Model\AbstractModel
         match (true) {
             $childrenList instanceof Asset\Listing => $fromName = 'asset',
             $childrenList instanceof DataObject\Listing => $fromName = $childrenList->getDao()->getTableName(),
-            $childrenList instanceof Document\Listing => $fromName = 'documents'
+            $childrenList instanceof Document\Listing => $fromName = 'documents',
+            default => throw new InvalidArgumentException('Unsupported listing type'),
         };
 
         if (!empty($cv)) {
