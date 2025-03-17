@@ -332,10 +332,11 @@ class Asset extends Element\AbstractElement
                 } else {
                     // guess mime type from stream directly
                     $mimeTypeGuessData = $data['stream'];
-                    $mimeType = $mimeTypeHelper->guessMimeType(
-                        $mimeTypeGuessData
-                    );
                 }
+
+                $mimeType = $mimeTypeHelper->guessMimeType(
+                    $mimeTypeGuessData
+                );
             } else {
                 if (!is_dir($data['sourcePath'])) {
                     $mimeTypeGuessData = $data['sourcePath'];
