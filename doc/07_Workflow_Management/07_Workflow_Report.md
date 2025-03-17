@@ -12,7 +12,7 @@ This way, you can follow and monitor workflows and the progress of document, ass
 ### Create a custom report for objects
 
 First, you just have to create a new empty custom report, please see:
-[custom reports](../18_Tools_and_Features/29_Custom_Reports.md)
+[custom reports](https://github.com/pimcore/custom-reports-bundle/blob/1.x/README.md)
 
 After creating it, you can configure it like this for the Source Definition, Column Configuration and Chart Settings:
 ![Source Definition](../img/workflow-report-source-definition.png)

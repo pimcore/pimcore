@@ -24,8 +24,7 @@ Available storages are (in priority order):
 - Symfony Config (YAML, needs container rebuild)
 - Pimcore [`SettingsStore`](../19_Development_Tools_and_Details/42_Settings_Store.md)
 
-This feature is currently supported by the following configurations: 
-- Custom reports
+This feature is currently supported by the following configurations:
 - Document types
 - Image thumbnails 
 - Video thumbnails
@@ -101,18 +100,11 @@ pimcore:
 and for some specific optional bundles are:
 
 ```yaml
-pimcore_custom_reports:
-    config_location:
-        custom_reports:
-            write_target:
-                type: 'symfony-config'
-
 pimcore_static_routes:
     config_location:
         staticroutes:
             write_target:
                 type: 'symfony-config'
-       ...
 ```
 
 #### Production environment with `symfony-config`
