@@ -139,7 +139,7 @@ trait QueryBuilderHelperTrait
         }
 
         if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
-            if (!$this->isQueryBuilderPartInUse($queryBuilder, 'select')){
+            if (!$this->isQueryBuilderPartInUse($queryBuilder, 'select')) {
                 $queryBuilder->select($identifierColumn);
             }
         } elseif ($this->isQueryBuilderPartInUse($queryBuilder, 'distinct')) {
@@ -170,7 +170,7 @@ trait QueryBuilderHelperTrait
                 $newQueryBuilder = clone $query;
                 $newQueryBuilder->select('*');
                 $querySQL = $newQueryBuilder->getSQL();
-            }else{
+            } else {
                 $querySQL = $query->getSQL();
             }
         }

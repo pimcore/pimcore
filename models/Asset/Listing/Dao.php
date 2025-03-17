@@ -98,9 +98,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         if (
             $this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') ||
-            $this->isQueryBuilderPartInUse($queryBuilder, 'having'))
-        {
-            if (!$this->isQueryBuilderPartInUse($queryBuilder, 'select')){
+            $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
+            if (!$this->isQueryBuilderPartInUse($queryBuilder, 'select')) {
                $queryBuilder->select($identifierColumn);
             }
             return (int)$this->db->fetchOne('SELECT COUNT(*)  FROM (' . $queryBuilder->getSQL() . ') as XYZ');

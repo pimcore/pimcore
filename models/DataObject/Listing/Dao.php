@@ -82,8 +82,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         if (
             $this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') ||
-            $this->isQueryBuilderPartInUse($queryBuilder, 'having'))
-        {
+            $this->isQueryBuilderPartInUse($queryBuilder, 'having')
+        ) {
             return (int)$this->db->fetchOne('SELECT COUNT(*)  FROM (' . $queryBuilder->getSQL() . ') as XYZ');
         }
 
@@ -98,11 +98,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         if ($this->model->isLoaded()) {
             return count($this->model->getObjects());
-        } else {
-            $idList = $this->loadIdList();
-
-            return count($idList);
         }
+
+        $idList = $this->loadIdList();
+
+        return count($idList);
     }
 
     /**
