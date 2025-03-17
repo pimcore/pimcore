@@ -169,12 +169,14 @@ class Sql extends AbstractAdapter
                         'eq' => '=',
                     ];
 
-                    if ($type == 'date') {
-                        if ($operator == 'eq') {
-                            $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote((string)$maxValue);
-
-                            break;
-                        }
+                    if (($type == 'date') && $operator == 'eq') {
+                        $condition[] = $db->quoteIdentifier(
+                            $filter['property']) .
+                            ' BETWEEN ' .
+                            $db->quote($value) .
+                            ' AND ' .
+                            $db->quote((string)$maxValue);
+                        break;
                     }
                     $fields[] = $filter['property'];
                     $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);
