@@ -49,6 +49,7 @@ use Pimcore\Model\Element\DeepCopy\MarshalMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\DeepCopy\UnmarshalMatcher;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Serialize;
 use ReflectionProperty;
@@ -905,12 +906,11 @@ class Service extends Model\AbstractModel
      */
     public static function addTreeFilterJoins(array $cv, Asset\Listing|DataObject\Listing|Document\Listing $childrenList): void
     {
-        match (true) {
-            $childrenList instanceof Asset\Listing => $fromName = 'asset',
-            $childrenList instanceof DataObject\Listing => $fromName = $childrenList->getDao()->getTableName(),
-            $childrenList instanceof Document\Listing => $fromName = 'documents',
-            default => throw new InvalidArgumentException('Unsupported listing type'),
-        };
+        $fromName = self::getListingFrom($childrenList);
+
+        if (null === $fromName) {
+            throw new InvalidArgumentException('Unsupported listing type');
+        }
 
         if (!empty($cv)) {
             $childrenList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv, $fromName) {
@@ -1459,5 +1459,16 @@ class Service extends Model\AbstractModel
         } else {
             return $type . '_';
         }
+    }
+
+    private static function getListingFrom(PaginateListingInterface $listing): ?string
+    {
+        return match(true)
+        {
+            $listing instanceof Asset\Listing => 'asset',
+            $listing instanceof DataObject\Listing => 'object',
+            $listing instanceof Document\Listing => 'document',
+            default => null,
+        };
     }
 }
