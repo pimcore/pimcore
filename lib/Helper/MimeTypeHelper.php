@@ -47,10 +47,6 @@ final class MimeTypeHelper implements MimeTypeHelperInterface
     {
         $fpPosition = false;
 
-        if (!is_resource($stream) || get_resource_type($stream) !== 'stream') {
-            throw new InvalidArgumentException('The provided stream is not a valid stream resource.');
-        }
-
         $seekable = stream_get_meta_data($stream)['seekable'];
         if ($seekable) {
             $fpPosition = ftell($stream);

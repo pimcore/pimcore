@@ -316,4 +316,52 @@ class AssetTest extends ModelTestCase
         $this->assertMatchesRegularExpression('@^(https?|data):@', $thumbnailFullUrl);
         $this->assertStringContainsString($thumbnail->getPath(), $thumbnailFullUrl);
     }
+
+    public function testMimeTypeFromStream(): void
+    {
+        $asset = Asset::create(
+            1,
+            [
+                'stream' => fopen(
+                    TestHelper::resolveFilePath('assets/images/image1.jpg'),
+                    'rb'
+                ),
+                'filename' => 'image1_from_stream.jpg'
+            ]
+        );
+
+        $this->assertEquals('image/jpeg', $asset->getMimeType());
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testMimeTypeFromFile(): void
+    {
+        $asset = TestHelper::createImageAsset(
+            '',
+            null,
+            true,
+            'assets/images/image1.jpg'
+        );
+
+        $this->assertEquals('image/jpeg', $asset->getMimeType());
+    }
+
+    public function testMimeTypeFromContent(): void
+    {
+        $fileName = 'image1_from_content';
+        $assetData = @file_get_contents(
+            TestHelper::resolveFilePath('assets/images/image1.jpg'),
+            false
+        );
+        $data = [
+            'data' => $assetData,
+            'key' => $fileName,
+            'filename' => $fileName
+        ];
+        $asset = Asset::create(1, $data);
+
+        $this->assertEquals('image/jpeg', $asset->getMimeType());
+    }
 }
