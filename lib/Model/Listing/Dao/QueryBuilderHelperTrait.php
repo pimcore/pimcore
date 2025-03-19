@@ -156,9 +156,9 @@ trait QueryBuilderHelperTrait
             'groupBy' => 'GROUP BY ',
             'having' => 'HAVING ',
             'distinct'=> ' DISTINCT ',
-            'select' => 'SELECT ',
+            'select' => '^SELECT ',
         ];
-        $pattern = '/' . $mapping[$part] . '/i';
+        $pattern = '/' . $mapping[$part] . '/';
 
         try {
             $querySQL = $query->getSql();
