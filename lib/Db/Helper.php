@@ -98,7 +98,7 @@ class Helper
         return null;
     }
 
-    public static function quoteInto(Connection $db, string $text, mixed $value, int|string|Type|null $type = null, ?int $count = null): array|string
+    public static function quoteInto(Connection $db, string $text, mixed $value, ?int $count = null): array|string
     {
         if ($count === null) {
             return str_replace('?', $db->quote((string)$value), $text);
