@@ -80,7 +80,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function setWidth(int|string|null $width): static
     {
-        return $this->setWidthTrait($width ?: 320);
+        return $this->setWidthTrait($width ?: '100%');
     }
 
     public function getCols(): ?int
