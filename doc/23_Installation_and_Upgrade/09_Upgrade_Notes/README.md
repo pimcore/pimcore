@@ -4,8 +4,8 @@
 - Removed deprecated Headless Chrome Processor.
 - Dropped support of `gotenberg/gotenberg-php` `v1.1` in favor of just supporting `v2` which bundles Chromium functionalities that refrain from requiring a standalone chromium binary.
 ### [Doctrine]
-- Added support to `doctrine/dbal` `v4`
-- Dropped support to `doctrine/dbal` `v3`
+- Added support of `doctrine/dbal` `v4`
+- Dropped support of `doctrine/dbal` `v3`
 - Changed signature of `Pimcore\Db\Helper::quoteInto()`, passing `$type` is not supported anymore to match the changes in `DBAL` about `quote()` working only with strings.
 - Tweaked the way the `Listing/Dao::getTotalCount()` is used to enable support with DBAL `v4`, please check the latest docs.
 
