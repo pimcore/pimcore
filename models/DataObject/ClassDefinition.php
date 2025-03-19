@@ -404,7 +404,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         } else {
             $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_ADD);
         }
-        if(!empty($this->getDeletedDataComponents())) {
+        if (!empty($this->getDeletedDataComponents())) {
             $this->deleteDeletedDataComponentsInCustomLayout();
         } else {
             $this->updateCustomLayouts();
@@ -447,7 +447,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             \Pimcore\File::putPhpFile($definitionFile, $data);
         }
     }
-    
+
     /**
      * @internal
      */
@@ -1141,8 +1141,9 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         return $this;
     }
 
-    private function updateCustomLayouts(): void {
-        
+    private function updateCustomLayouts(): void
+    {
+
         $customLayouts = new ClassDefinition\CustomLayout\Listing();
         $id = $this->getId();
         $customLayouts->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($id) {
