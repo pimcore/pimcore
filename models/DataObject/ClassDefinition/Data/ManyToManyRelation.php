@@ -360,7 +360,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 }
                 $relatedElementData[1] = $this->getNicePath($pathFormatterData, $object, $params);
             }
-            unset($item);
+            unset($relatedElementData);
         }
 
         return $gridData;

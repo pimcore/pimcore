@@ -402,7 +402,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             foreach ($gridData as &$relatedElementData) {
                 $relatedElementData['path'] = $this->getNicePath($relatedElementData, $object, $params);
             }
-            unset($item);
+            unset($relatedElementData);
         }
 
         return $gridData;
