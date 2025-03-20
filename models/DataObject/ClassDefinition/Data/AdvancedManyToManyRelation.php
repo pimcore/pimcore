@@ -28,8 +28,6 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-use function Amp\Iterator\merge;
-
 class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewriterInterface, PreGetDataInterface, ClassSavedInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
