@@ -28,6 +28,8 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
+use function Amp\Iterator\merge;
+
 class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewriterInterface, PreGetDataInterface, ClassSavedInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
@@ -394,9 +396,16 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
     public function getDataForGrid(?array $data, ?Concrete $object = null, array $params = []): ?array
     {
-        $ret = $this->getDataForEditmode($data, $object, $params);
+        $gridData = $this->getDataForEditmode($data, $object, $params);
 
-        return is_array($ret) ? $ret : null;
+        if (!empty($gridData)) {
+            foreach ($gridData as &$relatedElementData) {
+                $relatedElementData['path'] = $this->getNicePath($relatedElementData, $object, $params);
+            }
+            unset($item);
+        }
+
+        return $gridData;
     }
 
     /**

@@ -279,7 +279,13 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function getDataForGrid(?Element\ElementInterface $data, ?Concrete $object = null, array $params = []): ?array
     {
-        return $this->getDataForEditmode($data, $object, $params);
+        $gridData = $this->getDataForEditmode($data, $object, $params);
+
+        if (!empty($gridData)) {
+            $gridData['path'] = $this->getNicePath($gridData, $object, $params);
+        }
+
+        return $gridData;
     }
 
     /**

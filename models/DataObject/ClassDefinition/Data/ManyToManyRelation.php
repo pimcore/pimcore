@@ -342,14 +342,28 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /**
-     * @param DataObject\Concrete|null $object
-     *
-     * @todo: $pathes is undefined
-     */
     public function getDataForGrid(?array $data, ?Concrete $object = null, array $params = []): ?array
     {
-        return $this->getDataForEditmode($data, $object, $params);
+        $gridData = $this->getDataForEditmode($data, $object, $params);
+
+        if (!empty($gridData)) {
+            foreach ($gridData as &$relatedElementData) {
+                $pathFormatterData = [
+                    'id' => $relatedElementData[0],
+                    'path' => $relatedElementData[1],
+                    'type' => $relatedElementData[2],
+                    'subtype' => $relatedElementData[3],
+                ];
+
+                if(isset($relatedElementData[4])) {
+                    $pathFormatterData['published'] = $relatedElementData[4];
+                }
+                $relatedElementData[1] = $this->getNicePath($pathFormatterData, $object, $params);
+            }
+            unset($item);
+        }
+
+        return $gridData;
     }
 
     /**
