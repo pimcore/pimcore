@@ -362,7 +362,7 @@ abstract class AbstractListing extends AbstractModel implements Iterator, Counta
     {
         $db = Db::get();
 
-        return $db->quote($value, $type);
+        return $db->quote($value);
     }
 
     public function escapeLike(string $value): string

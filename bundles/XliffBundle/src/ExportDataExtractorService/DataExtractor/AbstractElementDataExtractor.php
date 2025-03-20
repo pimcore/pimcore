@@ -39,10 +39,6 @@ abstract class AbstractElementDataExtractor implements DataExtractorInterface
     {
         $element = $translationItem->getElement();
 
-        if (!$element instanceof ElementInterface) {
-            throw new Exception('only pimcore elements allowed');
-        }
-
         $result = $this
                     ->createResultInstance($translationItem)
                     ->setSourceLanguage($sourceLanguage)

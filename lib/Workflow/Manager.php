@@ -24,7 +24,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
 use Pimcore\Workflow\MarkingStore\StateTableMarkingStore;
@@ -115,8 +114,7 @@ class Manager
     /**
      * Returns all PlaceConfigs (for given marking) ordered by it's appearence in the workflow config file
      *
-     *
-     * @return PlaceConfig[];
+     * @return PlaceConfig[]
      */
     public function getOrderedPlaceConfigs(WorkflowInterface $workflow, ?Marking $marking = null): array
     {
@@ -203,17 +201,20 @@ class Manager
         return $workflow;
     }
 
-    public function getWorkflowByName(string $workflowName): ?object
+    public function getWorkflowByName(string $workflowName): ?WorkflowInterface
     {
         $config = $this->getWorkflowConfig($workflowName);
 
-        return Pimcore::getContainer()->get($config->getType() . '.' . $workflowName);
+        $workflow = Pimcore::getContainer()?->get($config->getType() . '.' . $workflowName);
+
+        if (!$workflow instanceof WorkflowInterface) {
+            return null;
+        }
+
+        return $workflow;
     }
 
     /**
-     *
-     *
-     * @throws ValidationException
      * @throws Exception
      */
     public function applyWithAdditionalData(
@@ -232,7 +233,7 @@ class Manager
         $transition = $this->getTransitionByName($workflow->getName(), $transition);
         $changePublishedState = $transition instanceof Transition ? $transition->getChangePublishedState() : null;
 
-        if ($saveSubject && $subject instanceof ElementInterface) {
+        if ($saveSubject) {
             if ($changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION) {
                 $subject->saveVersion();
             } else {

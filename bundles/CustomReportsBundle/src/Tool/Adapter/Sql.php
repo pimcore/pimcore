@@ -25,8 +25,15 @@ use stdClass;
  */
 class Sql extends AbstractAdapter
 {
-    public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, ?array $fields = null, ?array $drillDownFilters = null): array
-    {
+    public function getData(
+        ?array $filters,
+        ?string $sort,
+        ?string $dir,
+        ?int $offset,
+        ?int $limit,
+        ?array $fields = null,
+        ?array $drillDownFilters = null
+    ): array {
         $db = Db::get();
 
         $baseQuery = $this->getBaseQuery($filters ?? [], $fields ?? [], false, $drillDownFilters ?? []);
@@ -162,12 +169,15 @@ class Sql extends AbstractAdapter
                         'eq' => '=',
                     ];
 
-                    if ($type == 'date') {
-                        if ($operator == 'eq') {
-                            $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxValue);
+                    if (($type == 'date') && $operator == 'eq') {
+                        $condition[] = $db->quoteIdentifier(
+                            $filter['property']) .
+                            ' BETWEEN ' .
+                            $db->quote($value) .
+                            ' AND ' .
+                            $db->quote((string)$maxValue);
 
-                            break;
-                        }
+                        break;
                     }
                     $fields[] = $filter['property'];
                     $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);

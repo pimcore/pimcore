@@ -215,7 +215,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
         $return = [$idIndex => null, $typeIndex => null];
 
-        if ($data != null) {
+        if ($data !== null) {
             $rData = $this->prepareDataForPersistence($data, $object, $params);
 
             $return = [

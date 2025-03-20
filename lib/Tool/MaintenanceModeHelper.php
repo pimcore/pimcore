@@ -59,7 +59,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     {
         try {
             if (!$this->db->isConnected()) {
-                $this->db->connect();
+                $this->db->getNativeConnection();
             }
         } catch (Exception) {
             return false;

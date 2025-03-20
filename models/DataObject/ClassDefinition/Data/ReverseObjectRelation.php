@@ -166,9 +166,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         }, $relations);
 
         $data = $this->loadData($relations, $object, $params);
-        if ($object instanceof Model\Element\DirtyIndicatorInterface) {
-            $object->markFieldDirty($this->getName(), false);
-        }
+        $object->markFieldDirty($this->getName(), false);
 
         return $data['data'];
     }

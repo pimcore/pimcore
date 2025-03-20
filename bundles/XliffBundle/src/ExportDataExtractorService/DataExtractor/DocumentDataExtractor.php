@@ -164,7 +164,10 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
 
     protected function doExportProperty(Property $property): bool
     {
-        return parent::doExportProperty($property) && !in_array($property->getName(), [
+        return parent::doExportProperty($property) &&
+            !in_array(
+                $property->getName(),
+                [
                     'language',
                     'navigation_target',
                     'navigation_exclude',
@@ -174,19 +177,18 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
                     'navigation_relation',
                     'navigation_accesskey',
                     'navigation_tabindex',
-                ]);
+                ]
+            );
     }
 
     private function resetSourceDocument(Document &$document, AttributeSet $result, array $translations): void
     {
-        if ($result->getSourceLanguage() != $result->getTargetLanguages()) {
-            $sourceDocumentId = $translations[$result->getSourceLanguage()] ?? false;
-            if ($sourceDocumentId) {
-                $sourceDocument = Document::getById($sourceDocumentId);
+        $sourceDocumentId = $translations[$result->getSourceLanguage()] ?? false;
+        if ($sourceDocumentId) {
+            $sourceDocument = Document::getById($sourceDocumentId);
 
-                if ($sourceDocument instanceof Document\PageSnippet) {
-                    $document = $sourceDocument;
-                }
+            if ($sourceDocument instanceof Document\PageSnippet) {
+                $document = $sourceDocument;
             }
         }
     }

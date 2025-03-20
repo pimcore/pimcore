@@ -31,6 +31,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
+use function array_key_exists;
+use function count;
+use function is_array;
+use function strlen;
 
 /**
  * @Route("/custom-report")
@@ -43,10 +47,8 @@ class CustomReportController extends UserAwareController
 
     /**
      * @Route("/tree", name="pimcore_bundle_customreports_customreport_tree", methods={"GET", "POST"})
-     *
-     *
      */
-    public function treeAction(Request $request): JsonResponse
+    public function treeAction(): JsonResponse
     {
         $this->checkPermission('reports_config');
         $reports = Tool\Config::getReportsList();
@@ -56,10 +58,8 @@ class CustomReportController extends UserAwareController
 
     /**
      * @Route("/portlet-report-list", name="pimcore_bundle_customreports_customreport_portletreportlist", methods={"GET", "POST"})
-     *
-     *
      */
-    public function portletReportListAction(Request $request): JsonResponse
+    public function portletReportListAction(): JsonResponse
     {
         $this->checkPermission('reports');
         $reports = Tool\Config::getReportsList($this->getPimcoreUser());
@@ -69,8 +69,6 @@ class CustomReportController extends UserAwareController
 
     /**
      * @Route("/add", name="pimcore_bundle_customreports_customreport_add", methods={"POST"})
-     *
-     *
      */
     public function addAction(Request $request): JsonResponse
     {
@@ -100,8 +98,6 @@ class CustomReportController extends UserAwareController
 
     /**
      * @Route("/delete", name="pimcore_bundle_customreports_customreport_delete", methods={"DELETE"})
-     *
-     *
      */
     public function deleteAction(Request $request): JsonResponse
     {
@@ -122,8 +118,6 @@ class CustomReportController extends UserAwareController
 
     /**
      * @Route("/clone", name="pimcore_bundle_customreports_customreport_clone", methods={"POST"})
-     *
-     *
      */
     public function cloneAction(Request $request): JsonResponse
     {
@@ -160,8 +154,6 @@ class CustomReportController extends UserAwareController
 
     /**
      * @Route("/get", name="pimcore_bundle_customreports_customreport_get", methods={"GET"})
-     *
-     *
      */
     public function getAction(Request $request): JsonResponse
     {
@@ -179,8 +171,6 @@ class CustomReportController extends UserAwareController
 
     /**
      * @Route("/update", name="pimcore_bundle_customreports_customreport_update", methods={"PUT"})
-     *
-     *
      */
     public function updateAction(Request $request): JsonResponse
     {
@@ -201,6 +191,10 @@ class CustomReportController extends UserAwareController
             $data['yAxis'] = strlen($data['yAxis'] ?? '') ? [$data['yAxis']] : [];
         }
 
+        $adapter = Tool\Config::getAdapter($report->getDataSourceConfig());
+        $pagination = $adapter->getPagination();
+        $data['pagination'] = $pagination;
+
         foreach ($data as $key => $value) {
             $setter = 'set' . ucfirst($key);
             if (method_exists($report, $setter)) {
@@ -215,8 +209,6 @@ class CustomReportController extends UserAwareController
 
     /**
      * @Route("/column-config", name="pimcore_bundle_customreports_customreport_columnconfig", methods={"POST"})
-     *
-     *
      */
     public function columnConfigAction(Request $request): JsonResponse
     {
@@ -238,16 +230,18 @@ class CustomReportController extends UserAwareController
 
         try {
             $adapter = Tool\Config::getAdapter($configuration);
-            $columns = $adapter->getColumns($configuration);
+            $columns = $adapter->getColumnsWithMetadata($configuration);
+            $columnNames = array_map(fn ($column) => $column->getName(), $columns);
+            $columnMap = array_combine($columnNames, $columns);
 
             foreach ($columnConfiguration as $item) {
                 $name = $item['name'];
-                if (in_array($name, $columns)) {
-                    $result[] = $name;
-                    array_splice($columns, array_search($name, $columns), 1);
+                if (array_key_exists($name, $columnMap)) {
+                    $result[] = $columnMap[$name];
+                    unset($columnMap[$name]);
                 }
             }
-            foreach ($columns as $remainingColumn) {
+            foreach ($columnMap as $remainingColumn) {
                 $result[] = $remainingColumn;
             }
 
@@ -265,8 +259,6 @@ class CustomReportController extends UserAwareController
 
     /**
      * @Route("/get-report-config", name="pimcore_bundle_customreports_customreport_getreportconfig", methods={"GET"})
-     *
-     *
      */
     public function getReportConfigAction(Request $request): JsonResponse
     {
@@ -298,9 +290,7 @@ class CustomReportController extends UserAwareController
     }
 
     /**
-     * @Route("/data", name="pimcore_bundle_customreports_customreport_data", methods={"GET", "POST"})
-     *
-     *
+     * @Route("/data", name="pimcore_bundle_customreports_customreport_data", methods={"POST"})
      */
     public function dataAction(Request $request): JsonResponse
     {
@@ -327,9 +317,7 @@ class CustomReportController extends UserAwareController
     }
 
     /**
-     * @Route("/drill-down-options", name="pimcore_bundle_customreports_customreport_drilldownoptions", methods={"GET", "POST"})
-     *
-     *
+     * @Route("/drill-down-options", name="pimcore_bundle_customreports_customreport_drilldownoptions", methods={"POST"})
      */
     public function drillDownOptionsAction(Request $request): JsonResponse
     {
@@ -355,9 +343,7 @@ class CustomReportController extends UserAwareController
     }
 
     /**
-     * @Route("/chart", name="pimcore_bundle_customreports_customreport_chart", methods={"GET", "POST"})
-     *
-     *
+     * @Route("/chart", name="pimcore_bundle_customreports_customreport_chart", methods={"POST"})
      */
     public function chartAction(Request $request): JsonResponse
     {
@@ -390,8 +376,6 @@ class CustomReportController extends UserAwareController
 
     /**
      * @Route("/create-csv", name="pimcore_bundle_customreports_customreport_createcsv", methods={"GET"})
-     *
-     *
      */
     public function createCsvAction(Request $request): JsonResponse
     {
@@ -463,8 +447,6 @@ class CustomReportController extends UserAwareController
 
     /**
      * @Route("/download-csv", name="pimcore_bundle_customreports_customreport_downloadcsv", methods={"GET"})
-     *
-     *
      */
     public function downloadCsvAction(Request $request): BinaryFileResponse
     {

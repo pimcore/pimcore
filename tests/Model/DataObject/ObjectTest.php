@@ -97,7 +97,7 @@ class ObjectTest extends ModelTestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('ParentID not found.');
         $savedObject = TestHelper::createEmptyObject('', false);
-        $this->assertTrue($savedObject->getId() == 0);
+        $this->assertEquals(null, $savedObject->getId());
 
         $savedObject->setParentId(999999);
         $savedObject->save();

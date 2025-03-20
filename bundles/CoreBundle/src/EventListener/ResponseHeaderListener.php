@@ -44,16 +44,10 @@ class ResponseHeaderListener implements EventSubscriberInterface
     public function onKernelResponse(ResponseEvent $event): void
     {
         $headers = $this->responseHeaderResolver->getResponseHeaders($event->getRequest());
-
-        if (empty($headers)) {
-            return;
-        }
-
         $response = $event->getResponse();
+
         foreach ($headers as $header) {
-            if ($header instanceof ResponseHeader) {
-                $response->headers->set($header->getKey(), $header->getValues(), $header->getReplace());
-            }
+            $response->headers->set($header->getKey(), $header->getValues(), $header->getReplace());
         }
     }
 

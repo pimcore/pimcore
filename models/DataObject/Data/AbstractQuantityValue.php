@@ -101,10 +101,6 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
             $unit = $unitObject;
         }
 
-        if (!$unit instanceof Unit) {
-            throw new InvalidArgumentException('Please provide unit as '.Unit::class.' object or as string');
-        }
-
         /** @var UnitConversionService $converter */
         $converter = Pimcore::getContainer()->get(UnitConversionService::class);
 

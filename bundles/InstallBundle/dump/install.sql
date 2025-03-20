@@ -13,7 +13,8 @@ CREATE TABLE `assets` (
   `dataModificationDate` INT(11) UNSIGNED DEFAULT NULL,
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
-  `customSettings` longtext,
+  `customSettings` longtext collate utf8mb4_bin null
+      check (json_valid(`customSettings`)),
   `hasMetaData` tinyint(1) NOT NULL DEFAULT '0',
   `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),

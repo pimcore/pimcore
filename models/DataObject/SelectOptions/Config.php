@@ -47,6 +47,8 @@ final class Config extends AbstractModel implements JsonSerializable
 
     public const PROPERTY_GROUP = 'group';
 
+    public const PROPERTY_ADMIN_ONLY = 'adminOnly';
+
     public const PROPERTY_USE_TRAITS = 'useTraits';
 
     public const PROPERTY_IMPLEMENTS_INTERFACES = 'implementsInterfaces';
@@ -56,6 +58,8 @@ final class Config extends AbstractModel implements JsonSerializable
     protected string $id;
 
     protected ?string $group = null;
+
+    protected bool $adminOnly = false;
 
     protected string $useTraits = '';
 
@@ -100,6 +104,21 @@ final class Config extends AbstractModel implements JsonSerializable
     public function setGroup(?string $group): static
     {
         $this->group = $group;
+
+        return $this;
+    }
+
+    public function getAdminOnly(): bool
+    {
+        return $this->adminOnly;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setAdminOnly(bool $adminOnly): static
+    {
+        $this->adminOnly = $adminOnly;
 
         return $this;
     }
@@ -224,6 +243,7 @@ final class Config extends AbstractModel implements JsonSerializable
         }
 
         $group = $data[static::PROPERTY_GROUP] ?? null;
+        $adminOnly = $data[static::PROPERTY_ADMIN_ONLY] ?? false;
         $useTraits = $data[static::PROPERTY_USE_TRAITS] ?? '';
         $implementsInterfaces = $data[static::PROPERTY_IMPLEMENTS_INTERFACES] ?? '';
         $selectOptionsData = $data[static::PROPERTY_SELECT_OPTIONS] ?? [];
@@ -231,6 +251,7 @@ final class Config extends AbstractModel implements JsonSerializable
         return (new static())
             ->setId($id)
             ->setGroup($group)
+            ->setAdminOnly($adminOnly)
             ->setUseTraits($useTraits)
             ->setImplementsInterfaces($implementsInterfaces)
             ->setSelectOptionsFromData($selectOptionsData);
@@ -249,6 +270,7 @@ final class Config extends AbstractModel implements JsonSerializable
         return [
             static::PROPERTY_ID => $this->getId(),
             static::PROPERTY_GROUP => $this->getGroup(),
+            static::PROPERTY_ADMIN_ONLY => $this->getAdminOnly(),
             static::PROPERTY_USE_TRAITS => $this->getUseTraits(),
             static::PROPERTY_IMPLEMENTS_INTERFACES => $this->getImplementsInterfaces(),
             static::PROPERTY_SELECT_OPTIONS => $this->getSelectOptions(),

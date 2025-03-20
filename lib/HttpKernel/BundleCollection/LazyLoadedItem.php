@@ -78,7 +78,7 @@ class LazyLoadedItem extends AbstractItem
     public function registerDependencies(BundleCollection $collection): void
     {
         if (self::implementsInterface($this->className, DependentBundleInterface::class)) {
-            /** @var DependentBundleInterface $className */
+            /** @var class-string<DependentBundleInterface> $className */
             $className = $this->className;
             $className::registerDependentBundles($collection);
         }

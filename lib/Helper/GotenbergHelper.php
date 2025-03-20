@@ -19,6 +19,7 @@ namespace Pimcore\Helper;
 use Exception;
 use Gotenberg\Gotenberg as GotenbergAPI;
 use Gotenberg\Stream;
+use Pimcore\Cache;
 use Pimcore\Config;
 
 /**
@@ -38,30 +39,27 @@ class GotenbergHelper
             return true;
         }
 
+        if (Cache::load('gotenberg_ping') === true) {
+            self::$validPing = true;
+
+            return true;
+        }
+
         if (!class_exists(GotenbergAPI::class, true)) {
             return false;
         }
 
-        $request = null;
-
-        /** @var GotenbergAPI|object $chrome */
         $chrome = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url']);
-        if (method_exists($chrome, 'html')) {
-            // gotenberg/gotenberg-php API Client v1
-            $request = $chrome->html(Stream::string('dummy.html', '<body></body>'));
-        } elseif (method_exists($chrome, 'screenshot')) {
-            $request = $chrome->screenshot()->html(Stream::string('dummy.html', '<body></body>'));
-        }
+        $request = $chrome->screenshot()->html(Stream::string('dummy.html', '<body></body>'));
 
-        if ($request) {
-            try {
-                GotenbergAPI::send($request);
-                self::$validPing = true;
+        try {
+            GotenbergAPI::send($request);
+            self::$validPing = true;
+            Cache::save(true, 'gotenberg_ping', [], Config::getSystemConfiguration('gotenberg')['ping_cache_ttl']);
 
-                return true;
-            } catch (Exception $e) {
-                // nothing to do
-            }
+            return true;
+        } catch (Exception $e) {
+            // nothing to do
         }
 
         return false;

@@ -46,8 +46,32 @@ class DataObjectController extends UserAwareController
         }
 
         $searchRequest = $request;
-        $searchRequest->request->set('type', 'object');
-        $searchRequest->request->set('subtype', 'object,variant');
+        if ($fieldConfig['fieldtype'] === 'manyToOneRelation') {
+            $types = [];
+            $subtypes = [];
+            if ($fieldConfig['documentsAllowed']) {
+                $types[] = 'document';
+                foreach ($fieldConfig['documentTypes'] as $documentTypes) {
+                    $subtypes[] = $documentTypes['documentTypes'];
+                }
+            }
+            if ($fieldConfig['assetsAllowed']) {
+                $types[] = 'asset';
+                foreach ($fieldConfig['assetTypes'] as $assetTypes) {
+                    $subtypes[] = $assetTypes['assetTypes'];
+                }
+            }
+            if ($fieldConfig['objectsAllowed']) {
+                $types[] = 'object';
+                $subtypes[] = 'object';
+                $subtypes[] = 'variant';
+            }
+            $searchRequest->request->set('type', implode(',', $types));
+            $searchRequest->request->set('subtype', implode(',', $subtypes));
+        } else {
+            $searchRequest->request->set('type', 'object');
+            $searchRequest->request->set('subtype', 'object,variant');
+        }
         $searchRequest->request->set('class', implode(',', $classes));
         $searchRequest->request->set('fields', $visibleFields);
 
