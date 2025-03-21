@@ -573,7 +573,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 $objectTypes = $arguments[3] ?? null;
 
                 if (!$field instanceof AbstractRelations) {
-                    $defaultCondition = $db->quoteIdentifier($realPropertyName) . ' = ' . $db->quote($value) . ' ';
+                    $defaultCondition = $db->quoteIdentifier($realPropertyName) . ' = ' . $db->quote((string)$value) . ' ';
                 }
                 $listConfig = [
                     'condition' => $defaultCondition,
