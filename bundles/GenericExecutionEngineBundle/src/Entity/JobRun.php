@@ -63,7 +63,7 @@ class JobRun
 
     private ?SerializerInterface $serializer = null;
 
-    private ?Job $job;
+    private ?Job $job = null;
 
     #[ORM\Column(type: 'text')]
     private ?string $serializedJob;
@@ -71,11 +71,11 @@ class JobRun
     #[ORM\Column(type: 'json')]
     private ?array $context = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $creationDate;
+    #[ORM\Column(nullable: false)]
+    private int $creationDate;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $modificationDate;
+    #[ORM\Column(nullable: false)]
+    private int $modificationDate;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $executionContext;
@@ -89,6 +89,7 @@ class JobRun
     public function __construct(?int $ownerId = null)
     {
         $this->creationDate = time();
+        $this->modificationDate = time();
         $this->ownerId = $ownerId;
         $this->executionContext = self::DEFAULT_EXECUTION_CONTEXT;
     }
@@ -200,14 +201,14 @@ class JobRun
         $this->context = $context;
     }
 
-    public function getCreationDate(): ?int
+    public function getCreationDate(): int
     {
         return $this->creationDate;
     }
 
-    public function getModificationDate(): ?int
+    public function getModificationDate(): int
     {
-        return $this->modificationDate ?? null;
+        return $this->modificationDate;
     }
 
     #[ORM\PrePersist]

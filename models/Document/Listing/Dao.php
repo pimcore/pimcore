@@ -105,11 +105,21 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function getTotalCount(): int
     {
+        $identifierColumn = 'documents.id';
         $queryBuilder = $this->getQueryBuilder();
-        $this->prepareQueryBuilderForTotalCount($queryBuilder, 'documents.id');
+        $this->prepareQueryBuilderForTotalCount($queryBuilder, $identifierColumn);
 
-        $amount = (int) $this->db->fetchOne($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
+        if (
+            $this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') ||
+            $this->isQueryBuilderPartInUse($queryBuilder, 'having')
+        ) {
+            return (int)$this->db->fetchOne('SELECT COUNT(*)  FROM (' . $queryBuilder->getSQL() . ') as XYZ');
+        }
 
-        return $amount;
+        return (int)$this->db->fetchOne(
+            $queryBuilder->getSql(),
+            $queryBuilder->getParameters(),
+            $queryBuilder->getParameterTypes()
+        );
     }
 }

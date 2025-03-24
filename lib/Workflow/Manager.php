@@ -114,8 +114,7 @@ class Manager
     /**
      * Returns all PlaceConfigs (for given marking) ordered by it's appearence in the workflow config file
      *
-     *
-     * @return PlaceConfig[];
+     * @return PlaceConfig[]
      */
     public function getOrderedPlaceConfigs(WorkflowInterface $workflow, ?Marking $marking = null): array
     {
@@ -234,7 +233,7 @@ class Manager
         $transition = $this->getTransitionByName($workflow->getName(), $transition);
         $changePublishedState = $transition instanceof Transition ? $transition->getChangePublishedState() : null;
 
-        if ($saveSubject && $subject instanceof ElementInterface) {
+        if ($saveSubject) {
             if ($changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION) {
                 $subject->saveVersion();
             } else {

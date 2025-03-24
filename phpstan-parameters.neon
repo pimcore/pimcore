@@ -15,27 +15,27 @@ parameters:
         - bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
 
     symfony:
-        container_xml_path: var/cache/test/App_KernelTestDebugContainer.xml
+        containerXmlPath: var/cache/test/App_KernelTestDebugContainer.xml
 
     ignoreErrors:
-        - '~^Unsafe usage of new static\(\)~'
         -
-            identifier: missingType.iterableValue
+            identifier: new.static
         -
             identifier: missingType.generics
+        -
+            identifier: missingType.iterableValue
 
     # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
         - Pimcore\Config\Config
         - Pimcore\Templating\Model\ViewModel
 
-    checkAlwaysTrueCheckTypeFunctionCall: true
-    reportUnmatchedIgnoredErrors: false
-
     ergebnis:
         final:
             enabled: false
         finalInAbstractClass:
+            enabled: false
+        noAssignByReference:
             enabled: false
         noCompact:
             enabled: false
@@ -51,11 +51,15 @@ parameters:
             enabled: false
         noNullableReturnTypeDeclaration:
             enabled: false
+        noParameterPassedByReference:
+            enabled: false
         noParameterWithContainerTypeDeclaration:
             enabled: false
         noParameterWithNullableTypeDeclaration:
             enabled: false
         noParameterWithNullDefaultValue:
+            enabled: false
+        noReturnByReference:
             enabled: false
         noSwitch:
             enabled: false

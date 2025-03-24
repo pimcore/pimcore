@@ -194,7 +194,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
         $params = $this->context->getParameters();
 
         foreach ($this->getStaticRoutes() as $route) {
-            if (null !== $request && null !== $route->getMethods() && 0 !== count($route->getMethods())) {
+            if (null !== $request && 0 !== count($route->getMethods())) {
                 $method = $request->getMethod();
 
                 if (!in_array($method, $route->getMethods(), true)) {
@@ -262,7 +262,6 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     protected function getStaticRoutes(): array
     {
         if (null === $this->staticRoutes) {
-            /** @var Staticroute\Listing|Staticroute\Listing\Dao $list */
             $list = new Staticroute\Listing();
 
             $list->setOrder(function ($a, $b) {

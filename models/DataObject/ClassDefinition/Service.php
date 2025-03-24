@@ -474,10 +474,6 @@ class Service
     }
 
     /**
-     *
-     *
-     * @throws Exception
-     *
      * @internal
      */
     public static function buildUseCode(array $useParts): string

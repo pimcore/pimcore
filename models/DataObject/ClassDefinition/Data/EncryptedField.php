@@ -64,9 +64,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): mixed
     {
         if ($data) {
-            /** @var ResourcePersistenceAwareInterface|null $fd */
             $fd = $this->getDelegateDatatypeDefinition();
-            if ($fd) {
+            if ($fd instanceof ResourcePersistenceAwareInterface) {
                 $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
                 $result = $fd->getDataForResource($data, $object, $params);
                 if (isset($params['skipEncryption']) && $params['skipEncryption']) {
@@ -154,9 +153,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\EncryptedField
     {
-        /** @var ResourcePersistenceAwareInterface|null $fd */
         $fd = $this->getDelegateDatatypeDefinition();
-        if ($fd) {
+        if ($fd instanceof ResourcePersistenceAwareInterface) {
             $data = $this->decrypt($data, $object, $params);
             $data = $fd->getDataFromResource($data, $object, $params);
 

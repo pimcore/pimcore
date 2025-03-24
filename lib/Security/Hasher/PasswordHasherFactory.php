@@ -60,7 +60,8 @@ class PasswordHasherFactory implements PasswordHasherFactoryInterface
     {
         $factoryKey = null;
 
-        if ($user instanceof PasswordHasherFactoryAwareInterface && (null !== $factoryName = $user->getHasherFactoryName())) {
+        if ($user instanceof PasswordHasherFactoryAwareInterface) {
+            $factoryName = $user->getHasherFactoryName();
             if (!array_key_exists($factoryName, $this->passwordHasherFactories)) {
                 throw new RuntimeException(sprintf('The hasher factory "%s" was not configured.', $factoryName));
             }

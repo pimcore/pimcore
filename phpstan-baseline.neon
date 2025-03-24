@@ -1,966 +1,1201 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/CoreBundle/src/Command/Document/CleanupCommand.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/CoreBundle/src/Controller/WebDavController.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/CoreBundle/src/DependencyInjection/Compiler/SerializerPass.php
 
 		-
-			message: "#^Negated boolean expression is always false\\.$#"
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
 			count: 2
 			path: bundles/CoreBundle/src/DependencyInjection/PimcoreCoreExtension.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/CoreBundle/src/EventListener/Frontend/ElementListener.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^Trait Pimcore\\Bundle\\CoreBundle\\EventListener\\Traits\\PreviewRequestTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: bundles/CoreBundle/src/EventListener/Traits/PreviewRequestTrait.php
+
+		-
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/CoreBundle/src/Migrations/Version20201007000000.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/CoreBundle/src/Migrations/Version20230424084415.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/CustomReportsBundle/src/DependencyInjection/Configuration.php
 
 		-
-			message: "#^Call to method addSetting\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\IndexActionSettingsEvent\\.$#"
+			message: '#^Call to method addSetting\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\Event\\IndexActionSettingsEvent\.$#'
+			identifier: class.notFound
 			count: 1
 			path: bundles/CustomReportsBundle/src/EventListener/IndexSettingsListener.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/CustomReportsBundle/src/EventListener/IndexSettingsListener.php
 
 		-
-			message: "#^Parameter \\$settingsEvent of method Pimcore\\\\Bundle\\\\CustomReportsBundle\\\\EventListener\\\\IndexSettingsListener\\:\\:indexSettings\\(\\) has invalid type Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\IndexActionSettingsEvent\\.$#"
+			message: '#^Parameter \$settingsEvent of method Pimcore\\Bundle\\CustomReportsBundle\\EventListener\\IndexSettingsListener\:\:indexSettings\(\) has invalid type Pimcore\\Bundle\\AdminBundle\\Event\\IndexActionSettingsEvent\.$#'
+			identifier: class.notFound
 			count: 1
 			path: bundles/CustomReportsBundle/src/EventListener/IndexSettingsListener.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/CustomReportsBundle/src/Tool/Config/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/CustomReportsBundle/src/Tool/Config/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/GlossaryBundle/src/DependencyInjection/Configuration.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/GlossaryBundle/src/Model/Glossary/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/GlossaryBundle/src/Model/Glossary/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/InstallBundle/src/BundleConfig/BundleWriter.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/InstallBundle/src/Event/BundleSetupEvent.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/InstallBundle/src/Event/InstallEvents.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\SeoBundle\\\\Controller\\\\Document\\\\DocumentController\\:\\:getTreeNodeConfig\\(\\)\\.$#"
+			message: '#^Call to an undefined method Pimcore\\Bundle\\SeoBundle\\Controller\\Document\\DocumentController\:\:getTreeNodeConfig\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: bundles/SeoBundle/src/Controller/Document/DocumentController.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/SeoBundle/src/Controller/Document/DocumentController.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/SeoBundle/src/Controller/MiscController.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/SeoBundle/src/Model/Redirect/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/SeoBundle/src/Model/Redirect/Listing/Dao.php
 
 		-
-			message: "#^Access to constant CONTEXT_SEARCH on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\ElementAdminStyleEvent\\.$#"
+			message: '#^Access to constant CONTEXT_SEARCH on an unknown class Pimcore\\Bundle\\AdminBundle\\Event\\ElementAdminStyleEvent\.$#'
+			identifier: class.notFound
 			count: 1
 			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
 
 		-
-			message: "#^Access to constant RESOLVE_ELEMENT_ADMIN_STYLE on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\AdminEvents\\.$#"
+			message: '#^Access to constant RESOLVE_ELEMENT_ADMIN_STYLE on an unknown class Pimcore\\Bundle\\AdminBundle\\Event\\AdminEvents\.$#'
+			identifier: class.notFound
 			count: 1
 			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
 
 		-
-			message: "#^Call to method getAdminStyle\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\ElementAdminStyleEvent\\.$#"
+			message: '#^Call to method getAdminStyle\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\Event\\ElementAdminStyleEvent\.$#'
+			identifier: class.notFound
 			count: 1
 			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
 
 		-
-			message: "#^Call to method getFilterCondition\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Helper\\\\GridHelperService\\.$#"
+			message: '#^Call to method getFilterCondition\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\Helper\\GridHelperService\.$#'
+			identifier: class.notFound
 			count: 2
 			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
 
 		-
-			message: "#^Instantiated class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\ElementAdminStyleEvent not found\\.$#"
+			message: '#^Instantiated class Pimcore\\Bundle\\AdminBundle\\Event\\ElementAdminStyleEvent not found\.$#'
+			identifier: class.notFound
 			count: 1
 			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
 
 		-
-			message: "#^Parameter \\$gridHelperService of method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\Controller\\\\SearchController\\:\\:findAction\\(\\) has invalid type Pimcore\\\\Bundle\\\\AdminBundle\\\\Helper\\\\GridHelperService\\.$#"
+			message: '#^Parameter \$gridHelperService of method Pimcore\\Bundle\\SimpleBackendSearchBundle\\Controller\\SearchController\:\:findAction\(\) has invalid type Pimcore\\Bundle\\AdminBundle\\Helper\\GridHelperService\.$#'
+			identifier: class.notFound
 			count: 1
 			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
 
 		-
-			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\MessageHandler\\\\SearchBackendHandler\\:\\:process\\(\\) is unused\\.$#"
+			message: '#^Method Pimcore\\Bundle\\SimpleBackendSearchBundle\\MessageHandler\\SearchBackendHandler\:\:process\(\) is unused\.$#'
+			identifier: method.unused
 			count: 1
 			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
 
 		-
-			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\MessageHandler\\\\SearchBackendHandler\\:\\:shouldFlush\\(\\) is unused\\.$#"
+			message: '#^Method Pimcore\\Bundle\\SimpleBackendSearchBundle\\MessageHandler\\SearchBackendHandler\:\:shouldFlush\(\) is unused\.$#'
+			identifier: method.unused
 			count: 1
 			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/StaticRoutesBundle/src/DependencyInjection/Configuration.php
 
 		-
-			message: "#^Call to method addSetting\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\IndexActionSettingsEvent\\.$#"
+			message: '#^Call to method addSetting\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\Event\\IndexActionSettingsEvent\.$#'
+			identifier: class.notFound
 			count: 1
 			path: bundles/StaticRoutesBundle/src/EventListener/IndexSettingsListener.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/StaticRoutesBundle/src/EventListener/IndexSettingsListener.php
 
 		-
-			message: "#^Parameter \\$settingsEvent of method Pimcore\\\\Bundle\\\\StaticRoutesBundle\\\\EventListener\\\\IndexSettingsListener\\:\\:indexSettings\\(\\) has invalid type Pimcore\\\\Bundle\\\\AdminBundle\\\\Event\\\\IndexActionSettingsEvent\\.$#"
+			message: '#^Parameter \$settingsEvent of method Pimcore\\Bundle\\StaticRoutesBundle\\EventListener\\IndexSettingsListener\:\:indexSettings\(\) has invalid type Pimcore\\Bundle\\AdminBundle\\Event\\IndexActionSettingsEvent\.$#'
+			identifier: class.notFound
 			count: 1
 			path: bundles/StaticRoutesBundle/src/EventListener/IndexSettingsListener.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/StaticRoutesBundle/src/Model/Staticroute/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/StaticRoutesBundle/src/Model/Staticroute/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/UuidBundle/src/DependencyInjection/Configuration.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/UuidBundle/src/DependencyInjection/PimcoreUuidExtension.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/UuidBundle/src/Installer.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/UuidBundle/src/Migrations/Version20230203160742.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/UuidBundle/src/Model/Tool/UUID/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/UuidBundle/src/Model/Tool/UUID/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/UuidBundle/src/PimcoreUuidBundle.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/WordExportBundle/src/Controller/TranslationController.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/XliffBundle/src/Event/Model/TranslationXliffEvent.php
 
 		-
-			message: "#^Call to function is_subclass_of\\(\\) with '\\\\\\\\App\\\\\\\\Kernel' and 'Pimcore\\\\\\\\Kernel' will always evaluate to true\\.$#"
+			message: '#^Call to function is_subclass_of\(\) with ''\\\\App\\\\Kernel'' and ''Pimcore\\\\Kernel'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: lib/Bootstrap.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^Trait Pimcore\\Console\\Traits\\Timeout is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: lib/Console/Traits/Timeout.php
+
+		-
+			message: '#^Trait Pimcore\\Controller\\Traits\\ElementEditLockHelperTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: lib/Controller/Traits/ElementEditLockHelperTrait.php
+
+		-
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Controller/Traits/JsonHelperTrait.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Controller/UserAwareController.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^Trait Pimcore\\Event\\Traits\\RequestAwareTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: lib/Event/Traits/RequestAwareTrait.php
+
+		-
+			message: '#^Trait Pimcore\\Event\\Traits\\ResponseAwareTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: lib/Event/Traits/ResponseAwareTrait.php
+
+		-
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Extension/Bundle/PimcoreBundleAdminClassicInterface.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Extension/Bundle/Traits/BundleAdminClassicTrait.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Image/Adapter.php
 
 		-
-			message: "#^Negated boolean expression is always false\\.$#"
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: lib/Image/Adapter/Imagick.php
 
 		-
-			message: "#^If condition is always false\\.$#"
-			count: 1
-			path: lib/Image/Chromium.php
-
-		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Model/AbstractModel.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Model/Dao/DaoTrait.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^Instanceof between Pimcore\\Navigation\\Page and Pimcore\\Navigation\\Page will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: lib/Navigation/Container.php
+
+		-
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Security/Hasher/PimcoreUserPasswordHasher.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Security/User/Exception/InvalidUserException.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Security/User/TokenStorageUserResolver.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Security/User/User.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Security/User/UserLoader.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Security/User/UserProvider.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Serializer/Normalizer/ReferenceLoopNormalizer.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/Serializer/Serializer.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/SystemSettingsConfig.php
 
 		-
-			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
+			message: '#^Call to an undefined method COM\:\:Run\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: lib/Tool/Console.php
 
 		-
-			message: "#^Offset 'DELEGATES' does not exist on string\\.$#"
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
 			count: 1
 			path: lib/Tool/Requirements.php
 
 		-
-			message: "#^Static call to instance method Imagick\\:\\:getConfigureOptions\\(\\)\\.$#"
-			count: 1
-			path: lib/Tool/Requirements.php
-
-		-
-			message: "#^Ternary operator condition is always true\\.$#"
-			count: 1
-			path: lib/Tool/Requirements.php
-
-		-
-			message: "#^Dead catch \\- Throwable is never thrown in the try block\\.$#"
+			message: '#^Dead catch \- Throwable is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
 			count: 1
 			path: lib/Tool/Serialize.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: lib/helper-functions.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Asset.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Asset/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Asset/Image/Thumbnail.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Asset/Image/Thumbnail/Config/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Asset/Image/Thumbnail/Config/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Asset/Listing/Dao.php
 
 		-
-			message: "#^Negated boolean expression is always true\\.$#"
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: models/Asset/Video/ImageThumbnail.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Asset/Video/Thumbnail/Config/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Asset/Video/Thumbnail/Config/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/AbstractObject/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/ClassDefinition/CustomLayout/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/ClassDefinition/CustomLayout/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/ClassDefinition/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/ClassDefinition/Data.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/ClassDefinition/Data/ClassSavedInterface.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/ClassDefinition/Data/Consent.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/ClassDefinition/Data/Input.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/ClassDefinition/Helper/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/ClassDefinition/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Classificationstore/CollectionConfig/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Classificationstore/CollectionConfig/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Classificationstore/CollectionGroupRelation/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Classificationstore/CollectionGroupRelation/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Classificationstore/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Classificationstore/GroupConfig/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Classificationstore/GroupConfig/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Classificationstore/KeyConfig/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Classificationstore/KeyConfig/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Classificationstore/KeyGroupRelation/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Classificationstore/KeyGroupRelation/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Classificationstore/StoreConfig/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Classificationstore/StoreConfig/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Concrete/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Data/AbstractMetadata/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Data/ElementMetadata/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Data/ObjectMetadata/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Fieldcollection/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Fieldcollection/Data/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Fieldcollection/Definition/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Folder/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Listing/Concrete/Dao.php
 
 		-
-			message: "#^Call to function method_exists\\(\\) with Pimcore\\\\Model\\\\DataObject\\\\Listing and 'addDistinct' will always evaluate to true\\.$#"
+			message: '#^Call to function method_exists\(\) with Pimcore\\Model\\DataObject\\Listing and ''addDistinct'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: models/DataObject/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Localizedfield/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Objectbrick/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Objectbrick/Data/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Objectbrick/Definition/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/QuantityValue/Unit.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/QuantityValue/Unit/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/QuantityValue/Unit/Listing/Dao.php
 
 		-
-			message: "#^Call to method expandLocales\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
+			message: '#^Trait Pimcore\\Model\\DataObject\\SelectOptions\\Traits\\EnumGetValuesTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: models/DataObject/SelectOptions/Traits/EnumGetValuesTrait.php
+
+		-
+			message: '#^Trait Pimcore\\Model\\DataObject\\SelectOptions\\Traits\\EnumTryFromNullableTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: models/DataObject/SelectOptions/Traits/EnumTryFromNullableTrait.php
+
+		-
+			message: '#^Call to method expandLocales\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\DataObject\\GridColumnConfig\\ConfigElementInterface\.$#'
+			identifier: class.notFound
 			count: 1
 			path: models/DataObject/Service.php
 
 		-
-			message: "#^Call to method getLabeledValue\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
+			message: '#^Call to method getLabeledValue\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\DataObject\\GridColumnConfig\\ConfigElementInterface\.$#'
+			identifier: class.notFound
 			count: 1
 			path: models/DataObject/Service.php
 
 		-
-			message: "#^Call to method getRenderer\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
+			message: '#^Call to method getRenderer\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\DataObject\\GridColumnConfig\\ConfigElementInterface\.$#'
+			identifier: class.notFound
 			count: 2
 			path: models/DataObject/Service.php
 
 		-
-			message: "#^Call to method getValidLanguages\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
+			message: '#^Call to method getValidLanguages\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\DataObject\\GridColumnConfig\\ConfigElementInterface\.$#'
+			identifier: class.notFound
 			count: 1
 			path: models/DataObject/Service.php
 
 		-
-			message: "#^Class Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\Service not found\\.$#"
+			message: '#^Class Pimcore\\Bundle\\AdminBundle\\DataObject\\GridColumnConfig\\Service not found\.$#'
+			identifier: class.notFound
 			count: 1
 			path: models/DataObject/Service.php
 
 		-
-			message: "#^Method Pimcore\\\\Model\\\\DataObject\\\\Service\\:\\:getConfigForHelperDefinition\\(\\) has invalid return type Pimcore\\\\Bundle\\\\AdminBundle\\\\DataObject\\\\GridColumnConfig\\\\ConfigElementInterface\\.$#"
+			message: '#^Method Pimcore\\Model\\DataObject\\Service\:\:getConfigForHelperDefinition\(\) has invalid return type Pimcore\\Bundle\\AdminBundle\\DataObject\\GridColumnConfig\\ConfigElementInterface\.$#'
+			identifier: class.notFound
 			count: 1
 			path: models/DataObject/Service.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: models/DataObject/Service.php
+
+		-
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Dependency/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Document/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Document/DocType/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Document/DocType/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Document/Editable/Areablock.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Document/Editable/Dao.php
 
 		-
-			message: "#^Class Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Model\\\\Document\\\\Targeting\\\\TargetingDocumentInterface not found\\.$#"
+			message: '#^Class Pimcore\\Bundle\\PersonalizationBundle\\Model\\Document\\Targeting\\TargetingDocumentInterface not found\.$#'
+			identifier: class.notFound
 			count: 1
 			path: models/Document/Editable/Renderlet.php
 
 		-
-			message: "#^Class Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Document\\\\DocumentTargetingConfigurator not found\\.$#"
+			message: '#^Class Pimcore\\Bundle\\PersonalizationBundle\\Targeting\\Document\\DocumentTargetingConfigurator not found\.$#'
+			identifier: class.notFound
 			count: 1
 			path: models/Document/Editable/Renderlet.php
 
 		-
-			message: "#^Class Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Document\\\\DocumentTargetingConfigurator not found\\.$#"
+			message: '#^Class Pimcore\\Bundle\\PersonalizationBundle\\Targeting\\Document\\DocumentTargetingConfigurator not found\.$#'
+			identifier: class.notFound
 			count: 1
 			path: models/Document/Editable/Snippet.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Document/Email/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Document/Folder/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Document/Hardlink/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Document/Link/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Document/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Document/Page/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Document/PageSnippet/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Document/Service/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Document/Snippet/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Element/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Element/Editlock/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Element/Note/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Element/Note/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^Instanceof between Pimcore\\Model\\User and Pimcore\\Model\\User will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: models/Element/PermissionChecker.php
+
+		-
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Element/Recyclebin/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Element/Recyclebin/Item/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Element/Recyclebin/Item/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Element/Tag/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Element/Tag/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Element/WorkflowState/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Element/WorkflowState/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Metadata/Predefined/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Metadata/Predefined/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Notification/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Notification/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Property/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Property/Predefined/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Property/Predefined/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Schedule/Task/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Schedule/Task/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Site/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Site/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Tool/Email/Blocklist/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Tool/Email/Blocklist/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Tool/Email/Log/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Tool/Email/Log/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Tool/SettingsStore/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Tool/TmpStore/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Translation/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Translation/Listing/Dao.php
 
 		-
-			message: "#^Call to static method get\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Perspective\\\\Config\\.$#"
+			message: '#^Call to static method get\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\Perspective\\Config\.$#'
+			identifier: class.notFound
 			count: 1
 			path: models/User.php
 
 		-
-			message: "#^Call to static method getAvailablePerspectives\\(\\) on an unknown class Pimcore\\\\Bundle\\\\AdminBundle\\\\Perspective\\\\Config\\.$#"
+			message: '#^Call to static method getAvailablePerspectives\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\Perspective\\Config\.$#'
+			identifier: class.notFound
 			count: 1
 			path: models/User.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/User/AbstractUser/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/User/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/User/Listing/AbstractListing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/User/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/User/Permission/Definition/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/User/Permission/Definition/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/User/Role/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/User/Role/Folder/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/User/Role/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/User/UserRole/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/User/Workspace/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Version/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Version/Listing/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/WebsiteSetting/Dao.php
 
 		-
-			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/WebsiteSetting/Listing/Dao.php

@@ -29,6 +29,7 @@ use DeepCopy\TypeMatcher\TypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Exception;
+use InvalidArgumentException;
 use League\Csv\EscapeFormula;
 use Pimcore;
 use Pimcore\Db;
@@ -48,6 +49,7 @@ use Pimcore\Model\Element\DeepCopy\MarshalMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\DeepCopy\UnmarshalMatcher;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Serialize;
 use ReflectionProperty;
@@ -904,14 +906,18 @@ class Service extends Model\AbstractModel
      */
     public static function addTreeFilterJoins(array $cv, Asset\Listing|DataObject\Listing|Document\Listing $childrenList): void
     {
-        if ($cv) {
-            $childrenList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
+        $fromName = self::getListingFrom($childrenList);
+
+        if (null === $fromName) {
+            throw new InvalidArgumentException('Unsupported listing type');
+        }
+
+        if (!empty($cv)) {
+            $childrenList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv, $fromName) {
                 $where = $cv['where'] ?? null;
                 if ($where) {
                     $select->andWhere($where);
                 }
-
-                $fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'] ;
 
                 $customViewJoins = $cv['joins'] ?? null;
                 if ($customViewJoins) {
@@ -925,8 +931,10 @@ class Service extends Model\AbstractModel
 
                         $condition = $joinConfig['condition'];
                         $columns = $joinConfig['columns'];
-                        $select->add('select', $columns, true);
-                        $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
+                        foreach ($columns as $column) {
+                            $select->addSelect($column);
+                        }
+                        $select->$method($fromName, $joinTable, $joinAlias, $condition);
                     }
                 }
 
@@ -1440,5 +1448,15 @@ class Service extends Model\AbstractModel
         } else {
             return $type . '_';
         }
+    }
+
+    private static function getListingFrom(PaginateListingInterface $listing): ?string
+    {
+        return match(true) {
+            $listing instanceof Asset\Listing => 'asset',
+            $listing instanceof DataObject\Listing => 'object',
+            $listing instanceof Document\Listing => 'document',
+            default => null,
+        };
     }
 }

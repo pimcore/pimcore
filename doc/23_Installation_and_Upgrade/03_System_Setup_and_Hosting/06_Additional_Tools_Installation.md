@@ -45,33 +45,6 @@ Make sure to add and install the required library via composer:
 composer require gotenberg/gotenberg-php ^2.0
 ```
 
-
-### Chromium (Chrome Headless) - deprecated
-
-> Chromium is used to generate previews of document pages. 
-> This functionality is now also provided by Gotenberg, therefore Chromium support has been deprecated in favour of Gotenberg. 
- 
-First of all, you need to add and install the required library via composer:
-```bash
-composer require chrome-php/chrome
-```
-
-You can then directly install and use the Chromium binary locally or use it in Docker Container, accessing it via WebSocket connection.
-
-#### Locally
-Please follow the steps on [https://www.chromium.org/getting-involved/download-chromium](https://www.chromium.org/getting-involved/download-chromium) for installing Chromium locally.
-
-
-#### Docker
-Add a new service as:
-```dockerfile
-    chrome:
-        image: browserless/chrome
-```
-and set accordingly:
-- config `pimcore.chromium.uri` value (e.g. `ws://chrome:3000/`)
-- web2print settings hostUrl as the Docker web server service (e.g. `http://nginx:80`)
-
 ## Image Optimizers
 
 ### JPEGOptim

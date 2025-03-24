@@ -42,14 +42,13 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $this->requestHelper = $requestHelper;
     }
 
-    public function getRouteByName(string $name): ?DataObjectRoute
+    public function getRouteByName(string $name): DataObjectRoute
     {
         if (preg_match('/^data_object_(\d+)_(\d+)_(.*)$/', $name, $match)) {
             $slug = DataObject\Data\UrlSlug::resolveSlug($match[3], (int) $match[2]);
             if ($slug && $slug->getObjectId() == $match[1]) {
-                /** @var DataObject\Concrete $object * */
-                $object = DataObject::getById((int) $match[1]);
-                if ($object instanceof DataObject\Concrete && $object->isPublished()) {
+                $object = DataObject\Concrete::getById((int) $match[1]);
+                if ($object?->isPublished()) {
                     return $this->buildRouteForFromSlug($slug, $object);
                 }
             }

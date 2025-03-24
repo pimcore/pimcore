@@ -17,9 +17,11 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use InvalidArgumentException;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Exception\NotFoundException;
 
 class QuantityValue extends AbstractQuantityValue
 {
@@ -238,15 +240,20 @@ class QuantityValue extends AbstractQuantityValue
             } else {
                 $value = $dataValue;
             }
-            $quantityValue = new Model\DataObject\Data\QuantityValue($value === null ? null : (float)$value, $dataUnit);
 
-            if (isset($params['owner'])) {
-                $quantityValue->_setOwner($params['owner']);
-                $quantityValue->_setOwnerFieldname($params['fieldname']);
-                $quantityValue->_setOwnerLanguage($params['language'] ?? null);
+            try {
+                $quantityValue = new Model\DataObject\Data\QuantityValue($value === null ? null : (float)$value, $dataUnit);
+
+                if (isset($params['owner'])) {
+                    $quantityValue->_setOwner($params['owner']);
+                    $quantityValue->_setOwnerFieldname($params['fieldname']);
+                    $quantityValue->_setOwnerLanguage($params['language'] ?? null);
+                }
+
+                return $quantityValue;
+            } catch (NotFoundException $e) {
+                Logger::warning('QuantityValue could not loaded from resource: ' . $e);
             }
-
-            return $quantityValue;
         }
 
         return null;

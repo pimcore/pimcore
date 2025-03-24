@@ -470,6 +470,8 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                                     pimcore.helpers.openElement(id, "asset");
                                 } else if (action == "openObject") {
                                     pimcore.helpers.openElement(id, "object");
+                                } else if (action === "openUrl") {
+                                    window.open(id);
                                 }
                             }.bind(this, colConfig)
                         }

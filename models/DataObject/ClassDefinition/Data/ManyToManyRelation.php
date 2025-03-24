@@ -183,9 +183,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
     {
-        $return = [];
-
-        if (is_array($data) && count($data) > 0) {
+        if (is_array($data)) {
+            $return = [];
             $counter = 1;
             foreach ($data as $object) {
                 if ($object instanceof Element\ElementInterface) {
@@ -200,13 +199,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             }
 
             return $return;
-        } elseif (is_array($data) && count($data) === 0) {
-            //give empty array if data was not null
-            return [];
-        } else {
-            //return null if data was null  - this indicates data was not loaded
-            return null;
         }
+
+        return null;
     }
 
     protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
@@ -458,10 +453,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
                 $container->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($container);
-
-                if ($container instanceof Element\DirtyIndicatorInterface) {
-                    $container->markFieldDirty($this->getName(), false);
-                }
+                $container->markFieldDirty($this->getName(), false);
             }
         } elseif ($container instanceof DataObject\Localizedfield) {
             $data = $params['data'];

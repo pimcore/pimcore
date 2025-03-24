@@ -418,9 +418,7 @@ class Multiselect extends Data implements
             $existingData = [];
         }
 
-        $existingData = array_unique(array_diff($existingData, $removeData));
-
-        return $existingData;
+        return array_unique(array_diff($existingData, $removeData));
     }
 
     public function isFilterable(): bool

@@ -174,13 +174,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         // @TODO Find a better solution for using isEmpty() in all ClassDefintion DataTypes
 
         $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
-        /** @var Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $dataDefinition */
         $dataDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
         // set the given group to active groups
         $this->setActiveGroups($this->activeGroups + [$groupId => true]);
 
-        if (!$this->isFieldDirty('_self')) {
+        if (!$this->isFieldDirty('_self') && $dataDefinition instanceof Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
             if ($this->object) {
                 $oldData = $this->items[$groupId][$keyId][$language] ?? null;
                 $oldData = $dataDefinition->getDataForResource($oldData, $this->object, ['owner' => $this]);

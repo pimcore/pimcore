@@ -191,8 +191,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             $conditionParts = Model\DataObject\Service::buildConditionPartsFromDescriptor($deleteDescriptor);
             $db->executeQuery('DELETE FROM ' . Model\DataObject\Data\UrlSlug::TABLE_NAME . ' WHERE ' . implode(' AND ', $conditionParts));
             // now save the new data
-            if (is_array($slugs) && !empty($slugs)) {
-                /** @var Model\DataObject\Data\UrlSlug $slug */
+            if (is_array($slugs)) {
                 foreach ($slugs as $slug) {
                     if (!$slug['slug']) {
                         continue;
@@ -481,9 +480,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 $container->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($container);
 
-                if ($container instanceof Model\Element\DirtyIndicatorInterface) {
-                    $container->markFieldDirty($this->getName(), false);
-                }
+                $container->markFieldDirty($this->getName(), false);
             }
         } elseif ($container instanceof Model\DataObject\Localizedfield) {
             $data = $params['data'];

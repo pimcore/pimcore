@@ -146,7 +146,7 @@ class CacheWarmingCommand extends AbstractCommand
     protected function writeWarmingMessage(string $type, array $types, string $extra = ''): void
     {
         $output = sprintf('Warming <comment>%s</comment> cache', $type);
-        if (null !== $types && count($types) > 0) {
+        if ($types) {
             $output .= sprintf(' for types %s', $this->humanList($types, 'and', '<info>%s</info>'));
         } else {
             $output .= sprintf(' for <info>all</info> types');

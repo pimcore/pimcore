@@ -1,6 +1,35 @@
 # Upgrade Notes
 
 ## Pimcore 12.0.0
+
+#### [Documents]
+- Removed deprecated Headless Chrome Processor.
+- Dropped support of `gotenberg/gotenberg-php` `v1.1` in favor of just supporting `v2` which bundles Chromium functionalities that refrain from requiring a standalone chromium binary.
+
+#### [Doctrine]
+- Added support of `doctrine/dbal` `v4`
+- Dropped support of `doctrine/dbal` `v3`
+- Changed signature of `Pimcore\Db\Helper::quoteInto()`, passing `$type` is not supported anymore to match the changes in `DBAL` about `quote()` working only with strings.
+- Tweaked the way the `Listing/Dao::getTotalCount()` is used to enable support with DBAL `v4`, please check the latest docs.
+
+#### [ApplicationLoggerBundle]
+
+- Log levels can be translated now. The keys are based on the integer representation of the log level:
+`application_logger_log_level_1` = Emergency,
+`application_logger_log_level_2` = Alert,
+`application_logger_log_level_3` = Critical,
+`application_logger_log_level_4` = Error,
+`application_logger_log_level_5` = Warning,
+`application_logger_log_level_6` = Notice,
+`application_logger_log_level_7` = Info,
+`application_logger_log_level_8` = Debug,  
+Please make sure to add translations for log levels.
+
+- `filter_priority` configuration changed. LogLevels now start at 1 (emergency) - 8 (debug) instead of 0 (emergency) - 7 (debug). Please adjust your configuration accordingly.
+
+#### [Assets]
+- `customSettings` column in `assets` table is now a JSON column. 
+
 #### [Bundle]
 - Removed compatibility layer static `$bundleManager`
 
@@ -10,10 +39,32 @@
 #### [Documents]
 - Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
 
+#### [Database]
+- Change of default collation to `utf8mb4_unicode_520_ci` from `utf8mb4_general_ci`.
+- Make sure to update your database accordingly but be careful which tables you adapt. You can use the following statements to generate the `ALTER TABLE` statements for all tables. Please exclude tables you do not want to update.
+```sql
+-- Change database collation
+ALTER DATABASE `your_database_name` COLLATE utf8mb4_unicode_520_ci;
+-- For tables
+SELECT CONCAT('ALTER TABLE `', TABLE_NAME, '` COLLATE utf8mb4_unicode_520_ci;') 
+FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_SCHEMA = 'your_database_name' 
+  AND TABLE_COLLATION = 'utf8mb4_general_ci'
+ORDER BY TABLE_NAME;    
+-- For columns
+SELECT CONCAT('ALTER TABLE `', TABLE_NAME, '` CHANGE `', COLUMN_NAME, '` `', COLUMN_NAME, '` ', COLUMN_TYPE, ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;')
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'your_database_name'
+  AND COLLATION_NAME = 'utf8mb4_general_ci'
+ORDER BY TABLE_NAME;
+```
+
 #### [DataObjects]
 - Removed deprecated `unserialize()` method from `Pimcore\Model\DataObject\Data\Link`. If not the data is not migrated to the new format, to the new default values, please execute a simple script to resave all links.
 - Parameter `$index` of method `setIndex` is not nullable anymore in `Pimcore\Model\DataObject\ClassDefinition\Data`.
 - Removed deprecated `getThumbnailConfig()` method from `Pimcore\Model\Asset\Image`.
+- Removed deprecated hashing algorithms from `Pimcore\Model\DataObject\Data\Password`. `password_hash` is the only supported hashing algorithm now.
+- Removed deprecated `getVersionDependentDatabaseColumnName` method. You can use the column name directly now.
 
 #### [Events]
 - Removed `context` property of `ResolveUploadTargetEvent`.
@@ -40,6 +91,7 @@
 
 #### [Workflow]
 - Method `getWorkflowByName()` now returns `?WorkflowInterface` instead of `?object`. This also affected the `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php`.
+- Methods `sendPimcoreNotification` and `sendWorkflowEmailNotification` in `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php` now accept the `Transition` itself, rather than the `string` label.
 
 ### Custom Reports
 - add function `getColumnsWithMetadata` to `bundles/CustomReportsBundle/src/Tool/Adapter/CustomReportAdapterInterface.php`

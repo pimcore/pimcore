@@ -354,68 +354,58 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Concrete $object
-     *
      * @throws Exception
      */
     protected function getBlockDataFromContainer(Concrete $object, array $params = []): mixed
     {
-        $data = null;
-
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'])) {
             if ($context['containerType'] === 'fieldcollection') {
                 $fieldname = $context['fieldname'];
 
-                if ($object instanceof DataObject\Concrete) {
-                    $containerGetter = 'get' . ucfirst($fieldname);
-                    $container = $object->$containerGetter();
-                    if ($container) {
-                        $originalIndex = $context['oIndex'];
+                $containerGetter = 'get' . ucfirst($fieldname);
+                $container = $object->$containerGetter();
+                if ($container) {
+                    $originalIndex = $context['oIndex'];
 
-                        // field collection or block items
-                        if (!is_null($originalIndex)) {
-                            $items = $container->getItems();
+                    // field collection or block items
+                    if (!is_null($originalIndex)) {
+                        $items = $container->getItems();
 
-                            if ($items && count($items) > $originalIndex) {
-                                $item = $items[$originalIndex];
+                        if ($items && count($items) > $originalIndex) {
+                            $item = $items[$originalIndex];
 
-                                $getter = 'get' . ucfirst($this->getName());
-                                $data = $item->$getter();
+                            $getter = 'get' . ucfirst($this->getName());
 
-                                return $data;
-                            }
-                        } else {
-                            return null;
+                            return $item->$getter();
                         }
                     } else {
                         return null;
                     }
+                } else {
+                    return null;
                 }
             } elseif ($context['containerType'] === 'objectbrick') {
                 $fieldname = $context['fieldname'];
 
-                if ($object instanceof DataObject\Concrete) {
-                    $containerGetter = 'get' . ucfirst($fieldname);
-                    $container = $object->$containerGetter();
-                    if ($container) {
-                        $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        /** @var DataObject\Objectbrick\Data\AbstractData|null $brickData */
-                        $brickData = $container->$brickGetter();
+                $containerGetter = 'get' . ucfirst($fieldname);
+                $container = $object->$containerGetter();
+                if ($container) {
+                    $brickGetter = 'get' . ucfirst($context['containerKey']);
+                    /** @var DataObject\Objectbrick\Data\AbstractData|null $brickData */
+                    $brickData = $container->$brickGetter();
 
-                        if ($brickData) {
-                            $blockGetter = $params['blockGetter'];
-                            $data = $brickData->$blockGetter();
+                    if ($brickData) {
+                        $blockGetter = $params['blockGetter'];
 
-                            return $data;
-                        }
+                        return $brickData->$blockGetter();
                     }
                 }
             }
         }
 
-        return $data;
+        return null;
     }
 
     /**

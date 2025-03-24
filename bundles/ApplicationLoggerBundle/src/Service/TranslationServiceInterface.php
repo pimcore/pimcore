@@ -14,19 +14,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Image;
+namespace Pimcore\Bundle\ApplicationLoggerBundle\Service;
 
-trigger_deprecation('pimcore/pimcore', '11.2', 'The "%s" class is deprecated, use "%s" instead.', Chromium::class, HtmlToImage::class);
+interface TranslationServiceInterface
+{
+    public function getTranslatedLogLevels(): array;
 
-if (!class_exists(Chromium::class, false)) {
-    class_alias(HtmlToImage::class, Chromium::class);
-}
-
-if (false) {
-    /**
-     * @deprecated since Pimcore 11.2, use HtmlToImage instead
-     */
-    class Chromium extends HtmlToImage
-    {
-    }
+    public function getTranslatedLogLevel(int $key): string;
 }
