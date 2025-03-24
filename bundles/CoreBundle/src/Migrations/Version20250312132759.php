@@ -120,7 +120,7 @@ final class Version20250312132759 extends AbstractMigration
 
     private function isTargetColumn(string $value, bool $up): bool
     {
-        return ($up === true && preg_match('/^a:\d+:\{.*\}$/', $value)) ||
+        return ($up === true && preg_match('/^a:\d+:\{.*\}$/s', $value)) ||
             ($up === false && preg_match('/^\{.*\}$/', $value));
     }
 
