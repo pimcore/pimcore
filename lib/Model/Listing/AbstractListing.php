@@ -358,11 +358,15 @@ abstract class AbstractListing extends AbstractModel implements Iterator, Counta
         return $db->quoteIdentifier($value);
     }
 
+    /**
+     * @deprecated $value type mixed will be changed to string in the next major version
+     * @deprecated $type is not used
+     */
     public function quote(mixed $value, ?int $type = null): string
     {
         $db = Db::get();
 
-        return $db->quote($value);
+        return $db->quote((string) $value);
     }
 
     public function escapeLike(string $value): string
