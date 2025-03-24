@@ -242,7 +242,11 @@ class TranslationController extends UserAwareController
         ]);
     }
 
-    #[Route('/word-export-download', name: 'pimcore_bundle_wordexport_translation_wordexportdownload', methods: ['GET'])]
+    #[Route(
+        '/word-export-download',
+        name: 'pimcore_bundle_wordexport_translation_wordexportdownload',
+        methods: ['GET']
+    )]
     public function wordExportDownloadAction(Request $request): Response
     {
         $this->checkPermission(self::PERMISSION);

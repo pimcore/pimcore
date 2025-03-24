@@ -203,7 +203,11 @@ class LogController extends UserAwareController implements KernelControllerEvent
         return $this->jsonResponse(['components' => $components]);
     }
 
-    #[Route('/log/show-file-object', name: 'pimcore_admin_bundle_applicationlogger_log_showfileobject', methods: ['GET'])]
+    #[Route(
+        '/log/show-file-object',
+        name: 'pimcore_admin_bundle_applicationlogger_log_showfileobject',
+        methods: ['GET']
+    )]
     public function showFileObjectAction(Request $request): StreamedResponse
     {
         $this->checkPermission('application_logging');

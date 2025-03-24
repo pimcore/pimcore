@@ -53,7 +53,11 @@ class CustomReportController extends UserAwareController
         return $this->jsonResponse($reports);
     }
 
-    #[Route('/portlet-report-list', name: 'pimcore_bundle_customreports_customreport_portletreportlist', methods: ['GET', 'POST'])]
+    #[Route(
+        '/portlet-report-list',
+        name: 'pimcore_bundle_customreports_customreport_portletreportlist',
+        methods: ['GET', 'POST']
+    )]
     public function portletReportListAction(): JsonResponse
     {
         $this->checkPermission('reports');
@@ -295,7 +299,11 @@ class CustomReportController extends UserAwareController
         ]);
     }
 
-    #[Route('/drill-down-options', name: 'pimcore_bundle_customreports_customreport_drilldownoptions', methods: ['POST'])]
+    #[Route(
+        '/drill-down-options',
+        name: 'pimcore_bundle_customreports_customreport_drilldownoptions',
+        methods: ['POST']
+    )]
     public function drillDownOptionsAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
