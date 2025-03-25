@@ -20,7 +20,7 @@ use Pimcore\Model\User;
 
 /**
  * @method \Pimcore\Model\User\Listing\Dao getDao()
- * @method User[] load()
+ * @method User[]|User\Folder[] load()
  */
 class Listing extends Listing\AbstractListing
 {
