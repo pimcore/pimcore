@@ -91,7 +91,6 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     public function configureOptions(): void
     {
         $list = new Model\User\Listing();
-        $list->setCondition('type = "user"');
         $list->setOrder('asc');
         $list->setOrderKey('name');
         $users = $list->load();
