@@ -1089,7 +1089,7 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        $user = self::getUser($user);
+        $user = static::getUser($user);
 
         if ($user->isAdmin()) {
             return null;
@@ -1268,7 +1268,7 @@ class Service extends Model\Element\Service
             return $result;
         }
 
-        $user = self::getUser($user);
+        $user = static::getUser($user);
 
         if ($user->isAdmin()) {
             return $result;
@@ -1351,11 +1351,11 @@ class Service extends Model\Element\Service
         }
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
-            $user = self::getUser($user);
+            $user = static::getUser($user);
             if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig' && $object) {
                 $allowedView = self::getLanguagePermissions($object, $user, 'lView');
                 $allowedEdit = self::getLanguagePermissions($object, $user, 'lEdit');
-                self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit, $user);
+                static::enrichLayoutPermissions($layout, $allowedView, $allowedEdit, $user);
             }
 
             if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
@@ -1406,7 +1406,7 @@ class Service extends Model\Element\Service
                 if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
                     $layout->setPermissionView(
                         AdminTool::reorderWebsiteLanguages(
-                            self::getUser($user),
+                            static::getUser($user),
                             array_keys($allowedView),
                             true
                         )
@@ -1425,7 +1425,7 @@ class Service extends Model\Element\Service
                 if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
                     $layout->setPermissionEdit(
                         AdminTool::reorderWebsiteLanguages(
-                            self::getUser($user),
+                            static::getUser($user),
                             array_keys($allowedEdit),
                             true
                         )
@@ -1437,7 +1437,7 @@ class Service extends Model\Element\Service
                 $children = $layout->getChildren();
                 if (is_array($children)) {
                     foreach ($children as $child) {
-                        self::enrichLayoutPermissions($child, $allowedView, $allowedEdit, self::getUser($user));
+                        static::enrichLayoutPermissions($child, $allowedView, $allowedEdit, static::getUser($user));
                     }
                 }
             }
@@ -1942,7 +1942,7 @@ class Service extends Model\Element\Service
         }
     }
 
-    private static function getUser(User $user = null): ?User
+    private static function getUser(?User $user = null): ?User
     {
         return $user ?? AdminTool::getCurrentUser();
     }
