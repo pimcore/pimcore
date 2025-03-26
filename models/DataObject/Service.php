@@ -1078,7 +1078,7 @@ class Service extends Model\Element\Service
     /**
      * @internal
      */
-    public static function getCustomGridFieldDefinitions(string $classId, int $objectId, User $user = null): ?array
+    public static function getCustomGridFieldDefinitions(string $classId, int $objectId, ?User $user = null): ?array
     {
         $object = DataObject::getById($objectId);
 
@@ -1089,7 +1089,7 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        $user = static::getUser($user);
+        $user = self::getUser($user);
 
         if ($user->isAdmin()) {
             return null;
@@ -1255,7 +1255,7 @@ class Service extends Model\Element\Service
     public static function getCustomLayoutDefinitionForGridColumnConfig(
         ClassDefinition $class,
         int $objectId,
-        User $user = null
+        ?User $user = null
     ): array
     {
         $layoutDefinitions = $class->getLayoutDefinitions();
@@ -1268,7 +1268,7 @@ class Service extends Model\Element\Service
             return $result;
         }
 
-        $user = static::getUser($user);
+        $user = self::getUser($user);
 
         if ($user->isAdmin()) {
             return $result;
@@ -1337,7 +1337,7 @@ class Service extends Model\Element\Service
         ClassDefinition\Data|ClassDefinition\Layout|null &$layout,
         ?Concrete $object = null,
         array $context = [],
-        User $user = null
+        ?User $user = null
     ): void
     {
         if (is_null($layout)) {
@@ -1351,11 +1351,11 @@ class Service extends Model\Element\Service
         }
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
-            $user = static::getUser($user);
+            $user = self::getUser($user);
             if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig' && $object) {
                 $allowedView = self::getLanguagePermissions($object, $user, 'lView');
                 $allowedEdit = self::getLanguagePermissions($object, $user, 'lEdit');
-                static::enrichLayoutPermissions($layout, $allowedView, $allowedEdit, $user);
+                self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit, $user);
             }
 
             if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
@@ -1391,7 +1391,7 @@ class Service extends Model\Element\Service
         ClassDefinition\Data &$layout,
         ?array $allowedView,
         ?array $allowedEdit,
-        User $user = null
+        ?User $user = null
     ): void
     {
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
@@ -1406,7 +1406,7 @@ class Service extends Model\Element\Service
                 if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
                     $layout->setPermissionView(
                         AdminTool::reorderWebsiteLanguages(
-                            static::getUser($user),
+                            self::getUser($user),
                             array_keys($allowedView),
                             true
                         )
@@ -1425,7 +1425,7 @@ class Service extends Model\Element\Service
                 if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
                     $layout->setPermissionEdit(
                         AdminTool::reorderWebsiteLanguages(
-                            static::getUser($user),
+                            self::getUser($user),
                             array_keys($allowedEdit),
                             true
                         )
@@ -1437,7 +1437,7 @@ class Service extends Model\Element\Service
                 $children = $layout->getChildren();
                 if (is_array($children)) {
                     foreach ($children as $child) {
-                        static::enrichLayoutPermissions($child, $allowedView, $allowedEdit, static::getUser($user));
+                        self::enrichLayoutPermissions($child, $allowedView, $allowedEdit, self::getUser($user));
                     }
                 }
             }
