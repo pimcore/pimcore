@@ -214,6 +214,12 @@ parameters:
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
 			identifier: ergebnis.declareStrictTypes
 			count: 1
+			path: models/Asset/Dao.php
+
+		-
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
+			count: 1
 			path: models/Asset/Image/Thumbnail/Config/Dao.php
 
 		-
@@ -223,10 +229,28 @@ parameters:
 			path: models/Asset/Image/Thumbnail/Config/Listing/Dao.php
 
 		-
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
+			count: 1
+			path: models/Asset/Listing/Dao.php
+
+		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: models/Asset/Video/ImageThumbnail.php
+
+		-
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
+			count: 1
+			path: models/Asset/Video/Thumbnail/Config/Dao.php
+
+		-
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
+			count: 1
+			path: models/Asset/Video/Thumbnail/Config/Listing/Dao.php
 
 		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
@@ -371,6 +395,12 @@ parameters:
 			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/DataObject/Fieldcollection/Dao.php
+
+		-
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
+			count: 1
+			path: models/DataObject/Fieldcollection/Data/Dao.php
 
 		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
@@ -568,6 +598,12 @@ parameters:
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
 			identifier: ergebnis.declareStrictTypes
 			count: 1
+			path: models/Document/Listing/Dao.php
+
+		-
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
+			count: 1
 			path: models/Document/Page/Dao.php
 
 		-
@@ -701,6 +737,18 @@ parameters:
 			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Property/Predefined/Listing/Dao.php
+
+		-
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
+			count: 1
+			path: models/Schedule/Task/Dao.php
+
+		-
+			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
+			identifier: ergebnis.declareStrictTypes
+			count: 1
+			path: models/Schedule/Task/Listing/Dao.php
 
 		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
