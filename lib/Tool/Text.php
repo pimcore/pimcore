@@ -205,9 +205,7 @@ class Text
     private static function addAttributeToTag(string $oldTag, string $attribute, string $defaultValue = '/'): string
     {
         if (!str_contains($oldTag, $attribute)) {
-            $openTag = explode(' ', $oldTag)[0];
-
-            return str_replace($openTag, $openTag . ' ' . $attribute . '="' . $defaultValue . '"', $oldTag);
+            return $oldTag . ' ' . $attribute . '="' . $defaultValue . '"';
         }
 
         return $oldTag;
