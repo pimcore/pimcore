@@ -99,7 +99,7 @@ class DataObject extends Data
     public function getDataForListfolderGrid(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
-            $data = \Pimcore\Model\DataObject::getById($data);
+            $data = \Pimcore\Model\DataObject::getById((int)$data);
         }
 
         if ($data instanceof AbstractObject) {

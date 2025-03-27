@@ -1,9 +1,17 @@
 # Custom Reports
 :::caution
 
-To use this feature, please enable the `PimcoreCustomReportsBundle` in your `bundle.php` file and install it accordingly with the following command:
+To use this feature, please enable the `PimcoreCustomReportsBundle` in your `bundles.php` file via: 
 
-`bin/console pimcore:bundle:install PimcoreCustomReportsBundle`
+```php
+Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle::class => ['all' => true]
+```
+
+and install it accordingly with the following command:
+
+```sh
+bin/console pimcore:bundle:install PimcoreCustomReportsBundle
+```
 
 :::
 

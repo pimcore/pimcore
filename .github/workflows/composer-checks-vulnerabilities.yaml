@@ -11,6 +11,7 @@ permissions:
 jobs:
     composer-checks:
         uses: pimcore/workflows-collection-public/.github/workflows/reusable-composer-vulnerabilities.yaml@main
+        if: github.repository_owner == 'pimcore'
         strategy:
             fail-fast: false
             matrix:

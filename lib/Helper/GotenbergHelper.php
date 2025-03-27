@@ -19,6 +19,7 @@ namespace Pimcore\Helper;
 use Exception;
 use Gotenberg\Gotenberg as GotenbergAPI;
 use Gotenberg\Stream;
+use Pimcore\Cache;
 use Pimcore\Config;
 
 /**
@@ -38,6 +39,12 @@ class GotenbergHelper
             return true;
         }
 
+        if (Cache::load('gotenberg_ping') === true) {
+            self::$validPing = true;
+
+            return true;
+        }
+
         if (!class_exists(GotenbergAPI::class, true)) {
             return false;
         }
@@ -48,6 +55,7 @@ class GotenbergHelper
         try {
             GotenbergAPI::send($request);
             self::$validPing = true;
+            Cache::save(true, 'gotenberg_ping', [], Config::getSystemConfiguration('gotenberg')['ping_cache_ttl']);
 
             return true;
         } catch (Exception $e) {

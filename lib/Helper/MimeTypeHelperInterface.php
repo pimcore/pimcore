@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,25 +15,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\User;
+namespace Pimcore\Helper;
 
-use Pimcore\Model\User;
-
-/**
- * @method \Pimcore\Model\User\Listing\Dao getDao()
- * @method User[]|User\Folder[] load()
- */
-class Listing extends Listing\AbstractListing
+interface MimeTypeHelperInterface
 {
-    protected string $type = 'user';
-
-    /**
-     * Alias for $this->getItems()
-     *
-     * @return \Pimcore\Model\User[]
-     */
-    public function getUsers(): array
-    {
-        return $this->getItems();
-    }
+    public function guessMimeType(mixed $file): ?string;
 }

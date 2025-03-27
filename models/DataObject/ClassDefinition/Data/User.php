@@ -97,16 +97,18 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
 
         $options = [];
         foreach ($users as $user) {
-            $value = $user->getName();
-            $first = $user->getFirstname();
-            $last = $user->getLastname();
-            if (!empty($first) || !empty($last)) {
-                $value .= ' (' . $first . ' ' . $last . ')';
+            if ($user instanceof Model\User) {
+                $value = $user->getName();
+                $first = $user->getFirstname();
+                $last = $user->getLastname();
+                if (!empty($first) || !empty($last)) {
+                    $value .= ' (' . $first . ' ' . $last . ')';
+                }
+                $options[] = [
+                    'value' => $user->getId(),
+                    'key' => $value,
+                ];
             }
-            $options[] = [
-                'value' => $user->getId(),
-                'key' => $value,
-            ];
         }
         $this->setOptions($options);
     }
