@@ -43,9 +43,9 @@ class CustomLayout extends Model\AbstractModel
 
     protected string $description = '';
 
-    protected ?int $creationDate = null;
+    protected int $creationDate = 0;
 
-    protected ?int $modificationDate = null;
+    protected int $modificationDate = 0;
 
     protected ?int $userOwner = null;
 
@@ -269,12 +269,12 @@ class CustomLayout extends Model\AbstractModel
         return $this->name;
     }
 
-    public function getCreationDate(): ?int
+    public function getCreationDate(): int
     {
         return $this->creationDate;
     }
 
-    public function getModificationDate(): ?int
+    public function getModificationDate(): int
     {
         return $this->modificationDate;
     }
