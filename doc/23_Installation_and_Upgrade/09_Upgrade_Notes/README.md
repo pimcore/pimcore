@@ -7,6 +7,7 @@
 - Dropped support of `gotenberg/gotenberg-php` `v1.1` in favor of just supporting `v2` which bundles Chromium functionalities that refrain from requiring a standalone chromium binary.
 
 #### [Doctrine]
+- Bundles now need to use the default EntityManager (name: 'default') with the default connection (name: 'default')  or use another EntityManager with an additional connection.
 - Added support of `doctrine/dbal` `v4`
 - Dropped support of `doctrine/dbal` `v3`
 - Changed signature of `Pimcore\Db\Helper::quoteInto()`, passing `$type` is not supported anymore to match the changes in `DBAL` about `quote()` working only with strings.
