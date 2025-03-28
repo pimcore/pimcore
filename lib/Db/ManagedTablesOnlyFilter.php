@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Db;
 
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
 use RuntimeException;
 
@@ -38,6 +39,9 @@ final class ManagedTablesOnlyFilter
                 throw new RuntimeException('Only the default entity manager is supported. Found: ' . $name);
             }
             foreach ($em->getMetadataFactory()->getAllMetadata() as $metadata) {
+                if (!$metadata instanceof ClassMetadata) {
+                    continue;
+                }
                 $this->managedTables[] = $metadata->getTableName();
             }
         }
