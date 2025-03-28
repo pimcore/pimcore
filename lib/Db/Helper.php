@@ -97,6 +97,9 @@ class Helper
         return null;
     }
 
+    /**
+     * @deprecated mixed $value is deprecated and will be changed to string in the next major version.
+     */
     public static function quoteInto(Connection $db, string $text, mixed $value, ?int $count = null): array|string
     {
         if ($count === null) {
