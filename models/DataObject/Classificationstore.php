@@ -324,8 +324,13 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @throws Exception
      */
-    public function getLocalizedKeyValue(int $groupId, int $keyId, ?string $language = 'default', bool $ignoreFallbackLanguage = false, bool $ignoreDefaultLanguage = false): mixed
-    {
+    public function getLocalizedKeyValue(
+        int $groupId,
+        int $keyId,
+        ?string $language = 'default',
+        bool $ignoreFallbackLanguage = false,
+        bool $ignoreDefaultLanguage = false
+    ): mixed {
         $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
 
         if ($keyConfig->getType() == 'calculatedValue') {
