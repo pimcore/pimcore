@@ -140,7 +140,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->class;
     }
 
-    public function getLanguage(string $language = null): string
+    public function getLanguage(?string $language = null): string
     {
         if ($language) {
             return $language;
