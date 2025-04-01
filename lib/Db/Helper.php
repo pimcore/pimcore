@@ -34,8 +34,13 @@ class Helper
      * The values for the specified keys are read from the $data parameter.
      * @return last insert id or null if the insert was not successful or it was an update.
      */
-    public static function upsert(Connection $connection, string $table, array $data, array $keys, bool $quoteIdentifiers = true): int|string|null
-    {
+    public static function upsert(
+        Connection $connection,
+        string $table,
+        array $data,
+        array $keys,
+        bool $quoteIdentifiers = true
+    ): int|string|null {
         try {
             $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
             $connection->insert($table, $data);
