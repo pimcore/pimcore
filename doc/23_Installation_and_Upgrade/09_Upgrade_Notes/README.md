@@ -71,6 +71,7 @@ ORDER BY TABLE_NAME;
 - Removed `context` property of `ResolveUploadTargetEvent`.
 
 #### [Lib]
+- The method `Pimcore\Db\Helper::upsert()` now returns the last insert id instead of the number of affected rows.
 - Removed deprecated class `Pimcore\Helper\CsvFormulaFormatter`. Use `\League\Csv\EscapeFormula` instead.
 - Removed deprecated `getCachedSymfonyEnvironments()` method from `Pimcore\Tool`.
 

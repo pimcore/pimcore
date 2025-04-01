@@ -66,7 +66,7 @@ class Dao extends AbstractDao
             $model->setCreationDate($model->getModificationDate());
         }
 
-        Helper::upsert(
+        $lastInsertId = Helper::upsert(
             $this->db,
             self::DB_TABLE_NAME,
             $this->getData($model),
@@ -74,7 +74,7 @@ class Dao extends AbstractDao
         );
 
         if ($model->getId() === null) {
-            $model->setId((int) $this->db->lastInsertId());
+            $model->setId((int) $lastInsertId);
         }
     }
 
