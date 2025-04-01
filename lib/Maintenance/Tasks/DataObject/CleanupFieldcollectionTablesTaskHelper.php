@@ -87,7 +87,7 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
         if (!$fcDef) {
             $fcDef = \Pimcore\Model\DataObject\Fieldcollection\Definition::getByKey(lcfirst($fcType));
         }
-        
+
         if (!$fcDef) {
             $this->logger->error("Fieldcollection '" . $fcType . "' not found. Please check table " . $tableName);
 
