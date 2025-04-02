@@ -79,12 +79,16 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
             $migrations = $this->dependencyFactory->getMigrationRepository()->getMigrations();
             $executedMigrations = $metadataStorage->getExecutedMigrations();
 
+            if($executedMigrations->count() === 0) {
+                $metadataStorage->ensureInitialized();
+            }
+
             foreach ($migrations->getItems() as $migration) {
                 $version = $migration->getVersion();
 
                 if (!$executedMigrations->hasMigration($version)) {
                     $migrationResult = new ExecutionResult($version, Direction::UP);
-                    $metadataStorage->ensureInitialized();
+
                     $metadataStorage->complete($migrationResult);
                 }
 
@@ -109,7 +113,6 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
 
             foreach ($executedMigrations->getItems() as $migration) {
                 $migrationResult = new ExecutionResult($migration->getVersion(), Direction::DOWN);
-                $metadataStorage->ensureInitialized();
                 $metadataStorage->complete($migrationResult);
             }
         }
