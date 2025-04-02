@@ -17,9 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Cache\FullPage;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class PrepareTagsEvent extends Event
 {
@@ -33,13 +33,14 @@ class PrepareTagsEvent extends Event
     public function __construct(
         private readonly Request $request,
         private readonly Response $response
-    )  {
+    ) {
     }
 
     public function addTag(string $tag): void
     {
         $this->tags[] = $tag;
     }
+
     /**
      * @return string[]
      */
@@ -65,5 +66,4 @@ class PrepareTagsEvent extends Event
     {
         return $this->response;
     }
-
 }

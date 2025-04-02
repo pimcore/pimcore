@@ -349,7 +349,7 @@ class FullPageCacheListener
                 $this->eventDispatcher->dispatch($event, FullPageCacheEvents::PREPARE_TAGS);
                 $tags = $event->getTags();
 
-                $tags[] = $this->lifetime ? 'output_lifetime': 'output';
+                $tags[] = $this->lifetime ? 'output_lifetime' : 'output';
 
                 Cache::save($cacheItem, $cacheKey, $tags, $this->lifetime, 1000, true);
             } catch (Exception $e) {
