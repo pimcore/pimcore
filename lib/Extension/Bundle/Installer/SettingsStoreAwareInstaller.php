@@ -79,10 +79,6 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
             $migrations = $this->dependencyFactory->getMigrationRepository()->getMigrations();
             $executedMigrations = $metadataStorage->getExecutedMigrations();
 
-            if($executedMigrations->count() === 0) {
-                $metadataStorage->ensureInitialized();
-            }
-
             foreach ($migrations->getItems() as $migration) {
                 $version = $migration->getVersion();
 
