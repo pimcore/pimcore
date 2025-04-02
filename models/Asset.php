@@ -548,8 +548,6 @@ class Asset extends Element\AbstractElement
 
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
                 } catch (Exception $e) {
-                    Logger::error('Unable to save Asset: ' . (string) $e);
-
                     try {
                         $this->rollBack();
                     } catch (Exception $er) {
@@ -565,6 +563,7 @@ class Asset extends Element\AbstractElement
 
                         usleep($waitTime); // wait specified time until we restart the transaction
                     } else {
+                        Logger::error('Unable to save Asset: ' . (string) $e);
                         // if the transaction still fail after $maxRetries retries, we throw out the exception
                         throw $e;
                     }
