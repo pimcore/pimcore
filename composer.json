@@ -51,7 +51,7 @@
     "doctrine/doctrine-bundle": "^2.13.2",
     "doctrine/doctrine-migrations-bundle": "^3.2.2",
     "doctrine/inflector": "^2.0.2",
-    "doctrine/orm": "^2.15 || ^3.0",
+    "doctrine/orm": "^3.0",
     "doctrine/persistence": "^3.0.3",
     "egulias/email-validator": "^3.0 || ^4.0",
     "friendsofsymfony/jsrouting-bundle": "^3.2.1",

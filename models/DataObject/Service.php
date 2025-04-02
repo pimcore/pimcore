@@ -39,6 +39,7 @@ use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOption
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Tool\Session;
@@ -1077,7 +1078,7 @@ class Service extends Model\Element\Service
     /**
      * @internal
      */
-    public static function getCustomGridFieldDefinitions(string $classId, int $objectId): ?array
+    public static function getCustomGridFieldDefinitions(string $classId, int $objectId, ?User $user = null): ?array
     {
         $object = DataObject::getById($objectId);
 
@@ -1088,7 +1089,8 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        $user = AdminTool::getCurrentUser();
+        $user = self::getUser($user);
+
         if ($user->isAdmin()) {
             return null;
         }
@@ -1250,8 +1252,11 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function getCustomLayoutDefinitionForGridColumnConfig(ClassDefinition $class, int $objectId): array
-    {
+    public static function getCustomLayoutDefinitionForGridColumnConfig(
+        ClassDefinition $class,
+        int $objectId,
+        ?User $user = null
+    ): array {
         $layoutDefinitions = $class->getLayoutDefinitions();
 
         $result = [
@@ -1262,7 +1267,7 @@ class Service extends Model\Element\Service
             return $result;
         }
 
-        $user = AdminTool::getCurrentUser();
+        $user = self::getUser($user);
 
         if ($user->isAdmin()) {
             return $result;
@@ -1327,8 +1332,12 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function enrichLayoutDefinition(ClassDefinition\Data|ClassDefinition\Layout|null &$layout, ?Concrete $object = null, array $context = []): void
-    {
+    public static function enrichLayoutDefinition(
+        ClassDefinition\Data|ClassDefinition\Layout|null &$layout,
+        ?Concrete $object = null,
+        array $context = [],
+        ?User $user = null
+    ): void {
         if (is_null($layout)) {
             return;
         }
@@ -1340,11 +1349,11 @@ class Service extends Model\Element\Service
         }
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
-            $user = AdminTool::getCurrentUser();
+            $user = self::getUser($user);
             if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig' && $object) {
                 $allowedView = self::getLanguagePermissions($object, $user, 'lView');
                 $allowedEdit = self::getLanguagePermissions($object, $user, 'lEdit');
-                self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit);
+                self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit, $user);
             }
 
             if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
@@ -1367,7 +1376,7 @@ class Service extends Model\Element\Service
                 }
 
                 foreach ($children as $child) {
-                    self::enrichLayoutDefinition($child, $object, $context);
+                    self::enrichLayoutDefinition($child, $object, $context, $user);
                 }
             }
         }
@@ -1376,8 +1385,12 @@ class Service extends Model\Element\Service
     /**
      * @internal
      */
-    public static function enrichLayoutPermissions(ClassDefinition\Data &$layout, ?array $allowedView, ?array $allowedEdit): void
-    {
+    public static function enrichLayoutPermissions(
+        ClassDefinition\Data &$layout,
+        ?array $allowedView,
+        ?array $allowedEdit,
+        ?User $user = null
+    ): void {
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
             if (is_array($allowedView) && count($allowedView) > 0) {
                 $haveAllowedViewDefault = null;
@@ -1390,7 +1403,7 @@ class Service extends Model\Element\Service
                 if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
                     $layout->setPermissionView(
                         AdminTool::reorderWebsiteLanguages(
-                            AdminTool::getCurrentUser(),
+                            self::getUser($user),
                             array_keys($allowedView),
                             true
                         )
@@ -1409,7 +1422,7 @@ class Service extends Model\Element\Service
                 if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
                     $layout->setPermissionEdit(
                         AdminTool::reorderWebsiteLanguages(
-                            AdminTool::getCurrentUser(),
+                            self::getUser($user),
                             array_keys($allowedEdit),
                             true
                         )
@@ -1421,7 +1434,7 @@ class Service extends Model\Element\Service
                 $children = $layout->getChildren();
                 if (is_array($children)) {
                     foreach ($children as $child) {
-                        self::enrichLayoutPermissions($child, $allowedView, $allowedEdit);
+                        self::enrichLayoutPermissions($child, $allowedView, $allowedEdit, self::getUser($user));
                     }
                 }
             }
@@ -1924,5 +1937,10 @@ class Service extends Model\Element\Service
         } finally {
             DataObject::setGetInheritedValues($backup);
         }
+    }
+
+    private static function getUser(?User $user = null): ?User
+    {
+        return $user ?? AdminTool::getCurrentUser();
     }
 }

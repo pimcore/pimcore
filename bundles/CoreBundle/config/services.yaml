@@ -186,3 +186,11 @@ services:
         public: true
 
     Pimcore\Model\Notification\Service\UserService: ~
+
+    # Doctrine schema filter to only include managed tables
+    Pimcore\Db\ManagedTablesOnlyFilter.default:
+        class: Pimcore\Db\ManagedTablesOnlyFilter
+        arguments:
+            $registry: '@doctrine'
+        tags:
+            - { name: doctrine.dbal.schema_filter, connection: default }

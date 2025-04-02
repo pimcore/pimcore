@@ -67,10 +67,8 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::upsert($this->db, 'versions', $data, $this->getPrimaryKey('versions'));
-
-        $lastInsertId = $this->db->lastInsertId();
-        if (!$this->model->getId() && $lastInsertId) {
+        $lastInsertId = Helper::upsert($this->db, 'versions', $data, $this->getPrimaryKey('versions'));
+        if ($lastInsertId !== null && !$this->model->getId()) {
             $this->model->setId((int) $lastInsertId);
         }
 

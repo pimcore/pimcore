@@ -33,7 +33,7 @@ permissions:
 jobs:
     static-analysis-phpstan:
         name: "Static Analysis with PHPStan"
-        runs-on: "ubuntu-20.04"
+        runs-on: "ubuntu-latest"
         continue-on-error: ${{ matrix.experimental }}
         strategy:
             matrix:
