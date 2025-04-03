@@ -187,7 +187,7 @@ class Folder extends Model\Asset
                 }
                 $localFileContent = file_get_contents($localFile);
                 if (false === $localFileContent) {
-                    Logger::info('Creation of collage file of asset folder ' . $this->getRealFullPath() . ' is failed.');
+                    Logger::info('Generated collage file of asset folder ' . $this->getRealFullPath() . ' is broken or cannot be found.');
 
                     return null;
                 }
