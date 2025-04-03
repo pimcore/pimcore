@@ -45,7 +45,7 @@ final class ManagedTablesOnlyFilter
 
     public function loadManagedTables(): void
     {
-        $this->managedTables = [];
+        $this->managedTables = ['migration_versions'];
 
         foreach ($this->registry->getManagers() as $name => $em) {
             if ($name !== 'default') {
