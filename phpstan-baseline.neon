@@ -380,6 +380,11 @@ parameters:
 			path: models/Asset/Listing/Dao.php
 
 		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: models/Asset/Video/ImageThumbnail.php
+
+		-
 			message: "#^File is missing a \"declare\\(strict_types\\=1\\)\" declaration\\.$#"
 			count: 1
 			path: models/Asset/Video/Thumbnail/Config/Dao.php
