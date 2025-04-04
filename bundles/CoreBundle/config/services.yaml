@@ -185,6 +185,13 @@ services:
     Pimcore\Model\Notification\Service\NotificationService:
         public: true
 
+    Pimcore\Console\CommandContextHolder: ~
+
+
+    Pimcore\Bundle\CoreBundle\EventListener\ConsoleCommandListener:
+        tags:
+            - { name: 'kernel.event_subscriber' }
+
     Pimcore\Model\Notification\Service\UserService: ~
 
     # Doctrine schema filter to only include managed tables
@@ -192,5 +199,6 @@ services:
         class: Pimcore\Db\ManagedTablesOnlyFilter
         arguments:
             $registry: '@doctrine'
+            $commandContextHolder: '@Pimcore\Console\CommandContextHolder'
         tags:
             - { name: doctrine.dbal.schema_filter, connection: default }
