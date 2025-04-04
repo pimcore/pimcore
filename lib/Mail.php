@@ -565,7 +565,7 @@ class Mail extends Email
     /**
      * @param array<string, array<Address|string>> $recipients
      *
-     * @return array<Address|string>
+     * @return array<string, array<Address|string>>
      */
     private function getDebugMailRecipients(array $recipients): array
     {
