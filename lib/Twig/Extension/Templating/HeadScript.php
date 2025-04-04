@@ -382,7 +382,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Override set
      *
-     * @param  string $value
+     * @param  stdClass $value
      *
      */
     public function set($value): void

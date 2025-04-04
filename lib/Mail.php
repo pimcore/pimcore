@@ -563,7 +563,7 @@ class Mail extends Email
     }
 
     /**
-     * @param array<Address|string> $recipients
+     * @param array<string, array<Address|string>> $recipients
      *
      * @return array<Address|string>
      */
