@@ -85,7 +85,8 @@ class ImageGallery implements Iterator, OwnerAwareFieldInterface
     {
         if ($this->items) {
             /** @var array<int, Hotspotimage> $filtered */
-            $filtered = array_filter($this->items, fn($item) => !is_null($item));
+            $filtered = array_filter($this->items, fn ($item) => !is_null($item));
+
             return implode(',', array_map('strval', $filtered));
         }
 
