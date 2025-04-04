@@ -471,7 +471,6 @@ class Mail extends Email
         $recipients = [];
 
         foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
-            $recipients[$key] = null;
             $getterName = 'get' . $key;
             $addresses = $this->$getterName();
 

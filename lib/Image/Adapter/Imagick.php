@@ -62,7 +62,6 @@ class Imagick extends Adapter
         }
 
         if ($this->resource) {
-            unset($this->resource);
             $this->resource = null;
         }
 
