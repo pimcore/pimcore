@@ -79,7 +79,7 @@ class OptionsProvider implements SelectOptionsProviderInterface
     protected function generatePlaceLabel(PlaceConfig $placeConfig): string
     {
         // do not translate or format options when not in admin context
-        if (empty($this->translator->getLocale())) {
+        if (empty($this->translator->getLocale()) || !\Pimcore::inAdmin()) {
             return $placeConfig->getLabel();
         }
 
