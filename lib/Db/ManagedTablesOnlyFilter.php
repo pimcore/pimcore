@@ -40,7 +40,7 @@ final class ManagedTablesOnlyFilter
 
     public function __invoke(string $tableName): bool
     {
-        if ($this->isBypassedForCommand()) {
+        if (!$this->isActiveForCommand()) {
             return true;
         }
 
@@ -53,7 +53,7 @@ final class ManagedTablesOnlyFilter
 
     private function loadManagedTables(): void
     {
-        $this->managedTables = ['migration_versions'];
+        $this->managedTables = [];
 
         foreach ($this->registry->getManagers() as $name => $em) {
             if ($name !== 'default') {
@@ -69,8 +69,8 @@ final class ManagedTablesOnlyFilter
         $this->managedTables = array_unique($this->managedTables);
     }
 
-    private function isBypassedForCommand(): bool
+    private function isActiveForCommand(): bool
     {
-        return $this->commandContextHolder->getCommandName() === 'doctrine:migrations:migrate';
+        return $this->commandContextHolder->getCommandName() === 'doctrine:schema:update';
     }
 }
