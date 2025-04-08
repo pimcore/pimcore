@@ -129,10 +129,10 @@
   },
   "conflict": {
     "doctrine/doctrine-migrations-bundle": ">=3.4.0",
-    "pimcore/admin-ui-classic-bundle": "<1.5",
-    "pimcore/output-data-config-toolkit-bundle": "<5.0",
+    "pimcore/admin-ui-classic-bundle": "<2.0",
+    "pimcore/output-data-config-toolkit-bundle": "<6.0",
     "pimcore/translations-provider-interfaces": "<3.0",
-    "pimcore/web2print-tools-bundle": "<5.0",
+    "pimcore/web2print-tools-bundle": "<6.0",
     "phpstan/phpdoc-parser": ">=2.0",
     "sabre/dav": "4.2.2",
     "symfony/symfony": "*",
