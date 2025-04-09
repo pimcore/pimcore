@@ -32,7 +32,6 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object from database for the given id
      *
-     *
      * @throws Model\Exception\NotFoundException
      */
     public function getById(int $id): void
@@ -51,7 +50,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Get the data for the object from database for the given path
-     *
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -84,10 +82,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     *
      * @throws \Exception
      */
-    public function update(bool $isUpdate = null): void
+    public function update(?bool $isUpdate = null): void
     {
         $object = $this->model->getObjectVars();
 
@@ -132,7 +129,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Deletes object from database
-     *
      */
     public function delete(): void
     {
@@ -150,8 +146,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Updates the paths for children, children's properties and children's permissions in the database
-     *
-     *
      *
      * @internal
      */
@@ -184,7 +178,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * deletes all properties for the object from database
-     *
      */
     public function deleteAllProperties(): void
     {
@@ -287,7 +280,8 @@ class Dao extends Model\Element\Dao
         array $objectTypes = [
             DataObject::OBJECT_TYPE_OBJECT,
             DataObject::OBJECT_TYPE_VARIANT,
-            DataObject::OBJECT_TYPE_FOLDER],
+            DataObject::OBJECT_TYPE_FOLDER,
+        ],
         ?bool $includingUnpublished = null,
         ?User $user = null
     ): bool {
@@ -319,11 +313,12 @@ class Dao extends Model\Element\Dao
             $sql .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
         }
 
-        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && DataObject::doHideUnpublished())) {
+        $includingUnpublished ??= !DataObject::doHideUnpublished();
+        if (!$includingUnpublished) {
             $sql .= ' AND published = 1';
         }
 
-        if (!empty($objectTypes)) {
+        if ($objectTypes) {
             $sql .= " AND `type` IN ('" . implode("','", $objectTypes) . "')";
         }
 
@@ -358,11 +353,12 @@ class Dao extends Model\Element\Dao
             $params[] = $this->model->getId();
         }
 
-        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && DataObject::doHideUnpublished())) {
+        $includingUnpublished ??= !DataObject::doHideUnpublished();
+        if (!$includingUnpublished) {
             $sql .= ' AND published = 1';
         }
 
-        if (!empty($objectTypes)) {
+        if ($objectTypes) {
             $sql .= " AND `type` IN ('" . implode("','", $objectTypes) . "')";
         }
 
@@ -375,19 +371,22 @@ class Dao extends Model\Element\Dao
 
     /**
      * returns the amount of directly children (not recursivly)
-     *
-     * @param Model\User|null $user
-     *
      */
-    public function getChildAmount(?array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], User $user = null): int
-    {
+    public function getChildAmount(
+        ?array $objectTypes = [
+            DataObject::OBJECT_TYPE_OBJECT,
+            DataObject::OBJECT_TYPE_VARIANT,
+            DataObject::OBJECT_TYPE_FOLDER,
+        ],
+        ?User $user = null
+    ): int {
         if (!$this->model->getId()) {
             return 0;
         }
 
         $query = 'SELECT COUNT(*) AS count FROM objects o WHERE parentId = ?';
 
-        if (!empty($objectTypes)) {
+        if ($objectTypes) {
             $query .= sprintf(' AND `type` IN (\'%s\')', implode("','", $objectTypes));
         }
 
@@ -409,8 +408,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     *
-     *
      * @throws Model\Exception\NotFoundException
      */
     public function getTypeById(int $id): array
@@ -495,8 +492,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     *
-     *
      * @throws \Doctrine\DBAL\Exception
      */
     public function isInheritingPermission(string $type, array $userIds): int

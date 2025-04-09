@@ -404,8 +404,11 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         } else {
             $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_ADD);
         }
-
-        $this->deleteDeletedDataComponentsInCustomLayout();
+        if (!empty($this->getDeletedDataComponents())) {
+            $this->deleteDeletedDataComponentsInCustomLayout();
+        } else {
+            $this->updateCustomLayouts();
+        }
     }
 
     /**
@@ -1040,7 +1043,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
 
     public function getLinkGenerator(): ?ClassDefinition\LinkGeneratorInterface
     {
-        /** @var ClassDefinition\LinkGeneratorInterface $interface */
+        /** @var ClassDefinition\LinkGeneratorInterface|null $interface */
         $interface = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
 
         return $interface;
@@ -1138,11 +1141,23 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         return $this;
     }
 
+    private function updateCustomLayouts(): void
+    {
+
+        $customLayouts = new ClassDefinition\CustomLayout\Listing();
+        $id = $this->getId();
+        $customLayouts->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($id) {
+            return $layout->getClassId() === $id;
+        });
+        $customLayouts = $customLayouts->load();
+
+        foreach ($customLayouts as $customLayout) {
+            $customLayout->save();
+        }
+    }
+
     private function deleteDeletedDataComponentsInCustomLayout(): void
     {
-        if (empty($this->getDeletedDataComponents())) {
-            return;
-        }
         $customLayouts = new ClassDefinition\CustomLayout\Listing();
         $id = $this->getId();
         $customLayouts->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($id) {

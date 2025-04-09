@@ -46,7 +46,7 @@ class CleanupThumbnailsHandler implements BatchHandlerInterface
         foreach ($jobs as [$message, $ack]) {
             try {
                 $configClass = 'Pimcore\Model\Asset\\' . ucfirst($message->getType()) . '\Thumbnail\Config';
-                /** @var Asset\Image\Thumbnail\Config|Asset\Video\Thumbnail\Config|null $thumbConfig */
+                /** @var Asset\Image\Thumbnail\Config|Asset\Video\Thumbnail\Config $thumbConfig */
                 $thumbConfig = new $configClass();
                 $thumbConfig->setName($message->getName());
                 $thumbConfig->clearTempFiles();

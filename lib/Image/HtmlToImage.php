@@ -104,9 +104,6 @@ class HtmlToImage
         return false;
     }
 
-    /**
-     * @throws Exception
-     */
     public static function convertGotenberg(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
     {
         try {

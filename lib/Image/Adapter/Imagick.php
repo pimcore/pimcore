@@ -608,6 +608,9 @@ class Imagick extends Adapter
         return $newImage;
     }
 
+    /**
+     * @param \Imagick::COMPOSITE_* $composite
+     */
     private function createCompositeImageFromResource(int $width, int $height, int $x, int $y, string $color = 'transparent', int $composite = \Imagick::COMPOSITE_DEFAULT): \Imagick
     {
         $newImage = null;

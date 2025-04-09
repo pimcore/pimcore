@@ -26,15 +26,16 @@ final class Frontend
 {
     public static function isDocumentInSite(?Site $site, Document $document): bool
     {
-        $inSite = true;
+        $siteRootDocument = $site?->getRootDocument();
 
-        if ($site && $site->getRootDocument() instanceof Document\Page) {
-            if (!str_starts_with($document->getRealFullPath(), $site->getRootDocument()->getRealFullPath() . '/')) {
-                $inSite = false;
-            }
+        if (
+            $siteRootDocument &&
+            !str_starts_with($document->getRealFullPath() . '/', $siteRootDocument->getRealFullPath() . '/')
+        ) {
+            return false;
         }
 
-        return $inSite;
+        return true;
     }
 
     public static function isDocumentInCurrentSite(Document $document): bool

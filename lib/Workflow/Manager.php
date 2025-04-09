@@ -115,8 +115,7 @@ class Manager
     /**
      * Returns all PlaceConfigs (for given marking) ordered by it's appearence in the workflow config file
      *
-     *
-     * @return PlaceConfig[];
+     * @return PlaceConfig[]
      */
     public function getOrderedPlaceConfigs(WorkflowInterface $workflow, Marking $marking = null): array
     {

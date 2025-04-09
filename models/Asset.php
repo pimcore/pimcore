@@ -286,7 +286,9 @@ class Asset extends Element\AbstractElement
                 }
 
                 RuntimeCache::set($cacheKey, $asset);
-                $asset->__setDataVersionTimestamp($asset->getModificationDate());
+                if ($asset->getModificationDate() !== null) {
+                    $asset->__setDataVersionTimestamp($asset->getModificationDate());
+                }
 
                 $asset->resetDirtyMap();
 
@@ -563,6 +565,8 @@ class Asset extends Element\AbstractElement
 
                         usleep($waitTime); // wait specified time until we restart the transaction
                     } else {
+                        Logger::error('Unable to save Asset: ' . (string) $e);
+
                         // if the transaction still fail after $maxRetries retries, we throw out the exception
                         throw $e;
                     }

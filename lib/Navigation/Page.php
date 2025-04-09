@@ -361,8 +361,6 @@ abstract class Page extends Container
      * @param string|null $title page title. Default is null, which sets no title.
      *
      * @return $this fluent interface, returns self
-     *
-     * @throws Exception  if not given string or null
      */
     public function setTitle(?string $title = null): static
     {

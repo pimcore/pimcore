@@ -262,7 +262,6 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     protected function getStaticRoutes(): array
     {
         if (null === $this->staticRoutes) {
-            /** @var Staticroute\Listing|Staticroute\Listing\Dao $list */
             $list = new Staticroute\Listing();
 
             $list->setOrder(function ($a, $b) {

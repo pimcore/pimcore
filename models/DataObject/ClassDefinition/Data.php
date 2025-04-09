@@ -18,7 +18,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Closure;
 use Exception;
 use JsonSerializable;
-use LogicException;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -1265,8 +1264,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @throws LogicException
-     *
      * TODO Change return type to array in Pimcore 12
      */
     public function appendData(?array $existingData, array $additionalData): ?array
@@ -1275,8 +1272,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @throws LogicException
-     *
      * TODO Change return type to array in Pimcore 12
      */
     public function removeData(?array $existingData, array $removeData): mixed

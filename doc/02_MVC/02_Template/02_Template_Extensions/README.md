@@ -47,13 +47,13 @@ All Twig extension functions are described below in detail, the following tables
 
 Pimcore also adds some Twig tests for evaluating boolean conditions e.g.
 ```twig
-{# using 'instaceof' checks if object is instanceof provided classname #}
-{% if (product is instanceof('App\\Model\\Product\\Car')) %}
+{# using 'instanceof' checks if object is instanceof provided classname #}
+{% if product is instanceof('App\\Model\\Product\\Car') %}
     ...
 {% endif %}
 
 {# using 'pimcore_data_object' checks if object is instanceof \Pimcore\Model\DataObject\Concrete #}
-{% if (product is pimcore_data_object) %}
+{% if product is pimcore_data_object %}
  ...
 {% endif %}
 ```
@@ -225,17 +225,17 @@ This is especially useful for footers, headers, navigations, sidebars, teasers, 
  
  ##### Example
 ```twig
-{#include path#}
+{# include path #}
 {{ pimcore_inc("/shared/boxes/buttons") }}
  
-{#include ID#}
+{# include ID #}
 {{ pimcore_inc(256) }}
 
-{#include object#}
+{# include object #}
 {% set doc = pimcore_doc(477) %}
 {{ pimcore_inc(doc, {param: 'value'}) }}
   
-{#disable caching#}
+{# disable caching #}
 {{ pimcore_inc(123, null, false) }}
 ```
 
@@ -318,5 +318,5 @@ All parameters are optional here:
  ##### Example
 ```twig
 {% set object = pimcore_object(769) %}
-{{  pimcore_url({'object': object}) }}
+{{ pimcore_url({'object': object}) }}
 ```

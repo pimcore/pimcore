@@ -121,7 +121,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
             $data = false;
         }
 
-        /** @var DataObject\Data\Consent $oldData */
+        /** @var DataObject\Data\Consent|null $oldData */
         $oldData = null;
         $noteId = null;
 

@@ -233,7 +233,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $object = self::getModelFactory()->build($className);
                     RuntimeCache::set($cacheKey, $object);
                     $object->getDao()->getById($id);
-                    $object->__setDataVersionTimestamp($object->getModificationDate() ?? 0);
+                    if ($object->getModificationDate() !== null) {
+                        $object->__setDataVersionTimestamp($object->getModificationDate());
+                    }
 
                     Service::recursiveResetDirtyMap($object);
 
@@ -286,8 +288,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return DataObject\Listing
-     *
      * @throws Exception
      */
     public static function getList(array $config = []): Listing
@@ -295,7 +295,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $className = DataObject::class;
         // get classname
         if (!in_array(static::class, [__CLASS__, Concrete::class, Folder::class], true)) {
-            /** @var Concrete $tmpObject */
             $tmpObject = new static();
             if ($tmpObject instanceof Concrete) {
                 $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
@@ -461,7 +460,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             //clear parent data from registry
             $parentCacheKey = self::getCacheKey($this->getParentId());
             if (RuntimeCache::isRegistered($parentCacheKey)) {
-                /** @var AbstractObject $parent * */
                 $parent = RuntimeCache::get($parentCacheKey);
                 if ($parent instanceof self) {
                     $parent->setChildren(null);
