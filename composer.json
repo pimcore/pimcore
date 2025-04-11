@@ -55,6 +55,7 @@
     "doctrine/persistence": "^3.0.3",
     "egulias/email-validator": "^3.0 || ^4.0",
     "friendsofsymfony/jsrouting-bundle": "^3.2.1",
+    "gotenberg/gotenberg-php": "^2.4",
     "guzzlehttp/guzzle": "^7.8",
     "http-interop/http-factory-guzzle": "^1.0.0",
     "knplabs/knp-paginator-bundle": "^6.0.0",
@@ -70,6 +71,7 @@
     "nesbot/carbon": "^2.72 || ^3.8.4",
     "onnov/detect-encoding": "^2.0",
     "pear/net_url2": "^2.2",
+    "phpdocumentor/reflection-docblock": "^5.2",
     "presta/sitemap-bundle": "^3.3 || ^4.1",
     "sabre/dav": "^4.1.2",
     "scheb/2fa-bundle": "^6.0 || ^7.5",
@@ -103,6 +105,7 @@
     "symfony/password-hasher": "^6.4",
     "symfony/process": "^6.4",
     "symfony/property-access": "^6.4",
+    "symfony/property-info": "^6.4",
     "symfony/rate-limiter": "^6.4",
     "symfony/routing": "^6.4",
     "symfony/security-bundle": "^6.4",
@@ -144,7 +147,6 @@
     "codeception/module-symfony": "^3.1.0",
     "composer/composer": "*",
     "ergebnis/phpstan-rules": "^2.8.0",
-    "gotenberg/gotenberg-php": "^2.4",
     "phpstan/phpstan": "2.1.11",
     "phpstan/phpstan-symfony": "^2.0.2",
     "phpunit/phpunit": "^9.3",
@@ -156,13 +158,10 @@
     "ext-sockets": "*",
     "ext-imagick": "^3.4.0",
     "ext-redis": "*",
-    "gotenberg/gotenberg-php": "^2.0 - Required for generating pdf via Gotenberg in assets preview (LibreOffice), page preview, version diff and web2print",
     "elasticsearch/elasticsearch": "Required for Elastic Search service",
     "webmozarts/console-parallelization": "Required for parallelization of console commands",
     "symfony/dotenv": "Required for loading environment vars from .env files",
-    "pimcore/admin-ui-classic-bundle": "^1.5.0",
-    "phpdocumentor/reflection-docblock": "^5.2 - Required for Pimcore Generic Execution Engine Bundle",
-    "symfony/property-info": "^6.3 - Required for Pimcore Generic Execution Engine Bundle"
+    "pimcore/admin-ui-classic-bundle": "^2.0"
   },
   "autoload": {
     "files": [
