@@ -195,7 +195,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                     $this->lazyInitialize($domain, $fallbackCatalogue->getLocale());
 
                     try {
-                        $fallbackCatalogue->addCatalogue($this->getCatalogue($fallbackCatalogue->getLocale()));
+                        $this->getCatalogue($locale)->addFallbackCatalogue(
+                            $this->getCatalogue($fallbackCatalogue->getLocale())
+                        );
                     } catch (LogicException $e) {
                         // couldn't add fallback because of a circular reference
                     }
