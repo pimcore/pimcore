@@ -33,6 +33,8 @@ class Dao extends Model\Dao\AbstractDao
 {
     protected ?DataObject\Concrete\Dao\InheritanceHelper $inheritanceHelper = null;
 
+    private const SQL_SELECT_ALL = 'SELECT * FROM ';
+
     /**
      *
      * @throws Exception
@@ -130,7 +132,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->inheritanceHelper->resetFieldsToCheck();
         $oldData = $this->db->fetchAssociative(
-            'SELECT * FROM ' . $querytable . ' WHERE id = ? AND fieldname = ?',
+            self::SQL_SELECT_ALL . $querytable . ' WHERE id = ? AND fieldname = ?',
             [$object->getId(), $this->model->getFieldname()]
         );
 
@@ -145,7 +147,7 @@ class Dao extends Model\Dao\AbstractDao
                 // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                 // so the data of the parent cannot be changed while this transaction is on progress
                 $parentData = $this->db->fetchAssociative(
-                    'SELECT * FROM ' . $querytable . ' WHERE id = ? AND fieldname = ? FOR UPDATE',
+                    self::SQL_SELECT_ALL . $querytable . ' WHERE id = ? AND fieldname = ? FOR UPDATE',
                     [$parentForInheritance->getId(), $this->model->getFieldname()]
                 );
             }
@@ -261,7 +263,7 @@ class Dao extends Model\Dao\AbstractDao
         // update data for query table
         $queryTable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
-        $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $queryTable . ' WHERE id = ? AND fieldname = ?', [
+        $oldData = $this->db->fetchAssociative(self::SQL_SELECT_ALL . $queryTable . ' WHERE id = ? AND fieldname = ?', [
             $object->getId(),
             $this->model->getFieldname()
         ]);
