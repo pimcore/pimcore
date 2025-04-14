@@ -39,6 +39,7 @@
     "ext-intl": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
+    "ext-openssl": "*",
     "ext-pdo": "*",
     "ext-pdo_mysql": "*",
     "ext-zip": "*",

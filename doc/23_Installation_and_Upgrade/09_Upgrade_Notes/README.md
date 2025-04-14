@@ -2,6 +2,9 @@
 
 ## Pimcore 12.0.0
 
+#### [System Requirements]
+- ext-openssl is now required.
+
 #### [Documents]
 - Removed deprecated Headless Chrome Processor.
 - Dropped support of `gotenberg/gotenberg-php` `v1.1` in favor of just supporting `v2` which bundles Chromium functionalities that refrain from requiring a standalone chromium binary.
@@ -94,6 +97,15 @@ ORDER BY TABLE_NAME;
 #### [Workflow]
 - Method `getWorkflowByName()` now returns `?WorkflowInterface` instead of `?object`. This also affected the `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php`.
 - Methods `sendPimcoreNotification` and `sendWorkflowEmailNotification` in `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php` now accept the `Transition` itself, rather than the `string` label.
+
+#### [Composer]
+- Removed the `parametersYmlCheck` from the Pimcore composer hook. 
+  So string matching `/ThisTokenIsNotSoSecretChangeIt(Immediately)?/` in `config/system.yaml` won't be replaced 
+  with random strings anymore.   
+
+#### [Installer]
+- From now on, installer will generate a `secret` and puts it into parameters section of 
+  `config/local/product_registration.yaml` file.
 
 ### Custom Reports
 - add function `getColumnsWithMetadata` to `bundles/CustomReportsBundle/src/Tool/Adapter/CustomReportAdapterInterface.php`

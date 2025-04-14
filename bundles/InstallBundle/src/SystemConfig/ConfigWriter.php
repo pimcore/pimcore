@@ -40,4 +40,22 @@ final class ConfigWriter
             $this->filesystem->dumpFile($configFile, $content);
         }
     }
+
+    public function writeProductRegistrationConfig(string $secret, string $productKey): void
+    {
+        $config = [
+            'parameters' => [
+                'secret' => $secret
+            ],
+            'pimcore' => [
+                'product_registration' => [
+                    'product_key' => $productKey,
+                ],
+            ],
+        ];
+
+        $content = Yaml::dump($config);
+        $configFile = PIMCORE_PROJECT_ROOT .'/config/local/product_registration.yaml';
+        $this->filesystem->dumpFile($configFile, $content);
+    }
 }

@@ -50,19 +50,16 @@ class Composer
     public static function postCreateProject(Event $event): void
     {
         $rootPath = self::getRootPath($event);
-        self::parametersYmlCheck($rootPath);
     }
 
     public static function postInstall(Event $event): void
     {
         $rootPath = self::getRootPath($event);
-        self::parametersYmlCheck($rootPath);
     }
 
     public static function postUpdate(Event $event): void
     {
         $rootPath = self::getRootPath($event);
-        self::parametersYmlCheck($rootPath);
     }
 
     public static function clearDataCache(Event $event, string $consoleDir): void
@@ -74,28 +71,6 @@ class Composer
         }
     }
 
-    /**
-     *
-     * @internal
-     */
-    public static function parametersYmlCheck(string $rootPath): void
-    {
-        // ensure that there's a parameters.yml, if not we'll create a temporary one, so that the requirement check works
-        $parameters = '';
-        $parametersYml = $rootPath . '/config/services.yaml';
-        if (file_exists($parametersYml)) {
-            $parameters = file_get_contents($parametersYml);
-        }
-
-        // ensure that there's a random secret defined
-        if (strpos($parameters, 'ThisTokenIsNotSoSecretChangeIt')) {
-            $parameters = preg_replace_callback('/ThisTokenIsNotSoSecretChangeIt(Immediately)?/', function ($match) {
-                // generate a unique token for each occurrence
-                return base64_encode(random_bytes(32));
-            }, $parameters);
-            file_put_contents($parametersYml, $parameters);
-        }
-    }
 
     public static function prePackageUpdate(PackageEvent $event): void
     {

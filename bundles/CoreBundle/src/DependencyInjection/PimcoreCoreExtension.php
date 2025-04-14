@@ -155,6 +155,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             'pimcore_application_logger_db_max_level',
             $config['applicationlog']['loggers']['db']['max_level'] ?? Level::Emergency
         );
+
+        $this->checkProductRegistration($config, $container);
     }
 
     private function configureModelFactory(ContainerBuilder $container, array $config): void
@@ -304,5 +306,18 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
 
         return $newConfiguration;
+    }
+
+    private function checkProductRegistration(array $config, ContainerBuilder $container): void
+    {
+        $secret = $container->getParameter('secret');
+
+        //Pimcore not installed, skipping check
+        if(preg_match('/^ThisTokenIsNotSoSecretChangeIt(Immediately)?$/', $secret) && !Pimcore::isInstalled()) {
+            return;
+        }
+
+        $registrationValidator = new Pimcore\ProductRegistration\RegistrationValidator($secret);
+        $registrationValidator->validateProductKey($config['product_registration']['product_key'] ?? null);
     }
 }

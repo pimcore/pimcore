@@ -3,10 +3,11 @@ services:
         autowire: true
         autoconfigure: true
 
-    Pimcore\Bundle\InstallBundle\Command\:
-        resource: '../src/Command'
+    Pimcore\Bundle\InstallBundle\Command\InstallCommand:
         public: true
         tags: ['console.command']
+        arguments:
+            $secret: '%secret%'
 
     Pimcore\Composer\PackageInfo: ~
 

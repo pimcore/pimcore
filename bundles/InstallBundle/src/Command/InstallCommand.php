@@ -23,6 +23,7 @@ use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Console\ConsoleOutputDecorator;
 use Pimcore\Console\Style\PimcoreStyle;
+use Pimcore\ProductRegistration\RegistrationValidator;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -45,21 +46,18 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 )]
 class InstallCommand extends Command
 {
-    private Installer $installer;
-
-    private EventDispatcherInterface $eventDispatcher;
-
     private PimcoreStyle $io;
 
     private ?array $options = null;
 
-    public function __construct(
-        Installer $installer,
-        EventDispatcherInterface $eventDispatcher
-    ) {
-        $this->installer = $installer;
-        $this->eventDispatcher = $eventDispatcher;
+    private RegistrationValidator $registrationValidator;
 
+    public function __construct(
+        private readonly Installer                $installer,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly string                   $secret,
+    ) {
+        $this->registrationValidator = new RegistrationValidator($this->secret);
         parent::__construct();
     }
 
@@ -70,7 +68,6 @@ class InstallCommand extends Command
         }
 
         $options = [
-
             'admin-username' => [
                 'description' => 'Admin username',
                 'mode' => InputOption::VALUE_REQUIRED,
@@ -124,6 +121,34 @@ class InstallCommand extends Command
                 'default' => false,
                 'group' => 'bundles',
             ],
+            'app-secret' => [
+                'description' => 'Application Secret',
+                'mode' => InputOption::VALUE_OPTIONAL,
+                'insecure' => true,
+                'hidden-input' => true,
+                'group' => 'registration',
+            ],
+            'product-key' => [
+                'dynamic_description' => function() {
+                        return 'Please provide your product key. ' .
+                            'If you don\'t have one yet please register your product at ' .
+                            'https://license.pimcore.com/register?instance_identifier=' .
+                            $this->registrationValidator->getInstanceIdentifier();
+                    },
+                'mode' => InputOption::VALUE_REQUIRED,
+                'insecure' => true,
+                'hidden-input' => true,
+                'group' => 'registration',
+                'validator' => function(?string $productKey) {
+
+                    if (empty($productKey)) {
+                        throw new \InvalidArgumentException('Product Key cannot be empty');
+                    }
+
+                    $this->checkProductKey($productKey);
+                    return $productKey;
+                }
+            ],
         ];
 
         foreach (array_keys($options) as $name) {
@@ -153,6 +178,11 @@ class InstallCommand extends Command
         $this
             ->setHelp($help)
             ->addOption(
+                'skip-product-registration-config',
+                null,
+                InputOption::VALUE_NONE,
+                'Do not write a product registration config file: <comment>product_registration.yaml</comment>'
+            )->addOption(
                 'skip-database-config',
                 null,
                 InputOption::VALUE_NONE,
@@ -194,6 +224,10 @@ class InstallCommand extends Command
         if ($onlySteps = $input->getOption('only-steps')) {
             $onlySteps = array_map('trim', explode(',', $onlySteps));
             $this->installer->setRunInstallSteps($onlySteps);
+        }
+
+        if ($input->getOption('skip-product-registration-config')) {
+            $this->installer->setSkipProductRegistrationConfig(true);
         }
 
         if ($input->getOption('skip-database-config')) {
@@ -266,6 +300,8 @@ class InstallCommand extends Command
      */
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
+        $this->loadSecret($input);
+
         foreach ($this->getOptions() as $name => $config) {
             if (!$this->installerNeedsOption($config)) {
                 continue;
@@ -278,7 +314,10 @@ class InstallCommand extends Command
                 continue;
             }
 
-            $question = $config['prompt'] ?? $config['description'];
+            $question = $config['prompt'] ?? $config['description'] ?? '';
+            if($config['dynamic_description'] ?? false) {
+                $question = $config['dynamic_description']();
+            }
 
             if (isset($config['choices'])) {
                 $value = $this->io->choice(
@@ -294,6 +333,10 @@ class InstallCommand extends Command
 
                     return $answer;
                 };
+
+                if(isset($config['validator'])) {
+                    $validator = $config['validator'];
+                }
 
                 if ($config['hidden-input'] ?? false) {
                     $question .= ' (input will be hidden)';
@@ -330,6 +373,8 @@ class InstallCommand extends Command
             $installableBundles = $bundleSetupEvent->getInstallableBundles($bundles);
             $this->installer->setBundlesToInstall($installableBundles, $bundleSetupEvent->getAvailableBundles(), $bundleSetupEvent->getExcludeBundlesFromPhpBundles());
         }
+
+        $this->checkProductKey($input->getOption('product-key'));
 
         if ($input->isInteractive() && !$this->io->confirm('This will install Pimcore with the given settings. Do you want to continue?')) {
             return 0;
@@ -420,6 +465,11 @@ class InstallCommand extends Command
         $this->io->success('Pimcore was successfully installed');
 
         return 0;
+    }
+
+    private function checkProductKey(?string $productKey): void
+    {
+        $this->registrationValidator->validateProductKey($productKey);
     }
 
     private function writeInstallerOutputResults(BufferedOutput $output, BufferedOutput $errorOutput): void

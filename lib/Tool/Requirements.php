@@ -582,6 +582,13 @@ final class Requirements
             'state' => function_exists('gzcompress') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
+        // openssl
+        $checks[] = new Check([
+            'name' => 'OpenSSL',
+            'link' => 'https://www.php.net/openssl',
+            'state' => function_exists('openssl_verify') ? Check::STATE_OK : Check::STATE_ERROR,
+        ]);
+
         // Intl
         $checks[] = new Check([
             'name' => 'Intl',
