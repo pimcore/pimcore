@@ -291,7 +291,24 @@ class InstallCommand extends Command
                 }
             }
         }
+
     }
+
+    private function loadSecret(InputInterface $input) {
+        $secret = $input->getOption('app-secret');
+        if(!$secret) {
+            $secret = getenv('PIMCORE_INSTALL_APP_SECRET');
+        }
+
+        if($secret) {
+            $this->registrationValidator = new RegistrationValidator($secret);
+        } else {
+            $this->registrationValidator = new RegistrationValidator($this->secret);
+            $input->setOption('app-secret', $this->secret);
+        }
+
+    }
+
 
     /**
      * Prompt options which are not set interactively
