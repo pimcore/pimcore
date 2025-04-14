@@ -67,6 +67,7 @@ ORDER BY TABLE_NAME;
 - Removed deprecated hashing algorithms from `Pimcore\Model\DataObject\Data\Password`. `password_hash` is the only supported hashing algorithm now.
 - Removed deprecated `getVersionDependentDatabaseColumnName` method. You can use the column name directly now.
 - UrlSlug fields can return null and array values now.
+- Updated `getRange($step)` method in `Pimcore/Model/DataObject/Data/QuantityValueRange` to support both `int` and `float` step values and handle cases where `abs($step)` is greater than the range delta. 
 
 #### [Events]
 - Removed `context` property of `ResolveUploadTargetEvent`.
