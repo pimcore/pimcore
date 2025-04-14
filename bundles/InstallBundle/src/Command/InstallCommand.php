@@ -294,7 +294,7 @@ class InstallCommand extends Command
 
     }
 
-    private function loadSecret(InputInterface $input) {
+    private function loadSecret(InputInterface $input): void {
         $secret = $input->getOption('app-secret');
         if(!$secret) {
             $secret = getenv('PIMCORE_INSTALL_APP_SECRET');
