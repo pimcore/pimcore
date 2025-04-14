@@ -53,7 +53,7 @@ final class MimeTypeHelper implements MimeTypeHelperInterface
             fseek($stream, 0);
         }
 
-        $bytes = fread($stream, 1024);
+        $bytes = fread($stream, 4096);
 
         if ($seekable &&
             $fpPosition !== false
