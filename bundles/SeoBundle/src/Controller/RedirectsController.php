@@ -26,7 +26,7 @@ use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Logger;
-use Pimcore\Model\Document;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -50,6 +50,24 @@ class RedirectsController extends UserAwareController
         // check permission for both update and listing
         $this->checkPermission('redirects');
 
+        $setRedirectTargetId = function (array &$data): void {
+            $targetPath = $data['target'];
+            $targetType = $data['targetType'];
+
+            $target = $targetType ? Service::getElementByPath($targetType, $targetPath) : null;
+            $data['target'] = $target?->getId();
+            $data['targetType'] = $target ? $targetType : null;
+        };
+
+        $setRedirectTargetPath = function (Redirect $redirect): void {
+            $targetId = $redirect->getTarget();
+            $targetType = $redirect->getTargetType();
+            if (is_numeric($targetId) && $targetId > 0 && $targetType) {
+                $target = Service::getElementById($targetType, $targetId);
+                $redirect->setTarget($target?->getRealFullPath());
+            }
+        };
+
         if ($request->request->has('data')) {
             $data = $this->decodeJson($request->request->getString('data'));
 
@@ -72,9 +90,7 @@ class RedirectsController extends UserAwareController
                 }
 
                 if ($data['target']) {
-                    if ($doc = Document::getByPath($data['target'])) {
-                        $data['target'] = $doc->getId();
-                    }
+                    $setRedirectTargetId($data);
                 }
 
                 if (!$data['regex'] && $data['source']) {
@@ -85,12 +101,7 @@ class RedirectsController extends UserAwareController
 
                 $redirect->save();
 
-                $redirectTarget = $redirect->getTarget();
-                if (is_numeric($redirectTarget)) {
-                    if ($doc = Document::getById((int)$redirectTarget)) {
-                        $redirect->setTarget($doc->getRealFullPath());
-                    }
-                }
+                $setRedirectTargetPath($redirect);
 
                 return $this->jsonResponse(['data' => $redirect->getObjectVars(), 'success' => true]);
             }
@@ -101,9 +112,7 @@ class RedirectsController extends UserAwareController
                 $redirect = new Redirect();
 
                 if (!empty($data['target'])) {
-                    if ($doc = Document::getByPath($data['target'])) {
-                        $data['target'] = $doc->getId();
-                    }
+                    $setRedirectTargetId($data);
                 }
 
                 if (isset($data['regex']) && !$data['regex'] && isset($data['source']) && $data['source']) {
@@ -114,12 +123,7 @@ class RedirectsController extends UserAwareController
 
                 $redirect->save();
 
-                $redirectTarget = $redirect->getTarget();
-                if (is_numeric($redirectTarget)) {
-                    if ($doc = Document::getById((int)$redirectTarget)) {
-                        $redirect->setTarget($doc->getRealFullPath());
-                    }
-                }
+                $setRedirectTargetPath($redirect);
 
                 return $this->jsonResponse(['data' => $redirect->getObjectVars(), 'success' => true]);
             }
@@ -162,13 +166,7 @@ class RedirectsController extends UserAwareController
 
             $redirects = [];
             foreach ($list->getRedirects() as $redirect) {
-                if ($link = $redirect->getTarget()) {
-                    if (is_numeric($link)) {
-                        if ($doc = Document::getById((int)$link)) {
-                            $redirect->setTarget($doc->getRealFullPath());
-                        }
-                    }
-                }
+                $setRedirectTargetPath($redirect);
 
                 $redirects[] = $redirect->getObjectVars();
             }

@@ -100,6 +100,7 @@ pimcore.settings.redirects = Class.create({
                 {name: 'source', allowBlank: false},
                 {name: 'sourceSite'},
                 {name: 'target', allowBlank: false},
+                {name: 'targetType'},
                 {name: 'targetSite'},
                 {name: 'statusCode'},
                 {name: 'priority', type:'int'},
@@ -212,6 +213,12 @@ pimcore.settings.redirects = Class.create({
                     return Ext.util.Format.htmlEncode(value);
                 }
             },
+            {text: t("target_type"), flex: 70, sortable: true, dataIndex: 'targetType', hidden: true, editor: {
+                xtype: 'textfield',
+                id: 'targetTypeEditor',
+                disabled: true,
+                editable: false,
+            }},
             {text: t("status"), flex: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
                 store: this.statusCodes,
                 displayField: 'display',
@@ -366,7 +373,7 @@ pimcore.settings.redirects = Class.create({
                                     var record = data.records[0];
                                     var data = record.data;
 
-                                    if (in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
+                                    if (data.elementType == "object" || in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
                                         return Ext.dd.DropZone.prototype.dropAllowed;
                                     }
                                 } catch (e) {
@@ -383,8 +390,9 @@ pimcore.settings.redirects = Class.create({
                                     var record = data.records[0];
                                     var data = record.data;
 
-                                    if (in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
+                                    if (data.elementType == "object" || in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
                                         Ext.getCmp('targetEditor').setValue(data.path);
+                                        Ext.getCmp('targetTypeEditor').setValue(data.elementType);
 
                                         return true;
                                     }
@@ -620,7 +628,7 @@ pimcore.settings.redirects = Class.create({
                             var record = data.records[0];
                             var data = record.data;
 
-                            if (in_array(data.type, ["page", "link", "hardlink","image", "text", "audio", "video", "document"])) {
+                            if (data.elementType == "object" || in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
                                 return Ext.dd.DropZone.prototype.dropAllowed;
                             }
                         } catch (e) {
@@ -636,9 +644,10 @@ pimcore.settings.redirects = Class.create({
                         try {
                             var record = data.records[0];
                             var data = record.data;
-                            if (in_array(data.type, ["page", "link", "hardlink","image", "text", "audio", "video", "document"])) {
+                            if (data.elementType == "object" || in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
                                 var rec = this.grid.getStore().getAt(myRowIndex);
                                 rec.set("target", data.path);
+                                rec.set("targetType", data.elementType);
                                 this.updateRows();
                                 return true;
                             }

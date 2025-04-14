@@ -25,7 +25,12 @@ use Pimcore\Config;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Site;
 use Pimcore\Tool;
 use Psr\Log\LoggerInterface;
@@ -151,16 +156,43 @@ final class RedirectHandler
     {
         $this->dispatchEvent(new RedirectEvent($redirect), RedirectEvents::PRE_BUILD);
         $target = $redirect->getTarget();
-        if (is_numeric($target)) {
-            $d = Document::getById((int) $target);
-            if ($d instanceof Document\Page || $d instanceof Document\Link || $d instanceof Document\Hardlink) {
-                $target = $d->getFullPath();
-            } else {
-                $this->logger->error('Target of redirect {redirect} not found (Document-ID: {document})', [
-                    'redirect' => $redirect->getId(),
-                    'document' => $target,
-                ]);
+        $targetType = $redirect->getTargetType();
+        if (is_numeric($target) && in_array($targetType, ['object', 'asset', 'document'])) {
+            $targetElement = Service::getElementById($targetType, $target);
+            if ($targetElement) {
+                $linkGenerator = $targetElement instanceof Concrete
+                    ? $targetElement->getClass()->getLinkGenerator()
+                    : null;
+                if ($linkGenerator) {
+                    $getInheritedValues = DataObject::getGetInheritedValues();
+                    DataObject::setGetInheritedValues(true);
+                    $getFallBackValues = Localizedfield::getGetFallbackValues();
+                    Localizedfield::setGetFallbackValues(true);
 
+                    $target = $linkGenerator->generate($targetElement);
+
+                    DataObject::setGetInheritedValues($getInheritedValues);
+                    Localizedfield::setGetFallbackValues($getFallBackValues);
+                } elseif ($targetElement instanceof Asset || $targetElement instanceof Document) {
+                    $target = $targetElement->getFullPath();
+                } else {
+                    $this->logger->error('Target of redirect {redirect} is invalid ({targetType} ID: {target})', [
+                        'redirect' => $redirect->getId(),
+                        'target' => $target,
+                        'targetType' => $targetType,
+                    ]);
+                    $target = null;
+                }
+            } else {
+                $this->logger->error('Target of redirect {redirect} not found ({targetType} ID: {target})', [
+                    'redirect' => $redirect->getId(),
+                    'target' => $target,
+                    'targetType' => $targetType,
+                ]);
+                $target = null;
+            }
+
+            if (null === $target) {
                 return null;
             }
         }

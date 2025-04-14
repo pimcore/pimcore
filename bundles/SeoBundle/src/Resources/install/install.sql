@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS `redirects` (
      `source` varchar(255) DEFAULT NULL,
      `sourceSite` int(11) DEFAULT NULL,
      `target` varchar(255) DEFAULT NULL,
+     `targetType` varchar(255) DEFAULT NULL,
      `targetSite` int(11) DEFAULT NULL,
      `statusCode` varchar(3) DEFAULT NULL,
      `priority` int(2) DEFAULT '0',

@@ -63,6 +63,8 @@ final class Redirect extends AbstractModel
 
     protected ?string $target = null;
 
+    protected ?string $targetType = null;
+
     protected ?int $targetSite = null;
 
     protected int $statusCode = 301;
@@ -326,6 +328,18 @@ final class Redirect extends AbstractModel
     public function getTargetSite(): ?int
     {
         return $this->targetSite;
+    }
+
+    public function getTargetType(): ?string
+    {
+        return $this->targetType;
+    }
+
+    public function setTargetType(?string $targetType): static
+    {
+        $this->targetType = $targetType;
+
+        return $this;
     }
 
     public function setPassThroughParameters(bool $passThroughParameters): static
