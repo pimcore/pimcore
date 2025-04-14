@@ -5,3 +5,4 @@ http_errors: HTTP Errors
 keybinding_seoDocumentEditor: SEO Document Editor
 keybinding_robots: robots.txt
 keybinding_httpErrorLog: HTTP Errors
+target_type: Target Type

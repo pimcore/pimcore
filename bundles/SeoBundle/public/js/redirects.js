@@ -97,6 +97,7 @@ pimcore.settings.redirects = Class.create({
                 {name: 'source'},
                 {name: 'sourceSite'},
                 {name: 'target'},
+                {name: 'targetType'},
                 {name: 'targetSite'},
                 {name: 'statusCode'},
                 {name: 'priority', type:'int'},
@@ -211,6 +212,17 @@ pimcore.settings.redirects = Class.create({
                 renderer: function (value) {
                     return Ext.util.Format.htmlEncode(value);
                 }
+            },
+            {text: t("target_type"), flex: 100, sortable: true, dataIndex: 'targetType',
+                editor: {
+                    xtype: 'combobox',
+                    id: 'targetTypeEditor',
+                    store: ['', 'document', 'asset', 'object'],
+                    queryMode: 'local',
+                    typeAhead: false,
+                    editable: false,
+                    forceSelection: true,
+                },
             },
             {text: t("status"), flex: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
                 store: this.statusCodes,
@@ -366,7 +378,7 @@ pimcore.settings.redirects = Class.create({
                                     var record = data.records[0];
                                     var data = record.data;
 
-                                    if (in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
+                                    if (data.elementType == "object" || in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
                                         return Ext.dd.DropZone.prototype.dropAllowed;
                                     }
                                 } catch (e) {
@@ -383,8 +395,9 @@ pimcore.settings.redirects = Class.create({
                                     var record = data.records[0];
                                     var data = record.data;
 
-                                    if (in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
+                                    if (data.elementType == "object" || in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
                                         Ext.getCmp('targetEditor').setValue(data.path);
+                                        Ext.getCmp('targetTypeEditor').setValue(data.elementType);
 
                                         return true;
                                     }
@@ -620,7 +633,7 @@ pimcore.settings.redirects = Class.create({
                             var record = data.records[0];
                             var data = record.data;
 
-                            if (in_array(data.type, ["page", "link", "hardlink","image", "text", "audio", "video", "document"])) {
+                            if (data.elementType == "object" || in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
                                 return Ext.dd.DropZone.prototype.dropAllowed;
                             }
                         } catch (e) {
@@ -636,9 +649,12 @@ pimcore.settings.redirects = Class.create({
                         try {
                             var record = data.records[0];
                             var data = record.data;
-                            if (in_array(data.type, ["page", "link", "hardlink","image", "text", "audio", "video", "document"])) {
+                            if (data.elementType == "object" || in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
                                 var rec = this.grid.getStore().getAt(myRowIndex);
+                                rec.beginEdit();
                                 rec.set("target", data.path);
+                                rec.set("targetType", data.elementType);
+                                rec.endEdit();
                                 this.updateRows();
                                 return true;
                             }
