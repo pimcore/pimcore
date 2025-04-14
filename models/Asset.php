@@ -1303,7 +1303,7 @@ class Asset extends Element\AbstractElement
     {
         if (
             is_string($customSettings) &&
-            !empty($customSettings)
+            $customSettings !== ''
         ){
             if (strlen($customSettings) > 10e6) {
                 $this->customSettingsCanBeCached = false;
