@@ -43,7 +43,7 @@ class BooleanSelect extends Data implements
     /** storage value for empty */
     const EMPTY_VALUE = null;
 
-    /** edit mode valze for empty */
+    /** edit mode value for empty */
     const EMPTY_VALUE_EDITMODE = 0;
 
     /**
