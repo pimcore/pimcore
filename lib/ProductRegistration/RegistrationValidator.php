@@ -13,7 +13,7 @@ readonly class RegistrationValidator
     ) {
     }
 
-    public function getInstanceIdentifier() {
+    public function getInstanceIdentifier(): string {
         return sha1(substr($this->secret, 3, -3));
     }
 
