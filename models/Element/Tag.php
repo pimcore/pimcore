@@ -147,8 +147,6 @@ final class Tag extends Model\AbstractModel
             'elementIds' => $cIds,
         ]);
 
-        $tag->dispatchEvent($event, TagEvents::PRE_BATCH_ASSIGN_TAGS_TO_ELEMENT);
-
         $tag->getDao()->batchAssignTagsToElement($cType, $cIds, $tagIds, $replace);
 
         $tag->dispatchEvent($event, TagEvents::POST_BATCH_ASSIGN_TAGS_TO_ELEMENT);

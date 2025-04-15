@@ -114,17 +114,5 @@ final class TagEvents
      *
      * @var string
      */
-    const PRE_BATCH_ASSIGN_TAGS_TO_ELEMENT = 'pimcore.tag.preBatchAssignTagsToElement';
-
-    /**
-     * Arguments:
-     *  - tagIds
-     *  - elementType
-     *  - elementId
-     *
-     * @Event("Pimcore\Event\Model\TagEvent")
-     *
-     * @var string
-     */
     const POST_BATCH_ASSIGN_TAGS_TO_ELEMENT = 'pimcore.tag.postBatchAssignTagsToElement';
 }

@@ -42,16 +42,5 @@ final class ElementEvents
      *
      * @var string
      */
-    const PRE_ELEMENT_UNLOCK_PROPAGATE = 'pimcore.element.preUnlockPropagate';
-
-    /**
-     * Arguments:
-     *  - elementId
-     *   - elementType
-     *
-     * @Event("Pimcore\Event\Model\ElementEvent")
-     *
-     * @var string
-     */
     const POST_ELEMENT_UNLOCK_PROPAGATE = 'pimcore.element.postUnlockPropagate';
 }

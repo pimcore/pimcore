@@ -522,11 +522,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             ['elementId' => $this->getId(), 'elementType' => $type]
         );
 
-        $eventDispatcher = Pimcore::getEventDispatcher();
-        $eventDispatcher->dispatch($event, ElementEvents::PRE_ELEMENT_UNLOCK_PROPAGATE);
-
         $ids = $this->getDao()->unlockPropagate();
 
+        $eventDispatcher = Pimcore::getEventDispatcher();
         $eventDispatcher->dispatch($event, ElementEvents::POST_ELEMENT_UNLOCK_PROPAGATE);
 
         // invalidate cache items
