@@ -517,8 +517,17 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function unlockPropagate(): void
     {
         $type = Service::getElementType($this);
+        $event = new ElementEvent(
+            $this,
+            ['elementId' => $this->getId(), 'elementType' => $type]
+        );
+
+        $eventDispatcher = Pimcore::getEventDispatcher();
+        $eventDispatcher->dispatch($event, ElementEvents::PRE_ELEMENT_UNLOCK_PROPAGATE);
 
         $ids = $this->getDao()->unlockPropagate();
+
+        $eventDispatcher->dispatch($event, ElementEvents::POST_ELEMENT_UNLOCK_PROPAGATE);
 
         // invalidate cache items
         foreach ($ids as $id) {
