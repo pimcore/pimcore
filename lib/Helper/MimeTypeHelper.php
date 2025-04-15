@@ -69,7 +69,7 @@ final class MimeTypeHelper implements MimeTypeHelperInterface
             $mimeTypes = new MimeTypes();
             $extensions = $mimeTypes->getExtensions($mimeType);
 
-            if (!empty($extension)) {
+            if (!empty($extensions)) {
                 // Map known extensions to MIME types
                 $mimeMap = [
                     // Adobe
