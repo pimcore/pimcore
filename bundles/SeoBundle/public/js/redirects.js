@@ -21,6 +21,10 @@ pimcore.settings.redirects = Class.create({
         this.getData();
     },
 
+    canDrop: function (data) {
+        return pimcore.settings.redirects.canDrop(data);
+    },
+
     getData: function () {
         Ext.Ajax.request({
             url: Routing.generate('pimcore_bundle_seo_redirects_statuscodes'),
@@ -373,7 +377,7 @@ pimcore.settings.redirects = Class.create({
                                     var record = data.records[0];
                                     var data = record.data;
 
-                                    if (data.elementType == "object" || in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
+                                    if (this.canDrop(data)) {
                                         return Ext.dd.DropZone.prototype.dropAllowed;
                                     }
                                 } catch (e) {
@@ -390,7 +394,7 @@ pimcore.settings.redirects = Class.create({
                                     var record = data.records[0];
                                     var data = record.data;
 
-                                    if (data.elementType == "object" || in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
+                                    if (this.canDrop(data)) {
                                         Ext.getCmp('targetEditor').setValue(data.path);
                                         Ext.getCmp('targetTypeEditor').setValue(data.elementType);
 
@@ -628,7 +632,7 @@ pimcore.settings.redirects = Class.create({
                             var record = data.records[0];
                             var data = record.data;
 
-                            if (data.elementType == "object" || in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
+                            if (this.canDrop(data)) {
                                 return Ext.dd.DropZone.prototype.dropAllowed;
                             }
                         } catch (e) {
@@ -644,7 +648,7 @@ pimcore.settings.redirects = Class.create({
                         try {
                             var record = data.records[0];
                             var data = record.data;
-                            if (data.elementType == "object" || in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"])) {
+                            if (this.canDrop(data)) {
                                 var rec = this.grid.getStore().getAt(myRowIndex);
                                 rec.set("target", data.path);
                                 rec.set("targetType", data.elementType);
@@ -762,3 +766,7 @@ pimcore.settings.redirects = Class.create({
         return new Ext.form.ComboBox(config)
     }
 });
+
+pimcore.settings.redirects.canDrop = function (data) {
+    return data.elementType == "object" || in_array(data.type, ["page", "link", "hardlink", "image", "text", "audio", "video", "document"]);
+};

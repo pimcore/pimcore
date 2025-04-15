@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\SeoBundle\Controller;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Db;
+use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,8 +66,25 @@ class MiscController extends UserAwareController
             $condition = ' WHERE ' . implode(' OR ', $conditionParts);
         }
 
-        $logs = $db->fetchAllAssociative('SELECT code,uri,`count`,date FROM http_error_log ' . $condition . ' ORDER BY ' . $sort . ' ' . $dir . ' LIMIT ' . $offset . ',' . $limit);
-        $total = $db->fetchOne('SELECT count(*) FROM http_error_log ' . $condition);
+        $logs = $db->fetchAllAssociative(<<<SQL
+            SELECT `code`,`uri`,`count`,`date`,`serverVars`
+            FROM `http_error_log`
+            $condition
+            ORDER BY $sort $dir
+            LIMIT $offset, $limit
+        SQL);
+        $total = $db->fetchOne('SELECT COUNT(*) FROM `http_error_log` ' . $condition);
+
+        foreach ($logs as $key => $row) {
+            $serverVars = unserialize($row['serverVars']);
+            $logs[$key]['path'] = $serverVars['REQUEST_URI'];
+            try {
+                $site = Site::getByDomain($serverVars['HTTP_HOST']);
+                $logs[$key]['sourceSite'] = $site ? $site->getId() : null;
+            } catch (\Exception $e) {
+                $logs[$key]['sourceSite'] = null;
+            }
+        }
 
         return $this->jsonResponse([
             'items' => $logs,

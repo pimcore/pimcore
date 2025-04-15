@@ -83,8 +83,10 @@ pimcore.bundle.seo.httpErrorLog = Class.create({
             }},
             {
                 xtype: 'actioncolumn',
+                text: t('open'),
                 menuText: t('open'),
-                width: 30,
+                width: 70,
+                align: 'center',
                 items: [{
                     tooltip: t('open'),
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
@@ -93,7 +95,8 @@ pimcore.bundle.seo.httpErrorLog = Class.create({
                         window.open(data.get("uri"));
                     }.bind(this)
                 }]
-            }
+            },
+            this.createRedirectColumn()
         ];
 
 
@@ -186,6 +189,167 @@ pimcore.bundle.seo.httpErrorLog = Class.create({
         });
 
         return this.grid;
+    },
+
+    createRedirectColumn: function () {
+        const createDropZone = (el) => new Ext.dd.DropZone(el.getEl(), {
+            reference: this,
+            ddGroup: "element",
+            getTargetFromEvent: function (e) {
+                return this.getEl();
+            }.bind(el),
+
+            onNodeOver: function (target, dd, e, data) {
+                const record = data.records[0];
+                if (record.data && pimcore.settings.redirects.canDrop(record.data)) {
+                    return Ext.dd.DropZone.prototype.dropAllowed;
+                }
+                return Ext.dd.DropZone.prototype.dropNotAllowed;
+            },
+
+            onNodeDrop: function (target, dd, e, data) {
+                if (!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                    return false;
+                }
+
+                data = data.records[0].data;
+                if (pimcore.settings.redirects.canDrop(data)) {
+                    const targetTypeField = this.up('container').down('textfield[name=targetType]');
+                    this.setValue(data.path);
+                    targetTypeField.setValue(data.elementType);
+                    return true;
+                }
+                return false;
+            }.bind(el),
+        });
+
+        return {
+            xtype: "actioncolumn",
+            text: "Redirect",
+            menuText: "Redirect",
+            width: 70,
+            align: "center",
+            renderer: function (
+                value,
+                metaData,
+                record,
+                rowIndex,
+                colIndex,
+                store,
+                view
+            ) {
+                if (record.data.code !== 404 || record.data.sourceSite === null) {
+                    // Can't hide inner content, so let's push it off the display
+                    metaData.tdStyle = "text-indent: -1000em";
+                }
+                return value;
+            },
+            items: [
+                {
+                    tooltip: "Set a redirect",
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/workflow.svg",
+                    isActionDisabled: function (
+                        grid,
+                        rowIndex,
+                        colIndex,
+                        item,
+                        record
+                    ) {
+                        return record.data.code !== 404 || record.data.sourceSite === null;
+                    },
+                    handler: function (grid, rowIndex) {
+                        const gridData = grid.getStore().getAt(rowIndex);
+                        const windowCfg = {
+                            title: t("Create a redirect"),
+                            width: 600,
+                            layout: "fit",
+                            closeAction: "close",
+                            items: [
+                                {
+                                    xtype: "form",
+                                    bodyStyle: "padding: 10px;",
+                                    defaults: {
+                                        labelWidth: 70,
+                                        width: 574,
+                                    },
+                                    itemId: "form",
+                                    items: [
+                                        {
+                                            xtype: "textfield",
+                                            name: "source",
+                                            fieldLabel: t("source"),
+                                            value: gridData.get("path"),
+                                            disabled: true,
+                                        },
+                                        {
+                                            xtype: "textfield",
+                                            name: "target",
+                                            fieldCls: "input_drop_target",
+                                            fieldLabel: t("target"),
+                                            value: "",
+                                            listeners: {
+                                                render: (el) => createDropZone(el),
+                                            },
+                                        },
+                                        {
+                                            xtype: "textfield",
+                                            name: "targetType",
+                                            hidden: true,
+                                        },
+                                    ],
+                                },
+                            ],
+                            buttons: [
+                                {
+                                    text: t("cancel"),
+                                    iconCls: "pimcore_icon_delete",
+                                    handler: function () {
+                                        win.close();
+                                    },
+                                },
+                                {
+                                    text: t("save"),
+                                    iconCls: "pimcore_icon_apply",
+                                    handler: function () {
+                                        const data = win
+                                            .getComponent("form")
+                                            .getForm()
+                                            .getFieldValues();
+                                        data["source"] = gridData.get("path");
+                                        data["sourceSite"] = gridData.get("sourceSite");
+                                        data["type"] = "path";
+                                        data["priority"] = 1;
+                                        data["regex"] = false;
+                                        data["active"] = true;
+
+                                        if (!data["target"]) {
+                                            Ext.Msg.alert(t("error"), t("Please drag an element to the target field."));
+                                        } else {
+                                            Ext.Ajax.request({
+                                                url: Routing.generate(
+                                                    "pimcore_bundle_seo_redirects_redirects",
+                                                    { xaction: "create" }
+                                                ),
+                                                method: "POST",
+                                                params: {
+                                                    data: JSON.stringify(data),
+                                                },
+                                                success: function (response) {
+                                                    Ext.Msg.alert(t("success"), t("Redirect created successfully!"));
+                                                    win.close();
+                                                },
+                                            });
+                                        }
+                                    },
+                                },
+                            ],
+                        };
+                        const win = new Ext.Window(windowCfg);
+                        win.show();
+                    },
+                },
+            ],
+        };
     },
 
     reload: function () {
