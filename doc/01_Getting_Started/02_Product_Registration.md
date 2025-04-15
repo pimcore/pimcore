@@ -48,7 +48,7 @@ as described in the product registration process.
 In general, it is recommended to use env vars to handle secret and product key. 
 
 ### Verification Logic
-The product key is validated locally via private-public key validation. It does as signature verification as well as 
+The product key is validated locally via private-public key validation. It does a signature verification as well as 
 a check for matching instance ID. 
 
 The checks are performed:
