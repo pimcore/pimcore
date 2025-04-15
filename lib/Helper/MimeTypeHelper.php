@@ -53,7 +53,7 @@ final class MimeTypeHelper implements MimeTypeHelperInterface
             fseek($stream, 0);
         }
 
-        $bytes = fread($stream, 4096);
+        $bytes = fread($stream, 8192);
 
         if ($seekable &&
             $fpPosition !== false
@@ -63,6 +63,39 @@ final class MimeTypeHelper implements MimeTypeHelperInterface
 
         $fileInfo = new finfo(FILEINFO_MIME_TYPE);
         $mimeType = $fileInfo->buffer($bytes);
+
+        // Fallback to extension-based guessing
+        if (!$mimeType || $mimeType === 'application/octet-stream') {
+            $mimeTypes = new MimeTypes();
+            $extensions = $mimeTypes->getExtensions($mimeType);
+
+            if (!empty($extension)) {
+                // Map known extensions to MIME types
+                $mimeMap = [
+                    // Adobe
+                    'psd'   => 'image/vnd.adobe.photoshop',
+                    // Images
+                    'tif'   => 'image/tiff',
+                    'tiff'  => 'image/tiff',
+                    // Microsoft Word
+                    'doc'   => 'application/msword',
+                    'docx'  => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    // Microsoft Excel
+                    'xls'   => 'application/vnd.ms-excel',
+                    'xlsx'  => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    // Microsoft PowerPoint
+                    'ppt'   => 'application/vnd.ms-powerpoint',
+                    'pptx'  => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                    // OpenDocument formats (LibreOffice)
+                    'odt'   => 'application/vnd.oasis.opendocument.text',
+                    'ods'   => 'application/vnd.oasis.opendocument.spreadsheet',
+                    'odp'   => 'application/vnd.oasis.opendocument.presentation',
+                ];
+                if (isset($mimeMap[$extensions[0]])) {
+                    $mimeType = $mimeMap[$extensions[0]];
+                }
+            }
+        }
 
         return $mimeType === false ? null : $mimeType;
     }
