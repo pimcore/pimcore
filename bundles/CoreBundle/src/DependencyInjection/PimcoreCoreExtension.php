@@ -311,6 +311,10 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     private function checkProductRegistration(array $config, ContainerBuilder $container): void
     {
         $encryptionSecret = $container->getParameter('pimcore.encryption.secret');
+        $productIdentifier = $config['product_registration']['instance_identifier'] ?? null;
+
+        $container->setParameter('pimcore.product_registration.instance_identifier', $productIdentifier);
+
 
         //Pimcore not installed, skipping check
         if(empty($encryptionSecret) && !Pimcore::isInstalled()) {
@@ -327,7 +331,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $registrationValidator = new Pimcore\ProductRegistration\RegistrationValidator(
             $encryptionSecret,
-            $config['product_registration']['instance_identifier'] ?? null
+            $productIdentifier
         );
 
         $registrationValidator->validateProductKey($config['product_registration']['product_key'] ?? null);
