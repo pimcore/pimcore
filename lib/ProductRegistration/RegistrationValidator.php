@@ -3,30 +3,49 @@ declare(strict_types=1);
 
 namespace Pimcore\ProductRegistration;
 
+use Defuse\Crypto\Key;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Uid\Uuid;
 
-readonly class RegistrationValidator
+final class RegistrationValidator
 {
 
+    private string $hashedInstanceIdentifier;
+
     public function __construct(
-        private string $secret
-    ) {
+        readonly string $secret,
+        private ?string $instanceIdentifier,
+    )
+    {
+        //just to validate the secret to be a valid key
+        Key::loadFromAsciiSafeString($secret);
+
+        if(empty($this->instanceIdentifier)) {
+            $this->instanceIdentifier = Uuid::v6()->toBase58();
+        }
+        $this->hashedInstanceIdentifier = hash_hmac('sha256', $this->instanceIdentifier, $secret);
+    }
+    public function getHashedInstanceIdentifier(): string
+    {
+        return $this->hashedInstanceIdentifier;
     }
 
-    public function getInstanceIdentifier(): string {
-        return sha1(substr($this->secret, 3, -3));
+    public function getInstanceIdentifier(): ?string
+    {
+        return $this->instanceIdentifier;
     }
 
     public function validateProductKey(?string $productKey): void
     {
         $pleaseRegisterMessage =
             "Please register your product via " .
-            "https://license.pimcore.com/register?instance_identifier={$this->getInstanceIdentifier()} " .
-            "and provide the Product Key.";
+            "https://license.pimcore.com/register?" .
+            "instance_identifier={$this->getInstanceIdentifier()}&instance_hash={$this->getHashedInstanceIdentifier()} ".
+            "and provide the product key.";
 
         if (empty($productKey)) {
             throw new InvalidConfigurationException(
-                'Your Product Key is empty. ' . $pleaseRegisterMessage
+                'Your product key is empty. ' . $pleaseRegisterMessage
             );
         }
 
@@ -35,16 +54,17 @@ readonly class RegistrationValidator
 
         if(!$decodedSignature) {
             throw new InvalidConfigurationException(
-                'Your Product Key is invalid. ' . $pleaseRegisterMessage
+                'Your product key is invalid. ' . $pleaseRegisterMessage
             );
         }
 
         $payload = json_decode($decodedSignature['payload'] ?? null, true);
+        $hashedInstanceId = $payload['id'] ?? null;
 
-        if($payload && ($payload['id'] ?? null) !== $this->getInstanceIdentifier()) {
+        if($hashedInstanceId !== $this->getHashedInstanceIdentifier()) {
             throw new InvalidConfigurationException(
-                'Your Instance Identifier does not match with your Product Key: ' .
-                $payload['id'] . ' vs ' . $this->getInstanceIdentifier()
+                'Your hashed instance identifier does not match with your product key: ' .
+                $hashedInstanceId . ' vs ' . $this->getHashedInstanceIdentifier() . ";\n" . $pleaseRegisterMessage
             );
         }
 
@@ -55,7 +75,7 @@ readonly class RegistrationValidator
             OPENSSL_ALGO_SHA256)) {
 
             throw new InvalidConfigurationException(
-                'Your Product Key is invalid. ' . $pleaseRegisterMessage
+                'Your product key is invalid. ' . $pleaseRegisterMessage
             );
 
         }

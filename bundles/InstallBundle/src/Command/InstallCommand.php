@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\Command;
 
+use Defuse\Crypto\Key;
 use Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
@@ -34,6 +35,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @method Application getApplication()
@@ -55,9 +57,7 @@ class InstallCommand extends Command
     public function __construct(
         private readonly Installer                $installer,
         private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly string                   $secret,
     ) {
-        $this->registrationValidator = new RegistrationValidator($this->secret);
         parent::__construct();
     }
 
@@ -121,8 +121,15 @@ class InstallCommand extends Command
                 'default' => false,
                 'group' => 'bundles',
             ],
-            'app-secret' => [
-                'description' => 'Application Secret',
+            'encryption-secret' => [
+                'description' => 'Pimcore Encryption Secret',
+                'mode' => InputOption::VALUE_OPTIONAL,
+                'insecure' => true,
+                'hidden-input' => true,
+                'group' => 'registration',
+            ],
+            'instance-identifier' => [
+                'description' => 'Pimcore Instance Identifier',
                 'mode' => InputOption::VALUE_OPTIONAL,
                 'insecure' => true,
                 'hidden-input' => true,
@@ -133,7 +140,7 @@ class InstallCommand extends Command
                         return 'Please provide your product key. ' .
                             'If you don\'t have one yet please register your product at ' .
                             'https://license.pimcore.com/register?instance_identifier=' .
-                            $this->registrationValidator->getInstanceIdentifier();
+                            $this->registrationValidator->getHashedInstanceIdentifier();
                     },
                 'mode' => InputOption::VALUE_REQUIRED,
                 'insecure' => true,
@@ -294,19 +301,22 @@ class InstallCommand extends Command
 
     }
 
-    private function loadSecret(InputInterface $input): void {
-        $secret = $input->getOption('app-secret');
+    private function loadProductSecrets(InputInterface $input): void {
+        $secret = $input->getOption('encryption-secret');
         if(!$secret) {
-            $secret = getenv('PIMCORE_INSTALL_APP_SECRET');
+            $secret = getenv('PIMCORE_INSTALL_ENCRYPTION_SECRET')
+                ?: Key::createNewRandomKey()->saveToAsciiSafeString();
+            $input->setOption('encryption-secret', $secret);
         }
 
-        if($secret) {
-            $this->registrationValidator = new RegistrationValidator($secret);
-        } else {
-            $this->registrationValidator = new RegistrationValidator($this->secret);
-            $input->setOption('app-secret', $this->secret);
+        $instanceIdentifier = $input->getOption('instance-identifier');
+        if(!$instanceIdentifier) {
+            $instanceIdentifier = getenv('PIMCORE_INSTALL_INSTANCE_IDENTIFIER')
+                ?: Uuid::v6()->toBase58();
+            $input->setOption('instance-identifier', $instanceIdentifier);
         }
 
+        $this->registrationValidator = new RegistrationValidator($secret, $instanceIdentifier);
     }
 
 
@@ -317,7 +327,7 @@ class InstallCommand extends Command
      */
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
-        $this->loadSecret($input);
+        $this->loadProductSecrets($input);
 
         foreach ($this->getOptions() as $name => $config) {
             if (!$this->installerNeedsOption($config)) {

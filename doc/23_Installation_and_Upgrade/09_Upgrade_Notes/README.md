@@ -98,14 +98,9 @@ ORDER BY TABLE_NAME;
 - Method `getWorkflowByName()` now returns `?WorkflowInterface` instead of `?object`. This also affected the `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php`.
 - Methods `sendPimcoreNotification` and `sendWorkflowEmailNotification` in `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php` now accept the `Transition` itself, rather than the `string` label.
 
-#### [Composer]
-- Removed the `parametersYmlCheck` from the Pimcore composer hook. 
-  So string matching `/ThisTokenIsNotSoSecretChangeIt(Immediately)?/` in `config/system.yaml` won't be replaced 
-  with random strings anymore.   
-
 #### [Installer]
-- From now on, installer will generate a `secret` and puts it into parameters section of 
-  `config/local/product_registration.yaml` file.
+- From now on, installer will generate a `pimcore.encryption.secret` and a `pimcore.product_registration.instance_id` and 
+  puts it into the `config/local/product_registration.yaml` file besides the provided product registration key.
 
 ### Custom Reports
 - add function `getColumnsWithMetadata` to `bundles/CustomReportsBundle/src/Tool/Adapter/CustomReportAdapterInterface.php`

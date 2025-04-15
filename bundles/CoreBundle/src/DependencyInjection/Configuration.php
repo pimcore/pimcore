@@ -2082,7 +2082,13 @@ final class Configuration implements ConfigurationInterface
         $rootNode->children()
             ->arrayNode('product_registration')
                 ->children()
+                    ->scalarNode('instance_identifier')
+                        ->info('Unique identifier of that Pimcore instance. Will be generated during install.')
+                    ->end()
                     ->scalarNode('product_key')
+                        ->info('Product registration key obtained during product registration. ' .
+                               'It is based on `product_identifier` and `pimcore.encryption.secret`.')
+                    ->end()
                 ->end()
             ->end()
         ;

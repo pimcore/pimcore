@@ -345,7 +345,8 @@ class Installer
                     'password' => $adminPass,
                 ],
                 $db,
-                $params['app_secret'],
+                $params['encryption_secret'],
+                $params['instance_identifier'],
                 $params['product_key'],
             );
         } catch (Throwable $e) {
@@ -401,7 +402,8 @@ class Installer
     }
 
     private function runInstall(
-        array $dbConfig, array $userCredentials, Connection $db, string $secret, string $productKey
+        array $dbConfig, array $userCredentials, Connection $db,
+        ?string $encryptionSecret, ?string $instanceIdentifier, string $productKey
     ): array
     {
         $writer = new ConfigWriter();
@@ -417,7 +419,7 @@ class Installer
         }
 
         if(in_array('write_product_registration_config', $stepsToRun) && !$this->skipProductRegistrationConfig) {
-            $writer->writeProductRegistrationConfig($secret, $productKey);
+            $writer->writeProductRegistrationConfig($productKey, $instanceIdentifier, $encryptionSecret);
         }
 
         if (in_array('write_database_config', $stepsToRun)) {

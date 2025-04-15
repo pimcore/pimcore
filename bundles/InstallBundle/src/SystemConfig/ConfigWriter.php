@@ -41,18 +41,26 @@ final class ConfigWriter
         }
     }
 
-    public function writeProductRegistrationConfig(string $secret, string $productKey): void
+    public function writeProductRegistrationConfig(
+        string $productKey,
+        ?string $instanceIdentifier = null,
+        ?string $secret = null
+    ): void
     {
         $config = [
-            'parameters' => [
-                'secret' => $secret
-            ],
             'pimcore' => [
                 'product_registration' => [
                     'product_key' => $productKey,
                 ],
             ],
         ];
+
+        if($instanceIdentifier !== null) {
+            $config['pimcore']['product_registration']['instance_identifier'] = $instanceIdentifier;
+        }
+        if($secret !== null) {
+            $config['pimcore']['encryption']['secret'] = $secret;
+        }
 
         $content = Yaml::dump($config);
         $configFile = PIMCORE_PROJECT_ROOT .'/config/local/product_registration.yaml';

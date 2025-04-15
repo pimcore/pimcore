@@ -310,14 +310,26 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
     private function checkProductRegistration(array $config, ContainerBuilder $container): void
     {
-        $secret = $container->getParameter('secret');
+        $encryptionSecret = $container->getParameter('pimcore.encryption.secret');
 
         //Pimcore not installed, skipping check
-        if(preg_match('/^ThisTokenIsNotSoSecretChangeIt(Immediately)?$/', $secret) && !Pimcore::isInstalled()) {
+        if(empty($encryptionSecret) && !Pimcore::isInstalled()) {
             return;
         }
 
-        $registrationValidator = new Pimcore\ProductRegistration\RegistrationValidator($secret);
+        if(empty($encryptionSecret)) {
+            throw new InvalidArgumentException(
+                "`pimcore.encryption.secret` is not set.\n".
+                "Run `vendor/bin/generate-defuse-key` to generate a secret and set it as container parameter " .
+                "`pimcore.encryption.secret`."
+            );
+        }
+
+        $registrationValidator = new Pimcore\ProductRegistration\RegistrationValidator(
+            $encryptionSecret,
+            $config['product_registration']['instance_identifier'] ?? null
+        );
+
         $registrationValidator->validateProductKey($config['product_registration']['product_key'] ?? null);
     }
 }
