@@ -2087,7 +2087,7 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                     ->scalarNode('product_key')
                         ->info('Product registration key obtained during product registration. ' .
-                               'It is based on `product_identifier` and `pimcore.encryption.secret`.')
+                               'It is based on `instance_identifier` and `pimcore.encryption.secret`.')
                     ->end()
                 ->end()
             ->end()
