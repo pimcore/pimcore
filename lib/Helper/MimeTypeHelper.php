@@ -71,7 +71,7 @@ final class MimeTypeHelper implements MimeTypeHelperInterface
             if ($extension) {
                 $extension = strtolower($extension);
                 $mimeTypes = new MimeTypes();
-                $mimeTypes->getMimeTypes($extension)[0];
+                $mimeType = $mimeTypes->getMimeTypes($extension)[0];
             }
         }
 
