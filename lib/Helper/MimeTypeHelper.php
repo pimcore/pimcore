@@ -66,8 +66,7 @@ final class MimeTypeHelper implements MimeTypeHelperInterface
 
         // Fallback to extension-based guessing
         if (!$mimeType || $mimeType === 'application/octet-stream') {
-            $uri = $metadata['uri'] ?? null;
-            $extension = $uri ? pathinfo($uri, PATHINFO_EXTENSION) : null;
+            $extension = $metadata['uri'] ? pathinfo($metadata['uri'], PATHINFO_EXTENSION) : null;
 
             if ($extension) {
                 $extension = strtolower($extension);
