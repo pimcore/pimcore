@@ -46,8 +46,8 @@ final class MimeTypeHelper implements MimeTypeHelperInterface
     private function guessMimeTypeFromStream(mixed $stream): ?string
     {
         $fpPosition = false;
-
-        $seekable = stream_get_meta_data($stream)['seekable'];
+        $metadata = stream_get_meta_data($stream);
+        $seekable = $metadata['seekable'];
         if ($seekable) {
             $fpPosition = ftell($stream);
             fseek($stream, 0);
@@ -66,10 +66,11 @@ final class MimeTypeHelper implements MimeTypeHelperInterface
 
         // Fallback to extension-based guessing
         if (!$mimeType || $mimeType === 'application/octet-stream') {
-            $mimeTypes = new MimeTypes();
-            $extensions = $mimeTypes->getExtensions($mimeType);
+            $uri = $metadata['uri'] ?? null;
+            $extension = $uri ? pathinfo($uri, PATHINFO_EXTENSION) : null;
 
-            if (!empty($extensions)) {
+            if ($extension) {
+                $extension = strtolower($extension);
                 // Map known extensions to MIME types
                 $mimeMap = [
                     // Adobe
@@ -91,8 +92,8 @@ final class MimeTypeHelper implements MimeTypeHelperInterface
                     'ods'   => 'application/vnd.oasis.opendocument.spreadsheet',
                     'odp'   => 'application/vnd.oasis.opendocument.presentation',
                 ];
-                if (isset($mimeMap[$extensions[0]])) {
-                    $mimeType = $mimeMap[$extensions[0]];
+                if (isset($mimeMap[$extension])) {
+                    $mimeType = $mimeMap[$extension];
                 }
             }
         }
