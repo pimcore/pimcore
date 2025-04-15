@@ -140,7 +140,8 @@ class InstallCommand extends Command
                         return 'Please provide your product key. ' .
                             'If you don\'t have one yet please register your product at ' .
                             'https://license.pimcore.com/register?instance_identifier=' .
-                            $this->registrationValidator->getHashedInstanceIdentifier();
+                            $this->registrationValidator->getInstanceIdentifier() .
+                            '&instance_hash=' . $this->registrationValidator->getHashedInstanceIdentifier();
                     },
                 'mode' => InputOption::VALUE_REQUIRED,
                 'insecure' => true,
