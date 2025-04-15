@@ -99,7 +99,7 @@ ORDER BY TABLE_NAME;
 - Methods `sendPimcoreNotification` and `sendWorkflowEmailNotification` in `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php` now accept the `Transition` itself, rather than the `string` label.
 
 #### [Installer]
-- From now on, installer will generate a `pimcore.encryption.secret` and a `pimcore.product_registration.instance_id` and 
+- From now on, installer will generate a `pimcore.encryption.secret` and a `pimcore.product_registration.instance_identifier` and 
   puts it into the `config/local/product_registration.yaml` file besides the provided product registration key.
 
 ### Custom Reports
