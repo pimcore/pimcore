@@ -60,7 +60,7 @@ class QuantityValue extends AbstractQuantityValue
 
         if ($this->getUnit() instanceof Unit) {
             $translator = Pimcore::getContainer()->get('translator');
-            $value .= ' ' . $translator->trans($this->getUnit()->getAbbreviation(), [], 'admin');
+            $value .= $translator->trans($this->getUnit()->getAbbreviation(), [], 'admin');
         }
 
         return $value ? (string)$value : '';
