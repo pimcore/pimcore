@@ -56,7 +56,7 @@ final class BlockNode extends Node
         return <<<PHP
         \$editableExtension = \$this->env->getExtension('Pimcore\Twig\Extension\DocumentEditableExtension');
         \$block = \$editableExtension->renderEditable(\$context, 'block', '{$this->blockName}', $optionsString);
-        foreach(\$block->getIterator() as \$key=>\$index) {
+        foreach(\$block->getIterator() as \$key => \$index) {
             \$block->setCurrent(\$key);
             \$context['_block'] = \$block;
             \$config = \$block->getConfig();
