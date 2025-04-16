@@ -176,7 +176,7 @@ class Ghostscript extends Adapter
     {
         try {
             $localFile = self::getLocalFileFromStream($this->getPdf());
-            $cmd = [self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dFirstPage=' . $page, '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r'. $resolution, '-o', $imageTargetPath, $localFile];
+            $cmd = [self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dUseCropBox', '-dFirstPage=' . $page, '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r'. $resolution, '-o', $imageTargetPath, $localFile];
             Console::addLowProcessPriority($cmd);
             $process = new Process($cmd);
             $process->setTimeout(240);
