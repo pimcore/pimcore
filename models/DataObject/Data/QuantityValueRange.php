@@ -73,7 +73,7 @@ class QuantityValueRange extends AbstractQuantityValue
             if ($step > 0) {
                 return [$this->minimum, $this->maximum];
             } else {
-                // the native range() function supports negative $step values, 
+                // the native range() function supports negative $step values,
                 // so this mimics its behavior.
                 return [$this->maximum, $this->minimum];
             }
@@ -82,7 +82,7 @@ class QuantityValueRange extends AbstractQuantityValue
         return range($this->getMinimum(), $this->getMaximum(), $step);
     }
 
-    public function getValue(int $step = 1): array
+    public function getValue(int|float $step = 1): array
     {
         return $this->getRange($step);
     }
