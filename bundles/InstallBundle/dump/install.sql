@@ -592,6 +592,7 @@ CREATE TABLE `versions` (
   KEY `cid` (`cid`),
   KEY `ctype_cid` (`ctype`, `cid`),
   KEY `date` (`date`),
+  KEY `public` (`public`),
   KEY `binaryFileHash` (`binaryFileHash`),
   KEY `autoSave` (`autoSave`),
   KEY `stackTrace` (`stackTrace`(1)),
