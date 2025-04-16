@@ -36,20 +36,9 @@ trait RangeTrait
 
         $delta = $max - $min;
 
-        // Edge case
-        if ($min == $max) {
-            return [$min];
-        }
-
         // range throws when used with $step greater then $delta
-        if (abs($step) > abs($delta)) {
-            if ($step > 0) {
-                return [$min, $max];
-            } else {
-                // the native range() function supports negative $step values,
-                // so this mimics its behavior.
-                return [$max, $min];
-            }
+        if ($min != $max && abs($step) > abs($delta)) {
+            return $step > 0 ? [$min, $max] : [$max, $min];
         }
 
         return range($min, $max, $step);
