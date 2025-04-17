@@ -67,6 +67,8 @@ jobs:
 
             - name: "Install dependencies with Composer"
               uses: "ramsey/composer-install@v2"
+              env:
+                  PIMCORE_INSTANCE_IDENTIFIER: "this-is-my-secret-identifier"
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
                   composer-options: "${{ matrix.composer-options }}"

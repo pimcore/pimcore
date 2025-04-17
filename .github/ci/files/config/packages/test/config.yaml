@@ -27,6 +27,11 @@ doctrine:
                     enum: string
                     bit: boolean
 
+pimcore:
+    product_registration:
+        instance_identifier: '%env(PIMCORE_INSTANCE_IDENTIFIER)%'
+
+
 parameters:
     pimcore_test.db.dsn: '%env(PIMCORE_TEST_DB_DSN)%'
     env(PIMCORE_TEST_DB_DSN): ~
