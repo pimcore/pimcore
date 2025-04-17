@@ -2,6 +2,10 @@
 
 ## Pimcore 12.0.0
 
+#### [GenericExecutionEngineBundle]
+
+- Added `executionContext` parameter to `JobRunRepositoryInterface` / `JobRunRepository`. You need to adapt your implementations according, if necessary.
+
 #### [Documents]
 - Removed deprecated Headless Chrome Processor.
 - Dropped support of `gotenberg/gotenberg-php` `v1.1` in favor of just supporting `v2` which bundles Chromium functionalities that refrain from requiring a standalone chromium binary.
