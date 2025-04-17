@@ -52,7 +52,7 @@ final class BlockParser extends AbstractTokenParser
         return $token->test('endpimcoreblock');
     }
 
-    public function getTag()
+    public function getTag(): string
     {
         return 'pimcoreblock';
     }

@@ -11,7 +11,7 @@ framework:
         strict_requirements: ~
         utf8: true
     csrf_protection: ~
-    validation: { enable_annotations: true }
+    validation: { enable_attributes: true }
     default_locale:  "%locale%"
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id

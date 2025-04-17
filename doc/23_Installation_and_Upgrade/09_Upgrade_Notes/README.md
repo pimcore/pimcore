@@ -5,6 +5,10 @@
 #### [System Requirements]
 - ext-openssl is now required.
 
+#### [GenericExecutionEngineBundle]
+
+- Added `executionContext` parameter to `JobRunRepositoryInterface` / `JobRunRepository`. You need to adapt your implementations according, if necessary.
+
 #### [Documents]
 - Removed deprecated Headless Chrome Processor.
 - Dropped support of `gotenberg/gotenberg-php` `v1.1` in favor of just supporting `v2` which bundles Chromium functionalities that refrain from requiring a standalone chromium binary.
@@ -69,6 +73,7 @@ ORDER BY TABLE_NAME;
 - Removed deprecated `getThumbnailConfig()` method from `Pimcore\Model\Asset\Image`.
 - Removed deprecated hashing algorithms from `Pimcore\Model\DataObject\Data\Password`. `password_hash` is the only supported hashing algorithm now.
 - Removed deprecated `getVersionDependentDatabaseColumnName` method. You can use the column name directly now.
+- UrlSlug fields can return null and array values now.
 
 #### [Events]
 - Removed `context` property of `ResolveUploadTargetEvent`.

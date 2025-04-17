@@ -23,6 +23,7 @@ use Pimcore\Tool;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
+use Symfony\Component\Translation\Exception\LogicException;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
@@ -187,7 +188,20 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             }
 
             if ($catalogue) {
-                $this->getCatalogue($locale)->addCatalogue($catalogue);
+                $c = $this->getCatalogue($locale);
+                $c->addCatalogue($catalogue);
+                $fallbackCatalogue = $c->getFallbackCatalogue();
+                if ($fallbackCatalogue) {
+                    $this->lazyInitialize($domain, $fallbackCatalogue->getLocale());
+
+                    try {
+                        $this->getCatalogue($locale)->addFallbackCatalogue(
+                            $this->getCatalogue($fallbackCatalogue->getLocale())
+                        );
+                    } catch (LogicException $e) {
+                        // couldn't add fallback because of a circular reference
+                    }
+                }
             }
         }
     }

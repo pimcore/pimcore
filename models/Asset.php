@@ -1301,11 +1301,13 @@ class Asset extends Element\AbstractElement
      */
     public function setCustomSettings(mixed $customSettings): static
     {
-        if (is_string($customSettings)) {
+        if (
+            is_string($customSettings) &&
+            $customSettings !== ''
+        ) {
             if (strlen($customSettings) > 10e6) {
                 $this->customSettingsCanBeCached = false;
             }
-
             $customSettings = Serialize::fromJson($customSettings);
         }
 

@@ -55,7 +55,11 @@ interface JobRunRepositoryInterface
      */
     public function updateLog(JobRun $jobRun, string $message): void;
 
-    public function getJobRunById(int $id, bool $forceReload = false, ?int $ownerId = null): JobRun;
+    public function getJobRunById(
+        int $id,
+        bool $forceReload = false,
+        ?int $ownerId = null
+    ): JobRun;
 
     /**
      * @return JobRun[]
@@ -64,7 +68,8 @@ interface JobRunRepositoryInterface
         ?int $ownerId = null,
         array $orderBy = [],
         int $limit = 100,
-        int $offset = 0
+        int $offset = 0,
+        ?string $executionContext = null,
     ): array;
 
     public function getTotalCount(): int;
@@ -73,9 +78,12 @@ interface JobRunRepositoryInterface
         int $ownerId,
         array $orderBy = [],
         int $limit = 10,
+        ?string $executionContext = null,
     ): array;
 
-    public function getLastJobRunByName(string $name): ?JobRun;
+    public function getLastJobRunByName(
+        string $name
+    ): ?JobRun;
 
     /**
      * @param ElementDescriptor[] $selectedElements

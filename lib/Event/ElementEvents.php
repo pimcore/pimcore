@@ -32,4 +32,15 @@ final class ElementEvents
      * @var string
      */
     const ELEMENT_PERMISSION_IS_ALLOWED = 'pimcore.element.permissions.isAllowed';
+
+    /**
+     * Arguments:
+     *  - elementId
+     *   - elementType
+     *
+     * @Event("Pimcore\Event\Model\ElementEvent")
+     *
+     * @var string
+     */
+    const POST_ELEMENT_UNLOCK_PROPAGATE = 'pimcore.element.postUnlockPropagate';
 }
