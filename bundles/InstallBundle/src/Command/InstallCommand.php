@@ -395,6 +395,12 @@ class InstallCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->registrationValidator = new RegistrationValidator(
+            $input->getOption('encryption-secret'),
+            $input->getOption('instance-identifier')
+        );
+
+
         // dispatch a bundle config event here to manually add/remove bundles/recommendations
         $bundleSetupEvent = $this->installer->dispatchBundleSetupEvent();
 
