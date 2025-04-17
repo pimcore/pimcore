@@ -16,22 +16,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\WordExportBundle;
 
-use Pimcore\Bundle\WordExportBundle\DependencyInjection\PimcoreWordExportExtension;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
 use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
-use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
 class PimcoreWordExportBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
 {
     use BundleAdminClassicTrait;
     use PackageVersionTrait;
-
-    public function getContainerExtension(): ExtensionInterface
-    {
-        return new PimcoreWordExportExtension();
-    }
 
     public function getCssPaths(): array
     {

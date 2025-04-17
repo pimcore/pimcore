@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Extension\Bundle;
 
 use Pimcore;
-use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-abstract class AbstractPimcoreBundle extends AbstractBundle implements PimcoreBundleInterface
+abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInterface
 {
     public function getNiceName(): string
     {
