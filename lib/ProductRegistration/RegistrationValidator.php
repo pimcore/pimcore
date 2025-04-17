@@ -40,8 +40,9 @@ final class RegistrationValidator
         $pleaseRegisterMessage =
             "Please register your product via " .
             "https://license.pimcore.com/register?" .
-            "instance_identifier={$this->getInstanceIdentifier()}&instance_hash={$this->getHashedInstanceIdentifier()} ".
-            "and provide the product key.";
+            "instance_identifier={$this->getInstanceIdentifier()}" .
+            "&instance_hash={$this->getHashedInstanceIdentifier()}" .
+            " and provide the product key.";
 
         if (empty($productKey)) {
             throw new InvalidConfigurationException(
