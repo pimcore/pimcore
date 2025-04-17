@@ -61,3 +61,6 @@ The checks are performed:
 - For CI pipelines or automated testing, you can pass both the secret, instance id, and the product key to the 
   installer using parameters and environment variables. This enables reproducible, automated installations with static 
   instance secrets and product keys.
+- For updating product registration of an existing installation, just change the instance identifier (symfony 
+  configuration `pimcore.product_registration.instance_identifier`) and restart the process (build container, 
+  follow link in error message, generate new product key, apply it to the configuration).
