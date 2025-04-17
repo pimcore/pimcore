@@ -7,6 +7,9 @@ use Defuse\Crypto\Key;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Uid\Uuid;
 
+/**
+ * @internal
+ */
 final class RegistrationValidator
 {
 
