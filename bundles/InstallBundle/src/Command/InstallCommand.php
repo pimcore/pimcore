@@ -327,12 +327,12 @@ class InstallCommand extends Command
     {
         $secret = $input->getOption('encryption-secret');
         if (!$secret) {
-            throw new RuntimeException('Encryption secret is required.');
+            throw new InvalidArgumentException('Encryption secret is required.');
         }
 
         $instanceIdentifier = $input->getOption('instance-identifier');
         if (!$instanceIdentifier) {
-            throw new RuntimeException('Instance identifier is required.');
+            throw new InvalidArgumentException('Instance identifier is required.');
         }
 
         $this->registrationValidator = new RegistrationValidator(
