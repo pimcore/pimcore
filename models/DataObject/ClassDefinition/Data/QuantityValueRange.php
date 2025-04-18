@@ -134,7 +134,13 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     {
         if (array_key_exists($this->getName() . '__minimum', $data) &&
             array_key_exists($this->getName() . '__maximum', $data) &&
-            array_key_exists($this->getName() . '__unit', $data)) {
+            array_key_exists($this->getName() . '__unit', $data) &&
+            !(
+                is_null($data[$this->getName() . '__minimum']) &&
+                is_null($data[$this->getName() . '__maximum']) &&
+                is_null($data[$this->getName() . '__unit'])
+            )
+        ) {
             $quantityValueRange = new DataObject\Data\QuantityValueRange(
                 $data[$this->getName() . '__minimum'],
                 $data[$this->getName() . '__maximum'],
