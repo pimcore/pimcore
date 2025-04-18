@@ -323,6 +323,25 @@ class InstallCommand extends Command
         $this->registrationValidator = new RegistrationValidator($secret, $instanceIdentifier);
     }
 
+    private function checkProductSecrets(InputInterface $input): void
+    {
+        $secret = $input->getOption('encryption-secret');
+        if (!$secret) {
+            throw new RuntimeException('Encryption secret is required.');
+        }
+
+        $instanceIdentifier = $input->getOption('instance-identifier');
+        if (!$instanceIdentifier) {
+            throw new RuntimeException('Instance identifier is required.');
+        }
+
+        $this->registrationValidator = new RegistrationValidator(
+            $input->getOption('encryption-secret'),
+            $input->getOption('instance-identifier')
+        );
+
+    }
+
     /**
      * Prompt options which are not set interactively
      *
@@ -395,10 +414,7 @@ class InstallCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->registrationValidator = new RegistrationValidator(
-            $input->getOption('encryption-secret'),
-            $input->getOption('instance-identifier')
-        );
+        $this->checkProductSecrets($input);
 
         // dispatch a bundle config event here to manually add/remove bundles/recommendations
         $bundleSetupEvent = $this->installer->dispatchBundleSetupEvent();
