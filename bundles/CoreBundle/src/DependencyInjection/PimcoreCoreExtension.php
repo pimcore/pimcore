@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 use InvalidArgumentException;
 use Monolog\Level;
 use Pimcore;
+use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use Pimcore\Http\Context\PimcoreContextGuesser;
@@ -320,7 +321,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.product_registration.instance_identifier', $productIdentifier);
 
         //Pimcore not installed, skipping check
-        if (empty($encryptionSecret) && !Pimcore::isInstalled()) {
+        if (empty($encryptionSecret) && file_exists(Installer::NEEDS_INSTALL_MARKER)) {
             return;
         }
 

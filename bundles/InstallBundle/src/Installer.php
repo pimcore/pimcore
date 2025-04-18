@@ -63,6 +63,7 @@ use Throwable;
  */
 class Installer
 {
+    const NEEDS_INSTALL_MARKER = PIMCORE_PRIVATE_VAR . '/config/needs-install.lock';
     const RECOMMENDED_BUNDLES = ['PimcoreSimpleBackendSearchBundle'];
 
     public const INSTALLABLE_BUNDLES = [
@@ -513,6 +514,8 @@ class Installer
             $this->clearKernelCacheDir($kernel);
         }
 
+        $this->cleanupNeedsInstallMarker();
+
         $this->dispatchStepEvent('complete');
 
         return $errors;
@@ -926,5 +929,17 @@ class Installer
     public function setRunInstallSteps(array $runInstallSteps): void
     {
         $this->runInstallSteps = $runInstallSteps;
+    }
+
+    private function cleanupNeedsInstallMarker(): void
+    {
+        try {
+            $filesystem = new Filesystem();
+            if ($filesystem->exists(self::NEEDS_INSTALL_MARKER)) {
+                $filesystem->remove(self::NEEDS_INSTALL_MARKER);
+            }
+        } catch (IOException $e) {
+            $this->logger->error($e->getMessage());
+        }
     }
 }
