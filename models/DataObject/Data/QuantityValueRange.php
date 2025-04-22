@@ -64,9 +64,9 @@ class QuantityValueRange extends AbstractQuantityValue
         $this->markMeDirty();
     }
 
-    public function getValue(int|float $step = 1): array
+    public function getValue(): array
     {
-        return $this->getRange($step);
+        return [$this->getMinimum(), $this->getMaximum()];
     }
 
     public function toArray(): array

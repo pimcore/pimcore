@@ -68,7 +68,8 @@ ORDER BY TABLE_NAME;
 - Removed deprecated `getVersionDependentDatabaseColumnName` method. You can use the column name directly now.
 - UrlSlug fields can return null and array values now.
 - Refactored the `getRange($step)` method in `Pimcore/Model/DataObject/Data/QuantityValueRange` and `Pimcore/Model/DataObject/Data/NumericRange` to delegate its implementation to `Pimcore/Model/DataObject/Data/Traits/RangeTrait`. This refactoring now handles cases where `abs($step)` is greater than `abs($max - $min)`.
-- Updated the `getRange($step)` and `getValue($step)` method signature in `Pimcore/Model/DataObject/Data/QuantityValueRange` to support both `int` and `float` step values.
+- Updated the `getRange($step)` method signature in `Pimcore/Model/DataObject/Data/QuantityValueRange` to support both `int` and `float` step values.
+- Removed the `step` parameter and return `minimum` and `maximum` from the `getValue()` method in `Pimcore/Model/DataObject/Data/QuantityValueRange`.
 
 #### [Events]
 - Removed `context` property of `ResolveUploadTargetEvent`.
