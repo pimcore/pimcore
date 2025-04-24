@@ -194,6 +194,11 @@ services:
 
     Pimcore\Model\Notification\Service\UserService: ~
 
+    Pimcore\Tool\StatisticsManager:
+        arguments:
+            $instanceIdentifier: '%pimcore.product_registration.instance_identifier%'
+            $config: '%pimcore.config%'
+
     # Doctrine schema filter to only include managed tables
     Pimcore\Db\ManagedTablesOnlyFilter.default:
         class: Pimcore\Db\ManagedTablesOnlyFilter
