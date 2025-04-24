@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ref: [{'base': '12.x', 'destination': '12.x'}, {'base': '11.5', 'destination': '11.5'}]
+        ref: [{'base': '12.x', 'destination': '12.x'}, {'base': '12.0', 'destination': '12.0'}, {'base': '11.5', 'destination': '11.5'}]
     with:
       base_ref: ${{ matrix.ref.base }}
       ref_name: ${{ matrix.ref.destination }}

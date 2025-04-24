@@ -158,7 +158,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
             return Model\DataObject\Service::getCalculatedFieldValueForEditMode($object, $params, $data);
         }
 
-        return $data;
+        return (string)$data;
     }
 
     /**

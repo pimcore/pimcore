@@ -64,7 +64,7 @@ As you can see there are really useful cases for properties, feel free to use th
 * As the templates are written in Twig, there is a clear separation of logic (controllers) and design (view / template).
 
 ## Create Your First Document 
-Working with documents is described in detail in our [Create a First Project](../01_Getting_Started/06_Create_a_First_Project.md) manual. 
+Working with documents is described in detail in our [Create a First Project](../01_Getting_Started/07_Create_a_First_Project.md) manual. 
 
 ## Cleanup Documents Types
 Uninstalling bundles may not always clean up data or database tables in the process to avoid data loss.

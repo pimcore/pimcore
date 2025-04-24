@@ -39,6 +39,7 @@
     "ext-intl": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
+    "ext-openssl": "*",
     "ext-pdo": "*",
     "ext-pdo_mysql": "*",
     "ext-zip": "*",
@@ -71,6 +72,7 @@
     "nesbot/carbon": "^2.72 || ^3.8.4",
     "onnov/detect-encoding": "^2.0",
     "pear/net_url2": "^2.2",
+    "php-http/discovery": "^1.20",
     "phpdocumentor/reflection-docblock": "^5.2",
     "presta/sitemap-bundle": "^3.3 || ^4.1",
     "sabre/dav": "^4.1.2",
@@ -140,7 +142,8 @@
     "sabre/dav": "4.2.2",
     "symfony/symfony": "*",
     "thecodingmachine/safe": "<2.0",
-    "twig/twig": ">=3.9.0 <3.14.0"
+    "twig/twig": ">=3.9.0 <3.14.0",
+    "php-http/discovery": "<1.20"
   },
   "require-dev": {
     "codeception/codeception": "^5.0.3",

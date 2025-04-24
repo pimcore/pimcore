@@ -46,14 +46,14 @@ final class MimeTypeHelper implements MimeTypeHelperInterface
     private function guessMimeTypeFromStream(mixed $stream): ?string
     {
         $fpPosition = false;
-
-        $seekable = stream_get_meta_data($stream)['seekable'];
+        $metadata = stream_get_meta_data($stream);
+        $seekable = $metadata['seekable'];
         if ($seekable) {
             $fpPosition = ftell($stream);
             fseek($stream, 0);
         }
 
-        $bytes = fread($stream, 1024);
+        $bytes = fread($stream, 8192);
 
         if ($seekable &&
             $fpPosition !== false
@@ -63,6 +63,17 @@ final class MimeTypeHelper implements MimeTypeHelperInterface
 
         $fileInfo = new finfo(FILEINFO_MIME_TYPE);
         $mimeType = $fileInfo->buffer($bytes);
+
+        // Fallback to extension-based guessing
+        if (!$mimeType || $mimeType === 'application/octet-stream') {
+            $extension = $metadata['uri'] ? pathinfo($metadata['uri'], PATHINFO_EXTENSION) : null;
+
+            if ($extension) {
+                $extension = strtolower($extension);
+                $mimeTypes = new MimeTypes();
+                $mimeType = $mimeTypes->getMimeTypes($extension)[0];
+            }
+        }
 
         return $mimeType === false ? null : $mimeType;
     }

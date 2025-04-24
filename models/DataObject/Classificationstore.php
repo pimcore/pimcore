@@ -323,10 +323,16 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @throws Exception
      */
-    public function getLocalizedKeyValue(int $groupId, int $keyId, string $language = 'default', bool $ignoreFallbackLanguage = false, bool $ignoreDefaultLanguage = false): mixed
-    {
-        $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
+    public function getLocalizedKeyValue(
+        int $groupId,
+        int $keyId,
+        ?string $language = 'default',
+        bool $ignoreFallbackLanguage = false,
+        bool $ignoreDefaultLanguage = false
+    ): mixed {
+        $language = $this->getLanguage($language);
 
+        $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
         if ($keyConfig->getType() == 'calculatedValue') {
             $data = new Model\DataObject\Data\CalculatedValue($this->getFieldname());
             $childDef = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
@@ -337,8 +343,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
 
         $fieldDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
-
-        $language = $this->getLanguage($language);
         $data = null;
 
         if (array_key_exists($groupId, $this->items) && array_key_exists($keyId, $this->items[$groupId])

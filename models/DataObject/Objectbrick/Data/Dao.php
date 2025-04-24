@@ -16,7 +16,6 @@
 namespace Pimcore\Model\DataObject\Objectbrick\Data;
 
 use Exception;
-use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -33,6 +32,8 @@ class Dao extends Model\Dao\AbstractDao
 {
     protected ?DataObject\Concrete\Dao\InheritanceHelper $inheritanceHelper = null;
 
+    private const SQL_SELECT_ALL = 'SELECT * FROM ';
+
     /**
      *
      * @throws Exception
@@ -47,216 +48,227 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'id', $storetable, $querytable, null, 'id');
 
-        DataObject::setGetInheritedValues(false);
+        try {
+            DataObject::setGetInheritedValues(false);
 
-        $fieldDefinitions = $this->model->getDefinition()->getFieldDefinitions();
+            $fieldDefinitions = $this->model->getDefinition()->getFieldDefinitions();
 
-        $data = [];
-        $data['id'] = $object->getId();
-        $data['fieldname'] = $this->model->getFieldname();
+            $data = [];
+            $data['id'] = $object->getId();
+            $data['fieldname'] = $this->model->getFieldname();
 
-        $dirtyRelations = [];
-        $db = Db::get();
+            if (($params['isUpdate'] ?? false) === false && $this->model->getObject()->getClass()->getAllowInherit()) {
+                // if this is a fresh object, then we don't need the check
+                $isBrickUpdate = false; // used to indicate whether we want to consider the default value
+            } else {
+                // or brick has been added
+                $existsResult = $this->db->fetchOne(
+                    'SELECT id FROM ' . $storetable . ' WHERE id = ? AND fieldname = ? LIMIT 1',
+                    [$object->getId(), $this->model->getFieldname()]
+                );
 
-        if (($params['isUpdate'] ?? false) === false && $this->model->getObject()->getClass()->getAllowInherit()) {
-            // if this is a fresh object, then we don't need the check
-            $isBrickUpdate = false; // used to indicate whether we want to consider the default value
-        } else {
-            // or brick has been added
-            $existsResult = $this->db->fetchOne(
-                'SELECT id FROM ' . $storetable . ' WHERE id = ? LIMIT 1',
-                [$object->getId()]
-            );
+                $isBrickUpdate = (bool)$existsResult; // used to indicate whether we want to consider the default value
+            }
 
-            $isBrickUpdate = (bool)$existsResult; // used to indicate whether we want to consider the default value
-        }
+            foreach ($fieldDefinitions as $fieldName => $fd) {
+                $getter = 'get' . ucfirst($fd->getName());
 
-        foreach ($fieldDefinitions as $fieldName => $fd) {
-            $getter = 'get' . ucfirst($fd->getName());
+                if ($fd instanceof CustomResourcePersistingInterface) {
+                    // for fieldtypes which have their own save algorithm eg. relational data-types, ...
+                    $fd->save($this->model,
+                        array_merge($params, [
+                            'context' => [
+                                'containerType' => 'objectbrick',
+                                'containerKey' => $this->model->getType(),
+                                'fieldname' => $this->model->getFieldname(),
+                            ],
+                            'isUpdate' => $isBrickUpdate,
+                            'owner' => $this->model,
+                            'fieldname' => $fieldName,
+                        ]));
+                }
 
-            if ($fd instanceof CustomResourcePersistingInterface) {
-                // for fieldtypes which have their own save algorithm eg. relational data-types, ...
-                $fd->save($this->model,
-                    array_merge($params, [
+                if ($fd instanceof ResourcePersistenceAwareInterface) {
+                    $fieldDefinitionParams = [
+                        'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
+                        'fieldname' => $fieldName,
+                        'isUpdate' => $isBrickUpdate,
                         'context' => [
                             'containerType' => 'objectbrick',
                             'containerKey' => $this->model->getType(),
                             'fieldname' => $this->model->getFieldname(),
                         ],
-                        'isUpdate' => $isBrickUpdate,
-                        'owner' => $this->model,
-                        'fieldname' => $fieldName,
-                    ]));
-            }
-
-            if ($fd instanceof ResourcePersistenceAwareInterface) {
-                $fieldDefinitionParams = [
-                    'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
-                    'fieldname' => $fieldName,
-                    'isUpdate' => $isBrickUpdate,
-                    'context' => [
-                        'containerType' => 'objectbrick',
-                        'containerKey' => $this->model->getType(),
-                        'fieldname' => $this->model->getFieldname(),
-                    ],
-                ];
-                if (is_array($fd->getColumnType())) {
-                    $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
-                    $data = array_merge($data, $insertDataArray);
-                    $this->model->set($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams));
-                } else {
-                    $insertData = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
-                    $data[$fieldName] = $insertData;
-                    $this->model->set($fieldName, $fd->getDataFromResource($insertData, $object, $fieldDefinitionParams));
-                }
-
-                $this->model->markFieldDirty($fieldName, false);
-            }
-        }
-
-        if ($isBrickUpdate) {
-            $this->db->update($storetable, Helper::quoteDataIdentifiers($this->db, $data), ['id'=> $object->getId()]);
-        } else {
-            $this->db->insert($storetable, Helper::quoteDataIdentifiers($this->db, $data));
-        }
-
-        // get data for query table
-        // $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
-        // this is special because we have to call each getter to get the inherited values from a possible parent object
-
-        $data = [];
-        $data['id'] = $object->getId();
-        $data['fieldname'] = $this->model->getFieldname();
-
-        $this->inheritanceHelper->resetFieldsToCheck();
-        $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $querytable . ' WHERE id = ?', [$object->getId()]);
-
-        $inheritanceEnabled = $object->getClass()->getAllowInherit();
-        $parentData = null;
-        if ($inheritanceEnabled) {
-            // get the next suitable parent for inheritance
-            $parentForInheritance = $object->getNextParentForInheritance();
-            if ($parentForInheritance) {
-                // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
-                // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
-                // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
-                // so the data of the parent cannot be changed while this transaction is on progress
-                $parentData = $this->db->fetchAssociative('SELECT * FROM ' . $querytable . ' WHERE id = ? FOR UPDATE', [$parentForInheritance->getId()]);
-            }
-        }
-
-        foreach ($fieldDefinitions as $key => $fd) {
-            if ($fd instanceof QueryResourcePersistenceAwareInterface) {
-                $method = 'get' . $key;
-                $fieldValue = $this->model->$method();
-                $insertData = $fd->getDataForQueryResource($fieldValue, $object);
-                $isEmpty = $fd->isEmpty($fieldValue);
-
-                if (is_array($insertData)) {
-                    $columnNames = array_keys($insertData);
-                    $data = array_merge($data, $insertData);
-                } else {
-                    $columnNames = [$key];
-                    $data[$key] = $insertData;
-                }
-
-                // if the current value is empty and we have data from the parent, we just use it
-                if ($isEmpty && $parentData) {
-                    foreach ($columnNames as $columnName) {
-                        if (array_key_exists($columnName, $parentData)) {
-                            $data[$columnName] = $parentData[$columnName];
-                            if (is_array($insertData)) {
-                                $insertData[$columnName] = $parentData[$columnName];
-                            } else {
-                                $insertData = $parentData[$columnName];
-                            }
-                        }
-                    }
-                }
-
-                if ($inheritanceEnabled) {
-                    //get changed fields for inheritance
-                    if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
-                        // nothing to do, see https://github.com/pimcore/pimcore/issues/727
-                        continue;
-                    } elseif ($fd->isRelationType()) {
-                        if (is_array($insertData)) {
-                            $doInsert = false;
-                            foreach ($insertData as $insertDataKey => $insertDataValue) {
-                                $oldDataValue = $oldData[$insertDataKey] ?? null;
-                                $parentDataValue = $parentData[$insertDataKey] ?? null;
-                                if ($isEmpty && $oldDataValue == $parentDataValue) {
-                                    // do nothing, ... value is still empty and parent data is equal to current data in query table
-                                } elseif ($oldDataValue != $insertDataValue) {
-                                    $doInsert = true;
-
-                                    break;
-                                }
-                            }
-
-                            if ($doInsert) {
-                                $this->inheritanceHelper->addRelationToCheck($key, $fd, array_keys($insertData));
-                            }
-                        } else {
-                            $oldDataValue = $oldData[$key] ?? null;
-                            $parentDataValue = $parentData[$key] ?? null;
-                            if ($isEmpty && $oldDataValue == $parentDataValue) {
-                                // do nothing, ... value is still empty and parent data is equal to current data in query table
-                            } elseif ($oldDataValue != $insertData) {
-                                $this->inheritanceHelper->addRelationToCheck($key, $fd);
-                            }
-                        }
+                    ];
+                    if (is_array($fd->getColumnType())) {
+                        $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
+                        $data = array_merge($data, $insertDataArray);
+                        $this->model->set($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams));
                     } else {
-                        if (is_array($insertData)) {
-                            foreach ($insertData as $insertDataKey => $insertDataValue) {
-                                $oldDataValue = $oldData[$insertDataKey] ?? null;
-                                $parentDataValue = $parentData[$insertDataKey] ?? null;
+                        $insertData = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
+                        $data[$fieldName] = $insertData;
+                        $this->model->set($fieldName, $fd->getDataFromResource($insertData, $object, $fieldDefinitionParams));
+                    }
+
+                    $this->model->markFieldDirty($fieldName, false);
+                }
+            }
+
+            if ($isBrickUpdate) {
+                $this->db->update($storetable, Helper::quoteDataIdentifiers($this->db, $data), [
+                'id'=> $object->getId(),
+                'fieldname' => $this->model->getFieldname(),
+            ]);
+            } else {
+                $this->db->insert($storetable, Helper::quoteDataIdentifiers($this->db, $data));
+            }
+
+            // get data for query table
+            // $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
+            // this is special because we have to call each getter to get the inherited values from a possible parent object
+
+            $data = [];
+            $data['id'] = $object->getId();
+            $data['fieldname'] = $this->model->getFieldname();
+
+            $this->inheritanceHelper->resetFieldsToCheck();
+            $oldData = $this->db->fetchAssociative(
+                self::SQL_SELECT_ALL . $querytable . ' WHERE id = ? AND fieldname = ?',
+                [$object->getId(), $this->model->getFieldname()]
+            );
+
+            $inheritanceEnabled = $object->getClass()->getAllowInherit();
+            $parentData = null;
+            if ($inheritanceEnabled) {
+                // get the next suitable parent for inheritance
+                $parentForInheritance = $object->getNextParentForInheritance();
+                if ($parentForInheritance) {
+                    // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
+                    // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
+                    // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
+                    // so the data of the parent cannot be changed while this transaction is on progress
+                    $parentData = $this->db->fetchAssociative(
+                        self::SQL_SELECT_ALL . $querytable . ' WHERE id = ? AND fieldname = ? FOR UPDATE',
+                        [$parentForInheritance->getId(), $this->model->getFieldname()]
+                    );
+                }
+            }
+
+            foreach ($fieldDefinitions as $key => $fd) {
+                if ($fd instanceof QueryResourcePersistenceAwareInterface) {
+                    $method = 'get' . $key;
+                    $fieldValue = $this->model->$method();
+                    $insertData = $fd->getDataForQueryResource($fieldValue, $object);
+                    $isEmpty = $fd->isEmpty($fieldValue);
+
+                    if (is_array($insertData)) {
+                        $columnNames = array_keys($insertData);
+                        $data = array_merge($data, $insertData);
+                    } else {
+                        $columnNames = [$key];
+                        $data[$key] = $insertData;
+                    }
+
+                    // if the current value is empty and we have data from the parent, we just use it
+                    if ($isEmpty && $parentData) {
+                        foreach ($columnNames as $columnName) {
+                            if (array_key_exists($columnName, $parentData)) {
+                                $data[$columnName] = $parentData[$columnName];
+                                if (is_array($insertData)) {
+                                    $insertData[$columnName] = $parentData[$columnName];
+                                } else {
+                                    $insertData = $parentData[$columnName];
+                                }
+                            }
+                        }
+                    }
+
+                    if ($inheritanceEnabled) {
+                        //get changed fields for inheritance
+                        if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                            // nothing to do, see https://github.com/pimcore/pimcore/issues/727
+                            continue;
+                        } elseif ($fd->isRelationType()) {
+                            if (is_array($insertData)) {
+                                $doInsert = false;
+                                foreach ($insertData as $insertDataKey => $insertDataValue) {
+                                    $oldDataValue = $oldData[$insertDataKey] ?? null;
+                                    $parentDataValue = $parentData[$insertDataKey] ?? null;
+                                    if ($isEmpty && $oldDataValue == $parentDataValue) {
+                                        // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                    } elseif ($oldDataValue != $insertDataValue) {
+                                        $doInsert = true;
+
+                                        break;
+                                    }
+                                }
+
+                                if ($doInsert) {
+                                    $this->inheritanceHelper->addRelationToCheck($key, $fd, array_keys($insertData));
+                                }
+                            } else {
+                                $oldDataValue = $oldData[$key] ?? null;
+                                $parentDataValue = $parentData[$key] ?? null;
                                 if ($isEmpty && $oldDataValue == $parentDataValue) {
                                     // do nothing, ... value is still empty and parent data is equal to current data in query table
-                                } elseif ($oldDataValue != $insertDataValue) {
-                                    $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
+                                } elseif ($oldDataValue != $insertData) {
+                                    $this->inheritanceHelper->addRelationToCheck($key, $fd);
                                 }
                             }
                         } else {
-                            $oldDataValue = $oldData[$key] ?? null;
-                            $parentDataValue = $parentData[$key] ?? null;
-                            if ($isEmpty && $oldDataValue == $parentDataValue) {
-                                // do nothing, ... value is still empty and parent data is equal to current data in query table
-                            } elseif ($oldDataValue != $insertData) {
-                                // data changed, do check and update
-                                $this->inheritanceHelper->addFieldToCheck($key, $fd);
+                            if (is_array($insertData)) {
+                                foreach ($insertData as $insertDataKey => $insertDataValue) {
+                                    $oldDataValue = $oldData[$insertDataKey] ?? null;
+                                    $parentDataValue = $parentData[$insertDataKey] ?? null;
+                                    if ($isEmpty && $oldDataValue == $parentDataValue) {
+                                        // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                    } elseif ($oldDataValue != $insertDataValue) {
+                                        $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
+                                    }
+                                }
+                            } else {
+                                $oldDataValue = $oldData[$key] ?? null;
+                                $parentDataValue = $parentData[$key] ?? null;
+                                if ($isEmpty && $oldDataValue == $parentDataValue) {
+                                    // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                } elseif ($oldDataValue != $insertData) {
+                                    // data changed, do check and update
+                                    $this->inheritanceHelper->addFieldToCheck($key, $fd);
+                                }
                             }
                         }
                     }
                 }
             }
+
+            Helper::upsert($this->db, $querytable, $data, $this->getPrimaryKey($querytable));
+
+            if ($inheritanceEnabled) {
+                $this->inheritanceHelper->doUpdate($object->getId(), true,
+                    ['inheritanceRelationContext' => [
+                        'ownertype' => 'objectbrick',
+                    ]]);
+            }
+            $this->inheritanceHelper->resetFieldsToCheck();
+        } finally {
+            // HACK: see a few lines above!
+            DataObject::setGetInheritedValues($inheritedValues);
         }
-
-        Helper::upsert($this->db, $querytable, $data, $this->getPrimaryKey($querytable));
-
-        if ($inheritanceEnabled) {
-            $this->inheritanceHelper->doUpdate($object->getId(), true,
-                ['inheritanceRelationContext' => [
-                    'ownertype' => 'objectbrick',
-                ]]);
-        }
-        $this->inheritanceHelper->resetFieldsToCheck();
-
-        // HACK: see a few lines above!
-        DataObject::setGetInheritedValues($inheritedValues);
     }
 
     public function delete(DataObject\Concrete $object): void
     {
         // update data for store table
         $storeTable = $this->model->getDefinition()->getTableName($object->getClass(), false);
-        $this->db->delete($storeTable, ['id' => $object->getId()]);
+        $this->db->delete($storeTable, ['id' => $object->getId(), 'fieldname' => $this->model->getFieldname()]);
 
         // update data for query table
         $queryTable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
-        $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $queryTable . ' WHERE id = ?', [$object->getId()]);
-        $this->db->delete($queryTable, ['id' => $object->getId()]);
+        $oldData = $this->db->fetchAssociative(self::SQL_SELECT_ALL . $queryTable . ' WHERE id = ? AND fieldname = ?', [
+            $object->getId(),
+            $this->model->getFieldname(),
+        ]);
+        $this->db->delete($queryTable, ['id' => $object->getId(), 'fieldname' => $this->model->getFieldname()]);
 
         //update data for relations table
         $this->db->delete('object_relations_' . $object->getClassId(), [

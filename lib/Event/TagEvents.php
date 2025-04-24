@@ -103,4 +103,16 @@ final class TagEvents
      * @var string
      */
     const POST_REMOVE_FROM_ELEMENT = 'pimcore.tag.postRemoveFromElement';
+
+    /**
+     * Arguments:
+     *  - tagIds
+     *  - elementType
+     *  - elementId
+     *
+     * @Event("Pimcore\Event\Model\TagEvent")
+     *
+     * @var string
+     */
+    const POST_BATCH_ASSIGN_TAGS_TO_ELEMENT = 'pimcore.tag.postBatchAssignTagsToElement';
 }

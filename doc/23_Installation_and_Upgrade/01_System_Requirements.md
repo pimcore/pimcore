@@ -35,6 +35,7 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 - [intl](https://www.php.net/intl)
 - [opcache](https://php.net/opcache)
 - [curl](https://php.net/curl)
+- [ext-openssl](https://www.php.net/openssl)
 - CLI SAPI (for Cron Jobs)
 - [Composer 2](https://getcomposer.org/) (added to `$PATH` - see also [Additional Tools Installation](./03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md))
 
@@ -94,7 +95,7 @@ save ""
 ### RabbitMQ (optional but recommended for messenger)
 Pimcore utilizes the Symfony Messenger for various background processes to ensure efficient handling of tasks. As the number of Pimcore elements grows, the need for a more robust and scalable queue system becomes evident. RabbitMQ is recommended in these scenarios for its exemplary performance and scalability. It excels in managing high volumes of messages and complex workflows, making it the preferred choice for systems that demand reliability and efficiency at scale.
 
-Please follow [Symfony Messenger](../01_Getting_Started/02_Advanced_Installation_Topics/01_Symfony_Messenger.md) for more information about pimcore messenger. For an example configuration, refer to [this link](https://github.com/pimcore/skeleton/blob/11.x/.docker/messenger.yaml).
+Please follow [Symfony Messenger](../01_Getting_Started/03_Advanced_Installation_Topics/01_Symfony_Messenger.md) for more information about pimcore messenger. For an example configuration, refer to [this link](https://github.com/pimcore/skeleton/blob/11.x/.docker/messenger.yaml).
 
 ### Operating System
 Please ensure you have installed all required packages to ensure proper locale support by PHP.

@@ -81,6 +81,18 @@ class ImageGallery implements Iterator, OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
+    public function __toString(): string
+    {
+        if ($this->items) {
+            /** @var array<int, Hotspotimage> $filtered */
+            $filtered = array_filter($this->items, fn ($item) => !is_null($item));
+
+            return implode(',', array_map('strval', $filtered));
+        }
+
+        return '';
+    }
+
     public function hasValidImages(): bool
     {
         foreach ($this->getItems() as $item) {

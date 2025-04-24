@@ -141,7 +141,15 @@ final class Tag extends Model\AbstractModel
     public static function batchAssignTagsToElement(string $cType, array $cIds, array $tagIds, bool $replace = false): void
     {
         $tag = new Tag();
+        $event = new TagEvent($tag, [
+            'tagIds' => $tagIds,
+            'elementType' => $cType,
+            'elementIds' => $cIds,
+        ]);
+
         $tag->getDao()->batchAssignTagsToElement($cType, $cIds, $tagIds, $replace);
+
+        $tag->dispatchEvent($event, TagEvents::POST_BATCH_ASSIGN_TAGS_TO_ELEMENT);
     }
 
     /**
