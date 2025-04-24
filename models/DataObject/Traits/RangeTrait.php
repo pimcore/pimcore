@@ -38,7 +38,7 @@ trait RangeTrait
 
         // range throws when used with $step greater then $delta
         if ($min != $max && abs($step) > abs($delta)) {
-            return $step > 0 ? [$min, $max] : [$max, $min];
+            throw new \OutOfRangeException('The range must be higher than the given step parameter');
         }
 
         return range($min, $max, $step);
