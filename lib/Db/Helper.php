@@ -18,6 +18,7 @@ namespace Pimcore\Db;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Result;
+use Doctrine\DBAL\Exception\DriverException;
 use Exception;
 use LogicException;
 use Pimcore\Model\Element\ValidationException;
@@ -31,13 +32,25 @@ class Helper
      * @param string[] $keys If the table needs to be updated, the columns listed in this parameter will be used as criteria/condition for the where clause.
      * Typically, these are the primary key columns.
      * The values for the specified keys are read from the $data parameter.
+     *
+     * @return int|string|null last insert id or null if the insert was not successful or it was an update.
      */
-    public static function upsert(Connection $connection, string $table, array $data, array $keys, bool $quoteIdentifiers = true): int|string
-    {
+    public static function upsert(
+        Connection $connection,
+        string $table,
+        array $data,
+        array $keys,
+        bool $quoteIdentifiers = true
+    ): int|string|null {
         try {
             $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
+            $connection->insert($table, $data);
 
-            return $connection->insert($table, $data);
+            try {
+                return $connection->lastInsertId();
+            } catch (DriverException) {
+                return null;
+            }
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $exception) {
             $critera = [];
             foreach ($keys as $key) {
@@ -45,7 +58,9 @@ class Helper
                 $critera[$key] = $data[$key] ?? throw new LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
             }
 
-            return $connection->update($table, $data, $critera);
+            $connection->update($table, $data, $critera);
+
+            return null;
         }
     }
 
@@ -97,6 +112,9 @@ class Helper
         return null;
     }
 
+    /**
+     * @deprecated mixed $value is deprecated and will be changed to string in the next major version.
+     */
     public static function quoteInto(Connection $db, string $text, mixed $value, ?int $count = null): array|string
     {
         if ($count === null) {

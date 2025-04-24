@@ -16,11 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
-use Exception;
 use Pimcore;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
 
 /**
  * @internal
@@ -40,20 +37,12 @@ class Service
         self::$definitionsCache = [];
     }
 
-    /**
-     *
-     * @return EncryptedField|Data|null
-     *
-     * @throws Exception
-     */
-    public static function getFieldDefinitionFromKeyConfig(KeyConfig|KeyGroupRelation $keyConfig): DataObject\ClassDefinition\Data\EncryptedField|DataObject\ClassDefinition\Data|null
+    public static function getFieldDefinitionFromKeyConfig(KeyConfig|KeyGroupRelation $keyConfig): ?DataObject\ClassDefinition\Data
     {
         if ($keyConfig instanceof KeyConfig) {
             $cacheId = $keyConfig->getId();
-        } elseif ($keyConfig instanceof KeyGroupRelation) {
-            $cacheId = $keyConfig->getKeyId();
         } else {
-            throw new Exception('$keyConfig should be KeyConfig or KeyGroupRelation');
+            $cacheId = $keyConfig->getKeyId();
         }
 
         if (array_key_exists($cacheId, self::$definitionsCache)) {
@@ -69,7 +58,7 @@ class Service
         return $fd;
     }
 
-    public static function getFieldDefinitionFromJson(array $definition, string $type): DataObject\ClassDefinition\Data\EncryptedField|DataObject\ClassDefinition\Data|null
+    public static function getFieldDefinitionFromJson(array $definition, string $type): ?DataObject\ClassDefinition\Data
     {
         if (!$definition) {
             return null;

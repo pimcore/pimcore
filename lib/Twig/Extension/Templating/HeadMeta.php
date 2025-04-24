@@ -265,7 +265,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Prepend
      *
-     * @param  string $value
+     * @param  stdClass $value
      *
      * @throws Exception
      */

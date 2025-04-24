@@ -158,7 +158,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
             return Model\DataObject\Service::getCalculatedFieldValueForEditMode($object, $params, $data);
         }
 
-        return $data;
+        return (string)$data;
     }
 
     /**
@@ -191,7 +191,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
 
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
-        return $this->getDataFromObjectParam($object, $params) ?? '';
+        return (string) $this->getDataFromObjectParam($object, $params);
     }
 
     public function getQueryColumnType(): string

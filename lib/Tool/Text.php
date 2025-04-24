@@ -176,7 +176,11 @@ class Text
                         if (!empty($additionalAttributes)) {
                             $replacement .= ' ' . array_to_html_attribute_string($additionalAttributes);
                         }
-                        $newTag = preg_replace($pattern, $replacement, $oldTag);
+
+                        //if the html-sanitizer removes required link attribute add it here again
+                        $newTag = self::addAttributeToTag($oldTag, $linkAttr);
+
+                        $newTag = preg_replace($pattern, $replacement, $newTag);
 
                         $text = str_replace($oldTag, $newTag, $text);
                     }
@@ -198,6 +202,15 @@ class Text
         return $text;
     }
 
+    private static function addAttributeToTag(string $oldTag, string $attribute, string $defaultValue = '/'): string
+    {
+        if (!str_contains($oldTag, $attribute)) {
+            return $oldTag . ' ' . $attribute . '="' . $defaultValue . '"';
+        }
+
+        return $oldTag;
+    }
+
     private static function getElementsTagsInWysiwyg(string $text): array
     {
         if (strlen($text) < 1) {
@@ -210,11 +223,40 @@ class Text
         }
 
         //$text = Pimcore_Tool_Text::removeLineBreaks($text);
-        preg_match_all("@\<(a|img)[^>]*(pimcore_id=\"[0-9]+\")[^>]*(pimcore_type=\"[asset|document|object]+\")[^>]*\>@msUi", $text, $matches);
+
+        $matches = self::extractPimcoreAttributes($text);
 
         RuntimeCache::set($hash, $matches);
 
         return $matches;
+    }
+
+    private static function extractPimcoreAttributes(string $html): array
+    {
+        //getting all links and images with pimcore_id and pimcore_type attribute with ignoring the order
+        $pattern = '@<(a|img)[^>]*\bpimcore_id="([\d]+)"[^>]*\bpimcore_type="(asset|document|object)"|<(a|img)[^>]*\bpimcore_type="(asset|document|object)"[^>]*\bpimcore_id="([\d]+)"@msUi';
+
+        preg_match_all($pattern, $html, $matches, PREG_SET_ORDER);
+
+        $results = [];
+        $results[0] = [];
+        $results[1] = [];
+        $results[2] = [];
+        $results[3] = [];
+        for ($i = 0; $i < count($matches); $i++) {
+            $match = $matches[$i];
+
+            $tag = $match[1] ?: $match[4];
+            $pimcore_id = $match[2] ?: $match[6];
+            $pimcore_type = $match[3] ?: $match[5];
+
+            $results[0][$i] = $match[0];
+            $results[1][$i] = $tag;
+            $results[2][$i] = 'pimcore_id="' . $pimcore_id . '"';
+            $results[3][$i] = 'pimcore_type="' .$pimcore_type . '"';
+        }
+
+        return $results;
     }
 
     private static function getElementsInWysiwyg(string $text): array

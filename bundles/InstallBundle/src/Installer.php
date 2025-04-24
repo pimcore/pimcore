@@ -63,6 +63,8 @@ use Throwable;
  */
 class Installer
 {
+    const NEEDS_INSTALL_MARKER = PIMCORE_PRIVATE_VAR . '/config/needs-install.lock';
+
     const RECOMMENDED_BUNDLES = ['PimcoreSimpleBackendSearchBundle'];
 
     public const INSTALLABLE_BUNDLES = [
@@ -116,6 +118,12 @@ class Installer
     private bool $skipDatabaseConfig = false;
 
     /**
+     * skip writing product-registration.yaml file
+     *
+     */
+    private bool $skipProductRegistrationConfig = false;
+
+    /**
      * Bundles that will be installed
      *
      */
@@ -141,6 +149,11 @@ class Installer
         $this->skipDatabaseConfig = $skipDatabaseConfig;
     }
 
+    public function setSkipProductRegistrationConfig(bool $skipProductRegistrationConfig): void
+    {
+        $this->skipProductRegistrationConfig = $skipProductRegistrationConfig;
+    }
+
     private array $stepEvents = [
         'validate_parameters' => 'Validating input parameters...',
         'check_prerequisites' => 'Checking prerequisites...',
@@ -157,6 +170,7 @@ class Installer
 
     private array $runInstallSteps = [
         'write_database_config',
+        'write_product_registration_config',
         'setup_database',
         'install_assets',
         'install_classes',
@@ -167,7 +181,7 @@ class Installer
 
     public function __construct(
         LoggerInterface $logger,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
     ) {
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
@@ -332,7 +346,10 @@ class Installer
                     'username' => $adminUser,
                     'password' => $adminPass,
                 ],
-                $db
+                $db,
+                $params['encryption_secret'],
+                $params['instance_identifier'],
+                $params['product_key'],
             );
         } catch (Throwable $e) {
             $this->logger->error((string) $e);
@@ -386,13 +403,27 @@ class Installer
         return $dbConfig;
     }
 
-    private function runInstall(array $dbConfig, array $userCredentials, Connection $db): array
-    {
+    private function runInstall(
+        array $dbConfig, array $userCredentials, Connection $db,
+        ?string $encryptionSecret, ?string $instanceIdentifier, string $productKey
+    ): array {
+        $writer = new ConfigWriter();
+
         $errors = [];
         $stepsToRun = $this->getRunInstallSteps();
 
-        if (in_array('write_database_config', $stepsToRun)) {
+        if (
+            in_array('write_product_registration_config', $stepsToRun) ||
+            in_array('write_database_config', $stepsToRun)
+        ) {
             $this->dispatchStepEvent('create_config_files');
+        }
+
+        if (in_array('write_product_registration_config', $stepsToRun) && !$this->skipProductRegistrationConfig) {
+            $writer->writeProductRegistrationConfig($productKey, $instanceIdentifier, $encryptionSecret);
+        }
+
+        if (in_array('write_database_config', $stepsToRun)) {
 
             unset($dbConfig['driver']);
             unset($dbConfig['wrapperClass']);
@@ -417,14 +448,16 @@ class Installer
                 ],
             ];
 
-            $this->createConfigFiles($doctrineConfig);
+            if (!$this->skipDatabaseConfig) {
+                $writer->writeDbConfig($doctrineConfig);
+            }
         }
 
         $this->dispatchStepEvent('boot_kernel');
 
         // resolve environment with default=dev here as we set debug mode to true and want to
         // load the kernel for the same environment as the app.php would do. the kernel booted here
-        // will always be in "dev" with the exception of an environment set via env vars
+        // will always be in "dev" except an environment is set via env vars
         $environment = Config::getEnvironment();
 
         $kernel = \App\Kernel::class;
@@ -451,7 +484,6 @@ class Installer
 
             if (!$this->skipDatabaseConfig && in_array('write_database_config', $stepsToRun)) {
                 // now we're able to write the server version to the database.yaml
-                $writer = new ConfigWriter();
                 $serverVersion = $db->getServerVersion();
 
                 $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $serverVersion;
@@ -482,6 +514,8 @@ class Installer
         if (in_array('clear_cache', $stepsToRun)) {
             $this->clearKernelCacheDir($kernel);
         }
+
+        $this->cleanupNeedsInstallMarker();
 
         $this->dispatchStepEvent('complete');
 
@@ -618,15 +652,6 @@ class Installer
             $stdErr->write($process->getErrorOutput());
             $stdErr->note('Installing assets failed. Please run the following command manually:');
             $stdErr->writeln('  ' . str_replace(["'", '\\'], ['', '\\\\'], $process->getCommandLine()));
-        }
-    }
-
-    private function createConfigFiles(array $config): void
-    {
-        $writer = new ConfigWriter();
-
-        if (!$this->skipDatabaseConfig) {
-            $writer->writeDbConfig($config);
         }
     }
 
@@ -905,5 +930,17 @@ class Installer
     public function setRunInstallSteps(array $runInstallSteps): void
     {
         $this->runInstallSteps = $runInstallSteps;
+    }
+
+    private function cleanupNeedsInstallMarker(): void
+    {
+        try {
+            $filesystem = new Filesystem();
+            if ($filesystem->exists(self::NEEDS_INSTALL_MARKER)) {
+                $filesystem->remove(self::NEEDS_INSTALL_MARKER);
+            }
+        } catch (IOException $e) {
+            $this->logger->error($e->getMessage());
+        }
     }
 }

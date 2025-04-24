@@ -25,6 +25,9 @@ pimcore.bundle.search.element.selector.asset = Class.create(pimcore.bundle.searc
             proxy : {
                 type: 'ajax',
                 url: Routing.generate('pimcore_bundle_search_search_find'),
+                actionMethods: {
+                    read   : 'POST'
+                },
                 reader: {
                     type: 'json',
                     rootProperty: 'data'

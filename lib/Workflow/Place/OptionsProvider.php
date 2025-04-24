@@ -98,6 +98,10 @@ class OptionsProvider implements SelectOptionsProviderInterface
 
     public function getDefaultValue(array $context, Data $fieldDefinition): ?string
     {
+        if ($fieldDefinition instanceof Data\Select) {
+            return $fieldDefinition->getDefaultValue();
+        }
+
         return null;
     }
 }

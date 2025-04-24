@@ -73,14 +73,14 @@ interface ElementInterface extends ModelInterface
     /**
      * @return $this
      */
-    public function setUserOwner(int $userOwner): static;
+    public function setUserOwner(?int $userOwner): static;
 
     public function getUserModification(): ?int;
 
     /**
      * @return $this
      */
-    public function setUserModification(int $userModification): static;
+    public function setUserModification(?int $userModification): static;
 
     public static function getById(int $id, array $params = []): ?static;
 

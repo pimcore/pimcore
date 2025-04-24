@@ -123,8 +123,8 @@ class NotificationEmailService extends AbstractNotificationService
                         break;
                 }
             }
-        } catch (Exception) {
-            Logger::error('Error sending Workflow change notification email.');
+        } catch (Exception $e) {
+            Logger::error('Error sending Workflow change notification email: ' . (string)$e);
         }
     }
 

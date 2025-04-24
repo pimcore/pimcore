@@ -62,7 +62,6 @@ class Imagick extends Adapter
         }
 
         if ($this->resource) {
-            unset($this->resource);
             $this->resource = null;
         }
 
@@ -760,6 +759,10 @@ class Imagick extends Adapter
                     $frame->compositeImage($newImage, $compositeValue, $x, $y);
                 }
             } else {
+                // Transform base image to RGB colorspace if the watermark is in RGB or sRGB
+                if (in_array($newImage->getImageColorspace(), [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
+                    $this->setColorspaceToRGB();
+                }
                 $this->resource->compositeImage($newImage, $compositeValue, $x, $y);
             }
         }

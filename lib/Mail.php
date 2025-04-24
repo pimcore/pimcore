@@ -471,7 +471,6 @@ class Mail extends Email
         $recipients = [];
 
         foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
-            $recipients[$key] = null;
             $getterName = 'get' . $key;
             $addresses = $this->$getterName();
 
@@ -564,9 +563,9 @@ class Mail extends Email
     }
 
     /**
-     * @param array<Address|string> $recipients
+     * @param array<string, array<Address|string>> $recipients
      *
-     * @return array<Address|string>
+     * @return array<string, array<Address|string>>
      */
     private function getDebugMailRecipients(array $recipients): array
     {

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle\Installer;
 
+use Doctrine\DBAL\Exception\TableExistsException;
 use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\Version\Direction;
 use Doctrine\Migrations\Version\ExecutionResult;
@@ -73,17 +74,23 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
     {
         $migrationVersion = $this->getLastMigrationVersionClassName();
         if ($migrationVersion) {
+            $metadataStorage = $this->dependencyFactory->getMetadataStorage();
             $this->migrationRepository->setPrefix($this->bundle->getNamespace());
             $this->tableMetadataStorage->setPrefix($this->bundle->getNamespace());
             $migrations = $this->dependencyFactory->getMigrationRepository()->getMigrations();
-            $executedMigrations = $this->dependencyFactory->getMetadataStorage()->getExecutedMigrations();
+            $executedMigrations = $metadataStorage->getExecutedMigrations();
 
             foreach ($migrations->getItems() as $migration) {
                 $version = $migration->getVersion();
 
                 if (!$executedMigrations->hasMigration($version)) {
                     $migrationResult = new ExecutionResult($version, Direction::UP);
-                    $this->dependencyFactory->getMetadataStorage()->complete($migrationResult);
+
+                    try {
+                        $metadataStorage->ensureInitialized();
+                    } catch (TableExistsException $exception) {
+                    }
+                    $metadataStorage->complete($migrationResult);
                 }
 
                 if ((string)$version === $migrationVersion) {
@@ -101,12 +108,14 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
 
         $migrationVersion = $this->getLastMigrationVersionClassName();
         if ($migrationVersion) {
+            $metadataStorage = $this->dependencyFactory->getMetadataStorage();
             $this->tableMetadataStorage->setPrefix($this->bundle->getNamespace());
-            $executedMigrations = $this->dependencyFactory->getMetadataStorage()->getExecutedMigrations();
+            $executedMigrations = $metadataStorage->getExecutedMigrations();
 
             foreach ($executedMigrations->getItems() as $migration) {
                 $migrationResult = new ExecutionResult($migration->getVersion(), Direction::DOWN);
-                $this->dependencyFactory->getMetadataStorage()->complete($migrationResult);
+                $metadataStorage->ensureInitialized();
+                $metadataStorage->complete($migrationResult);
             }
         }
     }

@@ -18,6 +18,7 @@ namespace Pimcore\Model\Asset\Document;
 
 use Exception;
 use Pimcore;
+use Pimcore\Document;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
@@ -142,11 +143,20 @@ final class ImageThumbnail implements ImageThumbnailInterface
                 $tempFile = File::getLocalTempFilePath('png');
 
                 try {
-                    $converter = \Pimcore\Document::getInstance();
+                    $converter = Document::getInstance();
                     $converter->load($this->asset);
-                    if (false !== $converter->saveImage($tempFile, $this->page)) {
-                        $storage->write($cacheFilePath, file_get_contents($tempFile));
+                    if (false === $converter->saveImage($tempFile, $this->page)) {
+                        Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
+
+                        return null;
                     }
+                    $tempFileContent = file_get_contents($tempFile);
+                    if (false === $tempFileContent) {
+                        Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
+
+                        return null;
+                    }
+                    $storage->write($cacheFilePath, $tempFileContent);
                 } finally {
                     $lock->release();
                 }

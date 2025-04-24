@@ -225,7 +225,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $object = self::getModelFactory()->build($className);
                     RuntimeCache::set($cacheKey, $object);
                     $object->getDao()->getById($id);
-                    $object->__setDataVersionTimestamp($object->getModificationDate() ?? 0);
+                    if ($object->getModificationDate() !== null) {
+                        $object->__setDataVersionTimestamp($object->getModificationDate());
+                    }
 
                     Service::recursiveResetDirtyMap($object);
 

@@ -136,7 +136,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->userModification;
     }
 
-    public function setUserModification(int $userModification): static
+    public function setUserModification(?int $userModification): static
     {
         $this->markFieldDirty('userModification');
         $this->userModification = $userModification;
@@ -176,7 +176,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->userOwner;
     }
 
-    public function setUserOwner(int $userOwner): static
+    public function setUserOwner(?int $userOwner): static
     {
         $this->userOwner = $userOwner;
 
@@ -517,8 +517,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function unlockPropagate(): void
     {
         $type = Service::getElementType($this);
+        $event = new ElementEvent(
+            $this,
+            ['elementId' => $this->getId(), 'elementType' => $type]
+        );
 
         $ids = $this->getDao()->unlockPropagate();
+
+        $eventDispatcher = Pimcore::getEventDispatcher();
+        $eventDispatcher->dispatch($event, ElementEvents::POST_ELEMENT_UNLOCK_PROPAGATE);
 
         // invalidate cache items
         foreach ($ids as $id) {

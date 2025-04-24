@@ -352,7 +352,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Override append
      *
-     * @param  string $value
+     * @param  stdClass $value
      *
      */
     public function append($value): void
@@ -367,7 +367,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Override prepend
      *
-     * @param  string $value
+     * @param  stdClass $value
      *
      */
     public function prepend($value): void
@@ -382,7 +382,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Override set
      *
-     * @param  string $value
+     * @param  stdClass $value
      *
      */
     public function set($value): void
