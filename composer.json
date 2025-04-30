@@ -10,13 +10,13 @@
     "RAD",
     "Product Information Management"
   ],
-  "homepage": "http://www.pimcore.org/",
-  "license": "GPL-3.0-or-later",
+  "homepage": "https://www.pimcore.com/",
+  "license": "Pimcore Open Core License (POCL)",
   "authors": [
     {
       "name": "pimcore Team",
       "email": "info@pimcore.com",
-      "homepage": "http://www.pimcore.org/",
+      "homepage": "https://www.pimcore.com/",
       "role": "Developer"
     }
   ],

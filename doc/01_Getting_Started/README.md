@@ -1,7 +1,14 @@
 # Getting Started With Pimcore
 
-This section provides a quick getting started tutorial for Pimcore and covers the following topics: 
-
+If you're planning to use the free Pimcore Community Edition. please read the
+[Pimcore Open Core License](https://github.com/pimcore/pimcore/blob/12.x/LICENSE.md) carefully
+before installing Pimcore and ensure you comply with the restrictions.  
+  
+If you use the Community Edition with the Admin UI Classic bundle, you need to purchase an
+additional perpetual license at a price of €1,480 by contacting sales@pimcore.com because of ExtJS licencing limitations.  
+  
+This section provides a quick getting started tutorial for Pimcore and covers the following topics:  
+  
 1. Installation of Pimcore:
    - via [Docker](../01_Getting_Started/00_Installation/00_Docker_Based_Installation.md)
    - via [Webserver](../01_Getting_Started/00_Installation/01_Webserver_Installation.md)

@@ -5,7 +5,7 @@
 ![Pimcore - Own the digital World](./doc/img/logo-readme.svg)
   
   
-Pimcore Core Framework - Open Source Data & Experience Management Platform: PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce
+Pimcore Core Framework - Open Core Data & Experience Management Platform: PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce
 
 [![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
@@ -94,5 +94,5 @@ the Core Framework as well as extensions provided by Pimcore. For details on ver
 
 
 ## Copyright and License 
-Copyright: [Pimcore](https://www.pimcore.org) GmbH
+Copyright: [Pimcore](https://www.pimcore.com) GmbH
 For licensing details please visit [LICENSE.md](LICENSE.md)
