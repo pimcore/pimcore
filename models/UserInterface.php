@@ -194,7 +194,7 @@ interface UserInterface extends UserRoleInterface
 
     public function setKeyBindings(string $keyBindings): void;
 
-    public function getTwoFactorAuthentication(string $key = null): mixed;
+    public function getTwoFactorAuthentication(?string $key = null): mixed;
 
     /**
      * You can either pass an array for setting the entire 2fa settings, or a key and a value as the second argument

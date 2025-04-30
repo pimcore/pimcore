@@ -27,13 +27,11 @@ trait AllowDocumentRelationTrait
     /**
      * Checks if a document is an allowed relation
      *
-     *
-     *
      * @internal
      */
     protected function allowDocumentRelation(Document $document): bool
     {
-        if (!$document instanceof Document || $document->getId() <= 0) {
+        if ($document->getId() <= 0) {
             return false;
         }
 

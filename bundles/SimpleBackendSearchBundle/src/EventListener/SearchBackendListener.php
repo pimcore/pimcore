@@ -84,7 +84,7 @@ class SearchBackendListener implements EventSubscriberInterface
     public function onPreDeleteElement(ElementEventInterface $e): void
     {
         $searchEntry = Data::getForElement($e->getElement());
-        if ($searchEntry instanceof Data && $searchEntry->getId() instanceof Data\Id) {
+        if ($searchEntry->getId()) {
             $searchEntry->delete();
         }
     }

@@ -37,7 +37,6 @@ use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Bundle\SimpleBackendSearchBundle\PimcoreSimpleBackendSearchBundle;
 use Pimcore\Bundle\StaticRoutesBundle\PimcoreStaticRoutesBundle;
-use Pimcore\Bundle\TinymceBundle\PimcoreTinymceBundle;
 use Pimcore\Bundle\UuidBundle\PimcoreUuidBundle;
 use Pimcore\Bundle\WordExportBundle\PimcoreWordExportBundle;
 use Pimcore\Bundle\XliffBundle\PimcoreXliffBundle;
@@ -65,7 +64,7 @@ use Throwable;
  */
 class Installer
 {
-    const RECOMMENDED_BUNDLES = ['PimcoreSimpleBackendSearchBundle', 'PimcoreTinymceBundle'];
+    const RECOMMENDED_BUNDLES = ['PimcoreSimpleBackendSearchBundle'];
 
     public const INSTALLABLE_BUNDLES = [
         'PimcoreApplicationLoggerBundle' => PimcoreApplicationLoggerBundle::class,
@@ -74,7 +73,6 @@ class Installer
         'PimcoreSeoBundle' => PimcoreSeoBundle::class,
         'PimcoreSimpleBackendSearchBundle' => PimcoreSimpleBackendSearchBundle::class,
         'PimcoreStaticRoutesBundle' => PimcoreStaticRoutesBundle::class,
-        'PimcoreTinymceBundle' => PimcoreTinymceBundle::class,
         'PimcoreUuidBundle' => PimcoreUuidBundle::class,
         'PimcoreWordExportBundle' => PimcoreWordExportBundle::class,
         'PimcoreXliffBundle' => PimcoreXliffBundle::class,
@@ -153,8 +151,8 @@ class Installer
         'setup_database' => 'Running database setup...',
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes...',
-        'install_bundles' => 'Installing bundles...',
         'migrations' => 'Marking all migrations as done...',
+        'install_bundles' => 'Installing bundles...',
         'complete' => 'Install complete!',
     ];
 
@@ -163,8 +161,8 @@ class Installer
         'setup_database',
         'install_assets',
         'install_classes',
-        'install_bundles',
         'mark_migrations_as_done',
+        'install_bundles',
         'clear_cache',
     ];
 
@@ -223,7 +221,7 @@ class Installer
         return $this->eventDispatcher->dispatch(new BundleSetupEvent(self::INSTALLABLE_BUNDLES, self::RECOMMENDED_BUNDLES), InstallEvents::EVENT_BUNDLE_SETUP);
     }
 
-    public function checkPrerequisites(Connection $db = null): array
+    public function checkPrerequisites(?Connection $db = null): array
     {
         $checks = array_merge(
             Requirements::checkFilesystem(),
@@ -265,7 +263,7 @@ class Installer
         return count($this->stepEvents);
     }
 
-    private function dispatchStepEvent(string $type, string $message = null): InstallerStepEvent
+    private function dispatchStepEvent(string $type, ?string $message = null): InstallerStepEvent
     {
         if (!isset($this->stepEvents[$type])) {
             throw new InvalidArgumentException(sprintf('Trying to dispatch unsupported event type "%s"', $type));
@@ -454,13 +452,11 @@ class Installer
 
             if (!$this->skipDatabaseConfig && in_array('write_database_config', $stepsToRun)) {
                 // now we're able to write the server version to the database.yaml
-                if ($db instanceof Connection) {
-                    $connection = $db->getWrappedConnection();
-                    if ($connection instanceof ServerInfoAwareConnection) {
-                        $writer = new ConfigWriter();
-                        $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
-                        $writer->writeDbConfig($doctrineConfig);
-                    }
+                $connection = $db->getWrappedConnection();
+                if ($connection instanceof ServerInfoAwareConnection) {
+                    $writer = new ConfigWriter();
+                    $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
+                    $writer->writeDbConfig($doctrineConfig);
                 }
             }
         }
@@ -468,11 +464,6 @@ class Installer
         if (in_array('install_assets', $stepsToRun)) {
             $this->dispatchStepEvent('install_assets');
             $this->installAssets($kernel);
-        }
-
-        if (!empty($this->bundlesToInstall) && in_array('install_bundles', $stepsToRun)) {
-            $this->dispatchStepEvent('install_bundles');
-            $this->installBundles();
         }
 
         if (in_array('install_classes', $stepsToRun)) {
@@ -483,6 +474,11 @@ class Installer
         if (in_array('mark_migrations_as_done', $stepsToRun)) {
             $this->dispatchStepEvent('migrations');
             $this->markMigrationsAsDone();
+        }
+
+        if (!empty($this->bundlesToInstall) && in_array('install_bundles', $stepsToRun)) {
+            $this->dispatchStepEvent('install_bundles');
+            $this->installBundles();
         }
 
         if (in_array('clear_cache', $stepsToRun)) {

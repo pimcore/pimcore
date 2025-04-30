@@ -87,7 +87,7 @@ class BackendController
      */
     public function findByWordpressId(Request $request): JsonResponse
     {
-        if ($id = (int)$request->get('external-id')) {
+        if ($id = $request->query->getInt('external-id')) {
             if($object = MyObject::getByExternalId($id)) {
                 return new JsonResponse($object->getId());
             }

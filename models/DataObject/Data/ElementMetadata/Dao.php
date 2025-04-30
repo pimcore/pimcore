@@ -43,7 +43,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
             $data = $dataTemplate;
             $data['column'] = $column;
             $data['data'] = $this->model->$getter();
-            Helper::upsert($this->db, $table, $data, [parent::UNIQUE_KEY_NAME]);
+            Helper::upsert($this->db, $table, $data, parent::UNIQUE_COLUMNS);
         }
     }
 

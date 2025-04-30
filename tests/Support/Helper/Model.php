@@ -425,6 +425,7 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('date'));
             $panel->addChild($this->createDataChild('datetime'));
+            $panel->addChild($this->createDataChild('dateRange'));
 
             $panel->addChild($this->createDataChild('email'));
 
@@ -492,7 +493,6 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('numeric', 'number'));
 
             $passwordField = $this->createDataChild('password');
-            $passwordField->setAlgorithm(ClassDefinition\Data\Password::HASH_FUNCTION_PASSWORD_HASH);
             $panel->addChild($passwordField);
 
             $panel->addChild($this->createDataChild('rgbaColor', 'rgbaColor', false));

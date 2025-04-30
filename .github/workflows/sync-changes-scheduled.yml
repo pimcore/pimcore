@@ -6,12 +6,12 @@ on:
 
 jobs:
   sync-branches:
-    uses: pimcore/workflows-collection-public/.github/workflows/reusable-sync-changes.yaml@v1.0.0
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-sync-changes.yaml@main
     if: github.repository == 'pimcore/pimcore'
     strategy:
       fail-fast: false
       matrix:
-        ref: [{'base': '11.x', 'destination': '11.x'}, {'base': '11.4', 'destination': '11.4'}]
+        ref: [{'base': '12.x', 'destination': '12.x'}, {'base': '11.5', 'destination': '11.5'}]
     with:
       base_ref: ${{ matrix.ref.base }}
       ref_name: ${{ matrix.ref.destination }}

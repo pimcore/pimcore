@@ -30,6 +30,8 @@ use Symfony\Component\Process\Process;
  */
 class LibreOffice extends Ghostscript
 {
+    use GetTextConversionHelperTrait;
+
     public function isAvailable(): bool
     {
         try {
@@ -106,12 +108,7 @@ class LibreOffice extends Ghostscript
             // nothing to do, delegate to libreoffice
         }
 
-        $storagePath = sprintf(
-            '%s/%s/pdf-thumb__%s__libreoffice-document.png',
-            rtrim($asset->getRealPath(), '/'),
-            $asset->getId(),
-            $asset->getId(),
-        );
+        $storagePath = $this->getTemporaryPdfStorageFilePath($asset);
         $storage = Storage::get('asset_cache');
 
         $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock('soffice');
@@ -160,29 +157,5 @@ class LibreOffice extends Ghostscript
         }
 
         return $storage->readStream($storagePath);
-    }
-
-    public function getText(?int $page = null, ?Asset\Document $asset = null, ?string $path = null): mixed
-    {
-        if (!$asset && $this->asset) {
-            $asset = $this->asset;
-        }
-
-        try {
-            if (!parent::isFileTypeSupported($asset->getFilename())) {
-                $file = $this->getPdf($asset);
-
-                $fileMetaData = stream_get_meta_data($file);
-                if ($fileMetaData['uri']) {
-                    $path = $fileMetaData['uri'];
-                }
-            }
-
-            return parent::getText($page, $asset, $path);
-        } catch (Exception $e) {
-            Logger::debug($e->getMessage());
-
-            return ''; // default empty string
-        }
     }
 }

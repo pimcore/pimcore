@@ -129,6 +129,10 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
                         $definition = new ClassDefinition\Data\Date();
 
                         break;
+                    case 'dateRange':
+                        $definition = new ClassDefinition\Data\DateRange();
+
+                        break;
                     case 'datetime':
                         $definition = new ClassDefinition\Data\Datetime();
 

@@ -58,7 +58,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->translator = $translator;
     }
 
-    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string
+    public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
     {
         $id = trim($id);
 
@@ -118,7 +118,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return \Pimcore\Tool::getDefaultLanguage();
     }
 
-    public function getCatalogue(string $locale = null): MessageCatalogueInterface
+    public function getCatalogue(?string $locale = null): MessageCatalogueInterface
     {
         return $this->translator->getCatalogue($locale);
     }

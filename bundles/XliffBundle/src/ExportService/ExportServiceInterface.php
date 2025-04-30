@@ -27,7 +27,7 @@ interface ExportServiceInterface
      *
      * @throws Exception
      */
-    public function exportTranslationItems(TranslationItemCollection $translationItems, string $sourceLanguage, array $targetLanguages, string $exportId = null): string;
+    public function exportTranslationItems(TranslationItemCollection $translationItems, string $sourceLanguage, array $targetLanguages, ?string $exportId = null): string;
 
     public function getTranslationExporter(): ExporterInterface;
 }

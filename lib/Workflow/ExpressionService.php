@@ -40,7 +40,7 @@ class ExpressionService
 
     private ?ValidatorInterface $validator = null;
 
-    public function __construct(ExpressionLanguage $expressionLanguage, TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authenticationChecker, AuthenticationTrustResolverInterface $trustResolver, RoleHierarchyInterface $roleHierarchy = null, ValidatorInterface $validator = null)
+    public function __construct(ExpressionLanguage $expressionLanguage, TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authenticationChecker, AuthenticationTrustResolverInterface $trustResolver, ?RoleHierarchyInterface $roleHierarchy = null, ?ValidatorInterface $validator = null)
     {
         $this->expressionLanguage = $expressionLanguage;
         $this->tokenStorage = $tokenStorage;

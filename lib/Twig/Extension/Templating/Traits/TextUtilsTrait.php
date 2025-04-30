@@ -23,7 +23,7 @@ use Pimcore\Tool\Text;
  */
 trait TextUtilsTrait
 {
-    public function normalizeString(string $string, int $length = null, string $suffix = ''): string
+    public function normalizeString(string $string, ?int $length = null, string $suffix = ''): string
     {
         $string = strip_tags($string);
         $string = $this->getStringAsOneLine($string);

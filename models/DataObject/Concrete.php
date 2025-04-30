@@ -30,7 +30,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
-use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\SystemSettingsConfig;
 
 /**
@@ -104,7 +103,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $v['classId'];
     }
 
-    protected function update(bool $isUpdate = null, array $params = []): void
+    protected function update(?bool $isUpdate = null, array $params = []): void
     {
         $fieldDefinitions = $this->getClass()->getFieldDefinitions();
 
@@ -195,7 +194,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             $newVersionCount = $this->getVersionCount();
 
-            if (($newVersionCount != $oldVersionCount + 1) || ($this instanceof DirtyIndicatorInterface && $this->isFieldDirty('parentId'))) {
+            if (($newVersionCount != $oldVersionCount + 1) || $this->isFieldDirty('parentId')) {
                 self::disableDirtyDetection();
             }
 
@@ -203,7 +202,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // scheduled tasks are saved in $this->saveVersion();
 
-            $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
+            $this->saveVersion(false, false, $params['versionNote'] ?? null);
             $this->saveChildData();
         } finally {
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
@@ -236,7 +235,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * @param string|null $versionNote version note
      *
      */
-    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, string $versionNote = null, bool $isAutoSave = false): ?Model\Version
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false): ?Model\Version
     {
         try {
             if ($setModificationDate) {
@@ -350,12 +349,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         $dependencies = [parent::resolveDependencies()];
 
         // check in fields
-        if ($this->getClass() instanceof ClassDefinition) {
-            foreach ($this->getClass()->getFieldDefinitions() as $field) {
-                $key = $field->getName();
-                $getter = 'get' . ucfirst($key);
-                $dependencies[] = $field->resolveDependencies($this->$getter());
-            }
+        foreach ($this->getClass()->getFieldDefinitions() as $field) {
+            $key = $field->getName();
+            $getter = 'get' . ucfirst($key);
+            $dependencies[] = $field->resolveDependencies($this->$getter());
         }
 
         return array_merge(...$dependencies);
@@ -635,10 +632,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         try {
             parent::save($parameters);
-
-            if ($this instanceof DirtyIndicatorInterface) {
-                $this->resetDirtyMap();
-            }
+            $this->resetDirtyMap();
         } finally {
             DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
         }
@@ -648,16 +642,16 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
-     *
      */
     public function getLazyLoadedFieldNames(): array
     {
         $lazyLoadedFieldNames = [];
         $fields = $this->getClass()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if ($field instanceof LazyLoadingSupportInterface
-                && $field->getLazyLoading()
-                && $field instanceof DataObject\ClassDefinition\Data) {
+            if (
+                $field instanceof LazyLoadingSupportInterface &&
+                $field->getLazyLoading()
+            ) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }

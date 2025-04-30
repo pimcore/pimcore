@@ -70,7 +70,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     protected array $groupCollectionMapping = [];
 
-    public function __construct(array $items = null)
+    public function __construct(?array $items = null)
     {
         if ($items) {
             $this->setItems($items);
@@ -140,7 +140,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->class;
     }
 
-    public function getLanguage(string $language = null): string
+    public function getLanguage(?string $language = null): string
     {
         if ($language) {
             return $language;
@@ -155,7 +155,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @throws Exception
      */
-    public function setLocalizedKeyValue(int $groupId, int $keyId, mixed $value, string $language = null): static
+    public function setLocalizedKeyValue(int $groupId, int $keyId, mixed $value, ?string $language = null): static
     {
         if (!$groupId) {
             throw new Exception('groupId not valid');
@@ -174,13 +174,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         // @TODO Find a better solution for using isEmpty() in all ClassDefintion DataTypes
 
         $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
-        /** @var Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $dataDefinition */
         $dataDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
         // set the given group to active groups
         $this->setActiveGroups($this->activeGroups + [$groupId => true]);
 
-        if (!$this->isFieldDirty('_self')) {
+        if (!$this->isFieldDirty('_self') && $dataDefinition instanceof Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
             if ($this->object) {
                 $oldData = $this->items[$groupId][$keyId][$language] ?? null;
                 $oldData = $dataDefinition->getDataForResource($oldData, $this->object, ['owner' => $this]);
@@ -424,7 +423,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $this->groupCollectionMapping = $groupCollectionMapping;
     }
 
-    public function setGroupCollectionMapping(int $groupId = null, int $collectionId = null): void
+    public function setGroupCollectionMapping(?int $groupId = null, ?int $collectionId = null): void
     {
         if ($groupId && $collectionId) {
             $this->groupCollectionMapping[$groupId] = $collectionId;

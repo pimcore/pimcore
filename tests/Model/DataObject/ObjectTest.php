@@ -19,6 +19,7 @@ namespace Pimcore\Tests\Model\DataObject;
 use Exception;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -96,7 +97,7 @@ class ObjectTest extends ModelTestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('ParentID not found.');
         $savedObject = TestHelper::createEmptyObject('', false);
-        $this->assertTrue($savedObject->getId() == 0);
+        $this->assertEquals(null, $savedObject->getId());
 
         $savedObject->setParentId(999999);
         $savedObject->save();
@@ -282,7 +283,7 @@ class ObjectTest extends ModelTestCase
         $object->setTextarea('TextareaValue');
         $object->setWysiwyg('WysiwygValue');
         $object->setPassword('PasswordValue');
-        $iqv = new \Pimcore\Model\DataObject\Data\InputQuantityValue('1', 'km');
+        $iqv = new \Pimcore\Model\DataObject\Data\InputQuantityValue('1', Unit::getByAbbreviation('km')->getId());
         $object->setInputQuantityValue($iqv);
         $object->save();
 

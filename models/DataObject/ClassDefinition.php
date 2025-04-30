@@ -566,7 +566,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     /**
      * @internal
      */
-    public function getDefinitionFile(string $name = null): string
+    public function getDefinitionFile(?string $name = null): string
     {
         return $this->locateDefinitionFile($name ?? $this->getName(), 'definition_%s.php');
     }
@@ -1040,7 +1040,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
 
     public function getLinkGenerator(): ?ClassDefinition\LinkGeneratorInterface
     {
-        /** @var ClassDefinition\LinkGeneratorInterface $interface */
+        /** @var ClassDefinition\LinkGeneratorInterface|null $interface */
         $interface = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
 
         return $interface;

@@ -28,7 +28,7 @@ class LocaleService implements LocaleServiceInterface
 
     protected ?Translator $translator = null;
 
-    public function __construct(RequestStack $requestStack = null, Translator $translator = null)
+    public function __construct(?RequestStack $requestStack = null, ?Translator $translator = null)
     {
         $this->requestStack = $requestStack;
         $this->translator = $translator;
@@ -74,7 +74,7 @@ class LocaleService implements LocaleServiceInterface
         return ResourceBundle::getLocales('');
     }
 
-    public function getDisplayRegions(string $locale = null): array
+    public function getDisplayRegions(?string $locale = null): array
     {
         if (!$locale) {
             $locale = $this->findLocale();

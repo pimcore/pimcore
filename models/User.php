@@ -590,9 +590,9 @@ final class User extends User\UserRole implements UserInterface
      *
      * @internal
      *
-     * @return string[]|null
+     * @return string[]
      */
-    public function getAllowedLanguagesForEditingWebsiteTranslations(): ?array
+    public function getAllowedLanguagesForEditingWebsiteTranslations(): array
     {
         $mergedWebsiteTranslationLanguagesEdit = $this->getMergedWebsiteTranslationLanguagesEdit();
         if (
@@ -631,9 +631,9 @@ final class User extends User\UserRole implements UserInterface
      *
      * @internal
      *
-     * @return string[]|null
+     * @return string[]
      */
-    public function getAllowedLanguagesForViewingWebsiteTranslations(): ?array
+    public function getAllowedLanguagesForViewingWebsiteTranslations(): array
     {
         $mergedWebsiteTranslationLanguagesView = $this->getMergedWebsiteTranslationLanguagesView();
         if (empty($mergedWebsiteTranslationLanguagesView) || $this->isAdmin()) {
@@ -668,7 +668,7 @@ final class User extends User\UserRole implements UserInterface
         $this->keyBindings = $keyBindings;
     }
 
-    public function getTwoFactorAuthentication(string $key = null): mixed
+    public function getTwoFactorAuthentication(?string $key = null): mixed
     {
         if ($this->twoFactorAuthentication === null) {
             // set defaults if no data is present

@@ -253,7 +253,7 @@ IndexController.php (whatever controller / method is designated for /some/other/
 ```php
 public function otherDocumentAction(Request $request): array
 {
-    return ['parameterToPass' => $request->get('parameterToPass')];
+    return ['parameterToPass' => $request->query->get('parameterToPass')];
 }
 ```
 
@@ -261,7 +261,7 @@ more Convenient way
 ```php
 public function otherDocumentAction(Request $request): Response
 {
-    return $this->render(":Default:someOtherDocument.html.twig", ['parameterToPass' => $request->get('parameterToPass')]);
+    return $this->render(":Default:someOtherDocument.html.twig", ['parameterToPass' => $request->query->get('parameterToPass')]);
 }
 ```
 

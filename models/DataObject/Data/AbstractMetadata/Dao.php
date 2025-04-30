@@ -27,7 +27,7 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
-    protected const UNIQUE_KEY_NAME = 'metadata_un';
+    protected const UNIQUE_COLUMNS = ['id', 'dest_id', 'type', 'fieldname', 'column', 'ownertype', 'ownername', 'position', 'index'];
 
     protected ?array $tableDefinitions = null;
 

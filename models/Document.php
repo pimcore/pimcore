@@ -180,16 +180,8 @@ class Document extends Element\AbstractElement
         return true;
     }
 
-    public static function getById(int|string $id, array $params = []): ?static
+    public static function getById(int $id, array $params = []): ?static
     {
-        if (is_string($id)) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '11.0',
-                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
-            );
-            $id = is_numeric($id) ? (int) $id : 0;
-        }
         if ($id < 1) {
             return null;
         }
@@ -660,7 +652,6 @@ class Document extends Element\AbstractElement
             //clear parent data from registry
             $parentCacheKey = self::getCacheKey($this->getParentId());
             if (RuntimeCache::isRegistered($parentCacheKey)) {
-                /** @var Document $parent */
                 $parent = RuntimeCache::get($parentCacheKey);
                 if ($parent instanceof self) {
                     $parent->setChildren(null);
@@ -694,10 +685,8 @@ class Document extends Element\AbstractElement
         try {
             if (!$link && Tool::isFrontend() && Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
-                if ($site instanceof Site) {
-                    if ($site->getRootDocument()->getId() == $this->getId()) {
-                        $link = '/';
-                    }
+                if ($site->getRootDocument()->getId() == $this->getId()) {
+                    $link = '/';
                 }
             }
         } catch (Exception $e) {
@@ -812,14 +801,11 @@ class Document extends Element\AbstractElement
         try {
             if ($this->path && Tool::isFrontend() && Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
-                if ($site instanceof Site) {
-                    if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {
-                        $rootPath = $site->getRootPath();
-                        $rootPath = preg_quote($rootPath, '@');
-                        $link = preg_replace('@^' . $rootPath . '@', '', $this->path);
+                if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {
+                    $rootPath = $site->getRootPath();
+                    $rootPath = preg_quote($rootPath, '@');
 
-                        return $link;
-                    }
+                    return preg_replace('@^' . $rootPath . '@', '', $this->path);
                 }
             }
         } catch (Exception $e) {
@@ -927,7 +913,7 @@ class Document extends Element\AbstractElement
      */
     public function setParent(?ElementInterface $parent): static
     {
-        /** @var Document $parent */
+        /** @var Pimcore\Model\Element\AbstractElement $parent */
         $this->parent = $parent;
         if ($parent instanceof Document) {
             $this->parentId = $parent->getId();

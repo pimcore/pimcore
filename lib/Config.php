@@ -125,7 +125,7 @@ final class Config implements ArrayAccess
      *
      * @internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
      */
-    public static function setSystemConfiguration(?array $configuration, string $offset = null): void
+    public static function setSystemConfiguration(?array $configuration, ?string $offset = null): void
     {
         if (null !== $offset) {
             self::getSystemConfiguration();
@@ -140,7 +140,7 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function getSystemConfiguration(string $offset = null): ?array
+    public static function getSystemConfiguration(?string $offset = null): ?array
     {
         if (null === static::$systemConfig && $container = Pimcore::getContainer()) {
 
@@ -168,7 +168,7 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function getWebsiteConfigRuntimeCacheKey(string $languange = null): string
+    public static function getWebsiteConfigRuntimeCacheKey(?string $languange = null): string
     {
         $cacheKey = 'pimcore_config_website';
         if ($languange) {
@@ -181,7 +181,7 @@ final class Config implements ArrayAccess
     /**
      * @return array<string, mixed>
      */
-    public static function getWebsiteConfig(string $language = null): array
+    public static function getWebsiteConfig(?string $language = null): array
     {
         if (RuntimeCache::isRegistered(self::getWebsiteConfigRuntimeCacheKey($language))) {
             $config = RuntimeCache::get(self::getWebsiteConfigRuntimeCacheKey($language));
@@ -292,7 +292,7 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function setWebsiteConfig(?array $config, string $language = null): void
+    public static function setWebsiteConfig(?array $config, ?string $language = null): void
     {
         RuntimeCache::set(self::getWebsiteConfigRuntimeCacheKey($language), $config);
     }
@@ -304,7 +304,7 @@ final class Config implements ArrayAccess
      * @param mixed $default    Default value to use if the key is not set
      *
      */
-    public static function getWebsiteConfigValue(string $key = null, mixed $default = null, string $language = null): mixed
+    public static function getWebsiteConfigValue(?string $key = null, mixed $default = null, ?string $language = null): mixed
     {
         $config = self::getWebsiteConfig($language);
         if (null !== $key) {
