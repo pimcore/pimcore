@@ -13,20 +13,24 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Model;
 
+use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\User\AbstractUser;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class UserRoleEvent extends Event
 {
+    use ArgumentsAwareTrait;
+
     protected AbstractUser $userRole;
 
     /**
      * DocumentEvent constructor.
      *
      */
-    public function __construct(AbstractUser $userRole)
+    public function __construct(AbstractUser $userRole, array $arguments = [])
     {
         $this->userRole = $userRole;
+        $this->arguments = $arguments;
     }
 
     public function getUserRole(): AbstractUser
