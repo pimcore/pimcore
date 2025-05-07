@@ -18,7 +18,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Exception;
 use InvalidArgumentException;
-use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -794,11 +793,12 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $prefix = '';
         $name = $params['name'] ?: $this->name;
 
-        if ($params['brickPrefix']){
+        if ($params['brickPrefix']) {
             // The brick prefix is always quoted and with a dot suffix, so removing the first
             // and second last character to unquote
             $prefix = substr($params['brickPrefix'], 1, -2) . substr($params['brickPrefix'], -1);
         }
+
         return $this->getRelationFilterCondition($value, $operator, $prefix . $name);
     }
 
