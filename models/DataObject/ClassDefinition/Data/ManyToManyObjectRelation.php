@@ -728,9 +728,15 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
+        $prefix = '';
         $name = $params['name'] ?: $this->name;
 
-        return $this->getRelationFilterCondition($value, $operator, $name);
+        if ($params['brickPrefix']){
+            // The brick prefix is always quoted and with a dot suffix, so removing the first
+            // and second last character to unquote
+            $prefix = substr($params['brickPrefix'], 1, -2) . substr($params['brickPrefix'], -1);
+        }
+        return $this->getRelationFilterCondition($value, $operator, $prefix . $name);
     }
 
     public function getQueryColumnType(): string
