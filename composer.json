@@ -142,7 +142,7 @@
   },
   "require-dev": {
     "chrome-php/chrome": "^1.4.0",
-    "codeception/codeception": "5.2.1",
+    "codeception/codeception": "5.1.1",
     "codeception/module-symfony": "^3.1.0",
     "composer/composer": "*",
     "ergebnis/phpstan-rules": "^2.0",
