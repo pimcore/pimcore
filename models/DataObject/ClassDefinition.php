@@ -32,7 +32,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
-use Pimcore\Model\Exception\ConfigWriteException;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
