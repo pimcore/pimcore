@@ -40,7 +40,7 @@ final class Version20250416120333 extends AbstractMigration
     {
         $versionsTable = $schema->getTable('versions');
 
-        if (!$versionsTable->hasIndex('public')) {
+        if ($versionsTable->hasIndex('public')) {
             $versionsTable->dropIndex('public');
         }
     }
