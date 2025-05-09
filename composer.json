@@ -141,8 +141,9 @@
     "twig/twig": ">=3.9.0 <3.14.0"
   },
   "require-dev": {
+    "behat/gherkin": "4.12.0",
     "chrome-php/chrome": "^1.4.0",
-    "codeception/codeception": "^5.0.3",
+    "codeception/codeception": "5.2.2",
     "codeception/module-symfony": "^3.1.0",
     "composer/composer": "*",
     "ergebnis/phpstan-rules": "^2.0",
