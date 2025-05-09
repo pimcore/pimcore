@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Exception;
+use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Tool;
@@ -73,7 +74,10 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
     public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
-        $obj->configureOptions();
+
+        if (Pimcore::inAdmin()) {
+            $obj->configureOptions();
+        }
 
         return $obj;
     }
