@@ -22,7 +22,10 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 abstract class ModelTestCase extends TestCase
 {
-    protected ModelTester $tester;
+    /**
+     * @var ModelTester
+     */
+    protected $tester;
 
     private ?SessionInterface $session = null;
 
