@@ -20,9 +20,6 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
-/**
- * @property ModelTester $tester
- */
 abstract class ModelTestCase extends TestCase
 {
     protected ModelTester $tester;
