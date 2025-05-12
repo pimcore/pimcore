@@ -44,18 +44,6 @@ class Imagick extends Adapter
      */
     protected static array $supportedFormatsCache = [];
 
-    private bool $forceProcessICCProfiles = false;
-
-    public function isForceProcessICCProfiles(): bool
-    {
-        return $this->forceProcessICCProfiles;
-    }
-
-    public function setForceProcessICCProfiles(bool $forceProcessICCProfiles): void
-    {
-        $this->forceProcessICCProfiles = $forceProcessICCProfiles;
-    }
-
     public function load(string $imagePath, array $options = []): static|false
     {
         if (isset($options['preserveColor'])) {
