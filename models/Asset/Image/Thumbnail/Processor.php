@@ -231,6 +231,7 @@ class Processor
 
         // transform image
         $image->setPreserveColor($config->isPreserveColor());
+        $image->setForceProcessICCProfiles($config->isForceProcessICCProfiles());
         $image->setPreserveMetaData($config->isPreserveMetaData());
         $image->setPreserveAnimation($config->getPreserveAnimation());
 

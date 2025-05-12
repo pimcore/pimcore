@@ -44,6 +44,18 @@ class Imagick extends Adapter
      */
     protected static array $supportedFormatsCache = [];
 
+    private bool $forceProcessICCProfiles = false;
+
+    public function isForceProcessICCProfiles(): bool
+    {
+        return $this->forceProcessICCProfiles;
+    }
+
+    public function setForceProcessICCProfiles(bool $forceProcessICCProfiles): void
+    {
+        $this->forceProcessICCProfiles = $forceProcessICCProfiles;
+    }
+
     public function load(string $imagePath, array $options = []): static|false
     {
         if (isset($options['preserveColor'])) {
@@ -338,14 +350,15 @@ class Imagick extends Adapter
     {
         $imageColorspace = $this->resource->getImageColorspace();
 
-        if (in_array($imageColorspace, [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
+        if (!$this->isForceProcessICCProfiles() &&
+            in_array($imageColorspace, [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
             // no need to process (s)RGB images
             return $this;
         }
 
         $profiles = $this->resource->getImageProfiles('icc', true);
 
-        if (isset($profiles['icc'])) {
+        if (!$this->isForceProcessICCProfiles() && isset($profiles['icc'])) {
             if (str_contains($profiles['icc'], 'RGB')) {
                 // no need to process (s)RGB images
                 return $this;

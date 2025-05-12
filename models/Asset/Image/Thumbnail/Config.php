@@ -107,6 +107,12 @@ final class Config extends Model\AbstractModel
      * @internal
      *
      */
+    protected bool $forceProcessICCProfiles = false;
+
+    /**
+     * @internal
+     *
+     */
     protected bool $preserveMetaData = false;
 
     /**
@@ -695,6 +701,16 @@ final class Config extends Model\AbstractModel
     public function setPreserveColor(bool $preserveColor): void
     {
         $this->preserveColor = $preserveColor;
+    }
+
+    public function isForceProcessICCProfiles(): bool
+    {
+        return $this->forceProcessICCProfiles;
+    }
+
+    public function setForceProcessICCProfiles(bool $forceProcessICCProfiles): void
+    {
+        $this->forceProcessICCProfiles = $forceProcessICCProfiles;
     }
 
     public function isPreserveMetaData(): bool
