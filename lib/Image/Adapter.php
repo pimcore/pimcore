@@ -41,7 +41,6 @@ abstract class Adapter implements AdapterInterface
 
     protected mixed $resource = null;
 
-
     private bool $forceProcessICCProfiles = false;
 
     public function isForceProcessICCProfiles(): bool
