@@ -146,8 +146,8 @@
     "php-http/discovery": "<1.20"
   },
   "require-dev": {
-    "codeception/codeception": "^5.0.3",
-    "codeception/module-symfony": "^3.1.0",
+    "codeception/codeception": "^5.3",
+    "codeception/module-symfony": "^3.5",
     "composer/composer": "*",
     "ergebnis/phpstan-rules": "^2.8.0",
     "phpstan/phpstan": "2.1.11",

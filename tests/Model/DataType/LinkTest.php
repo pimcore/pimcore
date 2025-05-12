@@ -20,6 +20,7 @@ use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\unittestLink;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Tests\Support\ModelTester;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Throwable;
@@ -32,6 +33,8 @@ use TypeError;
  */
 class LinkTest extends ModelTestCase
 {
+    protected ModelTester $tester;
+
     protected Asset $testAsset;
 
     protected Link $link;

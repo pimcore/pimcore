@@ -35,14 +35,14 @@ class VersionTest extends TestCase
     protected function mockFileSystemStorageAdapter(): mixed
     {
         return $this->getMockBuilder(FileSystemVersionStorageAdapter::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->getMock();
     }
 
     protected function mockDbStorageAdapter(): mixed
     {
         return $this->getMockBuilder(DatabaseVersionStorageAdapter::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->setConstructorArgs([Db::get()])
             ->getMock();
     }
@@ -50,7 +50,7 @@ class VersionTest extends TestCase
     protected function mockDelegateStorageAdapter(int $byteThreshold = 1000): mixed
     {
         return $this->getMockBuilder(Version\Adapter\DelegateVersionStorageAdapter::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->setConstructorArgs([$byteThreshold, $this->mockDbStorageAdapter(), $this->mockFileSystemStorageAdapter()])
             ->getMock();
     }
