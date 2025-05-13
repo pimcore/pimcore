@@ -117,6 +117,7 @@ jobs:
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
                   composer-options: "${{ matrix.composer-options }}"
+                  ignore-cache: "yes"
 
             - name: "Test environment infos"
               run: |
