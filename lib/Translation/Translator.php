@@ -18,7 +18,6 @@ use Pimcore\Cache;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\Exception\LogicException;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -44,8 +43,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      */
     protected bool $disableTranslations = false;
-
-    protected Kernel $kernel;
 
     public function __construct(TranslatorInterface $translator)
     {
@@ -342,24 +339,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     public function setAdminTranslationMapping(array $adminTranslationMapping): void
     {
         $this->adminTranslationMapping = $adminTranslationMapping;
-    }
-
-    /**
-     * @internal
-     *
-     */
-    public function getKernel(): Kernel
-    {
-        return $this->kernel;
-    }
-
-    /**
-     *
-     * @internal
-     */
-    public function setKernel(Kernel $kernel): void
-    {
-        $this->kernel = $kernel;
     }
 
     public function getDisableTranslations(): bool
