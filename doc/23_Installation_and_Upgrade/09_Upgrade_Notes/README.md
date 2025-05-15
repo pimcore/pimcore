@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 11.5.5
+### General
+#### [Database]
+- Add index to `public` column in `versions` table
+
 ## Pimcore 11.5.0
 ### General
 #### [Database]
