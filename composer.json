@@ -112,7 +112,7 @@
     "symfony/routing": "^6.4 || ^7.2",
     "symfony/security-bundle": "^6.4",
     "symfony/security-core": "^6.4",
-    "symfony/security-http": "^6.4 || ^7.2",
+    "symfony/security-http": "^6.4",
     "symfony/serializer": "^6.4 || ^7.2",
     "symfony/string": "^6.4 || ^7.2",
     "symfony/templating": "^6.4",
