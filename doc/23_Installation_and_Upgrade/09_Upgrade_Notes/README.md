@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 12.1.0
+### [Requirements]
+
+- Added optional requirements for v7 of certain symfony packages. Version 6.4 is still supported, please make sure to use this version if you encounter any problems with v7 of symfony packages.
+
 ## Pimcore 12.0.0
 
 ## IMPORTANT: License change! Please read the following information carefully:
