@@ -380,9 +380,13 @@ class Asset extends Element\AbstractElement
             if (array_key_exists('type', $data)) {
                 unset($data['type']);
             }
+        } elseif (array_key_exists('type', $data)) {
+            $type = $data['type'];
+            unset($data['type']);
         }
 
-        $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
+        $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type)
+            ?? throw new InvalidArgumentException('Invalid asset type provided');
 
         /** @var Asset $asset */
         $asset = self::getModelFactory()->build($className);
