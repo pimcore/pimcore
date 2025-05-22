@@ -102,7 +102,6 @@ The Auto Alt functionality will try to automatically fall back to any available 
 Ultimately, it would use the image `title` as `alt` value when nothing above is previously found.
 It is also possible to define an alternative metadata to be used as `alt`, `copyright`, `title` values (eg. by defining `pimcore.assets.metadata.alt` in the configuration) that would have used when the inline options are not passed.
 
-```yaml
 
 ## Usage Examples
 
