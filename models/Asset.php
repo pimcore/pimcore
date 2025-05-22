@@ -609,7 +609,7 @@ class Asset extends Element\AbstractElement
             return $this;
         } catch (Exception $e) {
             // TODO: we should rollback any files that were moved here,
-            // assuming a prior revert has not been done.            
+            // assuming a prior revert has not been done.
             $failureEvent = new AssetEvent($this, $parameters);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
