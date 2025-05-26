@@ -37,5 +37,6 @@ final class Version20250526125951 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
+        $this->addSql('UPDATE redirects SET sourceSite=NULL WHERE sourceSite=0');
     }
 }
