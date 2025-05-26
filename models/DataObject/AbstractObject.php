@@ -246,7 +246,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             RuntimeCache::set($cacheKey, $object);
         }
 
-        if (!$object || !static::typeMatch($object)) {
+        if (!static::typeMatch($object)) {
             return null;
         }
 

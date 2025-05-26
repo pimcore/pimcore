@@ -181,20 +181,18 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                 Cache::save($catalogue, $cacheKey, ['translator', 'translator_website', 'translate'], null, 999);
             }
 
-            if ($catalogue) {
-                $c = $this->getCatalogue($locale);
-                $c->addCatalogue($catalogue);
-                $fallbackCatalogue = $c->getFallbackCatalogue();
-                if ($fallbackCatalogue) {
-                    $this->lazyInitialize($domain, $fallbackCatalogue->getLocale());
+            $c = $this->getCatalogue($locale);
+            $c->addCatalogue($catalogue);
+            $fallbackCatalogue = $c->getFallbackCatalogue();
+            if ($fallbackCatalogue) {
+                $this->lazyInitialize($domain, $fallbackCatalogue->getLocale());
 
-                    try {
-                        $this->getCatalogue($locale)->addFallbackCatalogue(
-                            $this->getCatalogue($fallbackCatalogue->getLocale())
-                        );
-                    } catch (LogicException $e) {
-                        // couldn't add fallback because of a circular reference
-                    }
+                try {
+                    $this->getCatalogue($locale)->addFallbackCatalogue(
+                        $this->getCatalogue($fallbackCatalogue->getLocale())
+                    );
+                } catch (LogicException $e) {
+                    // couldn't add fallback because of a circular reference
                 }
             }
         }

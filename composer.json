@@ -151,7 +151,7 @@
     "codeception/module-symfony": "^3.1.0",
     "composer/composer": "*",
     "ergebnis/phpstan-rules": "^2.8.0",
-    "phpstan/phpstan": "2.1.11",
+    "phpstan/phpstan": "2.1.17",
     "phpstan/phpstan-symfony": "^2.0.2",
     "phpunit/phpunit": "^9.3",
     "symfony/dotenv": "^6.4",

@@ -230,7 +230,7 @@ class Document extends Element\AbstractElement
             RuntimeCache::set($cacheKey, $document);
         }
 
-        if (!$document || !static::typeMatch($document)) {
+        if (!static::typeMatch($document)) {
             return null;
         }
 
