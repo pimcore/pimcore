@@ -21,7 +21,8 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Sets sourceSite=0 (Main domain) for all redirects with sourceSite = NULL because before NULL and 0 were both treated as main domain and in fact sourceSite was not optional (although UI told so)
+ * Sets sourceSite=0 (Main domain) for all redirects with sourceSite = NULL
+ * before NULL and 0 were both treated as main domain and in fact sourceSite was not optional (although UI told so)
  */
 final class Version20250526125951 extends AbstractMigration
 {
