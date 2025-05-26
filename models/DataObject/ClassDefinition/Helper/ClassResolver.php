@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
+use Error;
 use Pimcore;
 use Pimcore\Logger;
 
@@ -37,9 +38,9 @@ abstract class ClassResolver
                 str_starts_with($class, '@') ? Pimcore::getContainer()->get(substr($class, 1)) : new $class,
                 $validationCallback
             );
-        }
-        catch (\Error $e) {
+        } catch (Error $e) {
             Logger::error($e->getMessage());
+
             return null;
         }
     }
