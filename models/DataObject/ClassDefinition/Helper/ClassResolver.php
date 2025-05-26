@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore;
+use Pimcore\Logger;
 
 /**
  * @internal
@@ -31,10 +32,16 @@ abstract class ClassResolver
             return null;
         }
 
-        return self::$cache[$class] ??= self::returnValidServiceOrNull(
-            str_starts_with($class, '@') ? Pimcore::getContainer()->get(substr($class, 1)) : new $class,
-            $validationCallback
-        );
+        try {
+            return self::$cache[$class] ??= self::returnValidServiceOrNull(
+                str_starts_with($class, '@') ? Pimcore::getContainer()->get(substr($class, 1)) : new $class,
+                $validationCallback
+            );
+        }
+        catch (\Error $e) {
+            Logger::error($e->getMessage());
+            return null;
+        }
     }
 
     private static function returnValidServiceOrNull(object $service, callable $validationCallback = null): ?object
