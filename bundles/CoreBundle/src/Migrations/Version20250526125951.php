@@ -23,7 +23,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Sets sourceSite=0 (Main domain) for all redirects with sourceSite = NULL because before NULL and 0 were both treated as main domain and in fact sourceSite was not optional (although UI told so)
  */
-final class Version20240813125951 extends AbstractMigration
+final class Version20250526125951 extends AbstractMigration
 {
     public function getDescription(): string
     {
