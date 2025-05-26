@@ -14,6 +14,13 @@ Pimcore provides 2 possible ways of working with custom entities namely Doctrine
 Pimcore comes already with the Doctrine bundle, so you can easily create your own entities.
 Please check [https://symfony.com/doc/current/doctrine.html](https://symfony.com/doc/current/doctrine.html) for more details.
 
+Beware that Pimcore uses the default Doctrine connection as well as the default Entity manager.
+For the default connection you are only allowed to use the default entity manager.
+Every other entity manager will through an exception when you use the doctrine schema tool.
+
+If you want to use a different entity manager you also need to use a different connection.
+The connection needs to use a different database otherwise tables will be dropped.
+
 ## Option 2: Working with Pimcore Data Access Objects (Dao)
 
 This example will show you how you can save a custom model in the database.
@@ -446,10 +453,12 @@ class Dao extends Listing\Dao\AbstractDao
     {
         $queryBuilder = $this->getQueryBuilder();
         $this->prepareQueryBuilderForTotalCount($queryBuilder, $this->getTableName() . '.id');
-
-        $totalCount = $this->db->fetchOne($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
-
-        return (int) $totalCount;
+        
+        if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
+            return (int)$this->db->fetchOne('SELECT COUNT(*)  FROM (' . $queryBuilder->getSQL() . ') as XYZ');
+        } else {
+            return (int)$this->db->fetchOne($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
+        }
     }
 }
 ```

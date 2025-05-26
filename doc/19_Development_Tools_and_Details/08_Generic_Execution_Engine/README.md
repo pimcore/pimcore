@@ -1,7 +1,8 @@
 # Generic Execution Engine
 :::caution
 
-To use this feature, please enable the `PimcoreGenericExecutionEngineBundle` in your `bundles.php` file and install it accordingly with the following command:
+To use this feature, please update your `composer.json` by requiring `phpdocumentor/reflection-docblock` and `symfony/property-info` like in the `suggest` section. Enable the `PimcoreGenericExecutionEngineBundle` in your `bundles.php` file and install it accordingly with the following command:
+
 
 `bin/console pimcore:bundle:install PimcoreGenericExecutionEngineBundle`
 

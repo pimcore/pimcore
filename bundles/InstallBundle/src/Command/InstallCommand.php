@@ -3,26 +3,26 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\InstallBundle\Command;
 
+use Defuse\Crypto\Key;
+use InvalidArgumentException;
 use Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Console\ConsoleOutputDecorator;
 use Pimcore\Console\Style\PimcoreStyle;
+use Pimcore\ProductRegistration\RegistrationValidator;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -33,6 +33,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @method Application getApplication()
@@ -45,21 +46,16 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 )]
 class InstallCommand extends Command
 {
-    private Installer $installer;
-
-    private EventDispatcherInterface $eventDispatcher;
-
     private PimcoreStyle $io;
 
     private ?array $options = null;
 
-    public function __construct(
-        Installer $installer,
-        EventDispatcherInterface $eventDispatcher
-    ) {
-        $this->installer = $installer;
-        $this->eventDispatcher = $eventDispatcher;
+    private RegistrationValidator $registrationValidator;
 
+    public function __construct(
+        private readonly Installer $installer,
+        private readonly EventDispatcherInterface $eventDispatcher,
+    ) {
         parent::__construct();
     }
 
@@ -70,7 +66,6 @@ class InstallCommand extends Command
         }
 
         $options = [
-
             'admin-username' => [
                 'description' => 'Admin username',
                 'mode' => InputOption::VALUE_REQUIRED,
@@ -124,6 +119,43 @@ class InstallCommand extends Command
                 'default' => false,
                 'group' => 'bundles',
             ],
+            'encryption-secret' => [
+                'description' => 'Pimcore Encryption Secret',
+                'mode' => InputOption::VALUE_OPTIONAL,
+                'insecure' => true,
+                'hidden-input' => true,
+                'group' => 'registration',
+            ],
+            'instance-identifier' => [
+                'description' => 'Pimcore Instance Identifier',
+                'mode' => InputOption::VALUE_OPTIONAL,
+                'insecure' => true,
+                'hidden-input' => true,
+                'group' => 'registration',
+            ],
+            'product-key' => [
+                'dynamic_description' => function () {
+                    return 'Please provide your product key. ' .
+                        'If you don\'t have one yet please register your product at ' .
+                        'https://license.pimcore.com/register?instance_identifier=' .
+                        $this->registrationValidator->getInstanceIdentifier() .
+                        '&instance_hash=' . $this->registrationValidator->getHashedInstanceIdentifier();
+                },
+                'mode' => InputOption::VALUE_REQUIRED,
+                'insecure' => true,
+                'hidden-input' => true,
+                'group' => 'registration',
+                'validator' => function (?string $productKey) {
+
+                    if (empty($productKey)) {
+                        throw new InvalidArgumentException('Product Key cannot be empty');
+                    }
+
+                    $this->checkProductKey($productKey);
+
+                    return $productKey;
+                },
+            ],
         ];
 
         foreach (array_keys($options) as $name) {
@@ -153,6 +185,11 @@ class InstallCommand extends Command
         $this
             ->setHelp($help)
             ->addOption(
+                'skip-product-registration-config',
+                null,
+                InputOption::VALUE_NONE,
+                'Do not write a product registration config file: <comment>product_registration.yaml</comment>'
+            )->addOption(
                 'skip-database-config',
                 null,
                 InputOption::VALUE_NONE,
@@ -194,6 +231,10 @@ class InstallCommand extends Command
         if ($onlySteps = $input->getOption('only-steps')) {
             $onlySteps = array_map('trim', explode(',', $onlySteps));
             $this->installer->setRunInstallSteps($onlySteps);
+        }
+
+        if ($input->getOption('skip-product-registration-config')) {
+            $this->installer->setSkipProductRegistrationConfig(true);
         }
 
         if ($input->getOption('skip-database-config')) {
@@ -257,6 +298,45 @@ class InstallCommand extends Command
                 }
             }
         }
+
+    }
+
+    private function loadProductSecrets(InputInterface $input): void
+    {
+        $secret = $input->getOption('encryption-secret');
+        if (!$secret) {
+            $secret = getenv('PIMCORE_INSTALL_ENCRYPTION_SECRET')
+                ?: Key::createNewRandomKey()->saveToAsciiSafeString();
+            $input->setOption('encryption-secret', $secret);
+        }
+
+        $instanceIdentifier = $input->getOption('instance-identifier');
+        if (!$instanceIdentifier) {
+            $instanceIdentifier = getenv('PIMCORE_INSTALL_INSTANCE_IDENTIFIER')
+                ?: Uuid::v6()->toBase58();
+            $input->setOption('instance-identifier', $instanceIdentifier);
+        }
+
+        $this->registrationValidator = new RegistrationValidator($secret, $instanceIdentifier);
+    }
+
+    private function checkProductSecrets(InputInterface $input): void
+    {
+        $secret = $input->getOption('encryption-secret');
+        if (!$secret) {
+            throw new InvalidArgumentException('Encryption secret is required.');
+        }
+
+        $instanceIdentifier = $input->getOption('instance-identifier');
+        if (!$instanceIdentifier) {
+            throw new InvalidArgumentException('Instance identifier is required.');
+        }
+
+        $this->registrationValidator = new RegistrationValidator(
+            $input->getOption('encryption-secret'),
+            $input->getOption('instance-identifier')
+        );
+
     }
 
     /**
@@ -266,6 +346,8 @@ class InstallCommand extends Command
      */
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
+        $this->loadProductSecrets($input);
+
         foreach ($this->getOptions() as $name => $config) {
             if (!$this->installerNeedsOption($config)) {
                 continue;
@@ -278,7 +360,10 @@ class InstallCommand extends Command
                 continue;
             }
 
-            $question = $config['prompt'] ?? $config['description'];
+            $question = $config['prompt'] ?? $config['description'] ?? '';
+            if ($config['dynamic_description'] ?? false) {
+                $question = $config['dynamic_description']();
+            }
 
             if (isset($config['choices'])) {
                 $value = $this->io->choice(
@@ -294,6 +379,10 @@ class InstallCommand extends Command
 
                     return $answer;
                 };
+
+                if (isset($config['validator'])) {
+                    $validator = $config['validator'];
+                }
 
                 if ($config['hidden-input'] ?? false) {
                     $question .= ' (input will be hidden)';
@@ -322,6 +411,8 @@ class InstallCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->checkProductSecrets($input);
+
         // dispatch a bundle config event here to manually add/remove bundles/recommendations
         $bundleSetupEvent = $this->installer->dispatchBundleSetupEvent();
 
@@ -330,6 +421,8 @@ class InstallCommand extends Command
             $installableBundles = $bundleSetupEvent->getInstallableBundles($bundles);
             $this->installer->setBundlesToInstall($installableBundles, $bundleSetupEvent->getAvailableBundles(), $bundleSetupEvent->getExcludeBundlesFromPhpBundles());
         }
+
+        $this->checkProductKey($input->getOption('product-key'));
 
         if ($input->isInteractive() && !$this->io->confirm('This will install Pimcore with the given settings. Do you want to continue?')) {
             return 0;
@@ -420,6 +513,11 @@ class InstallCommand extends Command
         $this->io->success('Pimcore was successfully installed');
 
         return 0;
+    }
+
+    private function checkProductKey(?string $productKey): void
+    {
+        $this->registrationValidator->validateProductKey($productKey);
     }
 
     private function writeInstallerOutputResults(BufferedOutput $output, BufferedOutput $errorOutput): void

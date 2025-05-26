@@ -7,7 +7,7 @@ body:
       attributes:
           value: |
               ## Important notice
-              As an open source project we love to work together with our community to improve and develop our products.
+              As an open core project we love to work together with our community to improve and develop our products.
               It's also important for us to make clear that **we're not working for you or your company**,
               but we enjoy to work together to solve existing bugs.
               So we would love to see PRs with bugfixes, discuss them and we are happy to merge them when they are ready.

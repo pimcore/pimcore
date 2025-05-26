@@ -2,23 +2,22 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
 use InvalidArgumentException;
+use Monolog\Level;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
+use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
@@ -144,6 +143,18 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
                 $definition->addTag('pimcore.area.brick', ['id' => $attribute->id]);
             },
         );
+
+        $container->setParameter(
+            'pimcore_application_logger_db_min_level_or_list',
+            $config['applicationlog']['loggers']['db']['min_level_or_list'] ?? Level::Debug
+        );
+
+        $container->setParameter(
+            'pimcore_application_logger_db_max_level',
+            $config['applicationlog']['loggers']['db']['max_level'] ?? Level::Emergency
+        );
+
+        $this->checkProductRegistration($config, $container);
     }
 
     private function configureModelFactory(ContainerBuilder $container, array $config): void
@@ -293,5 +304,44 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
 
         return $newConfiguration;
+    }
+
+    private function checkProductRegistration(array $config, ContainerBuilder $container): void
+    {
+        //replace env placeholders in encryption secret to make sure we use the actual secret
+        $encryptionSecret = $container->resolveEnvPlaceholders(
+            $container->getParameter('pimcore.encryption.secret'),
+            true
+        );
+
+        $productIdentifier = $config['product_registration']['instance_identifier'] ?? null;
+        $container->setParameter('pimcore.product_registration.instance_identifier', $productIdentifier);
+
+        //Pimcore not installed, skipping check
+        if (empty($encryptionSecret) && file_exists(Installer::NEEDS_INSTALL_MARKER)) {
+            return;
+        }
+
+        if (empty($encryptionSecret)) {
+            throw new InvalidArgumentException(
+                "`pimcore.encryption.secret` is not set.\n".
+                'Run `vendor/bin/generate-defuse-key` to generate a secret and set it as container parameter ' .
+                '`pimcore.encryption.secret`.'
+            );
+        }
+
+        //replace env placeholders in product identifier and product key
+        $productIdentifier = $container->resolveEnvPlaceholders($productIdentifier, true);
+        $productKey = $container->resolveEnvPlaceholders(
+            $config['product_registration']['product_key'] ?? null,
+            true
+        );
+
+        $registrationValidator = new Pimcore\ProductRegistration\RegistrationValidator(
+            $encryptionSecret,
+            $productIdentifier
+        );
+
+        $registrationValidator->validateProductKey($productKey);
     }
 }

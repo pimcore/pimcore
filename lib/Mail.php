@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore;
@@ -123,7 +120,7 @@ class Mail extends Email
      * @param array|Headers|null $headers
      * @param AbstractPart|null $body
      */
-    public function __construct($headers = null, $body = null, string $contentType = null)
+    public function __construct($headers = null, $body = null, ?string $contentType = null)
     {
         if (is_array($headers)) {
             $options = $headers;
@@ -425,7 +422,7 @@ class Mail extends Email
      *
      * @return $this Provides fluent interface
      */
-    public function send(MailerInterface $mailer = null): static
+    public function send(?MailerInterface $mailer = null): static
     {
         $bodyHtmlRendered = $this->getBodyHtmlRendered();
         if ($bodyHtmlRendered) {
@@ -460,7 +457,7 @@ class Mail extends Email
      *
      * @throws Exception
      */
-    public function sendWithoutRendering(MailerInterface $mailer = null): static
+    public function sendWithoutRendering(?MailerInterface $mailer = null): static
     {
         // filter email addresses
 
@@ -471,7 +468,6 @@ class Mail extends Email
         $recipients = [];
 
         foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
-            $recipients[$key] = null;
             $getterName = 'get' . $key;
             $addresses = $this->$getterName();
 
@@ -498,9 +494,8 @@ class Mail extends Email
             }
         }
 
-        if (empty($this->getFrom()) && $hostname = Tool::getHostname()) {
-            // set default "from" address
-            $this->from('no-reply@' . $hostname);
+        if (empty($this->getFrom())) {
+            $sendingFailedException = new Exception('Missing mandatory mail parameter: From.');
         }
 
         $event = new MailEvent($this, [
@@ -565,9 +560,9 @@ class Mail extends Email
     }
 
     /**
-     * @param array<Address|string> $recipients
+     * @param array<string, array<Address|string>> $recipients
      *
-     * @return array<Address|string>
+     * @return array<string, array<Address|string>>
      */
     private function getDebugMailRecipients(array $recipients): array
     {
@@ -779,11 +774,11 @@ class Mail extends Email
         return $this->preventDebugInformationAppending;
     }
 
-    private function html2Text(string $htmlContent): string
+    private function html2Text(?string $htmlContent): string
     {
         $content = '';
 
-        if (!empty($htmlContent)) {
+        if ($htmlContent) {
             try {
                 $converter = new HtmlConverter();
                 $converter->getConfig()->merge($this->getHtml2TextOptions());

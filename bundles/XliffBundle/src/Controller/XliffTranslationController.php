@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\XliffBundle\Controller;
@@ -30,29 +27,25 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/translation")
- *
- */
+#[Route('/translation')]
 class XliffTranslationController extends UserAwareController
 {
     use JsonHelperTrait;
 
     /**
-     * @Route("/xliff-export", name="pimcore_bundle_xliff_translation_xliffexport", methods={"POST"})
-     *
      * @throws Exception
      */
+    #[Route('/xliff-export', name: 'pimcore_bundle_xliff_translation_xliffexport', methods: ['POST'])]
     public function xliffExportAction(Request $request, ExportServiceInterface $exportService): JsonResponse
     {
         $this->checkPermission('xliff_import_export');
 
-        $id = $request->get('id');
-        $data = $this->decodeJson($request->get('data'));
-        $source = $request->get('source');
-        $target = $request->get('target');
+        $id = $request->request->getString('id');
+        $data = $this->decodeJson($request->request->getString('data'));
+        $source = $request->request->getString('source');
+        $target = $request->request->getString('target');
 
         $translationItems = new TranslationItemCollection();
 
@@ -68,16 +61,12 @@ class XliffTranslationController extends UserAwareController
         ]);
     }
 
-    /**
-     * @Route("/xliff-export-download", name="pimcore_bundle_xliff_translation_exportdownload", methods={"GET"})
-     *
-     *
-     */
+    #[Route('/xliff-export-download', name: 'pimcore_bundle_xliff_translation_exportdownload', methods: ['GET'])]
     public function xliffExportDownloadAction(Request $request, ExporterInterface $translationExporter, ExportServiceInterface $exportService): BinaryFileResponse
     {
         $this->checkPermission('xliff_import_export');
 
-        $id = $request->get('id');
+        $id = $request->query->getString('id');
         $exportFile = $exportService->getTranslationExporter()->getExportFilePath($id);
 
         $response = new BinaryFileResponse($exportFile);
@@ -88,11 +77,7 @@ class XliffTranslationController extends UserAwareController
         return $response;
     }
 
-    /**
-     * @Route("/xliff-import-upload", name="pimcore_bundle_xliff_translation_xliffimportupload", methods={"POST"})
-     *
-     * @throws Exception
-     */
+    #[Route('/xliff-import-upload', name: 'pimcore_bundle_xliff_translation_xliffimportupload', methods: ['POST'])]
     public function xliffImportUploadAction(Request $request, ImportDataExtractorInterface $importDataExtractor): JsonResponse
     {
         $this->checkPermission('xliff_import_export');
@@ -128,16 +113,15 @@ class XliffTranslationController extends UserAwareController
     }
 
     /**
-     * @Route("/xliff-import-element", name="pimcore_bundle_xliff_translation_xliffimportelement", methods={"POST"})
-     *
      * @throws Exception
      */
+    #[Route('/xliff-import-element', name: 'pimcore_bundle_xliff_translation_xliffimportelement', methods: ['POST'])]
     public function xliffImportElementAction(Request $request, ImportDataExtractorInterface $importDataExtractor, ImporterServiceInterface $importerService): JsonResponse
     {
         $this->checkPermission('xliff_import_export');
 
-        $id = $request->get('id');
-        $step = (int) $request->get('step');
+        $id = $request->request->getString('id');
+        $step = $request->request->getInt('step');
 
         try {
             $attributeSet = $importDataExtractor->extractElement($id, $step);

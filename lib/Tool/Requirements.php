@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tool;
@@ -20,13 +17,13 @@ use DateTime;
 use DateTimeZone;
 use Doctrine\DBAL\Connection;
 use Exception;
+use Imagick;
 use IntlDateFormatter;
 use Pimcore\Helper\GotenbergHelper;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
 use ReflectionClass;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Process\Process;
 
 /**
  * @internal
@@ -389,7 +386,7 @@ final class Requirements
             'state' => $ffmpegBin ? Check::STATE_OK : Check::STATE_WARNING,
         ]);
 
-        // Chromium or Gotenberg
+        // Gotenberg
         try {
             $htmlToImage = \Pimcore\Image\HtmlToImage::isSupported();
         } catch (Exception $e) {
@@ -582,6 +579,13 @@ final class Requirements
             'state' => function_exists('gzcompress') ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
+        // openssl
+        $checks[] = new Check([
+            'name' => 'OpenSSL',
+            'link' => 'https://www.php.net/openssl',
+            'state' => function_exists('openssl_verify') ? Check::STATE_OK : Check::STATE_ERROR,
+        ]);
+
         // Intl
         $checks[] = new Check([
             'name' => 'Intl',
@@ -619,22 +623,7 @@ final class Requirements
         ]);
 
         if (class_exists('Imagick')) {
-            $convertExecutablePath = \Pimcore\Tool\Console::getExecutable('convert');
-            $imageMagickLcmsDelegateInstalledProcess = Process::fromShellCommandline($convertExecutablePath.' -list configure');
-            $imageMagickLcmsDelegateInstalledProcess->run();
-
-            $lcmsInstalled = false;
-            $separator = "\r\n";
-            $line = strtok($imageMagickLcmsDelegateInstalledProcess->getOutput(), $separator);
-
-            while ($line !== false) {
-                if (str_contains($line, 'DELEGATES') && str_contains($line, 'lcms')) {
-                    $lcmsInstalled = true;
-
-                    break;
-                }
-                $line = strtok($separator);
-            }
+            $lcmsInstalled = str_contains(Imagick::getConfigureOptions()['DELEGATES'], 'lcms');
 
             $checks[] = new Check([
                 'name' => 'ImageMagick LCMS delegate',
