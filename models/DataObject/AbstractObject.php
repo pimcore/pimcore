@@ -1087,7 +1087,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         $properties = parent::getProperties();
 
-        if(!self::getGetInheritedValues()) {
+        if(!static::getGetInheritedValues()) {
             $properties = array_filter($properties, static function (Model\Property $property) {
                 return !$property->isInherited();
             });
