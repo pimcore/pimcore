@@ -44,6 +44,11 @@ services:
     #     tags:
     #         - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: onObjectPreUpdate }
 
+    Pimcore\Bundle\SeoBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreSeoBundle')"
+
     Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:
         public: true
         alias: Pimcore\Model\Version\Adapter\ProxyVersionStorageAdapter
