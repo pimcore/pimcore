@@ -27,10 +27,20 @@ abstract class ClassResolver
 {
     private static array $cache;
 
-    protected static function resolve(?string $class, callable $validationCallback = null): ?object
-    {
+    protected static function resolve(
+        ?string $class,
+        callable $validationCallback = null,
+        bool $showError = true
+    ): ?object {
         if (!$class) {
             return null;
+        }
+
+        if ($showError) {
+            return self::$cache[$class] ??= self::returnValidServiceOrNull(
+                str_starts_with($class, '@') ? Pimcore::getContainer()->get(substr($class, 1)) : new $class,
+                $validationCallback
+            );
         }
 
         try {

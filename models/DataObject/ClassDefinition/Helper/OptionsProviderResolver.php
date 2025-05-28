@@ -30,7 +30,7 @@ class OptionsProviderResolver extends ClassResolver
 
     public static array $providerCache = [];
 
-    public static function resolveProvider(?string $providerClass, int $mode): ?object
+    public static function resolveProvider(?string $providerClass, int $mode, bool $showError = false): ?object
     {
         return self::resolve($providerClass, function ($provider) use ($mode) {
 
@@ -47,6 +47,6 @@ class OptionsProviderResolver extends ClassResolver
             return ($mode == self::MODE_SELECT && ($provider instanceof SelectOptionsProviderInterface))
                 || ($mode == self::MODE_MULTISELECT && ($provider instanceof MultiSelectOptionsProviderInterface))
                 || ($mode == self::MODE_MULTISELECT && ($provider instanceof SelectOptionsProviderInterface));
-        });
+        }, $showError);
     }
 }
