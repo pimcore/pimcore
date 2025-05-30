@@ -36,23 +36,24 @@ abstract class ClassResolver
             return null;
         }
 
+        $return = null;
         if ($showError) {
-            return self::$cache[$class] ??= self::returnValidServiceOrNull(
+            $return = self::$cache[$class] ??= self::returnValidServiceOrNull(
                 str_starts_with($class, '@') ? Pimcore::getContainer()->get(substr($class, 1)) : new $class,
                 $validationCallback
             );
         }
 
         try {
-            return self::$cache[$class] ??= self::returnValidServiceOrNull(
+            $return = self::$cache[$class] ??= self::returnValidServiceOrNull(
                 str_starts_with($class, '@') ? Pimcore::getContainer()->get(substr($class, 1)) : new $class,
                 $validationCallback
             );
         } catch (Error $e) {
             Logger::error($e->getMessage());
-
-            return null;
         }
+
+        return $return;
     }
 
     private static function returnValidServiceOrNull(object $service, callable $validationCallback = null): ?object
