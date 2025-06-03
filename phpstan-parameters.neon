@@ -49,7 +49,7 @@ parameters:
             enabled: false
         noIsset:
             enabled: false
-        NoNamedArgumentRule
+        noNamedArgumentRule
             enabled: false
         noNullableReturnTypeDeclaration:
             enabled: false
