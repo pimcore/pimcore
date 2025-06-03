@@ -49,6 +49,8 @@ parameters:
             enabled: false
         noIsset:
             enabled: false
+        NoNamedArgumentRule
+            enabled: false
         noNullableReturnTypeDeclaration:
             enabled: false
         noParameterPassedByReference:
