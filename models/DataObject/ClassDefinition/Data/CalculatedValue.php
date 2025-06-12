@@ -384,4 +384,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     {
         return 'calculatedValue';
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
 }

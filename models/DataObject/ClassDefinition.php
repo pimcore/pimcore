@@ -345,7 +345,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             $this->setId((string) $maxId);
         }
 
-        if (!preg_match('/[a-zA-Z][a-zA-Z0-9_]+/', $this->getName())) {
+        if (!preg_match('/[a-zA-Z]\w+/', $this->getName())) {
             throw new Exception(sprintf('Invalid name for class definition: %s', $this->getName()));
         }
 

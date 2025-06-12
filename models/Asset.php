@@ -517,17 +517,23 @@ class Asset extends Element\AbstractElement
                     if ($oldPath && $oldPath != $this->getRealFullPath()) {
                         $differentOldPath = $oldPath;
 
+                        // First make DB updates:
+                        $this->getDao()->updateWorkspaces();
+                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
+
+                        // then update thumbnails
+                        // TODO: determine if failure on moving thumbnails should be ignored
+                        $this->relocateThumbnails($oldPath);
+
+                        // finally move the actual assets themselves
+                        // We do this last so that any prior errors don't require a rollback
+                        // on potentially a remote service.
                         try {
                             $storage->move($oldPath, $this->getRealFullPath());
                         } catch (UnableToMoveFile $e) {
                             //update children, if unable to move parent
                             $this->updateChildPaths($storage, $oldPath);
                         }
-
-                        $this->getDao()->updateWorkspaces();
-
-                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
-                        $this->relocateThumbnails($oldPath);
                     }
 
                     // lastly create a new version if necessary

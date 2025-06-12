@@ -301,7 +301,7 @@ class Definition extends Model\AbstractModel
         if ($key === null || $key === '') {
             return true;
         }
-        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $key)) {
+        if (!preg_match('/^[a-zA-Z]\w*$/', $key)) {
             return true;
         }
 
