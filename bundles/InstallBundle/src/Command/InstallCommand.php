@@ -543,19 +543,23 @@ class InstallCommand extends Command
 
     private function loadProductRegistrationValuesFromTmpStorage(InputInterface $input): void
     {
-        if (file_exists(self::INSTALLER_PRODUCT_REGISTRATION_TMP_STORAGE)) {
-            if ($this->io->confirm('Found previous product registration values. Do you want to use them?', false)) {
-                $data = Yaml::parseFile(self::INSTALLER_PRODUCT_REGISTRATION_TMP_STORAGE);
-                if (is_array($data)) {
-                    if (isset($data['encryption_secret'])) {
-                        $input->setOption('encryption-secret', $data['encryption_secret']);
-                    }
-                    if (isset($data['instance_identifier'])) {
-                        $input->setOption('instance-identifier', $data['instance_identifier']);
-                    }
-                    if (isset($data['product_key'])) {
-                        $input->setOption('product-key', $data['product_key']);
-                    }
+        if (
+            file_exists(self::INSTALLER_PRODUCT_REGISTRATION_TMP_STORAGE) &&
+            $this->io->confirm(
+                'Found previous product registration values. Do you want to use them?',
+                false
+            )
+        ) {
+            $data = Yaml::parseFile(self::INSTALLER_PRODUCT_REGISTRATION_TMP_STORAGE);
+            if (is_array($data)) {
+                if (isset($data['encryption_secret'])) {
+                    $input->setOption('encryption-secret', $data['encryption_secret']);
+                }
+                if (isset($data['instance_identifier'])) {
+                    $input->setOption('instance-identifier', $data['instance_identifier']);
+                }
+                if (isset($data['product_key'])) {
+                    $input->setOption('product-key', $data['product_key']);
                 }
             }
         }
