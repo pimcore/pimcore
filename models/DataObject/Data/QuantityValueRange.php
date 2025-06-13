@@ -71,6 +71,7 @@ class QuantityValueRange extends AbstractQuantityValue
         if (is_null($min) || is_null($max)) {
             return [0];
         }
+
         return range($min, $max, $step);
     }
 
