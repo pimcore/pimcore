@@ -522,8 +522,8 @@ class Imagick extends Adapter
             $this->setWidth($width);
             $this->setHeight($height);
         }
-        
-        if($this->resource->getNumberImages() > 1) {
+
+        if ($this->resource->getNumberImages() > 1) {
             $this->resource->removeImage();
         }
 
