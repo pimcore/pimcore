@@ -4,8 +4,8 @@ If you're planning to use the free Pimcore Community Edition. please read the
 [Pimcore Open Core License](https://github.com/pimcore/pimcore/blob/12.x/LICENSE.md) carefully
 before installing Pimcore and ensure you comply with the restrictions.  
   
-If you use the Community Edition with the Admin UI Classic bundle, you need to purchase an
-additional perpetual license at a price of €1,480 by contacting sales@pimcore.com because of ExtJS licencing limitations.  
+If you use the Community Edition with the Admin UI Classic bundle, [you need to purchase an
+additional perpetual license at a price of €1,480 at our store](https://store.pimcore.com/shop/admin-ui-classic-bundle-for-community-edition-pocl-license-134) because of ExtJS licencing limitations.  
   
 This section provides a quick getting started tutorial for Pimcore and covers the following topics:  
   
