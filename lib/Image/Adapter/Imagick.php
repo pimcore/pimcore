@@ -522,6 +522,7 @@ class Imagick extends Adapter
             $this->setWidth($width);
             $this->setHeight($height);
         }
+        $this->resource->removeImage();
 
         $this->postModify();
 
