@@ -34,15 +34,15 @@ final class Version20250516142759 extends AbstractMigration
     {
         $table = $schema->getTable('versions');
         if (!$table->hasIndex('ctype_public_id')) {
-            $table->addIndex(['ctype', 'ctype', 'id'], 'ctype_public_id');
+            $table->addIndex(['ctype', 'public', 'id'], 'ctype_public_id');
         }
 
         if (!$table->hasIndex('ctype_public_id_date')) {
-            $table->addIndex(['ctype', 'ctype', 'id', 'date'], 'ctype_public_id_date');
+            $table->addIndex(['ctype', 'public', 'id', 'date'], 'ctype_public_id_date');
         }
 
         if (!$table->hasIndex('ctype_public_id_cid')) {
-            $table->addIndex(['ctype', 'ctype', 'id', 'cid'], 'ctype_public_id_cid');
+            $table->addIndex(['ctype', 'public', 'id', 'cid'], 'ctype_public_id_cid');
         }
     }
 
