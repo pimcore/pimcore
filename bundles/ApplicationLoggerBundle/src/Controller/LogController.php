@@ -58,7 +58,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
 
         $qb = $db->createQueryBuilder();
         $qb
-            ->select('*, priority + 0 AS priority_key')
+            ->select('*')
             ->from(ApplicationLoggerDb::TABLE_NAME)
             ->setFirstResult($requestSource->getInt('start', 0))
             ->setMaxResults($requestSource->getInt('limit', 50));
@@ -132,7 +132,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
                 'message' => $row['message'],
                 'date' => $row['timestamp'],
                 'timestamp' => $carbonTs->getTimestamp(),
-                'priority' => $translationService->getTranslatedLogLevel($row['priority_key']),
+                'priority' => $translationService->getTranslatedLogLevel((int)$row['priority']),
                 'fileobject' => $fileobject,
                 'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],
