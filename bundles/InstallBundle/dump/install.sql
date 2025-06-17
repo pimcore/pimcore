@@ -591,7 +591,6 @@ CREATE TABLE `versions` (
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
   KEY `ctype_cid` (`ctype`, `cid`),
-  KEY `ctype_public_id` (`ctype`, `public`, `id`),
   KEY `ctype_public_id_date` (`ctype`, `public`, `id`, `date`),
   KEY `ctype_public_id_cid` (`ctype`, `public`, `id`, `cid`),
   KEY `date` (`date`),
