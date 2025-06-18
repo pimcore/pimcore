@@ -198,7 +198,7 @@ final class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('timezone')
-                    ->defaultValue('')
+                    ->defaultValue(date_default_timezone_get())
                 ->end()
                 ->scalarNode('path_variable')
                     ->info('Additional $PATH variable (: separated) (/x/y:/foo/bar):')
