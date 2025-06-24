@@ -457,7 +457,8 @@ class Dao extends Model\Element\Dao
 
         $classIds = array_map(
             static fn ($id) => $id['classId'],
-            $this->db->fetchAllAssociative("SELECT DISTINCT classId FROM objects WHERE `path` like ? AND `type` = 'object'", [Helper::escapeLike($path) . '/%'])
+            $this->db->fetchAllAssociative("SELECT DISTINCT classId FROM objects
+            WHERE `path` like ? AND `type` = 'object'", [Helper::escapeLike($path) . '/%'])
         );
 
         $classes = [];
