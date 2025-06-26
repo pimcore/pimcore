@@ -332,7 +332,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             $keyConfig
                         );
 
-                        $dataFromEditMode = $dataDefinition->getDataFromEditmode($value);
+                        $dataFromEditMode = $dataDefinition->getDataFromEditmode($value, $object);
                         $activeGroups[$groupId] = true;
 
                         $classificationStore->setLocalizedKeyValue($groupId, $keyId, $dataFromEditMode, $language);

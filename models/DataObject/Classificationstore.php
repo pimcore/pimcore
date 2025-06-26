@@ -189,11 +189,8 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
                 }
 
                 $newData = $dataDefinition->getDataForResource($value, $this->object, ['owner' => $this]);
-                if ($dataDefinition instanceof Model\DataObject\ClassDefinition\Data\Password) {
-                    $value = $newData;
-                } else {
-                    $newData = serialize($newData);
-                }
+                $value = $newData;
+                $newData = serialize($newData);
 
                 if ($newData != $oldData) {
                     $this->markFieldDirty('_self');
