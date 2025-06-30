@@ -1171,5 +1171,4 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         // Compare items
         return serialize($oldValue->getItems()) === serialize($newValue->getItems());
     }
-
 }
