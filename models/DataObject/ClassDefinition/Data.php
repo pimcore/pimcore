@@ -422,11 +422,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             }
 
             if ($this->elementType === 'boolean') {
-                if ($this->calculatorType === 'class') {
-                    $bool = $value === 1 ? 1 : 0;
-                } else {
-                    $bool = $value === 1 ? $db->quote('true') : $db->quote('false');
-                }
+                $key = 'IFNULL(' . $key . ', 0)';
+                $bool = $value === 1 ? 1 : 0;
 
                 return $key . ' ' . $operator . ' ' . $bool;
             }
