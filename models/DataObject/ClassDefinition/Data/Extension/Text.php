@@ -27,7 +27,7 @@ trait Text
 
     public function isEmpty(mixed $data): bool
     {
-        return strlen((string) $data) < 1;
+        return strlen((string) $data) < 1  || $data === '<p></p>';
     }
 
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
