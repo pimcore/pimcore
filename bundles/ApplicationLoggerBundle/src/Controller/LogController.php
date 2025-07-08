@@ -134,7 +134,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
                 'date' => $row['timestamp'],
                 'timestamp' => $carbonTs->getTimestamp(),
                 'priority' => $translationService->getTranslatedLogLevel((int)$row['priority']),
-                'prioritykeyname' => LogLevel::getLogLevel($row['priority_key'])->name,
+                'prioritykeyname' => LogLevel::getLogLevel($row['priority'])->name,
                 'fileobject' => $fileobject,
                 'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],
