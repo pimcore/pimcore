@@ -1323,7 +1323,10 @@ class Service extends Model\AbstractModel
         $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $sessionId, $postfix);
         $tag = $elementType . '-session' . $postfix;
 
-        $element->setInDumpState(true);
+        if ($element instanceof ElementDumpStateInterface) {
+            $element->setInDumpState(true);
+        }
+
         $serializedData = Serialize::serialize($element);
 
         TmpStore::set($tmpStoreKey, $serializedData, $tag);

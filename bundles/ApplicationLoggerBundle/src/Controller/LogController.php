@@ -18,6 +18,7 @@ use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Types;
+use Pimcore\Bundle\ApplicationLoggerBundle\Enum\LogLevel;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -133,6 +134,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
                 'date' => $row['timestamp'],
                 'timestamp' => $carbonTs->getTimestamp(),
                 'priority' => $translationService->getTranslatedLogLevel((int)$row['priority']),
+                'prioritykeyname' => LogLevel::getLogLevel($row['priority_key'])->name,
                 'fileobject' => $fileobject,
                 'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],
