@@ -122,6 +122,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $logEntries = [];
         foreach ($result as $row) {
             $fileobject = null;
+            $priorityId = (int)row['priority'];
             if ($row['fileobject']) {
                 $fileobject = str_replace(PIMCORE_PROJECT_ROOT, '', $row['fileobject']);
             }
@@ -133,8 +134,8 @@ class LogController extends UserAwareController implements KernelControllerEvent
                 'message' => $row['message'],
                 'date' => $row['timestamp'],
                 'timestamp' => $carbonTs->getTimestamp(),
-                'priority' => $translationService->getTranslatedLogLevel((int)$row['priority']),
-                'prioritykeyname' => LogLevel::getLogLevel($row['priority'])->name,
+                'priority' => $translationService->getTranslatedLogLevel($priorityId),
+                'prioritykeyname' => LogLevel::getLogLevel($priorityId)->name,
                 'fileobject' => $fileobject,
                 'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],
