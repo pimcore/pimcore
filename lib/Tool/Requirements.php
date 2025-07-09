@@ -706,7 +706,7 @@ final class Requirements
              throw new Exception('not a directory: ' . $base);
         }
 
-        $array = array_diff($base_dirs, ['.', '..', '.svn']);
+        $array = array_diff($base_dirs, ['.', '..', '.svn', '.git']);
         foreach ($array as $value) {
             if (is_dir($base . $value)) {
                 $data[] = $base . $value . DIRECTORY_SEPARATOR;

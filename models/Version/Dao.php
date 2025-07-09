@@ -128,14 +128,14 @@ class Dao extends Model\Dao\AbstractDao
                 if (isset($elementType['days'])) {
                     // by days
                     $deadline = time() - ($elementType['days'] * 86400);
-                    $tmpVersionIds = $this->db->fetchFirstColumn('SELECT id FROM versions as a WHERE ctype = ? AND date < ? AND public=0 AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);
+                    $tmpVersionIds = $this->db->fetchFirstColumn('SELECT id FROM versions as a WHERE ctype = ? AND public=0 AND id NOT IN (' . $ignoreIdsList . ') AND date < ?', [$elementType['elementType'], $deadline]);
                     $versionIds = array_merge($versionIds, $tmpVersionIds);
                 } else {
                     // by steps
                     $versionData = $this->db->executeQuery('SELECT cid FROM versions WHERE ctype = ? AND public=0 AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING COUNT(*) > ? LIMIT 1000', [$elementType['elementType'], $elementType['steps'] + 1]);
                     while ($versionInfo = $versionData->fetchAssociative()) {
                         $count++;
-                        $elementVersions = $this->db->fetchFirstColumn('SELECT id FROM versions WHERE cid=? AND ctype = ? AND public=0 AND id NOT IN ('.$ignoreIdsList.') ORDER BY id DESC LIMIT '.($elementType['steps'] + 1).', '.PHP_INT_MAX, [$versionInfo['cid'], $elementType['elementType']]);
+                        $elementVersions = $this->db->fetchFirstColumn('SELECT id FROM versions WHERE ctype = ? AND public=0 AND id NOT IN ('.$ignoreIdsList.') AND cid=? ORDER BY id DESC LIMIT '.($elementType['steps'] + 1).', '.PHP_INT_MAX, [$elementType['elementType'], $versionInfo['cid']]);
 
                         $versionIds = array_merge($versionIds, $elementVersions);
 

@@ -69,7 +69,7 @@
     "mpratt/embera": "^2.0.14",
     "myclabs/deep-copy": "^1.13",
     "neitanod/forceutf8": "^2.0.4",
-    "nesbot/carbon": "^2.72 || ^3.8.4",
+    "nesbot/carbon": "^2.72 || ^3.10.0",
     "onnov/detect-encoding": "^2.0",
     "pear/net_url2": "^2.2",
     "php-http/discovery": "^1.20",

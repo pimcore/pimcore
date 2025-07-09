@@ -14,10 +14,12 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\OptionsProvider;
 
 use Exception;
+use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Model\DataObject\SelectOptions\Config;
 use Pimcore\Model\DataObject\SelectOptions\Data\SelectOption;
+use Pimcore\Tool\Admin;
 
 class SelectOptionsOptionsProvider implements SelectOptionsProviderInterface
 {
@@ -33,10 +35,14 @@ class SelectOptionsOptionsProvider implements SelectOptionsProviderInterface
             throw new Exception('Missing select options configuration ' . $configurationId, 1677137682677);
         }
 
+        $translator = Pimcore::getContainer()->get('translator');
+        $currentUserLocale = Admin::getCurrentUser()->getLanguage();
+        $translator->setLocale($currentUserLocale);
+
         return array_map(
             fn (SelectOption $selectOption) => [
                 'value' => $selectOption->getValue(),
-                'key' => $selectOption->getLabel(),
+                'key' => $translator->trans($selectOption->getLabel(), [], 'admin'),
             ],
             $selectOptionsConfiguration->getSelectOptions(),
         );

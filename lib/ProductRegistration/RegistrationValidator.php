@@ -25,7 +25,7 @@ final class RegistrationValidator
     private string $hashedInstanceIdentifier;
 
     public function __construct(
-        readonly string $secret,
+        public readonly string $secret,
         private ?string $instanceIdentifier,
     ) {
         //just to validate the secret to be a valid key
