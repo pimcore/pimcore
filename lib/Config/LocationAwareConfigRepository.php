@@ -281,8 +281,8 @@ class LocationAwareConfigRepository
             touch($servicesConfig);
         } else {
             $kernel = Pimcore::getKernel();
-            $app = new Application($kernel);
             if ($kernel->isDebug()) {
+                $app = new Application($kernel);
                 $app->setAutoExit(false);
                 $input = new \Symfony\Component\Console\Input\ArrayInput([
                     'command' => 'cache:clear',
