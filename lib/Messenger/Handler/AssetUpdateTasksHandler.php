@@ -22,7 +22,6 @@ use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 
 /**
  * @internal
