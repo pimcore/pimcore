@@ -79,6 +79,8 @@ class AssetUpdateTasksHandler
 
         if ($asset->getCustomSetting('document_page_count') !== 'failed') {
             $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+        } elseif ($savedNeeded) {
+            $this->logger->warning(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
         }
     }
 
