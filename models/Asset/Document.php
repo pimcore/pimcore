@@ -172,6 +172,10 @@ class Document extends Model\Asset
             return false;
         }
 
+        if ($this->getScanStatus() === Model\Asset\Enum\PdfScanStatus::SAFE) {
+            return false;
+        }
+
         $this->setCustomSetting(
             self::CUSTOM_SETTING_PDF_SCAN_STATUS,
             Model\Asset\Enum\PdfScanStatus::IN_PROGRESS->value
