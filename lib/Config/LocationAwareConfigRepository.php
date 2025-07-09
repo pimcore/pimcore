@@ -277,20 +277,8 @@ class LocationAwareConfigRepository
     {
         // invalidate container config cache if debug flag on kernel is set
         $servicesConfig = PIMCORE_PROJECT_ROOT . '/config/services.yaml';
-        if (is_writable($servicesConfig) || fileowner($servicesConfig) === getmyuid()) {
+        if (is_writable($servicesConfig)) {
             touch($servicesConfig);
-        } else {
-            $kernel = Pimcore::getKernel();
-            if ($kernel->isDebug()) {
-                $app = new Application($kernel);
-                $app->setAutoExit(false);
-                $input = new \Symfony\Component\Console\Input\ArrayInput([
-                    'command' => 'cache:clear',
-                    '--env' => $kernel->getEnvironment(),
-                ]);
-                $output = new \Symfony\Component\Console\Output\NullOutput();
-                $app->run($input, $output);
-            }
         }
     }
 
