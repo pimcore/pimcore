@@ -244,7 +244,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         }
 
         // we are looking for membership in the reverse relation
-        return "object_" . $this->getOwnerFieldName() . '.id IN ('
+        return 'object_' . $this->getOwnerFieldName() . '.id IN ('
             . 'SELECT dest_id FROM object_relations_'. $this->getOwnerClassId()
             . ' WHERE '. $subFilter
             . " AND fieldname = '". $this->getOwnerFieldName() . "'"
