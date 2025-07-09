@@ -1,23 +1,99 @@
 # Generic Execution Engine
-:::caution
 
-To use this feature, please update your `composer.json` by requiring `phpdocumentor/reflection-docblock` and `symfony/property-info` like in the `suggest` section. Enable the `PimcoreGenericExecutionEngineBundle` in your `bundles.php` file and install it accordingly with the following command:
+## Overview
 
+The Generic Execution Engine provides:
+* Asynchronous job execution via Symfony Messenger
+* State tracing and logging for job runs  
+* Job run management (start, cancel, restart)
 
-`bin/console pimcore:bundle:install PimcoreGenericExecutionEngineBundle`
+## Installation
 
+1. Update your `composer.json` to require the necessary dependencies:
+   ```bash
+   composer require phpdocumentor/reflection-docblock symfony/property-info
+   ```
+
+2. Enable the `PimcoreGenericExecutionEngineBundle` in your `/config/bundles.php` file by adding this line:
+   ```php
+   Pimcore\Bundle\GenericExecutionEngineBundle\PimcoreGenericExecutionEngineBundle::class => ['all' => true],
+   ```
+
+3. Install the bundle:
+   ```bash
+   bin/console pimcore:bundle:install PimcoreGenericExecutionEngineBundle
+   ```
+
+## Essential Configuration
+
+### Step 1: Configure Messenger Transport
+
+:::caution Transport Configuration Required
+The execution engine **requires** the `pimcore_generic_execution_engine` transport to be configured. Without this, jobs will not be processed.
 :::
 
-Generic execution engine
-- executes jobs asynchronously via [Symfony Messenger](https://symfony.com/doc/current/messenger.html).
-- traces and logs state of job runs.
-- manages (start, cancel, restart) job runs.
+Add this transport to your existing configuration:
 
-The execution is based on the [Symfony Messenger](https://symfony.com/doc/current/messenger.html#consuming-messages-running-the-worker) queue.
-If activated, the selected jobs are automatically executed.
+```yaml title="messenger.yaml"
+framework:
+    messenger:
+        transports:
+            # ... your existing transports
+            pimcore_generic_execution_engine: 'amqp://rabbitmq:5672/%2f/pimcore_generic_execution_engine'
+```
 
-:::caution
+**File Location:**
+- If using the example Docker setup: update `.docker/messenger.yaml`
+- If using a custom setup: update `config/packages/messenger.yaml`
 
-Messages are dispatched via `pimcore_generic_execution_engine` transport. Please ensure you have workers processing this transport.
-
+:::note
+Adjust the transport DSN according to your message broker setup. The example above uses RabbitMQ, but you can use any supported Symfony Messenger transport.
 :::
+
+### Step 2: Set Up Message Consumption
+
+#### Docker Deployments (Recommended for Production)
+
+Pimcore recommends using supervisord for production deployments. If you're using the Pimcore Docker container, add this configuration to your `supervisord.conf` file:
+
+```ini title="supervisord.conf"
+[program:execution-engine]
+command=php /var/www/html/bin/console messenger:consume pimcore_generic_execution_engine --memory-limit=250M --time-limit=3600
+numprocs=1
+startsecs=0
+autostart=true
+autorestart=true
+process_name=%(program_name)s_%(process_num)02d
+stdout_logfile=/dev/fd/1
+stdout_logfile_maxbytes=0
+redirect_stderr=true
+```
+
+This ensures the message consumer runs automatically and restarts if it fails.
+
+#### Alternative: Cron Job (Simple deployments)
+
+Add this to your crontab to run the consumer every minute:
+```bash
+* * * * * cd /path/to/your/pimcore/project && php bin/console messenger:consume pimcore_generic_execution_engine --time-limit=60 > /dev/null 2>&1
+```
+
+#### Development: Manual Execution
+
+Run the consumer manually for development:
+```bash
+php bin/console messenger:consume pimcore_generic_execution_engine
+```
+
+## Verification
+
+To verify your setup is working:
+
+1. Check that your message consumer is running:
+   ```bash
+   php bin/console messenger:stats
+   ```
+
+2. Monitor the logs for any transport-related errors
+
+3. Test by creating and running a simple job through the execution engine
