@@ -16,6 +16,7 @@ namespace Pimcore\Config;
 use Exception;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
+use Pimcore\Console\Application;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Component\Config\FileLocator;
@@ -278,6 +279,18 @@ class LocationAwareConfigRepository
         $servicesConfig = PIMCORE_PROJECT_ROOT . '/config/services.yaml';
         if (is_writable($servicesConfig)) {
             touch($servicesConfig);
+        } else {
+            $kernel = Pimcore::getKernel();
+            $app = new Application($kernel);
+            if ($kernel->isDebug()) {
+                $app->setAutoExit(false);
+                $input = new \Symfony\Component\Console\Input\ArrayInput([
+                    'command' => 'cache:clear',
+                    '--env' => $kernel->getEnvironment(),
+                ]);
+                $output = new \Symfony\Component\Console\Output\NullOutput();
+                $app->run($input, $output);
+            }
         }
     }
 
