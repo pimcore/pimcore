@@ -721,7 +721,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return parent::addListingFilter($listing, $data, $operator);
     }
 
-
     public function getQueryColumnType(): string
     {
         return 'text';
