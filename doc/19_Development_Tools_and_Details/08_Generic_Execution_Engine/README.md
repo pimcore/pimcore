@@ -26,25 +26,7 @@ The Generic Execution Engine provides:
 
 ## Configuration
 
-### Messenger Transport
-
-This step is optional unless you're using a different transport such as RabbitMQ in Pimcore docker-compose example.
-
-**If using the Docker example setup:**
-Add this transport to maintain consistency with your existing RabbitMQ configuration by updating `.docker/messenger.yaml` to match your other transport configurations.
-
-```yaml title="messenger.yaml"
-framework:
-    messenger:
-        transports:
-            # ... your existing transports
-            pimcore_generic_execution_engine: 'amqp://rabbitmq:5672/%2f/pimcore_generic_execution_engine'
-```
-
-**If using a custom setup:**
-You can use the default Doctrine transport (no additional configuration needed) or override it in `config/packages/messenger.yaml` if you prefer a different transport.
-
-### Message Consumption
+### 1. Message Consumption
 
 #### Docker Deployments (Recommended for Production)
 
@@ -78,6 +60,25 @@ Run the consumer manually for development:
 ```bash
 php bin/console messenger:consume pimcore_generic_execution_engine
 ```
+
+
+### 2. Messenger Transport
+
+This step is optional unless you're using a different transport such as RabbitMQ in Pimcore docker-compose example.
+
+**If using the Docker example setup:**
+Add this transport to maintain consistency with your existing RabbitMQ configuration by updating `.docker/messenger.yaml` to match your other transport configurations.
+
+```yaml title="messenger.yaml"
+framework:
+    messenger:
+        transports:
+            # ... your existing transports
+            pimcore_generic_execution_engine: 'amqp://rabbitmq:5672/%2f/pimcore_generic_execution_engine'
+```
+
+**If using a custom setup:**
+You can use the default Doctrine transport (no additional configuration needed) or override it in `config/packages/messenger.yaml` if you prefer a different transport.
 
 ## Verification
 
