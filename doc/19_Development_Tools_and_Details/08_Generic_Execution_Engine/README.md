@@ -24,15 +24,14 @@ The Generic Execution Engine provides:
    bin/console pimcore:bundle:install PimcoreGenericExecutionEngineBundle
    ```
 
-## Essential Configuration
+## Configuration
 
-### Step 1: Configure Messenger Transport
+### Messenger Transport
 
-:::caution Transport Configuration Required
-The execution engine **requires** the `pimcore_generic_execution_engine` transport to be configured. Without this, jobs will not be processed.
-:::
+This step is optional unless you're using a different transport such as RabbitMQ in Pimcore docker-compose example.
 
-Add this transport to your existing configuration:
+**If using the Docker example setup:**
+Add this transport to maintain consistency with your existing RabbitMQ configuration by updating `.docker/messenger.yaml` to match your other transport configurations.
 
 ```yaml title="messenger.yaml"
 framework:
@@ -42,15 +41,10 @@ framework:
             pimcore_generic_execution_engine: 'amqp://rabbitmq:5672/%2f/pimcore_generic_execution_engine'
 ```
 
-**File Location:**
-- If using the example Docker setup: update `.docker/messenger.yaml`
-- If using a custom setup: update `config/packages/messenger.yaml`
+**If using a custom setup:**
+You can use the default Doctrine transport (no additional configuration needed) or override it in `config/packages/messenger.yaml` if you prefer a different transport.
 
-:::note
-Adjust the transport DSN according to your message broker setup. The example above uses RabbitMQ, but you can use any supported Symfony Messenger transport.
-:::
-
-### Step 2: Set Up Message Consumption
+### Message Consumption
 
 #### Docker Deployments (Recommended for Production)
 
