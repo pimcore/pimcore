@@ -28,6 +28,8 @@ The Generic Execution Engine provides:
 
 ### 1. Message Consumption
 
+Make sure at least one of your symfony messenger worker is consuming the `pimcore_generic_execution_engine` transport. 
+
 #### Docker Deployments (Recommended for Production)
 
 Pimcore recommends using supervisord for production deployments. If you're using the Pimcore Docker container, add this configuration to your `supervisord.conf` file:
