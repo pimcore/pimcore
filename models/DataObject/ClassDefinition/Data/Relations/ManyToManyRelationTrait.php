@@ -94,7 +94,7 @@ trait ManyToManyRelationTrait
 
         if ($params['brickPrefix']) {
             $prefix = $params['brickPrefix'];
-            // The brick prefix is always quoted and with a dot suffix, so removing the first
+            // The brick prefix might be quoted and with a dot suffix, if so, removing the first
             // and second last character to unquote
             $quoteIdentifierSymbol  = substr(Db::get()->quoteIdentifier(''), 0 ,1);
             if (
