@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -455,7 +452,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         // getter
 
-        if ($this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -503,7 +500,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             $allowedTypes = $this->getAllowedTypes();
             foreach ($allowedTypes as $allowedType) {
                 $getter = 'get' . ucfirst($allowedType);
-                /** @var DataObject\Objectbrick\Data\AbstractData $item */
                 $item = $data->$getter();
 
                 if ($item instanceof DataObject\Objectbrick\Data\AbstractData) {
@@ -735,8 +731,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if ($fd instanceof IdRewriterInterface
-                    && $fd instanceof DataObject\ClassDefinition\Data) {
+                    if ($fd instanceof IdRewriterInterface) {
                         $d = $fd->rewriteIds($item, $idMapping, $params);
                         $setter = 'set' . ucfirst($fd->getName());
                         $item->$setter($d);
@@ -819,7 +814,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         if ($value instanceof Objectbrick) {
             $result = [];
             $value = $value->getObjectVars();
-            /** @var Objectbrick\Data\AbstractData $item */
             foreach ($value as $item) {
                 if (!$item instanceof DataObject\Objectbrick\Data\AbstractData) {
                     continue;
@@ -831,8 +825,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 $fds = $brickDef->getFieldDefinitions();
                 foreach ($fds as $fd) {
                     $value = $item->{'get' . $fd->getName()}();
-                    if ($fd instanceof NormalizerInterface
-                        && $fd instanceof DataObject\ClassDefinition\Data) {
+                    if ($fd instanceof NormalizerInterface) {
                         $result[$type][$fd->getName()] = $fd->normalize($value, $params);
                     } else {
                         throw new Exception($fd->getName() . ' does not implement NormalizerInterface');

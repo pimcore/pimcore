@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Entity;
@@ -63,7 +60,7 @@ class JobRun
 
     private ?SerializerInterface $serializer = null;
 
-    private ?Job $job;
+    private ?Job $job = null;
 
     #[ORM\Column(type: 'text')]
     private ?string $serializedJob;
@@ -71,11 +68,11 @@ class JobRun
     #[ORM\Column(type: 'json')]
     private ?array $context = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $creationDate;
+    #[ORM\Column(nullable: false)]
+    private int $creationDate;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $modificationDate;
+    #[ORM\Column(nullable: false)]
+    private int $modificationDate;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $executionContext;
@@ -89,6 +86,7 @@ class JobRun
     public function __construct(?int $ownerId = null)
     {
         $this->creationDate = time();
+        $this->modificationDate = time();
         $this->ownerId = $ownerId;
         $this->executionContext = self::DEFAULT_EXECUTION_CONTEXT;
     }
@@ -200,14 +198,14 @@ class JobRun
         $this->context = $context;
     }
 
-    public function getCreationDate(): ?int
+    public function getCreationDate(): int
     {
         return $this->creationDate;
     }
 
-    public function getModificationDate(): ?int
+    public function getModificationDate(): int
     {
-        return $this->modificationDate ?? null;
+        return $this->modificationDate;
     }
 
     #[ORM\PrePersist]

@@ -97,6 +97,8 @@ location ~ ^/var/.*/protected(.*) {
   return 403;
 }
 
+rewrite ^(/cache-buster-(?:\d+)/protected(?:.*)) /index.php$is_args$args last;
+
 location ~ ^/cache-buster\-[\d]+/protected(.*) {
   return 403;
 }
@@ -110,11 +112,18 @@ In the application, there has to be a route in (config/routes.yaml) and a contro
 ```yaml
 # config/routes.yaml
 
-# important this has to be the first route in the file!
+# important these have to be the top routes in the file!
 asset_protect:
     path: /protected/{path}
     defaults: { _controller: App\Controller\MyAssetController::protectedAssetAction }
     requirements:
+        path: '.*'
+        
+cache_buster_asset_protect:
+    path: /cache-buster-{id}/protected/{path}
+    defaults: { _controller: App\Controller\MyAssetController:protectedAssetAction }
+    requirements:
+        id: '\d+'
         path: '.*'
 ```
 

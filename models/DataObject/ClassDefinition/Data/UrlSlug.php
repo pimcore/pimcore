@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -191,8 +188,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             $conditionParts = Model\DataObject\Service::buildConditionPartsFromDescriptor($deleteDescriptor);
             $db->executeQuery('DELETE FROM ' . Model\DataObject\Data\UrlSlug::TABLE_NAME . ' WHERE ' . implode(' AND ', $conditionParts));
             // now save the new data
-            if (is_array($slugs) && !empty($slugs)) {
-                /** @var Model\DataObject\Data\UrlSlug $slug */
+            if (is_array($slugs)) {
                 foreach ($slugs as $slug) {
                     if (!$slug['slug']) {
                         continue;
@@ -481,9 +477,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 $container->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($container);
 
-                if ($container instanceof Model\Element\DirtyIndicatorInterface) {
-                    $container->markFieldDirty($this->getName(), false);
-                }
+                $container->markFieldDirty($this->getName(), false);
             }
         } elseif ($container instanceof Model\DataObject\Localizedfield) {
             $data = $params['data'];
@@ -564,12 +558,12 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
+        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
+        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]|null';
     }
 
     public function normalize(mixed $value, array $params = []): ?array

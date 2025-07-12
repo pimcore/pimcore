@@ -10,4 +10,4 @@ permissions:
 
 jobs:
   call-stale-workflow:
-    uses: pimcore/workflows-collection-public/.github/workflows/stale.yaml@main
+    uses: pimcore/workflows-collection-public/.github/workflows/stale.yml@main

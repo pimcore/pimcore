@@ -3,16 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Routing\Dynamic;
@@ -288,7 +285,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
             }
         }
 
-        if (null !== $redirectTargetUrl && $redirectTargetUrl !== $context->getOriginalPath()) {
+        if ($redirectTargetUrl !== $context->getOriginalPath()) {
             $route->setDefault('_controller', 'Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction');
             $route->setDefault('path', $redirectTargetUrl);
             $route->setDefault('permanent', true);

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -86,9 +83,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
     {
-        $return = [];
-
-        if (is_array($data) && count($data) > 0) {
+        if (is_array($data)) {
+            $return = [];
             $counter = 1;
             foreach ($data as $object) {
                 if ($object instanceof DataObject\Concrete) {
@@ -103,13 +99,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             }
 
             return $return;
-        } elseif (is_array($data) && count($data) === 0) {
-            //give empty array if data was not null
-            return [];
-        } else {
-            //return null if data was null - this indicates data was not loaded
-            return null;
         }
+
+        return null;
     }
 
     protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
@@ -719,18 +711,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         }
 
         return parent::addListingFilter($listing, $data, $operator);
-    }
-
-    /**
-     * Filter by relation feature
-     *
-     *
-     */
-    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
-    {
-        $name = $params['name'] ?: $this->name;
-
-        return $this->getRelationFilterCondition($value, $operator, $name);
     }
 
     public function getQueryColumnType(): string

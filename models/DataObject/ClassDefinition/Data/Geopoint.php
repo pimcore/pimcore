@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -58,7 +55,10 @@ class Geopoint extends AbstractGeo implements
      */
     public function getDataFromResource(mixed $data, ?Concrete $object = null, array $params = []): ?DataObject\Data\GeoCoordinates
     {
-        if ($data[$this->getName() . '__longitude'] && $data[$this->getName() . '__latitude']) {
+        if (is_array($data) &&
+            $data[$this->getName() . '__longitude'] &&
+            $data[$this->getName() . '__latitude']
+        ) {
             $geopoint = new DataObject\Data\GeoCoordinates($data[$this->getName() . '__latitude'], $data[$this->getName() . '__longitude']);
 
             if (isset($params['owner'])) {

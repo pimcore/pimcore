@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
@@ -42,21 +39,18 @@ use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * @Route("/search")
- *
  * @internal
  */
+#[Route('/search')]
 class SearchController extends UserAwareController
 {
     use JsonHelperTrait;
 
     /**
-     * @Route("/find", name="pimcore_bundle_search_search_find", methods={"GET", "POST"})
-     *
      * @todo: $conditionTypeParts could be undefined
      *
      * @todo: $conditionSubtypeParts could be undefined
@@ -65,6 +59,7 @@ class SearchController extends UserAwareController
      *
      * @todo: $data could be undefined
      */
+    #[Route('/find', name: 'pimcore_bundle_search_search_find', methods: ['GET', 'POST'])]
     public function findAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService): JsonResponse
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
@@ -416,6 +411,12 @@ class SearchController extends UserAwareController
                 foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
                     $exceptions = '';
                     $folderSuffix = '';
+                    //if there is restriction to root path, and not other paths allowed, no need to check further
+                    if ($forbiddenPath === '/' && !$allowedPaths) {
+                        $forbiddenPathSql = [' false '];
+
+                        break;
+                    }
                     if ($allowedPaths) {
                         $exceptionsConcat = implode("%' OR fullpath LIKE '", $allowedPaths);
                         $exceptions = " OR (fullpath LIKE '" . $exceptionsConcat . "%')";
@@ -424,6 +425,12 @@ class SearchController extends UserAwareController
                     $forbiddenPathSql[] = ' (fullpath NOT LIKE ' . $db->quote($forbiddenPath . $folderSuffix . '%') . $exceptions . ') ';
                 }
                 foreach ($elementPaths['allowed'] as $allowedPaths) {
+                    //has root access, skip 'fullpath LIKE %' as it slows the search; no need to check other paths
+                    if ($allowedPaths === '/') {
+                        $allowedPathSql = [' true '];
+
+                        break;
+                    }
                     $allowedPathSql[] = ' fullpath LIKE ' . $db->quote($allowedPaths  . '%');
                 }
 
@@ -480,11 +487,7 @@ class SearchController extends UserAwareController
         return $query;
     }
 
-    /**
-     * @Route("/quicksearch", name="pimcore_bundle_search_search_quicksearch", methods={"GET"})
-     *
-     *
-     */
+    #[Route('/quicksearch', name: 'pimcore_bundle_search_search_quicksearch', methods: ['GET'])]
     public function quickSearchAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $query = $this->filterQueryParam($request->query->getString('query'));
@@ -552,11 +555,7 @@ class SearchController extends UserAwareController
         return $this->jsonResponse($result);
     }
 
-    /**
-     * @Route("/quicksearch-get-by-id", name="pimcore_bundle_search_search_quicksearch_by_id", methods={"GET"})
-     *
-     *
-     */
+    #[Route('/quicksearch-get-by-id', name: 'pimcore_bundle_search_search_quicksearch_by_id', methods: ['GET'])]
     public function quickSearchByIdAction(Request $request, Config $config): JsonResponse
     {
         $type = $request->query->getString('type');

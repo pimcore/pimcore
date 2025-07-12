@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tests\Model\Asset;
@@ -142,7 +139,7 @@ class AssetTest extends ModelTestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('ParentID not found.');
         $savedObject = TestHelper::createImageAsset('', null, false);
-        $this->assertTrue($savedObject->getId() == 0);
+        $this->assertEquals(null, $savedObject->getId());
 
         $savedObject->setParentId(999999);
         $savedObject->save();
@@ -315,5 +312,53 @@ class AssetTest extends ModelTestCase
 
         $this->assertMatchesRegularExpression('@^(https?|data):@', $thumbnailFullUrl);
         $this->assertStringContainsString($thumbnail->getPath(), $thumbnailFullUrl);
+    }
+
+    public function testMimeTypeFromStream(): void
+    {
+        $asset = Asset::create(
+            1,
+            [
+                'stream' => fopen(
+                    TestHelper::resolveFilePath('assets/images/image1.jpg'),
+                    'rb'
+                ),
+                'filename' => 'image1_from_stream.jpg',
+            ]
+        );
+
+        $this->assertEquals('image/jpeg', $asset->getMimeType());
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testMimeTypeFromFile(): void
+    {
+        $asset = TestHelper::createImageAsset(
+            '',
+            null,
+            true,
+            'assets/images/image1.jpg'
+        );
+
+        $this->assertEquals('image/jpeg', $asset->getMimeType());
+    }
+
+    public function testMimeTypeFromContent(): void
+    {
+        $fileName = 'image1_from_content';
+        $assetData = @file_get_contents(
+            TestHelper::resolveFilePath('assets/images/image1.jpg'),
+            false
+        );
+        $data = [
+            'data' => $assetData,
+            'key' => $fileName,
+            'filename' => $fileName,
+        ];
+        $asset = Asset::create(1, $data);
+
+        $this->assertEquals('image/jpeg', $asset->getMimeType());
     }
 }

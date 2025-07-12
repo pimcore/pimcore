@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject;
@@ -127,18 +124,16 @@ class Fieldcollection extends Model\AbstractModel implements Iterator, DirtyIndi
         $collectionItems = $this->getItems();
         $index = 0;
         foreach ($collectionItems as $collection) {
-            if ($collection instanceof Fieldcollection\Data\AbstractData) {
-                if (in_array($collection->getType(), $allowedTypes)) {
-                    $collection->setFieldname($this->getFieldname());
-                    $collection->setIndex($index++);
-                    $params['owner'] = $collection;
+            if (in_array($collection->getType(), $allowedTypes)) {
+                $collection->setFieldname($this->getFieldname());
+                $collection->setIndex($index++);
+                $params['owner'] = $collection;
 
-                    // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
-                    $collection->setObject($object);
-                    $collection->getDao()->save($object, $params, $saveRelationalData);
-                } else {
-                    throw new Exception('Fieldcollection of type ' . $collection->getType() . ' is not allowed in field: ' . $this->getFieldname());
-                }
+                // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
+                $collection->setObject($object);
+                $collection->getDao()->save($object, $params, $saveRelationalData);
+            } else {
+                throw new Exception('Fieldcollection of type ' . $collection->getType() . ' is not allowed in field: ' . $this->getFieldname());
             }
         }
     }
@@ -239,24 +234,25 @@ class Fieldcollection extends Model\AbstractModel implements Iterator, DirtyIndi
         if ($item && !$item->isLazyKeyLoaded($field)) {
             if ($type == $item->getType()) {
                 $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($type);
-                /** @var Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface $fieldDef */
                 $fieldDef = $fcDef->getFieldDefinition($field);
 
-                $params = [
-                    'context' => [
-                        'object' => $object,
-                        'containerType' => 'fieldcollection',
-                        'containerKey' => $type,
-                        'fieldname' => $fcField,
-                        'index' => $index,
-                    ], ];
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\CustomResourcePersistingInterface) {
+                    $params = [
+                        'context' => [
+                            'object' => $object,
+                            'containerType' => 'fieldcollection',
+                            'containerKey' => $type,
+                            'fieldname' => $fcField,
+                            'index' => $index,
+                        ], ];
 
-                $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
-                DataObject::disableDirtyDetection();
+                    $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+                    DataObject::disableDirtyDetection();
 
-                $data = $fieldDef->load($item, $params);
-                DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
-                $item->setObjectVar($field, $data);
+                    $data = $fieldDef->load($item, $params);
+                    DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+                    $item->setObjectVar($field, $data);
+                }
             }
             $item->markLazyKeyAsLoaded($field);
         }
@@ -277,9 +273,7 @@ class Fieldcollection extends Model\AbstractModel implements Iterator, DirtyIndi
     {
         // update all items with the new $object
         foreach ($this->getItems() as $item) {
-            if ($item instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
-                $item->setObject($object);
-            }
+            $item->setObject($object);
         }
 
         return $this;

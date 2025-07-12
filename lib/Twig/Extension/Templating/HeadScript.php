@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 /**
@@ -352,7 +349,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Override append
      *
-     * @param  string $value
+     * @param  stdClass $value
      *
      */
     public function append($value): void
@@ -367,7 +364,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Override prepend
      *
-     * @param  string $value
+     * @param  stdClass $value
      *
      */
     public function prepend($value): void
@@ -382,7 +379,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Override set
      *
-     * @param  string $value
+     * @param  stdClass $value
      *
      */
     public function set($value): void

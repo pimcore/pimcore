@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject;
@@ -174,13 +171,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         // @TODO Find a better solution for using isEmpty() in all ClassDefintion DataTypes
 
         $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
-        /** @var Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $dataDefinition */
         $dataDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
         // set the given group to active groups
         $this->setActiveGroups($this->activeGroups + [$groupId => true]);
 
-        if (!$this->isFieldDirty('_self')) {
+        if (!$this->isFieldDirty('_self') && $dataDefinition instanceof Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
             if ($this->object) {
                 $oldData = $this->items[$groupId][$keyId][$language] ?? null;
                 $oldData = $dataDefinition->getDataForResource($oldData, $this->object, ['owner' => $this]);
@@ -324,10 +320,16 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @throws Exception
      */
-    public function getLocalizedKeyValue(int $groupId, int $keyId, string $language = 'default', bool $ignoreFallbackLanguage = false, bool $ignoreDefaultLanguage = false): mixed
-    {
-        $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
+    public function getLocalizedKeyValue(
+        int $groupId,
+        int $keyId,
+        ?string $language = 'default',
+        bool $ignoreFallbackLanguage = false,
+        bool $ignoreDefaultLanguage = false
+    ): mixed {
+        $language = $this->getLanguage($language);
 
+        $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
         if ($keyConfig->getType() == 'calculatedValue') {
             $data = new Model\DataObject\Data\CalculatedValue($this->getFieldname());
             $childDef = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
@@ -338,8 +340,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
 
         $fieldDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
-
-        $language = $this->getLanguage($language);
         $data = null;
 
         if (array_key_exists($groupId, $this->items) && array_key_exists($keyId, $this->items[$groupId])

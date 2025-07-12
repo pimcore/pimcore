@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\StaticRoutesBundle\Routing\Staticroute;
@@ -194,7 +191,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
         $params = $this->context->getParameters();
 
         foreach ($this->getStaticRoutes() as $route) {
-            if (null !== $request && null !== $route->getMethods() && 0 !== count($route->getMethods())) {
+            if (null !== $request && 0 !== count($route->getMethods())) {
                 $method = $request->getMethod();
 
                 if (!in_array($method, $route->getMethods(), true)) {
@@ -262,7 +259,6 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     protected function getStaticRoutes(): array
     {
         if (null === $this->staticRoutes) {
-            /** @var Staticroute\Listing|Staticroute\Listing\Dao $list */
             $list = new Staticroute\Listing();
 
             $list->setOrder(function ($a, $b) {

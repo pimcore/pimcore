@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject;
@@ -30,7 +27,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Link;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
-use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\SystemSettingsConfig;
 
 /**
@@ -195,7 +191,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             $newVersionCount = $this->getVersionCount();
 
-            if (($newVersionCount != $oldVersionCount + 1) || ($this instanceof DirtyIndicatorInterface && $this->isFieldDirty('parentId'))) {
+            if (($newVersionCount != $oldVersionCount + 1) || $this->isFieldDirty('parentId')) {
                 self::disableDirtyDetection();
             }
 
@@ -203,7 +199,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // scheduled tasks are saved in $this->saveVersion();
 
-            $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
+            $this->saveVersion(false, false, $params['versionNote'] ?? null);
             $this->saveChildData();
         } finally {
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
@@ -350,12 +346,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         $dependencies = [parent::resolveDependencies()];
 
         // check in fields
-        if ($this->getClass() instanceof ClassDefinition) {
-            foreach ($this->getClass()->getFieldDefinitions() as $field) {
-                $key = $field->getName();
-                $getter = 'get' . ucfirst($key);
-                $dependencies[] = $field->resolveDependencies($this->$getter());
-            }
+        foreach ($this->getClass()->getFieldDefinitions() as $field) {
+            $key = $field->getName();
+            $getter = 'get' . ucfirst($key);
+            $dependencies[] = $field->resolveDependencies($this->$getter());
         }
 
         return array_merge(...$dependencies);
@@ -576,7 +570,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 $objectTypes = $arguments[3] ?? null;
 
                 if (!$field instanceof AbstractRelations) {
-                    $defaultCondition = $db->quoteIdentifier($realPropertyName) . ' = ' . $db->quote($value) . ' ';
+                    $defaultCondition = $db->quoteIdentifier($realPropertyName) . ' = ' . $db->quote((string)$value) . ' ';
                 }
                 $listConfig = [
                     'condition' => $defaultCondition,
@@ -635,10 +629,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         try {
             parent::save($parameters);
-
-            if ($this instanceof DirtyIndicatorInterface) {
-                $this->resetDirtyMap();
-            }
+            $this->resetDirtyMap();
         } finally {
             DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
         }
@@ -648,16 +639,16 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
-     *
      */
     public function getLazyLoadedFieldNames(): array
     {
         $lazyLoadedFieldNames = [];
         $fields = $this->getClass()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if ($field instanceof LazyLoadingSupportInterface
-                && $field->getLazyLoading()
-                && $field instanceof DataObject\ClassDefinition\Data) {
+            if (
+                $field instanceof LazyLoadingSupportInterface &&
+                $field->getLazyLoading()
+            ) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
