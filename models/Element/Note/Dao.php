@@ -43,7 +43,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->assignVariablesToModel($data);
 
         // get key-value data
-        $preparedData = (new Listing())->getDao()->loadDataList([$id])[$id];
+        $preparedData = (new Listing())->getDao()->loadDataList([$id])[$id] ?? [];
 
         $this->model->setData($preparedData);
     }
