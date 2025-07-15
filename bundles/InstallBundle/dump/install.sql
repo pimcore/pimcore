@@ -8,19 +8,20 @@ CREATE TABLE `assets` (
   `filename` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '',
   `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `mimetype` varchar(190) DEFAULT NULL,
-  `creationDate` INT(11) UNSIGNED DEFAULT NULL,
-  `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
+  `creationDate` INT(11) UNSIGNED DEFAULT '0',
+  `modificationDate` INT(11) UNSIGNED DEFAULT '0',
   `dataModificationDate` INT(11) UNSIGNED DEFAULT NULL,
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
-  `customSettings` longtext,
+  `customSettings` json null,
   `hasMetaData` tinyint(1) NOT NULL DEFAULT '0',
   `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `fullpath` (`path`,`filename`),
   KEY `parentId` (`parentId`),
   KEY `filename` (`filename`),
-  KEY `modificationDate` (`modificationDate`)
+  KEY `modificationDate` (`modificationDate`),
+  KEY `versionCount` (`versionCount`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `assets_metadata`;
@@ -40,7 +41,7 @@ CREATE TABLE `assets_image_thumbnail_cache` (
     `cid` int(11) unsigned NOT NULL,
     `name` varchar(190) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
     `filename` varchar(190) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-    `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
+    `modificationDate` INT(11) UNSIGNED DEFAULT '0',
     `filesize` INT(11) UNSIGNED DEFAULT NULL,
     `width` SMALLINT UNSIGNED DEFAULT NULL,
     `height` SMALLINT UNSIGNED DEFAULT NULL,
@@ -80,8 +81,8 @@ CREATE TABLE `documents` (
   `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `index` int(11) unsigned DEFAULT '0',
   `published` tinyint(1) unsigned DEFAULT '1',
-  `creationDate` INT(11) UNSIGNED DEFAULT NULL,
-  `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
+  `creationDate` INT(11) UNSIGNED DEFAULT '0',
+  `modificationDate` INT(11) UNSIGNED DEFAULT '0',
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
   `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
@@ -90,7 +91,8 @@ CREATE TABLE `documents` (
   KEY `parentId` (`parentId`),
   KEY `key` (`key`),
   KEY `published` (`published`),
-  KEY `modificationDate` (`modificationDate`)
+  KEY `modificationDate` (`modificationDate`),
+  KEY `versionCount` (`versionCount`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `documents_editables`;
@@ -199,8 +201,8 @@ CREATE TABLE `edit_lock` (
 DROP TABLE IF EXISTS `email_blocklist`;
 CREATE TABLE `email_blocklist` (
   `address` varchar(190) NOT NULL DEFAULT '',
-  `creationDate` int(11) unsigned DEFAULT NULL,
-  `modificationDate` int(11) unsigned DEFAULT NULL,
+  `creationDate` INT(11) UNSIGNED DEFAULT '0',
+  `modificationDate` INT(11) UNSIGNED DEFAULT '0',
   PRIMARY KEY (`address`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -273,8 +275,8 @@ CREATE TABLE `objects` (
   `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `index` int(11) unsigned DEFAULT '0',
   `published` tinyint(1) unsigned DEFAULT '1',
-  `creationDate` int(11) unsigned DEFAULT NULL,
-  `modificationDate` int(11) unsigned DEFAULT NULL,
+  `creationDate` INT(11) UNSIGNED DEFAULT '0',
+  `modificationDate` INT(11) UNSIGNED DEFAULT '0',
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
   `classId` VARCHAR(50) NULL DEFAULT NULL,
@@ -290,7 +292,8 @@ CREATE TABLE `objects` (
   KEY `parentId` (`parentId`),
   KEY `type_path_classId` (`type`, `path`, `classId`),
   KEY `modificationDate` (`modificationDate`),
-  KEY `classId` (`classId`)
+  KEY `classId` (`classId`),
+  KEY `versionCount` (`versionCount`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `properties`;
@@ -432,8 +435,8 @@ CREATE TABLE `translations_messages` (
   `type` varchar(10) DEFAULT NULL,
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
-  `creationDate` int(11) unsigned DEFAULT NULL,
-  `modificationDate` int(11) unsigned DEFAULT NULL,
+  `creationDate` INT(11) UNSIGNED DEFAULT '0',
+  `modificationDate` INT(11) UNSIGNED DEFAULT '0',
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`key`,`language`),
@@ -513,6 +516,7 @@ CREATE TABLE `users_workspaces_asset` (
   PRIMARY KEY (`cid`, `userId`),
   KEY `userId` (`userId`),
   UNIQUE INDEX `cpath_userId` (`cpath`,`userId`),
+  UNIQUE INDEX `idx_users_workspaces_list_permission` (`userId`, `cpath`, `list`),
   CONSTRAINT `fk_users_workspaces_asset_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT `fk_users_workspaces_asset_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
@@ -536,6 +540,7 @@ CREATE TABLE `users_workspaces_document` (
   PRIMARY KEY (`cid`, `userId`),
   KEY `userId` (`userId`),
   UNIQUE INDEX `cpath_userId` (`cpath`,`userId`),
+  UNIQUE INDEX `idx_users_workspaces_list_permission` (`userId`, `cpath`, `list`),
   CONSTRAINT `fk_users_workspaces_document_documents` FOREIGN KEY (`cid`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT `fk_users_workspaces_document_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
@@ -562,6 +567,7 @@ CREATE TABLE `users_workspaces_object` (
   PRIMARY KEY (`cid`, `userId`),
   KEY `userId` (`userId`),
   UNIQUE INDEX `cpath_userId` (`cpath`,`userId`),
+  UNIQUE INDEX `idx_users_workspaces_list_permission` (`userId`, `cpath`, `list`),
   CONSTRAINT `fk_users_workspaces_object_objects` FOREIGN KEY (`cid`) REFERENCES `objects` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT `fk_users_workspaces_object_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
@@ -585,10 +591,14 @@ CREATE TABLE `versions` (
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
   KEY `ctype_cid` (`ctype`, `cid`),
+  KEY `ctype_public_id_date` (`ctype`, `public`, `id`, `date`),
+  KEY `ctype_public_id_cid` (`ctype`, `public`, `id`, `cid`),
   KEY `date` (`date`),
+  KEY `public` (`public`),
   KEY `binaryFileHash` (`binaryFileHash`),
   KEY `autoSave` (`autoSave`),
-  KEY `stackTrace` (`stackTrace`(1))
+  KEY `stackTrace` (`stackTrace`(1)),
+  KEY `versionCount` (`versionCount`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `website_settings`;

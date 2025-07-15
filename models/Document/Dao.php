@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Document;
@@ -34,7 +31,6 @@ class Dao extends Model\Element\Dao
     /**
      * Fetch a row by an id from the database and assign variables to the document model.
      *
-     *
      * @throws Model\Exception\NotFoundException
      */
     public function getById(int $id): void
@@ -53,7 +49,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Fetch a row by a path from the database and assign variables to the model.
-     *
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -174,7 +169,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Update document workspaces..
+     * Update document workspaces.
      *
      * @throws Exception
      */
@@ -189,8 +184,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Updates children path in order to the old document path specified in the $oldPath parameter.
-     *
-     *
      *
      * @internal
      */
@@ -219,7 +212,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Returns the current full document path from the database.
-     *
      */
     public function getCurrentFullPath(): ?string
     {
@@ -350,7 +342,8 @@ class Dao extends Model\Element\Dao
             $sql .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
         }
 
-        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
+        $includingUnpublished ??= !Model\Document::doHideUnpublished();
+        if (!$includingUnpublished) {
             $sql .= ' AND published = 1';
         }
 
@@ -365,7 +358,6 @@ class Dao extends Model\Element\Dao
      * Returns the amount of children (not recursively),
      *
      * @param Model\User|null $user
-     *
      */
     public function getChildAmount(?User $user = null): int
     {
@@ -392,8 +384,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Checks if the document has siblings
-     *
-     *
      */
     public function hasSiblings(?bool $includingUnpublished = null): bool
     {
@@ -409,7 +399,8 @@ class Dao extends Model\Element\Dao
             $params[] = $this->model->getId();
         }
 
-        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
+        $includingUnpublished ??= !Model\Document::doHideUnpublished();
+        if (!$includingUnpublished) {
             $sql .= ' AND published = 1';
         }
 
@@ -422,7 +413,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Checks if the document is locked.
-     *
      *
      * @throws Exception
      */
@@ -466,7 +456,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Deletes locks from the document and its children.
-     *
      */
     public function unlockPropagate(): array
     {
@@ -477,8 +466,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     *
-     *
      * @throws \Doctrine\DBAL\Exception
      */
     public function isInheritingPermission(string $type, array $userIds): int
@@ -488,9 +475,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Checks if the action is allowed.
-     *
-     * @param Model\User $user
-     *
      */
     public function isAllowed(string $type, User $user): bool
     {
@@ -519,7 +503,7 @@ class Dao extends Model\Element\Dao
             }
 
             // exception for list permission
-            if (empty($permissionsParent) && $type == 'list') {
+            if ($type == 'list') {
                 // check for children with permissions
                 $path = $this->model->getRealFullPath() . '/';
                 if ($this->model->getId() == 1) {
@@ -550,7 +534,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Save the document index.
-     *
      */
     public function saveIndex(int $index): void
     {
@@ -563,7 +546,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Fetches the maximum index value from siblings.
-     *
      */
     public function getNextIndex(): int
     {

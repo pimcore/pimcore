@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tests\Model\Document;
@@ -85,9 +82,23 @@ class DocumentTest extends ModelTestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
         $savedObject = TestHelper::createEmptyDocumentPage('', false);
-        $this->assertTrue($savedObject->getId() == 0);
+        $this->assertNull($savedObject->getId());
 
         $savedObject->setParentId(0);
+        $savedObject->save();
+    }
+
+    /**
+     * Parent ID of a new object cannot be null
+     */
+    public function testParentIsNull(): void
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
+        $savedObject = TestHelper::createEmptyDocumentPage('', false);
+        $this->assertNull($savedObject->getId());
+
+        $savedObject->setParentId(null);
         $savedObject->save();
     }
 
@@ -115,7 +126,7 @@ class DocumentTest extends ModelTestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('ParentID not found.');
         $savedObject = TestHelper::createEmptyDocumentPage('', false);
-        $this->assertTrue($savedObject->getId() == 0);
+        $this->assertEquals(null, $savedObject->getId());
 
         $savedObject->setParentId(999999);
         $savedObject->save();

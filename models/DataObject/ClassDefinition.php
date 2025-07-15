@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject;
@@ -348,7 +345,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             $this->setId((string) $maxId);
         }
 
-        if (!preg_match('/[a-zA-Z][a-zA-Z0-9_]+/', $this->getName())) {
+        if (!preg_match('/[a-zA-Z]\w+/', $this->getName())) {
             throw new Exception(sprintf('Invalid name for class definition: %s', $this->getName()));
         }
 
@@ -404,8 +401,11 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         } else {
             $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_ADD);
         }
-
-        $this->deleteDeletedDataComponentsInCustomLayout();
+        if (!empty($this->getDeletedDataComponents())) {
+            $this->deleteDeletedDataComponentsInCustomLayout();
+        } else {
+            $this->updateCustomLayouts();
+        }
     }
 
     /**
@@ -566,7 +566,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     /**
      * @internal
      */
-    public function getDefinitionFile(string $name = null): string
+    public function getDefinitionFile(?string $name = null): string
     {
         return $this->locateDefinitionFile($name ?? $this->getName(), 'definition_%s.php');
     }
@@ -1040,7 +1040,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
 
     public function getLinkGenerator(): ?ClassDefinition\LinkGeneratorInterface
     {
-        /** @var ClassDefinition\LinkGeneratorInterface $interface */
+        /** @var ClassDefinition\LinkGeneratorInterface|null $interface */
         $interface = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
 
         return $interface;
@@ -1138,11 +1138,25 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         return $this;
     }
 
+    private function updateCustomLayouts(): void
+    {
+
+        $customLayouts = new ClassDefinition\CustomLayout\Listing();
+        $id = $this->getId();
+        $customLayouts->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($id) {
+            return $layout->getClassId() === $id;
+        });
+        $customLayouts = $customLayouts->load();
+
+        foreach ($customLayouts as $customLayout) {
+            if ($customLayout->isWriteable()) {
+                $customLayout->save();
+            }
+        }
+    }
+
     private function deleteDeletedDataComponentsInCustomLayout(): void
     {
-        if (empty($this->getDeletedDataComponents())) {
-            return;
-        }
         $customLayouts = new ClassDefinition\CustomLayout\Listing();
         $id = $this->getId();
         $customLayouts->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($id) {
@@ -1157,7 +1171,9 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             }
             $this->deleteDeletedDataComponentsInLayoutDefinition($layoutDefinition);
             $customLayout->setLayoutDefinitions($layoutDefinition);
-            $customLayout->save();
+            if ($customLayout->isWriteable()) {
+                $customLayout->save();
+            }
         }
     }
 

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Workflow\Dumper;
@@ -59,7 +56,7 @@ class GraphvizDumper implements DumperInterface
      *  * node: The default options for nodes (places + transitions)
      *  * edge: The default options for edges
      */
-    public function dump(Definition $definition, Marking $marking = null, array $options = []): string
+    public function dump(Definition $definition, ?Marking $marking = null, array $options = []): string
     {
         $places = $this->findPlaces($definition, $marking, $options['workflowName']);
         $transitions = $this->findTransitions($definition);
@@ -77,7 +74,7 @@ class GraphvizDumper implements DumperInterface
     /**
      * @internal
      */
-    protected function findPlaces(Definition $definition, Marking $marking = null, string $workflowName = ''): array
+    protected function findPlaces(Definition $definition, ?Marking $marking = null, string $workflowName = ''): array
     {
         $places = [];
         foreach ($definition->getPlaces() as $place) {
