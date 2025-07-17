@@ -130,8 +130,6 @@ class Dao extends Model\Dao\AbstractDao
         $list->setCondition("`id` IN ('" . implode("','", $tagIds) . "')");
 
         $tags = $list->load();
-
-        $tags = array_filter($tags);
         @usort($tags, function ($left, $right) {
             return strcmp($left->getNamePath(), $right->getNamePath());
         });
