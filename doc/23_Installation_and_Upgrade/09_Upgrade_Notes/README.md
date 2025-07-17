@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 12.2.0
+
+#### [Configuration] 
+- The `pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than` parameter which was previously unused is now used to delete system temp files (var/tmp), with the default retention period of 1 day.
+
 ## Pimcore 12.1.0
 
 ### [Requirements]
@@ -11,9 +16,6 @@
 #### [Redirects]
 
 - Source site is now optional. Redirects without source site get applied for all domains. Previously, redirects without source site did not get applied at all.
-
-#### [Configuration] 
-- The `pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than` parameter which was previously unused is now used to delete system temp files (var/tmp), with the default retention period of 1 day.
 
 ## Pimcore 12.0.0
 
