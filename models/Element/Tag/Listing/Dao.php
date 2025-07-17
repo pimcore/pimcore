@@ -29,7 +29,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load(): array
     {
-        $tagsData = $this->db->fetchAllAssociative('SELECT * FROM tags' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $tagsData = $this->db->fetchAllAssociative(
+            'SELECT * FROM tags' .
+            $this->getCondition() .
+            $this->getOrder() .
+            $this->getOffsetLimit(),
+            $this->model->getConditionVariables()
+        );
 
         $tags = [];
         $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');

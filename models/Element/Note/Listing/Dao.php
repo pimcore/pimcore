@@ -59,7 +59,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function loadDataList(array $ids): array
     {
-        $keyValues = $this->db->fetchAllAssociative('SELECT * FROM notes_data WHERE id IN (' . implode(',', $ids) . ')');
+        if (empty($ids)) {
+            return [];
+        }
+
+        $keyValues = $this->db->fetchAllAssociative(
+            'SELECT * FROM notes_data WHERE id IN (' . implode(',', $ids) . ')'
+        );
+
         $list = [];
         foreach ($keyValues as $keyValue) {
             $id = $keyValue['id'];
