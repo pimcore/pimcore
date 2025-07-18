@@ -724,7 +724,8 @@ class SearchController extends UserAwareController
                     ),
                     true,
                     512,
-                    JSON_THROW_ON_ERROR)
+                    JSON_THROW_ON_ERROR
+                )
                 ['containerKey']);
     }
 }
