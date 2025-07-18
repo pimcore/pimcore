@@ -101,7 +101,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     protected function removeEntry(): void
     {
         try {
-            Cache::remove(self::ENTRY_ID);
+            Cache::save(self::OFF, self::ENTRY_ID, lifetime: null);
             TmpStore::delete(self::ENTRY_ID);
         } catch (Exception $e) {
             //nothing to log as the tmp doesn't exist
