@@ -714,7 +714,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             // aren't included in the $this->__objectAwareFields array - for example versions created in Pimcore <= 10.x
             // containing LocalizedFields. Verify all fields in this object.
             foreach (get_object_vars($this) as $propertyKey => $propertyValue) {
-                if(str_ends_with($propertyKey, 'o_published')) {
+                if (str_ends_with($propertyKey, 'o_published')) {
                     $this->published = (bool) $propertyValue;
                 }
                 if ($propertyValue instanceof ObjectAwareFieldInterface) {
