@@ -1,5 +1,22 @@
 # Upgrade Notes
 
+## Pimcore 12.2.0
+
+#### [Configuration] 
+- The `pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than` parameter which was previously unused is now used to delete system temp files (var/tmp), with the default retention period of 1 day.
+
+## Pimcore 12.1.0
+
+### [Requirements]
+
+- Added optional requirements for v7 of certain symfony packages. Version 6.4 is still supported, please make sure to use this version if you encounter any problems with v7 of symfony packages.
+
+### [SEO Bundle]
+
+#### [Redirects]
+
+- Source site is now optional. Redirects without source site get applied for all domains. Previously, redirects without source site did not get applied at all.
+
 ## Pimcore 12.0.0
 
 ## IMPORTANT: License change! Please read the following information carefully:

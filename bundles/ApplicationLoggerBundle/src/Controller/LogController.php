@@ -18,6 +18,7 @@ use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Types;
+use Pimcore\Bundle\ApplicationLoggerBundle\Enum\LogLevel;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -58,7 +59,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
 
         $qb = $db->createQueryBuilder();
         $qb
-            ->select('*, priority + 0 AS priority_key')
+            ->select('*')
             ->from(ApplicationLoggerDb::TABLE_NAME)
             ->setFirstResult($requestSource->getInt('start', 0))
             ->setMaxResults($requestSource->getInt('limit', 50));
@@ -121,6 +122,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $logEntries = [];
         foreach ($result as $row) {
             $fileobject = null;
+            $priorityId = (int)$row['priority'];
             if ($row['fileobject']) {
                 $fileobject = str_replace(PIMCORE_PROJECT_ROOT, '', $row['fileobject']);
             }
@@ -132,7 +134,8 @@ class LogController extends UserAwareController implements KernelControllerEvent
                 'message' => $row['message'],
                 'date' => $row['timestamp'],
                 'timestamp' => $carbonTs->getTimestamp(),
-                'priority' => $translationService->getTranslatedLogLevel($row['priority_key']),
+                'priority' => $translationService->getTranslatedLogLevel($priorityId),
+                'prioritykeyname' => LogLevel::getLogLevel($priorityId)->name,
                 'fileobject' => $fileobject,
                 'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],

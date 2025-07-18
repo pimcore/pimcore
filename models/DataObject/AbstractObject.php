@@ -187,6 +187,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * Static helper to get an object by the passed ID
+     *
+     * @param array{force?: bool, ...} $params
      */
     public static function getById(int $id, array $params = []): ?static
     {

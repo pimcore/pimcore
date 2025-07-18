@@ -241,6 +241,9 @@ class Asset extends Element\AbstractElement
         return true;
     }
 
+    /**
+     * @param array{force?: bool, ...} $params
+     */
     public static function getById(int $id, array $params = []): ?static
     {
         if ($id < 1) {

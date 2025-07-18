@@ -34,6 +34,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * @method Application getApplication()
@@ -46,6 +47,9 @@ use Symfony\Component\Uid\Uuid;
 )]
 class InstallCommand extends Command
 {
+    private const string INSTALLER_PRODUCT_REGISTRATION_TMP_STORAGE =
+        PIMCORE_SYSTEM_TEMP_DIRECTORY . '/installer_product_registration_tmp_storage.yaml';
+
     private PimcoreStyle $io;
 
     private ?array $options = null;
@@ -346,6 +350,7 @@ class InstallCommand extends Command
      */
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
+        $this->loadProductRegistrationValuesFromTmpStorage($input);
         $this->loadProductSecrets($input);
 
         foreach ($this->getOptions() as $name => $config) {
@@ -394,6 +399,8 @@ class InstallCommand extends Command
 
             $input->setOption($name, $value);
         }
+
+        $this->saveProductRegistrationValuesToTmpStorage($input);
     }
 
     private function installerNeedsOption(array $config): bool
@@ -512,12 +519,58 @@ class InstallCommand extends Command
 
         $this->io->success('Pimcore was successfully installed');
 
+        $this->cleanupProductRegistrationValuesTmpStorage();
+
         return 0;
     }
 
     private function checkProductKey(?string $productKey): void
     {
         $this->registrationValidator->validateProductKey($productKey);
+    }
+
+    private function saveProductRegistrationValuesToTmpStorage(InputInterface $input): void
+    {
+
+        $data = [
+            'encryption_secret' => $input->getOption('encryption-secret'),
+            'instance_identifier' => $input->getOption('instance-identifier'),
+            'product_key' => $input->getOption('product-key'),
+        ];
+
+        file_put_contents(self::INSTALLER_PRODUCT_REGISTRATION_TMP_STORAGE, Yaml::dump($data));
+
+    }
+
+    private function loadProductRegistrationValuesFromTmpStorage(InputInterface $input): void
+    {
+        if (
+            file_exists(self::INSTALLER_PRODUCT_REGISTRATION_TMP_STORAGE) &&
+            $this->io->confirm(
+                'Found previous product registration values. Do you want to use them?',
+                false
+            )
+        ) {
+            $data = Yaml::parseFile(self::INSTALLER_PRODUCT_REGISTRATION_TMP_STORAGE);
+            if (is_array($data)) {
+                if (isset($data['encryption_secret'])) {
+                    $input->setOption('encryption-secret', $data['encryption_secret']);
+                }
+                if (isset($data['instance_identifier'])) {
+                    $input->setOption('instance-identifier', $data['instance_identifier']);
+                }
+                if (isset($data['product_key'])) {
+                    $input->setOption('product-key', $data['product_key']);
+                }
+            }
+        }
+    }
+
+    private function cleanupProductRegistrationValuesTmpStorage(): void
+    {
+        if (file_exists(self::INSTALLER_PRODUCT_REGISTRATION_TMP_STORAGE)) {
+            unlink(self::INSTALLER_PRODUCT_REGISTRATION_TMP_STORAGE);
+        }
     }
 
     private function writeInstallerOutputResults(BufferedOutput $output, BufferedOutput $errorOutput): void
