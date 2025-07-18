@@ -76,10 +76,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
         $entryId = Cache::load(self::ENTRY_ID);
         if ($entryId){
             // If the entry is set to OFF, we return null to indicate that maintenance mode is not active
-            if ($entryId === self::OFF) {
-                return null;
-            }
-            return $entryId;
+            return $entryId === self::OFF ? null : $entryId;
         }
 
         // The cache entry is not set, we try to load it from the database
