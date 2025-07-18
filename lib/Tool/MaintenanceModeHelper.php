@@ -75,30 +75,30 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     {
         $entryId = Cache::load(self::ENTRY_ID);
         if ($entryId){
+            // If the entry is set to OFF, we return null to indicate that maintenance mode is not active
             if ($entryId === self::OFF) {
                 return null;
             }
             return $entryId;
         }
 
-        if ($entryId === false) {
-            try {
-                if (!$this->db->isConnected()) {
-                    $this->db->getNativeConnection();
-                }
-                $tmpStore = TmpStore::get(self::ENTRY_ID);
-            } catch (Exception $e) {
-                //nothing to log as the tmp doesn't exist
-                return null;
+        // The cache entry is not set, we try to load it from the database
+        try {
+            if (!$this->db->isConnected()) {
+                $this->db->getNativeConnection();
             }
-
-            $entryValue = null;
-            if ($tmpStore instanceof TmpStore) {
-                $entryValue = $tmpStore->getData();
-            }
-            Cache::save($entryValue ?? self::OFF, self::ENTRY_ID, lifetime: null);
-            return $entryValue;
+            $tmpStore = TmpStore::get(self::ENTRY_ID);
+        } catch (Exception $e) {
+            return null;
         }
+
+        $entryValue = null;
+        if ($tmpStore instanceof TmpStore) {
+            $entryValue = $tmpStore->getData();
+        }
+        // We set the cache entry to OFF if it isn't set, to avoid unnecessary database calls in the future
+        Cache::save($entryValue ?? self::OFF, self::ENTRY_ID, lifetime: null);
+        return $entryValue;
     }
 
     protected function removeEntry(): void
