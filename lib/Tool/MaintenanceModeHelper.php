@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class MaintenanceModeHelper implements MaintenanceModeHelperInterface
 {
     protected const ENTRY_ID = 'maintenance_mode';
+    protected const OFF = 'OFF';
 
     public function __construct(protected RequestStack $requestStack, protected Connection $db)
     {
@@ -55,16 +56,6 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
 
     public function isActive(?string $matchSessionId = null): bool
     {
-        if (!Cache::load(self::ENTRY_ID)) {
-            try {
-                if (!$this->db->isConnected()) {
-                    $this->db->connect();
-                }
-            } catch (Exception) {
-                return false;
-            }
-        }
-
         if ($maintenanceModeEntry = $this->getEntry()) {
             if ($matchSessionId === null || $matchSessionId !== $maintenanceModeEntry) {
                 return true;
@@ -84,17 +75,30 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     {
         $entryId = Cache::load(self::ENTRY_ID);
         if ($entryId){
+            if ($entryId === self::OFF) {
+                return null;
+            }
             return $entryId;
         }
 
-        try {
-            $tmpStore = TmpStore::get(self::ENTRY_ID);
-        } catch (Exception $e) {
-            //nothing to log as the tmp doesn't exist
-            return null;
-        }
+        if ($entryId === false) {
+            try {
+                if (!$this->db->isConnected()) {
+                    $this->db->getNativeConnection();
+                }
+                $tmpStore = TmpStore::get(self::ENTRY_ID);
+            } catch (Exception $e) {
+                //nothing to log as the tmp doesn't exist
+                return null;
+            }
 
-        return $tmpStore instanceof TmpStore ? $tmpStore->getData() : null;
+            $entryValue = null;
+            if ($tmpStore instanceof TmpStore) {
+                $entryValue = $tmpStore->getData();
+            }
+            Cache::save($entryValue ?? self::OFF, self::ENTRY_ID, lifetime: null);
+            return $entryValue;
+        }
     }
 
     protected function removeEntry(): void
