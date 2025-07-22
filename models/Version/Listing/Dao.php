@@ -57,11 +57,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $versionData['serialized'] = (bool)$versionData['serialized'];
             $versionData['autoSave'] = (bool)$versionData['autoSave'];
             
-            /** @var Model\Version $note */
-            $note = $modelFactory->build(Model\Version::class);
-            $note->getDao()->assignVariablesToModel($versionData);
+            /** @var Model\Version $version */
+            $version = $modelFactory->build(Model\Version::class);
+            $version->getDao()->assignVariablesToModel($versionData);
 
-            $versions[] = $note;
+            $versions[] = $version;
         }
 
         $this->model->setVersions($versions);

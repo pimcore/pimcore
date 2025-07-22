@@ -39,11 +39,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
 
         foreach ($collectionsData as $collectionData) {
-            /** @var DataObject\Classificationstore\CollectionConfig $note */
-            $note = $modelFactory->build(DataObject\Classificationstore\CollectionConfig::class);
-            $note->getDao()->assignVariablesToModel($collectionData);
+            /** @var DataObject\Classificationstore\CollectionConfig $collection */
+            $collection = $modelFactory->build(DataObject\Classificationstore\CollectionConfig::class);
+            $collection->getDao()->assignVariablesToModel($collectionData);
 
-            $configData[] = $note;
+            $configData[] = $collection;
         }
 
         $this->model->setList($configData);
