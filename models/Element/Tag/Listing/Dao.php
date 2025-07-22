@@ -34,7 +34,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $this->getCondition() .
             $this->getOrder() .
             $this->getOffsetLimit(),
-            $this->model->getConditionVariables()
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes(),
         );
 
         $tags = [];

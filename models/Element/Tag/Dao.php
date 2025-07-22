@@ -127,7 +127,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $list = new Listing();
-        $list->setCondition("`id` IN ('" . implode("','", $tagIds) . "')");
+        $list->setCondition("`id` IN (?)", [$tagIds]);
 
         $tags = $list->load();
         @usort($tags, function ($left, $right) {
