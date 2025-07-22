@@ -13,8 +13,11 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Listing;
 
 use Exception;
+use Pimcore\Cache\RuntimeCache;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition;
 
 /**
  * @internal
@@ -31,17 +34,61 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $classes = [];
 
-        $classesRaw = $this->db->fetchFirstColumn('SELECT id FROM classes' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $classesData = $this->db->fetchAllAssociative(
+            'SELECT * FROM classes' . 
+            $this->getCondition() . 
+            $this->getOrder() . 
+            $this->getOffsetLimit(), 
+            $this->model->getConditionVariables(), 
+            $this->model->getConditionVariableTypes()
+        );
 
-        foreach ($classesRaw as $classRaw) {
-            if ($class = DataObject\ClassDefinition::getById($classRaw)) {
-                $classes[] = $class;
-            }
+        foreach ($classesData as $classData) {
+            $classes[] = $this->buildModel($classData['id'], $classData['name']);
         }
 
         $this->model->setClasses($classes);
 
         return $classes;
+    }
+
+    public function buildModel(int $id, string $name, bool $force = false): ?ClassDefinition
+    {
+        $cacheKey = 'class_' . $id;
+
+        try {
+            if ($force) {
+                throw new Exception('Forced load');
+            }
+            $class = RuntimeCache::get($cacheKey);
+            if (!$class) {
+                throw new Exception('Class in registry is null');
+            }
+        } catch (Exception $e) {
+            try {
+                $class = new ClassDefinition();
+                if (!$name) {
+                    throw new Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
+                }
+
+                $definitionFile = $class->getDefinitionFile($name);
+                $class = @include $definitionFile;
+
+                if (!$class instanceof ClassDefinition) {
+                    throw new Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
+                }
+
+                $class->setId($id);
+
+                RuntimeCache::set($cacheKey, $class);
+            } catch (Exception $e) {
+                Logger::info($e->getMessage());
+
+                return null;
+            }
+        }
+
+        return $class;
     }
 
     public function getTotalCount(): int

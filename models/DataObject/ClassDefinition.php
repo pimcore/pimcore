@@ -209,42 +209,11 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      */
     public static function getById(string $id, bool $force = false): ?ClassDefinition
     {
-        $cacheKey = 'class_' . $id;
+        $class = (new ClassDefinition\Listing())
+            ->setCondition('id = ?', [$id])
+            ->current();
 
-        try {
-            if ($force) {
-                throw new Exception('Forced load');
-            }
-            $class = RuntimeCache::get($cacheKey);
-            if (!$class) {
-                throw new Exception('Class in registry is null');
-            }
-        } catch (Exception $e) {
-            try {
-                $class = new self();
-                $name = $class->getDao()->getNameById($id);
-                if (!$name) {
-                    throw new Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
-                }
-
-                $definitionFile = $class->getDefinitionFile($name);
-                $class = @include $definitionFile;
-
-                if (!$class instanceof self) {
-                    throw new Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
-                }
-
-                $class->setId($id);
-
-                RuntimeCache::set($cacheKey, $class);
-            } catch (Exception $e) {
-                Logger::info($e->getMessage());
-
-                return null;
-            }
-        }
-
-        return $class;
+        return $class ? $class : null;
     }
 
     /**
@@ -252,14 +221,11 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      */
     public static function getByName(string $name): ?ClassDefinition
     {
-        try {
-            $class = new self();
-            $id = $class->getDao()->getIdByName($name);
+        $class = (new ClassDefinition\Listing())
+            ->setCondition('name = ?', [$name])
+            ->current();
 
-            return self::getById($id);
-        } catch (Model\Exception\NotFoundException $e) {
-            return null;
-        }
+        return $class ? $class : null;
     }
 
     public static function create(array $values = []): ClassDefinition
