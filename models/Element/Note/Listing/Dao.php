@@ -63,9 +63,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
             return [];
         }
 
-        $placeholders = implode(',', array_fill(0, count($ids), '?'));
-        $sql = 'SELECT * FROM notes_data WHERE id IN (' . $placeholders . ')';
-        $keyValues = $this->db->fetchAllAssociative($sql, $ids);
+        $keyValues = $this->db->fetchAllAssociative(
+        	'SELECT * FROM notes_data WHERE id IN (?)', 
+        	[$ids],
+        	[\Doctrine\DBAL\ArrayParameterType::INTEGER],
+        );
 
         $list = [];
         foreach ($keyValues as $keyValue) {
