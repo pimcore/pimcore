@@ -77,8 +77,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $this->validateId();
 
-        $this->saveConfiguration();
         $this->model->generateEnumFiles();
+        $this->saveConfiguration();
     }
 
     protected function saveConfiguration(): void
