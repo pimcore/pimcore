@@ -295,6 +295,8 @@ abstract class AbstractListing extends AbstractModel implements Iterator, Counta
         $this->condition = $condition;
 
         // statement variables
+        $this->setConditionVariablesFromSetCondition([]);
+
         if (is_array($conditionVariables)) {
             $this->setConditionVariablesFromSetCondition($conditionVariables);
         } elseif ($conditionVariables !== null) {
