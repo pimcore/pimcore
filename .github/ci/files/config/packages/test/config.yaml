@@ -24,7 +24,7 @@ doctrine:
                 user: ~
                 password: ~
                 mapping_types:
-                    enum: string
+                    enum: text
                     bit: boolean
 
 pimcore:
