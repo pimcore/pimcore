@@ -715,7 +715,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             // containing LocalizedFields. Verify all fields in this object.
             foreach (get_object_vars($this) as $propertyKey => $propertyValue) {
                 $fcPropertyKey = DataObject\Service::getVersionDependentDatabaseColumnName($propertyKey);
-                if ($propertyKey !== $fcPropertyKey && str_ends_with($propertyKey, 'o_'. $fcPropertyKey)){
+                if ($propertyKey !== $fcPropertyKey && str_ends_with($propertyKey, 'o_'. $fcPropertyKey)) {
                     $this->{$fcPropertyKey} = $propertyValue;
                 }
                 if ($propertyValue instanceof ObjectAwareFieldInterface) {
