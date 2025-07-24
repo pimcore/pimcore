@@ -69,6 +69,7 @@ class DataObjectController extends UserAwareController
         }
         $searchRequest->request->set('class', implode(',', $classes));
         $searchRequest->request->set('fields', $visibleFields);
+        $searchRequest->request->set('fuzzy', 'true');
 
         $searchRequest->attributes->set('unsavedChanges', $request->query->getString('unsavedChanges'));
         $res = $this->forward(SearchController::class.'::findAction', ['request' => $searchRequest]);
