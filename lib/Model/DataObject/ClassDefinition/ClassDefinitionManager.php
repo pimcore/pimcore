@@ -13,8 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
+use Doctrine\DBAL\Exception;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinitionInterface;
+use Pimcore\Model\DataObject\Exception\DefinitionWriteException;
 
 class ClassDefinitionManager
 {
@@ -95,8 +97,42 @@ class ClassDefinitionManager
 
     /**
      * @return bool whether the class was saved or not
+     *
+     * @throws DefinitionWriteException     *
+     * @throws Exception
      */
     public function saveClass(ClassDefinitionInterface $class, bool $saveDefinitionFile, bool $force = false): bool
+    {
+        return $this->saveClassDefinition($class, $saveDefinitionFile, true, $force);
+    }
+
+    /**
+     * Additional method that gives more control over the saving process. Added as a separate method to avoid compatibility issues.
+     * TODO: Should be refactored in Pimcore 13 to avoid duplication with saveClass.
+     *
+     * @throws Exception
+     * @throws DefinitionWriteException
+     */
+    public function dumpClass(
+        ClassDefinition $class,
+        bool $saveDefinitionFile,
+        bool $dumpPHPClasses,
+        bool $force = false
+    ): bool
+    {
+        return $this->saveClassDefinition($class, $saveDefinitionFile, $dumpPHPClasses, $force);
+    }
+
+    /**
+     * @throws Exception
+     * @throws DefinitionWriteException
+     */
+    private function saveClassDefinition(
+        ClassDefinitionInterface|ClassDefinition $class,
+        bool $saveDefinitionFile,
+        bool $dumpPHPClasses = true,
+        bool $force = false
+    ): bool
     {
         $shouldSave = $force;
 
@@ -115,7 +151,11 @@ class ClassDefinitionManager
         }
 
         if ($shouldSave) {
-            $class->save($saveDefinitionFile);
+            if($class instanceof ClassDefinition) {
+                $class->dumpClass($saveDefinitionFile, $dumpPHPClasses);
+            } else {
+                $class->save($saveDefinitionFile);
+            }
         }
 
         return $shouldSave;

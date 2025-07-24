@@ -321,91 +321,27 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         return is_string($name);
     }
 
+    /**
+     * Additional method that gives more control over the saving process. Added as a separate method to avoid compatibility issues.
+     * TODO: Should be refactored in Pimcore 13 to avoid duplication with save method.
+     *
+     * @throws DataObject\Exception\DefinitionWriteException|\Doctrine\DBAL\Exception
+     * @throws Exception
+     */
+    public function dumpClass(
+        bool $saveDefinitionFile = true,
+        bool $dumpPHPClasses = true
+    ): void {
+        $this->saveClassInternal($saveDefinitionFile, $dumpPHPClasses);
+    }
+
+    /**
+     * @throws DataObject\Exception\DefinitionWriteException|\Doctrine\DBAL\Exception
+     * @throws Exception
+     */
     public function save(bool $saveDefinitionFile = true): void
     {
-        if ($saveDefinitionFile && !$this->isWritable()) {
-            throw new DataObject\Exception\DefinitionWriteException();
-        }
-
-        $fieldDefinitions = $this->getFieldDefinitions();
-        foreach ($fieldDefinitions as $fd) {
-            if ($fd->isForbiddenName()) {
-                throw new Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
-            }
-
-            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
-                $fd->preSave($this);
-            }
-        }
-
-        if (!$this->getId()) {
-            $db = Db::get();
-            $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
-            $maxId = $maxId ? $maxId + 1 : 1;
-            $this->setId((string) $maxId);
-        }
-
-        if (!preg_match('/[a-zA-Z]\w+/', $this->getName())) {
-            throw new Exception(sprintf('Invalid name for class definition: %s', $this->getName()));
-        }
-
-        if (!preg_match('/[a-zA-Z0-9]([a-zA-Z0-9_]+)?/', $this->getId())) {
-            throw new Exception(sprintf('Invalid ID `%s` for class definition %s', $this->getId(), $this->getName()));
-        }
-
-        foreach (['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {
-            $propertyValue = $this->{'get'.ucfirst($propertyName)}();
-            if ($propertyValue && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\ ,]*$/', $propertyValue)) {
-                throw new Exception(sprintf('Invalid %s value for class definition: %s', $propertyName,
-                    $this->getParentClass()));
-            }
-        }
-
-        $isUpdate = $this->exists();
-
-        if (!$isUpdate) {
-            $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_ADD);
-        } else {
-            $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_UPDATE);
-        }
-
-        // if definition file is not saved, modification date should not be updated
-        if ($saveDefinitionFile) {
-            $this->setModificationDate(time());
-        }
-
-        $this->getDao()->save($isUpdate);
-
-        $this->generateClassFiles($saveDefinitionFile);
-
-        foreach ($fieldDefinitions as $fd) {
-            if ($fd instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\ClassSavedInterface) {
-                $fd->classSaved($this);
-            }
-        }
-
-        // empty object cache
-        try {
-            Cache::clearTag('class_'.$this->getId());
-        } catch (Exception $e) {
-        }
-
-        foreach ($fieldDefinitions as $fd) {
-            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
-                $fd->postSave($this);
-            }
-        }
-
-        if ($isUpdate) {
-            $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_UPDATE);
-        } else {
-            $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_ADD);
-        }
-        if (!empty($this->getDeletedDataComponents())) {
-            $this->deleteDeletedDataComponentsInCustomLayout();
-        } else {
-            $this->updateCustomLayouts();
-        }
+        $this->saveClassInternal($saveDefinitionFile);
     }
 
     /**
@@ -413,36 +349,11 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      *
      * @internal
      */
-    public function generateClassFiles(bool $generateDefinitionFile = true): void
+    public function generateClassFiles(
+        bool $generateDefinitionFile = true
+    ): void
     {
-        Pimcore::getContainer()->get(PHPClassDumperInterface::class)->dumpPHPClasses($this);
-
-        if ($generateDefinitionFile) {
-            // save definition as a php file
-            $definitionFile = $this->getDefinitionFile();
-            if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
-                throw new Exception(
-                    'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
-                );
-            }
-            /** @var self $clone */
-            $clone = DataObject\Service::cloneDefinition($this);
-            $clone->setDao(null);
-            $clone->setFieldDefinitions([]);
-
-            self::cleanupForExport($clone->layoutDefinitions);
-
-            $exportedClass = var_export($clone, true);
-
-            $data = '<?php';
-            $data .= "\n\n";
-            $data .= $this->getInfoDocBlock();
-            $data .= "\n\n";
-
-            $data .= 'return '.$exportedClass.";\n";
-
-            \Pimcore\File::putPhpFile($definitionFile, $data);
-        }
+        $this->generateClassFilesInternal($generateDefinitionFile);
     }
 
     /**
@@ -1222,5 +1133,141 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         }
 
         return $class;
+    }
+
+    /**
+     * @throws DataObject\Exception\DefinitionWriteException|\Doctrine\DBAL\Exception
+     * @throws Exception
+     */
+    private function saveClassInternal(
+        bool $saveDefinitionFile = true,
+        bool $dumpPHPClasses = true
+    ): void
+    {
+        if ($saveDefinitionFile && !$this->isWritable()) {
+            throw new DataObject\Exception\DefinitionWriteException();
+        }
+
+        $fieldDefinitions = $this->getFieldDefinitions();
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd->isForbiddenName()) {
+                throw new Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
+            }
+
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->preSave($this);
+            }
+        }
+
+        if (!$this->getId()) {
+            $db = Db::get();
+            $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
+            $maxId = $maxId ? $maxId + 1 : 1;
+            $this->setId((string) $maxId);
+        }
+
+        if (!preg_match('/[a-zA-Z]\w+/', $this->getName())) {
+            throw new Exception(sprintf('Invalid name for class definition: %s', $this->getName()));
+        }
+
+        if (!preg_match('/[a-zA-Z0-9]([a-zA-Z0-9_]+)?/', $this->getId())) {
+            throw new Exception(sprintf('Invalid ID `%s` for class definition %s', $this->getId(), $this->getName()));
+        }
+
+        foreach (['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {
+            $propertyValue = $this->{'get'.ucfirst($propertyName)}();
+            if ($propertyValue && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\ ,]*$/', $propertyValue)) {
+                throw new Exception(sprintf('Invalid %s value for class definition: %s', $propertyName,
+                    $this->getParentClass()));
+            }
+        }
+
+        $isUpdate = $this->exists();
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_ADD);
+        } else {
+            $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_UPDATE);
+        }
+
+        // if definition file is not saved, modification date should not be updated
+        if ($saveDefinitionFile) {
+            $this->setModificationDate(time());
+        }
+
+        $this->getDao()->save($isUpdate);
+
+        $this->generateClassFilesInternal($saveDefinitionFile, $dumpPHPClasses);
+
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\ClassSavedInterface) {
+                $fd->classSaved($this);
+            }
+        }
+
+        // empty object cache
+        try {
+            Cache::clearTag('class_'.$this->getId());
+        } catch (Exception $e) {
+        }
+
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->postSave($this);
+            }
+        }
+
+        if ($isUpdate) {
+            $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_UPDATE);
+        } else {
+            $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_ADD);
+        }
+        if (!empty($this->getDeletedDataComponents())) {
+            $this->deleteDeletedDataComponentsInCustomLayout();
+        } else {
+            $this->updateCustomLayouts();
+        }
+    }
+    /**
+     *
+     * @throws Exception
+     *
+     * @internal
+     */
+    private function generateClassFilesInternal(
+        bool $generateDefinitionFile = true,
+        bool $dumpPHPClasses = true
+    ): void
+    {
+        if($dumpPHPClasses) {
+            Pimcore::getContainer()->get(PHPClassDumperInterface::class)->dumpPHPClasses($this);
+        }
+
+        if ($generateDefinitionFile) {
+            // save definition as a php file
+            $definitionFile = $this->getDefinitionFile();
+            if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
+                throw new Exception(
+                    'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
+                );
+            }
+            /** @var self $clone */
+            $clone = DataObject\Service::cloneDefinition($this);
+            $clone->setDao(null);
+            $clone->setFieldDefinitions([]);
+
+            self::cleanupForExport($clone->layoutDefinitions);
+
+            $exportedClass = var_export($clone, true);
+
+            $data = '<?php';
+            $data .= "\n\n";
+            $data .= $this->getInfoDocBlock();
+            $data .= "\n\n";
+
+            $data .= 'return '.$exportedClass.";\n";
+
+            \Pimcore\File::putPhpFile($definitionFile, $data);
+        }
     }
 }
