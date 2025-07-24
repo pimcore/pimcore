@@ -122,7 +122,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $logEntries = [];
         foreach ($result as $row) {
             $fileobject = null;
-            $logLevel = LogLevel::getLogLevel((int)$row['priority'] ?: $row['priority']);
+            $logLevel = LogLevel::getLogLevel($row['priority']);
             if ($row['fileobject']) {
                 $fileobject = str_replace(PIMCORE_PROJECT_ROOT, '', $row['fileobject']);
             }
