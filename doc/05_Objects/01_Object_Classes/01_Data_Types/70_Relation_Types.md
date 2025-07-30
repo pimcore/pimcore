@@ -101,7 +101,7 @@ If you want to disable the possibility to clear the whole relation, you can unch
 in the classdefinition.
 
 ## Inline search display mode
-You can also configure the display mode of the one-to-one relation to `Inline Search`, which uses the Full Text Search capabilities.
+You can also configure the display mode of the many-to-one relation to `Inline Search`, which uses the Full Text Search capabilities.
 
 ![Many-To-One Object Inline Search](../../../img/classes-datatypes-relation7.png)
 
