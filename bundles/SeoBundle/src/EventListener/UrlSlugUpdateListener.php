@@ -55,7 +55,7 @@ class UrlSlugUpdateListener implements EventSubscriberInterface
                 if ($slug->getSiteId()) {
                     $checkSql .= ' AND sourceSite = ' . $db->quote($slug->getSiteId());
                 } else {
-                    $checkSql .= ' AND sourceSite IS NULL';
+                    $checkSql .= ' AND (sourceSite IS NULL OR sourceSite = 0)';
                 }
 
                 $existingCheck = $db->fetchOne($checkSql, ['sourcePath' => $previousSlug, 'typeAuto' => Redirect::TYPE_AUTO_CREATE]);

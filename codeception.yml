@@ -1,0 +1,18 @@
+settings:
+    memory_limit: 1024M
+    colors: true
+bootstrap: _bootstrap.php
+namespace: Pimcore\Tests
+support_namespace: Support
+actor_suffix: Tester
+paths:
+    tests: tests
+    output: tests/_output
+    data: tests/Support/Data
+    support: tests/Support
+    envs: tests/_envs
+params:
+    - env
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed

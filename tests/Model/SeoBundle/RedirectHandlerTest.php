@@ -84,4 +84,27 @@ class RedirectHandlerTest extends TestCase
         $site->delete();
         $otherSite->delete();
     }
+
+    public function testRedirectWithMigratedSourceSite(): void
+    {
+        // Test the scenario where a redirect has sourceSite = 0 after migration
+        // from the migration Version20250526125951 that converts NULL to 0
+        $redirect = new Pimcore\Bundle\SeoBundle\Model\Redirect();
+        $redirect->setType(Pimcore\Bundle\SeoBundle\Model\Redirect::TYPE_PATH);
+        $redirect->setSource('/migrated-source');
+        $redirect->setTarget('/migrated-target');
+        $redirect->setSourceSite(0); // Simulating the migrated state
+        $redirect->save();
+
+        /** @var RedirectHandler $redirectHandler */
+        $redirectHandler = Pimcore::getContainer()->get(RedirectHandler::class);
+
+        $request = Request::create('http://example.org/migrated-source', 'GET');
+        $response = $redirectHandler->checkForRedirect($request);
+
+        $this->assertTrue($response->isRedirect(), 'Redirect should work for migrated redirects with sourceSite=0');
+        $this->assertEquals('/migrated-target', $response->headers->get('Location'), 'Redirect target should be /migrated-target');
+
+        $redirect->delete();
+    }
 }

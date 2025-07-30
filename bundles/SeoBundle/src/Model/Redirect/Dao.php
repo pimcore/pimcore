@@ -64,7 +64,7 @@ class Dao extends Model\Dao\AbstractDao
         if ($siteId !== null) {
             $sql .= ' AND (sourceSite IS NULL OR sourceSite = '.$siteId.')';
         } else {
-            $sql .= ' AND sourceSite IS NULL';
+            $sql .= ' AND (sourceSite IS NULL OR sourceSite = 0)';
         }
 
         if ($override) {
