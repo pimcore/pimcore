@@ -83,7 +83,6 @@ class SearchController extends UserAwareController
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
         $query = $this->filterQueryParam($allParams['query'] ?? '');
-        $fuzzy = $this->filterQueryParam($allParams['fuzzy'] ?? '');
 
         $types = explode(',', preg_replace('/[^a-z,]/i', '', $allParams['type'] ?? ''));
         $subtypes = explode(',', preg_replace('/[^a-z,]/i', '', $allParams['subtype'] ?? ''));
@@ -103,12 +102,7 @@ class SearchController extends UserAwareController
 
         $queryCondition = '';
         if (!empty($query)) {
-            $fullTextSearchCondition = 'MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE)';
-            if ($fuzzy) {
-                $queryCondition = '(fullpath LIKE ' . $db->quote('%'.$query.'%') . ' OR ' . $fullTextSearchCondition . ')';
-            }else {
-                $queryCondition = '(' . $fullTextSearchCondition . ')';
-            }
+            $queryCondition = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE) )';
 
             // the following should be done with an exact-search now "ID", because the Element-ID is now in the fulltext index
             // if the query is numeric the user might want to search by id
