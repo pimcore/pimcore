@@ -25,7 +25,7 @@ final class Version20250703080911 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $table = $schema->createTable('gridconfigs');
+        $table = $schema->getTable('gridconfigs');
         if(!$table->hasColumn('saveFilters')) {
             $this->addSql('ALTER TABLE gridconfigs ADD saveFilters TINYINT(1) DEFAULT 0 NOT NULL');
         }
@@ -33,7 +33,7 @@ final class Version20250703080911 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $table = $schema->createTable('gridconfigs');
+        $table = $schema->getTable('gridconfigs');
         if ($table->hasColumn('saveFilters')) {
             $this->addSql('ALTER TABLE gridconfigs DROP saveFilters');
         }
