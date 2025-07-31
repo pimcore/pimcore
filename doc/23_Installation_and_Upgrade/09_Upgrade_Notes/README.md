@@ -13,6 +13,7 @@
 - Added an index on `versionCount` columns
 #### [Events]
 - `context` property of `ResolveUploadTargetEvent` is deprecated. Use `setArgument()` method instead.
+#### [Twig Extension Deprecations]
 - `pimcore_block` Twig extension is deprecated. Use `pimcoreblock` or `pimcoremanualblock` instead.
 #### [Controllers]
 - Replaced all `$request->get()` with their explicit input source.
