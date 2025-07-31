@@ -205,6 +205,17 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $config;
     }
 
+    public function admin()
+    {
+        $html = parent::admin();
+
+        // get frontendcode for preview
+        // put the image code inside the generic code
+        $html = str_replace('</div>', $this->frontend() . '</div>', $html);
+
+        return $html;
+    }
+
     public function frontend()
     {
         $image = $this->getImage();

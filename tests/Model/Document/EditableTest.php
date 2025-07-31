@@ -80,6 +80,43 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertImage($this->testPage, 'image', $this->seed, $returnData);
     }
 
+    public function testImageEditModeWithImgAttributes(): void
+    {
+        $returnData = [];
+        $this->createTestPage('image', $returnData);
+
+        $this->reloadPage();
+        
+        // Test that Image editable includes imgAttributes in editmode
+        /** @var \Pimcore\Model\Document\Editable\Image $editable */
+        $editable = $this->testPage->getEditable('image');
+        $this->assertInstanceOf(\Pimcore\Model\Document\Editable\Image::class, $editable);
+        
+        // Set some test config including imgAttributes
+        $config = [
+            'thumbnail' => 'test',
+            'imgAttributes' => [
+                'class' => 'aspect-[16/9] w-full object-cover',
+                'data-test' => 'test-value'
+            ]
+        ];
+        $editable->setConfig($config);
+        $editable->setEditmode(true);
+        
+        // Get the admin (editmode) HTML
+        $adminHtml = $editable->admin();
+        
+        // The admin HTML should contain the image with imgAttributes
+        $this->assertStringContainsString('class="aspect-[16/9] w-full object-cover"', $adminHtml);
+        $this->assertStringContainsString('data-test="test-value"', $adminHtml);
+        
+        // Test frontend mode as well for comparison
+        $editable->setEditmode(false);
+        $frontendHtml = $editable->frontend();
+        $this->assertStringContainsString('class="aspect-[16/9] w-full object-cover"', $frontendHtml);
+        $this->assertStringContainsString('data-test="test-value"', $frontendHtml);
+    }
+
     public function testInput(): void
     {
         $this->createTestPage('input');
