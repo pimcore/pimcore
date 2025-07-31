@@ -238,5 +238,12 @@
       "php-http/discovery": false,
       "symfony/runtime": true
     }
+  },
+  "repositories": {
+    "private-packagist": {
+      "type": "composer",
+      "url": "https://repo.pimcore.com/github-actions/",
+      "canonical": true
+    }
   }
 }
