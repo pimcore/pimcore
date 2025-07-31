@@ -80,6 +80,23 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertImage($this->testPage, 'image', $this->seed, $returnData);
     }
 
+    public function testImageWithImgAttributes(): void
+    {
+        $returnData = [
+            'config' => [
+                'thumbnail' => 'stage',
+                'imgAttributes' => [
+                    'class' => 'aspect-[16/9] w-full object-cover',
+                    'loading' => 'eager'
+                ]
+            ]
+        ];
+        $this->createTestPage('image', $returnData);
+
+        $this->reloadPage();
+        $this->testDataHelper->assertImage($this->testPage, 'image', $this->seed, $returnData);
+    }
+
     public function testInput(): void
     {
         $this->createTestPage('input');

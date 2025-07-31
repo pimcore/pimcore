@@ -114,6 +114,14 @@ class TestDataHelper extends AbstractTestDataHelper
 
         $expectedImage = $params['asset'];
         $this->assertEquals($expectedImage->getId(), $value->getId());
+        
+        // Test imgAttributes in editmode data if provided
+        if (isset($params['imgAttributes'])) {
+            $editmodeData = $editable->getDataEditmode();
+            $this->assertIsArray($editmodeData);
+            $this->assertArrayHasKey('imgAttributes', $editmodeData);
+            $this->assertEquals($params['imgAttributes'], $editmodeData['imgAttributes']);
+        }
     }
 
     public function assertInput(PageSnippet $pagesnippet, string $field, int $seed = 1): void
@@ -410,9 +418,17 @@ class TestDataHelper extends AbstractTestDataHelper
         $editable = new Image();
         $editable->setName($field);
         $editable->setDataFromEditmode(['id' => $asset->getId()]);
-        $returnData = [
-            'asset' => $asset,
-        ];
+        
+        // Set config with imgAttributes if provided in input returnData
+        if (isset($returnData['config'])) {
+            $editable->setConfig($returnData['config']);
+            // Include imgAttributes in return data for assertion
+            if (isset($returnData['config']['imgAttributes'])) {
+                $returnData['imgAttributes'] = $returnData['config']['imgAttributes'];
+            }
+        }
+        
+        $returnData['asset'] = $asset;
         $page->setEditable($editable);
     }
 
