@@ -52,7 +52,7 @@ the attributes directly, you will not get the inherited values.
 Getting values from an object without inheritance
 ```php
 // Set the first argument to false so as not to inherit any values
-DataObject\Service::userInheritedValues(false, function() {
+DataObject\Service::useInheritedValues(false, function() {
     // ... your code goes here
     // ...
     // ...

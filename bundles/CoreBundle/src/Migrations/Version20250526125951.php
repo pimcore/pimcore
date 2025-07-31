@@ -29,11 +29,19 @@ final class Version20250526125951 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        if (!$schema->hasTable('redirects')) {
+            return;
+        }
+
         $this->addSql('UPDATE redirects SET sourceSite=0 WHERE sourceSite IS NULL');
     }
 
     public function down(Schema $schema): void
     {
+        if (!$schema->hasTable('redirects')) {
+            return;
+        }
+
         $this->addSql('UPDATE redirects SET sourceSite=NULL WHERE sourceSite=0');
     }
 }

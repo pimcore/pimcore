@@ -36,8 +36,10 @@ class SelectOptionsOptionsProvider implements SelectOptionsProviderInterface
         }
 
         $translator = Pimcore::getContainer()->get('translator');
-        $currentUserLocale = Admin::getCurrentUser()->getLanguage();
-        $translator->setLocale($currentUserLocale);
+        $currentUserLocale = Admin::getCurrentUser()?->getLanguage();
+        if ($currentUserLocale) {
+            $translator->setLocale($currentUserLocale);
+        }
 
         return array_map(
             fn (SelectOption $selectOption) => [

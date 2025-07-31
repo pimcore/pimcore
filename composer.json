@@ -134,6 +134,7 @@
   },
   "conflict": {
     "doctrine/doctrine-migrations-bundle": ">=3.4.0",
+    "doctrine/dbal": ">=4.3",
     "pimcore/admin-ui-classic-bundle": "<2.0",
     "pimcore/output-data-config-toolkit-bundle": "<6.0",
     "pimcore/translations-provider-interfaces": "<3.0",

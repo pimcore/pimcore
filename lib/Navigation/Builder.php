@@ -93,8 +93,8 @@ class Builder
      * @param array{
      *     root?: ?Document,
      *     htmlMenuPrefix?: ?string,
-     *     pageCallback?: ?\Closure,
-     *     rootCallback?: ?\Closure,
+     *     pageCallback?: ?Closure,
+     *     rootCallback?: ?Closure,
      *     cache?: string|bool,
      *     cacheLifetime?: ?int,
      *     maxDepth?: ?int,

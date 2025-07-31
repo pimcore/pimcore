@@ -1,0 +1,46 @@
+name: "Copilot Setup Steps"
+
+# Automatically run the setup steps when they are changed to allow for easy validation, and
+# allow manual testing through the repository's "Actions" tab
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "8.3"
+
+      - name: Install SSH Key # this is necessary for Composer to be able to clone source from pimcore/ee-pimcore
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY_PIMCORE_DEPLOYMENTS_USER }}
+          known_hosts: ".... we add this in the next step ;-)"
+
+      - name: "Add authentication for private pimcore packages"
+        run: |
+          composer config repositories.private-packagist '{"type": "composer", "url": "https://repo.pimcore.com/github-actions/", "canonical": true}'
+          composer config --global --auth http-basic.repo.pimcore.com github-actions ${{ secrets.COMPOSER_PIMCORE_REPO_PACKAGIST_TOKEN }}
+
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v3"
+        with:
+          composer-options: "--no-scripts --optimize-autoloader"
+
