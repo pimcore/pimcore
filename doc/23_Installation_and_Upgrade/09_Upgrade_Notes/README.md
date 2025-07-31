@@ -130,12 +130,12 @@ pimcore:
 - Bumped Symfony packages to "^6.4".
 #### [Value Objects]
 - Added new self validating Value Objects:
-  - `Pimcore\ValueObject\BooleanArray`
-  - `Pimcore\ValueObject\IntegerArray`
-  - `Pimcore\ValueObject\Path`
-  - `Pimcore\ValueObject\PositiveInteger`
-  - `Pimcore\ValueObject\PositiveIntegerArray`
-  - `Pimcore\ValueObject\StringArray`
+  - `Pimcore\ValueObject\String\Path`
+  - `Pimcore\ValueObject\Integer\PositiveInteger`
+  - `Pimcore\ValueObject\Collection\ArrayOfBoolean`
+  - `Pimcore\ValueObject\Collection\ArrayOfIntegers`
+  - `Pimcore\ValueObject\Collection\ArrayOfPositiveIntegers`
+  - `Pimcore\ValueObject\Collection\ArrayOfStrings`
 
 > [!WARNING]  
 > For [environment variable consistency purposes](https://github.com/pimcore/pimcore/issues/16638) in boostrap, please fix `public/index.php` in project root by moving `Bootstrap::bootstrap();` just above `$kernel = Bootstrap::kernel()` line instead of outside the closure.
