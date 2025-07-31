@@ -166,6 +166,8 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             $marker = $rewritePath($this->marker);
             $hotspots = $rewritePath($this->hotspots);
 
+            $config = $this->getConfig();
+            
             return [
                 'id' => $this->id,
                 'path' => $image->getRealFullPath(),
@@ -178,7 +180,8 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                 'hotspots' => $hotspots,
                 'marker' => $marker,
                 'thumbnail' => $this->thumbnail,
-                'predefinedDataTemplates' => $this->getConfig()['predefinedDataTemplates'] ?? null,
+                'predefinedDataTemplates' => $config['predefinedDataTemplates'] ?? null,
+                'imgAttributes' => $config['imgAttributes'] ?? null,
             ];
         }
 
