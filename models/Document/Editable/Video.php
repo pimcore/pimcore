@@ -25,7 +25,7 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-^class Video extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
+class Video extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
     public const TYPE_ASSET = 'asset';
 
