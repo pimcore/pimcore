@@ -17,6 +17,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementDescriptor;
+use Pimcore\Tool\HtmlUtils;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -203,6 +204,94 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         }
 
         return $config;
+    }
+
+    public function admin()
+    {
+        $image = $this->getImage();
+
+        if ($image instanceof Asset\Image) {
+            // In editmode, render the image with attributes like in frontend
+            $thumbnailName = $this->config['thumbnail'] ?? null;
+            if ($thumbnailName || $this->cropPercent) {
+                // create a thumbnail first
+                $autoName = false;
+
+                $thumbConfig = $image->getThumbnail($thumbnailName)->getConfig();
+                if (!$thumbConfig && $this->cropPercent) {
+                    $thumbConfig = new Asset\Image\Thumbnail\Config();
+                }
+
+                if ($this->cropPercent) {
+                    $this->applyCustomCropping($thumbConfig);
+                    $autoName = true;
+                }
+
+                if (isset($this->config['highResolution']) && $this->config['highResolution'] > 1) {
+                    $thumbConfig->setHighResolution($this->config['highResolution']);
+                }
+
+                // autogenerate a name for the thumbnail because it's different from the original
+                if ($autoName) {
+                    $thumbConfig->generateAutoName();
+                }
+
+                $deferred = true;
+                if (isset($this->config['deferred'])) {
+                    $deferred = $this->config['deferred'];
+                }
+
+                $thumbnail = $image->getThumbnail($thumbConfig, $deferred);
+            } else {
+                // we're using the thumbnail class only to generate the HTML
+                $thumbnail = $image->getThumbnail();
+            }
+
+            // Build attributes including imgAttributes for editmode
+            $attributes = array_merge($this->config, [
+                'alt' => $this->alt,
+                'title' => $this->alt,
+            ]);
+
+            // Add editmode parameter to thumbnail URL
+            $src = $thumbnail->getPath(true);
+            if (strpos($src, '?') !== false) {
+                $src .= '&pimcore_editmode=1';
+            } else {
+                $src .= '?pimcore_editmode=1';
+            }
+
+            // Handle imgAttributes specifically
+            $imgAttributes = [];
+            if (isset($this->config['imgAttributes']) && is_array($this->config['imgAttributes'])) {
+                $imgAttributes = $this->config['imgAttributes'];
+            }
+
+            // Build the image HTML with attributes
+            $htmlAttributes = [];
+            foreach ($imgAttributes as $attrName => $attrValue) {
+                $htmlAttributes[] = htmlspecialchars($attrName) . '="' . htmlspecialchars($attrValue) . '"';
+            }
+
+            // Add editmode specific attributes
+            $editableAttributes = $this->getEditmodeElementAttributes();
+            foreach ($editableAttributes as $attrName => $attrValue) {
+                $htmlAttributes[] = htmlspecialchars($attrName) . '="' . htmlspecialchars($attrValue) . '"';
+            }
+
+            $htmlAttributesString = implode(' ', $htmlAttributes);
+            $imageHtml = '<img src="' . htmlspecialchars($src) . '"' . ($htmlAttributesString ? ' ' . $htmlAttributesString : '') . '>';
+
+            if ($this->isInDialogBox()) {
+                $editmodeId = $editableAttributes['id'] ?? ('pimcore_editable_' . str_replace([':', '.'], '_', $this->getName()));
+                $imageHtml = $this->wrapEditmodeContainerCodeForDialogBox($editmodeId, $imageHtml);
+            }
+
+            return $imageHtml;
+        }
+
+        // Fallback to parent admin method when no image is set
+        return parent::admin();
     }
 
     public function frontend()
