@@ -35,11 +35,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $classes = [];
 
         $classesData = $this->db->fetchAllAssociative(
-            'SELECT * FROM classes' . 
-            $this->getCondition() . 
-            $this->getOrder() . 
-            $this->getOffsetLimit(), 
-            $this->model->getConditionVariables(), 
+            'SELECT * FROM classes' .
+            $this->getCondition() .
+            $this->getOrder() .
+            $this->getOffsetLimit(),
+            $this->model->getConditionVariables(),
             $this->model->getConditionVariableTypes()
         );
 
@@ -52,7 +52,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $classes;
     }
 
-    public function buildModel(int $id, string $name, bool $force = false): ?ClassDefinition
+    public function buildModel(string $id, string $name, bool $force = false): ?ClassDefinition
     {
         $cacheKey = 'class_' . $id;
 

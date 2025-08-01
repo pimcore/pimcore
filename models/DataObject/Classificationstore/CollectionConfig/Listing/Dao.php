@@ -31,7 +31,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load(): array
     {
         $collectionsData = $this->db->fetchAllAssociative(
-            'SELECT * FROM ' . DataObject\Classificationstore\CollectionConfig\Dao::TABLE_NAME_COLLECTIONS . ' ' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(),
+            'SELECT * FROM ' . DataObject\Classificationstore\CollectionConfig\Dao::TABLE_NAME_COLLECTIONS .
+            $this->getCondition() .
+            $this->getOrder() .
+            $this->getOffsetLimit(),
             $this->model->getConditionVariables(),
             $this->model->getConditionVariableTypes()
         );

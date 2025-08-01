@@ -32,8 +32,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $storesData = $this->db->fetchAllAssociative(
             'SELECT * FROM ' . DataObject\Classificationstore\StoreConfig\Dao::TABLE_NAME_STORES .
-            $this->getCondition() . 
-            $this->getOrder() . 
+            $this->getCondition() .
+            $this->getOrder() .
             $this->getOffsetLimit(),
             $this->model->getConditionVariables(),
             $this->model->getConditionVariableTypes()
