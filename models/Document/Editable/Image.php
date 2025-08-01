@@ -269,6 +269,15 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
             // Build the image HTML with attributes
             $htmlAttributes = [];
+            
+            // Add alt and title attributes if not already in imgAttributes
+            if (!isset($imgAttributes['alt']) && !empty($this->alt)) {
+                $htmlAttributes[] = 'alt="' . htmlspecialchars($this->alt) . '"';
+            }
+            if (!isset($imgAttributes['title']) && !empty($this->alt)) {
+                $htmlAttributes[] = 'title="' . htmlspecialchars($this->alt) . '"';
+            }
+            
             foreach ($imgAttributes as $attrName => $attrValue) {
                 $htmlAttributes[] = htmlspecialchars($attrName) . '="' . htmlspecialchars($attrValue) . '"';
             }
