@@ -14,10 +14,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Model;
 
+/**
+ * @internal
+ */
 enum JobStepStates: string
 {
     case RUNNING = 'running';
-    case FINISHED = 'finished';
+    case SUCCEEDED = 'succeeded';
     case FAILED = 'failed';
     case NOT_STARTED = 'not_started';
 }

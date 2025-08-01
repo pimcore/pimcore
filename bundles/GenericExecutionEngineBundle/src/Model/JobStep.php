@@ -18,12 +18,12 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\SelectionProcessingM
 final class JobStep implements JobStepInterface
 {
     public function __construct(
-        private readonly string                  $name,
-        private readonly string                  $messageFQCN,
-        private readonly string                  $condition,
-        private readonly array                   $config,
+        private readonly string $name,
+        private readonly string $messageFQCN,
+        private readonly string $condition,
+        private readonly array  $config,
         private readonly SelectionProcessingMode $selectionProcessingMode = SelectionProcessingMode::FOR_EACH,
-        private JobStepStates                    $jobStepState = JobStepStates::NOT_STARTED,
+        private JobStepStates $jobStepState = JobStepStates::NOT_STARTED,
     ) {
     }
 
