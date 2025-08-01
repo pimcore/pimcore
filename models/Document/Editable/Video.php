@@ -25,7 +25,7 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Video extends Model\Document\Editable implements IdRewriterInterface
+^class Video extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
     public const TYPE_ASSET = 'asset';
 
@@ -207,7 +207,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         ];
     }
 
-    protected function getDataEditmode(): mixed
+    public function getDataEditmode(): mixed
     {
         $data = $this->getData();
 
