@@ -554,6 +554,7 @@ class Service extends Model\Element\Service
             $im = \Pimcore\Image::getInstance();
             if (!$im->load($tmpFile)) {
                 unlink($tmpFile);
+
                 return false;
             }
             $im->scaleByWidth(800);
