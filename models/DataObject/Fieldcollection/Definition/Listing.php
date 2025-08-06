@@ -55,14 +55,23 @@ class Listing
      */
     public function loadFileNames(): array
     {
-        $filenames= [];
+        $filenames = [];
 
-        $fieldCollectionFolders = array_unique([PIMCORE_CLASS_DEFINITION_DIRECTORY . '/fieldcollections', PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY . '/fieldcollections']);
+        $fieldCollectionFolders = array_filter(array_unique(array_map('realpath', [
+            PIMCORE_CLASS_DEFINITION_DIRECTORY . '/fieldcollections',
+            PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY . '/fieldcollections'
+        ])));
+
+        $loadedFiles = [];
 
         foreach ($fieldCollectionFolders as $fieldCollectionFolder) {
             $files = glob($fieldCollectionFolder . '/*.php');
             foreach ($files as $file) {
-                $filenames[] = $file;
+                $realFile = realpath($file);
+                if (!isset($loadedFiles[$realFile])) {
+                    $loadedFiles[$realFile] = true;
+                    $filenames[] = $file;
+                }
             }
         }
 
