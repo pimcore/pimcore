@@ -31,7 +31,7 @@ class PHPObjectBrickContainerClassDumper implements PHPObjectBrickContainerClass
     {
         $objectClassesFolders = array_filter(array_unique(array_map('realpath', [
             PIMCORE_CLASS_DEFINITION_DIRECTORY,
-            PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY
+            PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY,
         ])));
         $containerDefinition = [];
 

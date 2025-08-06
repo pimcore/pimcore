@@ -59,7 +59,7 @@ class Listing
 
         $objectBricksFolders = array_filter(array_unique(array_map('realpath', [
             PIMCORE_CLASS_DEFINITION_DIRECTORY . '/objectbricks',
-            PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY . '/objectbricks'
+            PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY . '/objectbricks',
         ])));
 
         $loadedFiles = [];
