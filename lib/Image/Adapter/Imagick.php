@@ -475,6 +475,7 @@ class Imagick extends Adapter
     {
         if ($this->resource === null) {
             Logger::error('Cannot resize image: resource is null');
+
             return $this;
         }
 
@@ -541,6 +542,7 @@ class Imagick extends Adapter
     {
         if ($this->resource === null) {
             Logger::error('Cannot crop image: resource is null');
+
             return $this;
         }
 
@@ -590,6 +592,7 @@ class Imagick extends Adapter
     {
         if ($this->resource === null) {
             Logger::error('Cannot trim image: resource is null');
+
             return $this;
         }
 
@@ -656,6 +659,7 @@ class Imagick extends Adapter
     {
         if ($this->resource === null) {
             Logger::error('Cannot rotate image: resource is null');
+
             return $this;
         }
 
@@ -676,6 +680,7 @@ class Imagick extends Adapter
     {
         if ($this->resource === null) {
             Logger::error('Cannot round corners of image: resource is null');
+
             return $this;
         }
 
@@ -854,6 +859,7 @@ class Imagick extends Adapter
     {
         if ($this->resource === null) {
             Logger::error('Cannot apply grayscale to image: resource is null');
+
             return $this;
         }
 
@@ -868,6 +874,7 @@ class Imagick extends Adapter
     {
         if ($this->resource === null) {
             Logger::error('Cannot apply sepia to image: resource is null');
+
             return $this;
         }
 
@@ -882,6 +889,7 @@ class Imagick extends Adapter
     {
         if ($this->resource === null) {
             Logger::error('Cannot sharpen image: resource is null');
+
             return $this;
         }
 
@@ -897,6 +905,7 @@ class Imagick extends Adapter
     {
         if ($this->resource === null) {
             Logger::error('Cannot apply gaussian blur to image: resource is null');
+
             return $this;
         }
 
@@ -911,6 +920,7 @@ class Imagick extends Adapter
     {
         if ($this->resource === null) {
             Logger::error('Cannot adjust brightness/saturation of image: resource is null');
+
             return $this;
         }
 
@@ -925,6 +935,7 @@ class Imagick extends Adapter
     {
         if ($this->resource === null) {
             Logger::error('Cannot mirror image: resource is null');
+
             return $this;
         }
 
