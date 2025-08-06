@@ -473,6 +473,11 @@ class Imagick extends Adapter
 
     public function resize(int $width, int $height): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot resize image: resource is null');
+            return $this;
+        }
+
         $this->preModify();
 
         // this is the check for vector formats because they need to have a resolution set
