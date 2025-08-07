@@ -205,7 +205,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     public function __wakeup(): void
     {
         if (is_string($this->objectId)) {
-            $this->objectId = intval($this->objectId);
+            $this->objectId = (int) $this->objectId;
         }
 
         if ($this->object) {

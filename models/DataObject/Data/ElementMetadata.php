@@ -200,7 +200,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     public function __wakeup(): void
     {
         if (is_string($this->elementId)) {
-            $this->elementId = intval($this->elementId);
+            $this->elementId = (int) $this->elementId;
         }
     }
 }
