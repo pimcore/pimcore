@@ -257,9 +257,12 @@ class RgbaColor extends Data implements
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
         $db = \Pimcore\Db::get();
-        $name = $params['name'] ? $params['name'] : $this->name;
-        $key = 'concat(' . $db->quoteIdentifier($name  . '__rgb') .' ,'
+        $name = $key = $params['name'] ? $params['name'] : $this->name;
+
+        if (!str_starts_with($name, 'cskey_')){
+            $key = 'concat(' . $db->quoteIdentifier($name  . '__rgb') .' ,'
             . $db->quoteIdentifier($name  . '__a') .')';
+        }
 
         if ($value === 'NULL') {
             if ($operator === '=') {
