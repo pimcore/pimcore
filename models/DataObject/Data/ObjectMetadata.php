@@ -31,7 +31,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 
     protected ?DataObject\AbstractObject $object = null;
 
-    protected ?int $objectId = null;
+    protected null|string|int $objectId = null;
 
     protected ?string $fieldname = null;
 
@@ -204,6 +204,10 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 
     public function __wakeup(): void
     {
+        if (is_string($this->objectId)) {
+            $this->objectId = intval($this->objectId);
+        }
+
         if ($this->object) {
             $this->objectId = $this->object->getId();
         }

@@ -30,7 +30,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
 
     protected ?string $elementType = null;
 
-    protected ?int $elementId = null;
+    protected null|int|string $elementId = null;
 
     protected ?string $fieldname = null;
 
@@ -195,5 +195,12 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     public function __toString(): string
     {
         return $this->getElement()->__toString();
+    }
+
+    public function __wakeup(): void
+    {
+        if (is_string($this->elementId)) {
+            $this->elementId = intval($this->elementId);
+        }
     }
 }
