@@ -75,6 +75,10 @@ class EditmodeListener implements EventSubscriberInterface
             return;
         }
 
+        if ($request->query->getBoolean('pimcore_studio')) {
+            return;
+        }
+
         // trigger this once to make sure it is resolved properly
         // TODO is this needed?
         $this->editmodeResolver->isEditmode($request);
@@ -98,6 +102,10 @@ class EditmodeListener implements EventSubscriberInterface
         }
 
         if (!$this->contentTypeMatches($response)) {
+            return;
+        }
+
+        if ($request->query->getBoolean('pimcore_studio')) {
             return;
         }
 
