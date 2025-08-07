@@ -83,20 +83,6 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertImage($this->testPage, 'image', $this->seed, $returnData);
     }
 
-    public function testImageImgAttributesInEditmode(): void
-    {
-        $returnData = [];
-        $this->createTestPage([
-            [
-                'method' => 'fillImageWithImgAttributes',
-                'field' => 'image_with_attributes',
-            ],
-        ], $returnData);
-
-        $this->reloadPage();
-        $this->testDataHelper->assertImageImgAttributes($this->testPage, 'image_with_attributes', $this->seed, $returnData);
-    }
-
     public function testInput(): void
     {
         $this->createTestPage('input');

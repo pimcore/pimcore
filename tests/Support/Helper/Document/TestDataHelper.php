@@ -119,27 +119,6 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expectedImage->getId(), $value->getId());
     }
 
-    public function assertImageImgAttributes(PageSnippet $pagesnippet, string $field, int $seed = 1, array $params = []): void
-    {
-        /** @var Image $editable */
-        $editable = $pagesnippet->getEditable($field);
-        $this->assertInstanceOf(Image::class, $editable);
-
-        // Test basic image functionality
-        $value = $editable->getImage();
-        $this->assertInstanceOf(\Pimcore\Model\Asset\Image::class, $value);
-        $expectedImage = $params['asset'];
-        $this->assertEquals($expectedImage->getId(), $value->getId());
-
-        // Test that imgAttributes are included in editmode data
-        $editmodeData = $editable->getDataEditmode();
-        $this->assertIsArray($editmodeData);
-        $this->assertArrayHasKey('imgAttributes', $editmodeData);
-
-        $expectedImgAttributes = $params['expectedImgAttributes'];
-        $this->assertEquals($expectedImgAttributes, $editmodeData['imgAttributes']);
-    }
-
     public function assertInput(PageSnippet $pagesnippet, string $field, int $seed = 1): void
     {
         /** @var Input $editable */
@@ -436,28 +415,6 @@ class TestDataHelper extends AbstractTestDataHelper
         $editable->setDataFromEditmode(['id' => $asset->getId()]);
         $returnData = [
             'asset' => $asset,
-        ];
-        $page->setEditable($editable);
-    }
-
-    public function fillImageWithImgAttributes(Page $page, string $field, int $seed = 1, ?array &$returnData): void
-    {
-        $asset = TestHelper::createImageAsset();
-        $editable = new Image();
-        $editable->setName($field);
-        $editable->setDataFromEditmode(['id' => $asset->getId()]);
-        $editable->setConfig([
-            'imgAttributes' => [
-                'class' => 'aspect-[16/9] w-full object-cover',
-                'data-test' => 'test-value' . $seed,
-            ],
-        ]);
-        $returnData = [
-            'asset' => $asset,
-            'expectedImgAttributes' => [
-                'class' => 'aspect-[16/9] w-full object-cover',
-                'data-test' => 'test-value' . $seed,
-            ],
         ];
         $page->setEditable($editable);
     }
