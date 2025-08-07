@@ -406,8 +406,7 @@ class QuantityValue extends AbstractQuantityValue
             $key = $params['brickPrefix'].$key;
         }
         if (str_starts_with($name, 'cskey_')){
-            $a =  $key .'.'. $db->quoteIdentifier('value') . ' ' . $operator . ' ' . $value[0][0].' ';
-            return $a;
+            return $key .'.'. $db->quoteIdentifier('value') . ' ' . $operator . ' ' . $value[0][0].' ';
         }
 
         return $key . ' ' . $operator . ' ' . (is_string($value) ? $db->quote($value) : $value) . ' ';
