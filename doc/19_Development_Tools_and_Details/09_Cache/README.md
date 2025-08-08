@@ -57,9 +57,6 @@ save ""
 
 > With the default settings, the minimum supported Redis version is 3.0.
 
-> Please note that the Redis adapter currently doesn't properly support Redis Cluster setups.
-
-
 ## Element Cache Workflow (Asset, Document, Object)
 
 ![Element Cache Workflow](../../img/pimcore-cache.png)

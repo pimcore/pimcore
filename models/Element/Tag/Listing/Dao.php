@@ -1,21 +1,19 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Element\Tag\Listing;
 
 use Exception;
+use Pimcore;
 use Pimcore\Model;
 
 /**
@@ -31,13 +29,23 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load(): array
     {
-        $tagsData = $this->db->fetchFirstColumn('SELECT id FROM tags' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $tagsData = $this->db->fetchAllAssociative(
+            'SELECT * FROM tags' .
+            $this->getCondition() .
+            $this->getOrder() .
+            $this->getOffsetLimit(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes(),
+        );
 
         $tags = [];
+        $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
         foreach ($tagsData as $tagData) {
-            if ($tag = Model\Element\Tag::getById($tagData)) {
-                $tags[] = $tag;
-            }
+            /** @var Model\Element\Tag $tag */
+            $tag = $modelFactory->build(Model\Element\Tag::class);
+            $tag->getDao()->assignVariablesToModel($tagData);
+
+            $tags[] = $tag;
         }
 
         $this->model->setTags($tags);

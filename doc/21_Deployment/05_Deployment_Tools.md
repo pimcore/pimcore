@@ -43,6 +43,12 @@ After every code update you should use the `pimcore:deployment:classes-rebuild` 
 ./bin/console pimcore:deployment:classes-rebuild
 ```
 
+If you need to update the database structure of your classes without dumping the classes to the file system, you can use the `--db-only` option.
+
+```bash
+./bin/console pimcore:deployment:classes-rebuild --db-only
+```
+
 To create new classes from your configuration files in the database you can use the `create-classes` option. 
 
 ```bash

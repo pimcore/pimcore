@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Translation;
@@ -21,8 +18,8 @@ use Pimcore\Cache;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
+use Symfony\Component\Translation\Exception\LogicException;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
@@ -47,8 +44,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      */
     protected bool $disableTranslations = false;
 
-    protected Kernel $kernel;
-
     public function __construct(TranslatorInterface $translator)
     {
         if (!$translator instanceof TranslatorBagInterface) {
@@ -58,7 +53,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->translator = $translator;
     }
 
-    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string
+    public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
     {
         $id = trim($id);
 
@@ -118,7 +113,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return \Pimcore\Tool::getDefaultLanguage();
     }
 
-    public function getCatalogue(string $locale = null): MessageCatalogueInterface
+    public function getCatalogue(?string $locale = null): MessageCatalogueInterface
     {
         return $this->translator->getCatalogue($locale);
     }
@@ -186,8 +181,19 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                 Cache::save($catalogue, $cacheKey, ['translator', 'translator_website', 'translate'], null, 999);
             }
 
-            if ($catalogue) {
-                $this->getCatalogue($locale)->addCatalogue($catalogue);
+            $c = $this->getCatalogue($locale);
+            $c->addCatalogue($catalogue);
+            $fallbackCatalogue = $c->getFallbackCatalogue();
+            if ($fallbackCatalogue) {
+                $this->lazyInitialize($domain, $fallbackCatalogue->getLocale());
+
+                try {
+                    $this->getCatalogue($locale)->addFallbackCatalogue(
+                        $this->getCatalogue($fallbackCatalogue->getLocale())
+                    );
+                } catch (LogicException $e) {
+                    // couldn't add fallback because of a circular reference
+                }
             }
         }
     }
@@ -331,24 +337,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     public function setAdminTranslationMapping(array $adminTranslationMapping): void
     {
         $this->adminTranslationMapping = $adminTranslationMapping;
-    }
-
-    /**
-     * @internal
-     *
-     */
-    public function getKernel(): Kernel
-    {
-        return $this->kernel;
-    }
-
-    /**
-     *
-     * @internal
-     */
-    public function setKernel(Kernel $kernel): void
-    {
-        $this->kernel = $kernel;
     }
 
     public function getDisableTranslations(): bool

@@ -6,7 +6,7 @@
 The calculated-value datatype allows you to calculate attributes based on the value of various other attributes. The 
 value is always calculated on the fly when calling the corresponding getter, no caching applied.
 
-The only data stored is the one in the object's query tables for being able to query for calculated values.
+The only data stored is the one in the object's query tables for being able to query (e.g. grid filtering) for calculated values.
 
 > Values in the query table are only updated when the data object is saved. So be careful, the values in the query 
 > table might not be up-to-date depending on the caluclation parameters.  

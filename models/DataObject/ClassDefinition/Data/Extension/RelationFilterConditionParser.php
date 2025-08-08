@@ -2,19 +2,18 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
+
+use Pimcore\Db\Helper;
 
 /**
  * Trait RelationFilterConditionParser
@@ -28,16 +27,19 @@ trait RelationFilterConditionParser
      */
     public function getRelationFilterCondition(?string $value, string $operator, string $name): string
     {
-        $result = '`' . $name . '` IS NULL';
+        $db = \Pimcore\Db::get();
+        $result = $db->quoteIdentifier($name) . ' IS NULL';
         if ($value === null || $value === 'null') {
             return $result;
         }
         if ($operator === '=') {
-            return '`' . $name . '` = ' . "'" . $value . "'";
+            return $db->quoteIdentifier($name) . ' = ' . $db->quote($value);
         }
         $values = explode(',', $value);
-        $fieldConditions = array_map(function ($value) use ($name) {
-            return '`' . $name . "` LIKE '%," . $value . ",%' ";
+        $fieldConditions = array_map(function ($value) use ($name, $db) {
+            $quotedValue = $db->quote('%,' . Helper::escapeLike($value) . ',%');
+
+            return $db->quoteIdentifier($name) . ' LIKE ' . $quotedValue . ' ';
         }, array_filter($values));
         if (!empty($fieldConditions)) {
             $result = '(' . implode(' AND ', $fieldConditions) . ')';

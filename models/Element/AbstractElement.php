@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Element;
@@ -125,7 +122,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function setParentId(?int $parentId): static
     {
-        $parentId = (int) $parentId;
         $this->parentId = $parentId;
         $this->parent = null;
 
@@ -137,7 +133,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->userModification;
     }
 
-    public function setUserModification(int $userModification): static
+    public function setUserModification(?int $userModification): static
     {
         $this->markFieldDirty('userModification');
         $this->userModification = $userModification;
@@ -177,7 +173,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->userOwner;
     }
 
-    public function setUserOwner(int $userOwner): static
+    public function setUserOwner(?int $userOwner): static
     {
         $this->userOwner = $userOwner;
 
@@ -216,8 +212,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function getParent(): ?AbstractElement
     {
-        if ($this->parent === null && $this->getParentId() !== null) {
-            $parent = Service::getElementById(Service::getElementType($this), $this->getParentId());
+        $parentId = $this->getParentId();
+        if ($this->parent === null && $parentId !== null && $parentId !== 0) {
+            $parent = Service::getElementById(Service::getElementType($this), $parentId);
             $this->setParent($parent);
         }
 
@@ -517,8 +514,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function unlockPropagate(): void
     {
         $type = Service::getElementType($this);
+        $event = new ElementEvent(
+            $this,
+            ['elementId' => $this->getId(), 'elementType' => $type]
+        );
 
         $ids = $this->getDao()->unlockPropagate();
+
+        $eventDispatcher = Pimcore::getEventDispatcher();
+        $eventDispatcher->dispatch($event, ElementEvents::POST_ELEMENT_UNLOCK_PROPAGATE);
 
         // invalidate cache items
         foreach ($ids as $id) {
@@ -569,7 +573,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @internal
      *
      */
-    protected function doSaveVersion(string $versionNote = null, bool $saveOnlyVersion = true, bool $saveStackTrace = true, bool $isAutoSave = false): Model\Version
+    protected function doSaveVersion(?string $versionNote = null, bool $saveOnlyVersion = true, bool $saveStackTrace = true, bool $isAutoSave = false): Model\Version
     {
         $version = null;
 
@@ -678,7 +682,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @internal
      */
-    public function deleteAutoSaveVersions(int $userId = null): void
+    public function deleteAutoSaveVersions(?int $userId = null): void
     {
         $list = new Model\Version\Listing();
         $list->setLoadAutoSave(true);

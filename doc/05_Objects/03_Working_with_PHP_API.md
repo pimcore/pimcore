@@ -378,7 +378,7 @@ public function testAction(Request $request, \Knp\Component\Pager\PaginatorInter
  
     $paginator = $paginator->paginate(
         $list,
-        $request->get('page', 1),
+        $request->query->getInt('page', 1),
         10
     );
 

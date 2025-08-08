@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\Objectbrick;
@@ -142,74 +139,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function save(bool $saveDefinitionFile = true): void
     {
-        if (!$this->getKey()) {
-            throw new Exception('A object-brick needs a key to be saved!');
-        }
-
-        if ($this->isForbiddenName()) {
-            throw new Exception(sprintf('Invalid key for object-brick: %s', $this->getKey()));
-        }
-
-        if ($this->getParentClass() && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\]*$/', $this->getParentClass())) {
-            throw new Exception(sprintf('Invalid parentClass value for class definition: %s',
-                $this->getParentClass()));
-        }
-
-        $this->checkTablenames();
-        $this->checkContainerRestrictions();
-
-        $isUpdate = file_exists($this->getDefinitionFile());
-
-        if (!$isUpdate) {
-            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::PRE_ADD);
-        } else {
-            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::PRE_UPDATE);
-        }
-
-        $fieldDefinitions = $this->getFieldDefinitions();
-        foreach ($fieldDefinitions as $fd) {
-            if ($fd->isForbiddenName()) {
-                throw new Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
-            }
-
-            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
-                $fd->preSave($this);
-            }
-        }
-
-        $newClassDefinitions = [];
-        $classDefinitionsToDelete = [];
-
-        foreach ($this->classDefinitions as $cl) {
-            if (!isset($cl['deleted']) || !$cl['deleted']) {
-                $newClassDefinitions[] = $cl;
-            } else {
-                $classDefinitionsToDelete[] = $cl;
-            }
-        }
-
-        $this->classDefinitions = $newClassDefinitions;
-
-        $this->generateClassFiles($saveDefinitionFile);
-
-        $cacheKey = 'objectbrick_' . $this->getKey();
-        // for localized fields getting a fresh copy
-        RuntimeCache::set($cacheKey, $this);
-
-        $this->createContainerClasses();
-        $this->updateDatabase();
-
-        foreach ($fieldDefinitions as $fd) {
-            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
-                $fd->postSave($this);
-            }
-        }
-
-        if (!$isUpdate) {
-            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::POST_ADD);
-        } else {
-            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::POST_UPDATE);
-        }
+        $this->saveInternal($saveDefinitionFile);
     }
 
     /**
@@ -240,8 +170,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $this->enforceBlockRules($fds);
     }
 
-    protected function generateClassFiles(bool $generateDefinitionFile = true): void
-    {
+    protected function generateClassFiles(
+        bool $generateDefinitionFile = true,
+        bool $dumpPHPClasses = true
+    ): void {
         if ($generateDefinitionFile && !$this->isWritable()) {
             throw new DataObject\Exception\DefinitionWriteException();
         }
@@ -272,7 +204,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             $filesystem->dumpFile($definitionFile, $data);
         }
 
-        Pimcore::getContainer()->get(PHPObjectBrickClassDumperInterface::class)->dumpPHPClasses($this);
+        if ($dumpPHPClasses) {
+            Pimcore::getContainer()?->get(PHPObjectBrickClassDumperInterface::class)?->dumpPHPClasses($this);
+        }
     }
 
     private function buildClassList(array $definitions): array
@@ -553,7 +487,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @internal
      */
-    public function getDefinitionFile(string $key = null): string
+    public function getDefinitionFile(?string $key = null): string
     {
         return $this->locateDefinitionFile($key ?? $this->getKey(), 'objectbricks/%s.php');
     }
@@ -564,5 +498,82 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     public function getPhpClassFile(): string
     {
         return $this->locateFile(ucfirst($this->getKey()), 'DataObject/Objectbrick/Data/%s.php');
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function saveInternal(
+        bool $saveDefinitionFile = true,
+        bool $dumpPHPClasses = true
+    ): void {
+        if (!$this->getKey()) {
+            throw new Exception('A object-brick needs a key to be saved!');
+        }
+
+        if ($this->isForbiddenName()) {
+            throw new Exception(sprintf('Invalid key for object-brick: %s', $this->getKey()));
+        }
+
+        if ($this->getParentClass() && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\]*$/', $this->getParentClass())) {
+            throw new Exception(sprintf('Invalid parentClass value for class definition: %s',
+                $this->getParentClass()));
+        }
+
+        $this->checkTablenames();
+        $this->checkContainerRestrictions();
+
+        $isUpdate = file_exists($this->getDefinitionFile());
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::PRE_ADD);
+        } else {
+            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::PRE_UPDATE);
+        }
+
+        $fieldDefinitions = $this->getFieldDefinitions();
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd->isForbiddenName()) {
+                throw new Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
+            }
+
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->preSave($this);
+            }
+        }
+
+        $newClassDefinitions = [];
+        $classDefinitionsToDelete = [];
+
+        foreach ($this->classDefinitions as $cl) {
+            if (!isset($cl['deleted']) || !$cl['deleted']) {
+                $newClassDefinitions[] = $cl;
+            } else {
+                $classDefinitionsToDelete[] = $cl;
+            }
+        }
+
+        $this->classDefinitions = $newClassDefinitions;
+
+        $this->generateClassFiles($saveDefinitionFile, $dumpPHPClasses);
+
+        $cacheKey = 'objectbrick_' . $this->getKey();
+        // for localized fields getting a fresh copy
+        RuntimeCache::set($cacheKey, $this);
+
+        $this->createContainerClasses();
+        $this->updateDatabase();
+
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->postSave($this);
+            }
+        }
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::POST_ADD);
+        } else {
+            $this->dispatchEvent(new ObjectbrickDefinitionEvent($this), ObjectbrickDefinitionEvents::POST_UPDATE);
+        }
     }
 }

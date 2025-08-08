@@ -3,16 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CoreBundle\Migrations;
@@ -20,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Exception;
+use Pimcore;
 use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface;
@@ -52,10 +50,10 @@ final class Version20231127124738 extends AbstractMigration implements Container
      */
     private function regenerate(): void
     {
-        $classDumper = $this->container->get(PHPClassDumperInterface::class);
-        $brickClassDumper = $this->container->get(PHPObjectBrickClassDumperInterface::class);
-        $brickContainerClassDumper = $this->container->get(PHPObjectBrickContainerClassDumperInterface::class);
-        $collectionClassDumper = $this->container->get(PHPFieldCollectionClassDumperInterface::class);
+        $classDumper = Pimcore::getContainer()->get(PHPClassDumperInterface::class);
+        $brickClassDumper = Pimcore::getContainer()->get(PHPObjectBrickClassDumperInterface::class);
+        $brickContainerClassDumper = Pimcore::getContainer()->get(PHPObjectBrickContainerClassDumperInterface::class);
+        $collectionClassDumper = Pimcore::getContainer()->get(PHPFieldCollectionClassDumperInterface::class);
 
         $listing = new DataObject\ClassDefinition\Listing();
         foreach ($listing->getClasses() as $class) {

@@ -22,7 +22,7 @@ A typical use-case would be to render product objects within a document.
 | `class`        | string    | A CSS class that is added to the surrounding container of this element in editmode |             |
 
 Optionally you can pass every parameter (with a scalar data type) you like to the renderlet which can be accessed in 
-the configured controller with `$request->get('yourKey')`.
+the configured controller with `$request->query->get('yourKey')`.
 
 ## Methods
 
@@ -32,7 +32,7 @@ the configured controller with `$request->get('yourKey')`.
 
 ## In the configured Controller Action
 
-In the target controller action, you get the following parameters which can be accessed by `$request->get('key')`.
+In the target controller action, you get the following parameters which can be accessed by `$request->query->get('key')`.
 
 | Name       | Type                   | Description                                                                                      |
 |------------|------------------------|--------------------------------------------------------------------------------------------------|
@@ -40,7 +40,7 @@ In the target controller action, you get the following parameters which can be a
 | `type`     | string                 | The type of the element assigned to the renderlet (document,asset,object)                        |
 | `subtype`  | string                 | The subtype of the element assigned to the renderlet (folder, image, link, page, classname, ...) |
 
-If you have defined any custom parameters on the renderlet configuration you can access them also with `$request->get('yourParam')`.
+If you have defined any custom parameters on the renderlet configuration you can access them also with `$request->query->get('yourParam')`.
 
 ## Example
 
@@ -70,8 +70,8 @@ Now editors are able to put elements onto the renderlet in the editmode.
 #[Template('my-gallery.html.twig')]
 public function myGalleryAction(Request $request): array
 {
-    if ('asset' === $request->get('type')) {
-        $asset = Asset::getById((int) $request->get('id'));
+    if ('asset' === $request->query->get('type')) {
+        $asset = Asset::getById($request->query->getInt('id'));
         if ('folder' === $asset->getType()) {
             return [
                 'assets' => $asset->getChildren()

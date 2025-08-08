@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Element\Tag;
@@ -71,10 +68,8 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            Helper::upsert($this->db, 'tags', $data, $this->getPrimaryKey('tags'));
-
-            $lastInsertId = $this->db->lastInsertId();
-            if (!$this->model->getId() && $lastInsertId) {
+            $lastInsertId = Helper::upsert($this->db, 'tags', $data, $this->getPrimaryKey('tags'));
+            if ($lastInsertId !== null && !$this->model->getId()) {
                 $this->model->setId((int) $lastInsertId);
             }
 
@@ -126,14 +121,15 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getTagsForElement(string $cType, int $cId): array
     {
-        $tags = [];
         $tagIds = $this->db->fetchFirstColumn('SELECT tagid FROM tags_assignment WHERE cid = ? AND ctype = ?', [$cId, $cType]);
-
-        foreach ($tagIds as $tagId) {
-            $tags[] = Model\Element\Tag::getById($tagId);
+        if (empty($tagIds)) {
+            return [];
         }
 
-        $tags = array_filter($tags);
+        $list = new Listing();
+        $list->setCondition('`id` IN (?)', [$tagIds]);
+
+        $tags = $list->load();
         @usort($tags, function ($left, $right) {
             return strcmp($left->getNamePath(), $right->getNamePath());
         });
