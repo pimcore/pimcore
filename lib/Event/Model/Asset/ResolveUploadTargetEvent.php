@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Event\Model\Asset;
@@ -25,20 +22,12 @@ class ResolveUploadTargetEvent extends Event
 
     protected string $filename;
 
-    protected array $context;
-
     protected int $parentId;
 
-    /**
-     * ResolveUploadTargetEvent constructor.
-     *
-     * @param array $context contextual information
-     */
-    public function __construct(int $parentId, string $filename, array $context)
+    public function __construct(int $parentId, string $filename)
     {
         $this->parentId = $parentId;
         $this->filename = $filename;
-        $this->context = $context;
     }
 
     public function getFilename(): string
@@ -49,16 +38,6 @@ class ResolveUploadTargetEvent extends Event
     public function setFilename(string $filename): void
     {
         $this->filename = $filename;
-    }
-
-    public function getContext(): array
-    {
-        return $this->context;
-    }
-
-    public function setContext(array $context): void
-    {
-        $this->context = $context;
     }
 
     public function getParentId(): int

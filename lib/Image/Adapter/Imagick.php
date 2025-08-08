@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Image\Adapter;
@@ -62,7 +59,6 @@ class Imagick extends Adapter
         }
 
         if ($this->resource) {
-            unset($this->resource);
             $this->resource = null;
         }
 
@@ -181,7 +177,7 @@ class Imagick extends Adapter
         return $format;
     }
 
-    public function save(string $path, string $format = null, int $quality = null): static
+    public function save(string $path, ?string $format = null, ?int $quality = null): static
     {
         if (!$format) {
             $format = 'png32';
@@ -199,14 +195,13 @@ class Imagick extends Adapter
             $format = 'png32';
         }
 
-        $originalFilename = null;
         $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
 
         if (in_array($format, ['jpeg', 'pjpeg', 'jpg']) && $this->isAlphaPossible) {
             // set white background for transparent pixels
             $i->setImageBackgroundColor('#ffffff');
 
-            if ($i->getImageAlphaChannel() !== 0) { // Note: returns (int) 0 if there's no AlphaChannel, PHP Docs are wrong. See: https://www.imagemagick.org/api/channel.php
+            if ($i->getImageAlphaChannel()) {
                 // Imagick version compatibility
                 $alphaChannel = 11; // This works at least as far back as version 3.1.0~rc1-1
                 if (defined('Imagick::ALPHACHANNEL_REMOVE')) {
@@ -282,7 +277,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    private function checkPreserveAnimation(string $format = '', \Imagick $i = null, bool $checkNumberOfImages = true): bool
+    private function checkPreserveAnimation(string $format = '', ?\Imagick $i = null, bool $checkNumberOfImages = true): bool
     {
         if (!$this->isPreserveAnimation()) {
             return false;
@@ -338,14 +333,15 @@ class Imagick extends Adapter
     {
         $imageColorspace = $this->resource->getImageColorspace();
 
-        if (in_array($imageColorspace, [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
+        if (!$this->isForceProcessICCProfiles() &&
+            in_array($imageColorspace, [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
             // no need to process (s)RGB images
             return $this;
         }
 
         $profiles = $this->resource->getImageProfiles('icc', true);
 
-        if (isset($profiles['icc'])) {
+        if (!$this->isForceProcessICCProfiles() && isset($profiles['icc'])) {
             if (str_contains($profiles['icc'], 'RGB')) {
                 // no need to process (s)RGB images
                 return $this;
@@ -522,6 +518,10 @@ class Imagick extends Adapter
             $this->setHeight($height);
         }
 
+        if ($this->resource->getNumberImages() > 1) {
+            $this->resource->removeImage();
+        }
+
         $this->postModify();
 
         return $this;
@@ -608,11 +608,14 @@ class Imagick extends Adapter
         return $newImage;
     }
 
+    /**
+     * @param \Imagick::COMPOSITE_* $composite
+     */
     private function createCompositeImageFromResource(int $width, int $height, int $x, int $y, string $color = 'transparent', int $composite = \Imagick::COMPOSITE_DEFAULT): \Imagick
     {
         $newImage = null;
         if ($this->checkPreserveAnimation()) {
-            foreach ($this->resource as $i => $frame) {
+            foreach ($this->resource as $frame) {
                 $imageFrame = $this->createImage($width, $height, $color);
                 $imageFrame->compositeImage($frame, $composite, $x, $y);
                 if (!$newImage) {
@@ -676,7 +679,7 @@ class Imagick extends Adapter
         $this->resource->compositeImage($mask, \Imagick::COMPOSITE_DSTIN, 0, 0);
     }
 
-    public function setBackgroundImage(string $image, string $mode = null): static
+    public function setBackgroundImage(string $image, ?string $mode = null): static
     {
         $this->preModify();
 
@@ -758,6 +761,10 @@ class Imagick extends Adapter
                     $frame->compositeImage($newImage, $compositeValue, $x, $y);
                 }
             } else {
+                // Transform base image to RGB colorspace if the watermark is in RGB or sRGB
+                if (in_array($newImage->getImageColorspace(), [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
+                    $this->setColorspaceToRGB();
+                }
                 $this->resource->compositeImage($newImage, $compositeValue, $x, $y);
             }
         }
@@ -1024,11 +1031,9 @@ class Imagick extends Adapter
     {
         try {
             // we can't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
-            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-format-support-detection-' . uniqid() . '.' . $format;
             $image = new \Imagick();
             $image->newImage(1, 1, new ImagickPixel('red'));
-            $image->writeImage($format . ':' . $tmpFile);
-            unlink($tmpFile);
+            $image->writeImageFile(tmpfile(), $format);
 
             return true;
         } catch (Exception $e) {

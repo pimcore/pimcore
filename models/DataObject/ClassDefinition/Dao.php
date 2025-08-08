@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
@@ -162,8 +159,7 @@ class Dao extends Model\Dao\AbstractDao
 
         // add non existing columns in the table
         foreach ($this->model->getFieldDefinitions() as $key => $value) {
-            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
-                && $value instanceof DataObject\ClassDefinition\Data) {
+            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
                 // if a datafield requires more than one column in the datastore table => only for non-relation types
                 if (!$value->isRelationType()) {
                     if (is_array($value->getColumnType())) {
@@ -180,8 +176,7 @@ class Dao extends Model\Dao\AbstractDao
                 $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
             }
 
-            if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
-                && $value instanceof DataObject\ClassDefinition\Data) {
+            if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
                 // if a datafield requires more than one column in the query table
                 if (is_array($value->getQueryColumnType())) {
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {

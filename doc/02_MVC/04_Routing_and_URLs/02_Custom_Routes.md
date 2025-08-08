@@ -60,8 +60,8 @@ class NewsController extends FrontendController
 {
     public function detailAction(Request $request): Response
     {
-        $id = $request->get('news');
-        $text = $request->get('text');
+        $id = $request->query->getInt('news');
+        $text = $request->query->getString('text');
         
         // ...
         return $this->render('news/detail.html.twig');
@@ -79,7 +79,7 @@ To use the param resolver, simply type hint the argument (Symfony routing exampl
 
 ```php
     use Symfony\Component\HttpFoundation\Request;
-    use Symfony\Component\Routing\Annotation\Route;
+    use Symfony\Component\Routing\Attribute\Route;
     ....
 
      #[Template('/news/test')]
@@ -281,7 +281,7 @@ use \Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 public function testAction(Request $request): Response
 {
-    $object = DataObject::getById((int) $request->get('id')); 
+    $object = DataObject::getById($request->query->getInt('id')); 
     if( !$object || ( !$object->isPublished() && !$this->editmode) ) {
         throw new NotFoundHttpException('Not found');
     }

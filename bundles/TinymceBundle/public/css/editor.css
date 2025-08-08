@@ -1,7 +1,0 @@
-.tox-editor-container {
-    z-index: 19998;
-}
-
-.tox .tox-menu, .tox-tinymce-aux {
-    z-index: 19999 !important;
-}

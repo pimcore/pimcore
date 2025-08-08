@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Workflow\EventSubscriber;
@@ -20,10 +17,14 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Workflow;
+use Pimcore\Workflow\ExpressionService;
+use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\Notification\NotificationEmailService;
+use Pimcore\Workflow\Notification\PimcoreNotificationService;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
+use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -53,8 +54,13 @@ class NotificationSubscriber implements EventSubscriberInterface
 
     protected Workflow\Manager $workflowManager;
 
-    public function __construct(NotificationEmailService $mailService, Workflow\Notification\PimcoreNotificationService $pimcoreNotificationService, TranslatorInterface $translator, Workflow\ExpressionService $expressionService, Workflow\Manager $workflowManager)
-    {
+    public function __construct(
+        NotificationEmailService $mailService,
+        PimcoreNotificationService $pimcoreNotificationService,
+        TranslatorInterface $translator,
+        ExpressionService $expressionService,
+        Manager $workflowManager
+    ) {
         $this->mailService = $mailService;
         $this->pimcoreNotificationService = $pimcoreNotificationService;
         $this->translator = $translator;
@@ -72,7 +78,12 @@ class NotificationSubscriber implements EventSubscriberInterface
         $subject = $event->getSubject();
         /** @var Transition $transition */
         $transition = $event->getTransition();
+
         $workflow = $this->workflowManager->getWorkflowByName($event->getWorkflowName());
+
+        if ($workflow  === null) {
+            return;
+        }
 
         $notificationSettings = $transition->getNotificationSettings();
         foreach ($notificationSettings as $notificationSetting) {
@@ -83,18 +94,42 @@ class NotificationSubscriber implements EventSubscriberInterface
                 $notifyRoles = $notificationSetting['notifyRoles'] ?? [];
 
                 if (in_array(self::NOTIFICATION_CHANNEL_MAIL, $notificationSetting['channelType'])) {
-                    $this->handleNotifyPostWorkflowEmail($transition, $workflow, $subject, $notificationSetting['mailType'], $notificationSetting['mailPath'], $notifyUsers, $notifyRoles);
+                    $this->handleNotifyPostWorkflowEmail(
+                        $transition,
+                        $workflow,
+                        $subject,
+                        $notificationSetting['mailType'],
+                        $notificationSetting['mailPath'],
+                        $notifyUsers,
+                        $notifyRoles
+                    );
                 }
 
-                if (in_array(self::NOTIFICATION_CHANNEL_PIMCORE_NOTIFICATION, $notificationSetting['channelType'])) {
-                    $this->handleNotifyPostWorkflowPimcoreNotification($transition, $workflow, $subject, $notifyUsers, $notifyRoles);
+                if (in_array(
+                    self::NOTIFICATION_CHANNEL_PIMCORE_NOTIFICATION,
+                    $notificationSetting['channelType']
+                )) {
+                    $this->handleNotifyPostWorkflowPimcoreNotification(
+                        $transition,
+                        $workflow,
+                        $subject,
+                        $notifyUsers,
+                        $notifyRoles
+                    );
                 }
             }
         }
     }
 
-    private function handleNotifyPostWorkflowEmail(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, string $mailType, string $mailPath, array $notifyUsers, array $notifyRoles): void
-    {
+    private function handleNotifyPostWorkflowEmail(
+        Transition $transition,
+        WorkflowInterface $workflow,
+        ElementInterface $subject,
+        string $mailType,
+        string $mailPath,
+        array $notifyUsers,
+        array $notifyRoles
+    ): void {
         //notify users
         $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getElementType($subject));
 
@@ -104,14 +139,19 @@ class NotificationSubscriber implements EventSubscriberInterface
             $workflow,
             $subjectType,
             $subject,
-            $transition->getLabel(),
+            $transition,
             $mailType,
             $mailPath
         );
     }
 
-    private function handleNotifyPostWorkflowPimcoreNotification(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, array $notifyUsers, array $notifyRoles): void
-    {
+    private function handleNotifyPostWorkflowPimcoreNotification(
+        Transition $transition,
+        WorkflowInterface $workflow,
+        ElementInterface $subject,
+        array $notifyUsers,
+        array $notifyRoles
+    ): void {
         $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getElementType($subject));
         $this->pimcoreNotificationService->sendPimcoreNotification(
             $notifyUsers,
@@ -119,7 +159,7 @@ class NotificationSubscriber implements EventSubscriberInterface
             $workflow,
             $subjectType,
             $subject,
-            $transition->getLabel()
+            $transition
         );
     }
 
