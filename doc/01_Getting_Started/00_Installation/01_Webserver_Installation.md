@@ -4,7 +4,7 @@ The following guide assumes you're using a typical LAMP environment. If you're u
 
 ## 1. System Requirements
 
-Please have a look at [System Requirements](../../23_Installation_and_Upgrade/README.md) and ensure your system is ready for Pimcore.
+Please have a look at [System Requirements](../../23_Installation_and_Upgrade/01_System_Requirements.md and ensure your system is ready for Pimcore.
 
 ## 2. Install Pimcore & Dependencies
 
@@ -70,7 +70,7 @@ This launches the interactive installer with a few questions. Make sure that you
 :::
 
 ##### Open Admin Interface
-After the installer has finished and your [server is configured](../../23_Installation_and_Upgrade/01_System_Requirements.md), you can open the admin interface: `https://your-host.com/admin`
+After the installer has finished and your [server is configured](../../23_Installation_and_Upgrade/README.md), you can open the admin interface: `https://your-host.com/admin`
 
 ##### Debugging Installation Issues
 
