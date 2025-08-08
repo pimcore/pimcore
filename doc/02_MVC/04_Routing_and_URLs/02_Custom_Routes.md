@@ -60,8 +60,8 @@ class NewsController extends FrontendController
 {
     public function detailAction(Request $request): Response
     {
-        $id = $request->get('news');
-        $text = $request->get('text');
+        $id = $request->query->getInt('news');
+        $text = $request->query->getString('text');
         
         // ...
         return $this->render('news/detail.html.twig');
@@ -281,7 +281,7 @@ use \Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 public function testAction(Request $request): Response
 {
-    $object = DataObject::getById((int) $request->get('id')); 
+    $object = DataObject::getById($request->query->getInt('id')); 
     if( !$object || ( !$object->isPublished() && !$this->editmode) ) {
         throw new NotFoundHttpException('Not found');
     }

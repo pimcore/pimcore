@@ -178,21 +178,14 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * display the quantity value field data in the grid
-     *
-     * @param Model\DataObject\Concrete|null $object
-     *
+     * display the rgba color field data in the grid
      */
-    public function getDataForGrid(?Model\DataObject\Data\RgbaColor $data, Concrete $object = null, array $params = []): ?string
+    public function getDataForGrid(?Model\DataObject\Data\RgbaColor $data, ?Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
 
-    /**
-     * @param null|Model\DataObject\Concrete $object
-     *
-     */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?Concrete $object = null, array $params = []): string
     {
         if ($data instanceof  Model\DataObject\Data\RgbaColor) {
             $value = $data->getHex(true, true);

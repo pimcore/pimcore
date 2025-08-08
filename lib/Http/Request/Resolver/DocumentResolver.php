@@ -28,7 +28,7 @@ class DocumentResolver extends AbstractRequestResolver
             $request = $this->getCurrentRequest();
         }
 
-        $content = $request->get(DynamicRouter::CONTENT_KEY);
+        $content = $request->attributes->get(DynamicRouter::CONTENT_KEY);
         if ($content instanceof Document) {
             return $content;
         }

@@ -50,22 +50,16 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     /**
      * @internal
-     *
      */
     public string $delegateDatatype;
 
     /**
      * @internal
-     *
-     * @var Model\DataObject\ClassDefinition\Data|array|null
      */
     public Data|array|null $delegate = null;
 
     /**
-     * @param null|Model\DataObject\Concrete $object
-     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
@@ -89,7 +83,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    private function encrypt(mixed $data, Model\DataObject\Concrete $object = null, array $params): ?string
+    private function encrypt(mixed $data, ?Model\DataObject\Concrete $object, array $params): ?string
     {
         if (!is_null($data)) {
             $key = Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
@@ -115,7 +109,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * @throws Exception
      */
-    private function decrypt(?string $data, Model\DataObject\Concrete $object = null, array $params): ?string
+    private function decrypt(?string $data, ?Model\DataObject\Concrete $object, array $params): mixed
     {
         if ($data) {
             try {
@@ -156,10 +150,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @param null|Model\DataObject\Concrete $object
-     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\EncryptedField
     {
@@ -184,12 +175,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @param null|Model\DataObject\Concrete $object
-     *
      * @see Data::getDataForEditmode
-     *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
@@ -203,8 +191,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @param null|Model\DataObject\Concrete $object
-     *
      * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\EncryptedField
@@ -220,7 +206,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return null;
     }
 
-    public function getDataFromGridEditor(float $data, Model\DataObject\Concrete $object = null, array $params = []): float|Model\DataObject\Data\EncryptedField
+    public function getDataFromGridEditor(mixed $data, Model\DataObject\Concrete $object = null, array $params = []): mixed
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd && method_exists($fd, 'getDataFromGridEditor')) {
@@ -253,11 +239,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * display the quantity value field data in the grid
-     *
-     *
+     * display the encrypted field value field data in the grid
      */
-    public function getDataForGrid(mixed $data, Model\DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForGrid(mixed $data, Model\DataObject\Concrete $object = null, array $params = []): mixed
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
@@ -268,13 +252,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
             }
         }
 
-        return $data ?? [];
+        return $data;
     }
 
-    /**
-     * @param Model\DataObject\Concrete|null $object
-     *
-     */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         $fd = $this->getDelegateDatatypeDefinition();
@@ -299,9 +279,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     /**
      * returns sql query statement to filter according to this data types value(s)
-     *
-     *
-     *
      */
     public function getFilterCondition(mixed $value, string $operator, array $params = []): string
     {
@@ -325,7 +302,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     /**
      * @internal
-     *
      */
     public function setupDelegate(mixed $data): void
     {

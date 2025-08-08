@@ -35,14 +35,14 @@ class PublicServicesController extends Controller
 {
     public function thumbnailAction(Request $request): RedirectResponse|StreamedResponse
     {
-        $filename = $request->get('filename');
+        $filename = $request->attributes->getString('filename');
         $requestedFileExtension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
         $config = [
-            'prefix' => $request->get('prefix', ''),
-            'type' => $request->get('type'),
-            'asset_id' => (int) $request->get('assetId'),
-            'thumbnail_name' => $request->get('thumbnailName'),
+            'prefix' => $request->attributes->getString('prefix', ''),
+            'type' => $request->attributes->getString('type'),
+            'asset_id' => $request->attributes->getInt('assetId'),
+            'thumbnail_name' => $request->attributes->getString('thumbnailName'),
             'filename' => $filename,
             'file_extension' => $requestedFileExtension,
         ];

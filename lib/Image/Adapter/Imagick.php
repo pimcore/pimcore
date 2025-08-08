@@ -338,14 +338,15 @@ class Imagick extends Adapter
     {
         $imageColorspace = $this->resource->getImageColorspace();
 
-        if (in_array($imageColorspace, [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
+        if (!$this->isForceProcessICCProfiles() &&
+            in_array($imageColorspace, [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
             // no need to process (s)RGB images
             return $this;
         }
 
         $profiles = $this->resource->getImageProfiles('icc', true);
 
-        if (isset($profiles['icc'])) {
+        if (!$this->isForceProcessICCProfiles() && isset($profiles['icc'])) {
             if (str_contains($profiles['icc'], 'RGB')) {
                 // no need to process (s)RGB images
                 return $this;
@@ -522,6 +523,10 @@ class Imagick extends Adapter
             $this->setHeight($height);
         }
 
+        if ($this->resource->getNumberImages() > 1) {
+            $this->resource->removeImage();
+        }
+
         $this->postModify();
 
         return $this;
@@ -608,6 +613,9 @@ class Imagick extends Adapter
         return $newImage;
     }
 
+    /**
+     * @param \Imagick::COMPOSITE_* $composite
+     */
     private function createCompositeImageFromResource(int $width, int $height, int $x, int $y, string $color = 'transparent', int $composite = \Imagick::COMPOSITE_DEFAULT): \Imagick
     {
         $newImage = null;
@@ -758,6 +766,10 @@ class Imagick extends Adapter
                     $frame->compositeImage($newImage, $compositeValue, $x, $y);
                 }
             } else {
+                // Transform base image to RGB colorspace if the watermark is in RGB or sRGB
+                if (in_array($newImage->getImageColorspace(), [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
+                    $this->setColorspaceToRGB();
+                }
                 $this->resource->compositeImage($newImage, $compositeValue, $x, $y);
             }
         }

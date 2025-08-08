@@ -30,7 +30,7 @@ class TemplateResolver extends AbstractRequestResolver
             $request = $this->getCurrentRequest();
         }
 
-        return $request->get(DynamicRouter::CONTENT_TEMPLATE);
+        return $request->attributes->get(DynamicRouter::CONTENT_TEMPLATE);
     }
 
     public function setTemplate(Request $request, string $template): void

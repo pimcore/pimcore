@@ -19,6 +19,7 @@ namespace Pimcore\Model\Asset;
 use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\File;
+use Pimcore\Logger;
 use Pimcore\Messenger\AssetPreviewImageMessage;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -179,11 +180,18 @@ class Folder extends Model\Asset
 
             if ($count && !$skipped) {
                 $localFile = File::getLocalTempFilePath('jpg');
-                imagejpeg($collage, $localFile, 60);
+                if (false === imagejpeg($collage, $localFile, 60)) {
+                    Logger::info('Creation of collage file of asset folder ' . $this->getRealFullPath() . ' is failed.');
 
-                if (filesize($localFile) > 0) {
-                    $storage->write($cacheFilePath, file_get_contents($localFile));
+                    return null;
                 }
+                $localFileContent = file_get_contents($localFile);
+                if (false === $localFileContent) {
+                    Logger::info('Generated collage file of asset folder ' . $this->getRealFullPath() . ' is broken or cannot be found.');
+
+                    return null;
+                }
+                $storage->write($cacheFilePath, $localFileContent);
 
                 return $storage->readStream($cacheFilePath);
             }

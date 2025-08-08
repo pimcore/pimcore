@@ -327,10 +327,14 @@ class Select extends Data implements
         }
 
         if ($operator === '=') {
-            return $key.' = '."\"$value\"".' ';
+            $quotedValue = $db->quote($value);
+
+            return $key . ' = ' . $quotedValue . ' ';
         }
         if ($operator === 'LIKE') {
-            return $key.' LIKE '."\"%$value%\"".' ';
+            $quotedValue = $db->quote('%' . $value . '%');
+
+            return $key . ' LIKE ' . $quotedValue . ' ';
         }
 
         return '';

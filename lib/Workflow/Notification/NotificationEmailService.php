@@ -110,7 +110,7 @@ class NotificationEmailService extends AbstractNotificationService
                 }
             }
         } catch (Exception $e) {
-            \Pimcore\Logger::error('Error sending Workflow change notification email.');
+            \Pimcore\Logger::error('Error sending Workflow change notification email: ' . (string)$e);
         }
     }
 

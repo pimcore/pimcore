@@ -721,18 +721,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return parent::addListingFilter($listing, $data, $operator);
     }
 
-    /**
-     * Filter by relation feature
-     *
-     *
-     */
-    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
-    {
-        $name = $params['name'] ?: $this->name;
-
-        return $this->getRelationFilterCondition($value, $operator, $name);
-    }
-
     public function getQueryColumnType(): string
     {
         return 'text';

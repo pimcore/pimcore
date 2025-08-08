@@ -1639,39 +1639,39 @@ class Service extends Model\Element\Service
     {
         $objectData = [];
         $mappedFieldnames = [];
+        $currentLocale = $localeService->getLocale();
+
         foreach ($fields as $field) {
             $key = $field['key'];
-            if (static::isHelperGridColumnConfig($key) && $validLanguages = static::expandGridColumnForExport($helperDefinitions, $key)) {
-                $currentLocale = $localeService->getLocale();
-                $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions, $header);
+            if (static::isHelperGridColumnConfig($key)) {
+                $validLanguages = static::expandGridColumnForExport($helperDefinitions, $key);
+                if ($validLanguages) {
+                    $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions, $header);
 
-                foreach ($validLanguages as $validLanguage) {
-                    $localeService->setLocale($validLanguage);
-                    $fieldData = self::getCsvFieldData($currentLocale, $key, $object, $validLanguage, $helperDefinitions);
-                    $localizedFieldKey = $key . '-' . $validLanguage;
-                    if (!isset($mappedFieldnames[$localizedFieldKey])) {
-                        $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
+                    foreach ($validLanguages as $validLanguage) {
+                        $localeService->setLocale($validLanguage);
+                        $fieldData = self::getCsvFieldData($currentLocale, $key, $object, $validLanguage, $helperDefinitions);
+                        $localizedFieldKey = $key . '-' . $validLanguage;
+                        if ($returnMappedFieldNames && !isset($mappedFieldnames[$localizedFieldKey])) {
+                            $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
+                            $objectData[$mappedFieldnames[$localizedFieldKey]] = $fieldData;
+                        } else {
+                            $objectData[$localizedFieldKey] = $fieldData;
+                        }
                     }
-                    $objectData[$localizedFieldKey] = $fieldData;
-                }
+                    $localeService->setLocale($currentLocale);
 
-                $localeService->setLocale($currentLocale);
+                    continue;
+                }
+            }
+
+            $fieldData = self::getCsvFieldData($requestedLanguage, $key, $object, $requestedLanguage, $helperDefinitions);
+            if ($returnMappedFieldNames && !isset($mappedFieldnames[$key])) {
+                $mappedFieldnames[$key] = self::mapFieldname($field, $helperDefinitions, $header);
+                $objectData[$mappedFieldnames[$key]] = $fieldData;
             } else {
-                $fieldData = self::getCsvFieldData($requestedLanguage, $key, $object, $requestedLanguage, $helperDefinitions);
-                if (!isset($mappedFieldnames[$key])) {
-                    $mappedFieldnames[$key] = self::mapFieldname($field, $helperDefinitions, $header);
-                }
-
                 $objectData[$key] = $fieldData;
             }
-        }
-
-        if ($returnMappedFieldNames) {
-            $tmp = [];
-            foreach ($mappedFieldnames as $key => $value) {
-                $tmp[$value] = $objectData[$key];
-            }
-            $objectData = $tmp;
         }
 
         $event = new DataObjectEvent($object, ['objectData' => $objectData,
@@ -1698,16 +1698,17 @@ class Service extends Model\Element\Service
     public static function getCsvData(string $requestedLanguage, LocaleServiceInterface $localeService, Listing $list, array $fields, string $header = '', bool $addTitles = true, array $context = []): array
     {
         $data = [];
-        Logger::debug('objects in list:' . count($list->getObjects()));
+        Logger::debug('objects in list:' . $list->getCount());
 
-        if (class_exists(GridData\DataObject::class)) {
-            $helperDefinitions = GridData\DataObject::getHelperDefinitions();
-        } else {
-            $helperDefinitions = self::getHelperDefinitions();
-        }
+        if ($fields) {
+            if (class_exists(GridData\DataObject::class)) {
+                $helperDefinitions = GridData\DataObject::getHelperDefinitions();
+            } else {
+                $helperDefinitions = self::getHelperDefinitions();
+            }
 
-        foreach ($list->getObjects() as $object) {
-            if ($fields) {
+            $objects = $list->getObjects();
+            foreach ($objects as $object) {
                 if ($addTitles && empty($data)) {
                     $tmp = [];
                     $mapped = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $header, true, $context);
@@ -1915,7 +1916,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * TODO Bc layer for bundles to support both Pimcore 10 & 11, remove with Pimcore 12
+     * @depreacted Bc layer to support Pimcore 10 & 11, will be removed with Pimcore 12.
+     * With Pimcore 11 & 12 you can use the column names directly instead.
      *
      * Returns the version dependent field name for all system fields defined in $versionDependentSystemFields.
      *

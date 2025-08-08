@@ -85,7 +85,8 @@ class ClassDefinitionManager
                         $classSaved = $this->saveClass($existingClass, false, $force);
                         $changes[] = [$existingClass->getName(), $existingClass->getId(), $classSaved ? self::SAVED : self::SKIPPED];
                     } else {
-                        $classSaved = $this->saveClass($class, false, $force);
+                        //when creating, it should always save like as forced
+                        $classSaved = $this->saveClass($class, false, true);
                         $changes[] = [$class->getName(), $class->getId(), $classSaved ? self::CREATED : self::SKIPPED];
                     }
                 }

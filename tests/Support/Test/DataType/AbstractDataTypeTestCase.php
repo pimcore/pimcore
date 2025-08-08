@@ -99,6 +99,34 @@ abstract class AbstractDataTypeTestCase extends TestCase
         return true;
     }
 
+    abstract protected function createTestObject(array $fields = [], ?array &$params = []): Unittest;
+
+    abstract public function refreshObject(): void;
+
+    public function testMarshallDateRange(): void
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillDateRange',
+                'field' => 'dateRange',
+            ],
+        ]);
+
+        $before = $this->testObject->getDateRange();
+        $this->assertNotNull($before);
+
+        $version = $this->testObject->getLatestVersion(includingPublished: true);
+        $data = $version->loadData(true);
+
+        $after = $data->getDateRange();
+        $this->assertNotSame($before, $after);
+        $this->assertEquals($before->getEndDate(), $after->getEndDate());
+        $this->assertEquals($before->getRecurrences(), $after->getRecurrences());
+        $this->assertEquals($before->getStartDate(), $after->getStartDate());
+        $this->assertEquals($before->isEndExcluded(), $after->isEndExcluded());
+        $this->assertEquals($before->isStartExcluded(), $after->isStartExcluded());
+    }
+
     public function testBooleanSelect(): void
     {
         $this->createTestObject('booleanSelect');
@@ -106,10 +134,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->refreshObject();
         $this->testDataHelper->assertBooleanSelect($this->testObject, 'booleanSelect', $this->seed);
     }
-
-    abstract protected function createTestObject(array $fields = [], ?array &$params = []): Unittest;
-
-    abstract public function refreshObject(): void;
 
     public function testBricks(): void
     {
@@ -257,6 +281,19 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
         $this->testDataHelper->assertDate($this->testObject, 'date', $this->seed);
+    }
+
+    public function testDateRange(): void
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillDateRange',
+                'field' => 'dateRange',
+            ],
+        ]);
+
+        $this->refreshObject();
+        $this->testDataHelper->assertDatePeriod($this->testObject, 'dateRange', $this->seed);
     }
 
     public function testDateTime(): void

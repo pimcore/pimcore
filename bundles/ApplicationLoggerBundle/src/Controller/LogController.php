@@ -54,14 +54,30 @@ class LogController extends UserAwareController implements KernelControllerEvent
      */
     public function showAction(Request $request, Connection $db): JsonResponse
     {
+        $requestSource = $request->request;
+
+        //TODO: Remove the GET method support in Pimcore 12
+        if ($request->isMethod('GET')) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.5.0',
+                sprintf('Calling route "%s" (%s) via "GET" method is deprecated and will not be supported anymore in 12.
+                Please use "POST" method instead.',
+                    'pimcore_admin_bundle_applicationlogger_log_show',
+                    __METHOD__
+                )
+            );
+            $requestSource = $request->query;
+        }
+
         $this->checkPermission('application_logging');
 
         $qb = $db->createQueryBuilder();
         $qb
             ->select('*')
             ->from(ApplicationLoggerDb::TABLE_NAME)
-            ->setFirstResult($request->get('start', 0))
-            ->setMaxResults($request->get('limit', 50));
+            ->setFirstResult($requestSource->getInt('start', 0))
+            ->setMaxResults($requestSource->getInt('limit', 50));
 
         $qb->orderBy('id', 'DESC');
 
@@ -76,35 +92,35 @@ class LogController extends UserAwareController implements KernelControllerEvent
             }
         }
 
-        $priority = $request->get('priority');
+        $priority = $requestSource->getString('priority');
         if (!empty($priority)) {
             $qb->andWhere($qb->expr()->eq('priority', ':priority'));
             $qb->setParameter('priority', $priority);
         }
 
-        if ($fromDate = $this->parseDateObject($request->get('fromDate'), $request->get('fromTime'))) {
+        if ($fromDate = $this->parseDateObject($requestSource->getString('fromDate'), $requestSource->getString('fromTime'))) {
             $qb->andWhere('timestamp > :fromDate');
             $qb->setParameter('fromDate', $fromDate, Types::DATETIME_MUTABLE);
         }
 
-        if ($toDate = $this->parseDateObject($request->get('toDate'), $request->get('toTime'))) {
+        if ($toDate = $this->parseDateObject($requestSource->getString('toDate'), $requestSource->getString('toTime'))) {
             $qb->andWhere('timestamp <= :toDate');
             $qb->setParameter('toDate', $toDate, Types::DATETIME_MUTABLE);
         }
 
-        if (!empty($component = $request->get('component'))) {
+        if (!empty($component = $requestSource->getString('component'))) {
             $qb->andWhere('component = ' . $qb->createNamedParameter($component));
         }
 
-        if (!empty($relatedObject = $request->get('relatedobject'))) {
+        if (!empty($relatedObject = $requestSource->getString('relatedobject'))) {
             $qb->andWhere('relatedobject = ' . $qb->createNamedParameter($relatedObject));
         }
 
-        if (!empty($message = $request->get('message'))) {
+        if (!empty($message = $requestSource->getString('message'))) {
             $qb->andWhere('message LIKE ' . $qb->createNamedParameter('%' . $message . '%'));
         }
 
-        if (!empty($pid = $request->get('pid'))) {
+        if (!empty($pid = $requestSource->getInt('pid'))) {
             $qb->andWhere('pid LIKE ' . $qb->createNamedParameter('%' . $pid . '%'));
         }
 
@@ -210,7 +226,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
     {
         $this->checkPermission('application_logging');
 
-        $filePath = $request->get('filePath');
+        $filePath = $request->query->getString('filePath');
         $storage = Storage::get('application_log');
 
         if ($storage->fileExists($filePath)) {

@@ -67,7 +67,7 @@ Better replace the strings manually with your IDE instead of as a batch process.
 - [Deprecations] Fix deprecations defined in the [upgrade notes](../09_Upgrade_Notes/README.md), which is to be removed in Pimcore 11.
   Tip: you can search for deprecations in Symfony Profiler(Debug mode) or can run linux command `tail -f var/log/dev.log | grep 'User Deprecated'` for checking deprecations on runtime.
 
-- [Extensions] Stop using `var/config/extensions.php` for registering bundles, use `config/bundle.php` instead.
+- [Extensions] Stop using `var/config/extensions.php` for registering bundles, use `config/bundles.php` instead.
 
 - Don't use deprecated `Pimcore\Db\ConnectionInterface` interface, `Pimcore\Db\Connection` class and `Pimcore\Db\PimcoreExtensionsTrait` trait
   Use `Doctrine\DBAL\Driver\Connection` interface and `Doctrine\DBAL\Connection` class instead.

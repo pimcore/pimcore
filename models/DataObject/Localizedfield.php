@@ -29,7 +29,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
 /**
- * @method Localizedfield\Dao getDao()*
+ * @method Localizedfield\Dao getDao()
  * @method bool delete(bool $deleteQuery = true, bool $isUpdate = true)
  * @method void load(DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = [])
  * @method void save(array $params = [])

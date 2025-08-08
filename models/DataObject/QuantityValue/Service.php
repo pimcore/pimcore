@@ -27,8 +27,10 @@ class Service
     {
         try {
             $unitsArray = json_decode($json, true);
-            $baseUnits = array_column($unitsArray, 'baseunit');
+            $baseUnitsArray = array_column($unitsArray, 'baseunit');
             $units = []; //array of units to be imported;
+            $baseUnits = []; //array of base units to be imported first;
+
             foreach ($unitsArray as $unitArray) {
                 if ($unit = Unit::getById($unitArray['id'])) {
                     if ($override) { // override the existing unit definition
@@ -41,13 +43,16 @@ class Service
                 $unit->setValues($unitArray, true);
                 // we need to organize the units such that parent row are inserted before child row in db
                 // to avoid the foreign key constraint error
-                if (in_array($unitArray['id'], $baseUnits)) {
+
+                if (!$unitArray['baseunit']) {
+                    $baseUnits[] = $unit;
+                } elseif (in_array($unitArray['id'], $baseUnitsArray)) {
                     array_unshift($units, $unit);
                 } else {
                     array_push($units, $unit);
                 }
             }
-            foreach ($units as $unit) {
+            foreach (array_merge($baseUnits, $units) as $unit) {
                 $unit->save();
             }
         } catch (Exception) {

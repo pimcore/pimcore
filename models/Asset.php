@@ -286,7 +286,9 @@ class Asset extends Element\AbstractElement
                 }
 
                 RuntimeCache::set($cacheKey, $asset);
-                $asset->__setDataVersionTimestamp($asset->getModificationDate());
+                if ($asset->getModificationDate() !== null) {
+                    $asset->__setDataVersionTimestamp($asset->getModificationDate());
+                }
 
                 $asset->resetDirtyMap();
 
@@ -524,17 +526,23 @@ class Asset extends Element\AbstractElement
                     if ($oldPath && $oldPath != $this->getRealFullPath()) {
                         $differentOldPath = $oldPath;
 
+                        // First make DB updates:
+                        $this->getDao()->updateWorkspaces();
+                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
+
+                        // then update thumbnails
+                        // TODO: determine if failure on moving thumbnails should be ignored
+                        $this->relocateThumbnails($oldPath);
+
+                        // finally move the actual assets themselves
+                        // We do this last so that any prior errors don't require a rollback
+                        // on potentially a remote service.
                         try {
                             $storage->move($oldPath, $this->getRealFullPath());
                         } catch (UnableToMoveFile $e) {
                             //update children, if unable to move parent
                             $this->updateChildPaths($storage, $oldPath);
                         }
-
-                        $this->getDao()->updateWorkspaces();
-
-                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
-                        $this->relocateThumbnails($oldPath);
                     }
 
                     // lastly create a new version if necessary
@@ -563,6 +571,8 @@ class Asset extends Element\AbstractElement
 
                         usleep($waitTime); // wait specified time until we restart the transaction
                     } else {
+                        Logger::error('Unable to save Asset: ' . (string) $e);
+
                         // if the transaction still fail after $maxRetries retries, we throw out the exception
                         throw $e;
                     }
@@ -1676,18 +1686,26 @@ class Asset extends Element\AbstractElement
         }
 
         try {
+            $movedFiles = [];
             $children = $storage->listContents($oldPath, true);
             foreach ($children as $child) {
                 if ($child['type'] === 'file') {
                     $src  = $child['path'];
                     $dest = str_replace($oldPath, $newPath, '/' . $src);
                     $storage->move($src, $dest);
+                    $movedFiles[$dest] = $src;
                 }
             }
 
             $storage->deleteDirectory($oldPath);
         } catch (UnableToMoveFile $e) {
-            // noting to do
+            // rollback moved files
+            foreach ($movedFiles as $src => $dest) {
+                $storage->move($src, $dest);
+            }
+
+            // trigger database rollback
+            throw $e;
         }
     }
 

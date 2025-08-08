@@ -215,7 +215,9 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
     {
         $obj = parent::__set_state($data);
 
-        $obj->configureOptions();
+        if (Pimcore::inAdmin()) {
+            $obj->configureOptions();
+        }
 
         return $obj;
     }

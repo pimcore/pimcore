@@ -783,18 +783,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         throw new InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 
-    /**
-     * Filter by relation feature
-     *
-     *
-     */
-    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
-    {
-        $name = $params['name'] ?: $this->name;
-
-        return $this->getRelationFilterCondition($value, $operator, $name);
-    }
-
     public function getQueryColumnType(): string
     {
         return 'text';

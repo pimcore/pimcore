@@ -54,10 +54,10 @@ class TranslationController extends UserAwareController
         $this->checkPermission(self::PERMISSION);
         ini_set('display_errors', 'off');
 
-        $id = $this->sanitzeExportId((string)$request->get('id'));
+        $id = $this->sanitzeExportId($request->request->getString('id'));
         $exportFile = $this->getExportFilePath($id, false);
-        $data = $this->decodeJson($request->get('data'));
-        $source = $request->get('source');
+        $data = $this->decodeJson($request->request->getString('data'));
+        $source = $request->request->getString('source');
 
         if (!is_file($exportFile)) {
             $filesystem->dumpFile($exportFile, '');
@@ -257,7 +257,7 @@ class TranslationController extends UserAwareController
     public function wordExportDownloadAction(Request $request): Response
     {
         $this->checkPermission(self::PERMISSION);
-        $id = $this->sanitzeExportId((string)$request->get('id'));
+        $id = $this->sanitzeExportId($request->query->getString('id'));
         $exportFile = $this->getExportFilePath($id, true);
 
         // no conversion, output html file, works fine with MS Word and LibreOffice

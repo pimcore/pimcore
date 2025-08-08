@@ -48,4 +48,14 @@ final class FullPageCacheEvents
      * @var string
      */
     const PREPARE_RESPONSE = 'pimcore.cache.full_page.prepare_response';
+
+    /**
+     * Fired before the response is written to cache. Can be used to add tags
+     * to the cached response.
+     *
+     * @Event("Pimcore\Event\Cache\FullPage\PrepareTagsEvent")
+     *
+     * @var string
+     */
+    const PREPARE_TAGS = 'pimcore.cache.full_page.prepare_tags';
 }

@@ -76,7 +76,7 @@ class EditmodeResolver extends AbstractRequestResolver implements LoggerAwareInt
 
         // read editmode from request params
         $result = false;
-        if ($request->query->get('pimcore_editmode')) {
+        if ($request->query->has('pimcore_editmode')) {
             $logData['param'] = true;
             $result = true;
         }

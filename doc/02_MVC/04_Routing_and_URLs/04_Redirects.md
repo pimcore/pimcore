@@ -38,11 +38,13 @@ Each redirect has a priority.
 
 
 #### Creating Redirects When Moving or Renaming Documents
-Pimcore provides the ability to automatically create Redirects when renaming and  moving Documents (in terms of SEO and user experience). A User will be prompted with the auto redirect option on performing these actions on documents.
+Pimcore provides the ability to automatically create Redirects when renaming and moving Documents (in terms of SEO and user experience). 
 
-![Redirect Priority](../../img/redirects4.png)
-
-![Redirect Priority](../../img/redirects5.png)
+```yaml
+pimcore_seo:
+    redirects:
+        auto_create_redirects: true
+```
 
 
 #### Creating custom redirect status codes

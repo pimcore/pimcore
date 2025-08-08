@@ -52,7 +52,7 @@ expects your tests in a `tests/` directory and processes files in `src/` when ca
     </filter>
 
     <php>
-        <env name="SYMFONY_PHPUNIT_VERSION" value="7.4" />
+        <server name="SYMFONY_PHPUNIT_VERSION" value="9.6"/>
     </php>
 </phpunit>
 ``` 

@@ -139,10 +139,10 @@ As Twig does not provide a `while` control structure which is needed to iterate 
 editable, we introduced a function called `pimcore_iterate_block` to allow walking through every block element:
 
 ```twig
-{% for i in pimcore_iterate_block(pimcore_block('contentblock')) %}
-    <h2>{{ pimcore_input('subline') }}</h2>
-    {{ pimcore_wysiwyg('content') }}
-{% endfor %}
+{% pimcoreblock "contentblock" %}
+    <h2>{{ pimcore_input("subline") }}</h2>
+    {{ pimcore_wysiwyg("content") }}
+{% endpimcoreblock %}
 ```
 
 ### Tests

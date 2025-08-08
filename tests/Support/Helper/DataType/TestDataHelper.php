@@ -108,6 +108,8 @@ class TestDataHelper extends AbstractTestDataHelper
         $fd = $this->getFieldDefinition($object, $field);
         if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
             $this->assertTrue($fd->isEqual($expected, $value), sprintf('Expected isEqual() returns true for data type: %s', ucfirst($field)));
+        } else {
+            $this->fail('Expected interface EqualComparisonInterface for data type ' . $fd->getFieldType());
         }
     }
 
@@ -116,6 +118,18 @@ class TestDataHelper extends AbstractTestDataHelper
         $fd = $this->getFieldDefinition($object, $field);
         if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
             $this->assertFalse($fd->isEqual($expected, $value), sprintf('Expected isEqual() returns false for data type: %s', ucfirst($field)));
+        } else {
+            $this->fail('Expected interface EqualComparisonInterface for data type ' . $fd->getFieldType());
+        }
+    }
+
+    public function assertGetDataForGrid(Concrete $object, string $field, mixed $value, mixed $expected): void
+    {
+        $fd = $this->getFieldDefinition($object, $field);
+        if (method_exists($fd, 'getDataForGrid')) {
+            $this->assertEquals($fd->getDataForGrid($value, $object), $expected);
+        } else {
+            $this->fail('Expected method getDataForGrid() for data type ' . $fd->getFieldType());
         }
     }
 
@@ -150,6 +164,18 @@ class TestDataHelper extends AbstractTestDataHelper
         );
     }
 
+    public function assertDatePeriod(Concrete $object, string $field, int $seed = 1): void
+    {
+        $getter = 'get' . ucfirst($field);
+
+        /** @var \Carbon\CarbonPeriod $value */
+        $value = $object->$getter();
+
+        $expected = new \Carbon\CarbonPeriod('2018-04-21', '3 days', '2018-04-27');
+
+        $this->assertIsEqual($object, $field, $expected, $value);
+    }
+
     public function assertEmail(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
@@ -172,6 +198,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $expected = $language . 'content' . $seed;
 
         $this->assertIsEqual($object, $field, $expected, $value);
+        $this->assertGetDataForGrid($object, $field, $value, $expected);
         $this->assertEquals($expected, $value);
     }
 
@@ -1010,6 +1037,15 @@ class TestDataHelper extends AbstractTestDataHelper
         $date->setDate(2000, 12, 24);
 
         $object->$setter($date);
+    }
+
+    public function fillDateRange(Concrete $object, string $field, int $seed = 1): void
+    {
+        $setter = 'set' . ucfirst($field);
+
+        $period = new \Carbon\CarbonPeriod('2018-04-21', '3 days', '2018-04-27');
+
+        $object->$setter($period);
     }
 
     public function fillEmail(Concrete $object, string $field, int $seed = 1): void

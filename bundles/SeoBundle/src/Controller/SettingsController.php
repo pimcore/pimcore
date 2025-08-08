@@ -54,10 +54,7 @@ class SettingsController extends UserAwareController
     {
         $this->checkPermission('robots.txt');
 
-        $values = $request->get('data');
-        if (!is_array($values)) {
-            $values = [];
-        }
+        $values = $request->request->all('data');
 
         foreach ($values as $siteId => $robotsContent) {
             SettingsStore::set('robots.txt-' . $siteId, $robotsContent, SettingsStore::TYPE_STRING, 'robots.txt');

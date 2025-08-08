@@ -2,6 +2,7 @@ framework:
     html_sanitizer:
         sanitizers:
             pimcore.wysiwyg_sanitizer:
+                max_input_length: -1
                 allow_attributes:
                     pimcore_type: '*'
                     pimcore_id: '*'
@@ -10,7 +11,7 @@ framework:
                 allow_elements:
                     span: [ 'class', 'style', 'id' ]
                     div: [ 'class', 'style', 'id' ]
-                    p: [ 'class', 'style', 'id' ]
+                    p: [ 'class', 'style', 'id', 'dir', 'data-cell' ]
                     strong: 'class'
                     em: 'class'
                     h1: [ 'class', 'id' ]
@@ -19,14 +20,15 @@ framework:
                     h4: [ 'class', 'id' ]
                     h5: [ 'class', 'id' ]
                     h6: [ 'class', 'id' ]
+                    a: [ 'class', 'id', 'href', 'target', 'title', 'rel', 'style' ]
                     table: [ 'class', 'style', 'cellspacing', 'cellpadding', 'border', 'width', 'height', 'id' ]
                     colgroup: 'class'
                     col: [ 'class', 'style', 'id' ]
-                    thead: [ 'class', 'id' ]
-                    tbody: [ 'class', 'id' ]
-                    tr: [ 'class', 'id' ]
-                    td: [ 'class', 'id' ]
-                    th: [ 'class', 'id', 'scope' ]
+                    thead: [ 'class', 'id', 'style' ]
+                    tbody: [ 'class', 'id', 'style' ]
+                    tr: [ 'class', 'id', 'style', 'colspan', 'rowspan' ]
+                    td: [ 'class', 'id', 'style', 'colspan', 'rowspan', 'data-row', 'width', 'height' ]
+                    th: [ 'class', 'id', 'scope', 'style', 'colspan', 'rowspan', 'width', 'height' ]
                     ul: [ 'class', 'style', 'id' ]
                     li: [ 'class', 'style', 'id' ]
                     ol: [ 'class', 'style', 'id' ]
@@ -40,7 +42,8 @@ framework:
                     s: [ 'class', 'id' ]
                     iframe: [ 'frameborder', 'height', 'longdesc', 'name', 'sandbox', 'scrolling', 'src', 'title', 'width' ]
                     br: ''
-                    img: [ 'alt', 'style', 'src' ]
+                    img: [ 'class', 'alt', 'style', 'src' ]
+                    hr: ''
             pimcore.translation_sanitizer:
                 allow_attributes:
                     pimcore_type: '*'

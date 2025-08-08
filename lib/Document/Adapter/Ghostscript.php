@@ -24,6 +24,8 @@ use Pimcore\Model\Asset;
 use Pimcore\Tool\Console;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use function rtrim;
+use function sprintf;
 
 /**
  * @internal
@@ -170,7 +172,7 @@ class Ghostscript extends Adapter
         return $this->version;
     }
 
-    public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): mixed
+    public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): bool
     {
         try {
             $localFile = self::getLocalFileFromStream($this->getPdf());
@@ -178,9 +180,9 @@ class Ghostscript extends Adapter
             Console::addLowProcessPriority($cmd);
             $process = new Process($cmd);
             $process->setTimeout(240);
-            $process->run();
+            $process->mustRun();
 
-            return $this;
+            return true;
         } catch (Exception $e) {
             Logger::error((string) $e);
 
@@ -268,5 +270,15 @@ class Ghostscript extends Adapter
         unlink($textFile);
 
         return $text;
+    }
+
+    protected function getTemporaryPdfStorageFilePath(Asset $asset): string
+    {
+        return sprintf(
+            '%s/%s/pdf-thumb__%s__libreoffice-document.pdf',
+            rtrim($asset->getRealPath(), '/'),
+            $asset->getId(),
+            $asset->getId(),
+        );
     }
 }

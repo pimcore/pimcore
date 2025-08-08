@@ -503,7 +503,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             $allowedTypes = $this->getAllowedTypes();
             foreach ($allowedTypes as $allowedType) {
                 $getter = 'get' . ucfirst($allowedType);
-                /** @var DataObject\Objectbrick\Data\AbstractData $item */
                 $item = $data->$getter();
 
                 if ($item instanceof DataObject\Objectbrick\Data\AbstractData) {
@@ -819,7 +818,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         if ($value instanceof Objectbrick) {
             $result = [];
             $value = $value->getObjectVars();
-            /** @var Objectbrick\Data\AbstractData $item */
             foreach ($value as $item) {
                 if (!$item instanceof DataObject\Objectbrick\Data\AbstractData) {
                     continue;

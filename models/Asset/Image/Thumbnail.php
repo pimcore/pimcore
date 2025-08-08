@@ -315,13 +315,22 @@ final class Thumbnail implements ThumbnailInterface
         $titleText = !empty($options['title']) ? $options['title'] : (!empty($attributes['title']) ? $attributes['title'] : '');
 
         if (empty($titleText) && (!isset($options['disableAutoTitle']) || !$options['disableAutoTitle'])) {
-            if ($image->getMetadata('title')) {
+            $customTitle = Pimcore\Config::getSystemConfiguration('assets')['metadata']['title'];
+            if (!empty($customTitle) && $image->getMetadata($customTitle)) {
+                $titleText = $image->getMetadata($customTitle);
+            } elseif ($image->getMetadata('title')) {
                 $titleText = $image->getMetadata('title');
+            } else {
+                //don't change the one that is already set
             }
         }
 
         if (empty($altText) && (!isset($options['disableAutoAlt']) || !$options['disableAutoAlt'])) {
-            if ($image->getMetadata('alt')) {
+
+            $customAlt = Pimcore\Config::getSystemConfiguration('assets')['metadata']['alt'];
+            if (!empty($customAlt) && $image->getMetadata($customAlt)) {
+                $altText = $image->getMetadata($customAlt);
+            } elseif ($image->getMetadata('alt')) {
                 $altText = $image->getMetadata('alt');
             } elseif (isset($options['defaultalt'])) {
                 $altText = $options['defaultalt'];
@@ -331,18 +340,28 @@ final class Thumbnail implements ThumbnailInterface
         }
 
         // get copyright from asset
-        if (
-            (!isset($options['disableAutoCopyright']) || !$options['disableAutoCopyright']) &&
-            $image->getMetadata('copyright')
-        ) {
-            if (!empty($altText)) {
-                $altText .= ' | ';
+
+        if (!isset($options['disableAutoCopyright']) || !$options['disableAutoCopyright']) {
+
+            $customCopyright = Pimcore\Config::getSystemConfiguration('assets')['metadata']['copyright'];
+            if (!empty($customCopyright) && $image->getMetadata($customCopyright)) {
+                $copyrightText = $image->getMetadata($customCopyright);
+            } elseif ($image->getMetadata('copyright')) {
+                $copyrightText = $image->getMetadata('copyright');
+            } else {
+                // no value found, skip it
             }
-            if (!empty($titleText)) {
-                $titleText .= ' | ';
+
+            if (isset($copyrightText)) {
+                if (!empty($altText)) {
+                    $altText .= ' | ';
+                }
+                if (!empty($titleText)) {
+                    $titleText .= ' | ';
+                }
+                $altText .= ('© ' . $copyrightText);
+                $titleText .= ('© ' . $copyrightText);
             }
-            $altText .= ('© ' . $image->getMetadata('copyright'));
-            $titleText .= ('© ' . $image->getMetadata('copyright'));
         }
 
         $attributes['alt'] = $altText;

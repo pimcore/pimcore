@@ -21,6 +21,8 @@ use Generator;
 use Pimcore\Model\Document\Editable\BlockInterface;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Templating\Renderer\EditableRenderer;
+use Pimcore\Twig\TokenParser\BlockParser;
+use Pimcore\Twig\TokenParser\ManualBlockParser;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -97,5 +99,13 @@ class DocumentEditableExtension extends AbstractExtension
     public function getBlockIterator(BlockInterface $block): Generator
     {
         return $block->getIterator();
+    }
+
+    public function getTokenParsers(): array
+    {
+        return [
+            new BlockParser(),
+            new ManualBlockParser(),
+        ];
     }
 }

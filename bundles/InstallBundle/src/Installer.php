@@ -65,7 +65,7 @@ use Throwable;
  */
 class Installer
 {
-    const RECOMMENDED_BUNDLES = ['PimcoreSimpleBackendSearchBundle', 'PimcoreTinymceBundle'];
+    const RECOMMENDED_BUNDLES = ['PimcoreSimpleBackendSearchBundle'];
 
     public const INSTALLABLE_BUNDLES = [
         'PimcoreApplicationLoggerBundle' => PimcoreApplicationLoggerBundle::class,
@@ -153,8 +153,8 @@ class Installer
         'setup_database' => 'Running database setup...',
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes...',
-        'install_bundles' => 'Installing bundles...',
         'migrations' => 'Marking all migrations as done...',
+        'install_bundles' => 'Installing bundles...',
         'complete' => 'Install complete!',
     ];
 
@@ -163,8 +163,8 @@ class Installer
         'setup_database',
         'install_assets',
         'install_classes',
-        'install_bundles',
         'mark_migrations_as_done',
+        'install_bundles',
         'clear_cache',
     ];
 
@@ -470,11 +470,6 @@ class Installer
             $this->installAssets($kernel);
         }
 
-        if (!empty($this->bundlesToInstall) && in_array('install_bundles', $stepsToRun)) {
-            $this->dispatchStepEvent('install_bundles');
-            $this->installBundles();
-        }
-
         if (in_array('install_classes', $stepsToRun)) {
             $this->dispatchStepEvent('install_classes');
             $this->installClasses();
@@ -483,6 +478,11 @@ class Installer
         if (in_array('mark_migrations_as_done', $stepsToRun)) {
             $this->dispatchStepEvent('migrations');
             $this->markMigrationsAsDone();
+        }
+
+        if (!empty($this->bundlesToInstall) && in_array('install_bundles', $stepsToRun)) {
+            $this->dispatchStepEvent('install_bundles');
+            $this->installBundles();
         }
 
         if (in_array('clear_cache', $stepsToRun)) {
@@ -790,7 +790,10 @@ class Installer
                 }
             }
 
-            $db->executeStatement(implode("\n", $batchQueries));
+            // process remaining queries
+            if (count($batchQueries) > 0) {
+                $db->executeStatement(implode("\n", $batchQueries));
+            }
         }
     }
 

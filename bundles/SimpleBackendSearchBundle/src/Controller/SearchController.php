@@ -416,6 +416,12 @@ class SearchController extends UserAwareController
                 foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
                     $exceptions = '';
                     $folderSuffix = '';
+                    //if there is restriction to root path, and not other paths allowed, no need to check further
+                    if ($forbiddenPath === '/' && !$allowedPaths) {
+                        $forbiddenPathSql = [' false '];
+
+                        break;
+                    }
                     if ($allowedPaths) {
                         $exceptionsConcat = implode("%' OR fullpath LIKE '", $allowedPaths);
                         $exceptions = " OR (fullpath LIKE '" . $exceptionsConcat . "%')";
@@ -424,6 +430,12 @@ class SearchController extends UserAwareController
                     $forbiddenPathSql[] = ' (fullpath NOT LIKE ' . $db->quote($forbiddenPath . $folderSuffix . '%') . $exceptions . ') ';
                 }
                 foreach ($elementPaths['allowed'] as $allowedPaths) {
+                    //has root access, skip 'fullpath LIKE %' as it slows the search; no need to check other paths
+                    if ($allowedPaths === '/') {
+                        $allowedPathSql = [' true '];
+
+                        break;
+                    }
                     $allowedPathSql[] = ' fullpath LIKE ' . $db->quote($allowedPaths  . '%');
                 }
 
@@ -487,7 +499,7 @@ class SearchController extends UserAwareController
      */
     public function quickSearchAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $query = $this->filterQueryParam($request->get('query', ''));
+        $query = $this->filterQueryParam($request->query->getString('query'));
         if (!preg_match('/[\+\-\*"]/', $query)) {
             // check for a boolean operator (which was not filtered by filterQueryParam()),
             // if present, do not add asterisk at the end of the query
@@ -559,9 +571,8 @@ class SearchController extends UserAwareController
      */
     public function quickSearchByIdAction(Request $request, Config $config): JsonResponse
     {
-        $type = $request->get('type');
-        $id = $request->get('id');
-        $db = \Pimcore\Db::get();
+        $type = $request->query->getString('type');
+        $id = $request->query->getInt('id');
         $searcherList = new Data\Listing();
 
         $searcherList->addConditionParam('id = :id', ['id' => $id]);
