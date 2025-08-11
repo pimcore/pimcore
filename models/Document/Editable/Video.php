@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -28,7 +25,7 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Video extends Model\Document\Editable implements IdRewriterInterface
+class Video extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
     public const TYPE_ASSET = 'asset';
 
@@ -180,7 +177,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     {
         $path = $this->id;
         if ($this->id && $this->type === self::TYPE_ASSET && ($video = Asset::getById((int)$this->id))) {
-            $path = $video->getFullPath();
+            $path = $video->getRealFullPath();
         }
 
         $allowedTypes = $this->getAllowedTypes();
@@ -206,11 +203,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             'title'        => $this->title,
             'description'  => $this->description,
             'path'         => $path,
-            'poster'       => $poster ? $poster->getFullPath() : '',
+            'poster'       => $poster ? $poster->getRealFullPath() : '',
         ];
     }
 
-    protected function getDataEditmode(): mixed
+    public function getDataEditmode(): mixed
     {
         $data = $this->getData();
 
@@ -825,7 +822,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
     private function getHtml5Code(
         array $urls = [],
-        Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface $thumbnail = null
+        Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface|null $thumbnail = null
     ): string {
         $code = '';
         $video = $this->getVideoAsset();
@@ -952,7 +949,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return implode('', $durationParts);
     }
 
-    private function getProgressCode(string $thumbnail = null): string
+    private function getProgressCode(?string $thumbnail = null): string
     {
         $uid = $this->getUniqId();
         $code = '

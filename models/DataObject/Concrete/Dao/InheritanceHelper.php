@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\Concrete\Dao;
@@ -66,7 +63,7 @@ class InheritanceHelper
 
     protected ?string $queryIdField = null;
 
-    public function __construct(string $classId, string $idField = null, string $storetable = null, string $querytable = null, string $relationtable = null, string $queryIdField = null)
+    public function __construct(string $classId, ?string $idField = null, ?string $storetable = null, ?string $querytable = null, ?string $relationtable = null, ?string $queryIdField = null)
     {
         $this->db = \Pimcore\Db::get();
         $this->classId = $classId;
@@ -136,7 +133,7 @@ class InheritanceHelper
         $this->fieldDefinitions[$fieldname] = $fieldDefinition;
     }
 
-    public function addRelationToCheck(string $fieldname, DataObject\ClassDefinition\Data $fieldDefinition, array $queryfields = null): void
+    public function addRelationToCheck(string $fieldname, DataObject\ClassDefinition\Data $fieldDefinition, ?array $queryfields = null): void
     {
         if ($queryfields === null) {
             $this->relations[$fieldname] = $fieldname;
@@ -349,7 +346,7 @@ class InheritanceHelper
         return array_values($filteredResult);
     }
 
-    protected function buildTree(int $currentParentId, string $fields = '', array $parentIdGroups = null, array $params = []): array
+    protected function buildTree(int $currentParentId, string $fields = '', ?array $parentIdGroups = null, array $params = []): array
     {
         $objects = [];
         $storeTable = $this->storetable;

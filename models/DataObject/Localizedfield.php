@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject;
@@ -124,7 +121,7 @@ final class Localizedfield extends Model\AbstractModel implements
         return self::$getFallbackValues;
     }
 
-    public function __construct(array $items = null)
+    public function __construct(?array $items = null)
     {
         if ($items) {
             $this->setItems($items);
@@ -258,7 +255,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      *
      */
-    public function getLanguage(string $language = null): string
+    public function getLanguage(?string $language = null): string
     {
         if ($language) {
             return $language;
@@ -384,7 +381,7 @@ final class Localizedfield extends Model\AbstractModel implements
      * @throws Exception
      * @throws Model\Exception\NotFoundException
      */
-    public function getLocalizedValue(string $name, string $language = null, bool $ignoreFallbackLanguage = false): mixed
+    public function getLocalizedValue(string $name, ?string $language = null, bool $ignoreFallbackLanguage = false): mixed
     {
         $data = null;
         $language = $this->getLanguage($language);
@@ -498,7 +495,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @throws Exception
      */
-    public function setLocalizedValue(string $name, mixed $value, string $language = null, bool $markFieldAsDirty = true): static
+    public function setLocalizedValue(string $name, mixed $value, ?string $language = null, bool $markFieldAsDirty = true): static
     {
         if ($markFieldAsDirty) {
             $this->markFieldDirty('_self');

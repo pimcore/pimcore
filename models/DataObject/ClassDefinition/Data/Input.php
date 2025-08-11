@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -72,7 +69,7 @@ class Input extends Data implements
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, Concrete $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, ?Concrete $object = null, array $params = []): ?string
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -84,7 +81,7 @@ class Input extends Data implements
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
@@ -94,7 +91,7 @@ class Input extends Data implements
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -105,7 +102,7 @@ class Input extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -113,7 +110,7 @@ class Input extends Data implements
     /**
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data === '') {
             return null;
@@ -126,7 +123,7 @@ class Input extends Data implements
      * @param Model\DataObject\Concrete|null $object
      *
      */
-    public function getDataFromGridEditor(string $data, Concrete $object = null, array $params = []): ?string
+    public function getDataFromGridEditor(string $data, ?Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }

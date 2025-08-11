@@ -2,23 +2,20 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Db;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Result;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Exception\DriverException;
 use Exception;
 use LogicException;
 use Pimcore\Model\Element\ValidationException;
@@ -32,13 +29,25 @@ class Helper
      * @param string[] $keys If the table needs to be updated, the columns listed in this parameter will be used as criteria/condition for the where clause.
      * Typically, these are the primary key columns.
      * The values for the specified keys are read from the $data parameter.
+     *
+     * @return int|string|null last insert id or null if the insert was not successful or it was an update.
      */
-    public static function upsert(Connection $connection, string $table, array $data, array $keys, bool $quoteIdentifiers = true): int|string
-    {
+    public static function upsert(
+        Connection $connection,
+        string $table,
+        array $data,
+        array $keys,
+        bool $quoteIdentifiers = true
+    ): int|string|null {
         try {
             $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
+            $connection->insert($table, $data);
 
-            return $connection->insert($table, $data);
+            try {
+                return $connection->lastInsertId();
+            } catch (DriverException) {
+                return null;
+            }
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $exception) {
             $critera = [];
             foreach ($keys as $key) {
@@ -46,7 +55,9 @@ class Helper
                 $critera[$key] = $data[$key] ?? throw new LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
             }
 
-            return $connection->update($table, $data, $critera);
+            $connection->update($table, $data, $critera);
+
+            return null;
         }
     }
 
@@ -98,13 +109,16 @@ class Helper
         return null;
     }
 
-    public static function quoteInto(Connection $db, string $text, mixed $value, int|string|Type|null $type = null, ?int $count = null): array|string
+    /**
+     * @deprecated mixed $value is deprecated and will be changed to string in the next major version.
+     */
+    public static function quoteInto(Connection $db, string $text, mixed $value, ?int $count = null): array|string
     {
         if ($count === null) {
-            return str_replace('?', $db->quote($value, $type), $text);
+            return str_replace('?', $db->quote((string)$value), $text);
         }
 
-        return implode($db->quote($value, $type), explode('?', $text, $count + 1));
+        return implode($db->quote((string)$value), explode('?', $text, $count + 1));
     }
 
     public static function escapeLike(string $like): string

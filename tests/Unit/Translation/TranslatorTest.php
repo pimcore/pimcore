@@ -3,16 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tests\Unit\Translation;
@@ -36,6 +33,7 @@ class TranslatorTest extends TestCase
     protected array $locales = [
         'en' => '',
         'de' => 'en',
+        'de_AT' => 'de',
         'fr' => '',
     ];
 
@@ -51,10 +49,32 @@ class TranslatorTest extends TestCase
             'count_plural_n' => '%count% Items',
             'case_key' => 'Lower Case Key',
             'CASE_KEY' => 'Upper Case Key',
+            'fallback_to_EN' => 'EN',
+            'fallback_to_DE' => 'wrong: EN DB',
+            'fallback_to_YML_EN' => '',
+            'fallback_to_YML_DE' => 'wrong: EN DB',
+            'fallback_to_YML_AT' => '',
         ],
         'de' => [
             'simple_key' => 'DE Text',
             'fallback_key' => '',
+            'fallback_to_EN' => '',
+            'fallback_to_DE' => 'DE',
+            'fallback_to_YML_EN' => '',
+            'fallback_to_YML_DE' => '',
+            'fallback_to_YML_AT' => '',
+            'Text As Key' => '',
+            'text_params' => '',
+            'count_key' => '',
+        ],
+        'de_AT' => [
+            'simple_key' => 'AT Text',
+            'fallback_key' => '',
+            'fallback_to_EN' => '',
+            'fallback_to_DE' => '',
+            'fallback_to_YML_EN' => '',
+            'fallback_to_YML_DE' => '',
+            'fallback_to_YML_AT' => '',
             'Text As Key' => '',
             'text_params' => '',
             'count_key' => '',
@@ -269,5 +289,20 @@ class TranslatorTest extends TestCase
             )
         );
         $this->assertEquals('!@#$%^abc\'" 测试< edf > "', html_entity_decode($dbValue), 'Asserting translation is persisted as sanitized');
+    }
+
+    public function testFallbackBetweenYMLandDB(): void
+    {
+        $this->translator->setLocale('de_AT');
+        $this->assertEquals('YML AT', $this->translator->trans('fallback_to_YML_AT'));
+
+        //fallback to german translation when no de_AT is set
+        $this->assertEquals('DE', $this->translator->trans('fallback_to_DE'));
+        $this->assertEquals('YML DE', $this->translator->trans('fallback_to_YML_DE'));
+
+        //fallback to english translation when no de_AT nor german is set
+        $this->translator->setLocale('de_AT');
+        $this->assertEquals('EN', $this->translator->trans('fallback_to_EN'));
+        $this->assertEquals('YML EN', $this->translator->trans('fallback_to_YML_EN'));
     }
 }

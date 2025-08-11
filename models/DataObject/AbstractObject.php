@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject;
@@ -172,7 +169,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return self::$getInheritedValues;
     }
 
-    public static function doGetInheritedValues(Concrete $object = null): bool
+    public static function doGetInheritedValues(?Concrete $object = null): bool
     {
         if (self::$getInheritedValues && $object !== null) {
             $class = $object->getClass();
@@ -190,17 +187,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * Static helper to get an object by the passed ID
+     *
+     * @param array{force?: bool, ...} $params
      */
-    public static function getById(int|string $id, array $params = []): ?static
+    public static function getById(int $id, array $params = []): ?static
     {
-        if (is_string($id)) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '11.0',
-                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
-            );
-            $id = is_numeric($id) ? (int) $id : 0;
-        }
         if ($id < 1) {
             return null;
         }
@@ -233,7 +224,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $object = self::getModelFactory()->build($className);
                     RuntimeCache::set($cacheKey, $object);
                     $object->getDao()->getById($id);
-                    $object->__setDataVersionTimestamp($object->getModificationDate() ?? 0);
+                    if ($object->getModificationDate() !== null) {
+                        $object->__setDataVersionTimestamp($object->getModificationDate());
+                    }
 
                     Service::recursiveResetDirtyMap($object);
 
@@ -247,7 +240,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     throw new Model\Exception\NotFoundException('No entry for object id ' . $id);
                 }
             } catch (Model\Exception\NotFoundException $e) {
-                Logger::error($e->getMessage());
+                Logger::debug($e->getMessage());
 
                 return null;
             }
@@ -255,7 +248,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             RuntimeCache::set($cacheKey, $object);
         }
 
-        if (!$object || !static::typeMatch($object)) {
+        if (!static::typeMatch($object)) {
             return null;
         }
 
@@ -286,8 +279,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return DataObject\Listing
-     *
      * @throws Exception
      */
     public static function getList(array $config = []): Listing
@@ -295,7 +286,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $className = DataObject::class;
         // get classname
         if (!in_array(static::class, [__CLASS__, Concrete::class, Folder::class], true)) {
-            /** @var Concrete $tmpObject */
             $tmpObject = new static();
             if ($tmpObject instanceof Concrete) {
                 $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
@@ -461,7 +451,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             //clear parent data from registry
             $parentCacheKey = self::getCacheKey($this->getParentId());
             if (RuntimeCache::isRegistered($parentCacheKey)) {
-                /** @var AbstractObject $parent * */
                 $parent = RuntimeCache::get($parentCacheKey);
                 if ($parent instanceof self) {
                     $parent->setChildren(null);
@@ -698,7 +687,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @internal
      */
-    protected function update(bool $isUpdate = null, array $params = []): void
+    protected function update(?bool $isUpdate = null, array $params = []): void
     {
         $this->updateModificationInfos();
 
@@ -900,7 +889,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @throws Exception
      */
-    public function get(string $fieldName, string $language = null): mixed
+    public function get(string $fieldName, ?string $language = null): mixed
     {
         if (!$fieldName) {
             throw new Exception('Field name must not be empty.');
@@ -912,7 +901,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @throws Exception
      */
-    public function set(string $fieldName, mixed $value, string $language = null): mixed
+    public function set(string $fieldName, mixed $value, ?string $language = null): mixed
     {
         if (!$fieldName) {
             throw new Exception('Field name must not be empty.');
