@@ -370,11 +370,16 @@ final class Configuration implements ConfigurationInterface
                             ->defaultValue(30)
                         ->end()
                         ->scalarNode('archive_alternative_database')
-                            ->info('Archive database name (optional). Tables will get archived to a different database, recommended when huge amounts of logs will be generated')
+                            ->info(
+                                'Archive database name (optional). Tables will get archived to a different database,
+                                 recommended when huge amounts of logs will be generated'
+                            )
                             ->defaultValue('')
                         ->end()
                         ->scalarNode('archive_db_table_storage_engine')
-                            ->info('Database storage engine to be used for archive tables (e.g. ARCHIVE, InnoDB, Aria, ...)')
+                            ->info(
+                                'Database storage engine to be used for archive tables (e.g. ARCHIVE, InnoDB, Aria, ...)'
+                            )
                             ->defaultValue('archive')
                         ->end()
                         ->scalarNode('delete_archive_threshold')
