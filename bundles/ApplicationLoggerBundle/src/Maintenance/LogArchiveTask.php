@@ -62,19 +62,22 @@ class LogArchiveTask implements TaskInterface
 
         if ($db->fetchOne(sprintf($sql, 'COUNT(*)')) > 0) {
 
-            $storageEngine = $this->config['applicationlog']['archive_db_table_storage_engine'];
-            if (!$storageEngine) {
-                // auto-detect if no storage engine is defined in config
-                $engines = $db->fetchFirstColumn('SHOW ENGINES;');
-                $storageEngine = match(true) {
-                    in_arrayi('archive', $engines) => 'ARCHIVE',
-                    in_arrayi('aria', $engines) => 'Aria',
-                    in_arrayi('myisam', $engines) => 'MyISAM',
-                    default => 'InnoDB',
-                };
-            }
+            if (!$db->createSchemaManager()->tableExists($tablename)) {
+                $storageEngine = $this->config['applicationlog']['archive_db_table_storage_engine'];
+                if (!$storageEngine) {
+                    // auto-detect if no storage engine is defined in config
+                    $engines = $db->fetchFirstColumn(
+                        'SELECT Engine FROM information_schema.ENGINES WHERE Support IN (\'YES\',\'DEFAULT\')'
+                    );
+                    $storageEngine = match (true) {
+                        in_arrayi('archive', $engines) => 'ARCHIVE',
+                        in_arrayi('aria', $engines) => 'Aria',
+                        in_arrayi('myisam', $engines) => 'MyISAM',
+                        default => 'InnoDB',
+                    };
+                }
 
-            $db->executeQuery('CREATE TABLE IF NOT EXISTS '.$tablename." (
+                $db->executeQuery('CREATE TABLE ' . $tablename . " (
                        id BIGINT(20) NOT NULL,
                        `pid` INT(11) NULL DEFAULT NULL,
                        `timestamp` DATETIME NOT NULL,
@@ -88,7 +91,7 @@ class LogArchiveTask implements TaskInterface
                        relatedobjecttype ENUM('object', 'document', 'asset'),
                        maintenanceChecked TINYINT(1)
                     ) ENGINE = " . $storageEngine . ' ROW_FORMAT = DEFAULT;');
-
+            }
             $db->executeQuery('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));
 
             $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '.$archive_threshold.' days');

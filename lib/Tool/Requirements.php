@@ -80,7 +80,9 @@ final class Requirements
         $checks = [];
 
         // storage engines
-        $engines = $db->fetchFirstColumn('SHOW ENGINES;');
+        $engines = $db->fetchFirstColumn(
+            'SELECT Engine FROM information_schema.ENGINES WHERE Support IN (\'YES\',\'DEFAULT\')'
+        );
 
         // innodb
         $checks[] = new Check([

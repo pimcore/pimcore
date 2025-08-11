@@ -375,7 +375,7 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('archive_db_table_storage_engine')
                             ->info('Database storage engine to be used for archive tables (e.g. ARCHIVE, InnoDB, Aria, ...)')
-                            ->defaultValue('')
+                            ->defaultValue('archive')
                         ->end()
                         ->scalarNode('delete_archive_threshold')
                             ->info('Threshold for deleting application log archive tables (in months)')
