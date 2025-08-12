@@ -227,12 +227,12 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         }
 
         if ($operator === '=') {
-            $subFilter = '`' . "src_id" . '`' . " = '" . $value . "'";
-        } else if ($operator === 'LIKE' || $operator === 'IN') {
+            $subFilter = '`' . 'src_id' . '`' . " = '" . $value . "'";
+        } elseif ($operator === 'LIKE' || $operator === 'IN') {
             $values = explode(',', $value);
             // we treat LIKE and IN the same. UI sends LIKE
             $fieldConditions = array_map(function ($value) use ($name) {
-                return '`' . "src_id" . '`' . " = '" . $value . "'";
+                return '`' . 'src_id' . '`' . " = '" . $value . "'";
             }, array_filter($values));
             if (!empty($fieldConditions)) {
                 // we use OR
@@ -245,6 +245,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         }
 
         // we are looking for membership in the reverse relation
-        return $tablePrefix . "id IN (". 'SELECT dest_id FROM object_relations_'. $this->getOwnerClassId() . " WHERE ". $subFilter . " AND fieldname = '". $this->getOwnerFieldName() . "' AND ownertype = 'object'" . ")";
+        return $tablePrefix . 'id IN ('. 'SELECT dest_id FROM object_relations_'. $this->getOwnerClassId() . ' WHERE '. $subFilter . " AND fieldname = '". $this->getOwnerFieldName() . "' AND ownertype = 'object'" . ')';
     }
 }
