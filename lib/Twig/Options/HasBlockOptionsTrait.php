@@ -49,15 +49,19 @@ trait HasBlockOptionsTrait
             switch ($name) {
                 case 'limit':
                     $options->setLimit((int) $value);
+
                     break;
                 case 'reload':
                     $options->setReload((bool) $value);
+
                     break;
                 case 'default':
                     $options->setDefault((int) $value);
+
                     break;
                 case 'class':
                     $options->setClass($value);
+
                     break;
                 default:
                     break;
