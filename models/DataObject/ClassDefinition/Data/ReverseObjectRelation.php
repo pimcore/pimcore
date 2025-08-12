@@ -214,24 +214,25 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
 
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
-        // TODO: what is $name for
-        $name = $params['name'] ?: $this->name;
-
         $noResult = '1 = 0';
+
+        $tablePrefix = $params['tablePrefix'] ?? null;
+
+        if (null === $tablePrefix) {
+            throw new Exception('Function ReverseObjectRelation::getFilterConditionExt called without a table prefix.');
+        }
 
         if ($value === null || $value === 'null') {
             return $noResult;
         }
 
-        $db = \Pimcore\Db::get();
-
         if ($operator === '=') {
-            $subFilter = '`' . 'src_id' . '`' . " = '" . $db->quote($value) . "'";
-        } elseif ($operator === 'LIKE' || $operator === 'IN') {
+            $subFilter = '`' . "src_id" . '`' . " = '" . $value . "'";
+        } else if ($operator === 'LIKE' || $operator === 'IN') {
             $values = explode(',', $value);
             // we treat LIKE and IN the same. UI sends LIKE
-            $fieldConditions = array_map(function ($value) use ($db) {
-                return '`' . 'src_id' . '`' . " = '" . $db->quote($value) . "'";
+            $fieldConditions = array_map(function ($value) use ($name) {
+                return '`' . "src_id" . '`' . " = '" . $value . "'";
             }, array_filter($values));
             if (!empty($fieldConditions)) {
                 // we use OR
@@ -244,11 +245,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         }
 
         // we are looking for membership in the reverse relation
-        return 'object_' . $this->getOwnerFieldName() . '.id IN ('
-            . 'SELECT dest_id FROM object_relations_'. $this->getOwnerClassId()
-            . ' WHERE '. $subFilter
-            . " AND fieldname = '". $this->getOwnerFieldName() . "'"
-            . " AND ownertype = 'object'"
-        . ')';
+        return $tablePrefix . "id IN (". 'SELECT dest_id FROM object_relations_'. $this->getOwnerClassId() . " WHERE ". $subFilter . " AND fieldname = '". $this->getOwnerFieldName() . "' AND ownertype = 'object'" . ")";
     }
 }
