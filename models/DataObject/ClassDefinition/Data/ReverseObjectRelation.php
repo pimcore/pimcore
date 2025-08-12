@@ -231,7 +231,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         } elseif ($operator === 'LIKE' || $operator === 'IN') {
             $values = explode(',', $value);
             // we treat LIKE and IN the same. UI sends LIKE
-            $fieldConditions = array_map(function ($value) use ($name) {
+            $fieldConditions = array_map(function ($value) {
                 return '`' . 'src_id' . '`' . " = '" . $value . "'";
             }, array_filter($values));
             if (!empty($fieldConditions)) {
