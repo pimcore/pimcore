@@ -137,8 +137,7 @@
     "phpstan/phpdoc-parser": ">=2.0",
     "sabre/dav": "4.2.2",
     "symfony/symfony": "*",
-    "thecodingmachine/safe": "<2.0",
-    "php-http/discovery": "<1.20"
+    "thecodingmachine/safe": "<2.0"
   },
   "require-dev": {
     "behat/gherkin": "4.12.0",
