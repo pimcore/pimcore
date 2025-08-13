@@ -5,6 +5,7 @@
 #### [Configuration] 
 - The `pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than` parameter which was previously unused is now used to delete system temp files (var/tmp), with the default retention period of 1 day.
 - Introduced `pimcore.applicationlog.archive_db_table_storage_engine` configuration parameter to define the default engine for the `application_log_archive_x` tables. The default value is `Archive`, which have some limitation in clustered environment, please adapt according to your needs. Set it to empty string to auto-detect the engine.
+- Added `--perIteration` and `--timoutBetweenIteration` flags to `pimcore:cache:warming` which control the rate as which the cache is warmed.
 
 ## Pimcore 12.1.0
 
