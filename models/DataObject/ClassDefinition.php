@@ -223,7 +223,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         }
 
         $class = (new ClassDefinition\Listing())
-            ->setForce($force)
+            ->setForce(true)
             ->setCondition('id = ?', [$id])
             ->current();
 
