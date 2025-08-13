@@ -2,29 +2,31 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Element;
 
 use __PHP_Incomplete_Class;
+use Carbon\CarbonPeriod;
+use DatePeriod;
 use DeepCopy\DeepCopy;
 use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use DeepCopy\Matcher\PropertyTypeMatcher;
+use DeepCopy\TypeFilter\TypeFilter;
+use DeepCopy\TypeMatcher\TypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Exception;
+use InvalidArgumentException;
 use League\Csv\EscapeFormula;
 use Pimcore;
 use Pimcore\Db;
@@ -44,6 +46,7 @@ use Pimcore\Model\Element\DeepCopy\MarshalMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\DeepCopy\UnmarshalMatcher;
+use Pimcore\Model\Paginator\PaginateListingInterface;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Serialize;
 use ReflectionProperty;
@@ -456,6 +459,8 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
+     * @return array{force: bool, ...}
      */
     public static function prepareGetByIdParams(array $params): array
     {
@@ -704,60 +709,61 @@ class Service extends Model\AbstractModel
 
             return $data;
         }
-        if (is_object($data)) {
-            if ($data instanceof UnitEnum) {
-                return $data;
-            }
 
-            if ($data instanceof ElementInterface && !$initial) {
-                return self::getElementById(self::getElementType($data), $data->getId());
-            }
-
-            // if this is the initial element set the correct path and key
-            if ($data instanceof ElementInterface && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
-                $originalElement = self::getElementById(self::getElementType($data), $data->getId());
-
-                if ($originalElement) {
-                    //do not override filename for Assets https://github.com/pimcore/pimcore/issues/8316
-                    //                    if ($data instanceof Asset) {
-                    //                        /** @var Asset $originalElement */
-                    //                        $data->setFilename($originalElement->getFilename());
-                    //                    } else
-                    if ($data instanceof Document) {
-                        /** @var Document $originalElement */
-                        $data->setKey($originalElement->getKey());
-                    } elseif ($data instanceof DataObject\AbstractObject) {
-                        /** @var AbstractObject $originalElement */
-                        $data->setKey($originalElement->getKey());
-                    }
-
-                    $data->setPath($originalElement->getRealPath());
-                }
-            }
-
-            if ($data instanceof Model\AbstractModel) {
-                $properties = $data->getObjectVars();
-                foreach ($properties as $name => $value) {
-                    //do not renew object reference of ObjectAwareFieldInterface - as object might point to a
-                    //specific version of the object and must not be reloaded with DB version of object
-                    if ($data instanceof ObjectAwareFieldInterface && $name === 'object') {
-                        continue;
-                    }
-
-                    $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
-                }
-            } else {
-                $properties = method_exists($data, 'getObjectVars') ? $data->getObjectVars() : get_object_vars($data);
-                foreach ($properties as $name => $value) {
-                    if (method_exists($data, 'setObjectVar')) {
-                        $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
-                    } else {
-                        $data->$name = self::renewReferences($value, false, $name);
-                    }
-                }
-            }
-
+        if (!is_object($data)) {
             return $data;
+        }
+
+        if ($data instanceof UnitEnum || $data instanceof DatePeriod) {
+            return $data;
+        }
+
+        if ($data instanceof ElementInterface && !$initial) {
+            return self::getElementById(self::getElementType($data), $data->getId());
+        }
+
+        // if this is the initial element set the correct path and key
+        if ($data instanceof ElementInterface && !DataObject\AbstractObject::doNotRestoreKeyAndPath()) {
+            $originalElement = self::getElementById(self::getElementType($data), $data->getId());
+
+            if ($originalElement) {
+                //do not override filename for Assets https://github.com/pimcore/pimcore/issues/8316
+                //                    if ($data instanceof Asset) {
+                //                        /** @var Asset $originalElement */
+                //                        $data->setFilename($originalElement->getFilename());
+                //                    } else
+                if ($data instanceof Document) {
+                    /** @var Document $originalElement */
+                    $data->setKey($originalElement->getKey());
+                } elseif ($data instanceof DataObject\AbstractObject) {
+                    /** @var AbstractObject $originalElement */
+                    $data->setKey($originalElement->getKey());
+                }
+
+                $data->setPath($originalElement->getRealPath());
+            }
+        }
+
+        if ($data instanceof Model\AbstractModel) {
+            $properties = $data->getObjectVars();
+            foreach ($properties as $name => $value) {
+                //do not renew object reference of ObjectAwareFieldInterface - as object might point to a
+                //specific version of the object and must not be reloaded with DB version of object
+                if ($data instanceof ObjectAwareFieldInterface && $name === 'object') {
+                    continue;
+                }
+
+                $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
+            }
+        } else {
+            $properties = method_exists($data, 'getObjectVars') ? $data->getObjectVars() : get_object_vars($data);
+            foreach ($properties as $name => $value) {
+                if (method_exists($data, 'setObjectVar')) {
+                    $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
+                } else {
+                    $data->$name = self::renewReferences($value, false, $name);
+                }
+            }
         }
 
         return $data;
@@ -899,14 +905,18 @@ class Service extends Model\AbstractModel
      */
     public static function addTreeFilterJoins(array $cv, Asset\Listing|DataObject\Listing|Document\Listing $childrenList): void
     {
-        if ($cv) {
-            $childrenList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
+        $fromName = self::getListingFrom($childrenList);
+
+        if (null === $fromName) {
+            throw new InvalidArgumentException('Unsupported listing type');
+        }
+
+        if (!empty($cv)) {
+            $childrenList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv, $fromName) {
                 $where = $cv['where'] ?? null;
                 if ($where) {
                     $select->andWhere($where);
                 }
-
-                $fromAlias = $select->getQueryPart('from')[0]['alias'] ?? $select->getQueryPart('from')[0]['table'] ;
 
                 $customViewJoins = $cv['joins'] ?? null;
                 if ($customViewJoins) {
@@ -920,8 +930,10 @@ class Service extends Model\AbstractModel
 
                         $condition = $joinConfig['condition'];
                         $columns = $joinConfig['columns'];
-                        $select->add('select', $columns, true);
-                        $select->$method($fromAlias, $joinTable, $joinAlias, $condition);
+                        foreach ($columns as $column) {
+                            $select->addSelect($column);
+                        }
+                        $select->$method($fromName, $joinTable, $joinAlias, $condition);
                     }
                 }
 
@@ -1313,7 +1325,10 @@ class Service extends Model\AbstractModel
         $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $sessionId, $postfix);
         $tag = $elementType . '-session' . $postfix;
 
-        $element->setInDumpState(true);
+        if ($element instanceof ElementDumpStateInterface) {
+            $element->setInDumpState(true);
+        }
+
         $serializedData = Serialize::serialize($element);
 
         TmpStore::set($tmpStoreKey, $serializedData, $tag);
@@ -1380,6 +1395,16 @@ class Service extends Model\AbstractModel
             $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher('Pimcore\Model\DataObject\ClassDefinition'));
         }
 
+        $copier->prependTypeFilter(
+            new class implements TypeFilter {
+                public function apply($element): CarbonPeriod
+                {
+                    return CarbonPeriod::instance($element);
+                }
+            },
+            new TypeMatcher(CarbonPeriod::class),
+        );
+
         $event = new GenericEvent(null, [
             'copier' => $copier,
             'element' => $element,
@@ -1425,5 +1450,15 @@ class Service extends Model\AbstractModel
         } else {
             return $type . '_';
         }
+    }
+
+    private static function getListingFrom(PaginateListingInterface $listing): ?string
+    {
+        return match(true) {
+            $listing instanceof Asset\Listing => 'assets',
+            $listing instanceof DataObject\Listing => 'objects',
+            $listing instanceof Document\Listing => 'documents',
+            default => null,
+        };
     }
 }

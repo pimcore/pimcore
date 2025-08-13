@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -354,68 +351,58 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Concrete $object
-     *
      * @throws Exception
      */
     protected function getBlockDataFromContainer(Concrete $object, array $params = []): mixed
     {
-        $data = null;
-
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'])) {
             if ($context['containerType'] === 'fieldcollection') {
                 $fieldname = $context['fieldname'];
 
-                if ($object instanceof DataObject\Concrete) {
-                    $containerGetter = 'get' . ucfirst($fieldname);
-                    $container = $object->$containerGetter();
-                    if ($container) {
-                        $originalIndex = $context['oIndex'];
+                $containerGetter = 'get' . ucfirst($fieldname);
+                $container = $object->$containerGetter();
+                if ($container) {
+                    $originalIndex = $context['oIndex'];
 
-                        // field collection or block items
-                        if (!is_null($originalIndex)) {
-                            $items = $container->getItems();
+                    // field collection or block items
+                    if (!is_null($originalIndex)) {
+                        $items = $container->getItems();
 
-                            if ($items && count($items) > $originalIndex) {
-                                $item = $items[$originalIndex];
+                        if ($items && count($items) > $originalIndex) {
+                            $item = $items[$originalIndex];
 
-                                $getter = 'get' . ucfirst($this->getName());
-                                $data = $item->$getter();
+                            $getter = 'get' . ucfirst($this->getName());
 
-                                return $data;
-                            }
-                        } else {
-                            return null;
+                            return $item->$getter();
                         }
                     } else {
                         return null;
                     }
+                } else {
+                    return null;
                 }
             } elseif ($context['containerType'] === 'objectbrick') {
                 $fieldname = $context['fieldname'];
 
-                if ($object instanceof DataObject\Concrete) {
-                    $containerGetter = 'get' . ucfirst($fieldname);
-                    $container = $object->$containerGetter();
-                    if ($container) {
-                        $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        /** @var DataObject\Objectbrick\Data\AbstractData|null $brickData */
-                        $brickData = $container->$brickGetter();
+                $containerGetter = 'get' . ucfirst($fieldname);
+                $container = $object->$containerGetter();
+                if ($container) {
+                    $brickGetter = 'get' . ucfirst($context['containerKey']);
+                    /** @var DataObject\Objectbrick\Data\AbstractData|null $brickData */
+                    $brickData = $container->$brickGetter();
 
-                        if ($brickData) {
-                            $blockGetter = $params['blockGetter'];
-                            $data = $brickData->$blockGetter();
+                    if ($brickData) {
+                        $blockGetter = $params['blockGetter'];
 
-                            return $data;
-                        }
+                        return $brickData->$blockGetter();
                     }
                 }
             }
         }
 
-        return $data;
+        return null;
     }
 
     /**

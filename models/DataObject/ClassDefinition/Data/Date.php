@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -299,10 +296,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
                 return $condition;
             } else {
                 $maxTime = $timestamp + (86400 - 1); //specifies the top point of the range used in the condition
-                $filterField = $params['name'] ? $params['name'] : $this->getName();
-                $condition = '`' . $filterField . '` BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxTime);
+                $filterField = $params['name'] ?: $this->getName();
 
-                return $condition;
+                return '`' . $filterField . '` BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote((string)$maxTime);
             }
         }
 

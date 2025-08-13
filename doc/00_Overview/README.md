@@ -1,5 +1,5 @@
 # Pimcore Overview
-Pimcore is the leading Open Source platform for managing digital data and customer experience. It provides a fully integrated software stack for PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce.
+Pimcore is the leading Open Core platform for managing digital data and customer experience. It provides a fully integrated software stack for PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce.
 
 As a platform, Pimcore provides a solid foundation with generic functionality for all kinds of web applications and therefore 
 allows rapid application development and building customer solutions really fast. 

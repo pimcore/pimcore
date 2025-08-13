@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tests\Model\Asset;
@@ -115,7 +112,7 @@ class ListingTest extends ModelTestCase
     private function joinTags(QueryBuilder $queryBuilder, Tag ...$tags): void
     {
         $expressionBuilder = $queryBuilder->expr();
-        $tagIds = array_map(fn (Tag $tag) => $expressionBuilder->literal($tag->getId()), $tags);
+        $tagIds = array_map(fn (Tag $tag) => $expressionBuilder->literal((string)$tag->getId()), $tags);
 
         // Require assets to have one of the tags
         $queryBuilder
@@ -123,10 +120,14 @@ class ListingTest extends ModelTestCase
                 'assets',
                 'tags_assignment',
                 'ta',
-                $expressionBuilder->and(
+                $expressionBuilder->comparison(
                     $expressionBuilder->in('ta.tagid', $tagIds),
-                    $expressionBuilder->eq('ta.ctype', $expressionBuilder->literal('asset')),
-                    $expressionBuilder->eq('ta.cid', 'assets.id')
+                    'AND',
+                    $expressionBuilder->comparison(
+                        $expressionBuilder->eq('ta.ctype', $expressionBuilder->literal('asset')),
+                        'AND',
+                        $expressionBuilder->eq('ta.cid', 'assets.id')
+                    )
                 )
             )
             ->groupBy('assets.id')

@@ -2,22 +2,19 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Listing\Dao;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Exception;
+use Doctrine\DBAL\Query\QueryException;
 use Pimcore\Model\DataObject;
 
 trait QueryBuilderHelperTrait
@@ -129,8 +126,6 @@ trait QueryBuilderHelperTrait
 
     protected function prepareQueryBuilderForTotalCount(QueryBuilder $queryBuilder, string $identifierColumn): void
     {
-        $originalSelect = $queryBuilder->getQueryPart('select');
-        $queryBuilder->select('COUNT(*)');
         $queryBuilder->resetOrderBy();
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
@@ -140,29 +135,44 @@ trait QueryBuilderHelperTrait
         }
 
         if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
-            $queryBuilder->select(!empty($originalSelect) ? $originalSelect : $identifierColumn);
-
-            // Rewrite to 'SELECT COUNT(*) FROM (' . $queryBuilder . ') XYZ'
-            $innerQuery = (string)$queryBuilder;
-            $queryBuilder
-                ->resetQueryParts()
-                ->select('COUNT(*)')
-                ->from('(' . $innerQuery . ')', 'XYZ')
-            ;
+            if (!$this->isQueryBuilderPartInUse($queryBuilder, 'select')) {
+                $queryBuilder->select($identifierColumn);
+            }
         } elseif ($this->isQueryBuilderPartInUse($queryBuilder, 'distinct')) {
             $countIdentifier = 'DISTINCT ' . $identifierColumn;
             $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
+        } else {
+            $queryBuilder->select('COUNT(*)');
         }
     }
 
     protected function isQueryBuilderPartInUse(QueryBuilder $query, string $part): bool
     {
+        $mapping = [
+            'groupBy' => 'GROUP BY ',
+            'having' => 'HAVING ',
+            'distinct'=> ' DISTINCT ',
+            'select' => '^SELECT ',
+        ];
+        $pattern = '/' . $mapping[$part] . '/';
+
         try {
-            if ($query->getQueryPart($part)) {
-                return true;
+            $querySQL = $query->getSql();
+        } catch (QueryException $e) {
+            if (str_contains($e->getMessage(), 'No SELECT expressions given')) {
+                if ($part === 'select') {
+                    return false;
+                }
+                $newQueryBuilder = clone $query;
+                $newQueryBuilder->select('*');
+                $querySQL = $newQueryBuilder->getSQL();
+            } else {
+                $querySQL = $query->getSQL();
             }
-        } catch (Exception $e) {
-            // do nothing
+        }
+
+        if (preg_match($pattern, $querySQL, $matches)) {
+            return true;
         }
 
         return false;

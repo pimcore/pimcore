@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore;
@@ -587,27 +584,5 @@ final class Tool
         }
 
         return $exists;
-    }
-
-    /**
-     * @internal
-     *
-     * @return string[]
-     *
-     * @deprecated. Remove in Pimcore 12
-     */
-    public static function getCachedSymfonyEnvironments(): array
-    {
-        $dirs = glob(PIMCORE_SYMFONY_CACHE_DIRECTORY . '/*', GLOB_ONLYDIR);
-        if (($key = array_search(PIMCORE_CACHE_DIRECTORY, $dirs)) !== false) {
-            unset($dirs[$key]);
-        }
-        $dirs = array_map('basename', $dirs);
-        $dirs = array_filter($dirs, function ($value) {
-            // this filters out "old" build directories, which end with a ~
-            return !(bool) preg_match('/~$/', $value);
-        });
-
-        return array_values($dirs);
     }
 }

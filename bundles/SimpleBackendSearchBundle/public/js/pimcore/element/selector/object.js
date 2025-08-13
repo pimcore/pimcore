@@ -1,15 +1,12 @@
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
- */
+* This source file is available under the terms of the
+* Pimcore Open Core License (POCL)
+* Full copyright and license information is available in
+* LICENSE.md which is distributed with this source code.
+*
+*  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.com)
+*  @license    Pimcore Open Core License (POCL)
+*/
 
 pimcore.registerNS('pimcore.bundle.search.element.selector.object');
 
@@ -138,6 +135,8 @@ pimcore.bundle.search.element.selector.object = Class.create(pimcore.bundle.sear
             }
         }
 
+        filterClassStore.sort((class1, class2) => class1[1].localeCompare(class2[1]));
+
         var selectedClassValue = selectedClassStore.join(",");
         if(filterClassStore.length > 1) {
             filterClassStore.splice(0,0,[selectedClassValue, t("all_types")]);
@@ -152,6 +151,7 @@ pimcore.bundle.search.element.selector.object = Class.create(pimcore.bundle.sear
             typeAhead: true,
             forceSelection: true,
             selectOnFocus: true,
+            anyMatch: true,
             value: selectedClassValue,
             listeners: {
                 select: this.changeClass.bind(this)
@@ -366,6 +366,9 @@ pimcore.bundle.search.element.selector.object = Class.create(pimcore.bundle.sear
             proxy : {
                 type: 'ajax',
                 url: Routing.generate('pimcore_bundle_search_search_find'),
+                actionMethods: {
+                    read   : 'POST',
+                },
                 reader: {
                     type: 'json',
                     rootProperty: 'data'

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\QuantityValue;
@@ -27,8 +24,10 @@ class Service
     {
         try {
             $unitsArray = json_decode($json, true);
-            $baseUnits = array_column($unitsArray, 'baseunit');
+            $baseUnitsArray = array_column($unitsArray, 'baseunit');
             $units = []; //array of units to be imported;
+            $baseUnits = []; //array of base units to be imported first;
+
             foreach ($unitsArray as $unitArray) {
                 if ($unit = Unit::getById($unitArray['id'])) {
                     if ($override) { // override the existing unit definition
@@ -41,13 +40,16 @@ class Service
                 $unit->setValues($unitArray, true);
                 // we need to organize the units such that parent row are inserted before child row in db
                 // to avoid the foreign key constraint error
-                if (in_array($unitArray['id'], $baseUnits)) {
+
+                if (!$unitArray['baseunit']) {
+                    $baseUnits[] = $unit;
+                } elseif (in_array($unitArray['id'], $baseUnitsArray)) {
                     array_unshift($units, $unit);
                 } else {
                     array_push($units, $unit);
                 }
             }
-            foreach ($units as $unit) {
+            foreach (array_merge($baseUnits, $units) as $unit) {
                 $unit->save();
             }
         } catch (Exception) {

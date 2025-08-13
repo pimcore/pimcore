@@ -2,22 +2,20 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset\Document;
 
 use Exception;
 use Pimcore;
+use Pimcore\Document;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
@@ -142,11 +140,20 @@ final class ImageThumbnail implements ImageThumbnailInterface
                 $tempFile = File::getLocalTempFilePath('png');
 
                 try {
-                    $converter = \Pimcore\Document::getInstance();
+                    $converter = Document::getInstance();
                     $converter->load($this->asset);
-                    if (false !== $converter->saveImage($tempFile, $this->page)) {
-                        $storage->write($cacheFilePath, file_get_contents($tempFile));
+                    if (false === $converter->saveImage($tempFile, $this->page)) {
+                        Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
+
+                        return null;
                     }
+                    $tempFileContent = file_get_contents($tempFile);
+                    if (false === $tempFileContent) {
+                        Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
+
+                        return null;
+                    }
+                    $storage->write($cacheFilePath, $tempFileContent);
                 } finally {
                     $lock->release();
                 }

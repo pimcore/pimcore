@@ -23,7 +23,7 @@ Click on _+_ to add a new transformation, so that it look like that for example:
 in the configuration above. If you first round the corners this would be performed on the original image,
 and then the image will get resized, so the rounded corners are also resized which is not intended.
 
-To retrieve a thumbnail from an asses simply call `$asset->getThumbnail("thumbnail-name")` on the asset object, which will return
+To retrieve a thumbnail from an asset simply call `$asset->getThumbnail("thumbnail-name")` on the asset object, which will return
 an `\Pimcore\Model\Asset\Image\Thumbnail` object. The thumbnail object's `__toString()` method returns the path to the thumbnail file, for example:
 `/Car%20Images/ac%20cars/68/image-thumb__68__content/automotive-car-classic-149813.jpg`
 
@@ -102,7 +102,6 @@ The Auto Alt functionality will try to automatically fall back to any available 
 Ultimately, it would use the image `title` as `alt` value when nothing above is previously found.
 It is also possible to define an alternative metadata to be used as `alt`, `copyright`, `title` values (eg. by defining `pimcore.assets.metadata.alt` in the configuration) that would have used when the inline options are not passed.
 
-```yaml
 
 ## Usage Examples
 

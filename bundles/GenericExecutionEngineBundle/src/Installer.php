@@ -2,30 +2,25 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Constants\PermissionConstants;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Constants\TableConstants;
-use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
@@ -253,12 +248,9 @@ final class Installer extends SettingsStoreAwareInstaller
     private function executeDiffSql(Schema $newSchema): void
     {
         $currentSchema = $this->db->createSchemaManager()->introspectSchema();
-        $schemaComparator = new Comparator($this->db->getDatabasePlatform());
-        $schemaDiff = $schemaComparator->compareSchemas($currentSchema, $newSchema);
         $dbPlatform = $this->db->getDatabasePlatform();
-        if (!$dbPlatform instanceof AbstractPlatform) {
-            throw new InstallationException('Could not get database platform.');
-        }
+        $schemaComparator = new Comparator($dbPlatform);
+        $schemaDiff = $schemaComparator->compareSchemas($currentSchema, $newSchema);
 
         $sqlStatements = $dbPlatform->getAlterSchemaSQL($schemaDiff);
 

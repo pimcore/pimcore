@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -399,15 +396,16 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
                 foreach ($keys as $keyId => $values) {
                     $keyConfig = $this->getKeyConfiguration($keyId);
-                    /** @var ResourcePersistenceAwareInterface $fieldDefinition */
                     $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
-                    foreach ($values as $language => $value) {
-                        $value = $fieldDefinition->getDataForResource($value, $object, $params);
-                        if (is_array($value)) {
-                            $value = implode(',', $value);
+                    if ($fieldDefinition instanceof ResourcePersistenceAwareInterface) {
+                        foreach ($values as $value) {
+                            $value = $fieldDefinition->getDataForResource($value, $object, $params);
+                            if (is_array($value)) {
+                                $value = implode(',', $value);
+                            }
+                            $dataString .= $value . ' ';
                         }
-                        $dataString .= $value . ' ';
                     }
                 }
             }
@@ -1118,7 +1116,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $key = $this->getName();
 
         $typeDeclaration = '';
-        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+        if ($this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         }
 
