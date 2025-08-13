@@ -16,6 +16,7 @@ namespace Pimcore\Model\DataObject;
 use Exception;
 use Pimcore;
 use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\Db;
@@ -208,11 +209,25 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      */
     public static function getById(string $id, bool $force = false): ?ClassDefinition
     {
+        $cacheKey = 'class_' . $id;
+        $class = null;
+
+        if(!$force &&
+            RuntimeCache::isRegistered($cacheKey)
+        ) {
+            $class = RuntimeCache::get($cacheKey);
+        }
+
+        if($class !== null) {
+            return $class;
+        }
+
         $class = (new ClassDefinition\Listing())
+            ->setForce($force)
             ->setCondition('id = ?', [$id])
             ->current();
 
-        return $class ? $class : null;
+        return $class ?: null;
     }
 
     /**

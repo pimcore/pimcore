@@ -27,15 +27,22 @@ use Pimcore\Model\DataObject\ClassDefinition;
 class Dao extends Model\Listing\Dao\AbstractDao
 {
     /**
-     * Loads a list of object-classes for the specicifies parameters, returns an array of DataObject\ClassDefinition elements
+     * Loads a list of object-classes for the specific parameters, returns an array of DataObject\ClassDefinition elements
      *
+     * @return DataObject\ClassDefinition[]
+     *
+     * @throws \Doctrine\DBAL\Exception     *
      */
     public function load(): array
     {
         $classes = [];
 
         $classesData = $this->db->fetchAllAssociative(
-            'SELECT * FROM classes' .
+            sprintf(
+                'SELECT %s, %s FROM classes',
+                $this->db->quoteIdentifier('id'),
+                $this->db->quoteIdentifier('name')
+            ) .
             $this->getCondition() .
             $this->getOrder() .
             $this->getOffsetLimit(),
@@ -44,7 +51,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
         );
 
         foreach ($classesData as $classData) {
-            $classes[] = $this->buildModel($classData['id'], $classData['name']);
+            $classes[] = $this->buildModel(
+                $classData['id'],
+                $classData['name'],
+                $this->model->getForce()
+            );
         }
 
         $this->model->setClasses($classes);
