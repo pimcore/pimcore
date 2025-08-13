@@ -66,6 +66,7 @@ class Mail extends Email
      * @var array<string, mixed>
      */
     private array $html2textOptions = [
+        'suppress_errors' => true,
         'hard_break' => true,
         'strip_tags' => true,
         'remove_nodes' => 'head style',
