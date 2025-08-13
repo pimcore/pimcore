@@ -227,7 +227,10 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         if ($this->getPathFormatterClass() && !empty($gridData)) {
             $params['fd'] = $object->getClass()->getFieldDefinition($this->getName(), $params['context'] ?? []);
             foreach ($gridData as &$relatedElementData) {
-                $relatedElementData['fullpath'] = $this->getNicePath($relatedElementData, $object, $params);
+                $nicePath = $this->getNicePath($relatedElementData, $object, $params);
+                if ($nicePath){
+                    $relatedElementData['fullpath'] = $nicePath;
+                }
             }
             unset($relatedElementData);
         }

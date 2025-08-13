@@ -354,7 +354,10 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 if(isset($relatedElementData[4])) {
                     $pathFormatterData['published'] = $relatedElementData[4];
                 }
-                $relatedElementData[1] = $this->getNicePath($pathFormatterData, $object, $params);
+                $nicePath = $this->getNicePath($pathFormatterData, $object, $params);
+                if ($nicePath){
+                    $relatedElementData[1] = $nicePath;
+                }
             }
             unset($relatedElementData);
         }

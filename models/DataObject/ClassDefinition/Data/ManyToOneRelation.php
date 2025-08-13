@@ -283,7 +283,11 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
         if ($this->getPathFormatterClass() && !empty($gridData)) {
             $params['fd'] = $object->getClass()->getFieldDefinition($this->getName(), $params['context'] ?? []);
-            $gridData['path'] = $this->getNicePath($gridData, $object, $params);
+            $nicePath = $this->getNicePath($gridData, $object, $params);
+            if ($nicePath){
+                 $gridData['path']  = $nicePath;
+            }
+
         }
 
         return $gridData;
