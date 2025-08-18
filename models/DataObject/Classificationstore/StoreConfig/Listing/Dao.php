@@ -13,6 +13,7 @@
 namespace Pimcore\Model\DataObject\Classificationstore\StoreConfig\Listing;
 
 use Exception;
+use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -29,12 +30,24 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load(): array
     {
-        $sql = 'SELECT id FROM ' . DataObject\Classificationstore\StoreConfig\Dao::TABLE_NAME_STORES . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
-        $configsData = $this->db->fetchFirstColumn($sql, $this->model->getConditionVariables());
+        $storesData = $this->db->fetchAllAssociative(
+            'SELECT * FROM ' . DataObject\Classificationstore\StoreConfig\Dao::TABLE_NAME_STORES .
+            $this->getCondition() .
+            $this->getOrder() .
+            $this->getOffsetLimit(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes()
+        );
 
         $configData = [];
-        foreach ($configsData as $config) {
-            $configData[] = DataObject\Classificationstore\StoreConfig::getById($config);
+        $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
+
+        foreach ($storesData as $storeData) {
+            /** @var DataObject\Classificationstore\StoreConfig $store */
+            $store = $modelFactory->build(DataObject\Classificationstore\StoreConfig::class);
+            $store->getDao()->assignVariablesToModel($storeData);
+
+            $configData[] = $store;
         }
 
         $this->model->setList($configData);
