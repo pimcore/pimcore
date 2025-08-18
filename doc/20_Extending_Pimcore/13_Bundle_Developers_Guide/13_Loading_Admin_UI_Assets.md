@@ -5,7 +5,7 @@ If you need to load assets (JS, CSS) in the Admin or Editmode UI, you have 2 opt
 
 ## Pimcore Bundles
 
-Just add the [`PimcoreBundleAdminClassicInterface`](https://github.com/pimcore/pimcore/blob/11.x/lib/Extension/Bundle/PimcoreBundleAdminClassicInterface.php) to your bundle class.
+Just add the [`PimcoreBundleAdminClassicInterface`](https://github.com/pimcore/pimcore/blob/12.x/lib/Extension/Bundle/PimcoreBundleAdminClassicInterface.php) to your bundle class.
 The interface prescribes the following methods: 
 - `getJsPaths`
 - `getCssPaths`
@@ -13,7 +13,7 @@ The interface prescribes the following methods:
 - `getEditmodeCssPaths`
 
 
-In order to implement all four methods prescribed by the interface you can use the [`BundleAdminClassicTrait`](https://github.com/pimcore/pimcore/blob/11.x/lib/Extension/Bundle/Traits/BundleAdminClassicTrait.php).
+In order to implement all four methods prescribed by the interface you can use the [`BundleAdminClassicTrait`](https://github.com/pimcore/pimcore/blob/12.x/lib/Extension/Bundle/Traits/BundleAdminClassicTrait.php).
 
 ### Encore
 
@@ -56,7 +56,7 @@ class EncoreBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminCl
 
 ## Event Based
 
-You can add additional paths to load by handling the events defined on [`BundleManagerEvents`](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/BundleManagerEvents.php).
+You can add additional paths to load by handling the events defined on [`BundleManagerEvents`](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/BundleManagerEvents.php).
 For example, to load the JS file when loading the admin UI, implement an event listener like the following (please see
 [Events](../../20_Extending_Pimcore/11_Event_API_and_Event_Manager.md) for details on how to implement and register event
 listeners): 
