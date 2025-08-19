@@ -345,6 +345,10 @@ If you need to scale an image more than that, you can use the `max_scaling_facto
         max_scaling_factor: 6.0
 ```
 
+You can define the maximum automatic DPI scaling factor used for image thumbnail srcset values 
+via the `pimcore.assets.image.thumbnails.max_srcset_dpi_factor` configuration option.
+By default, this value is set to 2, and the getSrcset() method will generate values in increments of 1.
+
 ### Use in the Thumbnail Configuration:
 
 ![High Resolution](../../img/thumbnail_high_resolution.png)
