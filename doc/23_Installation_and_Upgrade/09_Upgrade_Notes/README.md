@@ -6,7 +6,7 @@
 - The `pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than` parameter which was previously unused is now used to delete system temp files (var/tmp), with the default retention period of 1 day.
 - Introduced `pimcore.applicationlog.archive_db_table_storage_engine` configuration parameter to define the default engine for the `application_log_archive_x` tables. The default value is `Archive`, which have some limitation in clustered environment, please adapt according to your needs. Set it to empty string to auto-detect the engine.
 - Added `--perIteration` and `--timoutBetweenIteration` flags to `pimcore:cache:warming` which control the rate as which the cache is warmed.
-- Introduced `pimcore.assets.image.thumbnails.max_srcset_dpi_factor` configuration parameter to define the maximum automatic DPI scaling factor for image thumbnails source set. The default value is `2` and the `getSrcset()` would return values by increments of 1.
+- Introduced `pimcore.assets.image.thumbnails.max_srcset_dpi_factor` configuration parameter to define the maximum automatic DPI scaling factor for image thumbnails source set.
 
 #### [Translation]
 - Added the possibility to pass parameters to `TranslationEvents::PRE_SAVE` and `TranslationEvents::POST_SAVE` on the `save()` function.
