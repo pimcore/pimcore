@@ -34,6 +34,23 @@ use Pimcore\Model\Element;
 class Renderlet extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface, LazyLoadingInterface
 {
     /**
+     * Known config keys of this editable.
+     * These are passed to the controller as attributes.
+     * Everything else is passed to the controller as query parameters.
+     */
+    private const CONFIG_KEYS = [
+        'controller' => true,
+        'template' => true,
+        'className' => true,
+        'height' => true,
+        'width' => true,
+        'reload' => true,
+        'title' => true,
+        'type' => true,
+        'class' => true,
+    ];
+
+    /**
      * Contains the ID of the linked object
      *
      * @internal
@@ -95,7 +112,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     {
         // TODO inject services via DI when editables are built through container
         $container = Pimcore::getContainer();
-        $editableHandler = $container->get(EditableHandler::class);
 
         if (empty($this->config['controller']) && !empty($this->config['template'])) {
             $this->config['controller'] = $container->getParameter('pimcore.documents.default_controller');
@@ -125,25 +141,30 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
                 $targetingConfigurator->configureTargetGroup($this->o);
             }
 
-            $blockparams = ['controller', 'template'];
-
-            $params = [
-                'template' => isset($this->config['template']) ? $this->config['template'] : null,
+            $attributes = [
+                'template' => $this->config['template'] ?? null,
                 'id' => $this->id,
                 'type' => $this->type,
                 'subtype' => $this->subtype,
                 'pimcore_request_source' => 'renderlet',
             ];
+            $query = [];
 
             foreach ($this->config as $key => $value) {
-                if (!array_key_exists($key, $params) && !in_array($key, $blockparams)) {
-                    $params[$key] = $value;
+                if ('controller' !== $key && !array_key_exists($key, $attributes)) {
+                    // Todo: pass only config keys as attributes in Pimcore 13
+                    $attributes[$key] = $value;
+                }
+
+                if (!isset(self::CONFIG_KEYS[$key])) {
+                    $query[$key] = $value;
                 }
             }
 
-            return $editableHandler->renderAction(
+            return $container->get(EditableHandler::class)->renderAction(
                 $this->config['controller'],
-                $params
+                $attributes,
+                $query,
             );
         }
 
