@@ -55,7 +55,9 @@ class Helper
                 $critera[$key] = $data[$key] ?? throw new LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
             }
 
-            $connection->update($table, $data, $critera);
+            if(empty($connection->update($table, $data, $critera))) {
+                throw new \RuntimeException('Could not find entry to update in "' . $table . '" for the given criteria: ' . json_encode($critera).': '. $exception->getMessage());
+            }
 
             return null;
         }
