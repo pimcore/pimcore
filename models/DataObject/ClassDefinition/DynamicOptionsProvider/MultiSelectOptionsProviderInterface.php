@@ -15,8 +15,12 @@ namespace Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-trigger_deprecation('pimcore/pimcore', '11.2', '%s is deprecated. Use %s instead.', MultiSelectOptionsProviderInterface::class, SelectOptionsProviderInterface::class);
-
+if (
+    interface_exists(MultiSelectOptionsProviderInterface::class)
+    && !is_subclass_of(SelectOptionsProviderInterface::class, MultiSelectOptionsProviderInterface::class)
+) {
+    trigger_deprecation('pimcore/pimcore', '11.2', '%s is deprecated. Use %s instead.', MultiSelectOptionsProviderInterface::class, SelectOptionsProviderInterface::class);
+}
 /**
  * @deprecated use SelectOptionsProviderInterface instead
  */
