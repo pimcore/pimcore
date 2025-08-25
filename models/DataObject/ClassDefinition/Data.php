@@ -864,11 +864,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= 'public function get' . ucfirst($key) . '(?string $language = null)' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
 
-        $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
-
         if (!$class instanceof DataObject\Fieldcollection\Definition) {
             $code .= $this->getPreGetValueHookCode($key);
         }
+
+        $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
         $code .= "\t\t" . 'return $data->getPlain();' . "\n";

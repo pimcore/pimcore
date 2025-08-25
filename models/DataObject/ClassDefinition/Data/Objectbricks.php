@@ -479,11 +479,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}' . "\n";
 
+        $code .= $this->getPreGetValueHookCode($key);
+
         if ($this instanceof PreGetDataInterface) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         }
-
-        $code .= $this->getPreGetValueHookCode($key);
 
         $code .= "\t" . 'return $data;' . "\n";
         $code .= "}\n\n";
