@@ -51,11 +51,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
         );
 
         foreach ($classesData as $classData) {
-            $classes[] = $this->buildModel(
+            $class = $this->buildModel(
                 $classData['id'],
                 $classData['name'],
                 $this->model->getForce()
             );
+            if($class) {
+                $classes[] = $class;
+            }
         }
 
         $this->model->setClasses($classes);
