@@ -137,7 +137,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
         // editmode document
         if ($this->editmodeResolver->isEditmode($request)) {
-            $document = $this->handleEditmode($document, $user, $request->getSession());
+            $document = $this->handleEditmode($document, $user, $request->getSession(), $request->query->getBoolean('pimcore_studio'));
         }
 
         // document preview
@@ -183,10 +183,13 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    protected function handleEditmode(Document $document, User $user, SessionInterface $session): Document
+    protected function handleEditmode(Document $document, User $user, SessionInterface $session, bool $isPimcoreStudio): Document
     {
         // check if there is the document in the session
-        if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId(), $session->getId())) {
+        if (
+            !$isPimcoreStudio 
+            && ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId(), $session->getId()))
+        ) {
             // if there is a document in the session use it
             $this->logger->debug('Loading editmode document {document} from session', [
                 'document' => $document->getFullPath(),
