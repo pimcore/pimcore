@@ -133,3 +133,9 @@ services:
             $debugToolbarListener: '@?web_profiler.debug_toolbar'
 
     Pimcore\Bundle\CoreBundle\EventListener\MessengerClearRuntimeCacheListener: ~
+
+    #
+    # DEPRECATIONS
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\DeprecatedRenderletAttributesListener: ~
