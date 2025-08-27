@@ -593,8 +593,6 @@ class Asset extends Element\AbstractElement
                 } else {
                     $this->dispatchEvent($failureEvent, AssetEvents::POST_ADD_FAILURE);
                 }
-
-                return $this;
             }
         );
 
