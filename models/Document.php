@@ -279,7 +279,7 @@ class Document extends Element\AbstractElement
         $updatedChildren = [];
 
         $this->retryableFunction(
-            beforeRetrayables: function () use (&$isUpdate, &$parameters) {
+            beforeRetryables: function () use (&$isUpdate, &$parameters) {
                 $preEvent = new DocumentEvent($this, $parameters);
                 if ($this->getId()) {
                     $isUpdate = true;
@@ -291,7 +291,7 @@ class Document extends Element\AbstractElement
 
                 $this->correctPath();
             },
-            retrayableFunc: function () use (&$isUpdate, &$differentOldPath, &$parameters, &$updatedChildren) {
+            retryableFunc: function () use (&$isUpdate, &$differentOldPath, &$parameters, &$updatedChildren) {
                 $this->updateModificationInfos();
 
                 if (!$isUpdate) {
@@ -604,10 +604,10 @@ class Document extends Element\AbstractElement
     {
 
         $this->retryableFunction(
-            beforeRetrayables: function () {
+            beforeRetryables: function () {
                 $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
             },
-            retrayableFunc: function () {
+            retryableFunc: function () {
                 if ($this->getId() == 1) {
                     throw new Exception('root-node cannot be deleted');
                 }

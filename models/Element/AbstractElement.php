@@ -736,21 +736,21 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
 
-    protected function retryableFunction(?callable $beforeRetrayables = null, ?callable $retrayableFunc = null,
+    protected function retryableFunction(?callable $beforeRetryables = null, ?callable $retryableFunc = null,
         ?callable $onCommit = null, ?callable $onBeforeRetry = null, ?callable $onFailure = null,
         int $maxRetries = 5): void
     {
         try {
-            if ($beforeRetrayables instanceof Closure) {
-                $beforeRetrayables();
+            if ($beforeRetryables instanceof Closure) {
+                $beforeRetryables();
             }
 
             for ($retries = 0; $retries < $maxRetries; $retries++) {
                 $this->beginTransaction();
 
                 try {
-                    if ($retrayableFunc instanceof Closure) {
-                        $retrayableFunc();
+                    if ($retryableFunc instanceof Closure) {
+                        $retryableFunc();
                     }
                     $this->commit();
                     if ($onCommit instanceof Closure) {

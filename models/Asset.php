@@ -483,7 +483,7 @@ class Asset extends Element\AbstractElement
         $updatedChildren = [];
 
         $this->retryableFunction(
-            beforeRetrayables: function () use (&$parameters, &$isUpdate) {
+            beforeRetryables: function () use (&$parameters, &$isUpdate) {
                 $preEvent = new AssetEvent($this, $parameters);
 
                 if ($this->getId()) {
@@ -500,7 +500,7 @@ class Asset extends Element\AbstractElement
                 // need for $this->update() for certain types (image, video, document)
                 $parameters['isUpdate'] = $isUpdate;
             },
-            retrayableFunc: function () use (&$parameters, &$isUpdate, &$differentOldPath, &$updatedChildren) {
+            retryableFunc: function () use (&$parameters, &$isUpdate, &$differentOldPath, &$updatedChildren) {
                 if (!$isUpdate) {
                     $this->getDao()->create();
                 }
@@ -945,10 +945,10 @@ class Asset extends Element\AbstractElement
         }
 
         $this->retryableFunction(
-            beforeRetrayables: function () {
+            beforeRetryables: function () {
                 $this->dispatchEvent(new AssetEvent($this), AssetEvents::PRE_DELETE);
             },
-            retrayableFunc: function () {
+            retryableFunc: function () {
                 $this->closeStream();
 
                 // remove children

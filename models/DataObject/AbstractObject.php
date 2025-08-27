@@ -438,10 +438,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function delete(): void
     {
         $this->retryableFunction(
-            beforeRetrayables: function () {
+            beforeRetryables: function () {
                 $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::PRE_DELETE);
             },
-            retrayableFunc: function () {
+            retryableFunc: function () {
                 $this->doDelete();
                 $this->getDao()->delete();
             },
@@ -481,7 +481,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $hideUnpublishedBackup = false;
 
         $this->retryableFunction(
-            beforeRetrayables: function () use (
+            beforeRetryables: function () use (
                 &$isUpdate,
                 &$parameters,
                 &$isDirtyDetectionDisabled
@@ -500,7 +500,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
                 $this->correctPath();
             },
-            retrayableFunc: function () use (
+            retryableFunc: function () use (
                 &$isUpdate,
                 &$parameters,
                 &$updatedChildren,
