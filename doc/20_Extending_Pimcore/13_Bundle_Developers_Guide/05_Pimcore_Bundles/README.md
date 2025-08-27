@@ -1,6 +1,6 @@
 # Pimcore Bundles
 
-Pimcore bundles follow the same rules as normal bundles, but need to implement [Pimcore\Extension\Bundle\PimcoreBundleInterface](https://github.com/pimcore/pimcore/blob/11.x/lib/Extension/Bundle/PimcoreBundleInterface.php)
+Pimcore bundles follow the same rules as normal bundles, but need to implement [Pimcore\Extension\Bundle\PimcoreBundleInterface](https://github.com/pimcore/pimcore/blob/12.x/lib/Extension/Bundle/PimcoreBundleInterface.php)
 in order to show up in the `pimcore:bundle:list` command. This gives you the following possibilities:
 
 * The bundle shows up in the `pimcore:bundle:list` command with info, if bundle can be installed or uninstalled.

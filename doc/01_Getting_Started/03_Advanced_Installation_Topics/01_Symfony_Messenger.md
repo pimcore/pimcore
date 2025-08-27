@@ -21,4 +21,4 @@ which can be re-processed later after fixing the underlying issue with command `
 
 Please follow the [Symfony docs](https://symfony.com/doc/current/messenger.html#saving-retrying-failed-messages) for options on failed jobs processing.
 
-We recommend [RabbitMQ](https://www.rabbitmq.com/#getstarted) as a message queue. For a tutorial, check this [link](https://www.rabbitmq.com/tutorials/tutorial-one-php.html). For an example configuration, refer to [this link](https://github.com/pimcore/skeleton/blob/11.x/.docker/messenger.yaml).
+We recommend [RabbitMQ](https://www.rabbitmq.com/#getstarted) as a message queue. For a tutorial, check this [link](https://www.rabbitmq.com/tutorials/tutorial-one-php.html). For an example configuration, refer to [this link](https://github.com/pimcore/skeleton/blob/2025.x/.docker/messenger.yaml).

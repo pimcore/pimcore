@@ -108,7 +108,7 @@ If you are sure you can run all available migrations after `composer update`, in
 ```
 
 ## Configuration Adaptions
-- [Security] Enable New Security Authenticator and adapt your `security.yaml` file as per changes [here](https://github.com/pimcore/demo/blob/11.x/config/packages/security.yaml):
+- [Security] Enable New Security Authenticator and adapt your `security.yaml` file as per changes [here](https://github.com/pimcore/demo/blob/2025.x/config/packages/security.yaml):
     ```
     security:
         enable_authenticator_manager: true

@@ -286,15 +286,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     }
 
     /**
-     * @param DataObject\Concrete|null $object
-     *
-     */
-    public function getDataForGrid(?array $data, ?Concrete $object = null, array $params = []): array
-    {
-        return $this->getDataForEditmode($data, $object, $params);
-    }
-
-    /**
      *
      *
      * @see Data::getVersionPreview

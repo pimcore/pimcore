@@ -849,4 +849,13 @@ final class Config extends Model\AbstractModel
             $params,
         ]));
     }
+
+    /**
+     * @internal
+     *
+     */
+    public static function getMaxDpiFactor(): int
+    {
+        return \Pimcore\Config::getSystemConfiguration('assets')['image']['thumbnails']['max_srcset_dpi_factor'];
+    }
 }

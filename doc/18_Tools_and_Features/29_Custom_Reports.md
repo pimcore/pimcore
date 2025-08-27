@@ -43,7 +43,7 @@ This class defines the user interface in the configuration of the custom report.
 the namespace `pimcore.bundle.customreports.custom.definition`, named like the adapter (e.g. `pimcore.report.custom.definition.mySource`)
 and implement the methods `initialize`, `getElement` and `getValues`. 
 
-As sample see [sql.js](https://github.com/pimcore/pimcore/blob/11.x/bundles/CustomReportsBundle/public/js/pimcore/report/custom/definitions/sql.js)
+As sample see [sql.js](https://github.com/pimcore/pimcore/blob/12.x/bundles/CustomReportsBundle/public/js/pimcore/report/custom/definitions/sql.js)
 
 #### PHP Adapter Class: 
 This class is the server side implementation of the adapter. It is responsible for retrieving and 
@@ -51,7 +51,7 @@ preparing the options, columns and data. It has to extend the abstract class `Pi
 (or implement `Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface`). 
 
 As examples see [Analytics adapter](https://github.com/pimcore/google-marketing-bundle/blob/1.x/src/CustomReport/Adapter/Analytics.php) 
-and [Sql adapter](https://github.com/pimcore/pimcore/blob/11.x/bundles/CustomReportsBundle/src/Tool/Adapter/Sql.php).
+and [Sql adapter](https://github.com/pimcore/pimcore/blob/12.x/bundles/CustomReportsBundle/src/Tool/Adapter/Sql.php).
 
 In the `getColumnsWithMetadata` method, for each column of the report disabling the configuration of `Order By`, 
 `Filterable`, `Dropdown Filterable` and `Label` is possible. Depending on the adapter implementation, these options might

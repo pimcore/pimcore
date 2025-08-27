@@ -5,6 +5,11 @@
 #### [Configuration] 
 - The `pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than` parameter which was previously unused is now used to delete system temp files (var/tmp), with the default retention period of 1 day.
 - Introduced `pimcore.applicationlog.archive_db_table_storage_engine` configuration parameter to define the default engine for the `application_log_archive_x` tables. The default value is `Archive`, which have some limitation in clustered environment, please adapt according to your needs. Set it to empty string to auto-detect the engine.
+- Added `--perIteration` and `--timoutBetweenIteration` flags to `pimcore:cache:warming` which control the rate as which the cache is warmed.
+- Introduced `pimcore.assets.image.thumbnails.max_srcset_dpi_factor` configuration parameter to define the maximum automatic DPI scaling factor for image thumbnails source set.
+
+#### [Translation]
+- Added the possibility to pass parameters to `TranslationEvents::PRE_SAVE` and `TranslationEvents::POST_SAVE` on the `save()` function.
 
 ## Pimcore 12.1.0
 
@@ -152,6 +157,11 @@ ORDER BY TABLE_NAME;
 - add function `getPagination` to `bundles/CustomReportsBundle/src/Tool/Adapter/CustomReportAdapterInterface.php`
 - change parameter types of `getData` in `bundles/CustomReportsBundle/src/Tool/Adapter/AbstractAdapter.php`
 
+## Pimcore 11.5.9
+### Security
+#### [Twig]
+- Bumped minimum requirement of `twig/twig` to `^3.21.0` to fix security and issues with `pimcoremanualblock`
+
 ## Pimcore 11.5.5
 ### General
 #### [Database]
@@ -294,7 +304,7 @@ pimcore:
 > For [environment variable consistency purposes](https://github.com/pimcore/pimcore/issues/16638) in boostrap, please fix `public/index.php` in project root by moving `Bootstrap::bootstrap();` just above `$kernel = Bootstrap::kernel()` line instead of outside the closure.
 > Alternatively can be fixed by appling this [patch](https://patch-diff.githubusercontent.com/raw/pimcore/skeleton/pull/183.patch)
 > 
-> You may also need to adjust your `bin/console` to the latest version of the skeleton: https://github.com/pimcore/skeleton/blob/11.x/bin/console
+> You may also need to adjust your `bin/console` to the latest version of the skeleton: https://github.com/pimcore/skeleton/blob/2025.x/bin/console
 
 
 ## Pimcore 11.1.0
