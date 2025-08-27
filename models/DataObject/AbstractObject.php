@@ -500,7 +500,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
                 $this->correctPath();
             },
-            retrayableFunc: function () use (&$isUpdate, &$parameters, &$updatedChildren, &$differentOldPath, &$hideUnpublishedBackup) {
+            retrayableFunc: function () use (
+                &$isUpdate,
+                &$parameters,
+                &$updatedChildren,
+                &$differentOldPath,
+                &$hideUnpublishedBackup
+            ) {
                 $hideUnpublishedBackup = self::getHideUnpublished();
                 self::setHideUnpublished(false);
 

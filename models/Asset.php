@@ -497,7 +497,8 @@ class Asset extends Element\AbstractElement
 
                 $this->correctPath();
 
-                $parameters['isUpdate'] = $isUpdate; // need for $this->update() for certain types (image, video, document)
+                // need for $this->update() for certain types (image, video, document)
+                $parameters['isUpdate'] = $isUpdate;
             },
             retrayableFunc: function () use (&$parameters, &$isUpdate, &$differentOldPath, &$updatedChildren) {
                 if (!$isUpdate) {
