@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
@@ -21,9 +18,11 @@ use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
+use Pimcore\Model\UserInterface;
 use Pimcore\Model\Version;
 use Pimcore\Security\User\UserLoader;
 use Psr\Log\LoggerAwareInterface;
@@ -94,7 +93,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             // editmode, pimcore_preview & pimcore_version
             if ($user) {
                 $document = $this->handleAdminUserDocumentParams($request, $document, $user);
-                $this->handleObjectParams($request);
+                $this->handleObjectParams($request, $user);
             }
 
             if ($document) {
@@ -108,8 +107,9 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     protected function handleVersion(Request $request, Document $document): Document
     {
-        if ($v = $request->get('v')) {
-            if ($version = Version::getById((int) $v)) {
+        $v = $request->query->getInt('v');
+        if ($v) {
+            if ($version = Version::getById($v)) {
                 if ($version->getPublic()) {
                     $this->logger->info('Setting version to {version} for document {document}', [
                         'version' => $version->getId(),
@@ -120,7 +120,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 }
             } else {
                 $this->logger->notice('Failed to load {version} for document {document}', [
-                    'version' => $request->get('v'),
+                    'version' => $v,
                     'document' => $document->getFullPath(),
                 ]);
             }
@@ -141,7 +141,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         }
 
         // document preview
-        if ($request->get('pimcore_preview')) {
+        if ($request->query->getBoolean('pimcore_preview')) {
             // get document from session
 
             // TODO originally, this was the following call. What was in this->getParam('document') and
@@ -158,9 +158,10 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         }
 
         // for version preview
-        if ($request->get('pimcore_version')) {
+        if ($request->query->has('pimcore_version')) {
+            $versionId = $request->query->getInt('pimcore_version');
             // TODO there was a check with a registry flag here - check if the main request handling is sufficient
-            $version = Version::getById((int) $request->get('pimcore_version'));
+            $version = Version::getById($versionId);
             if ($documentVersion = $version?->getData()) {
                 $document = $documentVersion;
                 $this->logger->debug('Loading version {version} for document {document} from pimcore_version parameter', [
@@ -169,13 +170,13 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 ]);
             } else {
                 $this->logger->warning('Failed to load {version} for document {document} from pimcore_version parameter', [
-                    'version' => $request->get('pimcore_version'),
+                    'version' => $versionId,
                     'document' => $document->getFullPath(),
                 ]);
 
                 throw new NotFoundHttpException(
                     sprintf('Failed to load %s for document %s from pimcore_version parameter',
-                        $request->get('pimcore_version'), $document->getFullPath()));
+                        $versionId, $document->getFullPath()));
             }
         }
 
@@ -212,20 +213,75 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    protected function handleObjectParams(Request $request): void
+    protected function handleObjectParams(Request $request, UserInterface $user): void
     {
-        // object preview
-        if ($objectId = $request->get('pimcore_object_preview')) {
-            if ($object = Service::getElementFromSession('object', $objectId, $request->getSession()->getId())) {
-                $this->logger->debug('Loading object {object} ({objectId}) from session', [
-                    'object' => $object->getFullPath(),
-                    'objectId' => $object->getId(),
-                ]);
 
-                // TODO remove \Pimcore\Cache\Runtime
-                // add the object to the registry so every call to DataObject::getById() will return this object instead of the real one
-                RuntimeCache::set('object_' . $object->getId(), $object);
-            }
+        if ($request->query->has('pimcore_studio_preview')) {
+            $this->handleStudioPreview($request->query->getInt('pimcore_object_preview'), $user);
+
+            return;
         }
+
+        $this->handleClassicAdminPreview($request, $request->query->getInt('pimcore_object_preview'));
+    }
+
+    private function handleClassicAdminPreview(Request $request, int $id): void
+    {
+        $object = Service::getElementFromSession('object', $id, $request->getSession()->getId());
+        if (!$object instanceof Concrete) {
+            return;
+        }
+
+        $this->logObjectLoading(
+            $object,
+            'Loading object {object} ({objectId}) for classic admin preview from session'
+        );
+
+        $this->cacheObject($object);
+    }
+
+    private function handleStudioPreview(int $id, UserInterface $user): void
+    {
+        $object = $this->getLatestVersion($id, $user);
+        if (!$object instanceof Concrete) {
+            return;
+        }
+
+        $this->logObjectLoading(
+            $object,
+            'Loading object {object} ({objectId}) for studio preview'
+        );
+
+        $this->cacheObject($object);
+    }
+
+    private function getLatestVersion(int $id, UserInterface $user): ?Concrete
+    {
+        $dataObject = Service::getElementById('object', $id);
+
+        if (!$dataObject instanceof Concrete) {
+            return null;
+        }
+
+        $version = $dataObject->getLatestVersion($user->getId());
+
+        if ($version === null || !$version->getData() instanceof Concrete) {
+            return $dataObject;
+        }
+
+        return $version->getData();
+    }
+
+    private function logObjectLoading(Concrete $object, string $message): void
+    {
+        $this->logger->debug($message, [
+            'object' => $object->getFullPath(),
+            'objectId' => $object->getId(),
+        ]);
+    }
+
+    private function cacheObject(Concrete $object): void
+    {
+        RuntimeCache::set('object_' . $object->getId(), $object);
     }
 }

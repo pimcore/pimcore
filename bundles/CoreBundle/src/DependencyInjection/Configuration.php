@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
@@ -134,7 +131,8 @@ final class Configuration implements ConfigurationInterface
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
         $this->addDependencyNode($rootNode);
-        $this->addChromiumNode($rootNode);
+        $this->addProductRegistrationNode($rootNode);
+
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
             'video_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/video_thumbnails',
@@ -178,7 +176,7 @@ final class Configuration implements ConfigurationInterface
                 ->children()
                     ->integerNode('cleanup_tmp_files_atime_older_than')
                         ->info('Integer value in seconds.')
-                        ->defaultValue(7_776_000) // 90 days
+                        ->defaultValue(86400) // 1 day
                     ->end()
                     ->integerNode('cleanup_profiler_files_atime_older_than')
                         ->info('Integer value in seconds.')
@@ -320,6 +318,21 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('applicationlog')
                 ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('loggers')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('db')
+                                    ->children()
+                                        ->variableNode('min_level_or_list')
+                                            ->defaultValue('debug')
+                                        ->end()
+                                        ->scalarNode('max_level')
+                                            ->defaultValue('emergency')
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
                         ->arrayNode('mail_notification')
                             ->children()
                                 ->booleanNode('send_log_summary')
@@ -333,7 +346,18 @@ final class Configuration implements ConfigurationInterface
                                     ->defaultFalse()
                                 ->end()
                                 ->scalarNode('filter_priority')
-                                    ->info('Filter threshold for email summary, choose one of: 7 (debug), 6 (info), 5 (notice), 4 (warning), 3 (error), 2 (critical), 1 (alert) ,0 (emerg)')
+                                    ->info(
+                                        'Filter threshold for email summary, choose one of: '
+                                        . '8 (debug),'
+                                        . '7 (info),'
+                                        . '6 (notice),'
+                                        . '5 (warning),'
+                                        . '4 (error),'
+                                        . '3 (critical),'
+                                        . '2 (alert),'
+                                        . '1 (emerg).'
+                                        .' You can use the integer or the string representation.'
+                                    )
                                     ->defaultNull()
                                 ->end()
                                 ->scalarNode('mail_receiver')
@@ -346,8 +370,17 @@ final class Configuration implements ConfigurationInterface
                             ->defaultValue(30)
                         ->end()
                         ->scalarNode('archive_alternative_database')
-                            ->info('Archive database name (optional). Tables will get archived to a different database, recommended when huge amounts of logs will be generated')
+                            ->info(
+                                'Archive database name (optional). Tables will get archived to a different database,
+                                 recommended when huge amounts of logs will be generated'
+                            )
                             ->defaultValue('')
+                        ->end()
+                        ->scalarNode('archive_db_table_storage_engine')
+                            ->info(
+                                'DB storage engine to be used for archive tables (e.g. ARCHIVE, InnoDB, Aria, ...)'
+                            )
+                            ->defaultValue('archive')
                         ->end()
                         ->scalarNode('delete_archive_threshold')
                             ->info('Threshold for deleting application log archive tables (in months)')
@@ -447,6 +480,7 @@ final class Configuration implements ConfigurationInterface
                                                 ->booleanNode('preserveMetaData')->end()
                                                 ->booleanNode('rasterizeSVG')->end()
                                                 ->booleanNode('downloadable')->end()
+                                                ->booleanNode('forceProcessICCProfiles')->end()
                                                 ->integerNode('modificationDate')->end()
                                                 ->integerNode('creationDate')->end()
                                                 ->booleanNode('preserveAnimation')->end()
@@ -604,6 +638,10 @@ final class Configuration implements ConfigurationInterface
                                 ->defaultTrue()
                                 ->info('Scan PDF documents for unsafe JavaScript.')
                             ->end()
+                            ->enumNode('open_pdf_in_new_tab')
+                                ->values(['all-pdfs', 'only-unsafe', 'none'])
+                                ->defaultValue('only-unsafe')
+                            ->end()
                         ->end()
                     ->end()
                     ->arrayNode('versions')
@@ -650,6 +688,18 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('metadata')
                 ->addDefaultsIfNotSet()
                     ->children()
+                        ->scalarNode('alt')
+                            ->info('Set to replace the default metadata used for auto alt functionality in frontend')
+                            ->defaultValue('')
+                        ->end()
+                        ->scalarNode('copyright')
+                            ->info('Set to replace the default metadata used for copyright in frontend')
+                            ->defaultValue('')
+                        ->end()
+                        ->scalarNode('title')
+                            ->info('Set to replace the default metadata used for title in frontend')
+                            ->defaultValue('')
+                        ->end()
                         ->arrayNode('predefined')
                             ->addDefaultsIfNotSet()
                             ->children()
@@ -776,6 +826,9 @@ final class Configuration implements ConfigurationInterface
                                         ->children()
                                             ->scalarNode('id')->end()
                                             ->scalarNode('group')->end()
+                                            ->booleanNode('adminOnly')
+                                                ->defaultFalse()
+                                            ->end()
                                             ->scalarNode('useTraits')->end()
                                             ->scalarNode('implementsInterfaces')->end()
                                             ->arrayNode('selectOptions')
@@ -2008,6 +2061,9 @@ final class Configuration implements ConfigurationInterface
                         ->scalarNode('base_url')
                             ->defaultValue('http://gotenberg:3000')
                         ->end()
+                        ->scalarNode('ping_cache_ttl')
+                            ->defaultValue(60)
+                        ->end()
                     ->end()
                 ->end()
             ->end();
@@ -2028,22 +2084,20 @@ final class Configuration implements ConfigurationInterface
         ->end();
     }
 
-    /**
-     * @deprecated
-     */
-    private function addChromiumNode(ArrayNodeDefinition $rootNode): void
+    private function addProductRegistrationNode(ArrayNodeDefinition $rootNode): void
     {
-        $rootNode
-            ->children()
-                ->arrayNode('chromium')
-                    ->setDeprecated('pimcore/pimcore', '11.2', 'Chromium service is deprecated and will be removed in Pimcore 12. Use Gotenberg instead.')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('uri')
-                            ->defaultNull()
-                        ->end()
+        $rootNode->children()
+            ->arrayNode('product_registration')
+                ->children()
+                    ->scalarNode('instance_identifier')
+                        ->info('Unique identifier of that Pimcore instance. Will be generated during install.')
+                    ->end()
+                    ->scalarNode('product_key')
+                        ->info('Product registration key obtained during product registration. ' .
+                               'It is based on `instance_identifier` and `pimcore.encryption.secret`.')
                     ->end()
                 ->end()
-            ->end();
+            ->end()
+        ;
     }
 }

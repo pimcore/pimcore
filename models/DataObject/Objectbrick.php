@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject;
@@ -276,23 +273,24 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         $item = $this->get($brick);
         if ($item && !$item->isLazyKeyLoaded($field)) {
             $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($brick);
-            /** @var Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface $fieldDef */
             $fieldDef = $brickDef->getFieldDefinition($field);
-            $context = [];
-            $context['object'] = $this->getObject();
-            $context['containerType'] = 'objectbrick';
-            $context['containerKey'] = $brick;
-            $context['brickField'] = $brickField;
-            $context['fieldname'] = $field;
-            $params['context'] = $context;
+            if ($fieldDef instanceof DataObject\ClassDefinition\Data\CustomResourcePersistingInterface) {
+                $context = [];
+                $context['object'] = $this->getObject();
+                $context['containerType'] = 'objectbrick';
+                $context['containerKey'] = $brick;
+                $context['brickField'] = $brickField;
+                $context['fieldname'] = $field;
+                $params['context'] = $context;
 
-            $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
-            DataObject::disableDirtyDetection();
-            $data = $fieldDef->load($this->$brick, $params);
-            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+                $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+                DataObject::disableDirtyDetection();
+                $data = $fieldDef->load($this->$brick, $params);
+                DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
-            $item->setObjectVar($field, $data);
-            $item->markLazyKeyAsLoaded($field);
+                $item->setObjectVar($field, $data);
+                $item->markLazyKeyAsLoaded($field);
+            }
         }
     }
 

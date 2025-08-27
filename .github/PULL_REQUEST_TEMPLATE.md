@@ -1,7 +1,7 @@
 <!--
 
 Before working on a contribution, you must determine on which branch you need to work:
-- Bug fix: choose the latest maintenance branch `11.4`
+- Bug fix: choose the latest maintenance branch `11.5`
 - Feature/Improvement: choose `11.x` 
 
 > All bug fixes merged into the latest maintenance branch are also merged to the current dev branch (`11.x`) on a regular basis.

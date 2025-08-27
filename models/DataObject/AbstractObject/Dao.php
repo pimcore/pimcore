@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\AbstractObject;
@@ -32,7 +29,6 @@ class Dao extends Model\Element\Dao
     /**
      * Get the data for the object from database for the given id
      *
-     *
      * @throws Model\Exception\NotFoundException
      */
     public function getById(int $id): void
@@ -51,7 +47,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Get the data for the object from database for the given path
-     *
      *
      * @throws Model\Exception\NotFoundException
      */
@@ -84,10 +79,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     *
      * @throws \Exception
      */
-    public function update(bool $isUpdate = null): void
+    public function update(?bool $isUpdate = null): void
     {
         $object = $this->model->getObjectVars();
 
@@ -132,7 +126,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Deletes object from database
-     *
      */
     public function delete(): void
     {
@@ -150,8 +143,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Updates the paths for children, children's properties and children's permissions in the database
-     *
-     *
      *
      * @internal
      */
@@ -184,7 +175,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * deletes all properties for the object from database
-     *
      */
     public function deleteAllProperties(): void
     {
@@ -287,7 +277,8 @@ class Dao extends Model\Element\Dao
         array $objectTypes = [
             DataObject::OBJECT_TYPE_OBJECT,
             DataObject::OBJECT_TYPE_VARIANT,
-            DataObject::OBJECT_TYPE_FOLDER],
+            DataObject::OBJECT_TYPE_FOLDER,
+        ],
         ?bool $includingUnpublished = null,
         ?User $user = null
     ): bool {
@@ -319,11 +310,12 @@ class Dao extends Model\Element\Dao
             $sql .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
         }
 
-        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
+        $includingUnpublished ??= !DataObject::doHideUnpublished();
+        if (!$includingUnpublished) {
             $sql .= ' AND published = 1';
         }
 
-        if (!empty($objectTypes)) {
+        if ($objectTypes) {
             $sql .= " AND `type` IN ('" . implode("','", $objectTypes) . "')";
         }
 
@@ -358,11 +350,12 @@ class Dao extends Model\Element\Dao
             $params[] = $this->model->getId();
         }
 
-        if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
+        $includingUnpublished ??= !DataObject::doHideUnpublished();
+        if (!$includingUnpublished) {
             $sql .= ' AND published = 1';
         }
 
-        if (!empty($objectTypes)) {
+        if ($objectTypes) {
             $sql .= " AND `type` IN ('" . implode("','", $objectTypes) . "')";
         }
 
@@ -375,19 +368,22 @@ class Dao extends Model\Element\Dao
 
     /**
      * returns the amount of directly children (not recursivly)
-     *
-     * @param Model\User|null $user
-     *
      */
-    public function getChildAmount(?array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], User $user = null): int
-    {
+    public function getChildAmount(
+        ?array $objectTypes = [
+            DataObject::OBJECT_TYPE_OBJECT,
+            DataObject::OBJECT_TYPE_VARIANT,
+            DataObject::OBJECT_TYPE_FOLDER,
+        ],
+        ?User $user = null
+    ): int {
         if (!$this->model->getId()) {
             return 0;
         }
 
         $query = 'SELECT COUNT(*) AS count FROM objects o WHERE parentId = ?';
 
-        if (!empty($objectTypes)) {
+        if ($objectTypes) {
             $query .= sprintf(' AND `type` IN (\'%s\')', implode("','", $objectTypes));
         }
 
@@ -409,8 +405,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     *
-     *
      * @throws Model\Exception\NotFoundException
      */
     public function getTypeById(int $id): array
@@ -461,15 +455,10 @@ class Dao extends Model\Element\Dao
             $path = '';
         }
 
-        $classIds = [];
-        do {
-            $classId = $this->db->fetchOne(
-                "SELECT classId FROM objects WHERE `path` like ? AND `type` = 'object'".($classIds ? ' AND classId NOT IN ('.rtrim(str_repeat('?,', count($classIds)), ',').')' : '').' LIMIT 1',
-                array_merge([Helper::escapeLike($path).'/%'], $classIds));
-            if ($classId) {
-                $classIds[] = $classId;
-            }
-        } while ($classId);
+        $classIds = $this->db->fetchFirstColumn(
+            "SELECT DISTINCT classId FROM objects WHERE `path` like ? AND `type` = 'object'",
+            [Helper::escapeLike($path) . '/%']
+        );
 
         $classes = [];
         foreach ($classIds as $classId) {
@@ -495,8 +484,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     *
-     *
      * @throws \Doctrine\DBAL\Exception
      */
     public function isInheritingPermission(string $type, array $userIds): int
@@ -519,7 +506,7 @@ class Dao extends Model\Element\Dao
             }
 
             // exception for list permission
-            if (empty($permissionsParent) && $type === 'list') {
+            if ($type === 'list') {
                 // check for children with permissions
                 $path = $this->model->getRealFullPath() . '/';
                 if ($this->model->getId() == 1) {
