@@ -67,7 +67,7 @@ class Listing
             foreach ($files as $file) {
                 $realFile = realpath($file);
                 if ($realFile) {
-                   $filenames[] = $realFile;
+                    $filenames[] = $realFile;
                 }
             }
         }
