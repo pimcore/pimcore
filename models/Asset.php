@@ -737,7 +737,7 @@ class Asset extends Element\AbstractElement
 
                 // delete old legacy file if exists
                 $dbPath = $this->getDao()->getCurrentFullPath();
-                if (!empty($dbPath) && $dbPath !== $path && $storage->fileExists($dbPath)) {
+                if ($dbPath && $dbPath !== $path && $storage->fileExists($dbPath)) {
                     $storage->delete($dbPath);
                 }
 
