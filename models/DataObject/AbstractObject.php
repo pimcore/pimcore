@@ -481,7 +481,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $hideUnpublishedBackup = false;
 
         $this->retryableFunction(
-            beforeRetrayables: function () use (&$isUpdate, &$parameters, &$isDirtyDetectionDisabled) {
+            beforeRetrayables: function () use (
+                &$isUpdate,
+                &$parameters,
+                &$isDirtyDetectionDisabled
+            ) {
                 $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
                 $preEvent = new DataObjectEvent($this, $parameters);
                 if ($this->getId()) {
@@ -535,7 +539,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     throw new Element\ValidationException('unique constraint violation', 0, $e);
                 }
             },
-            onCommit: function () use (&$isUpdate, &$parameters, &$differentOldPath, &$updatedChildren, &$isDirtyDetectionDisabled) {
+            onCommit: function () use (
+                &$isUpdate,
+                &$parameters,
+                &$differentOldPath,
+                &$updatedChildren,
+                &$isDirtyDetectionDisabled
+            ) {
                 $additionalTags = [];
                 if (isset($updatedChildren)) {
                     foreach ($updatedChildren as $objectId) {
