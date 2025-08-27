@@ -66,7 +66,9 @@ class Listing
             $files = glob($fieldCollectionFolder . '/*.php');
             foreach ($files as $file) {
                 $realFile = realpath($file);
-                $filenames[] = $realFile;
+                if ($realFile) {
+                   $filenames[] = $realFile;
+                }
             }
         }
 
