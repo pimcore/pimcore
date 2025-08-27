@@ -62,19 +62,16 @@ class Listing
             PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY . '/objectbricks',
         ])));
 
-        $loadedFiles = [];
-
         foreach ($objectBricksFolders as $objectBricksFolder) {
             $files = glob($objectBricksFolder . '/*.php');
             foreach ($files as $file) {
                 $realFile = realpath($file);
-                if (!isset($loadedFiles[$realFile])) {
-                    $loadedFiles[$realFile] = true;
-                    $filenames[] = $file;
+                if ($realFile) {
+                    $filenames[] = $realFile;
                 }
             }
         }
 
-        return $filenames;
+        return array_unique($filenames);
     }
 }
