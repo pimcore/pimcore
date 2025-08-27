@@ -62,19 +62,14 @@ class Listing
             PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY . '/fieldcollections',
         ])));
 
-        $loadedFiles = [];
-
         foreach ($fieldCollectionFolders as $fieldCollectionFolder) {
             $files = glob($fieldCollectionFolder . '/*.php');
             foreach ($files as $file) {
                 $realFile = realpath($file);
-                if (!isset($loadedFiles[$realFile])) {
-                    $loadedFiles[$realFile] = true;
-                    $filenames[] = $file;
-                }
+                $filenames[] = $realFile;
             }
         }
 
-        return $filenames;
+        return array_unique($filenames);
     }
 }
