@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Console;
@@ -77,6 +74,17 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
                 throw new RuntimeException(
                     'In maintenance mode - set the flag --ignore-maintenance-mode to force execution!'
                 );
+            }
+
+            if ($event->getInput()->hasOption('time-limit')) {
+                // this is to set the database wait_timeout according to the --time-limit option provided by messenger:consume
+                // to ensure the worker has a working database connection over the entire lifetime of the process
+                $timeLimit = (int) $event->getInput()->getOption('time-limit');
+                $db = Pimcore\Db::get();
+                $result = $db->fetchAssociative("SHOW VARIABLES LIKE 'wait_timeout'");
+                if ($result['Value'] < $timeLimit) {
+                    $db->executeQuery('SET SESSION wait_timeout = ' . $timeLimit);
+                }
             }
 
             if ($event->getInput()->getOption('maintenance-mode')) {

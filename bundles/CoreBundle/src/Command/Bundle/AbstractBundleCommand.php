@@ -3,16 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
@@ -36,7 +33,7 @@ abstract class AbstractBundleCommand extends AbstractCommand
     /**
      * @return $this
      */
-    protected function configureDescriptionAndHelp(string $description, string $help = null): static
+    protected function configureDescriptionAndHelp(string $description, ?string $help = null): static
     {
         if (null === $help) {
             $help = 'Bundle can be passed as fully qualified class name or as bundle short name (e.g. <comment>PimcoreEcommerceFrameworkBundle</comment>).';

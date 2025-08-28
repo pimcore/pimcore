@@ -3,16 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CoreBundle\Migrations;
@@ -40,10 +37,10 @@ final class Version20221003115124 extends AbstractMigration
         $this->addSql('ALTER TABLE objects CHANGE o_modificationDate modificationDate int(11) unsigned DEFAULT NULL NULL;');
         $this->addSql('ALTER TABLE objects CHANGE o_userOwner userOwner int(11) unsigned DEFAULT NULL NULL;');
         $this->addSql('ALTER TABLE objects CHANGE o_userModification userModification int(11) unsigned DEFAULT NULL NULL;');
-        $this->addSql('ALTER TABLE objects CHANGE o_classId classId varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;');
-        $this->addSql('ALTER TABLE objects CHANGE o_className className varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;');
-        $this->addSql("ALTER TABLE objects CHANGE o_childrenSortBy childrenSortBy enum('key','index') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE o_childrenSortOrder childrenSortOrder enum('ASC','DESC') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
+        $this->addSql('ALTER TABLE objects CHANGE o_classId classId varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE o_className className varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;');
+        $this->addSql("ALTER TABLE objects CHANGE o_childrenSortBy childrenSortBy enum('key','index') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;");
+        $this->addSql("ALTER TABLE objects CHANGE o_childrenSortOrder childrenSortOrder enum('ASC','DESC') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;");
         $this->addSql('ALTER TABLE objects CHANGE o_versionCount versionCount int(10) unsigned DEFAULT 0 NOT NULL;');
 
         $tableListObject = $this->connection->fetchAllAssociative("SHOW TABLES LIKE 'object_brick_%'");
@@ -80,10 +77,10 @@ final class Version20221003115124 extends AbstractMigration
         $this->addSql('ALTER TABLE objects CHANGE modificationDate o_modificationDate int(11) unsigned DEFAULT NULL NULL;');
         $this->addSql('ALTER TABLE objects CHANGE userOwner o_userOwner int(11) unsigned DEFAULT NULL NULL;');
         $this->addSql('ALTER TABLE objects CHANGE userModification o_userModification int(11) unsigned DEFAULT NULL NULL;');
-        $this->addSql('ALTER TABLE objects CHANGE classId o_classId varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;');
-        $this->addSql('ALTER TABLE objects CHANGE className o_className varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;');
-        $this->addSql("ALTER TABLE objects CHANGE childrenSortBy o_childrenSortBy enum('key','index') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE childrenSortOrder o_childrenSortOrder enum('ASC','DESC') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
+        $this->addSql('ALTER TABLE objects CHANGE classId o_classId varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE className o_className varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;');
+        $this->addSql("ALTER TABLE objects CHANGE childrenSortBy o_childrenSortBy enum('key','index') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;");
+        $this->addSql("ALTER TABLE objects CHANGE childrenSortOrder o_childrenSortOrder enum('ASC','DESC') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL NULL;");
         $this->addSql('ALTER TABLE objects CHANGE versionCount o_versionCount int(10) unsigned DEFAULT 0 NOT NULL;');
 
         $tableListObject = $this->connection->fetchAllAssociative("SHOW TABLES LIKE 'object_brick_%'");

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -48,8 +45,7 @@ class Relations extends Model\Document\Editable implements Iterator, IdRewriterI
 
     public function setElements(): static
     {
-        if (empty($this->elements)) {
-            $this->elements = [];
+        if (!$this->elements) {
             foreach ($this->elementIds as $elementId) {
                 $el = Element\Service::getElementById($elementId['type'], $elementId['id']);
                 if ($el instanceof Element\ElementInterface) {
@@ -104,9 +100,7 @@ class Relations extends Model\Document\Editable implements Iterator, IdRewriterI
         $return = '';
 
         foreach ($this->getElements() as $element) {
-            if ($element instanceof Element\ElementInterface) {
-                $return .= Element\Service::getElementType($element) . ': ' . $element->getFullPath() . '<br />';
-            }
+            $return .= Element\Service::getElementType($element) . ': ' . $element->getFullPath() . '<br />';
         }
 
         return $return;
@@ -165,15 +159,13 @@ class Relations extends Model\Document\Editable implements Iterator, IdRewriterI
         $dependencies = [];
 
         foreach ($this->elements as $element) {
-            if ($element instanceof Element\ElementInterface) {
-                $elementType = Element\Service::getElementType($element);
-                $key = $elementType . '_' . $element->getId();
+            $elementType = Element\Service::getElementType($element);
+            $key = $elementType . '_' . $element->getId();
 
-                $dependencies[$key] = [
-                    'id' => $element->getId(),
-                    'type' => $elementType,
-                ];
-            }
+            $dependencies[$key] = [
+                'id' => $element->getId(),
+                'type' => $elementType,
+            ];
         }
 
         return $dependencies;

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Messenger\Handler;
@@ -22,7 +19,6 @@ use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 
 /**
  * @internal
@@ -68,18 +64,21 @@ class AssetUpdateTasksHandler
             $asset->save(['versionNote' => 'PDF scan result']);
         }
 
+        $savedNeeded = false;
         $pageCount = $asset->getCustomSetting('document_page_count');
         if (!$pageCount || $pageCount === 'failed') {
-            if ($asset->processPageCount()) {
-                $this->saveAsset($asset);
-            }
-
-            if ($asset->getCustomSetting('document_page_count') === 'failed') {
-                throw new RuntimeException(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
-            }
+            $savedNeeded |= $asset->processPageCount();
         }
 
-        $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+        if ($savedNeeded) {
+            $this->saveAsset($asset);
+        }
+
+        if ($asset->getCustomSetting('document_page_count') !== 'failed') {
+            $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+        } elseif ($savedNeeded) {
+            $this->logger->warning(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
+        }
     }
 
     private function processVideo(Asset\Video $asset): void
@@ -105,7 +104,11 @@ class AssetUpdateTasksHandler
             $asset->removeCustomSetting('SphericalMetaData');
         }
 
-        $asset->handleEmbeddedMetaData();
+        try {
+            $asset->handleEmbeddedMetaData();
+        } catch (Exception $e) {
+            $this->logger->warning($e->getMessage());
+        }
         $this->saveAsset($asset);
 
         if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {

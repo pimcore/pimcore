@@ -2,24 +2,23 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use InvalidArgumentException;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Exception\NotFoundException;
 
 class QuantityValue extends AbstractQuantityValue
 {
@@ -227,7 +226,7 @@ class QuantityValue extends AbstractQuantityValue
         return sprintf('DECIMAL(%d, %d)', $precision, $scale);
     }
 
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
         $dataValue = $data[$this->getName() . '__value'];
         $dataUnit =  $data[$this->getName() . '__unit'];
@@ -238,26 +237,31 @@ class QuantityValue extends AbstractQuantityValue
             } else {
                 $value = $dataValue;
             }
-            $quantityValue = new Model\DataObject\Data\QuantityValue($value === null ? null : (float)$value, $dataUnit);
 
-            if (isset($params['owner'])) {
-                $quantityValue->_setOwner($params['owner']);
-                $quantityValue->_setOwnerFieldname($params['fieldname']);
-                $quantityValue->_setOwnerLanguage($params['language'] ?? null);
+            try {
+                $quantityValue = new Model\DataObject\Data\QuantityValue($value === null ? null : (float)$value, $dataUnit);
+
+                if (isset($params['owner'])) {
+                    $quantityValue->_setOwner($params['owner']);
+                    $quantityValue->_setOwnerFieldname($params['fieldname']);
+                    $quantityValue->_setOwnerLanguage($params['language'] ?? null);
+                }
+
+                return $quantityValue;
+            } catch (NotFoundException $e) {
+                Logger::warning('QuantityValue could not loaded from resource: ' . $e);
             }
-
-            return $quantityValue;
         }
 
         return null;
     }
 
-    public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
+    public function getDataFromGridEditor(array $data, ?Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
         if (strlen((string)$data['value']) > 0 || $data['unit']) {
             if (empty($data['unit']) || $data['unit'] == -1) {
@@ -390,5 +394,21 @@ class QuantityValue extends AbstractQuantityValue
     public function getFieldType(): string
     {
         return 'quantityValue';
+    }
+
+    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
+    {
+        $db = \Pimcore\Db::get();
+        $name = $params['name'] ?: $this->name;
+        $key = $db->quoteIdentifier($name);
+
+        if (!empty($params['brickPrefix'])) {
+            $key = $params['brickPrefix'].$key;
+        }
+        if (str_starts_with($name, 'cskey_')) {
+            return $key .'.'. $db->quoteIdentifier('value') . ' ' . $operator . ' ' . $value[0][0].' ';
+        }
+
+        return $key . ' ' . $operator . ' ' . (is_string($value) ? $db->quote($value) : $value) . ' ';
     }
 }

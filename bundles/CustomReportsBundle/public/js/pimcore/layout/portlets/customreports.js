@@ -1,15 +1,12 @@
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
- */
+* This source file is available under the terms of the
+* Pimcore Open Core License (POCL)
+* Full copyright and license information is available in
+* LICENSE.md which is distributed with this source code.
+*
+*  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.com)
+*  @license    Pimcore Open Core License (POCL)
+*/
 
 pimcore.registerNS("pimcore.layout.portlets.customreports");
 /**
@@ -209,6 +206,12 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                     reader: {
                         type: 'json',
                         rootProperty: 'data'
+                    },
+                    actionMethods: {
+                        create: 'POST',
+                        read: 'POST',
+                        update: 'POST',
+                        destroy: 'POST'
                     }
                 },
                 fields: storeFields
@@ -241,6 +244,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                 width: '100%',
                 height: 350,
                 insetPadding: 5,
+                downloadServerUrl: '/disabled-server-url/',
                 innerPadding: 10,
                 legend: {
                     docked: 'bottom'
@@ -289,6 +293,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
 
             var chart = Ext.create('Ext.chart.PolarChart', {
                 xtype: "polar",
+                downloadServerUrl: '/disabled-server-url/',
                 store: chartStore,
                 theme: 'default-gradients',
                 width: '100%',
@@ -462,6 +467,8 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                                     pimcore.helpers.openElement(id, "asset");
                                 } else if (action == "openObject") {
                                     pimcore.helpers.openElement(id, "object");
+                                } else if (action === "openUrl") {
+                                    window.open(id);
                                 }
                             }.bind(this, colConfig)
                         }

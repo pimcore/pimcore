@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Extension\Bundle;
@@ -21,11 +18,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInterface
 {
-    /**
-     * @deprecated
-     */
-    protected static ?PimcoreBundleManager $bundleManager = null;
-
     public function getNiceName(): string
     {
         return $this->getName();
@@ -48,8 +40,10 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
 
     public static function isInstalled(): bool
     {
-        $bundleManager = Pimcore::getContainer()->get(PimcoreBundleManager::class);
-        static::$bundleManager = $bundleManager; // @TODO: compatibility layer to be removed in Pimcore 12
+        $bundleManager = Pimcore::getContainer()?->get(PimcoreBundleManager::class);
+        if (!$bundleManager) {
+            return false;
+        }
         $bundle = $bundleManager->getActiveBundle(static::class, false);
 
         return $bundleManager->isInstalled($bundle);

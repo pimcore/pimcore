@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
@@ -44,8 +41,7 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($this->model->getDefinition()->getFieldDefinitions() as $fieldName => $fd) {
             $getter = 'get' . ucfirst($fieldName);
 
-            if ($fd instanceof CustomResourcePersistingInterface
-                && $fd instanceof Model\DataObject\ClassDefinition\Data) {
+            if ($fd instanceof CustomResourcePersistingInterface) {
                 if (!$fd instanceof Model\DataObject\ClassDefinition\Data\Localizedfields && $fd->supportsDirtyDetection() && !$saveRelationalData) {
                     continue;
                 }
@@ -71,8 +67,7 @@ class Dao extends Model\Dao\AbstractDao
                     $this->model, $params
                 );
             }
-            if ($fd instanceof ResourcePersistenceAwareInterface
-                && $fd instanceof Model\DataObject\ClassDefinition\Data) {
+            if ($fd instanceof ResourcePersistenceAwareInterface) {
                 $fieldDefinitionParams = [
                     'owner' => $this->model, //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
                     'fieldname' => $fd->getName(),
@@ -87,9 +82,7 @@ class Dao extends Model\Dao\AbstractDao
                     $this->model->set($fieldName, $fd->getDataFromResource($insertData, $object, $fieldDefinitionParams));
                 }
 
-                if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
-                    $this->model->markFieldDirty($fieldName, false);
-                }
+                $this->model->markFieldDirty($fieldName, false);
             }
         }
 

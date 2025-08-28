@@ -30,14 +30,14 @@ $tagList = new \Pimcore\Model\Element\Tag\Listing();
 
 //select parent node for tags or use all root tags.
 if ($this->getParam("node")) {
-    $tagList->setCondition("parentId = ?", (int) $request->get("node"));
+    $tagList->setCondition("parentId = ?", $request->query->getInt("node"));
 } else {
     $tagList->setCondition("ISNULL(parentId) OR parentId = 0");
 }
 $tagList->setOrderKey("name");
 $tags = [];
 foreach ($tagList->load() as $tag) {
-    $tags[] = $this->convertTagToArray($tag, $request->get('tags-filter'));
+    $tags[] = $this->convertTagToArray($tag, $request->query->get('tags-filter'));
 }
 ```
 
@@ -107,8 +107,7 @@ Important to know:
     public function filterForTags(Asset\Listing $listing, Request $request): Asset\Listing
     {
         // get tags IDs to filter for - e.g. from request param
-        $values = $request->get('tags-filter');
-        $values = is_array($values) ? $values : explode(',', $values);
+        $values = $request->query->all('tags-filter') ?: explode(',', $request->query->getString('tags-filter'));
 
         if($values)
         {
@@ -116,7 +115,7 @@ Important to know:
             foreach ($values as $tagId) {
 
                 //decide if child tags should be considered or not
-                if ($request->get("considerChildTags") == "true") {
+                if ($request->query->getBool("considerChildTags")) {
                     $tag = \Pimcore\Model\Element\Tag::getById((int)$tagId);
                     if ($tag) {
                         //get ID path of tag or filtering the child tags

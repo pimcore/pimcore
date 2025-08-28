@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\GlossaryBundle\Controller;
@@ -24,41 +21,34 @@ use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * @Route("/settings")
- *
  * @internal
  */
+#[Route('/settings')]
 class SettingsController extends UserAwareController
 {
     use JsonHelperTrait;
 
-    /**
-     * @Route("/glossary", name="pimcore_bundle_glossary_settings_glossary", methods={"POST"})
-     *
-     *
-     */
+    #[Route('/glossary', name: 'pimcore_bundle_glossary_settings_glossary', methods: ['POST'])]
     public function glossaryAction(Request $request): JsonResponse
     {
         // check glossary permissions
         $this->checkPermission('glossary');
 
-        if ($request->get('data')) {
+        if ($request->request->has('data')) {
+            $data = $this->decodeJson($request->request->getString('data'));
 
             Cache::clearTag('glossary');
 
-            if ($request->get('xaction') === 'destroy') {
-                $data = $this->decodeJson($request->get('data'));
+            if ($request->query->getString('xaction') === 'destroy') {
                 $id = $data['id'];
                 $glossary = Glossary::getById($id);
                 $glossary->delete();
 
                 return $this->jsonResponse(['success' => true, 'data' => []]);
-            } elseif ($request->get('xaction') === 'update') {
-                $data = $this->decodeJson($request->get('data'));
-
+            } elseif ($request->query->getString('xaction') === 'update') {
                 // save glossary
                 $glossary = Glossary::getById($data['id']);
 
@@ -81,8 +71,7 @@ class SettingsController extends UserAwareController
                 }
 
                 return $this->jsonResponse(['data' => $glossary, 'success' => true]);
-            } elseif ($request->get('xaction') == 'create') {
-                $data = $this->decodeJson($request->get('data'));
+            } elseif ($request->query->getString('xaction') == 'create') {
                 unset($data['id']);
 
                 // save glossary
@@ -114,8 +103,8 @@ class SettingsController extends UserAwareController
             }
 
             $list = new Glossary\Listing();
-            $list->setLimit((int) $request->get('limit', 50));
-            $list->setOffset((int) $request->get('start', 0));
+            $list->setLimit($request->request->getInt('limit', 50));
+            $list->setOffset($request->request->getInt('start'));
 
             $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {
@@ -123,8 +112,8 @@ class SettingsController extends UserAwareController
                 $list->setOrder($sortingSettings['order']);
             }
 
-            if ($request->get('filter')) {
-                $list->setCondition('`text` LIKE ' . $list->quote('%'.$request->get('filter').'%'));
+            if ($request->request->has('filter')) {
+                $list->setCondition('`text` LIKE ' . $list->quote('%'.$request->request->getString('filter').'%'));
             }
 
             $list->load();

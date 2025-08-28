@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Helper;
@@ -19,6 +16,7 @@ namespace Pimcore\Helper;
 use Exception;
 use Gotenberg\Gotenberg as GotenbergAPI;
 use Gotenberg\Stream;
+use Pimcore\Cache;
 use Pimcore\Config;
 
 /**
@@ -38,30 +36,27 @@ class GotenbergHelper
             return true;
         }
 
+        if (Cache::load('gotenberg_ping') === true) {
+            self::$validPing = true;
+
+            return true;
+        }
+
         if (!class_exists(GotenbergAPI::class, true)) {
             return false;
         }
 
-        $request = null;
-
-        /** @var GotenbergAPI|object $chrome */
         $chrome = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url']);
-        if (method_exists($chrome, 'html')) {
-            // gotenberg/gotenberg-php API Client v1
-            $request = $chrome->html(Stream::string('dummy.html', '<body></body>'));
-        } elseif (method_exists($chrome, 'screenshot')) {
-            $request = $chrome->screenshot()->html(Stream::string('dummy.html', '<body></body>'));
-        }
+        $request = $chrome->screenshot()->html(Stream::string('dummy.html', '<body></body>'));
 
-        if ($request) {
-            try {
-                GotenbergAPI::send($request);
-                self::$validPing = true;
+        try {
+            GotenbergAPI::send($request);
+            self::$validPing = true;
+            Cache::save(true, 'gotenberg_ping', [], Config::getSystemConfiguration('gotenberg')['ping_cache_ttl']);
 
-                return true;
-            } catch (Exception $e) {
-                // nothing to do
-            }
+            return true;
+        } catch (Exception $e) {
+            // nothing to do
         }
 
         return false;
