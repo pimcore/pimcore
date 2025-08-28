@@ -11,6 +11,10 @@
 #### [Translation]
 - Added the possibility to pass parameters to `TranslationEvents::PRE_SAVE` and `TranslationEvents::POST_SAVE` on the `save()` function.
 
+#### [QueryBuilder]
+- Deprecated `onCreateQueryBuilderCallback` property in `QueryBuilderHelperTrait`,  use `queryBuilderProcessors` instead.
+- Added the feature to add multiple callback processors on query build create by pushing to `addQueryBuilderProcessor`.
+
 ## Pimcore 12.1.0
 
 ### [Requirements]

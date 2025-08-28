@@ -20,12 +20,21 @@ use Pimcore\Model\DataObject;
 trait QueryBuilderHelperTrait
 {
     /**
+     * @var callable|null
+     *
+     * @deprecated Since 12.2.0, use $queryBuilderProcessors instead.
+     * @todo Remove in Pimcore 13
+     */
+    protected $onCreateQueryBuilderCallback;
+
+    /**
      * @var callable[]
      */
     protected array $queryBuilderProcessors = [];
 
     public function onCreateQueryBuilder(?callable $callback): void
     {
+        $this->onCreateQueryBuilderCallback = $callback;
         $this->discardQueryBuilderProcessors();
         if (is_callable($callback)) {
             $this->addQueryBuilderProcessor($callback);
