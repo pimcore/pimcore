@@ -2,14 +2,29 @@ name: "Codeception Tests centralised"
 
 on:
     workflow_dispatch:
+    schedule:
+        -   cron: '0 3 * * *'
+    pull_request_target:
+        branches:
+            - "[0-9]+.[0-9]+"
+            - "[0-9]+.x"
+        paths-ignore:
+            - 'doc/**'
+            - 'bundles/**/public/**'
     push:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
-            - "feature-*"
+            - "*_actions"
+        paths-ignore:
+            - 'doc/**'
+            - 'bundles/**/public/**'
     pull_request:
         types: [opened, synchronize, reopened]
-
+        
+permissions:
+  contents: read
+  
 env:
     PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
     PRIVATE_REPO: ${{ github.event.repository.private }}
@@ -73,10 +88,16 @@ jobs:
                   echo "matrix=${ENCODED_MATRIX_JSON}" >> $GITHUB_OUTPUT
 
     codeception-tests:
-        needs: setup-matrix
+        uses: pimcore/workflows-collection-public/.github/workflows/reusable-codeception-public.yaml@main
         strategy:
-            matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
-        uses: pimcore/workflows-collection-public/.github/workflows/reusable-codeception-tests-centralized.yaml@main
+            matrix:
+                include:
+                    - { php-version: 8.3, database: "mariadb:11.2", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.3, database: "mysql:8.4.4", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.3, database: "mariadb:10.3", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.4, database: "mariadb:10.5", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.4, database: "mariadb:10.11", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.4, database: "mysql:8.4.4", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
         with:
             APP_ENV: test
             PIMCORE_TEST: 1
@@ -86,10 +107,7 @@ jobs:
             SERVER_VERSION: ${{ matrix.matrix.server_version }}
             DEPENDENCIES: ${{ matrix.matrix.dependencies }}
             EXPERIMENTAL: ${{ matrix.matrix.experimental }}
-            PIMCORE_VERSION: ${{ matrix.matrix.pimcore_version }}
         secrets:
-            SSH_PRIVATE_KEY_PIMCORE_DEPLOYMENTS_USER: ${{ secrets.SSH_PRIVATE_KEY_PIMCORE_DEPLOYMENTS_USER }}
-            COMPOSER_PIMCORE_REPO_PACKAGIST_TOKEN: ${{ secrets.COMPOSER_PIMCORE_REPO_PACKAGIST_TOKEN }}
             PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_CI_INSTANCE_IDENTIFIER }}
             PIMCORE_ENCRYPTION_SECRET: ${{ secrets.PIMCORE_CI_ENCRYPTION_SECRET }}
             PIMCORE_PRODUCT_KEY: ${{ secrets.PIMCORE_CI_PRODUCT_KEY }}
