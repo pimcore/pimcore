@@ -206,7 +206,8 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     {
         foreach (get_object_vars($this) as $property => $value) {
             if ($property === 'objectId') {
-                $this->$property = (int) ( $data["\0*\0".$property] ?? $value);
+                $this->$property = (int) ($data["\0*\0".$property] ?? $value);
+
                 continue;
             }
             $this->$property = $data["\0*\0".$property] ?? $value;

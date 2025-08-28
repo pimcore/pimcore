@@ -201,7 +201,8 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     {
         foreach (get_object_vars($this) as $property => $value) {
             if ($property === 'elementId') {
-                $this->$property = (int) ( $data["\0*\0".$property] ?? $value);
+                $this->$property = (int) ($data["\0*\0".$property] ?? $value);
+
                 continue;
             }
             $this->$property = $data["\0*\0".$property] ?? $value;
