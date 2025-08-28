@@ -27,7 +27,7 @@ permissions:
 jobs:
     codeception-tests:
         name: "Codeception tests"
-        uses: pimcore/workflows-collection-public/.github/workflows/reusable-codeception-public.yaml@main
+        uses: pimcore/workflows-collection-public/.github/workflows/reusable-codeception-tests-centralized.yaml@main
         secrets:
             PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_CI_INSTANCE_IDENTIFIER }}
             PIMCORE_ENCRYPTION_SECRET: ${{ secrets.PIMCORE_CI_ENCRYPTION_SECRET }}
