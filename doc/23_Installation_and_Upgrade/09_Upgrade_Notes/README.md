@@ -13,7 +13,7 @@
 
 #### [QueryBuilder]
 - Deprecated `onCreateQueryBuilderCallback` property in `QueryBuilderHelperTrait`, please use `queryBuilderProcessors` instead.
-- Introduced the feature to add multiple callback processors on query build create by `addQueryBuilderProcessor`, and reset them by `resetQueryBuilderProcessors`.
+- Introduced the feature to add multiple callback processors on query build create by `addQueryBuilderProcessor`, and reset them by `discardQueryBuilderProcessors`.
 
 ## Pimcore 12.1.0
 
