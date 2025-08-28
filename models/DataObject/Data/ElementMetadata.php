@@ -30,7 +30,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
 
     protected ?string $elementType = null;
 
-    protected null|int|string $elementId = null;
+    protected ?int $elementId = null;
 
     protected ?string $fieldname = null;
 
@@ -197,10 +197,14 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         return $this->getElement()->__toString();
     }
 
-    public function __wakeup(): void
+    public function __unserialize(array $data): void
     {
-        if (is_string($this->elementId)) {
-            $this->elementId = (int) $this->elementId;
+        foreach (get_object_vars($this) as $property => $value) {
+            if ($property === 'elementId') {
+                $this->$property = (int) ( $data["\0*\0".$property] ?? $value);
+                continue;
+            }
+            $this->$property = $data["\0*\0".$property] ?? $value;
         }
     }
 }

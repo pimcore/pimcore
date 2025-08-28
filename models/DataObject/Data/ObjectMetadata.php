@@ -31,7 +31,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 
     protected ?DataObject\AbstractObject $object = null;
 
-    protected null|string|int $objectId = null;
+    protected ?int $objectId = null;
 
     protected ?string $fieldname = null;
 
@@ -202,10 +202,14 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         $this->objectId = $objectId;
     }
 
-    public function __wakeup(): void
+    public function __unserialize(array $data): void
     {
-        if (is_string($this->objectId)) {
-            $this->objectId = (int) $this->objectId;
+        foreach (get_object_vars($this) as $property => $value) {
+            if ($property === 'objectId') {
+                $this->$property = (int) ( $data["\0*\0".$property] ?? $value);
+                continue;
+            }
+            $this->$property = $data["\0*\0".$property] ?? $value;
         }
 
         if ($this->object) {
