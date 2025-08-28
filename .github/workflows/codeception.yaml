@@ -1,59 +1,95 @@
-
-name: "Codeception Tests"
+name: "Codeception Tests centralised"
 
 on:
     workflow_dispatch:
-    schedule:
-        -   cron: '0 3 * * *'
-    pull_request_target:
-        branches:
-            - "[0-9]+.[0-9]+"
-            - "[0-9]+.x"
-        paths-ignore:
-            - 'doc/**'
-            - 'bundles/**/public/**'
     push:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
-            - "*_actions"
-        paths-ignore:
-            - 'doc/**'
-            - 'bundles/**/public/**'
+            - "feature-*"
+    pull_request:
+        types: [opened, synchronize, reopened]
 
-permissions:
-  contents: read
+env:
+    PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
+    PRIVATE_REPO: ${{ github.event.repository.private }}
 
 jobs:
+    setup-matrix:
+        runs-on: ubuntu-latest
+        outputs:
+            php_versions: ${{ steps.parse-php-versions.outputs.php_versions }}
+            matrix: ${{ steps.set-matrix.outputs.matrix }}
+            private_repo: ${{ env.PRIVATE_REPO }}
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Checkout reusable workflow repo
+              uses: actions/checkout@v4
+              with:
+                  repository: pimcore/workflows-collection-public
+                  ref: main
+                  path: reusable-workflows
+
+            - name: Parse PHP versions from composer.json
+              id: parse-php-versions
+              run: |
+                  if [ -f composer.json ]; then
+                    php_versions=$(jq -r '.require.php' composer.json | grep -oP '\d+\.\d+' | tr '\n' ',' | sed 's/,$//')
+                    if [ -z "$php_versions" ]; then
+                      echo "No PHP versions found in composer.json"
+                      echo "Setting default PHP value"
+                      echo "php_versions=default" >> $GITHUB_OUTPUT
+                    else
+                      echo "php_versions=$php_versions" >> $GITHUB_OUTPUT
+                      echo "#### php versions #### : $php_versions"
+                    fi
+                  else
+                    echo "composer.json not found"
+                    exit 1
+                  fi
+
+            - name: Set up matrix
+              id: set-matrix
+              run: |
+                  php_versions="${{ steps.parse-php-versions.outputs.php_versions }}"
+                  
+                  MATRIX_JSON=$(cat reusable-workflows/codeception-tests-configuration/matrix-config.json)
+                  
+                  IFS=',' read -ra VERSIONS_ARRAY <<< "$php_versions"
+                  
+                  FILTERED_MATRIX_JSON=$(echo $MATRIX_JSON | jq --arg php_versions "$php_versions" '
+                  {
+                    matrix: [
+                      .configs[] |
+                      select(.php_version == $php_versions) |
+                      .matrix[]
+                    ]
+                  }')
+                  
+                  ENCODED_MATRIX_JSON=$(echo $FILTERED_MATRIX_JSON | jq -c .)
+                  
+                  echo "matrix=${ENCODED_MATRIX_JSON}" >> $GITHUB_OUTPUT
+
     codeception-tests:
-        name: "Codeception tests"
+        needs: setup-matrix
+        strategy:
+            matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
         uses: pimcore/workflows-collection-public/.github/workflows/reusable-codeception-tests-centralized.yaml@main
+        with:
+            APP_ENV: test
+            PIMCORE_TEST: 1
+            PRIVATE_REPO: ${{ needs.setup-matrix.outputs.private_repo}}
+            PHP_VERSION: ${{ matrix.matrix.php-version }}
+            DATABASE: ${{ matrix.matrix.database }}
+            SERVER_VERSION: ${{ matrix.matrix.server_version }}
+            DEPENDENCIES: ${{ matrix.matrix.dependencies }}
+            EXPERIMENTAL: ${{ matrix.matrix.experimental }}
+            PIMCORE_VERSION: ${{ matrix.matrix.pimcore_version }}
         secrets:
+            SSH_PRIVATE_KEY_PIMCORE_DEPLOYMENTS_USER: ${{ secrets.SSH_PRIVATE_KEY_PIMCORE_DEPLOYMENTS_USER }}
+            COMPOSER_PIMCORE_REPO_PACKAGIST_TOKEN: ${{ secrets.COMPOSER_PIMCORE_REPO_PACKAGIST_TOKEN }}
             PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_CI_INSTANCE_IDENTIFIER }}
             PIMCORE_ENCRYPTION_SECRET: ${{ secrets.PIMCORE_CI_ENCRYPTION_SECRET }}
             PIMCORE_PRODUCT_KEY: ${{ secrets.PIMCORE_CI_PRODUCT_KEY }}
-        strategy:
-            matrix:
-                include:
-                    - { php-version: 8.3, database: "mariadb:11.2", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.3, database: "mysql:8.4.4", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.3, database: "mariadb:10.3", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.4, database: "mariadb:10.5", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.4, database: "mariadb:10.11", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.4, database: "mysql:8.4.4", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
-        with:
-            php-version: ${{ matrix.php-version }}
-            database: ${{ matrix.database }}
-            dependencies: ${{ matrix.dependencies }}
-            experimental: ${{ matrix.experimental }}
-            storage: ${{ matrix.storage }}
-            symfony: ${{ matrix.symfony }}
-            composer-options: ${{ matrix.composer-options }}
-            repository: ${{ github.repository }}
-            PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
-            APP_ENV: "test"
-            PIMCORE_TEST: 1
-            PIMCORE_TEST_DB_DSN: "mysql://root@127.0.0.1:33006/pimcore_test"
-            PIMCORE_TEST_REDIS_DSN: "redis://127.0.0.1:63379"
-            MINIO_ACCESS_KEY: "PIMCORE_OBJECT_STORAGE_ACCESS_KEY"
-            MINIO_SECRET_KEY: "PIMCORE_OBJECT_STORAGE_SECRET_KEY"
