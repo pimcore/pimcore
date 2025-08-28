@@ -30,7 +30,7 @@ trait QueryBuilderHelperTrait
     /**
      * @var callable[]
      */
-    protected array $queryBuilderProcessors = [];
+    private array $queryBuilderProcessors = [];
 
     public function onCreateQueryBuilder(?callable $callback): void
     {
