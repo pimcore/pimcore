@@ -193,7 +193,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     {
         // check if there is the document in the session (for admin classic UI)
         $documentFromSession = Document\Service::getElementFromSession('document', $document->getId(), $session->getId());
-        if ( !$isPimcoreStudio && $documentFromSession) {
+        if (!$isPimcoreStudio && $documentFromSession) {
             // if there is a document in the session use it
             $this->logger->debug('Loading editmode document {document} from session', [
                 'document' => $document->getFullPath(),
