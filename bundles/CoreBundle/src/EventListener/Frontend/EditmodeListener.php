@@ -67,15 +67,15 @@ class EditmodeListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
+        if ($request->query->getBoolean('pimcore_studio')) {
+            return;
+        }
+
         if (!$event->isMainRequest()) {
             return; // only resolve editmode in frontend
         }
 
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
-            return;
-        }
-
-        if ($request->query->getBoolean('pimcore_studio')) {
             return;
         }
 

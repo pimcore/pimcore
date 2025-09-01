@@ -135,14 +135,15 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             return null;
         }
 
+        $isPimcoreStudio = $request->query->getBoolean('pimcore_studio');
+
         // editmode document
         if ($this->editmodeResolver->isEditmode($request)) {
-            $isPimcoreStudio = $request->query->getBoolean('pimcore_studio');
             $document = $this->handleEditmode($document, $user, $request->getSession(), $isPimcoreStudio);
         }
 
         // document preview
-        if ($request->query->getBoolean('pimcore_preview')) {
+        if (!$isPimcoreStudio && $request->query->getBoolean('pimcore_preview')) {
             // get document from session
 
             // TODO originally, this was the following call. What was in this->getParam('document') and
