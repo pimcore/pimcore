@@ -11,6 +11,9 @@
 #### [Translation]
 - Added the possibility to pass parameters to `TranslationEvents::PRE_SAVE` and `TranslationEvents::POST_SAVE` on the `save()` function.
 
+#### [Elements]
+- Added the feature of retrying the transaction when RetryableException is thrown during an element deletion.
+
 ## Pimcore 12.1.0
 
 ### [Requirements]

@@ -531,7 +531,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 if ($oldPath && $oldPath != $this->getRealFullPath()) {
                     $differentOldPath = $oldPath;
                     $this->getDao()->updateWorkspaces();
-                    $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
+                    $updatedChildren = $this->getDao()->updateChildPaths($oldPath) ?? [];
                 }
 
                 $this->update($isUpdate, $parameters);
@@ -558,7 +558,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     foreach ($updatedChildren as $objectId) {
                         $tag = 'object_' . $objectId;
                         $additionalTags[] = $tag;
-    
+
                         // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
                         RuntimeCache::set($tag, null);
                     }
