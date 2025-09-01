@@ -762,7 +762,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
                     }
 
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-                } catch (Exception $e) {
+                } catch (\Throwable $e) {
                     try {
                         $this->rollBack();
                     } catch (Exception $er) {
