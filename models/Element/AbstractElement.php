@@ -737,10 +737,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     protected function retryableFunction(
-        ?Closure $beforeRetryables = null, 
+        ?Closure $beforeRetryables = null,
         ?Closure $retryableFunc = null,
-        ?Closure $onCommit = null, 
-        ?Closure $onBeforeRetry = null, 
+        ?Closure $onCommit = null,
+        ?Closure $onBeforeRetry = null,
         ?Closure $onFailure = null,
         int $maxRetries = 5,
     ): void {
