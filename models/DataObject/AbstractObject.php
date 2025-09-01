@@ -554,12 +554,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             ) {
                 $additionalTags = [];
 
-                foreach ($updatedChildren as $objectId) {
-                    $tag = 'object_' . $objectId;
-                    $additionalTags[] = $tag;
-
-                    // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                    RuntimeCache::set($tag, null);
+                if (isset($updatedChildren)) {
+                    foreach ($updatedChildren as $objectId) {
+                        $tag = 'object_' . $objectId;
+                        $additionalTags[] = $tag;
+    
+                        // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
+                        RuntimeCache::set($tag, null);
+                    }
                 }
 
                 $this->clearDependentCache($additionalTags);
