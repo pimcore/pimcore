@@ -200,9 +200,8 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 $this->logger->debug('Loading editmode document {document} from session', [
                     'document' => $document->getFullPath(),
                 ]);
-                $document = $documentFromSession;
+                return $documentFromSession;
             }
-            return $document;
         }
 
         $this->logger->debug('Loading editmode document {document} from latest version', [
