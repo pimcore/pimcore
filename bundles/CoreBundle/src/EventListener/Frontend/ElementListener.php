@@ -136,8 +136,8 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         }
 
         // editmode document
-        $isPimcoreStudio = $request->query->getBoolean('pimcore_studio');
         if ($this->editmodeResolver->isEditmode($request)) {
+            $isPimcoreStudio = $request->query->getBoolean('pimcore_studio');
             $document = $this->handleEditmode($document, $user, $request->getSession(), $isPimcoreStudio);
         }
 
@@ -191,28 +191,31 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         bool $isPimcoreStudio
     ): Document
     {
-        // check if there is the document in the session (for admin classic UI)
-        $documentFromSession = Document\Service::getElementFromSession('document', $document->getId(), $session->getId());
-        if (!$isPimcoreStudio && $documentFromSession) {
-            // if there is a document in the session use it
-            $this->logger->debug('Loading editmode document {document} from session', [
-                'document' => $document->getFullPath(),
-            ]);
-            $document = $documentFromSession;
-        } else {
-            $this->logger->debug('Loading editmode document {document} from latest version', [
-                'document' => $document->getFullPath(),
-            ]);
+        if (!$isPimcoreStudio) {
+            // check if there is the document in the session (for admin classic UI)
+            $documentFromSession = Document\Service::getElementFromSession('document', $document->getId(), $session->getId());
+            if ($documentFromSession) {
+                // if there is a document in the session use it
+                $this->logger->debug('Loading editmode document {document} from session', [
+                    'document' => $document->getFullPath(),
+                ]);
+                $document = $documentFromSession;
+            }
+            return $document;
+        }
 
-            // set the latest available version for editmode if there is no doc in the session
-            if ($document instanceof Document\PageSnippet) {
-                $latestVersion = $document->getLatestVersion($user->getId());
-                if ($latestVersion) {
-                    $latestDoc = $latestVersion->loadData();
+        $this->logger->debug('Loading editmode document {document} from latest version', [
+            'document' => $document->getFullPath(),
+        ]);
 
-                    if ($latestDoc instanceof Document\PageSnippet) {
-                        $document = $latestDoc;
-                    }
+        // set the latest available version for editmode if there is no doc in the session
+        if ($document instanceof Document\PageSnippet) {
+            $latestVersion = $document->getLatestVersion($user->getId());
+            if ($latestVersion) {
+                $latestDoc = $latestVersion->loadData();
+
+                if ($latestDoc instanceof Document\PageSnippet) {
+                    $document = $latestDoc;
                 }
             }
         }

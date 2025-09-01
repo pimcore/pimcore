@@ -89,6 +89,10 @@ class EditmodeListener implements EventSubscriberInterface
         $request = $event->getRequest();
         $response = $event->getResponse();
 
+        if ($request->query->getBoolean('pimcore_studio')) {
+            return;
+        }
+
         if (!$event->isMainRequest()) {
             return; // only main requests inject editmode assets
         }
@@ -102,10 +106,6 @@ class EditmodeListener implements EventSubscriberInterface
         }
 
         if (!$this->contentTypeMatches($response)) {
-            return;
-        }
-
-        if ($request->query->getBoolean('pimcore_studio')) {
             return;
         }
 
