@@ -11,6 +11,10 @@
 #### [Translation]
 - Added the possibility to pass parameters to `TranslationEvents::PRE_SAVE` and `TranslationEvents::POST_SAVE` on the `save()` function.
 
+#### [QueryBuilder]
+- Deprecated `onCreateQueryBuilderCallback` property in `QueryBuilderHelperTrait`, please use `queryBuilderProcessors` instead.
+- Introduced the feature to add multiple callback processors on query build create by `addQueryBuilderProcessor`, and reset them by `discardQueryBuilderProcessors`.
+
 #### [Elements]
 - Added the feature of retrying the transaction when RetryableException is thrown during an element deletion.
 
