@@ -564,19 +564,16 @@ class Dao extends Model\Element\Dao
                 $firstPermission = $allPermissions[0];
                 $firstPermissionCid = $firstPermission['cid'];
                 $mergedPermissions = [];
+                $allowAllForEmptyConfig = $_SERVER['PIMCORE_PERMISSION_WORKSPACE_LOCALES_EMPTY'] !== 'deny'|| !in_array($type, ['lView', 'lEdit']);
 
                 foreach ($allPermissions as $permission) {
                     $cid = $permission['cid'];
-                    if ($cid != $firstPermissionCid) {
+                    if ($cid != $firstPermissionCid && $allowAllForEmptyConfig) {
                         break;
                     }
 
                     $permissionValues = $permission[$type];
-                    if (!$permissionValues
-                        && (
-                            $_SERVER['PIMCORE_PERMISSION_WORKSPACE_LOCALES_EMPTY'] !== 'deny'
-                            || !in_array($type, ['lView', 'lEdit']))
-                    ) {
+                    if (!$permissionValues && $allowAllForEmptyConfig) {
                         $firstPermission[$type] = null;
 
                         return $firstPermission;
