@@ -572,7 +572,11 @@ class Dao extends Model\Element\Dao
                     }
 
                     $permissionValues = $permission[$type];
-                    if (!$permissionValues) {
+                    if (!$permissionValues
+                        && (
+                            $_SERVER['PIMCORE_PERMISSION_WORKSPACE_LOCALES_EMPTY'] !== 'deny'
+                            || !in_array($type, ['lView', 'lEdit']))
+                    ) {
                         $firstPermission[$type] = null;
 
                         return $firstPermission;
