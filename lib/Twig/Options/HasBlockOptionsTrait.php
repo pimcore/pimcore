@@ -40,7 +40,7 @@ trait HasBlockOptionsTrait
 
             $argsNode = $valueNode = $parser->parseExpression();
 
-            if ($argsNode->hasAttribute('arguments')){
+            if ($argsNode->hasAttribute('arguments')) {
                 $valueNode = $argsNode->getNode('0');
             }
 
