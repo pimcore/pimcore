@@ -255,7 +255,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         $this->cacheObject($object);
     }
 
-    private function handleDocumentClassicPreview(Request $request, Document $document): ?Document
+    private function handleDocumentClassicPreview(Request $request, Document $document): Document
     {
         // get document from session
         if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId(), $request->getSession()->getId())) {
