@@ -146,7 +146,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         if ($request->query->getBoolean('pimcore_studio_preview')) {
             $document = $this->handleDocumentStudioPreview($document, $user);
         } elseif ($request->query->getBoolean('pimcore_preview')) {
-            $document = $this->handleDocumentClassicPreview($request, $document) ?? $document;
+            $document = $this->handleDocumentClassicPreview($request, $document);
         }
 
         // for version preview
