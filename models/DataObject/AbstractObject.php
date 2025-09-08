@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
-use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
 use InvalidArgumentException;
@@ -438,150 +437,123 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function delete(): void
     {
-        $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::PRE_DELETE);
+        $this->retryableFunction(
+            beforeRetryables: function () {
+                $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::PRE_DELETE);
+            },
+            retryableFunc: function () {
+                $this->doDelete();
+                $this->getDao()->delete();
+            },
+            onCommit:function () {
+                //clear parent data from registry
+                $parentCacheKey = self::getCacheKey($this->getParentId());
+                if (RuntimeCache::isRegistered($parentCacheKey)) {
 
-        $this->beginTransaction();
-
-        try {
-            $this->doDelete();
-            $this->getDao()->delete();
-
-            $this->commit();
-
-            //clear parent data from registry
-            $parentCacheKey = self::getCacheKey($this->getParentId());
-            if (RuntimeCache::isRegistered($parentCacheKey)) {
-                $parent = RuntimeCache::get($parentCacheKey);
-                if ($parent instanceof self) {
-                    $parent->setChildren(null);
+                    $parent = RuntimeCache::get($parentCacheKey);
+                    if ($parent instanceof self) {
+                        $parent->setChildren(null);
+                    }
                 }
+                // empty object cache
+                $this->clearDependentCache();
+
+                //clear object from registry
+                RuntimeCache::set(self::getCacheKey($this->getId()), null);
+
+                $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::POST_DELETE);
+            },
+            onFailure: function ($e) {
+                $failureEvent = new DataObjectEvent($this);
+                $failureEvent->setArgument('exception', $e);
+                $this->dispatchEvent($failureEvent, DataObjectEvents::POST_DELETE_FAILURE);
+
             }
-        } catch (Exception $e) {
-            try {
-                $this->rollBack();
-            } catch (Exception $er) {
-                // PDO adapter throws exceptions if rollback fails
-                Logger::info((string) $er);
-            }
-
-            $failureEvent = new DataObjectEvent($this);
-            $failureEvent->setArgument('exception', $e);
-            $this->dispatchEvent($failureEvent, DataObjectEvents::POST_DELETE_FAILURE);
-
-            Logger::crit((string) $e);
-
-            throw $e;
-        }
-
-        // empty object cache
-        $this->clearDependentCache();
-
-        //clear object from registry
-        RuntimeCache::set(self::getCacheKey($this->getId()), null);
-
-        $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::POST_DELETE);
+        );
     }
 
     public function save(array $parameters = []): static
     {
         $isUpdate = false;
-        $differentOldPath = null;
+        $isDirtyDetectionDisabled = null;
+        $updatedChildren = [];
+        $differentOldPath = '';
+        $hideUnpublishedBackup = false;
 
-        try {
-            $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
-            $preEvent = new DataObjectEvent($this, $parameters);
-            if ($this->getId()) {
-                $isUpdate = true;
-                $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
-            } else {
-                self::disableDirtyDetection();
-                $this->dispatchEvent($preEvent, DataObjectEvents::PRE_ADD);
-            }
+        $this->retryableFunction(
+            beforeRetryables: function () use (
+                &$isUpdate,
+                &$parameters,
+                &$isDirtyDetectionDisabled
+            ) {
+                $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
+                $preEvent = new DataObjectEvent($this, $parameters);
+                if ($this->getId()) {
+                    $isUpdate = true;
+                    $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
+                } else {
+                    self::disableDirtyDetection();
+                    $this->dispatchEvent($preEvent, DataObjectEvents::PRE_ADD);
+                }
 
-            $parameters = $preEvent->getArguments();
+                $parameters = $preEvent->getArguments();
 
-            $this->correctPath();
-
-            // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
-            // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
-            // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
-            $maxRetries = 5;
-            for ($retries = 0; $retries < $maxRetries; $retries++) {
-                // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
+                $this->correctPath();
+            },
+            retryableFunc: function () use (
+                &$isUpdate,
+                &$parameters,
+                &$updatedChildren,
+                &$differentOldPath,
+                &$hideUnpublishedBackup
+            ) {
                 $hideUnpublishedBackup = self::getHideUnpublished();
                 self::setHideUnpublished(false);
 
-                $this->beginTransaction();
-
-                try {
-                    if (!in_array($this->getType(), self::$types)) {
-                        throw new Exception('invalid object type given: [' . $this->getType() . ']');
-                    }
-
-                    if (!$isUpdate) {
-                        $this->getDao()->create();
-                    }
-
-                    // get the old path from the database before the update is done
-                    $oldPath = null;
-                    if ($isUpdate) {
-                        $oldPath = $this->getDao()->getCurrentFullPath();
-                    }
-
-                    // if the old path is different from the new path, update all children
-                    // we need to do the update of the children's path before $this->update() because the
-                    // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
-                    $updatedChildren = [];
-                    if ($oldPath && $oldPath != $this->getRealFullPath()) {
-                        $differentOldPath = $oldPath;
-                        $this->getDao()->updateWorkspaces();
-                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
-                    }
-
-                    $this->update($isUpdate, $parameters);
-
-                    self::setHideUnpublished($hideUnpublishedBackup);
-
-                    $this->commit();
-
-                    break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-                } catch (Exception $e) {
-                    try {
-                        $this->rollBack();
-                    } catch (Exception $er) {
-                        // PDO adapter throws exceptions if rollback fails
-                        Logger::info((string) $er);
-                    }
-
-                    // set "HideUnpublished" back to the value it was originally
-                    self::setHideUnpublished($hideUnpublishedBackup);
-
-                    if ($e instanceof UniqueConstraintViolationException) {
-                        throw new Element\ValidationException('unique constraint violation', 0, $e);
-                    }
-
-                    if ($e instanceof RetryableException) {
-                        // we try to start the transaction $maxRetries times again (deadlocks, ...)
-                        if ($retries < ($maxRetries - 1)) {
-                            $run = $retries + 1;
-                            $waitTime = random_int(1, 5) * 100000; // microseconds
-                            Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
-
-                            usleep($waitTime); // wait specified time until we restart the transaction
-                        } else {
-                            // if the transaction still fail after $maxRetries retries, we throw out the exception
-                            Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
-
-                            throw $e;
-                        }
-                    } else {
-                        throw $e;
-                    }
+                if (!in_array($this->getType(), self::$types)) {
+                    throw new Exception('invalid object type given: [' . $this->getType() . ']');
                 }
-            }
 
-            $additionalTags = [];
-            if (isset($updatedChildren)) {
+                if (!$isUpdate) {
+                    $this->getDao()->create();
+                }
+
+                // get the old path from the database before the update is done
+                $oldPath = null;
+                if ($isUpdate) {
+                    $oldPath = $this->getDao()->getCurrentFullPath();
+                }
+
+                // if the old path is different from the new path, update all children
+                // we need to do the update of the children's path before $this->update() because the
+                // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
+                $updatedChildren = [];
+                if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                    $differentOldPath = $oldPath;
+                    $this->getDao()->updateWorkspaces();
+                    $updatedChildren = $this->getDao()->updateChildPaths($oldPath) ?? [];
+                }
+
+                $this->update($isUpdate, $parameters);
+
+                self::setHideUnpublished($hideUnpublishedBackup);
+            },
+            onBeforeRetry: function ($e) use (&$hideUnpublishedBackup) {
+                self::setHideUnpublished($hideUnpublishedBackup);
+
+                if ($e instanceof UniqueConstraintViolationException) {
+                    throw new Element\ValidationException('unique constraint violation', 0, $e);
+                }
+            },
+            onCommit: function () use (
+                &$isUpdate,
+                &$parameters,
+                &$differentOldPath,
+                &$updatedChildren,
+                &$isDirtyDetectionDisabled
+            ) {
+                $additionalTags = [];
+
                 foreach ($updatedChildren as $objectId) {
                     $tag = 'object_' . $objectId;
                     $additionalTags[] = $tag;
@@ -589,42 +561,43 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
                     RuntimeCache::set($tag, null);
                 }
-            }
-            $this->clearDependentCache($additionalTags);
 
-            if ($differentOldPath) {
-                $this->renewInheritedProperties();
-            }
+                $this->clearDependentCache($additionalTags);
 
-            // add to queue that saves dependencies
-            $this->addToDependenciesQueue();
-
-            //Reset Relational data to force a reload
-            $this->__rawRelationData = null;
-
-            $postEvent = new DataObjectEvent($this, $parameters);
-            if ($isUpdate) {
                 if ($differentOldPath) {
-                    $postEvent->setArgument('oldPath', $differentOldPath);
+                    $this->renewInheritedProperties();
                 }
-                $this->dispatchEvent($postEvent, DataObjectEvents::POST_UPDATE);
-            } else {
-                self::setDisableDirtyDetection($isDirtyDetectionDisabled);
-                $this->dispatchEvent($postEvent, DataObjectEvents::POST_ADD);
-            }
 
-            return $this;
-        } catch (Exception $e) {
-            $failureEvent = new DataObjectEvent($this, $parameters);
-            $failureEvent->setArgument('exception', $e);
-            if ($isUpdate) {
-                $this->dispatchEvent($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
-            } else {
-                $this->dispatchEvent($failureEvent, DataObjectEvents::POST_ADD_FAILURE);
-            }
+                // add to queue that saves dependencies
+                $this->addToDependenciesQueue();
 
-            throw $e;
-        }
+                //Reset Relational data to force a reload
+                $this->__rawRelationData = null;
+
+                $postEvent = new DataObjectEvent($this, $parameters);
+                if ($isUpdate) {
+                    if ($differentOldPath) {
+                        $postEvent->setArgument('oldPath', $differentOldPath);
+                    }
+                    $this->dispatchEvent($postEvent, DataObjectEvents::POST_UPDATE);
+                } else {
+                    self::setDisableDirtyDetection($isDirtyDetectionDisabled);
+                    $this->dispatchEvent($postEvent, DataObjectEvents::POST_ADD);
+                }
+
+            },
+            onFailure: function ($e) use (&$isUpdate, &$parameters) {
+                $failureEvent = new DataObjectEvent($this, $parameters);
+                $failureEvent->setArgument('exception', $e);
+                if ($isUpdate) {
+                    $this->dispatchEvent($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
+                } else {
+                    $this->dispatchEvent($failureEvent, DataObjectEvents::POST_ADD_FAILURE);
+                }
+            }
+        );
+
+        return $this;
     }
 
     /**

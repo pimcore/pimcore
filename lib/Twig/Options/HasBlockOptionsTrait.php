@@ -29,30 +29,35 @@ trait HasBlockOptionsTrait
      */
     private function getBlockOptions(TokenStream $stream, Parser $parser): BlockOptions
     {
-        $expressionParser = $parser->getExpressionParser();
         $options = new BlockOptions();
+
         while ($stream->test(Token::NAME_TYPE)) {
-            $argument = $stream->getCurrent()->getValue();
+            $name = $stream->getCurrent()->getValue();
             $stream->next();
 
-            $args = $expressionParser->parseArguments();
-            $node = $args->getNode('0');
+            $argsNode = $parser
+                ->parseExpression()
+                ->getAttribute('arguments');
 
-            switch ($argument) {
+            $valueNode = $argsNode->getNode('0');
+
+            $value = $valueNode->getAttribute('value');
+
+            switch ($name) {
                 case 'limit':
-                    $options->setLimit((int) $node->getAttribute('value'));
+                    $options->setLimit((int) $value);
 
                     break;
                 case 'reload':
-                    $options->setReload((bool) $node->getAttribute('value'));
+                    $options->setReload((bool) $value);
 
                     break;
                 case 'default':
-                    $options->setDefault((int) $node->getAttribute('value'));
+                    $options->setDefault((int) $value);
 
                     break;
                 case 'class':
-                    $options->setClass($node->getAttribute('value'));
+                    $options->setClass($value);
 
                     break;
                 default:

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
+use Closure;
+use Doctrine\DBAL\Exception\RetryableException;
 use Exception;
 use Pimcore;
 use Pimcore\Cache;
@@ -21,11 +23,13 @@ use Pimcore\Config;
 use Pimcore\Event\ElementEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
+use Pimcore\Logger;
 use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
 use Pimcore\Workflow\Manager;
+use Throwable;
 
 /**
  * @method Model\Document\Dao|Model\Asset\Dao|Model\DataObject\AbstractObject\Dao getDao()
@@ -731,5 +735,72 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $myProperties = $this->getProperties();
         $inheritedProperties = $this->getDao()->getProperties(true);
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
+    }
+
+    protected function retryableFunction(
+        ?Closure $beforeRetryables = null,
+        ?Closure $retryableFunc = null,
+        ?Closure $onCommit = null,
+        ?Closure $onBeforeRetry = null,
+        ?Closure $onFailure = null,
+        int $maxRetries = 5,
+    ): void {
+        try {
+            if ($beforeRetryables instanceof Closure) {
+                $beforeRetryables();
+            }
+
+            for ($retries = 0; $retries < $maxRetries; $retries++) {
+                $this->beginTransaction();
+
+                try {
+                    if ($retryableFunc instanceof Closure) {
+                        $retryableFunc();
+                    }
+                    $this->commit();
+                    if ($onCommit instanceof Closure) {
+                        $onCommit();
+                    }
+
+                    break; // transaction was successfully completed, so we cancel the loop here -> no restart required
+                } catch (Throwable $e) {
+                    try {
+                        $this->rollBack();
+                    } catch (Exception $er) {
+                        // PDO adapter throws exceptions if rollback fails
+                        Logger::info((string)$er);
+                    }
+
+                    if ($onBeforeRetry instanceof Closure) {
+                        $onBeforeRetry($e);
+                    }
+
+                    if ($e instanceof RetryableException && $retries < ($maxRetries - 1)) {
+                        $run = $retries + 1;
+                        $waitTime = rand(1, 5) * 100000; // microseconds
+                        Logger::warn(
+                            'Unable to finish transaction (' . $run . '. run) because of the following reason: '
+                            . $e->getMessage()
+                            . '. --> Retrying in ' . $waitTime . ' microseconds ... ('
+                            . ($run + 1) . ' of ' . $maxRetries . ')'
+                        );
+
+                        usleep($waitTime); // wait specified time until we restart the transaction
+                    } else {
+                        // if the transaction still fail after $maxRetries retries, we throw out the exception
+                        throw $e;
+                    }
+
+                }
+            }
+
+        } catch (Exception $e) {
+            if ($onFailure instanceof Closure) {
+                $onFailure($e);
+            }
+            Logger::crit((string)$e);
+
+            throw $e;
+        }
     }
 }

@@ -11,6 +11,13 @@
 #### [Translation]
 - Added the possibility to pass parameters to `TranslationEvents::PRE_SAVE` and `TranslationEvents::POST_SAVE` on the `save()` function.
 
+#### [QueryBuilder]
+- Deprecated `onCreateQueryBuilderCallback` property in `QueryBuilderHelperTrait`, please use `queryBuilderProcessors` instead.
+- Introduced the feature to add multiple callback processors on query build create by `addQueryBuilderProcessor`, and reset them by `discardQueryBuilderProcessors`.
+
+#### [Elements]
+- Added the feature of retrying the transaction when RetryableException is thrown during an element deletion.
+
 ## Pimcore 12.1.0
 
 ### [Requirements]
@@ -156,6 +163,11 @@ ORDER BY TABLE_NAME;
 - add function `getColumnsWithMetadata` to `bundles/CustomReportsBundle/src/Tool/Adapter/CustomReportAdapterInterface.php`
 - add function `getPagination` to `bundles/CustomReportsBundle/src/Tool/Adapter/CustomReportAdapterInterface.php`
 - change parameter types of `getData` in `bundles/CustomReportsBundle/src/Tool/Adapter/AbstractAdapter.php`
+
+## Pimcore 11.5.9
+### Security
+#### [Twig]
+- Bumped minimum requirement of `twig/twig` to `^3.21.0` to fix security and issues with `pimcoremanualblock`
 
 ## Pimcore 11.5.5
 ### General

@@ -76,6 +76,17 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
                 );
             }
 
+            if ($event->getInput()->hasOption('time-limit')) {
+                // this is to set the database wait_timeout according to the --time-limit option provided by messenger:consume
+                // to ensure the worker has a working database connection over the entire lifetime of the process
+                $timeLimit = (int) $event->getInput()->getOption('time-limit');
+                $db = Pimcore\Db::get();
+                $result = $db->fetchAssociative("SHOW VARIABLES LIKE 'wait_timeout'");
+                if ($result['Value'] < $timeLimit) {
+                    $db->executeQuery('SET SESSION wait_timeout = ' . $timeLimit);
+                }
+            }
+
             if ($event->getInput()->getOption('maintenance-mode')) {
                 // enable maintenance mode if requested
                 $maintenanceModeId = 'cache-warming-dummy-session-id';
