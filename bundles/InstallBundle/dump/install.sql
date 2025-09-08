@@ -485,6 +485,7 @@ CREATE TABLE `users` (
   `lastLogin` int(11) unsigned DEFAULT NULL,
   `keyBindings` json NULL,
   `passwordRecoveryToken` varchar(290) DEFAULT NULL,
+  `lastPasswordReset` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_name` (`type`,`name`),
   KEY `parentId` (`parentId`),
