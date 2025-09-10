@@ -32,7 +32,7 @@ final class User extends User\UserRole implements UserInterface
 
     protected ?string $passwordRecoveryToken = null;
 
-    protected ?int $lastPasswordReset = null;
+    private ?int $lastPasswordReset = null;
 
     protected ?string $firstname = null;
 
