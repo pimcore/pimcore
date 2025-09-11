@@ -72,9 +72,9 @@ class SearchBackendReindexCommand extends AbstractCommand
             $elementsTotal = count($elementIds);
 
             foreach ($elementIds as $i => $elementId) {
-                if ($i % 100 === 0) {
+                if ($i % $elementsPerLoop === 0) {
                     Pimcore::collectGarbage();
-                    Logger::info('Processing '.$type.': '.min($i + 100, count($elementIds)).'/'.$elementsTotal);
+                    Logger::info('Processing '.$type.': '.min($i + $elementsPerLoop, count($elementIds)).'/'.$elementsTotal);
                 }
 
                 try {
