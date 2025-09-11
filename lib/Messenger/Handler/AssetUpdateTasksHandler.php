@@ -22,13 +22,14 @@ use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Lock\LockFactory;
 
 /**
  * @internal
  */
 class AssetUpdateTasksHandler
 {
-    public function __construct(protected LoggerInterface $logger, protected LongRunningHelper $longRunningHelper)
+    public function __construct(protected LoggerInterface $logger, protected LongRunningHelper $longRunningHelper, protected LockFactory $lockFactory)
     {
     }
 
@@ -51,6 +52,7 @@ class AssetUpdateTasksHandler
         }
 
         $this->longRunningHelper->deleteTemporaryFiles();
+        $this->lockFactory->createLock($asset->getUpdateQueueLockId())->release();
     }
 
     private function saveAsset(Asset $asset, array $saveParams = []): void

@@ -56,6 +56,8 @@ use Pimcore\Tool\Storage;
 use stdClass;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Mime\MimeTypes;
 
 /**
@@ -1777,12 +1779,25 @@ class Asset extends Element\AbstractElement
 
     /**
      * @internal
+     * public because it's also used by pimcore/admin-ui-classic-bundle
      */
-    protected function addToUpdateTaskQueue(): void
+    public function addToUpdateTaskQueue(): void
     {
-        Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-            new AssetUpdateTasksMessage($this->getId())
-        );
+        /** @var LockInterface $lock */
+        $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($this->getUpdateQueueLockId());
+        if($lock->acquire()) {
+            Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                new AssetUpdateTasksMessage($this->getId())
+            );
+        }
+    }
+
+    /**
+     * @internal
+     */
+    public function getUpdateQueueLockId(): string
+    {
+        return 'asset-update-queue-' . $this->getId();
     }
 
     public function getFrontendPath(): string
