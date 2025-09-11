@@ -54,46 +54,57 @@ class AssetUpdateTasksHandler
         $this->longRunningHelper->deleteTemporaryFiles();
     }
 
-    private function saveAsset(Asset $asset): void
+    private function saveAsset(Asset $asset, array $saveParams = []): void
     {
         Version::disable();
         $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
-        $asset->save();
+        $asset->save($saveParams);
         Version::enable();
     }
 
     private function processDocument(Asset\Document $asset): void
     {
+        $save = false;
+        $saveParams = [];
+        $asset->removeCustomSetting(Asset::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED);
         if ($asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS()) {
-            $asset->save(['versionNote' => 'PDF scan result']);
+            $save = true;
+            $saveParams['versionNote'] = 'PDF scan result';
         }
 
         $pageCount = $asset->getCustomSetting('document_page_count');
         if (!$pageCount || $pageCount === 'failed') {
-            if ($asset->processPageCount()) {
-                $this->saveAsset($asset);
+            if (!$asset->processPageCount() || $asset->getCustomSetting('document_page_count') === 'failed') {
+                $asset->setCustomSetting(Asset::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED, true);
+            } else {
+                $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
             }
 
-            if ($asset->getCustomSetting('document_page_count') === 'failed') {
-                throw new RuntimeException(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
-            }
+            $save = true;
         }
 
-        $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+        if ($save) {
+            $this->saveAsset($asset, $saveParams);
+        }
     }
 
     private function processVideo(Asset\Video $asset): void
     {
+        $asset->removeCustomSetting(Asset::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED);
+        $failed = true;
+
         if ($duration = $asset->getDurationFromBackend()) {
             $asset->setCustomSetting('duration', $duration);
-        } else {
-            $asset->removeCustomSetting('duration');
+            if ($dimensions = $asset->getDimensionsFromBackend()) {
+                $asset->setCustomSetting('videoWidth', $dimensions['width']);
+                $asset->setCustomSetting('videoHeight', $dimensions['height']);
+                $failed = false;
+            }
         }
 
-        if ($dimensions = $asset->getDimensionsFromBackend()) {
-            $asset->setCustomSetting('videoWidth', $dimensions['width']);
-            $asset->setCustomSetting('videoHeight', $dimensions['height']);
-        } else {
+        if($failed) {
+            $asset->setCustomSetting(Asset::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED, true);
+            $asset->removeCustomSetting('duration');
             $asset->removeCustomSetting('videoWidth');
             $asset->removeCustomSetting('videoHeight');
         }

@@ -147,8 +147,12 @@ class Video extends Model\Asset
         }
 
         if (!$this->getCustomSetting('videoWidth') || !$this->getCustomSetting('videoHeight')) {
-            Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
-            $this->addToUpdateTaskQueue();
+            if(!$this->getCustomSetting(self::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED)) {
+                Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
+                $this->addToUpdateTaskQueue();
+            } else {
+                Logger::info('Image thumbnail not available, video cannot be processed.');
+            }
 
             return new Video\ImageThumbnail(null); // returns error image
         }
@@ -200,7 +204,7 @@ class Video extends Model\Asset
     public function getDuration(): float|int|null
     {
         $duration = $this->getCustomSetting('duration');
-        if (!$duration) {
+        if (!$duration && !$this->getCustomSetting(self::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED)) {
             $duration = $this->getDurationFromBackend();
             if ($duration) {
                 $this->setCustomSetting('duration', $duration);
@@ -216,9 +220,16 @@ class Video extends Model\Asset
 
     public function getDimensions(): ?array
     {
+        $dimensions = null;
         $width = $this->getCustomSetting('videoWidth');
         $height = $this->getCustomSetting('videoHeight');
-        if (!$width || !$height) {
+
+        if ($width && $height) {
+            $dimensions = [
+                'width' => $width,
+                'height' => $height,
+            ];
+        } elseif (!$this->getCustomSetting(self::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED)) {
             $dimensions = $this->getDimensionsFromBackend();
             if ($dimensions) {
                 $this->setCustomSetting('videoWidth', (int) $dimensions['width']);
@@ -228,11 +239,6 @@ class Video extends Model\Asset
                 $this->save(); // auto save
                 Model\Version::enable();
             }
-        } else {
-            $dimensions = [
-                'width' => $width,
-                'height' => $height,
-            ];
         }
 
         return $dimensions;

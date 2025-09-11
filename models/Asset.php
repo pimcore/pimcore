@@ -70,6 +70,8 @@ class Asset extends Element\AbstractElement
     use ScheduledTasksTrait;
     use TemporaryFileHelperTrait;
 
+    public const CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED = 'pimcore-asset-update-task-processing-failed';
+
     /**
      * @internal
      *
