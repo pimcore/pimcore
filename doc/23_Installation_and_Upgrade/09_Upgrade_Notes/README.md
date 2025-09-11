@@ -3,7 +3,7 @@
 ## Pimcore 12.2.0
 
 #### [Security]
-- Introduced the feature of expiring existing session and firce to re-login whenever a password is changed.
+- Introduced the feature of expiring existing session and force to re-login whenever a password is changed.
 
 #### [Configuration] 
 - The `pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than` parameter which was previously unused is now used to delete system temp files (var/tmp), with the default retention period of 1 day.
