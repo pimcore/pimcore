@@ -23,6 +23,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
+use function sprintf;
 
 /**
  * @internal
@@ -77,6 +78,8 @@ class AssetUpdateTasksHandler
         if (!$pageCount || $pageCount === 'failed') {
             if (!$asset->processPageCount() || $asset->getCustomSetting('document_page_count') === 'failed') {
                 $asset->setCustomSetting(Asset::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED, true);
+                $this->logger->warning(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
+
             } else {
                 $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
             }
@@ -117,7 +120,11 @@ class AssetUpdateTasksHandler
             $asset->removeCustomSetting('SphericalMetaData');
         }
 
-        $asset->handleEmbeddedMetaData();
+        try {
+            $asset->handleEmbeddedMetaData();
+        } catch (Exception $e) {
+            $this->logger->warning($e->getMessage());
+        }
         $this->saveAsset($asset);
 
         if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {

@@ -102,6 +102,7 @@ class SearchBackendReindexCommand extends AbstractCommand
                     }
                 }
                 Pimcore::collectGarbage();
+                Pimcore::deleteTemporaryFiles();
             }
         }
 
