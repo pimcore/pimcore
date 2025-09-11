@@ -62,7 +62,7 @@ class Dao extends AbstractDao
         $model = $this->getModel();
         $model->setModificationDate(date('Y-m-d H:i:s'));
 
-        if ($model->getId() === null) {
+        if ($model->getId() === null || !$model->getCreationDate()) {
             $model->setCreationDate($model->getModificationDate());
         }
 
