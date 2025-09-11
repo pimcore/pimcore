@@ -147,7 +147,7 @@ class Video extends Model\Asset
         }
 
         if (!$this->getCustomSetting('videoWidth') || !$this->getCustomSetting('videoHeight')) {
-            if(!$this->getCustomSetting(self::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED)) {
+            if (!$this->getCustomSetting(self::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED)) {
                 Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
                 $this->addToUpdateTaskQueue();
             } else {

@@ -22,7 +22,6 @@ use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 
 /**
  * @internal
@@ -102,7 +101,7 @@ class AssetUpdateTasksHandler
             }
         }
 
-        if($failed) {
+        if ($failed) {
             $asset->setCustomSetting(Asset::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED, true);
             $asset->removeCustomSetting('duration');
             $asset->removeCustomSetting('videoWidth');

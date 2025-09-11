@@ -75,6 +75,7 @@ class Document extends Model\Asset
         } catch (Exception $e) {
             Logger::error((string) $e);
             $this->setCustomSetting('document_page_count', 'failed');
+
             return false;
         }
 
