@@ -130,7 +130,7 @@ class Dao extends AbstractDao
         }
 
         $model->setId((int)$data['id']);
-        $model->setCreationDate($data['creationDate']);
+        $model->setCreationDate($data['creationDate'] ?? $data['modificationDate']);
         $model->setModificationDate($data['modificationDate']);
         $model->setSender($sender);
         $model->setRecipient($recipient);
