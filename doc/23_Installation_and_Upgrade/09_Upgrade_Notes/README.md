@@ -2,6 +2,9 @@
 
 ## Pimcore 12.2.0
 
+#### [Security]
+- Introduced the feature of expiring existing session and firce to re-login whenever a password is changed.
+
 #### [Configuration] 
 - The `pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than` parameter which was previously unused is now used to delete system temp files (var/tmp), with the default retention period of 1 day.
 - Introduced `pimcore.applicationlog.archive_db_table_storage_engine` configuration parameter to define the default engine for the `application_log_archive_x` tables. The default value is `Archive`, which have some limitation in clustered environment, please adapt according to your needs. Set it to empty string to auto-detect the engine.
