@@ -1785,7 +1785,7 @@ class Asset extends Element\AbstractElement
     {
         /** @var LockInterface $lock */
         $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($this->getUpdateQueueLockId());
-        if($lock->acquire()) {
+        if ($lock->acquire()) {
             Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                 new AssetUpdateTasksMessage($this->getId())
             );
