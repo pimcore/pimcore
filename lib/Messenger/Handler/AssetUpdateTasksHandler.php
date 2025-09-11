@@ -34,8 +34,7 @@ class AssetUpdateTasksHandler
         protected LoggerInterface $logger,
         protected LongRunningHelper $longRunningHelper,
         protected LockFactory $lockFactory
-    )
-    {
+    ) {
     }
 
     public function __invoke(AssetUpdateTasksMessage $message): void
