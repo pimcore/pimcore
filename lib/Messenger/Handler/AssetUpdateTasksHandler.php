@@ -30,7 +30,11 @@ use function sprintf;
  */
 class AssetUpdateTasksHandler
 {
-    public function __construct(protected LoggerInterface $logger, protected LongRunningHelper $longRunningHelper, protected LockFactory $lockFactory)
+    public function __construct(
+        protected LoggerInterface $logger,
+        protected LongRunningHelper $longRunningHelper,
+        protected LockFactory $lockFactory
+    )
     {
     }
 
