@@ -52,6 +52,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public string|int $maxCharacters = 0;
 
+    public function __wakeup(): void
+    {
+        $this->width = $this->width ?: '100%';
+    }
+    
     private static function getWysiwygSanitizer(): HtmlSanitizer
     {
         return self::$pimcoreWysiwygSanitizer ??= Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
