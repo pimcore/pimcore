@@ -52,7 +52,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public string|int $maxCharacters = 0;
 
-    public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
+    public function enrichLayoutDefinition(?DataObject\Concrete $object, array $context = []): static
     {
         $this->width = $this->getWidth() ?: '100%';
 
