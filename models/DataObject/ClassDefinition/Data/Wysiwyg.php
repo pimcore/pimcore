@@ -57,7 +57,8 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $this->width = $this->getWidth() ?: 400;
 
         return $this;
-    }    
+    }
+
     private static function getWysiwygSanitizer(): HtmlSanitizer
     {
         return self::$pimcoreWysiwygSanitizer ??= Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
