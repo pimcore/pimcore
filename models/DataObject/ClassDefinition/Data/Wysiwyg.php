@@ -54,7 +54,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
-        $this->width = $this->getWidth() ?: 1000;
+        $this->width = $this->getWidth() ?: 400;
 
         return $this;
     }    
