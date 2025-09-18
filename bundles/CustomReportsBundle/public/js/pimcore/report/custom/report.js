@@ -197,7 +197,7 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
                 },
                 items: [{
                     xtype: 'textfield',
-                    fieldLabel: t('CSV Delimiter'),
+                    fieldLabel: t('csv_delimiter'),
                     name: 'delimiter',
                     value: ';',
                     allowBlank: false,
@@ -205,14 +205,14 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
                     width: 250
                 }, {
                     xtype: 'checkbox',
-                    fieldLabel: t('Include Headers'),
+                    fieldLabel: t('include_headers'),
                     name: 'headers',
                     checked: false
                 }]
             });
 
             const exportDialog = Ext.create('Ext.window.Window', {
-                title: t('Export CSV Options'),
+                title: t('export_csv_options'),
                 width: 350,
                 height: 180,
                 modal: true,
