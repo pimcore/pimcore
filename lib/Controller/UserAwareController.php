@@ -33,6 +33,8 @@ abstract class UserAwareController extends Controller
 
     /**
      * Get user from user proxy object which is registered on security component
+     *
+     * @return ($proxyUser is true ? UserProxy|null : User|null)
      */
     protected function getPimcoreUser(bool $proxyUser = false): UserProxy|User|null
     {
