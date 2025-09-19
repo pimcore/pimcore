@@ -60,7 +60,7 @@ class HousekeepingTask implements TaskInterface
 
             if ($current->getATime() && $current->getATime() < (time() - $seconds)) {
                 return true;
-            };
+            }
 
             return false;
         });
