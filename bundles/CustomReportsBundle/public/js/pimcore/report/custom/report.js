@@ -207,7 +207,9 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
                     xtype: 'checkbox',
                     fieldLabel: t('include_headers'),
                     name: 'headers',
-                    checked: false
+                    checked: false,
+                    inputValue: true,
+                    uncheckedValue: false
                 }]
             });
 
@@ -221,30 +223,32 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
                 buttons: [{
                     text: t('export'),
                     handler: function() {
-                        const values = form.getValues();
-                        exportDialog.close();
-                        
-                        this.progressBar = Ext.create('Ext.ProgressBar', {
-                            renderTo: Ext.getBody(),
-                            width: 300
-                        });
-                        this.progressWindow = new Ext.Window({
-                            modal: true,
-                            title: "Progress",
-                            width: 300,
-                            height: 120,
-                            closable: false,
-                            items: [this.progressBar],
-                            buttons: [{
-                                text: t("cancel"),
-                                handler: function () {
-                                    this.progressStop = true;
-                                    this.progressWindow.close();
-                                }.bind(this)
-                            }]
-                        });
-                        this.progressWindow.show();
-                        this.createCsv(values.delimiter, "", 0, values.headers ? "1" : "");
+                        if (form.isValid()) {
+                            const values = form.getValues();
+                            exportDialog.close();
+                            
+                            this.progressBar = Ext.create('Ext.ProgressBar', {
+                                renderTo: Ext.getBody(),
+                                width: 300
+                            });
+                            this.progressWindow = new Ext.Window({
+                                modal: true,
+                                title: "Progress",
+                                width: 300,
+                                height: 120,
+                                closable: false,
+                                items: [this.progressBar],
+                                buttons: [{
+                                    text: t("cancel"),
+                                    handler: function () {
+                                        this.progressStop = true;
+                                        this.progressWindow.close();
+                                    }.bind(this)
+                                }]
+                            });
+                            this.progressWindow.show();
+                            this.createCsv(values.delimiter, "", 0, values.headers);
+                        }
                     }.bind(this)
                 }, {
                     text: t('cancel'),
