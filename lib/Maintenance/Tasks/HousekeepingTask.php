@@ -58,13 +58,9 @@ class HousekeepingTask implements TaskInterface
                 return false;
             }
 
-            if ($current->isFile()) {
-                if ($current->getATime() && $current->getATime() < (time() - $seconds)) {
-                    return true;
-                }
-            } else {
+            if ($current->getATime() && $current->getATime() < (time() - $seconds)) {
                 return true;
-            }
+            };
 
             return false;
         });
