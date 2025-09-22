@@ -1060,7 +1060,6 @@ class Model extends AbstractDefinitionHelper
 
         $this->debug('[PimcoreSimpleBackendSearchBundle] Running SimpleBackendSearchBundle installer');
 
-        // install ecommerce framework
         $installer = $pimcoreModule->getContainer()->get(\Pimcore\Bundle\SimpleBackendSearchBundle\Installer::class);
         $installer->install();
     }
