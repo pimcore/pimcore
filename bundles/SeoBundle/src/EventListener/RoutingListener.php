@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\EventListener;
 
-use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -28,8 +27,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class RoutingListener implements EventSubscriberInterface
 {
-    use PimcoreContextAwareTrait;
-
     public function __construct(protected RedirectHandler $redirectHandler)
     {
     }
