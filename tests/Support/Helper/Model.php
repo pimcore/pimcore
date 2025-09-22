@@ -28,6 +28,7 @@ class Model extends AbstractDefinitionHelper
         DataObject::setHideUnpublished(false);
         parent::_beforeSuite($settings);
         $this->installSeoBundle();
+        $this->installSimpleBackendSearchBundle();
     }
 
     /**
@@ -1050,5 +1051,17 @@ class Model extends AbstractDefinitionHelper
 
         //explicitly load installed classes so that the new ones are used during tests
         Autoloader::load(Redirect::class);
+    }
+
+    private function installSimpleBackendSearchBundle(): void 
+    {
+        /** @var Pimcore $pimcoreModule */
+        $pimcoreModule = $this->getModule('\\'.Pimcore::class);
+
+        $this->debug('[PimcoreSimpleBackendSearchBundle] Running SimpleBackendSearchBundle installer');
+
+        // install ecommerce framework
+        $installer = $pimcoreModule->getContainer()->get(\Pimcore\Bundle\SimpleBackendSearchBundle\Installer::class);
+        $installer->install();
     }
 }
