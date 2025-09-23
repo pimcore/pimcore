@@ -83,9 +83,9 @@ class SearchBackendReindexCommand extends AbstractCommand
                         //process page count, if not exists
                         if (
                             $element instanceof Asset\Document &&
-                            !$element->getCustomSetting('document_page_count') &&
-                            $element->processPageCount()
+                            !$element->getCustomSetting('document_page_count')
                         ) {
+                            $element->processPageCount();
                             $this->saveAsset($element);
                         }
 
