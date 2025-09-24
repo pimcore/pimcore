@@ -77,7 +77,7 @@ class AssetUpdateTasksHandler
             $saveParams['versionNote'] = 'PDF scan result';
         }
 
-        if($asset->isPageCountProcessingEnabled()) {
+        if ($asset->isPageCountProcessingEnabled()) {
             $pageCount = $asset->getCustomSetting('document_page_count');
             if (!$pageCount || $pageCount === 'failed') {
                 if (!$asset->processPageCount() || $asset->getCustomSetting('document_page_count') === 'failed') {
@@ -89,7 +89,7 @@ class AssetUpdateTasksHandler
             }
         }
 
-        if($asset->isThumbnailsEnabled() && !$asset->getCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED)) {
+        if ($asset->isThumbnailsEnabled() && !$asset->getCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED)) {
             $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
         }
 

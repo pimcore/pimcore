@@ -22,7 +22,6 @@ use Pimcore\Config;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
-use Pimcore\Model\Asset;
 use Pimcore\Tool;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\GenericEvent;

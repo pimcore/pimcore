@@ -88,7 +88,7 @@ trait EmbeddedMetaDataTrait
                 $exif = $this->flattenArray($this->getEXIFData($filePath));
                 $embeddedMetaData = array_merge(array_merge($xmp, $exif), $iptc);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error($e->getMessage());
         }
 
