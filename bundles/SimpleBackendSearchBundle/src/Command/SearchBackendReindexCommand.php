@@ -80,15 +80,6 @@ class SearchBackendReindexCommand extends AbstractCommand
                 $elements = $list->load();
                 foreach ($elements as $element) {
                     try {
-                        //process page count, if not exists
-                        if (
-                            $element instanceof Asset\Document &&
-                            !$element->getCustomSetting('document_page_count')
-                        ) {
-                            $element->processPageCount();
-                            $this->saveAsset($element);
-                        }
-
                         $searchEntry = Search\Backend\Data::getForElement($element);
                         if ($searchEntry->getId() instanceof Search\Backend\Data\Id) {
                             $searchEntry->setDataFromElement($element);
