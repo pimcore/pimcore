@@ -101,15 +101,4 @@ class SearchBackendReindexCommand extends AbstractCommand
 
         return 0;
     }
-
-    /**
-     * @throws Exception
-     */
-    private function saveAsset(Asset $asset): void
-    {
-        Version::disable();
-        $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
-        $asset->save();
-        Version::enable();
-    }
 }
