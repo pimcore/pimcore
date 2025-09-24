@@ -71,23 +71,26 @@ class AssetUpdateTasksHandler
     {
         $save = false;
         $saveParams = [];
-        $asset->removeCustomSetting(Asset::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED);
+        $asset->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
         if ($asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS()) {
             $save = true;
             $saveParams['versionNote'] = 'PDF scan result';
         }
 
-        $pageCount = $asset->getCustomSetting('document_page_count');
-        if (!$pageCount || $pageCount === 'failed') {
-            if (!$asset->processPageCount() || $asset->getCustomSetting('document_page_count') === 'failed') {
-                $asset->setCustomSetting(Asset::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED, true);
-                $this->logger->warning(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
+        if($asset->isPageCountProcessingEnabled()) {
+            $pageCount = $asset->getCustomSetting('document_page_count');
+            if (!$pageCount || $pageCount === 'failed') {
+                if (!$asset->processPageCount() || $asset->getCustomSetting('document_page_count') === 'failed') {
+                    $asset->setCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED, true);
+                    $this->logger->warning(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
+                }
 
-            } else {
-                $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+                $save = true;
             }
+        }
 
-            $save = true;
+        if($asset->isThumbnailsEnabled() && !$asset->getCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED)) {
+            $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
         }
 
         if ($save) {
@@ -97,7 +100,7 @@ class AssetUpdateTasksHandler
 
     private function processVideo(Asset\Video $asset): void
     {
-        $asset->removeCustomSetting(Asset::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED);
+        $asset->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
         $failed = true;
 
         if ($duration = $asset->getDurationFromBackend()) {
@@ -110,24 +113,20 @@ class AssetUpdateTasksHandler
         }
 
         if ($failed) {
-            $asset->setCustomSetting(Asset::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED, true);
+            $asset->setCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED, true);
             $asset->removeCustomSetting('duration');
             $asset->removeCustomSetting('videoWidth');
             $asset->removeCustomSetting('videoHeight');
         }
 
         $sphericalMetaData = $asset->getSphericalMetaDataFromBackend();
-        if (!empty($sphericalMetaData)) {
+        if ($sphericalMetaData !== $asset->getCustomSetting('SphericalMetaData')) {
             $asset->setCustomSetting('SphericalMetaData', $sphericalMetaData);
         } else {
             $asset->removeCustomSetting('SphericalMetaData');
         }
 
-        try {
-            $asset->handleEmbeddedMetaData();
-        } catch (Exception $e) {
-            $this->logger->warning($e->getMessage());
-        }
+        $asset->handleEmbeddedMetaData();
         $this->saveAsset($asset);
 
         if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {

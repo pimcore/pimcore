@@ -72,7 +72,7 @@ class Asset extends Element\AbstractElement
     use ScheduledTasksTrait;
     use TemporaryFileHelperTrait;
 
-    public const CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED = 'pimcore-asset-update-task-processing-failed';
+    public const CUSTOM_SETTING_PROCESSING_FAILED = 'pimcore-asset-processing-failed';
 
     /**
      * @internal
@@ -1793,12 +1793,14 @@ class Asset extends Element\AbstractElement
      */
     public function addToUpdateTaskQueue(): void
     {
-        /** @var LockInterface $lock */
-        $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($this->getUpdateQueueLockId());
-        if ($lock->acquire()) {
-            Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                new AssetUpdateTasksMessage($this->getId())
-            );
+        if (!$this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED)) {
+            /** @var LockInterface $lock */
+            $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($this->getUpdateQueueLockId());
+            if ($lock->acquire()) {
+                Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                    new AssetUpdateTasksMessage($this->getId())
+                );
+            }
         }
     }
 

@@ -22,6 +22,7 @@ use Pimcore\Config;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Asset;
 use Pimcore\Tool;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -146,17 +147,6 @@ class Video extends Model\Asset
             return new Video\ImageThumbnail(null); // returns error image
         }
 
-        if (!$this->getCustomSetting('videoWidth') || !$this->getCustomSetting('videoHeight')) {
-            if (!$this->getCustomSetting(self::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED)) {
-                Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
-                $this->addToUpdateTaskQueue();
-            } else {
-                Logger::info('Image thumbnail not available, video cannot be processed.');
-            }
-
-            return new Video\ImageThumbnail(null); // returns error image
-        }
-
         return new Video\ImageThumbnail($this, $thumbnailName, $timeOffset, $imageAsset);
     }
 
@@ -204,7 +194,7 @@ class Video extends Model\Asset
     public function getDuration(): float|int|null
     {
         $duration = $this->getCustomSetting('duration');
-        if (!$duration && !$this->getCustomSetting(self::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED)) {
+        if (!$duration && !$this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED)) {
             $duration = $this->getDurationFromBackend();
             if ($duration) {
                 $this->setCustomSetting('duration', $duration);
@@ -229,16 +219,18 @@ class Video extends Model\Asset
                 'width' => $width,
                 'height' => $height,
             ];
-        } elseif (!$this->getCustomSetting(self::CUSTOM_SETTING_UPDATE_TASK_PROCESSING_FAILED)) {
+        } elseif (!$this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED)) {
             $dimensions = $this->getDimensionsFromBackend();
             if ($dimensions) {
                 $this->setCustomSetting('videoWidth', (int) $dimensions['width']);
                 $this->setCustomSetting('videoHeight', (int) $dimensions['height']);
-
-                Model\Version::disable();
-                $this->save(); // auto save
-                Model\Version::enable();
+            } else {
+                $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED, true);
             }
+
+            Model\Version::disable();
+            $this->save(); // auto save
+            Model\Version::enable();
         }
 
         return $dimensions;
