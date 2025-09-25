@@ -47,6 +47,8 @@ class AssetUpdateTasksHandler
         }
         $this->logger->debug(sprintf('Processing asset with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
 
+        $asset->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
+
         if ($asset instanceof Asset\Image) {
             $this->processImage($asset);
         } elseif ($asset instanceof Asset\Document) {
@@ -71,7 +73,6 @@ class AssetUpdateTasksHandler
     {
         $save = false;
         $saveParams = [];
-        $asset->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
         if ($asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS()) {
             $save = true;
             $saveParams['versionNote'] = 'PDF scan result';
@@ -100,7 +101,6 @@ class AssetUpdateTasksHandler
 
     private function processVideo(Asset\Video $asset): void
     {
-        $asset->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
         $failed = true;
 
         if ($duration = $asset->getDurationFromBackend()) {
@@ -119,11 +119,10 @@ class AssetUpdateTasksHandler
             $asset->removeCustomSetting('videoHeight');
         }
 
+        $asset->removeCustomSetting('SphericalMetaData');
         $sphericalMetaData = $asset->getSphericalMetaDataFromBackend();
-        if ($sphericalMetaData !== $asset->getCustomSetting('SphericalMetaData')) {
+        if ($sphericalMetaData) {
             $asset->setCustomSetting('SphericalMetaData', $sphericalMetaData);
-        } else {
-            $asset->removeCustomSetting('SphericalMetaData');
         }
 
         $asset->handleEmbeddedMetaData();
@@ -154,13 +153,7 @@ class AssetUpdateTasksHandler
         // and also to just do the calculation once, because the calculation can fail, an then the controller tries to
         // calculate the dimensions on every request an also will create a version, ...
         $image->setCustomSetting('imageDimensionsCalculated', $imageDimensionsCalculated);
-
-        try {
-            $image->handleEmbeddedMetaData();
-        } catch (Exception $e) {
-            $this->logger->warning($e->getMessage());
-        }
-
+        $image->handleEmbeddedMetaData();
         $this->saveAsset($image);
 
         // generating the thumbnails must be after saving the image, because otherwise the generated

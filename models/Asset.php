@@ -607,6 +607,7 @@ class Asset extends Element\AbstractElement
             $this->addToDependenciesQueue();
 
             if ($this->getDataChanged()) {
+                $this->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
                 if (in_array($this->getType(), ['image', 'video', 'document'])) {
                     $this->addToUpdateTaskQueue();
                 }
