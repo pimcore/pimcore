@@ -61,8 +61,6 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $conditionVariables = [];
-        $missingOnly = $input->getOption('missing-only');
-
         $conditions = [];
 
         if ($input->getOption('parent')) {
@@ -71,7 +69,7 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
                 $conditions[] = "path LIKE '" . Helper::escapeLike($parent->getRealFullPath()) . "/%'";
             } else {
                 $this->writeError($input->getOption('parent') . ' is not a valid asset folder ID!');
-                exit;
+                return 1;
             }
         }
 
