@@ -69,6 +69,7 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
                 $conditions[] = "path LIKE '" . Helper::escapeLike($parent->getRealFullPath()) . "/%'";
             } else {
                 $this->writeError($input->getOption('parent') . ' is not a valid asset folder ID!');
+
                 return 1;
             }
         }
