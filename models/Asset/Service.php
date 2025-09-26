@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset;
 
 use Exception;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToReadFile;
 use Pimcore;
 use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
@@ -568,26 +570,29 @@ class Service extends Model\Element\Service
         // thumbnail urls are at least 10 characters long
         if (strlen($uri) > 10) {
 
-            $asset = Asset::getById($config['asset_id']);
             $thumbnailConfig = ThumbnailConfig::getByName($config['thumbnail_name']);
+            $asset = Asset::getById($config['asset_id']);
 
             $hash = $thumbnailConfig->getHash([$asset->getChecksum()]);
             $hasHash = strpos($config['filename'], '.' . $hash .'.');
-            if ($hasHash === false) {
-                $storagePathWithHash = str_replace('.' . $config['file_extension'], '.'. $hash .'.'. $config['file_extension'], $storagePath);
-            }
 
-            if (isset($storagePathWithHash) && $storage->fileExists($storagePathWithHash)) {
-                if ($hasHash === false) {
-                    // if cache is expired we copy the file to the non-hashed version
+            //Only for Dynamic Thumbnails Generation on request without an Hash, make a copy without hash
+            //in filename for Maintanenace Mode purposes.
+            if ($hasHash === false) {
+                $storagePathWithHash = str_replace(
+                    '.' . $config['file_extension'],
+                    '.'. $hash .'.'. $config['file_extension'],
+                    $storagePath
+                );
+
+                if ($storage->fileExists($storagePathWithHash)){
                     $storage->copy($storagePathWithHash, $storagePath);
-                } else {
-                    $storagePath = $storagePathWithHash;
                 }
             }
-            $stream = $storage->readStream($storagePath);
 
-            if (isset($stream)) {
+            if ($storage->fileExists($storagePath)) {
+                $stream = $storage->readStream($storagePath);
+
                 $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
 
                 return new StreamedResponse(function () use ($stream) {
@@ -599,6 +604,7 @@ class Service extends Model\Element\Service
                     'Content-Length' => $storage->fileSize($storagePath),
                 ]);
             }
+
         }
 
         $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
