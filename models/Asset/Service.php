@@ -566,24 +566,44 @@ class Service extends Model\Element\Service
         }
 
         // thumbnail urls are at least 10 characters long
-        if (strlen($uri) > 10 && $storage->fileExists($storagePath)) {
+        if (strlen($uri) > 10) {
+
+            $asset = Asset::getById($config['asset_id']);
+            $thumbnailConfig = ThumbnailConfig::getByName($config['thumbnail_name']);
+
+            $hash = $thumbnailConfig->getHash([$asset->getChecksum()]);
+            $hasHash = strpos($config['filename'], '.' . $hash .'.');
+            if ($hasHash === false) {
+                $storagePathWithHash = str_replace('.' . $config['file_extension'], '.'. $hash .'.'. $config['file_extension'], $storagePath);
+            }
+
+            if (isset($storagePathWithHash) && $storage->fileExists($storagePathWithHash)) {
+                if ($hasHash === false) {
+                    // if cache is expired we copy the file to the non-hashed version
+                    $storage->copy($storagePathWithHash, $storagePath);
+                } else {
+                    $storagePath = $storagePathWithHash;
+                }
+            }
             $stream = $storage->readStream($storagePath);
 
-            $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
+            if (isset($stream)) {
+                $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
 
-            return new StreamedResponse(function () use ($stream) {
-                fpassthru($stream);
-            }, 200, [
-                'Cache-Control' => 'public, max-age=' . $lifetime,
-                'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
-                'Content-Type' => $storage->mimeType($storagePath),
-                'Content-Length' => $storage->fileSize($storagePath),
-            ]);
-        } else {
-            $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
-            if ($thumbnail) {
-                return Asset\Service::getStreamedResponseFromImageThumbnail($thumbnail, $config);
+                return new StreamedResponse(function () use ($stream) {
+                    fpassthru($stream);
+                }, 200, [
+                    'Cache-Control' => 'public, max-age=' . $lifetime,
+                    'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
+                    'Content-Type' => $storage->mimeType($storagePath),
+                    'Content-Length' => $storage->fileSize($storagePath),
+                ]);
             }
+        }
+
+        $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
+        if ($thumbnail) {
+            return Asset\Service::getStreamedResponseFromImageThumbnail($thumbnail, $config);
         }
 
         return null;
