@@ -56,36 +56,40 @@ trait EmbeddedMetaDataTrait
         $exiftool = Console::getExecutable('exiftool');
         $embeddedMetaData = [];
 
-        if (!$filePath) {
-            $filePath = $this->getLocalFile();
-        }
+        try {
+            if (!$filePath) {
+                $filePath = $this->getLocalFile();
+            }
 
-        if ($exiftool && $useExifTool) {
-            $process = new Process([$exiftool, '-j', $filePath]);
-            $process->run();
-            $output = $process->getOutput();
-            $outputArray = json_decode($output, true);
-            if ($outputArray) {
-                $embeddedMetaData = $this->flattenArray($outputArray[0]);
+            if ($exiftool && $useExifTool) {
+                $process = new Process([$exiftool, '-j', $filePath]);
+                $process->run();
+                $output = $process->getOutput();
+                $outputArray = json_decode($output, true);
+                if ($outputArray) {
+                    $embeddedMetaData = $this->flattenArray($outputArray[0]);
 
-                foreach (['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
-                    if (isset($embeddedMetaData[$removeKey])) {
-                        unset($embeddedMetaData[$removeKey]);
+                    foreach (['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
+                        if (isset($embeddedMetaData[$removeKey])) {
+                            unset($embeddedMetaData[$removeKey]);
+                        }
                     }
                 }
-            }
-        } else {
-            try {
-                $xmp = $this->flattenArray($this->getXMPData($filePath));
-            } catch (Exception $e) {
-                $xmp = [];
-                Logger::error('Problem reading XMP metadata of the image with ID ' . $this->getId() . ' Reason: '
-                    . $e->getMessage());
-            }
+            } else {
+                try {
+                    $xmp = $this->flattenArray($this->getXMPData($filePath));
+                } catch (Exception $e) {
+                    $xmp = [];
+                    Logger::error('Problem reading XMP metadata of the image with ID ' . $this->getId() . ' Reason: '
+                        . $e->getMessage());
+                }
 
-            $iptc = $this->flattenArray($this->getIPTCData($filePath));
-            $exif = $this->flattenArray($this->getEXIFData($filePath));
-            $embeddedMetaData = array_merge(array_merge($xmp, $exif), $iptc);
+                $iptc = $this->flattenArray($this->getIPTCData($filePath));
+                $exif = $this->flattenArray($this->getEXIFData($filePath));
+                $embeddedMetaData = array_merge(array_merge($xmp, $exif), $iptc);
+            }
+        } catch (Exception $e) {
+            Logger::error($e->getMessage());
         }
 
         $this->setCustomSetting('embeddedMetaData', $embeddedMetaData);

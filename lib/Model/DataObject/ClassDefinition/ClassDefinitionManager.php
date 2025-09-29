@@ -69,13 +69,24 @@ class ClassDefinitionManager
      */
     public function createOrUpdateClassDefinitions(bool $force = false): array
     {
-        $objectClassesFolders = array_unique([PIMCORE_CLASS_DEFINITION_DIRECTORY, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY]);
+        $objectClassesFolders = array_filter(array_unique(array_map('realpath', [
+            PIMCORE_CLASS_DEFINITION_DIRECTORY,
+            PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY,
+        ])));
 
         $changes = [];
+        $includedFiles = [];
 
         foreach ($objectClassesFolders as $objectClassesFolder) {
             $files = glob($objectClassesFolder . '/*.php');
             foreach ($files as $file) {
+                $realFile = realpath($file);
+
+                if (isset($includedFiles[$realFile])) {
+                    continue;
+                }
+
+                $includedFiles[$realFile] = true;
                 $class = include $file;
 
                 if ($class instanceof ClassDefinitionInterface) {

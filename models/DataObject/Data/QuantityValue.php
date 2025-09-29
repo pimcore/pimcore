@@ -58,9 +58,16 @@ class QuantityValue extends AbstractQuantityValue
             }
         }
 
-        if ($this->getUnit() instanceof Unit) {
-            $translator = Pimcore::getContainer()->get('translator');
-            $value .= ' ' . $translator->trans($this->getUnit()->getAbbreviation(), [], 'admin');
+        $unit = $this->getUnit();
+        if ($unit instanceof Unit) {
+            if ($unit->getAbbreviation() === null) {
+                $unitAbbreviation = $unit->getId();
+            } else {
+                $translator = Pimcore::getContainer()->get('translator');
+                $unitAbbreviation = $translator->trans($unit->getAbbreviation(), [], 'admin');
+            }
+
+            $value .= ' ' . $unitAbbreviation;
         }
 
         return $value ? (string)$value : '';

@@ -22,14 +22,19 @@ use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Lock\LockFactory;
+use function sprintf;
 
 /**
  * @internal
  */
 class AssetUpdateTasksHandler
 {
-    public function __construct(protected LoggerInterface $logger, protected LongRunningHelper $longRunningHelper)
-    {
+    public function __construct(
+        protected LoggerInterface $logger,
+        protected LongRunningHelper $longRunningHelper,
+        protected LockFactory $lockFactory
+    ) {
     }
 
     public function __invoke(AssetUpdateTasksMessage $message): void
@@ -42,6 +47,8 @@ class AssetUpdateTasksHandler
         }
         $this->logger->debug(sprintf('Processing asset with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
 
+        $asset->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
+
         if ($asset instanceof Asset\Image) {
             $this->processImage($asset);
         } elseif ($asset instanceof Asset\Document) {
@@ -51,67 +58,74 @@ class AssetUpdateTasksHandler
         }
 
         $this->longRunningHelper->deleteTemporaryFiles();
+        $this->lockFactory->createLock($asset->getUpdateQueueLockId())->release();
     }
 
-    private function saveAsset(Asset $asset): void
+    private function saveAsset(Asset $asset, array $saveParams = []): void
     {
         Version::disable();
         $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
-        $asset->save();
+        $asset->save($saveParams);
         Version::enable();
     }
 
     private function processDocument(Asset\Document $asset): void
     {
+        $save = false;
+        $saveParams = [];
         if ($asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS()) {
-            $asset->save(['versionNote' => 'PDF scan result']);
+            $save = true;
+            $saveParams['versionNote'] = 'PDF scan result';
         }
 
-        $savedNeeded = false;
-        $pageCount = $asset->getCustomSetting('document_page_count');
-        if (!$pageCount || $pageCount === 'failed') {
-            $savedNeeded |= $asset->processPageCount();
+        if ($asset->isPageCountProcessingEnabled()) {
+            $pageCount = $asset->getCustomSetting('document_page_count');
+            if (!$pageCount || $pageCount === 'failed') {
+                if (!$asset->processPageCount() || $asset->getCustomSetting('document_page_count') === 'failed') {
+                    $asset->setCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED, true);
+                    $this->logger->warning(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
+                }
+
+                $save = true;
+            }
         }
 
-        if ($savedNeeded) {
-            $this->saveAsset($asset);
-        }
-
-        if ($asset->getCustomSetting('document_page_count') !== 'failed') {
+        if ($asset->isThumbnailsEnabled() && !$asset->getCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED)) {
             $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
-        } elseif ($savedNeeded) {
-            $this->logger->warning(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
+        }
+
+        if ($save) {
+            $this->saveAsset($asset, $saveParams);
         }
     }
 
     private function processVideo(Asset\Video $asset): void
     {
+        $failed = true;
+
         if ($duration = $asset->getDurationFromBackend()) {
             $asset->setCustomSetting('duration', $duration);
-        } else {
-            $asset->removeCustomSetting('duration');
+            if ($dimensions = $asset->getDimensionsFromBackend()) {
+                $asset->setCustomSetting('videoWidth', $dimensions['width']);
+                $asset->setCustomSetting('videoHeight', $dimensions['height']);
+                $failed = false;
+            }
         }
 
-        if ($dimensions = $asset->getDimensionsFromBackend()) {
-            $asset->setCustomSetting('videoWidth', $dimensions['width']);
-            $asset->setCustomSetting('videoHeight', $dimensions['height']);
-        } else {
+        if ($failed) {
+            $asset->setCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED, true);
+            $asset->removeCustomSetting('duration');
             $asset->removeCustomSetting('videoWidth');
             $asset->removeCustomSetting('videoHeight');
         }
 
+        $asset->removeCustomSetting('SphericalMetaData');
         $sphericalMetaData = $asset->getSphericalMetaDataFromBackend();
-        if (!empty($sphericalMetaData)) {
+        if ($sphericalMetaData) {
             $asset->setCustomSetting('SphericalMetaData', $sphericalMetaData);
-        } else {
-            $asset->removeCustomSetting('SphericalMetaData');
         }
 
-        try {
-            $asset->handleEmbeddedMetaData();
-        } catch (Exception $e) {
-            $this->logger->warning($e->getMessage());
-        }
+        $asset->handleEmbeddedMetaData();
         $this->saveAsset($asset);
 
         if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {
@@ -139,13 +153,7 @@ class AssetUpdateTasksHandler
         // and also to just do the calculation once, because the calculation can fail, an then the controller tries to
         // calculate the dimensions on every request an also will create a version, ...
         $image->setCustomSetting('imageDimensionsCalculated', $imageDimensionsCalculated);
-
-        try {
-            $image->handleEmbeddedMetaData();
-        } catch (Exception $e) {
-            $this->logger->warning($e->getMessage());
-        }
-
+        $image->handleEmbeddedMetaData();
         $this->saveAsset($image);
 
         // generating the thumbnails must be after saving the image, because otherwise the generated
