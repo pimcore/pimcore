@@ -35,6 +35,8 @@ use function in_array;
 )]
 class AddToUpdateTaskQueueCommand extends AbstractCommand
 {
+    protected array $types = ['image', 'video', 'document'];
+
     protected function configure(): void
     {
         $this
@@ -55,13 +57,23 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'only add assets matching the given regex pattern (path + filename), example:  ^/Sample.*urban.jpg$'
+            )
+            ->addOption(
+                'retry-failed',
+                'f',
+                InputOption::VALUE_NONE,
+                'retry assets that previously failed to be processed'
             );
+
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $conditionVariables = [];
-        $conditions = [];
+
+        $conditions = [
+            "`type` IN ('" . implode("','", $this->types) . "')"
+        ];
 
         if ($input->getOption('parent')) {
             $parent = Asset::getById((int) $input->getOption('parent'));
@@ -83,6 +95,13 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
             $conditionVariables[] = $regex;
         }
 
+        if ($input->getOption('retry-failed')) {
+            $conditions[] = sprintf(
+                "customSettings LIKE '%%%s%%'",
+                '"' . Asset::CUSTOM_SETTING_PROCESSING_FAILED . '":true'
+            );
+        }
+
         $list = new Asset\Listing();
         $list->setCondition(implode(' AND ', $conditions), $conditionVariables);
         $total = $list->getTotalCount();
@@ -93,9 +112,7 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
             $list->setOffset($i * $perLoop);
             $assets = $list->load();
             foreach ($assets as $asset) {
-                if (in_array($asset->getType(), ['image', 'video', 'document'])) {
-                    $asset->addToUpdateTaskQueue();
-                }
+                $asset->triggerUpdateTask();
             }
 
             Pimcore::collectGarbage();

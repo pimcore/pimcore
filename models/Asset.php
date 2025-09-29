@@ -1795,13 +1795,22 @@ class Asset extends Element\AbstractElement
     public function addToUpdateTaskQueue(): void
     {
         if (!$this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED)) {
-            /** @var LockInterface $lock */
-            $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($this->getUpdateQueueLockId());
-            if ($lock->acquire()) {
-                Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                    new AssetUpdateTasksMessage($this->getId())
-                );
-            }
+            $this->triggerUpdateTask();
+        }
+    }
+
+    /**
+     * @internal
+     */
+    public function triggerUpdateTask(): void
+    {
+        /** @var LockInterface $lock */
+        $lock = Pimcore::getContainer()->get(LockFactory::class)->createLock($this->getUpdateQueueLockId());
+        if ($lock->acquire()) {
+            $bus = Pimcore::getContainer()->get('messenger.bus.pimcore-core');
+            $message = new AssetUpdateTasksMessage($this->getId());
+            
+            $bus->dispatch($message);
         }
     }
 
