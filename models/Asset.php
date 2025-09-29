@@ -1809,7 +1809,7 @@ class Asset extends Element\AbstractElement
         if ($lock->acquire()) {
             $bus = Pimcore::getContainer()->get('messenger.bus.pimcore-core');
             $message = new AssetUpdateTasksMessage($this->getId());
-            
+
             $bus->dispatch($message);
         }
     }
