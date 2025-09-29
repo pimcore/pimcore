@@ -309,6 +309,10 @@ process).
 
 Of course this works only with predefined (named) thumbnail configurations and not with dynamic configurations.
 
+> **WARNING**
+> This feature is delivered through PublicServicesController and might not work if the controller is unreachable, eg. when in Maintenance mode.
+> When requesting an image without providing a hash, the content cannot be Browser cached like regular Nginx-served files, as the file without hash doesn’t exist physically.
+
 ## Deferred Rendering of Thumbnails
 
 For performance reasons, Pimcore doesn't generate the thumbnail image directly when calling `getThumbnail()`
