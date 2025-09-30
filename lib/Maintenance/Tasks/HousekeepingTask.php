@@ -37,15 +37,15 @@ class HousekeepingTask implements TaskInterface
     public function execute(): void
     {
         foreach (['dev'] as $environment) {
-            $profilerDir = sprintf('%s/%s/profiler', PIMCORE_SYMFONY_CACHE_DIRECTORY, $environment);
+            $profilerDir = sprintf('%s/%s/profiler', PIMCORE_SYMFONY_CACHE_DIRECTORY, $environment, true);
 
             $this->deleteFilesInFolderOlderThanSeconds($profilerDir, $this->profilerTime);
         }
 
-        $this->deleteFilesInFolderOlderThanSeconds(PIMCORE_SYSTEM_TEMP_DIRECTORY, $this->tmpFileTime);
+        $this->deleteFilesInFolderOlderThanSeconds(PIMCORE_SYSTEM_TEMP_DIRECTORY, $this->tmpFileTime, false);
     }
 
-    private function deleteFilesInFolderOlderThanSeconds(string $folder, int $seconds): void
+    private function deleteFilesInFolderOlderThanSeconds(string $folder, int $seconds, bool $clearFolder): void
     {
         if (!is_dir($folder)) {
             return;
@@ -79,7 +79,7 @@ class HousekeepingTask implements TaskInterface
                 @unlink($file->getPathname());
             }
 
-            if (is_dir_empty($file->getPath())) {
+            if (is_dir_empty($file->getPath()) && $clearFolder) {
                 @rmdir($file->getPath());
             }
         }
