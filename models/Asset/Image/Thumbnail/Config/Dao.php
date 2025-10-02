@@ -92,7 +92,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $data = [];
         $allowedProperties = ['name', 'description', 'group', 'items', 'medias', 'format',
             'quality', 'highResolution', 'creationDate', 'modificationDate', 'preserveColor', 'preserveMetaData',
-            'rasterizeSVG', 'downloadable', 'preserveAnimation', ];
+            'rasterizeSVG', 'useCropBox', 'downloadable', 'preserveAnimation', ];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {

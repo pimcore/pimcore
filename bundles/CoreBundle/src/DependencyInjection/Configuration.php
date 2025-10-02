@@ -446,6 +446,7 @@ final class Configuration implements ConfigurationInterface
                                                 ->booleanNode('preserveColor')->end()
                                                 ->booleanNode('preserveMetaData')->end()
                                                 ->booleanNode('rasterizeSVG')->end()
+                                                ->booleanNode('useCropBox')->end()
                                                 ->booleanNode('downloadable')->end()
                                                 ->integerNode('modificationDate')->end()
                                                 ->integerNode('creationDate')->end()

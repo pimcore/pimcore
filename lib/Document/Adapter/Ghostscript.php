@@ -172,13 +172,32 @@ class Ghostscript extends Adapter
         return $this->version;
     }
 
-    public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): bool
+    public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200, bool $cropBox = false): bool
     {
         try {
             $localFile = self::getLocalFileFromStream($this->getPdf());
-            $cmd = [self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dUseCropBox', '-dFirstPage=' . $page,
-            '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r'. $resolution, '-o',
-            $imageTargetPath, $localFile];
+            $cmd = [
+                self::getGhostscriptCli(),
+                '-sDEVICE=pngalpha',
+                '-dFirstPage=' . $page,
+                '-dLastPage=' . $page,
+                '-dTextAlphaBits=4',
+                '-dGraphicsAlphaBits=4',
+                '-r' . $resolution,
+            ];
+
+            if ($cropBox) {
+                $cmd[] = '-dUseCropBox';
+            }
+
+            $outputCmd = [
+                '-o',
+                $imageTargetPath,
+                $localFile
+            ];
+
+            $cmd = array_merge($cmd, $outputCmd);
+
             Console::addLowProcessPriority($cmd);
             $process = new Process($cmd);
             $process->setTimeout(240);

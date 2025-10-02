@@ -119,6 +119,12 @@ final class Config extends Model\AbstractModel
      * @internal
      *
      */
+    protected bool $useCropBox = false;
+
+    /**
+     * @internal
+     *
+     */
     protected bool $downloadable = false;
 
     /**
@@ -715,6 +721,16 @@ final class Config extends Model\AbstractModel
     public function setRasterizeSVG(bool $rasterizeSVG): void
     {
         $this->rasterizeSVG = $rasterizeSVG;
+    }
+
+    public function isCropBox(): bool
+    {
+        return $this->useCropBox;
+    }
+
+    public function setCropBox(bool $cropbox): void
+    {
+        $this->useCropBox = $cropbox;
     }
 
     public function isSvgTargetFormatPossible(): bool
