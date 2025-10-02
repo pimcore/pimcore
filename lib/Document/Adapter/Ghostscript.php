@@ -183,20 +183,12 @@ class Ghostscript extends Adapter
                 '-dLastPage=' . $page,
                 '-dTextAlphaBits=4',
                 '-dGraphicsAlphaBits=4',
+                ...($cropBox ? ['-dUseCropBox'] : []),
                 '-r' . $resolution,
-            ];
-
-            if ($cropBox) {
-                $cmd[] = '-dUseCropBox';
-            }
-
-            $outputCmd = [
                 '-o',
                 $imageTargetPath,
                 $localFile
             ];
-
-            $cmd = array_merge($cmd, $outputCmd);
 
             Console::addLowProcessPriority($cmd);
             $process = new Process($cmd);
