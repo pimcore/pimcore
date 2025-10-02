@@ -169,12 +169,17 @@ class Ghostscript extends Adapter
         return $this->version;
     }
 
-    public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200, bool $cropBox = false): bool
+    public function saveImage(
+        string $imageTargetPath,
+        int $page = 1,
+        int $resolution = 200,
+        bool $cropBox = false
+    ): bool
     {
         try {
             $localFile = self::getLocalFileFromStream($this->getPdf());
             $cmd = [
-                self::getGhostscriptCli(),
+                static::getGhostscriptCli(),
                 '-sDEVICE=pngalpha',
                 '-dFirstPage=' . $page,
                 '-dLastPage=' . $page,
