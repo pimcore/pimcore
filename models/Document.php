@@ -2,21 +2,17 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model;
 
-use Doctrine\DBAL\Exception\DeadlockException;
 use Exception;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
@@ -180,16 +176,11 @@ class Document extends Element\AbstractElement
         return true;
     }
 
-    public static function getById(int|string $id, array $params = []): ?static
+    /**
+     * @param array{force?: bool, ...} $params
+     */
+    public static function getById(int $id, array $params = []): ?static
     {
-        if (is_string($id)) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '11.0',
-                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
-            );
-            $id = is_numeric($id) ? (int) $id : 0;
-        }
         if ($id < 1) {
             return null;
         }
@@ -241,7 +232,7 @@ class Document extends Element\AbstractElement
             RuntimeCache::set($cacheKey, $document);
         }
 
-        if (!$document || !static::typeMatch($document)) {
+        if (!static::typeMatch($document)) {
             return null;
         }
 
@@ -284,85 +275,54 @@ class Document extends Element\AbstractElement
     public function save(array $parameters = []): static
     {
         $isUpdate = false;
+        $differentOldPath = null;
+        $updatedChildren = [];
 
-        try {
-            $preEvent = new DocumentEvent($this, $parameters);
-            if ($this->getId()) {
-                $isUpdate = true;
-                $this->dispatchEvent($preEvent, DocumentEvents::PRE_UPDATE);
-            } else {
-                $this->dispatchEvent($preEvent, DocumentEvents::PRE_ADD);
-            }
-
-            $parameters = $preEvent->getArguments();
-
-            $this->correctPath();
-            $differentOldPath = null;
-
-            // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
-            // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
-            // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
-            $maxRetries = 5;
-            for ($retries = 0; $retries < $maxRetries; $retries++) {
-                $this->beginTransaction();
-
-                try {
-                    $this->updateModificationInfos();
-
-                    if (!$isUpdate) {
-                        $this->getDao()->create();
-                    }
-
-                    // get the old path from the database before the update is done
-                    $oldPath = null;
-                    if ($isUpdate) {
-                        $oldPath = $this->getDao()->getCurrentFullPath();
-                    }
-
-                    $this->update($parameters);
-
-                    // if the old path is different from the new path, update all children
-                    $updatedChildren = [];
-                    if ($oldPath && $oldPath !== $newPath = $this->getRealFullPath()) {
-                        $differentOldPath = $oldPath;
-                        $this->getDao()->updateWorkspaces();
-                        $updatedChildren = array_map(
-                            static function (array $doc) use ($oldPath, $newPath): array {
-                                $doc['oldPath'] = substr_replace($doc['path'], $oldPath, 0, strlen($newPath));
-
-                                return $doc;
-                            },
-                            $this->getDao()->updateChildPaths($oldPath),
-                        );
-                    }
-
-                    $this->commit();
-
-                    break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-                } catch (Exception $e) {
-                    try {
-                        $this->rollBack();
-                    } catch (Exception $er) {
-                        // PDO adapter throws exceptions if rollback fails
-                        Logger::error((string) $er);
-                    }
-
-                    // we try to start the transaction $maxRetries times again (deadlocks, ...)
-                    if ($e instanceof DeadlockException && $retries < ($maxRetries - 1)) {
-                        $run = $retries + 1;
-                        $waitTime = rand(1, 5) * 100000; // microseconds
-                        Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
-
-                        usleep($waitTime); // wait specified time until we restart the transaction
-                    } else {
-                        // if the transaction still fail after $maxRetries retries, we throw out the exception
-                        throw $e;
-                    }
+        $this->retryableFunction(
+            beforeRetryables: function () use (&$isUpdate, &$parameters) {
+                $preEvent = new DocumentEvent($this, $parameters);
+                if ($this->getId()) {
+                    $isUpdate = true;
+                    $this->dispatchEvent($preEvent, DocumentEvents::PRE_UPDATE);
+                } else {
+                    $this->dispatchEvent($preEvent, DocumentEvents::PRE_ADD);
                 }
-            }
+                $parameters = $preEvent->getArguments();
 
-            $additionalTags = [];
-            if (isset($updatedChildren)) {
+                $this->correctPath();
+            },
+            retryableFunc: function () use (&$isUpdate, &$differentOldPath, &$parameters, &$updatedChildren) {
+                $this->updateModificationInfos();
+
+                if (!$isUpdate) {
+                    $this->getDao()->create();
+                }
+
+                // get the old path from the database before the update is done
+                $oldPath = null;
+                if ($isUpdate) {
+                    $oldPath = $this->getDao()->getCurrentFullPath();
+                }
+
+                $this->update($parameters);
+
+                // if the old path is different from the new path, update all children
+                $updatedChildren = [];
+                if ($oldPath && $oldPath !== $newPath = $this->getRealFullPath()) {
+                    $differentOldPath = $oldPath;
+                    $this->getDao()->updateWorkspaces();
+                    $updatedChildren = array_map(
+                        static function (array $doc) use ($oldPath, $newPath): array {
+                            $doc['oldPath'] = substr_replace($doc['path'], $oldPath, 0, strlen($newPath));
+
+                            return $doc;
+                        },
+                        $this->getDao()->updateChildPaths($oldPath),
+                    );
+                }
+            },
+            onCommit: function () use (&$isUpdate, &$differentOldPath, &$updatedChildren, &$parameters) {
+                $additionalTags = [];
                 foreach ($updatedChildren as $updatedDocument) {
                     $tag = self::getCacheKey($updatedDocument['id']);
                     $additionalTags[] = $tag;
@@ -371,38 +331,37 @@ class Document extends Element\AbstractElement
                     RuntimeCache::set($tag, null);
                     RuntimeCache::set(self::getPathCacheKey($updatedDocument['oldPath']), null);
                 }
-            }
-            $this->clearDependentCache($additionalTags);
+                $this->clearDependentCache($additionalTags);
 
-            if ($differentOldPath) {
-                $this->renewInheritedProperties();
-            }
-
-            // add to queue that saves dependencies
-            $this->addToDependenciesQueue();
-
-            $postEvent = new DocumentEvent($this, $parameters);
-            if ($isUpdate) {
                 if ($differentOldPath) {
-                    $postEvent->setArgument('oldPath', $differentOldPath);
+                    $this->renewInheritedProperties();
                 }
-                $this->dispatchEvent($postEvent, DocumentEvents::POST_UPDATE);
-            } else {
-                $this->dispatchEvent($postEvent, DocumentEvents::POST_ADD);
-            }
 
-            return $this;
-        } catch (Exception $e) {
-            $failureEvent = new DocumentEvent($this, $parameters);
-            $failureEvent->setArgument('exception', $e);
-            if ($isUpdate) {
-                $this->dispatchEvent($failureEvent, DocumentEvents::POST_UPDATE_FAILURE);
-            } else {
-                $this->dispatchEvent($failureEvent, DocumentEvents::POST_ADD_FAILURE);
-            }
+                // add to queue that saves dependencies
+                $this->addToDependenciesQueue();
 
-            throw $e;
-        }
+                $postEvent = new DocumentEvent($this, $parameters);
+                if ($isUpdate) {
+                    if ($differentOldPath) {
+                        $postEvent->setArgument('oldPath', $differentOldPath);
+                    }
+                    $this->dispatchEvent($postEvent, DocumentEvents::POST_UPDATE);
+                } else {
+                    $this->dispatchEvent($postEvent, DocumentEvents::POST_ADD);
+                }
+            },
+            onFailure: function ($e) use (&$parameters, &$isUpdate) {
+                $failureEvent = new DocumentEvent($this, $parameters);
+                $failureEvent->setArgument('exception', $e);
+                if ($isUpdate) {
+                    $this->dispatchEvent($failureEvent, DocumentEvents::POST_UPDATE_FAILURE);
+                } else {
+                    $this->dispatchEvent($failureEvent, DocumentEvents::POST_ADD_FAILURE);
+                }
+            }
+        );
+
+        return $this;
     }
 
     /**
@@ -643,46 +602,44 @@ class Document extends Element\AbstractElement
 
     public function delete(): void
     {
-        $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
 
-        $this->beginTransaction();
-
-        try {
-            if ($this->getId() == 1) {
-                throw new Exception('root-node cannot be deleted');
-            }
-
-            $this->doDelete();
-            $this->getDao()->delete();
-
-            $this->commit();
-
-            //clear parent data from registry
-            $parentCacheKey = self::getCacheKey($this->getParentId());
-            if (RuntimeCache::isRegistered($parentCacheKey)) {
-                $parent = RuntimeCache::get($parentCacheKey);
-                if ($parent instanceof self) {
-                    $parent->setChildren(null);
+        $this->retryableFunction(
+            beforeRetryables: function () {
+                $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
+            },
+            retryableFunc: function () {
+                if ($this->getId() == 1) {
+                    throw new Exception('root-node cannot be deleted');
                 }
+
+                $this->doDelete();
+                $this->getDao()->delete();
+            },
+            onCommit: function () {
+                //clear parent data from registry
+                $parentCacheKey = self::getCacheKey($this->getParentId());
+                if (RuntimeCache::isRegistered($parentCacheKey)) {
+
+                    $parent = RuntimeCache::get($parentCacheKey);
+                    if ($parent instanceof self) {
+                        $parent->setChildren(null);
+                    }
+                }
+                // clear cache
+                $this->clearDependentCache();
+
+                //clear document from registry
+                RuntimeCache::set(self::getCacheKey($this->getId()), null);
+                RuntimeCache::set(self::getPathCacheKey($this->getRealFullPath()), null);
+
+                $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::POST_DELETE);
+            },
+            onFailure: function ($e) {
+                $failureEvent = new DocumentEvent($this);
+                $failureEvent->setArgument('exception', $e);
+                $this->dispatchEvent($failureEvent, DocumentEvents::POST_DELETE_FAILURE);
             }
-        } catch (Exception $e) {
-            $this->rollBack();
-            $failureEvent = new DocumentEvent($this);
-            $failureEvent->setArgument('exception', $e);
-            $this->dispatchEvent($failureEvent, DocumentEvents::POST_DELETE_FAILURE);
-            Logger::error((string) $e);
-
-            throw $e;
-        }
-
-        // clear cache
-        $this->clearDependentCache();
-
-        //clear document from registry
-        RuntimeCache::set(self::getCacheKey($this->getId()), null);
-        RuntimeCache::set(self::getPathCacheKey($this->getRealFullPath()), null);
-
-        $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::POST_DELETE);
+        );
     }
 
     public function getFullPath(bool $force = false): string
@@ -693,10 +650,8 @@ class Document extends Element\AbstractElement
         try {
             if (!$link && Tool::isFrontend() && Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
-                if ($site instanceof Site) {
-                    if ($site->getRootDocument()->getId() == $this->getId()) {
-                        $link = '/';
-                    }
+                if ($site->getRootDocument()->getId() == $this->getId()) {
+                    $link = '/';
                 }
             }
         } catch (Exception $e) {
@@ -811,14 +766,11 @@ class Document extends Element\AbstractElement
         try {
             if ($this->path && Tool::isFrontend() && Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
-                if ($site instanceof Site) {
-                    if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {
-                        $rootPath = $site->getRootPath();
-                        $rootPath = preg_quote($rootPath, '@');
-                        $link = preg_replace('@^' . $rootPath . '@', '', $this->path);
+                if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {
+                    $rootPath = $site->getRootPath();
+                    $rootPath = preg_quote($rootPath, '@');
 
-                        return $link;
-                    }
+                    return preg_replace('@^' . $rootPath . '@', '', $this->path);
                 }
             }
         } catch (Exception $e) {

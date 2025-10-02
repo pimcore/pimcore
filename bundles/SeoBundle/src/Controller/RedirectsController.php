@@ -3,16 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\SeoBundle\Controller;
@@ -34,22 +31,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * @Route("/redirects")
- *
  * @internal
  */
+#[Route('/redirects')]
 class RedirectsController extends UserAwareController
 {
     use JsonHelperTrait;
 
-    /**
-     * @Route("/list", name="pimcore_bundle_seo_redirects_redirects", methods={"POST"})
-     *
-     *
-     */
+    #[Route('/list', name: 'pimcore_bundle_seo_redirects_redirects', methods: ['POST'])]
     public function redirectsAction(Request $request, RedirectHandler $redirectHandler): JsonResponse
     {
         // check permission for both update and listing
@@ -184,11 +176,7 @@ class RedirectsController extends UserAwareController
         return $this->jsonResponse(['success' => false]);
     }
 
-    /**
-     * @Route("/csv-export", name="pimcore_bundle_seo_redirects_csvexport", methods={"GET"})
-     *
-     *
-     */
+    #[Route('/csv-export', name: 'pimcore_bundle_seo_redirects_csvexport', methods: ['GET'])]
     public function csvExportAction(Csv $csv): Response
     {
         $this->checkPermission('redirects');
@@ -213,11 +201,7 @@ class RedirectsController extends UserAwareController
         return $response;
     }
 
-    /**
-     * @Route("/csv-import", name="pimcore_bundle_seo_redirects_csvimport", methods={"POST"})
-     *
-     *
-     */
+    #[Route('/csv-import', name: 'pimcore_bundle_seo_redirects_csvimport', methods: ['POST'])]
     public function csvImportAction(Request $request, Csv $csv): Response
     {
         $this->checkPermission('redirects');
@@ -237,10 +221,7 @@ class RedirectsController extends UserAwareController
         ]);
     }
 
-    /**
-     * @Route("/cleanup", name="pimcore_bundle_seo_redirects_cleanup", methods={"DELETE"})
-     *
-     */
+    #[Route('/cleanup', name: 'pimcore_bundle_seo_redirects_cleanup', methods: ['DELETE'])]
     public function cleanupAction(): JsonResponse
     {
         $this->checkPermission('redirects');
@@ -263,10 +244,7 @@ class RedirectsController extends UserAwareController
         }
     }
 
-    /**
-     * @Route("/get-statuscodes", name="pimcore_bundle_seo_redirects_statuscodes", methods={"GET"})
-     *
-     */
+    #[Route('/get-statuscodes', name: 'pimcore_bundle_seo_redirects_statuscodes', methods: ['GET'])]
     public function statusCodesAction(): JsonResponse
     {
         $this->checkPermission('redirects');

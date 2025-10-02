@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\AbstractObject;
@@ -458,15 +455,10 @@ class Dao extends Model\Element\Dao
             $path = '';
         }
 
-        $classIds = [];
-        do {
-            $classId = $this->db->fetchOne(
-                "SELECT classId FROM objects WHERE `path` like ? AND `type` = 'object'".($classIds ? ' AND classId NOT IN ('.rtrim(str_repeat('?,', count($classIds)), ',').')' : '').' LIMIT 1',
-                array_merge([Helper::escapeLike($path).'/%'], $classIds));
-            if ($classId) {
-                $classIds[] = $classId;
-            }
-        } while ($classId);
+        $classIds = $this->db->fetchFirstColumn(
+            "SELECT DISTINCT classId FROM objects WHERE `path` like ? AND `type` = 'object'",
+            [Helper::escapeLike($path) . '/%']
+        );
 
         $classes = [];
         foreach ($classIds as $classId) {
@@ -514,7 +506,7 @@ class Dao extends Model\Element\Dao
             }
 
             // exception for list permission
-            if (empty($permissionsParent) && $type === 'list') {
+            if ($type === 'list') {
                 // check for children with permissions
                 $path = $this->model->getRealFullPath() . '/';
                 if ($this->model->getId() == 1) {

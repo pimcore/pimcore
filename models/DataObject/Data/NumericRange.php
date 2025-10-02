@@ -2,26 +2,24 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use Pimcore\Model\DataObject\Traits\RangeTrait;
 
 class NumericRange implements OwnerAwareFieldInterface
 {
-    use OwnerAwareFieldTrait;
+    use OwnerAwareFieldTrait, RangeTrait;
 
     protected int|null|float $minimum = null;
 
@@ -57,11 +55,6 @@ class NumericRange implements OwnerAwareFieldInterface
         $this->maximum = $maximum;
 
         $this->markMeDirty();
-    }
-
-    public function getRange(int|float $step = 1): array
-    {
-        return range($this->getMinimum(), $this->getMaximum(), $step);
     }
 
     public function toArray(): array

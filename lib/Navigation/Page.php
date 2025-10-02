@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 /**
@@ -137,14 +134,6 @@ abstract class Page extends Container
      */
     protected array $_customHtmlAttribs = [];
 
-    /**
-     * @deprecated will be removed in Pimcore 12.
-     *
-     * The type of page to use when it wasn't set
-     *
-     */
-    protected static ?string $_defaultPageType = null;
-
     // Initialization:
 
     /**
@@ -170,8 +159,6 @@ abstract class Page extends Container
     {
         if (isset($options['type'])) {
             $type = $options['type'];
-        } elseif (self::$_defaultPageType != null) {
-            $type = self::$_defaultPageType;
         }
 
         if (isset($type)) {
@@ -216,7 +203,7 @@ abstract class Page extends Container
      *
      * @throws Exception    if invalid options are given
      */
-    public function __construct(array $options = null)
+    public function __construct(?array $options = null)
     {
         if (is_array($options)) {
             $this->setOptions($options);
@@ -625,7 +612,7 @@ abstract class Page extends Container
      *
      * @throws Exception  if order is not integer or null
      */
-    public function setOrder(int|string $order = null): static
+    public function setOrder(int|string|null $order = null): static
     {
         if (is_string($order)) {
             $temp = (int) $order;

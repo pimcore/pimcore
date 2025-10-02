@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -197,7 +194,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         if (empty($data)) {
             // if it is empty then there is no need to serialize anything
@@ -218,7 +215,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $unserializedData = Serialize::unserialize((string) $data);
 
@@ -257,7 +254,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if (!empty($data)) {
             $tmpLine = [];
@@ -281,7 +278,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (is_array($data)) {
             //make sure only array values are used of edit mode (other wise ext stores do not work anymore)
@@ -291,7 +288,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $data;
     }
 
-    public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): ?array
+    public function getDataForGrid(?array $data, ?Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
@@ -302,7 +299,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         // check for empty data
         $checkData = '';
@@ -326,7 +323,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param null|DataObject\Concrete $object
      *
      */
-    public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?array
+    public function getDataFromGridEditor(array $data, ?Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -337,7 +334,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         $versionPreview = $this->getDiffVersionPreview($data, $object, $params);
         if (is_array($versionPreview) && $versionPreview['html']) {
@@ -399,7 +396,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): array|string
+    public function getDiffVersionPreview(?array $data, ?Concrete $object = null, array $params = []): array|string
     {
         if ($data) {
             $html = '<table>';
@@ -483,7 +480,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $key = $this->getName();
 
-        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+        if ($this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -529,7 +526,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $key = $this->getName();
 
-        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+        if ($this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -573,7 +570,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $key = $this->getName();
 
-        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+        if ($this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -610,7 +607,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $key = $this->getName();
 
-        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+        if ($this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';

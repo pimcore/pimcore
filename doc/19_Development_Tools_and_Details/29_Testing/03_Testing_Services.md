@@ -14,7 +14,7 @@ Currently, we are not using the [codeception symfony module](https://codeception
 to reduce test complexity and due to lack of compatibility with symfony 6.
 
 To still have the grab service functionality available, just use the 
-[`Pimcore\Tests\Support\Helper\Pimcore`](https://github.com/pimcore/pimcore/blob/11.x/tests/Support/Helper/Pimcore.php#L101) 
+[`Pimcore\Tests\Support\Helper\Pimcore`](https://github.com/pimcore/pimcore/blob/12.x/tests/Support/Helper/Pimcore.php#L101) 
 module and call `grabService` as below: 
 
 ```php

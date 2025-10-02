@@ -2,20 +2,19 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Element;
 
+use Closure;
+use Doctrine\DBAL\Exception\RetryableException;
 use Exception;
 use Pimcore;
 use Pimcore\Cache;
@@ -24,11 +23,13 @@ use Pimcore\Config;
 use Pimcore\Event\ElementEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
+use Pimcore\Logger;
 use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
 use Pimcore\Workflow\Manager;
+use Throwable;
 
 /**
  * @method Model\Document\Dao|Model\Asset\Dao|Model\DataObject\AbstractObject\Dao getDao()
@@ -106,6 +107,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected ?int $parentId = null;
 
+    private static bool $getInheritedProperties = true;
+
     public function getPath(): ?string
     {
         return $this->path;
@@ -136,7 +139,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->userModification;
     }
 
-    public function setUserModification(int $userModification): static
+    public function setUserModification(?int $userModification): static
     {
         $this->markFieldDirty('userModification');
         $this->userModification = $userModification;
@@ -163,10 +166,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function setModificationDate(int $modificationDate): static
     {
-        if ($this->modificationDate != $modificationDate) {
-            $this->markFieldDirty('modificationDate');
-            $this->modificationDate = $modificationDate;
-        }
+        $this->markFieldDirty('modificationDate');
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -176,7 +177,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->userOwner;
     }
 
-    public function setUserOwner(int $userOwner): static
+    public function setUserOwner(?int $userOwner): static
     {
         $this->userOwner = $userOwner;
 
@@ -242,7 +243,14 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $this->properties = $properties;
         }
 
-        return $this->properties;
+        $properties = $this->properties;
+        if (!static::getGetInheritedProperties()) {
+            $properties = array_filter($properties, static function (Model\Property $property) {
+                return !$property->isInherited();
+            });
+        }
+
+        return $properties;
     }
 
     public function setProperties(?array $properties): static
@@ -280,6 +288,16 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->setProperties($properties);
 
         return $this;
+    }
+
+    public static function setGetInheritedProperties(bool $getInheritedProperties): void
+    {
+        self::$getInheritedProperties = $getInheritedProperties;
+    }
+
+    public static function getGetInheritedProperties(): bool
+    {
+        return self::$getInheritedProperties;
     }
 
     /**
@@ -517,8 +535,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function unlockPropagate(): void
     {
         $type = Service::getElementType($this);
+        $event = new ElementEvent(
+            $this,
+            ['elementId' => $this->getId(), 'elementType' => $type]
+        );
 
         $ids = $this->getDao()->unlockPropagate();
+
+        $eventDispatcher = Pimcore::getEventDispatcher();
+        $eventDispatcher->dispatch($event, ElementEvents::POST_ELEMENT_UNLOCK_PROPAGATE);
 
         // invalidate cache items
         foreach ($ids as $id) {
@@ -569,7 +594,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @internal
      *
      */
-    protected function doSaveVersion(string $versionNote = null, bool $saveOnlyVersion = true, bool $saveStackTrace = true, bool $isAutoSave = false): Model\Version
+    protected function doSaveVersion(?string $versionNote = null, bool $saveOnlyVersion = true, bool $saveStackTrace = true, bool $isAutoSave = false): Model\Version
     {
         $version = null;
 
@@ -678,7 +703,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @internal
      */
-    public function deleteAutoSaveVersions(int $userId = null): void
+    public function deleteAutoSaveVersions(?int $userId = null): void
     {
         $list = new Model\Version\Listing();
         $list->setLoadAutoSave(true);
@@ -727,5 +752,72 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $myProperties = $this->getProperties();
         $inheritedProperties = $this->getDao()->getProperties(true);
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
+    }
+
+    protected function retryableFunction(
+        ?Closure $beforeRetryables = null,
+        ?Closure $retryableFunc = null,
+        ?Closure $onCommit = null,
+        ?Closure $onBeforeRetry = null,
+        ?Closure $onFailure = null,
+        int $maxRetries = 5,
+    ): void {
+        try {
+            if ($beforeRetryables instanceof Closure) {
+                $beforeRetryables();
+            }
+
+            for ($retries = 0; $retries < $maxRetries; $retries++) {
+                $this->beginTransaction();
+
+                try {
+                    if ($retryableFunc instanceof Closure) {
+                        $retryableFunc();
+                    }
+                    $this->commit();
+                    if ($onCommit instanceof Closure) {
+                        $onCommit();
+                    }
+
+                    break; // transaction was successfully completed, so we cancel the loop here -> no restart required
+                } catch (Throwable $e) {
+                    try {
+                        $this->rollBack();
+                    } catch (Exception $er) {
+                        // PDO adapter throws exceptions if rollback fails
+                        Logger::info((string)$er);
+                    }
+
+                    if ($onBeforeRetry instanceof Closure) {
+                        $onBeforeRetry($e);
+                    }
+
+                    if ($e instanceof RetryableException && $retries < ($maxRetries - 1)) {
+                        $run = $retries + 1;
+                        $waitTime = rand(1, 5) * 100000; // microseconds
+                        Logger::warn(
+                            'Unable to finish transaction (' . $run . '. run) because of the following reason: '
+                            . $e->getMessage()
+                            . '. --> Retrying in ' . $waitTime . ' microseconds ... ('
+                            . ($run + 1) . ' of ' . $maxRetries . ')'
+                        );
+
+                        usleep($waitTime); // wait specified time until we restart the transaction
+                    } else {
+                        // if the transaction still fail after $maxRetries retries, we throw out the exception
+                        throw $e;
+                    }
+
+                }
+            }
+
+        } catch (Exception $e) {
+            if ($onFailure instanceof Closure) {
+                $onFailure($e);
+            }
+            Logger::crit((string)$e);
+
+            throw $e;
+        }
     }
 }

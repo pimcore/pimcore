@@ -2,29 +2,31 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Workflow\Notification;
 
 use Exception;
+use Pimcore\Logger;
+use Pimcore\Mail;
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
+use Pimcore\Workflow\Transition;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
-use Symfony\Component\Workflow\Workflow;
+use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -49,8 +51,16 @@ class NotificationEmailService extends AbstractNotificationService
      * Sends an Mail
      *
      */
-    public function sendWorkflowEmailNotification(array $users, array $roles, Workflow $workflow, string $subjectType, ElementInterface $subject, string $action, string $mailType, string $mailPath): void
-    {
+    public function sendWorkflowEmailNotification(
+        array $users,
+        array $roles,
+        WorkflowInterface $workflow,
+        string $subjectType,
+        ElementInterface $subject,
+        Transition $transition,
+        string $mailType,
+        string $mailPath
+    ): void {
         try {
             $recipients = $this->getNotificationUsersByName($users, $roles);
             if (!count($recipients)) {
@@ -62,16 +72,17 @@ class NotificationEmailService extends AbstractNotificationService
             if ($hostUrl !== '') {
                 // Decide what kind of link to create
                 $objectType = $type = 'object';
-                if ($subject instanceof \Pimcore\Model\Document) {
+                if ($subject instanceof Document) {
                     $objectType = 'document';
                     $type = $subject->getType();
                 }
-                if ($subject instanceof \Pimcore\Model\Asset) {
+                if ($subject instanceof Asset) {
                     $objectType = 'asset';
                     $type = $subject->getType();
                 }
 
-                $deeplink = $hostUrl . $this->router->generate('pimcore_admin_login_deeplink') . '?'.$objectType.'_' . $subject->getId() . '_'. $type;
+                $deeplink = $hostUrl . $this->router->generate('pimcore_admin_login_deeplink');
+                $deeplink .= '?'.$objectType.'_' . $subject->getId() . '_'. $type;
             }
 
             foreach ($recipients as $language => $recipientsPerLanguage) {
@@ -85,7 +96,7 @@ class NotificationEmailService extends AbstractNotificationService
                             $subjectType,
                             $subject,
                             $workflow,
-                            $action,
+                            $transition->getLabel(),
                             $language,
                             $localizedMailPath,
                             $deeplink
@@ -100,7 +111,7 @@ class NotificationEmailService extends AbstractNotificationService
                             $subjectType,
                             $subject,
                             $workflow,
-                            $action,
+                            $transition->getLabel(),
                             $language,
                             $localizedMailPath,
                             $deeplink
@@ -110,16 +121,36 @@ class NotificationEmailService extends AbstractNotificationService
                 }
             }
         } catch (Exception $e) {
-            \Pimcore\Logger::error('Error sending Workflow change notification email: ' . (string)$e);
+            Logger::error('Error sending Workflow change notification email: ' . (string)$e);
         }
     }
 
     /**
      * @param User[] $recipients
      */
-    protected function sendPimcoreDocumentMail(array $recipients, string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): void
-    {
-        $mail = new \Pimcore\Mail(['document' => $mailPath, 'params' => $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)]);
+    protected function sendPimcoreDocumentMail(
+        array $recipients,
+        string $subjectType,
+        ElementInterface $subject,
+        WorkflowInterface $workflow,
+        string $action,
+        string $language,
+        string $mailPath,
+        string $deeplink
+    ): void {
+        $mail = new Mail(
+            [
+                'document' => $mailPath,
+                'params' => $this->getNotificationEmailParameters(
+                    $subjectType,
+                    $subject,
+                    $workflow,
+                    $action,
+                    $deeplink,
+                    $language
+                ),
+            ]
+        );
 
         foreach ($recipients as $user) {
             $mail->addTo($user->getEmail(), $user->getName());
@@ -131,16 +162,29 @@ class NotificationEmailService extends AbstractNotificationService
     /**
      * @param User[] $recipients
      */
-    protected function sendTemplateMail(array $recipients, string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): void
-    {
-        $mail = new \Pimcore\Mail();
+    protected function sendTemplateMail(
+        array $recipients,
+        string $subjectType,
+        ElementInterface $subject,
+        WorkflowInterface $workflow,
+        string $action,
+        string $language,
+        string $mailPath,
+        string $deeplink
+    ): void {
+        $mail = new Mail();
 
         foreach ($recipients as $user) {
             $mail->addTo($user->getEmail(), $user->getName());
         }
 
         $mail->subject(
-            $this->translator->trans('workflow_change_email_notification_subject', [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()], 'admin', $language)
+            $this->translator->trans(
+                'workflow_change_email_notification_subject',
+                [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()],
+                'admin',
+                $language
+            )
         );
 
         $mail->html($this->getHtmlBody($subjectType, $subject, $workflow, $action, $language, $mailPath, $deeplink));
@@ -148,8 +192,15 @@ class NotificationEmailService extends AbstractNotificationService
         $mail->send();
     }
 
-    protected function getHtmlBody(string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): string
-    {
+    protected function getHtmlBody(
+        string $subjectType,
+        ElementInterface $subject,
+        WorkflowInterface $workflow,
+        string $action,
+        string $language,
+        string $mailPath,
+        string $deeplink
+    ): string {
         $translatorLocaleBackup = null;
         if ($this->translator instanceof LocaleAwareInterface) {
             $translatorLocaleBackup = $this->translator->getLocale();
@@ -170,8 +221,14 @@ class NotificationEmailService extends AbstractNotificationService
         }
     }
 
-    protected function getNotificationEmailParameters(string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $deeplink, string $language): array
-    {
+    protected function getNotificationEmailParameters(
+        string $subjectType,
+        ElementInterface $subject,
+        WorkflowInterface $workflow,
+        string $action,
+        string $deeplink,
+        string $language
+    ): array {
         $noteDescription = $this->getNoteInfo($subject->getId());
 
         return [

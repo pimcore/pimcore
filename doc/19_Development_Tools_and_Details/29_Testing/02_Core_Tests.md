@@ -126,12 +126,12 @@ See [Codeception Commands](https://codeception.com/docs/reference/Commands) for 
 In general, contributions in form extending and improving tests is highly appreciated.
 Please follow the structure and principles described above.
 
-If you have the extend the data model then please have a look at [Model.php](https://github.com/pimcore/pimcore/blob/11.x/tests/Support/Helper/Model.php).
+If you have the extend the data model then please have a look at [Model.php](https://github.com/pimcore/pimcore/blob/12.x/tests/Support/Helper/Model.php).
 There you will find all class definitions used for testing.
 
 ### Perform PHPStan Analysis
 
-First, get a copy of this [sample configuration file](https://github.com/pimcore/pimcore/blob/11.x/doc/Samples/phpstan.neon) and place it in your root directory.
+First, get a copy of this [sample configuration file](https://github.com/pimcore/pimcore/blob/12.x/doc/Samples/phpstan.neon) and place it in your root directory.
 
 Add dependencies:
 ```sh

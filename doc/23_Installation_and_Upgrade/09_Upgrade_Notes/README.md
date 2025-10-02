@@ -1,5 +1,182 @@
 # Upgrade Notes
 
+## Pimcore 12.2.0
+
+#### [Security]
+- Implemented a feature that automatically invalidates existing sessions and requires users to re-authenticate whenever their password is updated.
+
+#### [Configuration] 
+- The `pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than` parameter which was previously unused is now used to delete system temp files (var/tmp), with the default retention period of 1 day.
+- Introduced `pimcore.applicationlog.archive_db_table_storage_engine` configuration parameter to define the default engine for the `application_log_archive_x` tables. The default value is `Archive`, which have some limitation in clustered environment, please adapt according to your needs. Set it to empty string to auto-detect the engine.
+- Added `--perIteration` and `--timoutBetweenIteration` flags to `pimcore:cache:warming` which control the rate as which the cache is warmed.
+- Introduced `pimcore.assets.image.thumbnails.max_srcset_dpi_factor` configuration parameter to define the maximum automatic DPI scaling factor for image thumbnails source set.
+
+#### [Translation]
+- Added the possibility to pass parameters to `TranslationEvents::PRE_SAVE` and `TranslationEvents::POST_SAVE` on the `save()` function.
+
+#### [QueryBuilder]
+- Deprecated `onCreateQueryBuilderCallback` property in `QueryBuilderHelperTrait`, please use `queryBuilderProcessors` instead.
+- Introduced the feature to add multiple callback processors on query build create by `addQueryBuilderProcessor`, and reset them by `discardQueryBuilderProcessors`.
+
+#### [Elements]
+- Added the feature of retrying the transaction when RetryableException is thrown during an element deletion.
+
+## Pimcore 12.1.0
+
+### [Requirements]
+
+- Added optional requirements for v7 of certain symfony packages. Version 6.4 is still supported, please make sure to use this version if you encounter any problems with v7 of symfony packages.
+
+### [SEO Bundle]
+
+#### [Redirects]
+
+- Source site is now optional. Redirects without source site get applied for all domains. Previously, redirects without source site did not get applied at all.
+
+## Pimcore 12.0.0
+
+## IMPORTANT: License change! Please read the following information carefully:
+With the release of Pimcore Platform Version 2025.1, Pimcore has transitioned its
+Community Edition from the GNU General Public License v3 (GPLv3) to the new
+Pimcore Open Core License (POCL). Platform version 2024.4 marks the final release under
+GPLv3.
+
+This licensing change only affects users of the free and open-source Pimcore
+Community Edition previously licensed under GPLv3. If you're already using a Pimcore Professional
+Edition or Enterprise/PaaS Edition under a commercial agreement, nothing changes for you. Your
+existing contracts, rights, and usage terms remain fully intact — POCL has no impact on your
+deployment or support.
+
+Please read the [Pimcore Open Core License](https://github.com/pimcore/pimcore/blob/12.x/LICENSE.md) carefully
+and check whether you can continue to use the free Pimcore Community edition.
+**If you continue to use the Community Edition with the Admin UI Classic bundle, [you need to purchase an
+additional perpetual license at a price of €1,480 at our store](https://store.pimcore.com/shop/admin-ui-classic-bundle-for-community-edition-pocl-license-134) because of ExtJS licencing limitations.**
+
+
+#### [System Requirements]
+- ext-openssl is now required.
+
+#### [GenericExecutionEngineBundle]
+
+- Added `executionContext` parameter to `JobRunRepositoryInterface` / `JobRunRepository`. You need to adapt your implementations according, if necessary.
+
+#### [Documents]
+- Removed deprecated Headless Chrome Processor.
+- Dropped support of `gotenberg/gotenberg-php` `v1.1` in favor of just supporting `v2` which bundles Chromium functionalities that refrain from requiring a standalone chromium binary.
+
+#### [Doctrine]
+- Bundles now need to use the default EntityManager (name: 'default') with the default connection (name: 'default')  or use another EntityManager with an additional connection.
+- Added support of `doctrine/dbal` `v4`
+- Dropped support of `doctrine/dbal` `v3`
+- Changed signature of `Pimcore\Db\Helper::quoteInto()`, passing `$type` is not supported anymore to match the changes in `DBAL` about `quote()` working only with strings.
+- Tweaked the way the `Listing/Dao::getTotalCount()` is used to enable support with DBAL `v4`, please check the latest docs.
+
+#### [ApplicationLoggerBundle]
+
+- Log levels can be translated now. The keys are based on the integer representation of the log level:
+`application_logger_log_level_1` = Emergency,
+`application_logger_log_level_2` = Alert,
+`application_logger_log_level_3` = Critical,
+`application_logger_log_level_4` = Error,
+`application_logger_log_level_5` = Warning,
+`application_logger_log_level_6` = Notice,
+`application_logger_log_level_7` = Info,
+`application_logger_log_level_8` = Debug,  
+Please make sure to add translations for log levels.
+
+- `filter_priority` configuration changed. LogLevels now start at 1 (emergency) - 8 (debug) instead of 0 (emergency) - 7 (debug). Please adjust your configuration accordingly.
+
+#### [Assets]
+- `customSettings` column in `assets` table is now a JSON column. 
+
+#### [Bundle]
+- Removed compatibility layer static `$bundleManager`
+
+#### [Commands]
+- Removed deprecated option `generator` from `Pimcore\Bundle\CoreBundle\Command\LowQualityImagePreviewCommand`.
+
+#### [Documents]
+- Date Editable: Removed deprecated outputFormat config. Use outputIsoFormat config instead.
+- Video Editable: Passing an invalid allowedTypes config will throw an exception.
+
+#### [Database]
+- Change of default collation to `utf8mb4_unicode_520_ci` from `utf8mb4_general_ci`.
+- Make sure to update your database accordingly but be careful which tables you adapt. You can use the following statements to generate the `ALTER TABLE` statements for all tables. Please exclude tables you do not want to update.
+```sql
+-- Change database collation
+ALTER DATABASE `your_database_name` COLLATE utf8mb4_unicode_520_ci;
+-- For tables
+SELECT CONCAT('ALTER TABLE `', TABLE_NAME, '` COLLATE utf8mb4_unicode_520_ci;') 
+FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_SCHEMA = 'your_database_name' 
+  AND TABLE_COLLATION = 'utf8mb4_general_ci'
+ORDER BY TABLE_NAME;    
+-- For columns
+SELECT CONCAT('ALTER TABLE `', TABLE_NAME, '` CHANGE `', COLUMN_NAME, '` `', COLUMN_NAME, '` ', COLUMN_TYPE, ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;')
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'your_database_name'
+  AND COLLATION_NAME = 'utf8mb4_general_ci'
+ORDER BY TABLE_NAME;
+```
+
+#### [DataObjects]
+- Removed deprecated `unserialize()` method from `Pimcore\Model\DataObject\Data\Link`. If not the data is not migrated to the new format, to the new default values, please execute a simple script to resave all links.
+- Parameter `$index` of method `setIndex` is not nullable anymore in `Pimcore\Model\DataObject\ClassDefinition\Data`.
+- Removed deprecated `getThumbnailConfig()` method from `Pimcore\Model\Asset\Image`.
+- Removed deprecated hashing algorithms from `Pimcore\Model\DataObject\Data\Password`. `password_hash` is the only supported hashing algorithm now.
+- Removed deprecated `getVersionDependentDatabaseColumnName` method. You can use the column name directly now.
+- UrlSlug fields can return null and array values now.
+- Refactored the `getRange($step)` method in `Pimcore/Model/DataObject/Data/QuantityValueRange` and `Pimcore/Model/DataObject/Data/NumericRange` to delegate its implementation to `Pimcore/Model/DataObject/Data/Traits/RangeTrait`. This refactoring now handles cases where `abs($step)` is greater than `abs($max - $min)`.
+- Updated the `getRange($step)` method signature in `Pimcore/Model/DataObject/Data/QuantityValueRange` to support both `int` and `float` step values.
+- Removed the `step` parameter and return `minimum` and `maximum` from the `getValue()` method in `Pimcore/Model/DataObject/Data/QuantityValueRange`.
+
+#### [Events]
+- Removed `context` property of `ResolveUploadTargetEvent`.
+
+#### [Lib]
+- The method `Pimcore\Db\Helper::upsert()` now returns the last insert id instead of the number of affected rows.
+- Removed deprecated class `Pimcore\Helper\CsvFormulaFormatter`. Use `\League\Csv\EscapeFormula` instead.
+- Removed deprecated `getCachedSymfonyEnvironments()` method from `Pimcore\Tool`.
+
+#### [Mail]
+- If sender is not set in the mail, instead of setting a default `from` address, an exception is now thrown.
+
+#### [Models]
+- Method `getById()` now only accepts `int` as the first parameter. 
+- Interface `ElementInterface` now has `array $params = []` as the second parameter for `getById()`.
+
+#### [Navigation]
+- Remove deprecated `$_defaultPageType` from `Pimcore\Navigation\Page`.
+
+#### [Select Options]
+- Add 'Admin only' configuration to restrict access to admin users
+
+#### [Templates]
+- Removed `key_value_table.html.twig` from `CoreBundle`
+
+#### [Workflow]
+- Method `getWorkflowByName()` now returns `?WorkflowInterface` instead of `?object`. This also affected the `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php`.
+- Methods `sendPimcoreNotification` and `sendWorkflowEmailNotification` in `lib/Workflow/Notification/NotificationEmailService.php` and `lib/Workflow/Notification/PimcoreNotificationService.php` now accept the `Transition` itself, rather than the `string` label.
+
+#### [Installer]
+- From now on, installer will generate a `pimcore.encryption.secret` and a `pimcore.product_registration.instance_identifier` and 
+  puts it into the `config/local/product_registration.yaml` file besides the provided product registration key.
+
+### Custom Reports
+- add function `getColumnsWithMetadata` to `bundles/CustomReportsBundle/src/Tool/Adapter/CustomReportAdapterInterface.php`
+- add function `getPagination` to `bundles/CustomReportsBundle/src/Tool/Adapter/CustomReportAdapterInterface.php`
+- change parameter types of `getData` in `bundles/CustomReportsBundle/src/Tool/Adapter/AbstractAdapter.php`
+
+## Pimcore 11.5.9
+### Security
+#### [Twig]
+- Bumped minimum requirement of `twig/twig` to `^3.21.0` to fix security and issues with `pimcoremanualblock`
+
+## Pimcore 11.5.5
+### General
+#### [Database]
+- Add index to `public` column in `versions` table
+
 ## Pimcore 11.5.0
 ### General
 #### [Database]
@@ -8,6 +185,7 @@
 - Added an index on `versionCount` columns
 #### [Events]
 - `context` property of `ResolveUploadTargetEvent` is deprecated. Use `setArgument()` method instead.
+#### [Twig Extension Deprecations]
 - `pimcore_block` Twig extension is deprecated. Use `pimcoreblock` or `pimcoremanualblock` instead.
 #### [Controllers]
 - Replaced all `$request->get()` with their explicit input source.
@@ -125,18 +303,18 @@ pimcore:
 - Bumped Symfony packages to "^6.4".
 #### [Value Objects]
 - Added new self validating Value Objects:
-  - `Pimcore\ValueObject\BooleanArray`
-  - `Pimcore\ValueObject\IntegerArray`
-  - `Pimcore\ValueObject\Path`
-  - `Pimcore\ValueObject\PositiveInteger`
-  - `Pimcore\ValueObject\PositiveIntegerArray`
-  - `Pimcore\ValueObject\StringArray`
+  - `Pimcore\ValueObject\String\Path`
+  - `Pimcore\ValueObject\Integer\PositiveInteger`
+  - `Pimcore\ValueObject\Collection\ArrayOfBoolean`
+  - `Pimcore\ValueObject\Collection\ArrayOfIntegers`
+  - `Pimcore\ValueObject\Collection\ArrayOfPositiveIntegers`
+  - `Pimcore\ValueObject\Collection\ArrayOfStrings`
 
 > [!WARNING]  
 > For [environment variable consistency purposes](https://github.com/pimcore/pimcore/issues/16638) in boostrap, please fix `public/index.php` in project root by moving `Bootstrap::bootstrap();` just above `$kernel = Bootstrap::kernel()` line instead of outside the closure.
 > Alternatively can be fixed by appling this [patch](https://patch-diff.githubusercontent.com/raw/pimcore/skeleton/pull/183.patch)
 > 
-> You may also need to adjust your `bin/console` to the latest version of the skeleton: https://github.com/pimcore/skeleton/blob/11.x/bin/console
+> You may also need to adjust your `bin/console` to the latest version of the skeleton: https://github.com/pimcore/skeleton/blob/2025.x/bin/console
 
 
 ## Pimcore 11.1.0
