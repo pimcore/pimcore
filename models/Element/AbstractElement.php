@@ -732,5 +732,4 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $inheritedProperties = $this->getDao()->getProperties(true);
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
-
 }
