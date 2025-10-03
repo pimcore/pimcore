@@ -82,7 +82,7 @@
     "symfony-cmf/routing-bundle": "^3.0",
     "symfony/cache": "^6.4.12 || ^7.2",
     "symfony/config": "^6.4 || ^7.2",
-    "symfony/console": "^6.4",
+    "symfony/console": "^6.4 || ^7.2",
     "symfony/contracts": "^3.2",
     "symfony/debug-bundle": "^6.4 || ^7.2",
     "symfony/dependency-injection": "^6.4",
