@@ -69,7 +69,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      */
-    protected ?int $id = null;
+    protected null|int|string $id = null;
 
     /**
      * @internal
@@ -201,6 +201,10 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function getId(): ?int
     {
+        if (is_null($this->id) || is_string($this->id)) {
+            $this->id = (int) $this->id;
+        }
+
         return $this->id;
     }
 
@@ -729,16 +733,4 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
 
-    public function __unserialize(array $data): void
-    {
-        foreach (get_object_vars($this) as $property => $value) {
-            if ($property === 'id') {
-                $this->$property = (int) ($data["\0*\0".$property] ?? $value);
-
-                continue;
-            }
-            $this->$property = $data["\0*\0".$property] ?? $value;
-
-        }
-    }
 }

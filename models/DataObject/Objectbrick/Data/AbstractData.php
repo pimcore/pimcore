@@ -240,16 +240,10 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $finalVars;
     }
 
-    public function __unserialize(array $data): void
+    public function __wakeup(): void
     {
-        foreach (get_object_vars($this) as $property => $value) {
-            if ($property === 'doDelete') {
-                $this->$property = (bool) ($data["\0*\0".$property] ?? $value);
-
-                continue;
-            }
-            $this->$property = $data["\0*\0".$property] ?? $value;
-
+        if (is_null($this->doDelete)) {
+            $this->doDelete = (bool) $this->doDelete;
         }
 
         if ($this->object) {
