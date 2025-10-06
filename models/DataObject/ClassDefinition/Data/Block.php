@@ -788,7 +788,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $params['fieldname'] = $this->getName();
         if ($container instanceof DataObject\Concrete) {
             $data = $container->getObjectVar($this->getName());
-        } elseif ($container instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $data = $container->getObjectVar($this->getName());
@@ -810,6 +810,19 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $container->$setter($data);
             }
         }
+
+        if (is_array($data)) {
+            foreach ($data as $blockElements) {
+                foreach ($blockElements as $elementName => $blockElement) {
+                    $fd = $this->getFieldDefinition($elementName);
+
+                    if ($fd instanceof PreGetDataInterface) {
+                        $blockElement->setData($fd->preGetData($blockElement, array_merge($params, ['data' => $blockElement->getData()])));
+                    }
+                }
+            }
+        }
+
         $this->preSetData($container, $data, $params);
 
         return is_array($data) ? $data : [];

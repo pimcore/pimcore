@@ -96,7 +96,7 @@ To get a list of all available commands use `./bin/console list`.
 | pimcore:definition:import:units           | Import Quantity value units definition from a JSON export                                                                         |
 | pimcore:deployment:classes-rebuild        | Rebuilds classes and db structure based on updated `var/classes/definition_*.php` files                                           |
 | pimcore:thumbnails:image                  | Generate image thumbnails, useful to pre-generate thumbnails in the background. Use `--processes` option for parallel processing. |
-| pimcore:thumbnails:optimize-images        | Optimize file size of all images in `web/var/tmp`                                                                                 |
+| pimcore:thumbnails:optimize-images        | Optimize file size of all images in `public/var/tmp`                                                                                 |
 | pimcore:thumbnails:video                  | Generate video thumbnails, useful to pre-generate thumbnails in the background. Use `--processes` option for parallel processing. |
 
 Find more about the Pimcore Console on the [dedicated page](../19_Development_Tools_and_Details/11_Console_CLI.md).

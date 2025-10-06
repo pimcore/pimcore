@@ -22,8 +22,6 @@ Overwrite the service `Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageLi
 Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener:
     calls:
         - [loadTemplateFromResource, ['@@App/Resources/misc/maintenance.html']]
-    tags:
-        - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
 ```
 
 Use loadTemplateFromPath if the file is located outside a bundle.
@@ -32,6 +30,4 @@ Use loadTemplateFromPath if the file is located outside a bundle.
 Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener:
     calls:
         - [loadTemplateFromPath, ['/templates/maintenance.html']]
-    tags:
-        - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
 ```

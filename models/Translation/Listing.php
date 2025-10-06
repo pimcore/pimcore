@@ -23,6 +23,8 @@ use Pimcore\Model\Exception\NotFoundException;
  * @method Model\Translation|false current()
  * @method int getTotalCount()
  * @method void onCreateQueryBuilder(?callable $callback)
+ * @method void addQueryBuilderProcessor(callable $callback)
+ * @method void discardQueryBuilderProcessors()
  * @method void cleanup()
  *
  */

@@ -97,7 +97,7 @@ class Special extends DataObject\Concrete implements DataObject\PreGetValueHookI
     public function preGetValue(string $key): ?string
     {
         if ($key == "myCustomProperty") {
-            return strtolower($object->myCustomProperty);
+            return strtolower($this->myCustomProperty);
         }
 
         return null;
