@@ -1766,7 +1766,6 @@ class Service extends Model\Element\Service
                 $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
 
                 $key = $fieldname . '~' . $groupConfig->getName() . '~' . $keyConfig->getName();
-                $title = $groupConfig->getName() . '.' . $field['label'];
             }
         }
 
