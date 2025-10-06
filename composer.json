@@ -100,7 +100,7 @@
     "symfony/http-kernel": "^6.3",
     "symfony/lock": "^6.4 || ^7.2",
     "symfony/mailer": "^6.4 || ^7.2",
-    "symfony/messenger": "^6.4",
+    "symfony/messenger": "^6.4 || ^7.2",
     "symfony/mime": "^6.4 || ^7.2",
     "symfony/monolog-bundle": "^3.8",
     "symfony/options-resolver": "^6.4 || ^7.2",
