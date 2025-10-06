@@ -33,7 +33,9 @@ final class Version20250821094211 extends AbstractMigration
         $classes = new Listing();
         foreach($classes->getClasses() as $class) {
             if($schema->hasTable('object_metadata_' . $class->getId())) {
-                $this->addSql('ALTER TABLE object_metadata_' . $class->getId() . ' CHANGE auto_id auto_id BIGINT(20) NOT NULL');
+                $this->addSql(
+                    'ALTER TABLE object_metadata_' . $class->getId() . ' CHANGE auto_id auto_id BIGINT(20) NOT NULL'
+                );
             }
         }
     }
@@ -43,7 +45,9 @@ final class Version20250821094211 extends AbstractMigration
         $classes = new Listing();
         foreach ($classes->getClasses() as $class) {
             if ($schema->hasTable('object_metadata_'.$class->getId())) {
-                $this->addSql('ALTER TABLE object_metadata_'.$class->getId().' CHANGE auto_id auto_id INT(11) NOT NULL');
+                $this->addSql(
+                    'ALTER TABLE object_metadata_'.$class->getId().' CHANGE auto_id auto_id INT(11) NOT NULL'
+                );
             }
         }
     }
