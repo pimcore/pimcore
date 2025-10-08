@@ -124,7 +124,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if (!empty($elementTypes)) {
             $count = 0;
-            $stop = false;
+
             foreach ($elementTypes as $elementType) {
                 if (isset($elementType['days'])) {
                     // by days
@@ -132,30 +132,36 @@ class Dao extends Model\Dao\AbstractDao
                     $tmpVersionIds = $this->db->fetchFirstColumn('SELECT id FROM versions as a WHERE ctype = ? AND public=0 ' . $ignoreIdsQueryPart . ' AND date < ?', [$elementType['elementType'], $deadline]);
                     $versionIds = array_merge($versionIds, $tmpVersionIds);
                 } else {
-                    // by steps
-                    $versionData = $this->db->executeQuery('SELECT cid FROM versions WHERE ctype = ? AND public=0  ' . $ignoreIdsQueryPart . ' GROUP BY cid HAVING COUNT(*) > ? LIMIT 1000', [$elementType['elementType'], $elementType['steps'] + 1]);
-                    while ($versionInfo = $versionData->fetchAssociative()) {
-                        $count++;
-                        $elementVersions = $this->db->fetchFirstColumn('SELECT id FROM versions WHERE ctype = ? AND public=0 ' . $ignoreIdsQueryPart . ' AND cid=? ORDER BY id DESC LIMIT '.($elementType['steps'] + 1).', '.PHP_INT_MAX, [$elementType['elementType'], $versionInfo['cid']]);
 
-                        $versionIds = array_merge($versionIds, $elementVersions);
+                    $sql = '
+                        SELECT cid,id
+                        FROM (
+                            SELECT id, cid,
+                                   ROW_NUMBER() OVER (PARTITION BY cid ORDER BY id DESC) AS rownumber
+                            FROM versions
+                            WHERE ctype = ? AND public = 0 ' . $ignoreIdsQueryPart . '
+                        ) sub
+                        WHERE rownumber > ?
+                    ';
 
-                        Logger::info($versionInfo['cid'].'(object '.$count.') Vcount '.count($versionIds));
+                    $countsPerCid = [];
+                    $elementVersions = $this->db->fetchAssociative(
+                        $sql,
+                        [$elementType['elementType'], $elementType['steps'] + 1]
+                    );
 
-                        // call the garbage collector if memory consumption is > 100MB
-                        if (memory_get_usage() > 100000000 && ($count % 100 == 0)) {
-                            Pimcore::collectGarbage();
+                    foreach ($elementVersions as $versionInfo) {
+                        $cid = $versionInfo['cid'];
+                        if (!isset($countsPerCid[$cid])) {
+                            $countsPerCid[$cid] = 0;
                         }
+                        $countsPerCid[$cid]++;
 
-                        if (count($versionIds) > 1000) {
-                            $stop = true;
-
-                            break;
-                        }
+                        $versionIds[] = $versionInfo['id'];
                     }
 
-                    if ($stop) {
-                        break;
+                    foreach ($countsPerCid as $cid => $countPerCid) {
+                        Logger::info($cid . '(object ' . $count . ') Vcount ' . $countPerCid);
                     }
                 }
             }
