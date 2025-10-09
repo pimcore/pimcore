@@ -16,9 +16,9 @@ class CalculatedFieldExpressionLanguage extends ExpressionLanguage
         parent::__construct();
 
         //overwrite constant function to avoid exposing internal information
-        $this->register('constant', function ($str) {
+        $this->register('constant', function () {
             throw new SyntaxError('`constant` function not available');
-        }, function ($arguments, $str) {
+        }, function () {
             throw new SyntaxError('`constant` function not available');
         });
 
