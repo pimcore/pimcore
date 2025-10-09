@@ -1440,15 +1440,17 @@ class Service extends Model\Element\Service
 
     private static function evaluateExpression(Model\DataObject\ClassDefinition\Data\CalculatedValue $fd, Concrete $object, ?DataObject\Data\CalculatedValue $data): mixed
     {
-        $expressionLanguage = new ExpressionLanguage();
-        //overwrite constant function to aviod exposing internal information
-        $expressionLanguage->register('constant', function ($str) {
-            throw new SyntaxError('`constant` function not available');
-        }, function ($arguments, $str) {
-            throw new SyntaxError('`constant` function not available');
-        });
+        // TODO refactor in a future PR to allow these to be injected
+        $container = Pimcore::getContainer();
+        $expressionLanguage = $container->get('pimcore.calculated_value.expression_language');
 
-        return $expressionLanguage->evaluate($fd->getCalculatorExpression(), ['object' => $object, 'data' => $data]);
+        return $expressionLanguage->evaluate(
+            $fd->getCalculatorExpression(),
+            [
+                'object' => $object,
+                'data' => $data
+            ]
+        );
     }
 
     /**
