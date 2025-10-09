@@ -128,7 +128,10 @@ class Dao extends Model\Dao\AbstractDao
                 // by days
                 $deadline = time() - ($elementType['days'] * 86400);
                 $tmpVersionIds = $this->db->fetchFirstColumn(
-                    'SELECT id FROM versions as a WHERE ctype = ? AND public=0 ' . $ignoreIdsQueryPart . ' AND date < ?',
+                    'SELECT id FROM versions AS a
+                    WHERE ctype = ?
+                    AND public = 0 ' . $ignoreIdsQueryPart . '
+                    AND date < ?',
                     [$elementType['elementType'], $deadline]
                 );
                 $versionIds = array_merge($versionIds, $tmpVersionIds);
