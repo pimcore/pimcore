@@ -23,9 +23,7 @@ class CalculatedFieldExpressionLanguage extends ExpressionLanguage
         });
 
         foreach ($providers as $provider) {
-            if ($provider instanceof ExpressionFunctionProviderInterface) {
-                $this->registerProvider($provider);
-            }
+            $this->registerProvider($provider);
         }
     }
 }
