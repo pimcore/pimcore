@@ -121,51 +121,52 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $versionIds = [];
+        $count = 0;
 
-        if (!empty($elementTypes)) {
-            $count = 0;
+        foreach ($elementTypes as $elementType) {
+            if (isset($elementType['days'])) {
+                // by days
+                $deadline = time() - ($elementType['days'] * 86400);
+                $tmpVersionIds = $this->db->fetchFirstColumn(
+                    'SELECT id FROM versions as a WHERE ctype = ? AND public=0 ' . $ignoreIdsQueryPart . ' AND date < ?',
+                    [$elementType['elementType'], $deadline]
+                );
+                $versionIds = array_merge($versionIds, $tmpVersionIds);
+            } else {
 
-            foreach ($elementTypes as $elementType) {
-                if (isset($elementType['days'])) {
-                    // by days
-                    $deadline = time() - ($elementType['days'] * 86400);
-                    $tmpVersionIds = $this->db->fetchFirstColumn('SELECT id FROM versions as a WHERE ctype = ? AND public=0 ' . $ignoreIdsQueryPart . ' AND date < ?', [$elementType['elementType'], $deadline]);
-                    $versionIds = array_merge($versionIds, $tmpVersionIds);
-                } else {
+                $sql = '
+                    SELECT cid,id
+                    FROM (
+                        SELECT id, cid,
+                               ROW_NUMBER() OVER (PARTITION BY cid ORDER BY id DESC) AS rownumber
+                        FROM versions
+                        WHERE ctype = ? AND public = 0 ' . $ignoreIdsQueryPart . '
+                    ) sub
+                    WHERE rownumber > ?
+                ';
 
-                    $sql = '
-                        SELECT cid,id
-                        FROM (
-                            SELECT id, cid,
-                                   ROW_NUMBER() OVER (PARTITION BY cid ORDER BY id DESC) AS rownumber
-                            FROM versions
-                            WHERE ctype = ? AND public = 0 ' . $ignoreIdsQueryPart . '
-                        ) sub
-                        WHERE rownumber > ?
-                    ';
+                $countsPerCid = [];
+                $elementVersions = $this->db->fetchAssociative(
+                    $sql,
+                    [$elementType['elementType'], $elementType['steps'] + 1]
+                );
 
-                    $countsPerCid = [];
-                    $elementVersions = $this->db->fetchAssociative(
-                        $sql,
-                        [$elementType['elementType'], $elementType['steps'] + 1]
-                    );
-
-                    foreach ($elementVersions as $versionInfo) {
-                        $cid = $versionInfo['cid'];
-                        if (!isset($countsPerCid[$cid])) {
-                            $countsPerCid[$cid] = 0;
-                        }
-                        $countsPerCid[$cid]++;
-
-                        $versionIds[] = $versionInfo['id'];
+                foreach ($elementVersions as $versionInfo) {
+                    $cid = $versionInfo['cid'];
+                    if (!isset($countsPerCid[$cid])) {
+                        $countsPerCid[$cid] = 0;
                     }
+                    $countsPerCid[$cid]++;
 
-                    foreach ($countsPerCid as $cid => $countPerCid) {
-                        Logger::info($cid . '(object ' . $count . ') Vcount ' . $countPerCid);
-                    }
+                    $versionIds[] = $versionInfo['id'];
+                }
+
+                foreach ($countsPerCid as $cid => $countPerCid) {
+                    Logger::info($cid . '(object ' . $count . ') Vcount ' . $countPerCid);
                 }
             }
         }
+
         Logger::info('return ' .  count($versionIds) . " ids\n");
 
         return array_map('intval', $versionIds);
