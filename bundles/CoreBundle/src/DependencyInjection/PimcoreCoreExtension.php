@@ -281,6 +281,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
      */
     public function prepend(ContainerBuilder $container): void
     {
+        $container->setParameter('locale', substr(Pimcore\Tool::getDefaultLanguage(), 0, 2));
         /*$securityConfigs = $container->getExtensionConfig('security');
 
         if (count($securityConfigs) > 1) {
