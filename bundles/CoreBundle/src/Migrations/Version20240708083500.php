@@ -72,7 +72,8 @@ final class Version20240708083500 extends AbstractMigration
                 'Temporarily enable debug mode or switch to an alternate config-storage to run this migration.' . "\n" .
                 '- Missing write permissions: Set PIMCORE_CLASS_DEFINITION_WRITABLE env variable.' . "\n" .
                 sprintf(
-                    'If definitions are already migrated, skip this migration: "php bin/console doctrine:migrations:version --add %s"',
+                    'If definitions are already migrated, skip this migration: ' . "\n" .
+                    '  "php bin/console doctrine:migrations:version --add %s"',
                     __CLASS__
                 )
             );
