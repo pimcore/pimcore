@@ -239,7 +239,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             $unit = $data->getUnit();
 
             if ($unit instanceof DataObject\QuantityValue\Unit) {
-                $export .= ' ' . $unit->getAbbreviation();
+                $export .= $unit->getAbbreviation();
             }
 
             return $export;

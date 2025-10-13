@@ -146,7 +146,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
             if ($data->getUnitId()) {
                 $unitDefinition = Model\DataObject\QuantityValue\Unit::getById($data->getUnitId());
                 if ($unitDefinition) {
-                    $unit = ' ' . $unitDefinition->getAbbreviation();
+                    $unit = $unitDefinition->getAbbreviation();
                 }
             }
 
