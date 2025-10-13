@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Translation\Listing;
@@ -114,8 +111,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
         $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
+        $translations = Cache::load($cacheKey);
 
-        if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
+        if (
+            !$translations ||
+            !empty($this->model->getConditionParams()) ||
+            !empty($this->model->getConditionVariablesFromSetCondition())
+        ) {
             $translations = [];
             $translationsData = $this->db->fetchAllAssociative($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
             foreach ($translationsData as $t) {
@@ -126,7 +128,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
                 }
             }
 
-            if (empty($this->model->getConditionParams())) {
+            if (
+                empty($this->model->getConditionParams()) &&
+                empty($this->model->getConditionVariablesFromSetCondition())
+            ) {
                 Cache::save($translations, $cacheKey, ['translator', 'translate'], null, 999);
             }
         }

@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
@@ -414,11 +411,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             }
 
             if ($this->elementType === 'boolean') {
-                if ($this->calculatorType === 'class') {
-                    $bool = $value === 1 ? 1 : 0;
-                } else {
-                    $bool = $value === 1 ? $db->quote('true') : $db->quote('false');
-                }
+                $key = 'IFNULL(' . $key . ', 0)';
+                $bool = $value === 1 ? 1 : 0;
 
                 return $key . ' ' . $operator . ' ' . $bool;
             }
@@ -531,14 +525,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
-        if ($class instanceof DataObject\Objectbrick\Definition) {
-            $classname = 'Objectbrick\\Data\\' . ucfirst($class->getKey());
-        } elseif ($class instanceof DataObject\Fieldcollection\Definition) {
-            $classname = 'Fieldcollection\\Data\\' . ucfirst($class->getKey());
-        } else {
-            $classname = $class->getName();
-        }
-
         $key = $this->getName();
 
         if ($this->getParameterTypeDeclaration()) {
@@ -894,13 +880,10 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     {
         $key = $this->getName();
         if ($class instanceof DataObject\Objectbrick\Definition) {
-            $classname = 'Objectbrick\\Data\\' . ucfirst($class->getKey());
             $containerGetter = 'getDefinition';
         } elseif ($class instanceof DataObject\Fieldcollection\Definition) {
-            $classname = 'Fieldcollection\\Data\\' . ucfirst($class->getKey());
             $containerGetter = 'getDefinition';
         } else {
-            $classname = $class->getName();
             $containerGetter = 'getClass';
         }
 

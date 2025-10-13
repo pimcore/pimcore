@@ -2,20 +2,18 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
+use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
@@ -78,5 +76,31 @@ trait ManyToManyRelationTrait
         }
 
         return $data;
+    }
+
+    /**
+     * Filter by relation feature
+     *
+     *
+     */
+    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
+    {
+        $prefix = '';
+        $name = $params['name'] ?: $this->name;
+        $prefix = $params['brickPrefix'] ?? null;
+
+        if ($prefix !== null) {
+            // The brick prefix might be quoted and with a dot suffix, if so, removing the first
+            // and second last character to unquote
+            $quoteIdentifierSymbol  = substr(Db::get()->quoteIdentifier(''), 0, 1);
+            if (
+                substr($prefix, 1, -2) === $quoteIdentifierSymbol &&
+                substr($prefix, -1) === $quoteIdentifierSymbol
+            ) {
+                $prefix = substr($prefix, 1, -2) . substr($prefix, -1);
+            }
+        }
+
+        return $this->getRelationFilterCondition($value, $operator, $prefix . $name);
     }
 }

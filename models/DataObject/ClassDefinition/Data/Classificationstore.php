@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -27,7 +24,7 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface, ClassSavedInterface
+class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface, ClassSavedInterface, EqualComparisonInterface
 {
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
@@ -1150,5 +1147,26 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function getFieldType(): string
     {
         return 'classificationstore';
+    }
+
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
+    {
+        // Check if they are the same reference
+        if ($oldValue === $newValue) {
+            return true;
+        }
+
+        // Check if related objects are the same
+        if ($oldValue->getObject()->getId() !== $newValue->getObject()->getId()) {
+            return false;
+        }
+
+        // Check if they are of the same type
+        if (get_class($oldValue) !== get_class($newValue)) {
+            return false;
+        }
+
+        // Compare items
+        return serialize($oldValue->getItems()) === serialize($newValue->getItems());
     }
 }

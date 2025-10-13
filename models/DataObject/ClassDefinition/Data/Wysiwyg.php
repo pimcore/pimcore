@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -26,7 +23,7 @@ use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 
-class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface
+class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
 {
     use DataObject\ClassDefinition\Data\Extension\Text;
     use DataObject\Traits\DataHeightTrait;
@@ -51,6 +48,13 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      */
     public string|int $maxCharacters = 0;
+
+    public function enrichLayoutDefinition(?DataObject\Concrete $object, array $context = []): static
+    {
+        $this->width = $this->getWidth() ?: '100%';
+
+        return $this;
+    }
 
     private static function getWysiwygSanitizer(): HtmlSanitizer
     {
@@ -207,7 +211,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $data = '';
         if ($container instanceof DataObject\Concrete) {
             $data = $container->getObjectVar($this->getName());
-        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Classificationstore) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Classificationstore || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $data = $container->getObjectVar($this->getName());

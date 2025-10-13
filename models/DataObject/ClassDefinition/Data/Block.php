@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -791,7 +788,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $params['fieldname'] = $this->getName();
         if ($container instanceof DataObject\Concrete) {
             $data = $container->getObjectVar($this->getName());
-        } elseif ($container instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $data = $container->getObjectVar($this->getName());
@@ -813,6 +810,19 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $container->$setter($data);
             }
         }
+
+        if (is_array($data)) {
+            foreach ($data as $blockElements) {
+                foreach ($blockElements as $elementName => $blockElement) {
+                    $fd = $this->getFieldDefinition($elementName);
+
+                    if ($fd instanceof PreGetDataInterface) {
+                        $blockElement->setData($fd->preGetData($blockElement, array_merge($params, ['data' => $blockElement->getData()])));
+                    }
+                }
+            }
+        }
+
         $this->preSetData($container, $data, $params);
 
         return is_array($data) ? $data : [];

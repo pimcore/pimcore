@@ -1,14 +1,10 @@
-
-[![PI25-Visuals-GitHub_16x9](https://github.com/user-attachments/assets/d5246851-9603-45d9-ac21-42ce74621577)](https://pimcore.com/en/inspire-2025)
-
-
 ![Pimcore - Own the digital World](./doc/img/logo-readme.svg)
   
   
-Pimcore Core Framework - Open Source Data & Experience Management Platform: PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce
+Pimcore Core Framework - Open Core Data & Experience Management Platform: PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce
 
 [![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
-[![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
+[![Software License](https://img.shields.io/badge/license-POCL-brightgreen.svg?style=flat)](LICENSE.md)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore)
 
 * 📢 **[We are hiring!](https://pimcore.com/en/careers?utm_source=github&utm_medium=readme-pimcore-pimcore&utm_campaign=careers)** - Join us on our mission!
@@ -94,5 +90,5 @@ the Core Framework as well as extensions provided by Pimcore. For details on ver
 
 
 ## Copyright and License 
-Copyright: [Pimcore](https://www.pimcore.org) GmbH
+Copyright: [Pimcore](https://www.pimcore.com) GmbH
 For licensing details please visit [LICENSE.md](LICENSE.md)

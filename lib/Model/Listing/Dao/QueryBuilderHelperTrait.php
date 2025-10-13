@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Listing\Dao;
@@ -24,12 +21,35 @@ trait QueryBuilderHelperTrait
 {
     /**
      * @var callable|null
+     *
+     * @deprecated Since 12.2.0, use $queryBuilderProcessors instead, add processors via addQueryBuilderProcessor()
+     *
+     * @todo Remove in Pimcore 13
      */
     protected $onCreateQueryBuilderCallback;
+
+    /**
+     * @var callable[]
+     */
+    private array $queryBuilderProcessors = [];
 
     public function onCreateQueryBuilder(?callable $callback): void
     {
         $this->onCreateQueryBuilderCallback = $callback;
+        $this->discardQueryBuilderProcessors();
+        if (is_callable($callback)) {
+            $this->addQueryBuilderProcessor($callback);
+        }
+    }
+
+    public function addQueryBuilderProcessor(callable $callback): void
+    {
+        $this->queryBuilderProcessors[] = $callback;
+    }
+
+    public function discardQueryBuilderProcessors(): void
+    {
+        $this->queryBuilderProcessors = [];
     }
 
     protected function applyListingParametersToQueryBuilder(QueryBuilder $queryBuilder): void
@@ -39,9 +59,8 @@ trait QueryBuilderHelperTrait
         $this->applyOrderByToQueryBuilder($queryBuilder);
         $this->applyLimitToQueryBuilder($queryBuilder);
 
-        $callback = $this->onCreateQueryBuilderCallback;
-        if (is_callable($callback)) {
-            $callback($queryBuilder);
+        foreach ($this->queryBuilderProcessors as $processor) {
+            $processor($queryBuilder);
         }
     }
 

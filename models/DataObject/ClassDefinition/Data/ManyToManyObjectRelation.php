@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -222,7 +219,20 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     public function getDataForGrid(?array $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
-        return $this->getDataForEditmode($data, $object, $params);
+        $gridData = $this->getDataForEditmode($data, $object, $params);
+
+        if ($this->getPathFormatterClass() && !empty($gridData)) {
+            $params['fd'] = $object->getClass()->getFieldDefinition($this->getName(), $params['context'] ?? []);
+            foreach ($gridData as &$relatedElementData) {
+                $nicePath = $this->getNicePath($relatedElementData, $object, $params);
+                if ($nicePath) {
+                    $relatedElementData['fullpath'] = $nicePath;
+                }
+            }
+            unset($relatedElementData);
+        }
+
+        return $gridData;
     }
 
     /**
@@ -325,7 +335,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 $container->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($container);
             }
-        } elseif ($container instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             parent::loadLazyFieldcollectionField($container);
@@ -714,18 +724,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         }
 
         return parent::addListingFilter($listing, $data, $operator);
-    }
-
-    /**
-     * Filter by relation feature
-     *
-     *
-     */
-    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
-    {
-        $name = $params['name'] ?: $this->name;
-
-        return $this->getRelationFilterCondition($value, $operator, $name);
     }
 
     public function getQueryColumnType(): string

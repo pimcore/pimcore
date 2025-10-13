@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Repository;
@@ -20,6 +17,7 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Configuration\ExecutionContextInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\CurrentMessage\CurrentMessageProviderInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
@@ -32,16 +30,16 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Translation\Translator;
 use Psr\Log\LoggerInterface;
 
-final class JobRunRepository implements JobRunRepositoryInterface
+final readonly class JobRunRepository implements JobRunRepositoryInterface
 {
     public function __construct(
-        private readonly Connection $db,
-        private readonly CurrentMessageProviderInterface $currentMessageProvider,
-        private readonly EntityManagerInterface $pimcoreEntityManager,
-        private readonly ExecutionContextInterface $executionContext,
-        private readonly LoggerInterface $genericExecutionEngineLogger,
-        private readonly PermissionServiceInterface $permissionService,
-        private readonly Translator $translator,
+        private Connection $db,
+        private CurrentMessageProviderInterface $currentMessageProvider,
+        private EntityManagerInterface $pimcoreEntityManager,
+        private ExecutionContextInterface $executionContext,
+        private LoggerInterface $genericExecutionEngineLogger,
+        private PermissionServiceInterface $permissionService,
+        private Translator $translator,
     ) {
     }
 
@@ -59,7 +57,6 @@ final class JobRunRepository implements JobRunRepositoryInterface
 
     public function update(JobRun $jobRun): JobRun
     {
-
         $this->pimcoreEntityManager->persist($jobRun);
         $this->pimcoreEntityManager->flush();
 
@@ -68,6 +65,7 @@ final class JobRunRepository implements JobRunRepositoryInterface
 
     /**
      * @throws Exception
+     * @throws ORMException
      *
      * @internal
      */
@@ -90,6 +88,9 @@ final class JobRunRepository implements JobRunRepositoryInterface
         $this->updateLog($jobRun, $translatedMessage);
     }
 
+    /**
+     * @throws Exception|ORMException
+     */
     public function updateLogLocalized(
         JobRun $jobRun,
         string $message,
@@ -111,6 +112,7 @@ final class JobRunRepository implements JobRunRepositoryInterface
 
     /**
      * @throws Exception
+     * @throws ORMException
      */
     public function updateLog(JobRun $jobRun, string $message): void
     {
@@ -130,13 +132,16 @@ final class JobRunRepository implements JobRunRepositoryInterface
         $this->pimcoreEntityManager->refresh($jobRun);
     }
 
-    public function getJobRunById(int $id, bool $forceReload = false, ?int $ownerId = null): JobRun
-    {
-
+    /**
+     * @throws ORMException
+     */
+    public function getJobRunById(
+        int $id,
+        bool $forceReload = false,
+        ?int $ownerId = null
+    ): JobRun {
         $params = ['id' => $id];
-        if ($ownerId !== null && !$this->permissionService->isAllowedToSeeAllJobRuns()) {
-            $params['ownerId'] = $ownerId;
-        }
+        $params = $this->setOwnerId($params, $ownerId);
 
         $jobRun = $this->pimcoreEntityManager->getRepository(JobRun::class)->findOneBy($params);
         if (!$jobRun) {
@@ -161,12 +166,12 @@ final class JobRunRepository implements JobRunRepositoryInterface
         ?int $ownerId = null,
         array $orderBy = [],
         int $limit = 100,
-        int $offset = 0
+        int $offset = 0,
+        ?string $executionContext = null
     ): array {
         $params = [];
-        if ($ownerId !== null && !$this->permissionService->isAllowedToSeeAllJobRuns()) {
-            $params['ownerId'] = $ownerId;
-        }
+        $params = $this->setOwnerId($params, $ownerId);
+        $params = $this->setExecutionContext($params, $executionContext);
 
         return $this->pimcoreEntityManager->getRepository(JobRun::class)->findBy(
             $params,
@@ -178,18 +183,24 @@ final class JobRunRepository implements JobRunRepositoryInterface
 
     public function getTotalCount(): int
     {
-        return $this->pimcoreEntityManager->getRepository(JobRun::class)->count([]);
+        return $this->pimcoreEntityManager->getRepository(JobRun::class)->count();
     }
 
     public function getRunningJobsByUserId(
         int $ownerId,
         array $orderBy = [],
         int $limit = 10,
+        ?string $executionContext = null
     ): array {
+        $params = [];
+        $params = $this->setOwnerId($params, $ownerId);
+        $params = $this->setExecutionContext($params, $executionContext);
+        $params['state'] = JobRunStates::RUNNING;
+
         return $this->pimcoreEntityManager
             ->getRepository(JobRun::class)
             ->findBy(
-                ['ownerId' => $ownerId, 'state' => JobRunStates::RUNNING],
+                $params,
                 $orderBy,
                 $limit
             );
@@ -214,7 +225,7 @@ final class JobRunRepository implements JobRunRepositoryInterface
     }
 
     /**
-     * @throws Exception
+     * @throws Exception|ORMException
      */
     public function updateSelectedElements(JobRun $jobRun, array $selectedElements): void
     {
@@ -233,5 +244,23 @@ final class JobRunRepository implements JobRunRepositoryInterface
                 '%toCount%' => count($selectedElements),
             ]
         );
+    }
+
+    private function setExecutionContext(array $params, ?string $executionContext): array
+    {
+        if ($executionContext) {
+            $params['executionContext'] = $executionContext;
+        }
+
+        return $params;
+    }
+
+    private function setOwnerId(array $params, ?int $ownerId): array
+    {
+        if ($ownerId !== null && !$this->permissionService->isAllowedToSeeAllJobRuns()) {
+            $params['ownerId'] = $ownerId;
+        }
+
+        return $params;
     }
 }

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Agent;
@@ -22,6 +19,8 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Entity\JobRun;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Messenger\Messages\GenericExecutionEngineMessageInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\Job;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobRunStates;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStep;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobStepStates;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepositoryInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\Enums\ErrorHandlingMode;
@@ -78,6 +77,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             'gee_job_started',
             $this->getLogParams($jobRun)
         );
+        $this->setJobStepState($jobRun, JobStepStates::RUNNING);
         $this->jobRunRepository->update($jobRun);
 
         $this->dispatchStepMessage($jobRun);
@@ -204,13 +204,13 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             return;
         }
 
+        $this->setJobStepState($jobRun, JobStepStates::SUCCEEDED);
         $nextStep = $jobRun->getCurrentStep() + 1;
 
         if (count($job->getSteps()) <= $nextStep) {
             $jobRun->setCurrentStep(null);
             $this->setCompletionState($jobRun);
             $this->jobRunRepository->update($jobRun);
-
             $this->genericExecutionEngineLogger->info("[JobRun {$jobRun->getId()}]: Job '{$job->getName()}' finished.");
         } else {
             $jobRun->setProcessedElementsForStep(0);
@@ -294,6 +294,7 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             JobRunStates::RUNNING
         );
 
+        $this->setJobStepState($jobRun, JobStepStates::FAILED);
         $this->handleNextMessage($message);
     }
 
@@ -410,21 +411,31 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
     private function setCompletionState(JobRun $jobRun): void
     {
         $message = '';
+        $jobRunSteps = $jobRun->getJob()?->getSteps();
 
-        $logs = $this->jobRunErrorLogRepository->getLogsByJobRunId(
-            $jobRun->getId(),
-            $jobRun->getCurrentStep()
+        $totalStepsCount = count($jobRunSteps);
+        $failedStepsCount = count(
+            array_filter($jobRunSteps,
+                static fn ($step) => $step->getState() === JobStepStates::FAILED
+            )
+        );
+        $finishedStepsCount = count(
+            array_filter($jobRunSteps,
+                static fn ($step) => $step->getState() === JobStepStates::SUCCEEDED
+            )
         );
 
-        if (count($logs) === $jobRun->getTotalElements()) {
+        if ($totalStepsCount === $failedStepsCount) {
             $jobRun->setState(JobRunStates::FAILED);
             $message = 'gee_job_failed';
-        } elseif (count($logs) > 0) {
+        }
+
+        if ($failedStepsCount > 0 && $totalStepsCount !== $failedStepsCount) {
             $jobRun->setState(JobRunStates::FINISHED_WITH_ERRORS);
             $message = 'gee_job_finished_with_errors';
         }
 
-        if (empty($logs)) {
+        if ($totalStepsCount === $finishedStepsCount) {
             $jobRun->setCurrentMessage(null);
             $jobRun->setState(JobRunStates::FINISHED);
             $message = 'gee_job_finished';
@@ -465,5 +476,22 @@ final class JobExecutionAgent implements JobExecutionAgentInterface
             )
             );
         }
+    }
+
+    private function setJobStepState(JobRun|JobStep $jobElement, JobStepStates $jobStepState): void
+    {
+        $currentJobStep = $jobElement instanceof JobStep ?
+            $jobElement : $jobElement->getJob()?->getSteps()[$jobElement->getCurrentStep()] ?? null;
+
+        if (!$currentJobStep) {
+            return;
+        }
+
+        $currentJobStepState = $currentJobStep->getState();
+        if ($currentJobStepState === JobStepStates::FAILED) {
+            return;
+        }
+
+        $currentJobStep->setState($jobStepState);
     }
 }

@@ -38,3 +38,5 @@ will be hidden. `modify` is a short hand for save, publish, unpublish, delete an
 > If multiple places provide a valid permission configuration the one with the highest priority will be used. 
 > The priority is based on the workflow priority (the workflow with the higher priority setting will win). Within a 
 > single workflow the order within the places section of the configuration file will be used.
+
+For conditions to other roles than admin users, use `ROLE_<role name in uppercase>`, e.g. `ROLE_EDITOR` for a role named "Editor".

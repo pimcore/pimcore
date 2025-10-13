@@ -348,11 +348,6 @@ parameters:
 			count: 1
 			path: lib/Image/Adapter.php
 
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: lib/Image/Adapter/Imagick.php
 
 		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
@@ -1199,3 +1194,8 @@ parameters:
 			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/WebsiteSetting/Listing/Dao.php
+
+		-
+			message: "#^Ternary operator condition is always true\\.$#"
+			count: 1
+			path: lib/Tool/Text.php

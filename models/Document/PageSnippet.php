@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Document;
@@ -552,27 +549,34 @@ abstract class PageSnippet extends Model\Document
         }
 
         if (!$hostname) {
-            $hostname = \Pimcore\Config::getSystemConfiguration('general')['domain'];
-            if (empty($hostname)) {
-                if (!$hostname = \Pimcore\Tool::getHostname()) {
-                    throw new Exception('No hostname available');
-                }
-            }
+            $hostname = $this->getHostname();
         }
 
         $url = $scheme . $hostname;
         if ($this instanceof Page && $this->getPrettyUrl()) {
             $url .= $this->getPrettyUrl();
         } else {
-            $url .= $this->getFullPath();
-        }
-
-        $site = \Pimcore\Tool\Frontend::getSiteForDocument($this);
-        if ($site instanceof Model\Site && $site->getMainDomain()) {
-            $url = $scheme . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $this->getRealFullPath());
+            $site = \Pimcore\Tool\Frontend::getSiteForDocument($this);
+            if ($site instanceof Model\Site) {
+                $url .= preg_replace('@^'.$site->getRootPath().'/?@', '/', $this->getRealFullPath());
+            } else {
+                $url .= $this->getFullPath();
+            }
         }
 
         return $url;
+    }
+
+    private function getHostname(): string
+    {
+        $site = \Pimcore\Tool\Frontend::getSiteForDocument($this);
+        if ($site instanceof Model\Site && $site->getMainDomain()) {
+            return $site->getMainDomain();
+        }
+
+        return \Pimcore\Config::getSystemConfiguration('general')['domain']
+            ?: \Pimcore\Tool::getHostname()
+            ?: throw new Exception('No hostname available');
     }
 
     /**

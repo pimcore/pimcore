@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\ApplicationLoggerBundle\Controller;
@@ -21,6 +18,7 @@ use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Types;
+use Pimcore\Bundle\ApplicationLoggerBundle\Enum\LogLevel;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -61,7 +59,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
 
         $qb = $db->createQueryBuilder();
         $qb
-            ->select('*, priority + 0 AS priority_key')
+            ->select('*')
             ->from(ApplicationLoggerDb::TABLE_NAME)
             ->setFirstResult($requestSource->getInt('start', 0))
             ->setMaxResults($requestSource->getInt('limit', 50));
@@ -124,6 +122,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $logEntries = [];
         foreach ($result as $row) {
             $fileobject = null;
+            $logLevel = LogLevel::getLogLevel($row['priority']);
             if ($row['fileobject']) {
                 $fileobject = str_replace(PIMCORE_PROJECT_ROOT, '', $row['fileobject']);
             }
@@ -135,7 +134,8 @@ class LogController extends UserAwareController implements KernelControllerEvent
                 'message' => $row['message'],
                 'date' => $row['timestamp'],
                 'timestamp' => $carbonTs->getTimestamp(),
-                'priority' => $translationService->getTranslatedLogLevel($row['priority_key']),
+                'priority' => $translationService->getTranslatedLogLevel($logLevel->value),
+                'prioritykeyname' => $logLevel->name,
                 'fileobject' => $fileobject,
                 'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],

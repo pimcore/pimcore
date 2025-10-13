@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
@@ -134,6 +131,8 @@ final class Configuration implements ConfigurationInterface
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
         $this->addDependencyNode($rootNode);
+        $this->addProductRegistrationNode($rootNode);
+
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
             'video_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/video_thumbnails',
@@ -177,7 +176,7 @@ final class Configuration implements ConfigurationInterface
                 ->children()
                     ->integerNode('cleanup_tmp_files_atime_older_than')
                         ->info('Integer value in seconds.')
-                        ->defaultValue(7_776_000) // 90 days
+                        ->defaultValue(86400) // 1 day
                     ->end()
                     ->integerNode('cleanup_profiler_files_atime_older_than')
                         ->info('Integer value in seconds.')
@@ -371,8 +370,17 @@ final class Configuration implements ConfigurationInterface
                             ->defaultValue(30)
                         ->end()
                         ->scalarNode('archive_alternative_database')
-                            ->info('Archive database name (optional). Tables will get archived to a different database, recommended when huge amounts of logs will be generated')
+                            ->info(
+                                'Archive database name (optional). Tables will get archived to a different database,
+                                 recommended when huge amounts of logs will be generated'
+                            )
                             ->defaultValue('')
+                        ->end()
+                        ->scalarNode('archive_db_table_storage_engine')
+                            ->info(
+                                'DB storage engine to be used for archive tables (e.g. ARCHIVE, InnoDB, Aria, ...)'
+                            )
+                            ->defaultValue('archive')
                         ->end()
                         ->scalarNode('delete_archive_threshold')
                             ->info('Threshold for deleting application log archive tables (in months)')
@@ -472,6 +480,7 @@ final class Configuration implements ConfigurationInterface
                                                 ->booleanNode('preserveMetaData')->end()
                                                 ->booleanNode('rasterizeSVG')->end()
                                                 ->booleanNode('downloadable')->end()
+                                                ->booleanNode('forceProcessICCProfiles')->end()
                                                 ->integerNode('modificationDate')->end()
                                                 ->integerNode('creationDate')->end()
                                                 ->booleanNode('preserveAnimation')->end()
@@ -510,6 +519,10 @@ final class Configuration implements ConfigurationInterface
                                             })
                                         ->end()
                                         ->defaultTrue()
+                                    ->end()
+                                    ->integerNode('max_srcset_dpi_factor')
+                                        ->info('Maximum generated srcset DPI factor for web images.')
+                                        ->defaultValue(2)
                                     ->end()
                                     ->arrayNode('image_optimizers')
                                         ->addDefaultsIfNotSet()
@@ -2073,5 +2086,22 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ->end();
+    }
+
+    private function addProductRegistrationNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode->children()
+            ->arrayNode('product_registration')
+                ->children()
+                    ->scalarNode('instance_identifier')
+                        ->info('Unique identifier of that Pimcore instance. Will be generated during install.')
+                    ->end()
+                    ->scalarNode('product_key')
+                        ->info('Product registration key obtained during product registration. ' .
+                               'It is based on `instance_identifier` and `pimcore.encryption.secret`.')
+                    ->end()
+                ->end()
+            ->end()
+        ;
     }
 }

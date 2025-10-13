@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -158,7 +155,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
             return Model\DataObject\Service::getCalculatedFieldValueForEditMode($object, $params, $data);
         }
 
-        return $data;
+        return (string)$data;
     }
 
     /**
@@ -386,5 +383,19 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public function getFieldType(): string
     {
         return 'calculatedValue';
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
+
+    public function isEmpty(mixed $data): bool
+    {
+        return match ($this->elementType) {
+            'boolean' => $data === null || $data === '',
+            'numeric' => !is_numeric($data),
+            default => parent::isEmpty($data)
+        };
     }
 }

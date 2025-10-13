@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Notification;
@@ -62,7 +59,7 @@ class Dao extends AbstractDao
         $model = $this->getModel();
         $model->setModificationDate(date('Y-m-d H:i:s'));
 
-        if ($model->getId() === null) {
+        if ($model->getId() === null || !$model->getCreationDate()) {
             $model->setCreationDate($model->getModificationDate());
         }
 
@@ -130,7 +127,7 @@ class Dao extends AbstractDao
         }
 
         $model->setId((int)$data['id']);
-        $model->setCreationDate($data['creationDate']);
+        $model->setCreationDate($data['creationDate'] ?? $data['modificationDate']);
         $model->setModificationDate($data['modificationDate']);
         $model->setSender($sender);
         $model->setRecipient($recipient);
