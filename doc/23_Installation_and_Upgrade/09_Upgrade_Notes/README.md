@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## Pimcore 13.0.0
+- The space between quantity value and unit is removed across all data types.
+
 ## Pimcore 12.2.0
 
 #### [Security]
