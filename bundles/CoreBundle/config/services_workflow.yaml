@@ -45,7 +45,6 @@ services:
         arguments:
             $tokenStorage: '@security.token_storage'
             $accessDecisionManager: '@security.access.decision_manager'
-            $exceptionOnNoToken: false
 
     Pimcore\Workflow\ExpressionService:
         class: Pimcore\Workflow\ExpressionService
