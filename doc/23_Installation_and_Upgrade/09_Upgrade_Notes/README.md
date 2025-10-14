@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## Pimcore 12.3.0
+- Added possibility to `pimcore:classificationstore:delete-store` to pass `--inactive-only` flag to only delete inactive (soft deleted from UI) classification stores Keys.
+
 ## Pimcore 12.2.0
 
 #### [Security]

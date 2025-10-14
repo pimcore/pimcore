@@ -17,9 +17,11 @@ use Exception;
 use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
+use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -27,7 +29,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 #[AsCommand(
     name: 'pimcore:classificationstore:delete-store',
-    description: 'Delete Classification Store',
+    description: 'Delete Classification Store by Store ID or delete all inactive Keys',
     aliases: ['classificationstore:delete-store']
 )]
 class DeleteClassificationStoreCommand extends AbstractCommand
@@ -35,49 +37,85 @@ class DeleteClassificationStoreCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->addArgument('storeId', InputArgument::REQUIRED, 'The store ID to delete')
-        ;
+            ->addArgument(
+                'storeId',
+                InputArgument::OPTIONAL,
+                'The specific store ID to delete'
+            )
+            ->addOption(
+                'inactive-only',
+                'i',
+                InputOption::VALUE_NONE,
+                'If set, deletes only inactive Keys (ignores provided Store ID).'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $storeId = $input->getArgument('storeId');
+        $inactiveOnly = $input->getOption('inactive-only');
 
-        if (!is_numeric($storeId)) {
-            throw new Exception('Invalid store ID');
+        //if storeId and inactive only are both set, we delete only inactive store keys
+        //kept as argument for BC purposes as it was mandatory to provide storeId before
+        if ($inactiveOnly) {
+            return $this->deleteInactive();
+        } elseif ($storeId) {
+            if (!is_numeric($storeId)) {
+                throw new Exception('Invalid store ID');
+            }
+            return $this->deleteByStoreId((int)$storeId);
+        } else {
+            throw new Exception('Please provide a store ID or use the --inactive-only option');
         }
+    }
 
+    protected function deleteInactive(): int
+    {
+        $listing = new KeyConfig\Listing();
+        $listing->setIncludeDisabled(true);
+        foreach ($listing->load() as $keyConfig) {
+            echo 'Deleting inactive store with ID ' . $keyConfig->getId() . "\n";
+            $keyConfig->delete();
+        }
+        return 0;
+    }
+
+    protected function deleteByStoreId(int $storeId): int
+    {
         $db = Db::get();
 
-        $tableList = $db->fetchAllAssociative("show tables like 'object_classificationstore_data_%'");
+        $tableList = $db->fetchAllAssociative("SHOW TABLES LIKE 'object_classificationstore_data_%'");
         foreach ($tableList as $table) {
             $theTable = current($table);
-            $sql = 'delete from ' . $theTable . ' where keyId In (select id from classificationstore_keys where storeId = ' . $db->quote($storeId) . ')';
+            $sql = 'DELETE FROM ' . $theTable .
+                ' WHERE keyId IN (SELECT id FROM classificationstore_keys WHERE storeId = ' . $storeId . ')';
             echo $sql . "\n";
             $db->executeQuery($sql);
         }
 
-        $tableList = $db->fetchAllAssociative("show tables like 'object_classificationstore_groups_%'");
+        $tableList = $db->fetchAllAssociative("SHOW TABLES LIKE 'object_classificationstore_groups_%'");
+
         foreach ($tableList as $table) {
             $theTable = current($table);
-            $sql = 'delete from ' . $theTable . ' where groupId In (select id from classificationstore_groups where storeId = ' . $db->quote($storeId) . ')';
+            $sql = 'DELETE FROM ' . $theTable .
+                ' WHERE groupId IN (SELECT id FROM classificationstore_groups WHERE storeId = ' . $storeId . ')';
             echo $sql . "\n";
             $db->executeQuery($sql);
         }
 
-        $sql = 'delete from classificationstore_keys where storeId = ' . $db->quote($storeId);
+        $sql = 'DELETE FROM classificationstore_keys WHERE storeId = ' . $storeId;
         echo $sql . "\n";
         $db->executeQuery($sql);
 
-        $sql = 'delete from classificationstore_groups where storeId = ' . $db->quote($storeId);
+        $sql = 'DELETE FROM classificationstore_groups WHERE storeId = ' . $storeId;
         echo $sql . "\n";
         $db->executeQuery($sql);
 
-        $sql = 'delete from classificationstore_collections where storeId = ' . $db->quote($storeId);
+        $sql = 'DELETE FROM classificationstore_collections WHERE storeId = ' . $storeId;
         echo $sql . "\n";
         $db->executeQuery($sql);
 
-        $sql = 'delete from classificationstore_stores where id = ' . $db->quote($storeId);
+        $sql = 'DELETE FROM classificationstore_stores WHERE id = ' . $storeId;
         echo $sql . "\n";
         $db->executeQuery($sql);
 
