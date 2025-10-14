@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\HttpKernel\CacheWarmer;
 
+use ReflectionClass;
 use Pimcore\Bootstrap;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
-use ReflectionClass;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 /**
