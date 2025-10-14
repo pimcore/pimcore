@@ -14,17 +14,17 @@ declare(strict_types=1);
 namespace Pimcore\Translation;
 
 use Exception;
+use Pimcore\Tool;
 use Pimcore\Cache;
 use Pimcore\Model\Translation;
-use Pimcore\Tool;
+use Symfony\Component\Translation\MessageCatalogue;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
+use Symfony\Component\Translation\TranslatorBagInterface;
+use Symfony\Component\Translation\Exception\LogicException;
+use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
-use Symfony\Component\Translation\Exception\LogicException;
-use Symfony\Component\Translation\MessageCatalogue;
-use Symfony\Component\Translation\MessageCatalogueInterface;
-use Symfony\Component\Translation\TranslatorBagInterface;
-use Symfony\Contracts\Translation\LocaleAwareInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleAwareInterface, WarmableInterface
 {
@@ -375,8 +375,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @return string[]
      */
-    public function warmUp(string $cacheDir): array
+    public function warmUp(string $cacheDir, string $buildDir = null): array
     {
-        return $this->translator->warmUp($cacheDir);
+        if ($this->translator instanceof WarmableInterface) {
+            return $this->translator->warmUp($cacheDir, $buildDir);
+        }
+
+        return [];
     }
 }
