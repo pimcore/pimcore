@@ -433,7 +433,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                 if ($operator === 'LIKE') {
                     $value = $db->quote('%' . $value . '%');
                 } else {
-                    $value = $db->quote($value);
+                    $value = $db->quote((string) $value);
                 }
             }
         }

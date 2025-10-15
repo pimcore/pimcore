@@ -369,6 +369,7 @@ class CustomReportController extends UserAwareController
             $drillDownFilters = json_decode($drillDownFilters, true);
         }
         $includeHeaders = $request->query->getBoolean('headers');
+        $delimiter = $request->query->getString('delimiter', ';');
 
         $config = Tool\Config::getByName($request->query->getString('name'));
         if (!$config) {
@@ -402,12 +403,12 @@ class CustomReportController extends UserAwareController
         $fp = fopen($exportFile, 'a');
 
         if ($includeHeaders) {
-            fputcsv($fp, $fields, ';');
+            fputcsv($fp, $fields, $delimiter);
         }
 
         foreach ($result['data'] as $row) {
             $row = Service::escapeCsvRecord($row);
-            fputcsv($fp, array_values($row), ';');
+            fputcsv($fp, array_values($row), $delimiter);
         }
 
         fclose($fp);
