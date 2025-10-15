@@ -34,7 +34,7 @@ final class ContainerAwarePass implements CompilerPassInterface
     public function process(ContainerBuilder $container): void
     {
         // Iterate through all service definitions
-        foreach ($container->getDefinitions() as $id => $definition) {
+        foreach ($container->getDefinitions() as $definition) {
             $class = $definition->getClass();
 
             // Skip if class is not set or is a parameter
