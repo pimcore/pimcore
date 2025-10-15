@@ -97,11 +97,20 @@ trait ManyToManyRelationTrait
             // The brick prefix might be quoted and with a dot suffix, if so, removing the first
             // and second last character to unquote
             $quoteIdentifierSymbol  = substr(Db::get()->quoteIdentifier(''), 0, 1);
+
             if (
-                substr($prefix, 1, -2) === $quoteIdentifierSymbol &&
+                substr($prefix, 0, 1) === $quoteIdentifierSymbol &&
+                substr($prefix, -2, 1) === $quoteIdentifierSymbol &&
+                substr($prefix, -1) === '.'
+            ) {
+                // Case: `db`.
+                $prefix = substr($prefix, 1, -2) . '.';
+            } elseif (
+                substr($prefix, 0, 1) === $quoteIdentifierSymbol &&
                 substr($prefix, -1) === $quoteIdentifierSymbol
             ) {
-                $prefix = substr($prefix, 1, -2) . substr($prefix, -1);
+                // Case: `db`
+                $prefix = substr($prefix, 1, -1);
             }
         }
 
