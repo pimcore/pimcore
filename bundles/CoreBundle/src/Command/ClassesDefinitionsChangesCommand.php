@@ -88,9 +88,9 @@ class ClassesDefinitionsChangesCommand extends AbstractCommand
 
         if (
             preg_match(
-            "/\\\\ClassDefinition::__set_state\s*\(\s*array\s*\(.*?'name'\s*=>\s*'([^']*)'/su",
-            $src,
-            $matches
+                "/\\\\ClassDefinition::__set_state\s*\(\s*array\s*\(.*?'name'\s*=>\s*'([^']*)'/su",
+                $src,
+                $matches
             )
         ) {
             return $matches[1];
