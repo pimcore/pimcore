@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## Pimcore 12.3.0
+- Added a new command `pimcore:classes:changes` to list all Class Definition that have been changed. This command helps in tracking modifications and can be useful for auditing and version control purposes.
+
 ## Pimcore 12.2.0
 
 #### [Security]

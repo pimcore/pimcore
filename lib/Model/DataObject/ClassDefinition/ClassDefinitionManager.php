@@ -133,6 +133,19 @@ class ClassDefinitionManager
         return $this->saveClassDefinition($class, $saveDefinitionFile, $dumpPHPClasses, $force);
     }
 
+    public function hasChanges(ClassDefinitionInterface $class): bool
+    {
+        $db = \Pimcore\Db::get();
+        $definitionModificationDate = null;
+
+        if ($classId = $class->getId()) {
+            $definitionModificationDate = $db->fetchOne('SELECT definitionModificationDate FROM classes WHERE id = ?;', [$classId]);
+        }
+
+        return !$definitionModificationDate || $definitionModificationDate !== $class->getModificationDate();
+    }
+
+
     /**
      * @throws Exception
      * @throws DefinitionWriteException
@@ -145,18 +158,8 @@ class ClassDefinitionManager
     ): bool {
         $shouldSave = $force;
 
-        if (!$force) {
-            $db = \Pimcore\Db::get();
-
-            $definitionModificationDate = null;
-
-            if ($classId = $class->getId()) {
-                $definitionModificationDate = $db->fetchOne('SELECT definitionModificationDate FROM classes WHERE id = ?;', [$classId]);
-            }
-
-            if (!$definitionModificationDate || $definitionModificationDate !== $class->getModificationDate()) {
-                $shouldSave = true;
-            }
+        if (!$force && $this->hasChanges($class)) {
+            $shouldSave = true;
         }
 
         if ($shouldSave) {
