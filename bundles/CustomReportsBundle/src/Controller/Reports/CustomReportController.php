@@ -373,10 +373,14 @@ class CustomReportController extends UserAwareController
 
         // sum up values for same x-axis values
         $groupedResult = [];
+        $xAxis = $config->getXAxis();
+        $yAxes = $config->getYAxis();
+        
         foreach ($result['data'] as $record) {
-            $xAxisValue = $record[$config->getXAxis()];
-            if (isset($groupedResult[$xAxisValue]) && is_array($config->getYAxis())) {
-                foreach ($config->getYAxis() as $yAxisField) {
+            $xAxisValue = $record[$xAxis];
+        
+            if (isset($groupedResult[$xAxisValue]) && is_array($yAxes)) {
+                foreach ($yAxes as $yAxisField) {
                     $groupedResult[$xAxisValue][$yAxisField] += $record[$yAxisField];
                 }
             } else {
