@@ -13,21 +13,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
-use Doctrine\Inflector\Inflector;
-use Doctrine\Inflector\InflectorFactory;
-use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
-use Pimcore\Extension\Document\Areabrick\AreabrickManager;
-use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
-use Pimcore\Templating\Renderer\EditableRenderer;
 use ReflectionClass;
-use Symfony\Component\Config\Resource\DirectoryResource;
-use Symfony\Component\Config\Resource\FileExistenceResource;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
+use Doctrine\Inflector\Inflector;
 use Symfony\Component\Finder\Finder;
+use Doctrine\Inflector\InflectorFactory;
+use Pimcore\Templating\Renderer\EditableRenderer;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\Config\Resource\DirectoryResource;
+use Pimcore\Extension\Document\Areabrick\AreabrickManager;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
+use Symfony\Component\Config\Resource\FileExistenceResource;
+use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
 /**
  * @internal
@@ -75,8 +74,6 @@ final class AreabrickPass implements CompilerPassInterface
                 $areabrickManager->addMethodCall('registerService', [$brickId, $id]);
             }
 
-            // handle bricks implementing ContainerAwareInterface
-            $this->handleContainerAwareDefinition($definition, $reflector);
             $this->handleEditableRendererCall($definition, $reflector);
         }
 
@@ -138,8 +135,6 @@ final class AreabrickPass implements CompilerPassInterface
                     $bundleArea['serviceId'],
                 ]);
 
-                // handle bricks implementing ContainerAwareInterface
-                $this->handleContainerAwareDefinition($definition, $reflector);
                 $this->handleEditableRendererCall($definition, $reflector);
             }
         }
@@ -154,15 +149,6 @@ final class AreabrickPass implements CompilerPassInterface
         }
     }
 
-    /**
-     * Adds setContainer() call to bricks implementing ContainerAwareInterface
-     */
-    private function handleContainerAwareDefinition(Definition $definition, ReflectionClass $reflector): void
-    {
-        if ($reflector->implementsInterface(ContainerAwareInterface::class)) {
-            $definition->addMethodCall('setContainer', [new Reference('service_container')]);
-        }
-    }
 
     /**
      * Look for classes implementing AreabrickInterface in each bundle's Document\Areabrick sub-namespace
