@@ -51,12 +51,12 @@ final class ContainerAwarePass implements CompilerPassInterface
                 }
             }
 
-            // Skip if class doesn't exist
-            if (!class_exists($class) && !interface_exists($class)) {
-                continue;
-            }
-
             try {
+                // Skip if class doesn't exist (wrapped in try-catch to avoid autoload errors)
+                if (!class_exists($class) && !interface_exists($class)) {
+                    continue;
+                }
+
                 $reflector = new ReflectionClass($class);
 
                 // Check if the class implements ContainerAwareInterface
@@ -64,8 +64,9 @@ final class ContainerAwarePass implements CompilerPassInterface
                     // Add setContainer method call to inject the service container
                     $definition->addMethodCall('setContainer', [new Reference('service_container')]);
                 }
-            } catch (\ReflectionException $e) {
-                // Skip classes that can't be reflected
+            } catch (\Throwable $e) {
+                // Skip classes that can't be loaded or reflected
+                // This includes missing dependencies, autoload failures, etc.
                 continue;
             }
         }
