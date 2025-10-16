@@ -29,55 +29,6 @@ This is part of the migration to Symfony 7, which no longer includes the `symfon
 3. **Container Lookups**:
     - Retrieving `pimcore.templating.engine.delegating` directly from the container
 
-**Migration Path:**
-
-**Before (Deprecated):**
-
-```php
-use Twig\Environment;
-
-class MyService
-{
-    public function __construct(private EngineInterface $templating) {}
-
-    public function render(): string
-    {
-        return $this->templating->render('template.html.twig', ['data' => 'value']);
-    }
-}
-```
-
-**After (Recommended):**
-
-```php
-use Symfony\Component\Templating\EngineInterface;
-
-class MyService
-{
-    public function __construct(private Environment $twig) {}
-
-    public function render(): string
-    {
-        return $this->twig->render('template.html.twig', ['data' => 'value']);
-    }
-}
-```
-
-**For Container Lookups:**
-
-**Before (Deprecated):**
-
-```php
-$templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
-$html = $templatingEngine->render($template, $params);
-```
-
-**After (Recommended):**
-
-```php
-$twig = \Pimcore::getContainer()->get('twig');
-$html = $twig->render($template, $params);
-```
 
 **Timeline:**
 
