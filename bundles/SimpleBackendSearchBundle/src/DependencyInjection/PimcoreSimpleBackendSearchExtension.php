@@ -32,6 +32,12 @@ class PimcoreSimpleBackendSearchExtension extends Extension implements PrependEx
         );
 
         $loader->load('services.yaml');
+
+        $bundles = $container->getParameter('kernel.bundles');
+
+        if (array_key_exists('PimcoreAdminBundle', $bundles)) {
+            $loader->load('admin-classic-services.yaml');
+        }
     }
 
     public function prepend(ContainerBuilder $container): void
