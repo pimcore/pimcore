@@ -120,7 +120,7 @@
     "symfony/twig-bridge": "^6.4 || ^7.2",
     "symfony/twig-bundle": "^6.4 || ^7.2",
     "symfony/uid": "^6.4 || ^7.2",
-    "symfony/validator": "^6.4",
+    "symfony/validator": "^6.4 || ^7.2",
     "symfony/var-dumper": "^6.4 || ^7.2",
     "symfony/web-profiler-bundle": "^6.4 || ^7.2",
     "symfony/webpack-encore-bundle": "^1.17 || ^2.0",

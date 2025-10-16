@@ -24,6 +24,7 @@ use Twig\Extension\SandboxExtension;
 
 /**
  * @internal
+ * @deprecated since 12.3, will be removed in 13.0. Will be replaced with direct Twig injection.
  */
 class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
 {
