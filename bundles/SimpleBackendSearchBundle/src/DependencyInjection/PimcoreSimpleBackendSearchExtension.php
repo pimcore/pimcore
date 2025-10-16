@@ -32,7 +32,7 @@ class PimcoreSimpleBackendSearchExtension extends Extension implements PrependEx
         );
 
         $loader->load('services.yaml');
-        
+
         /** @var array<string, class-string> $bundles */
         $bundles = $container->getParameter('kernel.bundles');
 
