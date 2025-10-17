@@ -39,6 +39,11 @@ final class LogLine
         return $this->logLine;
     }
 
+    public function appendLogLine(string $logLine): void
+    {
+        $this->logLine .= PHP_EOL . $logLine;
+    }
+
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
