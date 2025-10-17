@@ -75,6 +75,12 @@ class ParameterBagHelper
      */
     public static function getBool(ParameterBag $bag, string $key, bool $default = false): bool
     {
+        // Check if value is null first, as filter_var returns false for null
+        // which would bypass our default value logic
+        if ($bag->get($key) === null) {
+            return $default;
+        }
+
         return $bag->filter($key, $default, \FILTER_VALIDATE_BOOLEAN, \FILTER_NULL_ON_FAILURE) ?? $default;
     }
 }
