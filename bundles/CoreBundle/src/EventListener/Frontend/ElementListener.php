@@ -12,6 +12,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
@@ -107,7 +108,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     protected function handleVersion(Request $request, Document $document): Document
     {
-        $v = $request->query->getInt('v');
+        $v = ParameterBagHelper::getInt($request->query, 'v');
         if ($v) {
             if ($version = Version::getById($v)) {
                 if ($version->getPublic()) {
@@ -151,7 +152,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
         // for version preview
         if ($request->query->has('pimcore_version')) {
-            $versionId = $request->query->getInt('pimcore_version');
+            $versionId = ParameterBagHelper::getInt($request->query, 'pimcore_version');
             // TODO there was a check with a registry flag here - check if the main request handling is sufficient
             $version = Version::getById($versionId);
             if ($documentVersion = $version?->getData()) {
@@ -217,12 +218,12 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     {
 
         if ($request->query->has('pimcore_studio_preview')) {
-            $this->handleObjectStudioPreview($request->query->getInt('pimcore_object_preview'), $user);
+            $this->handleObjectStudioPreview(ParameterBagHelper::getInt($request->query, 'pimcore_object_preview'), $user);
 
             return;
         }
 
-        $this->handleObjectClassicPreview($request, $request->query->getInt('pimcore_object_preview'));
+        $this->handleObjectClassicPreview($request, ParameterBagHelper::getInt($request->query, 'pimcore_object_preview'));
     }
 
     private function handleObjectClassicPreview(Request $request, int $id): void

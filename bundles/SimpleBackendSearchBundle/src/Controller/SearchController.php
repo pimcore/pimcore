@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
 
+use Pimcore\Helper\ParameterBagHelper;
 use Doctrine\DBAL\Exception\SyntaxErrorException;
 use Exception;
 use InvalidArgumentException;
@@ -567,7 +568,7 @@ class SearchController extends UserAwareController
     public function quickSearchByIdAction(Request $request, Config $config): JsonResponse
     {
         $type = $request->query->getString('type');
-        $id = $request->query->getInt('id');
+        $id = ParameterBagHelper::getInt($request->query, 'id');
         $searcherList = new Data\Listing();
 
         $searcherList->addConditionParam('id = :id', ['id' => $id]);

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\Controller;
 
+use Pimcore\Helper\ParameterBagHelper;
 use Exception;
 use Pimcore\Bundle\XliffBundle\ExportService\Exporter\ExporterInterface;
 use Pimcore\Bundle\XliffBundle\ExportService\ExportServiceInterface;
@@ -121,7 +122,7 @@ class XliffTranslationController extends UserAwareController
         $this->checkPermission('xliff_import_export');
 
         $id = $request->request->getString('id');
-        $step = $request->request->getInt('step');
+        $step = ParameterBagHelper::getInt($request->request, 'step');
 
         try {
             $attributeSet = $importDataExtractor->extractElement($id, $step);

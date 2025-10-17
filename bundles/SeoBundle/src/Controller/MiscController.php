@@ -12,6 +12,7 @@
 
 namespace Pimcore\Bundle\SeoBundle\Controller;
 
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Db;
@@ -32,8 +33,8 @@ class MiscController extends UserAwareController
 
         $db = Db::get();
 
-        $limit = $request->request->getInt('limit');
-        $offset = $request->request->getInt('start');
+        $limit = ParameterBagHelper::getInt($request->request, 'limit');
+        $offset = ParameterBagHelper::getInt($request->request, 'start');
         $sortInfo = ($request->request->has('sort') ? json_decode($request->request->getString('sort'), true)[0] : []);
         $sort = $sortInfo['property'] ?? null;
         $dir = $sortInfo['direction'] ?? null;

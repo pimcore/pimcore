@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -109,7 +110,7 @@ class RoutingListener implements EventSubscriberInterface
             $site = Site::getByDomain($host);
         } elseif ($this->requestHelper->isObjectPreviewRequestByAdmin($request)) {
             // When rendering an object's preview tab, resolve the site via a parameter
-            $siteId = $request->query->getInt(PreviewGeneratorInterface::PARAMETER_SITE);
+            $siteId = ParameterBagHelper::getInt($request->query, PreviewGeneratorInterface::PARAMETER_SITE);
             $site = Site::getById($siteId);
         }
 

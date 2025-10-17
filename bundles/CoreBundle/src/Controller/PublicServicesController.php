@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
+use Pimcore\Helper\ParameterBagHelper;
 use Exception;
 use Pimcore\Bundle\SeoBundle\Config;
 use Pimcore\Controller\Controller;
@@ -38,7 +39,7 @@ class PublicServicesController extends Controller
         $config = [
             'prefix' => $request->attributes->getString('prefix', ''),
             'type' => $request->attributes->getString('type'),
-            'asset_id' => $request->attributes->getInt('assetId'),
+            'asset_id' => ParameterBagHelper::getInt($request->attributes, 'assetId'),
             'thumbnail_name' => $request->attributes->getString('thumbnailName'),
             'filename' => $filename,
             'file_extension' => $requestedFileExtension,

@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Controller;
 
+use Pimcore\Helper\ParameterBagHelper;
 use Exception;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
@@ -128,8 +129,8 @@ class RedirectsController extends UserAwareController
             // get list of routes
 
             $list = new Redirect\Listing();
-            $list->setLimit($request->request->getInt('limit', 50));
-            $list->setOffset($request->request->getInt('start'));
+            $list->setLimit(ParameterBagHelper::getInt($request->request, 'limit', 50));
+            $list->setOffset(ParameterBagHelper::getInt($request->request, 'start'));
 
             $sortingSettings = QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {
