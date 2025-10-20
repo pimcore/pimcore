@@ -5,6 +5,7 @@ provided by Pimcore and for each Pimcore object class Pimcore generates correspo
 with these objects via a comfortable PHP API and take full advantage of an IDE (e.g. code completion etc.).
 
 ## CRUD Operations
+
 The following code snippet indicates how to access, create and modify an object programmatically:
 
 ```php
@@ -13,7 +14,7 @@ The following code snippet indicates how to access, create and modify an object 
 use \Pimcore\Model\DataObject;
 
 // Create a new object
-$newObject = new DataObject\Myclassname(); 
+$newObject = new DataObject\Myclassname();
 $newObject->setKey(\Pimcore\Model\Element\Service::getValidKey('New Name', 'object'));
 $newObject->setParentId(123);
 $newObject->setName("New Name");
@@ -60,6 +61,7 @@ $city->delete();
 <a name="objectsListing">&nbsp;</a>
 
 ## Object Listings
+
 Once data is available in a structured manner, it can not only be accessed more conveniently but also be filtered,
 sorted, grouped and displayed intuitively by the use of an object listing. Moreover, data can be exported very easily
 not only programmatically but also through the Pimcore object csv export.
@@ -109,7 +111,7 @@ if ($entries->getClass()->getFieldDefinition('fieldname e.g. name or age or city
 foreach ($entries as $entry) {
     $entry->getName();
 }
- 
+
 // there is also a shorthand eg.:
 $items = DataObject\Myclassname::getList([
     "offset" => $offset,
@@ -117,7 +119,7 @@ $items = DataObject\Myclassname::getList([
     "orderKey" => "date",
     "order" => "desc"
 ]);
- 
+
 // order by multiple columns
 $items = DataObject\Myclassname::getList([
     "offset" => $offset,
@@ -125,7 +127,7 @@ $items = DataObject\Myclassname::getList([
     "orderKey" => ["date", "name"],
     "order" => "desc"
 ]);
- 
+
 // with different directions
 $items = DataObject\Myclassname::getList([
     "offset" => $offset,
@@ -133,21 +135,22 @@ $items = DataObject\Myclassname::getList([
     "orderKey" => ["name", "date"],
     "order" => ["asc","desc"]
 ]);
- 
+
 // with random order
 $items = new DataObject\PhoneProduct\Listing();
 $items->setOrderKey("RAND()", false);
- 
+
 foreach ($items as $item) {
     echo $item . "<br />"; // output the path of the object
 }
- 
+
 // with subselect in order
 $items = new DataObject\PhoneProduct\Listing();
 $items->setOrderKey("(SELECT id FROM sometable GROUP BY someField)", false);
 ```
 
 ### Using prepared statement placeholders and variables
+
 The syntax is similar to that from the Zend Framework described
 [here](https://framework.zend.com/manual/1.12/en/zend.db.adapter.html#zend.db.adapter.select.fetchall).
 
@@ -159,17 +162,17 @@ use \Pimcore\Model\DataObject;
 $entries = new DataObject\Myclassname\Listing();
 $entries->setCondition("name LIKE ?", "%bernie%");
 $entries->load();
- 
+
 foreach($entries as $entry) {...}
- 
+
 // using more variables / placeholders
 $entries = new DataObject\Myclassname\Listing();
 $entries->setCondition("name LIKE ? AND date > ?", ["%bernie%", time()]);
 $entries->load();
- 
+
 foreach($entries as $entry) {...}
- 
- 
+
+
 // using named placeholders (recommended)
 $entries = new DataObject\Myclassname\Listing();
 $entries->setCondition("name LIKE :name AND date > :date", ["name" => "%bernie%", "date" => time()]);
@@ -177,7 +180,9 @@ $entries->load();
 ```
 
 ### Conditions on localized fields
+
 Following code will only search the EN value of the field `name`.
+
 ```php
 <?php
 
@@ -187,6 +192,7 @@ $entries->setCondition("name LIKE :name", ["name" => "%term%"]); // name is a fi
 ```
 
 ##### Disable Localized Fields in listings
+
 Sometimes you don't want to have localized data on the listings (condition & order by). For this particular case you
 can disable localized fields on your listing (the objects in the list will still include the localized fields).
 Conditions and order by statements on localized fields are then not possible anymore.
@@ -200,6 +206,7 @@ $entries->load();
 ```
 
 ### Get Objects matching a value of a property
+
 Often it's very useful to get a listing of objects or a single object where a property is matching exactly one value.
 This is especially useful to get an object matching a foreign key, or get a list of objects with only one condition.
 
@@ -218,10 +225,12 @@ $result = DataObject\ClassName::getByMyfieldname($value, ['locale' => $locale, '
 // or object variants and objects matching a value in localized fields
 $result = DataObject\ClassName::getByMyfieldname($value, ['locale' => $locale, 'limit' => $limit, 'offset' => $offset, 'objectTypes' => [DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]]);
 ```
+
 If you set no limit, a list object containing all matching objects are returned. If the limit is set to 1
 the first matching object is returned directly (without listing). Only published objects are return.
 
 Alternatively you can pass an array as second parameter which will be applied to the object listing.
+
 ```php
 $result = DataObject\ClassName::getByMyfieldname($value, ['limit' => 1,'unpublished' => true]);
 ```
@@ -240,14 +249,14 @@ foreach ($list as $city) {
     $city->getZip();
     ...
 }
- 
- 
+
+
 // get a city by zip
 $city = DataObject\City::getByZip(5020, 1);
 $city->getZip(); // do something with the city
- 
- 
- 
+
+
+
 // get the first 10 cities in Austria
 $list = DataObject\City::getByCountry("AT", 10);
 foreach ($list as $city) {
@@ -265,7 +274,6 @@ $list = DataObject\News::getByLocalizedfields($fieldName, $value, $locale, $limi
 $list = DataObject\News::getByFieldName($value, $locale, $limit | array('limit' => $limit, 'offset' => $offset, 'unpublished' => $unpublished));
 ```
 
-
 ##### Examples
 
 ```php
@@ -277,32 +285,32 @@ use \Pimcore\Model\DataObject;
 $list = DataObject\City::getByLocalizedfields("country", "Österreich");
 // or
 $list = DataObject\City::getByCountry("Österreich");
- 
+
 // get a city by localized name using default locale
 $city = DataObject\City::getByLocalizedfields("city", "Wels", null, 1);
 // or
 $city = DataObject\City::getByLocalizedfields("city", "Wels", null, ['limit' => 1]);
 // or
 $city = DataObject\City::getByCity("Wels", null, 1);
- 
+
 // get the first 10 cities in Austria by localized field using default locale
 $list = DataObject\City::getByLocalizedfields("country", "Österreich", null, 10);
 // or
 $list = DataObject\City::getByCountry("Österreich", null, 10);
-  
+
 // get the first 10 cities in Austria by localized field "de" locale
 $list = DataObject\City::getByLocalizedfields("country", "Österreich", "de", 10);
 // or
 $list = DataObject\City::getByCountry("Österreich", "de", 10);
- 
+
 //get a country by localized name in english
 $country = DataObject\Country::getByLocalizedfields("name", "Austria", "en", 1);
 // or
 $country = DataObject\Country::getByName("Austria", "en", 1);
 ```
 
-
 ### Get an Object List including unpublished Objects
+
 Normally object lists only give published objects. This can be changed by setting a lists `unpublished` property to `true`.
 
 ```php
@@ -310,7 +318,7 @@ Normally object lists only give published objects. This can be changed by settin
 
 $list = \Pimcore\Model\DataObject\News::getList(["unpublished" => true]);
 
-//or 
+//or
 
 $list = new \Pimcore\Model\DataObject\News\Listing();
 $list->setUnpublished(true);
@@ -331,6 +339,7 @@ You can switch globally the behaviour (it will bypass `setUnpublished` setting),
 ```
 
 ### Filter Objects by attributes from Field Collections
+
 To filter objects by attributes from field collections, you can use following syntax
 (Both code snippets result in the same object listing).
 
@@ -360,22 +369,23 @@ of the object listing. The syntax is as shown in the examples above `FIELDCOLLEC
 or if you have not specified a fieldname `FIELDCOLLECTION.ATTRIBUTE_OF_FIELDCOLLECTION`.
 
 The object listing of this example only delivers objects of the type Collectiontest, which have
-* a Fieldcollection of the type `MyCollection` and the value `testinput` in the attribute `myinput` and
-* a Fieldcollection in the field `collection` of the type `MyCollection` and the value `hugo` in the attribute `myinput`.
 
+-   a Fieldcollection of the type `MyCollection` and the value `testinput` in the attribute `myinput` and
+-   a Fieldcollection in the field `collection` of the type `MyCollection` and the value `hugo` in the attribute `myinput`.
 
 <a name="zendPaginatorListing">&nbsp;</a>
 
 ### Working with Knp\Component\Pager\Paginator
 
 ##### Action
+
 ```php
 public function testAction(Request $request, \Knp\Component\Pager\PaginatorInterface $paginator): Response
 {
     $list = new DataObject\Simple\Listing();
     $list->setOrderKey("name");
     $list->setOrder("asc");
- 
+
     $paginator = $paginator->paginate(
         $list,
         \Pimcore\Helper\ParameterBagHelper::getInt($request->query, 'page', 1),
@@ -390,16 +400,18 @@ public function testAction(Request $request, \Knp\Component\Pager\PaginatorInter
 ```
 
 ##### View
+
 ```twig
 {% for item in paginator %}
     <h2>{{ item.name }}</h2>
 {% endfor %}
 <br />
- 
+
 {% include 'includes/pagination.html.twig' %}
 ```
 
 ##### Partial Script (`includes/pagination.html.twig`)
+
 ```twig
 <nav aria-label="Pagination">
     <ul class="pagination justify-content-center">
@@ -443,6 +455,7 @@ public function testAction(Request $request, \Knp\Component\Pager\PaginatorInter
 
 It is possible to access and modify the internal query from every object listing. The internal query is based
 on `\Doctrine\DBAL\Query\QueryBuilder`.
+
 ```php
 <?php
 // This example lists all cars that have been sold.

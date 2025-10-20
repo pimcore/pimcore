@@ -2,29 +2,28 @@
 
 ## Introduction
 
-Pimcore controllers play the designated role in the MVC pattern. They bind the design patterns together and contain or delegate 
+Pimcore controllers play the designated role in the MVC pattern. They bind the design patterns together and contain or delegate
 the functionality of the application. It is good practise to keep the controllers as lean as possible and encapsulate
-the business logic into models or services/libraries. 
+the business logic into models or services/libraries.
 
 Pimcore offers an abstract class (`Pimcore\Controller\FrontendController`), which can be implemented by your controllers.
 This abstract class adds some Pimcore specific dispatching features - especially in combination with Pimcore Documents,
-multi-language support etc. 
+multi-language support etc.
 
-The naming of the file and the class is just the same as in Symfony. 
+The naming of the file and the class is just the same as in Symfony.
 
 ## Pimcore Specialities and Examples
 
 | Controller Name | File Name                              | Class Name                         | Default View Directory |
-|-----------------|----------------------------------------|------------------------------------|------------------------|
+| --------------- | -------------------------------------- | ---------------------------------- | ---------------------- |
 | Content         | `src/Controller/ContentController.php` | `App\Controller\ContentController` | `/templates/content`   |
 | News            | `src/Controller/NewsController.php`    | `App\Controller\NewsController`    | `/templates/news`      |
 
-In controllers, for every action there exists a separate method ending with the `Action` suffix. 
-The `DefaultController` comes with Pimcore. When you create an empty page in Pimcore it will call 
-the `defaultAction` in the `DefaultController` which uses the view `/templates/default/default.html.twig`. 
+In controllers, for every action there exists a separate method ending with the `Action` suffix.
+The `DefaultController` comes with Pimcore. When you create an empty page in Pimcore it will call
+the `defaultAction` in the `DefaultController` which uses the view `/templates/default/default.html.twig`.
 
-You can render templates just the [standard Symfony way](https://symfony.com/doc/current/templates.html#rendering-a-template-in-emails), by either using `$this->render('foo.html.twig')` or using the `#Template[]` [attribute](https://symfony.com/doc/current/templates.html#rendering-a-template-in-controllers). 
-
+You can render templates just the [standard Symfony way](https://symfony.com/doc/current/templates.html#rendering-a-template-in-emails), by either using `$this->render('foo.html.twig')` or using the `#Template[]` [attribute](https://symfony.com/doc/current/templates.html#rendering-a-template-in-controllers).
 
 ### Examples
 
@@ -40,7 +39,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Pimcore\Controller\Attribute\ResponseHeader;
 
 class DefaultController extends FrontendController
-{   
+{
     /**
     * Very simple example using $this->>render() and passing the parameter 'foo'
     */
@@ -50,7 +49,7 @@ class DefaultController extends FrontendController
     }
 
     /**
-     * Example using the #[Template] attribute to resolve the view. 
+     * Example using the #[Template] attribute to resolve the view.
      * The frontend controller also provides methods to add response headers or via attributes without having
      * access to the final response object (as it is automatically created when rendering the view).
      *
@@ -61,27 +60,27 @@ class DefaultController extends FrontendController
     {
         // schedule a response header via code
         $this->addResponseHeader('X-Foo', 'bar', false, $request);
-        
+
         return ["foo" => "bar"];
     }
-    
+
     /**
-     * This action returns a JSON response. 
+     * This action returns a JSON response.
     */
     public function jsonAction(Request $request): JsonResponse
     {
         return $this->json(array('key' => 'value'));
     }
-    
+
     /**
-     * This returns a standard symfony Response object 
+     * This returns a standard symfony Response object
     */
     public function customAction(Request $request): Response
     {
         return new Response("Just some text");
     }
 }
-``` 
+```
 
 ## Working with Request Parameters
 
@@ -101,16 +100,16 @@ class MyController extends FrontendController
     {
         // Safe integer retrieval - returns 0 if invalid or missing
         $page = ParameterBagHelper::getInt($request->query, 'page', 1);
-        
-        // Safe boolean retrieval - returns false if invalid or missing  
+
+        // Safe boolean retrieval - returns false if invalid or missing
         $isActive = ParameterBagHelper::getBool($request->query, 'active', true);
-        
+
         // Works with any ParameterBag (query, request, attributes)
         $id = ParameterBagHelper::getInt($request->attributes, 'id');
-        
+
         // Use regular get() for strings - this doesn't throw exceptions
         $name = $request->query->get('name', 'default');
-        
+
         return $this->render('my-template.html.twig', [
             'page' => $page,
             'isActive' => $isActive,
@@ -125,7 +124,7 @@ class MyController extends FrontendController
 
 ###### There are also some properties which can be useful:
 
-| Name              | Type        | Description                                              |
-|-------------------|-------------|----------------------------------------------------------|
-| `$this->document` | Document    | Reference to the current document, if any is available.  |
-| `$this->editmode` | boolean     | True if you are in editmode (admin)                      |
+| Name              | Type     | Description                                             |
+| ----------------- | -------- | ------------------------------------------------------- |
+| `$this->document` | Document | Reference to the current document, if any is available. |
+| `$this->editmode` | boolean  | True if you are in editmode (admin)                     |

@@ -29,7 +29,6 @@ This is part of the migration to Symfony 7, which no longer includes the `symfon
 3. **Container Lookups**:
     - Retrieving `pimcore.templating.engine.delegating` directly from the container
 
-
 **Timeline:**
 
 -   Version 12.3: Deprecation warnings introduced
@@ -45,8 +44,8 @@ Symfony 7 introduces breaking changes to `ParameterBag::getInt()` and `Parameter
 
 **What Changed:**
 
-- `$request->query->getInt('id')` now throws an exception if 'id' is not a valid integer
-- `$request->query->getBool('active')` now throws an exception if 'active' is not a valid boolean
+-   `$request->query->getInt('id')` now throws an exception if 'id' is not a valid integer
+-   `$request->query->getBool('active')` now throws an exception if 'active' is not a valid boolean
 
 **New Helper Available:**
 
@@ -66,10 +65,12 @@ $active = ParameterBagHelper::getBool($request->query, 'active', false);
 
 **Timeline:**
 
-- Version 12.3: `ParameterBagHelper` introduced for forward compatibility
-- Symfony 7: Direct ParameterBag methods will throw exceptions
+-   Version 12.3: `ParameterBagHelper` introduced for forward compatibility
+-   Symfony 7: Direct ParameterBag methods will throw exceptions
 
 **Action Required:**
 Replace `$request->query->getInt()` and `$request->query->getBool()` calls with `ParameterBagHelper::getInt()` and `ParameterBagHelper::getBool()` respectively.
+
+```
 
 ```
