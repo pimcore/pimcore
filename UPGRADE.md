@@ -29,6 +29,7 @@ This is part of the migration to Symfony 7, which no longer includes the `symfon
 3. **Container Lookups**:
     - Retrieving `pimcore.templating.engine.delegating` directly from the container
 
+
 **Timeline:**
 
 -   Version 12.3: Deprecation warnings introduced
@@ -37,40 +38,3 @@ This is part of the migration to Symfony 7, which no longer includes the `symfon
 **Action Required:**
 Update your code to use `Twig\Environment` directly instead of `Symfony\Component\Templating\EngineInterface`.
 All functionality remains the same, but the interface changes from the Symfony templating abstraction to Twig directly.
-
-#### ParameterBag::getInt() and getBool() Symfony 7 Breaking Changes
-
-Symfony 7 introduces breaking changes to `ParameterBag::getInt()` and `ParameterBag::getBool()` methods. These methods now throw `UnexpectedValueException` for invalid values instead of returning fallback values.
-
-**What Changed:**
-
--   `$request->query->getInt('id')` now throws an exception if 'id' is not a valid integer
--   `$request->query->getBool('active')` now throws an exception if 'active' is not a valid boolean
-
-**New Helper Available:**
-
-Use `Pimcore\Helper\ParameterBagHelper` for safe parameter extraction:
-
-```php
-// Before (Symfony 6 - may throw exception in Symfony 7)
-$page = $request->query->getInt('page', 1);
-$active = $request->query->getBool('active', false);
-
-// After (Symfony 7 compatible)
-use Pimcore\Helper\ParameterBagHelper;
-
-$page = ParameterBagHelper::getInt($request->query, 'page', 1);
-$active = ParameterBagHelper::getBool($request->query, 'active', false);
-```
-
-**Timeline:**
-
--   Version 12.3: `ParameterBagHelper` introduced for forward compatibility
--   Symfony 7: Direct ParameterBag methods will throw exceptions
-
-**Action Required:**
-Replace `$request->query->getInt()` and `$request->query->getBool()` calls with `ParameterBagHelper::getInt()` and `ParameterBagHelper::getBool()` respectively.
-
-```
-
-```

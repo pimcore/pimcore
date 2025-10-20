@@ -1,32 +1,36 @@
 # Using Pimcore Tags for Filtering in Frontend
 
 The [Pimcore Tags](../18_Tools_and_Features/09_Tags.md) functionality is primarily designed
-as Pimcore Backend UI functionality for tagging and filtering elements. Nevertheless sometimes it can be quite useful to implement custom frontend filtering functionality based on the Pimcore
-Tags.
+ as Pimcore Backend UI functionality for tagging and filtering elements. Nevertheless sometimes it can be quite useful to implement custom frontend filtering functionality based on the Pimcore
+ Tags. 
+ 
+ ![Tags Assignment](../img/tags_assignment.png)
+ 
+ 
 
-![Tags Assignment](../img/tags_assignment.png)
-
-Following code snippets should give you a head start to do so:
+ 
+Following code snippets should give you a head start to do so: 
+ 
 
 #### Preparing Data for Template
-
-Preparation of data for your template strongly depends on our template and how you want to visualize the tag hierarchy.
-
-For example you can build a tag tree based on [bootstrap treeview](https://github.com/jonmiles/bootstrap-treeview/).
+Preparation of data for your template strongly depends on our template and how you want to visualize the tag hierarchy. 
+ 
+For example you can build a tag tree based on [bootstrap treeview](https://github.com/jonmiles/bootstrap-treeview/). 
 
 ![Tags Filter in Frontend](../img/frontend-tags-filter.jpg)
-
-To do so you can use something similar to following snippets:
-
+ 
+ 
+To do so you can use something similar to following snippets: 
+ 
 ```php
-<?php
+<?php 
 
-//prepare data for template in your controller
+//prepare data for template in your controller 
 $tagList = new \Pimcore\Model\Element\Tag\Listing();
 
 //select parent node for tags or use all root tags.
 if ($this->getParam("node")) {
-    $tagList->setCondition("parentId = ?", \Pimcore\Helper\ParameterBagHelper::getInt($request->query, "node"));
+    $tagList->setCondition("parentId = ?", $request->query->getInt("node"));
 } else {
     $tagList->setCondition("ISNULL(parentId) OR parentId = 0");
 }
@@ -38,7 +42,7 @@ foreach ($tagList->load() as $tag) {
 ```
 
 ```php
-<?php
+<?php 
 /**
 *  Function to convert tags to an array that is expected by bootstrap tree view
 */
@@ -77,24 +81,26 @@ protected function hasCheckedNodes($nodesArray) {
 
 ```
 
+
 ```javascript
-// template script to set up bootstrap treeview
+// template script to set up bootstrap treeview 
 
 $tree = $('#filter-tag-tree');
 $tree.treeview({data: <?=json_encode($this->tagTree)?>, showCheckbox: true, levels: 1});
 
 ```
 
+
 #### Filtering Elements based on Tags
-
+     
 For filtering elements based on tags some advanced queries on the element listing are necessary. Have a look at the following example
-for filtering and asset listing. Listings for other elements work the same way.
+for filtering and asset listing. Listings for other elements work the same way. 
 
-Important to know:
+Important to know: 
+- Tags and their hierarchy are stored in the table `tags`.
+- The table `tags` also has the column `idPath` which is useful for filtering for tags including their child tags.
+- Tag assignment to elements is stored in the table `tags_assignment`.
 
--   Tags and their hierarchy are stored in the table `tags`.
--   The table `tags` also has the column `idPath` which is useful for filtering for tags including their child tags.
--   Tag assignment to elements is stored in the table `tags_assignment`.
 
 ```php
 <?php
@@ -109,22 +115,22 @@ Important to know:
             foreach ($values as $tagId) {
 
                 //decide if child tags should be considered or not
-                if (\Pimcore\Helper\ParameterBagHelper::getBool($request->query, "considerChildTags")) {
+                if ($request->query->getBool("considerChildTags")) {
                     $tag = \Pimcore\Model\Element\Tag::getById((int)$tagId);
                     if ($tag) {
                         //get ID path of tag or filtering the child tags
                         $tagPath = $tag->getFullIdPath();
-
+                        
                         $conditionParts[] = "id IN (
-                            SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid
-                            WHERE
-                                ctype = 'asset' AND
+                            SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid 
+                            WHERE 
+                                ctype = 'asset' AND 
                                 (id = " . (int) $tagId . " OR idPath LIKE " . $listing->quote(Db::get()->escapeLike($tagPath) . "%") . ")
                         )";
                     }
                 } else {
                     $conditionParts[] = "id IN (
-                        SELECT cId FROM tags_assignment WHERE ctype = 'asset' AND tagid = " . (int) $tagId .
+                        SELECT cId FROM tags_assignment WHERE ctype = 'asset' AND tagid = " . (int) $tagId . 
                     ")";
                 }
             }
@@ -135,7 +141,7 @@ Important to know:
                 $listing->addConditionParam($condition);
             }
         }
-        return $listing;
+        return $listing; 
     }
 
 ```

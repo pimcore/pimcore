@@ -1,20 +1,20 @@
 # Integrating Commerce Data With Content
 
-Content commerce, shop everywhere, vanish separation of content and commerce - these are key phrases that popup with
+Content commerce, shop everywhere, vanish separation of content and commerce - these are key phrases that popup with 
 every state-of-the-art e-commerce project. With its integrated approach Pimcore does exactly that and provides several
 tools to provide the best experience for the users.
 
 One of these tools are [Renderlets](../03_Documents/01_Editables/28_Renderlet.md),
-which provide a great way to integrate dynamic object (thus commerce) content to Pimcore documents.
+which provide a great way to integrate dynamic object (thus commerce) content to Pimcore documents. 
 
 ![Demo](img/demo.jpg)
 
+
 Follow the steps to create a Product teaser similar to the one in our [demo](https://demo.pimcore.fun/).
 
-### Create Area Brick `MyProductTeaser` with Renderlet
+### Create Area Brick `MyProductTeaser` with Renderlet 
 
-**MyProductTeaser Implementation**
-
+**MyProductTeaser Implementation** 
 ```php
 <?php
 
@@ -31,7 +31,6 @@ class MyProductTeaser extends AbstractAreabrick
 ```
 
 **MyProductTeaser Template**
-
 ```twig
 <div class="row">
     {% for i in pimcore_block('teaserblock').iterator %}
@@ -47,15 +46,15 @@ class MyProductTeaser extends AbstractAreabrick
 </div>
 ```
 
+
 ### Create Controller and Action for Teaser Content
 
-**Controller Action**
-
+**Controller Action** 
 ```php
     public function productCellAction(Request $request): Response
     {
-        $id = \Pimcore\Helper\ParameterBagHelper::getInt($request->attributes, 'id');
-        $type = $request->attributes->get('type');
+        $id = $request->attribute->getInt('id');
+        $type = $request->attribute->get('type');
 
         if ($type === 'object') {
             $product = Product::getById($id);
@@ -67,8 +66,7 @@ class MyProductTeaser extends AbstractAreabrick
     }
 ```
 
-**Template**
-
+**Template** 
 ```twig
 {% set col = app.request.get('editmode') ? 12 : 3 %}
 
@@ -80,7 +78,7 @@ class MyProductTeaser extends AbstractAreabrick
                 <h4 class="pull-right">{{ product.OSPrice }}</h4>
 
                 <h4>{{ product.OSName }}</h4>
-
+    
                 <p>{{ product.description|striptags|trim[:70] }}</p>
 
             </div>
