@@ -71,7 +71,7 @@ Now editors are able to put elements onto the renderlet in the editmode.
 public function myGalleryAction(Request $request): array
 {
     if ('asset' === $request->query->get('type')) {
-        $asset = Asset::getById($request->query->getInt('id'));
+        $asset = Asset::getById(\Pimcore\Helper\ParameterBagHelper::getInt($request->query, 'id'));
         if ('folder' === $asset->getType()) {
             return [
                 'assets' => $asset->getChildren()

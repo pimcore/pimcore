@@ -53,8 +53,8 @@ class MyProductTeaser extends AbstractAreabrick
 ```php
     public function productCellAction(Request $request): Response
     {
-        $id = $request->attribute->getInt('id');
-        $type = $request->attribute->get('type');
+        $id = \Pimcore\Helper\ParameterBagHelper::getInt($request->attributes, 'id');
+        $type = $request->attributes->get('type');
 
         if ($type === 'object') {
             $product = Product::getById($id);

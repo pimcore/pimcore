@@ -86,7 +86,7 @@ class BackendController
     #[Route('/admin/find-by-external-id')]
     public function findByWordpressId(Request $request): JsonResponse
     {
-        if ($id = $request->query->getInt('external-id')) {
+        if ($id = \Pimcore\Helper\ParameterBagHelper::getInt($request->query, 'external-id')) {
             if($object = MyObject::getByExternalId($id)) {
                 return new JsonResponse($object->getId());
             }

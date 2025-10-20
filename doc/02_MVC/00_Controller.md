@@ -83,6 +83,46 @@ class DefaultController extends FrontendController
 }
 ``` 
 
+## Working with Request Parameters
+
+### ParameterBagHelper for Symfony 7 Compatibility
+
+When working with request parameters in Symfony 7, the `ParameterBag::getInt()` and `ParameterBag::getBool()` methods now throw `UnexpectedValueException` for invalid values instead of returning fallback values. To maintain backward compatibility and avoid exceptions, Pimcore provides the `ParameterBagHelper` class:
+
+```php
+<?php
+
+use Pimcore\Helper\ParameterBagHelper;
+use Symfony\Component\HttpFoundation\Request;
+
+class MyController extends FrontendController
+{
+    public function myAction(Request $request): Response
+    {
+        // Safe integer retrieval - returns 0 if invalid or missing
+        $page = ParameterBagHelper::getInt($request->query, 'page', 1);
+        
+        // Safe boolean retrieval - returns false if invalid or missing  
+        $isActive = ParameterBagHelper::getBool($request->query, 'active', true);
+        
+        // Works with any ParameterBag (query, request, attributes)
+        $id = ParameterBagHelper::getInt($request->attributes, 'id');
+        
+        // Use regular get() for strings - this doesn't throw exceptions
+        $name = $request->query->get('name', 'default');
+        
+        return $this->render('my-template.html.twig', [
+            'page' => $page,
+            'isActive' => $isActive,
+            'id' => $id,
+            'name' => $name
+        ]);
+    }
+}
+```
+
+> **Note:** Use `ParameterBagHelper::getInt()` and `ParameterBagHelper::getBool()` instead of the direct ParameterBag methods to avoid exceptions with invalid input values.
+
 ###### There are also some properties which can be useful:
 
 | Name              | Type        | Description                                              |

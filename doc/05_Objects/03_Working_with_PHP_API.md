@@ -378,7 +378,7 @@ public function testAction(Request $request, \Knp\Component\Pager\PaginatorInter
  
     $paginator = $paginator->paginate(
         $list,
-        $request->query->getInt('page', 1),
+        \Pimcore\Helper\ParameterBagHelper::getInt($request->query, 'page', 1),
         10
     );
 

@@ -60,7 +60,7 @@ class NewsController extends FrontendController
 {
     public function detailAction(Request $request): Response
     {
-        $id = $request->query->getInt('news');
+        $id = \Pimcore\Helper\ParameterBagHelper::getInt($request->query, 'news');
         $text = $request->query->getString('text');
         
         // ...
@@ -281,7 +281,7 @@ use \Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 public function testAction(Request $request): Response
 {
-    $object = DataObject::getById($request->query->getInt('id')); 
+    $object = DataObject::getById(\Pimcore\Helper\ParameterBagHelper::getInt($request->query, 'id')); 
     if( !$object || ( !$object->isPublished() && !$this->editmode) ) {
         throw new NotFoundHttpException('Not found');
     }

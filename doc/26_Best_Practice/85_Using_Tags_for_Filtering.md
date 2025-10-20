@@ -30,7 +30,7 @@ $tagList = new \Pimcore\Model\Element\Tag\Listing();
 
 //select parent node for tags or use all root tags.
 if ($this->getParam("node")) {
-    $tagList->setCondition("parentId = ?", $request->query->getInt("node"));
+    $tagList->setCondition("parentId = ?", \Pimcore\Helper\ParameterBagHelper::getInt($request->query, "node"));
 } else {
     $tagList->setCondition("ISNULL(parentId) OR parentId = 0");
 }
@@ -115,7 +115,7 @@ Important to know:
             foreach ($values as $tagId) {
 
                 //decide if child tags should be considered or not
-                if ($request->query->getBool("considerChildTags")) {
+                if (\Pimcore\Helper\ParameterBagHelper::getBool($request->query, "considerChildTags")) {
                     $tag = \Pimcore\Model\Element\Tag::getById((int)$tagId);
                     if ($tag) {
                         //get ID path of tag or filtering the child tags
