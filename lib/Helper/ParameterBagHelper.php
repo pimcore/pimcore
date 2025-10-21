@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  *
  * @internal
  */
-class ParameterBagHelper
+final class ParameterBagHelper
 {
     /**
      * Safely retrieves an integer value from a ParameterBag.
