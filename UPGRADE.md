@@ -4,6 +4,24 @@
 
 ### Deprecations
 
+#### Symfony 6.x Components Support
+
+Support for all Symfony 6.x components will be removed in version 13.0.
+This is part of the migration to Symfony 7, which requires updating all Symfony dependencies to version 7.3 or higher.
+
+**What's Deprecated:**
+
+-   All Symfony 6.x component versions
+-   Mixed Symfony 6.x/7.x environments
+
+**Timeline:**
+
+-   Version 12.3: Deprecation notice for Symfony 6.x support
+-   Version 13.0: Complete removal of Symfony 6.x compatibility
+
+**Action Required:**
+Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 13.0.
+
 #### Symfony Templating Component
 
 The `Symfony\Component\Templating\EngineInterface` and related templating services are deprecated and will be removed in version 13.0.
@@ -28,7 +46,6 @@ This is part of the migration to Symfony 7, which no longer includes the `symfon
 
 3. **Container Lookups**:
     - Retrieving `pimcore.templating.engine.delegating` directly from the container
-
 
 **Timeline:**
 
