@@ -48,7 +48,27 @@ final class ParameterBagHelper
      */
     public static function getInt(ParameterBag $bag, string $key, int $default = 0): int
     {
-        return $bag->filter($key, $default, \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE) ?? $default;
+        // Check environment first for efficiency
+        $env = $_SERVER['APP_ENV'] ?? 'prod';
+        if (\in_array($env, ['dev', 'staging'], true)) {
+            // Check for validation failure only in dev/staging environments
+            $val = $bag->filter($key, null, \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE);
+            if ($val === null && $bag->has($key)) {
+                $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+                $caller = $backtrace[1] ?? [];
+                $callerInfo = isset($caller['class'], $caller['function'])
+                    ? sprintf('%s::%s()', $caller['class'], $caller['function'])
+                    : ($caller['function'] ?? 'unknown');
+
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '12.3',
+                    sprintf('Invalid int for "%s" in %s. Replace BC helper with proper validation.', $key, $callerInfo)
+                );
+            }
+        }
+
+        return $bag->filter($key, $default, \FILTER_VALIDATE_INT, ['options' => ['default' => $default]]);
     }
 
     /**
@@ -75,12 +95,26 @@ final class ParameterBagHelper
      */
     public static function getBool(ParameterBag $bag, string $key, bool $default = false): bool
     {
-        // Check if value is null first, as filter_var returns false for null
-        // which would bypass our default value logic
-        if ($bag->get($key) === null) {
-            return $default;
+        // Check environment first for efficiency
+        $env = $_SERVER['APP_ENV'] ?? 'prod';
+        if (\in_array($env, ['dev', 'staging'], true)) {
+            // Check for validation failure only in dev/staging environments
+            $val = $bag->filter($key, null, \FILTER_VALIDATE_BOOLEAN, \FILTER_NULL_ON_FAILURE);
+            if ($val === null && $bag->has($key)) {
+                $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+                $caller = $backtrace[1] ?? [];
+                $callerInfo = isset($caller['class'], $caller['function'])
+                    ? sprintf('%s::%s()', $caller['class'], $caller['function'])
+                    : ($caller['function'] ?? 'unknown');
+
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '12.3',
+                    sprintf('Invalid bool for "%s" in %s. Replace BC helper with proper validation.', $key, $callerInfo)
+                );
+            }
         }
 
-        return $bag->filter($key, $default, \FILTER_VALIDATE_BOOLEAN, \FILTER_NULL_ON_FAILURE) ?? $default;
+        return $bag->filter($key, $default, \FILTER_VALIDATE_BOOLEAN, ['options' => ['default' => $default]]);
     }
 }
