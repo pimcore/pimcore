@@ -59,7 +59,7 @@ final class ParameterBagHelper
             trigger_deprecation(
                 'pimcore/pimcore',
                 '12.3',
-                sprintf('Usage of getInt is deprecated. Use proper parameter validation instead.', $callerInfo)
+                sprintf('Usage of getInt is deprecated. Use proper parameter validation instead in %s.', $callerInfo)
             );
         }
 
@@ -101,7 +101,7 @@ final class ParameterBagHelper
             trigger_deprecation(
                 'pimcore/pimcore',
                 '12.3',
-                sprintf('Usage of getBool is deprecated. Use proper parameter validation instead.', $callerInfo)
+                sprintf('Usage of getBool is deprecated. Use proper parameter validation instead in %s.', $callerInfo)
             );
         }
 
