@@ -48,12 +48,14 @@ final class ParameterBagHelper
      */
     public static function getInt(ParameterBag $bag, string $key, int $default = 0): int
     {
-        // Check environment first for efficiency
-        $env = $_SERVER['APP_ENV'] ?? 'prod';
-        if (\in_array($env, ['dev', 'staging'], true)) {
-            // Check for validation failure only in dev/staging environments
-            $val = $bag->filter($key, null, \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE);
-            if ($val === null && $bag->has($key)) {
+        // Single filter operation with null on failure
+        $result = $bag->filter($key, null, \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE);
+
+        // Check if filtering failed and key exists (invalid value scenario)
+        if ($result === null && $bag->has($key)) {
+            // Trigger deprecation in dev/staging environments
+            $env = $_SERVER['APP_ENV'] ?? 'prod';
+            if (\in_array($env, ['dev', 'staging'], true)) {
                 $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
                 $caller = $backtrace[1] ?? [];
                 $callerInfo = isset($caller['class'], $caller['function'])
@@ -66,9 +68,11 @@ final class ParameterBagHelper
                     sprintf('Invalid int for "%s" in %s. Replace BC helper with proper validation.', $key, $callerInfo)
                 );
             }
+            return $default;
         }
 
-        return $bag->filter($key, $default, \FILTER_VALIDATE_INT, ['options' => ['default' => $default]]);
+        // Return filtered result or default if key doesn't exist
+        return $result !== null ? $result : $default;
     }
 
     /**
@@ -95,12 +99,19 @@ final class ParameterBagHelper
      */
     public static function getBool(ParameterBag $bag, string $key, bool $default = false): bool
     {
-        // Check environment first for efficiency
-        $env = $_SERVER['APP_ENV'] ?? 'prod';
-        if (\in_array($env, ['dev', 'staging'], true)) {
-            // Check for validation failure only in dev/staging environments
-            $val = $bag->filter($key, null, \FILTER_VALIDATE_BOOLEAN, \FILTER_NULL_ON_FAILURE);
-            if ($val === null && $bag->has($key)) {
+        // Check if key exists, if not return default immediately
+        if (!$bag->has($key)) {
+            return $default;
+        }
+
+        // Single filter operation with null on failure for existing keys
+        $result = $bag->filter($key, null, \FILTER_VALIDATE_BOOLEAN, \FILTER_NULL_ON_FAILURE);
+
+        // Check if filtering failed (invalid value scenario)
+        if ($result === null) {
+            // Trigger deprecation in dev/staging environments
+            $env = $_SERVER['APP_ENV'] ?? 'prod';
+            if (\in_array($env, ['dev', 'staging'], true)) {
                 $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
                 $caller = $backtrace[1] ?? [];
                 $callerInfo = isset($caller['class'], $caller['function'])
@@ -113,8 +124,10 @@ final class ParameterBagHelper
                     sprintf('Invalid bool for "%s" in %s. Replace BC helper with proper validation.', $key, $callerInfo)
                 );
             }
+            return $default;
         }
 
-        return $bag->filter($key, $default, \FILTER_VALIDATE_BOOLEAN, ['options' => ['default' => $default]]);
+        // Return filtered result
+        return $result;
     }
 }
