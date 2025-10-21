@@ -48,31 +48,22 @@ final class ParameterBagHelper
      */
     public static function getInt(ParameterBag $bag, string $key, int $default = 0): int
     {
-        // Single filter operation with null on failure
-        $result = $bag->filter($key, null, \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE);
+        $env = $_SERVER['APP_ENV'] ?? 'prod';
+        if (\in_array($env, ['dev', 'staging'], true)) {
+            $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+            $caller = $backtrace[1] ?? [];
+            $callerInfo = isset($caller['class'], $caller['function'])
+                ? sprintf('%s::%s()', $caller['class'], $caller['function'])
+                : ($caller['function'] ?? 'unknown');
 
-        // Check if filtering failed and key exists (invalid value scenario)
-        if ($result === null && $bag->has($key)) {
-            // Trigger deprecation in dev/staging environments
-            $env = $_SERVER['APP_ENV'] ?? 'prod';
-            if (\in_array($env, ['dev', 'staging'], true)) {
-                $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-                $caller = $backtrace[1] ?? [];
-                $callerInfo = isset($caller['class'], $caller['function'])
-                    ? sprintf('%s::%s()', $caller['class'], $caller['function'])
-                    : ($caller['function'] ?? 'unknown');
-
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '12.3',
-                    sprintf('Invalid int for "%s" in %s. Replace BC helper with proper validation.', $key, $callerInfo)
-                );
-            }
-            return $default;
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '12.3',
+                sprintf('Usage of getInt is deprecated. Use proper parameter validation instead.', $callerInfo)
+            );
         }
 
-        // Return filtered result or default if key doesn't exist
-        return $result !== null ? $result : $default;
+        return $bag->filter($key, $default, \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE) ?? $default;
     }
 
     /**
@@ -99,35 +90,26 @@ final class ParameterBagHelper
      */
     public static function getBool(ParameterBag $bag, string $key, bool $default = false): bool
     {
-        // Check if key exists, if not return default immediately
-        if (!$bag->has($key)) {
-            return $default;
-        }
+        $env = $_SERVER['APP_ENV'] ?? 'prod';
+        if (\in_array($env, ['dev', 'staging'], true)) {
+            $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+            $caller = $backtrace[1] ?? [];
+            $callerInfo = isset($caller['class'], $caller['function'])
+                ? sprintf('%s::%s()', $caller['class'], $caller['function'])
+                : ($caller['function'] ?? 'unknown');
 
-        // Single filter operation with null on failure for existing keys
-        $result = $bag->filter($key, null, \FILTER_VALIDATE_BOOLEAN, \FILTER_NULL_ON_FAILURE);
-
-        // Check if filtering failed (invalid value scenario)
-        if ($result === null) {
-            // Trigger deprecation in dev/staging environments
-            $env = $_SERVER['APP_ENV'] ?? 'prod';
-            if (\in_array($env, ['dev', 'staging'], true)) {
-                $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-                $caller = $backtrace[1] ?? [];
-                $callerInfo = isset($caller['class'], $caller['function'])
-                    ? sprintf('%s::%s()', $caller['class'], $caller['function'])
-                    : ($caller['function'] ?? 'unknown');
-
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '12.3',
-                    sprintf('Invalid bool for "%s" in %s. Replace BC helper with proper validation.', $key, $callerInfo)
-                );
-            }
-            return $default;
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '12.3',
+                sprintf('Usage of getBool is deprecated. Use proper parameter validation instead.', $callerInfo)
+            );
         }
 
         // Return filtered result
-        return $result;
+        if ($bag->get($key) === null) {
+            return $default;
+        }
+
+        return $bag->filter($key, null, \FILTER_VALIDATE_BOOLEAN, \FILTER_NULL_ON_FAILURE) ?? $default;
     }
 }
