@@ -22,6 +22,9 @@ This is part of the migration to Symfony 7, which requires updating all Symfony 
 **Action Required:**
 Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 13.0.
 
+**Note:**
+If you want to stay on Symfony 6.x after updating to this version, you need to add explicit version constraints to your composer.json manually. If not, version 7.3 or later will be installed automatically.
+
 #### Symfony Templating Component
 
 The `Symfony\Component\Templating\EngineInterface` and related templating services are deprecated and will be removed in version 13.0.
