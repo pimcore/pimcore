@@ -33,22 +33,23 @@ final class ParameterBagHelper
      */
     private static function triggerDeprecation(string $method): void
     {
-        $env = $_SERVER['APP_ENV'] ?? 'prod';
-        if (\in_array($env, ['dev', 'staging'], true)) {
-            $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
-            $caller = $backtrace[2] ?? [];
-            $callerInfo = isset($caller['class'], $caller['function'])
-                ? sprintf('%s::%s()', $caller['class'], $caller['function'])
-                : ($caller['function'] ?? 'unknown');
-
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '12.3',
-                'Usage of \Pimcore\Helper::%s is deprecated. Use proper parameter validation instead in %s.',
-                $method,
-                $callerInfo
-            );
+        if (!filter_var($_SERVER['APP_DEBUG'] ?? false, \FILTER_VALIDATE_BOOLEAN)) {
+            return;
         }
+
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
+        $caller = $backtrace[2] ?? [];
+        $callerInfo = isset($caller['class'], $caller['function'])
+            ? sprintf('%s::%s()', $caller['class'], $caller['function'])
+            : ($caller['function'] ?? 'unknown');
+
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '12.3',
+            'Usage of \Pimcore\Helper::%s is deprecated. Use proper parameter validation instead in %s.',
+            $method,
+            $callerInfo
+        );
     }
 
     /**
@@ -56,6 +57,8 @@ final class ParameterBagHelper
      *
      * Uses FILTER_VALIDATE_INT with FILTER_NULL_ON_FAILURE to avoid exceptions.
      * Returns the default value if the key doesn't exist or contains an invalid value.
+     *
+     * @deprecated since 12.3, will be removed in 13.0. Use proper parameter validation instead.
      *
      * Examples:
      * // Basic usage
@@ -81,6 +84,8 @@ final class ParameterBagHelper
      *
      * Uses FILTER_VALIDATE_BOOLEAN with FILTER_NULL_ON_FAILURE to avoid exceptions.
      * Returns the default value if the key doesn't exist or contains an invalid value.
+     *
+     * @deprecated since 12.3, will be removed in 13.0. Use proper parameter validation instead.
      *
      * Accepted boolean values:
      * - true: "1", "true", "on", "yes", 1, true
