@@ -29,6 +29,29 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 final class ParameterBagHelper
 {
     /**
+     * Triggers a deprecation warning for the helper method usage.
+     */
+    private static function triggerDeprecation(string $method): void
+    {
+        $env = $_SERVER['APP_ENV'] ?? 'prod';
+        if (\in_array($env, ['dev', 'staging'], true)) {
+            $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
+            $caller = $backtrace[2] ?? [];
+            $callerInfo = isset($caller['class'], $caller['function'])
+                ? sprintf('%s::%s()', $caller['class'], $caller['function'])
+                : ($caller['function'] ?? 'unknown');
+
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '12.3',
+                'Usage of \Pimcore\Helper::%s is deprecated. Use proper parameter validation instead in %s.',
+                $method,
+                $callerInfo
+            );
+        }
+    }
+
+    /**
      * Safely retrieves an integer value from a ParameterBag.
      *
      * Uses FILTER_VALIDATE_INT with FILTER_NULL_ON_FAILURE to avoid exceptions.
@@ -48,20 +71,7 @@ final class ParameterBagHelper
      */
     public static function getInt(ParameterBag $bag, string $key, int $default = 0): int
     {
-        $env = $_SERVER['APP_ENV'] ?? 'prod';
-        if (\in_array($env, ['dev', 'staging'], true)) {
-            $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-            $caller = $backtrace[1] ?? [];
-            $callerInfo = isset($caller['class'], $caller['function'])
-                ? sprintf('%s::%s()', $caller['class'], $caller['function'])
-                : ($caller['function'] ?? 'unknown');
-
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '12.3',
-                sprintf('Usage of getInt is deprecated. Use proper parameter validation instead in %s.', $callerInfo)
-            );
-        }
+        self::triggerDeprecation(__METHOD__);
 
         return $bag->filter($key, $default, \FILTER_VALIDATE_INT, \FILTER_NULL_ON_FAILURE) ?? $default;
     }
@@ -90,20 +100,7 @@ final class ParameterBagHelper
      */
     public static function getBool(ParameterBag $bag, string $key, bool $default = false): bool
     {
-        $env = $_SERVER['APP_ENV'] ?? 'prod';
-        if (\in_array($env, ['dev', 'staging'], true)) {
-            $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-            $caller = $backtrace[1] ?? [];
-            $callerInfo = isset($caller['class'], $caller['function'])
-                ? sprintf('%s::%s()', $caller['class'], $caller['function'])
-                : ($caller['function'] ?? 'unknown');
-
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '12.3',
-                sprintf('Usage of getBool is deprecated. Use proper parameter validation instead in %s.', $callerInfo)
-            );
-        }
+        self::triggerDeprecation(__METHOD__);
 
         // Return filtered result
         if ($bag->get($key) === null) {
