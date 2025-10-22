@@ -38,7 +38,6 @@ final class ContainerAwarePass implements CompilerPassInterface
             return;
         }
 
-        $parameterBag = $container->getParameterBag();
         $containerAwareInterface = ContainerAwareInterface::class;
         $serviceContainerRef = new Reference('service_container');
 
@@ -46,17 +45,9 @@ final class ContainerAwarePass implements CompilerPassInterface
         foreach ($definitions as $definition) {
             $class = $definition->getClass();
 
+            // Skip if class is not set
             if (!$class) {
                 continue;
-            }
-
-            // Resolve class name if it contains parameters
-            if (str_contains($class, '%')) {
-                try {
-                    $class = $parameterBag->resolveValue($class);
-                } catch (\Exception $e) {
-                    continue;
-                }
             }
 
             try {
