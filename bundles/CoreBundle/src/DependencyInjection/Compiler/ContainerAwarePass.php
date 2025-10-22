@@ -33,40 +33,40 @@ final class ContainerAwarePass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
+        $definitions = $container->getDefinitions();
+        if (empty($definitions)) {
+            return;
+        }
+
+        $parameterBag = $container->getParameterBag();
+        $containerAwareInterface = ContainerAwareInterface::class;
+        $serviceContainerRef = new Reference('service_container');
+
         // Iterate through all service definitions
-        foreach ($container->getDefinitions() as $definition) {
+        foreach ($definitions as $definition) {
             $class = $definition->getClass();
 
-            // Skip if class is not set or is a parameter
-            if (!$class || str_starts_with($class, '%')) {
+            if (!$class) {
                 continue;
             }
 
-            // Resolve class name if it's a parameter
+            // Resolve class name if it contains parameters
             if (str_contains($class, '%')) {
                 try {
-                    $class = $container->getParameterBag()->resolveValue($class);
+                    $class = $parameterBag->resolveValue($class);
                 } catch (\Exception $e) {
                     continue;
                 }
             }
 
             try {
-                // Skip if class doesn't exist (wrapped in try-catch to avoid autoload errors)
-                if (!class_exists($class) && !interface_exists($class)) {
-                    continue;
-                }
-
+                // Use ReflectionClass directly - it will throw if class doesn't exist
                 $reflector = new ReflectionClass($class);
 
-                // Check if the class implements ContainerAwareInterface
-                if ($reflector->implementsInterface(ContainerAwareInterface::class)) {
-                    // Add setContainer method call to inject the service container
-                    $definition->addMethodCall('setContainer', [new Reference('service_container')]);
+                if ($reflector->implementsInterface($containerAwareInterface)) {
+                    $definition->addMethodCall('setContainer', [$serviceContainerRef]);
                 }
             } catch (\Throwable $e) {
-                // Skip classes that can't be loaded or reflected
-                // This includes missing dependencies, autoload failures, etc.
                 continue;
             }
         }
