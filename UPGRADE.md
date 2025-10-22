@@ -25,6 +25,24 @@ Update all Symfony components to version 7.3 or higher before upgrading to Pimco
 **Note:**
 If you want to stay on Symfony 6.x after updating to this version, you need to add explicit version constraints to your composer.json manually. If not, version 7.3 or later will be installed automatically.
 
+#### Doctrine Annotations
+
+The `doctrine/annotations` package has been removed as it's no longer needed with modern PHP 8+ attributes.
+This is part of the migration to Symfony 7 and modern PHP practices.
+
+**What's Removed:**
+
+-   `doctrine/annotations` package dependency
+-   Legacy annotation-based configurations
+
+**Timeline:**
+
+-   Version 12.3: `doctrine/annotations` package removed
+-   All functionality now uses PHP 8+ attributes instead
+
+**Action Required:**
+No action required for most users. If your custom code relies on `doctrine/annotations` directly, update to use PHP 8+ attributes or add the dependency to your own composer.json if still needed.
+
 #### Symfony Templating Component
 
 The `Symfony\Component\Templating\EngineInterface` and related templating services are deprecated and will be removed in version 13.0.
