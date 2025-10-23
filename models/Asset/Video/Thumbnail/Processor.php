@@ -211,7 +211,7 @@ class Processor
         $lock->acquire(true);
 
         $asset = Model\Asset::getById($instance->getAssetId());
-        $workerSourceFile = $asset->getTemporaryFile();
+        $workerSourceFile = $asset->getLocalFile();
 
         // start converting
         foreach ($instance->queue as $converter) {
