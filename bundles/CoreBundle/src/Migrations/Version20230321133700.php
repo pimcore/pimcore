@@ -24,7 +24,7 @@ final class Version20230321133700 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Alters date time columns to timestamp columns for application logs, notifications and scheduled tasks. Converts values to UTC.';
+        return 'Converts datetime/timestamp values to UTC for application logs and notifications.';
     }
 
     private function converToTimeZone(
