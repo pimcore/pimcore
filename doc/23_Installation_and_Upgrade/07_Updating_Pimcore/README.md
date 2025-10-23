@@ -26,3 +26,4 @@ We recommend using the Pimcore Platform Version. Details see [here](https://pimc
 - [Preparing for Version 11](./11_Preparing_for_V11.md)
 - [Upgrade from Version 10 to Version 11](./12_V10_to_V11.md)
 - [Upgrade from Version 11 to Version 12](./13_V11_to_V12.md)
+- [Upgrade from Version 12 to Version 13](./14_V12_to_V13.md)
