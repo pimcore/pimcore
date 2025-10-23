@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Messenger\Handler;
 
+use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Messenger\AssetPreviewImageMessage;
 use Pimcore\Model\Asset;
 use Psr\Log\LoggerInterface;
@@ -31,7 +32,10 @@ class AssetPreviewImageHandler implements BatchHandlerInterface
 {
     use BatchHandlerTrait;
 
-    public function __construct(protected LoggerInterface $logger)
+    public function __construct(
+        protected LoggerInterface $logger,
+        protected LongRunningHelper $longRunningHelper,
+    )
     {
     }
 
@@ -61,6 +65,8 @@ class AssetPreviewImageHandler implements BatchHandlerInterface
             } catch (Throwable $e) {
                 $ack->nack($e);
             }
+
+            $this->longRunningHelper->deleteTemporaryFiles();
         }
     }
 
