@@ -17,8 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Migrations;
 
+use DateTime;
+use DateTimeZone;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Exception;
 
 final class Version20230321133700 extends AbstractMigration
 {
@@ -58,6 +61,7 @@ final class Version20230321133700 extends AbstractMigration
                 $db->quote($fromTimeZone),
                 $db->quote($toTimeZone)
             ));
+
             return;
         }
 
@@ -69,19 +73,19 @@ final class Version20230321133700 extends AbstractMigration
             $db->quoteIdentifier($timeStampColumn)
         ));
 
-        $fromTz = new \DateTimeZone($fromTimeZone);
-        $toTz = new \DateTimeZone($toTimeZone);
+        $fromTz = new DateTimeZone($fromTimeZone);
+        $toTz = new DateTimeZone($toTimeZone);
 
         foreach ($rows as $row) {
             try {
-                $dt = new \DateTime($row[$timeStampColumn], $fromTz);
+                $dt = new DateTime($row[$timeStampColumn], $fromTz);
                 $dt->setTimezone($toTz);
                 $db->update(
                     $table,
                     [$timeStampColumn => $dt->format('Y-m-d H:i:s')],
                     ['id' => $row['id']]
                 );
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Ignore invalid rows gracefully
             }
         }
