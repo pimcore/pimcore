@@ -31,7 +31,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load(): array
     {
-        $tagsData = $this->db->fetchFirstColumn('SELECT id FROM tags' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $tagsData = $this->db->fetchFirstColumn('SELECT id FROM tags' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         $tags = [];
         foreach ($tagsData as $tagData) {
@@ -50,7 +50,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList(): array
     {
-        $tagsIds = $this->db->fetchFirstColumn('SELECT id FROM tags' . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $tagsIds = $this->db->fetchFirstColumn('SELECT id FROM tags' . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $tagsIds);
     }
@@ -58,7 +58,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount(): int
     {
         try {
-            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM tags ' . $this->getCondition(), $this->model->getConditionVariables());
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM tags ' . $this->getCondition(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
         } catch (Exception $e) {
             return 0;
         }

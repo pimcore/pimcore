@@ -32,7 +32,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load(): array
     {
         $tasks = [];
-        $tasksData = $this->db->fetchFirstColumn('SELECT id FROM schedule_tasks' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $tasksData = $this->db->fetchFirstColumn('SELECT id FROM schedule_tasks' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         foreach ($tasksData as $taskData) {
             $tasks[] = Model\Schedule\Task::getById($taskData);
@@ -46,7 +46,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount(): int
     {
         try {
-            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM schedule_tasks ' . $this->getCondition(), $this->model->getConditionVariables());
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM schedule_tasks ' . $this->getCondition(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
         } catch (Exception $e) {
             return 0;
         }

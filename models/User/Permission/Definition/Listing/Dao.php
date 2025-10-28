@@ -32,7 +32,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load(): array
     {
         $definitions = [];
-        $definitionsData = $this->db->fetchAllAssociative('SELECT * FROM users_permission_definitions' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $definitionsData = $this->db->fetchAllAssociative('SELECT * FROM users_permission_definitions' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         foreach ($definitionsData as $definitionData) {
             $definition = new Model\User\Permission\Definition($definitionData);
@@ -47,7 +47,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount(): int
     {
         try {
-            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM users_permission_definitions ' . $this->getCondition(), $this->model->getConditionVariables());
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM users_permission_definitions ' . $this->getCondition(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
         } catch (Exception $e) {
             return 0;
         }
