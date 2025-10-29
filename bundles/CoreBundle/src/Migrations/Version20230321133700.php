@@ -65,29 +65,82 @@ final class Version20230321133700 extends AbstractMigration
             return;
         }
 
-        // ⚙️ Fallback to PHP-based conversion
-        $rows = $db->fetchAllAssociative(sprintf(
-            'SELECT id, %s FROM %s WHERE %s IS NOT NULL',
-            $db->quoteIdentifier($timeStampColumn),
-            $db->quoteIdentifier($table),
-            $db->quoteIdentifier($timeStampColumn)
-        ));
-
+        // Fallback to PHP-based conversion
         $fromTz = new DateTimeZone($fromTimeZone);
         $toTz = new DateTimeZone($toTimeZone);
 
-        foreach ($rows as $row) {
+        // First pass: distinct timestamps only, as many entries could have the same timestamp
+        $sql = sprintf(
+            'SELECT DISTINCT %s FROM %s WHERE %s IS NOT NULL',
+            $db->quoteIdentifier($timeStampColumn),
+            $db->quoteIdentifier($table),
+            $db->quoteIdentifier($timeStampColumn)
+        );
+
+        $convertedMap = [];
+        $collisions = [];
+        $collidingResults = [];
+
+        // Stream through distinct timestamps, convert date and check for the collision
+        foreach ($db->iterateAssociative($sql) as $row) {
             try {
-                $dt = new DateTime($row[$timeStampColumn], $fromTz);
+                $oldValue = $row[$timeStampColumn];
+                $dt = new DateTime($oldValue, $fromTz);
                 $dt->setTimezone($toTz);
-                $db->update(
-                    $table,
-                    [$timeStampColumn => $dt->format('Y-m-d H:i:s')],
-                    ['id' => $row['id']]
-                );
+                $newValue = $dt->format('Y-m-d H:i:s');
+
+                //If dates before/after conversion casually match, put aside
+                if (
+                    in_array($oldValue, $convertedMap, true) ||
+                    array_key_exists($newValue, $convertedMap)
+                ) {
+                    $collisions[$oldValue] = true;
+                }
+                $convertedMap[$oldValue] = $newValue;
+
             } catch (Exception $e) {
-                // Ignore invalid rows gracefully
+                // Ignore invalid or unparsable timestamps
             }
+        }
+
+        // Handle collisions safely (by ID)
+        if (!empty($collisions)) {
+            // Prepare the list of colliding timestamps
+            $collisionTimestamps = array_keys($collisions);
+
+            // Build placeholders for prepared statement
+            $collidingTimestamps = implode(',', $db->quote((string)$collisionTimestamps));
+
+            $sql = sprintf(
+                'SELECT id, %s FROM %s WHERE %s IN (%s)',
+                $db->quoteIdentifier($timeStampColumn),
+                $db->quoteIdentifier($table),
+                $db->quoteIdentifier($timeStampColumn),
+                $collidingTimestamps
+            );
+            $collidingResults = $db->fetchAllAssociative($sql);
+        }
+
+
+        // Batch update for non-colliding timestamps
+        foreach ($convertedMap as $old => $new) {
+            if (!isset($collisions[$old])) {
+                $db->executeStatement(sprintf(
+                    'UPDATE %s SET %s = ? WHERE %s = ?',
+                    $db->quoteIdentifier($table),
+                    $db->quoteIdentifier($timeStampColumn),
+                    $db->quoteIdentifier($timeStampColumn)
+                ), [$new, $old]);
+            }
+        }
+
+        // Stream rows that actually need per-ID updates to avoid collision
+        foreach ($collidingResults as $row) {
+            $db->update(
+                $table,
+                [$timeStampColumn => $convertedMap[$row[$timeStampColumn]]],
+                ['id' => $row['id']]
+            );
         }
     }
 
