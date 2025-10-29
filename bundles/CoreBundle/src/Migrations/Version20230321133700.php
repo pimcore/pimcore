@@ -109,7 +109,7 @@ final class Version20230321133700 extends AbstractMigration
             $collisionTimestamps = array_keys($collisions);
 
             // Build placeholders for prepared statement
-            $quoted = array_map(fn($ts) => $db->quote((string)$ts), $collisionTimestamps);
+            $quoted = array_map(fn ($ts) => $db->quote((string)$ts), $collisionTimestamps);
             $collidingTimestamps = implode(',', $quoted);
 
             $sql = sprintf(
