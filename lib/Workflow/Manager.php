@@ -385,10 +385,10 @@ class Manager
 
             try {
                 $marking = $workflow->getMarking($element);
-            } catch (LogicException $e){
+            } catch (LogicException $e) {
                 continue;
             }
-            
+
             if (!count($marking->getPlaces())) {
                 continue;
             }
