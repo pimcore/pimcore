@@ -109,7 +109,8 @@ final class Version20230321133700 extends AbstractMigration
             $collisionTimestamps = array_keys($collisions);
 
             // Build placeholders for prepared statement
-            $collidingTimestamps = implode(',', $db->quote((string)$collisionTimestamps));
+            $quoted = array_map(fn($ts) => $db->quote((string)$ts), $collisionTimestamps);
+            $collidingTimestamps = implode(',', $quoted);
 
             $sql = sprintf(
                 'SELECT id, %s FROM %s WHERE %s IN (%s)',
