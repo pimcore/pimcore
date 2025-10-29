@@ -121,7 +121,6 @@ final class Version20230321133700 extends AbstractMigration
             $collidingResults = $db->fetchAllAssociative($sql);
         }
 
-
         // Batch update for non-colliding timestamps
         foreach ($convertedMap as $old => $new) {
             if (!isset($collisions[$old])) {
