@@ -402,7 +402,7 @@ abstract class PageSnippet extends Model\Document
 
         // Don't set the content main document if the document is already part of the main document chain
         if ($contentMainDocumentId) {
-            if ($currentContentMainDocument = Document\PageSnippet::getById($contentMainDocumentId)) {
+            if ($currentContentMainDocument = Document\PageSnippet::getById((int) $contentMainDocumentId)) {
                 $maxDepth = 20;
                 do {
                     if ($currentContentMainDocument->getId() === $this->getId()) {

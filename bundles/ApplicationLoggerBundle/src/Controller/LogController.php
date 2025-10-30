@@ -24,6 +24,7 @@ use Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -61,8 +62,8 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $qb
             ->select('*')
             ->from(ApplicationLoggerDb::TABLE_NAME)
-            ->setFirstResult($requestSource->getInt('start', 0))
-            ->setMaxResults($requestSource->getInt('limit', 50));
+            ->setFirstResult(ParameterBagHelper::getInt($requestSource, 'start', 0))
+            ->setMaxResults(ParameterBagHelper::getInt($requestSource, 'limit', 50));
 
         $qb->orderBy('id', 'DESC');
 
@@ -105,7 +106,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
             $qb->andWhere('message LIKE ' . $qb->createNamedParameter('%' . $message . '%'));
         }
 
-        if (!empty($pid = $requestSource->getInt('pid'))) {
+        if (!empty($pid = ParameterBagHelper::getInt($requestSource, 'pid'))) {
             $qb->andWhere('pid LIKE ' . $qb->createNamedParameter('%' . $pid . '%'));
         }
 

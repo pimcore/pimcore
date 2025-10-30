@@ -73,6 +73,7 @@ abstract class Controller extends AbstractController
     public static function getSubscribedServices(): array
     {
         $services = parent::getSubscribedServices();
+        // @deprecated since 12.3, will be removed in 13.0. Use Twig\Environment instead.
         $services['pimcore.templating'] = '?'.EngineInterface::class;
 
         return $services;

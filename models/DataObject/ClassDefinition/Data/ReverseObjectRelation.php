@@ -224,12 +224,12 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         $db = \Pimcore\Db::get();
 
         if ($operator === '=') {
-            $subFilter = '`' . 'src_id' . '`' . ' = ' . $db->quote($value);
+            $subFilter = '`' . 'src_id' . '`' . ' = ' . $db->quote((string) $value);
         } elseif ($operator === 'LIKE' || $operator === 'IN') {
             $values = explode(',', $value);
             // we treat LIKE and IN the same. UI sends LIKE
             $fieldConditions = array_map(function ($value) use ($db) {
-                return '`' . 'src_id' . '`' . ' = ' . $db->quote($value);
+                return '`' . 'src_id' . '`' . ' = ' . $db->quote((string) $value);
             }, array_filter($values));
             if (!empty($fieldConditions)) {
                 // we use OR
