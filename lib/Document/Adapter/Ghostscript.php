@@ -33,6 +33,8 @@ class Ghostscript extends Adapter
 
     private ?string $version = null;
 
+    private bool $useCropBox = false;
+
     public function isAvailable(): bool
     {
         try {
@@ -169,12 +171,7 @@ class Ghostscript extends Adapter
         return $this->version;
     }
 
-    public function saveImage(
-        string $imageTargetPath,
-        int $page = 1,
-        int $resolution = 200,
-        bool $cropBox = false
-    ): bool
+    public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): bool
     {
         try {
             $localFile = self::getLocalFileFromStream($this->getPdf());
@@ -285,6 +282,16 @@ class Ghostscript extends Adapter
         unlink($textFile);
 
         return $text;
+    }
+
+    public function isUseCropBox(): bool
+    {
+        return $this->useCropBox;
+    }
+
+    public function setUseCropBox(bool $useCropBox): void
+    {
+        $this->useCropBox = $useCropBox;
     }
 
     protected function getTemporaryPdfStorageFilePath(Asset $asset): string

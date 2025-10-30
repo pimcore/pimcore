@@ -147,10 +147,15 @@ final class ImageThumbnail implements ImageThumbnailInterface
                 try {
                     $converter = Document::getInstance();
                     $converter->load($this->asset);
+
+                    // TODO: saveImage could be having an optional $options parameter instead
+                    if ($converter instanceof Document\Adapter\Ghostscript){
+                        $converter->setUseCropBox($this->getConfig()->isCropBox());
+                    }
+
                     if (false === $converter->saveImage(
                             $tempFile,
-                            $this->page,
-                            cropBox: $this->getConfig()->isCropBox()
+                            $this->page
                         )
                     ) {
                         Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
