@@ -182,7 +182,7 @@ class Ghostscript extends Adapter
                 '-dLastPage=' . $page,
                 '-dTextAlphaBits=4',
                 '-dGraphicsAlphaBits=4',
-                ...($cropBox ? ['-dUseCropBox'] : []),
+                ...($this->isUseCropBox() ? ['-dUseCropBox'] : []),
                 '-r' . $resolution,
                 '-o',
                 $imageTargetPath,
