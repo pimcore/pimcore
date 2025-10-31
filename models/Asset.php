@@ -1718,25 +1718,29 @@ class Asset extends Element\AbstractElement
 
             // Step 2: try to move each file individually
             foreach ($children as $child) {
-                if (
-                    ($child instanceof \League\Flysystem\StorageAttributes && $child->isFile()) ||
-                    (is_array($child) && ($child['type'] ?? null) === 'file')
-                ) {
-                    $src = is_array($child) ? $child['path'] : $child->path();
-                    $dest = str_replace($oldPath, $newPath, $src);
+                $src = null;
 
-                    try {
-                        $storage->move($src, $dest);
-                        $moved[] = $src;
-                    } catch (Throwable $e) {
-                        $failed[] = $src;
-                        \Pimcore\Logger::error(sprintf(
-                            'Move failed for %s  %s: %s',
-                            $src,
-                            $dest,
-                            $e->getMessage()
-                        ));
-                    }
+                if ($child instanceof \League\Flysystem\StorageAttributes && $child->isFile()) {
+                    $src = $child->path();
+                } elseif (is_array($child) && ($child['type'] ?? null) === 'file') {
+                    $src = $child['path'];
+                }
+
+                if ($src === null) {
+                    continue;
+                }
+
+                try {
+                    $storage->move($src, $dest);
+                    $moved[] = $src;
+                } catch (Throwable $e) {
+                    $failed[] = $src;
+                    \Pimcore\Logger::error(sprintf(
+                        'Move failed for %s  %s: %s',
+                        $src,
+                        $dest,
+                        $e->getMessage()
+                    ));
                 }
             }
 
