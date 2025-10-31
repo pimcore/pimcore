@@ -1717,30 +1717,25 @@ class Asset extends Element\AbstractElement
             $failed = [];
 
             // Step 2: try to move each file individually
+
+            /** @var \League\Flysystem\StorageAttributes $child */
             foreach ($children as $child) {
-                $src = null;
-
-                if ($child instanceof \League\Flysystem\StorageAttributes && $child->isFile()) {
+                if ($child->isFile()) {
                     $src = $child->path();
-                } elseif (is_array($child) && ($child['type'] ?? null) === 'file') {
-                    $src = $child['path'];
-                }
+                    $dest = str_replace($oldPath, $newPath, $src);
 
-                if ($src === null) {
-                    continue;
-                }
-
-                try {
-                    $storage->move($src, $dest);
-                    $moved[] = $src;
-                } catch (Throwable $e) {
-                    $failed[] = $src;
-                    \Pimcore\Logger::error(sprintf(
-                        'Move failed for %s  %s: %s',
-                        $src,
-                        $dest,
-                        $e->getMessage()
-                    ));
+                    try {
+                        $storage->move($src, $dest);
+                        $moved[] = $src;
+                    } catch (Throwable $e) {
+                        $failed[] = $src;
+                        \Pimcore\Logger::error(sprintf(
+                            'Move failed for %s  %s: %s',
+                            $src,
+                            $dest,
+                            $e->getMessage()
+                        ));
+                    }
                 }
             }
 
