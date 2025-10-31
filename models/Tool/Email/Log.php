@@ -370,7 +370,7 @@ class Log extends Model\AbstractModel
             $storage = Storage::get('email_log');
 
             //TODO: remove in Pimcore 13
-            if ($storage->fileExists($this->getTextLogFilename()) ) {
+            if ($storage->fileExists($this->getHtmlLogFilename()) ) {
                 return $storage->read($this->getHtmlLogFilename());
             } else {
                 return $storage->read($this->getHtmlLogFilenameWithDate());
