@@ -30,17 +30,17 @@ use Symfony\Component\Console\Output\OutputInterface;
  * TODO: Remove in Pimcore 13
  */
 #[AsCommand(
-    name: 'pimcore:migrate:logs-folder-structure',
-    description: 'Change logs folder structure to
+    name: 'pimcore:migrate:mail-logs-folder-structure',
+    description: 'Change mail logs folder structure to
     YYYY/MM/DD/<log filename>
     instead of
     <log filename>'
 )]
-class LogsFolderStructureCommand extends AbstractCommand
+class MailLogsFolderStructureCommand extends AbstractCommand
 {
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('Migrating logs ...');
+        $output->writeln('Migrating mail logs ...');
         $this->doMigrateStorage($output);
         $output->writeln("\n<info>Successfully moved log files to new folder structure</info>\n");
 

@@ -284,7 +284,7 @@ class Log extends Model\AbstractModel
 
         $storageFileWithDate = $this->getHtmlLogFilenameWithDate();
         $this->emailLogExistsHtml =
-            $storage->fileExists($storageFile) || $storage->fileExists($storageFileWithDate) ? 1 : 0;
+            $storage->fileExists($storageFileWithDate) || $storage->fileExists($storageFile) ? 1 : 0;
 
         return $this;
     }
@@ -312,7 +312,7 @@ class Log extends Model\AbstractModel
 
         $storageFileWithDate = $this->getTextLogFilenameWithDate();
         $this->emailLogExistsText =
-            $storage->fileExists($storageFile) || $storage->fileExists($storageFileWithDate) ? 1 : 0;
+             $storage->fileExists($storageFileWithDate) || $storage->fileExists($storageFile) ? 1 : 0;
 
         return $this;
     }
@@ -369,11 +369,18 @@ class Log extends Model\AbstractModel
         if ($this->getEmailLogExistsHtml()) {
             $storage = Storage::get('email_log');
 
-            //TODO: remove in Pimcore 13
-            if ($storage->fileExists($this->getHtmlLogFilename()) ) {
-                return $storage->read($this->getHtmlLogFilename());
-            } else {
+
+            if ($storage->fileExists($this->getHtmlLogFilenameWithDate()) ) {
                 return $storage->read($this->getHtmlLogFilenameWithDate());
+            } else {
+                //TODO: remove in Pimcore 13
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '12.x',
+                    'Please run the migration command "pimcore:migrations:email-log-files-move"
+                    to move email log files to date-based folders or move the files manually.'
+                );
+                return $storage->read($this->getHtmlLogFilename());
             }
         }
 
@@ -388,11 +395,17 @@ class Log extends Model\AbstractModel
         if ($this->getEmailLogExistsText()) {
             $storage = Storage::get('email_log');
 
-            //TODO: remove in Pimcore 13
-            if ($storage->fileExists($this->getTextLogFilename()) ) {
-                return $storage->read($this->getTextLogFilename());
-            } else {
+            if ($storage->fileExists($this->getTextLogFilenameWithDate()) ) {
                 return $storage->read($this->getTextLogFilenameWithDate());
+            } else {
+                //TODO: remove in Pimcore 13
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '12.x',
+                    'Please run the migration command "pimcore:migrations:email-log-files-move"
+                    to move email log files to date-based folders or move the files manually.'
+                );
+                return $storage->read($this->getTextLogFilename());
             }
         }
 
