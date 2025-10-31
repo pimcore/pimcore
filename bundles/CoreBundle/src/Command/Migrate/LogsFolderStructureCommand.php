@@ -72,13 +72,6 @@ class LogsFolderStructureCommand extends AbstractCommand
 
             if (!$storage->fileExists($targetPath)) {
                 $storage->move($logFile->path(), $targetPath);
-                $storage->delete($logFile->path());
-            } else {
-                if ($logFile->isDir()) {
-                    continue;
-                } else {
-                    $storage->delete($logFile->path());
-                }
             }
 
             $progressBar->advance();
