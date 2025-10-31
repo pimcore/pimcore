@@ -376,7 +376,7 @@ class Log extends Model\AbstractModel
                 //TODO: remove in Pimcore 13
                 trigger_deprecation(
                     'pimcore/pimcore',
-                    '12.x',
+                    '12.3.0',
                     'Please run the migration command "pimcore:migrations:email-log-files-move"
                     to move email log files to date-based folders or move the files manually.'
                 );
