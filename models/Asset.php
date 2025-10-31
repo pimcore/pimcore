@@ -59,6 +59,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Mime\MimeTypes;
+use Throwable;
 
 /**
  * @method Dao getDao()
@@ -1703,6 +1704,7 @@ class Asset extends Element\AbstractElement
         // Fail-safe guard: never operate on root or empty paths
         if ($oldPath === '/' || $oldPath === '') {
             \Pimcore\Logger::warning('Refusing to delete or move root path.');
+
             return;
         }
 
@@ -1726,7 +1728,7 @@ class Asset extends Element\AbstractElement
                     try {
                         $storage->move($src, $dest);
                         $moved[] = $src;
-                    } catch (\Throwable $e) {
+                    } catch (Throwable $e) {
                         $failed[] = $src;
                         \Pimcore\Logger::error(sprintf(
                             'Move failed for %s  %s: %s',
@@ -1748,6 +1750,7 @@ class Asset extends Element\AbstractElement
                     'No files found in %s; skipping deleteDirectory().',
                     $oldPath
                 ));
+
                 return;
             }
 
@@ -1760,6 +1763,7 @@ class Asset extends Element\AbstractElement
                     $movedCount,
                     $totalFiles
                 ));
+
                 return;
             }
 
@@ -1773,7 +1777,7 @@ class Asset extends Element\AbstractElement
                     $newPath
                 ));
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             \Pimcore\Logger::error(sprintf(
                 'updateChildPaths() failed for %s  %s: %s',
                 $oldPath,
@@ -1787,7 +1791,6 @@ class Asset extends Element\AbstractElement
             }
         }
     }
-
 
     /**
      * @throws FilesystemException
