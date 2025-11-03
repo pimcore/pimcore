@@ -142,11 +142,21 @@ final class ImageThumbnail implements ImageThumbnailInterface
                         if (false === $converter->saveImage($tempFile, (int) $timeOffset)) {
                             Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
 
+                            $this->pathReference = [
+                                'type' => 'error',
+                                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+                            ];
+
                             return;
                         }
                         $tempFileContent = file_get_contents($tempFile);
                         if (false === $tempFileContent) {
                             Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
+
+                            $this->pathReference = [
+                                'type' => 'error',
+                                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+                            ];
 
                             return;
                         }
