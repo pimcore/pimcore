@@ -1701,93 +1701,50 @@ class Asset extends Element\AbstractElement
             $newPath = $this->getRealFullPath();
         }
 
-        // Fail-safe guard: never operate on root or empty paths
-        if ($oldPath === '/' || $oldPath === '') {
-            \Pimcore\Logger::warning('Refusing to delete or move root path.');
-
-            return;
-        }
-
         try {
-            // Step 1: get list of children
-            $children = iterator_to_array($storage->listContents($oldPath, true));
-            $totalFiles = count($children);
+            $movedFiles = [];
+            $children = $storage->listContents($oldPath, true);
+            $totalChildren = iterator_count($children);
 
-            $moved = [];
-            $failed = [];
-
-            // Step 2: try to move each file individually
-
-            /** @var \League\Flysystem\StorageAttributes $child */
-            foreach ($children as $child) {
-                if ($child->isFile()) {
-                    $src = $child->path();
-                    $dest = str_replace($oldPath, $newPath, $src);
-
-                    try {
+            if ($totalChildren > 0) {
+                /** @var \League\Flysystem\StorageAttributes $child */
+                foreach ($children as $child) {
+                    if ($child instanceof \League\Flysystem\FileAttributes) {
+                        $src  = $child['path'];
+                        $dest = str_replace($oldPath, $newPath, '/' . $src);
                         $storage->move($src, $dest);
-                        $moved[] = $src;
-                    } catch (Throwable $e) {
-                        $failed[] = $src;
-                        \Pimcore\Logger::error(sprintf(
-                            'Move failed for %s  %s: %s',
-                            $src,
-                            $dest,
-                            $e->getMessage()
-                        ));
+                        $movedFiles[$dest] = $src;
                     }
                 }
-            }
 
-            $movedCount = count($moved);
-            $failedCount = count($failed);
+                $movedCount = count($movedFiles);
 
-            // Step 3: decide what to do with the source path
-            if ($totalFiles === 0) {
-                // nothing listed  skip deletion
-                \Pimcore\Logger::warning(sprintf(
-                    'No files found in %s; skipping deleteDirectory().',
-                    $oldPath
-                ));
-
-                return;
-            }
-
-            if ($failedCount > 0) {
-                // partial success  keep source folder
-                \Pimcore\Logger::warning(sprintf(
-                    'Partial move for %s  %s: %d of %d files moved successfully. Source preserved.',
-                    $oldPath,
-                    $newPath,
-                    $movedCount,
-                    $totalFiles
-                ));
-
-                return;
-            }
-
-            // Step 4: all files moved successfully  safe to delete source
-            if ($movedCount === $totalFiles) {
-                $storage->deleteDirectory($oldPath);
-                \Pimcore\Logger::info(sprintf(
-                    'Moved %d files from %s  %s. Source directory deleted.',
-                    $movedCount,
-                    $oldPath,
-                    $newPath
-                ));
+                if ($movedCount === $totalChildren) {
+                    $storage->deleteDirectory($oldPath);
+                } else {
+                    \Pimcore\Logger::info(
+                        sprintf(
+                            'Moved %d/%d files from %s to %s. No exception was thrown for %d files,
+                            so the source directory was not deleted.',
+                            $movedCount, $totalChildren, $oldPath, $newPath, $totalChildren - $movedCount
+                        )
+                    );
+                }
             }
         } catch (Throwable $e) {
-            \Pimcore\Logger::error(sprintf(
-                'updateChildPaths() failed for %s  %s: %s',
-                $oldPath,
-                $newPath,
-                $e->getMessage()
-            ));
+            Logger::error(sprintf('Asset Move to %s failed: %s', $newPath, $e->getMessage()));
 
-            // Never delete source directory on any kind of error
-            if (!$skipError) {
-                throw $e;
+            if ($skipError) {
+                return;
             }
+
+            // rollback moved files
+            foreach ($movedFiles as $src => $dest) {
+                $storage->move($src, $dest);
+            }
+
+            // trigger database rollback
+            throw $e;
         }
     }
 
