@@ -21,6 +21,7 @@ use Pimcore\Bundle\SeoBundle\Config;
 use Pimcore\Controller\Controller;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Asset\Image\Thumbnail;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -57,7 +58,7 @@ class PublicServicesController extends Controller
         } catch (Exception $e) {
             Logger::error($e->getMessage());
 
-            return new RedirectResponse('/bundles/pimcoreadmin/img/filetype-not-supported.svg');
+            return new RedirectResponse(Thumbnail::FILETYPE_NOT_SUPPORTED_ICON);
         }
     }
 

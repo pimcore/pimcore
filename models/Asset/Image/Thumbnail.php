@@ -35,6 +35,11 @@ final class Thumbnail implements ThumbnailInterface
     use ImageThumbnailTrait;
 
     /**
+     * @var string
+     */
+    public const FILETYPE_NOT_SUPPORTED_ICON = '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
+
+    /**
      * @internal
      *
      * @var bool[]
@@ -138,7 +143,7 @@ final class Thumbnail implements ThumbnailInterface
         if (empty($this->pathReference)) {
             $this->pathReference = [
                 'type' => 'error',
-                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+                'src' => self::FILETYPE_NOT_SUPPORTED_ICON,
             ];
         }
 

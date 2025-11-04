@@ -144,7 +144,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
 
                             $this->pathReference = [
                                 'type' => 'error',
-                                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+                                'src' => Image\Thumbnail::FILETYPE_NOT_SUPPORTED_ICON,
                             ];
 
                             return;
@@ -155,7 +155,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
 
                             $this->pathReference = [
                                 'type' => 'error',
-                                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+                                'src' => Image\Thumbnail::FILETYPE_NOT_SUPPORTED_ICON,
                             ];
 
                             return;
@@ -190,7 +190,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
         if (empty($this->pathReference)) {
             $this->pathReference = [
                 'type' => 'error',
-                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+                'src' => Image\Thumbnail::FILETYPE_NOT_SUPPORTED_ICON,
             ];
         }
 

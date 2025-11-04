@@ -22,6 +22,7 @@ use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Asset\Image\Thumbnail;
 use Pimcore\Tool;
 
 /**
@@ -529,7 +530,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         $code = '
         <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
-            <div class="pimcore_editable_video_error" style="text-align:center; width: ' . $width . '; height: ' . $height . '; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
+            <div class="pimcore_editable_video_error" style="text-align:center; width: ' . $width . '; height: ' . $height . '; border:1px solid #000; background: url(' . Thumbnail::FILETYPE_NOT_SUPPORTED_ICON . ') no-repeat center center #fff;">
                 ' . $message . '
             </div>
         </div>';
