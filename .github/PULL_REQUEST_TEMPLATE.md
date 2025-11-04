@@ -2,9 +2,9 @@
 
 Before working on a contribution, you must determine on which branch you need to work:
 - Bug fix: choose the latest maintenance branch `11.5`
-- Feature/Improvement: choose `11.x` 
+- Feature/Improvement: choose `12.x` 
 
-> All bug fixes merged into the latest maintenance branch are also merged to the current dev branch (`11.x`) on a regular basis.
+> All bug fixes merged into the latest maintenance branch are also merged to the current dev branch (`12.x`) on a regular basis.
 
 ## Please make sure your PR complies with all of the following points: 
 - [ ] Read and accept our [contributing guidelines](/CONTRIBUTING.md) before you submit a PR.

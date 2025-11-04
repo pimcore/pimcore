@@ -1658,7 +1658,16 @@ class Service extends Model\Element\Service
             $fieldData = self::getCsvFieldData($requestedLanguage, $key, $object, $requestedLanguage, $helperDefinitions);
             if ($returnMappedFieldNames && !isset($mappedFieldnames[$key])) {
                 $mappedFieldnames[$key] = self::mapFieldname($field, $helperDefinitions, $header);
-                $objectData[$mappedFieldnames[$key]] = $fieldData;
+
+                // ensure unique field names, if the same title/label is used more than once, add suffix `_x`
+                $i = 1;
+                $newKey = $mappedFieldnames[$key];
+                while (isset($objectData[$newKey])) {
+                    $newKey = $mappedFieldnames[$key] . '_' . $i;
+                    $i++;
+                }
+
+                $objectData[$newKey] = $fieldData;
             } else {
                 $objectData[$key] = $fieldData;
             }

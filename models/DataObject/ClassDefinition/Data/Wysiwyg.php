@@ -211,7 +211,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $data = '';
         if ($container instanceof DataObject\Concrete) {
             $data = $container->getObjectVar($this->getName());
-        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Classificationstore) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Classificationstore || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $data = $container->getObjectVar($this->getName());

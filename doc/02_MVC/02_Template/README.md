@@ -48,7 +48,7 @@ template will be used for auto-rendering when the controller does not return a r
 To make Pimcore's functions available in Twig templates, Pimcore implements a set of extensions. Please see our [Demo](https://github.com/pimcore/demo)
 as first reference how to use Pimcore with Twig. 
 
-You can take a look at the [implementations](https://github.com/pimcore/pimcore/tree/11.x/lib/Twig)
+You can take a look at the [implementations](https://github.com/pimcore/pimcore/tree/12.x/lib/Twig)
 for further details. Note that all of Pimcore's Twig extensions are prefixed with `pimcore` to avoid naming collisions.
 
 ### Pimcore Editables
@@ -76,7 +76,7 @@ generates HTML as otherwise the HTML will be escaped by twig.
 
 ### Functions
 
-#### Loading Objects
+#### Loading elements
 
 The following functions can be used to load Pimcore elements from within a template:
 
@@ -87,6 +87,7 @@ The following functions can be used to load Pimcore elements from within a templ
 * `pimcore_asset_by_path`
 * `pimcore_object`
 * `pimcore_object_by_path`
+* `pimcore_user`
 
 ```twig
 {% set myObject = pimcore_object(123) %}
@@ -100,8 +101,19 @@ or
 
 For documents, Pimcore also provides a function to handle hardlinks through the `pimcore_document_wrap_hardlink` method.
 
-See [PimcoreObjectExtension](https://github.com/pimcore/pimcore/blob/11.x/lib/Twig/Extension/PimcoreObjectExtension.php)
+See [PimcoreObjectExtension](https://github.com/pimcore/pimcore/blob/12.x/lib/Twig/Extension/PimcoreObjectExtension.php)
 for details.
+
+##### Element helper functions
+
+The following functions can be used to get specific data from Pimcore elements:
+
+| Function                                                                              | Description                                                                                                                       |
+|---------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `pimcore_object_classificationstore_group(id)`                                        | Get classification store group definition by id.                                                                                  |
+| `pimcore_object_classificationstore_get_field_definition_from_json(definition, type)` | Returns the classification store field definition from the given definition JSON, enabling structured access to field properties. |
+| `pimcore_object_brick_definition_key(key)`                                            | Get objectbrick definition by id.                                                                                                 |
+| `pimcore_element_tags(element, asNameList)`                                           | Returns a list of assigned element tags. Use `true` as the second parameter to receive only the tag names.                        |
 
 
 #### Subrequests
@@ -114,7 +126,7 @@ for details.
 See [Template Extensions](./02_Template_Extensions/README.md) for details.
 
 
-#### Templating Extensions
+#### Templating extensions
 
 The following extensions can directly be used on Twig. See [Template Extensions](./02_Template_Extensions/README.md) for a 
 detailed description of every helper:
@@ -157,7 +169,7 @@ Can be used to test if an object is an instance of a given class.
 {% endif %}
 ```
 
-####  Pimcore Specialities
+####  Pimcore specialities
 
 Pimcore provides a few special functionalities to make templates even more powerful. 
 These are explained in following sub chapters:

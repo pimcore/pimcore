@@ -8,7 +8,7 @@ Following steps are necessary to do so:
   Pimcore Admin UI. 
    
    For examples have a look at the Pimcore core datatypes at 
-   [github](https://github.com/pimcore/pimcore/tree/11.x/models/DataObject/ClassDefinition/Data). 
+   [github](https://github.com/pimcore/pimcore/tree/12.x/models/DataObject/ClassDefinition/Data). 
 
 2) Create JavaScript class for Class Definition editor (object data): 
 This JavaScript class defines the representation of the data type in the *Class Definition editor* and therefore where

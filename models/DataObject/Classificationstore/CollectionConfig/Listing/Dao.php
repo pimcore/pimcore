@@ -13,6 +13,7 @@
 namespace Pimcore\Model\DataObject\Classificationstore\CollectionConfig\Listing;
 
 use Exception;
+use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -29,12 +30,23 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load(): array
     {
-        $sql = 'SELECT id FROM ' . DataObject\Classificationstore\CollectionConfig\Dao::TABLE_NAME_COLLECTIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
-        $configsData = $this->db->fetchFirstColumn($sql, $this->model->getConditionVariables());
-
+        $collectionsData = $this->db->fetchAllAssociative(
+            'SELECT * FROM ' . DataObject\Classificationstore\CollectionConfig\Dao::TABLE_NAME_COLLECTIONS .
+            $this->getCondition() .
+            $this->getOrder() .
+            $this->getOffsetLimit(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes()
+        );
         $configData = [];
-        foreach ($configsData as $config) {
-            $configData[] = DataObject\Classificationstore\CollectionConfig::getById($config);
+        $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
+
+        foreach ($collectionsData as $collectionData) {
+            /** @var DataObject\Classificationstore\CollectionConfig $collection */
+            $collection = $modelFactory->build(DataObject\Classificationstore\CollectionConfig::class);
+            $collection->getDao()->assignVariablesToModel($collectionData);
+
+            $configData[] = $collection;
         }
 
         $this->model->setList($configData);
