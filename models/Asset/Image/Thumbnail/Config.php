@@ -736,12 +736,12 @@ final class Config extends Model\AbstractModel
         $this->rasterizeSVG = $rasterizeSVG;
     }
 
-    public function isCropBox(): bool
+    public function isUseCropBox(): bool
     {
         return $this->useCropBox;
     }
 
-    public function setCropBox(bool $cropbox): void
+    public function setUseCropBox(bool $cropbox): void
     {
         $this->useCropBox = $cropbox;
     }

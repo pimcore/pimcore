@@ -150,7 +150,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
 
                     // TODO: saveImage could be having an optional $options parameter instead
                     if ($converter instanceof Document\Adapter\Ghostscript){
-                        $converter->setUseCropBox($this->getConfig()->isCropBox());
+                        $converter->setUseCropBox($this->getConfig()->isUseCropBox());
                     }
 
                     if (false === $converter->saveImage(
