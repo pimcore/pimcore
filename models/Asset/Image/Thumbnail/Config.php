@@ -861,6 +861,7 @@ final class Config extends Model\AbstractModel
             $this->getQuality(),
             $this->isPreserveColor(),
             $this->isPreserveMetaData(),
+            $this->isUseCropBox(),
             $this->getItems(),
             $params,
         ]));
