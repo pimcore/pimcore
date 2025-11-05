@@ -477,9 +477,10 @@ class CoreCacheHandler implements LoggerAwareInterface
                 );
 
                 $this->writeInProgress = false;
+
                 return false;
             }
-            
+
             $data = $latestData;
 
             // dump state is used to trigger a full serialized dump in __sleep eg. in Document, AbstractObject
