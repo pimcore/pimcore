@@ -460,17 +460,27 @@ class CoreCacheHandler implements LoggerAwareInterface
         if ($data instanceof ElementInterface) {
             // fetch a fresh copy
             $type = Service::getElementType($data);
-            $data = Service::getElementById($type, $data->getId(), ['force' => true]);
+            $latestData = Service::getElementById($type, $data->getId(), ['force' => true]);
 
-            if (!$data?->__isBasedOnLatestData()) {
-                $this->logger->warning('Not saving {key} to cache as element is not based on latest data', [
-                    'key' => $key,
-                ]);
+            if ($latestData === null || !$latestData->__isBasedOnLatestData()) {
+                $reason = $latestData === null
+                    ? 'data is null'
+                    : 'element is not based on latest data';
+
+                $this->logger->warning(
+                    'Not saving {key} to cache as {reason} (id: {id})',
+                    [
+                        'key'    => $key,
+                        'id'     => $data->getId(),
+                        'reason' => $reason,
+                    ]
+                );
 
                 $this->writeInProgress = false;
-
                 return false;
             }
+            
+            $data = $latestData;
 
             // dump state is used to trigger a full serialized dump in __sleep eg. in Document, AbstractObject
             $data->setInDumpState(false);
