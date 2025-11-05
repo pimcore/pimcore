@@ -132,11 +132,12 @@ final class ImageThumbnail implements ImageThumbnailInterface
     {
         $storage = Storage::get('asset_cache');
         $cacheFilePath = sprintf(
-            '%s/%s/image-thumb__%s__document_original_image/page_%s.png',
+            '%s/%s/image-thumb__%s__document_original_image/page_%s_cropbox_%d.png',
             rtrim($this->asset->getRealPath(), '/'),
             $this->asset->getId(),
             $this->asset->getId(),
-            $this->page
+            $this->page,
+            (int) $this->getConfig()->isUseCropBox()
         );
 
         if (!$storage->fileExists($cacheFilePath)) {
