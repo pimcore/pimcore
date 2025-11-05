@@ -4,6 +4,7 @@
 
 -   Added a new command `pimcore:classes:changes` to list all Class Definition that have been changed. This command helps in tracking modifications and can be useful for auditing and version control purposes.
 -   Added possibility to `pimcore:classificationstore:delete-store` to pass `--inactive-only` flag to only delete inactive (soft deleted from UI) classification stores Keys.
+-   Added a thumbnail setting option to use Crop Box (the visible area), instead of Media Box when converting documents via Ghostscript. 
 
 ### Deprecations
 
