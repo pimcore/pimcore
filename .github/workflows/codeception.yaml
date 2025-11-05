@@ -5,6 +5,7 @@ on:
     schedule:
         -   cron: '0 3 * * *'
     pull_request_target:
+        types: [opened, synchronize, reopened]
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
@@ -19,8 +20,6 @@ on:
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
-    pull_request:
-        types: [opened, synchronize, reopened]
         
 permissions:
   contents: read
