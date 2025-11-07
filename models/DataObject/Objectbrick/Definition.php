@@ -470,7 +470,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function getContainerClassFolder(string $classname): string
     {
-        return PIMCORE_CLASS_DIRECTORY . '/DataObject/' . ucfirst($classname);
+        return PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/DataObject/' . ucfirst($classname);
     }
 
     /**
