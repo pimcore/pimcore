@@ -41,7 +41,6 @@
     "ext-mbstring": "*",
     "ext-openssl": "*",
     "ext-pdo": "*",
-    "ext-pdo_mysql": "*",
     "ext-zip": "*",
     "ext-zlib": "*",
     "composer-runtime-api": "^2.0",
