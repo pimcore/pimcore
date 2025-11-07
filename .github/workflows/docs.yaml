@@ -28,12 +28,12 @@ jobs:
         if: ${{ github.repository == 'pimcore/pimcore' }}
         steps:
             - name: "Checkout code"
-              uses: "actions/checkout@v3"
+              uses: "actions/checkout@v4"
               with:
                 ref: ${{ github.event.pull_request.head.sha }}  
 
             - name: "Checkout Docs Generator"
-              uses: "actions/checkout@v3"
+              uses: "actions/checkout@v4"
               with:
                   repository: "pimcore/docs-generator"
                   ref: "main"
@@ -41,9 +41,9 @@ jobs:
                   token: ${{ secrets.DOCS_GENERATOR_ACCESS_TOKEN }}
 
             - name: "Install Node"
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
-                  node-version: 19.x
+                  node-version: 'lts/*'
                   registry-url: 'https://registry.npmjs.org'
 
             - name: Prepare Docs

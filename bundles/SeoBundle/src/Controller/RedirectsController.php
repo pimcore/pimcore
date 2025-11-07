@@ -22,6 +22,7 @@ use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
@@ -128,8 +129,8 @@ class RedirectsController extends UserAwareController
             // get list of routes
 
             $list = new Redirect\Listing();
-            $list->setLimit($request->request->getInt('limit', 50));
-            $list->setOffset($request->request->getInt('start'));
+            $list->setLimit(ParameterBagHelper::getInt($request->request, 'limit', 50));
+            $list->setOffset(ParameterBagHelper::getInt($request->request, 'start'));
 
             $sortingSettings = QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {

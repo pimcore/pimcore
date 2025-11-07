@@ -68,7 +68,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
 
     protected function addEntry(string $sessionId): void
     {
-        Cache::save($sessionId, self::ENTRY_ID, lifetime: null);
+        Cache::save($sessionId, self::ENTRY_ID, lifetime: null, force: true);
         TmpStore::add(self::ENTRY_ID, $sessionId);
     }
 
@@ -107,7 +107,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     protected function removeEntry(): void
     {
         try {
-            Cache::save(self::OFF, self::ENTRY_ID, lifetime: null);
+            Cache::save(self::OFF, self::ENTRY_ID, lifetime: null, force: true);
             TmpStore::delete(self::ENTRY_ID);
         } catch (Exception $e) {
             //nothing to log as the tmp doesn't exist

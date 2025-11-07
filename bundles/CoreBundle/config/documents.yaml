@@ -13,11 +13,12 @@ services:
     Pimcore\Document\Editable\EditableHandler:
         public: true
         arguments:
-            $templating: '@pimcore.templating.engine.delegating'
+            # @deprecated since 12.3, will be removed in 13.0. Use Twig\Environment instead.
+            $templating: "@pimcore.templating.engine.delegating"
             $responseStack: '@Pimcore\Http\ResponseStack'
-            $httpKernelRuntime: '@twig.runtime.httpkernel'
+            $httpKernelRuntime: "@twig.runtime.httpkernel"
         calls:
-            - [setLogger, ['@logger']]
+            - [setLogger, ["@logger"]]
         tags:
             - { name: monolog.logger, channel: pimcore }
 
@@ -31,11 +32,11 @@ services:
     # will be configured in areabrick pass
     pimcore.document.areabrick.brick_locator:
         class: Symfony\Component\DependencyInjection\ServiceLocator
-        tags: ['container.service_locator']
+        tags: ["container.service_locator"]
 
     Pimcore\Extension\Document\Areabrick\AreabrickManager:
         arguments:
-            $container: '@pimcore.document.areabrick.brick_locator'
+            $container: "@pimcore.document.areabrick.brick_locator"
 
     Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface:
         alias: Pimcore\Extension\Document\Areabrick\AreabrickManager
@@ -49,7 +50,7 @@ services:
     Pimcore\Model\Document\Service:
         public: true
 
-    Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface: '@fragment.renderer.inline'
+    Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface: "@fragment.renderer.inline"
 
     Pimcore\Document\Renderer\DocumentRendererInterface:
         class: Pimcore\Document\Renderer\DocumentRenderer
