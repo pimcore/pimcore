@@ -480,11 +480,10 @@ class Imagick extends Adapter
 
         if ($this->isVectorGraphic()) {
             // the resolution has to be set before loading the image, that's why we have to destroy the instance and load it again
-            $res = $this->resource->getImageResolution();
+            $res = $sourceRes = $this->resource->getImageResolution();
             if ($res['x'] && $res['y']) {
                 $x_ratio = $res['x'] / $this->getWidth();
                 $y_ratio = $res['y'] / $this->getHeight();
-                $this->resource->removeImage();
 
                 $newRes = ['x' => $width * $x_ratio, 'y' => $height * $y_ratio];
 
@@ -503,8 +502,11 @@ class Imagick extends Adapter
                 ];
             }
 
-            $this->resource->setResolution($res['x'], $res['y']);
-            $this->resource->readImage($this->imagePath);
+            if($sourceRes != $res) {
+                $this->resource->removeImage();
+                $this->resource->setResolution($res['x'], $res['y']);
+                $this->resource->readImage($this->imagePath);
+            }
 
             if (!$this->isPreserveColor()) {
                 $this->setColorspaceToRGB();
