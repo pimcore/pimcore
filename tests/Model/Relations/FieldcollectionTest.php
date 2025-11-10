@@ -20,6 +20,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -241,4 +242,83 @@ class FieldcollectionTest extends ModelTestCase
         $lrel = $loadedFieldcollectionItem->getLRelation('en');
         $this->assertEquals(null, $lrel);
     }
+
+
+    public function testInputFieldWithNullAndThenDefaultValue(): void
+    {
+        //empty string
+        $item1 = new FieldCollection\Data\Unittestfieldcollection();
+        $item1->setLinput('', 'en');
+
+        //null by default
+        $item2 = new FieldCollection\Data\Unittestfieldcollection();
+
+        //null set manually
+        $item3 = new FieldCollection\Data\Unittestfieldcollection();
+        $item1->setLinput(null, 'en');
+
+        //save empty data for language "en"
+        $items = new Fieldcollection();
+        $items->add($item1);
+        $items->add($item2);
+        $items->add($item3);
+
+        $object = TestHelper::createEmptyObject();
+        $object->setFieldcollection($items);
+        $object->save();
+
+        //Reload object from db
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+
+        $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
+        $linput = $loadedFieldcollectionItem->getLinput('en');
+        $this->assertEquals('', $linput);
+
+        $loadedFieldcollectionItem = $object->getFieldcollection()->get(1);
+        $linput = $loadedFieldcollectionItem->getLinput('en');
+        $this->assertEquals(null, $linput);
+
+        $loadedFieldcollectionItem = $object->getFieldcollection()->get(2);
+        $linput = $loadedFieldcollectionItem->getLinput('en');
+        $this->assertEquals(null, $linput);
+
+        // Add default value afterwards
+        $definition = Definition::getByKey('unittestfieldcollection');
+        $children = $definition->getFieldDefinition('localizedfields')->getChildren();
+        foreach ($children as $index => $child) {
+            if ($child->getName() == 'linput') {
+                $children[$index]->setDefaultValue('1234');
+            }
+        }
+        $definition->save();
+
+        // reload, resave and check
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+
+        // add a ex-novo item that should have default value
+        $item4 = new FieldCollection\Data\Unittestfieldcollection();
+        $items->add($item4);
+        $object->save();
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+
+        //check all again
+        $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
+        $linput = $loadedFieldcollectionItem->getLinput('en');
+        $this->assertEquals('', $linput);
+
+        //stays null, the default value is not applied retroactively
+        $loadedFieldcollectionItem = $object->getFieldcollection()->get(1);
+        $linput = $loadedFieldcollectionItem->getLinput('en');
+        $this->assertEquals(null, $linput);
+
+        //stays null, the default value is not applied retroactively
+        $loadedFieldcollectionItem = $object->getFieldcollection()->get(2);
+        $linput = $loadedFieldcollectionItem->getLinput('en');
+        $this->assertEquals(null, $linput);
+
+        $loadedFieldcollectionItem = $object->getFieldcollection()->get(2);
+        $linput = $loadedFieldcollectionItem->getLinput('en');
+        $this->assertEquals('1234', $linput);
+    }
+
 }
