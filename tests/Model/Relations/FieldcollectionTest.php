@@ -243,7 +243,6 @@ class FieldcollectionTest extends ModelTestCase
         $this->assertEquals(null, $lrel);
     }
 
-
     public function testInputFieldWithNullAndThenDefaultValue(): void
     {
         //empty string
@@ -320,5 +319,4 @@ class FieldcollectionTest extends ModelTestCase
         $linput = $loadedFieldcollectionItem->getLinput('en');
         $this->assertEquals('1234', $linput);
     }
-
 }
