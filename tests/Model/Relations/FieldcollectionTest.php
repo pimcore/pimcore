@@ -315,7 +315,8 @@ class FieldcollectionTest extends ModelTestCase
         $linput = $loadedFieldcollectionItem->getLinput('en');
         $this->assertEquals(null, $linput);
 
-        $loadedFieldcollectionItem = $object->getFieldcollection()->get(2);
+        //newly added with no values define taking default value
+        $loadedFieldcollectionItem = $object->getFieldcollection()->get(3);
         $linput = $loadedFieldcollectionItem->getLinput('en');
         $this->assertEquals('1234', $linput);
     }
