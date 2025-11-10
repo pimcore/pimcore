@@ -23,7 +23,7 @@ trait LocateFileTrait
 {
     protected function locateDefinitionFile(string $key, string $pathTemplate): string
     {
-        $customFile = sprintf('%s/classes/' . $pathTemplate, PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY, $key);
+        $customFile = sprintf('%s/' . $pathTemplate, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY, $key);
 
         if (is_file($customFile)) {
             return $customFile;
@@ -34,7 +34,7 @@ trait LocateFileTrait
 
     protected function locateFile(string $key, string $pathTemplate): string
     {
-        $customFile = sprintf('%s/classes/' . $pathTemplate, PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY, $key);
+        $customFile = sprintf('%s/' . $pathTemplate, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY, $key);
 
         if (is_file($customFile)) {
             return $customFile;
