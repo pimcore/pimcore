@@ -502,7 +502,7 @@ class Imagick extends Adapter
                 ];
             }
 
-            if($sourceRes != $res) {
+            if ($sourceRes != $res) {
                 $this->resource->removeImage();
                 $this->resource->setResolution($res['x'], $res['y']);
                 $this->resource->readImage($this->imagePath);
