@@ -323,7 +323,6 @@ class FieldcollectionTest extends ModelTestCase
         $linput = $loadedFieldcollectionItem->getLinput('en');
         $this->assertEquals('1234', $linput);
 
-        
         //retest for a new object with the new definition with a default value
         $items = new Fieldcollection();
         $item1 = new FieldCollection\Data\Unittestfieldcollection();
