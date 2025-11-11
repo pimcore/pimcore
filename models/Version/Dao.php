@@ -140,9 +140,9 @@ class Dao extends Model\Dao\AbstractDao
                 $limit = 1000;
                 $offset = 0;
                 $versionIds = [];
-                $countsPerCid = [];
                 
                 do {
+                    $countsPerCid = [];
                     $sql = '
                         SELECT cid, id
                         FROM (
@@ -167,9 +167,9 @@ class Dao extends Model\Dao\AbstractDao
                     }
                     
                     foreach ($countsPerCid as $cid => $countPerCid) {
-                        Logger::info($cid . ' (object ' . $countPerCid . ') Vcount ' . $countPerCid);
+                        Logger::info($cid . ' Vcount ' . $countPerCid);
                     }
-                    
+
                     $offset += $limit;
                     
                 } while (count($elementVersions) > 0);
