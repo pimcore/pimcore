@@ -140,6 +140,7 @@ class Dao extends Model\Dao\AbstractDao
                 $limit = 1000;
                 $offset = 0;
                 $versionIds = [];
+                $countsPerCid = [];
                 
                 do {
                     $sql = '
