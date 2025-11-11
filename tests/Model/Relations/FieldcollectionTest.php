@@ -286,8 +286,8 @@ class FieldcollectionTest extends ModelTestCase
         $fieldDefinitions = $definition->getFieldDefinitions();
         $children = $fieldDefinitions['localizedfields']->getChildren();
         foreach ($children as $index => $child) {
-            if ($child->getName() == 'title') {
-                $children[$index]->setDefaultValue('');
+            if ($child->getName() == 'linput') {
+                $children[$index]->setDefaultValue('1234');
             }
         }
         $fieldDefinitions['localizedfields']->setChildren($children);
