@@ -283,12 +283,15 @@ class FieldcollectionTest extends ModelTestCase
 
         // Add default value afterwards
         $definition = Definition::getByKey('unittestfieldcollection');
-        $children = $definition->getFieldDefinition('localizedfields')->getChildren();
+        $fieldDefinitions = $definition->getFieldDefinitions();
+        $children = $fieldDefinitions['localizedfields']->getChildren();
         foreach ($children as $index => $child) {
-            if ($child->getName() == 'linput') {
-                $children[$index]->setDefaultValue('1234');
+            if ($child->getName() == 'title') {
+                $children[$index]->setDefaultValue('');
             }
         }
+        $fieldDefinitions['localizedfields']->setChildren($children);
+        $definition->setFieldDefinitions($fieldDefinitions);
         $definition->save();
 
         // reload, resave and check
@@ -317,6 +320,20 @@ class FieldcollectionTest extends ModelTestCase
 
         //newly added with no values define taking default value
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(3);
+        $linput = $loadedFieldcollectionItem->getLinput('en');
+        $this->assertEquals('1234', $linput);
+
+        
+        //retest for a new object with the new definition with a default value
+        $items = new Fieldcollection();
+        $item1 = new FieldCollection\Data\Unittestfieldcollection();
+        $items->add($item1);
+
+        $object = TestHelper::createEmptyObject();
+        $object->setFieldcollection($items);
+        $object->save();
+
+        $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
         $linput = $loadedFieldcollectionItem->getLinput('en');
         $this->assertEquals('1234', $linput);
     }
