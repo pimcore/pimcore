@@ -204,7 +204,11 @@ class Dao extends Model\Dao\AbstractDao
                             if ($context['containerType'] === 'fieldcollection') {
                                 $isUpdate = true;
                             }
-                            $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => $isUpdate]);
+                            $fieldDefinitionParams = $this->getFieldDefinitionParams(
+                                $fieldName,
+                                $language,
+                                ['isUpdate' => $isUpdate]
+                            );
                             $insertData[$fd->getName()] = $fd->getDataForResource(
                                 $this->model->getLocalizedValue($fieldName, $language, true),
                                 $object,
