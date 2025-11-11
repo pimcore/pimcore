@@ -202,7 +202,7 @@ class Dao extends Model\Dao\AbstractDao
                         } else {
                             $isUpdate = $params['isUpdate'] ?? false;
                             if ($context['containerType'] === 'fieldcollection') {
-                                $isUpdate = true;
+                                $isUpdate = $this->model->getDirtyLanguages() === null;
                             }
                             $fieldDefinitionParams = $this->getFieldDefinitionParams(
                                 $fieldName,
