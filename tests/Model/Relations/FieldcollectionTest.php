@@ -254,7 +254,7 @@ class FieldcollectionTest extends ModelTestCase
 
         //null set manually
         $item3 = new FieldCollection\Data\Unittestfieldcollection();
-        $item1->setLinput(null, 'en');
+        $item3->setLinput(null, 'en');
 
         //save empty data for language "en"
         $items = new Fieldcollection();
