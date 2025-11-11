@@ -167,7 +167,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
                     
                     foreach ($countsPerCid as $cid => $countPerCid) {
-                        Logger::info($cid . ' Vcount ' . $countPerCid);
+                        Logger::info($elementType['elementType']. ' id: '. $cid . ' Vcount: ' . $countPerCid);
                     }
 
                     $offset += $limit;
