@@ -137,36 +137,41 @@ class Dao extends Model\Dao\AbstractDao
                 $versionIds = array_merge($versionIds, $tmpVersionIds);
             } else {
 
-                $sql = '
-                    SELECT cid,id
-                    FROM (
-                        SELECT id, cid,
-                               ROW_NUMBER() OVER (PARTITION BY cid ORDER BY id DESC) AS rownumber
-                        FROM versions
-                        WHERE ctype = ? AND public = 0 ' . $ignoreIdsQueryPart . '
-                    ) sub
-                    WHERE rownumber > ?
-                ';
-
-                $countsPerCid = [];
-                $elementVersions = $this->db->fetchAssociative(
-                    $sql,
-                    [$elementType['elementType'], $elementType['steps'] + 1]
-                );
-
-                foreach ($elementVersions as $versionInfo) {
-                    $cid = $versionInfo['cid'];
-                    if (!isset($countsPerCid[$cid])) {
-                        $countsPerCid[$cid] = 0;
+                $limit = 1000;
+                $offset = 0;
+                $versionIds = [];
+                
+                do {
+                    $sql = '
+                        SELECT cid, id
+                        FROM (
+                            SELECT id, cid,
+                                   ROW_NUMBER() OVER (PARTITION BY cid ORDER BY id DESC) AS rownumber
+                            FROM versions
+                            WHERE ctype = ? AND public = 0 ' . $ignoreIdsQueryPart . '
+                        ) sub
+                        WHERE rownumber > ?
+                        LIMIT ' . $limit . ' OFFSET ' . $offset . '
+                    ';
+                    
+                    $elementVersions = $this->db->fetchAllAssociative($sql, [$elementType['elementType'], $elementType['steps'] + 1]);
+                    
+                    foreach ($elementVersions as $versionInfo) {
+                        $cid = $versionInfo['cid'];
+                        if (!isset($countsPerCid[$cid])) {
+                            $countsPerCid[$cid] = 0;
+                        }
+                        $countsPerCid[$cid]++;
+                        $versionIds[] = $versionInfo['id'];
                     }
-                    $countsPerCid[$cid]++;
-
-                    $versionIds[] = $versionInfo['id'];
-                }
-
-                foreach ($countsPerCid as $cid => $countPerCid) {
-                    Logger::info($cid . '(object ' . $count . ') Vcount ' . $countPerCid);
-                }
+                    
+                    foreach ($countsPerCid as $cid => $countPerCid) {
+                        Logger::info($cid . ' (object ' . $countPerCid . ') Vcount ' . $countPerCid);
+                    }
+                    
+                    $offset += $limit;
+                    
+                } while (count($elementVersions) > 0);
             }
         }
 
