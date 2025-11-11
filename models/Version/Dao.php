@@ -143,6 +143,7 @@ class Dao extends Model\Dao\AbstractDao
                 
                 do {
                     $countsPerCid = [];
+                    
                     $sql = '
                         SELECT cid, id
                         FROM (
@@ -152,11 +153,20 @@ class Dao extends Model\Dao\AbstractDao
                             WHERE ctype = ? AND public = 0 ' . $ignoreIdsQueryPart . '
                         ) sub
                         WHERE rownumber > ?
-                        LIMIT ' . $limit . ' OFFSET ' . $offset . '
+                        LIMIT ? 
+                        OFFSET ?
                     ';
                     
-                    $elementVersions = $this->db->fetchAllAssociative($sql, [$elementType['elementType'], $elementType['steps'] + 1]);
-                    
+                    $elementVersions = $this->db->fetchAllAssociative(
+                        $sql,
+                        [
+                            $elementType['elementType'],
+                            $elementType['steps'] + 1,
+                            $limit,
+                            $offset,
+                        ]
+                    );
+                                        
                     foreach ($elementVersions as $versionInfo) {
                         $cid = $versionInfo['cid'];
                         if (!isset($countsPerCid[$cid])) {
