@@ -124,10 +124,7 @@ class Dao extends Model\Dao\AbstractDao
                     LEFT JOIN '. $elementType['elementType'] .'s AS element ON sub.cid = element.id
                     WHERE ctype = ?
                     AND public = 0 AND autosave = 0
-                    AND (
-                        element.id IS NULL OR
-                        element.modificationDate >= a.`date`
-                    )
+                    AND element.modificationDate >= a.`date`
                     AND `date` < ? AND AND IFNULL(active,  0) = 0',
                     [
                         $elementType['elementType'],
@@ -150,10 +147,7 @@ class Dao extends Model\Dao\AbstractDao
                     LEFT JOIN schedule_tasks ON sub.id = schedule_tasks.version
                     LEFT JOIN '. $elementType['elementType'] .'s AS element ON sub.cid = element.id
                     WHERE rownumber > ? AND IFNULL(active,  0) = 0
-                    AND (
-                        element.id IS NULL OR
-                        element.modificationDate >= sub.`date`
-                    )
+                    AND element.modificationDate >= sub.`date`
                 ';
 
                 $iterator = $this->db->iterateAssociative(
@@ -182,5 +176,27 @@ class Dao extends Model\Dao\AbstractDao
         Logger::info('return ' .  count($versionIds) . " ids\n");
 
         return array_map('intval', $versionIds);
+    }
+
+    public function getOrphanedVersions(array $elementTypes): array
+    {
+        $results = [];
+
+        foreach ($elementTypes as $elementType) {
+            $table = $elementType['elementType'] . 's';
+            $type = $elementType['elementType'];
+
+            $sql = "
+                SELECT versions.id, element.id AS element_id
+                FROM versions
+                LEFT JOIN {$table} AS element ON element.id = versions.cid
+                WHERE element.id IS NULL AND versions.ctype = :ctype
+            ";
+
+            $rows = $this->db->fetchAllAssociative($sql, ['ctype' => $type]);
+            $results = array_merge($results, $rows);
+        }
+
+        return $results;
     }
 }
