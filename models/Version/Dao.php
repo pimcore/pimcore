@@ -187,7 +187,7 @@ class Dao extends Model\Dao\AbstractDao
             $type = $elementType['elementType'];
 
             $sql = "
-                SELECT versions.id, element.id AS element_id
+                SELECT versions.id
                 FROM versions
                 LEFT JOIN {$table} AS element ON element.id = versions.cid
                 WHERE element.id IS NULL AND versions.ctype = :ctype
@@ -197,6 +197,6 @@ class Dao extends Model\Dao\AbstractDao
             $results = array_merge($results, $rows);
         }
 
-        return $results;
+        return array_column($results, 'id');
     }
 }
