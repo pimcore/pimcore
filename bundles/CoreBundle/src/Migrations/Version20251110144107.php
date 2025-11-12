@@ -26,15 +26,19 @@ final class Version20251110144107 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if (!$schema->getTable('gridconfigs')->hasColumn('shareBetweenFolders')) {
-            $this->addSql('ALTER TABLE gridconfigs ADD shareBetweenFolders TINYINT(1) NULL');
+        $table = $schema->getTable('gridconfigs');
+        if (!$table->hasColumn('shareBetweenFolders')) {
+            $table->addColumn('shareBetweenFolders', 'boolean', ['notnull' => false]);
+            $table->addIndex(['shareBetweenFolders'], 'shareBetweenFolders');
         }
     }
 
     public function down(Schema $schema): void
     {
-        if ($schema->getTable('gridconfigs')->hasColumn('shareBetweenFolders')) {
-            $this->addSql('ALTER TABLE gridconfigs DROP shareBetweenFolders');
+        $table = $schema->getTable('gridconfigs');
+        if ($table->hasColumn('shareBetweenFolders')) {
+            $table->dropIndex('shareBetweenFolders');
+            $table->dropColumn('shareBetweenFolders');
         }
     }
 }

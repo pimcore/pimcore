@@ -8,13 +8,15 @@ CREATE TABLE `assets` (
     `parentId` int(11) unsigned DEFAULT NULL,
     `type` varchar(20) DEFAULT NULL,
     `filename` varchar(255) CHARACTER
-        SET utf8 COLLATE utf8_bin DEFAULT '',
-    `path` varchar(765) CHARACTER
-        SET utf8 COLLATE utf8_bin DEFAULT NULL,
-        /* path in utf8 (3-byte) using the full key length of 3072 bytes */ 
-    `mimetype` varchar(190) DEFAULT NULL,
-    `creationDate` INT(11) UNSIGNED DEFAULT '0',
-    `modificationDate` INT(11) UNSIGNED DEFAULT '0',
+    SET
+        utf8 COLLATE utf8_bin DEFAULT '',
+        `path` varchar(765) CHARACTER
+    SET
+        utf8 COLLATE utf8_bin DEFAULT NULL,
+        /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+        `mimetype` varchar(190) DEFAULT NULL,
+        `creationDate` INT(11) UNSIGNED DEFAULT '0',
+        `modificationDate` INT(11) UNSIGNED DEFAULT '0',
         `dataModificationDate` INT(11) UNSIGNED DEFAULT NULL,
         `userOwner` int(11) unsigned DEFAULT NULL,
         `userModification` int(11) unsigned DEFAULT NULL,
@@ -121,7 +123,8 @@ CREATE TABLE `documents` (
         `path` varchar(765) CHARACTER
     SET
         utf8 COLLATE utf8_bin DEFAULT NULL,
-        /* path in utf8 (3-byte) using the full key length of 3072 bytes */ `index` int(11) unsigned DEFAULT '0',
+        /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+        `index` int(11) unsigned DEFAULT '0',
         `published` tinyint (1) unsigned DEFAULT '1',
         `creationDate` INT(11) UNSIGNED DEFAULT '0',
         `modificationDate` INT(11) UNSIGNED DEFAULT '0',
@@ -340,7 +343,8 @@ CREATE TABLE `objects` (
         `path` varchar(765) CHARACTER
     SET
         utf8 COLLATE utf8_bin DEFAULT NULL,
-        /* path in utf8 (3-byte) using the full key length of 3072 bytes */ `index` int(11) unsigned DEFAULT '0',
+        /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+        `index` int(11) unsigned DEFAULT '0',
         `published` tinyint (1) unsigned DEFAULT '1',
         `creationDate` INT(11) UNSIGNED DEFAULT '0',
         `modificationDate` INT(11) UNSIGNED DEFAULT '0',
@@ -371,7 +375,8 @@ CREATE TABLE `properties` (
     `cpath` varchar(765) CHARACTER
     SET
         utf8 COLLATE utf8_general_ci DEFAULT NULL,
-        /* path in utf8 (3-byte) using the full key length of 3072 bytes */ `name` varchar(190) NOT NULL DEFAULT '',
+        /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+        `name` varchar(190) NOT NULL DEFAULT '',
         `type` enum (
             'text',
             'document',
@@ -573,7 +578,8 @@ CREATE TABLE `users_workspaces_asset` (
     `cpath` varchar(765) CHARACTER
     SET
         utf8 COLLATE utf8_bin DEFAULT NULL,
-        /* path in utf8 (3-byte) using the full key length of 3072 bytes */ `userId` int(11) unsigned NOT NULL DEFAULT '0',
+        /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+        `userId` int(11) unsigned NOT NULL DEFAULT '0',
         `list` tinyint (1) DEFAULT '0',
         `view` tinyint (1) DEFAULT '0',
         `publish` tinyint (1) DEFAULT '0',
@@ -598,7 +604,8 @@ CREATE TABLE `users_workspaces_document` (
     `cpath` varchar(765) CHARACTER
     SET
         utf8 COLLATE utf8_bin DEFAULT NULL,
-        /* path in utf8 (3-byte) using the full key length of 3072 bytes */ `userId` int(11) unsigned NOT NULL DEFAULT '0',
+        /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+        `userId` int(11) unsigned NOT NULL DEFAULT '0',
         `list` tinyint (1) unsigned DEFAULT '0',
         `view` tinyint (1) unsigned DEFAULT '0',
         `save` tinyint (1) unsigned DEFAULT '0',
@@ -625,7 +632,8 @@ CREATE TABLE `users_workspaces_object` (
     `cpath` varchar(765) CHARACTER
     SET
         utf8 COLLATE utf8_bin DEFAULT NULL,
-        /* path in utf8 (3-byte) using the full key length of 3072 bytes */ `userId` int(11) unsigned NOT NULL DEFAULT '0',
+        /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+        `userId` int(11) unsigned NOT NULL DEFAULT '0',
         `list` tinyint (1) unsigned DEFAULT '0',
         `view` tinyint (1) unsigned DEFAULT '0',
         `save` tinyint (1) unsigned DEFAULT '0',
@@ -823,7 +831,8 @@ CREATE TABLE `gridconfigs` (
     INDEX `ownerId` (`ownerId`),
     INDEX `classId` (`classId`),
     INDEX `searchType` (`searchType`),
-    INDEX `shareGlobally` (`shareGlobally`)
+    INDEX `shareGlobally` (`shareGlobally`),
+    INDEX `shareBetweenFolders` (`shareBetweenFolders`)
 ) DEFAULT CHARSET = utf8mb4;
 
 ;
@@ -924,7 +933,8 @@ CREATE TABLE `object_url_slugs` (
     `ownername` VARCHAR(70) NOT NULL DEFAULT '',
     `position` VARCHAR(70) NOT NULL DEFAULT '0',
     `slug` varchar(765) NOT NULL,
-    /* slug in utf8mb4 (4-byte) using the full key length of 3072 bytes */ `siteId` INT(11) NOT NULL DEFAULT '0',
+    /* slug in utf8mb4 (4-byte) using the full key length of 3072 bytes */
+    `siteId` INT(11) NOT NULL DEFAULT '0',
     PRIMARY KEY (`slug`, `siteId`),
     INDEX `objectId` (`objectId`),
     INDEX `classId` (`classId`),
