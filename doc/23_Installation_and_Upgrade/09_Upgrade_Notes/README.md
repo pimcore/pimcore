@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 12.3.0
+### [General]
+#### [Database]
+- Add column `shareBetweenFolders` to `gridconfigs` table
+
 ## Pimcore 12.2.0
 
 #### [Security]
