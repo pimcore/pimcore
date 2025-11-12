@@ -40,7 +40,7 @@ class MailLogsFolderStructureCommand extends AbstractCommand
 {
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('Migrating mail logs ...');
+        $output->writeln('Migrating mail logs to the new folder structure (YYYY/MM/DD/<filename>)...');
         $this->doMigrateStorage($output);
         $output->writeln("\n<info>Successfully moved log files to new folder structure</info>\n");
 
