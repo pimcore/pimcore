@@ -8,14 +8,13 @@ CREATE TABLE `assets` (
     `parentId` int(11) unsigned DEFAULT NULL,
     `type` varchar(20) DEFAULT NULL,
     `filename` varchar(255) CHARACTER
-    SET
-        utf8 COLLATE utf8_bin DEFAULT '',
-        `path` varchar(765) CHARACTER
-    SET
-        utf8 COLLATE utf8_bin DEFAULT NULL,
-        /* path in utf8 (3-byte) using the full key length of 3072 bytes */ `mimetype` varchar(190) DEFAULT NULL,
-        `creationDate` INT(11) UNSIGNED DEFAULT '0',
-        `modificationDate` INT(11) UNSIGNED DEFAULT '0',
+        SET utf8 COLLATE utf8_bin DEFAULT '',
+    `path` varchar(765) CHARACTER
+        SET utf8 COLLATE utf8_bin DEFAULT NULL,
+        /* path in utf8 (3-byte) using the full key length of 3072 bytes */ 
+    `mimetype` varchar(190) DEFAULT NULL,
+    `creationDate` INT(11) UNSIGNED DEFAULT '0',
+    `modificationDate` INT(11) UNSIGNED DEFAULT '0',
         `dataModificationDate` INT(11) UNSIGNED DEFAULT NULL,
         `userOwner` int(11) unsigned DEFAULT NULL,
         `userModification` int(11) unsigned DEFAULT NULL,
