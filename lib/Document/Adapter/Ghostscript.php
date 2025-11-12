@@ -33,6 +33,8 @@ class Ghostscript extends Adapter
 
     private ?string $version = null;
 
+    private bool $useCropBox = false;
+
     public function isAvailable(): bool
     {
         try {
@@ -173,7 +175,20 @@ class Ghostscript extends Adapter
     {
         try {
             $localFile = self::getLocalFileFromStream($this->getPdf());
-            $cmd = [self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dFirstPage=' . $page, '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r'. $resolution, '-o', $imageTargetPath, $localFile];
+            $cmd = [
+                static::getGhostscriptCli(),
+                '-sDEVICE=pngalpha',
+                '-dFirstPage=' . $page,
+                '-dLastPage=' . $page,
+                '-dTextAlphaBits=4',
+                '-dGraphicsAlphaBits=4',
+                ...($this->isUseCropBox() ? ['-dUseCropBox'] : []),
+                '-r' . $resolution,
+                '-o',
+                $imageTargetPath,
+                $localFile,
+            ];
+
             Console::addLowProcessPriority($cmd);
             $process = new Process($cmd);
             $process->setTimeout(240);
@@ -267,6 +282,16 @@ class Ghostscript extends Adapter
         unlink($textFile);
 
         return $text;
+    }
+
+    public function isUseCropBox(): bool
+    {
+        return $this->useCropBox;
+    }
+
+    public function setUseCropBox(bool $useCropBox): void
+    {
+        $this->useCropBox = $useCropBox;
     }
 
     protected function getTemporaryPdfStorageFilePath(Asset $asset): string
