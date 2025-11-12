@@ -99,7 +99,9 @@ class VersionsCleanupTask implements TaskInterface
 
         foreach ($orphanVersions as $versionId) {
             $version = Version::getById($versionId);
-            $this->logger->debug('delete version (' . $versionId . ") because the corresponding element doesn't exist anymore");
+            $this->logger->debug(
+                'delete version (' . $versionId . ") because the corresponding element doesn't exist anymore"
+            );
             $version->delete();
         }
 
