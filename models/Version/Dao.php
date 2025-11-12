@@ -111,45 +111,52 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return int[]
      */
-    public function maintenanceGetOutdatedVersions(array $elementTypes, array $ignoreIds = []): array
+    public function maintenanceGetOutdatedVersions(array $elementTypes): array
     {
-        $ignoreIdsQueryPart = '';
-        if (!empty($ignoreIds)) {
-            $ignoreIdsList = implode(',', $ignoreIds);
-            $ignoreIdsQueryPart = ' AND id NOT IN (' . $ignoreIdsList . ')';
-            Logger::debug("ignore ID's: " . $ignoreIdsList);
-        }
-
         $versionIds = [];
-        $count = 0;
 
         foreach ($elementTypes as $elementType) {
             if (isset($elementType['days'])) {
                 // by days
                 $deadline = time() - ($elementType['days'] * 86400);
                 $tmpVersionIds = $this->db->fetchFirstColumn(
-                    'SELECT id FROM versions AS a
+                    'SELECT a.id as id FROM versions AS a
+                    LEFT JOIN schedule_tasks ON a.id = schedule_tasks.version
+                    LEFT JOIN '. $elementType['elementType'] .'s AS element ON sub.cid = element.id
                     WHERE ctype = ?
-                    AND public = 0 ' . $ignoreIdsQueryPart . '
-                    AND date < ?',
-                    [$elementType['elementType'], $deadline]
+                    AND public = 0 AND autosave = 0
+                    AND (
+                        element.id IS NULL OR
+                        element.modificationDate >= a.`date`
+                    )
+                    AND `date` < ? AND AND IFNULL(active,  0) = 0',
+                    [
+                        $elementType['elementType'],
+                        $deadline
+                    ]
                 );
                 $versionIds = array_merge($versionIds, $tmpVersionIds);
             } else {
                 $versionIds = [];
                 $countsPerCid = [];
-                
+
                 $sql = '
-                    SELECT cid, id
+                    SELECT sub.cid as cid, sub.id as id, sub.`date`
                     FROM (
-                        SELECT id, cid,
+                        SELECT id, cid, versions.`date`,
                                ROW_NUMBER() OVER (PARTITION BY cid ORDER BY id DESC) AS rownumber
                         FROM versions
-                        WHERE ctype = ? AND public = 0 ' . $ignoreIdsQueryPart . '
+                        WHERE ctype = ? AND public = 0 AND autosave = 0
                     ) sub
-                    WHERE rownumber > ?
+                    LEFT JOIN schedule_tasks ON sub.id = schedule_tasks.version
+                    LEFT JOIN '. $elementType['elementType'] .'s AS element ON sub.cid = element.id
+                    WHERE rownumber > ? AND IFNULL(active,  0) = 0
+                    AND (
+                        element.id IS NULL OR
+                        element.modificationDate >= sub.`date`
+                    )
                 ';
-                
+
                 $iterator = $this->db->iterateAssociative(
                     $sql,
                     [
@@ -157,7 +164,7 @@ class Dao extends Model\Dao\AbstractDao
                         $elementType['steps'] + 1,
                     ]
                 );
-                
+
                 foreach ($iterator as $versionInfo) {
                     $cid = $versionInfo['cid'];
                     if (!isset($countsPerCid[$cid])) {
@@ -166,7 +173,7 @@ class Dao extends Model\Dao\AbstractDao
                     $countsPerCid[$cid]++;
                     $versionIds[] = $versionInfo['id'];
                 }
-                
+
                 foreach ($countsPerCid as $cid => $countPerCid) {
                     Logger::info($elementType['elementType'] . ' id: ' . $cid . ' Vcount: ' . $countPerCid);
                 }
