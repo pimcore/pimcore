@@ -107,7 +107,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param list<array{elementType: string, days?: int, steps?: int}> $elementTypes
-     * @param int[] $ignoreIds
      *
      * @return int[]
      */
