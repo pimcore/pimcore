@@ -26,6 +26,6 @@ class VideoConvertHandler
 {
     public function __invoke(VideoConvertMessage $message): void
     {
-        Processor::execute($message->getProcessId());
+        Processor::execute($message->getProcessId(), $message->getAssetId());
     }
 }
