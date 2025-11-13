@@ -199,4 +199,15 @@ class Dao extends Model\Dao\AbstractDao
 
         return array_column($results, 'id');
     }
+
+    public function deleteVersionsByIds(array $ids, int $chunkSize = 1000){
+        $idChunks = array_chunk($ids, $chunkSize);
+
+        foreach ($idChunks as $chunk) {
+            $versionIds = implode(',', $chunk);
+
+            $query = "DELETE FROM versions WHERE id IN ($versionIds)";
+            $this->db->executeQuery($query, $chunk);
+        }
+    }
 }

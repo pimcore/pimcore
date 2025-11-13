@@ -97,14 +97,17 @@ class VersionsCleanupTask implements TaskInterface
         // Delete orphan versions
         $orphanVersions = $dao->getOrphanedVersions($elementTypes);
 
-        foreach ($orphanVersions as $versionId) {
-            $version = Version::getById($versionId);
-            $this->logger->debug(
-                'delete version (' . $versionId . ") because the corresponding element doesn't exist anymore"
-            );
-            $version->delete();
+        if ($tConf['disable_events']) {
+            $dao->deleteVersionsByIds($orphanVersions);
+        } else {
+            foreach ($orphanVersions as $versionId) {
+                $version = Version::getById($versionId);
+                $this->logger->debug(
+                    'delete version (' . $versionId . ") because the corresponding element doesn't exist anymore"
+                );
+                $version->delete();
+            }
         }
-
         $versions = $dao->maintenanceGetOutdatedVersions($elementTypes);
         $totalVersions =  count($versions);
         if ($totalVersions === 0) {
@@ -113,9 +116,13 @@ class VersionsCleanupTask implements TaskInterface
 
         $this->logger->debug('versions to check: ' . $totalVersions);
 
-        foreach ($versions as $index => $id) {
-            $version = Version::getById($id);
-            $version->delete();
+        if ($tConf['disable_events']) {
+            $dao->deleteVersionsByIds($orphanVersions);
+        } else {
+            foreach ($versions as $id) {
+                $version = Version::getById($id);
+                $version->delete();
+            }
         }
     }
 }
