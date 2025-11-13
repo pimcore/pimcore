@@ -17,6 +17,7 @@ use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Version;
 
 /**
  * @internal
@@ -200,14 +201,26 @@ class Dao extends Model\Dao\AbstractDao
         return array_column($results, 'id');
     }
 
-    public function deleteVersionsByIds(array $ids, int $chunkSize = 1000){
-        $idChunks = array_chunk($ids, $chunkSize);
+    public function deleteVersions(array $ids, array $elementTypes, int $chunkSize = 1000){
 
-        foreach ($idChunks as $chunk) {
-            $versionIds = implode(',', $chunk);
+        foreach ($elementTypes as $elementType) {
+            if ($elementType['disable_events']) {
+                $idChunks = array_chunk($ids, $chunkSize);
 
-            $query = "DELETE FROM versions WHERE id IN ($versionIds)";
-            $this->db->executeQuery($query, $chunk);
+                foreach ($idChunks as $chunk) {
+                    $versionIds = implode(',', $chunk);
+
+                    $query = "DELETE FROM versions WHERE id IN ($versionIds)";
+                    $this->db->executeQuery($query);
+                }
+            } else {
+                foreach ($ids as $id) {
+                    $version = Version::getById($id);
+                    if ($version) {
+                        $version->delete();
+                    }
+                }
+            }
         }
     }
 }
