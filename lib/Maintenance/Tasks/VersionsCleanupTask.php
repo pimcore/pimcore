@@ -98,6 +98,8 @@ class VersionsCleanupTask implements TaskInterface
         // Delete orphan versions
         $orphanVersions = $dao->getOrphanedVersions($elementTypes);
         $dao->deleteVersions($orphanVersions, $elementTypes);
+
+        // Delete outdated versions
         $versions = $dao->maintenanceGetOutdatedVersions($elementTypes);
         $totalVersions =  count($versions);
         if ($totalVersions === 0) {
