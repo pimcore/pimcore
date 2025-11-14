@@ -28,9 +28,9 @@ interface PreviewGeneratorInterface
 
     /**
      * @return list<array{
-     *     name: string, 
-     *     label: string, 
-     *     values: array<string, int|string>, 
+     *     name: string,
+     *     label: string,
+     *     values: array<string, int|string>,
      *     defaultValue: int|string|null,
      * }>
      */
