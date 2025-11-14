@@ -27,7 +27,12 @@ interface PreviewGeneratorInterface
     public function generatePreviewUrl(Concrete $object, array $params): string;
 
     /**
-     * @return list<array{name: string, label: string, values: array<string, int|string>, defaultValue: int|string|null}>
+     * @return list<array{
+     *     name: string, 
+     *     label: string, 
+     *     values: array<string, int|string>, 
+     *     defaultValue: int|string|null,
+     * }>
      */
     public function getPreviewConfig(Concrete $object): array;
 }
