@@ -5,23 +5,18 @@ on:
     branches:
       - "[0-9]+.[0-9]+"
       - "[0-9]+.x"
-      - "reusable-workflows"
+      - "docs_actions"
     paths:
       - "doc/**"
-      - ".github/workflows/docs.yaml"
-      - ".github/workflows/docs.yml"
       - ".github/workflows/new-docs.yml"
       - "README.md"
   push:
     branches:
       - "[0-9]+.[0-9]+"
       - "[0-9]+.x"
-      - "*_actions"
-      - "reusable-workflows"
+      - "docs_actions"
     paths:
       - "doc/**"
-      - ".github/workflows/docs.yaml"
-      - ".github/workflows/docs.yml"
       - ".github/workflows/new-docs.yml"
       - "README.md"
 
