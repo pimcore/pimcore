@@ -24,6 +24,7 @@ use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Lock\LockFactory;
 
@@ -31,7 +32,8 @@ class StaticPageGenerator
 {
     public function __construct(
         protected DocumentRendererInterface $documentRenderer,
-        private LockFactory $lockFactory
+        private LockFactory $lockFactory,
+        protected SystemSettingsConfig $settingsConfig
     ) {
     }
 
