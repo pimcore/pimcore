@@ -297,9 +297,11 @@ class FieldcollectionTest extends ModelTestCase
         // reload, resave and check
         $object = DataObject::getById($object->getId(), ['force' => true]);
 
+        $items = $object->getFieldcollection();
         // add a ex-novo item that should have default value
         $item4 = new FieldCollection\Data\Unittestfieldcollection();
         $items->add($item4);
+        $object->setFieldcollection($items);
         $object->save();
         $object = DataObject::getById($object->getId(), ['force' => true]);
 
