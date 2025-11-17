@@ -111,10 +111,7 @@ class StaticPageGenerator
 
         if ($params['is_cli'] ?? false) {
             $lock->release();
-
-            if ($this->kernel->getContainer()->has('services_resetter')) {
-                $this->kernel->getContainer()->get('services_resetter')->reset();
-            }
+            $this->kernel->getContainer()->get('services_resetter')?->reset();
         }
 
         return true;
