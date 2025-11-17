@@ -30,6 +30,7 @@ use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Db\Helper;
 use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
@@ -567,7 +568,7 @@ class SearchController extends UserAwareController
     public function quickSearchByIdAction(Request $request, Config $config): JsonResponse
     {
         $type = $request->query->getString('type');
-        $id = $request->query->getInt('id');
+        $id = ParameterBagHelper::getInt($request->query, 'id');
         $searcherList = new Data\Listing();
 
         $searcherList->addConditionParam('id = :id', ['id' => $id]);

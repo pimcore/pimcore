@@ -324,7 +324,7 @@ class Select extends Data implements
         }
 
         if ($operator === '=') {
-            $quotedValue = $db->quote($value);
+            $quotedValue = $db->quote((string) $value);
 
             return $key . ' = ' . $quotedValue . ' ';
         }
