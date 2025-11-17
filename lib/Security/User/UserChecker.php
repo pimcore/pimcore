@@ -39,6 +39,7 @@ class UserChecker extends InMemoryUserChecker
     {
         $this->checkValidUser($user);
 
+        /** @var User $user */
         $pimcoreUser = $user->getUser();
         $pimcoreUser->setLastLoginDate(); //set user current login date
 
