@@ -18,23 +18,20 @@ declare(strict_types=1);
 namespace Pimcore\Document;
 
 use Exception;
+use Pimcore;
 use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
-use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool\Storage;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Lock\LockFactory;
 
 class StaticPageGenerator
 {
     public function __construct(
         protected DocumentRendererInterface $documentRenderer,
-        private LockFactory $lockFactory,
-        protected SystemSettingsConfig $settingsConfig,
-        protected KernelInterface $kernel
+        private LockFactory $lockFactory
     ) {
     }
 
@@ -111,7 +108,7 @@ class StaticPageGenerator
 
         if ($params['is_cli'] ?? false) {
             $lock->release();
-            $this->kernel->getContainer()->get('services_resetter')?->reset();
+            Pimcore::getKernel()->getContainer()->get('services_resetter')?->reset();
         }
 
         return true;
