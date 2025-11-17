@@ -110,7 +110,7 @@ class StaticPageGenerator
 
         if ($params['is_cli'] ?? false) {
             $lock->release();
-            Pimcore::getKernel()->getContainer()->get('services_resetter')?->reset();
+            Pimcore::getKernel()->getContainer()->get('services_resetter')->reset();
         }
 
         return true;
