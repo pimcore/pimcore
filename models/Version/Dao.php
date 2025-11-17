@@ -201,7 +201,8 @@ class Dao extends Model\Dao\AbstractDao
         return array_column($results, 'id');
     }
 
-    public function deleteVersions(array $ids, array $elementTypes, int $chunkSize = 1000){
+    public function deleteVersions(array $ids, array $elementTypes, int $chunkSize = 1000): void
+    {
 
         foreach ($elementTypes as $elementType) {
             if ($elementType['disable_events']) {
