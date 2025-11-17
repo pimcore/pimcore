@@ -159,7 +159,7 @@ class Processor
         $instance->save();
 
         Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-            new VideoConvertMessage($instance->getProcessId())
+            new VideoConvertMessage($instance->getProcessId(), $asset->getId())
         );
 
         return $instance;
@@ -192,12 +192,32 @@ class Processor
         }
     }
 
-    public static function execute(string $processId): void
+    public static function execute(string $processId, ?int $assetId = null): void
     {
         $instance = new self();
         $instance->setProcessId($processId);
 
         $instanceItem = TmpStore::get($instance->getJobStoreId($processId));
+
+        if (!$instanceItem) {
+            Logger::error('Video conversion job with processId "' . $processId . '" not found in TmpStore.');
+            if ($assetId) {
+                $asset = Model\Asset::getById($assetId);
+                $customSetting = $asset->getCustomSetting('thumbnails');
+                $customSetting = is_array($customSetting) ? $customSetting : [];
+                if (array_key_exists($instance->getConfig()->getName(), $customSetting)) {
+                    $customSetting[$instance->getConfig()->getName()]['status'] = 'error';
+                    $asset->setCustomSetting('thumbnails', $customSetting);
+
+                    Model\Version::disable();
+                    $asset->save();
+                    Model\Version::enable();
+                }
+            }
+
+            return;
+        }
+
         /**
          * @var self $instance
          */
