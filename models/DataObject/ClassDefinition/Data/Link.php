@@ -38,6 +38,26 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @var null|string[]
      */
+    public ?array $allowedAssetSubtypes = null;
+
+    /**
+     * @var null|string[]
+     */
+    public ?array $allowedDocumentSubtypes = null;
+
+    /**
+     * @var null|string[]
+     */
+    public ?array $allowedObjectSubtypes = null;
+
+    /**
+     * @var null|string[]
+     */
+    public ?array $allowedClasses = null;
+
+    /**
+     * @var null|string[]
+     */
     public ?array $allowedTargets = null;
 
     /**
@@ -414,6 +434,86 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function setAllowedTypes(?array $allowedTypes): static
     {
         $this->allowedTypes = $allowedTypes;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedAssetSubtypes(): ?array
+    {
+        return $this->allowedAssetSubtypes;
+    }
+
+    /**
+     * @param null|string[] $allowedAssetSubtypes
+     *
+     * @return $this
+     */
+    public function setAllowedAssetSubtypes(?array $allowedAssetSubtypes): static
+    {
+        $this->allowedAssetSubtypes = $allowedAssetSubtypes;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedDocumentSubtypes(): ?array
+    {
+        return $this->allowedDocumentSubtypes;
+    }
+
+    /**
+     * @param null|string[] $allowedDocumentSubtypes
+     *
+     * @return $this
+     */
+    public function setAllowedDocumentSubtypes(?array $allowedDocumentSubtypes): static
+    {
+        $this->allowedDocumentSubtypes = $allowedDocumentSubtypes;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedObjectSubtypes(): ?array
+    {
+        return $this->allowedObjectSubtypes;
+    }
+
+    /**
+     * @param null|string[] $allowedObjectSubtypes
+     *
+     * @return $this
+     */
+    public function setAllowedObjectSubtypes(?array $allowedObjectSubtypes): static
+    {
+        $this->allowedObjectSubtypes = $allowedObjectSubtypes;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedClasses(): ?array
+    {
+        return $this->allowedClasses;
+    }
+
+    /**
+     * @param null|string[] $allowedClasses
+     *
+     * @return $this
+     */
+    public function setAllowedClasses(?array $allowedClasses): static
+    {
+        $this->allowedClasses = $allowedClasses;
 
         return $this;
     }
