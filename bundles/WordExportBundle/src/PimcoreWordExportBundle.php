@@ -18,11 +18,23 @@ use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
 use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
+/**
+ * @deprecated version 12.3
+ */
 class PimcoreWordExportBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
 {
     use BundleAdminClassicTrait;
     use PackageVersionTrait;
 
+    public function __construct()
+    {
+        trigger_deprecation(
+            'pimcore/word-export-bundle',
+            '12.3',
+            'The WordExportBundle is deprecated and will be discontinued with Pimcore Studio.'
+        );
+    }
+    
     public function getCssPaths(): array
     {
         return [

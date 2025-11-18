@@ -1,6 +1,14 @@
 ![Pimcore - Own the digital World](./doc/img/logo-readme.svg)
   
-  
+> [!WARNING]
+> The following bundles won't be migrated to Pimcore Studio and therefore will be deprecated with 12.3.
+> - GlossaryBundle
+> - SeoBundle
+> - SimpleBackendSearchBundle
+> - StaticRoutesBundle
+> - WordExportBundle
+> - XliffBundle
+
 Pimcore Core Framework - Open Core Data & Experience Management Platform: PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce
 
 [![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
