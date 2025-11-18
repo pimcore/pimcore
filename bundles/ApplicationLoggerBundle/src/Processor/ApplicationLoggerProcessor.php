@@ -23,7 +23,7 @@ use Pimcore\Model\Document;
 
 /**
  * Make sure you add this processor when using the ApplicationLoggerDb handler as is
- * prepares data to be written by the handler. This replicates the functionalty implemented
+ * prepares data to be written by the handler. This replicates the functionality implemented
  * in ApplicationLogger, but makes it available when using the ApplicationLoggerDb handler
  * in a pure PSR-3 handler context configured as monolog channel handler instead of
  * the ApplicationLogger class.
