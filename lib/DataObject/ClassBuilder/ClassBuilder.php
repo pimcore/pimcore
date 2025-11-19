@@ -69,6 +69,7 @@ class ClassBuilder implements ClassBuilderInterface
         $cd .= "\n\n";
         $cd .= "/**\n";
         $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst($classDefinition->getName()).'\Listing getList(array $config = [])'."\n";
+        $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst($classDefinition->getName()).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst($classDefinition->getName()).'|null getByKey(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)'."\n";
 
         foreach ($classDefinition->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition instanceof ClassDefinition\Data\Localizedfields) {
