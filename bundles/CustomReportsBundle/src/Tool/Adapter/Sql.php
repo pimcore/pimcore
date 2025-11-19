@@ -150,6 +150,8 @@ class Sql extends AbstractAdapter
                 }
                 $value = strtotime($value);
             }
+            
+            $value = (string) $value;
 
             switch ($operator) {
                 case 'like':
@@ -170,19 +172,19 @@ class Sql extends AbstractAdapter
                         $condition[] = $db->quoteIdentifier(
                             $filter['property']) .
                             ' BETWEEN ' .
-                            $db->quote((string)$value) .
+                            $db->quote($value) .
                             ' AND ' .
                             $db->quote((string)$maxValue);
 
                         break;
                     }
                     $fields[] = $filter['property'];
-                    $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote((string)$value);
+                    $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);
 
                     break;
                 case '=':
                     $fields[] = $filter['property'];
-                    $condition[] = $db->quoteIdentifier($filter['property']) . ' = ' . $db->quote((string)$value);
+                    $condition[] = $db->quoteIdentifier($filter['property']) . ' = ' . $db->quote($value);
 
                     break;
             }
