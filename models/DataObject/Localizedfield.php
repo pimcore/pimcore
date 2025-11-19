@@ -95,6 +95,13 @@ final class Localizedfield extends Model\AbstractModel implements
     protected ?array $dirtyLanguages = null;
 
     /**
+     * whether this is entry is an update or not, useful for defining a default value
+     *
+     * @internal
+     */
+    protected bool $isUpdate = false;
+
+    /**
      * @internal
      */
     protected bool $_loadedAllLazyData = false;
@@ -781,9 +788,21 @@ final class Localizedfield extends Model\AbstractModel implements
         $dirtyLanguages = $this->getDirtyLanguages();
         $this->setObject($object);
         if (is_array($dirtyLanguages)) {
+            // it might be an empty array when adding emptyish localized data
+            $this->isUpdate = false;
             $this->markLanguagesAsDirty($dirtyLanguages);
         } else {
+            // there are no dirty languages detected, so it's loading from existing data
+            $this->isUpdate = true;
             $this->resetLanguageDirtyMap();
         }
+    }
+
+    /**
+     * @internal
+     */
+    public function isUpdate(): bool
+    {
+        return $this->isUpdate;
     }
 }
