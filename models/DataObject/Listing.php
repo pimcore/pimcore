@@ -21,6 +21,7 @@ use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Model\DataObject[] load()
+ * @method Model\DataObject[] getData()
  * @method Model\DataObject|false current()
  * @method int getTotalCount()
  * @method int getCount()
@@ -34,11 +35,20 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     protected array $objectTypes = [Model\DataObject::OBJECT_TYPE_OBJECT, Model\DataObject::OBJECT_TYPE_VARIANT, Model\DataObject::OBJECT_TYPE_FOLDER];
 
+
+    /**
+     * @return Model\DataObject[]
+     */
     public function getObjects(): array
     {
         return $this->getData();
     }
 
+    /**
+     * @param Model\DataObject[] $objects
+     *
+     * @return $this
+     */
     public function setObjects(array $objects): static
     {
         return $this->setData($objects);
@@ -49,6 +59,9 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
         return $this->unpublished;
     }
 
+    /**
+     * @return $this
+     */
     public function setUnpublished(bool $unpublished): static
     {
         $this->setData(null);
@@ -58,6 +71,9 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setObjectTypes(array $objectTypes): static
     {
         $this->setData(null);
