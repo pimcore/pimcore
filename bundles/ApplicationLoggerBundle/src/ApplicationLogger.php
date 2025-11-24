@@ -317,7 +317,7 @@ class ApplicationLogger implements LoggerInterface
         $this->log($level, $message, $context);
     }
 
-    public function logException(string $message, Throwable $exceptionObject, ?string $priority = 'alert', ?\Pimcore\Model\DataObject\AbstractObject $relatedObject = null, ?string $component = null): void
+    public function logException(string $message, Throwable $exceptionObject, ?string $priority = 'alert', \Pimcore\Model\DataObject\AbstractObject|\Pimcore\Model\Asset|null $relatedObject = null, ?string $component = null): void
     {
         if (is_null($priority)) {
             $priority = 'alert';
