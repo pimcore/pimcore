@@ -343,7 +343,7 @@ class ApplicationLogger implements LoggerInterface
         string $message,
         Throwable $exception,
         int|string|Level $level = Level::Alert,
-        ?\Pimcore\Model\DataObject\AbstractObject $relatedObject = null,
+        \Pimcore\Model\DataObject\AbstractObject|\Pimcore\Model\Asset|null $relatedObject = null
         array $context = []
     ): void {
         $message .= ' : ' . $exception->getMessage();
