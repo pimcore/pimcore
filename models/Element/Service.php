@@ -1127,6 +1127,16 @@ class Service extends Model\AbstractModel
                 ),
                 new PimcoreClassDefinitionMatcher(Data\CustomDataCopyInterface::class)
             );
+
+            $deepCopy->prependTypeFilter(
+                new class implements TypeFilter {
+                    public function apply($element): CarbonPeriod
+                    {
+                        return CarbonPeriod::instance($element);
+                    }
+                },
+                new TypeMatcher(CarbonPeriod::class),
+            );
         }
 
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('dao'));
