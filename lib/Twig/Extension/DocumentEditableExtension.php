@@ -43,6 +43,9 @@ class DocumentEditableExtension extends AbstractExtension
                 'is_safe' => ['html'],
             ]),
             new TwigFunction('pimcore_iterate_block', [$this, 'getBlockIterator']),
+            new TwigFunction('pimcoreblock_count', [$this, 'getBlockCount'],[
+                'needs_context' => true
+            ]),
         ];
 
         // @phpstan-ignore-next-line those are just for auto-complete, not nice, but works ;-)
@@ -96,6 +99,16 @@ class DocumentEditableExtension extends AbstractExtension
     public function getBlockIterator(BlockInterface $block): Generator
     {
         return $block->getIterator();
+    }
+
+    /**
+     * @internal
+     *
+     */
+    public function getBlockCount(array $context, string $name): int
+    {
+        $block = $this->renderEditable($context, 'block', $name);
+        return $block->getCount();
     }
 
     public function getTokenParsers(): array

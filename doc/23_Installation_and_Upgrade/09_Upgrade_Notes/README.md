@@ -8,6 +8,7 @@
 -   Added possibility to `pimcore:classificationstore:delete-store` to pass `--inactive-only` flag to only delete inactive (soft deleted from UI) classification stores Keys.
 -   Added a new command `pimcore:migrate:mail-logs-folder-structure` to migrate all mail log files to a new folder structure (YYYY/MM/DD/\<log filename\>).
 -   Added a thumbnail setting option to use Crop Box (the visible area), instead of Media Box when converting documents via Ghostscript. 
+-   Added the Twig function `pimcoreblock_count(blockname)` to get the count for `pimcoreblock` editable.
 
 ### Deprecations
 
