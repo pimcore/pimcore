@@ -78,7 +78,7 @@ final class ManualBlockParser extends AbstractTokenParser
         return $token->test('endpimcoremanualblock');
     }
 
-    public function getTag()
+    public function getTag(): string
     {
         return 'pimcoremanualblock';
     }
