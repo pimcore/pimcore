@@ -61,10 +61,10 @@ And in the frontend of the application:
 ### Example for getting the count or check if is empty
 
 ```twig
-{% if pimcoreblock_count("contentblock") == 0 %}
+{% if pimcore_count_block("contentblock") == 0 %}
     block is empty
 {% else %}
-    block has {{pimcoreblock_count("contentblock")}} items
+    block has {{pimcore_count_block("contentblock")}} items
 {% endif %}
 ```
 

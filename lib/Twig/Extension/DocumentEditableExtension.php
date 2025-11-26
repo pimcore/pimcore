@@ -45,7 +45,7 @@ class DocumentEditableExtension extends AbstractExtension
             ]),
             new TwigFunction('pimcore_iterate_block', [$this, 'getBlockIterator']),
             new TwigFunction(
-                'pimcoreblock_count',
+                'pimcore_count_block',
                 [$this, 'getBlockCount'],
                 ['needs_context' => true]
             ),
