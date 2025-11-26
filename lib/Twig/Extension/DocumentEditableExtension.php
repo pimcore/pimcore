@@ -44,9 +44,11 @@ class DocumentEditableExtension extends AbstractExtension
                 'is_safe' => ['html'],
             ]),
             new TwigFunction('pimcore_iterate_block', [$this, 'getBlockIterator']),
-            new TwigFunction('pimcoreblock_count', [$this, 'getBlockCount'],[
-                'needs_context' => true
-            ]),
+            new TwigFunction(
+                'pimcoreblock_count',
+                [$this, 'getBlockCount'],
+                ['needs_context' => true]
+            ),
         ];
 
         // @phpstan-ignore-next-line those are just for auto-complete, not nice, but works ;-)
@@ -79,7 +81,9 @@ class DocumentEditableExtension extends AbstractExtension
      *
      * @throws Exception
      */
-    public function renderEditable(array $context, string $type, string $name, array $options = []): string|EditableInterface
+    public function renderEditable(
+        array $context, string $type, string $name, array $options = []
+    ): string|EditableInterface
     {
         $document = $context['document'] ?? null;
         if (!($document instanceof PageSnippet)) {
