@@ -16,6 +16,7 @@ namespace Pimcore\Twig\Extension;
 use Exception;
 use Generator;
 use Pimcore\Model\Document\Editable\BlockInterface;
+use Pimcore\Model\Document\Editable\EditableInterface;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Twig\TokenParser\BlockParser;
@@ -78,7 +79,7 @@ class DocumentEditableExtension extends AbstractExtension
      *
      * @throws Exception
      */
-    public function renderEditable(array $context, string $type, string $name, array $options = []): string|\Pimcore\Model\Document\Editable\EditableInterface
+    public function renderEditable(array $context, string $type, string $name, array $options = []): string|EditableInterface
     {
         $document = $context['document'] ?? null;
         if (!($document instanceof PageSnippet)) {
@@ -108,7 +109,11 @@ class DocumentEditableExtension extends AbstractExtension
     public function getBlockCount(array $context, string $name): int
     {
         $block = $this->renderEditable($context, 'block', $name);
-        return $block->getCount();
+        if ($block instanceof EditableInterface) {
+            return $block->getCount();
+        } else {
+            return 0;
+        }
     }
 
     public function getTokenParsers(): array
