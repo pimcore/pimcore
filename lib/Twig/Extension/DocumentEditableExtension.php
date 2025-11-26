@@ -109,7 +109,7 @@ class DocumentEditableExtension extends AbstractExtension
     public function getBlockCount(array $context, string $name): int
     {
         $block = $this->renderEditable($context, 'block', $name);
-        if ($block instanceof EditableInterface) {
+        if ($block instanceof BlockInterface) {
             return $block->getCount();
         } else {
             return 0;
