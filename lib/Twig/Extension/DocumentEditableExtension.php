@@ -82,7 +82,10 @@ class DocumentEditableExtension extends AbstractExtension
      * @throws Exception
      */
     public function renderEditable(
-        array $context, string $type, string $name, array $options = []
+        array $context,
+        string $type,
+        string $name,
+        array $options = []
     ): string|EditableInterface
     {
         $document = $context['document'] ?? null;
