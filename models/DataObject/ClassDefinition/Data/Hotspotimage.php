@@ -95,7 +95,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
                 'crop' => $data->getCrop(),
             ];
 
-            $metaData = Serialize::serialize($metaData);
+            $metaData = $metaData ? Serialize::serialize($metaData) : null;
 
             return [
                 $this->getName() . '__image' => $imageId,
@@ -128,7 +128,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
             // check if the data is JSON (backward compatibility)
             $md = json_decode($metaData, true);
             if (!$md) {
-                $md = Serialize::unserialize($metaData);
+                $md = $metaData ? Serialize::unserialize($metaData) : [];
             } elseif (is_array($md)) {
                 $md['hotspots'] = $md;
             }
