@@ -130,25 +130,4 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
 
         return $inputDefinition;
     }
-
-    public function add(Command $command): ?Command
-    {
-        if ($command instanceof LazyCommand && str_starts_with($command->getName(), 'doctrine:')) {
-            $command = $command->getCommand();
-        }
-
-        if ($command instanceof DoctrineCommand) {
-            $definition = $command->getDefinition();
-
-            // add filter option
-            $definition->addOption(new InputOption(
-                'prefix',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Optional prefix filter for version classes, eg. Pimcore\Bundle\CoreBundle\Migrations'
-            ));
-        }
-
-        return parent::add($command);
-    }
 }
