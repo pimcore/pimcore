@@ -36,6 +36,13 @@ class BundleLocator implements BundleLocatorInterface
 
     public function getBundlePath(object|string $class): string
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '12.3',
+            'The "%s()" method is deprecated and will be removed in Pimcore 13. Use "getBundle()->getPath()" instead.',
+            __METHOD__,
+        );
+
         return $this->getBundleForClass($class)->getPath();
     }
 
