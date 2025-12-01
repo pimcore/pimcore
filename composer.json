@@ -161,7 +161,6 @@
     "phpunit/phpunit": "^10.5",
     "symfony/dotenv": "^6.4 || ^7.2",
     "symfony/runtime": "^6.4",
-    "symfony/var-exporter": "^6.4 || ^7.3",
     "webmozarts/console-parallelization": "^2.1"
   },
   "suggest": {
