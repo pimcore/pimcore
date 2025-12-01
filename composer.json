@@ -121,6 +121,7 @@
     "symfony/uid": "^6.4 || ^7.3",
     "symfony/validator": "^6.4 || ^7.3",
     "symfony/var-dumper": "^6.4 || ^7.3",
+    "symfony/var-exporter": "^6.4 || ^7.3",
     "symfony/web-profiler-bundle": "^6.4 || ^7.3",
     "symfony/webpack-encore-bundle": "^1.17 || ^2.0",
     "symfony/workflow": "^6.4 || ^7.3",
