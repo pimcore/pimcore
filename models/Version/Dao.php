@@ -197,7 +197,8 @@ class Dao extends Model\Dao\AbstractDao
             ";
 
             $rows = $this->db->fetchAllAssociative(
-                $sql, ['ctype' => $type, 'autoSaveDateCleanup' => $autoSaveDateCleanup->getTimestamp()]
+                $sql,
+                ['ctype' => $type, 'autoSaveDateCleanup' => $autoSaveDateCleanup->getTimestamp()]
             );
             $results = array_merge($results, $rows);
         }
