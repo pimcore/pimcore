@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GlossaryBundle\Tool;
 
-use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Cache;
+use Pimcore\Model\Site;
+use Pimcore\Model\Document;
+use Pimcore\Tool\DomCrawler;
+use Pimcore\Http\RequestHelper;
+use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
-use Pimcore\Http\RequestHelper;
-use Pimcore\Model\Document;
-use Pimcore\Model\Site;
-use Pimcore\Tool\DomCrawler;
 
 /**
  * @internal
@@ -115,7 +115,6 @@ class Processor
         $data['count'] = array_fill(0, count($data['search']), 0);
 
         $es->each(function ($parentNode, $i) use ($options, $data) {
-            /** @var DomCrawler|null $parentNode */
             $text = $parentNode->html();
             if (
                 $parentNode instanceof DomCrawler &&
