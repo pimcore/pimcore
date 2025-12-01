@@ -1,6 +1,5 @@
 ![Pimcore - Own the digital World](./doc/img/logo-readme.svg)
-  
-  
+
 Pimcore Core Framework - Open Core Data & Experience Management Platform: PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce
 
 [![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)

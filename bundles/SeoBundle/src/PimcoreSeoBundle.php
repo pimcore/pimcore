@@ -21,10 +21,22 @@ use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Presta\SitemapBundle\PrestaSitemapBundle;
 
+/**
+ * @deprecated version 12.3
+ */
 class PimcoreSeoBundle extends AbstractPimcoreBundle implements DependentBundleInterface, PimcoreBundleAdminClassicInterface
 {
     use BundleAdminClassicTrait;
     use PackageVersionTrait;
+
+    public function __construct()
+    {
+        trigger_deprecation(
+            'pimcore/seo-bundle',
+            '12.3',
+            'The SeoBundle is deprecated and will be discontinued with Pimcore Studio.'
+        );
+    }
 
     public function getCssPaths(): array
     {

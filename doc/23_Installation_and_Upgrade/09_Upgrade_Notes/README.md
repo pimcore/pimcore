@@ -8,9 +8,32 @@
 -   Added possibility to `pimcore:classificationstore:delete-store` to pass `--inactive-only` flag to only delete inactive (soft deleted from UI) classification stores Keys.
 -   Added a new command `pimcore:migrate:mail-logs-folder-structure` to migrate all mail log files to a new folder structure (YYYY/MM/DD/\<log filename\>).
 -   Added a thumbnail setting option to use Crop Box (the visible area), instead of Media Box when converting documents via Ghostscript. 
+-   Added the Twig function `pimcore_count_block(blockname)` to get the count for `pimcoreblock` editable.
 -   Refactored VersionCleanupTask for improved performance and reduced SQL query amounts. Added a new configuration option `disable_events` under each version’s configuration block. When enabled, PRE/POST delete events will be suppressed during the version cleanup process to reduce overhead and speed up execution. 
 
+
+
 ### Deprecations
+
+#### Bundles
+
+**What's Deprecated:**
+
+The following bundles won't be migrated to Pimcore Studio
+- GlossaryBundle
+- SeoBundle
+- WordExportBundle
+- XliffBundle
+
+SimpleBackendSearchBundle - Studio implements this functionality out-of-the-box.
+
+StaticRoutesBundle - All functionality except of the redirects and sitemaps won't be migrated to Pimcore Studio
+
+**Timeline:**
+
+-   Version 12.3: Deprecation notice
+-   Version 13.0: Complete removal of the bundles
+
 
 #### [Symfony 6.x Components Support]
 
