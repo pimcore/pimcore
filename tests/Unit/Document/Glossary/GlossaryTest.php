@@ -41,7 +41,7 @@ class GlossaryTest extends TestCase
 
         $result = $this->processor->parse('<body><p>This is a Test for the Glossary</p></body>', [], 'en', null, null);
 
-        $expect = '<body><p>This is a Test for the <a class="pimcore_glossary" href="/test">Glossary</a></p></body>';
+        $expect = '<head></head><body><p>This is a Test for the <a class="pimcore_glossary" href="/test">Glossary</a></p></body>';
 
         $this->assertSame($expect, $result);
     }
@@ -62,7 +62,7 @@ class GlossaryTest extends TestCase
             null
         );
 
-        $expect = '<body><p>This is a Test for the&nbsp;<a class="pimcore_glossary" href="/test">Entity</a> &copy;</p></body>';
+        $expect = '<head></head><body><p>This is a Test for the&nbsp;<a class="pimcore_glossary" href="/test">Entity</a> &copy;</p></body>';
 
         $this->assertSame(html_entity_decode($expect), $result);
     }
@@ -77,7 +77,7 @@ class GlossaryTest extends TestCase
 
         $result = $this->processor->parse('<body><p>Test &nbsp; Eintrag ©</p></body>', [], 'en', null, null);
 
-        $expect = '<body><p>Test &nbsp; <a class="pimcore_glossary" href="/test">Eintrag</a> &copy;</p></body>';
+        $expect = '<head></head><body><p>Test &nbsp; <a class="pimcore_glossary" href="/test">Eintrag</a> &copy;</p></body>';
 
         $this->assertSame(html_entity_decode($expect), $result);
     }
@@ -123,7 +123,7 @@ class GlossaryTest extends TestCase
         </div>
     </section>';
 
-        $this->assertSame($expect, $result);
+        $this->assertSame(html_entity_decode($expect), $result);
     }
 
     public function testGlossaryWithAnotherHtml(): void
