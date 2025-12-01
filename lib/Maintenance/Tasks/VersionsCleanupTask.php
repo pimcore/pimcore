@@ -69,7 +69,7 @@ class VersionsCleanupTask implements TaskInterface
             $elementTypes[] = [
                 'elementType' => $elementType,
                 $versioningType => $value,
-                'disable_events' => $tConf['disable_events'],
+                'disable_events' => $tConf['disable_events'] ?? false,
             ];
         }
 
@@ -78,7 +78,7 @@ class VersionsCleanupTask implements TaskInterface
         $dao = $dao->getDao();
 
         // Delete orphan versions
-        $orphanVersions = $dao->getOrphanedVersions($elementTypes);
+        $orphanVersions = $dao->getOrphanedVersionsAndOutdatedAutoSave($elementTypes);
         $dao->deleteVersions($orphanVersions, $elementTypes);
 
         // Delete outdated versions

@@ -115,9 +115,6 @@ class Dao extends Model\Dao\AbstractDao
     {
         $versionIds = [];
 
-        $autoSaveDateCleanup = \Carbon\Carbon::now();
-        $autoSaveDateCleanup->subHours(72);
-
         foreach ($elementTypes as $elementType) {
             if (isset($elementType['days'])) {
                 // by days
@@ -149,9 +146,7 @@ class Dao extends Model\Dao\AbstractDao
                     ) sub
                     LEFT JOIN schedule_tasks ON sub.id = schedule_tasks.version
                     LEFT JOIN '. $elementType['elementType'] .'s AS element ON sub.cid = element.id
-                    WHERE
-                    (rownumber > ? AND IFNULL(active,  0) = 0 AND element.modificationDate >= sub.`date`) OR
-                    (`autoSave` = 1 AND `date` < ?)
+                    WHERE rownumber > ? AND IFNULL(active,  0) = 0 AND element.modificationDate >= sub.`date`
                 ';
 
                 $iterator = $this->db->iterateAssociative(
@@ -159,7 +154,6 @@ class Dao extends Model\Dao\AbstractDao
                     [
                         $elementType['elementType'],
                         $elementType['steps'] + 1,
-                        $autoSaveDateCleanup->getTimestamp()
                     ]
                 );
 
@@ -183,9 +177,12 @@ class Dao extends Model\Dao\AbstractDao
         return array_map('intval', $versionIds);
     }
 
-    public function getOrphanedVersions(array $elementTypes): array
+    public function getOrphanedVersionsAndOutdatedAutoSave(array $elementTypes): array
     {
         $results = [];
+
+        $autoSaveDateCleanup = \Carbon\Carbon::now();
+        $autoSaveDateCleanup->subHours(72);
 
         foreach ($elementTypes as $elementType) {
             $table = $elementType['elementType'] . 's';
@@ -195,10 +192,13 @@ class Dao extends Model\Dao\AbstractDao
                 SELECT versions.id
                 FROM versions
                 LEFT JOIN {$table} AS element ON element.id = versions.cid
-                WHERE element.id IS NULL AND versions.ctype = :ctype
+                WHERE (element.id IS NULL AND versions.ctype = :ctype) OR
+                      (autoSave = 1 AND date < :autoSaveDateCleanup)
             ";
 
-            $rows = $this->db->fetchAllAssociative($sql, ['ctype' => $type]);
+            $rows = $this->db->fetchAllAssociative(
+                $sql, ['ctype' => $type, 'autoSaveDateCleanup' => $autoSaveDateCleanup->getTimestamp()]
+            );
             $results = array_merge($results, $rows);
         }
 
