@@ -39,7 +39,7 @@ class GlossaryTest extends TestCase
         $entry->setLanguage('en');
         $entry->save();
 
-        $result = $this->processor->parse('<body><p>This is a Test for the Glossary</p></body>', [], 'en', null, null);
+        $result = $this->processor->parse('<head></head><body><p>This is a Test for the Glossary</p></body>', [], 'en', null, null);
 
         $expect = '<head></head><body><p>This is a Test for the <a class="pimcore_glossary" href="/test">Glossary</a></p></body>';
 
@@ -55,7 +55,7 @@ class GlossaryTest extends TestCase
         $entry->save();
 
         $result = $this->processor->parse(
-            '<body><p>This is a Test for the&nbsp;Entity &copy;</p></body>',
+            '<head></head><body><p>This is a Test for the&nbsp;Entity &copy;</p></body>',
             [],
             'en',
             null,
@@ -75,7 +75,7 @@ class GlossaryTest extends TestCase
         $entry->setLanguage('en');
         $entry->save();
 
-        $result = $this->processor->parse('<body><p>Test &nbsp; Eintrag ©</p></body>', [], 'en', null, null);
+        $result = $this->processor->parse('<head></head><body><p>Test &nbsp; Eintrag ©</p></body>', [], 'en', null, null);
 
         $expect = '<head></head><body><p>Test &nbsp; <a class="pimcore_glossary" href="/test">Eintrag</a> &copy;</p></body>';
 
