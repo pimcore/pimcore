@@ -35,26 +35,8 @@ class VersionsCleanupTask implements TaskInterface
     public function execute(): void
     {
         $this->doVersionCleanup();
-        $this->doAutoSaveVersionCleanup();
     }
 
-    private function doAutoSaveVersionCleanup(): void
-    {
-        $date = \Carbon\Carbon::now();
-        $date->subHours(72);
-
-        $list = new Version\Listing();
-        $ids = $list->setLoadAutoSave(true)
-            ->setCondition(' `autoSave` = 1 AND `date` < ' . $date->getTimestamp())
-            ->loadIdList();
-
-        $this->logger->debug('Auto-save versions to delete: ' . count($ids));
-        foreach ($ids as $i => $id) {
-            $this->logger->debug('Deleting auto-save version: ' . $id);
-            $version = Version::getById($id);
-            $version->delete();
-        }
-    }
 
     private function doVersionCleanup(): void
     {
@@ -87,7 +69,7 @@ class VersionsCleanupTask implements TaskInterface
             $elementTypes[] = [
                 'elementType' => $elementType,
                 $versioningType => $value,
-                'disableEvents' => $tConf['disableEvents'],
+                'disable_events' => $tConf['disable_events'],
             ];
         }
 

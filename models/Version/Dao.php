@@ -115,6 +115,9 @@ class Dao extends Model\Dao\AbstractDao
     {
         $versionIds = [];
 
+        $autoSaveDateCleanup = \Carbon\Carbon::now();
+        $autoSaveDateCleanup->subHours(72);
+
         foreach ($elementTypes as $elementType) {
             if (isset($elementType['days'])) {
                 // by days
@@ -134,7 +137,6 @@ class Dao extends Model\Dao\AbstractDao
                 );
                 $versionIds = array_merge($versionIds, $tmpVersionIds);
             } else {
-                $versionIds = [];
                 $countsPerCid = [];
 
                 $sql = '
@@ -147,8 +149,9 @@ class Dao extends Model\Dao\AbstractDao
                     ) sub
                     LEFT JOIN schedule_tasks ON sub.id = schedule_tasks.version
                     LEFT JOIN '. $elementType['elementType'] .'s AS element ON sub.cid = element.id
-                    WHERE rownumber > ? AND IFNULL(active,  0) = 0
-                    AND element.modificationDate >= sub.`date`
+                    WHERE
+                    (rownumber > ? AND IFNULL(active,  0) = 0 AND element.modificationDate >= sub.`date`) OR
+                    (`autoSave` = 1 AND `date` < ?)
                 ';
 
                 $iterator = $this->db->iterateAssociative(
@@ -156,6 +159,7 @@ class Dao extends Model\Dao\AbstractDao
                     [
                         $elementType['elementType'],
                         $elementType['steps'] + 1,
+                        $autoSaveDateCleanup->getTimestamp()
                     ]
                 );
 

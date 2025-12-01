@@ -8,6 +8,7 @@
 -   Added possibility to `pimcore:classificationstore:delete-store` to pass `--inactive-only` flag to only delete inactive (soft deleted from UI) classification stores Keys.
 -   Added a new command `pimcore:migrate:mail-logs-folder-structure` to migrate all mail log files to a new folder structure (YYYY/MM/DD/\<log filename\>).
 -   Added a thumbnail setting option to use Crop Box (the visible area), instead of Media Box when converting documents via Ghostscript. 
+-   Refactored VersionCleanupTask for improved performance and reduced SQL query amounts. Added a new configuration option `disable_events` under each version’s configuration block. When enabled, PRE/POST delete events will be suppressed during the version cleanup process to reduce overhead and speed up execution. 
 
 ### Deprecations
 
