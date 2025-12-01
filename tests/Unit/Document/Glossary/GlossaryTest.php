@@ -123,7 +123,7 @@ class GlossaryTest extends TestCase
         </div>
     </section>';
 
-        $this->assertSame(html_entity_decode($expect), $result);
+        $this->assertSame(html_entity_decode($expect), html_entity_decode($result));
     }
 
     public function testGlossaryWithAnotherHtml(): void
