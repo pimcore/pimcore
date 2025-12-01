@@ -145,7 +145,8 @@
     "symfony/web-link": "<6.0",
     "thecodingmachine/safe": "<2.0",
     "twig/twig": ">=3.9.0 <3.14.0",
-    "php-http/discovery": "<1.20"
+    "php-http/discovery": "<1.20",
+    "symfony/serializer": ">7.3"
   },
   "require-dev": {
     "behat/gherkin": "4.12.0",
