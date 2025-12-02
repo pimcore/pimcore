@@ -463,6 +463,7 @@ class TestHelper
         $testDataHelper->fillTime($object, 'time', $seed);
         $testDataHelper->fillSelect($object, 'select', $seed);
         $testDataHelper->fillMultiSelect($object, 'multiselect', $seed);
+        $testDataHelper->fillMultiSelectEnforced($object, 'multiselectenforced', $seed);
         $testDataHelper->fillUser($object, 'user', $seed);
         $testDataHelper->fillCheckbox($object, 'checkbox', $seed);
         $testDataHelper->fillBooleanSelect($object, 'booleanSelect', $seed);

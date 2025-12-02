@@ -571,6 +571,29 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
+    public function assertMultiSelectEnforced(Concrete $object, string $field, int $seed = 1): void
+    {
+        $getter = 'get' . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
+        $value = $object->$getter();
+        $expected = ['cat', 'tiger'];
+
+        $this->assertIsEqual($object, $field, $expected, $value);
+        $this->assertEquals($expected, $value);
+
+        $object->$setter(['dragon']);
+
+        try {
+            $object->save();
+            $this->assertFalse(true);
+        } catch (\Exception $e) {
+            $this->assertTrue(
+                str_contains($e->getMessage(), 'Invalid multiselect option') && str_contains($e->getMessage(), 'dragon')
+            );
+        }
+
+    }
+
     public function assertMultihref(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
@@ -1270,6 +1293,13 @@ class TestDataHelper extends AbstractTestDataHelper
         $setter = 'set' . ucfirst($field);
         $object->$setter(['cat', 'tiger']);
     }
+
+    public function fillMultiSelectEnforced(Concrete $object, string $field, int $seed = 1): void
+    {
+        $setter = 'set' . ucfirst($field);
+        $object->$setter(['cat', 'tiger']);
+    }
+
 
     public function fillMultihref(Concrete $object, string $field, int $seed = 1): void
     {
