@@ -148,7 +148,10 @@
     "twig/twig": ">=3.9.0 <3.14.0",
     "php-http/discovery": "<1.20",
     "symfony/var-dumper": ">=7.4",
-    "symfony/var-exporter": ">=7.4"
+    "symfony/var-exporter": ">=7.4",
+    "symfony/cache": ">=7.4",
+    "symfony/yaml": ">=7.4",
+    "symfony/serializer": ">=7.4"
   },
   "require-dev": {
     "behat/gherkin": "4.12.0",
