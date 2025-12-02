@@ -87,7 +87,7 @@
     "symfony/debug-bundle": "^6.4 || ^7.2",
     "symfony/dependency-injection": "^6.4",
     "symfony/doctrine-bridge": "^6.4 || 7.2.x || 7.3.x",
-    "symfony/doctrine-messenger": "^6.4 || ^7.2",
+    "symfony/doctrine-messenger": "^6.4 || 7.2.x || 7.3.x",
     "symfony/dom-crawler": "^6.4 || ^7.2",
     "symfony/error-handler": "^6.4 || ^7.2",
     "symfony/event-dispatcher": "^6.4 || ^7.2",
