@@ -86,7 +86,7 @@ like CloudFront for your resources.
 ### Example: AWS S3 Adapter for Assets
 First, install AWS S3 Adapter with command:
 ```
-composer require league/flysystem-aws-s3-v3:^2.0
+composer require league/flysystem-aws-s3-v3
 ````
 
 Next step is to configure AWS S3 client service for class `Aws\S3\S3Client` with following required arguments:
@@ -130,6 +130,46 @@ flysystem:
                 client: 'assets_s3'
                 bucket: 'bucket-name'
                 prefix: assets
+```
+
+### Example: Handling source assets when your storage is not publicly accessible:
+ ```yaml
+pimcore:
+    assets:
+        frontend_prefixes:
+            # Prefix used for the original asset files
+            source: https://your.domain/asset-stream
+```    
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Pimcore\Model\Asset;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Routing\Attribute\Route;
+
+class AssetStreamController
+{
+    #[Route('/asset-stream{uri}', requirements: ['uri' => '.+'])]
+    public function stream(string $uri): Response
+    {
+        if (!empty($asset = Asset::getByPath($uri)) && $stream = $asset->getStream()) {
+            return new StreamedResponse(function () use ($stream) {
+                fpassthru($stream);
+            }, 200, [
+                'Content-Type' => $asset->getMimeType(),
+                'Access-Control-Allow-Origin', '*',
+            ]);
+        }
+
+        return new Response('', Response::HTTP_NOT_FOUND);
+    }
+}
+
 ```
 
 ### Storage Migration

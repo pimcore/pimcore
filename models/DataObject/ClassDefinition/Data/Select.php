@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -124,7 +121,7 @@ class Select extends Data implements
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): null|string|int
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): null|string|int
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -136,7 +133,7 @@ class Select extends Data implements
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): null|string|int
+    public function getDataFromResource(mixed $data, ?Concrete $object = null, array $params = []): null|string|int
     {
         return $data;
     }
@@ -146,7 +143,7 @@ class Select extends Data implements
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -157,7 +154,7 @@ class Select extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): null|string|int
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): null|string|int
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -168,7 +165,7 @@ class Select extends Data implements
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): null|string|int
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): null|string|int
     {
         return $this->getDataFromResource($data, $object, $params);
     }
@@ -179,7 +176,7 @@ class Select extends Data implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return htmlspecialchars((string) $data, ENT_QUOTES, 'UTF-8');
     }
@@ -192,7 +189,7 @@ class Select extends Data implements
     /** See parent class.
      *
      */
-    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $result = [];
 
@@ -317,7 +314,7 @@ class Select extends Data implements
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDataForGrid(mixed $data, Concrete $object = null, array $params = []): array|string|int|null
+    public function getDataForGrid(mixed $data, ?Concrete $object = null, array $params = []): array|string|int|null
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
@@ -365,10 +362,14 @@ class Select extends Data implements
         }
 
         if ($operator === '=') {
-            return $key.' = '."\"$value\"".' ';
+            $quotedValue = $db->quote((string) $value);
+
+            return $key . ' = ' . $quotedValue . ' ';
         }
         if ($operator === 'LIKE') {
-            return $key.' LIKE '."\"%$value%\"".' ';
+            $quotedValue = $db->quote('%' . $value . '%');
+
+            return $key . ' LIKE ' . $quotedValue . ' ';
         }
 
         return '';

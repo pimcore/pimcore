@@ -63,7 +63,11 @@ class OptionsProvider implements SelectOptionsProviderInterface
      */
     public function getDefaultValue(array $context, Data $fieldDefinition): ?string 
     {
-        return $fieldDefinition->getDefaultValue();
+        if (method_exists($fieldDefinition, 'getDefaultValue')) {
+            return $fieldDefinition->getDefaultValue();
+        }
+
+        return null;
     }
 
     public function hasStaticOptions(array $context, Data $fieldDefinition): bool

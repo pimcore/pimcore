@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
@@ -19,6 +16,7 @@ namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
 use Doctrine\DBAL\Exception\SyntaxErrorException;
 use Exception;
 use InvalidArgumentException;
+use JsonException;
 use Pimcore;
 use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent;
@@ -32,6 +30,7 @@ use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Db\Helper;
 use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
@@ -42,29 +41,30 @@ use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * @Route("/search")
- *
  * @internal
  */
+#[Route('/search')]
 class SearchController extends UserAwareController
 {
     use JsonHelperTrait;
 
     /**
-     * @Route("/find", name="pimcore_bundle_search_search_find", methods={"GET", "POST"})
-     *
-     * @todo: $conditionTypeParts could be undefined
+     * @throws JsonException
      *
      * @todo: $conditionSubtypeParts could be undefined
      *
      * @todo: $conditionClassnameParts could be undefined
      *
      * @todo: $data could be undefined
+     *
+     * @todo: $conditionTypeParts could be undefined
+     *
      */
+    #[Route('/find', name: 'pimcore_bundle_search_search_find', methods: ['GET', 'POST'])]
     public function findAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService): JsonResponse
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
@@ -122,17 +122,7 @@ class SearchController extends UserAwareController
             //remove sql comments
             $fields = str_replace('--', '', $fields);
 
-            foreach ($fields as $f) {
-                $parts = explode('~', $f);
-                if (str_starts_with($f, '~')) {
-                    //                    $type = $parts[1];
-                    //                    $field = $parts[2];
-                    //                    $keyid = $parts[3];
-                    // key value, ignore for now
-                } elseif (count($parts) > 1) {
-                    $bricks[$parts[0]] = $parts[0];
-                }
-            }
+            $bricks = $this->parseBricks($fields);
         }
 
         // filtering for objects
@@ -146,17 +136,23 @@ class SearchController extends UserAwareController
             $localizedFieldsFilters = [];
 
             foreach ($params as $paramConditionObject) {
+                $property = $paramConditionObject['property'] ?? null;
+                $isBrick = $this->isBrick($property);
+                $isLocalizedBrick = $this->isLocalizedFieldBrick($property);
+
                 //this loop divides filter parameters to localized and unlocalized groups
-                if (in_array($paramConditionObject['property'], DataObject\Service::getSystemFields())) {
+                if (in_array($property, DataObject\Service::getSystemFields())) {
                     $unlocalizedFieldsFilters[] = $paramConditionObject;
-                } elseif ($localizedFields instanceof Localizedfields && $localizedFields->getFieldDefinition($paramConditionObject['property'])) {
+                } elseif (($isBrick && $isLocalizedBrick) ||
+                    ($localizedFields instanceof Localizedfields && $localizedFields->getFieldDefinition($property))) {
                     $localizedFieldsFilters[] = $paramConditionObject;
-                } elseif ($class->getFieldDefinition($paramConditionObject['property'])) {
+                } elseif (
+                    $isBrick ||
+                    $class->getFieldDefinition($property)
+                ) {
                     $unlocalizedFieldsFilters[] = $paramConditionObject;
                 }
             }
-
-            //get filter condition only when filters array is not empty
 
             //string statements for divided filters
             $conditionFilters = count($unlocalizedFieldsFilters)
@@ -169,14 +165,22 @@ class SearchController extends UserAwareController
             $join = '';
             $localizedJoin = '';
             foreach ($bricks as $ob) {
-                $join .= ' LEFT JOIN object_brick_query_' . $ob . '_' . $class->getId();
-                $join .= ' `' . $ob . '`';
+                $brickAlias = ' `' . $ob .'`';
+                $objectTable = '`search_backend_data`';
+
+                $join .= ' LEFT JOIN object_brick_query_' . $ob . '_' . $class->getId() . $brickAlias;
+                $join .= ' ON ' . $brickAlias . '.id = ' . $objectTable . '.id';
 
                 if ($localizedConditionFilters) {
-                    $localizedJoin = $join . ' ON `' . $ob . '`.id = `object_localized_data_' . $class->getId() . '`.ooo_id';
+                    $localizedFieldAlias = ' `' . $ob .'_localized`';
+                    $localizedJoin = sprintf('%s LEFT JOIN %s as %s on %s.id = %s.ooo_id',
+                        empty($conditionFilters) ? $join : '',
+                        'object_brick_localized_' . $ob . '_' . $class->getId(),
+                        $localizedFieldAlias,
+                        $brickAlias,
+                        $localizedFieldAlias
+                    );
                 }
-
-                $join .= ' ON `' . $ob . '`.id = `object_' . $class->getId() . '`.id';
             }
 
             if (null !== $conditionFilters) {
@@ -416,6 +420,12 @@ class SearchController extends UserAwareController
                 foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
                     $exceptions = '';
                     $folderSuffix = '';
+                    //if there is restriction to root path, and not other paths allowed, no need to check further
+                    if ($forbiddenPath === '/' && !$allowedPaths) {
+                        $forbiddenPathSql = [' false '];
+
+                        break;
+                    }
                     if ($allowedPaths) {
                         $exceptionsConcat = implode("%' OR fullpath LIKE '", $allowedPaths);
                         $exceptions = " OR (fullpath LIKE '" . $exceptionsConcat . "%')";
@@ -424,6 +434,12 @@ class SearchController extends UserAwareController
                     $forbiddenPathSql[] = ' (fullpath NOT LIKE ' . $db->quote($forbiddenPath . $folderSuffix . '%') . $exceptions . ') ';
                 }
                 foreach ($elementPaths['allowed'] as $allowedPaths) {
+                    //has root access, skip 'fullpath LIKE %' as it slows the search; no need to check other paths
+                    if ($allowedPaths === '/') {
+                        $allowedPathSql = [' true '];
+
+                        break;
+                    }
                     $allowedPathSql[] = ' fullpath LIKE ' . $db->quote($allowedPaths  . '%');
                 }
 
@@ -480,14 +496,10 @@ class SearchController extends UserAwareController
         return $query;
     }
 
-    /**
-     * @Route("/quicksearch", name="pimcore_bundle_search_search_quicksearch", methods={"GET"})
-     *
-     *
-     */
+    #[Route('/quicksearch', name: 'pimcore_bundle_search_search_quicksearch', methods: ['GET'])]
     public function quickSearchAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $query = $this->filterQueryParam($request->get('query', ''));
+        $query = $this->filterQueryParam($request->query->getString('query'));
         if (!preg_match('/[\+\-\*"]/', $query)) {
             // check for a boolean operator (which was not filtered by filterQueryParam()),
             // if present, do not add asterisk at the end of the query
@@ -552,16 +564,11 @@ class SearchController extends UserAwareController
         return $this->jsonResponse($result);
     }
 
-    /**
-     * @Route("/quicksearch-get-by-id", name="pimcore_bundle_search_search_quicksearch_by_id", methods={"GET"})
-     *
-     *
-     */
+    #[Route('/quicksearch-get-by-id', name: 'pimcore_bundle_search_search_quicksearch_by_id', methods: ['GET'])]
     public function quickSearchByIdAction(Request $request, Config $config): JsonResponse
     {
-        $type = $request->get('type');
-        $id = $request->get('id');
-        $db = \Pimcore\Db::get();
+        $type = $request->query->getString('type');
+        $id = ParameterBagHelper::getInt($request->query, 'id');
         $searcherList = new Data\Listing();
 
         $searcherList->addConditionParam('id = :id', ['id' => $id]);
@@ -627,7 +634,7 @@ class SearchController extends UserAwareController
      *
      * @throws Exception
      */
-    protected function addAdminStyle(ElementInterface $element, int $context = null, array &$data = []): void
+    protected function addAdminStyle(ElementInterface $element, ?int $context = null, array &$data = []): void
     {
         $event = new ElementAdminStyleEvent($element, new AdminStyle($element), $context);
         Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);
@@ -646,5 +653,81 @@ class SearchController extends UserAwareController
             $data['cls'] .= $adminStyle->getElementCssClass() . ' ';
         }
         $data['qtipCfg'] = $adminStyle->getElementQtipConfig();
+    }
+
+    /**
+     * @throws JsonException
+     */
+    private function parseBricks(array $fields): array
+    {
+        $bricks = [];
+
+        foreach ($fields as $f) {
+            $name = $this->getBrickData($f);
+            if ($name) {
+                $bricks[] = $name;
+            }
+        }
+
+        return array_unique($bricks);
+    }
+
+    /**
+     * @throws JsonException
+     */
+    private function getBrickData(string $fieldName): ?string
+    {
+        $isLocalized = $this->isLocalizedFieldBrick($fieldName);
+        $parts = explode('~', $fieldName);
+
+        if (count($parts) <= 1) {
+            return null;
+        }
+
+        $brick = $parts[0];
+        if ($isLocalized) {
+            $encodedBrickData = json_decode(
+                substr($brick, 1),
+                true,
+                flags: JSON_THROW_ON_ERROR
+            );
+
+            return $encodedBrickData['containerKey'];
+        }
+
+        return $parts[0];
+    }
+
+    /**
+     * @throws JsonException
+     */
+    private function isBrick(string $fieldName): bool
+    {
+        return $this->getBrickData($fieldName) !== null;
+    }
+
+    /**
+     * @throws JsonException
+     */
+    private function isLocalizedFieldBrick(string $fieldName): bool
+    {
+        $parts = explode('~', $fieldName);
+        if (count($parts) <= 1) {
+            return false;
+        }
+
+        return str_starts_with(
+            $parts[0],
+            '?'
+        ) &&
+            isset(json_decode(
+                substr(
+                    $parts[0],
+                    1
+                ),
+                true,
+                512,
+                JSON_THROW_ON_ERROR
+            )['containerKey']);
     }
 }

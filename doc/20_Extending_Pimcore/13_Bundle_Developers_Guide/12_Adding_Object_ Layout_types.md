@@ -9,7 +9,7 @@ Following steps are necessary to do so:
    This class needs to extend `Pimcore\Model\DataObject\ClassDefinition\Layout` and defines which settings your data type has and how it is read for the Pimcore Admin Ui.
    
    For examples have a look at the Pimcore core layout types at 
-   [github](https://github.com/pimcore/pimcore/tree/11.x/models/DataObject/ClassDefinition/Layout). 
+   [github](https://github.com/pimcore/pimcore/tree/12.x/models/DataObject/ClassDefinition/Layout). 
 
 2) Create JavaScript class for Class Definition editor: 
    This JavaScript class defines the config options in class editor. 

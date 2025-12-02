@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -22,12 +19,13 @@ use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Exception\InvalidConfigException;
 use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Video extends Model\Document\Editable implements IdRewriterInterface
+class Video extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
     public const TYPE_ASSET = 'asset';
 
@@ -179,7 +177,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     {
         $path = $this->id;
         if ($this->id && $this->type === self::TYPE_ASSET && ($video = Asset::getById((int)$this->id))) {
-            $path = $video->getFullPath();
+            $path = $video->getRealFullPath();
         }
 
         $allowedTypes = $this->getAllowedTypes();
@@ -205,11 +203,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             'title'        => $this->title,
             'description'  => $this->description,
             'path'         => $path,
-            'poster'       => $poster ? $poster->getFullPath() : '',
+            'poster'       => $poster ? $poster->getRealFullPath() : '',
         ];
     }
 
-    protected function getDataEditmode(): mixed
+    public function getDataEditmode(): mixed
     {
         $data = $this->getData();
 
@@ -650,12 +648,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                 if (in_array($key, $validYoutubeParams)) {
                     if (is_bool($value)) {
                         if ($value) {
-                            $additionalParams .= '&'.$key.'=1';
+                            $additionalParams .= '&amp;'.$key.'=1';
                         } else {
-                            $additionalParams .= '&'.$key.'=0';
+                            $additionalParams .= '&amp;'.$key.'=0';
                         }
                     } else {
-                        $additionalParams .= '&'.$key.'='.$value;
+                        $additionalParams .= '&amp;'.$key.'='.$value;
                     }
                 }
             }
@@ -728,19 +726,19 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                     if (in_array($key, $validVimeoParams)) {
                         if (is_bool($value)) {
                             if ($value) {
-                                $additionalParams .= '&'.$key.'=1';
+                                $additionalParams .= '&amp;'.$key.'=1';
                             } else {
-                                $additionalParams .= '&'.$key.'=0';
+                                $additionalParams .= '&amp;'.$key.'=0';
                             }
                         } else {
-                            $additionalParams .= '&'.$key.'='.$value;
+                            $additionalParams .= '&amp;'.$key.'='.$value;
                         }
                     }
                 }
             }
 
             $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
-                <iframe src="https://player.vimeo.com/video/' . $vimeoId . '?dnt=1&title=0&amp;byline=0&amp;portrait=0' . $additionalParams . '" width="' . $width . '" height="' . $height . '" title="Vimeo video" allow="fullscreen" data-type="pimcore_video_editable"></iframe>
+                <iframe src="https://player.vimeo.com/video/' . $vimeoId . '?dnt=1&amp;title=0&amp;byline=0&amp;portrait=0' . $additionalParams . '" width="' . $width . '" height="' . $height . '" title="Vimeo video" allow="fullscreen" data-type="pimcore_video_editable"></iframe>
             </div>';
 
             return $code;
@@ -800,12 +798,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                     if (in_array($key, $validDailymotionParams)) {
                         if (is_bool($value)) {
                             if ($value) {
-                                $additionalParams .= '&'.$key.'=1';
+                                $additionalParams .= '&amp;'.$key.'=1';
                             } else {
-                                $additionalParams .= '&'.$key.'=0';
+                                $additionalParams .= '&amp;'.$key.'=0';
                             }
                         } else {
-                            $additionalParams .= '&'.$key.'='.$value;
+                            $additionalParams .= '&amp;'.$key.'='.$value;
                         }
                     }
                 }
@@ -824,7 +822,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
     private function getHtml5Code(
         array $urls = [],
-        Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface $thumbnail = null
+        Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface|null $thumbnail = null
     ): string {
         $code = '';
         $video = $this->getVideoAsset();
@@ -951,7 +949,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return implode('', $durationParts);
     }
 
-    private function getProgressCode(string $thumbnail = null): string
+    private function getProgressCode(?string $thumbnail = null): string
     {
         $uid = $this->getUniqId();
         $code = '
@@ -989,16 +987,24 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_editable_video_empty" id="' . $uid . '" style="width: ' . $this->getWidthWithUnit() . '; height: ' . $this->getHeightWithUnit() . ';"></div></div>';
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     private function updateAllowedTypesFromConfig(array $config): void
     {
-        $this->allowedTypes = self::ALLOWED_TYPES;
-
-        if (
-            isset($config['allowedTypes']) === true
-            && empty($config['allowedTypes']) === false
-            && empty(array_diff($config['allowedTypes'], self::ALLOWED_TYPES))
-        ) {
+        if (isset($config['allowedTypes'])) {
+            if (!is_array($config['allowedTypes'])) {
+                throw new InvalidConfigException('Video config "allowedTypes" must be an array');
+            }
+            if (!$config['allowedTypes']) {
+                throw new InvalidConfigException('Video config "allowedTypes" must not be empty');
+            }
+            if (array_diff($config['allowedTypes'], self::ALLOWED_TYPES)) {
+                throw new InvalidConfigException('Unsupported types in video config "allowedTypes"');
+            }
             $this->allowedTypes = $config['allowedTypes'];
+        } else {
+            $this->allowedTypes = self::ALLOWED_TYPES;
         }
     }
 

@@ -2,20 +2,18 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
+use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
@@ -30,15 +28,14 @@ trait ManyToManyRelationTrait
      * Unless forceSave is set to true, this method will check if the field is dirty and skip the save if not
      */
     protected function skipSaveCheck(
-        Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object,
-        array $params = []): bool
-    {
+        Localizedfield|AbstractData|DataObject\Objectbrick\Data\AbstractData|Concrete $object,
+        array $params = []
+    ): bool {
         $forceSave = $params['forceSave'] ?? false;
 
         if (
             $forceSave === false &&
-            !DataObject::isDirtyDetectionDisabled() &&
-            $object instanceof DirtyIndicatorInterface
+            !DataObject::isDirtyDetectionDisabled()
         ) {
             if ($object instanceof DataObject\Localizedfield) {
                 if ($object->getObject() instanceof DirtyIndicatorInterface && !$object->hasDirtyFields()) {
@@ -52,7 +49,7 @@ trait ManyToManyRelationTrait
         return false;
     }
 
-    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
+    public function save(Localizedfield|AbstractData|DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         if ($this->skipSaveCheck($object, $params)) {
             return;
@@ -79,5 +76,40 @@ trait ManyToManyRelationTrait
         }
 
         return $data;
+    }
+
+    /**
+     * Filter by relation feature
+     *
+     *
+     */
+    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
+    {
+        $prefix = '';
+        $name = $params['name'] ?: $this->name;
+        $prefix = $params['brickPrefix'] ?? null;
+
+        if ($prefix !== null) {
+            // The brick prefix might be quoted and with a dot suffix, if so, removing the first
+            // and second last character to unquote
+            $quoteIdentifierSymbol  = substr(Db::get()->quoteIdentifier(''), 0, 1);
+
+            if (
+                substr($prefix, 0, 1) === $quoteIdentifierSymbol &&
+                substr($prefix, -2, 1) === $quoteIdentifierSymbol &&
+                substr($prefix, -1) === '.'
+            ) {
+                // Case: `db`.
+                $prefix = substr($prefix, 1, -2) . '.';
+            } elseif (
+                substr($prefix, 0, 1) === $quoteIdentifierSymbol &&
+                substr($prefix, -1) === $quoteIdentifierSymbol
+            ) {
+                // Case: `db`
+                $prefix = substr($prefix, 1, -1);
+            }
+        }
+
+        return $this->getRelationFilterCondition($value, $operator, $prefix . $name);
     }
 }

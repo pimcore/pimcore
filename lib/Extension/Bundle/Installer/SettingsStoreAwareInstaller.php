@@ -2,20 +2,18 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Extension\Bundle\Installer;
 
+use Doctrine\DBAL\Exception\TableExistsException;
 use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\Version\Direction;
 use Doctrine\Migrations\Version\ExecutionResult;
@@ -73,17 +71,23 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
     {
         $migrationVersion = $this->getLastMigrationVersionClassName();
         if ($migrationVersion) {
+            $metadataStorage = $this->dependencyFactory->getMetadataStorage();
             $this->migrationRepository->setPrefix($this->bundle->getNamespace());
             $this->tableMetadataStorage->setPrefix($this->bundle->getNamespace());
             $migrations = $this->dependencyFactory->getMigrationRepository()->getMigrations();
-            $executedMigrations = $this->dependencyFactory->getMetadataStorage()->getExecutedMigrations();
+            $executedMigrations = $metadataStorage->getExecutedMigrations();
 
             foreach ($migrations->getItems() as $migration) {
                 $version = $migration->getVersion();
 
                 if (!$executedMigrations->hasMigration($version)) {
                     $migrationResult = new ExecutionResult($version, Direction::UP);
-                    $this->dependencyFactory->getMetadataStorage()->complete($migrationResult);
+
+                    try {
+                        $metadataStorage->ensureInitialized();
+                    } catch (TableExistsException $exception) {
+                    }
+                    $metadataStorage->complete($migrationResult);
                 }
 
                 if ((string)$version === $migrationVersion) {
@@ -101,12 +105,14 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
 
         $migrationVersion = $this->getLastMigrationVersionClassName();
         if ($migrationVersion) {
+            $metadataStorage = $this->dependencyFactory->getMetadataStorage();
             $this->tableMetadataStorage->setPrefix($this->bundle->getNamespace());
-            $executedMigrations = $this->dependencyFactory->getMetadataStorage()->getExecutedMigrations();
+            $executedMigrations = $metadataStorage->getExecutedMigrations();
 
             foreach ($executedMigrations->getItems() as $migration) {
                 $migrationResult = new ExecutionResult($migration->getVersion(), Direction::DOWN);
-                $this->dependencyFactory->getMetadataStorage()->complete($migrationResult);
+                $metadataStorage->ensureInitialized();
+                $metadataStorage->complete($migrationResult);
             }
         }
     }

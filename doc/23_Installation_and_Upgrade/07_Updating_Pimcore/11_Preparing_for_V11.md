@@ -67,7 +67,7 @@ Better replace the strings manually with your IDE instead of as a batch process.
 - [Deprecations] Fix deprecations defined in the [upgrade notes](../09_Upgrade_Notes/README.md), which is to be removed in Pimcore 11.
   Tip: you can search for deprecations in Symfony Profiler(Debug mode) or can run linux command `tail -f var/log/dev.log | grep 'User Deprecated'` for checking deprecations on runtime.
 
-- [Extensions] Stop using `var/config/extensions.php` for registering bundles, use `config/bundle.php` instead.
+- [Extensions] Stop using `var/config/extensions.php` for registering bundles, use `config/bundles.php` instead.
 
 - Don't use deprecated `Pimcore\Db\ConnectionInterface` interface, `Pimcore\Db\Connection` class and `Pimcore\Db\PimcoreExtensionsTrait` trait
   Use `Doctrine\DBAL\Driver\Connection` interface and `Doctrine\DBAL\Connection` class instead.
@@ -108,7 +108,7 @@ If you are sure you can run all available migrations after `composer update`, in
 ```
 
 ## Configuration Adaptions
-- [Security] Enable New Security Authenticator and adapt your `security.yaml` file as per changes [here](https://github.com/pimcore/demo/blob/11.x/config/packages/security.yaml):
+- [Security] Enable New Security Authenticator and adapt your `security.yaml` file as per changes [here](https://github.com/pimcore/demo/blob/2025.x/config/packages/security.yaml):
     ```
     security:
         enable_authenticator_manager: true

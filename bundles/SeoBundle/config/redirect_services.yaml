@@ -2,6 +2,7 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
+        public: true
 
     # redirect handler used to handle redirects before/after routing
     Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler: ~

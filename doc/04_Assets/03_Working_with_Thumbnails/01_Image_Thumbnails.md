@@ -8,7 +8,7 @@ which are not stored as an asset inside Pimcore.
 
 > **IMPORTANT**  
 > Use Imagick PECL extension for best results, GDlib is just a fallback with limited functionality
-> (only PNG, JPG, GIF) and less quality!
+> (only PNG, JPG, GIF) and less quality! If Imagick is available it will be the default, otherwise falling back to GD.
 > Using ImageMagick Pimcore can support hundreds of formats including: AI, EPS, TIFF, PNG, JPG, GIF, PSD, etc.
 > Not all formats are allowed out of the box. To extend the list [see](./README.md#allowed-formats).
 
@@ -23,7 +23,7 @@ Click on _+_ to add a new transformation, so that it look like that for example:
 in the configuration above. If you first round the corners this would be performed on the original image,
 and then the image will get resized, so the rounded corners are also resized which is not intended.
 
-To retrieve a thumbnail from an asses simply call `$asset->getThumbnail("thumbnail-name")` on the asset object, which will return
+To retrieve a thumbnail from an asset simply call `$asset->getThumbnail("thumbnail-name")` on the asset object, which will return
 an `\Pimcore\Model\Asset\Image\Thumbnail` object. The thumbnail object's `__toString()` method returns the path to the thumbnail file, for example:
 `/Car%20Images/ac%20cars/68/image-thumb__68__content/automotive-car-classic-149813.jpg`
 
@@ -96,6 +96,12 @@ You can configure the generated markup with the following options:
 | `disableImgTag`                | bool     | Set to `true` to not include the `<img>` fallback tag in the generated `<picture>` tag.                                            |
 | `useDataSrc`                   | bool     | Set to `true` to use `data-src(set)` attributes instead of `src(set)`.                                                             |
 | `useFrontendPath`              | bool     | Set to `true` to use the full url (including the frontend_prefix).                                                                 |
+
+**Info:** 
+The Auto Alt functionality will try to automatically fall back to any available `alt` value by also checking the metadata entries (with name as `alt`, `defaultalt`). 
+Ultimately, it would use the image `title` as `alt` value when nothing above is previously found.
+It is also possible to define an alternative metadata to be used as `alt`, `copyright`, `title` values (eg. by defining `pimcore.assets.metadata.alt` in the configuration) that would have used when the inline options are not passed.
+
 
 ## Usage Examples
 
@@ -302,6 +308,10 @@ process).
 
 Of course this works only with predefined (named) thumbnail configurations and not with dynamic configurations.
 
+> **WARNING**
+> This feature is delivered through PublicServicesController and may not work if the controller is unreachable (e.g. during Maintenance mode).
+> When requesting an image without providing a hash, the content cannot be Browser cached like regular Nginx-served files, as the file without hash doesn’t exist physically.
+
 ## Deferred Rendering of Thumbnails
 
 For performance reasons, Pimcore doesn't generate the thumbnail image directly when calling `getThumbnail()`
@@ -338,6 +348,10 @@ If you need to scale an image more than that, you can use the `max_scaling_facto
       thumbnails:
         max_scaling_factor: 6.0
 ```
+
+You can define the maximum automatic DPI scaling factor used for image thumbnail srcset values 
+via the `pimcore.assets.image.thumbnails.max_srcset_dpi_factor` configuration option.
+By default, this value is set to 2, and the getSrcset() method will generate values in increments of 1.
 
 ### Use in the Thumbnail Configuration:
 
@@ -447,10 +461,11 @@ Images with an embedded clipping path (8BIM / Adobe profile meta data) are autom
 If you do not want to use thumbnail auto clipping, you can disable the support by adding the following config option:
 
 ```yml
-assets:
-    image:
-        thumbnails:
-            clip_auto_support: false
+pimcore:
+    assets:
+        image:
+            thumbnails:
+                clip_auto_support: false
 ```
 
 ### Note on using WebP with Imagick using delegates
@@ -507,3 +522,18 @@ pimcore:
             thumbnails:
                 auto_formats: null
 ```
+
+## Manually specify the used image processing adapter (Imagick or GD)
+It is possible to manually specify the used image processing adapter by Pimcore. 
+You can choose from `Imagick` or `GD`, the default is auto-detected, based on the availability of `imagick` PECL extension. 
+It is also possible to implement your own adapter, by implementing `Pimcore\Image\AdapterInterface`.
+
+To specify the used image adapter, please use the following service configuration: 
+
+```yaml
+services: 
+    Pimcore\Image\AdapterInterface:
+        alias: Pimcore\Image\Adapter\GD
+        public: true
+```
+Please be aware that the adapter service needs to be public. 

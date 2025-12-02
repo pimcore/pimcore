@@ -1,15 +1,12 @@
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
- */
+* This source file is available under the terms of the
+* Pimcore Open Core License (POCL)
+* Full copyright and license information is available in
+* LICENSE.md which is distributed with this source code.
+*
+*  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.com)
+*  @license    Pimcore Open Core License (POCL)
+*/
 
 pimcore.registerNS("pimcore.bundle.customreports.custom.report");
 /**
@@ -146,13 +143,19 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
 
     },
 
-    createGrid: function() {
-        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
+    createGrid: function(data) {
+        let itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
+        if (!data.pagination) {
+            itemsPerPage = -1;
+        }
         var url = Routing.generate('pimcore_bundle_customreports_customreport_data');
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url, this.storeFields, itemsPerPage
         );
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
+        if (!data.pagination) {
+            this.pagingtoolbar = null;
+        }
 
         var proxy = this.store.getProxy();
         proxy.extraParams.name = this.config["name"];
@@ -186,44 +189,84 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
 
         var topBar = this.buildTopBar(this.drillDownFilterDefinitions);
 
-        //export button
-        var exportBtnHandler = function (btn) {
-            this.progressBar = Ext.create('Ext.ProgressBar', {
-                renderTo: Ext.getBody(),
-                width: 300
-            });
-            this.progressWindow = new Ext.Window({
-                modal: true,
-                title: "Progress",
-                width: 300,
-                height: 120,
-                closable: false,
-                items: [this.progressBar],
-                buttons: [{
-                    text: t("cancel"),
-                    handler: function () {
-                        this.progressStop = true;
-                        this.progressWindow.close();
-                    }.bind(this)
+        const exportBtnHandler = function (btn) {
+            const form = Ext.create('Ext.form.Panel', {
+                bodyPadding: 10,
+                defaults: {
+                    labelWidth: 120
+                },
+                items: [{
+                    xtype: 'textfield',
+                    fieldLabel: t('csv_delimiter'),
+                    name: 'delimiter',
+                    value: ';',
+                    allowBlank: false,
+                    maxLength: 1,
+                    width: 250
+                }, {
+                    xtype: 'checkbox',
+                    fieldLabel: t('include_headers'),
+                    name: 'headers',
+                    checked: false,
+                    inputValue: true,
+                    uncheckedValue: false
                 }]
             });
-            this.progressWindow.show();
-            this.createCsv(btn, "", 0, btn.getItemId() === 'exportWithHeaders' ? "1" : "");
+
+            const exportDialog = Ext.create('Ext.window.Window', {
+                title: t('export_csv_options'),
+                width: 350,
+                height: 180,
+                modal: true,
+                layout: 'fit',
+                items: [form],
+                buttons: [{
+                    text: t('export'),
+                    handler: function() {
+                        if (form.isValid()) {
+                            const values = form.getValues();
+                            exportDialog.close();
+                            
+                            this.progressBar = Ext.create('Ext.ProgressBar', {
+                                renderTo: Ext.getBody(),
+                                width: 300
+                            });
+                            this.progressWindow = new Ext.Window({
+                                modal: true,
+                                title: "Progress",
+                                width: 300,
+                                height: 120,
+                                closable: false,
+                                items: [this.progressBar],
+                                buttons: [{
+                                    text: t("cancel"),
+                                    handler: function () {
+                                        this.progressStop = true;
+                                        this.progressWindow.close();
+                                    }.bind(this)
+                                }]
+                            });
+                            this.progressWindow.show();
+                            this.createCsv(values.delimiter, "", 0, values.headers);
+                        }
+                    }.bind(this)
+                }, {
+                    text: t('cancel'),
+                    handler: function() {
+                        exportDialog.close();
+                    }
+                }]
+            });
+
+            exportDialog.show();
         };
 
         topBar.push("->");
 
         topBar.push({
-            xtype: 'splitbutton',
             text: t("export_csv"),
             iconCls: "pimcore_icon_export",
-            handler: exportBtnHandler.bind(this),
-            menu: [{
-                text: t("export_csv_include_headers"),
-                itemId: 'exportWithHeaders',
-                iconCls: "pimcore_icon_export",
-                handler: exportBtnHandler.bind(this)
-            }]
+            handler: exportBtnHandler.bind(this)
         });
 
         this.grid = new Ext.grid.GridPanel({
@@ -247,7 +290,7 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
 
     initGrid: function (data) {
         this.prepareGridConfig(data);
-        return this.createGrid();
+        return this.createGrid(data);
     },
 
     buildTopBar: function(drillDownFilterDefinitions) {
@@ -556,7 +599,7 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
         return this.panel;
     },
 
-    createCsv: function (btn, exportFile, offset, withHeader) {
+    createCsv: function (delimiter, exportFile, offset, withHeader) {
         let filterData = this.store.getFilters().items;
         let proxy = this.store.getProxy();
 
@@ -568,6 +611,7 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
                 name: this.config.name,
                 filter: filterData.length > 0 ? encodeURIComponent(proxy.encodeFilters(filterData)) : "",
                 headers: withHeader,
+                delimiter: delimiter,
                 drillDownFilters: JSON.stringify(this.drillDownFilters)
             },
             success: function (response) {
@@ -580,7 +624,7 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
                 }else{
                     this.progressBar.updateProgress(response["progress"],Number.parseFloat(response["progress"]*100).toFixed(0)+"%");
                     if(!this.progressStop){
-                        this.createCsv(btn, response["exportFile"], response["offset"], 0);
+                        this.createCsv(delimiter, response["exportFile"], response["offset"], 0);
                     }
                 }
             }.bind(this)
