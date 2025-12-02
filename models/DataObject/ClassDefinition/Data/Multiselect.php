@@ -69,6 +69,11 @@ class Multiselect extends Data implements
 
     /**
      * @internal
+     *
+     */
+    public bool $enforceValidation = false;
+    /**
+     * @internal
      */
     public bool $dynamicOptions = false;
 
@@ -120,6 +125,16 @@ class Multiselect extends Data implements
     public function getRenderType(): ?string
     {
         return $this->renderType;
+    }
+
+    public function isEnforceValidation(): bool
+    {
+        return $this->enforceValidation;
+    }
+
+    public function setEnforceValidation(bool $enforceValidation): void
+    {
+        $this->enforceValidation = $enforceValidation;
     }
 
     /**
@@ -277,10 +292,15 @@ class Multiselect extends Data implements
             throw new Model\Element\ValidationException("Invalid multiselect data on field [ {$this->getName()} ]");
         }
 
-        if (is_array($data)) {
+        if (is_array($data) && $this->isEnforceValidation()) {
             // Ensure options providers are resolved
             if ($this->getOptions() === null) {
                 $this->enrichFieldDefinition($params['context'] ?? []);
+            }
+
+            // If no options are defined yet, skip the validation
+            if (!$this->getOptions()) {
+                return;
             }
 
             foreach ($data as $value) {
@@ -299,11 +319,6 @@ class Multiselect extends Data implements
      */
     private function isValidOption(mixed $data): bool
     {
-        // If no options are defined yet, skip the validation
-        if (!$this->getOptions()) {
-            return true;
-        }
-
         $matches = array_filter(
             $this->getOptions(),
             function (array $option) use ($data) {
