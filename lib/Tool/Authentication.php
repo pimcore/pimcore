@@ -56,7 +56,7 @@ class Authentication
                 $pimcoreUser = $user->getUser();
                 // update last login date if last login timestamp was more than few seconds ago
                 // this is to reduce potential many last login update queries within a small time frame
-                if ( $pimcoreUser->getLastLogin() <= time() - 15) {
+                if ($pimcoreUser->getLastLogin() <= time() - 15) {
                     $pimcoreUser->setLastLogin(time());
                     $pimcoreUser->setLastLoginDate(); //set user current login date
                 }
