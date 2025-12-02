@@ -1269,7 +1269,7 @@ class Service extends Model\Element\Service
             return $result;
         }
 
-        $mergedFieldDefinition = self::getCustomGridFieldDefinitions($class->getId(), $objectId);
+        $mergedFieldDefinition = self::getCustomGridFieldDefinitions($class->getId(), $objectId, $user);
         if (is_array($mergedFieldDefinition)) {
             if (isset($mergedFieldDefinition['localizedfields'])) {
                 $children = $mergedFieldDefinition['localizedfields']->getFieldDefinitions();

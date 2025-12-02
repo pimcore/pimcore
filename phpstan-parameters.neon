@@ -25,6 +25,9 @@ parameters:
             identifier: missingType.generics
         -
             identifier: missingType.iterableValue
+        -
+            identifier: instanceof.alwaysTrue
+            path: bundles/GlossaryBundle/src/Tool/Processor.php
 
     # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:

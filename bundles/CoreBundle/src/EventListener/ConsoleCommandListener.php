@@ -13,8 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Doctrine\Migrations\Tools\Console\Command\DoctrineCommand;
 use Pimcore\Console\CommandContextHolder;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -41,6 +43,15 @@ class ConsoleCommandListener implements EventSubscriberInterface
         $command = $event->getCommand();
         if ($command) {
             $this->contextHolder->setCommandName($command->getName());
+        }
+
+        if ($command instanceof DoctrineCommand) {
+            $command->addOption(
+                'prefix',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Optional prefix filter for version classes, e.g., Pimcore\Bundle\CoreBundle\Migrations'
+            );
         }
     }
 }
