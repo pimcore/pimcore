@@ -564,17 +564,32 @@ class TestDataHelper extends AbstractTestDataHelper
     public function assertMultiSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
+
         $value = $object->$getter();
         $expected = ['cat', 'tiger'];
 
         $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
+
+        // Testing default behavior when enforceValidation is disabled
+        $object->$setter(['dragon']);
+
+        try {
+            $object->save();
+            $this->assertTrue(true);
+        } catch (\Exception $e) {
+            $this->assertFalse(
+                str_contains($e->getMessage(), 'Invalid multiselect option') && str_contains($e->getMessage(), 'dragon')
+            );
+        }
     }
 
     public function assertMultiSelectEnforced(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $setter = 'set' . ucfirst($field);
+
         $value = $object->$getter();
         $expected = ['cat', 'tiger'];
 
