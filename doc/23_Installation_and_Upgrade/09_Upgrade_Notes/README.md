@@ -192,7 +192,7 @@ ORDER BY TABLE_NAME;
 #### [Dependencies]
 - Added support to `doctrine/orm` `v3` and `symfony/webpack-encore-bundle` `v2`.
 #### [WYSIWYG-Editor]
-- `TinyMCE` is deprecated. Use `Quill` (`pimcore/quill-bundle`) instead.
+- `TinyMCE` is deprecated for Pimcore Community edition. Use `Quill` (`pimcore/quill-bundle`) instead.
 ### Elements
 #### [Assets]
 - Introduced `pimcore.assets.metadata.alt`, `pimcore.assets.metadata.copyright`, `pimcore.assets.metadata.title` configuration to allow defining which metadata should be used when rending the image tag.

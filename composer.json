@@ -122,6 +122,7 @@
     "symfony/uid": "^6.4 || ^7.2",
     "symfony/validator": "^6.4",
     "symfony/var-dumper": "^6.4 || ^7.2",
+    "symfony/var-exporter": "^6.4 || ^7.2",
     "symfony/web-profiler-bundle": "^6.4 || ^7.2",
     "symfony/webpack-encore-bundle": "^1.17 || ^2.0",
     "symfony/workflow": "^6.4 || ^7.2",
@@ -145,7 +146,38 @@
     "symfony/web-link": "<6.0",
     "thecodingmachine/safe": "<2.0",
     "twig/twig": ">=3.9.0 <3.14.0",
-    "php-http/discovery": "<1.20"
+    "php-http/discovery": "<1.20",
+    "symfony/cache": ">=7.4",
+    "symfony/config": ">=7.4",
+    "symfony/debug-bundle": ">=7.4",
+    "symfony/doctrine-bridge": ">=7.4",
+    "symfony/doctrine-messenger": ">=7.4",
+    "symfony/dom-crawler": ">=7.4",
+    "symfony/error-handler": ">=7.4",
+    "symfony/event-dispatcher": ">=7.4",
+    "symfony/expression-language": ">=7.4",
+    "symfony/filesystem": ">=7.4",
+    "symfony/finder": ">=7.4",
+    "symfony/html-sanitizer": ">=7.4",
+    "symfony/lock": ">=7.4",
+    "symfony/mailer": ">=7.4",
+    "symfony/mime": ">=7.4",
+    "symfony/options-resolver": ">=7.4",
+    "symfony/password-hasher": ">=7.4",
+    "symfony/process": ">=7.4",
+    "symfony/property-access": ">=7.4",
+    "symfony/property-info": ">=7.4",
+    "symfony/rate-limiter": ">=7.4",
+    "symfony/routing": ">=7.4",
+    "symfony/serializer": ">=7.4",
+    "symfony/string": ">=7.4",
+    "symfony/translation": ">=7.4",
+    "symfony/uid": ">=7.4",
+    "symfony/var-dumper": ">=7.4",
+    "symfony/var-exporter": ">=7.4",
+    "symfony/web-profiler-bundle": ">=7.4",
+    "symfony/workflow": ">=7.4",
+    "symfony/yaml": ">=7.4"
   },
   "require-dev": {
     "behat/gherkin": "4.12.0",
@@ -157,9 +189,8 @@
     "phpstan/phpstan": "2.1.26",
     "phpstan/phpstan-symfony": "^2.0.2",
     "phpunit/phpunit": "^10.5",
-    "symfony/dotenv": "^6.4 || ^7.2",
+    "symfony/dotenv": "^6.4 || 7.2.x || 7.3.x",
     "symfony/runtime": "^6.4",
-    "symfony/var-exporter": "^6.4 || ^7.3",
     "webmozarts/console-parallelization": "^2.1"
   },
   "suggest": {
@@ -210,7 +241,7 @@
   },
   "extra": {
     "branch-alias": {
-      "11.x-dev": "11.5.x-dev"
+      "dev-12.x": "12.3.x-dev"
     }
   },
   "scripts": {
