@@ -286,6 +286,18 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         if (count($securityConfigs) > 1) {
             $this->setExtensionConfig($container, 'security', $securityConfigs);
         }*/
+
+        if (!$container->hasExtension('framework')) {
+            return;
+        }
+
+        $symfonyVersion = \Symfony\Component\HttpKernel\Kernel::VERSION;
+        if (version_compare($symfonyVersion, '7.4.0', '>=')) {
+            $container->prependExtensionConfig('framework', [
+                'http_method_override' => true,
+                'allowed_http_method_override' => ['PUT', 'PATCH', 'DELETE'],
+            ]);
+        }
     }
 
     /**
