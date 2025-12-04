@@ -9,50 +9,34 @@
 -   Added a new command `pimcore:migrate:mail-logs-folder-structure` to migrate all mail log files to a new folder structure (YYYY/MM/DD/\<log filename\>).
 -   Added a thumbnail setting option to use Crop Box (the visible area), instead of Media Box when converting documents via Ghostscript. 
 -   Added the Twig function `pimcore_count_block(blockname)` to get the count for `pimcoreblock` editable.
+-   Refactored VersionCleanupTask for improved performance and reduced SQL query amounts. Added a new configuration option `disable_events` under each version’s configuration block. When enabled, PRE/POST delete events will be suppressed during the version cleanup process to reduce overhead and speed up execution. 
 -   Added a new configuration option for Select and MultiSelect object types to enforce validation when setting values via PHP API.
 
 ### Deprecations
 
-#### Bundles
+#### Deprecated and Discontinued 
+The following bundles got deprecated and won't be migrated to Pimcore Studio
+- Glossary Bundle
+- Simple Backend Search Bundle
+- Static Routes Bundle
+- Parts of SeoBundle - All functionality except of the redirects and sitemaps won't be migrated to Pimcore Studio
+- WordExport Bundle
+- XliffBundle Export Bundle
 
-**What's Deprecated:**
-
-The following bundles won't be migrated to Pimcore Studio
-- GlossaryBundle
-- SeoBundle
-- WordExportBundle
-- XliffBundle
-
-SimpleBackendSearchBundle - Studio implements this functionality out-of-the-box.
-
-StaticRoutesBundle - All functionality except of the redirects and sitemaps won't be migrated to Pimcore Studio
-
-**Timeline:**
-
--   Version 12.3: Deprecation notice
--   Version 13.0: Complete removal of the bundles
-
+#### Deprecated because directly integrated into Studio 
+- SimpleBackendSearch Bundle
 
 #### [Symfony 6.x Components Support]
 
-Support for all Symfony 6.x components will be removed in version 13.0.
+Support for all Symfony 6.x components will be removed in next major version.
 This is part of the migration to Symfony 7, which requires updating all Symfony dependencies to version 7.3 or higher.
-
-**What's Deprecated:**
-
--   All Symfony 6.x component versions
--   Mixed Symfony 6.x/7.x environments
-
-**Timeline:**
-
--   Version 12.3: Deprecation notice for Symfony 6.x support
--   Version 13.0: Complete removal of Symfony 6.x compatibility
 
 **Action Required:**
 Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 13.0.
 
 **Note:**
-If you want to stay on Symfony 6.x after updating to this version, you can use the `pimcore/symfony-freeze` metapackage to prevent automatic upgrades to Symfony 7.x:
+If you want to stay on Symfony 6.x after updating to this version, you can use the `pimcore/symfony-freeze` metapackage to prevent 
+automatic upgrades to Symfony 7.x:
 
 ```bash
 composer require pimcore/symfony-freeze:^6.0
@@ -68,20 +52,11 @@ composer require pimcore/symfony-freeze:^7.0
 
 **Note:** The `pimcore/symfony-freeze` package is only intended for Pimcore 12.3 and 12.x development versions. It will not be needed for Pimcore 13, as Symfony 6 support will be removed entirely.
 
+
 #### [Doctrine Annotations]
 
 The `doctrine/annotations` package has been removed as it's no longer needed with modern PHP 8+ attributes.
 This is part of the migration to Symfony 7 and modern PHP practices.
-
-**What's Removed:**
-
--   `doctrine/annotations` package dependency
--   Legacy annotation-based configurations
-
-**Timeline:**
-
--   Version 12.3: `doctrine/annotations` package removed
--   All functionality now uses PHP 8+ attributes instead
 
 **Action Required:**
 No action required for most users. If your custom code relies on `doctrine/annotations` directly, update to use PHP 8+ attributes or add the dependency to your own composer.json if still needed.
@@ -109,11 +84,6 @@ This is part of the migration to Symfony 7, which no longer includes the `symfon
 3. **Container Lookups**:
     - Retrieving `pimcore.templating.engine.delegating` directly from the container
 
-**Timeline:**
-
--   Version 12.3: Deprecation warnings introduced
--   Version 13.0: Complete removal of symfony/templating support
-
 **Action Required:**
 Update your code to use `Twig\Environment` directly instead of `Symfony\Component\Templating\EngineInterface`.
 All functionality remains the same, but the interface changes from the Symfony templating abstraction to Twig directly.
@@ -121,15 +91,6 @@ All functionality remains the same, but the interface changes from the Symfony t
 #### Folder structure for email logs
 
 The command `pimcore:migrate:mail-logs-folder-structure` and supporting the old structure are deprecated and will be removed in version 13.0.
-
-**What's Deprecated:**
-
-1. **Commands**: `pimcore:migrate:mail-logs-folder-structure`
-
-**Timeline:**
-
--   Version 12.3: Deprecation warnings introduced
--   Version 13.0: Complete removal of the command `pimcore:migrate:mail-logs-folder-structure` and supporting the old structure
 
 **Action Required:**
 Execute the command `pimcore:migrate:mail-logs-folder-structure` or move the files manually to YYYY/MM/DD/\<log filename\>.
@@ -370,8 +331,7 @@ ORDER BY TABLE_NAME;
 
 #### [WYSIWYG-Editor]
 
--   `TinyMCE` is deprecated. Use `Quill` (`pimcore/quill-bundle`) instead.
-
+-   `TinyMCE` is deprecated for Pimcore Community edition. Use `Quill` (`pimcore/quill-bundle`) instead.
 ### Elements
 
 #### [Assets]
