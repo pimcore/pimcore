@@ -71,7 +71,7 @@ class Select extends Data implements
     /**
      * @internal
      */
-    private bool $enforceValidation = false;
+    public bool $enforceValidation = false;
 
     public function getColumnLength(): int
     {
