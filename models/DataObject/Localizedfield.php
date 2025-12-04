@@ -552,6 +552,17 @@ final class Localizedfield extends Model\AbstractModel implements
             }
         }
 
+        if (
+            $markFieldAsDirty &&
+            (
+                $fieldDefinition instanceof DataObject\ClassDefinition\Data\Multiselect ||
+                $fieldDefinition instanceof DataObject\ClassDefinition\Data\Select
+            ) &&
+            $fieldDefinition->isEnforceValidation()
+        ) {
+            $fieldDefinition->checkValidity($value);
+        }
+
         if ($fieldDefinition instanceof PreSetDataInterface) {
             $value = $fieldDefinition->preSetData(
                 $this,
