@@ -23,6 +23,8 @@ use Pimcore\Tool\Admin;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Pimcore\Version;
 use RuntimeException;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\LazyCommand;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
@@ -127,5 +129,27 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
         $inputDefinition->addOption(new InputOption('maintenance-mode', null, InputOption::VALUE_NONE, 'Set this flag to force maintenance mode while this task runs'));
 
         return $inputDefinition;
+    }
+
+
+    public function add(Command $command): ?Command
+    {
+        if ($command instanceof LazyCommand && str_starts_with($command->getName(), 'doctrine:')) {
+            $command = $command->getCommand();
+        }
+
+        if (str_starts_with($command->getName(), 'doctrine:') || $command instanceof DoctrineCommand) {
+            $definition = $command->getDefinition();
+
+            // add filter option
+            $definition->addOption(new InputOption(
+                'prefix',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Optional prefix filter for version classes, eg. Pimcore\Bundle\CoreBundle\Migrations'
+            ));
+        }
+
+        return parent::add($command);
     }
 }

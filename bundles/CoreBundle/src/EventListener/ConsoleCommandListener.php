@@ -44,14 +44,5 @@ class ConsoleCommandListener implements EventSubscriberInterface
         if ($command) {
             $this->contextHolder->setCommandName($command->getName());
         }
-
-        if ($command instanceof DoctrineCommand) {
-            $command->addOption(
-                'prefix',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Optional prefix filter for version classes, e.g., Pimcore\Bundle\CoreBundle\Migrations'
-            );
-        }
     }
 }
