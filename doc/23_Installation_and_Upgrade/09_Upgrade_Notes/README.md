@@ -9,6 +9,7 @@
 -   Added a new command `pimcore:migrate:mail-logs-folder-structure` to migrate all mail log files to a new folder structure (YYYY/MM/DD/\<log filename\>).
 -   Added a thumbnail setting option to use Crop Box (the visible area), instead of Media Box when converting documents via Ghostscript. 
 -   Added the Twig function `pimcore_count_block(blockname)` to get the count for `pimcoreblock` editable.
+-   Added a new configuration option for Select and MultiSelect object types to enforce validation when setting values via PHP API.
 
 ### Deprecations
 
