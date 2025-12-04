@@ -565,6 +565,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $getter = 'get' . ucfirst($field);
         $setter = 'set' . ucfirst($field);
+        $validationException = false;
 
         $value = $object->$getter();
         $expected = ['cat', 'tiger'];
@@ -577,18 +578,23 @@ class TestDataHelper extends AbstractTestDataHelper
 
         try {
             $object->save();
-            $this->assertTrue(true);
+            $this->assertTrue(true); //save successfull without exceptions
         } catch (\Exception $e) {
-            $this->assertFalse(
-                str_contains($e->getMessage(), 'Invalid multiselect option') && str_contains($e->getMessage(), 'dragon')
-            );
+            if (
+                str_contains($e->getMessage(), 'Invalid multiselect option') &&
+                str_contains($e->getMessage(), 'dragon')
+            ) {
+                $validationException = true;
+            }
         }
+        $this->assertFalse($validationException);
     }
 
     public function assertMultiSelectEnforced(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $setter = 'set' . ucfirst($field);
+        $validationException = false;
 
         $value = $object->$getter();
         $expected = ['cat', 'tiger'];
@@ -602,11 +608,14 @@ class TestDataHelper extends AbstractTestDataHelper
             $object->save();
             $this->assertFalse(true);
         } catch (\Exception $e) {
-            $this->assertTrue(
-                str_contains($e->getMessage(), 'Invalid multiselect option') && str_contains($e->getMessage(), 'dragon')
-            );
+            if (
+                str_contains($e->getMessage(), 'Invalid multiselect option') &&
+                str_contains($e->getMessage(), 'dragon')
+            ) {
+                $validationException = true;
+            }
         }
-
+        $this->assertTrue($validationException);
     }
 
     public function assertMultihref(Concrete $object, string $field, int $seed = 1): void
