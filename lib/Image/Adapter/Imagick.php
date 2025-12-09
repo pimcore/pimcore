@@ -523,7 +523,7 @@ class Imagick extends Adapter
             $this->setHeight($height);
         }
 
-        if ($this->resource->getNumberImages() > 1) {
+        if ($this->isVectorGraphic() && $this->resource->getNumberImages() > 1) {
             $this->resource->removeImage();
         }
 
