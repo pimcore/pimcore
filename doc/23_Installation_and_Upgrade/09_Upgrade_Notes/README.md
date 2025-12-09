@@ -761,7 +761,7 @@ The tokens for password reset are now stored in the DB and are one time use only
             ```
             -   Removed deprecated methods `getTranslator()`, `getBundleManager()` and `getTokenResolver()` from the `Pimcore\Bundle\AdminBundle\Controller\AdminController`
     -   [System Info & Tools] Php Info and Opcache Status has been moved into `pimcore/system-info-bundle` package.
-    -   [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
+    -   [File Explorer] System File explorer has been moved to `pimcore/file-explorer-bundle` package.
     -   [Web2Print] has been moved to `pimcore/web-to-print-bundle` package.
         -   Config `pimcore:documents:web_to_print` has been removed, please use `pimcore_web_to_print` in the PimcoreWebToPrintBundle instead.
         -   Print related Events have been moved into PimcoreWebToPrintBundle. Please check and adapt the Events' namespaces.
