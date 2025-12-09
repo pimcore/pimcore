@@ -251,6 +251,7 @@ pimcore:
                     localizedfields: \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields
                     manyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation
                     advancedManyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
+                    manyToManyAssetRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyAssetRelation
                     multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
                     reverseObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation
                     urlSlug: \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug
