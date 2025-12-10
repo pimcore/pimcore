@@ -252,9 +252,7 @@ class Input extends Data implements
      */
     public function setDefaultValue(string $defaultValue): static
     {
-        if ($defaultValue !== '') {
-            $this->defaultValue = $defaultValue;
-        }
+        $this->defaultValue = $defaultValue;
 
         return $this;
     }

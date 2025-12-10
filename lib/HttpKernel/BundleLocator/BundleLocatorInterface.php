@@ -31,7 +31,7 @@ interface BundleLocatorInterface
      *
      * AppBundle\Controller\FooController returns src/AppBundle
      *
-     *
+     * @deprecated will be removed in 13.0. Use "getBundle()->getPath()" instead.
      *
      * @throws NotFoundException
      */

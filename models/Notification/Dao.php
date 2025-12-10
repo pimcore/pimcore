@@ -56,22 +56,21 @@ class Dao extends AbstractDao
      */
     public function save(): void
     {
-        $model = $this->getModel();
-        $model->setModificationDate(date('Y-m-d H:i:s'));
+        $this->model->setModificationDate(date('Y-m-d H:i:s'));
 
-        if ($model->getId() === null || !$model->getCreationDate()) {
-            $model->setCreationDate($model->getModificationDate());
+        if ($this->model->getId() === null || !$this->model->getCreationDate()) {
+            $this->model->setCreationDate($this->model->getModificationDate());
         }
 
         $lastInsertId = Helper::upsert(
             $this->db,
             self::DB_TABLE_NAME,
-            $this->getData($model),
+            $this->getData($this->model),
             $this->getPrimaryKey(self::DB_TABLE_NAME)
         );
 
-        if ($model->getId() === null) {
-            $model->setId((int) $lastInsertId);
+        if ($this->model->getId() === null) {
+            $this->model->setId((int) $lastInsertId);
         }
     }
 
@@ -83,13 +82,12 @@ class Dao extends AbstractDao
     public function delete(): void
     {
         $this->db->delete(self::DB_TABLE_NAME, [
-            'id' => $this->getModel()->getId(),
+            'id' => $this->model->getId(),
         ]);
     }
 
     protected function assignVariablesToModel(array $data): void
     {
-        $model = $this->getModel();
         $sender = null;
 
         if ($data['sender']) {
@@ -126,18 +124,18 @@ class Dao extends AbstractDao
             $linkedElement = Service::getElementById($data['linkedElementType'], $data['linkedElement']);
         }
 
-        $model->setId((int)$data['id']);
-        $model->setCreationDate($data['creationDate'] ?? $data['modificationDate']);
-        $model->setModificationDate($data['modificationDate']);
-        $model->setSender($sender);
-        $model->setRecipient($recipient);
-        $model->setTitle($data['title']);
-        $model->setType($data['type'] ?? 'info');
-        $model->setMessage($data['message']);
-        $model->setLinkedElement($linkedElement);
-        $model->setRead($data['read'] === 1);
-        $model->setPayload($data['payload']);
-        $model->setIsStudio($data['isStudio'] === 1); // TODO: Remove with end of Classic-UI
+        $this->model->setId((int)$data['id']);
+        $this->model->setCreationDate($data['creationDate'] ?? $data['modificationDate']);
+        $this->model->setModificationDate($data['modificationDate']);
+        $this->model->setSender($sender);
+        $this->model->setRecipient($recipient);
+        $this->model->setTitle($data['title']);
+        $this->model->setType($data['type'] ?? 'info');
+        $this->model->setMessage($data['message']);
+        $this->model->setLinkedElement($linkedElement);
+        $this->model->setRead($data['read'] === 1);
+        $this->model->setPayload($data['payload']);
+        $this->model->setIsStudio($data['isStudio'] === 1); // TODO: Remove with end of Classic-UI
     }
 
     protected function getData(Notification $model): array
@@ -157,10 +155,5 @@ class Dao extends AbstractDao
             'payload' => $model->getPayload(),
             'isStudio' => (int) $model->isStudio(), // TODO: Remove with end of Classic-UI
         ];
-    }
-
-    protected function getModel(): Notification
-    {
-        return $this->model;
     }
 }

@@ -21,6 +21,7 @@ use Pimcore\Bundle\XliffBundle\ImporterService\ImporterServiceInterface;
 use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItemCollection;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -121,7 +122,7 @@ class XliffTranslationController extends UserAwareController
         $this->checkPermission('xliff_import_export');
 
         $id = $request->request->getString('id');
-        $step = $request->request->getInt('step');
+        $step = ParameterBagHelper::getInt($request->request, 'step');
 
         try {
             $attributeSet = $importDataExtractor->extractElement($id, $step);

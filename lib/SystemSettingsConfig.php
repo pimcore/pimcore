@@ -189,6 +189,7 @@ class SystemSettingsConfig
                 'versions' => [
                     'days' => $values['documents.versions.days'] ?? null,
                     'steps' => $values['documents.versions.steps'] ?? null,
+                    'disable_events' => $values['disable_events'] ?? false,
                 ],
                 'error_pages' => [
                     'default' => $values['documents.error_pages.default'],
@@ -199,12 +200,14 @@ class SystemSettingsConfig
                 'versions' => [
                     'days' => $values['objects.versions.days'] ?? null,
                     'steps' => $values['objects.versions.steps'] ?? null,
+                    'disable_events' => $values['disable_events'] ?? false,
                 ],
             ],
             'assets' => [
                 'versions' => [
                     'days' => $values['assets.versions.days'] ?? null,
                     'steps' => $values['assets.versions.steps'] ?? null,
+                    'disable_events' => $values['disable_events'] ?? false,
                 ],
             ],
             'email' => [],

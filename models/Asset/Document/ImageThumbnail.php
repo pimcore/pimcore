@@ -43,8 +43,12 @@ final class ImageThumbnail implements ImageThumbnailInterface
      */
     protected int $page = 1;
 
-    public function __construct(?Model\Asset\Document $asset, array|string|Image\Thumbnail\Config|null $config = null, int $page = 1, bool $deferred = true)
-    {
+    public function __construct(
+        ?Model\Asset\Document $asset,
+        array|string|Image\Thumbnail\Config|null $config = null,
+        int $page = 1,
+        bool $deferred = true
+    ) {
         $this->asset = $asset;
         $this->config = $this->createConfig($config ?? []);
         $this->page = $page;
@@ -127,11 +131,12 @@ final class ImageThumbnail implements ImageThumbnailInterface
     {
         $storage = Storage::get('asset_cache');
         $cacheFilePath = sprintf(
-            '%s/%s/image-thumb__%s__document_original_image/page_%s.png',
+            '%s/%s/image-thumb__%s__document_original_image/page_%d%s.png',
             rtrim($this->asset->getRealPath(), '/'),
             $this->asset->getId(),
             $this->asset->getId(),
-            $this->page
+            $this->page,
+            $this->getConfig()->isUseCropBox() ? '_cropbox' : ''
         );
 
         if (!$storage->fileExists($cacheFilePath)) {
@@ -142,6 +147,12 @@ final class ImageThumbnail implements ImageThumbnailInterface
                 try {
                     $converter = Document::getInstance();
                     $converter->load($this->asset);
+
+                    // TODO: saveImage could be having an optional $options parameter instead
+                    if ($converter instanceof Document\Adapter\Ghostscript) {
+                        $converter->setUseCropBox($this->getConfig()->isUseCropBox());
+                    }
+
                     if (false === $converter->saveImage($tempFile, $this->page)) {
                         Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
 

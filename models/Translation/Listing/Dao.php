@@ -39,7 +39,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $queryBuilder->setFirstResult(0);
 
         $query = sprintf('SELECT COUNT(*) as amount FROM (%s) AS a', (string) $queryBuilder);
-        $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables());
+        $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $amount;
     }
@@ -53,9 +53,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
 
         $query = sprintf('SELECT COUNT(*) as amount FROM (%s) AS a', (string) $queryBuilder);
-        $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables());
 
-        return $amount;
+        return (int) $this->db->fetchOne($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
     }
 
     public function getAllTranslations(): array

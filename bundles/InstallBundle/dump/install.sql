@@ -707,11 +707,13 @@ CREATE TABLE `gridconfigs` (
 	`modificationDate` INT(11) NULL,
 	`shareGlobally` TINYINT(1) NULL,
 	`setAsFavourite` TINYINT(1) NULL,
+	`shareBetweenFolders` TINYINT(1) NULL,
 	PRIMARY KEY (`id`),
 	INDEX `ownerId` (`ownerId`),
 	INDEX `classId` (`classId`),
 	INDEX `searchType` (`searchType`),
-	INDEX `shareGlobally` (`shareGlobally`)
+	INDEX `shareGlobally` (`shareGlobally`),
+    INDEX `shareBetweenFolders` (`shareBetweenFolders`)
 )
 DEFAULT CHARSET=utf8mb4;
 ;
