@@ -443,7 +443,7 @@ class Video extends Data implements
         }
 
         foreach ($oldData as $key => $oValue) {
-            if (!isset($newData[$key]) || $oValue !== $newData[$key]) {
+            if (!array_key_exists($key, $newData) || $oValue !== $newData[$key]) {
                 return false;
             }
         }
