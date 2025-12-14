@@ -137,12 +137,32 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
     public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $return = [];
+        $visibleFieldsArray = $this->getVisibleFields() ? explode(',', (string) $this->getVisibleFields()) : [];
 
         // add data
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $asset) {
                 if ($asset instanceof Asset) {
-                    $return[] = Element\Service::gridElementData($asset);
+                    $row = Element\Service::gridElementData($asset);
+
+                    if (!empty($visibleFieldsArray)) {
+                        foreach ($visibleFieldsArray as $field) {
+                            // don't override existing system columns (id, fullpath, subtype, etc.)
+                            if (array_key_exists($field, $row)) {
+                                continue;
+                            }
+
+                            $getter = 'get' . ucfirst($field);
+                            if (method_exists($asset, $getter)) {
+                                $row[$field] = $asset->{$getter}();
+                                continue;
+                            }
+
+                            $row[$field] = $asset->getMetadata($field);
+                        }
+                    }
+
+                    $return[] = $row;
                 }
             }
         }
