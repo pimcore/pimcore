@@ -199,7 +199,6 @@ class Imagick extends Adapter
             $format = 'png32';
         }
 
-        $originalFilename = null;
         $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
 
         if (in_array($format, ['jpeg', 'pjpeg', 'jpg']) && $this->isAlphaPossible) {
