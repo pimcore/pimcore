@@ -716,6 +716,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
+        $this->__getRawRelationData();
+
         // set object to registry
         RuntimeCache::set(self::getCacheKey($this->getId()), $this);
     }
