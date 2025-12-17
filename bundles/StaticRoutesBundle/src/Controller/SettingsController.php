@@ -35,8 +35,9 @@ class SettingsController extends UserAwareController
      */
     public function staticroutesAction(Request $request): JsonResponse
     {
+        $this->checkPermission('routes');
+        
         if ($request->request->has('data')) {
-            $this->checkPermission('routes');
 
             $data = $this->decodeJson($request->request->getString('data'));
 
