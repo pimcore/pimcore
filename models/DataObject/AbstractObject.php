@@ -716,7 +716,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        $this->__getRawRelationData();
+        // force loading of relation data
+        if ($this instanceof Concrete) {
+            $this->__getRawRelationData();
+        }
 
         // set object to registry
         RuntimeCache::set(self::getCacheKey($this->getId()), $this);
