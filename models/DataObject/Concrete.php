@@ -121,7 +121,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
                     // when adding a new object, skip check on mandatory for fields
                     // with default value or default value or default value generator
-                    if (empty($value) && !$isUpdate &&
+                    if (!$omitMandatoryCheck && empty($value) && !$isUpdate &&
                         (
                             (
                                 method_exists($fd, 'getDefaultValue') &&
