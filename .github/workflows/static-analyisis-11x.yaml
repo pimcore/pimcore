@@ -44,7 +44,14 @@ jobs:
                     - { php-version: "8.1", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
 
         steps:
-            - name: "Checkout code"
+            - name: Checkout PR head (only for pull_request_target)
+              if: github.event_name == 'pull_request_target'
+              uses: "actions/checkout@v4"
+              with:
+                ref: "refs/pull/${{ github.event.pull_request.number }}/merge"
+
+            - name: Checkout PR head (for push or other events)
+              if: github.event_name != 'pull_request_target'
               uses: "actions/checkout@v4"
 
             - name: "Install PHP"
