@@ -23,7 +23,7 @@ on:
         
 permissions:
   contents: read
-  
+
 jobs:
     codeception-tests:
         uses: pimcore/workflows-collection-public/.github/workflows/reusable-codeception-public.yaml@main
