@@ -107,6 +107,19 @@ class ListingTest extends ModelTestCase
         $list->load();
         $count = $list->getCount();
         $this->assertEquals(3, $count, 'expected 3 assets on grouped limited query');
+
+        // Test: on a grouped query, the ->getTotalCount() should use connected parameters (filtering on asset type image in this case)
+        $list = new Asset\Listing();
+        $list->addConditionParam('assets.type = ?', 'image');
+        $list->getDao()->onCreateQueryBuilder(function (QueryBuilder $queryBuilder) use ($tagA, $tagB) {
+            $this->joinTags($queryBuilder, $tagA, $tagB);
+        });
+
+        $totalCount = $list->getTotalCount();
+        $this->assertEquals(2, $totalCount, 'expected 4 assets on totalCount of grouped query containing parameters');
+        $list->load();
+        $count = $list->getCount();
+        $this->assertEquals(2, $count, 'expected 4 assets on grouped query containing parameters');
     }
 
     private function joinTags(QueryBuilder $queryBuilder, Tag ...$tags): void
