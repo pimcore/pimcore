@@ -182,6 +182,10 @@ class LogController extends UserAwareController implements KernelControllerEvent
             }
         }
 
+        if ($dateTime instanceof DateTime) {
+            $dateTime->setTimezone(new \DateTimeZone('UTC'));
+        }
+
         return $dateTime;
     }
 
