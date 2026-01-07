@@ -35,6 +35,7 @@ use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
+use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\AdminStyle;
@@ -169,6 +170,11 @@ class SearchController extends UserAwareController
             $join = '';
             $localizedJoin = '';
             foreach ($bricks as $ob) {
+                $objectBrickDefinition = Definition::getByKey($ob);
+                if (!$objectBrickDefinition){
+                    throw new InvalidArgumentException('Check your object brick filter arguments.');
+                }
+
                 $join .= ' LEFT JOIN object_brick_query_' . $ob . '_' . $class->getId();
                 $join .= ' `' . $ob . '`';
 
