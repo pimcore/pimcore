@@ -1,22 +1,19 @@
 
-name: "PHPStan Static Analysis"
+name: "PHPStan Static Analysis 11.x"
 
 on:
     workflow_dispatch:
     schedule:
         -   cron: '0 3 * * *'
-    pull_request:
+    pull_request_target:
         branches:
-            - "[0-9]+.[0-9]+"
-            - "[0-9]+.x"
+            - "11.*"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
     push:
         branches:
-            - "[0-9]+.[0-9]+"
-            - "[0-9]+.x"
-            - "*_actions"
+            - "11.*"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
@@ -47,7 +44,14 @@ jobs:
                     - { php-version: "8.1", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
 
         steps:
-            - name: "Checkout code"
+            - name: Checkout PR head (only for pull_request_target)
+              if: github.event_name == 'pull_request_target'
+              uses: "actions/checkout@v4"
+              with:
+                ref: "refs/pull/${{ github.event.pull_request.number }}/merge"
+
+            - name: Checkout PR head (for push or other events)
+              if: github.event_name != 'pull_request_target'
               uses: "actions/checkout@v4"
 
             - name: "Install PHP"
