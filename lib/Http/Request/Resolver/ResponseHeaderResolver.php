@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Http\Request\Resolver;
 
 use Pimcore\Controller\Attribute\ResponseHeader;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
