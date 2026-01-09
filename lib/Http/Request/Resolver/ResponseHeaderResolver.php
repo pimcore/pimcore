@@ -37,10 +37,9 @@ class ResponseHeaderResolver extends AbstractRequestResolver
             $request = $this->getCurrentRequest();
         }
         
-        /**
-        * @return array<string, ResponseHeader>
-        */
-        return $request->attributes->all(static::ATTRIBUTE_RESPONSE_HEADER);
+        /** @var array<string, ResponseHeader> $headers */
+        $headers = $request->attributes->all(static::ATTRIBUTE_RESPONSE_HEADER);
+        return $headers;
     }
 
     /**
