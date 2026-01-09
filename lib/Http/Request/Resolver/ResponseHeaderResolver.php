@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Pimcore\Http\Request\Resolver;
 
 use Pimcore\Controller\Attribute\ResponseHeader;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -37,10 +36,11 @@ class ResponseHeaderResolver extends AbstractRequestResolver
         if (null === $request) {
             $request = $this->getCurrentRequest();
         }
-
-        /** @var ParameterBag<string, mixed> $attributesBag */
-        $attributesBag = $request->attributes;
-        return $attributesBag->all(static::ATTRIBUTE_RESPONSE_HEADER);
+        
+        /**
+        * @return array<string, ResponseHeader>
+        */
+        return $request->attributes->all(static::ATTRIBUTE_RESPONSE_HEADER);
     }
 
     /**
