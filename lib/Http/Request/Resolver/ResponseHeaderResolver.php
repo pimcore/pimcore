@@ -37,7 +37,9 @@ class ResponseHeaderResolver extends AbstractRequestResolver
             $request = $this->getCurrentRequest();
         }
 
-        return $request->attributes->all(static::ATTRIBUTE_RESPONSE_HEADER);
+        /** @var ParameterBag<string, mixed> $attributesBag */
+        $attributesBag = $request->attributes;
+        return $attributesBag->all(static::ATTRIBUTE_RESPONSE_HEADER);
     }
 
     /**
