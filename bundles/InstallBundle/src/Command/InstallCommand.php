@@ -378,6 +378,11 @@ class InstallCommand extends Command
                 );
             } else {
                 $validator = function ($answer) use ($name) {
+                    // MySQL password can be null
+                    if ($name === 'mysql-password') {
+                        return $answer;
+                    }
+                    
                     if (empty($answer)) {
                         throw new RuntimeException(sprintf('%s cannot be empty', $name));
                     }
