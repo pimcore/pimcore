@@ -63,7 +63,7 @@ class MiscController extends UserAwareController
             $filter = $db->quote('%' . $filter . '%');
 
             $conditionParts = [];
-            foreach (['uri', 'code', 'parametersGet', 'parametersPost', 'serverVars', 'cookies'] as $field) {
+            foreach (['uri', 'code', 'parametersGet'] as $field) {
                 $conditionParts[] = $field . ' LIKE ' . $filter;
             }
             $condition = ' WHERE ' . implode(' OR ', $conditionParts);
@@ -96,7 +96,7 @@ class MiscController extends UserAwareController
         $data = $db->fetchAssociative('SELECT * FROM http_error_log WHERE uri = ?', [$request->query->getString('uri')]);
 
         foreach ($data as $key => &$value) {
-            if (in_array($key, ['parametersGet', 'parametersPost', 'serverVars', 'cookies'])) {
+            if (in_array($key, ['parametersGet'])) {
                 $value = unserialize($value);
             }
         }
