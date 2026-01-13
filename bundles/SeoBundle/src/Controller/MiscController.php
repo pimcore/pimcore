@@ -96,7 +96,7 @@ class MiscController extends UserAwareController
         $data = $db->fetchAssociative('SELECT * FROM http_error_log WHERE uri = ?', [$request->query->getString('uri')]);
 
         foreach ($data as $key => &$value) {
-            if (in_array($key, ['parametersGet'])) {
+            if ($key === 'parametersGet') {
                 $value = unserialize($value);
             }
         }
