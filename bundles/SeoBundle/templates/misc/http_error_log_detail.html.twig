@@ -44,7 +44,7 @@
 <h2>{{ data["code"] }} | {{ data["uri"] }}</h2>
 
 {% for key,value in data %}
-    {% if value is not empty %}
+    {% if value is not empty and key == "parametersGet" %}
         <h2 class="sub">{{ key|trans([], 'admin') }}</h2>
 
         <table>
