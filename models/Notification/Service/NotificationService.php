@@ -31,17 +31,12 @@ class NotificationService
 {
     private UserService $userService;
 
-    /**
-     * NotificationService constructor.
-     *
-     */
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
     }
 
     /**
-     *
      * @throws UnexpectedValueException
      * @throws Exception
      */
@@ -54,30 +49,36 @@ class NotificationService
     ): void {
         $this->beginTransaction();
 
-        $sender = User::getById($fromUser);
-        $recipient = User::getById($userId);
+        try {
+            $sender = User::getById($fromUser);
+            $recipient = User::getById($userId);
 
-        if (!$recipient instanceof User) {
-            throw new UnexpectedValueException(sprintf('No user found with the ID %d', $userId));
+            if (!$recipient instanceof User) {
+                throw new UnexpectedValueException(sprintf('No user found with the ID %d', $userId));
+            }
+
+            if (empty($title)) {
+                throw new UnexpectedValueException('Title of the Notification cannot be empty');
+            }
+
+            if (empty($message)) {
+                throw new UnexpectedValueException('Message text of the Notification cannot be empty');
+            }
+
+            $notification = new Notification();
+            $notification->setRecipient($recipient);
+            $notification->setSender($sender);
+            $notification->setTitle($title);
+            $notification->setMessage($message);
+            $notification->setLinkedElement($element);
+            $notification->save();
+
+            $this->commit();
+        } catch (\Throwable $t) {
+            $this->rollBack();
+
+            throw $t;
         }
-
-        if (empty($title)) {
-            throw new UnexpectedValueException('Title of the Notification cannot be empty');
-        }
-
-        if (empty($message)) {
-            throw new UnexpectedValueException('Message text of the Notification cannot be empty');
-        }
-
-        $notification = new Notification();
-        $notification->setRecipient($recipient);
-        $notification->setSender($sender);
-        $notification->setTitle($title);
-        $notification->setMessage($message);
-        $notification->setLinkedElement($element);
-        $notification->save();
-
-        $this->commit();
     }
 
     /**
@@ -142,27 +143,33 @@ class NotificationService
     }
 
     /**
-     *
-     *
      * @throws UnexpectedValueException
      * @throws Exception
      */
     public function findAndMarkAsRead(int $id, ?int $recipientId = null): Notification
     {
         $this->beginTransaction();
-        $notification = $this->find($id);
+        $committed = false;
 
-        if ($notification->getRecipient()?->getId() !== $recipientId) {
-            throw new AccessDeniedHttpException();
+        try {
+            $notification = $this->find($id);
+
+            if ($notification->getRecipient()?->getId() !== $recipientId) {
+                throw new AccessDeniedHttpException();
+            }
+
+            if ($recipientId && $recipientId === $notification->getRecipient()?->getId()) {
+                $notification->setRead(true);
+                $notification->save();
+                $committed = $this->commit();
+            }
+
+            return $notification;
+        } finally {
+            if (!$committed) {
+                $this->rollBack();
+            }
         }
-
-        if ($recipientId && $recipientId === $notification->getRecipient()?->getId()) {
-            $notification->setRead(true);
-            $notification->save();
-            $this->commit();
-        }
-
-        return $notification;
     }
 
     /**
@@ -239,12 +246,18 @@ class NotificationService
 
         $this->beginTransaction();
 
-        $result = [
-            'total' => $listing->count(),
-            'data' => $listing->getData(),
-        ];
+        try {
+            $result = [
+                'total' => $listing->count(),
+                'data' => $listing->getData(),
+            ];
 
-        $this->commit();
+            $this->commit();
+        } catch (\Throwable $t) {
+            $this->rollBack();
+
+            throw $t;
+        }
 
         return $result;
     }
@@ -299,13 +312,19 @@ class NotificationService
     {
         $this->beginTransaction();
 
-        $notification = $this->find($id);
+        try {
+            $notification = $this->find($id);
 
-        if ($recipientId && $recipientId === $notification->getRecipient()?->getId()) {
-            $notification->delete();
+            if ($recipientId && $recipientId === $notification->getRecipient()?->getId()) {
+                $notification->delete();
+            }
+
+            $this->commit();
+        } catch (\Throwable $t) {
+            $this->rollBack();
+
+            throw $t;
         }
-
-        $this->commit();
     }
 
     /**
@@ -318,11 +337,17 @@ class NotificationService
 
         $this->beginTransaction();
 
-        foreach ($listing->getData() as $notification) {
-            $notification->delete();
-        }
+        try {
+            foreach ($listing->getData() as $notification) {
+                $notification->delete();
+            }
 
-        $this->commit();
+            $this->commit();
+        } catch (\Throwable $t) {
+            $this->rollBack();
+
+            throw $t;
+        }
     }
 
     /**
@@ -336,8 +361,16 @@ class NotificationService
     /**
      * @throws Exception
      */
-    private function commit(): void
+    private function commit(): bool
     {
-        Db::getConnection()->commit();
+        return Db::getConnection()->commit();
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function rollBack(): void
+    {
+        Db::getConnection()->rollBack();
     }
 }
