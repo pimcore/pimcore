@@ -261,8 +261,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 $getter = 'get' . ucfirst($collectionRaw['type']);
                 $brick = $container->$getter();
                 if (empty($brick)) {
+                    $modelFactory = \Pimcore::getContainer()->get('pimcore.model.factory');
                     $brickClass = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($collectionRaw['type']);
-                    $brick = new $brickClass($object);
+                    $brick = $modelFactory->build($brickClass);
+                    $brick->setObject($object);
                 }
 
                 $brick->setFieldname($this->getName());
@@ -687,8 +689,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             $brick = $brickdata->$getter();
             if (!$brick) {
                 // brick must be added to object
+                $modelFactory = \Pimcore::getContainer()->get('pimcore.model.factory');
                 $brickClass = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickname);
-                $brick = new $brickClass($object);
+                $brick = $modelFactory->build($brickClass);
+                $brick->setObject($object);
             }
 
             $fieldname = $subdata['name'];

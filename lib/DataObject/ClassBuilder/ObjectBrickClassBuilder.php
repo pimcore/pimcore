@@ -77,7 +77,7 @@ class ObjectBrickClassBuilder implements ObjectBrickClassBuilderInterface
         $cd .= '* @param DataObject\Concrete $object' . "\n";
         $cd .= '*/' . "\n";
 
-        $cd .= 'public function __construct(DataObject\Concrete $object)' . "\n";
+        $cd .= 'public function __construct(?DataObject\Concrete $object = null)' . "\n";
         $cd .= '{' . "\n";
         $cd .= "\t" . 'parent::__construct($object);' . "\n";
         $cd .= "\t" .'$this->markFieldDirty("_self");' . "\n";

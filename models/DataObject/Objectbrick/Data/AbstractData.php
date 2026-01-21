@@ -47,7 +47,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     protected ?int $objectId = null;
 
-    public function __construct(Concrete $object)
+    public function __construct(?Concrete $object = null)
     {
         $this->setObject($object);
     }

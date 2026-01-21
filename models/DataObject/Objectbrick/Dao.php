@@ -50,9 +50,10 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
             $fieldDefinitions = $definition->getFieldDefinitions(['object' => $object, 'suppressEnrichment' => true]);
             $brickClass = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($type);
+            $modelFactory = \Pimcore::getContainer()->get('pimcore.model.factory');
 
             foreach ($results as $result) {
-                $brick = new $brickClass($object);
+                $brick = $modelFactory->build($brickClass);
                 $brick->setFieldname($result['fieldname']);
                 $brick->setObject($object);
 
