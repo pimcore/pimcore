@@ -343,10 +343,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @throws Exception
      */
-    private function createContainerClasses(): void
+    private function createContainerClasses(bool $dumpPHPClasses = true): void
     {
-        $containerDefinition = [];
-
         if (!empty($this->classDefinitions)) {
             foreach ($this->classDefinitions as $cl) {
                 $class = DataObject\ClassDefinition::getByName($cl['classname']);
@@ -380,7 +378,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             }
         }
 
-        Pimcore::getContainer()->get(PHPObjectBrickContainerClassDumperInterface::class)->dumpContainerClasses($this);
+        if ($dumpPHPClasses) {
+            Pimcore::getContainer()->get(PHPObjectBrickContainerClassDumperInterface::class)->dumpContainerClasses($this);
+        }
     }
 
     /**
@@ -561,7 +561,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         // for localized fields getting a fresh copy
         RuntimeCache::set($cacheKey, $this);
 
-        $this->createContainerClasses();
+        $this->createContainerClasses($dumpPHPClasses);
         $this->updateDatabase();
 
         foreach ($fieldDefinitions as $fd) {
