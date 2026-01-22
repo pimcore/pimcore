@@ -1,7 +1,7 @@
 doctrine:
     orm:
         entity_managers:
-            pimcore:
+            default:
                 connection: default
                 mappings:
                     PimcoreGenericExecutionEngineBundle:

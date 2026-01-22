@@ -3,16 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tests\Unit\HttpKernel\Response;
@@ -137,14 +134,12 @@ class CodeInjectorTest extends TestCase
         $data = [];
 
         $source = <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
-</body>
-</html>
+</body></html>
 EOF;
 
         $data[] = [
@@ -152,14 +147,12 @@ EOF;
             CodeInjector::POSITION_BEGINNING,
             $source,
             <<<EOF
-<html>
-<head><!-- INJECTED -->
+<html><head><!-- INJECTED -->
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
-</body>
-</html>
+</body></html>
 EOF
         ];
 
@@ -168,14 +161,12 @@ EOF
             CodeInjector::POSITION_END,
             $source,
             <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 <!-- INJECTED --></head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
-</body>
-</html>
+</body></html>
 EOF
         ];
 
@@ -184,12 +175,10 @@ EOF
             CodeInjector::REPLACE,
             $source,
             <<<EOF
-<html>
-<head><!-- INJECTED --></head>
-<body class="foo" bar>
+<html><head><!-- INJECTED --></head>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
-</body>
-</html>
+</body></html>
 EOF
         ];
 
@@ -198,14 +187,12 @@ EOF
             CodeInjector::POSITION_BEGINNING,
             $source,
             <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar><!-- INJECTED -->
+<body class="foo" bar=""><!-- INJECTED -->
     <!-- ORIG BODY -->
-</body>
-</html>
+</body></html>
 EOF
         ];
 
@@ -214,14 +201,12 @@ EOF
             CodeInjector::POSITION_END,
             $source,
             <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
-<!-- INJECTED --></body>
-</html>
+<!-- INJECTED --></body></html>
 EOF
         ];
 
@@ -230,12 +215,10 @@ EOF
             CodeInjector::REPLACE,
             $source,
             <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar><!-- INJECTED --></body>
-</html>
+<body class="foo" bar=""><!-- INJECTED --></body></html>
 EOF
         ];
 
@@ -247,15 +230,13 @@ EOF
         $data = [];
 
         $domSource = <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
     <div class="bar"><!-- ORIG DIV --></div>
-</body>
-</html>
+</body></html>
 EOF;
 
         $data[] = [
@@ -263,15 +244,13 @@ EOF;
             CodeInjector::REPLACE,
             $domSource,
             <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
     <div class="bar"><!-- INJECTED --></div>
-</body>
-</html>
+</body></html>
 EOF
         ];
 
@@ -280,15 +259,13 @@ EOF
             CodeInjector::POSITION_BEGINNING,
             $domSource,
             <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
     <div class="bar"><!-- INJECTED --><!-- ORIG DIV --></div>
-</body>
-</html>
+</body></html>
 EOF
         ];
 
@@ -297,15 +274,13 @@ EOF
             CodeInjector::POSITION_END,
             $domSource,
             <<<EOF
-<html>
-<head>
+<html><head>
     <!-- ORIG HEAD -->
 </head>
-<body class="foo" bar>
+<body class="foo" bar="">
     <!-- ORIG BODY -->
     <div class="bar"><!-- ORIG DIV --><!-- INJECTED --></div>
-</body>
-</html>
+</body></html>
 EOF
         ];
 

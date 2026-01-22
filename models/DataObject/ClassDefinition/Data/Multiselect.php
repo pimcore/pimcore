@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -72,6 +69,12 @@ class Multiselect extends Data implements
 
     /**
      * @internal
+     *
+     */
+    public bool $enforceValidation = false;
+
+    /**
+     * @internal
      */
     public bool $dynamicOptions = false;
 
@@ -125,6 +128,16 @@ class Multiselect extends Data implements
         return $this->renderType;
     }
 
+    public function isEnforceValidation(): bool
+    {
+        return $this->enforceValidation;
+    }
+
+    public function setEnforceValidation(bool $enforceValidation): void
+    {
+        $this->enforceValidation = $enforceValidation;
+    }
+
     /**
      * @return $this
      */
@@ -148,7 +161,7 @@ class Multiselect extends Data implements
      *
      *
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         if (!$this->isEmpty($data) && is_array($data)) {
             return implode(',', $data);
@@ -168,7 +181,7 @@ class Multiselect extends Data implements
      *
      *
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (strlen((string) $data)) {
             return explode(',', $data);
@@ -182,7 +195,7 @@ class Multiselect extends Data implements
      *
      *
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         $dataForResource = $this->getDataForResource($data, $object, $params);
         if ($dataForResource) {
@@ -197,12 +210,12 @@ class Multiselect extends Data implements
      *
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
-    public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): array|string|null
+    public function getDataForGrid(?array $data, ?Concrete $object = null, array $params = []): array|string|null
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
@@ -238,12 +251,12 @@ class Multiselect extends Data implements
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): mixed
     {
         return $data;
     }
 
-    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDiffDataFromEditmode(array $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $data = $data[0]['data'];
         if (is_string($data) && $data !== '') {
@@ -259,7 +272,7 @@ class Multiselect extends Data implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if (is_array($data)) {
             return implode(',', array_map(function ($v) {
@@ -279,6 +292,46 @@ class Multiselect extends Data implements
         if (!is_array($data) && !empty($data)) {
             throw new Model\Element\ValidationException("Invalid multiselect data on field [ {$this->getName()} ]");
         }
+
+        if (is_array($data) && $this->isEnforceValidation()) {
+            // Ensure options providers are resolved
+            if ($this->getOptions() === null) {
+                $this->enrichFieldDefinition($params['context'] ?? []);
+            }
+
+            // If no options are defined yet, skip the validation
+            if (!$this->getOptions()) {
+                return;
+            }
+
+            foreach ($data as $value) {
+                if (!$this->isValidOption($value)) {
+                    throw new Model\Element\ValidationException(
+                        sprintf("Invalid multiselect option '%s' on field [ %s ]", $value, $this->getName())
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * Validates if the provided data matches any of the available options.
+     *
+     */
+    private function isValidOption(mixed $data): bool
+    {
+        $matches = array_filter(
+            $this->getOptions(),
+            function (array $option) use ($data) {
+                if (!array_key_exists('value', $option)) {
+                    return false;
+                }
+
+                return $option['value'] == $data;
+            }
+        );
+
+        return count($matches) > 0;
     }
 
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
@@ -344,7 +397,7 @@ class Multiselect extends Data implements
 
             $value = $operator === '='
                 ? $db->quote('%,'. $value . ',%')
-                : $db->quote('%,%' .Helper::escapeLike($value). '%,%');
+                : $db->quote('%,%' .Helper::escapeLike((string) $value). '%,%');
 
             return $key.' LIKE '.$value.' ';
         }
@@ -363,7 +416,7 @@ class Multiselect extends Data implements
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): array|string
+    public function getDiffVersionPreview(?array $data, ?Concrete $object = null, array $params = []): array|string
     {
         if ($data) {
             $map = [];
@@ -418,9 +471,7 @@ class Multiselect extends Data implements
             $existingData = [];
         }
 
-        $existingData = array_unique(array_diff($existingData, $removeData));
-
-        return $existingData;
+        return array_unique(array_diff($existingData, $removeData));
     }
 
     public function isFilterable(): bool

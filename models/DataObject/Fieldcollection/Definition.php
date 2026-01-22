@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
@@ -124,60 +121,20 @@ class Definition extends Model\AbstractModel
      */
     public function save(bool $saveDefinitionFile = true): void
     {
-        if (!$this->getKey()) {
-            throw new Exception('A field-collection needs a key to be saved!');
-        }
+        $this->saveInternal($saveDefinitionFile);
+    }
 
-        if ($this->isForbiddenName()) {
-            throw new Exception(sprintf('Invalid key for field-collection: %s', $this->getKey()));
-        }
-
-        if ($this->getParentClass() && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\]*$/', $this->getParentClass())) {
-            throw new Exception(sprintf('Invalid parentClass value for class definition: %s',
-                $this->getParentClass()));
-        }
-
-        $isUpdate = file_exists($this->getDefinitionFile());
-
-        if (!$isUpdate) {
-            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::PRE_ADD);
-        } else {
-            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::PRE_UPDATE);
-        }
-
-        $fieldDefinitions = $this->getFieldDefinitions();
-        foreach ($fieldDefinitions as $fd) {
-            if ($fd->isForbiddenName()) {
-                throw new Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
-            }
-
-            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
-                $fd->preSave($this);
-            }
-        }
-
-        $this->generateClassFiles($saveDefinitionFile);
-
-        // update classes
-        $classList = new DataObject\ClassDefinition\Listing();
-        $classes = $classList->load();
-        foreach ($classes as $class) {
-            foreach ($class->getFieldDefinitions() as $fieldDef) {
-                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
-                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-                        $this->getDao()->createUpdateTable($class);
-
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!$isUpdate) {
-            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::POST_ADD);
-        } else {
-            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::POST_UPDATE);
-        }
+    /**
+     * Additional method that gives more control over the saving process. Added as a separate method to avoid compatibility issues.
+     * TODO: Should be refactored in Pimcore 13 to avoid duplication with save.
+     *
+     * @throws Exception
+     */
+    public function dump(
+        bool $saveDefinitionFile = true,
+        bool $dumpPHPClasses = true
+    ): void {
+        $this->saveInternal($saveDefinitionFile, $dumpPHPClasses);
     }
 
     /**
@@ -186,8 +143,10 @@ class Definition extends Model\AbstractModel
      *
      * @internal
      */
-    protected function generateClassFiles(bool $generateDefinitionFile = true): void
-    {
+    protected function generateClassFiles(
+        bool $generateDefinitionFile = true,
+        bool $dumpPHPClasses = true
+    ): void {
         if ($generateDefinitionFile && !$this->isWritable()) {
             throw new DataObject\Exception\DefinitionWriteException();
         }
@@ -214,7 +173,9 @@ class Definition extends Model\AbstractModel
             $filesystem->dumpFile($definitionFile, $data);
         }
 
-        Pimcore::getContainer()->get(PHPFieldCollectionClassDumperInterface::class)->dumpPHPClass($this);
+        if ($dumpPHPClasses) {
+            Pimcore::getContainer()->get(PHPFieldCollectionClassDumperInterface::class)->dumpPHPClass($this);
+        }
 
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
@@ -267,7 +228,7 @@ class Definition extends Model\AbstractModel
     /**
      * @internal
      */
-    public function getDefinitionFile(string $key = null): string
+    public function getDefinitionFile(?string $key = null): string
     {
         return $this->locateDefinitionFile($key ?? $this->getKey(), 'fieldcollections/%s.php');
     }
@@ -309,5 +270,65 @@ class Definition extends Model\AbstractModel
         }
 
         return in_array(strtolower($key), self::FORBIDDEN_NAMES);
+    }
+
+    protected function saveInternal(
+        bool $saveDefinitionFile = true,
+        bool $dumpPHPClasses = true
+    ): void {
+        if (!$this->getKey()) {
+            throw new Exception('A field-collection needs a key to be saved!');
+        }
+
+        if ($this->isForbiddenName()) {
+            throw new Exception(sprintf('Invalid key for field-collection: %s', $this->getKey()));
+        }
+
+        if ($this->getParentClass() && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\]*$/', $this->getParentClass())) {
+            throw new Exception(sprintf('Invalid parentClass value for class definition: %s',
+                $this->getParentClass()));
+        }
+
+        $isUpdate = file_exists($this->getDefinitionFile());
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::PRE_ADD);
+        } else {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::PRE_UPDATE);
+        }
+
+        $fieldDefinitions = $this->getFieldDefinitions();
+        foreach ($fieldDefinitions as $fd) {
+            if ($fd->isForbiddenName()) {
+                throw new Exception(sprintf('Forbidden name used for field definition: %s', $fd->getName()));
+            }
+
+            if ($fd instanceof DataObject\ClassDefinition\Data\DataContainerAwareInterface) {
+                $fd->preSave($this);
+            }
+        }
+
+        $this->generateClassFiles($saveDefinitionFile, $dumpPHPClasses);
+
+        // update classes
+        $classList = new DataObject\ClassDefinition\Listing();
+        $classes = $classList->load();
+        foreach ($classes as $class) {
+            foreach ($class->getFieldDefinitions() as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+                    if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+                        $this->getDao()->createUpdateTable($class);
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!$isUpdate) {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::POST_ADD);
+        } else {
+            $this->dispatchEvent(new FieldcollectionDefinitionEvent($this), FieldcollectionDefinitionEvents::POST_UPDATE);
+        }
     }
 }

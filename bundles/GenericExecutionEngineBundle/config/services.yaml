@@ -37,12 +37,12 @@ services:
     Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface:
         class: Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepository
         arguments:
-            $pimcoreEntityManager: "@doctrine.orm.pimcore_entity_manager"
+            $pimcoreEntityManager: "@doctrine.orm.default_entity_manager"
 
     Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepositoryInterface:
         class: Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepository
         arguments:
-            $pimcoreEntityManager: "@doctrine.orm.pimcore_entity_manager"
+            $pimcoreEntityManager: "@doctrine.orm.default_entity_manager"
 
     Pimcore\Bundle\GenericExecutionEngineBundle\Grid\JobRunGridInterface:
         class: Pimcore\Bundle\GenericExecutionEngineBundle\Grid\JobRunGrid

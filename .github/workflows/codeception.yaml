@@ -7,24 +7,20 @@ on:
     pull_request_target:
         types: [opened, synchronize, reopened]
         branches:
-            - "[0-9]+.[0-9]+"
-            - "[0-9]+.x"
+            - "12.*"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
     push:
         branches:
-            - "[0-9]+.[0-9]+"
-            - "[0-9]+.x"
+            - "12.*"
             - "*_actions"
         paths-ignore:
             - 'doc/**'
-            - 'bundles/**/public/**'
-        
+            - 'bundles/**/public/**'   
 permissions:
   contents: read
  
-
 jobs:
     codeception-tests:
         uses: pimcore/workflows-collection-public/.github/workflows/reusable-codeception-public.yaml@main
@@ -32,13 +28,11 @@ jobs:
             matrix:
                 include:
                     - { php-version: 8.3, database: "mariadb:11.2", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.3, database: "mysql:8.4.4", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
                     - { php-version: 8.3, database: "mariadb:10.3", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.2, database: "mariadb:10.5", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.2, database: "mariadb:10.11", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.2, database: "mariadb:10.11", dependencies: highest, experimental: true, storage: local, symfony: "6.4.x-dev", composer-options: "" }
-                    - { php-version: 8.1, database: "mariadb:10.7", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.1, database: "mysql:8.0", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.1, database: "percona:8.0", dependencies: lowest, experimental: false, storage: minio, symfony: "", composer-options: "" }
+                    - { php-version: 8.4, database: "mariadb:10.5", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.4, database: "mariadb:10.11", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.4, database: "mysql:8.4.4", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
         with:
             php-version: ${{ matrix.php-version }}
             database: ${{ matrix.database }}

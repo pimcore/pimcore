@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -32,7 +29,8 @@ class DateRange extends Data implements
     QueryResourcePersistenceAwareInterface,
     EqualComparisonInterface,
     VarExporterInterface,
-    NormalizerInterface
+    NormalizerInterface,
+    CustomVersionMarshalInterface
 {
     use DataObject\Traits\DataWidthTrait;
 
@@ -50,7 +48,7 @@ class DateRange extends Data implements
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $startDateKey = $this->getName() . '__start_date';
         $endDateKey = $this->getName() . '__end_date';
@@ -77,7 +75,7 @@ class DateRange extends Data implements
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
     {
         $startDateKey = $this->getName() . '__start_date';
         $endDateKey = $this->getName() . '__end_date';
@@ -86,10 +84,7 @@ class DateRange extends Data implements
             $startDate = $this->getDateFromTimestamp($data[$startDateKey]);
             $endDate = $this->getDateFromTimestamp($data[$endDateKey]);
             $period = CarbonPeriod::create()->setStartDate($startDate);
-
-            if ($endDate instanceof Carbon) {
-                $period->setEndDate($endDate);
-            }
+            $period->setEndDate($endDate);
 
             return $period;
         }
@@ -102,7 +97,7 @@ class DateRange extends Data implements
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -113,7 +108,7 @@ class DateRange extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof CarbonPeriod) {
             $endDate = $data->getEndDate();
@@ -132,7 +127,7 @@ class DateRange extends Data implements
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
     {
         if (is_array($data) && isset($data['start_date'], $data['end_date'])) {
             $startDate = $this->getDateFromTimestamp($data['start_date'] / 1000);
@@ -144,7 +139,7 @@ class DateRange extends Data implements
         return null;
     }
 
-    public function getDataFromGridEditor(array $data, DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
+    public function getDataFromGridEditor(array $data, ?DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
     {
         if ($data['start_date']) {
             $data['start_date'] *= 1000;
@@ -157,7 +152,7 @@ class DateRange extends Data implements
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    public function getDataForGrid(?CarbonPeriod $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForGrid(?CarbonPeriod $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
@@ -168,7 +163,7 @@ class DateRange extends Data implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof CarbonPeriod) {
             /** @var CarbonInterface $startDate */
@@ -262,9 +257,9 @@ class DateRange extends Data implements
             $startDate = $data->getStartDate();
             $endDate = $data->getEndDate();
 
-            if (!$startDate instanceof CarbonInterface || !$endDate instanceof CarbonInterface) {
+            if (!$endDate instanceof CarbonInterface) {
                 throw new ValidationException(
-                    sprintf('Either the start or end value in field [ %s ] is not a date', $fieldName)
+                    sprintf('The end value in field [ %s ] is not a date', $fieldName)
                 );
             }
 
@@ -368,5 +363,15 @@ class DateRange extends Data implements
                 'end_date' => $columnType,
             ];
         }
+    }
+
+    public function marshalVersion(Concrete $object, mixed $data): mixed
+    {
+        return $data;
+    }
+
+    public function unmarshalVersion(Concrete $object, mixed $data): mixed
+    {
+        return $data;
     }
 }

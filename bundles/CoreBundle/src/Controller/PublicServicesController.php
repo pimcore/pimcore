@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
@@ -19,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\Controller;
 use Exception;
 use Pimcore\Bundle\SeoBundle\Config;
 use Pimcore\Controller\Controller;
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
@@ -41,7 +39,7 @@ class PublicServicesController extends Controller
         $config = [
             'prefix' => $request->attributes->getString('prefix', ''),
             'type' => $request->attributes->getString('type'),
-            'asset_id' => $request->attributes->getInt('assetId'),
+            'asset_id' => ParameterBagHelper::getInt($request->attributes, 'assetId'),
             'thumbnail_name' => $request->attributes->getString('thumbnailName'),
             'filename' => $filename,
             'file_extension' => $requestedFileExtension,

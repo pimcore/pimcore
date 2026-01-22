@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore;
@@ -192,6 +189,7 @@ class SystemSettingsConfig
                 'versions' => [
                     'days' => $values['documents.versions.days'] ?? null,
                     'steps' => $values['documents.versions.steps'] ?? null,
+                    'disable_events' => $values['disable_events'] ?? false,
                 ],
                 'error_pages' => [
                     'default' => $values['documents.error_pages.default'],
@@ -202,12 +200,14 @@ class SystemSettingsConfig
                 'versions' => [
                     'days' => $values['objects.versions.days'] ?? null,
                     'steps' => $values['objects.versions.steps'] ?? null,
+                    'disable_events' => $values['disable_events'] ?? false,
                 ],
             ],
             'assets' => [
                 'versions' => [
                     'days' => $values['assets.versions.days'] ?? null,
                     'steps' => $values['assets.versions.steps'] ?? null,
+                    'disable_events' => $values['disable_events'] ?? false,
                 ],
             ],
             'email' => [],

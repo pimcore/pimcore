@@ -29,7 +29,7 @@ All Twig extension functions are described below in detail, the following tables
 | `pimcorecache`                                                          | Simple in-template caching functionality                                          |
 | `pimcore_cache()` (deprecated)                                          | Simple in-template caching functionality (deprecated legacy version)              |
 | `pimcore_device()`                                                      | Helps implementing adaptive designs                                               |
-| `pimcore_glossary`                                                      | Twig Filter: Apply filter on content to pass it to Glossary engine                |
+| `pimcore_glossary` (deprecated)                                                      | Twig Filter: Apply filter on content to pass it to Glossary engine                |
 | `pimcore_placeholder()`                                                 | Adding and embedding custom placeholders, e.g. for special header tags, etc.      |
 | `pimcore_head_link()`                                                   | Embeding / managing referenced stylesheets (alternative to `assets()`)            |
 | `pimcore_head_meta()`                                                   | Managing your \<meta\> elements in your HTML document                             |
@@ -182,7 +182,7 @@ This extension makes it easy to implement "Adaptive Design" in Pimcore.
    
 For details also see [Adaptive Design](../../../19_Development_Tools_and_Details/21_Adaptive_Design_Helper.md).
 
-### `pimcore_glossary`
+### `pimcore_glossary` (deprecated)
 
 The `pimcore_glossary` filter replaces glossary terms. See [Glossary](../../../18_Tools_and_Features/21_Glossary.md) for details.
 

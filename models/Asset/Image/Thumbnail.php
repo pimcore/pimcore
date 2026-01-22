@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset\Image;
@@ -41,7 +38,7 @@ final class Thumbnail implements ThumbnailInterface
      */
     protected static array $hasListenersCache = [];
 
-    public function __construct(Image $asset, array|string|Thumbnail\Config $config = null, bool $deferred = true)
+    public function __construct(Image $asset, array|string|Thumbnail\Config|null $config = null, bool $deferred = true)
     {
         $this->asset = $asset;
         $this->deferred = $deferred;
@@ -83,6 +80,8 @@ final class Thumbnail implements ThumbnailInterface
             $event = new GenericEvent($this, [
                 'pathReference' => $pathReference,
                 'frontendPath' => $path,
+                'asset' => $this->getAsset(),
+                'config' => $this->getConfig(),
             ]);
             Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
             $path = $event->getArgument('frontendPath');
@@ -161,10 +160,13 @@ final class Thumbnail implements ThumbnailInterface
 
     private function addCacheBuster(string $path, array $options, Asset $asset): string
     {
-        if (isset($options['cacheBuster']) && $options['cacheBuster']) {
-            if (!str_starts_with($path, 'http')) {
-                $path = '/cache-buster-' . $asset->getVersionCount() . $path;
-            }
+        if (
+            isset($options['cacheBuster']) &&
+            $options['cacheBuster'] &&
+            !str_starts_with($path, 'http') &&
+            !str_starts_with($path, '/cache-buster-')
+        ) {
+            $path = '/cache-buster-' . $asset->getVersionCount() . $path;
         }
 
         return $path;
@@ -452,7 +454,8 @@ final class Thumbnail implements ThumbnailInterface
     private function getSrcset(Config $thumbConfig, Image $image, array $options, ?string $mediaQuery = null): string
     {
         $srcSetValues = [];
-        foreach ([1, 2] as $highRes) {
+        $maxDpiFactor = $thumbConfig::getMaxDpiFactor();
+        for ($highRes=1; $highRes <= $maxDpiFactor; $highRes++) {
             $thumbConfigRes = clone $thumbConfig;
             if ($mediaQuery) {
                 $thumbConfigRes->selectMedia($mediaQuery);

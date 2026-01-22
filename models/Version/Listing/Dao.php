@@ -1,21 +1,19 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Version\Listing;
 
 use Exception;
+use Pimcore;
 use Pimcore\Model;
 
 /**
@@ -46,11 +44,24 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load(): array
     {
+        $versionsData = $this->db->fetchAllAssociative(
+            'SELECT * FROM versions' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes()
+        );
         $versions = [];
-        $data = $this->loadIdList();
+        $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
 
-        foreach ($data as $id) {
-            $versions[] = Model\Version::getById($id);
+        foreach ($versionsData as $versionData) {
+            $versionData['public'] = (bool)$versionData['public'];
+            $versionData['serialized'] = (bool)$versionData['serialized'];
+            $versionData['autoSave'] = (bool)$versionData['autoSave'];
+
+            /** @var Model\Version $version */
+            $version = $modelFactory->build(Model\Version::class);
+            $version->getDao()->assignVariablesToModel($versionData);
+
+            $versions[] = $version;
         }
 
         $this->model->setVersions($versions);

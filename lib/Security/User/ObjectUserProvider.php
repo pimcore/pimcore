@@ -2,22 +2,18 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Security\User;
 
 use Pimcore\Model\DataObject\AbstractObject;
-use ReflectionClass;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -58,7 +54,7 @@ class ObjectUserProvider implements UserProviderInterface
 
     protected function setClassName(string $className): void
     {
-        if (empty($className)) {
+        if ($className === '') {
             throw new InvalidArgumentException('Object class name is empty');
         }
 
@@ -66,8 +62,7 @@ class ObjectUserProvider implements UserProviderInterface
             throw new InvalidArgumentException(sprintf('User class %s does not exist', $className));
         }
 
-        $reflector = new ReflectionClass($className);
-        if (!$reflector->isSubclassOf(AbstractObject::class)) {
+        if (!is_subclass_of($className, AbstractObject::class)) {
             throw new InvalidArgumentException(sprintf('User class %s must be a subclass of %s', $className, AbstractObject::class));
         }
 
@@ -93,9 +88,7 @@ class ObjectUserProvider implements UserProviderInterface
             throw new UnsupportedUserException();
         }
 
-        $refreshedUser = call_user_func_array([$this->className, 'getById'], [$user->getId()]);
-
-        return $refreshedUser;
+        return $this->className::getById($user->getId());
     }
 
     public function supportsClass(string $class): bool
