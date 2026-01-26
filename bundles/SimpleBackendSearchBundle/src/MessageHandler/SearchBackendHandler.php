@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\MessageHandler;
 
+use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Message\SearchBackendMessage;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Messenger\Handler\HandlerHelperTrait;
@@ -29,6 +30,10 @@ class SearchBackendHandler implements BatchHandlerInterface
 {
     use BatchHandlerTrait;
     use HandlerHelperTrait;
+
+    public function __construct(protected LongRunningHelper $longRunningHelper)
+    {
+    }
 
     public function __invoke(SearchBackendMessage $message, ?Acknowledger $ack = null): mixed
     {
@@ -62,6 +67,8 @@ class SearchBackendHandler implements BatchHandlerInterface
             } catch (Throwable $e) {
                 $ack->nack($e);
             }
+
+            $this->longRunningHelper->deleteTemporaryFiles();
         }
     }
 
