@@ -416,7 +416,8 @@ class Data extends AbstractModel
                 }
             } elseif ($element instanceof Asset\Image) {
                 try {
-                    $metaData = array_merge($element->getEXIFData(), $element->getIPTCData());
+                    $assetFile = $element->getLocalFile();
+                    $metaData = array_merge($element->getEXIFData($assetFile), $element->getIPTCData($assetFile));
                     foreach ($metaData as $key => $value) {
                         if (is_array($value)) {
                             $this->data .= ' ' . $key . ' : ' . implode(' - ', $value);
