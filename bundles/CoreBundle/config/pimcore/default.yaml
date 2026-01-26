@@ -351,4 +351,4 @@ pimcore:
 
 scheb_two_factor:
     google:
-        issuer: "%router.request_context.host%"
+        server_name: "%router.request_context.host%"
