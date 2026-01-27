@@ -7,6 +7,13 @@ Pimcore is a PHP-based Data & Experience Management Platform built on Symfony. I
 - Do this always before merging a PR
 - composer.json should not contain any changes compared to the base branch
 
+When performing a code review, respond in English.
+
+When suggesting code changes, follow the existing coding style and conventions used in the Pimcore project.
+
+When performing a code review, ensure that all new code adheres to the development guidelines outlined below.
+
+
 
 ## Development Commands
 
