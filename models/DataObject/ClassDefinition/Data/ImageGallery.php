@@ -115,7 +115,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
             return [
                 $this->getName() . '__images' => $ids,
-                $this->getName() . '__hotspots' => $hotspots ? Serialize::serialize($hotspots) : null,
+                $this->getName() . '__hotspots' => null,
             ];
         }
 
@@ -152,7 +152,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $images = array_map('intval', explode(',', $images));
         for ($i = 1; $i < count($images) - 1; $i++) {
             $imageId = $images[$i];
-            $hotspotData = $hotspots[$i - 1];
+            $hotspotData = $hotspots[$i - 1] ?? '';
 
             $itemData = [
                 $fd->getName() . '__image' => $imageId,
