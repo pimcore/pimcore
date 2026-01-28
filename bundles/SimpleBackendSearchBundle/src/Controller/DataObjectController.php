@@ -21,10 +21,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class DataObjectController extends UserAwareController
 {
-    #[Route('/relation-objects-list', name: 'pimcore_bundle_search_dataobject_relation_objects_list', methods: ['GET'])]
+    #[Route('/relation-objects-list', name: 'pimcore_bundle_search_dataobject_relation_objects_list', methods: ['GET', 'POST'])]
     public function optionsAction(Request $request): JsonResponse
     {
-        $fieldConfig = json_decode($request->query->getString('fieldConfig'), true);
+        $fieldConfig = json_decode($request->request->getString('fieldConfig', $request->query->getString('fieldConfig')), true);
 
         $options = [];
         $classes = [];
@@ -70,12 +70,12 @@ class DataObjectController extends UserAwareController
         $searchRequest->request->set('class', implode(',', $classes));
         $searchRequest->request->set('fields', $visibleFields);
 
-        $searchRequest->attributes->set('unsavedChanges', $request->query->getString('unsavedChanges'));
+        $searchRequest->attributes->set('unsavedChanges', $request->request->getString('unsavedChanges', $request->query->getString('unsavedChanges') ));
         $res = $this->forward(SearchController::class.'::findAction', ['request' => $searchRequest]);
         $objects = json_decode($res->getContent(), true)['data'];
 
-        if ($request->query->has('data')) {
-            $dataArray = json_decode($request->query->getString('data'), true);
+        if ($request->request->has('data') || $request->query->has('data')) {
+            $dataArray = json_decode($request->request->getString('data', $request->query->getString('data')), true);
             if (is_array($dataArray)) {
                 foreach ($dataArray as $preSelectedElement) {
                     if (isset($preSelectedElement['id'], $preSelectedElement['type'])) {
