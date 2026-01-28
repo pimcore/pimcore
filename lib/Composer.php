@@ -48,6 +48,7 @@ class Composer
     {
         $rootPath = self::getRootPath($event);
         self::parametersYmlCheck($rootPath);
+        self::removeComposerName($rootPath);
     }
 
     public static function postInstall(Event $event): void
@@ -286,5 +287,26 @@ class Composer
         }
 
         static::executeCommand($event, $consoleDir, $command);
+    }
+
+    private static function removeComposerName(string $rootPath): void
+    {
+        $composerJson = $rootPath . '/composer.json';
+
+        if (!file_exists($composerJson)) {
+            return;
+        }
+
+        $contents = file_get_contents($composerJson);
+
+        // Remove "name": "pimcore/skeleton"
+        $contents = preg_replace(
+            '/^\s*"name"\s*:\s*"[^"]+"\s*,?\s*\n?/m',
+            '',
+            $contents,
+            1
+        );
+
+        file_put_contents($composerJson, $contents);
     }
 }
