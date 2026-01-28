@@ -298,6 +298,9 @@ class Composer
         }
 
         $contents = file_get_contents($composerJson);
+        if ($contents === false) {
+            throw new RuntimeException(sprintf('Failed to read composer.json at "%s".', $composerJson));
+        }
 
         // Remove "name": "pimcore/skeleton"
         $contents = preg_replace(
