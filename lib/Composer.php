@@ -302,14 +302,10 @@ class Composer
             throw new RuntimeException(sprintf('Failed to read composer.json at "%s".', $composerJson));
         }
 
-        // Remove the "name" field from composer.json
-        $contents = preg_replace(
-            '/^\s*"name"\s*:\s*"[^"]+"\s*,?\s*\n?/m',
-            '',
-            $contents,
-            1
-        );
+        $json = json_decode($contents, true);
 
-        file_put_contents($composerJson, $contents);
+        unset($json['name']);
+
+        file_put_contents($composerJson, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 }
