@@ -68,13 +68,12 @@ class GotenbergHelper
             return false;
         }
 
-        if (self::healthPing()){
+        if (self::healthPing()) {
             self::$validPing = true;
             Cache::save(true, 'gotenberg_ping', [], Config::getSystemConfiguration('gotenberg')['ping_cache_ttl']);
 
             return true;
         }
-
 
         return false;
     }
