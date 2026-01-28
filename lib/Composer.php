@@ -289,6 +289,11 @@ class Composer
         static::executeCommand($event, $consoleDir, $command);
     }
 
+    /**
+     * Removes the "name" field from the root composer.json file.
+     *
+     * @throws RuntimeException If the composer.json file cannot be read.
+     */
     private static function removeComposerName(string $rootPath): void
     {
         $composerJson = $rootPath . '/composer.json';
