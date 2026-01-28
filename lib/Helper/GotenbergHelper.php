@@ -15,13 +15,11 @@ namespace Pimcore\Helper;
 
 use Exception;
 use Gotenberg\Gotenberg as GotenbergAPI;
-use Gotenberg\Stream;
 use GuzzleHttp\Psr7\Request;
 use Pimcore\Cache;
 use Pimcore\Config;
-use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\Client as GuzzleClient;
-use Http\Adapter\Guzzle7\Client as GuzzleAdapter;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\HttpClient\Psr18Client;
 
 /**
  * @internal
@@ -29,27 +27,26 @@ use Http\Adapter\Guzzle7\Client as GuzzleAdapter;
 class GotenbergHelper
 {
     private static bool $validPing = false;
-    private static function healthPing(): ?ResponseInterface
+    private static function healthPing(): bool
     {
+        $psr18Client = new Psr18Client(HttpClient::create([
+            'timeout' => 2,
+            'max_duration' => 2,
+        ]));
+
         $chromeBaseUrl = Config::getSystemConfiguration('gotenberg')['base_url'];
-
-        $request = new Request(
-            'GET',
-            $chromeBaseUrl . '/health'
-        );
-
-        $client = new GuzzleAdapter(
-            new GuzzleClient([
-                'connect_timeout' => 1,
-                'timeout' => 2,
-            ])
-        );
+        $request = new Request('GET', $chromeBaseUrl . '/health');
 
         try {
-            return GotenbergAPI::send($request, $client);
+            $response = GotenbergAPI::send($request, $psr18Client);
+            if ($response->getStatusCode() === 200) {
+                return true;
+            }
         } catch (\Throwable $e) {
-            return null;
+            // do nothing
         }
+
+        return false;
     }
     /**
      *
