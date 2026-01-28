@@ -29,24 +29,15 @@ class GotenbergHelper
     private static bool $validPing = false;
     private static function healthPing(): bool
     {
-        $psr18Client = new Psr18Client(HttpClient::create([
-            'timeout' => 2,
-            'max_duration' => 2,
-        ]));
-
         $chromeBaseUrl = Config::getSystemConfiguration('gotenberg')['base_url'];
-        $request = new Request('GET', $chromeBaseUrl . '/health');
+        $request = new Request('GET', rtrim($chromeBaseUrl, '/') . '/health');
 
         try {
-            $response = GotenbergAPI::send($request, $psr18Client);
-            if ($response->getStatusCode() === 200) {
-                return true;
-            }
+            $response = GotenbergAPI::send($request, null);
+            return $response->getStatusCode() === 200;
         } catch (\Throwable $e) {
-            // do nothing
+            return false;
         }
-
-        return false;
     }
     /**
      *
@@ -68,13 +59,12 @@ class GotenbergHelper
             return false;
         }
 
-        if (self::healthPing()){
+        if (self::healthPing()) {
             self::$validPing = true;
             Cache::save(true, 'gotenberg_ping', [], Config::getSystemConfiguration('gotenberg')['ping_cache_ttl']);
 
             return true;
         }
-
 
         return false;
     }
