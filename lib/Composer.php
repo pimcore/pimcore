@@ -302,7 +302,7 @@ class Composer
             throw new RuntimeException(sprintf('Failed to read composer.json at "%s".', $composerJson));
         }
 
-        // Remove "name": "pimcore/skeleton"
+        // Remove the "name" field from composer.json
         $contents = preg_replace(
             '/^\s*"name"\s*:\s*"[^"]+"\s*,?\s*\n?/m',
             '',
