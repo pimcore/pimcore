@@ -16,8 +16,12 @@ namespace Pimcore\Helper;
 use Exception;
 use Gotenberg\Gotenberg as GotenbergAPI;
 use Gotenberg\Stream;
+use GuzzleHttp\Psr7\Request;
 use Pimcore\Cache;
 use Pimcore\Config;
+use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Client as GuzzleClient;
+use Http\Adapter\Guzzle7\Client as GuzzleAdapter;
 
 /**
  * @internal
@@ -25,7 +29,28 @@ use Pimcore\Config;
 class GotenbergHelper
 {
     private static bool $validPing = false;
+    private static function healthPing(): ?ResponseInterface
+    {
+        $chromeBaseUrl = Config::getSystemConfiguration('gotenberg')['base_url'];
 
+        $request = new Request(
+            'GET',
+            $chromeBaseUrl . '/health'
+        );
+
+        $client = new GuzzleAdapter(
+            new GuzzleClient([
+                'connect_timeout' => 1,
+                'timeout' => 2,
+            ])
+        );
+
+        try {
+            return GotenbergAPI::send($request, $client);
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
     /**
      *
      * @throws Exception
@@ -46,18 +71,13 @@ class GotenbergHelper
             return false;
         }
 
-        $chrome = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url']);
-        $request = $chrome->screenshot()->html(Stream::string('dummy.html', '<body></body>'));
-
-        try {
-            GotenbergAPI::send($request);
+        if (self::healthPing()){
             self::$validPing = true;
             Cache::save(true, 'gotenberg_ping', [], Config::getSystemConfiguration('gotenberg')['ping_cache_ttl']);
 
             return true;
-        } catch (Exception $e) {
-            // nothing to do
         }
+
 
         return false;
     }
