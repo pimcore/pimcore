@@ -53,10 +53,6 @@ class GotenbergHelper
         return false;
     }
 
-    /**
-     *
-     * @throws Exception
-     */
     public static function isAvailable(): bool
     {
         if (self::$validPing !== null) {
