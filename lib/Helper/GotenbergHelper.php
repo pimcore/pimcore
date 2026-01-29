@@ -27,13 +27,19 @@ use Symfony\Component\HttpClient\Psr18Client;
 class GotenbergHelper
 {
     private static bool $validPing = false;
+
     private static function healthPing(): bool
     {
-        $chromeBaseUrl = Config::getSystemConfiguration('gotenberg')['base_url'];
-        $request = new Request('GET', rtrim($chromeBaseUrl, '/') . '/health');
+        $gotenbergBaseUrl = Config::getSystemConfiguration('gotenberg')['base_url'];
+        $request = new Request('GET', rtrim($gotenbergBaseUrl, '/') . '/health');
+
+        $symfonyClient = HttpClient::create([
+            'timeout' => 2.0,
+        ]);
+        $psr18Client = new Psr18Client($symfonyClient);
 
         try {
-            $response = GotenbergAPI::send($request, null);
+            $response = GotenbergAPI::send($request, $psr18Client);
             return $response->getStatusCode() === 200;
         } catch (\Throwable $e) {
             return false;
