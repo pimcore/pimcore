@@ -7,19 +7,16 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
- *  @license    Pimcore Open Core License (POCL)
+ * @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ * @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Helper;
 
 use Exception;
 use Gotenberg\Gotenberg as GotenbergAPI;
-use GuzzleHttp\Psr7\Request;
 use Pimcore\Cache;
 use Pimcore\Config;
-use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Component\HttpClient\Psr18Client;
 
 /**
  * @internal
@@ -31,20 +28,27 @@ class GotenbergHelper
     private static function healthPing(): bool
     {
         $gotenbergBaseUrl = Config::getSystemConfiguration('gotenberg')['base_url'];
-        $request = new Request('GET', rtrim($gotenbergBaseUrl, '/') . '/health');
+        if ($gotenbergBaseUrl) {
+            try {
+                $ch = curl_init(rtrim($gotenbergBaseUrl, '/') . '1/health');
 
-        $symfonyClient = HttpClient::create([
-            'timeout' => 2.0,
-        ]);
-        $psr18Client = new Psr18Client($symfonyClient);
+                curl_setopt_array($ch, [
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_TIMEOUT => 2,
+                ]);
 
-        try {
-            $response = GotenbergAPI::send($request, $psr18Client);
-            return $response->getStatusCode() === 200;
-        } catch (\Throwable $e) {
-            return false;
+                curl_exec($ch);
+                $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+
+                return $status === 200;
+            } catch (\Throwable $e) {
+                return false;
+            }
         }
+        return false;
     }
+
     /**
      *
      * @throws Exception
@@ -57,21 +61,28 @@ class GotenbergHelper
 
         if (Cache::load('gotenberg_ping') === true) {
             self::$validPing = true;
-
             return true;
         }
 
+        if (Cache::load('gotenberg_inactive') === true) {
+            self::$validPing = false;
+            return false;
+        }
+
+        $ttl = Config::getSystemConfiguration('gotenberg')['ping_cache_ttl'];
+
         if (!class_exists(GotenbergAPI::class, true)) {
+            Cache::save(true, 'gotenberg_inactive', [], $ttl);
             return false;
         }
 
         if (self::healthPing()) {
             self::$validPing = true;
-            Cache::save(true, 'gotenberg_ping', [], Config::getSystemConfiguration('gotenberg')['ping_cache_ttl']);
-
+            Cache::save(true, 'gotenberg_ping', [], $ttl);
             return true;
         }
 
+        Cache::save(true, 'gotenberg_inactive', [], $ttl);
         return false;
     }
 }
