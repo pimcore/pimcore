@@ -38,6 +38,7 @@ class GotenbergHelper
                 curl_setopt_array($ch, [
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_TIMEOUT => 2,
+                    CURLOPT_CONNECTTIMEOUT => 2,
                 ]);
 
                 curl_exec($ch);
@@ -82,6 +83,7 @@ class GotenbergHelper
             return true;
         }
 
+        self::$validPing = false;
         Cache::save(self::STATUS_UNAVAILABLE, self::CACHE_KEY, [], $ttl);
         return false;
     }
