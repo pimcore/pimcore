@@ -85,8 +85,16 @@ class GotenbergHelper
             return true;
         }
 
-        self::$validPing = false;
-        Cache::save(self::STATUS_UNAVAILABLE, self::CACHE_KEY, [], $ttl);
-        return false;
+        // Short-lived retry counter to avoid caching transient failures.
+        // Only consecutive failures within a small window mark the service unavailable.
+        $retries = is_int($cachedStatus) ? $cachedStatus : 0;
+        $retries++;
+        if ($retries < 3) {
+            Cache::save($retries, self::CACHE_KEY, [], 15);
+        } else {
+            Cache::save(self::STATUS_UNAVAILABLE, self::CACHE_KEY, [], $ttl);
+        }
+
+        return self::$validPing = false;
     }
 }
