@@ -41,7 +41,13 @@ class GotenbergHelper
                     CURLOPT_CONNECTTIMEOUT => 2,
                 ]);
 
-                curl_exec($ch);
+                $result = curl_exec($ch);
+
+                if ($result === false) {
+                    curl_close($ch);
+
+                    return false;
+                }
                 $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
                 curl_close($ch);
 
