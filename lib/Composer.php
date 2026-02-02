@@ -290,14 +290,9 @@ class Composer
     }
 
     /**
-     * Removes the "name" property from the composer.json file located at the specified root path.
+     * Removes the "name" field from the project composer.json file.
      *
-     * This function checks for the existence of the composer.json file, reads its contents,
-     * decodes the JSON data, removes the "name" field, and writes the modified data back to the file.
-     *
-     * @param string $rootPath The root directory path where the composer.json file is located.
-     *
-     * @throws RuntimeException if composer.json is not readable or writable
+     * @throws RuntimeException If the composer.json file cannot be read or written
      */
     private static function removeComposerName(string $rootPath): void
     {
