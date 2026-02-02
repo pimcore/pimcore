@@ -289,6 +289,16 @@ class Composer
         static::executeCommand($event, $consoleDir, $command);
     }
 
+    /**
+     * Removes the "name" property from the composer.json file located at the specified root path.
+     *
+     * This function checks for the existence of the composer.json file, reads its contents,
+     * decodes the JSON data, removes the "name" field, and writes the modified data back to the file.
+     *
+     * @param string $rootPath The root directory path where the composer.json file is located.
+     *
+     * @throws RuntimeException if composer.json is not readable or writable
+     */
     private static function removeComposerName(string $rootPath): void
     {
         $composerJson = $rootPath . '/composer.json';
@@ -306,6 +316,8 @@ class Composer
 
         unset($json['name']);
 
-        file_put_contents($composerJson, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        if(file_put_contents($composerJson, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) === false) {
+            throw new RuntimeException(sprintf('Failed to write composer.json at "%s".', $composerJson));
+        }
     }
 }
