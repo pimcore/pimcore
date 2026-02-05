@@ -81,7 +81,7 @@ the default javascript class for the reports which is `pimcore.bundle.customrepo
 
 :::caution
 
-Be aware that several SQL keywords cannot be used in column names unless they're escaped, such as:
+Be aware that several SQL keywords cannot be used in column names unless they're quoted, such as:
 
 ```sql
 ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE
