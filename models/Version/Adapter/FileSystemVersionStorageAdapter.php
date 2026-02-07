@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Version\Adapter;
 
 use League\Flysystem\FilesystemOperator;
+use League\Flysystem\UnableToDeleteFile;
 use League\Flysystem\UnableToReadFile;
 use Pimcore\Config;
 use Pimcore\File;
@@ -114,14 +115,33 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
         $storageFileName = $this->getStorageFilename($version->getId(), $version->getCid(), $version->getCtype());
 
         $storagePath = dirname($storageFileName);
-        if ($this->storage->fileExists($storageFileName)) {
-            $this->storage->delete($storageFileName);
+        if ($this->deleteFileIfExists($storageFileName)) {
             File::recursiveDeleteEmptyDirs($this->storage, $storagePath);
         }
 
-        if ($this->storage->fileExists($binaryStoragePath) && !$isBinaryHashInUse) {
-            $this->storage->delete($binaryStoragePath);
+        if (!$isBinaryHashInUse) {
+            $this->deleteFileIfExists($binaryStoragePath);
         }
+    }
+
+    private function deleteFileIfExists(string $path): bool
+    {
+        if (!$this->storage->fileExists($path)) {
+            return false;
+        }
+
+        try {
+            $this->storage->delete($path);
+
+            return true;
+        } catch (UnableToDeleteFile $e) {
+            // Ignore races where the file disappeared after fileExists() but before delete().
+            if ($this->storage->fileExists($path)) {
+                throw $e;
+            }
+        }
+
+        return false;
     }
 
     public function getStorageType(
