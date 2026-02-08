@@ -104,8 +104,13 @@ class LogArchiveTask implements TaskInterface
                 if ($filePath !== null) {
                     try {
                         $storage->delete($filePath);
-                    } catch (UnableToDeleteFile) {
-                        // File may have already been deleted by another process
+                    } catch (UnableToDeleteFile $e) {
+                        if ($storage->fileExists($filePath)) {
+                            $this->logger->warning('Unable to delete log file object: ' . $e->getMessage());
+
+                            throw $e;
+                        }
+                        // File was already deleted (race condition) — safe to ignore
                     }
                 }
             }
@@ -133,8 +138,13 @@ class LogArchiveTask implements TaskInterface
 
                     try {
                         $storage->deleteDirectory($folderName);
-                    } catch (UnableToDeleteDirectory) {
-                        // Directory may have already been deleted by another process
+                    } catch (UnableToDeleteDirectory $e) {
+                        if ($storage->directoryExists($folderName)) {
+                            $this->logger->warning('Unable to delete log archive directory: ' . $e->getMessage());
+
+                            throw $e;
+                        }
+                        // Directory was already deleted (race condition) — safe to ignore
                     }
                 }
             }

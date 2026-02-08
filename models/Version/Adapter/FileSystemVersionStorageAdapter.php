@@ -18,6 +18,7 @@ use League\Flysystem\UnableToDeleteFile;
 use League\Flysystem\UnableToReadFile;
 use Pimcore\Config;
 use Pimcore\File;
+use Pimcore\Logger;
 use Pimcore\Model\Version;
 use Pimcore\Tool\Storage;
 
@@ -118,15 +119,25 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
         try {
             $this->storage->delete($storageFileName);
             File::recursiveDeleteEmptyDirs($this->storage, $storagePath);
-        } catch (UnableToDeleteFile) {
-            // File may have already been deleted by another process
+        } catch (UnableToDeleteFile $e) {
+            if ($this->storage->fileExists($storageFileName)) {
+                Logger::warning('Unable to delete version file: ' . $e->getMessage());
+
+                throw $e;
+            }
+            // File was already deleted (race condition) — safe to ignore
         }
 
         if (!$isBinaryHashInUse) {
             try {
                 $this->storage->delete($binaryStoragePath);
-            } catch (UnableToDeleteFile) {
-                // File may have already been deleted by another process
+            } catch (UnableToDeleteFile $e) {
+                if ($this->storage->fileExists($binaryStoragePath)) {
+                    Logger::warning('Unable to delete version binary file: ' . $e->getMessage());
+
+                    throw $e;
+                }
+                // File was already deleted (race condition) — safe to ignore
             }
         }
     }
