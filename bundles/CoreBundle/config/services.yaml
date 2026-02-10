@@ -207,3 +207,9 @@ services:
             $commandContextHolder: '@Pimcore\Console\CommandContextHolder'
         tags:
             - { name: doctrine.dbal.schema_filter, connection: default }
+
+    pimcore.calculated_value.expression_language:
+        class: Pimcore\Helper\SymfonyExpression\CalculatedFieldExpressionLanguage
+        public: true
+        arguments:
+            - !tagged_iterator pimcore.calculated_value.expression_language_provider

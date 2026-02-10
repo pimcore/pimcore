@@ -7,15 +7,13 @@ on:
         -   cron: '0 3 * * *'
     pull_request_target:
         branches:
-            - "[0-9]+.[0-9]+"
-            - "[0-9]+.x"
+            - "12.*"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
     push:
         branches:
-            - "[0-9]+.[0-9]+"
-            - "[0-9]+.x"
+            - "12.*"
             - "*_actions"
         paths-ignore:
             - 'doc/**'

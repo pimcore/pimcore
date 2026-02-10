@@ -74,6 +74,16 @@ class RequestHelper
         return $mainRequest;
     }
 
+    public function popRequest(): Request
+    {
+        return $this->requestStack->pop();
+    }
+
+    public function pushRequest(Request $request): void
+    {
+        $this->requestStack->push($request);
+    }
+
     public function isFrontendRequest(?Request $request = null): bool
     {
         $request = $this->getRequest($request);

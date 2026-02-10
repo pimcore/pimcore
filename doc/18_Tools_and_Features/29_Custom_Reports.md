@@ -78,3 +78,19 @@ pimcore_custom_reports:
 If you need to fully customize the appearance of the report, you can specify a custom javascript class that should 
 be used when opening the report in Pimcore Backend. This class can be specified in `Report Class` option and should extend
 the default javascript class for the reports which is `pimcore.bundle.customreports.custom.report`.
+
+:::caution
+
+Be aware that several SQL keywords cannot be used in column names unless they're quoted, such as:
+
+```sql
+ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE
+```
+
+For example, a column named `lastUpdate` would need to be wrapped with backticks (``) like so:
+
+```sql
+SELECT `lastUpdate`
+```
+
+:::

@@ -137,7 +137,7 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
             $command = $command->getCommand();
         }
 
-        if ($command instanceof DoctrineCommand) {
+        if (str_starts_with($command->getName(), 'doctrine:') || $command instanceof DoctrineCommand) {
             $definition = $command->getDefinition();
 
             // add filter option

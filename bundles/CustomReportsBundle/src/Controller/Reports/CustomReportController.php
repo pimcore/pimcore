@@ -18,6 +18,7 @@ use Pimcore\Bundle\CustomReportsBundle\Tool;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
 use stdClass;
@@ -278,8 +279,8 @@ class CustomReportController extends UserAwareController
         if (!class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
             throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
         }
-        $offset = $request->request->getInt('start', 0);
-        $limit = $request->request->getInt('limit', 40);
+        $offset = ParameterBagHelper::getInt($request->request, 'start', 0);
+        $limit = ParameterBagHelper::getInt($request->request, 'limit', 40);
         $config = Tool\Config::getByName($request->request->getString('name'));
         if (!$config) {
             throw $this->createNotFoundException();
@@ -388,7 +389,7 @@ class CustomReportController extends UserAwareController
 
         $adapter = Tool\Config::getAdapter($configuration, $config);
 
-        $offset = $request->query->getInt('offset');
+        $offset = ParameterBagHelper::getInt($request->query, 'offset');
         $limit = 5000;
         $result = $adapter->getData($filters, $sort, $dir, $offset * $limit, $limit, $fields, $drillDownFilters);
         ++$offset;

@@ -54,7 +54,7 @@ class Document extends Model\Asset
         if (!\Pimcore\Document::isAvailable()) {
             Logger::error(
                 sprintf(
-                    "Couldn't create image-thumbnail of document %s as no document adapter is available",
+                    "Couldn't process page count of document %s as no document adapter is available",
                     $this->getRealFullPath()
                 )
             );

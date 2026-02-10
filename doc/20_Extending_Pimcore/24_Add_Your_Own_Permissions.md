@@ -1,7 +1,22 @@
 # Add Your Own Permissions
 
 ## Add your permission to the database
-Choose a custom unique name and add it to the `users_permission_definitions` table in your database.
+Permissions are stored in the `users_permission_definitions` table in your database. Use the `Definition` model to create your custom permission:
+
+```php
+use Pimcore\Model\User\Permission\Definition;
+
+// Create your custom permission
+$permissionKey = 'my_custom_permission';
+$existingPermission = Definition::getByKey($permissionKey);
+
+if (null === $existingPermission) {
+    $permission = new Definition();
+    $permission->setKey($permissionKey);
+    $permission->setCategory('Custom Permission Group'); // Group related permissions
+    $permission->save();
+}
+```
 You should now be able to select the permission in the users/roles tabs:
 ![CustomPermissionPimcore](../img/custom_permissions_pimcore.png)
 

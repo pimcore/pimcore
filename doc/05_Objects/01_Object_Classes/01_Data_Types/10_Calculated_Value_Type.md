@@ -48,6 +48,63 @@ data.getFieldname()
 
 ```
 
+##### Adding Expression Functions
+You can register new functions that can be used in symfony expressions for calculated values.
+
+Example string functions provider:
+
+```
+<?php
+
+namespace App\ExpressionLanguage;
+
+use Symfony\Component\ExpressionLanguage\ExpressionFunction;
+use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
+
+class StringFunctionsProvider implements ExpressionFunctionProviderInterface
+{
+    public function getFunctions(): array
+    {
+        return [
+            new ExpressionFunction(
+                'toLower',
+                function ($str) {
+                    return sprintf('strtolower(%s)', $str);
+                },
+                function (array $variables, $value) {
+                    return strtolower($value);
+                }
+            ),
+            new ExpressionFunction(
+                'toUpper',
+                function ($str) {
+                    return sprintf('strtoupper(%s)', $str);
+                },
+                function (array $variables, $value) {
+                    return strtoupper($value);
+                }
+            ),
+            new ExpressionFunction(
+                'trim',
+                function ($str) {
+                    return sprintf('trim(%s)', $str);
+                },
+                function (array $variables, $value) {
+                    return trim($value);
+                }
+            )
+        ];
+    }
+}
+```
+
+```
+services:
+    App\ExpressionLanguage\StringFunctionsProvider:
+        tags:
+        - { name: "pimcore.calculated_value.expression_language_provider" }
+```
+
 ### Calculator Class
 
 The second option for defining the calculation is providing a php calculator class. This is especially useful for more

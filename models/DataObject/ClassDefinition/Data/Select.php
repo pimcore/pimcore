@@ -68,6 +68,11 @@ class Select extends Data implements
      */
     public bool $dynamicOptions = false;
 
+    /**
+     * @internal
+     */
+    public bool $enforceValidation = false;
+
     public function getColumnLength(): int
     {
         return $this->columnLength;
@@ -222,6 +227,43 @@ class Select extends Data implements
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
+
+        if (!$this->isEmpty($data) && $this->isEnforceValidation()) {
+            // Ensure options providers are resolved
+            if ($this->getOptions() === null) {
+                $this->enrichFieldDefinition($params['context'] ?? []);
+            }
+
+            if (!$this->getOptions()) {
+                return;
+            }
+
+            if (!$this->isValidOption($data)) {
+                throw new Model\Element\ValidationException(
+                    sprintf("Invalid option '%s' for field [ %s ]", $data, $this->getName())
+                );
+            }
+        }
+    }
+
+    /**
+     * Validates if the provided data matches any of the available options.
+     *
+     */
+    private function isValidOption(mixed $data): bool
+    {
+        $matches = array_filter(
+            $this->getOptions(),
+            function (array $option) use ($data) {
+                if (!array_key_exists('value', $option)) {
+                    return false;
+                }
+
+                return $option['value'] == $data;
+            }
+        );
+
+        return count($matches) > 0;
     }
 
     public function isEmpty(mixed $data): bool
@@ -244,6 +286,16 @@ class Select extends Data implements
         $this->optionsProviderType = $mainDefinition->optionsProviderType;
         $this->optionsProviderClass = $mainDefinition->optionsProviderClass;
         $this->optionsProviderData = $mainDefinition->optionsProviderData;
+    }
+
+    public function isEnforceValidation(): bool
+    {
+        return $this->enforceValidation;
+    }
+
+    public function setEnforceValidation(bool $enforceValidation): void
+    {
+        $this->enforceValidation = $enforceValidation;
     }
 
     public function getDefaultValue(): ?string

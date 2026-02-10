@@ -196,7 +196,15 @@ class Dao extends Model\Dao\AbstractDao
                             $insertData = array_merge($insertData, $insertDataArray);
                             $this->model->setLocalizedValue($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams), $language, false);
                         } else {
-                            $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)]);
+                            $isUpdate = $params['isUpdate'] ?? false;
+                            if ($context['containerType'] === 'fieldcollection') {
+                                $isUpdate = $this->model->getDirtyLanguages() === null;
+                            }
+                            $fieldDefinitionParams = $this->getFieldDefinitionParams(
+                                $fieldName,
+                                $language,
+                                ['isUpdate' => $isUpdate]
+                            );
                             $insertData[$fd->getName()] = $fd->getDataForResource(
                                 $this->model->getLocalizedValue($fieldName, $language, true),
                                 $object,

@@ -13,6 +13,15 @@ declare(strict_types=1);
 
 namespace Pimcore\HttpKernel\BundleLocator;
 
+trigger_deprecation(
+    'pimcore/pimcore',
+    '12.3',
+    'The "%s" class is deprecated and will be removed in Pimcore 13.',
+);
+
+/**
+ * @deprecated
+ */
 class InvalidArgumentException extends \InvalidArgumentException
 {
 }

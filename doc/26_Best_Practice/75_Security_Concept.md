@@ -38,7 +38,7 @@ pimcore_admin:
         additional_urls:
             script-src:
                 - 'https://oreo.cat/scripts/meow.js' 
-                - 'https://bagheera.cat/*'
+                - 'https://bagheera.cat'
             style-src:
                 - 'https://oreo.cat/scripts/meow.css'
 ```
