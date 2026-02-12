@@ -234,10 +234,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false, array $parameters = []): ?Model\Version
     {
-        $coreSaveOnlyVersionParams = [
+        $coreParameters = [
             'saveVersionOnly' => true,
             'isAutoSave' => $isAutoSave,
         ];
+        $eventParameters = array_merge($parameters, $coreParameters);
 
         try {
             if ($setModificationDate) {
@@ -246,9 +247,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $preUpdateEvent = new DataObjectEvent($this, array_merge($parameters, $coreSaveOnlyVersionParams));
+                $preUpdateEvent = new DataObjectEvent($this, $eventParameters);
                 Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DataObjectEvents::PRE_UPDATE);
-                $parameters = $preUpdateEvent->getArguments();
+                $eventParameters = $preUpdateEvent->getArguments();
             }
 
             // scheduled tasks are saved always, they are not versioned!
@@ -269,13 +270,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $postUpdateEvent = new DataObjectEvent($this, array_merge($parameters, $coreSaveOnlyVersionParams));
+                $postUpdateEvent = new DataObjectEvent($this, array_merge($eventParameters, $coreParameters));
                 Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DataObjectEvents::POST_UPDATE);
             }
 
             return $version;
         } catch (Exception $e) {
-            $postUpdateFailureEvent = new DataObjectEvent($this, array_merge($parameters, $coreSaveOnlyVersionParams, ['exception' => $e]));
+            $postUpdateFailureEvent = new DataObjectEvent($this, array_merge($eventParameters, $coreParameters, ['exception' => $e]));
             Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
 
             throw $e;
