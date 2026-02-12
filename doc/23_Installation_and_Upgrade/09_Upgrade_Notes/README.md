@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 13.0.0
+
+#### [DataObjects]
+- Add a new optional `$parameters` argument to `Concrete::saveVersion()` to allow passing of arguments to events.
+
 ## Pimcore 12.0.0
 
 ## IMPORTANT: License change! Please read the following information carefully:
