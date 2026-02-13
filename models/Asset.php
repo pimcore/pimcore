@@ -1708,8 +1708,8 @@ class Asset extends Element\AbstractElement
 
             /** @var \League\Flysystem\StorageAttributes $child */
             foreach ($children as $child) {
+                $totalChildren++;
                 if ($child instanceof \League\Flysystem\FileAttributes) {
-                    $totalChildren++;
                     $src  = $child['path'];
                     $dest = str_replace($oldPath, $newPath, '/' . $src);
                     $storage->move($src, $dest);
