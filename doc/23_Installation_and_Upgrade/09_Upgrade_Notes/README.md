@@ -1,5 +1,9 @@
 # Upgrade Notes
 
+## Pimcore 13.0.0
+
+- Added a `page` parameter to enable paging/offset feature in `getRunningJobsByUserId` in JobRunRepositoryInterface.
+
 ## Pimcore 12.3.0
 
 ### [General]

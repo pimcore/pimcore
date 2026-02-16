@@ -76,6 +76,7 @@ interface JobRunRepositoryInterface
         array $orderBy = [],
         int $limit = 10,
         ?string $executionContext = null,
+        int $page = 1
     ): array;
 
     public function getLastJobRunByName(

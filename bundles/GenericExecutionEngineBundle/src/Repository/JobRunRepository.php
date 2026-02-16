@@ -190,7 +190,8 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
         int $ownerId,
         array $orderBy = [],
         int $limit = 10,
-        ?string $executionContext = null
+        ?string $executionContext = null,
+        int $page = 1
     ): array {
         $params = [];
         $params = $this->setOwnerId($params, $ownerId);
@@ -202,7 +203,8 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
             ->findBy(
                 $params,
                 $orderBy,
-                $limit
+                $limit,
+                ($page - 1) * $limit,
             );
     }
 
