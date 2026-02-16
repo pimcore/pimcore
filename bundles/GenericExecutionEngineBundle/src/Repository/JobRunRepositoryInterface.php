@@ -69,7 +69,7 @@ interface JobRunRepositoryInterface
         ?string $executionContext = null,
     ): array;
 
-    public function getTotalCount(): int;
+    public function getTotalCount(?string $context = null, ?int $ownerId = null): int;
 
     public function getRunningJobsByUserId(
         int $ownerId,

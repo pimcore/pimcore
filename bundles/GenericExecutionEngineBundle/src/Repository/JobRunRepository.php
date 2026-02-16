@@ -181,9 +181,28 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
         );
     }
 
-    public function getTotalCount(): int
+    public function getTotalCount(?string $context = null, ?int $ownerId = null): int
     {
-        return $this->pimcoreEntityManager->getRepository(JobRun::class)->count();
+        $repository = $this->pimcoreEntityManager->getRepository(JobRun::class);
+
+        if ($context === null && $ownerId === null) {
+            return $repository->count([]);
+        }
+
+        $qb = $repository->createQueryBuilder('jr')
+            ->select('COUNT(jr.id)');
+
+        if ($ownerId !== null) {
+            $qb->andWhere('jr.ownerId = :ownerId')
+                ->setParameter('ownerId', $ownerId);
+        }
+
+        if ($context !== null) {
+            $qb->andWhere('jr.executionContext = :executionContext')
+                ->setParameter('executionContext', $context);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     public function getRunningJobsByUserId(
