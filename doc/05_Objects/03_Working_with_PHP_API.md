@@ -330,6 +330,44 @@ You can switch globally the behaviour (it will bypass `setUnpublished` setting),
 \Pimcore\Model\DataObject::setHideUnpublished(false);
 ```
 
+### Disable Row Locking on Load
+
+Since Pimcore 11.5.2, loading a data object acquires an exclusive row lock (`FOR UPDATE`) to prevent race conditions
+during concurrent read-then-write operations. In read-only scenarios (batch exports, reporting, version snapshots,
+parallel imports loading related objects), this lock is unnecessary and can cause deadlocks or lock wait timeouts.
+
+You can disable the lock globally for a block of operations:
+
+```php
+<?php
+
+use Pimcore\Model\DataObject;
+
+$wasDisabled = DataObject\AbstractObject::isLockingDisabled();
+DataObject\AbstractObject::disableLocking();
+try {
+    // all getById() calls within this block will skip FOR UPDATE
+    $objects = $listing->load();
+} finally {
+    DataObject\AbstractObject::setDisableLocking($wasDisabled);
+}
+```
+
+Or per call using the `lock` parameter on `getById()`:
+
+```php
+<?php
+
+use Pimcore\Model\DataObject;
+
+// load a single object without acquiring a row lock
+$object = DataObject\Myclassname::getById(167, ['lock' => false]);
+```
+
+> **Note:** The lock only applies within database transactions. In regular reads without an active transaction, the
+> `FOR UPDATE` clause has no effect. Only disable locking when you are certain the loaded objects will not be modified
+> in the same transaction.
+
 ### Filter Objects by attributes from Field Collections
 To filter objects by attributes from field collections, you can use following syntax
 (Both code snippets result in the same object listing).

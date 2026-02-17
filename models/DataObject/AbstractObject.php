@@ -73,6 +73,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
+     */
+    protected static bool $disableLocking = false;
+
+    /**
+     * @internal
      *
      * @var string[]
      */
@@ -207,6 +212,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         $cacheKey = self::getCacheKey($id);
 
+        $lock = $params['lock'] ?? true;
+        unset($params['lock']);
         $params = Model\Element\Service::prepareGetByIdParams($params);
 
         if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
@@ -232,7 +239,19 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     /** @var AbstractObject $object */
                     $object = self::getModelFactory()->build($className);
                     RuntimeCache::set($cacheKey, $object);
-                    $object->getDao()->getById($id);
+
+                    if (!$lock) {
+                        $wasLockingDisabled = self::isLockingDisabled();
+                        self::disableLocking();
+                    }
+                    try {
+                        $object->getDao()->getById($id);
+                    } finally {
+                        if (!$lock) {
+                            self::setDisableLocking($wasLockingDisabled);
+                        }
+                    }
+
                     if ($object->getModificationDate() !== null) {
                         $object->__setDataVersionTimestamp($object->getModificationDate());
                     }
@@ -954,6 +973,38 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public static function enableDirtyDetection(): void
     {
         self::setDisableDirtyDetection(false);
+    }
+
+    /**
+     * @internal
+     */
+    public static function isLockingDisabled(): bool
+    {
+        return self::$disableLocking;
+    }
+
+    /**
+     * @internal
+     */
+    public static function setDisableLocking(bool $disableLocking): void
+    {
+        self::$disableLocking = $disableLocking;
+    }
+
+    /**
+     * @internal
+     */
+    public static function disableLocking(): void
+    {
+        self::setDisableLocking(true);
+    }
+
+    /**
+     * @internal
+     */
+    public static function enableLocking(): void
+    {
+        self::setDisableLocking(false);
     }
 
     /**
