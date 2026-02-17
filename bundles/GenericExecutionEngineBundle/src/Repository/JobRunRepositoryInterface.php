@@ -55,7 +55,8 @@ interface JobRunRepositoryInterface
     public function getJobRunById(
         int $id,
         bool $forceReload = false,
-        ?int $ownerId = null
+        ?int $ownerId = null,
+        array $criteria = []
     ): JobRun;
 
     /**
@@ -67,16 +68,18 @@ interface JobRunRepositoryInterface
         int $limit = 100,
         int $offset = 0,
         ?string $executionContext = null,
+        array $criteria = []
     ): array;
 
-    public function getTotalCount(?string $context = null, ?int $ownerId = null): int;
+    public function getTotalCount(array $criteria = []): int;
 
     public function getRunningJobsByUserId(
         int $ownerId,
         array $orderBy = [],
         int $limit = 10,
         ?string $executionContext = null,
-        int $page = 1
+        int $offset = 0,
+        array $criteria = []
     ): array;
 
     public function getLastJobRunByName(

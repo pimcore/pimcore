@@ -2,8 +2,8 @@
 
 ## Pimcore 13.0.0
 
-- [GEE] Added a `$page` parameter to enable paging/offset feature in `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
-- [GEE] Added `$executionContext` and `$ownerId` parameters to `getTotalCount()` in `JobRunRepositoryInterface`.
+- [GEE] Added a `$offset` parameter to ease paging feature in `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
+- [GEE] Added possibility to pass a `$criteria` array to `getTotalCount()`, `getJobRunById()`, `getJobRunsByUserId()` and `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
 
 ## Pimcore 12.3.0
 
