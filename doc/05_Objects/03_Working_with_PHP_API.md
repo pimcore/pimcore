@@ -353,7 +353,7 @@ try {
 }
 ```
 
-Or per call using the `lock` parameter on `getById()`:
+Or per call using the `lock` parameter on `getById()` or `getByPath()`:
 
 ```php
 <?php
@@ -362,6 +362,9 @@ use Pimcore\Model\DataObject;
 
 // load a single object without acquiring a row lock
 $object = DataObject\Myclassname::getById(167, ['lock' => false]);
+
+// also works with getByPath()
+$object = DataObject::getByPath("/path/to/object", ['lock' => false]);
 ```
 
 > **Note:** The lock only applies within database transactions. In regular reads without an active transaction, the

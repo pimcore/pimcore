@@ -300,7 +300,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $object = new static();
             $object->getDao()->getByPath($path);
 
-            return static::getById($object->getId(), Model\Element\Service::prepareGetByIdParams($params));
+            $lock = $params['lock'] ?? true;
+            unset($params['lock']);
+            $preparedParams = Model\Element\Service::prepareGetByIdParams($params);
+            $preparedParams['lock'] = $lock;
+
+            return static::getById($object->getId(), $preparedParams);
         } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
