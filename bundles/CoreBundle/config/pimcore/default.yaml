@@ -52,11 +52,6 @@ framework:
         default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:
-    rate_limiter:
-        reset_password:
-            policy: 'fixed_window'
-            limit: 5
-            interval: '5 minutes'
     html_sanitizer:
         sanitizers:
             pimcore.wysiwyg_sanitizer:
