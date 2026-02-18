@@ -13,6 +13,7 @@
 namespace Pimcore\Model\Dependency;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\DBAL\ParameterType;
 use Exception;
 use Pimcore;
 use Pimcore\Db\Helper;
@@ -86,32 +87,38 @@ class Dao extends Model\Dao\AbstractDao
         FROM (
             SELECT d.targetid as id, d.targettype as type
             FROM dependencies d
-            INNER JOIN objects o ON o.id = d.targetid AND d.targettype= 'object'
-            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(o.path, o.key)) RLIKE '".$value."'
+            INNER JOIN objects o ON o.id = d.targetid AND d.targettype = 'object'
+            WHERE d.sourcetype = :sourceType AND d.sourceid = :sourceId AND LOWER(CONCAT(o.path, o.key)) RLIKE :value
             UNION
             SELECT d.targetid as id, d.targettype as type
             FROM dependencies d
-            INNER JOIN documents doc ON doc.id = d.targetid AND d.targettype= 'document'
-            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(doc.path, doc.key)) RLIKE '".$value."'
+            INNER JOIN documents doc ON doc.id = d.targetid AND d.targettype = 'document'
+            WHERE d.sourcetype = :sourceType AND d.sourceid = :sourceId AND LOWER(CONCAT(doc.path, doc.key)) RLIKE :value
             UNION
             SELECT d.targetid as id, d.targettype as type
             FROM dependencies d
-            INNER JOIN assets a ON a.id = d.targetid AND d.targettype= 'asset'
-            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(a.path, a.filename)) RLIKE '".$value."'
+            INNER JOIN assets a ON a.id = d.targetid AND d.targettype = 'asset'
+            WHERE d.sourcetype = :sourceType AND d.sourceid = :sourceId AND LOWER(CONCAT(a.path, a.filename)) RLIKE :value
         ) dep
         ORDER BY " . $orderBy . ' ' . $orderDirection;
+
+        $params = [
+            'sourceType' => $sourceType,
+            'sourceId'   => $sourceId,
+            'value'      => strtolower((string) $value),
+        ];
+
+        $types = [
+            'sourceType' => ParameterType::STRING,
+            'sourceId'   => ParameterType::INTEGER,
+            'value'      => ParameterType::STRING,
+        ];
 
         if ($offset !== null && $limit !== null) {
             $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
         }
 
-        $requiresByPath = $this->db->fetchAllAssociative($query);
-
-        if (count($requiresByPath) > 0) {
-            return $requiresByPath;
-        } else {
-            return [];
-        }
+        return $this->db->fetchAllAssociative($query);
     }
 
     public function getFilterRequiredByPath(
@@ -142,34 +149,40 @@ class Dao extends Model\Dao\AbstractDao
         $query = "
         SELECT id, type
         FROM (
-            SELECT d.sourceid as id, d.sourcetype as type
+            SELECT d.sourceid AS id, d.sourcetype AS type
             FROM dependencies d
-            INNER JOIN objects o ON o.id = d.sourceid AND d.targettype= 'object'
-            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(o.path, o.key)) RLIKE '".$value."'
+            INNER JOIN objects o ON o.id = d.sourceid AND d.targettype = 'object'
+            WHERE d.targettype = :targetType AND d.targetid = :targetId AND LOWER(CONCAT(o.path, o.key)) RLIKE :value
             UNION
-            SELECT d.sourceid as id, d.sourcetype as type
+            SELECT d.sourceid AS id, d.sourcetype AS type
             FROM dependencies d
-            INNER JOIN documents doc ON doc.id = d.sourceid AND d.targettype= 'document'
-            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(doc.path, doc.key)) RLIKE '".$value."'
+            INNER JOIN documents doc ON doc.id = d.sourceid AND d.targettype = 'document'
+            WHERE d.targettype = :targetType AND d.targetid = :targetId AND LOWER(CONCAT(doc.path, doc.key)) RLIKE :value
             UNION
-            SELECT d.sourceid as id, d.sourcetype as type
+            SELECT d.sourceid AS id, d.sourcetype AS type
             FROM dependencies d
-            INNER JOIN assets a ON a.id = d.sourceid AND d.targettype= 'asset'
-            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(a.path, a.filename)) RLIKE '".$value."'
+            INNER JOIN assets a ON a.id = d.sourceid AND d.targettype = 'asset'
+            WHERE d.targettype = :targetType AND d.targetid = :targetId AND LOWER(CONCAT(a.path, a.filename)) RLIKE :value
         ) dep
         ORDER BY " . $orderBy . ' ' . $orderDirection;
+
+        $params = [
+            'sourceType' => $targetType,
+            'sourceId'   => $targetId,
+            'value'      => strtolower((string) $value),
+        ];
+
+        $types = [
+            'sourceType' => ParameterType::STRING,
+            'sourceId'   => ParameterType::INTEGER,
+            'value'      => ParameterType::STRING,
+        ];
 
         if ($offset !== null && $limit !== null) {
             $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
         }
 
-        $requiredByPath = $this->db->fetchAllAssociative($query);
-
-        if (count($requiredByPath) > 0) {
-            return $requiredByPath;
-        } else {
-            return [];
-        }
+        return $this->db->fetchAllAssociative($query, $params, $types);
     }
 
     /**
