@@ -1,5 +1,11 @@
 # Upgrade Notes
 
+## Pimcore 13.0.0
+
+### [General]
+
+- The `reset_password` rate limiter configuration has been moved to the studio-backend bundle and is no longer part of Pimcore's core configuration.
+
 ## Pimcore 12.3.0
 
 ### [General]
