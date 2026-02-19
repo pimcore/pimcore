@@ -85,17 +85,17 @@ class Dao extends Model\Dao\AbstractDao
         $query = "
         SELECT id, type
         FROM (
-            SELECT d.targetid as id, d.targettype as type
+            SELECT d.targetid AS id, d.targettype AS type
             FROM dependencies d
             INNER JOIN objects o ON o.id = d.targetid AND d.targettype = 'object'
             WHERE d.sourcetype = :sourceType AND d.sourceid = :sourceId AND LOWER(CONCAT(o.path, o.key)) RLIKE :value
             UNION
-            SELECT d.targetid as id, d.targettype as type
+            SELECT d.targetid AS id, d.targettype AS type
             FROM dependencies d
             INNER JOIN documents doc ON doc.id = d.targetid AND d.targettype = 'document'
             WHERE d.sourcetype = :sourceType AND d.sourceid = :sourceId AND LOWER(CONCAT(doc.path, doc.key)) RLIKE :value
             UNION
-            SELECT d.targetid as id, d.targettype as type
+            SELECT d.targetid AS id, d.targettype AS type
             FROM dependencies d
             INNER JOIN assets a ON a.id = d.targetid AND d.targettype = 'asset'
             WHERE d.sourcetype = :sourceType AND d.sourceid = :sourceId AND LOWER(CONCAT(a.path, a.filename)) RLIKE :value
