@@ -166,10 +166,13 @@ class Dao extends Model\Dao\AbstractDao
         ) dep
         ORDER BY " . $orderBy . ' ' . $orderDirection;
 
+        $pattern = strtolower((string) $value);
+        $pattern = preg_quote($pattern, '/');
+
         $params = [
             'targetType' => $targetType,
             'targetId'   => $targetId,
-            'value'      => strtolower((string) $value),
+            'value'      => $pattern,
         ];
 
         $types = [
