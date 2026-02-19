@@ -1,3 +1,7 @@
+
+[<img width="1890" height="500" alt="image" src="https://github.com/user-attachments/assets/be41e89d-6050-4fdf-a2aa-b41cbad51114" />](https://eu1.hubs.ly/H0qxJLc0)
+
+
 ![Pimcore - Own the digital World](./doc/img/logo-readme.svg)
 
 Pimcore Core Framework - Open Core Data & Experience Management Platform: PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce

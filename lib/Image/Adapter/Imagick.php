@@ -505,7 +505,7 @@ class Imagick extends Adapter
             }
 
             $this->resource->setResolution($res['x'], $res['y']);
-            $this->resource->readImage($this->imagePath);
+            $this->resource->readImage($this->imagePath . '[0]');
 
             if (!$this->isPreserveColor()) {
                 $this->setColorspaceToRGB();
