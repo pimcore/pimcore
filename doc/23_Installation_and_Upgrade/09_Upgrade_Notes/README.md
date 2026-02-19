@@ -148,7 +148,7 @@ Edition or Enterprise/PaaS Edition under a commercial agreement, nothing changes
 existing contracts, rights, and usage terms remain fully intact — POCL has no impact on your
 deployment or support.
 
-Please read the [Pimcore Open Core License](https://github.com/pimcore/pimcore/blob/12.x/LICENSE.md) carefully
+Please read the [Pimcore Open Core License](https://github.com/pimcore/pimcore/blob/2026.x/LICENSE.md) carefully
 and check whether you can continue to use the free Pimcore Community edition.
 **If you continue to use the Community Edition with the Admin UI Classic bundle, [you need to purchase an
 additional perpetual license at a price of €1,480 at our store](https://store.pimcore.com/shop/admin-ui-classic-bundle-for-community-edition-pocl-license-134) because of ExtJS licencing limitations.**

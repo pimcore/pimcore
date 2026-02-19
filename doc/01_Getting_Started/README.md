@@ -1,7 +1,7 @@
 # Getting Started With Pimcore
 
 If you're planning to use the free Pimcore Community Edition. please read the
-[Pimcore Open Core License](https://github.com/pimcore/pimcore/blob/12.x/LICENSE.md) carefully
+[Pimcore Open Core License](https://github.com/pimcore/pimcore/blob/2026.x/LICENSE.md) carefully
 before installing Pimcore and ensure you comply with the restrictions.  
   
 If you use the Community Edition with the Admin UI Classic bundle, [you need to purchase an
