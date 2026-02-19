@@ -102,7 +102,6 @@ The Auto Alt functionality will try to automatically fall back to any available 
 Ultimately, it would use the image `title` as `alt` value when nothing above is previously found.
 It is also possible to define an alternative metadata to be used as `alt`, `copyright`, `title` values (eg. by defining `pimcore.assets.metadata.alt` in the configuration) that would have used when the inline options are not passed.
 
-```yaml
 
 ## Usage Examples
 
@@ -309,6 +308,10 @@ process).
 
 Of course this works only with predefined (named) thumbnail configurations and not with dynamic configurations.
 
+> **WARNING**
+> This feature is delivered through PublicServicesController and may not work if the controller is unreachable (e.g. during Maintenance mode).
+> When requesting an image without providing a hash, the content cannot be Browser cached like regular Nginx-served files, as the file without hash doesn’t exist physically.
+
 ## Deferred Rendering of Thumbnails
 
 For performance reasons, Pimcore doesn't generate the thumbnail image directly when calling `getThumbnail()`
@@ -345,6 +348,10 @@ If you need to scale an image more than that, you can use the `max_scaling_facto
       thumbnails:
         max_scaling_factor: 6.0
 ```
+
+You can define the maximum automatic DPI scaling factor used for image thumbnail srcset values 
+via the `pimcore.assets.image.thumbnails.max_srcset_dpi_factor` configuration option.
+By default, this value is set to 2, and the getSrcset() method will generate values in increments of 1.
 
 ### Use in the Thumbnail Configuration:
 

@@ -118,8 +118,19 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     $value = $this->$getter();
 
                     $omitMandatoryCheck = $this->getOmitMandatoryCheck();
-                    // when adding a new object, skip check on mandatory fields with default value
-                    if (empty($value) && !$isUpdate && method_exists($fd, 'getDefaultValue') && !empty($fd->getDefaultValue())
+
+                    // when adding a new object, skip check on mandatory for fields
+                    // with default value or default value or default value generator
+                    if (!$omitMandatoryCheck && empty($value) && !$isUpdate &&
+                        (
+                            (
+                                method_exists($fd, 'getDefaultValue') &&
+                                !empty($fd->getDefaultValue())
+                            ) || (
+                                method_exists($fd, 'getDefaultValueGenerator') &&
+                                $fd->getDefaultValueGenerator() !== ''
+                            )
+                        )
                     ) {
                         $omitMandatoryCheck = true;
                     }
@@ -701,7 +712,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             // We're reloading version data, there might be fields that now implement the ObjectAwareFieldInterface but
             // aren't included in the $this->__objectAwareFields array - for example versions created in Pimcore <= 10.x
             // containing LocalizedFields. Verify all fields in this object.
-            foreach (get_object_vars($this) as $propertyValue) {
+            foreach (get_object_vars($this) as $propertyKey => $propertyValue) {
                 if ($propertyValue instanceof ObjectAwareFieldInterface) {
                     $propertyValue->setObject($this);
                 }

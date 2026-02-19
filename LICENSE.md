@@ -1,5 +1,5 @@
 # License
-Copyright (C) Pimcore GmbH (http://www.pimcore.com)
+Copyright (C) Pimcore GmbH (https://www.pimcore.com)
 
 This software is available under the terms of the
 following Pimcore Open Core License (POCL)
@@ -7,7 +7,7 @@ following Pimcore Open Core License (POCL)
 
 **PIMCORE OPEN CORE LICENSE AGREEMENT (POCL)**
 
-**Last Update: April 2025**
+**Last Update: June 2025**
 
 This Open Core License Agreement ("**Agreement**" or “**POCL**”), effective as of the day of the first installation or use by Customer (the "**Effective Date**"), is by and between Pimcore GmbH, Söllheimer Straße 16, AT-5020 Salzburg, Republic of Austria (hereinafter "**Licensor**" or “**Pimcore**”) and the user of the Software, as defined herein, (hereinafter "**Licensee**" or "**Customer**"). Licensor and Licensee may be referred to herein collectively as the "**Parties**" or individually as a "**Party**."
 
@@ -36,13 +36,13 @@ This Open Core License Agreement ("**Agreement**" or “**POCL**”), effective 
 
 a) An organization with total global revenue not exceeding €5 million (€5M) or equivalent amount in other currency annually (“**Threshold**”) may qualify for a free license for Production Use of the Open Core Software, provided such organization is not a part, subsidiary, affiliate, or shell company to another organization, entity, or company group whose total combined revenue exceeds the Threshold. Eligibility must be self-certified by the Customer when starting the use of the Open Core Software and is subject to periodic review and audit by Pimcore. If at any time the Customer’s revenue exceeds the Threshold, a paid commercial license will be required for continued Production Use of the software. The Customer is obliged to inform Pimcore about relevant changes in revenues. Pimcore is entitled to charge license fees retroactively from the date on which Customer exceeded the Threshold.
 
-b) Non-profit and educational organizations are eligible for a free license for Production Use of the Open Core Software, subject to Pimcore’s non-profit criteria.
+b) Non-profit and educational organizations are eligible for a free license for Production Use of the Open Core Software, subject to Pimcore’s non-profit criteria. For this purpose, “non-profit” refers to entities that are legally recognized as non-profit or tax-exempt under applicable law and operate exclusively for charitable, educational, or scientific purposes without profit distribution. Government bodies, municipalities, political parties, and public institutions are excluded unless explicitly approved by Pimcore. 
 
 Pimcore shall decide at its own reasonable discretion whether (a) the Threshold is exceeded or (b) the requirements for non-profit or educational usage are met. Legal recourse is excluded with regard to such decision of Pimcore.
 
 1.2.2 Non-Production Use and Transition to Production Use (Open Core Software)
 
-For non-production purposes, such as demonstrations, designing of prototypes, proofs of concept, and sales presentations (such and comparable usages of a software “**Non-Production Use**”), the Pimcore Developer License (PDLA) must be purchased.
+For non-production purposes—such as demonstrations, prototype design, proofs of concept, and sales presentations (collectively referred to as “**Non-Production Use**”)—the use of POCL-based software is free of charge. However, to showcase or demonstrate the features of the Enterprise Edition of Pimcore for any Non-Production Use, a Pimcore Developer License Agreement (PDLA) must be purchased.
 
 If the Customer or a Partner or any other third person acting on the Customer’s behalf initiates development of a solution with the intention or foreseeable or actual effect of deploying it into production, such use from its beginning shall be deemed Production Use of the Open Core Software for which the Threshold applies from the outset. Individual transition periods to Production Use may be agreed between Pimcore and Customer in writing.
 

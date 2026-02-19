@@ -88,9 +88,6 @@ class ResponseExceptionListener implements EventSubscriberInterface
                 'uri' => $uri,
                 'code' => $statusCode,
                 'parametersGet' => serialize($_GET),
-                'parametersPost' => serialize($_POST),
-                'cookies' => serialize($_COOKIE),
-                'serverVars' => serialize($_SERVER),
                 'date' => time(),
                 'count' => 1,
             ]);

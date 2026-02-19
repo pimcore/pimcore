@@ -70,7 +70,7 @@ This launches the interactive installer with a few questions. Make sure that you
 :::
 
 ##### Open Admin Interface
-After the installer has finished, you can open the admin interface: `https://your-host.com/admin`
+After the installer has finished and your [server is configured](../../23_Installation_and_Upgrade/README.md), you can open the admin interface: `https://your-host.com/admin`
 
 ##### Debugging Installation Issues
 

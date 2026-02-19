@@ -64,3 +64,5 @@ The checks are performed:
 - For updating product registration of an existing installation, just change the instance identifier (symfony 
   configuration `pimcore.product_registration.instance_identifier`) and restart the process (build container, 
   follow link in error message, generate new product key, apply it to the configuration).
+- Encryption secret needs to be a [defuse key](https://github.com/defuse/php-encryption)
+  It can be manually generated via `vendor/bin/generate-defuse-key`

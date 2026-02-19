@@ -334,14 +334,32 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /**
-     * @param DataObject\Concrete|null $object
-     *
-     * @todo: $pathes is undefined
-     */
     public function getDataForGrid(?array $data, ?Concrete $object = null, array $params = []): ?array
     {
-        return $this->getDataForEditmode($data, $object, $params);
+        $gridData = $this->getDataForEditmode($data, $object, $params);
+
+        if ($this->getPathFormatterClass() && !empty($gridData)) {
+            $params['fd'] = $object->getClass()->getFieldDefinition($this->getName(), $params['context'] ?? []);
+            foreach ($gridData as &$relatedElementData) {
+                $pathFormatterData = [
+                    'id' => $relatedElementData[0],
+                    'path' => $relatedElementData[1],
+                    'type' => $relatedElementData[2],
+                    'subtype' => $relatedElementData[3],
+                ];
+
+                if (isset($relatedElementData[4])) {
+                    $pathFormatterData['published'] = $relatedElementData[4];
+                }
+                $nicePath = $this->getNicePath($pathFormatterData, $object, $params);
+                if ($nicePath) {
+                    $relatedElementData[1] = $nicePath;
+                }
+            }
+            unset($relatedElementData);
+        }
+
+        return $gridData;
     }
 
     /**
@@ -452,7 +470,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 $this->markLazyloadedFieldAsLoaded($container);
                 $container->markFieldDirty($this->getName(), false);
             }
-        } elseif ($container instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             parent::loadLazyFieldcollectionField($container);
@@ -770,18 +788,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         }
 
         throw new InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
-    }
-
-    /**
-     * Filter by relation feature
-     *
-     *
-     */
-    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
-    {
-        $name = $params['name'] ?: $this->name;
-
-        return $this->getRelationFilterCondition($value, $operator, $name);
     }
 
     public function getQueryColumnType(): string

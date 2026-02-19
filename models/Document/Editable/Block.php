@@ -326,6 +326,15 @@ EOT;
         return $this->current - 1;
     }
 
+    /**
+     * @internal
+     *
+     */
+    public function setCurrent(int $current): void
+    {
+        $this->current = $current + 1;
+    }
+
     public function getCurrentIndex(): int
     {
         return (int) ($this->indices[$this->getCurrent()] ?? 0);

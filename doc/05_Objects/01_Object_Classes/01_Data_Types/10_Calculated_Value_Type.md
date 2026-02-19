@@ -6,7 +6,7 @@
 The calculated-value datatype allows you to calculate attributes based on the value of various other attributes. The 
 value is always calculated on the fly when calling the corresponding getter, no caching applied.
 
-The only data stored is the one in the object's query tables for being able to query for calculated values.
+The only data stored is the one in the object's query tables for being able to query (e.g. grid filtering) for calculated values.
 
 > Values in the query table are only updated when the data object is saved. So be careful, the values in the query 
 > table might not be up-to-date depending on the caluclation parameters.  
@@ -46,6 +46,63 @@ object.getText() != '' ? 'yes' : 'no'
 # get fieldname of current field
 data.getFieldname()
 
+```
+
+##### Adding Expression Functions
+You can register new functions that can be used in symfony expressions for calculated values.
+
+Example string functions provider:
+
+```
+<?php
+
+namespace App\ExpressionLanguage;
+
+use Symfony\Component\ExpressionLanguage\ExpressionFunction;
+use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
+
+class StringFunctionsProvider implements ExpressionFunctionProviderInterface
+{
+    public function getFunctions(): array
+    {
+        return [
+            new ExpressionFunction(
+                'toLower',
+                function ($str) {
+                    return sprintf('strtolower(%s)', $str);
+                },
+                function (array $variables, $value) {
+                    return strtolower($value);
+                }
+            ),
+            new ExpressionFunction(
+                'toUpper',
+                function ($str) {
+                    return sprintf('strtoupper(%s)', $str);
+                },
+                function (array $variables, $value) {
+                    return strtoupper($value);
+                }
+            ),
+            new ExpressionFunction(
+                'trim',
+                function ($str) {
+                    return sprintf('trim(%s)', $str);
+                },
+                function (array $variables, $value) {
+                    return trim($value);
+                }
+            )
+        ];
+    }
+}
+```
+
+```
+services:
+    App\ExpressionLanguage\StringFunctionsProvider:
+        tags:
+        - { name: "pimcore.calculated_value.expression_language_provider" }
 ```
 
 ### Calculator Class

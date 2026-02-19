@@ -27,6 +27,7 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Header\MailboxListHeader;
 use Symfony\Component\Mime\Part\AbstractPart;
+use Twig\Extension\EscaperExtension;
 use Twig\Sandbox\SecurityError;
 
 class Mail extends Email
@@ -63,7 +64,10 @@ class Mail extends Email
      * @var array<string, mixed>
      */
     private array $html2textOptions = [
-        'ignore_errors' => true,
+        'suppress_errors' => true,
+        'hard_break' => true,
+        'strip_tags' => true,
+        'remove_nodes' => 'head style',
     ];
 
     /**
@@ -590,11 +594,22 @@ class Mail extends Email
 
     private function renderParams(string $string, string $context): string
     {
+        trigger_deprecation('pimcore/pimcore', '12.3', 'Retrieving "pimcore.templating.engine.delegating" from the container is deprecated and will be removed in 13.0. Inject Twig\Environment directly instead.');
         $templatingEngine = Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
+        $defaultStrategy = null;
+        $twig = null;
 
         try {
             $twig = $templatingEngine->getTwigEnvironment(true);
-            $template = $twig->createTemplate($string);
+
+            // If rendering an email subject, disable Twig's auto-escaping temporarily
+            if ($context === 'subject') {
+                $escaper = $twig->getExtension(EscaperExtension::class);
+                $defaultStrategy = $escaper->getDefaultStrategy('__string_template__');
+                $escaper->setDefaultStrategy(false);
+            }
+
+            $template = $twig->createTemplate($string, 'pimcore_email_' . $context);
 
             return $template->render($this->getParams());
         } catch (SecurityError $e) {
@@ -603,6 +618,11 @@ class Mail extends Email
             throw new Exception(sprintf('Failed rendering the %s: %s. Please check your twig sandbox security policy or contact the administrator.',
                 $context, substr($e->getMessage(), 0, strpos($e->getMessage(), ' in "__string'))));
         } finally {
+            // Restore the default escaping strategy (HTML) after rendering the subject
+            if ($twig instanceof \Twig\Environment && $defaultStrategy !== null) {
+                $twig->getExtension(EscaperExtension::class)->setDefaultStrategy($defaultStrategy);
+            }
+
             $templatingEngine->disableSandboxExtensionFromTwigEnvironment();
         }
     }
@@ -774,11 +794,11 @@ class Mail extends Email
         return $this->preventDebugInformationAppending;
     }
 
-    private function html2Text(string $htmlContent): string
+    private function html2Text(?string $htmlContent): string
     {
         $content = '';
 
-        if (!empty($htmlContent)) {
+        if ($htmlContent) {
             try {
                 $converter = new HtmlConverter();
                 $converter->getConfig()->merge($this->getHtml2TextOptions());

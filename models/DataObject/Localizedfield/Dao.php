@@ -19,6 +19,7 @@ use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
@@ -195,7 +196,15 @@ class Dao extends Model\Dao\AbstractDao
                             $insertData = array_merge($insertData, $insertDataArray);
                             $this->model->setLocalizedValue($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams), $language, false);
                         } else {
-                            $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)]);
+                            $isUpdate = $params['isUpdate'] ?? false;
+                            if ($context['containerType'] === 'fieldcollection') {
+                                $isUpdate = $this->model->getDirtyLanguages() === null;
+                            }
+                            $fieldDefinitionParams = $this->getFieldDefinitionParams(
+                                $fieldName,
+                                $language,
+                                ['isUpdate' => $isUpdate]
+                            );
                             $insertData[$fd->getName()] = $fd->getDataForResource(
                                 $this->model->getLocalizedValue($fieldName, $language, true),
                                 $object,
@@ -330,7 +339,7 @@ class Dao extends Model\Dao\AbstractDao
                                     }
                                 }
 
-                                if ($inheritanceEnabled && $fd->getFieldType() != 'calculatedValue') {
+                                if ($inheritanceEnabled && !$fd instanceof CalculatedValue) {
                                     //get changed fields for inheritance
                                     if ($fd->isRelationType()) {
                                         if (is_array($insertData)) {

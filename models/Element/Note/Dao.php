@@ -12,7 +12,6 @@
 
 namespace Pimcore\Model\Element\Note;
 
-use DateTime;
 use DateTimeInterface;
 use Exception;
 use Pimcore\Db\Helper;
@@ -44,41 +43,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->assignVariablesToModel($data);
 
         // get key-value data
-        $keyValues = $this->db->fetchAllAssociative('SELECT * FROM notes_data WHERE id = ?', [$id]);
-        $preparedData = [];
-
-        foreach ($keyValues as $keyValue) {
-            $data = $keyValue['data'];
-            $type = $keyValue['type'];
-            $name = $keyValue['name'];
-
-            if ($type == 'document') {
-                if ($data) {
-                    $data = Document::getById($data);
-                }
-            } elseif ($type == 'asset') {
-                if ($data) {
-                    $data = Asset::getById($data);
-                }
-            } elseif ($type == 'object') {
-                if ($data) {
-                    $data = DataObject::getById($data);
-                }
-            } elseif ($type == 'date') {
-                if ($data > 0) {
-                    $date = new DateTime();
-                    $date->setTimestamp($data);
-                    $data = $date;
-                }
-            } elseif ($type == 'bool') {
-                $data = (bool) $data;
-            }
-
-            $preparedData[$name] = [
-                'data' => $data,
-                'type' => $type,
-            ];
-        }
+        $preparedData = (new Listing())->getDao()->loadDataList([$id])[$id] ?? [];
 
         $this->model->setData($preparedData);
     }

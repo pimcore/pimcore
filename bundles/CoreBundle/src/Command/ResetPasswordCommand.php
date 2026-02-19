@@ -73,6 +73,7 @@ class ResetPasswordCommand extends AbstractCommand
         }
 
         $password = Authentication::getPasswordHash($user->getName(), $plainPassword);
+        $user->setLastPasswordReset(time());
         $user->setPassword($password);
         $user->save();
 

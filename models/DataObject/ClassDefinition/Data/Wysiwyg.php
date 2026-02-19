@@ -23,7 +23,7 @@ use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 
-class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface
+class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
 {
     use DataObject\ClassDefinition\Data\Extension\Text;
     use DataObject\Traits\DataHeightTrait;
@@ -48,6 +48,13 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      */
     public string|int $maxCharacters = 0;
+
+    public function enrichLayoutDefinition(?DataObject\Concrete $object, array $context = []): static
+    {
+        $this->width = $this->getWidth() ?: '100%';
+
+        return $this;
+    }
 
     private static function getWysiwygSanitizer(): HtmlSanitizer
     {
@@ -204,7 +211,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $data = '';
         if ($container instanceof DataObject\Concrete) {
             $data = $container->getObjectVar($this->getName());
-        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Classificationstore) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Classificationstore || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $data = $container->getObjectVar($this->getName());

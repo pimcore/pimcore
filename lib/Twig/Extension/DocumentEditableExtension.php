@@ -16,6 +16,7 @@ namespace Pimcore\Twig\Extension;
 use Exception;
 use Generator;
 use Pimcore\Model\Document\Editable\BlockInterface;
+use Pimcore\Model\Document\Editable\EditableInterface;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Twig\TokenParser\BlockParser;
@@ -43,6 +44,11 @@ class DocumentEditableExtension extends AbstractExtension
                 'is_safe' => ['html'],
             ]),
             new TwigFunction('pimcore_iterate_block', [$this, 'getBlockIterator']),
+            new TwigFunction(
+                'pimcore_count_block',
+                [$this, 'getBlockCount'],
+                ['needs_context' => true]
+            ),
         ];
 
         // @phpstan-ignore-next-line those are just for auto-complete, not nice, but works ;-)
@@ -75,8 +81,12 @@ class DocumentEditableExtension extends AbstractExtension
      *
      * @throws Exception
      */
-    public function renderEditable(array $context, string $type, string $name, array $options = []): string|\Pimcore\Model\Document\Editable\EditableInterface
-    {
+    public function renderEditable(
+        array $context,
+        string $type,
+        string $name,
+        array $options = []
+    ): string|EditableInterface {
         $document = $context['document'] ?? null;
         if (!($document instanceof PageSnippet)) {
             return '';
@@ -96,6 +106,20 @@ class DocumentEditableExtension extends AbstractExtension
     public function getBlockIterator(BlockInterface $block): Generator
     {
         return $block->getIterator();
+    }
+
+    /**
+     * @internal
+     *
+     */
+    public function getBlockCount(array $context, string $name): int
+    {
+        $block = $this->renderEditable($context, 'block', $name);
+        if ($block instanceof BlockInterface) {
+            return $block->getCount();
+        } else {
+            return 0;
+        }
     }
 
     public function getTokenParsers(): array

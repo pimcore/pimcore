@@ -41,7 +41,6 @@ use Pimcore\Tool;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Tool\Session;
 use stdClass;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Throwable;
@@ -525,10 +524,10 @@ class Service extends Model\Element\Service
 
         return self::useInheritedValues(true, static function () use ($object, $config) {
             $labeledValue = $config->getLabeledValue($object);
-            if (!$labeledValue || !isset($labeledValue->value) || !$result = $labeledValue->value) {
+            if (!$labeledValue || !isset($labeledValue->value)) {
                 return null;
             }
-
+            $result = $labeledValue->value;
             if (!empty($config->getRenderer())) {
                 $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($config->getRenderer());
                 /** @var Model\DataObject\ClassDefinition\Data $rendererImpl */
@@ -1270,7 +1269,7 @@ class Service extends Model\Element\Service
             return $result;
         }
 
-        $mergedFieldDefinition = self::getCustomGridFieldDefinitions($class->getId(), $objectId);
+        $mergedFieldDefinition = self::getCustomGridFieldDefinitions($class->getId(), $objectId, $user);
         if (is_array($mergedFieldDefinition)) {
             if (isset($mergedFieldDefinition['localizedfields'])) {
                 $children = $mergedFieldDefinition['localizedfields']->getFieldDefinitions();
@@ -1440,15 +1439,17 @@ class Service extends Model\Element\Service
 
     private static function evaluateExpression(Model\DataObject\ClassDefinition\Data\CalculatedValue $fd, Concrete $object, ?DataObject\Data\CalculatedValue $data): mixed
     {
-        $expressionLanguage = new ExpressionLanguage();
-        //overwrite constant function to aviod exposing internal information
-        $expressionLanguage->register('constant', function ($str) {
-            throw new SyntaxError('`constant` function not available');
-        }, function ($arguments, $str) {
-            throw new SyntaxError('`constant` function not available');
-        });
+        // TODO refactor in a future PR to allow these to be injected
+        $container = Pimcore::getContainer();
+        $expressionLanguage = $container->get('pimcore.calculated_value.expression_language');
 
-        return $expressionLanguage->evaluate($fd->getCalculatorExpression(), ['object' => $object, 'data' => $data]);
+        return $expressionLanguage->evaluate(
+            $fd->getCalculatorExpression(),
+            [
+                'object' => $object,
+                'data' => $data,
+            ]
+        );
     }
 
     /**
@@ -1658,7 +1659,16 @@ class Service extends Model\Element\Service
             $fieldData = self::getCsvFieldData($requestedLanguage, $key, $object, $requestedLanguage, $helperDefinitions);
             if ($returnMappedFieldNames && !isset($mappedFieldnames[$key])) {
                 $mappedFieldnames[$key] = self::mapFieldname($field, $helperDefinitions, $header);
-                $objectData[$mappedFieldnames[$key]] = $fieldData;
+
+                // ensure unique field names, if the same title/label is used more than once, add suffix `_x`
+                $i = 1;
+                $newKey = $mappedFieldnames[$key];
+                while (isset($objectData[$newKey])) {
+                    $newKey = $mappedFieldnames[$key] . '_' . $i;
+                    $i++;
+                }
+
+                $objectData[$newKey] = $fieldData;
             } else {
                 $objectData[$key] = $fieldData;
             }

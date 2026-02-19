@@ -411,11 +411,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             }
 
             if ($this->elementType === 'boolean') {
-                if ($this->calculatorType === 'class') {
-                    $bool = $value === 1 ? 1 : 0;
-                } else {
-                    $bool = $value === 1 ? $db->quote('true') : $db->quote('false');
-                }
+                $key = 'IFNULL(' . $key . ', 0)';
+                $bool = $value === 1 ? 1 : 0;
 
                 return $key . ' ' . $operator . ' ' . $bool;
             }
@@ -436,7 +433,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                 if ($operator === 'LIKE') {
                     $value = $db->quote('%' . $value . '%');
                 } else {
-                    $value = $db->quote($value);
+                    $value = $db->quote((string) $value);
                 }
             }
         }
@@ -528,14 +525,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
-        if ($class instanceof DataObject\Objectbrick\Definition) {
-            $classname = 'Objectbrick\\Data\\' . ucfirst($class->getKey());
-        } elseif ($class instanceof DataObject\Fieldcollection\Definition) {
-            $classname = 'Fieldcollection\\Data\\' . ucfirst($class->getKey());
-        } else {
-            $classname = $class->getName();
-        }
-
         $key = $this->getName();
 
         if ($this->getParameterTypeDeclaration()) {
@@ -891,13 +880,10 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     {
         $key = $this->getName();
         if ($class instanceof DataObject\Objectbrick\Definition) {
-            $classname = 'Objectbrick\\Data\\' . ucfirst($class->getKey());
             $containerGetter = 'getDefinition';
         } elseif ($class instanceof DataObject\Fieldcollection\Definition) {
-            $classname = 'Fieldcollection\\Data\\' . ucfirst($class->getKey());
             $containerGetter = 'getDefinition';
         } else {
-            $classname = $class->getName();
             $containerGetter = 'getClass';
         }
 

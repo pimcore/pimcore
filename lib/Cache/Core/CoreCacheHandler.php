@@ -459,12 +459,23 @@ class CoreCacheHandler implements LoggerAwareInterface
         if ($data instanceof ElementInterface) {
             // fetch a fresh copy
             $type = Service::getElementType($data);
-            $data = Service::getElementById($type, $data->getId(), ['force' => true]);
+            $id = $data->getId();
 
-            if (!$data->__isBasedOnLatestData()) {
-                $this->logger->warning('Not saving {key} to cache as element is not based on latest data', [
-                    'key' => $key,
-                ]);
+            $data = Service::getElementById($type, $id, ['force' => true]);
+
+            if ($data === null || !$data->__isBasedOnLatestData()) {
+                $reason = $data === null
+                    ? 'data is null'
+                    : 'element is not based on latest data';
+
+                $this->logger->warning(
+                    'Not saving {key} to cache as {reason} (id: {id})',
+                    [
+                        'key'    => $key,
+                        'id'     => $id,
+                        'reason' => $reason,
+                    ]
+                );
 
                 $this->writeInProgress = false;
 

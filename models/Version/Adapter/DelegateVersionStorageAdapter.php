@@ -62,11 +62,9 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
         ?int $metaDataSize = null,
         ?int $binaryDataSize = null): string
     {
-        if (empty($this->fallbackAdapter) === false) {
-            if ($metaDataSize > $this->byteThreshold ||
-                $binaryDataSize > $this->byteThreshold) {
-                return $this->fallbackAdapter->getStorageType($metaDataSize, $binaryDataSize);
-            }
+        if ($metaDataSize > $this->byteThreshold ||
+        $binaryDataSize > $this->byteThreshold) {
+            return $this->fallbackAdapter->getStorageType($metaDataSize, $binaryDataSize);
         }
 
         return $this->defaultAdapter->getStorageType($metaDataSize, $binaryDataSize);

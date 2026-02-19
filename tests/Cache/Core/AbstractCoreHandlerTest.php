@@ -119,7 +119,7 @@ abstract class AbstractCoreHandlerTest extends Unit
 
         /** @var CoreCacheHandler|PHPUnit_Framework_MockObject_MockObject $handler */
         $handler = $this->getMockBuilder(CoreCacheHandler::class)
-            ->setMethods($mockMethods)
+            ->onlyMethods($mockMethods)
             ->setConstructorArgs([
                 $this->cache,
                 $this->writeLock,

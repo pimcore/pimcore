@@ -549,7 +549,11 @@ class Service extends Model\Element\Service
 
         if (HtmlToImage::convert($url, $tmpFile)) {
             $im = \Pimcore\Image::getInstance();
-            $im->load($tmpFile);
+            if (!$im->load($tmpFile)) {
+                unlink($tmpFile);
+
+                return false;
+            }
             $im->scaleByWidth(800);
             $im->save($file, 'jpeg', 85);
 

@@ -243,7 +243,7 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
                     forceFit:true,
                     // loadMask: false,
                     getRowClass: function(record) {
-                        return 'log-type-' + record.get('priority');
+                        return 'log-type-' + record.get('prioritykeyname').toLowerCase();
                     },
                     enableTextSelection: true
                 },

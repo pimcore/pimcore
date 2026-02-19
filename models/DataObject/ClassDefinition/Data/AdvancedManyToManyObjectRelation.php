@@ -286,15 +286,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     }
 
     /**
-     * @param DataObject\Concrete|null $object
-     *
-     */
-    public function getDataForGrid(?array $data, ?Concrete $object = null, array $params = []): array
-    {
-        return $this->getDataForEditmode($data, $object, $params);
-    }
-
-    /**
      *
      *
      * @see Data::getVersionPreview
@@ -510,7 +501,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $container->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($container);
             }
-        } elseif ($container instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             parent::loadLazyFieldcollectionField($container);

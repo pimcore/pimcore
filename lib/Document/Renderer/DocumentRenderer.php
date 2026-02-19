@@ -71,6 +71,9 @@ class DocumentRenderer implements DocumentRendererInterface
 
     public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string
     {
+        $isStaticPageGenerator = $attributes['pimcore_static_page_generator'] ?? false;
+        $isCli = in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed'], true);
+
         $this->eventDispatcher->dispatch(
             new DocumentEvent($document, $attributes),
             DocumentEvents::RENDERER_PRE_RENDER
@@ -80,9 +83,7 @@ class DocumentRenderer implements DocumentRendererInterface
         // this is needed for logic relying on the current route (e.g. pimcoreUrl helper)
         if (!isset($attributes['_route'])) {
             $route = $this->documentRouteHandler->buildRouteForDocument($document);
-            if (null !== $route) {
-                $attributes['_route'] = $route->getRouteKey();
-            }
+            $attributes['_route'] = $route?->getRouteKey();
         }
 
         try {
@@ -90,17 +91,19 @@ class DocumentRenderer implements DocumentRendererInterface
         } catch (Exception $e) {
 
             $host = null;
+            $url = $document->getFullPath();
             if ($site = Frontend::getSiteForDocument($document)) {
                 Site::setCurrentSite($site);
                 $host = $site->getMainDomain();
+                $url = preg_replace('@^' . $site->getRootPath() . '/?@', '/', $url);
             } elseif ($systemMainDomain = Tool::getHostname()) {
                 $host = $systemMainDomain;
             }
 
-            $request = $this->requestHelper->createRequestWithContext(host: $host);
+            $request = $this->requestHelper->createRequestWithContext(uri: $url, host: $host);
         }
 
-        if ($attributes['pimcore_static_page_generator'] ?? false) {
+        if ($isStaticPageGenerator) {
             $headers = \Pimcore\Config::getSystemConfiguration('documents')['static_page_generator']['headers'];
             foreach ($headers as $header) {
                 $request->headers->set($header['name'], $header['value']);
@@ -114,6 +117,10 @@ class DocumentRenderer implements DocumentRendererInterface
             $request->setLocale($documentLocale);
         }
 
+        if ($isStaticPageGenerator && $isCli && !$this->requestHelper->hasMainRequest()) {
+            $this->requestHelper->pushRequest($request);
+        }
+
         $uri = $this->actionRenderer->createDocumentReference($document, $attributes, $query);
         $response = $this->fragmentRenderer->render($uri, $request, $options);
 
@@ -124,6 +131,14 @@ class DocumentRenderer implements DocumentRendererInterface
             DocumentEvents::RENDERER_POST_RENDER
         );
 
-        return $response->getContent();
+        try {
+            return $response->getContent();
+        } finally {
+            if ($isStaticPageGenerator && $isCli) {
+                while ($this->requestHelper->hasCurrentRequest()) {
+                    $this->requestHelper->popRequest();
+                }
+            }
+        }
     }
 }

@@ -348,11 +348,6 @@ parameters:
 			count: 1
 			path: lib/Image/Adapter.php
 
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: lib/Image/Adapter/Imagick.php
 
 		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'

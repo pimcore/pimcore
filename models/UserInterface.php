@@ -187,6 +187,10 @@ interface UserInterface extends UserRoleInterface
      */
     public function setLastLogin(int $lastLogin): static;
 
+    // TODO: Add these to Pimcore 13
+    //public function getLastPasswordChange(): ?int;
+    //public function setLastPasswordChange(int $lastPasswordChange): static;
+
     public function getKeyBindings(): ?string;
 
     public function setKeyBindings(string $keyBindings): void;

@@ -73,7 +73,7 @@ class Vote extends AbstractModel
             return $obj;
         }
         catch (NotFoundException $ex) {
-            \Pimcore\Logger::warn("Vote with id $id not found");
+            \Pimcore\Logger::debug("Vote with id $id not found");
         }
 
         return null;

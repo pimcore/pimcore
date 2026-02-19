@@ -38,7 +38,7 @@ enum LogLevel: int
         }
 
         foreach (static::cases() as $case) {
-            if ($case->name === $value) {
+            if (strtolower($case->name) === strtolower($value)) {
                 return $case;
             }
         }

@@ -15,6 +15,7 @@ namespace Pimcore\Bundle\SeoBundle\Controller;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Db;
+use Pimcore\Helper\ParameterBagHelper;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,8 +33,8 @@ class MiscController extends UserAwareController
 
         $db = Db::get();
 
-        $limit = $request->request->getInt('limit');
-        $offset = $request->request->getInt('start');
+        $limit = ParameterBagHelper::getInt($request->request, 'limit');
+        $offset = ParameterBagHelper::getInt($request->request, 'start');
         $sortInfo = ($request->request->has('sort') ? json_decode($request->request->getString('sort'), true)[0] : []);
         $sort = $sortInfo['property'] ?? null;
         $dir = $sortInfo['direction'] ?? null;
@@ -56,7 +57,7 @@ class MiscController extends UserAwareController
             $filter = $db->quote('%' . $filter . '%');
 
             $conditionParts = [];
-            foreach (['uri', 'code', 'parametersGet', 'parametersPost', 'serverVars', 'cookies'] as $field) {
+            foreach (['uri', 'code', 'parametersGet'] as $field) {
                 $conditionParts[] = $field . ' LIKE ' . $filter;
             }
             $condition = ' WHERE ' . implode(' OR ', $conditionParts);
@@ -85,7 +86,7 @@ class MiscController extends UserAwareController
         $data = $db->fetchAssociative('SELECT * FROM http_error_log WHERE uri = ?', [$request->query->getString('uri')]);
 
         foreach ($data as $key => &$value) {
-            if (in_array($key, ['parametersGet', 'parametersPost', 'serverVars', 'cookies'])) {
+            if ($key === 'parametersGet') {
                 $value = unserialize($value);
             }
         }

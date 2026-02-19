@@ -87,7 +87,9 @@ class HelpersExtension extends AbstractExtension
     {
         $thumbnail = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/image-version-preview-' . uniqid() . '.png';
         $convert = \Pimcore\Image::getInstance();
-        $convert->load($file);
+        if (!$convert->load($file)) {
+            throw new Exception("Failed to load image file: $file");
+        }
         $convert->contain(500, 500);
         $convert->save($thumbnail, 'png');
 

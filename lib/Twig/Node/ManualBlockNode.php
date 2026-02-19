@@ -71,6 +71,7 @@ final class ManualBlockNode extends Node
         return <<<PHP
         \$editableExtension = \$this->env->getExtension('Pimcore\Twig\Extension\DocumentEditableExtension');
         \$block = \$editableExtension->renderEditable(\$context, 'block', '{$this->blockName}', $optionsString);
+        \$context['_block'] = \$block;
 \$block->start();
 {$splitChars}
         foreach(\$block->getIterator() as \$index) {

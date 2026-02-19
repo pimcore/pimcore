@@ -18,34 +18,34 @@ first, which covers all basics in that matter.
 ## Available Events
 
 All Pimcore events are defined and documented as a constant on component specific classes: 
-- [Assets](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/AssetEvents.php)
-- [Documents](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DocumentEvents.php)
-- [Data Objects](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DataObjectEvents.php)
-- [Versions](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/VersionEvents.php)
-- [Data Object Class Definition](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DataObjectClassDefinitionEvents.php)
-- [Object Brick Definition](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/ObjectbrickDefinitionEvents.php)
-- [Data Object Classification Store](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DataObjectClassificationStoreEvents.php)
-- [Data Object Custom Layouts](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DataObjectCustomLayoutEvents.php)
-- [Data Object Import](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/Model/DataObjectImportEvent.php)
-- [Data Object Quantity Value Unit](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DataObjectQuantityValueEvents.php)
-- [Users / Roles](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/UserRoleEvents.php)
-- [Workflows](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/WorkflowEvents.php)
-- [Elements](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/ElementEvents.php)
-- [Mail](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/MailEvents.php)
-- [Notifications](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/NotificationEvents.php)
-- [Redirect](https://github.com/pimcore/pimcore/blob/11.x/bundles/SeoBundle/src/Event/RedirectEvents.php)
+- [Assets](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/AssetEvents.php)
+- [Documents](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/DocumentEvents.php)
+- [Data Objects](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/DataObjectEvents.php)
+- [Versions](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/VersionEvents.php)
+- [Data Object Class Definition](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/DataObjectClassDefinitionEvents.php)
+- [Object Brick Definition](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/ObjectbrickDefinitionEvents.php)
+- [Data Object Classification Store](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/DataObjectClassificationStoreEvents.php)
+- [Data Object Custom Layouts](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/DataObjectCustomLayoutEvents.php)
+- [Data Object Import](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/Model/DataObjectImportEvent.php)
+- [Data Object Quantity Value Unit](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/DataObjectQuantityValueEvents.php)
+- [Users / Roles](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/UserRoleEvents.php)
+- [Workflows](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/WorkflowEvents.php)
+- [Elements](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/ElementEvents.php)
+- [Mail](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/MailEvents.php)
+- [Notifications](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/NotificationEvents.php)
+- [Redirect](https://github.com/pimcore/pimcore/blob/12.x/bundles/SeoBundle/src/Event/RedirectEvents.php)
 - [Admin](https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/src/Event/AdminEvents.php)
-- [Frontend](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/FrontendEvents.php)
-- [Cache](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/CoreCacheEvents.php)
-- [Full-Page Cache](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/FullPageCacheEvents.php)
-- [Search](https://github.com/pimcore/pimcore/blob/11.x/bundles/SimpleBackendSearchBundle/src/Event/SearchBackendEvents.php)
-- [System](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/SystemEvents.php)
-- [Tags](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/TagEvents.php)
+- [Frontend](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/FrontendEvents.php)
+- [Cache](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/CoreCacheEvents.php)
+- [Full-Page Cache](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/FullPageCacheEvents.php)
+- [Search](https://github.com/pimcore/pimcore/blob/12.x/bundles/SimpleBackendSearchBundle/src/Event/SearchBackendEvents.php)
+- [System](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/SystemEvents.php)
+- [Tags](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/TagEvents.php)
 - [Target Group](https://github.com/pimcore/personalization-bundle/blob/1.x/src/Event/TargetGroupEvents.php)
 - [Targeting](https://github.com/pimcore/personalization-bundle/blob/1.x/src/Event/TargetingEvents.php)
-- [Tests](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/TestEvents.php)
-- [Translation](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/TranslationEvents.php)
-- [Bundle Manager for injecting js/css files to Pimcore backend or editmode](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/BundleManagerEvents.php)
+- [Tests](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/TestEvents.php)
+- [Translation](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/TranslationEvents.php)
+- [Bundle Manager for injecting js/css files to Pimcore backend or editmode](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/BundleManagerEvents.php)
 
 ## Examples
 
@@ -133,7 +133,7 @@ and implement your own logic.
 Certain data types (like image, relations, etc ...) allow you to specify a dedicated upload path which defaults 
 to '/_default_upload_bucket' if not otherwise specified in the config yml file or in the class definition.
 
-The [AssetEvents::RESOLVE_UPLOAD_TARGET](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/AssetEvents.php) event
+The [AssetEvents::RESOLVE_UPLOAD_TARGET](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/AssetEvents.php) event
 allows you to dynamically modify the target path depending on the object it will be assigned to. 
 Additional contextual information (like fieldname, fieldcollection index number, etc... ) could be utilized to
 support the decision.

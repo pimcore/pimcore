@@ -20,10 +20,22 @@ use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+/**
+ * @deprecated version 12.3
+ */
 class PimcoreXliffBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
 {
     use BundleAdminClassicTrait;
     use PackageVersionTrait;
+
+    public function __construct()
+    {
+        trigger_deprecation(
+            'pimcore/xliff-bundle',
+            '12.3',
+            'The XliffBundle is deprecated and will be discontinued with Pimcore Studio.'
+        );
+    }
 
     public function getJsPaths(): array
     {

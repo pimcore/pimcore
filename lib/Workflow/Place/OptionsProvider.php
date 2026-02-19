@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Workflow\Place;
 
 use Exception;
+use Pimcore;
 use Pimcore\Helper\ContrastColor;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
@@ -76,7 +77,7 @@ class OptionsProvider implements SelectOptionsProviderInterface
     protected function generatePlaceLabel(PlaceConfig $placeConfig): string
     {
         // do not translate or format options when not in admin context
-        if (empty($this->translator->getLocale())) {
+        if (empty($this->translator->getLocale()) || !Pimcore::inAdmin()) {
             return $placeConfig->getLabel();
         }
 
