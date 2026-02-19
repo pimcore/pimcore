@@ -7,13 +7,13 @@ on:
     pull_request_target:
         types: [opened, synchronize, reopened]
         branches:
-            - "12.*"
+            - "2026.*"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
     push:
         branches:
-            - "12.*"
+            - "2026.*"
             - "*_actions"
         paths-ignore:
             - 'doc/**'
