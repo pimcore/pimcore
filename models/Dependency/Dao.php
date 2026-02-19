@@ -105,7 +105,7 @@ class Dao extends Model\Dao\AbstractDao
         $params = [
             'sourceType' => $sourceType,
             'sourceId'   => $sourceId,
-            'value'      => preg_quote(strtolower((string) $value)),
+            'value'      => preg_quote((string) $value),
         ];
 
         $types = [
@@ -166,13 +166,10 @@ class Dao extends Model\Dao\AbstractDao
         ) dep
         ORDER BY " . $orderBy . ' ' . $orderDirection;
 
-        $pattern = strtolower((string) $value);
-        $pattern = preg_quote($pattern, '/');
-
         $params = [
             'targetType' => $targetType,
             'targetId'   => $targetId,
-            'value'      => $pattern,
+            'value'      => preg_quote((string) $value),
         ];
 
         $types = [
