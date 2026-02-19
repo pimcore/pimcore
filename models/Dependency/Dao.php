@@ -118,7 +118,7 @@ class Dao extends Model\Dao\AbstractDao
             $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
         }
 
-        return $this->db->fetchAllAssociative($query);
+        return $this->db->fetchAllAssociative($query, $params, $types);
     }
 
     public function getFilterRequiredByPath(
@@ -167,14 +167,14 @@ class Dao extends Model\Dao\AbstractDao
         ORDER BY " . $orderBy . ' ' . $orderDirection;
 
         $params = [
-            'sourceType' => $targetType,
-            'sourceId'   => $targetId,
+            'targetType' => $targetType,
+            'targetId'   => $targetId,
             'value'      => strtolower((string) $value),
         ];
 
         $types = [
-            'sourceType' => ParameterType::STRING,
-            'sourceId'   => ParameterType::INTEGER,
+            'targetType' => ParameterType::STRING,
+            'targetId'   => ParameterType::INTEGER,
             'value'      => ParameterType::STRING,
         ];
 
