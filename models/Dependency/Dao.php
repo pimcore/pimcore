@@ -105,7 +105,7 @@ class Dao extends Model\Dao\AbstractDao
         $params = [
             'sourceType' => $sourceType,
             'sourceId'   => $sourceId,
-            'value'      => strtolower((string) $value),
+            'value'      => preg_quote(strtolower((string) $value)),
         ];
 
         $types = [
