@@ -464,8 +464,11 @@ abstract class PageSnippet extends Model\Document
 
             if (self::getGetInheritedValues() && $this->supportsContentMain() && $this->getContentMainDocument()) {
                 $contentMainEditables = $this->getContentMainDocument()->getEditables();
+                foreach ($contentMainEditables as $editable) {
+                    $editable->setInherited(true);
+                }
                 $documentEditables = array_merge($contentMainEditables, $documentEditables);
-                $this->inheritedEditables = $documentEditables;
+                $this->inheritedEditables = $contentMainEditables;
             }
 
             $this->setEditables($documentEditables);
