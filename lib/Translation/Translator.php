@@ -18,7 +18,6 @@ use Pimcore\Cache;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\Exception\LogicException;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -44,8 +43,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      */
     protected bool $disableTranslations = false;
-
-    protected Kernel $kernel;
 
     public function __construct(TranslatorInterface $translator)
     {
@@ -184,20 +181,18 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                 Cache::save($catalogue, $cacheKey, ['translator', 'translator_website', 'translate'], null, 999);
             }
 
-            if ($catalogue) {
-                $c = $this->getCatalogue($locale);
-                $c->addCatalogue($catalogue);
-                $fallbackCatalogue = $c->getFallbackCatalogue();
-                if ($fallbackCatalogue) {
-                    $this->lazyInitialize($domain, $fallbackCatalogue->getLocale());
+            $c = $this->getCatalogue($locale);
+            $c->addCatalogue($catalogue);
+            $fallbackCatalogue = $c->getFallbackCatalogue();
+            if ($fallbackCatalogue) {
+                $this->lazyInitialize($domain, $fallbackCatalogue->getLocale());
 
-                    try {
-                        $this->getCatalogue($locale)->addFallbackCatalogue(
-                            $this->getCatalogue($fallbackCatalogue->getLocale())
-                        );
-                    } catch (LogicException $e) {
-                        // couldn't add fallback because of a circular reference
-                    }
+                try {
+                    $this->getCatalogue($locale)->addFallbackCatalogue(
+                        $this->getCatalogue($fallbackCatalogue->getLocale())
+                    );
+                } catch (LogicException $e) {
+                    // couldn't add fallback because of a circular reference
                 }
             }
         }
@@ -344,24 +339,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->adminTranslationMapping = $adminTranslationMapping;
     }
 
-    /**
-     * @internal
-     *
-     */
-    public function getKernel(): Kernel
-    {
-        return $this->kernel;
-    }
-
-    /**
-     *
-     * @internal
-     */
-    public function setKernel(Kernel $kernel): void
-    {
-        $this->kernel = $kernel;
-    }
-
     public function getDisableTranslations(): bool
     {
         return $this->disableTranslations;
@@ -398,8 +375,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @return string[]
      */
-    public function warmUp(string $cacheDir): array
+    public function warmUp(string $cacheDir, ?string $buildDir = null): array
     {
-        return $this->translator->warmUp($cacheDir);
+        if ($this->translator instanceof WarmableInterface) {
+            return $this->translator->warmUp($cacheDir, $buildDir);
+        }
+
+        return [];
     }
 }

@@ -25,7 +25,7 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
-class Video extends Model\Document\Editable implements IdRewriterInterface
+class Video extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
     public const TYPE_ASSET = 'asset';
 
@@ -177,7 +177,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     {
         $path = $this->id;
         if ($this->id && $this->type === self::TYPE_ASSET && ($video = Asset::getById((int)$this->id))) {
-            $path = $video->getFullPath();
+            $path = $video->getRealFullPath();
         }
 
         $allowedTypes = $this->getAllowedTypes();
@@ -203,11 +203,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             'title'        => $this->title,
             'description'  => $this->description,
             'path'         => $path,
-            'poster'       => $poster ? $poster->getFullPath() : '',
+            'poster'       => $poster ? $poster->getRealFullPath() : '',
         ];
     }
 
-    protected function getDataEditmode(): mixed
+    public function getDataEditmode(): mixed
     {
         $data = $this->getData();
 
@@ -1067,11 +1067,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
     public function getThumbnail(string|Asset\Video\Thumbnail\Config $config): array
     {
-        if ($this->getVideoAsset()) {
-            return $this->getVideoAsset()->getThumbnail($config);
-        }
-
-        return [];
+        return $this->getVideoAsset()?->getThumbnail($config) ?? [];
     }
 
     public function rewriteIds(array $idMapping): void

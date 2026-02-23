@@ -7,15 +7,13 @@ on:
         -   cron: '0 3 * * *'
     pull_request_target:
         branches:
-            - "[0-9]+.[0-9]+"
-            - "[0-9]+.x"
+            - "12.*"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
     push:
         branches:
-            - "[0-9]+.[0-9]+"
-            - "[0-9]+.x"
+            - "12.*"
             - "*_actions"
         paths-ignore:
             - 'doc/**'
@@ -47,8 +45,15 @@ jobs:
                     - { php-version: "8.4", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
 
         steps:
-            - name: "Checkout code"
-              uses: "actions/checkout@v2"
+            - name: Checkout PR head (only for pull_request_target)
+              if: github.event_name == 'pull_request_target'
+              uses: "actions/checkout@v4"
+              with:
+                ref: "refs/pull/${{ github.event.pull_request.number }}/merge"
+
+            - name: Checkout PR head (for push or other events)
+              if: github.event_name != 'pull_request_target'
+              uses: "actions/checkout@v4"
 
             - name: "Install PHP"
               uses: "shivammathur/setup-php@v2"

@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface, ClassSavedInterface
+class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface, ClassSavedInterface, EqualComparisonInterface
 {
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
@@ -1147,5 +1147,26 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function getFieldType(): string
     {
         return 'classificationstore';
+    }
+
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
+    {
+        // Check if they are the same reference
+        if ($oldValue === $newValue) {
+            return true;
+        }
+
+        // Check if related objects are the same
+        if ($oldValue->getObject()->getId() !== $newValue->getObject()->getId()) {
+            return false;
+        }
+
+        // Check if they are of the same type
+        if (get_class($oldValue) !== get_class($newValue)) {
+            return false;
+        }
+
+        // Compare items
+        return serialize($oldValue->getItems()) === serialize($newValue->getItems());
     }
 }

@@ -175,12 +175,12 @@ class Link extends Model\Document
         $path = $this->getHref();
 
         $parameters = $this->getProperty('navigation_parameters');
-        if (strlen($parameters) > 0) {
+        if (is_string($parameters) && strlen($parameters) > 0) {
             $path .= '?' . str_replace('?', '', $parameters);
         }
 
         $anchor = $this->getProperty('navigation_anchor');
-        if (strlen($anchor) > 0) {
+        if (is_string($anchor) && strlen($anchor) > 0) {
             $path .= '#' . str_replace('#', '', $anchor);
         }
 

@@ -80,7 +80,9 @@ final class Requirements
         $checks = [];
 
         // storage engines
-        $engines = $db->fetchFirstColumn('SHOW ENGINES;');
+        $engines = $db->fetchFirstColumn(
+            'SELECT Engine FROM information_schema.ENGINES WHERE Support IN (\'YES\',\'DEFAULT\')'
+        );
 
         // innodb
         $checks[] = new Check([
@@ -701,7 +703,12 @@ final class Requirements
             throw new Exception('limit of 2000 files reached');
         }
 
-        $array = array_diff(scandir($base), ['.', '..', '.svn']);
+        $base_dirs = scandir($base);
+        if ($base_dirs === false) {
+            throw new Exception('not a directory: ' . $base);
+        }
+
+        $array = array_diff($base_dirs, ['.', '..', '.svn', '.git']);
         foreach ($array as $value) {
             if (is_dir($base . $value)) {
                 $data[] = $base . $value . DIRECTORY_SEPARATOR;

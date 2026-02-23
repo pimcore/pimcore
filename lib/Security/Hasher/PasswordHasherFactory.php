@@ -34,7 +34,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 class PasswordHasherFactory implements PasswordHasherFactoryInterface
 {
     /**
-     * @param PasswordHasherFactoryInterface[] $passwordHasherFactories
+     * @param array<class-string<PasswordHasherFactoryInterface>, PasswordHasherFactoryInterface> $passwordHasherFactories
      */
     public function __construct(protected PasswordHasherFactoryInterface $frameworkFactory, protected array $passwordHasherFactories = [])
     {
@@ -66,7 +66,7 @@ class PasswordHasherFactory implements PasswordHasherFactoryInterface
             $factoryKey = $factoryName;
         } else {
             foreach ($this->passwordHasherFactories as $class => $factory) {
-                if (($user instanceof $class) || (!is_object($user) && (is_subclass_of($user, $class) || $user == $class))) {
+                if (is_a($user, $class, true)) {
                     $factoryKey = $class;
 
                     break;

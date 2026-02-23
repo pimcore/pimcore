@@ -39,7 +39,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $queryBuilder->setFirstResult(0);
 
         $query = sprintf('SELECT COUNT(*) as amount FROM (%s) AS a', (string) $queryBuilder);
-        $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables());
+        $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $amount;
     }
@@ -53,9 +53,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
 
         $query = sprintf('SELECT COUNT(*) as amount FROM (%s) AS a', (string) $queryBuilder);
-        $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables());
 
-        return $amount;
+        return (int) $this->db->fetchOne($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
     }
 
     public function getAllTranslations(): array
@@ -111,8 +110,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         $queryBuilder = $this->getQueryBuilder($this->getDatabaseTableName() . '.key');
         $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
+        $translations = Cache::load($cacheKey);
 
-        if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
+        if (
+            !$translations ||
+            !empty($this->model->getConditionParams()) ||
+            !empty($this->model->getConditionVariablesFromSetCondition())
+        ) {
             $translations = [];
             $translationsData = $this->db->fetchAllAssociative($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
             foreach ($translationsData as $t) {
@@ -123,7 +127,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
                 }
             }
 
-            if (empty($this->model->getConditionParams())) {
+            if (
+                empty($this->model->getConditionParams()) &&
+                empty($this->model->getConditionVariablesFromSetCondition())
+            ) {
                 Cache::save($translations, $cacheKey, ['translator', 'translate'], null, 999);
             }
         }

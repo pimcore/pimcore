@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Document;
 
 use Exception;
+use Pimcore;
 use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Pimcore\Logger;
@@ -106,6 +107,7 @@ class StaticPageGenerator
 
         if ($params['is_cli'] ?? false) {
             $lock->release();
+            Pimcore::getKernel()->getContainer()->get('services_resetter')->reset();
         }
 
         return true;

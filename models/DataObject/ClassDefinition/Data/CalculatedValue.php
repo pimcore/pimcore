@@ -384,4 +384,18 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     {
         return 'calculatedValue';
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
+
+    public function isEmpty(mixed $data): bool
+    {
+        return match ($this->elementType) {
+            'boolean' => $data === null || $data === '',
+            'numeric' => !is_numeric($data),
+            default => parent::isEmpty($data)
+        };
+    }
 }

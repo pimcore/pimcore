@@ -107,7 +107,7 @@ trait DefaultValueTrait
                     fn () => $owner?->getValueFromParent($this->getName(), []),
                 );
 
-                if (!$this->isEmpty($parentValue)) {
+                if (!$this->isEmpty($parentValue) || $parentValue === null) {
                     return null;
                 }
             } catch (InheritanceParentNotFoundException) {

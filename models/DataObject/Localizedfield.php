@@ -92,6 +92,13 @@ final class Localizedfield extends Model\AbstractModel implements
     protected ?array $dirtyLanguages = null;
 
     /**
+     * whether this is entry is an update or not, useful for defining a default value
+     *
+     * @internal
+     */
+    protected bool $isUpdate = false;
+
+    /**
      * @internal
      */
     protected bool $_loadedAllLazyData = false;
@@ -468,7 +475,9 @@ final class Localizedfield extends Model\AbstractModel implements
             foreach (Tool::getFallbackLanguagesFor($language) as $l) {
                 // fallback-language may not exist yet for lazy-loaded field (relation)
                 if ($this->languageExists($l) || ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading())) {
-                    if ($data = $this->getLocalizedValue($name, $l)) {
+                    $data = $this->getLocalizedValue($name, $l);
+
+                    if (!$fieldDefinition->isEmpty($data)) {
                         break;
                     }
                 }
@@ -548,6 +557,17 @@ final class Localizedfield extends Model\AbstractModel implements
             if (!$this->isLazyKeyLoaded($lazyKey)) {
                 $forceLanguageDirty = true;
             }
+        }
+
+        if (
+            $markFieldAsDirty &&
+            (
+                $fieldDefinition instanceof DataObject\ClassDefinition\Data\Multiselect ||
+                $fieldDefinition instanceof DataObject\ClassDefinition\Data\Select
+            ) &&
+            $fieldDefinition->isEnforceValidation()
+        ) {
+            $fieldDefinition->checkValidity($value);
         }
 
         if ($fieldDefinition instanceof PreSetDataInterface) {
@@ -776,9 +796,21 @@ final class Localizedfield extends Model\AbstractModel implements
         $dirtyLanguages = $this->getDirtyLanguages();
         $this->setObject($object);
         if (is_array($dirtyLanguages)) {
+            // it might be an empty array when adding emptyish localized data
+            $this->isUpdate = false;
             $this->markLanguagesAsDirty($dirtyLanguages);
         } else {
+            // there are no dirty languages detected, so it's loading from existing data
+            $this->isUpdate = true;
             $this->resetLanguageDirtyMap();
         }
+    }
+
+    /**
+     * @internal
+     */
+    public function isUpdate(): bool
+    {
+        return $this->isUpdate;
     }
 }

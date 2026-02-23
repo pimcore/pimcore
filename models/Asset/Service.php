@@ -608,7 +608,7 @@ class Service extends Model\Element\Service
             return [
                 'prefix' => $matches[1],
                 'type' => $matches[2],
-                'asset_id' => $matches[3],
+                'asset_id' => (int) $matches[3],
                 'thumbnail_name' => $matches[4],
                 'filename' => $matches[5],
             ];

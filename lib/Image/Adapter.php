@@ -12,6 +12,7 @@
 
 namespace Pimcore\Image;
 
+use Exception;
 use Pimcore\Logger;
 
 abstract class Adapter implements AdapterInterface
@@ -37,6 +38,18 @@ abstract class Adapter implements AdapterInterface
     protected ?string $sourceImageFormat = null;
 
     protected mixed $resource = null;
+
+    private bool $forceProcessICCProfiles = false;
+
+    public function isForceProcessICCProfiles(): bool
+    {
+        return $this->forceProcessICCProfiles;
+    }
+
+    public function setForceProcessICCProfiles(bool $forceProcessICCProfiles): void
+    {
+        $this->forceProcessICCProfiles = $forceProcessICCProfiles;
+    }
 
     public function setHeight(int $height): static
     {
@@ -337,7 +350,9 @@ abstract class Adapter implements AdapterInterface
         $this->reinitializing = true;
         $this->save($tmpFile, $format);
         $this->destroy();
-        $this->load($tmpFile);
+        if (!$this->load($tmpFile)) {
+            throw new Exception('Failed to reinitialize image from temporary file');
+        }
         $this->reinitializing = false;
 
         $this->modified = false;

@@ -39,6 +39,13 @@ class GlossaryExtension extends AbstractExtension
 
     public function applyGlossary(string $string, array $options = []): string
     {
+        trigger_deprecation(
+            'pimcore/glossary-bundle',
+            '12.3',
+            'The GlossaryBundle Twig extension "pimcore_glossary" is deprecated and
+             will be discontinued with Pimcore Studio.'
+        );
+
         if (!$string) {
             return $string;
         }

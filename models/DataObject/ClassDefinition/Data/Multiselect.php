@@ -69,6 +69,12 @@ class Multiselect extends Data implements
 
     /**
      * @internal
+     *
+     */
+    public bool $enforceValidation = false;
+
+    /**
+     * @internal
      */
     public bool $dynamicOptions = false;
 
@@ -120,6 +126,16 @@ class Multiselect extends Data implements
     public function getRenderType(): ?string
     {
         return $this->renderType;
+    }
+
+    public function isEnforceValidation(): bool
+    {
+        return $this->enforceValidation;
+    }
+
+    public function setEnforceValidation(bool $enforceValidation): void
+    {
+        $this->enforceValidation = $enforceValidation;
     }
 
     /**
@@ -276,6 +292,46 @@ class Multiselect extends Data implements
         if (!is_array($data) && !empty($data)) {
             throw new Model\Element\ValidationException("Invalid multiselect data on field [ {$this->getName()} ]");
         }
+
+        if (is_array($data) && $this->isEnforceValidation()) {
+            // Ensure options providers are resolved
+            if ($this->getOptions() === null) {
+                $this->enrichFieldDefinition($params['context'] ?? []);
+            }
+
+            // If no options are defined yet, skip the validation
+            if (!$this->getOptions()) {
+                return;
+            }
+
+            foreach ($data as $value) {
+                if (!$this->isValidOption($value)) {
+                    throw new Model\Element\ValidationException(
+                        sprintf("Invalid multiselect option '%s' on field [ %s ]", $value, $this->getName())
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * Validates if the provided data matches any of the available options.
+     *
+     */
+    private function isValidOption(mixed $data): bool
+    {
+        $matches = array_filter(
+            $this->getOptions(),
+            function (array $option) use ($data) {
+                if (!array_key_exists('value', $option)) {
+                    return false;
+                }
+
+                return $option['value'] == $data;
+            }
+        );
+
+        return count($matches) > 0;
     }
 
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
@@ -341,7 +397,7 @@ class Multiselect extends Data implements
 
             $value = $operator === '='
                 ? $db->quote('%,'. $value . ',%')
-                : $db->quote('%,%' .Helper::escapeLike($value). '%,%');
+                : $db->quote('%,%' .Helper::escapeLike((string) $value). '%,%');
 
             return $key.' LIKE '.$value.' ';
         }

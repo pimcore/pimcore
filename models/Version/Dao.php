@@ -12,11 +12,11 @@
 
 namespace Pimcore\Model\Version;
 
-use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Version;
 
 /**
  * @internal
@@ -107,60 +107,125 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param list<array{elementType: string, days?: int, steps?: int}> $elementTypes
-     * @param int[] $ignoreIds
      *
      * @return int[]
      */
-    public function maintenanceGetOutdatedVersions(array $elementTypes, array $ignoreIds = []): array
+    public function maintenanceGetOutdatedVersions(array $elementTypes): array
     {
-        $ignoreIdsList = implode(',', $ignoreIds);
-        if (!$ignoreIdsList) {
-            $ignoreIdsList = '0'; // set a default to avoid SQL errors (there's no version with ID 0)
-        }
         $versionIds = [];
 
-        Logger::debug("ignore ID's: " . $ignoreIdsList);
+        foreach ($elementTypes as $elementType) {
+            if (isset($elementType['days'])) {
+                // by days
+                $deadline = time() - ($elementType['days'] * 86400);
+                $tmpVersionIds = $this->db->fetchFirstColumn(
+                    'SELECT a.id as id FROM versions AS a
+                    LEFT JOIN schedule_tasks ON a.id = schedule_tasks.version
+                    LEFT JOIN '. $elementType['elementType'] .'s AS element ON sub.cid = element.id
+                    WHERE ctype = ?
+                    AND public = 0 AND autosave = 0
+                    AND element.modificationDate >= a.`date`
+                    AND `date` < ? AND AND IFNULL(active,  0) = 0',
+                    [
+                        $elementType['elementType'],
+                        $deadline,
+                    ]
+                );
+                $versionIds = array_merge($versionIds, $tmpVersionIds);
+            } else {
+                $countsPerCid = [];
 
-        if (!empty($elementTypes)) {
-            $count = 0;
-            $stop = false;
-            foreach ($elementTypes as $elementType) {
-                if (isset($elementType['days'])) {
-                    // by days
-                    $deadline = time() - ($elementType['days'] * 86400);
-                    $tmpVersionIds = $this->db->fetchFirstColumn('SELECT id FROM versions as a WHERE ctype = ? AND date < ? AND public=0 AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);
-                    $versionIds = array_merge($versionIds, $tmpVersionIds);
-                } else {
-                    // by steps
-                    $versionData = $this->db->executeQuery('SELECT cid FROM versions WHERE ctype = ? AND public=0 AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING COUNT(*) > ? LIMIT 1000', [$elementType['elementType'], $elementType['steps'] + 1]);
-                    while ($versionInfo = $versionData->fetchAssociative()) {
-                        $count++;
-                        $elementVersions = $this->db->fetchFirstColumn('SELECT id FROM versions WHERE cid=? AND ctype = ? AND public=0 AND id NOT IN ('.$ignoreIdsList.') ORDER BY id DESC LIMIT '.($elementType['steps'] + 1).', '.PHP_INT_MAX, [$versionInfo['cid'], $elementType['elementType']]);
+                $sql = '
+                    SELECT sub.cid as cid, sub.id as id, sub.`date`
+                    FROM (
+                        SELECT id, cid, versions.`date`,
+                               ROW_NUMBER() OVER (PARTITION BY cid ORDER BY id DESC) AS rownumber
+                        FROM versions
+                        WHERE ctype = ? AND public = 0 AND autosave = 0
+                    ) sub
+                    LEFT JOIN schedule_tasks ON sub.id = schedule_tasks.version
+                    LEFT JOIN '. $elementType['elementType'] .'s AS element ON sub.cid = element.id
+                    WHERE rownumber > ? AND IFNULL(active,  0) = 0 AND element.modificationDate >= sub.`date`
+                ';
 
-                        $versionIds = array_merge($versionIds, $elementVersions);
+                $iterator = $this->db->iterateAssociative(
+                    $sql,
+                    [
+                        $elementType['elementType'],
+                        $elementType['steps'] + 1,
+                    ]
+                );
 
-                        Logger::info($versionInfo['cid'].'(object '.$count.') Vcount '.count($versionIds));
-
-                        // call the garbage collector if memory consumption is > 100MB
-                        if (memory_get_usage() > 100000000 && ($count % 100 == 0)) {
-                            Pimcore::collectGarbage();
-                        }
-
-                        if (count($versionIds) > 1000) {
-                            $stop = true;
-
-                            break;
-                        }
+                foreach ($iterator as $versionInfo) {
+                    $cid = $versionInfo['cid'];
+                    if (!isset($countsPerCid[$cid])) {
+                        $countsPerCid[$cid] = 0;
                     }
+                    $countsPerCid[$cid]++;
+                    $versionIds[] = $versionInfo['id'];
+                }
 
-                    if ($stop) {
-                        break;
+                foreach ($countsPerCid as $cid => $countPerCid) {
+                    Logger::info($elementType['elementType'] . ' id: ' . $cid . ' Vcount: ' . $countPerCid);
+                }
+            }
+        }
+
+        Logger::info('return ' .  count($versionIds) . " ids\n");
+
+        return array_map('intval', $versionIds);
+    }
+
+    public function getOrphanedVersionsAndOutdatedAutoSave(array $elementTypes): array
+    {
+        $results = [];
+
+        $autoSaveDateCleanup = \Carbon\Carbon::now();
+        $autoSaveDateCleanup->subHours(72);
+
+        foreach ($elementTypes as $elementType) {
+            $table = $elementType['elementType'] . 's';
+            $type = $elementType['elementType'];
+
+            $sql = "
+                SELECT versions.id
+                FROM versions
+                LEFT JOIN {$table} AS element ON element.id = versions.cid
+                WHERE (element.id IS NULL AND versions.ctype = :ctype) OR
+                      (autoSave = 1 AND date < :autoSaveDateCleanup)
+            ";
+
+            $rows = $this->db->fetchAllAssociative(
+                $sql,
+                ['ctype' => $type, 'autoSaveDateCleanup' => $autoSaveDateCleanup->getTimestamp()]
+            );
+            $results = array_merge($results, $rows);
+        }
+
+        return array_column($results, 'id');
+    }
+
+    public function deleteVersions(array $ids, array $elementTypes, int $chunkSize = 1000): void
+    {
+
+        foreach ($elementTypes as $elementType) {
+            if ($elementType['disable_events']) {
+                $idChunks = array_chunk($ids, $chunkSize);
+
+                foreach ($idChunks as $chunk) {
+                    $versionIds = implode(',', $chunk);
+
+                    $query = "DELETE FROM versions WHERE id IN ($versionIds)";
+                    $this->db->executeQuery($query);
+                }
+            } else {
+                foreach ($ids as $id) {
+                    $version = Version::getById($id);
+                    if ($version) {
+                        $version->delete();
                     }
                 }
             }
         }
-        Logger::info('return ' .  count($versionIds) . " ids\n");
-
-        return array_map('intval', $versionIds);
     }
 }

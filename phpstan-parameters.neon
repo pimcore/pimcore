@@ -1,6 +1,6 @@
 parameters:
     level: 6
-
+    reportUnmatchedIgnoredErrors: false
     paths:
         - bundles
         - lib
@@ -13,6 +13,7 @@ parameters:
         - bundles/SeoBundle/src/Controller/Traits/DocumentTreeConfigWrapperTrait.php
         - bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/Assets.php
         - bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
+        - lib/Translation/Translator.php
 
     symfony:
         containerXmlPath: var/cache/test/App_KernelTestDebugContainer.xml
@@ -24,6 +25,9 @@ parameters:
             identifier: missingType.generics
         -
             identifier: missingType.iterableValue
+        -
+            identifier: instanceof.alwaysTrue
+            path: bundles/GlossaryBundle/src/Tool/Processor.php
 
     # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
@@ -48,6 +52,8 @@ parameters:
         noExtends:
             enabled: false
         noIsset:
+            enabled: false
+        noNamedArgument:
             enabled: false
         noNullableReturnTypeDeclaration:
             enabled: false

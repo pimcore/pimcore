@@ -88,8 +88,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $dataRaw = $this->model->getObjectVars();
         $data = [];
         $allowedProperties = ['name', 'description', 'group', 'items', 'medias', 'format',
-            'quality', 'highResolution', 'creationDate', 'modificationDate', 'preserveColor', 'preserveMetaData',
-            'rasterizeSVG', 'downloadable', 'preserveAnimation', ];
+            'quality', 'highResolution', 'creationDate', 'modificationDate', 'preserveColor', 'forceProcessICCProfiles',
+            'preserveMetaData', 'rasterizeSVG', 'useCropBox', 'downloadable', 'preserveAnimation', ];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {

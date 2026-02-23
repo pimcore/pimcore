@@ -18,11 +18,13 @@ use DateTime;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Types;
+use Pimcore\Bundle\ApplicationLoggerBundle\Enum\LogLevel;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -58,10 +60,10 @@ class LogController extends UserAwareController implements KernelControllerEvent
 
         $qb = $db->createQueryBuilder();
         $qb
-            ->select('*, priority + 0 AS priority_key')
+            ->select('*')
             ->from(ApplicationLoggerDb::TABLE_NAME)
-            ->setFirstResult($requestSource->getInt('start', 0))
-            ->setMaxResults($requestSource->getInt('limit', 50));
+            ->setFirstResult(ParameterBagHelper::getInt($requestSource, 'start', 0))
+            ->setMaxResults(ParameterBagHelper::getInt($requestSource, 'limit', 50));
 
         $qb->orderBy('id', 'DESC');
 
@@ -104,7 +106,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
             $qb->andWhere('message LIKE ' . $qb->createNamedParameter('%' . $message . '%'));
         }
 
-        if (!empty($pid = $requestSource->getInt('pid'))) {
+        if (!empty($pid = ParameterBagHelper::getInt($requestSource, 'pid'))) {
             $qb->andWhere('pid LIKE ' . $qb->createNamedParameter('%' . $pid . '%'));
         }
 
@@ -121,6 +123,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $logEntries = [];
         foreach ($result as $row) {
             $fileobject = null;
+            $logLevel = LogLevel::getLogLevel($row['priority']);
             if ($row['fileobject']) {
                 $fileobject = str_replace(PIMCORE_PROJECT_ROOT, '', $row['fileobject']);
             }
@@ -132,7 +135,8 @@ class LogController extends UserAwareController implements KernelControllerEvent
                 'message' => $row['message'],
                 'date' => $row['timestamp'],
                 'timestamp' => $carbonTs->getTimestamp(),
-                'priority' => $translationService->getTranslatedLogLevel($row['priority_key']),
+                'priority' => $translationService->getTranslatedLogLevel($logLevel->value),
+                'prioritykeyname' => $logLevel->name,
                 'fileobject' => $fileobject,
                 'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],

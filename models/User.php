@@ -32,6 +32,8 @@ final class User extends User\UserRole implements UserInterface
 
     protected ?string $passwordRecoveryToken = null;
 
+    private ?int $lastPasswordReset = null;
+
     protected ?string $firstname = null;
 
     protected ?string $lastname = null;
@@ -655,6 +657,16 @@ final class User extends User\UserRole implements UserInterface
         return $this;
     }
 
+    /**
+     * @return $this
+     */
+    public function setLastPasswordReset(int $lastPasswordReset): static
+    {
+        $this->lastPasswordReset = $lastPasswordReset;
+
+        return $this;
+    }
+
     public function getKeyBindings(): ?string
     {
         return $this->keyBindings;
@@ -738,5 +750,10 @@ final class User extends User\UserRole implements UserInterface
         $this->datetimeLocale = $datetimeLocale;
 
         return $this;
+    }
+
+    public function getLastPasswordReset(): ?int
+    {
+        return $this->lastPasswordReset;
     }
 }

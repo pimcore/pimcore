@@ -196,7 +196,11 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
                 $data['unit'] = null;
             }
 
-            return new DataObject\Data\QuantityValueRange($data['minimum'], $data['maximum'], $data['unit']);
+            return new DataObject\Data\QuantityValueRange(
+                is_null($data['minimum']) ? null : (float) $data['minimum'],
+                is_null($data['maximum']) ? null : (float) $data['maximum'],
+                $data['unit']
+            );
         }
 
         return null;

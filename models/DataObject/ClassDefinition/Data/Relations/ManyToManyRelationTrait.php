@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
+use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
@@ -75,5 +76,40 @@ trait ManyToManyRelationTrait
         }
 
         return $data;
+    }
+
+    /**
+     * Filter by relation feature
+     *
+     *
+     */
+    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
+    {
+        $prefix = '';
+        $name = $params['name'] ?: $this->name;
+        $prefix = $params['brickPrefix'] ?? null;
+
+        if ($prefix !== null) {
+            // The brick prefix might be quoted and with a dot suffix, if so, removing the first
+            // and second last character to unquote
+            $quoteIdentifierSymbol  = substr(Db::get()->quoteIdentifier(''), 0, 1);
+
+            if (
+                substr($prefix, 0, 1) === $quoteIdentifierSymbol &&
+                substr($prefix, -2, 1) === $quoteIdentifierSymbol &&
+                substr($prefix, -1) === '.'
+            ) {
+                // Case: `db`.
+                $prefix = substr($prefix, 1, -2) . '.';
+            } elseif (
+                substr($prefix, 0, 1) === $quoteIdentifierSymbol &&
+                substr($prefix, -1) === $quoteIdentifierSymbol
+            ) {
+                // Case: `db`
+                $prefix = substr($prefix, 1, -1);
+            }
+        }
+
+        return $this->getRelationFilterCondition($value, $operator, $prefix . $name);
     }
 }

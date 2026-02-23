@@ -29,6 +29,7 @@ use Pimcore\Model\Document;
 use Pimcore\Tool\HtmlUtils;
 use Pimcore\Tool\Serialize;
 use RuntimeException;
+use Stringable;
 use Throwable;
 
 /**
@@ -36,7 +37,7 @@ use Throwable;
  * @method void save()
  * @method void delete()
  */
-abstract class Editable extends Model\AbstractModel implements Model\Document\Editable\EditableInterface
+abstract class Editable extends Model\AbstractModel implements Model\Document\Editable\EditableInterface, Stringable
 {
     /**
      * Contains some configurations for the editmode, or the thumbnail name, ...

@@ -333,14 +333,15 @@ class Imagick extends Adapter
     {
         $imageColorspace = $this->resource->getImageColorspace();
 
-        if (in_array($imageColorspace, [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
+        if (!$this->isForceProcessICCProfiles() &&
+            in_array($imageColorspace, [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
             // no need to process (s)RGB images
             return $this;
         }
 
         $profiles = $this->resource->getImageProfiles('icc', true);
 
-        if (isset($profiles['icc'])) {
+        if (!$this->isForceProcessICCProfiles() && isset($profiles['icc'])) {
             if (str_contains($profiles['icc'], 'RGB')) {
                 // no need to process (s)RGB images
                 return $this;
@@ -467,6 +468,12 @@ class Imagick extends Adapter
 
     public function resize(int $width, int $height): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot resize image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
 
         // this is the check for vector formats because they need to have a resolution set
@@ -498,7 +505,7 @@ class Imagick extends Adapter
             }
 
             $this->resource->setResolution($res['x'], $res['y']);
-            $this->resource->readImage($this->imagePath);
+            $this->resource->readImage($this->imagePath . '[0]');
 
             if (!$this->isPreserveColor()) {
                 $this->setColorspaceToRGB();
@@ -517,6 +524,10 @@ class Imagick extends Adapter
             $this->setHeight($height);
         }
 
+        if ($this->isVectorGraphic() && $this->resource->getNumberImages() > 1) {
+            $this->resource->removeImage();
+        }
+
         $this->postModify();
 
         return $this;
@@ -524,6 +535,12 @@ class Imagick extends Adapter
 
     public function crop(int $x, int $y, int $width, int $height): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot crop image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
 
         if ($this->checkPreserveAnimation()) {
@@ -568,6 +585,12 @@ class Imagick extends Adapter
 
     public function trim(int $tolerance): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot trim image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
 
         $this->resource->trimimage($tolerance);
@@ -629,6 +652,12 @@ class Imagick extends Adapter
 
     public function rotate(int $angle): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot rotate image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
 
         $this->resource->rotateImage(new ImagickPixel('none'), $angle);
@@ -644,6 +673,12 @@ class Imagick extends Adapter
 
     public function roundCorners(int $width, int $height): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot round corners of image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
 
         $this->internalRoundCorners($width, $height);
@@ -817,6 +852,12 @@ class Imagick extends Adapter
 
     public function grayscale(): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot apply grayscale to image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
         $this->resource->setImageType(\Imagick::IMGTYPE_GRAYSCALEMATTE);
         $this->postModify();
@@ -826,6 +867,12 @@ class Imagick extends Adapter
 
     public function sepia(): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot apply sepia to image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
         $this->resource->sepiatoneimage(85);
         $this->postModify();
@@ -835,6 +882,12 @@ class Imagick extends Adapter
 
     public function sharpen(float $radius = 0, float $sigma = 1.0, float $amount = 1.0, float $threshold = 0.05): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot sharpen image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
         $this->resource->normalizeImage();
         $this->resource->unsharpMaskImage($radius, $sigma, $amount, $threshold);
@@ -845,6 +898,12 @@ class Imagick extends Adapter
 
     public function gaussianBlur(int $radius = 0, float $sigma = 1.0): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot apply gaussian blur to image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
         $this->resource->gaussianBlurImage($radius, $sigma);
         $this->postModify();
@@ -854,6 +913,12 @@ class Imagick extends Adapter
 
     public function brightnessSaturation(int $brightness = 100, int $saturation = 100, int $hue = 100): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot adjust brightness/saturation of image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
         $this->resource->modulateImage($brightness, $saturation, $hue);
         $this->postModify();
@@ -863,6 +928,12 @@ class Imagick extends Adapter
 
     public function mirror(string $mode): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot mirror image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
 
         if ($mode == 'vertical') {

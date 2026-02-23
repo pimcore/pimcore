@@ -33,7 +33,7 @@ class Dao extends AbstractDao
     public function load(): array
     {
         $entries = [];
-        $data = $this->db->fetchAllAssociative('SELECT * FROM search_backend_data' .  $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $data = $this->db->fetchAllAssociative('SELECT * FROM search_backend_data' .  $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         foreach ($data as $entryData) {
             if (!in_array($entryData['maintype'], ['document', 'asset', 'object'], true)) {
@@ -65,7 +65,7 @@ class Dao extends AbstractDao
 
     public function getTotalCount(): int
     {
-        return (int)$this->db->fetchOne('SELECT COUNT(*) FROM search_backend_data' . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
+        return (int)$this->db->fetchOne('SELECT COUNT(*) FROM search_backend_data' . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
     }
 
     public function getCount(): int|string
@@ -74,9 +74,7 @@ class Dao extends AbstractDao
             return count($this->model->getEntries());
         }
 
-        $amount = $this->db->fetchOne('SELECT COUNT(*) as amount FROM search_backend_data '  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-
-        return $amount;
+        return $this->db->fetchOne('SELECT COUNT(*) as amount FROM search_backend_data '  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
     }
 
     protected function getCondition(): string

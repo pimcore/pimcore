@@ -459,6 +459,8 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
+     * @return array{force: bool, ...}
      */
     public static function prepareGetByIdParams(array $params): array
     {
@@ -1125,6 +1127,16 @@ class Service extends Model\AbstractModel
                 ),
                 new PimcoreClassDefinitionMatcher(Data\CustomDataCopyInterface::class)
             );
+
+            $deepCopy->prependTypeFilter(
+                new class implements TypeFilter {
+                    public function apply($element): CarbonPeriod
+                    {
+                        return CarbonPeriod::instance($element);
+                    }
+                },
+                new TypeMatcher(CarbonPeriod::class),
+            );
         }
 
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('dao'));
@@ -1323,7 +1335,10 @@ class Service extends Model\AbstractModel
         $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $sessionId, $postfix);
         $tag = $elementType . '-session' . $postfix;
 
-        $element->setInDumpState(true);
+        if ($element instanceof ElementDumpStateInterface) {
+            $element->setInDumpState(true);
+        }
+
         $serializedData = Serialize::serialize($element);
 
         TmpStore::set($tmpStoreKey, $serializedData, $tag);
@@ -1450,9 +1465,9 @@ class Service extends Model\AbstractModel
     private static function getListingFrom(PaginateListingInterface $listing): ?string
     {
         return match(true) {
-            $listing instanceof Asset\Listing => 'asset',
-            $listing instanceof DataObject\Listing => 'object',
-            $listing instanceof Document\Listing => 'document',
+            $listing instanceof Asset\Listing => 'assets',
+            $listing instanceof DataObject\Listing => 'objects',
+            $listing instanceof Document\Listing => 'documents',
             default => null,
         };
     }

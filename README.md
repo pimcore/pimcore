@@ -1,15 +1,13 @@
 
-[![PI25-Visuals-GitHub_16x9](https://github.com/user-attachments/assets/d5246851-9603-45d9-ac21-42ce74621577)](https://pimcore.com/en/inspire-2025)
+[<img width="1890" height="500" alt="image" src="https://github.com/user-attachments/assets/be41e89d-6050-4fdf-a2aa-b41cbad51114" />](https://eu1.hubs.ly/H0qxJLc0)
 
 
 ![Pimcore - Own the digital World](./doc/img/logo-readme.svg)
-  
-  
+
 Pimcore Core Framework - Open Core Data & Experience Management Platform: PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce
 
 [![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
-[![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
-[![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore)
+[![Software License](https://img.shields.io/badge/license-POCL-brightgreen.svg?style=flat)](LICENSE.md)
 
 * 📢 **[We are hiring!](https://pimcore.com/en/careers?utm_source=github&utm_medium=readme-pimcore-pimcore&utm_campaign=careers)** - Join us on our mission!
 * 🌍 [Website](https://pimcore.com/) - Learn more about Pimcore
@@ -17,13 +15,11 @@ Pimcore Core Framework - Open Core Data & Experience Management Platform: PIM, M
 * 🉐 **Help translate Pimcore!** Start with [Essentials](https://poeditor.com/join/project/VWmZyvFVMH), continue with [Extended](https://poeditor.com/join/project/XliCYYgILb)
 * 👍 Like us on [Facebook](https://www.facebook.com/pimcore), follow us on [LinkedIn](https://www.linkedin.com/company/3505853/) and [Twitter](https://twitter.com/pimcore)
 * 🐞 [Issue Tracker](https://github.com/pimcore/pimcore/issues) - Report bugs or suggest new features
-* 🗨  [Forums](https://github.com/pimcore/pimcore/discussions) - Community support and discussions
-* 👪 [Community Chat](https://gitter.im/pimcore/pimcore) - Gitter
-  
+* 🗨  [Forums](https://github.com/pimcore/pimcore/discussions) - Community support and discussions  
 
 ## Contribute  
 **Bug fixes:** please create a pull request including a step by step description to reproduce the problem  
-**Contribute features:** contact the core-team on our [Gitter channel](https://gitter.im/pimcore/pimcore) before you start developing   
+**Contribute features:** contact the core-team via issue before you start developing   
 **Security vulnerabilities:** please see our [security policy](https://github.com/pimcore/pimcore/security/policy)
   
 For details, please have a look at our [contributing guide](CONTRIBUTING.md).

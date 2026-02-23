@@ -121,14 +121,15 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getTagsForElement(string $cType, int $cId): array
     {
-        $tags = [];
         $tagIds = $this->db->fetchFirstColumn('SELECT tagid FROM tags_assignment WHERE cid = ? AND ctype = ?', [$cId, $cType]);
-
-        foreach ($tagIds as $tagId) {
-            $tags[] = Model\Element\Tag::getById($tagId);
+        if (empty($tagIds)) {
+            return [];
         }
 
-        $tags = array_filter($tags);
+        $list = new Listing();
+        $list->setCondition('`id` IN (?)', [$tagIds]);
+
+        $tags = $list->load();
         @usort($tags, function ($left, $right) {
             return strcmp($left->getNamePath(), $right->getNamePath());
         });

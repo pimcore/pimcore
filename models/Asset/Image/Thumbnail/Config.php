@@ -104,6 +104,12 @@ final class Config extends Model\AbstractModel
      * @internal
      *
      */
+    protected bool $forceProcessICCProfiles = false;
+
+    /**
+     * @internal
+     *
+     */
     protected bool $preserveMetaData = false;
 
     /**
@@ -111,6 +117,12 @@ final class Config extends Model\AbstractModel
      *
      */
     protected bool $rasterizeSVG = false;
+
+    /**
+     * @internal
+     *
+     */
+    protected bool $useCropBox = false;
 
     /**
      * @internal
@@ -694,6 +706,16 @@ final class Config extends Model\AbstractModel
         $this->preserveColor = $preserveColor;
     }
 
+    public function isForceProcessICCProfiles(): bool
+    {
+        return $this->forceProcessICCProfiles;
+    }
+
+    public function setForceProcessICCProfiles(bool $forceProcessICCProfiles): void
+    {
+        $this->forceProcessICCProfiles = $forceProcessICCProfiles;
+    }
+
     public function isPreserveMetaData(): bool
     {
         return $this->preserveMetaData;
@@ -712,6 +734,16 @@ final class Config extends Model\AbstractModel
     public function setRasterizeSVG(bool $rasterizeSVG): void
     {
         $this->rasterizeSVG = $rasterizeSVG;
+    }
+
+    public function isUseCropBox(): bool
+    {
+        return $this->useCropBox;
+    }
+
+    public function setUseCropBox(bool $cropbox): void
+    {
+        $this->useCropBox = $cropbox;
     }
 
     public function isSvgTargetFormatPossible(): bool
@@ -829,8 +861,18 @@ final class Config extends Model\AbstractModel
             $this->getQuality(),
             $this->isPreserveColor(),
             $this->isPreserveMetaData(),
+            $this->isUseCropBox(),
             $this->getItems(),
             $params,
         ]));
+    }
+
+    /**
+     * @internal
+     *
+     */
+    public static function getMaxDpiFactor(): int
+    {
+        return \Pimcore\Config::getSystemConfiguration('assets')['image']['thumbnails']['max_srcset_dpi_factor'];
     }
 }

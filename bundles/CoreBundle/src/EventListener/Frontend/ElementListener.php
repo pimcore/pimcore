@@ -14,6 +14,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -107,7 +108,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     protected function handleVersion(Request $request, Document $document): Document
     {
-        $v = $request->query->getInt('v');
+        $v = ParameterBagHelper::getInt($request->query, 'v');
         if ($v) {
             if ($version = Version::getById($v)) {
                 if ($version->getPublic()) {
@@ -135,31 +136,23 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             return null;
         }
 
+        $isPimcoreStudio = $request->query->getBoolean('pimcore_studio');
+
         // editmode document
         if ($this->editmodeResolver->isEditmode($request)) {
-            $document = $this->handleEditmode($document, $user, $request->getSession());
+            $document = $this->handleEditmode($document, $user, $request->getSession(), $isPimcoreStudio);
         }
 
         // document preview
-        if ($request->query->getBoolean('pimcore_preview')) {
-            // get document from session
-
-            // TODO originally, this was the following call. What was in this->getParam('document') and
-            // why was it an object?
-            // $docKey = "document_" . $this->getParam("document")->getId();
-
-            if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId(), $request->getSession()->getId())) {
-                // if there is a document in the session use it
-                $this->logger->debug('Loading preview document {document} from session', [
-                    'document' => $document->getFullPath(),
-                ]);
-                $document = $documentFromSession;
-            }
+        if ($request->query->getBoolean('pimcore_studio_preview')) {
+            $document = $this->handleDocumentStudioPreview($document, $user);
+        } elseif ($request->query->getBoolean('pimcore_preview')) {
+            $document = $this->handleDocumentClassicPreview($request, $document);
         }
 
         // for version preview
         if ($request->query->has('pimcore_version')) {
-            $versionId = $request->query->getInt('pimcore_version');
+            $versionId = ParameterBagHelper::getInt($request->query, 'pimcore_version');
             // TODO there was a check with a registry flag here - check if the main request handling is sufficient
             $version = Version::getById($versionId);
             if ($documentVersion = $version?->getData()) {
@@ -183,29 +176,37 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    protected function handleEditmode(Document $document, User $user, SessionInterface $session): Document
-    {
-        // check if there is the document in the session
-        if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId(), $session->getId())) {
-            // if there is a document in the session use it
-            $this->logger->debug('Loading editmode document {document} from session', [
-                'document' => $document->getFullPath(),
-            ]);
-            $document = $documentFromSession;
-        } else {
-            $this->logger->debug('Loading editmode document {document} from latest version', [
-                'document' => $document->getFullPath(),
-            ]);
+    protected function handleEditmode(
+        Document $document,
+        User $user,
+        SessionInterface $session,
+        bool $isPimcoreStudio
+    ): Document {
+        if (!$isPimcoreStudio) {
+            // check if there is the document in the session (for admin classic UI)
+            $documentFromSession = Document\Service::getElementFromSession('document', $document->getId(), $session->getId());
+            if ($documentFromSession) {
+                // if there is a document in the session use it
+                $this->logger->debug('Loading editmode document {document} from session', [
+                    'document' => $document->getFullPath(),
+                ]);
 
-            // set the latest available version for editmode if there is no doc in the session
-            if ($document instanceof Document\PageSnippet) {
-                $latestVersion = $document->getLatestVersion($user->getId());
-                if ($latestVersion) {
-                    $latestDoc = $latestVersion->loadData();
+                return $documentFromSession;
+            }
+        }
 
-                    if ($latestDoc instanceof Document\PageSnippet) {
-                        $document = $latestDoc;
-                    }
+        $this->logger->debug('Loading editmode document {document} from latest version', [
+            'document' => $document->getFullPath(),
+        ]);
+
+        // set the latest available version for editmode if there is no doc in the session
+        if ($document instanceof Document\PageSnippet) {
+            $latestVersion = $document->getLatestVersion($user->getId());
+            if ($latestVersion) {
+                $latestDoc = $latestVersion->loadData();
+
+                if ($latestDoc instanceof Document\PageSnippet) {
+                    $document = $latestDoc;
                 }
             }
         }
@@ -217,15 +218,15 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     {
 
         if ($request->query->has('pimcore_studio_preview')) {
-            $this->handleStudioPreview($request->query->getInt('pimcore_object_preview'), $user);
+            $this->handleObjectStudioPreview(ParameterBagHelper::getInt($request->query, 'pimcore_object_preview'), $user);
 
             return;
         }
 
-        $this->handleClassicAdminPreview($request, $request->query->getInt('pimcore_object_preview'));
+        $this->handleObjectClassicPreview($request, ParameterBagHelper::getInt($request->query, 'pimcore_object_preview'));
     }
 
-    private function handleClassicAdminPreview(Request $request, int $id): void
+    private function handleObjectClassicPreview(Request $request, int $id): void
     {
         $object = Service::getElementFromSession('object', $id, $request->getSession()->getId());
         if (!$object instanceof Concrete) {
@@ -240,7 +241,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         $this->cacheObject($object);
     }
 
-    private function handleStudioPreview(int $id, UserInterface $user): void
+    private function handleObjectStudioPreview(int $id, UserInterface $user): void
     {
         $object = $this->getLatestVersion($id, $user);
         if (!$object instanceof Concrete) {
@@ -253,6 +254,41 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         );
 
         $this->cacheObject($object);
+    }
+
+    private function handleDocumentClassicPreview(Request $request, Document $document): Document
+    {
+        // get document from session
+        if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId(), $request->getSession()->getId())) {
+            // if there is a document in the session use it
+            $this->logger->debug('Loading preview document {document} from session', [
+                'document' => $document->getFullPath(),
+            ]);
+
+            return $documentFromSession;
+        }
+
+        return $document;
+    }
+
+    private function handleDocumentStudioPreview(Document $document, User $user): Document
+    {
+        $this->logger->debug('Loading preview document {document} from latest version', [
+            'document' => $document->getFullPath(),
+        ]);
+
+        if ($document instanceof Document\PageSnippet) {
+            $latestVersion = $document->getLatestVersion($user->getId());
+            if ($latestVersion) {
+                $latestDoc = $latestVersion->loadData();
+
+                if ($latestDoc instanceof Document\PageSnippet) {
+                    return $latestDoc;
+                }
+            }
+        }
+
+        return $document;
     }
 
     private function getLatestVersion(int $id, UserInterface $user): ?Concrete

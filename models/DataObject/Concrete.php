@@ -118,8 +118,19 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     $value = $this->$getter();
 
                     $omitMandatoryCheck = $this->getOmitMandatoryCheck();
-                    // when adding a new object, skip check on mandatory fields with default value
-                    if (empty($value) && !$isUpdate && method_exists($fd, 'getDefaultValue') && !empty($fd->getDefaultValue())
+
+                    // when adding a new object, skip check on mandatory for fields
+                    // with default value or default value or default value generator
+                    if (!$omitMandatoryCheck && empty($value) && !$isUpdate &&
+                        (
+                            (
+                                method_exists($fd, 'getDefaultValue') &&
+                                !empty($fd->getDefaultValue())
+                            ) || (
+                                method_exists($fd, 'getDefaultValueGenerator') &&
+                                $fd->getDefaultValueGenerator() !== ''
+                            )
+                        )
                     ) {
                         $omitMandatoryCheck = true;
                     }
@@ -232,8 +243,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * @param string|null $versionNote version note
      *
      */
-    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false): ?Model\Version
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false, array $parameters = []): ?Model\Version
     {
+        $coreParameters = [
+            'saveVersionOnly' => true,
+            'isAutoSave' => $isAutoSave,
+        ];
+        $eventParameters = array_merge($parameters, $coreParameters);
+
         try {
             if ($setModificationDate) {
                 $this->setModificationDate(time());
@@ -241,11 +258,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $preUpdateEvent = new DataObjectEvent($this, [
-                    'saveVersionOnly' => true,
-                    'isAutoSave' => $isAutoSave,
-                ]);
+                $preUpdateEvent = new DataObjectEvent($this, $eventParameters);
                 Pimcore::getEventDispatcher()->dispatch($preUpdateEvent, DataObjectEvents::PRE_UPDATE);
+                $eventParameters = $preUpdateEvent->getArguments();
             }
 
             // scheduled tasks are saved always, they are not versioned!
@@ -266,20 +281,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $postUpdateEvent = new DataObjectEvent($this, [
-                    'saveVersionOnly' => true,
-                    'isAutoSave' => $isAutoSave,
-                ]);
+                $postUpdateEvent = new DataObjectEvent($this, array_merge($eventParameters, $coreParameters));
                 Pimcore::getEventDispatcher()->dispatch($postUpdateEvent, DataObjectEvents::POST_UPDATE);
             }
 
             return $version;
         } catch (Exception $e) {
-            $postUpdateFailureEvent = new DataObjectEvent($this, [
-                'saveVersionOnly' => true,
-                'exception' => $e,
-                'isAutoSave' => $isAutoSave,
-            ]);
+            $postUpdateFailureEvent = new DataObjectEvent($this, array_merge($eventParameters, $coreParameters, ['exception' => $e]));
             Pimcore::getEventDispatcher()->dispatch($postUpdateFailureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
 
             throw $e;
@@ -704,7 +712,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             // We're reloading version data, there might be fields that now implement the ObjectAwareFieldInterface but
             // aren't included in the $this->__objectAwareFields array - for example versions created in Pimcore <= 10.x
             // containing LocalizedFields. Verify all fields in this object.
-            foreach (get_object_vars($this) as $propertyValue) {
+            foreach (get_object_vars($this) as $propertyKey => $propertyValue) {
                 if ($propertyValue instanceof ObjectAwareFieldInterface) {
                     $propertyValue->setObject($this);
                 }

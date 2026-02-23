@@ -276,7 +276,7 @@ class LocationAwareConfigRepository
     {
         // invalidate container config cache if debug flag on kernel is set
         $servicesConfig = PIMCORE_PROJECT_ROOT . '/config/services.yaml';
-        if (is_file($servicesConfig)) {
+        if (is_writable($servicesConfig)) {
             touch($servicesConfig);
         }
     }
