@@ -5,6 +5,9 @@
 #### [DataObjects]
 - Add a new optional `$parameters` argument to `Concrete::saveVersion()` to allow passing of arguments to events.
 
+#### [Models]
+- Added new options `$parameters` argument to `AbstractUser::save()` to allow passing of arguments to `UserRoleEvent`.
+
 ## Pimcore 12.3.0
 
 ### [General]

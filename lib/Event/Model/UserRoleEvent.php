@@ -23,10 +23,6 @@ class UserRoleEvent extends Event
 
     protected AbstractUser $userRole;
 
-    /**
-     * DocumentEvent constructor.
-     *
-     */
     public function __construct(AbstractUser $userRole, array $arguments = [])
     {
         $this->userRole = $userRole;
