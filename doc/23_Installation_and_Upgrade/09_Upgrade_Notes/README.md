@@ -6,7 +6,7 @@
 - Add a new optional `$parameters` argument to `Concrete::saveVersion()` to allow passing of arguments to events.
 
 #### [Models]
-- Added new options `$parameters` argument to `AbstractUser::save()` and `AbstractUser::delete()` to allow passing of arguments to `UserRoleEvent`.
+- Added new options `$parameters` argument to `AbstractUser::save()` and `AbstractUser::delete()` to allow passing of arguments to `UserRoleEvent`. The interface `AbstractUserInterface` functions have been updated as well.
 
 ## Pimcore 12.3.0
 
