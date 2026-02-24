@@ -125,7 +125,7 @@ class Dao extends Model\Dao\AbstractDao
                     WHERE ctype = ?
                     AND public = 0 AND autosave = 0
                     AND element.modificationDate >= a.`date`
-                    AND `date` < ? AND IFNULL(active,  0) = 0',
+                    AND `date` < ? AND IFNULL(active, 0) = 0',
                     [
                         $elementType['elementType'],
                         $deadline,
@@ -145,7 +145,7 @@ class Dao extends Model\Dao\AbstractDao
                     ) sub
                     LEFT JOIN schedule_tasks ON sub.id = schedule_tasks.version
                     LEFT JOIN '. $elementType['elementType'] .'s AS element ON sub.cid = element.id
-                    WHERE rownumber > ? AND IFNULL(active,  0) = 0 AND element.modificationDate >= sub.`date`
+                    WHERE rownumber > ? AND IFNULL(active, 0) = 0 AND element.modificationDate >= sub.`date`
                 ';
 
                 $iterator = $this->db->iterateAssociative(
