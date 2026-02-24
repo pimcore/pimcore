@@ -209,7 +209,8 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-2026.x": "12.x-dev"
+      "dev-2026.x": "12.x-dev",
+      "dev-1109-cleanup-extjs": "12.3.x-dev"
     }
   },
   "scripts": {
