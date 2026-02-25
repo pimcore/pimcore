@@ -5,3 +5,4 @@ modules:
               connect_db: true
         - \Pimcore\Tests\Support\Helper\Unit
         - \Pimcore\Tests\Support\Helper\ClassManager
+        - \Pimcore\Tests\Support\Helper\CoreModel
