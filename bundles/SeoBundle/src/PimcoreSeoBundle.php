@@ -38,23 +38,6 @@ class PimcoreSeoBundle extends AbstractPimcoreBundle implements DependentBundleI
         );
     }
 
-    public function getCssPaths(): array
-    {
-        return [
-            '/bundles/pimcoreseo/css/icons.css',
-        ];
-    }
-
-    public function getJsPaths(): array
-    {
-        return [
-            '/bundles/pimcoreseo/js/startup.js',
-            '/bundles/pimcoreseo/js/httpErrorLog.js',
-            '/bundles/pimcoreseo/js/robotstxt.js',
-            '/bundles/pimcoreseo/js/seopanel.js',
-            '/bundles/pimcoreseo/js/redirects.js',
-        ];
-    }
 
     public function getInstaller(): Installer
     {
