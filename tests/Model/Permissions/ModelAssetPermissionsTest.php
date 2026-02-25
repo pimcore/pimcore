@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Element;
 
 use Codeception\Stub;
-use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Property;
 use Pimcore\Model\User;
@@ -433,53 +432,6 @@ class ModelAssetPermissionsTest extends ModelTestCase
         ]);
 
         return $AssetController;
-    }
-
-    protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100): void
-    {
-        $controller = $this->buildController('\\Pimcore\\Bundle\\SimpleBackendSearchBundle\\Controller\\SearchController', $user);
-
-        $request = new Request([
-            'type' => 'asset',
-            'query' => $searchText,
-            'start' => 0,
-            'limit' => $limit,
-        ]);
-
-        $responseData = $controller->findAction(
-            $request,
-            new EventDispatcher(),
-            $this->getMockBuilder('\Pimcore\Bundle\AdminBundle\Helper\GridHelperService')->getMock() //this is not used in the test
-        );
-
-        $responsePaths = [];
-        $responseData = json_decode($responseData->getContent(), true);
-        foreach ($responseData['data'] as $node) {
-            $responsePaths[] = $node['fullpath'];
-        }
-
-        $this->assertCount(
-            $responseData['total'],
-            $responseData['data'],
-            'Assert total count of response matches count of nodes array for `' . $searchText . '` for user `' . $user->getName() . '`'
-        );
-
-        $this->assertCount(
-            count($expectedResultPaths),
-            $responseData['data'],
-            'Assert number of expected result matches count of nodes array for `' . $searchText . '` for user `' . $user->getName() . '` (' . print_r([
-                'expectedValue' => $expectedResultPaths,
-                'actualValue' => $responseData['data'],
-            ], true) . ')'
-        );
-
-        foreach ($expectedResultPaths as $path) {
-            $this->assertContains(
-                $path,
-                $responsePaths,
-                'Result for `' . $searchText . '` does not contain `' . $path . '` for user `' . $user->getName() . '`'
-            );
-        }
     }
 
     public function testSearch(): void

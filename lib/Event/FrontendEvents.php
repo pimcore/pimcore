@@ -104,23 +104,6 @@ final class FrontendEvents
     const DOCUMENT_PATH = 'pimcore.frontend.path.document';
 
     /**
-     * Allows to rewrite the frontend path of a static route
-     * Overwrite the argument "frontendPath" to do so
-     *
-     * Subject: 	Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute
-     * Arguments:
-     *  - frontendPath | string | Web-path, relative
-     *  - params | array
-     *  - reset | bool
-     *  - encode | bool
-     *
-     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
-     *
-     * @var string
-     */
-    const STATICROUTE_PATH = 'pimcore.frontend.path.staticroute';
-
-    /**
      * Subject: 	\Pimcore\Twig\Extension\Templating\HeadLink
      * Arguments:
      *  - item | stdClass
