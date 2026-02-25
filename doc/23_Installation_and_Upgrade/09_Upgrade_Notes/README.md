@@ -4,7 +4,7 @@
 
 ### [General]
 
-- Added support to PHP `8.5` and bumbed minimum requirement of Symfony to `7.4`.
+- Added support to PHP `8.5` and bumped minimum requirement of Symfony to `7.4`.
 - Dropped support to PHP `8.3` and Symfony `6`.
  
 #### [DataObjects]
