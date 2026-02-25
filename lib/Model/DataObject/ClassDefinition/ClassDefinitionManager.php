@@ -63,10 +63,11 @@ class ClassDefinitionManager
      * Updates all classes from PIMCORE_CLASS_DEFINITION_DIRECTORY
      *
      * @param bool $force whether to always update no matter if the model definition changed or not
+     * @param bool $dumpPHPClasses whether to write the PHP classes to the disk, if false, only the database will be updated
      *
      * @return list<array{string, string, string}>
      */
-    public function createOrUpdateClassDefinitions(bool $force = false): array
+    public function createOrUpdateClassDefinitions(bool $force = false, bool $dumpPHPClasses = true): array
     {
         $objectClassesFolders = array_filter(array_unique(array_map('realpath', [
             PIMCORE_CLASS_DEFINITION_DIRECTORY,
@@ -92,11 +93,11 @@ class ClassDefinitionManager
                     $existingClass = ClassDefinition::getByName($class->getName());
 
                     if ($existingClass instanceof ClassDefinitionInterface) {
-                        $classSaved = $this->saveClass($existingClass, false, $force);
+                        $classSaved = $this->dumpClass($existingClass, false, $dumpPHPClasses, $force);
                         $changes[] = [$existingClass->getName(), $existingClass->getId(), $classSaved ? self::SAVED : self::SKIPPED];
                     } else {
                         //when creating, it should always save like as forced
-                        $classSaved = $this->saveClass($class, false, true);
+                        $classSaved = $this->dumpClass($class, false, $dumpPHPClasses, true);
                         $changes[] = [$class->getName(), $class->getId(), $classSaved ? self::CREATED : self::SKIPPED];
                     }
                 }

@@ -116,7 +116,7 @@ class ClassesRebuildCommand extends AbstractCommand
         $force = (bool)$input->getOption('force');
 
         if ($input->getOption('create-classes')) {
-            foreach ($this->classDefinitionManager->createOrUpdateClassDefinitions($force) as $changes) {
+            foreach ($this->classDefinitionManager->createOrUpdateClassDefinitions($force, $dumpPHPClasses) as $changes) {
                 if ($output->isVerbose()) {
                     [$class, $id, $action] = $changes;
                     $output->writeln(sprintf('%s [%s] %s', $class, $id, $action));
