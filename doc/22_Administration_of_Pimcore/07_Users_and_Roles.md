@@ -45,8 +45,6 @@ The following list outlines what the different system permissions (available for
 * **Document Types**: User can create and modify predefined document types
 * **Emails**: User sees E-Mail history
 * **Extensions**: specifies if a user is allowed to download install and manage extension
-* **Glossary**: Glossary entries visible
-* **HTTP Errors**: HTTP Errors are visible 
 * **Notes & Events**: Notes & Events are visible 
 * **Objects**: Objects tree is visible 
 * **Predefined Properties**: User can create and modify predefined properties
