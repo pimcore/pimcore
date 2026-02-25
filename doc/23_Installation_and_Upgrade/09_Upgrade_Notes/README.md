@@ -1,6 +1,15 @@
 # Upgrade Notes
 
-## Pimcore 13.0.0
+## Pimcore 2026.1.0
+
+#### Removed deprecated and discontinued bundles
+The following bundles got removed
+- Glossary Bundle
+- Simple Backend Search Bundle
+- Static Routes Bundle
+- Parts of SeoBundle - All functionality except of the redirects and sitemaps won't be migrated to Pimcore Studio
+- WordExport Bundle
+- XliffBundle Export Bundle
 
 #### [DataObjects]
 - Add a new optional `$parameters` argument to `Concrete::saveVersion()` to allow passing of arguments to events.
