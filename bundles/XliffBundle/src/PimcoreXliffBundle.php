@@ -40,8 +40,6 @@ class PimcoreXliffBundle extends AbstractPimcoreBundle implements PimcoreBundleA
     public function getJsPaths(): array
     {
         return [
-            '/bundles/pimcorexliff/js/startup.js',
-            '/bundles/pimcorexliff/js/settings.js',
         ];
     }
 

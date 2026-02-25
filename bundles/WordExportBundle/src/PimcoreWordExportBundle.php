@@ -45,8 +45,6 @@ class PimcoreWordExportBundle extends AbstractPimcoreBundle implements PimcoreBu
     public function getJsPaths(): array
     {
         return [
-            '/bundles/pimcorewordexport/js/startup.js',
-            '/bundles/pimcorewordexport/js/settings.js',
         ];
     }
 
