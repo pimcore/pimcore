@@ -412,7 +412,11 @@ class Link implements OwnerAwareFieldInterface
         $text = $this->getText();
 
         if (empty($text)) {
-            return '';
+            $text = $this->getHref();
+
+            if (empty($text)) {
+                return '';
+            }
         }
 
         return '<a href="' . $this->getHref() . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($text) . '</a>';
