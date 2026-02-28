@@ -69,6 +69,12 @@ class OptimizeImageHandler implements BatchHandlerInterface
     // @phpstan-ignore-next-line
     private function shouldFlush(): bool
     {
-        return 100 <= count($this->jobs);
+        // Each job is processed independently with no cross-job aggregation, so there
+        // is no benefit to accumulating a batch. Flushing immediately prevents
+        // Acknowledgers from sitting unresolved in memory, which causes a
+        // LogicException in their destructor if the worker exits before the batch
+        // threshold is reached (regression introduced by symfony/messenger v6.4.32,
+        // see https://github.com/symfony/symfony/pull/62872).
+        return (bool) $this->jobs;
     }
 }
