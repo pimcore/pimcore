@@ -67,6 +67,9 @@ class Admin
         foreach ($languageDirs as $filesDir) {
             $files = scandir($filesDir);
 
+            if ($files === false) {
+                continue;
+            }
             foreach ($files as $file) {
                 $filePath = $filesDir . '/' . $file;
 
