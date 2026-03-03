@@ -104,7 +104,7 @@ class Admin
         foreach ($adminLanguages as $adminLanguage) {
             if (
                 in_array($adminLanguage, $translatedLanguages, true) ||
-                in_array(\Locale::getPrimaryLanguage($adminLanguage), $translatedLanguages, true)
+                in_array(Locale::getPrimaryLanguage($adminLanguage), $translatedLanguages, true)
             ) {
                 $languages[] = $adminLanguage;
             }
