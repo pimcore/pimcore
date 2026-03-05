@@ -73,7 +73,7 @@ class Document extends Element\AbstractElement
     protected ?int $userModification = null;
 
     /**
-     * @internal'newsletter'
+     * @internal
      *
      * @var array<string, Listing>
      */
