@@ -13,7 +13,7 @@
 
 #### [Assets]
 
-- Added a new option `$parameters` argument to `Concrete::saveVersion()` to allow passing of arguments to events.
+- Added a new optional `$parameters` argument to `Asset::saveVersion()` to allow passing of arguments to events.
 ## Pimcore 12.3.0
 
 ### [General]
