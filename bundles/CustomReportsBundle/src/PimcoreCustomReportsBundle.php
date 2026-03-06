@@ -30,19 +30,7 @@ class PimcoreCustomReportsBundle extends AbstractPimcoreBundle implements Pimcor
 
     public function getJsPaths(): array
     {
-        return [
-            '/bundles/pimcorecustomreports/js/startup.js',
-            '/bundles/pimcorecustomreports/js/pimcore/report/abstract.js',
-            '/bundles/pimcorecustomreports/js/pimcore/report/broker.js',
-            '/bundles/pimcorecustomreports/js/pimcore/report/panel.js',
-            '/bundles/pimcorecustomreports/js/pimcore/layout/portlets/customreports.js',
-            '/bundles/pimcorecustomreports/js/pimcore/report/custom/settings.js',
-            '/bundles/pimcorecustomreports/js/pimcore/report/custom/definitions/sql.js',
-            '/bundles/pimcorecustomreports/js/pimcore/report/custom/item.js',
-            '/bundles/pimcorecustomreports/js/pimcore/report/custom/panel.js',
-            '/bundles/pimcorecustomreports/js/pimcore/report/custom/report.js',
-            '/bundles/pimcorecustomreports/js/pimcore/report/custom/toolbarenricher.js',
-        ];
+        return [];
     }
 
     public function getInstaller(): ?Installer

@@ -37,17 +37,12 @@ class PimcoreWordExportBundle extends AbstractPimcoreBundle implements PimcoreBu
 
     public function getCssPaths(): array
     {
-        return [
-            '/bundles/pimcorewordexport/css/icons.css',
-        ];
+        return [];
     }
 
     public function getJsPaths(): array
     {
-        return [
-            '/bundles/pimcorewordexport/js/startup.js',
-            '/bundles/pimcorewordexport/js/settings.js',
-        ];
+        return [];
     }
 
     public function getInstaller(): Installer

@@ -37,17 +37,12 @@ class PimcoreStaticRoutesBundle extends AbstractPimcoreBundle implements Pimcore
 
     public function getCssPaths(): array
     {
-        return [
-            '/bundles/pimcorestaticroutes/css/icons.css',
-        ];
+        return [];
     }
 
     public function getJsPaths(): array
     {
-        return [
-            '/bundles/pimcorestaticroutes/js/startup.js',
-            '/bundles/pimcorestaticroutes/js/settings.js',
-        ];
+        return [];
     }
 
     public function getInstaller(): Installer

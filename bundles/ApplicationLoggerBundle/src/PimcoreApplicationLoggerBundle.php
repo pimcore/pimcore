@@ -25,18 +25,12 @@ class PimcoreApplicationLoggerBundle extends AbstractPimcoreBundle implements Pi
 
     public function getCssPaths(): array
     {
-        return [
-            '/bundles/pimcoreapplicationlogger/css/icons.css',
-        ];
+        return [];
     }
 
     public function getJsPaths(): array
     {
-        return [
-            '/bundles/pimcoreapplicationlogger/js/startup.js',
-            '/bundles/pimcoreapplicationlogger/js/log/admin.js',
-            '/bundles/pimcoreapplicationlogger/js/log/detailwindow.js',
-        ];
+        return [];
     }
 
     public function getInstaller(): ?Installer

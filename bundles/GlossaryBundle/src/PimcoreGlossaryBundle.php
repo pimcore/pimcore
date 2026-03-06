@@ -37,17 +37,12 @@ class PimcoreGlossaryBundle extends AbstractPimcoreBundle implements PimcoreBund
 
     public function getCssPaths(): array
     {
-        return [
-            '/bundles/pimcoreglossary/css/icons.css',
-        ];
+        return [];
     }
 
     public function getJsPaths(): array
     {
-        return [
-            '/bundles/pimcoreglossary/js/startup.js',
-            '/bundles/pimcoreglossary/js/settings.js',
-        ];
+        return [];
     }
 
     public function getInstaller(): Installer

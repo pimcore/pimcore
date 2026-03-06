@@ -37,18 +37,7 @@ class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle implements 
 
     public function getJsPaths(): array
     {
-        return [
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/startup.js',
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/element/service.js',
-
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/element/selector/abstract.js',
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/element/selector/asset.js',
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/element/selector/document.js',
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/element/selector/object.js',
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/element/selector/selector.js',
-
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/layout/toolbar.js',
-        ];
+        return [];
     }
 
     public function getInstaller(): Installer
