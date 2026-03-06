@@ -261,9 +261,6 @@ class TranslationController extends UserAwareController
         $content =
             "<html>\n" .
             "<head>\n" .
-            '<style type="text/css">' . "\n" .
-            file_get_contents(PIMCORE_WEB_ROOT . '/bundles/pimcorewordexport/css/word-export.css') .
-            "</style>\n" .
             "</head>\n\n" .
             "<body>\n" .
             $content .
