@@ -795,15 +795,16 @@ class Asset extends Element\AbstractElement
      *
      * @throws Exception
      */
-    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null): ?Version
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, array $parameters = []): ?Version
     {
+        $coreParameters = ['saveVersionOnly' => true];
+        $eventParameters = array_merge($parameters, $coreParameters);
         try {
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $event = new AssetEvent($this, [
-                    'saveVersionOnly' => true,
-                ]);
+                $event = new AssetEvent($this, $eventParameters);
                 $this->dispatchEvent($event, AssetEvents::PRE_UPDATE);
+                $eventParameters = $event->getArguments();
             }
 
             // set date
@@ -830,18 +831,13 @@ class Asset extends Element\AbstractElement
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $event = new AssetEvent($this, [
-                    'saveVersionOnly' => true,
-                ]);
+                $event = new AssetEvent($this, array_merge($eventParameters, $coreParameters));
                 $this->dispatchEvent($event, AssetEvents::POST_UPDATE);
             }
 
             return $version;
         } catch (Exception $e) {
-            $event = new AssetEvent($this, [
-                'saveVersionOnly' => true,
-                'exception' => $e,
-            ]);
+            $event = new AssetEvent($this, array_merge($eventParameters, $coreParameters, ['exception' => $e]));
             $this->dispatchEvent($event, AssetEvents::POST_UPDATE_FAILURE);
 
             throw $e;
