@@ -148,7 +148,6 @@ class DocumentListener implements EventSubscriberInterface
         $redirect->setTarget((string) $targetId);
         $redirect->setSource($source);
         $redirect->setStatusCode(301);
-        $redirect->setExpiry(time() + 86400 * 365); // this entry is removed automatically after 1 year
 
         if ($sourceSite) {
             $redirect->setSourceSite($sourceSite->getId());
