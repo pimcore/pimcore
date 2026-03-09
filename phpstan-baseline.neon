@@ -2,7 +2,13 @@ parameters:
 	ignoreErrors:
 		-
 			message: '#Call to method (castToArray|ifString|arrayNode|children|append|integerNode|scalarNode|booleanNode|enumNode|variableNode)\(\) on an unknown class#'
+			identifier: class.notFound
 			path: bundles/CoreBundle/src/DependencyInjection/ConfigurationHelper.php
+
+		-
+			message: '#Call to method (castToArray|ifString|arrayNode|children|append|integerNode|scalarNode|booleanNode|enumNode|variableNode)\(\) on an unknown class#'
+			identifier: class.notFound
+			path: bundles/CoreBundle/src/DependencyInjection/Configuration.php
 
 		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
