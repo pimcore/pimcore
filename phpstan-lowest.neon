@@ -3,3 +3,7 @@ includes:
 
 parameters:
 	reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+            -
+                message: '#Call to method (castToArray|ifString|arrayNode|children|append|integerNode|scalarNode|booleanNode|enumNode|variableNode)\(\) on an unknown class#'
+                path: bundles/CoreBundle/src/DependencyInjection/ConfigurationHelper.php
