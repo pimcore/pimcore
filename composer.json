@@ -72,7 +72,7 @@
     "onnov/detect-encoding": "^2.0",
     "pear/net_url2": "^2.2",
     "php-http/discovery": "^1.20",
-    "phpdocumentor/reflection-docblock": "^6.0",
+    "phpdocumentor/reflection-docblock": "^5.6 || ^6.0",
     "presta/sitemap-bundle": "^3.3 || ^4.1",
     "sabre/dav": "^4.1.2",
     "scheb/2fa-bundle": "^8.4",
