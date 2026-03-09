@@ -46,6 +46,11 @@ parameters:
 			path: bundles/XliffBundle/src/DependencyInjection/Configuration.php
 
 		-
+			message: '#Call to method (castToArray|ifString|ifNull|addDefaultsIfNotSet|arrayNode|children|append|integerNode|scalarNode|booleanNode|enumNode|variableNode)\(\) on an unknown class#'
+			identifier: class.notFound
+			path: bundles/GlossaryBundle/src/DependencyInjection/Configuration.php
+
+		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
 			identifier: ergebnis.declareStrictTypes
 			count: 1
