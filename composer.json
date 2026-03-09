@@ -205,8 +205,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-2026.x": "12.x-dev",
-      "367-composer-updates": "2026.x-dev"
+      "dev-2026.x": "12.x-dev"
     }
   },
   "scripts": {
