@@ -15,17 +15,14 @@ namespace Pimcore\Bundle\XliffBundle;
 
 use Pimcore\Bundle\XliffBundle\DependencyInjection\Compiler\TranslationServicesPass;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
-use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
-use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * @deprecated version 12.3
  */
-class PimcoreXliffBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
+class PimcoreXliffBundle extends AbstractPimcoreBundle
 {
-    use BundleAdminClassicTrait;
     use PackageVersionTrait;
 
     public function __construct()
@@ -35,11 +32,6 @@ class PimcoreXliffBundle extends AbstractPimcoreBundle implements PimcoreBundleA
             '12.3',
             'The XliffBundle is deprecated and will be discontinued with Pimcore Studio.'
         );
-    }
-
-    public function getJsPaths(): array
-    {
-        return [];
     }
 
     public function build(ContainerBuilder $container): void

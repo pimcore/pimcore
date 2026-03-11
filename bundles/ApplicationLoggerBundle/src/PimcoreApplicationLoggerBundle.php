@@ -14,24 +14,11 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\ApplicationLoggerBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
-use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
-use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class PimcoreApplicationLoggerBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
+class PimcoreApplicationLoggerBundle extends AbstractPimcoreBundle
 {
-    use BundleAdminClassicTrait;
     use PackageVersionTrait;
-
-    public function getCssPaths(): array
-    {
-        return [];
-    }
-
-    public function getJsPaths(): array
-    {
-        return [];
-    }
 
     public function getInstaller(): ?Installer
     {

@@ -14,16 +14,13 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\GlossaryBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
-use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
-use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
 /**
  * @deprecated version 12.3
  */
-class PimcoreGlossaryBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
+class PimcoreGlossaryBundle extends AbstractPimcoreBundle
 {
-    use BundleAdminClassicTrait;
     use PackageVersionTrait;
 
     public function __construct()
@@ -33,16 +30,6 @@ class PimcoreGlossaryBundle extends AbstractPimcoreBundle implements PimcoreBund
             '12.3',
             'The GlossaryBundle is deprecated and will be discontinued with Pimcore Studio.'
         );
-    }
-
-    public function getCssPaths(): array
-    {
-        return [];
-    }
-
-    public function getJsPaths(): array
-    {
-        return [];
     }
 
     public function getInstaller(): Installer

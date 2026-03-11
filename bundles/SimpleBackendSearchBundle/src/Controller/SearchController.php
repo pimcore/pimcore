@@ -21,7 +21,6 @@ use Pimcore;
 use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
-use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\AdminBundle\Service\GridData;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
@@ -29,7 +28,6 @@ use Pimcore\Config;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Db\Helper;
-use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -53,6 +51,13 @@ class SearchController extends UserAwareController
 {
     use JsonHelperTrait;
 
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            '?' . GridHelperService::class => GridHelperService::class,
+        ]);
+    }
+
     /**
      * @throws JsonException
      *
@@ -66,8 +71,12 @@ class SearchController extends UserAwareController
      *
      */
     #[Route('/find', name: 'pimcore_bundle_search_search_find', methods: ['GET', 'POST'])]
-    public function findAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService): JsonResponse
+    public function findAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
+        /** @var GridHelperService|null $gridHelperService */
+        $gridHelperService = $this->container->has(GridHelperService::class)
+            ? $this->container->get(GridHelperService::class)
+            : null;
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $requestedLanguage = $allParams['language'] ?? null;
@@ -156,10 +165,10 @@ class SearchController extends UserAwareController
             }
 
             //string statements for divided filters
-            $conditionFilters = count($unlocalizedFieldsFilters)
+            $conditionFilters = ($gridHelperService && count($unlocalizedFieldsFilters))
                 ? $gridHelperService->getFilterCondition($this->encodeJson($unlocalizedFieldsFilters), $class)
                 : null;
-            $localizedConditionFilters = count($localizedFieldsFilters)
+            $localizedConditionFilters = ($gridHelperService && count($localizedFieldsFilters))
                 ? $gridHelperService->getFilterCondition($this->encodeJson($localizedFieldsFilters), $class)
                 : null;
 
@@ -394,15 +403,36 @@ class SearchController extends UserAwareController
     }
 
     /**
-     * @throws AdminClassicBundleNotFoundException
+     * @throws \JsonException
      */
     protected function extractSortingSettings(array $params): array
     {
-        if (!class_exists(QueryParams::class)) {
-            throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
+        $orderKey = null;
+        $order = null;
+
+        $sortParam = $params['sort'] ?? false;
+        if ($sortParam) {
+            $sortParam = json_decode($sortParam, true);
+            $sortParam = $sortParam[0];
+
+            $order = strtoupper($sortParam['direction']) === 'DESC' ? 'DESC' : 'ASC';
+
+            if (!str_starts_with($sortParam['property'], '~')) {
+                $orderKey = $sortParam['property'];
+            } else {
+                $orderKey = $sortParam['property'];
+                $parts = explode('~', $orderKey);
+                $fieldname = $parts[2];
+                $groupKeyId = $parts[3];
+                $groupKeyId = explode('-', $groupKeyId);
+                $groupId = (int) $groupKeyId[0];
+                $keyid = (int) $groupKeyId[1];
+
+                return ['orderKey' => $sortParam['property'], 'fieldname' => $fieldname, 'groupId' => $groupId, 'keyId' => $keyid, 'order' => $order, 'isFeature' => 1];
+            }
         }
 
-        return QueryParams::extractSortingSettings($params);
+        return ['orderKey' => $orderKey, 'order' => $order];
     }
 
     /**
@@ -598,7 +628,9 @@ class SearchController extends UserAwareController
                     'iconCls' => 'pimcore_icon_asset_default',
                 ];
 
-                $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
+                if (class_exists(ElementAdminStyleEvent::class)) {
+                    $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
+                }
 
                 $validLanguages = \Pimcore\Tool::getValidLanguages();
 
@@ -642,6 +674,10 @@ class SearchController extends UserAwareController
      */
     protected function addAdminStyle(ElementInterface $element, ?int $context = null, array &$data = []): void
     {
+        if (!class_exists(ElementAdminStyleEvent::class)) {
+            return;
+        }
+
         $event = new ElementAdminStyleEvent($element, new AdminStyle($element), $context);
         Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);
         $adminStyle = $event->getAdminStyle();

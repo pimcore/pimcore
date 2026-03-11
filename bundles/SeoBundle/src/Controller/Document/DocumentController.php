@@ -16,7 +16,6 @@ use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\SeoBundle\Controller\Traits\DocumentTreeConfigWrapperTrait;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
-use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
@@ -64,18 +63,15 @@ class DocumentController extends UserAwareController
     ): JsonResponse {
         $this->checkPermission('seo_document_editor');
 
-        if (!class_exists(AdminEvents::class)) {
-            throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
-        }
-
         $allParams = array_merge($request->request->all(), $request->query->all());
 
-        $filterPrepareEvent = new GenericEvent($this, [
-            'requestParams' => $allParams,
-        ]);
-        $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::DOCUMENT_LIST_BEFORE_FILTER_PREPARE);
-
-        $allParams = $filterPrepareEvent->getArgument('requestParams');
+        if (class_exists(AdminEvents::class)) {
+            $filterPrepareEvent = new GenericEvent($this, [
+                'requestParams' => $allParams,
+            ]);
+            $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::DOCUMENT_LIST_BEFORE_FILTER_PREPARE);
+            $allParams = $filterPrepareEvent->getArgument('requestParams');
+        }
 
         // make sure document routes are also built for unpublished documents
         $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
@@ -93,9 +89,11 @@ class DocumentController extends UserAwareController
                 'list' => $list,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD);
-            /** @var Document\Listing $list */
-            $list = $beforeListLoadEvent->getArgument('list');
+            if (class_exists(AdminEvents::class)) {
+                $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD);
+                /** @var Document\Listing $list */
+                $list = $beforeListLoadEvent->getArgument('list');
+            }
 
             $childrenList = $list->load();
 
@@ -114,12 +112,14 @@ class DocumentController extends UserAwareController
 
         $result = ['data' => $documents, 'success' => true, 'total' => count($documents)];
 
-        $afterListLoadEvent = new GenericEvent($this, [
-            'list' => $result,
-            'context' => $allParams,
-        ]);
-        $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD);
-        $result = $afterListLoadEvent->getArgument('list');
+        if (class_exists(AdminEvents::class)) {
+            $afterListLoadEvent = new GenericEvent($this, [
+                'list' => $result,
+                'context' => $allParams,
+            ]);
+            $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD);
+            $result = $afterListLoadEvent->getArgument('list');
+        }
 
         return $this->jsonResponse($result['data']);
     }

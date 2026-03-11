@@ -14,16 +14,13 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SimpleBackendSearchBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
-use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
-use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
 /**
  * @deprecated version 12.3
  */
-class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
+class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle
 {
-    use BundleAdminClassicTrait;
     use PackageVersionTrait;
 
     public function __construct()
@@ -33,11 +30,6 @@ class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle implements 
             '12.3',
             'The SimpleBackendSearchBundle is deprecated and will be discontinued with Pimcore Studio.'
         );
-    }
-
-    public function getJsPaths(): array
-    {
-        return [];
     }
 
     public function getInstaller(): Installer
