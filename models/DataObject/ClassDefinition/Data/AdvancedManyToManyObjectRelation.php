@@ -571,16 +571,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
     public function setVisibleFields(array|string|null $visibleFields): static
     {
-        /**
-         * @extjs6
-         */
-        if (is_array($visibleFields)) {
-            if (count($visibleFields)) {
-                $visibleFields = implode(',', $visibleFields);
-            } else {
-                $visibleFields = null;
-            }
-        }
         $this->visibleFields = $visibleFields;
 
         return $this;

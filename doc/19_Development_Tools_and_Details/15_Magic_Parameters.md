@@ -13,7 +13,7 @@ This parameter only works if [`DEBUG MODE`](../18_Tools_and_Features/25_System_S
 
 ### unminified_js
 
-Disables the JavaScript minifier. Useful for ExtJS debugging. Disabled by default if in [`DEV MODE`](../18_Tools_and_Features/25_System_Settings.md). 
+Disables the JavaScript minifier. Disabled by default if in [`DEV MODE`](../18_Tools_and_Features/25_System_Settings.md). 
 
 This parameter only works if [`DEBUG MODE`](../18_Tools_and_Features/25_System_Settings.md) is on.
 

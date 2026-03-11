@@ -17,7 +17,6 @@ use Exception;
 use Pimcore\Bundle\CustomReportsBundle\Tool;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
-use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
@@ -276,9 +275,6 @@ class CustomReportController extends UserAwareController
     public function dataAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
-        if (!class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
-            throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
-        }
         $offset = ParameterBagHelper::getInt($request->request, 'start', 0);
         $limit = ParameterBagHelper::getInt($request->request, 'limit', 40);
         $config = Tool\Config::getByName($request->request->getString('name'));
@@ -458,9 +454,7 @@ class CustomReportController extends UserAwareController
         $sortingSettings = null;
         $sort = null;
         $dir = null;
-        if (class_exists('\Pimcore\Bundle\AdminBundle\Helper\QueryParams')) {
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
-        }
+        $sortingSettings = self::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         if (is_array($sortingSettings) && $sortingSettings['orderKey']) {
             $sort = $sortingSettings['orderKey'];
             $dir = $sortingSettings['order'];
@@ -473,5 +467,35 @@ class CustomReportController extends UserAwareController
         }
 
         return ['sort' => $sort, 'dir' => $dir, 'filters' => $filters, 'drillDownFilters' => $drillDownFilters];
+    }
+
+    private static function extractSortingSettings(array $params): array
+    {
+        $orderKey = null;
+        $order = null;
+
+        $sortParam = $params['sort'] ?? false;
+        if ($sortParam) {
+            $sortParam = json_decode($sortParam, true);
+            $sortParam = $sortParam[0];
+
+            $order = strtoupper($sortParam['direction']) === 'DESC' ? 'DESC' : 'ASC';
+
+            if (!str_starts_with($sortParam['property'], '~')) {
+                $orderKey = $sortParam['property'];
+            } else {
+                $orderKey = $sortParam['property'];
+                $parts = explode('~', $orderKey);
+                $fieldname = $parts[2];
+                $groupKeyId = $parts[3];
+                $groupKeyId = explode('-', $groupKeyId);
+                $groupId = (int) $groupKeyId[0];
+                $keyid = (int) $groupKeyId[1];
+
+                return ['orderKey' => $sortParam['property'], 'fieldname' => $fieldname, 'groupId' => $groupId, 'keyId' => $keyid, 'order' => $order, 'isFeature' => 1];
+            }
+        }
+
+        return ['orderKey' => $orderKey, 'order' => $order];
     }
 }

@@ -15,13 +15,11 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SeoBundle\Controller;
 
 use Exception;
-use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\Csv;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
-use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -122,17 +120,13 @@ class RedirectsController extends UserAwareController
                 return $this->jsonResponse(['data' => $redirect->getObjectVars(), 'success' => true]);
             }
         } else {
-            if (!class_exists(QueryParams::class)) {
-                throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
-            }
-
             // get list of routes
 
             $list = new Redirect\Listing();
             $list->setLimit(ParameterBagHelper::getInt($request->request, 'limit', 50));
             $list->setOffset(ParameterBagHelper::getInt($request->request, 'start'));
 
-            $sortingSettings = QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+            $sortingSettings = self::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {
                 $list->setOrderKey($sortingSettings['orderKey']);
                 $list->setOrder($sortingSettings['order']);
@@ -264,5 +258,35 @@ class RedirectsController extends UserAwareController
         ];
 
         return $this->jsonResponse($response);
+    }
+
+    private static function extractSortingSettings(array $params): array
+    {
+        $orderKey = null;
+        $order = null;
+
+        $sortParam = $params['sort'] ?? false;
+        if ($sortParam) {
+            $sortParam = json_decode($sortParam, true);
+            $sortParam = $sortParam[0];
+
+            $order = strtoupper($sortParam['direction']) === 'DESC' ? 'DESC' : 'ASC';
+
+            if (!str_starts_with($sortParam['property'], '~')) {
+                $orderKey = $sortParam['property'];
+            } else {
+                $orderKey = $sortParam['property'];
+                $parts = explode('~', $orderKey);
+                $fieldname = $parts[2];
+                $groupKeyId = $parts[3];
+                $groupKeyId = explode('-', $groupKeyId);
+                $groupId = (int) $groupKeyId[0];
+                $keyid = (int) $groupKeyId[1];
+
+                return ['orderKey' => $sortParam['property'], 'fieldname' => $fieldname, 'groupId' => $groupId, 'keyId' => $keyid, 'order' => $order, 'isFeature' => 1];
+            }
+        }
+
+        return ['orderKey' => $orderKey, 'order' => $order];
     }
 }

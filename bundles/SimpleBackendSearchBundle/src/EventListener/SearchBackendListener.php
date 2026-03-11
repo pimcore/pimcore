@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\EventListener;
 
-use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Message\SearchBackendMessage;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Event\AssetEvents;
@@ -52,11 +51,6 @@ class SearchBackendListener implements EventSubscriberInterface
             DocumentEvents::POST_UPDATE => 'onPostAddUpdateElement',
             AssetEvents::POST_UPDATE => 'onPostAddUpdateElement',
         ];
-
-        // used when admin UI classic bundle is installed
-        if (class_exists(AdminEvents::class) && defined(AdminEvents::class . '::OBJECT_LIST_HANDLE_FULLTEXT_QUERY')) {
-            $events[AdminEvents::OBJECT_LIST_HANDLE_FULLTEXT_QUERY] = 'onHandleFulltextQuery';
-        }
 
         return $events;
     }

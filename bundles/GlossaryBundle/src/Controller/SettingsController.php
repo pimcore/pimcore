@@ -17,7 +17,6 @@ use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Cache;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
-use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
 use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -99,15 +98,11 @@ class SettingsController extends UserAwareController
                 return $this->jsonResponse(['data' => $glossary->getObjectVars(), 'success' => true]);
             }
         } else {
-            if (!class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
-                throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
-            }
-
             $list = new Glossary\Listing();
             $list->setLimit(ParameterBagHelper::getInt($request->request, 'limit', 50));
             $list->setOffset(ParameterBagHelper::getInt($request->request, 'start'));
 
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+            $sortingSettings = self::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {
                 $list->setOrderKey($sortingSettings['orderKey']);
                 $list->setOrder($sortingSettings['order']);
@@ -136,5 +131,35 @@ class SettingsController extends UserAwareController
         }
 
         return $this->jsonResponse(['success' => false]);
+    }
+
+    private static function extractSortingSettings(array $params): array
+    {
+        $orderKey = null;
+        $order = null;
+
+        $sortParam = $params['sort'] ?? false;
+        if ($sortParam) {
+            $sortParam = json_decode($sortParam, true);
+            $sortParam = $sortParam[0];
+
+            $order = strtoupper($sortParam['direction']) === 'DESC' ? 'DESC' : 'ASC';
+
+            if (!str_starts_with($sortParam['property'], '~')) {
+                $orderKey = $sortParam['property'];
+            } else {
+                $orderKey = $sortParam['property'];
+                $parts = explode('~', $orderKey);
+                $fieldname = $parts[2];
+                $groupKeyId = $parts[3];
+                $groupKeyId = explode('-', $groupKeyId);
+                $groupId = (int) $groupKeyId[0];
+                $keyid = (int) $groupKeyId[1];
+
+                return ['orderKey' => $sortParam['property'], 'fieldname' => $fieldname, 'groupId' => $groupId, 'keyId' => $keyid, 'order' => $order, 'isFeature' => 1];
+            }
+        }
+
+        return ['orderKey' => $orderKey, 'order' => $order];
     }
 }

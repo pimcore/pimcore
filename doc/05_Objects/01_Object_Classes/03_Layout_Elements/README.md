@@ -22,7 +22,3 @@ a field's tooltip. Please note that since release 4.4.2 it is possible to genera
 Please read this [page](./01_Dynamic_Text_Labels.md) for further details.
 * IFrame - provide a URL and make use of the context parameter to render the response of your choice.
 Please read this [page](./02_Preview_Iframe.md) for further details.
-
-Pimcore uses Ext JS layout components for all object layout elements. For a deeper understanding of the layout elements, 
-please have a look at the [Ext JS documentation pages](https://docs.sencha.com/extjs/7.0.0/classic/Ext.html) and 
-[examples](http://www.sencha.com/products/js/).

@@ -14,16 +14,13 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\WordExportBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
-use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
-use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
 /**
  * @deprecated version 12.3
  */
-class PimcoreWordExportBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
+class PimcoreWordExportBundle extends AbstractPimcoreBundle
 {
-    use BundleAdminClassicTrait;
     use PackageVersionTrait;
 
     public function __construct()
@@ -33,16 +30,6 @@ class PimcoreWordExportBundle extends AbstractPimcoreBundle implements PimcoreBu
             '12.3',
             'The WordExportBundle is deprecated and will be discontinued with Pimcore Studio.'
         );
-    }
-
-    public function getCssPaths(): array
-    {
-        return [];
-    }
-
-    public function getJsPaths(): array
-    {
-        return [];
     }
 
     public function getInstaller(): Installer
