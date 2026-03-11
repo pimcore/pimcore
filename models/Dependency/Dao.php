@@ -76,7 +76,7 @@ class Dao extends Model\Dao\AbstractDao
             throw new SuspiciousOperationException('Illegal source type ' . $this->model->getSourceType());
         }
 
-        if (!in_array($orderBy, ['id', 'type', 'path'])) {
+        if (!in_array($orderBy, ['id', 'type'])) {
             $orderBy = 'id';
         }
 
@@ -140,7 +140,7 @@ class Dao extends Model\Dao\AbstractDao
             throw new SuspiciousOperationException('Illegal source type ' . $this->model->getSourceType());
         }
 
-        if (!in_array($orderBy, ['id', 'type', 'path'])) {
+        if (!in_array($orderBy, ['id', 'type'])) {
             $orderBy = 'id';
         }
 
@@ -154,17 +154,17 @@ class Dao extends Model\Dao\AbstractDao
         FROM (
             SELECT d.sourceid AS id, d.sourcetype AS type
             FROM dependencies d
-            INNER JOIN objects o ON o.id = d.sourceid AND d.targettype = 'object'
+            INNER JOIN objects o ON o.id = d.sourceid AND d.sourcetype = 'object'
             WHERE d.targettype = :targetType AND d.targetid = :targetId AND LOWER(CONCAT(o.path, o.key)) RLIKE :value
             UNION
             SELECT d.sourceid AS id, d.sourcetype AS type
             FROM dependencies d
-            INNER JOIN documents doc ON doc.id = d.sourceid AND d.targettype = 'document'
+            INNER JOIN documents doc ON doc.id = d.sourceid AND d.sourcetype = 'document'
             WHERE d.targettype = :targetType AND d.targetid = :targetId AND LOWER(CONCAT(doc.path, doc.key)) RLIKE :value
             UNION
             SELECT d.sourceid AS id, d.sourcetype AS type
             FROM dependencies d
-            INNER JOIN assets a ON a.id = d.sourceid AND d.targettype = 'asset'
+            INNER JOIN assets a ON a.id = d.sourceid AND d.sourcetype = 'asset'
             WHERE d.targettype = :targetType AND d.targetid = :targetId AND LOWER(CONCAT(a.path, a.filename)) RLIKE :value
         ) dep
         ORDER BY " . $orderBy . ' ' . $orderDirection;
@@ -348,28 +348,38 @@ class Dao extends Model\Dao\AbstractDao
         $query = "
             SELECT id, type, path
             FROM (
-                SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(o.path, o.key) as `path`
+                SELECT d.sourceid AS id, d.sourcetype AS `type`, CONCAT(o.path, o.key) AS `path`
                 FROM dependencies d
                 JOIN objects o ON o.id = d.sourceid
-                WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'object'
+                WHERE d.targettype = :targetType AND d.targetid = :targetId AND d.sourceType = 'object'
                 UNION
-                SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(doc.path, doc.key) as `path`
+                SELECT d.sourceid AS id, d.sourcetype AS `type`, CONCAT(doc.path, doc.key) AS `path`
                 FROM dependencies d
                 JOIN documents doc ON doc.id = d.sourceid
-                WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'document'
+                WHERE d.targettype = :targetType AND d.targetid = :targetId AND d.sourceType = 'document'
                 UNION
-                SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(a.path, a.filename) as `path`
+                SELECT d.sourceid AS id, d.sourcetype AS `type`, CONCAT(a.path, a.filename) AS `path`
                 FROM dependencies d
                 JOIN assets a ON a.id = d.sourceid
-                WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'asset'
+                WHERE d.targettype = :targetType AND d.targetid = :targetId AND d.sourceType = 'asset'
             ) dep
             ORDER BY " . $orderBy . ' ' . $orderDirection;
+
+        $params = [
+            'targetType' => $targetType,
+            'targetId'   => $targetId,
+        ];
+
+        $types = [
+            'targetType' => ParameterType::STRING,
+            'targetId'   => ParameterType::INTEGER,
+        ];
 
         if (is_int($offset) && is_int($limit)) {
             $query .= ' LIMIT ' . $offset . ', ' . $limit;
         }
 
-        return $this->db->fetchAllAssociative($query);
+        return $this->db->fetchAllAssociative($query, $params, $types);
     }
 
     /**
