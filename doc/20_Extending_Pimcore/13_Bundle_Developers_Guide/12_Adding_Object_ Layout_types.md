@@ -21,7 +21,7 @@ Following steps are necessary to do so:
    [github](https://github.com/pimcore/admin-ui-classic-bundle/tree/1.x/public/js/pimcore/object/classes/layout)
 
 3) Create JavaScript class for object editor:
-   This JavaScript class defines the representation of the layout type in the *object editor*. You can use very simple ExtJS elements here.
+   This JavaScript class defines the representation of the layout type in the *object editor*.
 
    It needs to extend `pimcore.object.abstract`, be located in namespace `pimcore.object.layout` and named after the 
    `$fieldtype` property of the corresponding PHP class.
