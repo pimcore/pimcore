@@ -236,7 +236,7 @@ pimcore:
                                 # Set position of custom HTML inside modal (top, center, bottom; default=top).
                                 position: 'top'
                             
-                        # Css class to define the icon which will be used in the actions button in the backend.
+                        # CSS class to define the icon which will be used in the actions button in the backend.
                         iconClass:            ~
                         # Forces an object layout after the transition was performed.
                         # This objectLayout setting overrules all objectLayout settings within the places configs.
@@ -283,7 +283,7 @@ pimcore:
                     # Nice name for the Pimcore backend.
                     label:                ~
 
-                    # Css class to define the icon which will be used in the actions button in the backend.
+                    # CSS class to define the icon which will be used in the actions button in the backend.
                     iconClass:            ~
                     
                     # Forces an object layout after the global action was performed.

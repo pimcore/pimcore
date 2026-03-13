@@ -55,11 +55,11 @@ or [Configuration Details](./01_Configuration_Details/README.md).
 ## Events
 
 The Pimcore workflow management fires several events that can be used to customize and extend functionality. For details
-see [Working with PHP API](./09_Working_with_PHP_API.md).
+see [Working with PHP API](./07_Working_with_PHP_API.md).
 
 
 ## User Notifications
-Notifications (via email or Pimcore notifications) can be configured to be sent to users when an transition takes place. 
+Notifications (via email or Pimcore notifications) can be configured to be sent to users when a transition takes place. 
 To do this simply specify an array of user(s) or role(s) that you would like to be notified in options section of the 
 transition definition. 
 

@@ -20,29 +20,25 @@ The Core Framework comes with several core features that can be fully adapted or
 
 The Core Framework documentation is divided into three sections that aim to guide the reader through its first use of the platform:
 
-* See the [Getting Started](#getting-started) section for an overview of the Core Framework or information about the installation process and the MVC pattern integration within Pimcore.
 * See the [Element Types](#element-types) section for details about managed elements in Pimcore and associated actions.
 * See the [Platform Topics](#platform-topics) section for documentation about all features implemented within Pimcore.
 
-### Getting Started
-* [Overview](./00_Overview/README.md) 
-* [Getting Started](./01_Getting_Started/README.md) 
-* [MVC](./02_MVC/README.md) 
-
 ### Element Types
-* [Documents - *Managing Web Pages*](./03_Documents/README.md) 
-* [Assets - *Media Library / Digital Asset Management*](./04_Assets/README.md) 
-* [Objects - *Custom Data Models / Entities, PIM / MDM*](./05_Objects/README.md) 
+* [Documents - *Managing Web Pages*](./01_Documents/README.md)
+* [Assets - *Media Library / Digital Asset Management*](./02_Assets/README.md)
+* [Objects - *Custom Data Models / Entities, PIM / MDM*](./03_Objects/README.md)
 
 ### Platform Topics
-* [Multilanguage & Localization](./06_Multi_Language_i18n/README.md) 
-* [Workflow Management](./07_Workflow_Management/README.md) 
-* [Tools & Features](./18_Tools_and_Features/README.md) 
-* [Development Tools & Details](./19_Development_Tools_and_Details/README.md) 
-* [Extending & Advanced Topics](./20_Extending_Pimcore/README.md) 
-* [Deployment](./21_Deployment/README.md) 
-* [Administration](./22_Administration_of_Pimcore/README.md) 
-* [Installation & Upgrade](./23_Installation_and_Upgrade/README.md) 
+* [Multilanguage & Localization](./04_Multi_Language_i18n/README.md)
+* [Content Management Features](./05_Content_Management_Features/README.md)
+* [Reporting](./06_Reporting/README.md)
+* [Workflow Management](./07_Workflow_Management/README.md)
+* [Development Details](./08_Development_Details/README.md)
+* [Development Tools](./09_Development_Tools/README.md)
+* [Extending Pimcore](./10_Extending_Pimcore/README.md)
+* [Deployment Recommendations](./11_Deployment_Recommendations/README.md)
+* [Implementation Inspirations](./12_Implementation_Inspirations/README.md)
+* [Upgrade Notes](./13_Upgrade_Notes/README.md)
 
 
 ## Additional resources for getting started with Pimcore

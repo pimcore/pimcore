@@ -5,7 +5,7 @@ represented of the following marking store types.
 
 ## state_table (default)
 
-This is the default marking store. The place information is stored in the element_workfow_state table. This would be 
+This is the default marking store. The place information is stored in the element_workflow_state table. This would be 
 the best option for Assets and Documents. For data objects the other marking store options might be the better choice as 
 the data would be stored directly in the data object model as attributes.
 
@@ -17,7 +17,7 @@ the data would be stored directly in the data object model as attributes.
 
 ## single_state
 
-Stores the place in a attribute of the subject (calls the setter method). Can be used if a model cannot be in more then 
+Stores the place in a attribute of the subject (calls the setter method). Can be used if a model cannot be in more than 
 one state at the same time. This is the default single_state marking store provided by the Symfony framework. For data 
 objects a select field (or maybe input field) would be the right Pimcore field to store the places when the single_state 
 marking store is used.
@@ -33,7 +33,7 @@ marking store is used.
 
 ## multiple_state
 
-Same as single_state but can be used if the subject can be in more then one state at the same time. Note: this cannot be 
+Same as single_state but can be used if the subject can be in more than one state at the same time. Note: this cannot be 
 used in combination with data object multiselect fields - use data_object_multiple_state instead.
 
 ##### Configuration Example
@@ -46,7 +46,7 @@ used in combination with data object multiselect fields - use data_object_multip
 
 ## data_object_multiple_state
 
-Can be used to store mutliple places in a data object multiselect field.
+Can be used to store multiple places in a data object multiselect field.
 
 ##### Configuration Example
 ```yaml
