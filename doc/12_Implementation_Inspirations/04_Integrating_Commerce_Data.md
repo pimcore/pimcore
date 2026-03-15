@@ -2,7 +2,7 @@
 
 A common requirement in e-commerce projects is integrating content and commerce data. Pimcore's integrated approach provides several tools to combine both seamlessly.
 
-One of these tools are [Renderlets](../01_Documents/01_Templates/03_Editables/28_Renderlet.md),
+One of these tools are [Renderlets](../01_Documents/02_Templates/03_Editables/28_Renderlet.md),
 which provide a great way to integrate dynamic object (thus commerce) content to Pimcore documents. 
 
 ![Demo](img/demo.jpg)

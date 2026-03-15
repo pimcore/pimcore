@@ -1,7 +1,7 @@
 # Object Classes
 
 To get started with Pimcore objects, classes must be defined. 
-In [Create A First Project](../../backlog/01_Getting_Started/07_Create_a_First_Project.md) you can see the first steps how to 
+In [Create a First Project](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/03_Create_a_First_Project/README.md) you can see the first steps how to
 create objects and classes.
 
 Defining a class consists of two parts: 

@@ -30,5 +30,5 @@ use the `OutputTimestampResolver` service and get the timestamp from it instead 
 > The preview can only take content into account that is already in the system and published. It cannot
 > take scheduled versions of documents, assets or objects into account. 
 
-See also [Scheduled Block](../01_Documents/01_Templates/03_Editables/42_Scheduled_Block.md) for an editable that uses
+See also [Scheduled Block](../01_Documents/02_Templates/03_Editables/42_Scheduled_Block.md) for an editable that uses
 this functionality.

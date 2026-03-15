@@ -56,7 +56,7 @@ If a script does not contain a valid nonce, it is stopped from being executed wi
 
 `Refused to execute inline script because it violates the following Content Security Policy directive: ...`
 
-This issue can be resolved either by using Pimcore [Headscript extension](../01_Documents/01_Templates/02_Twig_Extensions/03_HeadScript.md) or add nonce script to inline scripts as follows:
+This issue can be resolved either by using Pimcore [Headscript extension](../01_Documents/02_Templates/02_Twig_Extensions/03_HeadScript.md) or add nonce script to inline scripts as follows:
 
 ```twig
 <script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>

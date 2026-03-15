@@ -1,3 +1,8 @@
+---
+title: Static Page Generator
+description: Generating static HTML pages from Pimcore documents for direct web server delivery.
+---
+
 # Static Page Generator
 Pimcore offers a Static Page Generator service, which is used to generate HTML pages from Pimcore documents. This generator service works by taking a Pimcore document with content and templates and renders them into a full HTML page, that can served directly from the server without the intervention of templating engine.
 
@@ -55,7 +60,7 @@ server {
 
 ## Processing
 Once the static generator option is enabled, Pimcore generates static pages on following actions:
- - First request to the page, after updating and saving the document in admin.
+ - First request to the page, after updating and saving the document in Pimcore Studio.
  - Maintenance job
  - CLI command
  

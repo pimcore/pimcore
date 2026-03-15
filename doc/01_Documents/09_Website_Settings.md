@@ -1,3 +1,8 @@
+---
+title: Website Settings
+description: Configuring site-specific key-value settings accessible from controllers and templates.
+---
+
 # Website Settings
 
 The `Website Settings` give you the possibility to configure website-specific settings, which you can 

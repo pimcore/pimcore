@@ -1,3 +1,8 @@
+---
+title: Navigation
+description: Building navigations from the Pimcore document tree using the navigation Twig extension.
+---
+
 # Navigation
 
 ## Basics
@@ -15,7 +20,7 @@ It builds a navigation container based on the existing document structure. The p
 **Only documents are included** in this structure, Folders are ignored, regardless of their navigation properties.
 
 ```twig
-{# get root node if there is no document defined (for pages which are routed directly through static route) #}
+{# get root node if there is no document defined (for pages which are routed directly through custom route) #}
 {% if not document is defined or not document %}
     {% set document = pimcore_document(1) %}
 {% endif %}
@@ -497,7 +502,8 @@ The homepage will not appear in the navigation by default. You can add the homep
 }) %}
 ```
 
-If you retrieve the **home** document (which always has the ID 1) you can also retrieve its navigation properties so that they can be edited from the Pimcore admin interface like all the other documents.
+If you retrieve the **home** document (which always has the ID 1) you can also retrieve its navigation properties so that
+they can be edited from Pimcore Studio like all the other documents.
 
 ```twig
 {% set home = pimcore_document(1) %}

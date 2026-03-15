@@ -1,4 +1,9 @@
-# Document Inheritance 
+---
+title: Document Inheritance
+description: Inheriting content between documents using the Content Main Document feature.
+---
+
+# Document Inheritance
 
 The *Content Main Document* setting, allows a document to inherit all of its contents from any other document which can 
 then be overwritten individually on field level. Notice: Properties are not inherited via Content Main Documents.

@@ -1,3 +1,8 @@
+---
+title: Working with Sites
+description: Setting up multi-domain websites within a single Pimcore instance using the Sites feature.
+---
+
 # Working With Sites
 
 ## Introduction

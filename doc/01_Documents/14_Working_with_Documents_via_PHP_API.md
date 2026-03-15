@@ -1,3 +1,8 @@
+---
+title: Working with Documents via PHP API
+description: Performing CRUD operations on Pimcore documents using the PHP API.
+---
+
 # Working With Documents via PHP API
 
 Pimcore provides an object-oriented PHP API to work with Documents.
@@ -28,7 +33,7 @@ $page->setParentId(82); // id of a document or folder
 $page->save(["versionNote" => "my new version"]);
 ```
 
-Now you can refresh the parent node of the newly created document in the admin interface (ID `82` in this case) and you'll 
+Now you can refresh the parent node of the newly created document in Pimcore Studio (ID `82` in this case) and you'll
 see the newly created document. 
 
 ![Create document by API](../img/documents_api_create.png)
@@ -126,6 +131,18 @@ If you'd like to get also all the unpublished documents, set the following flag:
 | `loadIdList()`          |                                     | Returns complete array with id as a row.                                                    |
 
 If you want to know more about the paginator usage with lists, you should visit [Working with Objects via PHP API part](../03_Objects/02_Working_with_Objects_via_PHP_API.md#working-with-knpcomponentpagerpaginator).
+
+## Cleanup Document Types
+
+Uninstalling bundles may not always clean up data or database tables to avoid data loss.
+The following command removes type-specific tables and enum types from the documents table.
+The types `page`, `link`, `snippet`, `folder`, `hardlink`, and `email` are protected and cannot be cleaned up.
+
+You can clean up multiple types at once:
+
+```bash
+bin/console pimcore:documents:cleanup <type1> <type2> <type3>
+```
 
 
 ### Advanced Example

@@ -1,85 +1,68 @@
+---
+title: Documents
+description: Introduction to Pimcore Documents, the CMS component for managing web pages, snippets, emails, and navigation structures.
+keywords:
+    - CMS
+    - web content management
+    - document types
+    - page
+    - snippet
+---
+
 # Documents
-Documents are the CMS part of Pimcore and are the way to go for managing unstructured contents using pages, content snippets and navigations. 
+
+Documents are Pimcore's web content management component. Each document is a node in a hierarchical tree,
+identified by a unique ID and a path that doubles as its public URL. A page at `/en/about/team` in the
+document tree is reachable at exactly that address in the browser.
+
+Documents combine structured content editing in [Pimcore Studio](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/README.md)
+with Symfony-based rendering on the frontend.
+Editors work with visual [Editables](./02_Templates/03_Editables/README.md) (input fields, WYSIWYG editors,
+image pickers) directly inside the page, while developers control layout and logic through controllers
+and Twig templates.
 
 ## Document Types
-Pimcore offers different types of documents and each of them offers functionality specific for the intended use-case. 
 
-| Type           | Description                                                                                                                                                 | 
-|----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Page           | Represents a typical web-page, the path in the tree is equal to the address in the browser.                                                                 |
-| Snippet        | Makes it easier to extract often used contents into reusable containers. Can be embedded in pages or nested into other snippets.                            |
-| Link           | A simple web-link to be used in navigation.                                                                                                                 |
-| Email          | A document like the page, but with special functionality for transactional emails.                                                                          |
-| Hardlink       | Create links to other document structures and reuse them within a different structure / context. (see [Hard link](https://en.wikipedia.org/wiki/Hard_link)) |
-| Folder         | Just like the folders you know from your local filesystem.                                                                                                  |
+Pimcore provides several document types, each designed for a specific use case:
 
+| Type      | Purpose                                                                                  |
+|-----------|------------------------------------------------------------------------------------------|
+| Page      | A web page. Its path in the tree equals its URL in the browser.                          |
+| Snippet   | A reusable content fragment, embeddable in pages or other snippets.                      |
+| Link      | A web link for use in navigation structures.                                             |
+| Hardlink  | A reference to another document subtree, reusing its content in a different context.     |
+| Folder    | Organizes documents, just like folders on a filesystem.                                  |
+| Email     | A document with special functionality for transactional emails.                          |
 
-## Document Configuration
+## How Documents Work
 
-Many document types are tied to the [MVC](./02_MVC_in_Pimcore.md) and therefore need an underlying controller/action and a template.
-They are directly specified in the document settings:
-
-![Documents: controller and view settings](../img/documents_controller_and_view_settings.png)
-
-Not all of them are necessary, the table below shows which configurations are possible:
-
-| Type | Controller  | Template | Description                                                                                                                            |
-|------|------------ |----------|----------------------------------------------------------------------------------------------------------------------------------------|
-| 1    | X           |          | The specified controller/action is executed. If the action returns a response object, it is used for rendering.                        |
-| 2    | X           | X        | Same as above but the template specified is rendered and not the auto-discovered template (only if action does not return a response). |
-| 3    |             | X        | Renders the template with the default controller/action, this is practical if there is only templating stuff.                          |
-
-
-Pimcore is shipped with a default controller containing a default action, which is called when only a template is given to the document.
-
-You can set a default module/bundle, controller and action in the symfony configuration:
-
-```yaml
-pimcore:
-    documents:
-        default_controller:App\Controller\DefaultController::defaultAction
-```  
+Documents follow a document-controller-template pattern built on Symfony MVC.
+A request is [routed](./05_Routing_and_URLs/README.md) to a document, which determines
+the controller and template for rendering.
+See [MVC in Pimcore](./01_MVC_in_Pimcore.md) for the rendering flow and configuration types.
 
 ## Properties
 
-[Properties](../05_Content_Management_Features/04_Properties.md) are very powerful in combination with documents.
-Below, you can find some examples where properties can be very useful for the use with documents. 
+[Properties](../05_Content_Management_Features/04_Properties.md) add key-value metadata to documents.
+Combined with tree inheritance, they become a powerful tool for managing cross-cutting concerns
+without touching every page individually:
 
-1. **Navigation** - If you build the navigation based on the document-tree, sometimes you need special settings for the frontend, like separators or highlightings.
-2. **Header Images** - Often there are header images on a website, if you don't want to define it for every page, you can use properties with inheritance. Then you can define a default one at the root document, and override this on a deeper level in the tree structure.
-3. **Sidebars** - You can easily manage visibility of sidebars in specific documents.
-4. **SEO** - It's also possible to use properties for SEO. It's very painful to define a nice title and description for every page on your site, with properties this is not necessary (inheritance).
-5. **Protected Areas** - Closed user groups
-6. Change the appearance of the website depending on the properties (eg. micro-sites, nested sites)
-7. Mark them for some automated exports (PDF, RPCs, ...)
+- **Navigation** - control separators, highlighting, or custom CSS classes for navigation rendering.
+- **Header images** - set a default header image at the root and override it deeper in the tree.
+- **Sidebars** - toggle sidebar visibility per section.
+- **SEO** - define fallback meta titles and descriptions that inherit down the tree,
+  overridden only where needed.
+- **Protected areas** - mark subtrees for closed user groups.
+- **Appearance** - switch themes or layouts for micro-sites or nested sites.
 
-As you can see there are really useful cases for properties, feel free to use them for whatever they seem to be useful.
+## Next Steps
 
-## A Few Facts
-
-* Documents follow the MVC pattern; therefore, Pimcore requires that there is at least one controller with an action and a template file.
-* Pimcore comes with a DefaultController containing a defaultAction and a template file.
-* Because of the MVC architecture, there is a clear separation between your data, the functionality and the templates.
-* Templates for Pimcore are created with [Twig](https://twig.symfony.com/).
-* As the templates are written in Twig, there is a clear separation of logic (controllers) and design (view / template).
-
-## Create Your First Document 
-Working with documents is described in detail in our [Create a First Project](../backlog/01_Getting_Started/07_Create_a_First_Project.md) manual. 
-
-## Cleanup Documents Types
-Uninstalling bundles may not always clean up data or database tables in the process to avoid data loss.
-Running the following command removes type specific tables and enum types from the documents table.
-The following types are protected and cannot be cleaned up via this command: `page, link, snippet, folder, hardlink, email`
-
-You can clean up multiple types at once.
-```bash
-bin/console pimcore:documents:cleanup <type1> <type2> <type3>
-```
-
-
-## Document Topics
-- [Creating editable templates](./01_Templates/03_Editables/README.md)
-- [Navigation](./06_Navigation.md)
-- [Inheritance](./07_Document_Inheritance.md)
-- [Working with the PHP API](./14_Working_with_Documents_via_PHP_API.md)
-- [Predefined Document Types](./04_Predefined_Document_Types.md)
+- [Templates](./02_Templates/README.md) - Twig templates and editables
+- [MVC in Pimcore](./01_MVC_in_Pimcore.md) - document rendering architecture and type configuration
+- [Editables](./02_Templates/03_Editables/README.md) - in-page content editing widgets
+- [Routing and URLs](./05_Routing_and_URLs/README.md) - how requests reach documents
+- [Navigation](./06_Navigation.md) - building navigations from the document tree
+- [Document Inheritance](./07_Document_Inheritance.md) - inheriting content between documents
+- [Predefined Document Types](./04_Predefined_Document_Types.md) - preconfigured controller/template combinations
+- [Working with Documents via PHP API](./14_Working_with_Documents_via_PHP_API.md) - CRUD operations and listings
+- [Create a First Project](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/03_Create_a_First_Project/README.md) - hands-on tutorial

@@ -1,3 +1,8 @@
+---
+title: Predefined Document Types
+description: Preconfiguring document settings such as controller, action, and template for easy reuse.
+---
+
 # Predefined Document-Types
 
 ## General

@@ -1,3 +1,8 @@
+---
+title: Documents and Pretty URLs
+description: How Pimcore routes requests based on document paths and pretty URL overrides.
+---
+
 # URLs Based on Documents and Pretty URLs
  
 ## Introduction

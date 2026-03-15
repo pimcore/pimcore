@@ -402,7 +402,7 @@ You can cache part of a template like:
 {% endif %}
 ```
 
-Read more about `pimcore_cache` [here](../../../01_Documents/01_Templates/02_Twig_Extensions/README.md).
+Read more about `pimcore_cache` [here](../../../01_Documents/02_Templates/02_Twig_Extensions/README.md).
 
 #### Benchmarks:
 On running command, `ab -n 100 -c 20 http://localhost/en/Magazine`

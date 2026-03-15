@@ -252,7 +252,7 @@ $webpThumbnail->getHtml();
 {{ image.thumbnail('exampleScaleWidth').imageTag({'alt': 'top priority alt text'}) }}
 ```
 
-Additionally, there are some special parameters to [customize generated image HTML code](../../01_Documents/01_Templates/03_Editables/14_Image.md#configuration).
+Additionally, there are some special parameters to [customize generated image HTML code](../../01_Documents/02_Templates/03_Editables/14_Image.md#configuration).
 
 ## Lazy Loading
 
@@ -357,7 +357,7 @@ By default, this value is set to 2, and the getSrcset() method will generate val
 ![High Resolution](../../img/thumbnail_high_resolution.png)
 The above configuration will generate a thumbnail with 500px width.
 
-When using this configuration in combination with the [image editable](../../01_Documents/01_Templates/03_Editables/14_Image.md)
+When using this configuration in combination with the [image editable](../../01_Documents/02_Templates/03_Editables/14_Image.md)
 using the following code
 
 ```twig

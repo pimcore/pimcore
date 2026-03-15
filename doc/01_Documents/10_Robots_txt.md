@@ -1,3 +1,8 @@
+---
+title: Robots.txt
+description: Generating and managing robots.txt files on a per-site basis in Pimcore.
+---
+
 # Robots.txt
 :::caution
 
@@ -19,4 +24,4 @@ Disallow:
 ```
 
 Alternatively, you can still manually create a `robots.txt` file by putting them into the document root, this will 
-override all robots.txt settings made within the Pimcore admin interface.
+override all robots.txt settings made within Pimcore Studio.

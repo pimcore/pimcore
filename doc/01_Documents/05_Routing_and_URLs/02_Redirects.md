@@ -1,3 +1,8 @@
+---
+title: Redirects
+description: Configuring URL redirects in Pimcore for marketing URLs, site relaunches, and moved documents.
+---
+
 # URLs Based on Redirects
 :::caution
 
@@ -11,7 +16,7 @@ To use this feature, please enable the `PimcoreSeoBundle` in your `bundle.php` f
 Redirects are a useful feature of Pimcore for directing the user to the correct pages - may it be for marketing URLs, 
  for redirects after a website relaunch or redirects for moved Documents. 
  
-Depending on their priority, Redirects come second (priority 99) or fifth (all other priorities) in the route processing priority.  
+Depending on their priority, Redirects come second (priority 99) or sixth (all other priorities) in the route processing priority.  
 
 
 ## Setting up Redirects

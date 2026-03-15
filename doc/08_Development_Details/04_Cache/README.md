@@ -6,7 +6,7 @@ Every cache item is tagged with dependencies so the system is able to evict depe
 a referenced object changes.
 
 The second cache is the output cache, which you can use either as pure page cache (configurable 
-in system settings), or as in-template cache (see more at [template extensions](../../01_Documents/01_Templates/02_Twig_Extensions/README.md)).
+in system settings), or as in-template cache (see more at [template extensions](../../01_Documents/02_Templates/02_Twig_Extensions/README.md)).
 
 The third cache is used for add-ons like the glossary, translations, database schemes, and so on. 
 The behavior of the caches is controlled by the add-on itself.

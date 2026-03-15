@@ -8,4 +8,4 @@ Following an overview of all additional service tags provided by Pimcore:
  
 | Name                               | Usage                                                                           |
 |------------------------------------|---------------------------------------------------------------------------------|
-| `pimcore.area.brick`               | Used to register your [custom area bricks](../01_Documents/01_Templates/03_Editables/02_Areablock/02_Bricks.md), which are not loaded by the discovering service |
+| `pimcore.area.brick`               | Used to register your [custom area bricks](../01_Documents/02_Templates/03_Editables/02_Areablock/02_Bricks.md), which are not loaded by the discovering service |

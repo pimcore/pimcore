@@ -1,3 +1,8 @@
+---
+title: Pimcore Controller
+description: Writing controllers for Pimcore documents using the FrontendController base class.
+---
+
 # Pimcore Controller
 
 ## Introduction

@@ -80,4 +80,4 @@ generates frontend:
 ```
 
 ## Using with the Video Editable
-Please have a look at [Video Editable](../../01_Documents/01_Templates/03_Editables/38_Video.md). 
+Please have a look at [Video Editable](../../01_Documents/02_Templates/03_Editables/38_Video.md). 

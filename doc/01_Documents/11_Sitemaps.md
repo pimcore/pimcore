@@ -1,3 +1,8 @@
+---
+title: Sitemaps
+description: Generating XML sitemaps for Pimcore documents and custom data objects.
+---
+
 # Sitemaps
 :::caution
 
@@ -232,7 +237,7 @@ and processors. For example, the `DocumentTreeProcessor` uses the context to def
 In the example above, the URL is created by using a [Link Generator](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/05_Link_Generator.md).
 
 > It's important that your link generator is able to generate an absolute URL for the given object. Above is only an example, but
-  you can have a look at the [demo](https://github.com/pimcore/demo/tree/2025.x/src/)
+  you can have a look at the [demo](https://github.com/pimcore/demo-enterprise/tree/2026.x/src/)
   for a working example building sitemap entries for News objects.
 
 After creating the generator, register it as service and add it to the config. Use filters and processors to reuse already
@@ -388,7 +393,7 @@ services:
 
 To generate absolute URLs, Pimcore defines an [url generator](https://github.com/pimcore/pimcore/blob/2026.x/bundles/SeoBundle/src/Sitemap/UrlGenerator.php) which, given a path, takes care of creating an absolute URL
 based on the [Request Context](https://symfony.com/doc/current/routing.html#generating-urls-in-commands).
-See core processors/generators and [demo](https://github.com/pimcore/demo/tree/2025.x/src/Sitemaps)
+See core processors/generators and [demo](https://github.com/pimcore/demo-enterprise/tree/2026.x/src/Sitemaps)
 for details. As example how to use the URL generator in a processor:
 
 ```php
