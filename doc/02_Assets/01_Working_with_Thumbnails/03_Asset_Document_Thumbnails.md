@@ -74,11 +74,17 @@ pimcore:
     assets:
         document:
             thumbnails:
-                enabled: false #disable generating thumbnail for asset documents
-            process_page_count: false #disable processing page count
-            process_text: false #disable processing text extraction
-            scan_pdf: false #disable scanning PDF documents for unsafe JavaScript.
-            open_pdf_in_new_tab: all-pdfs #show only thumbnail for every pdf
-            #open_pdf_in_new_tab: only-unsafe #show only thumbnail for pdf with JavaScript
-            #open_pdf_in_new_tab: none #show every pdf (not recommended)
+                enabled: true # process thumbnails for asset documents (default: true)
+            process_page_count: true # process & store page count, required for thumbnails & text generation (default: true)
+            process_text: true # process text for asset documents, used by search (default: true)
+            scan_pdf: true # scan PDF documents for unsafe JavaScript (default: true)
+            open_pdf_in_new_tab: only-unsafe # 'all-pdfs' | 'only-unsafe' | 'none' (default: only-unsafe)
 ```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `thumbnails.enabled` | `true` | Process thumbnails for asset documents. |
+| `process_page_count` | `true` | Process and store page count. Internally required for thumbnails and text generation. |
+| `process_text` | `true` | Extract text from asset documents (used by search). |
+| `scan_pdf` | `true` | Scan PDF documents for unsafe JavaScript. |
+| `open_pdf_in_new_tab` | `only-unsafe` | Controls PDF display: `all-pdfs` (show thumbnail for all PDFs), `only-unsafe` (show thumbnail only for PDFs with JavaScript), `none` (show all PDFs inline, not recommended). |

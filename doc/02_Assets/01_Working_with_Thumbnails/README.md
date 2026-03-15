@@ -44,5 +44,5 @@ pimcore:
 - [Video Thumbnails](./02_Video_Thumbnails.md) - transcoding and preview image extraction
 - [Asset Document Thumbnails](./03_Asset_Document_Thumbnails.md) - preview images for PDFs,
   Office documents, and other formats
-- [Advanced Image Thumbnails](./04_Advanced_Image_Thumbnails.md) - high-resolution support,
-  media queries, focal points, ICC profiles, and more
+- [Advanced Image Thumbnail Features](./04_Advanced_Image_Thumbnails.md) - high-resolution support,
+  media queries, focal points, auto format, ICC profiles, and more

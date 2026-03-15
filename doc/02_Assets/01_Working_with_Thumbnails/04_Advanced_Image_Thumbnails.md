@@ -1,12 +1,14 @@
 ---
-title: Advanced Image Thumbnails
+title: Advanced Image Thumbnail Features
 description: High-resolution images, media queries, focal points, ICC profiles, and other advanced thumbnail features.
 ---
 
-# Advanced Image Thumbnails
+# Advanced Image Thumbnail Features
 
 This page covers advanced image thumbnail features. For the basics of creating thumbnail
 configurations and generating HTML, see [Image Thumbnails](./01_Image_Thumbnails.md).
+
+For auto (web-optimized) format support, see [Customize Auto Format](#customize-auto-web-optimized-format) below.
 
 ## High-Resolution Support
 
@@ -184,7 +186,8 @@ For most web-based applications, use the auto configuration, which does the foll
 
 Even with the auto setting, you still need to set a quality in the thumbnail configuration.
 This quality is used by `jpeg` and `png` and, if not configured otherwise, also for `webp`.
-If `avif` is supported by Imagick, it uses a fixed value instead of the thumbnail configuration quality.
+If `avif` is supported by Imagick, it uses a separate default quality value (50) instead of
+the thumbnail configuration quality.
 
 You can customize the alternative image formats and their qualities:
 
@@ -198,7 +201,7 @@ pimcore:
                     # the following config is used as the default by Pimcore
                     # the order of the formats is used for the priority of the <source> in the <picture> tag
                     avif:
-                        quality: 15
+                        quality: 50
                     webp:
                         quality: null
                         enabled: true

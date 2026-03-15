@@ -6,11 +6,17 @@ description: Configuring image transformation pipelines for resizing, cropping, 
 # Image Thumbnails
 
 Pimcore offers an advanced thumbnail service (also called "image pipeline") that transforms images
-in unlimited steps to produce the desired result. You can configure transformation pipelines
-in Pimcore Studio under _Settings_ > _Thumbnails_.
+in unlimited steps to produce the desired result. You can configure transformation pipelines in Pimcore Studio via the mega menu under
+_Asset Management_ > _Image Thumbnails_.
 
 Every image stored as an asset can be transformed through this service.
 Pimcore does not support modifying images that are not stored as assets.
+
+> **Tip:** For most web applications, use the **auto format** setting on your thumbnail
+> configurations. It automatically selects the best image format (JPEG, PNG) based on image
+> characteristics and generates optimized variants (WebP, AVIF) using progressive enhancement.
+> See [Customize Auto Format](./04_Advanced_Image_Thumbnails.md#customize-auto-web-optimized-format)
+> for configuration details.
 
 > **IMPORTANT**
 > Use the Imagick PECL extension for best results. GDlib is a fallback with limited functionality
@@ -21,7 +27,8 @@ Pimcore does not support modifying images that are not stored as assets.
 
 ## Creating Transformation Pipelines
 
-To create a new pipeline, open _Settings_ > _Thumbnails_ in Pimcore Studio and click _Add Thumbnail_.
+To create a new pipeline, open _Asset Management_ > _Image Thumbnails_ in the Pimcore Studio
+mega menu and click _Add Thumbnail_.
 Configure the name, description, format, and quality, then add transformations.
 Click _+_ to add a new transformation. For example:
 
@@ -90,7 +97,7 @@ For thumbnails in action, have a look at the [Live Demo](https://demo.pimcore.fu
 
 Pimcore offers the method `getHtml(array $options)` to get a ready-to-use `<picture>` tag
 for your thumbnail. When a `<picture>` element is not needed or desired, use
-`getImageTag(array $options)` to get an `<img />` element instead.
+`getImageTag(array $options, array $removeAttributes)` to get an `<img />` element instead.
 
 Configure the generated markup with these options:
 
@@ -340,5 +347,5 @@ To download the thumbnail, choose it from the list and hit the "Download" button
 ## Further Reading
 
 For advanced features like high-resolution support, media queries, focal points, clipping support,
-ICC color profiles, and custom image processing adapters, see
-[Advanced Image Thumbnails](./04_Advanced_Image_Thumbnails.md).
+ICC color profiles, auto (web-optimized) format configuration, and custom image processing adapters,
+see [Advanced Image Thumbnail Features](./04_Advanced_Image_Thumbnails.md).
