@@ -41,7 +41,7 @@ The default route is also responsible to assemble the URLs for documents.
 ```twig
 <a href="{{ pimcore_document(2) }}">Test-Link</a>
 
-/* OR */
+{# OR #}
 
 {% set document = pimcore_document(2) %}
 <a href="{{ document.fullpath }}">Test-Link</a>

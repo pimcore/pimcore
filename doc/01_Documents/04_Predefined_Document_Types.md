@@ -7,10 +7,9 @@ description: Preconfiguring document settings such as controller, action, and te
 
 ## General
 
-Pimcore provides the ability to define preconfigurations for documents, which makes it easier for editors to work with 
-many different controller/action and templates. 
-By using this feature the editors don't have to have any knowledge of which controller/action/template 
-should be used in a specific document because they can choose out of a predefined set of configurations with a friendly name. 
+Predefined document types let you save controller/template combinations under a friendly name.
+Editors can then select a type when creating a document instead of manually configuring
+the controller and template in the document settings.
 
 ## Example
 
@@ -27,9 +26,11 @@ fill out the newly created configuration row accordingly.
 
 ![New document type](../img/documenttypes_new_row.png)
 
-The type can be either a `page`, `snippet`, `email`.  
-`printcontainer` or `printpage` are only available if the PimcoreWebToPrintBundle is enabled and installed.  
-`newsletter` is only available if the PimcoreNewsletterBundle is enabled and installed.
+Available types:
+
+- `page`, `snippet`, `email` - always available
+- `printcontainer`, `printpage` - requires PimcoreWebToPrintBundle
+- `newsletter` - requires PimcoreNewsletterBundle
 
 After you have defined a type you can access it in the context menu or in the document settings:
 

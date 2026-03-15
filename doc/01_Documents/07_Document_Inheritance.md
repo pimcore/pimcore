@@ -23,7 +23,7 @@ document and inherited from the main document.
 ![Confirm main document changes](../img/main_document_2step.png)
 
 4. Now you can see grey spaces in the document. 
-If you want to overwrite any value, just click the right button on it.
+To overwrite an inherited value, click the unlock button next to the editable field.
  
 ![Main document - the editmode preview](../img/main_document_3step.png)
 

@@ -165,7 +165,7 @@ map $uri $static_page_uri {
 
 ## Static Page Generation With Ajax Request
 The static pages with XMLHttpRequest fetches the data and displays it on the page, just like a standard document page. 
-However, if you are using the Fetch API to request the data, then must add the `XMLHttpRequest` header as shown below, 
+However, if you are using the Fetch API to request the data, then you must add the `XMLHttpRequest` header as shown below,
 otherwise the sub-request will replace the content of the generated static page.
 
 ```js

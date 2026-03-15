@@ -17,11 +17,11 @@ please have a look at [Working with Thumbnails](../../02_Assets/01_Working_with_
 
 ```twig
 {# Use directly on the asset object - myThumbnail is the name of the thumbnail configured in thumbnail configuration #}
-{% set asset = asset('/path/to/image.jpg') %}
+{% set asset = pimcore_asset_by_path('/path/to/image.jpg') %}
 {{ asset.getThumbnail('myThumbnail').getHtml() | raw }}
 
 {# Use directly on the asset object using dynamic configuration #}
-{% set asset = asset('/path/to/image.jpg') %}
+{% set asset = pimcore_asset_by_path('/path/to/image.jpg') %}
 {{ asset.getThumbnail({
     width: 500,
     format: 'png'
@@ -51,11 +51,11 @@ please have a look at [Working with Thumbnails](../../02_Assets/01_Working_with_
 
 {# Use from an object-field #}
 {% if myObject.myImage is instanceof('Asset\\Image') %}
-    <img src="{{ myObject.myImage.getThumbnail('myThumbnail').getHref() }}" />
+    <img src="{{ myObject.myImage.getThumbnail('myThumbnail') }}" />
 {% endif %}
 
 {# Use from an object-field using dynamic configuration #}
 {% if myObject.myImage is instanceof('Asset\\Image') %}
-    <img src="{{ myObject.myImage.getThumbnail({width: 220, format: 'jpeg'}).getHref() }}" />
+    <img src="{{ myObject.myImage.getThumbnail({width: 220, format: 'jpeg'}) }}" />
 {% endif %}
 ```

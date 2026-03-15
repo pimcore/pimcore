@@ -7,17 +7,11 @@ description: Writing controllers for Pimcore documents using the FrontendControl
 
 ## Introduction
 
-Pimcore controllers play the designated role in the MVC pattern. They bind the design patterns together and contain or delegate 
-the functionality of the application. It is good practice to keep the controllers as lean as possible and encapsulate
-the business logic into models or services/libraries. 
+Pimcore controllers extend `Pimcore\Controller\FrontendController`, which adds document-aware dispatching,
+edit mode support, and multi-language features on top of Symfony's standard controller.
+Keep controllers lean and delegate business logic to services.
 
-Pimcore offers an abstract class (`Pimcore\Controller\FrontendController`), which can be implemented by your controllers.
-This abstract class adds some Pimcore specific dispatching features - especially in combination with Pimcore Documents,
-multi-language support etc. 
-
-The naming of the file and the class is just the same as in Symfony. 
-
-## Pimcore Specialities and Examples
+## Conventions and Examples
 
 | Controller Name | File Name                              | Class Name                         | Default View Directory |
 |-----------------|----------------------------------------|------------------------------------|------------------------|
@@ -28,7 +22,7 @@ In controllers, for every action there exists a separate method ending with the 
 The `DefaultController` comes with Pimcore. When you create an empty page in Pimcore it will call 
 the `defaultAction` in the `DefaultController` which uses the view `/templates/default/default.html.twig`. 
 
-You can render templates just the [standard Symfony way](https://symfony.com/doc/current/templates.html#rendering-a-template-in-emails), by either using `$this->render('foo.html.twig')` or using the `#Template[]` [attribute](https://symfony.com/doc/current/templates.html#rendering-a-template-in-controllers). 
+You can render templates the [standard Symfony way](https://symfony.com/doc/current/templates.html#rendering-a-template-in-controllers), either using `$this->render('foo.html.twig')` or the `#[Template]` attribute.
 
 
 ### Examples
@@ -88,9 +82,9 @@ class DefaultController extends FrontendController
 }
 ``` 
 
-###### There are also some properties which can be useful:
+### Available Properties
 
 | Name              | Type        | Description                                              |
 |-------------------|-------------|----------------------------------------------------------|
 | `$this->document` | Document    | Reference to the current document, if any is available.  |
-| `$this->editmode` | boolean     | True if you are in editmode (Pimcore Studio editmode)                      |
+| `$this->editmode` | boolean     | True if the page is rendered in Pimcore Studio edit mode. |

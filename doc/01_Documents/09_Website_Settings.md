@@ -13,8 +13,7 @@ Examples:
 * ReCAPTCHA public & private key
 * Locale settings
 * Google Maps API key
-* Defaults
-* ....
+* Default values and fallbacks
 
 ### Access the Settings
 
@@ -70,7 +69,7 @@ class TestController
     public function testAction(): Response
     {
         // get the "somenumber" setting for "de"
-        // if the property does not exist you will get the setting with not language provided
+        // if the property does not exist you will get the setting with no language provided
         $somesetting = \Pimcore\Model\WebsiteSetting::getByName('somenumber', null, 'de');
         $currentnumber = $somesetting->getData();
         //Now do something with the data or set new data
@@ -86,54 +85,18 @@ class TestController
 
 ### Events
 
-You can also listen to events when a website setting is changed.
+Pimcore dispatches events when website settings are created, updated, or deleted.
+Use standard Symfony event subscribers to listen for these events:
 
-```php
-namespace Pimcore\Event;
+| Event                                    | Constant                                          |
+|------------------------------------------|---------------------------------------------------|
+| `pimcore.websiteSetting.preAdd`          | `WebsiteSettingEvents::PRE_ADD`                   |
+| `pimcore.websiteSetting.postAdd`         | `WebsiteSettingEvents::POST_ADD`                  |
+| `pimcore.websiteSetting.preUpdate`       | `WebsiteSettingEvents::PRE_UPDATE`                |
+| `pimcore.websiteSetting.postUpdate`      | `WebsiteSettingEvents::POST_UPDATE`               |
+| `pimcore.websiteSetting.preDelete`       | `WebsiteSettingEvents::PRE_DELETE`                |
+| `pimcore.websiteSetting.postDelete`      | `WebsiteSettingEvents::POST_DELETE`               |
 
-final class WebsiteSettingEvents
-{
-    /**
-     * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
-     *
-     * @var string
-     */
-    public const PRE_ADD = 'pimcore.websiteSetting.preAdd';
-
-    /**
-     * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
-     *
-     * @var string
-     */
-    public const POST_ADD = 'pimcore.websiteSetting.postAdd';
-
-    /**
-     * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
-     *
-     * @var string
-     */
-    public const PRE_UPDATE = 'pimcore.websiteSetting.preUpdate';
-
-    /**
-     * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
-     *
-     * @var string
-     */
-    public const POST_UPDATE = 'pimcore.websiteSetting.postUpdate';
-
-    /**
-     * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
-     *
-     * @var string
-     */
-    public const PRE_DELETE = 'pimcore.websiteSetting.preDelete';
-
-    /**
-     * @Event("Pimcore\Event\Model\WebsiteSettingEvent")
-     *
-     * @var string
-     */
-    public const POST_DELETE = 'pimcore.websiteSetting.postDelete';
-}
-```
+All events dispatch a `Pimcore\Event\Model\WebsiteSettingEvent` instance.
+See `Pimcore\Event\WebsiteSettingEvents` for the full class reference.
 

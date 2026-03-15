@@ -15,10 +15,8 @@ You can create subsites in Pimcore very easily directly in the context menu of t
 
 ![Configuring Sites](../img/sites.png)
 
-That's basically all.
- 
- Note: Of course, your server setup (VHost, `ServerAlias`) must be configured properly so that all the requests for all the 
- domains are delegated to Pimcore. 
+Your server setup (VHost, `ServerAlias`) must be configured so that requests for all
+domains are delegated to Pimcore.
  
  
 Now also the routing functionalities [Custom Routes](../backlog/02_MVC_Custom_Routes.md) and [Redirects](./05_Routing_and_URLs/02_Redirects.md) 
@@ -88,8 +86,8 @@ if (\Pimcore\Model\Site::isSiteRequest()) {
 
 </div>
 
-#### Some other Tools
-The functionality should be pretty self-explanatory: 
+#### Site Utility Methods
+
 ```php
 \Pimcore\Tool\Frontend::getSiteForDocument($document);
 \Pimcore\Tool\Frontend::isDocumentInCurrentSite($document);

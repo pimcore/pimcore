@@ -11,20 +11,16 @@ Layouts define everything that repeats on one page to another, such as a header,
 Layouts often contain the basic structure of a HTML document, such as `<html>`, `<head>` and the `<body>` 
 tag as well as scripts and stylesheets.
 
-In Symfony/Pimcore, this problem is thought about differently: a template can be decorated by another one. 
-This works exactly the same as PHP classes: template inheritance allows you to build a base "layout" 
-template that contains all the common elements of your site defined as blocks (think "PHP class with 
-base methods"). A child template can extend the base layout and override any of its blocks 
-(think "PHP subclass that overrides certain methods of its parent class").
+Template inheritance lets you build a base layout containing common elements (header, footer, scripts)
+defined as Twig blocks. Child templates extend the layout and override specific blocks.
+Layouts are regular Twig files located in `/templates`.
 
-Layout scripts are just normal view scripts and are located together with normal view scripts in: `/templates`
-
-For more details about template inheritance and layouts, please have a look at the 
-[Symfony documentation](https://symfony.com/doc/current/templating.html#template-inheritance-and-layouts). 
+For more details, see the
+[Symfony documentation](https://symfony.com/doc/current/templates.html#template-inheritance-and-layouts).
 
 ## Usage of Layouts
 
-###### A Simple Sample Layout Looks Like the Following:  
+### Sample Layout
 
 ```twig
 <!DOCTYPE html>
@@ -46,18 +42,15 @@ Of course, editables and template helpers can be used within the layout file and
 more complicated. The most important line though is `{{ block('content') }}`. 
 It includes the actual rendered content of the view. 
 
-###### Use a Layout in a template
+### Using a Layout in a Template
 
-Layouts are simply used by declaring a parent template with the following code. 
+Declare a parent template with the `extends` tag:
 
 ```twig
 {% extends 'layout.html.twig' %}
 ```
 
-In this example we extend from the template `layout.html.twig`, but we can use any other and as many as needed 
-scripts instead.  
-  
-A complete example of a document page would look like the following: 
+A complete document template using a layout:
 
 ```twig
 {% extends 'layout.html.twig' %}

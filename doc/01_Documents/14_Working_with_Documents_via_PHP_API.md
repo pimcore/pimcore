@@ -87,8 +87,6 @@ if ($document) {
 }
 ```
 
-<a name="documentsListing">&nbsp;</a>
-
 ## Document Listings
 
 ### Examples
