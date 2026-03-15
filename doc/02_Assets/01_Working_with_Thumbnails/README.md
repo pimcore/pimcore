@@ -1,17 +1,22 @@
-# Working With Thumbnails
+---
+title: Working with Thumbnails
+description: Generating optimized image, video, and document thumbnails from Pimcore assets.
+---
 
-Pimcore provides a sophisticated thumbnail processing engine for calculating thumbnails based on source assets. So for 
-different output channels Pimcore can calculate and provide optimized images in terms of dimensions, file sizes, formats
-and much more.
+# Working with Thumbnails
 
-This functionality allows true single source publishing with Pimcore.
+Pimcore provides a thumbnail processing engine that calculates optimized output variants
+from source assets. For different output channels, Pimcore can generate images with the right
+dimensions, file sizes, formats, and quality settings from a single source file.
 
-### Allowed formats
+## Allowed Formats
+
 Pimcore allows the following formats for thumbnails out of the box:
 `'avif', 'eps', 'gif', 'jpeg', 'jpg', 'pjpeg', 'png', 'svg', 'tiff', 'webm', 'webp', 'print'`.
 
-If you want to use a different format, you can easily extend the list of supported formats.
-Keep in mind that you must copy the whole list of formats and add your desired format to it.
+To add a different format, extend the list in your configuration.
+Note that you must include the complete list of formats when overriding:
+
 ```yaml
 pimcore:
     assets:
@@ -32,7 +37,12 @@ pimcore:
                 - 'print' # Add your desired format here
 ```
 
-##### Thumbnails are available for following file types: 
-* [Image Thumbnails](./01_Image_Thumbnails.md)
-* [Video Thumbnails](./02_Video_Thumbnails.md)
-* [Asset Document Thumbnails](./03_Asset_Document_Thumbnails.md)
+## Thumbnail Types
+
+- [Image Thumbnails](./01_Image_Thumbnails.md) - transformation pipelines for resizing, cropping,
+  and format conversion
+- [Video Thumbnails](./02_Video_Thumbnails.md) - transcoding and preview image extraction
+- [Asset Document Thumbnails](./03_Asset_Document_Thumbnails.md) - preview images for PDFs,
+  Office documents, and other formats
+- [Advanced Image Thumbnails](./04_Advanced_Image_Thumbnails.md) - high-resolution support,
+  media queries, focal points, ICC profiles, and more

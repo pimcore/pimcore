@@ -1,30 +1,40 @@
+---
+title: Restricting Public Asset Access
+description: Securing confidential assets by restricting or controlling public access via web server rules or application logic.
+---
+
 # Restricting Public Asset Access
 
-Pimcore has following default behavior in terms of asset delivery: 
+By default, all data stored as Pimcore assets is publicly accessible via its URL
+(e.g. `https://mydomain.com/my-assetfolder/my-asset.jpg`) without login or other access restriction.
+Confidential data **must not** be stored as Pimcore assets without additional protection measures.
 
-> All Data that is stored as Pimcore Assets can be accessed via its URL (e.g. https://mydomain.com/my-assetfolder/my-asset.jpg) 
-> and therefore is public available without login or other access restriction!
-> 
-> As a consequence confidential data **must not** be stored as Pimcore Assets without additional protection measures.
+This default exists for performance reasons: delivering an asset directly via the web server
+requires significantly fewer resources than starting a PHP process for every asset request
+(especially for thumbnails).
 
-The reason for this wanted behavior is performance. Delivering an asset directly via the web server needs significantly 
-less resources than starting a php process for every asset request (especially when it comes to delivering thumbnails).  
+If you need to restrict access, Pimcore provides two options:
+
+| Option | Approach | Performance Impact |
+|--------|----------|--------------------|
+| **Option 1** | Block access entirely at the web server level | None (requests never reach PHP) |
+| **Option 2** | Route requests through a controller for permission checks | Significant (PHP process per request) |
+
+Choose **Option 1** when assets should never be accessible publicly. Choose **Option 2** when
+you need to check permissions at runtime (e.g. user-specific access control).
 
 
-If further restriction is needed, Pimcore provides two options for doing so: 
+## Option 1 - Restricting Access Completely
 
-
-### Option 1 - Restricting access to certain assets completely  
-
-All confidential assets need to be stored within one (or a few) folder(s), e.g. within `/protected` (to set up Pimcore
-permissions this is necessary anyway). 
+All confidential assets must be stored within one (or a few) folders, e.g. within `/protected`
+(this is also required for Pimcore permissions).
 
 ![Protected Folder](../img/asset-access-restriction.png)
 
-**Apache**
+### Apache
 
-In the `.htaccess` of the project, the access to this folder has to be restricted with an additional rewrite rule. It is
-important, that this rule is placed **in front of** the rewrite rule for asset delivery. 
+In the `.htaccess` of the project, restrict access to this folder with an additional rewrite rule.
+Place this rule **before** the rewrite rule for asset delivery:
 
 ```apache
 ...
@@ -36,9 +46,9 @@ RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 ...
 ```
 
-**Nginx**
+### Nginx
 
-Add the following parts to your Nginx configuration directly after the index directive. 
+Add the following parts to your Nginx configuration directly after the index directive:
 
 ```nginx
 location ~ ^/protected/.* {
@@ -54,27 +64,29 @@ location ~ ^/cache-buster\-[\d]+/protected(.*) {
 }
 ```
 
-A full configuration example can be found [on this page](../backlog/23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
+A full configuration example can be found on the
+[Nginx Configuration](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/02_Nginx_Configuration.md) page.
 
 
-Because of this rule, all assets located within `/protected` (also all their thumbnails) are not delivered via the web 
-server anymore. As a consequence also using the direct link for downloading or using the Pimcore generated img tags for 
-thumbnails cannot be used anymore. All delivery of these assets has to be done manually via a custom controller action. 
+Because of this rule, all assets located within `/protected` (including all their thumbnails)
+are no longer delivered via the web server. As a consequence, direct download links and
+Pimcore-generated img tags for thumbnails cannot be used. All delivery of these assets
+must be done manually via a custom controller action.
 
 
-### Option 2 - Checking permissions before delivery 
+## Option 2 - Checking Permissions Before Delivery
 
-This option does not restrict the delivery in general, but routes the asset request to a controller action that can check 
-access permissions with custom business logic and then deliver the asset or not. 
+This option does not restrict delivery entirely, but routes asset requests to a controller action
+that can check access permissions with custom business logic and then deliver the asset or not.
 
-Again all confidential assets need to be stored within one (or a few) folders, e.g. within `/protected`. 
+Again, all confidential assets must be stored within one (or a few) folders, e.g. within `/protected`.
 
 ![Protected Folder](../img/asset-access-restriction.png)
 
-**Apache**
+### Apache
 
-In the `.htaccess` of the project, requests to assets of this folder need to be routed to `index.php`. Again, it is
-important, that this rule is placed **in front of** the rewrite rule for asset delivery.
+In the `.htaccess` of the project, route requests to assets in this folder to `index.php`.
+Place this rule **before** the rewrite rule for asset delivery:
 
 ```apache
 ...
@@ -86,9 +98,9 @@ RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 ...
 ```
 
-**Nginx**
+### Nginx
 
-Add the following parts to your Nginx configuration directly after the index directive. 
+Add the following parts to your Nginx configuration directly after the index directive:
 
 ```nginx
 rewrite ^(/protected/.*) /index.php$is_args$args last;
@@ -104,24 +116,25 @@ location ~ ^/cache-buster\-[\d]+/protected(.*) {
 }
 ```
 
-A full configuration example can be found [on this page](../backlog/23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
+A full configuration example can be found on the
+[Nginx Configuration](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/02_Nginx_Configuration.md) page.
 
 
-In the application, there has to be a route in (config/routes.yaml) and a controller action that handles the request, e.g. like the following:
+In the application, define a route in `config/routes.yaml` and a controller action that handles the request:
 
 ```yaml
 # config/routes.yaml
 
-# important these have to be the top routes in the file!
+# important: these must be the top routes in the file!
 asset_protect:
     path: /protected/{path}
     defaults: { _controller: App\Controller\MyAssetController::protectedAssetAction }
     requirements:
         path: '.*'
-        
+
 cache_buster_asset_protect:
     path: /cache-buster-{id}/protected/{path}
-    defaults: { _controller: App\Controller\MyAssetController:protectedAssetAction }
+    defaults: { _controller: App\Controller\MyAssetController::protectedAssetAction }
     requirements:
         id: '\d+'
         path: '.*'
@@ -145,8 +158,7 @@ class MyAssetController extends FrontendController
     public function protectedAssetAction(Request $request): Response
     {
         // IMPORTANT!
-        // Add your code here to check permission!
-
+        // Add your permission check here and throw AccessDeniedHttpException if denied.
 
         // the following code is responsible to deliver asset & thumbnail contents
         // modify it the way you need it for your use-case
@@ -168,5 +180,5 @@ class MyAssetController extends FrontendController
 }
 ```
 
-Of course this option has significant impact on server load and delivery performance of assets (and thumbnails). Therefore
-it is **not** suggested to deliver all assets that way but only the confidential ones!  
+This option has significant impact on server load and delivery performance of assets (and thumbnails).
+It is **not** recommended to deliver all assets this way, only the confidential ones.

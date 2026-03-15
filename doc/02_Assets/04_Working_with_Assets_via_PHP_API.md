@@ -1,10 +1,15 @@
-# Working With Assets via PHP API
+---
+title: Working with Assets via PHP API
+description: CRUD operations, listings, custom settings, and metadata management for assets in PHP.
+---
 
-Pimcore provides an object-oriented PHP API to work with Assets.
+# Working with Assets via PHP API
+
+Pimcore provides an object-oriented PHP API to work with assets.
 
 ## CRUD Operations
-Following lines of code show simple CRUD operations for Assets.
- ```php
+
+```php
 //creating and saving new asset
 $newAsset = new \Pimcore\Model\Asset();
 $newAsset->setFilename("myAsset.png");
@@ -26,11 +31,12 @@ $asset1->save();
 
 //deleting assets
 $asset2->delete();
- ```
+```
 
 ## Asset Listings
-With `Asset\Listing` lists of assets can be retrieved and filtered. The most important methods are `setCondition`,
-`setOffset`, `setLimit`, `setOrderKey`, `setOrder`.
+
+Use `Asset\Listing` to retrieve and filter lists of assets. The most important methods are
+`setCondition`, `setOffset`, `setLimit`, `setOrderKey`, and `setOrder`.
 
 ```php
 $list = new \Pimcore\Model\Asset\Listing();
@@ -40,37 +46,48 @@ $list->setOrder("DESC");
 $list->load();
 ```
 
-Please also have a look at [object listings](../03_Objects/02_Working_with_Objects_via_PHP_API.md#object-listings)
-and [document listings](../01_Documents/14_Working_with_Documents_via_PHP_API.md#document-listings).
+Also see [Object Listings](../03_Objects/02_Working_with_Objects_via_PHP_API.md#object-listings)
+and [Document Listings](../01_Documents/14_Working_with_Documents_via_PHP_API.md#document-listings).
 
 
 ## Custom Settings
 
-Custom Settings/Properties can be added programmatically to every asset. This is mostly used for plugins or something
-similar.
+Custom settings are key-value pairs that you can attach programmatically to any asset.
+They are typically used by bundles or application-specific logic.
+
+> **Note:** Custom settings are different from **properties**. Properties are user-facing,
+> support inheritance through the tree hierarchy, and are editable in Pimcore Studio.
+> Custom settings are developer-facing, stored directly on the asset,
+> and can hold any serializable value.
 
 ```php
 $asset = Asset::getById(2345);
 $settings = $asset->getCustomSettings();
-$settings["mySetting"] = "this is my value, this can be anything - also an array or an object, not only a string";
+$settings["mySetting"] = "this can be anything - a string, array, or object";
 $asset->setCustomSettings($settings);
 $asset->save();
 ```
 
 
-## Using (localized) Asset Metadata
-Asset Metadata allow you to attach localized metadata to assets within Pimcore. These metadata can be accessed via API and
-therefore used on all output channels.
+## Using (Localized) Asset Metadata
 
-### Examples
-##### Getting Data
-Metadata for an asset can be fetched using `getMetadata` method of Asset class. It can take the following optional parameters: 
-1. `$name` (string) when passed it returns the metadata with the given name, otherwise it lists all.
-2. `$language` (string) with this parameter you can filter out the metadata of a specific language.
-3. `$strictMatchLanguage` (boolean) if true tries to get only the metadata which exactly matches the requested language without considering the fallback.
-4. `$raw`  (boolean) if true, it will also return extra information like name, data, language and input type of the metadata.
+Asset metadata lets you attach localized metadata to assets within Pimcore.
+These metadata values can be accessed via the API and used across all output channels.
 
-To know the expected return values, you can look into the tests inside `tests/Model/Asset/Metadata/NormalizerTest::testLocalizedMetaData`
+### Getting Data
+
+Retrieve metadata using the `getMetadata` method of the Asset class.
+It accepts the following optional parameters:
+
+1. `$name` (string) - when passed, returns the metadata with the given name; otherwise returns all metadata.
+2. `$language` (string) - filters metadata for a specific language.
+3. `$strictMatchLanguage` (boolean) - if true, returns only metadata that exactly matches
+   the requested language without considering fallback.
+4. `$raw` (boolean) - if true, returns extra information including name, data, language,
+   and input type of the metadata.
+
+For expected return values, see the tests in
+`tests/Model/Asset/Metadata/NormalizerTest::testLocalizedMetaData`.
 
 ```php
 $asset = Asset::getById(123);
@@ -80,7 +97,7 @@ $asset->getMetadata("title");
 
 // get the English title
 $asset->getMetadata("title", "en");
-// if there's no title for "en" but one without a language this will be returned (fallback mechanism).
+// if there's no title for "en" but one without a language, the unlocalized value is returned (fallback mechanism)
 
 // get all available metadata
 $asset->getMetadata();
@@ -91,37 +108,40 @@ $asset->getMetadata(null, 'en');
 // get exclusively all the metadata that have a specific language
 $asset->getMetadata(null, 'en', true);
 
-// get metadata in raw format. ie: including metadata input type, language, value and name
+// get metadata in raw format (including metadata input type, language, value, and name)
 $asset->getMetadata('title', null, true, true);
- ```
+```
 
-##### Setting Data
- ```php
- // Set the English title
- $asset->addMetadata("title", "input", "the new title", "en");
- ```
+### Setting Data
 
-##### Removing Data
- ```php
- // Remove the English title
- $asset->removeMetadata("title", "en");
+```php
+// Set the English title
+$asset->addMetadata("title", "input", "the new title", "en");
+```
 
- // Remove the title in all languages
- $asset->removeMetadata("title", "*");
- ```
+### Removing Data
+
+```php
+// Remove the English title
+$asset->removeMetadata("title", "en");
+
+// Remove the title in all languages
+$asset->removeMetadata("title", "*");
+```
 
 ### Predefined System Metadata
-There may be predefined and default fields on an Asset. That means that these fields have a special meaning and
-will be used somewhere else.
 
-##### Image asset
-There are 3 default fields, namely `title`, `alt` and `copyright`. The contents of this fields will be
-used as default `alt` and `title` attribute on any `<img>` tag generated by Pimcore for the
-corresponding image.
+Some fields on an asset have special meaning and are used by the system.
 
-This includes for example:
+#### Image Assets
+
+There are 3 default fields: `title`, `alt`, and `copyright`. These are used as default `alt`
+and `title` attributes on any `<img>` tag generated by Pimcore for the corresponding image.
+
+This includes:
+
 ```twig
-// image editable on documents
+{# image editable on documents #}
 {{ pimcore_image("myImage", {"thumbnail": "xyz"}) }}
 ```
 
@@ -130,6 +150,5 @@ This includes for example:
 {{ asset.getThumbnail("xyz").getHtml()|raw }}
 {{ object.getMyImage().getThumbnail("xyz").getHtml()|raw }}
 ```
-The `copyright` field will be appended to every `title` and `alt` attribute separated by |.
 
----
+The `copyright` field is appended to every `title` and `alt` attribute, separated by `|`.
