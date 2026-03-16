@@ -12,7 +12,7 @@ Additionally, data type containers such as blocks or field collections cannot be
 
 For instance, the following structure is **not allowed**:
 
-```
+```text
 -- Field Collection
     -- Block
         -- Localized Field
@@ -21,7 +21,7 @@ For instance, the following structure is **not allowed**:
 
 However, the following structure **is allowed**:
 
-```
+```text
 -- Field Collection
     -- Block
         -- Input field

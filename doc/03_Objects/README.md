@@ -27,7 +27,7 @@ consists of two parts:
 - **Editor layout** - how fields are organized in the object editor using
   [layout elements](./01_Object_Classes/02_Layout_Elements/README.md) (panels, tabs, fieldsets)
 
-See [Object Classes](./01_Object_Classes/README.md) for the full documentation.
+See [Data Object Classes](./01_Object_Classes/README.md) for the full documentation.
 
 ## Key Capabilities
 

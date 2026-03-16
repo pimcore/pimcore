@@ -38,7 +38,7 @@ possibilities.
 - Context information as `data` (details see Context Information for Calculation below).
 
 ##### Simple examples
-```
+```twig
 # print ID of data object
 object.getId()
 
@@ -58,7 +58,7 @@ You can register new functions that can be used in symfony expressions for calcu
 
 Example string functions provider:
 
-```
+```php
 <?php
 
 namespace App\ExpressionLanguage;
@@ -103,7 +103,7 @@ class StringFunctionsProvider implements ExpressionFunctionProviderInterface
 }
 ```
 
-```
+```yaml
 services:
     App\ExpressionLanguage\StringFunctionsProvider:
         tags:

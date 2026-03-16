@@ -15,7 +15,7 @@ For this purpose columns are separated with a "|" and rows are distinguished wit
 The database field for a table is a TEXT column. 
 For example, the data shown in the screen above would be stored as:
 
-```
+```text
 one|two|three
 four|five|six
 seven|eight|nine

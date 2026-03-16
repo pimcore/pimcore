@@ -13,7 +13,7 @@ Provide a URL and make use of the context parameter to render a response of your
 Note that you can provide a freely selectable string that will be added to the context information. See the output of the example below.
 
 ## Sample Controller Code
-```
+```php
 <?php
 
 namespace App\Controller;

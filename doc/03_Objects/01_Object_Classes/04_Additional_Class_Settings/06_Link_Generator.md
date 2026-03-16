@@ -119,7 +119,7 @@ echo($d->getHref());
 
 would produce the following output
  
- ```
+ ```text
  /en/shop/Products/Cars/Sports-Cars/Jaguar-E-Type~p9
  ```
  

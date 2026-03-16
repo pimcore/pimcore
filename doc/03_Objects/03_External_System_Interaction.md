@@ -90,7 +90,7 @@ For simple CSV exports, Pimcore Studio provides a CSV export functionality.
  
  
 ## Memory Issues
-If you're using / creating very much objects you should call the Pimcore garbage collector after several cycles to prevent memory issues
+If you process or create a large number of objects, call the Pimcore garbage collector after several cycles to prevent memory issues.
 
 ```php
 // just call this static method

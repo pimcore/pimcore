@@ -1,11 +1,11 @@
 ---
-title: Object Classes
+title: Data Object Classes
 description: Defining data structure and editor layout for Pimcore data objects.
 ---
 
-# Object Classes
+# Data Object Classes
 
-Object classes define the structure and editor layout of Data Objects. To get started, follow the
+Data Object classes define the structure and editor layout of Data Objects. To get started, follow the
 [Create a First Project](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/03_Create_a_First_Project/README.md)
 tutorial for a hands-on introduction.
 

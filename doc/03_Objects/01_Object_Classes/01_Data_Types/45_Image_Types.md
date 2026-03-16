@@ -108,7 +108,7 @@ $hotspots = $hotspotImage->getHotspots();
 
 The content of `$hotspots` could look like:
 
-```
+```text
 Array
 (
     [0] => Array
@@ -144,9 +144,9 @@ $hotspotImage = $object->getHotspot1(); // name of the field in Pimcore is "hots
 $marker = $hotspotImage->getMarker();
 ```
 
-The content of $marker could look like:
+The content of `$marker` could look like:
 
-```
+```text
 Array
 (
     [0] => Array

@@ -7,7 +7,7 @@ description: "Defining custom icons for objects based on class or data values."
 
 Pimcore allows you to define custom icons for objects. Either, icons can be the same for all objects of a class 
 (via configuration in class) or objects depending on their data values can have different icons (see below). 
-In addition to that, the tooltip of an object in object tree can be customized via admin style.   
+In addition to that, the tooltip of an object in the object tree can be customized via `AdminStyle`.   
 
 ## Static Custom Icons for Classes
 
