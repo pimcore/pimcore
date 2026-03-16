@@ -1,4 +1,4 @@
-# Best Practice
+# Implementation Inspirations
 
 :::info
 
