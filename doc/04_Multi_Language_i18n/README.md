@@ -1,54 +1,50 @@
-# Multi Language i18n & Localization in Pimcore
+---
+title: Multi-Language & Localization
+description: Overview of Pimcore's multi-language content management, document localization, translation system, and formatting capabilities.
+---
 
-Localization is a very important aspect in every content management. In Pimcore localization can be centrally configured 
-and has influence on multiple aspects within the system. 
+# Multi-Language & Localization
 
-Bottom line is that using Pimcore in a multi language mode is pretty easy for users and developers. Pimcore takes care 
-of all technical aspects and by doing so follows the Symfony patterns.
+Pimcore supports multi-language content and a fully localized user interface out of the box. Content localization and
+UI localization are configured independently, so the languages available for your content can differ from the language
+used in Pimcore Studio. Pimcore follows Symfony patterns for locale handling and translations, making multi-language
+setups straightforward for both editors and developers.
 
-Pimcore has different sets of languages/locales and translations for the admin interface and the front end (website).
-This allows you to have the user interface of Pimcore in different languages than the website. You need to be aware of
-this when requesting the current and available locales, as they are different depending on the context. If a user is
-saving an object in Pimcore which is set to English, the current locale is different than when a visitor on your French
-website triggers a save action.
- 
-## Content Localization 
+## Content Localization
 
-### Language Configuration
-The available languages for content are configured centrally in system settings (*Settings* > *System Settings* > *Localization & Internationalization (i18n/l10n)*). 
+You configure the available languages centrally in Pimcore Studio under **System > System Settings > 
+Localization & Internationalization (l10n/i18n)**. The following settings are available:
 
-![Localization Settings](../img/localization-settings.png)
+- **Available languages** - the set of locales editors can use for content.
+- **Default language** - the system-wide fallback locale.
+- **Fallback language per locale** - if a value is empty in the primary language, Pimcore returns the fallback
+  language's value instead.
+- **Required languages** - mark specific languages as mandatory in localized fields of data objects
+  (see [Localized Fields](../03_Objects/01_Object_Classes/01_Data_Types/50_Localized_Fields.md#definition-of-required-languages)).
 
-Following settings can be defined here: 
-* Available languages
-* System wide default language
-* Fallback language for each language: if defined, Pimcore returns values from fallback language if primary language has 
- no values set. 
-* Define if content for that language should be mandatory in localized fields of data objects. 
-  Details see [here](../03_Objects/01_Object_Classes/01_Data_Types/50_Localized_Fields.md#definition-of-required-languages)
+The activated languages apply to [Localized Fields](../03_Objects/01_Object_Classes/01_Data_Types/50_Localized_Fields.md)
+and [Classification Store](../03_Objects/01_Object_Classes/01_Data_Types/15_Classification_Store.md) fields in data
+objects, as well as to document and translation management.
 
-> *Note: Removing language from the Localization & Internationalization (i18n/l10n) list will not delete its respective data. Please use console command `pimcore:locale:delete-unused-tables` for cleanup.*
+> **Note:** Removing a language from the i18n/l10n list does not delete the corresponding database tables.
+> Use the console command `pimcore:locale:delete-unused-tables` for cleanup.
 
-### Localized Content Areas
-The activated languages have influence to following modules of content within Pimcore: 
+## Document Localization
 
-* [Document - Localization (system property for language)](./01_Localize_your_Documents.md)
-* [Shared Translations (Symfony Translations Component)](./02_Shared_Translations.md)
-* [Localized Fields for Objects (object localization)](../03_Objects/01_Object_Classes/01_Data_Types/50_Localized_Fields.md)
-* [Structured Data Fields - Classification Store](../03_Objects/01_Object_Classes/01_Data_Types/15_Classification_Store.md)
+Pimcore documents carry a language system property that controls locale-aware rendering and routing. For setup details,
+language-specific document trees, and best practices, see [Document Localization](./01_Document_Localization.md).
 
+## Translations
 
-## Pimcore Backend UI Localization
+Pimcore uses the Symfony Translator component and organizes translations into multiple domains. You manage all
+translation entries through **Translations > Translations** in Pimcore Studio, where you can filter by domain, import,
+and export. For details on each domain, see:
 
-Pimcore backend UI localization is independent of content localization but works similar to Shared Translations.
-Basically every text in Pimcore backend is translatable, but there are two different sources for translations - Pimcore
-system translations and project specific translations. 
+- [Shared Translations](./02_Shared_Translations.md) - website and application strings
+- [Pimcore Studio Translations](./03_Pimcore_Studio_Translations.md) - UI labels for Pimcore Studio
+- [Custom Translation Domains](./04_Custom_Translation_Domains.md) - project-specific domains
 
+## Formatting
 
-### Pimcore System Translations
-This covers all labels and texts within Pimcore that ship with Pimcore installation package. Here the standard language 
-English is maintained by the core team. In addition to that, everybody can join the 
- [Pimcore translation project](https://poeditor.com/join/project/VWmZyvFVMH) to add system translations in additional
- languages. With every Pimcore release, newly added translations are added to the Pimcore installation package.
-
-System translations can be overwritten by [Admin Translations](./03_Admin_Translations.md). 
+Pimcore provides a formatting service for locale-aware number, date, and currency formatting.
+See [Formatting Service](./05_Formatting_Service.md) for usage and configuration.

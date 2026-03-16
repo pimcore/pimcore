@@ -1,32 +1,42 @@
-# Shared Translations 
+---
+title: Shared Translations
+description: "Manage website translations using the Symfony Translator component with the messages domain."
+---
 
-Pimcore provides an easy way for editors to edit commonly used translation terms across the application, which can be found 
-here:  `Extras` > `Translation` > `Shared Translations`.
-In the background the standard Symfony Translator component is used to add the shared translation functionality to the application. 
-The main benefit is that you have only one single translator for all your translations. 
+# Shared Translations
 
-It automatically uses the locale specified on a document or from a fallback mechanism. 
+Pimcore provides an easy way for editors to manage commonly used translation terms across the application.
+You can find shared translations in Pimcore Studio under **Translations > Translations**, filtered to the `messages` domain.
+In the background, Pimcore uses the standard Symfony Translator component to provide this functionality.
+The main benefit is that you have a single translator for all your translations.
 
-For more information, please also check out [Symfony's Translations Component](https://symfony.com/doc/current/translation.html). 
+Shared translations use the `messages` domain, which is the default Symfony translation domain. The translator
+automatically uses the locale specified on the current document or from a fallback mechanism. Pimcore also uses other
+domains internally, for example the `studio` domain for Pimcore Studio UI translations. If you need to register your own
+custom domains, see [Custom Translation Domains](./04_Custom_Translation_Domains.md).
+
+For more information, check out the [Symfony Translator component](https://symfony.com/doc/current/translation.html).
 
 ![Shared Translations](../img/localization-translations.png)
 
-Available languages are defined within the system languages, see [here](./README.md).
+Available languages are defined within the system languages, see
+[Multi-Language & Localization](./README.md).
 
-Shared translations are stored in `translations_messages` database table and can be versioned using [Migrations](https://pimcore.com/docs/pimcore/current/Development_Documentation/Development_Tools_and_Details/Migrations.html).
+Shared translations are stored in the `translations_messages` database table and can be versioned using
+[Migrations](https://pimcore.com/docs/pimcore/current/Development_Documentation/Development_Tools_and_Details/Migrations.html).
 
-## Translations case sensitivity
+## Translations Case Sensitivity
 
-Translations are case sensitive by default. You can
-reconfigure Pimcore to handle website and admin translations as case insensitive, however as this implies a performance
-hit (translations might be looked up twice) and it does not  conform with Symfony's translators you're encouraged to reference
-translation keys with the same casing as they were saved.
+Translations are case sensitive by default. You can reconfigure Pimcore to handle website and admin translations as
+case insensitive. However, this implies a performance hit (translations might be looked up twice) and does not conform
+with the Symfony Translator component. You are encouraged to reference translation keys with the same casing as they
+were saved.
 
 ## Working with Shared Translations / the Translator in Code
-  
-#### Example in Templates / Views
 
-You can also use variable interpolation in localized messages.
+### Example in Templates / Views
+
+Use the Symfony `trans` filter in Twig templates. You can also pass variables for interpolation in localized messages.
 
 ```twig
 <div>
@@ -37,9 +47,11 @@ You can also use variable interpolation in localized messages.
 </div>
 ```
 
-Parameters in translations can be wrapped in double curly braces (`{{` and `}}`) but you are free to use other placeholder wrappers as well, e.g. `%parameter%` like in the [Symfony docs](https://symfony.com/doc/current/translation.html#translatable-objects) also works.
+Parameters in translations can be wrapped in double curly braces (`{{` and `}}`), but you are free to use other
+placeholder wrappers as well. For example, `%parameter%` as shown in the
+[Symfony docs](https://symfony.com/doc/current/translation.html#translatable-objects) also works.
 
-#### Example in a Controller
+### Example in a Controller
  
 ```php
 <?php
@@ -64,18 +76,21 @@ class ContentController extends FrontendController
 }
 ```
 
-#### Translation Pluralization/Selection
-Since Pimcore uses Symfony Translator component in background, you can store and use the translations in ICU Message Format(supported by Symfony Translator) for Pluralization, Selection and more. [Read here](https://symfony.com/doc/current/translation.html#message-format)
-This can be achieved in Pimcore by selecting type "ICU Format" on translation UI and passing required parameter in view/Controller. 
-e.g.
- - Add translation key and select type "ICU Format".
+### Translation Pluralization/Selection
+
+Since Pimcore uses the Symfony Translator component, you can store and use translations in
+[ICU Message Format](https://symfony.com/doc/current/translation.html#message-format) for pluralization, selection,
+and more. To use ICU format, select type "ICU Format" in the Pimcore Studio translations view and pass the required
+parameters in your template or controller.
+
+ - Add a translation key and select type "ICU Format".
 
     ![Translation Pluralization1](../img/translation_pluralization1.png)
     
- - Click on language cell plain text button to edit 
+ - Click the plain text button on the language cell to open the editor.
     ![Translation Pluralization1](../img/translation_pluralization1b.png)
-   
-   and add translation in ICU format `{variable_name, function_name, function_statement}`
+
+   Add the translation in ICU format `{variable_name, function_name, function_statement}`:
     ![Translation Pluralization2](../img/translation_pluralization2.png)
 
  - Use in view
@@ -90,9 +105,11 @@ e.g.
     {# output: Total of 100 cars sold! #}
 ```
 
-## Pimcore backend functionalities
+## Pimcore Studio Features
 
-### Sorting & Filtering on language level
+The Pimcore Studio translations view provides several tools for managing shared translations.
+
+### Sorting & Filtering per Language
 
 ![Sorting Shared Translations](../img/localization-translations-sorting.jpg)
 

@@ -1,9 +1,16 @@
+---
+title: Formatting Service
+description: "International formatting of numbers, currencies, and dates using PHP's Intl extension."
+---
+
 # Formatting Service
 
-Pimcore ships a service for international formatting of numbers, currencies and date time. The service is basically a 
-factory and wrapper of the [`IntlDateFormatter` component of php](https://php.net/manual/en/class.intldateformatter.php).
-  
-#### Usage Example
+Pimcore ships a service for locale-aware formatting of numbers, currencies, and dates. The `IntlFormatter` service
+wraps PHP's [`IntlDateFormatter`](https://php.net/manual/en/class.intldateformatter.php) and
+[`NumberFormatter`](https://php.net/manual/en/class.numberformatter.php) components. By default, it resolves the
+locale from the current request.
+
+## Usage Example
  
 ```php
 <?php
@@ -21,11 +28,11 @@ echo $service->formatCurrency("45632325.32", "EUR");
 echo $service->formatCurrency("45632325.32", "EUR", "#,##0.00 ¤¤");
 ```
 
-#### Overwriting Definition
+## Overriding the Service Definition
 
-You can overwrite the default service definition with your own, e.g. to overwrite the default currency patterns. 
+You can override the default service definition with your own, for example to customize the default currency patterns. 
 
-```yml
+```yaml
 services:
     # Formatting service for dates, times and numbers
     Pimcore\Localization\IntlFormatter:
