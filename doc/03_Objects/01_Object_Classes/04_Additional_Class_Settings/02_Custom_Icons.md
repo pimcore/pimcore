@@ -24,7 +24,12 @@ Icons that come along with Pimcore by default can be found in `<YOUR-DOMAIN>/pim
 #### Icon Sizes
 As icons SVG graphics are recommended. If you use pixel graphics, the maximum size is 18x20 pixels. 
 
-## Dynamically define Custom Icons and Style in Object-Tree (AdminStyle)
+## Dynamic Icons and Tooltips (AdminStyle)
 
-You can dynamically define custom icons based on the element.
-Read [Dynamic Icons](../../../10_Extending_Pimcore/03_Custom_Extension_Guides/10_Custom_Icons_and_Tooltips.md) for details.
+Beyond static class-level icons, you can dynamically change icons, CSS classes, and tooltips
+based on the element's data. For example, show a different icon for published vs. draft objects,
+or display key attributes in the tree node tooltip.
+
+This is done by implementing `AdminStyleInterface` in your class. See the full guide in the
+Extending Pimcore section:
+[Custom Icons & Tooltips](../../../10_Extending_Pimcore/03_Custom_Extension_Guides/10_Custom_Icons_and_Tooltips.md).
