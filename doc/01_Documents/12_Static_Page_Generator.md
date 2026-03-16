@@ -8,14 +8,18 @@ Pimcore offers a Static Page Generator service, which is used to generate HTML p
 
 ## Enable Static Page generator for a Document
 To enable automatic static page generation on document save or by CLI command, go to Document -> Settings -> Static Page Generator.
+
+<div class="image-as-lightbox"></div>
+
 ![Static Page Settings](../img/static_page1.png)
 
 Mark enable checkbox and define optional lifetime for static pages (which regenerates static page after lifetime) and save document.
 
-Once, the static page generator is enabled, the document icon changes to grey icon:
-![Static Page Detail](../img/static_page2.png)
+Once, the static page generator is enabled, last generated information is displayed in document settings, when the 
+generation is requested from frontend or cli command.
 
-and last generated information is displayed in document settings, when the generation is requested from frontend or cli command.
+<div class="image-as-lightbox"></div>
+
 ![Static Page Detail](../img/static_page3.png)
 
 In addition, if you are using default local storage for static pages, then make sure your project `.htaccess` has this below section (after the `# Thumbnails` section), which is responsible for looking up static page before passing to templating engine. 

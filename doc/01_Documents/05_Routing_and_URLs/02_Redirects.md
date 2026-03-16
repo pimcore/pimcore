@@ -27,6 +27,8 @@ Redirects are configured in the Redirects editor, accessible via the Tools menu.
 You can use regular expressions to define the sources, the placeholders in the regex can be accessed in the target 
 URL using the PCRE back-reference syntax. 
 
+<div class="image-as-lightbox"></div>
+
 ![Regex and Backreference](../../img/redirects2.png)
 
 Notice: Only simple `$1-n` references are possible, no special back-reference syntax. 
@@ -35,6 +37,8 @@ Notice: Only simple `$1-n` references are possible, no special back-reference sy
 #### Priority
 
 Each redirect has a priority.
+
+<div class="image-as-lightbox"></div>
 
 ![Redirect Priority](../../img/redirects3.png)
  
@@ -64,5 +68,7 @@ pimcore_seo:
 
 
 The new status codes can be seen in Pimcore Studio.
+
+<div class="image-as-lightbox"></div>
 
 ![Redirect Priority](../../img/redirects7.png)

@@ -65,9 +65,15 @@ Additionally you can also pass [any valid attribute for `Thumbnail::getHtml()`](
 The code above generates an image area in the backend and displays the image at the frontend.
 
 The empty backend area:
+
+<div class="image-as-lightbox"></div>
+
 ![Empty image area](../../../img/image_preview_backend1.png)
 
 The filled backend area:
+
+<div class="image-as-lightbox"></div>
+
 ![Filled image area](../../../img/image_preview_backend2.png)
 
 

@@ -54,9 +54,13 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*
 
 You could see the edit mode preview in the picture, below.
 
+<div class="image-as-lightbox"></div>
+
 ![Link editable - edit mode preview](../../../img/editables_link_backend_preview.png)
 
 And the frontend:
+
+<div class="image-as-lightbox"></div>
 
 ![Link editable - frontend](../../../img/editables_link_frontend_preview.png)
 
@@ -76,6 +80,9 @@ Let's see how to make a list of links with [Block](./06_Block.md).
 ```
 
 The above example renders a list of links: 
+
+<div class="image-as-lightbox"></div>
+
 ![The links list in the backend](../../../img/editables_link_inside_block.png)
 
 ### Link Generators

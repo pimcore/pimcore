@@ -45,7 +45,8 @@ In the target controller action, you get the following parameters which can be a
 | `type`     | string                 | The type of the element assigned to the renderlet (document,asset,object)                        |
 | `subtype`  | string                 | The subtype of the element assigned to the renderlet (folder, image, link, page, classname, ...) |
 
-If you have defined any custom parameters on the renderlet configuration you can access them also with `$request->query->get('yourParam')`.
+If you have defined any custom parameters on the renderlet configuration you can access them also with 
+`$request->query->get('yourParam')`.
 
 ## Example
 
@@ -67,12 +68,14 @@ The code below shows how to use renderlet to create gallery based on it.
 
 Now editors are able to put elements onto the renderlet in the editmode.
 
+<div class="image-as-lightbox"></div>
+
 ![Renderlet gallery - editmode](../../../img/editables_renderlet_gallery_example_editmode.png)
 
 ### Specify the Controller Action
 
 ```php
-#[Template('my-gallery.html.twig')]
+#[Template('content/my_gallery.html.twig')]
 public function myGalleryAction(Request $request): array
 {
     if ('asset' === $request->query->get('type')) {
@@ -97,19 +100,24 @@ Now you have to create the template file at: `templates/content/my_gallery.html.
 
 ```twig
 {% if assets %}
-	<div class="my-gallery">
-		{% for asset in assets %}
-			{% if asset is instanceof('\\Pimcore\\Model\\Asset\\Image') %}
-				<div class="gallery-row">
-                    {{ asset.getThumbnail("myThumbnailName").getHTML()|raw }}
-				</div>
-			{% endif %}
-		{% endfor %}
-	</div>
+    <div class="area-gallery-single-images row">
+        {% for asset in assets %}
+            {% if asset is instanceof('\\Pimcore\\Model\\Asset\\Image') %}
+                <div class="col-md-4">
+                    <div class="pimcore_block_entry">
+                        {{ asset.getThumbnail("galleryThumbnail").getHTML()|raw }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
 {% endif %}
 ```
 
 And the final view is like, below:
+
+<div class="image-as-lightbox"></div>
+
 ![Rendered renderlet - frontend](../../../img/editables_renderlet_rendered_view.png)
 
 

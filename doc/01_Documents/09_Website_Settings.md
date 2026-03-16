@@ -22,6 +22,9 @@ The returned configuration is an array containing your settings.
 
 
 ### Example Configuration
+
+<div class="image-as-lightbox"></div>
+
 ![Website Setting Config](../img/website-settings.png)
 
 Usage in a template:

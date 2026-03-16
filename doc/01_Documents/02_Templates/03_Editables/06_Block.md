@@ -48,7 +48,7 @@ The items in the loop as well as their order can be defined by the editor with t
 ```
 
 ```twig
-<!-- Deprecated! Will be removed in Pimcore 12 -->
+<!-- Deprecated! Will be removed with next twig major version -->
 {% for i in pimcore_block("contentblock").iterator %}
     <h2>{{ pimcore_input("subline") }}</h2>
     {{ pimcore_wysiwyg("content") }}
@@ -87,7 +87,7 @@ And in the frontend of the application:
 ```
 
 ```twig
-<!-- Deprecated! Will be removed in Pimcore 12 -->
+<!-- Deprecated! Will be removed with next twig major version -->
 {% set myBlock = pimcore_block("contentblock", {"reload": true}) %}
 {% for i in myBlock.iterator %}
     {% if myBlock.current > 0 %}
@@ -128,7 +128,7 @@ The manual block offers you the possibility to deal with block the way you like,
 ```
 
 ```twig
-<!-- Deprecated! Will be removed in Pimcore 12 -->
+<!-- Deprecated! Will be removed with next twig major version -->
 {% set block = pimcore_block("gridblock", {"manual": true, "limit": 6}).start() %}
 <table>
     <tr>
@@ -174,7 +174,7 @@ If you want to wrap buttons in a div or change the Position.
 ```
 
 ```twig
-<!-- Deprecated! Will be removed in Pimcore 12 -->
+<!-- Deprecated! Will be removed with next twig major version -->
 {% set block = pimcore_block("gridblock", {"manual": true}).start() %}
 <table>
     <tr>
@@ -212,7 +212,7 @@ If you want to wrap buttons in a div or change the Position.
 ```
 
 ```twig
-<!-- Deprecated! Will be removed in Pimcore 12 -->
+<!-- Deprecated! Will be removed with next twig major version -->
 {% set block = pimcore_block("gridblock", {"manual": true}).start() %}
 <div>
     {% for b in block.iterator %}

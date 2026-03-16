@@ -106,11 +106,20 @@ implementing the methods for templates and icon yourself (see `AreabrickInterfac
 |---------------|-------------------------------------|
 | view template | `<templateLocation>/view.html.twig` |
 
-If the brick defines an icon in the `public` resources directory of the bundle, the icon will be automatically used 
-in editmode. If the icon is at another location, you can override the `getIcon()` method and specify an URL to be 
-included as icon. When rendering editmode, the following location will be searched for the brick icon and is expected
- to be a 16x16 pixel PNG: `<bundlePath>/Resources/public/areas/<brickId>/icon.png` which resolves to the URL  
- `/bundles/<bundleUrl>/areas/<brickId>/icon.png` when included in editmode.
+If the brick defines an icon in the `public` resources directory of the bundle, the icon will be automatically used
+in editmode. When `getIcon()` returns `null`, the following locations are checked for an auto-discovered icon:
+
+- `<bundlePath>/public/areas/<brickId>/icon.png` (Symfony >= 5 structure)
+- `<bundlePath>/Resources/public/areas/<brickId>/icon.png` (legacy structure)
+
+If found, the icon resolves to the URL `/bundles/<bundleUrl>/areas/<brickId>/icon.png`.
+
+You can also override the `getIcon()` method to specify a custom icon. The return value supports two modes:
+
+- **Icon name** (string without a dot): References a built-in Pimcore Studio icon from the icon library, e.g. `'car'`, `'image'`, `'calendar'`. This is the recommended approach.
+- **Icon path** (string containing a dot): A URL path to a custom image file, e.g. `'/bundles/app/img/custom-icon.svg'`.
+
+If no icon is configured and auto-discovery finds nothing, a default `area-brick` icon is shown.
 
 You can optionally implement `Pimcore\Extension\Document\Areabrick\PreviewAwareInterface` to add a custom html tooltip
 for your brick that will be shown as a tooltip when hovering over the add-brick button.  
@@ -121,16 +130,24 @@ Given our `iframe` brick defined before, the following paths will be used.
 | Location      | Path                                       |
 |---------------|--------------------------------------------|
 | view template | `templates/areas/iframe/view.html.twig`    |
-| icon path     | `public/bundles/app/areas/iframe/icon.png` |
-| icon URL      | `/bundles/app/areas/iframe/icon.png`       |
 
 ### `bundle` template location
 
-The icon path and URL are the same as above, but the view scripts are expected inside the bundle.
+The view scripts are expected inside the bundle directory.
 
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
 | view template | `templates/areas/iframe/view.html.twig`                 |
+
+### Icon auto-discovery (both locations)
+
+The icon is resolved from the bundle's public directory, regardless of template location:
+
+| Location      | Path                                                        |
+|---------------|-------------------------------------------------------------|
+| icon path     | `<bundlePath>/public/areas/iframe/icon.png`                 |
+| legacy path   | `<bundlePath>/Resources/public/areas/iframe/icon.png`       |
+| icon URL      | `/bundles/<bundleUrl>/areas/iframe/icon.png`                |
 
 ## How to Create a Brick
  
@@ -152,6 +169,15 @@ class Iframe extends AbstractTemplateAreabrick
     public function getName(): string
     {
         return 'IFrame';
+    }
+    
+    public function getIcon(): ?string
+    {
+        // Option 1: Use a built-in Pimcore Studio icon by name (recommended)
+        return 'video';
+
+        // Option 2: Use a custom icon file by path (must contain a dot)
+        // return '/bundles/app/img/areas/iframe/icon.svg';
     }
 
     public function getDescription(): string
@@ -224,11 +250,25 @@ brick metadata.
     {% endif %}
 {% endif %}
 ```
+:::caution
+
+Make sure the newly added brick is allowed in the areablock configuration (either by adding it to the `allowed` array 
+or by not defining an `allowed` array at all, which means all bricks are allowed).
+Details see [areablock documentation](./README.md).
+
+:::
+
 
 Now you should be able to see your brick in the list of available bricks on your areablock:
+
+<div class="image-as-lightbox"></div>
+
 ![Areablock bricks list with the iframe brick](../../../../img/bricks_iframe_areablock_list.png)
 
 In editmode you can see the configuration for the Iframe brick:
+
+<div class="image-as-lightbox"></div>
+
 ![Iframe brick - configuration in the editmode](../../../../img/bricks_iframe_editmode_preview.png)
 
 
@@ -248,7 +288,7 @@ reasons, but a couple of methods could be useful when implementing your own bric
 | `$info->getParam($name)`| Retrieve a param passed by `globalParams` or `params` config option  |
 | `$info->getParams()`    | Retrieve all params passed by `globalParams` or `params` config option  |
 
-## Editable Dialog (since 6.8)
+## Editable Dialog
 Sometimes it is necessary to gather some more optional data or provide some configuration options for a brick,
 which shouldn't be visible by default. For those scenarios the editable dialog is the right tool. 
 

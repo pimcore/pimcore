@@ -55,9 +55,13 @@ The code below is responsible for showing a list of elements types related to th
 
 Picture below, presents the editmode preview:
 
+<div class="image-as-lightbox"></div>
+
 ![Relations editable - editmode preview](../../../img/editables_multihref_editmode_preview.png)
 
 The frontend part looks like that:
+
+<div class="image-as-lightbox"></div>
 
 ![Relations editable - frontend preview](../../../img/editables_multihref_preview.png)
 

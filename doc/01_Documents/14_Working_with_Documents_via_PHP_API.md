@@ -36,8 +36,6 @@ $page->save(["versionNote" => "my new version"]);
 Now you can refresh the parent node of the newly created document in Pimcore Studio (ID `82` in this case) and you'll
 see the newly created document. 
 
-![Create document by API](../img/documents_api_create.png)
-
 ### Edit an Existing Document
 
 If you'd like to get a document you can use the `getById()` or `getByPath()` method from the `\Pimcore\Model\Document` class.

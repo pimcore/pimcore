@@ -124,6 +124,8 @@ parameter during the build step:
 
 ## Document Navigation Properties
 
+<div class="image-as-lightbox"></div>
+
 ![Settings for navigation on document edit page.](../img/navigation_document_settings.png)
 
 Pages and links have **Navigation Settings** in their system properties. These include:

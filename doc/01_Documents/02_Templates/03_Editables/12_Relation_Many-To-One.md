@@ -46,7 +46,7 @@ After, the view in Pimcore Studio changes like in the picture:
 
 ### Using Restriction
 
-If you want specify elements which could be assigned to the relation editable, use `types`, `subtypes` and `classes`
+If you want to specify elements which could be assigned to the relation editable, use `types`, `subtypes` and `classes`
 options in the editable configuration.
 
 ##### Example
@@ -68,6 +68,8 @@ We restricted the `myRelation` editable to the following entities:
 * Person Objects (`\Pimcore\Model\DataObject\Person`) (Objects) 
  
 As you see in the picture below, it's impossible to drop any other type to that editable.
+
+<div class="image-as-lightbox"></div>
 
 ![Relation restriction](../../../img/href_restriction_in_backend.png)
 

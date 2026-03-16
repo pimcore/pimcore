@@ -39,8 +39,12 @@ The PDF editable allows you to embed asset documents (pdf, doc, xls, ...) into d
 
 This looks like the following in editmode: 
 
+<div class="image-as-lightbox"></div>
+
 ![PDF editable - the empty area](../../../img/editables_pdf_empty_container.png)
 
 A user can now drag documents there from the *Assets* tree:
+
+<div class="image-as-lightbox"></div>
 
 ![PDF editable - drag a document](../../../img/editables_pdf_filled.png)

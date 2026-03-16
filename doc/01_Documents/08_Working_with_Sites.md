@@ -13,6 +13,8 @@ With Sites, it is possible to create multi domain web applications within Pimcor
 ## Configuring Sites
 You can create subsites in Pimcore very easily directly in the context menu of the Document tree: 
 
+<div class="image-as-lightbox"></div>
+
 ![Configuring Sites](../img/sites.png)
 
 Your server setup (VHost, `ServerAlias`) must be configured so that requests for all

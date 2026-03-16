@@ -9,7 +9,11 @@ description: Content construction kit for composing documents from reusable bric
 
 The areablock is the content construction kit for documents offered by Pimcore.
 
+<div class="image-as-lightbox"></div>
+
 ![Areablock edit mode preview 1](../../../../img/areablock_editmode1.png)
+
+<div class="image-as-lightbox"></div>
 
 ![Areablock edit mode preview 2](../../../../img/areablock_editmode2.png)
 

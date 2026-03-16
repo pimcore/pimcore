@@ -67,6 +67,8 @@ To create a container for local video files you can just use the `$this->video` 
 
 In the editmode, there is now a container available where you can assign an asset path and a video poster. 
 
+<div class="image-as-lightbox"></div>
+
 ![Video editable window - editmode](../../../img/editables_video_localtype_editmode.png)
 
 
@@ -76,10 +78,14 @@ You can use videos from external services, as well (at the moment, YouTube, Vime
 In the video edit dialog, change the type to `youtube` and fill the **ID** input with a video identifier or the video URL.
 (in that case you can easily find it in the url). Youtube playlists are supported as well - you can identify them by the prefix `PL` in the **ID**.
 
+<div class="image-as-lightbox"></div>
+
 ![Video editable - YouTube configuration - editmode](../../../img/editables_video_youtube_editmode.png)
 
 Have a look at the frontend preview:
- 
+
+<div class="image-as-lightbox"></div>
+
 ![Video editable - YouTube configuration - frontend](../../../img/editables_video_youtube_frontend.png)
 
 In the configuration, you could also specify additional options for external services.
