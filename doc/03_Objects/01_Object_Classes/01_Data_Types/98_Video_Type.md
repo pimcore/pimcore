@@ -1,3 +1,8 @@
+---
+title: Video Datatype
+description: "Store and manage video content from assets or external sources like YouTube and Vimeo."
+---
+
 # Video Datatype
 
 ![Video Field](../../../img/classes-datatypes-video.png)

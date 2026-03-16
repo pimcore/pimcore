@@ -1,3 +1,8 @@
+---
+title: Select Options
+description: "Predefined sets of options for use with select and multiselect fields."
+---
+
 # Select Options
 
 Select options are predefined sets of options which may be used for (multi)select fields.

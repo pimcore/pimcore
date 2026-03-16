@@ -1,3 +1,8 @@
+---
+title: Reverse Object Relation Datatype
+description: "Display and edit relations owned by a remote object, the counterpart to object relation fields."
+---
+
 # Reverse Object Relation Datatype
 
 Reverse Object Relation are the counter part to the [Many-To-Many Object Relation & Many-To-One Object Relation fields](70_Relation_Types.md).

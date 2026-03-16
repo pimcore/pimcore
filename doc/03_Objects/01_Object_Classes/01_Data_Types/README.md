@@ -1,3 +1,8 @@
+---
+title: Data Types
+description: "Available data types for object class attributes, from simple text to complex relations."
+---
+
 # Object Data Types
 
 The entire list of data types is indicated below:
@@ -133,12 +138,12 @@ The second column indicates the underlying data type class and the third column 
 to fill in, edit and display data objects.
 
 
-Besides the `name`, which is the name of the object's property, and the `title`, which is shown in the GUI, an
+Besides the `name`, which is the name of the object's property, and the `title`, which is shown in Pimcore Studio, an
 object field has the general configuration options listed below. The title can be translated for different system
 languages. Please see the article about Translations to find out how to add object field translations.
 
 * `mandatory`: Makes the field mandatory and does not allow saving the object when it is empty
-* `not editable`: Does not allow a change of this field's value in Pimcore backend (data change can only be done
+* `not editable`: Does not allow a change of this field's value in Pimcore Studio (data change can only be done
   programmatically)
 * `invisible`: The field is not visible in Pimcore
 * `visible in grid view`: Determines if the field's data column is shown in the object grid view, or hidden 
@@ -170,7 +175,7 @@ For datatypes which support default values (currently these are Input, Date, Dat
 
 The data is persisted according to the following rules.
 
-1. ***No [inheritance](../04_Additional_Class_Settings/03_Data_Inheritance_and_Parent_Class/README.md)***: default value is persisted to store/query table on create
+1. ***No [inheritance](../04_Additional_Class_Settings/03_Data_Inheritance.md)***: default value is persisted to store/query table on create
 2. ***With inheritance and NO parent value***: default value is persisted to store/query table on create
 3. ***With inheritance and existing parent value***: no value is persisted to store table, 
 inherited value is persisted to query table, inheritance is active

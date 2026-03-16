@@ -1,3 +1,8 @@
+---
+title: "Working with Data Objects via PHP API"
+description: "CRUD operations, listings, versioning, and advanced queries for data objects in PHP."
+---
+
 # Working With Objects via PHP API
 
 Pimcore provides an object orientated PHP API to work with Objects. There are several generic functionalities
@@ -70,7 +75,7 @@ process. Object listings also come with a built-in paginator that simplifies the
 When working with object listings, user defined routes come in handy while implementing object detail views.
 User defined routes allow directing requests to certain detail pages, even though the request does not portray the path
 of a document, but matches a certain route. For more information have a look at
-[URLs based on Custom Routes](../backlog/02_MVC_Custom_Routes.md).
+[Routing and URLs](../01_Documents/05_Routing_and_URLs/README.md).
 
 An object listing class is created automatically for each class defined in Pimcore. Objects for the class `Myobject`
 are retrieved through a listing as in the following example:

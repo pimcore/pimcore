@@ -1,3 +1,8 @@
+---
+title: "Object Variants"
+description: "Managing product variants as lightweight objects hidden from the object tree."
+---
+
 # Object Variants
 The best way to show the use and function of object variants is via a use case:
 

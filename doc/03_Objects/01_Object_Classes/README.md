@@ -1,33 +1,48 @@
+---
+title: Object Classes
+description: Defining data structure and editor layout for Pimcore data objects.
+---
+
 # Object Classes
 
-To get started with Pimcore objects, classes must be defined. 
-In [Create a First Project](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/03_Create_a_First_Project/README.md) you can see the first steps how to
-create objects and classes.
+Object classes define the structure and editor layout of Data Objects. To get started, follow the
+[Create a First Project](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/03_Create_a_First_Project/README.md)
+tutorial for a hands-on introduction.
 
-Defining a class consists of two parts: 
-* defining the attributes of the object and 
-* defining the layout for the object editor. 
+## Defining a Class
 
-Layout object properties can be grouped into panels, which incorporate the layout areas north, east, west, south and 
-center and additionally they can be positioned into tab panels. This allows logical structuring of object attributes 
-into smaller units of data belonging together. It depends on the use case how data should be grouped and structured.
-Common applications are tabs/groups for different languages or logical groups like basic data, media, sales data, etc.
-In addition to the main editor layout, Custom Layouts for different views on the object data can be defined. 
+A class definition consists of two parts:
 
-To define a class, navigate to `Settings` -> `Data Objects` -> `Classes` in the Pimcore toolbar menu.
-The class name has to be a valid PHP class name. After creating a new class, the class attributes and layout can be built.  
+- **Attributes** - the data fields of the object
+- **Editor layout** - how fields are organized in the object editor
 
-Add `title` field to classdefinitions, where you can add a translation key like `app.classes.product` which is used for
-translations in your translation file.
+Layout elements can be grouped into panels and placed into tab panels. This allows logical
+structuring of object attributes into smaller units of related data. Common groupings include
+tabs for logical groups like basic data, media, and sales data.
 
-Class attributes are defined from a set of predefined data types. 
-These data types define not only the type of data such as text, number, image, reference to another object etc. but 
-also how data input can be achieved and how data is accessed. 
+In addition to the main editor layout,
+[Custom Layouts](./03_Custom_Layouts.md) can define alternative views on the object data.
 
-Each data type comes with an input widget. For instance, the text input data type comes with a simple text field, the 
-image data type comes with a drop area to which a user can drag and drop an image.
- 
-For detailed documentation about these data types see [Data Types](./01_Data_Types/README.md).
-Also have a look at [Layout Elements](./02_Layout_Elements/README.md) for information about the layout elements 
-and [Class Settings](./04_Additional_Class_Settings/README.md) for further details and features of Pimcore classes like 
-inheritance, variants, preview, custom layouts, etc.   
+## Creating a Class
+
+To define a class, navigate to **Data Management > Data Model Definitions > Classes** in Pimcore
+Studio. The class name must be a valid PHP class name. After creating a new class, build its
+attributes and layout.
+
+Use the `title` field in class definitions to add a translation key (e.g., `app.classes.product`)
+for use in your translation files.
+
+## Data Types and Layout
+
+Class attributes are selected from a set of predefined data types. Each data type defines the type
+of data (text, number, image, reference to another object, etc.) and provides a corresponding
+input widget in the editor (text field, drop area for images, etc.).
+
+- [Data Types](./01_Data_Types/README.md) - all available data types and their configuration
+- [Layout Elements](./02_Layout_Elements/README.md) - panels, tabs, fieldsets, and other layout
+  components
+- [Custom Layouts](./03_Custom_Layouts.md) - alternative editor views on the same data
+- [Additional Class Settings](./04_Additional_Class_Settings/README.md) - inheritance, variants,
+  custom icons, link generators, and more
+- [Object Bricks vs Classification Store](./05_Object_Bricks_vs_Classification_Store.md) -
+  choosing between the two approaches for extensible class definitions

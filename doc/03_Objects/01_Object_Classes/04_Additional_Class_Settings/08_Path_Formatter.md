@@ -1,4 +1,9 @@
-# Path Formatter  
+---
+title: "Path Formatter"
+description: "Displaying user-friendly object information instead of technical paths in relation fields."
+---
+
+# Path Formatter
 
 ### Summary
 * Allows you to show a user friendly "object information' instead of technical path in Pimcore data types such as Many-To-One, Many-To-Many (Object) etc.

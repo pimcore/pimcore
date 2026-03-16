@@ -80,4 +80,4 @@ The above example renders a list of links:
 
 ### Link Generators
 
-Please also see the section about [Link Generators](../../../03_Objects/01_Object_Classes/04_Additional_Class_Settings/05_Link_Generator.md)
+Please also see the section about [Link Generators](../../../03_Objects/01_Object_Classes/04_Additional_Class_Settings/06_Link_Generator.md)

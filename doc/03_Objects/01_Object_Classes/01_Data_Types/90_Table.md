@@ -1,3 +1,8 @@
+---
+title: Table
+description: "Table widget for structured array data with variable rows and columns."
+---
+
 # Table
 
 The table widget can hold structured data in the form of an array. 

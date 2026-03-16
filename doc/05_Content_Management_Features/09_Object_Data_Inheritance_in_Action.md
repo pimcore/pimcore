@@ -1,6 +1,6 @@
 # Object Data Inheritance in Action
 
-[Object Data Inheritance](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/03_Data_Inheritance_and_Parent_Class/README.md) is a powerful feature to minimize the data maintenance effort for editors.
+[Object Data Inheritance](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/03_Data_Inheritance.md) is a powerful feature to minimize the data maintenance effort for editors.
 
 In our [e-commerce demo](https://github.com/pimcore/demo-ecommerce) we use data inheritance for fashion products with different colors and sizes - meaning
 we have a generic article with all the generic information (like names, descriptions, material, gender assignment, specific
@@ -38,6 +38,6 @@ only attributes that should be modified on the current level by the editor.
 
 **Modifying inherited data**
 
-Please make sure to understand the concept of [Data Inheritance](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/03_Data_Inheritance_and_Parent_Class/README.md)
+Please make sure to understand the concept of [Data Inheritance](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/03_Data_Inheritance.md)
 in general and to take a deeper look at the `Modifying values from getters when using inheritance` section in the mentioned documentation.
 

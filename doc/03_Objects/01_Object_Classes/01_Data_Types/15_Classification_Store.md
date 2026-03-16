@@ -1,3 +1,8 @@
+---
+title: Classification Store
+description: "A key/value-like data type for adding arbitrary, group-organized attributes to objects."
+---
+
 # Classification Store
 
 ## Overview

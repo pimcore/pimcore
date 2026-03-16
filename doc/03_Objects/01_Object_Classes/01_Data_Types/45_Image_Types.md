@@ -1,3 +1,8 @@
+---
+title: Image Datatypes
+description: "Image fields store references to asset images, represented by a drop area in the UI."
+---
+
 # Image Datatypes
 
 ## Image

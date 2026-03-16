@@ -1,3 +1,8 @@
+---
+title: Geographic Datatypes
+description: "Geo data types including Geopoint, Geobounds, Geopolygon and Geopolyline."
+---
+
 # Geographic Datatypes
 
 There are different geographic data types available in Pimcore: `Geopoint`, `Geobounds`, `Geopolygon` and `Geopolyline`. 
@@ -9,7 +14,7 @@ listed with the other select widgets.
 
 ![GeoPoint Field](../../../img/classes-datatypes-geo1.jpg)
 
-The geopoint consists of two coordinates: latitude and longitude. In the Pimcore GUI there is the same geopoint selector
+The geopoint consists of two coordinates: latitude and longitude. In Pimcore Studio there is the same geopoint selector
 widget as shown above. It allows to find coordinates for a geographic point easily. In the database the values are 
 stored in two columns which are called latitude and longitude. Programmatically the data for this field is 
 represented by `Pimcore\Model\DataObject\Data\Geopoint`. To set a geopoint programmatically, a new 
@@ -28,7 +33,7 @@ $object->save();
 
 ![GeoBounds Field](../../../img/classes-datatypes-geo2.jpg)
 
-Geobounds represent a geographic area defined by a north eastern point and a south western point. In the pimcore GUI the
+Geobounds represent a geographic area defined by a north eastern point and a south western point. In Pimcore Studio the
 input widget as shown above is available. In the database there are 4 columns with coordinates to hold the data of 
 geobounds. Programmatically both points are `Pimcore\Model\DataObject\Data\GeoCoordinates` and they are wrapped by the 
 `Pimcore\Model\DataObject\Data\GeoCoordinates` Object. The following code snippet shows how to set Geobounds:

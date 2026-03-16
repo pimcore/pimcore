@@ -1,3 +1,8 @@
+---
+title: Consent
+description: "Stores user consent as a checkbox with metadata tracked via notes on the object."
+---
+
 # Consent
 
 This data type can be used to store consent of users for something like permission for sending direct mailings.
@@ -9,7 +14,7 @@ when a consent is revoked.
 ![Data Type Consent](../../../img/classes-datatypes-consent.png)
 
 
-### Usage in Pimcore Admin Backend
+### Usage in Pimcore Studio
 The consent value can be changed directly in the object editor. Every time the value changes, a note with default values
 is added automatically.
 

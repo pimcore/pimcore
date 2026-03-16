@@ -1,3 +1,8 @@
+---
+title: Other Datatypes
+description: "Additional data types including checkbox, boolean select, and other specialized fields."
+---
+
 # Other Datatypes
 
 ## Checkbox
@@ -18,12 +23,12 @@ If inheritance is activated in the corresponding DataObject class, a trashcan ic
 
 ## Boolean Select
 
-A `Boolean Select` is kind of a tri-state checkbox which is rendered as a select datatype in the admin UI.
+A `Boolean Select` is kind of a tri-state checkbox which is rendered as a select datatype in Pimcore Studio.
 The background is that a checkbox can only have two states. This is especially important when it comes to inheritance.
 A checkbox treats an empty (never set) value just like the unchecked value. The consequence is then as soon as a parent sets it `checked` you can not reset it to `unchecked` in the child nodes anymore.
 The boolean select takes care of this problem by introducing a third state. The storage values are -1 (for unchecked), 1 (for checked and
 null for empty.
-For the admin UI you can specify the display values according to your needs. Default values are `yes`, `no` and `empty`.
+In Pimcore Studio you can specify the display values according to your needs. Default values are `yes`, `no` and `empty`.
 
 ![Boolean Select](../../../img/boolean_select.png)
 
@@ -60,7 +65,7 @@ $object = DataObject::getById(234);
 ```
 #### Link Generators
 
-Please also see the section about [Link Generators](../04_Additional_Class_Settings/05_Link_Generator.md)
+Please also see the section about [Link Generators](../04_Additional_Class_Settings/06_Link_Generator.md)
 
 ## RGBA Color
 

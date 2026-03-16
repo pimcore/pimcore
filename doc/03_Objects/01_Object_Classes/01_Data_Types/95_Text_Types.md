@@ -1,3 +1,8 @@
+---
+title: Text Datatypes
+description: "Text input fields including input, textarea, WYSIWYG, and password types."
+---
+
 # Text Datatypes
 
 ## Input

@@ -1,3 +1,8 @@
+---
+title: "Preview Iframe"
+description: "Embedding a URL-based preview panel in the object editor."
+---
+
 # Preview / Iframe Panel
 
 Provide a URL and make use of the context parameter to render a response of your choice.

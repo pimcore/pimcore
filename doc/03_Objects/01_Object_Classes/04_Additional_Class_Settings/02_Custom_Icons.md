@@ -1,3 +1,8 @@
+---
+title: "Custom Icons"
+description: "Defining custom icons for objects based on class or data values."
+---
+
 # Custom Icons for Objects
 
 Pimcore allows you to define custom icons for objects. Either, icons can be the same for all objects of a class 
@@ -14,7 +19,7 @@ immediately which objects are of the type "News".
 
 ![Class Icons](../../../img/classes-icons1.png)
 
-Icons that come along with Pimcore by default can be found in `<YOUR-DOMAIN>/admin/misc/icon-list` (backend session needed).
+Icons that come along with Pimcore by default can be found in `<YOUR-DOMAIN>/pimcore-studio/misc/icon-list` (Pimcore Studio session needed).
 
 #### Icon Sizes
 As icons SVG graphics are recommended. If you use pixel graphics, the maximum size is 18x20 pixels. 

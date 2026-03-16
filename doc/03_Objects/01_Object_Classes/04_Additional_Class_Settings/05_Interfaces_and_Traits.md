@@ -1,3 +1,8 @@
+---
+title: "Interfaces and Traits"
+description: "Adding interfaces and traits to generated data object PHP classes."
+---
+
 # Using Interfaces and Traits
 In some cases it could be helpful to let the generated PHP class for data objects implement interfaces or add some additional functions using traits.
 
@@ -44,7 +49,7 @@ trait TransmissionTrait
 ```
 
 ## Use it with Cars product data
-Navigate to the Settings *Settings* -> *Data Objects* -> *Classes* -> *Product Data* -> *Car*
+Navigate to **Data Management > Data Model Definitions > Classes > Product Data > Car** in Pimcore Studio.
 
 Click on *General Settings* and paste your interface and trait path into `Implements interface(s)` and `Use (traits)`
 

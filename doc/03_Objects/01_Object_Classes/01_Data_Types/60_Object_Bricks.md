@@ -1,4 +1,9 @@
-# Objects Bricks 
+---
+title: Object Bricks
+description: "Extend objects with additional attributes without changing the class definition."
+---
+
+# Objects Bricks
 
 ## General
 
@@ -51,7 +56,7 @@ A field of this data type has to be added to the object class.
 ![Object class definition](../../../img/ObjectsBricks_class_definition.png)
 
 In the object bricks definition, you can also specify a parent class - a way is the same like for 
-classes (you can find more details in the [Parent Class for Objects section](../04_Additional_Class_Settings/03_Data_Inheritance_and_Parent_Class/01_Parent_Class_for_Objects.md)).
+classes (you can find more details in the [Parent Class for Objects section](../04_Additional_Class_Settings/04_Parent_Class.md)).
 
 
 ## Working with PHP API

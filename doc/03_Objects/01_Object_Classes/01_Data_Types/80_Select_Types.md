@@ -1,3 +1,8 @@
+---
+title: Select Datatypes
+description: "Seven select widget variants including country, language, and user selects."
+---
+
 # Select Datatypes
 
 There are 7 different select widgets available. Except the Multiselect widgets, all of them are portrayed by an input 

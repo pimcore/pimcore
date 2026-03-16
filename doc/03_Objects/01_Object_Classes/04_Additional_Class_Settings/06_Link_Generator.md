@@ -1,3 +1,8 @@
+---
+title: "Link Generator"
+description: "Dynamically generating web links for data objects in documents and templates."
+---
+
 # Link Generator
 
 ### Summary

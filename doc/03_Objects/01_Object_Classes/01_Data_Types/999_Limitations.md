@@ -1,3 +1,8 @@
+---
+title: Limitations
+description: "Nesting restrictions for data types like blocks, field collections, and localized fields."
+---
+
 ## Limitations
 
 ### Nesting of Data Types

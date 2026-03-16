@@ -1,3 +1,8 @@
+---
+title: Localized Fields
+description: "Define object attributes that can be translated into multiple languages."
+---
+
 # Localized Fields
 
 Localized fields allow the definition of attributes, that should be translated into multiple languages within an object. 

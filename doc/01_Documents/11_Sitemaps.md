@@ -184,7 +184,7 @@ is in [sitemaps.yaml](https://github.com/pimcore/pimcore/blob/2026.x/bundles/Cor
 
 To add non-document content (e.g. data objects) to your sitemap, create a generator
 that extends `AbstractElementGenerator`. Each data object class needs a
-[Link Generator](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/05_Link_Generator.md)
+[Link Generator](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/06_Link_Generator.md)
 that can produce absolute URLs. This example adds `BlogArticle` entries:
 
 ```php

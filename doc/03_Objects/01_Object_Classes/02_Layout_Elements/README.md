@@ -1,3 +1,8 @@
+---
+title: "Layout Elements"
+description: "Organizing the object editor with panels, tabs, fieldsets, and other layout components."
+---
+
 # Layout Elements
 
 To structure object data layout-wise, there are 3 panel types and 4 other layout elements available. Data fields are 

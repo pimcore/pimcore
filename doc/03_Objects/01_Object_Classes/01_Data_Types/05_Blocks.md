@@ -1,3 +1,8 @@
+---
+title: Blocks
+description: "A container data type for grouping other data fields, similar to field collections."
+---
+
 # Blocks
 
 The block data type acts as a simple container for other data fields. 

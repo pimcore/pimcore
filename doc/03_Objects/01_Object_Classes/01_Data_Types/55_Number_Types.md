@@ -1,3 +1,8 @@
+---
+title: Number Datatypes
+description: "Numeric and slider data types stored as DOUBLE in the database."
+---
+
 # Number Datatypes
 
 Both numeric data types (`number` and `slider`) are stored as a number in a DOUBLE column in the database. 
@@ -9,7 +14,7 @@ widgets and the fact that the slider has a min/max value and step size, which th
 
 ![Numeric Field](../../../img/classes-datatypes-number2.jpg)
 
-The numeric data field can be configured with a default value. In the GUI it is represented by a spinner field.
+The numeric data field can be configured with a default value. In Pimcore Studio it is represented by a spinner field.
 
 ![Numeric Configuration](../../../img/classes-datatypes-number1.jpg)
 
@@ -24,7 +29,7 @@ the same way. Programmatically the values are represented by a [NumericRange](ht
 
 ## Slider
 
-In the GUI a slider can be used as a horizontal or vertical widget. It needs to be configured with a min and max value,
+In Pimcore Studio a slider can be used as a horizontal or vertical widget. It needs to be configured with a min and max value,
 the increment step and decimal precision.
 
 ![Slider Configuration](../../../img/classes-datatypes-number3.jpg)

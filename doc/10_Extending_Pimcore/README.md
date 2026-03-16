@@ -19,7 +19,7 @@ Following a list of ways to extend Pimcore. See detail pages for additional info
 * [**Configuration**](../08_Development_Details/01_Configuration.md) regarding configuration (e.g. overwriting Pimcore constants
  like assets directory, temporary directory etc.)
 
-* [**Parent Class for Objects**](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/03_Data_Inheritance_and_Parent_Class/01_Parent_Class_for_Objects.md) to inject additional functionality
+* [**Parent Class for Objects**](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/04_Parent_Class.md) to inject additional functionality
  to Pimcore object classes.
 
 * [**Event API and Event Manager**](./01_Events/README.md) for hooking into standard

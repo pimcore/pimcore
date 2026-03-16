@@ -1,3 +1,8 @@
+---
+title: Calculated Value Datatype
+description: "Allows calculating object attributes dynamically based on other attribute values."
+---
+
 # Calculated Value Datatype
 
 

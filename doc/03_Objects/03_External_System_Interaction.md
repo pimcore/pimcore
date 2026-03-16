@@ -1,3 +1,8 @@
+---
+title: "External System Interaction"
+description: "Importing and exporting data object data with external systems using the PHP API."
+---
+
 # External System Interaction
 
 Whenever interaction with other systems is required, data objects are the vital components of data exchange. 
@@ -81,7 +86,7 @@ few lines of code.
  
  ```
 
-For simple CSV exports, Pimcore backend interface provides a CSV export functionality.
+For simple CSV exports, Pimcore Studio provides a CSV export functionality.
  
  
 ## Memory Issues

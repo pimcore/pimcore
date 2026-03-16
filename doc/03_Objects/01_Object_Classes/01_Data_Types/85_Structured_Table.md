@@ -1,3 +1,8 @@
+---
+title: Structured Table
+description: "Table widget with predefined, named rows and columns and typed data per column."
+---
+
 # Structured Table
 
 ## Add Structured Table to the Class

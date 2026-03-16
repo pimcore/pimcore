@@ -1,3 +1,8 @@
+---
+title: "Composite Indices"
+description: "Creating composite database indices on object query and store tables."
+---
+
 # Composite Indices
 
 Pimcore can create composite indices on `object_query_*`, `object_store_*`, `object_localized_data_*` and `object_localized_query_*` tables for you.

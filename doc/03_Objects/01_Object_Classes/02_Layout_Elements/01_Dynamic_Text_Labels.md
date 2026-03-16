@@ -1,3 +1,8 @@
+---
+title: "Dynamic Text Labels"
+description: "Generating layout text dynamically based on object data and label context."
+---
+
 # Dynamic Text Labels
 
 Similar to the [CalculatedValue](../01_Data_Types/10_Calculated_Value_Type.md) data type,

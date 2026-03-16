@@ -1,8 +1,13 @@
+---
+title: Date Datatypes
+description: "Date and time fields represented by calendar widgets, stored as date/datetime or unix timestamp."
+---
+
 # Date Datatypes
 
 ## Date, Date & Time
 
-The `date` and `date & time` object fields are represented by a calender widget in the Pimcore GUI.
+The `date` and `date & time` object fields are represented by a calendar widget in Pimcore Studio.
 
 ![Date Field](../../../img/classes-datatypes-date1.jpg)
 
@@ -11,7 +16,7 @@ these data types are represented by a [DateTime/Carbon](https://github.com/brian
 
 ### Behaviour regarding user timezones
 
-The `date` and `date & time` object fields can be configured to respect the user's timezone. If timezone support is enabled the Pimcore admin UI will display the date and time in the user's timezone. Without timezone support the date and time will be shown exactly as it was entered independent of the user's timezone.
+The `date` and `date & time` object fields can be configured to respect the user's timezone. If timezone support is enabled Pimcore Studio will display the date and time in the user's timezone. Without timezone support the date and time will be shown exactly as it was entered independent of the user's timezone.
 
 For the `date` object field timezones are taken into account when the `bigint` column type is chosen whereas for the `date` column type the timezone is ignored.
 
@@ -30,7 +35,7 @@ string like for example "11:00" to the field's setter.
 ## Date Range
 
 The `dateRange` object field consists of two `date` fields (start and end date) and can be filled
-with the usual calendar widget in the Pimcore GUI or programmatically via the Pimcore API.
+with the usual calendar widget in Pimcore Studio or programmatically via the Pimcore API.
 
 ![Date Range Field](../../../img/classes-datatypes-date3.jpg)
 

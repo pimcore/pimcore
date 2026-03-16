@@ -1,3 +1,8 @@
+---
+title: Relational Datatypes
+description: "Many-To-One, Many-To-Many, and object relation fields for linking Pimcore elements."
+---
+
 # Relational Datatypes
 
 ## Many-To-One, Many-To-Many and Many-To-Many Object Relation Data Fields 

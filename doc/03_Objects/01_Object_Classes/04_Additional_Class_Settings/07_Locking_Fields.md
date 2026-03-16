@@ -1,3 +1,8 @@
+---
+title: "Locking Fields"
+description: "Preventing modification or deletion of fields in the class editor."
+---
+
 # Locking Fields
 Sometimes it's useful that a field cannot be modified/deleted in the class editor. Especially if a class is 
 created by a plugin.

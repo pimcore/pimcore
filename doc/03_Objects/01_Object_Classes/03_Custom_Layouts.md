@@ -1,3 +1,8 @@
+---
+title: "Custom Layouts"
+description: "Creating customized object editor layouts based on the main class definition."
+---
+
 # Custom Layouts
 It is possible to create customized layouts based on the main definition and override the settings concerning the visual aspects of the layout and data components. It is also possible to make a field editable, although it is 
 marked as non-editable in the main layout. Custom layouts are available for all admin users and can be made
