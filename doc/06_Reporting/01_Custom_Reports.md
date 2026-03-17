@@ -1,13 +1,18 @@
+---
+title: Custom Reports
+---
+
 # Custom Reports
+
 :::caution
 
-To use this feature, please enable the `PimcoreCustomReportsBundle` in your `bundles.php` file via: 
+To use this feature, enable the `PimcoreCustomReportsBundle` in your `bundles.php` file:
 
 ```php
 Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle::class => ['all' => true]
 ```
 
-and install it accordingly with the following command:
+Then install it with:
 
 ```sh
 bin/console pimcore:bundle:install PimcoreCustomReportsBundle
@@ -15,82 +20,197 @@ bin/console pimcore:bundle:install PimcoreCustomReportsBundle
 
 :::
 
-Custom Reports is a report engine directly integrated into Pimcore. With Custom Reports it is possible to create tabular
-or chart reports (or both) with further filtering and export functionality.
+This page covers report configuration, built-in data source adapters, permissions,
+and how to implement custom adapters with both a PHP backend and a Pimcore Studio frontend.
 
 ![Custom Reports](../img/custom-reports.png)
 
-The data source for the reports is always a source adapter which is responsible for retrieving and preparing the report
-data. Currently, two adapters ship with Pimcore: 
-- SQL: Retrieve Data based on a SQL statement
-![Custom Reports Configuration](../img/custom-reports-config.png)
-- Google Analytics: Retrieve Data from Google Analytics only available if
-  - Only available if the corresponding `PimcoreGoogleMarketingBundle` is enabled.
+## Data Source Adapters
 
+Each report uses a data source adapter to retrieve and prepare its data.
+Pimcore ships with the following adapters:
+
+- **SQL** - query data with custom SQL statements
+  ![Custom Reports Configuration](../img/custom-reports-config.png)
+
+  :::caution
+
+  When using the SQL adapter, several SQL keywords cannot appear unquoted in column names:
+
+  ```sql
+  ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE
+  ```
+
+  For example, a column named `lastUpdate` needs backtick quoting:
+
+  ```sql
+  SELECT `lastUpdate`
+  ```
+
+  :::
+
+- **Statistics Explorer** (Enterprise) - aggregation and pivot-table reports via
+  [Statistics Explorer Custom Report Integration](https://github.com/pimcore/statistics-explorer/blob/doc-refactoring/doc/04_Custom_Report_Integration/README.md)
 
 ## Custom Report Permissions
-With custom report permissions it is possible to define which users should be able to see a report. Following options 
-are available:  
-- `Share globally`: Custom report is visible to all users that have `reports` permission. 
-- `Visible to users`: Custom report is visible to all listed users.  
-- `Visible to roles`: Custom report is visible to all listed roles. 
+
+Custom report permissions control report visibility:
+
+- **Share globally**: all users with the `reports` permission can access the report.
+- **Visible to users**: only the listed users can access the report.
+- **Visible to roles**: only users with the listed roles can access the report.
 
 ## Custom Data Source Adapters
-It is easily possible to implement custom source adapters for special use cases. To do so following steps are necessary: 
 
-#### JavaScript Class: 
-This class defines the user interface in the configuration of the custom report. It has to be located in 
-the namespace `pimcore.bundle.customreports.custom.definition`, named like the adapter (e.g. `pimcore.report.custom.definition.mySource`)
-and implement the methods `initialize`, `getElement` and `getValues`. 
+Implement custom source adapters for specialized data retrieval.
+A custom adapter consists of a PHP backend (data retrieval) and a Pimcore Studio frontend (configuration form).
 
-As sample see [sql.js](https://github.com/pimcore/pimcore/blob/2026.x/bundles/CustomReportsBundle/public/js/pimcore/report/custom/definitions/sql.js)
+### PHP Backend: Adapter Class
 
-#### PHP Adapter Class: 
-This class is the server side implementation of the adapter. It is responsible for retrieving and 
-preparing the options, columns and data. It has to extend the abstract class `Pimcore\Model\Tool\CustomReport\Adapter\AbstractAdapter` 
-(or implement `Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface`). 
+Implement `CustomReportAdapterInterface`
+(or extend `AbstractAdapter`) from `Pimcore\Bundle\CustomReportsBundle\Tool\Adapter`:
 
-As examples see [Analytics adapter](https://github.com/pimcore/google-marketing-bundle/blob/1.x/src/CustomReport/Adapter/Analytics.php) 
-and [Sql adapter](https://github.com/pimcore/pimcore/blob/2026.x/bundles/CustomReportsBundle/src/Tool/Adapter/Sql.php).
+| Method | Description |
+|--------|-------------|
+| `getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, ?array $fields, ?array $drillDownFilters): array` | Return report data as an array with `data` (rows) and `total` (count) keys. |
+| `getColumns(?stdClass $configuration): array` | Return available column names. |
+| `getColumnsWithMetadata(?stdClass $configuration): array` | Return `ColumnInformation[]` controlling per-column settings: sort ordering, filtering, dropdown filtering, and label editability. Override to restrict which settings are configurable. |
+| `getAvailableOptions(array $filters, string $field, array $drillDownFilters): array` | Return distinct values for drill-down filter dropdowns. |
+| `getPagination(): bool` | Return whether the adapter supports pagination (default: `true`). |
 
-In the `getColumnsWithMetadata` method, for each column of the report disabling the configuration of `Order By`, 
-`Filterable`, `Dropdown Filterable` and `Label` is possible. Depending on the adapter implementation, these options might
-be handy. See the `AbstractAdapter` as reference. 
+Reference implementation:
+[Sql.php](https://github.com/pimcore/pimcore/blob/2026.x/bundles/CustomReportsBundle/src/Tool/Adapter/Sql.php)
 
-#### Register your Adapter Factory as Service
-- If you are using a simple adapter class without dependency injection parameters, you can use the `DefaultCustomReportAdapterFactory` providing the adapter class' FQN as single argument
-```yml
-app.custom_report.adapter.factory.custom:
-   class: Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\DefaultCustomReportAdapterFactory
-   arguments:
-       - 'App\CustomReport\Adapter\Custom'
+### PHP Backend: Adapter Factory
+
+Create a factory implementing `CustomReportAdapterFactoryInterface`:
+
+```php
+interface CustomReportAdapterFactoryInterface
+{
+    public function create(stdClass $config, ?Config $fullConfig = null): CustomReportAdapterInterface;
+}
 ```
-- If you are using a more complex adapter, you can create your own factory by implementing the interface `Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\CustomReportAdapterFactoryInterface`
 
-#### Add your Adapter Factory to the configuration:
-```yml
+For simple adapters without dependency injection, use `DefaultCustomReportAdapterFactory`
+and pass the adapter class FQCN as argument:
+
+```yaml
+services:
+    app.custom_report.adapter.factory.custom:
+        class: Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\DefaultCustomReportAdapterFactory
+        arguments:
+            - 'App\CustomReport\Adapter\Custom'
+```
+
+For adapters requiring injected services, implement `CustomReportAdapterFactoryInterface` directly.
+
+### PHP Backend: Register the Adapter
+
+Add the factory to the `pimcore_custom_reports.adapters` configuration.
+The key becomes the adapter's type identifier. At runtime, the system resolves the factory
+from a `ServiceLocator` using the `type` field in the report's `dataSourceConfig`:
+
+```yaml
 pimcore_custom_reports:
     adapters:
         myAdapter: app.custom_report.adapter.factory.custom
 ```
 
-## Custom JS Class for Report Visualization
-If you need to fully customize the appearance of the report, you can specify a custom javascript class that should 
-be used when opening the report in Pimcore Backend. This class can be specified in `Report Class` option and should extend
-the default javascript class for the reports which is `pimcore.bundle.customreports.custom.report`.
+When a report stores `"type": "myAdapter"` in its data source configuration,
+Pimcore looks up the `myAdapter` key in the registered adapter factories and calls `create()` on it.
 
-:::caution
+### Pimcore Studio Frontend: Dynamic Type Provider
 
-Be aware that several SQL keywords cannot be used in column names unless they're quoted, such as:
+After registering the PHP adapter, create a corresponding Pimcore Studio component
+so the adapter appears in the report configuration editor.
 
-```sql
-ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE
+Extend `DynamicTypeCustomReportDefinitionAbstract`:
+
+```typescript
+import { injectable } from 'inversify'
+import { type ReactElement } from 'react'
+import {
+  DynamicTypeCustomReportDefinitionAbstract
+} from '@Pimcore/modules/reports/dynamic-types/definitions/custom-report-definition-adapters/dynamic-type-custom-report-definition-abstract'
+import { type IReportConfigurationSectionProps } from '@Pimcore/modules/reports/reports-editor/types'
+
+@injectable()
+export class DynamicTypeMyCustomAdapter extends DynamicTypeCustomReportDefinitionAbstract {
+  readonly id = 'myAdapter'
+
+  getLabel (): ReactElement {
+    return <>My Custom Adapter</>
+  }
+
+  getPagination (): boolean {
+    return true
+  }
+
+  getCustomReportData (props: IReportConfigurationSectionProps): ReactElement {
+    return <MyAdapterConfigForm {...props} />
+  }
+}
 ```
 
-For example, a column named `lastUpdate` would need to be wrapped with backticks (``) like so:
+The `id` property must match the adapter key registered in `pimcore_custom_reports.adapters`.
 
-```sql
-SELECT `lastUpdate`
+`getCustomReportData()` returns the React component that renders in the report configuration view.
+The component receives props typed as `IReportConfigurationSectionProps`:
+- `currentData` (`ReportFormData`) - the current report configuration state
+- `updateFormData` (`(data: ReportFormData) => void`) - callback to update configuration values
+- `form` (`FormInstance`) - the Ant Design form instance for field binding
+
+Register the dynamic type in a Pimcore Studio plugin.
+The plugin binds the class to the DI container; the module retrieves it and registers it
+with the dynamic type registry:
+
+```typescript
+// plugin.ts
+import type { IAbstractPlugin } from '@Pimcore/modules/app/plugin/plugin-api'
+
+export const MyPlugin: IAbstractPlugin = {
+  name: 'my-custom-report-plugin',
+
+  onInit ({ container }) {
+    container.bind('MyPlugin/DynamicTypes/CustomReportDefinition/MyAdapter')
+      .to(DynamicTypeMyCustomAdapter)
+      .inSingletonScope()
+  },
+
+  onStartup ({ moduleSystem }) {
+    moduleSystem.registerModule(MyModule)
+  }
+}
 ```
 
-:::
+```typescript
+// module/index.tsx
+import type { AbstractModule } from '@Pimcore/app/module-system/module-system'
+import { container } from '@Pimcore/app/depency-injection'
+import { serviceIds } from '@Pimcore/app/config/services/service-ids'
+import {
+  type DynamicTypeCustomReportDefinitionRegistry
+} from '@Pimcore/modules/reports/dynamic-types/definitions/custom-report-definition-adapters/dynamic-type-custom-report-definition-registry'
+
+export const MyModule: AbstractModule = {
+  onInit () {
+    const registry = container.get<DynamicTypeCustomReportDefinitionRegistry>(
+      serviceIds['DynamicTypes/CustomReportDefinitionRegistry']
+    )
+    registry.registerDynamicType(
+      container.get<DynamicTypeMyCustomAdapter>('MyPlugin/DynamicTypes/CustomReportDefinition/MyAdapter')
+    )
+  }
+}
+```
+
+Reference implementations:
+- SQL adapter:
+  [dynamic-type-custom-report-definition-sql-adapter.tsx](https://github.com/pimcore/studio-ui-bundle/blob/1.x/assets/js/src/core/modules/reports/dynamic-types/definitions/custom-report-definition-adapters/types/dynamic-type-custom-report-definition-sql-adapter.tsx)
+- Statistics Explorer adapters:
+  [statistics-explorer/assets/studio/js/src/modules/statistics-explorer/dynamic-types/types/](https://github.com/pimcore/statistics-explorer/tree/doc-refactoring/assets/studio/js/src/modules/statistics-explorer/dynamic-types/types)
+
+Creating a Pimcore Studio plugin requires a Module Federation bundle.
+See the [Pimcore Studio Extending Guide](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/README.md)
+for setup instructions.
