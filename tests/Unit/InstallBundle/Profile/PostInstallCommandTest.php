@@ -31,7 +31,6 @@ final class PostInstallCommandTest extends TestCase
         $this->assertSame('cache:clear', $cmd->getCommand());
         $this->assertSame('Clearing cache', $cmd->getLabel());
         $this->assertSame(0, $cmd->getPriority());
-        $this->assertTrue($cmd->isIdempotent());
     }
 
     public function testConstructorWithCustomValues(): void
@@ -40,7 +39,6 @@ final class PostInstallCommandTest extends TestCase
             'generic-data-index:update:index',
             'Creating search index',
             priority: 100,
-            idempotent: true,
         );
 
         $this->assertSame(100, $cmd->getPriority());

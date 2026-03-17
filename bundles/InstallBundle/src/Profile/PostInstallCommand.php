@@ -24,13 +24,11 @@ final readonly class PostInstallCommand
      * @param string $command   Symfony console command name (e.g. 'cache:clear')
      * @param string $label     Human-readable description for CLI output
      * @param int    $priority  Execution order: higher values run first (descending sort)
-     * @param bool   $idempotent Whether re-running this command is safe on partial installs
      */
     public function __construct(
         private string $command,
         private string $label,
         private int $priority = 0,
-        private bool $idempotent = true,
     ) {
     }
 
@@ -47,10 +45,5 @@ final readonly class PostInstallCommand
     public function getPriority(): int
     {
         return $this->priority;
-    }
-
-    public function isIdempotent(): bool
-    {
-        return $this->idempotent;
     }
 }
