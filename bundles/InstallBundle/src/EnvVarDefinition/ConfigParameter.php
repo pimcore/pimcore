@@ -29,7 +29,6 @@ final readonly class ConfigParameter
         private ?string $defaultValue = null,
         private ?string $description = null,
         private array $choices = [],
-        private bool $transient = false,
     ) {
     }
 
@@ -71,8 +70,4 @@ final readonly class ConfigParameter
         return $this->choices;
     }
 
-    public function isTransient(): bool
-    {
-        return $this->transient;
-    }
 }

@@ -37,105 +37,73 @@ final class DatabaseEnvVarDefinitionTest extends TestCase
         $this->assertSame('pimcore/pimcore', $this->definition->getSectionName());
     }
 
-    public function testParametersStructure(): void
+    public function testSingleDatabaseUrlParameter(): void
     {
         $params = $this->definition->getParameters();
-        $this->assertCount(5, $params);
-
-        $names = array_map(fn ($p) => $p->getEnvVarName(), $params);
-        $this->assertSame(
-            ['DATABASE_HOST', 'DATABASE_PORT', 'DATABASE_NAME', 'DATABASE_USER', 'DATABASE_PASSWORD'],
-            $names,
-        );
-
-        // All DB params are transient (assembled into DATABASE_URL)
-        foreach ($params as $param) {
-            $this->assertTrue($param->isTransient(), $param->getEnvVarName() . ' should be transient');
-        }
+        $this->assertCount(1, $params);
+        $this->assertSame('DATABASE_URL', $params[0]->getEnvVarName());
+        $this->assertNotNull($params[0]->getDefaultValue());
+        $this->assertStringStartsWith('mysql://', $params[0]->getDefaultValue());
     }
 
-    public function testResolveEnvVarsAssemblesDsn(): void
+    public function testResolveEnvVarsPassesThrough(): void
     {
-        $envVars = $this->definition->resolveEnvVars([
-            'DATABASE_HOST' => 'db.example.com',
-            'DATABASE_PORT' => '3307',
-            'DATABASE_NAME' => 'mydb',
-            'DATABASE_USER' => 'myuser',
-            'DATABASE_PASSWORD' => 's3cr3t',
-        ]);
+        $dsn = 'mysql://myuser:s3cr3t@db.example.com:3307/mydb';
+        $envVars = $this->definition->resolveEnvVars(['DATABASE_URL' => $dsn]);
 
-        $this->assertArrayHasKey('DATABASE_URL', $envVars);
-        $this->assertSame(
-            'mysql://myuser:s3cr3t@db.example.com:3307/mydb',
-            $envVars['DATABASE_URL'],
-        );
+        $this->assertSame(['DATABASE_URL' => $dsn], $envVars);
     }
 
-    public function testResolveEnvVarsEncodesSpecialChars(): void
+    public function testValidateRejectsEmptyUrl(): void
     {
-        $envVars = $this->definition->resolveEnvVars([
-            'DATABASE_HOST' => '127.0.0.1',
-            'DATABASE_PORT' => '3306',
-            'DATABASE_NAME' => 'pimcore',
-            'DATABASE_USER' => 'user@host',
-            'DATABASE_PASSWORD' => 'p@ss:w/rd',
-        ]);
-
-        $this->assertStringContainsString('user%40host', $envVars['DATABASE_URL']);
-        $this->assertStringContainsString('p%40ss%3Aw%2Frd', $envVars['DATABASE_URL']);
-    }
-
-    public function testResolveEnvVarsWithEmptyPassword(): void
-    {
-        $envVars = $this->definition->resolveEnvVars([
-            'DATABASE_HOST' => '127.0.0.1',
-            'DATABASE_PORT' => '3306',
-            'DATABASE_NAME' => 'pimcore',
-            'DATABASE_USER' => 'root',
-            'DATABASE_PASSWORD' => '',
-        ]);
-
-        // Should not have the :password@ part
-        $this->assertSame(
-            'mysql://root@127.0.0.1:3306/pimcore',
-            $envVars['DATABASE_URL'],
-        );
-    }
-
-    public function testValidateReturnsErrorsForEmptyHost(): void
-    {
-        $errors = $this->definition->validate([
-            'DATABASE_HOST' => '',
-            'DATABASE_PORT' => '3306',
-            'DATABASE_NAME' => 'pimcore',
-            'DATABASE_USER' => 'pimcore',
-        ]);
-
+        $errors = $this->definition->validate(['DATABASE_URL' => '']);
         $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('host', $errors[0]);
     }
 
-    public function testValidateReturnsErrorsForInvalidPort(): void
+    public function testValidateRejectsInvalidScheme(): void
     {
-        $errors = $this->definition->validate([
-            'DATABASE_HOST' => '127.0.0.1',
-            'DATABASE_PORT' => '99999',
-            'DATABASE_NAME' => 'pimcore',
-            'DATABASE_USER' => 'pimcore',
-        ]);
-
+        $errors = $this->definition->validate(['DATABASE_URL' => 'http://localhost/pimcore']);
         $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('port', $errors[0]);
+        $this->assertStringContainsString('scheme', strtolower($errors[0]));
+    }
+
+    public function testValidateRejectsMissingHost(): void
+    {
+        $errors = $this->definition->validate(['DATABASE_URL' => 'mysql:///pimcore']);
+        $this->assertNotEmpty($errors);
+        // PHP 8.4 parse_url() returns false for this input, so the error may be
+        // "not a valid URL" instead of the specific "host" message.
+        $lower = strtolower($errors[0]);
+        $this->assertTrue(
+            str_contains($lower, 'host') || str_contains($lower, 'not a valid url'),
+            sprintf('Expected error about host or invalid URL, got: %s', $errors[0]),
+        );
+    }
+
+    public function testValidateRejectsMissingDbName(): void
+    {
+        $errors = $this->definition->validate(['DATABASE_URL' => 'mysql://user@localhost:3306']);
+        $this->assertNotEmpty($errors);
+        $this->assertStringContainsString('database name', strtolower($errors[0]));
+    }
+
+    public function testValidateRejectsInvalidPort(): void
+    {
+        $errors = $this->definition->validate(['DATABASE_URL' => 'mysql://user@localhost:99999/pimcore']);
+        $this->assertNotEmpty($errors);
+        // PHP 8.4 parse_url() returns false for ports > 65535, so the error may be
+        // "not a valid URL" instead of the specific "port" message.
+        $lower = strtolower($errors[0]);
+        $this->assertTrue(
+            str_contains($lower, 'port') || str_contains($lower, 'not a valid url'),
+            sprintf('Expected error about port or invalid URL, got: %s', $errors[0]),
+        );
     }
 
     public function testValidateReturnsConnectionErrorForUnreachableHost(): void
     {
         $errors = $this->definition->validate([
-            'DATABASE_HOST' => '192.0.2.1',    // RFC 5737 TEST-NET — always unreachable
-            'DATABASE_PORT' => '3306',
-            'DATABASE_NAME' => 'pimcore',
-            'DATABASE_USER' => 'pimcore',
-            'DATABASE_PASSWORD' => 'secret',
+            'DATABASE_URL' => 'mysql://pimcore:secret@192.0.2.1:3306/pimcore',
         ]);
 
         $this->assertNotEmpty($errors);

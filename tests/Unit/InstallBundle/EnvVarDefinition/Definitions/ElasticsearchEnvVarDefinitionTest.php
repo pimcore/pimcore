@@ -43,80 +43,62 @@ final class ElasticsearchEnvVarDefinitionTest extends TestCase
         $this->assertSame('pimcore/elasticsearch-client', $this->definition->getSectionName());
     }
 
-    public function testResolveEnvVarsBuildsDsn(): void
-    {
-        $envVars = $this->definition->resolveEnvVars([
-            'PIMCORE_ELASTICSEARCH_HOST' => 'https://es:9200',
-            'PIMCORE_ELASTICSEARCH_USERNAME' => 'elastic',
-            'PIMCORE_ELASTICSEARCH_PASSWORD' => 'changeme',
-            'PIMCORE_ELASTICSEARCH_SSL_VERIFY' => 'true',
-        ]);
-
-        $this->assertArrayHasKey('PIMCORE_ELASTICSEARCH_DSN', $envVars);
-        $dsn = $envVars['PIMCORE_ELASTICSEARCH_DSN'];
-        $this->assertStringStartsWith('elasticsearch://', $dsn);
-        $this->assertStringContainsString('elastic:changeme@', $dsn);
-        $this->assertStringContainsString('es:9200', $dsn);
-        $this->assertStringContainsString('ssl_verify=true', $dsn);
-    }
-
-    public function testResolveEnvVarsBuildsDsnWithEmptyPassword(): void
-    {
-        $envVars = $this->definition->resolveEnvVars([
-            'PIMCORE_ELASTICSEARCH_HOST' => 'https://es:9200',
-            'PIMCORE_ELASTICSEARCH_USERNAME' => 'elastic',
-            'PIMCORE_ELASTICSEARCH_PASSWORD' => '',
-            'PIMCORE_ELASTICSEARCH_SSL_VERIFY' => 'true',
-        ]);
-
-        $dsn = $envVars['PIMCORE_ELASTICSEARCH_DSN'];
-        $this->assertStringContainsString('elastic@', $dsn);
-        $this->assertStringNotContainsString('elastic:@', $dsn);
-    }
-
-    public function testValidateRejectsEmptyHost(): void
-    {
-        $errors = $this->definition->validate([
-            'PIMCORE_ELASTICSEARCH_HOST' => '',
-        ]);
-
-        $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('host', strtolower($errors[0]));
-    }
-
-    public function testValidateRejectsInvalidUrl(): void
-    {
-        $errors = $this->definition->validate([
-            'PIMCORE_ELASTICSEARCH_HOST' => 'not-a-url',
-        ]);
-
-        $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('Invalid', $errors[0]);
-    }
-
-    public function testParametersContainExpectedFields(): void
+    public function testSingleDsnParameter(): void
     {
         $params = $this->definition->getParameters();
-        $names = array_map(fn ($p) => $p->getEnvVarName(), $params);
-
-        $this->assertContains('PIMCORE_ELASTICSEARCH_HOST', $names);
-        $this->assertContains('PIMCORE_ELASTICSEARCH_USERNAME', $names);
-        $this->assertContains('PIMCORE_ELASTICSEARCH_PASSWORD', $names);
-        $this->assertContains('PIMCORE_ELASTICSEARCH_SSL_VERIFY', $names);
+        $this->assertCount(1, $params);
+        $this->assertSame('PIMCORE_ELASTICSEARCH_DSN', $params[0]->getEnvVarName());
+        $this->assertNotNull($params[0]->getDefaultValue());
+        $this->assertStringStartsWith('elasticsearch://', $params[0]->getDefaultValue());
     }
 
-    public function testPasswordIsOptional(): void
+    public function testResolveEnvVarsPassesThrough(): void
     {
-        $params = $this->definition->getParameters();
-        $passwordParam = null;
-        foreach ($params as $p) {
-            if ($p->getEnvVarName() === 'PIMCORE_ELASTICSEARCH_PASSWORD') {
-                $passwordParam = $p;
-                break;
-            }
+        $dsn = 'elasticsearch://elastic:secret@es:9200?ssl_verify=true';
+        $envVars = $this->definition->resolveEnvVars(['PIMCORE_ELASTICSEARCH_DSN' => $dsn]);
+        $this->assertSame(['PIMCORE_ELASTICSEARCH_DSN' => $dsn], $envVars);
+    }
+
+    public function testValidateRejectsEmptyDsn(): void
+    {
+        $errors = $this->definition->validate(['PIMCORE_ELASTICSEARCH_DSN' => '']);
+        $this->assertNotEmpty($errors);
+    }
+
+    public function testValidateRejectsInvalidScheme(): void
+    {
+        $errors = $this->definition->validate([
+            'PIMCORE_ELASTICSEARCH_DSN' => 'http://localhost:9200',
+        ]);
+        $this->assertNotEmpty($errors);
+        $this->assertStringContainsString('scheme', strtolower($errors[0]));
+    }
+
+    public function testValidateRejectsMissingHost(): void
+    {
+        $errors = $this->definition->validate([
+            'PIMCORE_ELASTICSEARCH_DSN' => 'elasticsearch://',
+        ]);
+        $this->assertNotEmpty($errors);
+        // PHP 8.4 parse_url() returns false for scheme-only URLs, so the error may be
+        // "not a valid URL" instead of the specific "host" message.
+        $lower = strtolower($errors[0]);
+        $this->assertTrue(
+            str_contains($lower, 'host') || str_contains($lower, 'not a valid url'),
+            sprintf('Expected error about host or invalid URL, got: %s', $errors[0]),
+        );
+    }
+
+    public function testValidateAcceptsValidDsn(): void
+    {
+        $errors = $this->definition->validate([
+            'PIMCORE_ELASTICSEARCH_DSN' => 'elasticsearch://elastic:secret@localhost:9200?ssl_verify=true',
+        ]);
+
+        // Only connection test errors expected (no server running)
+        foreach ($errors as $error) {
+            $this->assertStringNotContainsString('scheme', strtolower($error));
+            $this->assertStringNotContainsString('required', strtolower($error));
         }
-
-        $this->assertNotNull($passwordParam);
-        $this->assertFalse($passwordParam->isRequired());
     }
 }

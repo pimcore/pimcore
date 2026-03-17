@@ -43,109 +43,62 @@ final class OpenSearchEnvVarDefinitionTest extends TestCase
         $this->assertSame('pimcore/opensearch-client', $this->definition->getSectionName());
     }
 
-    public function testResolveEnvVarsBuildsDsn(): void
+    public function testSingleDsnParameter(): void
     {
-        $envVars = $this->definition->resolveEnvVars([
-            'PIMCORE_OPENSEARCH_HOST' => 'https://os:9200',
-            'PIMCORE_OPENSEARCH_USERNAME' => 'admin',
-            'PIMCORE_OPENSEARCH_PASSWORD' => 'secret',
-            'PIMCORE_OPENSEARCH_SSL_VERIFY' => 'false',
-        ]);
-
-        $this->assertArrayHasKey('PIMCORE_OPENSEARCH_DSN', $envVars);
-        $dsn = $envVars['PIMCORE_OPENSEARCH_DSN'];
-        $this->assertStringStartsWith('opensearch://', $dsn);
-        $this->assertStringContainsString('admin:secret@', $dsn);
-        $this->assertStringContainsString('os:9200', $dsn);
-        $this->assertStringContainsString('ssl_verify=false', $dsn);
+        $params = $this->definition->getParameters();
+        $this->assertCount(1, $params);
+        $this->assertSame('PIMCORE_OPENSEARCH_DSN', $params[0]->getEnvVarName());
+        $this->assertNotNull($params[0]->getDefaultValue());
+        $this->assertStringStartsWith('opensearch://', $params[0]->getDefaultValue());
     }
 
-    public function testResolveEnvVarsBuildsDsnWithEmptyPassword(): void
+    public function testResolveEnvVarsPassesThrough(): void
     {
-        $envVars = $this->definition->resolveEnvVars([
-            'PIMCORE_OPENSEARCH_HOST' => 'https://os:9200',
-            'PIMCORE_OPENSEARCH_USERNAME' => 'admin',
-            'PIMCORE_OPENSEARCH_PASSWORD' => '',
-            'PIMCORE_OPENSEARCH_SSL_VERIFY' => 'true',
-        ]);
-
-        $dsn = $envVars['PIMCORE_OPENSEARCH_DSN'];
-        // With empty password, only username in userinfo
-        $this->assertStringContainsString('admin@', $dsn);
-        $this->assertStringNotContainsString('admin:@', $dsn);
+        $dsn = 'opensearch://admin:secret@os:9200?ssl_verify=false';
+        $envVars = $this->definition->resolveEnvVars(['PIMCORE_OPENSEARCH_DSN' => $dsn]);
+        $this->assertSame(['PIMCORE_OPENSEARCH_DSN' => $dsn], $envVars);
     }
 
-    public function testResolveEnvVarsBuildsDsnWithNoCredentials(): void
+    public function testValidateRejectsEmptyDsn(): void
     {
-        $envVars = $this->definition->resolveEnvVars([
-            'PIMCORE_OPENSEARCH_HOST' => 'https://os:9200',
-            'PIMCORE_OPENSEARCH_USERNAME' => '',
-            'PIMCORE_OPENSEARCH_PASSWORD' => '',
-            'PIMCORE_OPENSEARCH_SSL_VERIFY' => 'true',
-        ]);
-
-        $dsn = $envVars['PIMCORE_OPENSEARCH_DSN'];
-        // No userinfo at all
-        $this->assertStringStartsWith('opensearch://os:9200', $dsn);
-    }
-
-    public function testValidateRejectsEmptyHost(): void
-    {
-        $errors = $this->definition->validate([
-            'PIMCORE_OPENSEARCH_HOST' => '',
-        ]);
-
+        $errors = $this->definition->validate(['PIMCORE_OPENSEARCH_DSN' => '']);
         $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('host', strtolower($errors[0]));
     }
 
-    public function testValidateRejectsInvalidUrl(): void
+    public function testValidateRejectsInvalidScheme(): void
     {
         $errors = $this->definition->validate([
-            'PIMCORE_OPENSEARCH_HOST' => 'not-a-url',
+            'PIMCORE_OPENSEARCH_DSN' => 'http://localhost:9200',
         ]);
-
         $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('Invalid', $errors[0]);
+        $this->assertStringContainsString('scheme', strtolower($errors[0]));
     }
 
-    public function testValidateAcceptsValidConfig(): void
+    public function testValidateRejectsMissingHost(): void
     {
         $errors = $this->definition->validate([
-            'PIMCORE_OPENSEARCH_HOST' => 'https://localhost:9200',
-            'PIMCORE_OPENSEARCH_USERNAME' => 'admin',
-            'PIMCORE_OPENSEARCH_PASSWORD' => 'admin',
+            'PIMCORE_OPENSEARCH_DSN' => 'opensearch://',
+        ]);
+        $this->assertNotEmpty($errors);
+        // PHP 8.4 parse_url() returns false for scheme-only URLs, so the error may be
+        // "not a valid URL" instead of the specific "host" message.
+        $lower = strtolower($errors[0]);
+        $this->assertTrue(
+            str_contains($lower, 'host') || str_contains($lower, 'not a valid url'),
+            sprintf('Expected error about host or invalid URL, got: %s', $errors[0]),
+        );
+    }
+
+    public function testValidateAcceptsValidDsn(): void
+    {
+        $errors = $this->definition->validate([
+            'PIMCORE_OPENSEARCH_DSN' => 'opensearch://admin:admin@localhost:9200?ssl_verify=false',
         ]);
 
-        // Only connection test errors expected (no server running)
+        // Only connection test errors expected (no server running in test env)
         foreach ($errors as $error) {
+            $this->assertStringNotContainsString('scheme', strtolower($error));
             $this->assertStringNotContainsString('required', strtolower($error));
         }
-    }
-
-    public function testParametersContainExpectedFields(): void
-    {
-        $params = $this->definition->getParameters();
-        $names = array_map(fn ($p) => $p->getEnvVarName(), $params);
-
-        $this->assertContains('PIMCORE_OPENSEARCH_HOST', $names);
-        $this->assertContains('PIMCORE_OPENSEARCH_USERNAME', $names);
-        $this->assertContains('PIMCORE_OPENSEARCH_PASSWORD', $names);
-        $this->assertContains('PIMCORE_OPENSEARCH_SSL_VERIFY', $names);
-    }
-
-    public function testPasswordIsOptional(): void
-    {
-        $params = $this->definition->getParameters();
-        $passwordParam = null;
-        foreach ($params as $p) {
-            if ($p->getEnvVarName() === 'PIMCORE_OPENSEARCH_PASSWORD') {
-                $passwordParam = $p;
-                break;
-            }
-        }
-
-        $this->assertNotNull($passwordParam);
-        $this->assertFalse($passwordParam->isRequired());
     }
 }

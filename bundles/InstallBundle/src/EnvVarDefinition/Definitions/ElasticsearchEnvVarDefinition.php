@@ -21,9 +21,8 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Validation\FormatValidator;
 /**
  * Elasticsearch search engine definition.
  *
- * Collects host, credentials, and SSL settings from the user,
- * then assembles them into a single `PIMCORE_ELASTICSEARCH_DSN` env var
- * with the format: elasticsearch://user:pass@host:port?ssl_verify=bool
+ * Collects a single `PIMCORE_ELASTICSEARCH_DSN` env var with the format:
+ * elasticsearch://user:pass@host:port?ssl_verify=bool
  *
  * @internal
  */
@@ -53,32 +52,11 @@ final readonly class ElasticsearchEnvVarDefinition implements SearchEngineDefini
     {
         return [
             new ConfigParameter(
-                'PIMCORE_ELASTICSEARCH_HOST',
-                'Host',
+                'PIMCORE_ELASTICSEARCH_DSN',
+                'Elasticsearch DSN',
                 ParameterType::Url,
-                defaultValue: 'https://localhost:9200',
-                transient: true,
-            ),
-            new ConfigParameter(
-                'PIMCORE_ELASTICSEARCH_USERNAME',
-                'Username',
-                ParameterType::String,
-                defaultValue: 'elastic',
-                transient: true,
-            ),
-            new ConfigParameter(
-                'PIMCORE_ELASTICSEARCH_PASSWORD',
-                'Password',
-                ParameterType::Secret,
-                false,
-                transient: true,
-            ),
-            new ConfigParameter(
-                'PIMCORE_ELASTICSEARCH_SSL_VERIFY',
-                'Verify SSL?',
-                ParameterType::Boolean,
-                defaultValue: 'true',
-                transient: true,
+                defaultValue: 'elasticsearch://elastic@localhost:9200?ssl_verify=true',
+                description: 'elasticsearch://user:pass@host:port?ssl_verify=bool',
             ),
         ];
     }
@@ -86,61 +64,57 @@ final readonly class ElasticsearchEnvVarDefinition implements SearchEngineDefini
     public function resolveEnvVars(array $collectedValues): array
     {
         return [
-            'PIMCORE_ELASTICSEARCH_DSN' => $this->buildDsn($collectedValues),
+            'PIMCORE_ELASTICSEARCH_DSN' => $collectedValues['PIMCORE_ELASTICSEARCH_DSN'] ?? '',
         ];
     }
 
     public function validate(array $collectedValues): array
     {
-        $host = $collectedValues['PIMCORE_ELASTICSEARCH_HOST'] ?? '';
+        $dsn = $collectedValues['PIMCORE_ELASTICSEARCH_DSN'] ?? '';
 
         $validator = new FormatValidator();
-        $validator
-            ->requireNonEmpty($host, 'Elasticsearch host')
-            ->requireValidUrl($host, 'Elasticsearch host');
+        $validator->requireNonEmpty($dsn, 'Elasticsearch DSN');
 
         if ($validator->hasErrors()) {
             return $validator->getErrors();
         }
 
-        return $this->testConnection($collectedValues);
-    }
-
-    private function buildDsn(array $collectedValues): string
-    {
-        $host = $collectedValues['PIMCORE_ELASTICSEARCH_HOST'] ?? 'https://localhost:9200';
-        $username = $collectedValues['PIMCORE_ELASTICSEARCH_USERNAME'] ?? '';
-        $password = $collectedValues['PIMCORE_ELASTICSEARCH_PASSWORD'] ?? '';
-        $sslVerify = $collectedValues['PIMCORE_ELASTICSEARCH_SSL_VERIFY'] ?? 'true';
-
-        $parsed = parse_url($host);
-        $hostname = $parsed['host'] ?? 'localhost';
-        $port = $parsed['port'] ?? 9200;
-
-        $userinfo = '';
-        if ($username !== '') {
-            $userinfo = rawurlencode($username);
-            if ($password !== '') {
-                $userinfo .= ':' . rawurlencode($password);
-            }
-            $userinfo .= '@';
+        $parsed = parse_url($dsn);
+        if ($parsed === false) {
+            return ['Elasticsearch DSN is not a valid URL.'];
         }
 
-        return sprintf(
-            'elasticsearch://%s%s:%d?ssl_verify=%s',
-            $userinfo,
-            $hostname,
-            $port,
-            $sslVerify,
-        );
+        $scheme = $parsed['scheme'] ?? '';
+        if ($scheme !== 'elasticsearch') {
+            return [sprintf('Elasticsearch DSN scheme must be "elasticsearch" (got "%s").', $scheme)];
+        }
+
+        $host = $parsed['host'] ?? '';
+        if ($host === '') {
+            return ['Elasticsearch DSN must contain a host.'];
+        }
+
+        return $this->testConnection($parsed);
     }
 
-    private function testConnection(array $collectedValues): array
+    /**
+     * @param array<string, mixed> $parsed Result of parse_url()
+     */
+    private function testConnection(array $parsed): array
     {
-        $host = $collectedValues['PIMCORE_ELASTICSEARCH_HOST'] ?? '';
-        $username = $collectedValues['PIMCORE_ELASTICSEARCH_USERNAME'] ?? '';
-        $password = $collectedValues['PIMCORE_ELASTICSEARCH_PASSWORD'] ?? '';
-        $sslVerify = ($collectedValues['PIMCORE_ELASTICSEARCH_SSL_VERIFY'] ?? 'true') === 'true';
+        $host = $parsed['host'] ?? 'localhost';
+        $port = $parsed['port'] ?? 9200;
+        $username = isset($parsed['user']) ? rawurldecode($parsed['user']) : '';
+        $password = isset($parsed['pass']) ? rawurldecode($parsed['pass']) : '';
+
+        $query = [];
+        if (isset($parsed['query'])) {
+            parse_str($parsed['query'], $query);
+        }
+        $sslVerify = ($query['ssl_verify'] ?? 'true') === 'true';
+
+        $protocol = ($port === 80) ? 'http' : 'https';
+        $url = sprintf('%s://%s:%d', $protocol, $host, $port);
 
         $contextOptions = [
             'http' => [
@@ -160,13 +134,13 @@ final readonly class ElasticsearchEnvVarDefinition implements SearchEngineDefini
 
         try {
             $context = stream_context_create($contextOptions);
-            $response = @file_get_contents($host, false, $context);
+            $response = @file_get_contents($url, false, $context);
 
             if ($response === false) {
                 return [sprintf(
                     'Elasticsearch connection failed at %s. '
                     . 'Verify the host is reachable and credentials are correct.',
-                    $host,
+                    $url,
                 )];
             }
         } catch (\Exception $e) {

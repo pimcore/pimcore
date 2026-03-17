@@ -28,7 +28,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  *
  * Tests the collection priority chain (env var > interactive > default)
  * across different definition configurations: required, optional,
- * DSN with transient params, and no-param definitions.
+ * and no-param definitions.
  *
  * @internal
  */
@@ -151,43 +151,6 @@ final class ParameterCollectionIntegrationTest extends TestCase
         $this->assertSame('redis://custom-host:6380', $result['REDIS_URL']);
     }
 
-    public function testTransientParamsSkippedWhenFinalDsnPresent(): void
-    {
-        $envVarReader = new ArrayEnvVarReader();
-        // Set the final DSN — transient params should be skipped
-        $envVarReader->set('DATABASE_URL', 'mysql://user:pass@host:3306/db');
-
-        $definition = $this->createDsnDefinition();
-        $collector = new ParameterCollector($envVarReader);
-
-        $result = $collector->collect($definition, $this->createNonInteractiveIo(), false);
-
-        $this->assertNotNull($result);
-        // The final DSN should be populated from the env var
-        $this->assertSame('mysql://user:pass@host:3306/db', $result['DATABASE_URL']);
-        // Transient params should NOT be collected (not in the result keys)
-        $this->assertArrayNotHasKey('DB_HOST', $result);
-        $this->assertArrayNotHasKey('DB_PORT', $result);
-    }
-
-    public function testTransientParamsCollectedWhenFinalDsnNotPresent(): void
-    {
-        $envVarReader = new ArrayEnvVarReader();
-        // Set transient params but NOT the final DSN
-        $envVarReader->set('DB_HOST', 'custom-host');
-        $envVarReader->set('DB_PORT', '3307');
-
-        $definition = $this->createDsnDefinition();
-        $collector = new ParameterCollector($envVarReader);
-
-        $result = $collector->collect($definition, $this->createNonInteractiveIo(), false);
-
-        $this->assertNotNull($result);
-        // Transient params should be collected
-        $this->assertSame('custom-host', $result['DB_HOST']);
-        $this->assertSame('3307', $result['DB_PORT']);
-    }
-
     public function testDefinitionWithNoParametersReturnsEmptyArray(): void
     {
         $envVarReader = new ArrayEnvVarReader();
@@ -302,70 +265,6 @@ final class ParameterCollectionIntegrationTest extends TestCase
                 }
 
                 return $result;
-            }
-
-            public function validate(array $collectedValues): array
-            {
-                return [];
-            }
-        };
-    }
-
-    /**
-     * Creates a DSN definition with transient params that assemble into a final DATABASE_URL.
-     */
-    private function createDsnDefinition(): EnvVarDefinitionInterface
-    {
-        return new class() implements EnvVarDefinitionInterface {
-            public function getKey(): string
-            {
-                return 'database';
-            }
-
-            public function getLabel(): string
-            {
-                return 'Database';
-            }
-
-            public function isRequired(): bool
-            {
-                return true;
-            }
-
-            public function getSectionName(): string
-            {
-                return 'test';
-            }
-
-            public function getParameters(): array
-            {
-                return [
-                    new ConfigParameter(
-                        'DB_HOST',
-                        'Host',
-                        ParameterType::String,
-                        defaultValue: 'localhost',
-                        transient: true,
-                    ),
-                    new ConfigParameter(
-                        'DB_PORT',
-                        'Port',
-                        ParameterType::Integer,
-                        defaultValue: '3306',
-                        transient: true,
-                    ),
-                ];
-            }
-
-            public function resolveEnvVars(array $collectedValues): array
-            {
-                return [
-                    'DATABASE_URL' => sprintf(
-                        'mysql://user@%s:%s/db',
-                        $collectedValues['DB_HOST'] ?? 'localhost',
-                        $collectedValues['DB_PORT'] ?? '3306',
-                    ),
-                ];
             }
 
             public function validate(array $collectedValues): array

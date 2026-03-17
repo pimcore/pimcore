@@ -24,6 +24,8 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Validation\FormatValidator;
  */
 final readonly class DatabaseEnvVarDefinition implements EnvVarDefinitionInterface
 {
+    private const ALLOWED_SCHEMES = ['mysql', 'mysqli', 'pdo-mysql'];
+
     public function getKey(): string
     {
         return 'database';
@@ -48,91 +50,69 @@ final readonly class DatabaseEnvVarDefinition implements EnvVarDefinitionInterfa
     {
         return [
             new ConfigParameter(
-                'DATABASE_HOST',
-                'Database Host',
-                ParameterType::String,
-                defaultValue: '127.0.0.1',
-                transient: true,
-            ),
-            new ConfigParameter(
-                'DATABASE_PORT',
-                'Database Port',
-                ParameterType::Integer,
-                defaultValue: '3306',
-                transient: true,
-            ),
-            new ConfigParameter(
-                'DATABASE_NAME',
-                'Database Name',
-                ParameterType::String,
-                defaultValue: 'pimcore',
-                transient: true,
-            ),
-            new ConfigParameter(
-                'DATABASE_USER',
-                'Database User',
-                ParameterType::String,
-                defaultValue: 'pimcore',
-                transient: true,
-            ),
-            new ConfigParameter(
-                'DATABASE_PASSWORD',
-                'Database Password',
-                ParameterType::Secret,
-                false,
-                transient: true,
+                'DATABASE_URL',
+                'Database URL',
+                ParameterType::Url,
+                defaultValue: 'mysql://pimcore:pimcore@127.0.0.1:3306/pimcore',
+                description: 'Doctrine DBAL URL (mysql://user:pass@host:port/dbname)',
             ),
         ];
     }
 
     public function resolveEnvVars(array $collectedValues): array
     {
-        $password = $collectedValues['DATABASE_PASSWORD'] ?? '';
-        $passwordPart = $password !== '' ? ':' . urlencode($password) : '';
-        $host = $collectedValues['DATABASE_HOST'] ?? '127.0.0.1';
-
-        // Wrap IPv6 addresses in brackets for URL format compliance
-        if (str_contains($host, ':')) {
-            $host = '[' . $host . ']';
-        }
-
         return [
-            'DATABASE_URL' => sprintf(
-                'mysql://%s%s@%s:%s/%s',
-                urlencode($collectedValues['DATABASE_USER'] ?? 'pimcore'),
-                $passwordPart,
-                $host,
-                $collectedValues['DATABASE_PORT'] ?? '3306',
-                $collectedValues['DATABASE_NAME'] ?? 'pimcore',
-            ),
+            'DATABASE_URL' => $collectedValues['DATABASE_URL'] ?? '',
         ];
     }
 
     public function validate(array $collectedValues): array
     {
-        $validator = new FormatValidator();
+        $url = $collectedValues['DATABASE_URL'] ?? '';
 
-        $validator
-            ->requireNonEmpty($collectedValues['DATABASE_HOST'] ?? '', 'Database host')
-            ->requirePortInRange(
-                (int) ($collectedValues['DATABASE_PORT'] ?? 0),
-                'Database port',
-            )
-            ->requireNonEmpty($collectedValues['DATABASE_NAME'] ?? '', 'Database name')
-            ->requireNonEmpty($collectedValues['DATABASE_USER'] ?? '', 'Database user');
+        $validator = new FormatValidator();
+        $validator->requireNonEmpty($url, 'Database URL');
 
         if ($validator->hasErrors()) {
             return $validator->getErrors();
         }
 
-        return array_merge($validator->getErrors(), $this->testConnection($collectedValues));
+        $parsed = parse_url($url);
+        if ($parsed === false) {
+            return ['Database URL is not a valid URL.'];
+        }
+
+        $scheme = $parsed['scheme'] ?? '';
+        if (!in_array($scheme, self::ALLOWED_SCHEMES, true)) {
+            return [sprintf(
+                'Database URL scheme must be one of: %s (got "%s").',
+                implode(', ', self::ALLOWED_SCHEMES),
+                $scheme,
+            )];
+        }
+
+        $host = $parsed['host'] ?? '';
+        if ($host === '') {
+            return ['Database URL must contain a host.'];
+        }
+
+        $port = $parsed['port'] ?? 3306;
+        if ($port < 1 || $port > 65535) {
+            return [sprintf('Database URL port must be between 1 and 65535 (got %d).', $port)];
+        }
+
+        $path = trim($parsed['path'] ?? '', '/');
+        if ($path === '') {
+            return ['Database URL must contain a database name in the path (e.g. mysql://...host/dbname).'];
+        }
+
+        return $this->testConnection($url);
     }
 
-    private function testConnection(array $collectedValues): array
+    private function testConnection(string $url): array
     {
         try {
-            $dsn = $this->resolveEnvVars($collectedValues)['DATABASE_URL'];
-            $connection = DriverManager::getConnection(['url' => $dsn]);
+            $connection = DriverManager::getConnection(['url' => $url]);
             $connection->executeQuery('SELECT 1');
             $connection->close();
         } catch (\Exception $e) {

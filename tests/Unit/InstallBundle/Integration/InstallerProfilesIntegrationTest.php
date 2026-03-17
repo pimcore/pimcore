@@ -44,8 +44,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  * profile → definitions → collection → validation → .env.local output.
  *
  * Note: Validation for Database and OpenSearch definitions attempts real
- * connections. We bypass this by providing the final DSN env var directly
- * (which skips transient parameter collection and connection testing).
+ * connections. We bypass this by providing the DSN env var directly
+ * or by wrapping the definition to skip connection testing.
  *
  * @internal
  */
@@ -77,19 +77,15 @@ final class InstallerProfilesIntegrationTest extends TestCase
     {
         $envVarReader = new ArrayEnvVarReader();
 
-        // Pre-set the final DSN env vars to bypass connection validation.
-        // Database: when DATABASE_URL is set, transient params are skipped.
+        // Pre-set env vars for all definitions
         $envVarReader->set('DATABASE_URL', 'mysql://pimcore:secret@db:3306/pimcore');
-
-        // OpenSearch: when PIMCORE_OPENSEARCH_DSN is set, transient params are skipped.
         $envVarReader->set('PIMCORE_OPENSEARCH_DSN', 'opensearch://admin:admin@opensearch:9200?ssl_verify=false');
-
-        // Mercure: set all required params
+        $envVarReader->set('PIMCORE_MESSENGER_TRANSPORT_DSN', 'doctrine://default');
         $envVarReader->set('MERCURE_JWT_KEY', 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4');
         $envVarReader->set('MERCURE_URL', 'http://localhost/hub');
         $envVarReader->set('MERCURE_SERVER_URL', 'http://mercure/.well-known/mercure');
 
-        $profile = $this->createRealProfile();
+        $profile = $this->createNonValidatingProfile();
         $collector = new ParameterCollector($envVarReader);
 
         $errors = $this->installer->runPhaseOne(
@@ -125,18 +121,12 @@ final class InstallerProfilesIntegrationTest extends TestCase
         $this->assertStringContainsString('MERCURE_SERVER_URL="http://mercure/.well-known/mercure"', $envContent);
     }
 
-    public function testPhaseOneWithDatabaseTransientParamsAssemblesDsn(): void
+    public function testPhaseOneWithDatabaseUrlPassedThroughDirectly(): void
     {
         $envVarReader = new ArrayEnvVarReader();
 
-        // Set transient params (NOT the final DATABASE_URL) to test DSN assembly.
-        // Validation will fail because we can't connect, but we use a
-        // non-connecting profile that bypasses the DB validation.
-        $envVarReader->set('DATABASE_HOST', '10.0.0.1');
-        $envVarReader->set('DATABASE_PORT', '3307');
-        $envVarReader->set('DATABASE_NAME', 'mydb');
-        $envVarReader->set('DATABASE_USER', 'myuser');
-        $envVarReader->set('DATABASE_PASSWORD', 'mypass');
+        // Set DATABASE_URL directly — the definition now collects it as a single parameter.
+        $envVarReader->set('DATABASE_URL', 'mysql://myuser:mypass@10.0.0.1:3307/mydb');
 
         // Use a non-validating database definition to avoid actual DB connection
         $dbDef = $this->createNonValidatingDatabaseDefinition();
@@ -163,7 +153,7 @@ final class InstallerProfilesIntegrationTest extends TestCase
 
         $envContent = file_get_contents($this->tempDir . '/.env.local');
 
-        // Verify the transient params were assembled into a proper DSN
+        // Verify the DATABASE_URL was written directly as provided
         $this->assertStringContainsString(
             'DATABASE_URL="mysql://myuser:mypass@10.0.0.1:3307/mydb"',
             $envContent,
@@ -175,11 +165,12 @@ final class InstallerProfilesIntegrationTest extends TestCase
         $envVarReader = new ArrayEnvVarReader();
         $envVarReader->set('DATABASE_URL', 'mysql://user:pass@localhost/db');
         $envVarReader->set('PIMCORE_OPENSEARCH_DSN', 'opensearch://localhost:9200?ssl_verify=false');
+        $envVarReader->set('PIMCORE_MESSENGER_TRANSPORT_DSN', 'doctrine://default');
         $envVarReader->set('MERCURE_JWT_KEY', 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4');
         $envVarReader->set('MERCURE_URL', 'http://localhost/hub');
         $envVarReader->set('MERCURE_SERVER_URL', 'http://mercure/.well-known/mercure');
 
-        $profile = $this->createRealProfile();
+        $profile = $this->createNonValidatingProfile();
         $collector = new ParameterCollector($envVarReader);
 
         $this->installer->runPhaseOne(
@@ -217,6 +208,7 @@ final class InstallerProfilesIntegrationTest extends TestCase
         $envVarReader = new ArrayEnvVarReader();
         $envVarReader->set('DATABASE_URL', 'mysql://user:pass@localhost/db');
         $envVarReader->set('PIMCORE_OPENSEARCH_DSN', 'opensearch://localhost:9200?ssl_verify=false');
+        $envVarReader->set('PIMCORE_MESSENGER_TRANSPORT_DSN', 'doctrine://default');
         $envVarReader->set('MERCURE_JWT_KEY', 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4');
         $envVarReader->set('MERCURE_URL', 'http://localhost/hub');
         $envVarReader->set('MERCURE_SERVER_URL', 'http://mercure/.well-known/mercure');
@@ -229,7 +221,7 @@ final class InstallerProfilesIntegrationTest extends TestCase
             ['REDIS_URL'],
         );
 
-        $profile = $this->createRealProfileWithExtra([$optionalDef]);
+        $profile = $this->createNonValidatingProfileWithExtra([$optionalDef]);
         $collector = new ParameterCollector($envVarReader);
 
         $errors = $this->installer->runPhaseOne(
@@ -272,11 +264,12 @@ final class InstallerProfilesIntegrationTest extends TestCase
         $envVarReader = new ArrayEnvVarReader();
         $envVarReader->set('DATABASE_URL', 'mysql://user:pass@localhost/db');
         $envVarReader->set('PIMCORE_OPENSEARCH_DSN', 'opensearch://localhost:9200?ssl_verify=false');
+        $envVarReader->set('PIMCORE_MESSENGER_TRANSPORT_DSN', 'doctrine://default');
         $envVarReader->set('MERCURE_JWT_KEY', 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4');
         $envVarReader->set('MERCURE_URL', 'http://localhost/hub');
         $envVarReader->set('MERCURE_SERVER_URL', 'http://mercure/.well-known/mercure');
 
-        $profile = $this->createRealProfile();
+        $profile = $this->createNonValidatingProfile();
         $collector = new ParameterCollector($envVarReader);
 
         $installer->runPhaseOne(
@@ -296,107 +289,37 @@ final class InstallerProfilesIntegrationTest extends TestCase
     }
 
     /**
-     * Create a profile using all real definition classes.
-     * The Database and OpenSearch definitions do connection testing in validate(),
-     * but since we pre-set the final DSN env vars, the transient params are
-     * skipped and validate() gets the final DSN value directly.
+     * Create a profile using real definition classes but with connection
+     * testing disabled (validate() returns [] for all definitions).
+     * This allows testing the collection/writing flow without real services.
      */
-    private function createRealProfile(): InstallProfileInterface
+    private function createNonValidatingProfile(): InstallProfileInterface
     {
-        return new class() implements InstallProfileInterface {
-            public function getName(): string
-            {
-                return 'integration-test';
-            }
+        $definitions = [
+            $this->createNonValidatingDatabaseDefinition(),
+            $this->createNonValidatingOpenSearchDefinition(),
+            new DoctrineMessengerEnvVarDefinition(),
+            new MercureEnvVarDefinition(),
+        ];
 
-            public function getDescription(): string
-            {
-                return 'Integration test profile with real definitions';
-            }
-
-            public function getBundles(): array
-            {
-                return [];
-            }
-
-            public function getEnvVarDefinitions(): array
-            {
-                return [
-                    new DatabaseEnvVarDefinition(),
-                    new OpenSearchEnvVarDefinition(),
-                    new DoctrineMessengerEnvVarDefinition(),
-                    new MercureEnvVarDefinition(),
-                ];
-            }
-
-            public function getDataSource(): ?DataSourceInterface
-            {
-                return null;
-            }
-
-            public function getPostInstallCommands(): array
-            {
-                return [];
-            }
-
-            public function postInstall(PostInstallContext $context): void
-            {
-            }
-        };
+        return $this->createMockProfile($definitions);
     }
 
     /**
-     * Create a profile using real definitions plus extra definitions appended.
+     * Create a non-validating profile with extra definitions appended.
      *
      * @param list<EnvVarDefinitionInterface> $extraDefs
      */
-    private function createRealProfileWithExtra(array $extraDefs): InstallProfileInterface
+    private function createNonValidatingProfileWithExtra(array $extraDefs): InstallProfileInterface
     {
-        return new class($extraDefs) implements InstallProfileInterface {
-            /** @param list<EnvVarDefinitionInterface> $extraDefs */
-            public function __construct(private readonly array $extraDefs)
-            {
-            }
+        $definitions = array_merge([
+            $this->createNonValidatingDatabaseDefinition(),
+            $this->createNonValidatingOpenSearchDefinition(),
+            new DoctrineMessengerEnvVarDefinition(),
+            new MercureEnvVarDefinition(),
+        ], $extraDefs);
 
-            public function getName(): string
-            {
-                return 'integration-test-extra';
-            }
-
-            public function getDescription(): string
-            {
-                return 'Integration test profile with extra definitions';
-            }
-
-            public function getBundles(): array
-            {
-                return [];
-            }
-
-            public function getEnvVarDefinitions(): array
-            {
-                return array_merge([
-                    new DatabaseEnvVarDefinition(),
-                    new OpenSearchEnvVarDefinition(),
-                    new DoctrineMessengerEnvVarDefinition(),
-                    new MercureEnvVarDefinition(),
-                ], $this->extraDefs);
-            }
-
-            public function getDataSource(): ?DataSourceInterface
-            {
-                return null;
-            }
-
-            public function getPostInstallCommands(): array
-            {
-                return [];
-            }
-
-            public function postInstall(PostInstallContext $context): void
-            {
-            }
-        };
+        return $this->createMockProfile($definitions);
     }
 
     /**
@@ -494,6 +417,57 @@ final class InstallerProfilesIntegrationTest extends TestCase
             public function validate(array $collectedValues): array
             {
                 // Skip connection testing — only validate format
+                return [];
+            }
+        };
+    }
+
+    /**
+     * Creates an OpenSearch definition that uses the same resolveEnvVars() logic
+     * as OpenSearchEnvVarDefinition but skips connection testing in validate().
+     */
+    private function createNonValidatingOpenSearchDefinition(): SearchEngineDefinitionInterface
+    {
+        return new class() implements SearchEngineDefinitionInterface {
+            private readonly OpenSearchEnvVarDefinition $inner;
+
+            public function __construct()
+            {
+                $this->inner = new OpenSearchEnvVarDefinition();
+            }
+
+            public function getKey(): string
+            {
+                return $this->inner->getKey();
+            }
+
+            public function getLabel(): string
+            {
+                return $this->inner->getLabel();
+            }
+
+            public function isRequired(): bool
+            {
+                return $this->inner->isRequired();
+            }
+
+            public function getSectionName(): string
+            {
+                return $this->inner->getSectionName();
+            }
+
+            public function getParameters(): array
+            {
+                return $this->inner->getParameters();
+            }
+
+            public function resolveEnvVars(array $collectedValues): array
+            {
+                return $this->inner->resolveEnvVars($collectedValues);
+            }
+
+            public function validate(array $collectedValues): array
+            {
                 return [];
             }
         };

@@ -106,51 +106,6 @@ final class ParameterCollectorTest extends TestCase
         $this->assertSame(['REDIS_URL' => 'redis://redis:6379'], $values);
     }
 
-    public function testSkipsTransientParamsWhenFinalDsnIsSet(): void
-    {
-        $this->envVarReader->set('DATABASE_URL', 'mysql://root:pass@db:3306/pimcore');
-
-        $definition = $this->createDatabaseLikeDefinition();
-
-        $io = $this->createNonInteractiveIo();
-        $values = $this->collector->collect($definition, $io, false);
-
-        // Should contain the final DSN, not the transient parts
-        $this->assertArrayHasKey('DATABASE_URL', $values);
-        $this->assertSame(
-            'mysql://root:pass@db:3306/pimcore',
-            $values['DATABASE_URL'],
-        );
-        // Transient params should NOT be in collected values
-        $this->assertArrayNotHasKey('DATABASE_HOST', $values);
-        $this->assertArrayNotHasKey('DATABASE_PORT', $values);
-        $this->assertArrayNotHasKey('DATABASE_NAME', $values);
-        $this->assertArrayNotHasKey('DATABASE_USER', $values);
-        $this->assertArrayNotHasKey('DATABASE_PASSWORD', $values);
-    }
-
-    public function testCollectsTransientParamsWhenFinalDsnNotSet(): void
-    {
-        $definition = $this->createDatabaseLikeDefinition();
-
-        $io = $this->createNonInteractiveIo();
-        $values = $this->collector->collect($definition, $io, false);
-
-        // When DATABASE_URL is not set, transient params should be collected
-        // with their defaults (non-interactive mode)
-        $this->assertArrayHasKey('DATABASE_HOST', $values);
-        $this->assertSame('127.0.0.1', $values['DATABASE_HOST']);
-        $this->assertArrayHasKey('DATABASE_PORT', $values);
-        $this->assertSame('3306', $values['DATABASE_PORT']);
-        $this->assertArrayHasKey('DATABASE_NAME', $values);
-        $this->assertSame('pimcore', $values['DATABASE_NAME']);
-        $this->assertArrayHasKey('DATABASE_USER', $values);
-        $this->assertSame('root', $values['DATABASE_USER']);
-        // DATABASE_PASSWORD has no default and is not required, so empty string
-        $this->assertArrayHasKey('DATABASE_PASSWORD', $values);
-        $this->assertSame('', $values['DATABASE_PASSWORD']);
-    }
-
     public function testEnvVarPriorityOverDefault(): void
     {
         $this->envVarReader->set('TEST_VAR', 'env-value');
@@ -240,213 +195,6 @@ final class ParameterCollectorTest extends TestCase
         // HOST from env, PORT from default
         $this->assertSame('db.example.com', $values['HOST']);
         $this->assertSame('5432', $values['PORT']);
-    }
-
-    public function testOptionalDefinitionCollectedWhenResolvedEnvVarPresent(): void
-    {
-        // The final DSN env var is set (not a transient param), so the
-        // optional definition should be collected
-        $this->envVarReader->set('DATABASE_URL', 'mysql://root@localhost/pimcore');
-
-        $definition = $this->createOptionalDatabaseDefinition();
-
-        $io = $this->createNonInteractiveIo();
-        $values = $this->collector->collect($definition, $io, false);
-
-        $this->assertNotNull($values);
-        $this->assertArrayHasKey('DATABASE_URL', $values);
-    }
-
-    private function createSimpleDefinition(
-        string $key,
-        bool $required,
-        array $parameters,
-    ): EnvVarDefinitionInterface {
-        return new class($key, $required, $parameters) implements EnvVarDefinitionInterface {
-            public function __construct(
-                private readonly string $key,
-                private readonly bool $required,
-                private readonly array $parameters,
-            ) {
-            }
-
-            public function getKey(): string
-            {
-                return $this->key;
-            }
-
-            public function getLabel(): string
-            {
-                return ucfirst($this->key);
-            }
-
-            public function isRequired(): bool
-            {
-                return $this->required;
-            }
-
-            public function getSectionName(): string
-            {
-                return 'test';
-            }
-
-            public function getParameters(): array
-            {
-                return $this->parameters;
-            }
-
-            public function resolveEnvVars(array $collectedValues): array
-            {
-                $result = [];
-                foreach ($this->parameters as $param) {
-                    if (!$param->isTransient()) {
-                        $result[$param->getEnvVarName()] =
-                            $collectedValues[$param->getEnvVarName()] ?? '';
-                    }
-                }
-
-                return $result;
-            }
-
-            public function validate(array $collectedValues): array
-            {
-                return [];
-            }
-        };
-    }
-
-    private function createDatabaseLikeDefinition(): EnvVarDefinitionInterface
-    {
-        return new class() implements EnvVarDefinitionInterface {
-            public function getKey(): string
-            {
-                return 'database';
-            }
-
-            public function getLabel(): string
-            {
-                return 'Database';
-            }
-
-            public function isRequired(): bool
-            {
-                return true;
-            }
-
-            public function getSectionName(): string
-            {
-                return 'pimcore/pimcore';
-            }
-
-            public function getParameters(): array
-            {
-                return [
-                    new ConfigParameter(
-                        'DATABASE_HOST',
-                        'Host',
-                        ParameterType::String,
-                        defaultValue: '127.0.0.1',
-                        transient: true,
-                    ),
-                    new ConfigParameter(
-                        'DATABASE_PORT',
-                        'Port',
-                        ParameterType::Integer,
-                        defaultValue: '3306',
-                        transient: true,
-                    ),
-                    new ConfigParameter(
-                        'DATABASE_NAME',
-                        'DB',
-                        ParameterType::String,
-                        defaultValue: 'pimcore',
-                        transient: true,
-                    ),
-                    new ConfigParameter(
-                        'DATABASE_USER',
-                        'User',
-                        ParameterType::String,
-                        defaultValue: 'root',
-                        transient: true,
-                    ),
-                    new ConfigParameter(
-                        'DATABASE_PASSWORD',
-                        'Pass',
-                        ParameterType::Secret,
-                        required: false,
-                        transient: true,
-                    ),
-                ];
-            }
-
-            public function resolveEnvVars(array $collectedValues): array
-            {
-                return ['DATABASE_URL' => sprintf(
-                    'mysql://%s:%s@%s:%s/%s',
-                    $collectedValues['DATABASE_USER'] ?? 'root',
-                    $collectedValues['DATABASE_PASSWORD'] ?? '',
-                    $collectedValues['DATABASE_HOST'] ?? '127.0.0.1',
-                    $collectedValues['DATABASE_PORT'] ?? '3306',
-                    $collectedValues['DATABASE_NAME'] ?? 'pimcore',
-                )];
-            }
-
-            public function validate(array $collectedValues): array
-            {
-                return [];
-            }
-        };
-    }
-
-    private function createOptionalDatabaseDefinition(): EnvVarDefinitionInterface
-    {
-        return new class() implements EnvVarDefinitionInterface {
-            public function getKey(): string
-            {
-                return 'optional-db';
-            }
-
-            public function getLabel(): string
-            {
-                return 'Optional Database';
-            }
-
-            public function isRequired(): bool
-            {
-                return false;
-            }
-
-            public function getSectionName(): string
-            {
-                return 'test';
-            }
-
-            public function getParameters(): array
-            {
-                return [
-                    new ConfigParameter(
-                        'DATABASE_HOST',
-                        'Host',
-                        ParameterType::String,
-                        defaultValue: 'localhost',
-                        transient: true,
-                    ),
-                ];
-            }
-
-            public function resolveEnvVars(array $collectedValues): array
-            {
-                return ['DATABASE_URL' => sprintf(
-                    'mysql://%s',
-                    $collectedValues['DATABASE_HOST'] ?? 'localhost',
-                )];
-            }
-
-            public function validate(array $collectedValues): array
-            {
-                return [];
-            }
-        };
     }
 
     public function testInteractiveWithEnvVarUsesEnvVarAsDefault(): void
@@ -742,6 +490,69 @@ final class ParameterCollectorTest extends TestCase
 
         $rendered = $output->fetch();
         $this->assertStringContainsString('MY_SECRET is already configured', $rendered);
+    }
+
+    /**
+     * Creates a simple definition with the given key, required flag, and parameters.
+     *
+     * @param list<ConfigParameter> $parameters
+     */
+    private function createSimpleDefinition(
+        string $key,
+        bool $required,
+        array $parameters,
+    ): EnvVarDefinitionInterface {
+        return new class($key, $required, $parameters)
+            implements EnvVarDefinitionInterface
+        {
+            public function __construct(
+                private readonly string $key,
+                private readonly bool $required,
+                private readonly array $parameters,
+            ) {
+            }
+
+            public function getKey(): string
+            {
+                return $this->key;
+            }
+
+            public function getLabel(): string
+            {
+                return ucfirst($this->key);
+            }
+
+            public function isRequired(): bool
+            {
+                return $this->required;
+            }
+
+            public function getSectionName(): string
+            {
+                return 'test';
+            }
+
+            public function getParameters(): array
+            {
+                return $this->parameters;
+            }
+
+            public function resolveEnvVars(array $collectedValues): array
+            {
+                $result = [];
+                foreach ($this->parameters as $param) {
+                    $name = $param->getEnvVarName();
+                    $result[$name] = $collectedValues[$name] ?? '';
+                }
+
+                return $result;
+            }
+
+            public function validate(array $collectedValues): array
+            {
+                return [];
+            }
+        };
     }
 
     private function createNonInteractiveIo(): SymfonyStyle

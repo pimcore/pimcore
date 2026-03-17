@@ -24,9 +24,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * 2. Interactive prompts (when running interactively)
  * 3. Default values (fallback)
  *
- * For definitions that resolve a final DSN env var (e.g., DATABASE_URL):
- * if the final env var is already set, all transient parameters are skipped.
- *
  * @internal
  */
 final readonly class ParameterCollector
@@ -50,69 +47,32 @@ final readonly class ParameterCollector
         SymfonyStyle $io,
         bool $interactive,
     ): ?array {
-        $resolvedEnvVarNames = $this->getResolvedEnvVarNames($definition);
-
         // Optional definition gate
         if (!$definition->isRequired()) {
-            if (!$this->shouldConfigureOptional($definition, $io, $interactive, $resolvedEnvVarNames)) {
+            if (!$this->shouldConfigureOptional($definition, $io, $interactive)) {
                 return null;
             }
         }
 
         $parameters = $definition->getParameters();
 
-        // Check if any resolved (final) env var is already fully set.
-        // If all final env vars are present, we can skip transient parameter prompts.
-        $allFinalVarsPresent = $this->allFinalEnvVarsPresent($resolvedEnvVarNames);
-
         $collectedValues = [];
         foreach ($parameters as $parameter) {
-            // If this is a transient param and all final DSN vars are already set, skip it
-            if ($parameter->isTransient() && $allFinalVarsPresent) {
-                continue;
-            }
-
             $value = $this->collectParameter($parameter, $io, $interactive);
             $collectedValues[$parameter->getEnvVarName()] = $value;
-        }
-
-        // If we skipped transients because final vars were present,
-        // we need to populate collected values from those final vars
-        // so validation can work correctly.
-        if ($allFinalVarsPresent) {
-            foreach ($resolvedEnvVarNames as $envVarName) {
-                if (array_key_exists($envVarName, $collectedValues)) {
-                    continue;
-                }
-                $envValue = $this->envVarReader->get($envVarName);
-                if ($envValue !== null) {
-                    $collectedValues[$envVarName] = $envValue;
-                }
-            }
         }
 
         return $collectedValues;
     }
 
-    /**
-     * @param list<string> $resolvedEnvVarNames
-     */
     private function shouldConfigureOptional(
         EnvVarDefinitionInterface $definition,
         SymfonyStyle $io,
         bool $interactive,
-        array $resolvedEnvVarNames,
     ): bool {
         // Check if any env var for this definition is already set
         foreach ($definition->getParameters() as $parameter) {
             if ($this->envVarReader->get($parameter->getEnvVarName()) !== null) {
-                return true;
-            }
-        }
-
-        // Also check resolved env var names
-        foreach ($resolvedEnvVarNames as $name) {
-            if ($this->envVarReader->get($name) !== null) {
                 return true;
             }
         }
@@ -197,40 +157,5 @@ final readonly class ParameterCollector
                 $suggestion,
             ),
         };
-    }
-
-    /**
-     * Get env var names that resolveEnvVars() would produce.
-     * We need this to check if the final DSN is already set.
-     *
-     * @return list<string>
-     */
-    private function getResolvedEnvVarNames(EnvVarDefinitionInterface $definition): array
-    {
-        // Build a dummy values array with defaults to discover which env vars get resolved
-        $dummyValues = [];
-        foreach ($definition->getParameters() as $param) {
-            $dummyValues[$param->getEnvVarName()] = $param->getDefaultValue() ?? '';
-        }
-
-        return array_keys($definition->resolveEnvVars($dummyValues));
-    }
-
-    /**
-     * @param list<string> $envVarNames
-     */
-    private function allFinalEnvVarsPresent(array $envVarNames): bool
-    {
-        if ($envVarNames === []) {
-            return false;
-        }
-
-        foreach ($envVarNames as $name) {
-            if ($this->envVarReader->get($name) === null) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

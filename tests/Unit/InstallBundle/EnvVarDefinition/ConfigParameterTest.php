@@ -37,7 +37,6 @@ final class ConfigParameterTest extends TestCase
         $this->assertNull($param->getDefaultValue());
         $this->assertNull($param->getDescription());
         $this->assertSame([], $param->getChoices());
-        $this->assertFalse($param->isTransient());
     }
 
     public function testConstructorWithAllValues(): void
@@ -50,7 +49,6 @@ final class ConfigParameterTest extends TestCase
             defaultValue: 'opensearch',
             description: 'Choose your search engine',
             choices: ['opensearch', 'elasticsearch'],
-            transient: false,
         );
 
         $this->assertSame('PIMCORE_SEARCH_ENGINE', $param->getEnvVarName());
@@ -58,16 +56,4 @@ final class ConfigParameterTest extends TestCase
         $this->assertSame('opensearch', $param->getDefaultValue());
     }
 
-    public function testTransientParameter(): void
-    {
-        $param = new ConfigParameter(
-            'DATABASE_HOST',
-            'Database Host',
-            ParameterType::String,
-            defaultValue: '127.0.0.1',
-            transient: true,
-        );
-
-        $this->assertTrue($param->isTransient());
-    }
 }

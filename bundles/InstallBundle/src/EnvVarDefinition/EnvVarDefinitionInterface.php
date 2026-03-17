@@ -38,9 +38,9 @@ interface EnvVarDefinitionInterface
 
     /**
      * Transform collected parameter values into final env vars.
-     * This is where DSN assembly happens.
-     * Transient parameters (used for prompting) are combined into
-     * compound DSN values here.
+     *
+     * For simple definitions this is a pass-through of the collected values.
+     * Definitions may transform or rename values as needed.
      *
      * @param array<string, string> $collectedValues
      *
