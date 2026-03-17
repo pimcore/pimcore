@@ -87,10 +87,36 @@ class Installer
 
     private int $totalSteps = 0;
 
+    /**
+     * @param (\Closure(string): InstallerCheckpoint)|null $checkpointFactory
+     * @param (\Closure(string): EnvWriter)|null $envWriterFactory
+     */
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly DatabaseSetup $databaseSetup = new DatabaseSetup(),
+        private readonly BundleWriter $bundleWriter = new BundleWriter(),
+        private readonly ?\Closure $checkpointFactory = null,
+        private readonly ?\Closure $envWriterFactory = null,
     ) {
+    }
+
+    private function createCheckpoint(string $projectRoot): InstallerCheckpoint
+    {
+        if ($this->checkpointFactory !== null) {
+            return ($this->checkpointFactory)($projectRoot);
+        }
+
+        return new InstallerCheckpoint($projectRoot);
+    }
+
+    private function createEnvWriter(string $envFilePath): EnvWriter
+    {
+        if ($this->envWriterFactory !== null) {
+            return ($this->envWriterFactory)($envFilePath);
+        }
+
+        return new EnvWriter($envFilePath);
     }
 
     /**
@@ -192,7 +218,7 @@ class Installer
         SymfonyStyle $io,
         string $projectRoot,
     ): array {
-        $checkpoint = new InstallerCheckpoint($projectRoot);
+        $checkpoint = $this->createCheckpoint($projectRoot);
         $completedStep = $checkpoint->getCompletedStep();
 
         if ($completedStep !== null) {
@@ -768,7 +794,7 @@ class Installer
             );
         }
 
-        $envWriter = new EnvWriter($projectRoot . '/.env.local');
+        $envWriter = $this->createEnvWriter($projectRoot . '/.env.local');
         $warnings = $envWriter->write($sectionedEnvVars);
 
         foreach ($warnings as $warning) {
@@ -848,7 +874,7 @@ class Installer
      */
     private function setupDatabase(Connection $db): void
     {
-        (new DatabaseSetup())->createSchema($db);
+        $this->databaseSetup->createSchema($db);
     }
 
     /**
@@ -898,8 +924,7 @@ class Installer
             return;
         }
 
-        $writer = new BundleWriter();
-        $writer->addBundlesToConfig($bundles, $bundles);
+        $this->bundleWriter->addBundlesToConfig($bundles, $bundles);
     }
 
     private function installBundles(InstallProfileInterface $profile, SymfonyStyle $io): void
