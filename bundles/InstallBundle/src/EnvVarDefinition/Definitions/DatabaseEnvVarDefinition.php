@@ -69,9 +69,10 @@ final readonly class DatabaseEnvVarDefinition implements EnvVarDefinitionInterfa
     public function validate(array $collectedValues): array
     {
         $url = $collectedValues['DATABASE_URL'] ?? '';
+        $label = 'Database URL';
 
         $validator = new FormatValidator();
-        $validator->requireNonEmpty($url, 'Database URL');
+        $validator->requireNonEmpty($url, $label);
 
         if ($validator->hasErrors()) {
             return $validator->getErrors();
@@ -79,13 +80,14 @@ final readonly class DatabaseEnvVarDefinition implements EnvVarDefinitionInterfa
 
         $parsed = parse_url($url);
         if ($parsed === false) {
-            return ['Database URL is not a valid URL.'];
+            return [sprintf('%s is not a valid URL.', $label)];
         }
 
         $scheme = $parsed['scheme'] ?? '';
         if (!in_array($scheme, self::ALLOWED_SCHEMES, true)) {
             return [sprintf(
-                'Database URL scheme must be one of: %s (got "%s").',
+                '%s scheme must be one of: %s (got "%s").',
+                $label,
                 implode(', ', self::ALLOWED_SCHEMES),
                 $scheme,
             )];
@@ -93,17 +95,19 @@ final readonly class DatabaseEnvVarDefinition implements EnvVarDefinitionInterfa
 
         $host = $parsed['host'] ?? '';
         if ($host === '') {
-            return ['Database URL must contain a host.'];
+            return [sprintf('%s must contain a host.', $label)];
         }
 
-        $port = $parsed['port'] ?? 3306;
-        if ($port < 1 || $port > 65535) {
-            return [sprintf('Database URL port must be between 1 and 65535 (got %d).', $port)];
+        if (isset($parsed['port'])) {
+            $validator->requirePortInRange($parsed['port'], $label . ' port');
+            if ($validator->hasErrors()) {
+                return $validator->getErrors();
+            }
         }
 
         $path = trim($parsed['path'] ?? '', '/');
         if ($path === '') {
-            return ['Database URL must contain a database name in the path (e.g. mysql://...host/dbname).'];
+            return [sprintf('%s must contain a database name in the path (e.g. mysql://...host/dbname).', $label)];
         }
 
         return $this->testConnection($url);
