@@ -13,11 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions;
 
-use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
-use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterType;
-use Pimcore\Bundle\InstallBundle\EnvVarDefinition\SearchEngineDefinitionInterface;
-use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Validation\FormatValidator;
-
 /**
  * OpenSearch search engine definition.
  *
@@ -26,7 +21,7 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Validation\FormatValidator;
  *
  * @internal
  */
-final readonly class OpenSearchEnvVarDefinition implements SearchEngineDefinitionInterface
+final readonly class OpenSearchEnvVarDefinition extends AbstractSearchEngineEnvVarDefinition
 {
     public function getKey(): string
     {
@@ -38,115 +33,33 @@ final readonly class OpenSearchEnvVarDefinition implements SearchEngineDefinitio
         return 'OpenSearch';
     }
 
-    public function isRequired(): bool
-    {
-        return true;
-    }
-
     public function getSectionName(): string
     {
         return 'pimcore/opensearch-client';
     }
 
-    public function getParameters(): array
+    protected function getScheme(): string
     {
-        return [
-            new ConfigParameter(
-                'PIMCORE_OPENSEARCH_DSN',
-                'OpenSearch DSN',
-                ParameterType::Url,
-                defaultValue: 'opensearch://admin@localhost:9200?ssl_verify=false',
-                description: 'opensearch://user:pass@host:port?ssl_verify=bool',
-            ),
-        ];
+        return 'opensearch';
     }
 
-    public function resolveEnvVars(array $collectedValues): array
+    protected function getEnvVarName(): string
     {
-        return [
-            'PIMCORE_OPENSEARCH_DSN' => $collectedValues['PIMCORE_OPENSEARCH_DSN'] ?? '',
-        ];
+        return 'PIMCORE_OPENSEARCH_DSN';
     }
 
-    public function validate(array $collectedValues): array
+    protected function getDefaultDsn(): string
     {
-        $dsn = $collectedValues['PIMCORE_OPENSEARCH_DSN'] ?? '';
-
-        $validator = new FormatValidator();
-        $validator->requireNonEmpty($dsn, 'OpenSearch DSN');
-
-        if ($validator->hasErrors()) {
-            return $validator->getErrors();
-        }
-
-        $parsed = parse_url($dsn);
-        if ($parsed === false) {
-            return ['OpenSearch DSN is not a valid URL.'];
-        }
-
-        $scheme = $parsed['scheme'] ?? '';
-        if ($scheme !== 'opensearch') {
-            return [sprintf('OpenSearch DSN scheme must be "opensearch" (got "%s").', $scheme)];
-        }
-
-        $host = $parsed['host'] ?? '';
-        if ($host === '') {
-            return ['OpenSearch DSN must contain a host.'];
-        }
-
-        return $this->testConnection($parsed);
+        return 'opensearch://admin@localhost:9200?ssl_verify=false';
     }
 
-    /**
-     * @param array<string, mixed> $parsed Result of parse_url()
-     */
-    private function testConnection(array $parsed): array
+    protected function getDefaultPort(): int
     {
-        $host = $parsed['host'] ?? 'localhost';
-        $port = $parsed['port'] ?? 9200;
-        $username = isset($parsed['user']) ? rawurldecode($parsed['user']) : '';
-        $password = isset($parsed['pass']) ? rawurldecode($parsed['pass']) : '';
+        return 9200;
+    }
 
-        $query = [];
-        if (isset($parsed['query'])) {
-            parse_str($parsed['query'], $query);
-        }
-        $sslVerify = ($query['ssl_verify'] ?? 'false') === 'true';
-
-        $protocol = ($port === 80) ? 'http' : 'https';
-        $url = sprintf('%s://%s:%d', $protocol, $host, $port);
-
-        $contextOptions = [
-            'http' => [
-                'timeout' => 5,
-                'ignore_errors' => true,
-            ],
-            'ssl' => [
-                'verify_peer' => $sslVerify,
-                'verify_peer_name' => $sslVerify,
-            ],
-        ];
-
-        if ($username !== '' && $password !== '') {
-            $contextOptions['http']['header'] = 'Authorization: Basic '
-                . base64_encode($username . ':' . $password);
-        }
-
-        try {
-            $context = stream_context_create($contextOptions);
-            $response = @file_get_contents($url, false, $context);
-
-            if ($response === false) {
-                return [sprintf(
-                    'OpenSearch connection failed at %s. '
-                    . 'Verify the host is reachable and credentials are correct.',
-                    $url,
-                )];
-            }
-        } catch (\Exception $e) {
-            return [sprintf('OpenSearch connection failed: %s', $e->getMessage())];
-        }
-
-        return [];
+    protected function getDefaultSslVerify(): bool
+    {
+        return false;
     }
 }
