@@ -17,6 +17,8 @@ custom domains, see [Custom Translation Domains](./04_Custom_Translation_Domains
 
 For more information, check out the [Symfony Translator component](https://symfony.com/doc/current/translation.html).
 
+<div class="image-as-lightbox"></div>
+
 ![Shared Translations](../img/localization-translations.png)
 
 Available languages are defined within the system languages, see
@@ -108,11 +110,6 @@ parameters in your template or controller.
 ## Pimcore Studio Features
 
 The Pimcore Studio translations view provides several tools for managing shared translations.
-
-### Sorting & Filtering per Language
-
-![Sorting Shared Translations](../img/localization-translations-sorting.jpg)
-
 
 ### Translation Export & Import
 

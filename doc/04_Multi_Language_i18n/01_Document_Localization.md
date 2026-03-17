@@ -22,6 +22,8 @@ When a language is set, Pimcore automatically applies it to the request object (
 shared translations, localized object lists, and all other locale-aware content pick up the correct language without
 additional configuration.
 
+<div class="image-as-lightbox"></div>
+
 ![Localization Settings](../img/localization-documents.png)
 
 Since the language is a standard document property, you can access it like any other property:
@@ -45,6 +47,8 @@ $language = $doc->getProperty("language");
 
 Every document has one single language/locale assigned. Pimcore's best practice for building multi-language websites
 is to create a separate document subtree per language.
+
+<div class="image-as-lightbox"></div>
 
 ![Localization Language Trees](../img/localization-documents1.png)
 
