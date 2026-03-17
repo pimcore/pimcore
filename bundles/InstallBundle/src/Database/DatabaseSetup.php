@@ -51,19 +51,109 @@ final class DatabaseSetup
             throw new \RuntimeException(sprintf('Could not read SQL file: %s', $filePath));
         }
 
-        $sql = preg_replace(
-            "/\s*(?!<\")\/\*(?![!+])[^\*]+\*\/(?!\")\s*/",
-            '',
-            $sql,
-        );
-
-        $statements = explode(';', $sql);
+        $statements = $this->splitSqlStatements($sql);
         foreach ($statements as $statement) {
-            $trimmed = trim($statement);
-            if ($trimmed !== '') {
-                $db->executeQuery($trimmed . ';');
-            }
+            $db->executeQuery($statement . ';');
         }
+    }
+
+    /**
+     * Split SQL into individual statements, respecting quoted strings and comments.
+     *
+     * @return list<string> non-empty trimmed statements (without trailing semicolons)
+     */
+    private function splitSqlStatements(string $sql): array
+    {
+        $statements = [];
+        $current = '';
+        $length = strlen($sql);
+        $i = 0;
+
+        while ($i < $length) {
+            $char = $sql[$i];
+
+            // Single-quoted string
+            if ($char === "'") {
+                $current .= $char;
+                $i++;
+                while ($i < $length) {
+                    $current .= $sql[$i];
+                    if ($sql[$i] === "'" && ($i + 1 >= $length || $sql[$i + 1] !== "'")) {
+                        $i++;
+                        break;
+                    }
+                    if ($sql[$i] === "'" && $i + 1 < $length && $sql[$i + 1] === "'") {
+                        $current .= $sql[++$i];
+                    }
+                    $i++;
+                }
+                continue;
+            }
+
+            // Double-quoted identifier
+            if ($char === '"') {
+                $current .= $char;
+                $i++;
+                while ($i < $length) {
+                    $current .= $sql[$i];
+                    if ($sql[$i] === '"') {
+                        $i++;
+                        break;
+                    }
+                    $i++;
+                }
+                continue;
+            }
+
+            // Single-line comment: -- ...
+            if ($char === '-' && $i + 1 < $length && $sql[$i + 1] === '-') {
+                while ($i < $length && $sql[$i] !== "\n") {
+                    $i++;
+                }
+                continue;
+            }
+
+            // Multi-line comment: /* ... */ (skip only non-executable comments)
+            if ($char === '/' && $i + 1 < $length && $sql[$i + 1] === '*') {
+                // Preserve MySQL executable comments /*!...*/ by checking for !
+                if ($i + 2 < $length && $sql[$i + 2] === '!') {
+                    $current .= $char;
+                    $i++;
+                    continue;
+                }
+                $i += 2;
+                while ($i < $length) {
+                    if ($sql[$i] === '*' && $i + 1 < $length && $sql[$i + 1] === '/') {
+                        $i += 2;
+                        break;
+                    }
+                    $i++;
+                }
+                continue;
+            }
+
+            // Statement terminator
+            if ($char === ';') {
+                $trimmed = trim($current);
+                if ($trimmed !== '') {
+                    $statements[] = $trimmed;
+                }
+                $current = '';
+                $i++;
+                continue;
+            }
+
+            $current .= $char;
+            $i++;
+        }
+
+        // Handle last statement (no trailing semicolon)
+        $trimmed = trim($current);
+        if ($trimmed !== '') {
+            $statements[] = $trimmed;
+        }
+
+        return $statements;
     }
 
     private function createInfrastructureTables(Connection $db): void
