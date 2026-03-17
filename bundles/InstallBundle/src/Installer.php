@@ -1054,55 +1054,50 @@ class Installer
         string $taskName,
         ?SymfonyStyle $io = null,
     ): void {
-        try {
-            array_splice($arguments, 0, 0, [
-                Console::getPhpCli(),
-                PIMCORE_PROJECT_ROOT . '/bin/console',
-            ]);
+        array_splice($arguments, 0, 0, [
+            Console::getPhpCli(),
+            PIMCORE_PROJECT_ROOT . '/bin/console',
+        ]);
 
-            $this->logger->info('Running {command} command', [
-                'command' => implode(' ', $arguments),
-            ]);
+        $this->logger->info('Running {command} command', [
+            'command' => implode(' ', $arguments),
+        ]);
 
-            $process = new Process($arguments);
-            $process->setTimeout(0);
-            $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
-            $process->run();
+        $process = new Process($arguments);
+        $process->setTimeout(0);
+        $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
+        $process->run();
 
-            if (!$process->isSuccessful()) {
-                throw new ProcessFailedException($process);
-            }
-
-            if ($io !== null) {
-                $output = $process->getOutput();
-                if ($output !== '') {
-                    $io->writeln($output);
-                }
-            }
-        } catch (ProcessFailedException $e) {
+        if (!$process->isSuccessful()) {
+            $e = new ProcessFailedException($process);
             $this->logger->error($e->getMessage());
 
-            if ($io === null) {
-                throw $e;
+            if ($io !== null) {
+                $errorOutput = trim($process->getErrorOutput());
+                if ($errorOutput !== '') {
+                    $io->getErrorStyle()->write($errorOutput);
+                }
+
+                $io->getErrorStyle()->note(
+                    $taskName . ' failed. Please run the following command manually:',
+                );
+                $io->getErrorStyle()->writeln(
+                    '  ' . str_replace(
+                        ["'", '\\'],
+                        ['', '\\\\'],
+                        $process->getCommandLine(),
+                    ),
+                );
             }
 
-            $process = $e->getProcess();
-            $errorOutput = trim($process->getErrorOutput());
+            throw $e;
+        }
 
-            if ($errorOutput !== '') {
-                $io->getErrorStyle()->write($errorOutput);
+        if ($io !== null) {
+            $output = $process->getOutput();
+            if ($output !== '') {
+                $io->writeln($output);
             }
-
-            $io->getErrorStyle()->note(
-                $taskName . ' failed. Please run the following command manually:',
-            );
-            $io->getErrorStyle()->writeln(
-                '  ' . str_replace(
-                    ["'", '\\'],
-                    ['', '\\\\'],
-                    $process->getCommandLine(),
-                ),
-            );
         }
     }
 
