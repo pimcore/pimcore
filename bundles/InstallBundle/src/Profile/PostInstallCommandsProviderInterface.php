@@ -11,16 +11,12 @@ declare(strict_types=1);
  *  @license    Pimcore Open Core License (POCL)
  */
 
-namespace Pimcore\Bundle\InstallBundle\Event;
+namespace Pimcore\Bundle\InstallBundle\Profile;
 
-/**
- * @internal
- */
-final class InstallEvents
+interface PostInstallCommandsProviderInterface
 {
-    public const string EVENT_NAME_STEP = 'pimcore.installer.step';
-
-    private function __construct()
-    {
-    }
+    /**
+     * @return list<PostInstallCommand>
+     */
+    public function getPostInstallCommands(): array;
 }

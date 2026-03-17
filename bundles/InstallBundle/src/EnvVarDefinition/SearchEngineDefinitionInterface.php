@@ -11,16 +11,16 @@ declare(strict_types=1);
  *  @license    Pimcore Open Core License (POCL)
  */
 
-namespace Pimcore\Bundle\InstallBundle\Event;
+namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition;
 
 /**
+ * Marker interface for search engine env var definitions.
+ *
+ * Profiles must include exactly one definition implementing this interface.
+ * The installer validates this constraint during Phase 1.
+ *
  * @internal
  */
-final class InstallEvents
+interface SearchEngineDefinitionInterface extends EnvVarDefinitionInterface
 {
-    public const string EVENT_NAME_STEP = 'pimcore.installer.step';
-
-    private function __construct()
-    {
-    }
 }

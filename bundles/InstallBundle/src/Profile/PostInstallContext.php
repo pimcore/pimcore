@@ -11,16 +11,19 @@ declare(strict_types=1);
  *  @license    Pimcore Open Core License (POCL)
  */
 
-namespace Pimcore\Bundle\InstallBundle\Event;
+namespace Pimcore\Bundle\InstallBundle\Profile;
+
+use Doctrine\DBAL\Connection;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @internal
  */
-final class InstallEvents
+final readonly class PostInstallContext
 {
-    public const string EVENT_NAME_STEP = 'pimcore.installer.step';
-
-    private function __construct()
-    {
+    public function __construct(
+        public Connection $connection,
+        public OutputInterface $output,
+    ) {
     }
 }

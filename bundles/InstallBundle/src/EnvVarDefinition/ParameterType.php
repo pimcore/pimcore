@@ -11,16 +11,17 @@ declare(strict_types=1);
  *  @license    Pimcore Open Core License (POCL)
  */
 
-namespace Pimcore\Bundle\InstallBundle\Event;
+namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition;
 
 /**
  * @internal
  */
-final class InstallEvents
+enum ParameterType
 {
-    public const string EVENT_NAME_STEP = 'pimcore.installer.step';
-
-    private function __construct()
-    {
-    }
+    case String;
+    case Secret;
+    case Url;
+    case Integer;
+    case Boolean;
+    case Choice;
 }
