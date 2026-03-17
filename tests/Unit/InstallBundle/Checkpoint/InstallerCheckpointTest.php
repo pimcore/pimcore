@@ -217,6 +217,21 @@ final class InstallerCheckpointTest extends TestCase
         $this->assertInstanceOf(\DateTimeImmutable::class, $updatedAt);
     }
 
+    public function testMalformedJsonStructureStartsFresh(): void
+    {
+        // Write valid JSON but with wrong structure (missing expected keys)
+        $dir = dirname($this->checkpointPath);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        file_put_contents($this->checkpointPath, '{"randomKey": "randomValue"}');
+
+        $checkpoint = new InstallerCheckpoint($this->tempDir);
+
+        // Should start fresh — the structure doesn't have 'startedAt' or 'stepResults'
+        $this->assertNull($checkpoint->getCompletedStep());
+    }
+
     public function testStepOverwritePreviousResult(): void
     {
         $checkpoint = new InstallerCheckpoint($this->tempDir);

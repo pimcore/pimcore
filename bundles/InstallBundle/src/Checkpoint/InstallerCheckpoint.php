@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\InstallBundle\Checkpoint;
 use DateTimeImmutable;
 use DateTimeInterface;
 use JsonException;
-use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -90,7 +89,7 @@ final class InstallerCheckpoint
             if ($content !== false) {
                 try {
                     $decoded = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
-                    if (is_array($decoded)) {
+                    if (is_array($decoded) && $this->isValidStructure($decoded)) {
                         $this->data = $decoded;
                     }
                 } catch (JsonException) {
@@ -105,6 +104,19 @@ final class InstallerCheckpoint
         }
     }
 
+    private function isValidStructure(array $data): bool
+    {
+        if (!isset($data['startedAt']) || !is_string($data['startedAt'])) {
+            return false;
+        }
+
+        if (!isset($data['stepResults']) || !is_array($data['stepResults'])) {
+            return false;
+        }
+
+        return true;
+    }
+
     private function save(): void
     {
         $dir = dirname($this->checkpointPath);
@@ -117,11 +129,6 @@ final class InstallerCheckpoint
             JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
         );
 
-        if (file_put_contents($this->checkpointPath, $encoded) === false) {
-            throw new RuntimeException(sprintf(
-                'Failed to write checkpoint file: %s',
-                $this->checkpointPath,
-            ));
-        }
+        $this->filesystem->dumpFile($this->checkpointPath, $encoded);
     }
 }
