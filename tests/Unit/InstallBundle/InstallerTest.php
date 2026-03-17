@@ -25,9 +25,10 @@ use Pimcore\Bundle\InstallBundle\Profile\DataSource\DataSourceInterface;
 use Pimcore\Bundle\InstallBundle\Profile\InstallProfileInterface;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallContext;
 use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tests\Unit\InstallBundle\Support\InstallBundleTestHelperTrait;
+use Pimcore\Tests\Unit\InstallBundle\Support\NoopMessengerTransportDefinition;
+use Pimcore\Tests\Unit\InstallBundle\Support\NoopSearchEngineDefinition;
 use Psr\Log\NullLogger;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -41,6 +42,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 final class InstallerTest extends TestCase
 {
+    use InstallBundleTestHelperTrait;
+
     private string $tempDir;
 
     private Installer $installer;
@@ -1136,128 +1139,18 @@ final class InstallerTest extends TestCase
         };
     }
 
-    private function createNonInteractiveIo(): SymfonyStyle
-    {
-        return new SymfonyStyle(
-            new ArrayInput([]),
-            new NullOutput(),
-        );
-    }
-
-    private function removeDirectory(string $dir): void
-    {
-        if (!is_dir($dir)) {
-            return;
-        }
-
-        $items = scandir($dir);
-        if ($items === false) {
-            return;
-        }
-
-        foreach ($items as $item) {
-            if ($item === '.' || $item === '..') {
-                continue;
-            }
-
-            $path = $dir . '/' . $item;
-            if (is_dir($path)) {
-                $this->removeDirectory($path);
-            } else {
-                unlink($path);
-            }
-        }
-
-        rmdir($dir);
-    }
-
     /**
      * Creates a lightweight SearchEngineDefinitionInterface that requires no input
      * and always passes validation. Used by createMockProfile() to satisfy
      * the category validation when the test doesn't care about search engines.
      */
-    private function createNoopSearchEngineDefinition(): SearchEngineDefinitionInterface
+    private function createNoopSearchEngineDefinition(): NoopSearchEngineDefinition
     {
-        return new class() implements SearchEngineDefinitionInterface {
-            public function getKey(): string
-            {
-                return 'noop-search-engine';
-            }
-
-            public function getLabel(): string
-            {
-                return 'Noop Search Engine';
-            }
-
-            public function isRequired(): bool
-            {
-                return true;
-            }
-
-            public function getSectionName(): string
-            {
-                return 'test';
-            }
-
-            public function getParameters(): array
-            {
-                return [];
-            }
-
-            public function resolveEnvVars(array $collectedValues): array
-            {
-                return ['NOOP_SEARCH_DSN' => 'noop://localhost'];
-            }
-
-            public function validate(array $collectedValues): array
-            {
-                return [];
-            }
-        };
+        return new NoopSearchEngineDefinition();
     }
 
-    /**
-     * Creates a lightweight MessengerTransportDefinitionInterface that requires no input
-     * and always passes validation. Used by createMockProfile() to satisfy
-     * the category validation when the test doesn't care about messenger transports.
-     */
-    private function createNoopMessengerTransportDefinition(): MessengerTransportDefinitionInterface
+    private function createNoopMessengerTransportDefinition(): NoopMessengerTransportDefinition
     {
-        return new class() implements MessengerTransportDefinitionInterface {
-            public function getKey(): string
-            {
-                return 'noop-messenger-transport';
-            }
-
-            public function getLabel(): string
-            {
-                return 'Noop Messenger Transport';
-            }
-
-            public function isRequired(): bool
-            {
-                return true;
-            }
-
-            public function getSectionName(): string
-            {
-                return 'test';
-            }
-
-            public function getParameters(): array
-            {
-                return [];
-            }
-
-            public function resolveEnvVars(array $collectedValues): array
-            {
-                return ['NOOP_MESSENGER_DSN' => 'doctrine://default'];
-            }
-
-            public function validate(array $collectedValues): array
-            {
-                return [];
-            }
-        };
+        return new NoopMessengerTransportDefinition();
     }
 }

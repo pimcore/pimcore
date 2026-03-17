@@ -19,9 +19,7 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterType;
 use Pimcore\Tests\Support\Test\TestCase;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Pimcore\Tests\Unit\InstallBundle\Support\InstallBundleTestHelperTrait;
 
 /**
  * Integration tests for ParameterCollector with multiple definition types.
@@ -34,6 +32,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 final class ParameterCollectionIntegrationTest extends TestCase
 {
+    use InstallBundleTestHelperTrait;
+
     public function testEnvVarTakesPrecedenceOverDefault(): void
     {
         $envVarReader = new ArrayEnvVarReader();
@@ -272,13 +272,5 @@ final class ParameterCollectionIntegrationTest extends TestCase
                 return [];
             }
         };
-    }
-
-    private function createNonInteractiveIo(): SymfonyStyle
-    {
-        return new SymfonyStyle(
-            new ArrayInput([]),
-            new NullOutput(),
-        );
     }
 }

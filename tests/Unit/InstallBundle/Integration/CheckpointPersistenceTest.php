@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Unit\InstallBundle\Integration;
 
 use Pimcore\Bundle\InstallBundle\Checkpoint\InstallerCheckpoint;
 use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tests\Unit\InstallBundle\Support\InstallBundleTestHelperTrait;
 
 /**
  * Integration tests for checkpoint persistence and resume.
@@ -27,6 +28,8 @@ use Pimcore\Tests\Support\Test\TestCase;
  */
 final class CheckpointPersistenceTest extends TestCase
 {
+    use InstallBundleTestHelperTrait;
+
     private string $tempDir;
 
     protected function setUp(): void
@@ -237,32 +240,5 @@ final class CheckpointPersistenceTest extends TestCase
         $updatedAt2 = $data2['updatedAt'];
 
         $this->assertGreaterThanOrEqual($updatedAt1, $updatedAt2);
-    }
-
-    private function removeDirectory(string $dir): void
-    {
-        if (!is_dir($dir)) {
-            return;
-        }
-
-        $items = scandir($dir);
-        if ($items === false) {
-            return;
-        }
-
-        foreach ($items as $item) {
-            if ($item === '.' || $item === '..') {
-                continue;
-            }
-
-            $path = $dir . '/' . $item;
-            if (is_dir($path)) {
-                $this->removeDirectory($path);
-            } else {
-                unlink($path);
-            }
-        }
-
-        rmdir($dir);
     }
 }
