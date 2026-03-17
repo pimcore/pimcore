@@ -8,6 +8,4 @@ services:
         public: true
         tags: ['console.command']
 
-    Pimcore\Composer\PackageInfo: ~
-
     Pimcore\Bundle\InstallBundle\Installer: ~
