@@ -11,9 +11,7 @@ The select datatype also allows you to define the default option at runtime.
 
 You can also add some additional static data which will be passed to the data provider.
 
-Note that there are two ways to define an options provider. 
-
-Either simply specify the FQCN or the name of a Symfony service with `@`-prefix.
+There are two ways to define an options provider: specify the FQCN directly or the name of a Symfony service with `@`-prefix.
 
 The services.yaml would then look like this:
 
@@ -86,7 +84,7 @@ This will generate the following options.
 
 ## Context Information for the Provider Class
 
-Note that depending on the use case not all of the infos will be available.
+Depending on the use case, not all context information will be available.
 Especially the existence of the object parameter cannot be guaranteed because the provider class will also be called when a class is saved or if you programmatically call $class->getFieldDefinitions().
 Layout definition calls can be distinguished from other ones by checking if the `purpose` parameter is set to `layout`
 

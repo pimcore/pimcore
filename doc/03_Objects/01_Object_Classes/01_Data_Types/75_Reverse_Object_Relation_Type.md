@@ -12,7 +12,7 @@ This is best explained with an example:
 
 ![Reverse Object Relation Field](../../../img/classes-datatypes-nonownerobject1.png)
 
-Let's say there is a product, which has an Many-To-Many Object Relation field called `accessories`. The straight forward way of establishing 
+Consider a product with a Many-To-Many Object Relation field called `accessories`. The straight forward way of establishing 
 a relation is to open a product and assign it it's accessories by dragging and dropping other products into the 
 accessories field. If you now also want to be able to go to the accessory product and define which other products 
 this is an accessory of, you'd have to set up a Reverse Object Relation field to do that. The reverse field needs to be configured 
@@ -23,7 +23,7 @@ not only assign accessories to a product, but you can also define of which other
 ![Reverse Object Relation Configuration](../../../img/classes-datatypes-nonownerobject2.png)
 
 
-The Reverse Object Relation field do not have a database column or any data storage at all. They are stored in the remote object and 
+Reverse Object Relation fields have no database column or data storage. They are stored in the remote object and 
 merely represent a different way of establishing data relations from within the dependent object. When an object is added 
 to a Reverse Object Relation field, this means the object owning the relation is modified implicitly. If the owning object is open in 
 Pimcore as well, Pimcore will warn you that you are about to modify an object that is already open. If the owning
@@ -37,7 +37,7 @@ Since Reverse Object Relation are owned by the remote object, they can only be s
 
 #### Get relations via PHP API
 
-In order to get the owner objects use the getter method:
+Retrieve the owner objects with the getter method:
 
 ```php
 $ownerRelations = $object->getMyReverseObjectRelationField();

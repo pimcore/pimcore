@@ -6,14 +6,14 @@ description: "Importing and exporting data object data with external systems usi
 # External System Interaction
 
 Whenever interaction with other systems is required, data objects are the vital components of data exchange. 
-Pimcore data objects can be created, filled and listed programmatically in order to realize batch imports and exports 
-with only very few lines of code.
+Create, fill, and list Pimcore data objects programmatically to implement batch imports and exports
+with only a few lines of code.
 
 Therefore the recommended way of interacting with external systems is using the PHP API of Pimcore and create a 
 interaction layer with your custom PHP code. This interaction layer can be within a [Pimcore bundle](../10_Extending_Pimcore/04_Pimcore_Bundle_Developers_Guide/README.md), a library component,
  a custom web service, a [CLI Command](../08_Development_Details/10_CLI_and_Pimcore_Console.md) or just a simple CLI script - you have the full flexibility.
 
-To keep things simple, we're using simple CLI scripts in the following example, although we're recommending the use of [CLI Commands](../08_Development_Details/10_CLI_and_Pimcore_Console.md).
+The following examples use plain CLI scripts. For production use, prefer [CLI Commands](../08_Development_Details/10_CLI_and_Pimcore_Console.md).
 
 ## Import
 The following example indicates the creation of a new object of the class `myclass`. 
@@ -61,12 +61,11 @@ class AwesomeCommand extends AbstractCommand
 }
 ```
 
-Thus, with very few lines of codes importer scripts can be implemented to populate data objects. Please have a look at 
-Pimcore\Console how to integrate your custom CLI scripts to the [Pimcore console](../08_Development_Details/10_CLI_and_Pimcore_Console.md).
+With a few lines of code, implement importer scripts to populate data objects. See
+Pimcore\Console for integrating custom CLI scripts into the [Pimcore console](../08_Development_Details/10_CLI_and_Pimcore_Console.md).
 
 ## Export
-Export of data objects can be achieved programmatically similar to imports by using object listings and writing just a
-few lines of code.
+Export data objects programmatically, similar to imports, by using object listings with a few lines of code.
  
  ```php
  
@@ -93,7 +92,7 @@ For simple CSV exports, Pimcore Studio provides a CSV export functionality.
 If you process or create a large number of objects, call the Pimcore garbage collector after several cycles to prevent memory issues.
 
 ```php
-// just call this static method
+// call this static method
 \Pimcore::collectGarbage();
 ```
 Or use `RuntimeCache::disable()` before iterating many objects to avoid excessive memory usage.

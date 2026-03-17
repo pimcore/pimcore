@@ -54,7 +54,7 @@ data.getFieldname()
 ```
 
 ##### Adding Expression Functions
-You can register new functions that can be used in symfony expressions for calculated values.
+Register new functions for use in Symfony expressions for calculated values.
 
 Example string functions provider:
 
@@ -127,7 +127,7 @@ The calculator class can be defined in two ways:
 
 #### Calculator Class Implementation
 
-Let's suppose we have a very simple class with 2 number fields called xValue and yValue and a calculated-value field 
+Suppose there is a class with 2 number fields called xValue and yValue and a calculated-value field
 called `sum` placed inside a localizedfields container.
 
 The PHP calculator class needs to implement the `CalculatorClassInterface` interface. 
@@ -160,10 +160,10 @@ class Calculator implements CalculatorClassInterface
 } 
 ```
 
-As we see here, the calculator class sums up the x and y values from the corresponding language tab.
+The calculator class sums the x and y values from the corresponding language tab.
 
-In addition to the `compute` method you need to implement the `getCalculatedValueForEditMode` method. 
-This method is used to display the value in object edit mode:
+Implement the `getCalculatedValueForEditMode` method in addition to `compute`.
+This method provides the display value in object edit mode:
 
 ```php
 public function getCalculatedValueForEditMode(Concrete $object, CalculatedValue $context): string

@@ -6,19 +6,19 @@ description: "Generating layout text dynamically based on object data and label 
 # Dynamic Text Labels
 
 Similar to the [CalculatedValue](../01_Data_Types/10_Calculated_Value_Type.md) data type,
-it is possible to generate the Layout Text dynamically based on the current object and the label's context. There are two options for defining dynamic content: 
+generate the Layout Text dynamically based on the current object and the label's context. Two options exist for defining dynamic content: 
 - Providing a custom renderer class
 - Using twig in template
 This is an alternative to the static text defined in the class definition.
 
-For all ways, the preview tab shows a preview of the generated content. If you are using object context in your content, then just drag & drop object on "Drag Object for Preview" field before checking the output in preview tab.
+The preview tab shows a preview of the generated content. If your content uses object context, drag and drop an object onto the "Drag Object for Preview" field to check the output in the preview tab.
 
 
 ## Custom Renderer Class
 
-Let's consider the following example.
+Consider the following example.
 
-It states that we want to use a custom renderer service which implements `DynamicTextLabelInterface` and in turn returns dynamic text string from `renderLayoutText` method. We also want to pass some additional data (*some additional data :)* in this example) to the rendering method.
+It uses a custom renderer service implementing `DynamicTextLabelInterface` that returns a dynamic text string from the `renderLayoutText` method, with additional data passed to the rendering method.
 
 ![Class Definition](../../../img/dynamic_textlabel_1.png)
 
@@ -51,14 +51,14 @@ class CustomRenderer implements DynamicTextLabelInterface
 ```
 
 *$data* will contain the additional data from the class definition. In *$params* you will find additional information about the current context.
-For example: If the text label lives inside a field collection, *$params* will contain the name of the field collection (and of course the name of the label itself).
+For example: If the text label lives inside a field collection, *$params* will contain the name of the field collection (and the name of the label itself).
 
 The result will be as follows:
 
 ![Editmode](../../../img/dynamic_textlabel_2.png)
 
 ## Twig & Preview
-It is possible to use Twig syntax inside htmleditor (Source Edit) and Renderer class. You can also check the generated output in preview tab.
+Use Twig syntax inside the HTML editor (Source Edit) or Renderer class. You can also check the generated output in preview tab.
 
 Following variables are available in twig context: 
 - `object` - current data object
@@ -71,8 +71,8 @@ Here is an example of Twig content in htmleditor source edit mode:
 ![Template editmode](../../../img/dynamic_textlabel_4.png)
 
 ### Sandbox Restrictions
-Dynamic Text renders user controlled twig templates in a sandbox with restrictive
-security policies for tags, filters & functions. Please use following configuration to allow more in template rendering:
+Dynamic Text renders user-controlled Twig templates in a sandbox with restrictive
+security policies for tags, filters, and functions. Use the following configuration to allow more in template rendering:
 
 ```yaml
     pimcore:

@@ -4,11 +4,11 @@ description: "Adding interfaces and traits to generated data object PHP classes.
 ---
 
 # Using Interfaces and Traits
-In some cases it could be helpful to let the generated PHP class for data objects implement interfaces or add some additional functions using traits.
+Use interfaces and traits to extend the generated PHP classes for data objects with additional functionality.
 
 ##### Example
-This example uses the demo project to show the usage of this features.
-We're extending the `Cars` class with methods to retrieve the transmission type as well as the amount of gears. This will be done by implementing an interface and a trait that adds the required methods.
+This example uses the demo project to show the usage of these features.
+The `Cars` class gets methods to retrieve the transmission type and the number of gears, implemented via an interface and a trait.
 
 ##### Create the interface
 ```php

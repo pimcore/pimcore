@@ -16,7 +16,7 @@ objects are limited to object classes.
 
 The width and height of the input widget can be configured in the 
 object class settings. For a Many-To-One relation only the width can be configured, since it is represented by a single drop area. 
-Lazy Loading is explained further below in the section about relations and lazy loading.
+Relations are always lazy loaded (the configuration option was removed in Pimcore 6.5.0).
 
 
 The input widgets for all three relation data types are represented by drop areas, which allow to drag and drop elements 
@@ -24,14 +24,15 @@ from the tree on the left to the drop target in the object layout.
 
 In addition to the drag and drop feature, elements can be searched and selected directly from the input widget. In case 
 of objects it is even possible to create a new object and select it for the objects widget.
- 
+
+<div class="image-as-lightbox"></div>
+
 ![Relation Fields](../../../img/classes-datatypes-relation2.png)
 
 
 #### Filtering for relations via PHP API
-These pure relation types are stored in a separate database table called `object_relations_ID`. In the according 
-`object_~ID~` database view, which is used for querying data, the relations fields are summarized as a comma 
-separated list of IDs of related elements. Therefore, if one needs to create an object list with a filter condition on a 
+These pure relation types are stored in a separate database table called `object_relations_ID`. In the `object_~ID~` database view used for querying data, the relation fields appear as a comma-separated
+list of IDs of related elements. Therefore, if one needs to create an object list with a filter condition on a 
 relation column this can be achieved as follows:
 
 ```php
@@ -48,8 +49,8 @@ $objects=$list->load();
 ```
 
 #### Assigning relations via PHP API
-In order to set a Many-To-One data field, a single Pimcore element needs to be passed to the setter. With Many-To-Many 
-and Many-To-Many Objects, an array of elements is passed to the setter:
+Pass a single Pimcore element to the setter for a Many-To-One data field. For Many-To-Many
+and Many-To-Many Objects, pass an array of elements:
 
 ```php
 use Pimcore\Model\DataObject;
@@ -74,7 +75,7 @@ $object->save();
 ```
 
 #### Deleting relations via PHP API
-In order to remove all elements from this object's Many-To-Many field, the setter can be called with null or an array:
+Remove all elements from a Many-To-Many field by calling the setter with null or an empty array:
 
 ```php
 $object->setMyManyToManyField([]);
@@ -86,7 +87,7 @@ Internally the setter sets the value to an empty array, regardless if an empty a
 
 
 #### Unpublished relations
-Related items that are unpublished are normally not returned. You can disable this behavior like this:
+Pimcore normally excludes unpublished related items. Disable this behavior as follows:
 ```php
 //also include unpublished relations from now on
 DataObject::setHideUnpublished(false);
@@ -105,7 +106,7 @@ be downloaded.
 If you want to disable the possibility to clear the whole relation, you can uncheck the checkbox "Allow to clear all relations of this field"  
 in the classdefinition.
 
-## Inline search display mode
+## Inline search display mode (not implemented in Studio yet)
 You can also configure the display mode of a many-to-one relation as `Inline Search`, which leverages [Boolean Mode Full Text Search](https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html) to quickly locate related records across multiple fields
 
 ![Many-To-One Object Inline Search](../../../img/classes-datatypes-relation7.png)
@@ -226,24 +227,6 @@ $references[] = $elementMetadata;
 $object->setMetadata($references); 
 ```
 
-
-## Lazy Loading
-
-> Note that from 6.5.0 on relations are always lazy loaded. The configuration option has been removed.
-
-Whenever an object is loaded from database or cache, all these related objects are loaded with it. Especially with 
-Many-To-Many relations it is easy to produce a huge amount of relations, which makes the object or an object list slow 
-in loading.
-
-As a solution to this dilemma, Many-To-Many relational data types can be classified as `lazy loading` 
-in the class definition.
-
-![Lazy Loading](../../../img/classes-datatypes-relation3.png)
-
-Attributes which are lazy loaded, are only loaded from the `database/cache` when their getter is called. In the 
-example above this would mean, that the Many-To-Many relational data is only loaded when calling `$object->getMyManyToManyField();`.
-
-
 ## Dependencies
 
 There are several object data types which represent a relation to an other Pimcore element. The pure relation types are
@@ -261,7 +244,7 @@ is not classified as a pure relation type)
 * Link
 * Wysiwyg
 
-All of these relations produce a dependency. In other words, the dependent element is shown in both element's dependencies 
+All of these relations produce a dependency. In other words, the dependent element is shown in both element's dependencies
 tab and Pimcore issues a warning when deleting an element which has dependencies.
 
 ![Dependencies](../../../img/classes-datatypes-relation4.png)

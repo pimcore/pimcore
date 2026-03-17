@@ -140,7 +140,7 @@ to fill in, edit and display data objects.
 
 Besides the `name`, which is the name of the object's property, and the `title`, which is shown in Pimcore Studio, an
 object field has the general configuration options listed below. The title can be translated for different system
-languages. Please see the article about Translations to find out how to add object field translations.
+languages. See the Translations article for adding object field translations.
 
 * `mandatory`: Makes the field mandatory and does not allow saving the object when it is empty
 * `not editable`: Does not allow a change of this field's value in Pimcore Studio (data change can only be done
@@ -154,18 +154,8 @@ languages. Please see the article about Translations to find out how to add obje
 * `unique`: If checked, the value has to be unique across all objects of this class. Note that only works on top level attributes and not on nested stuff inside localized fields etc. Beware that this does not add a database index to the query table which `Listing` classes use.
 * Moreover, each data field can have a `tooltip`, which is shown when the mouse hovers over the input field.
 
-![Data Field Settings](../../../img/classes-datatypes1.jpg)
-![Data Field Settings](../../../img/classes-datatypes2.jpg)
-
-
-The `layout settings` allow to apply custom CSS to any object field.
-
-
-![Data Field Settings](../../../img/classes-datatypes3.jpg)
-
-
-> **WARNING**  
-> Please note that renaming a field means the loss of data from the field in all objects using this class.
+> **WARNING**
+> Renaming a field causes the loss of data from that field in all objects using this class.
 
 See sub-pages of this page for detail documentation of different data types. 
 
@@ -181,7 +171,7 @@ The data is persisted according to the following rules.
 inherited value is persisted to query table, inheritance is active
 
 A default value generator is a class which implements `\Pimcore\Model\DataObject\ClassDefinition\DefaultValueGeneratorInterface`. This class can generate a value based on the current data of an object.
-Have a look at [Calculated Value](./10_Calculated_Value_Type.md) for an overview of contextual information.
+See [Calculated Value](./10_Calculated_Value_Type.md) for an overview of contextual information.
 
 If a default value generator is defined then it has a higher priority than a configured static default value.
 
@@ -192,4 +182,4 @@ The decisions are made in the following order:
 
 ### Limitations
 
-Please make sure to read the [Limitations](999_Limitations.md) page to understand the limitations of data types.
+Read the [Limitations](999_Limitations.md) page to understand the restrictions on data type nesting.

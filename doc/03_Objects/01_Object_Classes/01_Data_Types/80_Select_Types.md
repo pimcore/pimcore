@@ -5,41 +5,24 @@ description: "Seven select widget variants including country, language, and user
 
 # Select Datatypes
 
-There are 7 different select widgets available. Except the Multiselect widgets, all of them are portrayed by an input 
+Seven select widgets are available. Except for the multiselect variants, all display as an input
 field with a drop-down list of options. The database column type is VARCHAR for all select data types, TEXT for all 
 multiselection types. The configured value (not the display value!) is stored in the database. In the case of 
 multiselect, values are stored as a comma separated list. 
 
-![Select Field](../../../img/classes-datatypes-select1.png)
-
-For select and multiselect the options can be defined with a value and display value in the class definition: 
-
-![Select Field](../../../img/classes-datatypes-select-configure.png)
-
-It's also possible to retrieve options from different sources.
+For select and multiselect the options can be defined with a value and display value in the class definition
+or retrieve options from different sources:
 * [Select Options](./77_Select_Options.md)
 * [Class / Service](./30_Dynamic_Select_Types.md)
 
 Country and language have fixed option values. For the language field the options can be limited to available system 
 languages. The country and language select field are also available as multi select fields.
-The user field has fixed values as well. It allows to select a user from all available Pimcore system users. 
-Thereby a system user can be associated an object. 
+The user field has fixed values as well. It selects a user from all available Pimcore system users,
+associating a system user with an object.
 
-For multiselect types there is extra configuration to set render type (list or tags)
-
-![Select Field](../../../img/multiselect_rendertype.png)
-
-Object Editor view for List Render Type:
-
-![Select Field](../../../img/multiselect_view_list.png)
-
-Object Editor view for Tags Render Type:
-
-![Select Field](../../../img/multiselect_view_tags.png)
 ### Working with select data types via API
 
-In order to set a select field's value programmatically, the value is simply passed to the setter. To set the values 
-of a multiselect field, an array of values is passed to the setter.
+Pass the value to the setter to set a select field programmatically. For multiselect fields, pass an array of values.
 
 ```php
 $object->setSelect("1");
@@ -50,16 +33,14 @@ $object->setUser(1);
 $object->save();
 ```
 
-If one needs to find out what options are available for a select field. This can be done by getting the field definition 
-as follows:
+Retrieve available options by getting the field definition:
 
 ```php
 $fd = $object->getClass()->getFieldDefinition("multiselect");
 $options = $fd->getOptions();
 ```
 
-If one needs to find out what options are available for a select field inside an ObjectBrick. This can also be done by 
-getting the field definition of the brick as follows:
+For a select field inside an ObjectBrick, get the field definition of the brick:
 
 ```php
 $fd = $brick->getDefinition()->getFieldDefinition("multiselect");

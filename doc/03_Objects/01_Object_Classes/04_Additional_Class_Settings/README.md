@@ -5,7 +5,7 @@ description: Advanced class configuration including inheritance, variants, icons
 
 # Additional Class Settings
 
-On class level, several additional settings and features are available that influence the
+On class level, several additional settings and features influence the
 appearance and behavior of Data Objects and their editors. These can be configured in Pimcore Studio or via code.
 
 #### Available features:

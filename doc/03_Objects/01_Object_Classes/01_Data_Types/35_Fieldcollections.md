@@ -35,7 +35,7 @@ The user can then decide which and how many of the available field definitions s
 
 
 > [!IMPORTANT]
-> Please note the limitations related to blocks and fieldcollections when creating the data model.
+> Review the limitations related to blocks and fieldcollections when creating the data model.
 > [More Information about Limitations](./999_Limitations.md) 
 
 
@@ -47,15 +47,14 @@ Field definition data is stored in a separate table for each field definition an
 The naming convention for these tables is: `object_collection_COLLECTION-NAME_OBJECT-ID`. 
 Such a table contains all the field data, the concrete object's id, field name and index of the field collection 
 within the field collection data field. 
-In order to fully understand the data structure of objects and field collections, it is best to enter some example data 
-and have a look at the tables created by Pimcore.
+To fully understand the data structure of objects and field collections, enter some example data
+and inspect the tables created by Pimcore.
 
 
 ## Working with PHP API
 
-Of course, field collection data can be set programmatically as well. 
-The following code snippet illustrates how this can be achieved. 
-Let's say there is an object class **collectiontest** and a fieldcollection called **MyCollection**.
+Set field collection data programmatically as shown below.
+This example uses an object class **collectiontest** with a fieldcollection called **MyCollection**.
 There is an object field called **collectionitems** which is of the type field collection.
 
 ```php
@@ -79,7 +78,7 @@ $object->setCollectionitems($items);
 $object->save();
 ```
 
-If you want to use localized fields inside field collections you have to set the object before calling any localized field - related methods.
+When using localized fields inside field collections, set the object before calling any localized field-related methods.
 
 ```php
 $item = new DataObject\Fieldcollection\Data\MyCollection();

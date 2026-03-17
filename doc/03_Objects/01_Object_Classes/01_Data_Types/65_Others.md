@@ -13,13 +13,13 @@ A checkbox field can be configured to be checked by default when a new object is
 
 It is stored in a TINYINT column in the database with the value 0 or 1. 
 
-In order to set a checkbox value, a bool value needs to be passed to the according setter of the object:
+Pass a bool value to the object's setter to set a checkbox value:
 
 ```php
 $object->setCheckbox(true);
 ```
 
-If inheritance is activated in the corresponding DataObject class, a trashcan icon is displayed next to the checkbox. This can be used to reset the value of the checkbox in order to guarantee inheritance from parents again.
+If inheritance is activated in the corresponding DataObject class, a trashcan icon is displayed next to the checkbox. Use this to reset the checkbox value and restore inheritance from parent objects.
 
 ## Boolean Select
 
@@ -36,11 +36,10 @@ In Pimcore Studio you can specify the display values according to your needs. De
 
 ![Link Field](../../../img/classes-datatypes-link1.jpg)
 
-In the UI a link is displayed as text. Its details can be edited by clicking on the button next to the link text. In the 
-object class definition there are no special configurations available for an object field link.
+In the UI a link is displayed as text. Edit its details by clicking the button next to the link text. The object class definition has no special configurations for a link field.
 
-The link object field has its own data class which is `Pimcore\Model\DataObject\Data\Link`. In order to set a link 
-programmatically an `Pimcore\Model\DataObject\Data\Link` object needs to be instantiated and passed to the setter:
+The link field uses the `Pimcore\Model\DataObject\Data\Link` data class. To set a link
+programmatically, instantiate a `Pimcore\Model\DataObject\Data\Link` object and pass it to the setter:
 
 ```php
 $l = new DataObject\Data\Link();               
@@ -69,7 +68,7 @@ Please also see the section about [Link Generators](../04_Additional_Class_Setti
 
 ## RGBA Color
 
-Allows to store RGBA Values. RGB and Alpha values are stored in two separate columns as hex values in the database.
+Stores RGBA values. RGB and Alpha values are stored in two separate columns as hex values in the database.
 
 ![Color Picker](../../../img/rgba_color_picker.png)
 
@@ -124,19 +123,18 @@ Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField::setStrictMode(fals
 
 ## URL Slug
 
-A slug is the part of a URL which identifies a particular page on a website in an easy 
-to read form. In other words, it’s the part of the URL that explains the page’s content.
-For example, if the URL is `https://demo.pimcore.fun/slug`, then the slug simply is `/slug`.
+A slug is the human-readable part of a URL that identifies a particular page on a website.
+For example, if the URL is `https://demo.pimcore.fun/slug`, then the slug is `/slug`.
 
 
-> Note that currently URL slugs are not supported inside [Blocks](./05_Blocks.md) & [Classification Stores](./15_Classification_Store.md).
+> URL slugs are currently not supported inside [Blocks](./05_Blocks.md) & [Classification Stores](./15_Classification_Store.md).
 
 This data-type can be used to manage custom URL slugs for data objects, you can add as many fields of this type to a class as you want. 
 Pimcore then cares automatically about the routing and calls the configured controller/action if a slug matches.
 
 You could use the [Symfony String component's slugger](https://symfony.com/doc/current/components/string.html#slugger) to generate the slugs.
 
-> Note that slugs can't contain the following chars: `? #` since they are reserved characters.
+> Slugs cannot contain the characters `? #` since they are reserved.
 > For more information check the [RFC 3986](https://www.rfc-editor.org/rfc/rfc3986#section-2.2).
 
 ### Example

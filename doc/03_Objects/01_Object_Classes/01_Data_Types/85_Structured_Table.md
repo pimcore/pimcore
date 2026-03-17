@@ -12,29 +12,30 @@ But there are a few fundamental differences:
 
 * The rows and columns are predefined and named.
 * The data type per column can be defined. Possible data types are text, number and boolean.
-* The data of a structured table can be accessed via getters and setters and is stored in a structured way in the database.
+* Access structured table data via getters and setters. Pimcore stores the data in a structured format in the database.
 
-You can add structured table component in a class definition:
+You can add structured table component in a class definition. Define rows and column headers 
+to structure the table content.
 
-![Add structured table component to the class](../../../img/Objects_Structured_Table_add_data_component.png)
-
-To define the table, you have to specify rows and columns headers which would be used to fill the structured table content.
+<div class="image-as-lightbox"></div>
 
 ![Structured table definition](../../../img/Objects_Structured_Table_definition.png)
 
-Now, you can use the table in your object, like below:
+Use the table in your object as shown below:
+
+<div class="image-as-lightbox"></div>
 
 ![Edit object with structured table](../../../img/Objects_Structured_Table_use.png)
 
 ## Storage of Structured tables
 
-For each row and column combination a new column in table of the structured table containing class will be stored.
+Each row and column combination creates a new column in the structured table's database table.
 
-So it will be a clear restriction not to use this type of structuring data in case of a bigger number of data rows or columns. By using this design the maximum number of columns per table should be taken into consideration because it could be a technical restriction for it.
+Avoid this data type for tables with many rows or columns. The maximum number of database columns per table applies as a technical restriction.
 
 ## Using structured table with PHP API
 
-In the code, the data of this field can be accessed as shown in the code snippets, below:
+Access field data using these methods:
 
 ```php
 /** @var \Pimcore\Model\DataObject\Data\StructuredTable $structuredData */
@@ -46,7 +47,7 @@ $structuredData->getCommunityedition();
 //Returns an associated array of row CommunityEdition with all columns
 $structuredData->getCommunityedition__support();
 
-//Delivers an associated array of row CommunityEdition with all columns
+//Sets the value of the CommunityEdition support column
 $structuredData->setCommunityedition__support("Forum");
 
 //Alternative way of setting data to a structured table

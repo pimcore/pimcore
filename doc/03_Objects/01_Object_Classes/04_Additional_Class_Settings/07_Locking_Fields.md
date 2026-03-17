@@ -4,11 +4,9 @@ description: "Preventing modification or deletion of fields in the class editor.
 ---
 
 # Locking Fields
-Sometimes it's useful that a field cannot be modified/deleted in the class editor. Especially if a class is 
-created by a plugin.
+Lock fields to prevent modification or deletion in the class editor, particularly for plugin-created classes.
 
-Pimcore offers the possibility to lock a field programmatically, you can call the method `setLocked()` on every 
-`Pimcore\Model\DataObject\ClassDefinition\Data` object.
+Call `setLocked()` on any `Pimcore\Model\DataObject\ClassDefinition\Data` object to lock a field programmatically.
 
 ### Example
 

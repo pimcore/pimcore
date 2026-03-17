@@ -29,7 +29,7 @@ Nesting is not possible.
 
 ### API Usage
 
-Let us consider the following class definition
+Consider the following class definition
 
 <div class="image-as-lightbox"></div>
 

@@ -5,9 +5,11 @@ description: "Predefined sets of options for use with select and multiselect fie
 
 # Select Options
 
-Select options are predefined sets of options which may be used for (multi)select fields.
+Select options define predefined sets of options for (multi)select fields.
 
-![Fieldcollection Configuration](../../../img/classes-datatypes-selectoptions-editor.png)
+<div class="image-as-lightbox"></div>
+
+![Select Option Configuration](../../../img/classes-datatypes-selectoptions-editor.png)
 
 The 'Name' column is optional, unless the value can't be converted to a valid PHP enum case.
 This applies to values starting with a number or certain symbols.
@@ -20,13 +22,13 @@ For non-admin users, access to the management interface can be enabled via
 
 Checking the 'Admin only' checkbox in the General Settings of a select options
 set prevents non-admin users from deleting or editing the configuration.
-This may be useful for system critical select options.
+Use this for system-critical select options that should not be modified by non-admin users.
 
 ## Field configuration
 
 Set the options source to 'Select Options' and select one of the select options sets.
 
-![Fieldcollection Configuration](../../../img/classes-datatypes-selectoptions-selector.png)
+![Field Configuration](../../../img/classes-datatypes-selectoptions-selector.png)
 
 ## Working with PHP API
 

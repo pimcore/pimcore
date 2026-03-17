@@ -53,10 +53,10 @@ $unit->setGroup("dimension");
 $unit->save();
 ```
 
-It is also possible to import and export the units as json file. 
+Import and export units as a JSON file.
 For importing there is also a command: `pimcore:definition:import:units`
 
-In the class editor, it is possible to restrict the list of valid units on a field-level.
+In the class editor, restrict the list of valid units at the field level.
 Only those units will be available in the editor then.
 
 <div class="image-as-lightbox"></div>
@@ -126,7 +126,7 @@ $convertedValue = $originalValue->convertTo('mm');
 // $convertedValue is a QuantityValue with value 3000 and unit mm
 ```
 
-Units without base unit are expected to be a base unit itself. That is why in above example configuration meter has no base unit - but of course you can set it to meter to be more explicit.
+Units without base unit are expected to be a base unit itself. That is why in above example configuration meter has no base unit - but you can set it explicitly to meter for clarity.
 
 In quantity value unit configuration there is also the column "offset". This is for unit conversions where addition / subtraction is needed. For example 
 

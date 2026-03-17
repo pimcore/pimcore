@@ -6,8 +6,8 @@ description: "Displaying user-friendly object information instead of technical p
 # Path Formatter
 
 ### Summary
-* Allows you to show a user friendly "object information' instead of technical path in Pimcore data types such as Many-To-One, Many-To-Many (Object) etc.
-* Uses Ajax to request nice path info on demand (i.e. after rendering) 
+* Display user-friendly object information instead of technical paths in Pimcore data types such as Many-To-One, Many-To-Many (Object), etc.
+* Request path info on demand via Ajax (after rendering)
 
 ### Example
 
@@ -19,7 +19,7 @@ In this example, we want to display the asset metadata title of the target asset
 
 ### Configuration via class editor
 
-Just specify the formatter service in the class editor. 
+Specify the formatter service in the class editor.
 
 ![Formatter Class DI](../../../img/formatter_class_di.png)
 

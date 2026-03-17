@@ -9,12 +9,11 @@ Localized fields allow the definition of attributes, that should be translated i
 They can be filled with selected data types and layouts - due to technical and data storage reasons not all data types are
 available. 
 
-The advantage of this, is to make it very easy to translate fields to the configured languages.
+This simplifies translation of fields to the configured languages.
 
 ## Definition of localized fields
 
-First of all, you have to configure your localized fields and layouts within your class. This can be easily done in 
-the class editor.
+Configure localized fields and layouts within your class using the class editor.
 
 <div class="image-as-lightbox"></div>
 
@@ -31,8 +30,7 @@ Language switch is possible via the global language switcher in the bottom toolb
 ![Localized page preview](../../../img/Objects_LocalizedFields_page_preview.png)
 
 ## Definition of available Languages
-If it's not already configured, please specify the valid languages for your website. 
-You can do this in `System` -> `System Settings` -> `Localization & Internationalization`.
+Specify the valid languages for your website in `System` -> `System Settings` -> `Localization & Internationalization` if not already configured.
 
 ## Definition of required Languages
 If you want to have mandatory fields in the localized fields, but they are not mandatory for all languages, you can define
@@ -46,7 +44,7 @@ Fallback and inherited values are evaluated in a vertical way first. This is con
 
 If walking up the inheritance levels yields no result, the fallback language of the lowermost level will be checked in the same way. (Also walking up the inheritance levels for this language). 
 
-Consider the following example and let’s assume that English is the fallback language for German. We request the German value for the object at level 3. 
+Consider the following example, assuming English is the fallback language for German. We request the German value for the object at level 3. 
 Since the only value can be found on level 1 for the default language the tree is traversed as depicted.
 
 
@@ -73,7 +71,7 @@ You can disable the Fallback languages
 
 ### Accessing the data
 
-Accessing the data is simple as below:
+Access the data as follows:
 
 ```php
 // with global registered locale
@@ -87,12 +85,12 @@ $object->getInput1("de"); // will return the German value for the field "input1"
 
 ### Setting data
 
-It works in the similar way as getting the data.
+Setting data works the same way:
 
 ```php
 $object = DataObject::getById(234);
 $object->setInput1("My Name", "fr"); // set the French value for the field "input1"
 ```
 
-**Warning:** Please note that moving a field from outside (normal object field) into the localizedfield container means 
-the loss of data from the field in all objects using this class.
+**Warning:** Moving a field from outside (normal object field) into the localizedfield container causes
+data loss for that field in all objects using this class.

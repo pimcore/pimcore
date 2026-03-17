@@ -5,6 +5,8 @@ description: "Store and manage video content from assets or external sources lik
 
 # Video Datatype
 
+<div class="image-as-lightbox"></div>
+
 ![Video Field](../../../img/classes-datatypes-video.png)
 
 ## Working with PHP API

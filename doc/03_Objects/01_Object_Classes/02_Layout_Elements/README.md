@@ -5,9 +5,8 @@ description: "Organizing the object editor with panels, tabs, fieldsets, and oth
 
 # Layout Elements
 
-To structure object data layout-wise, there are 3 panel types and 4 other layout elements available. Data fields are 
-always contained in a panel. Panels can be nested and thereby a data input interface tailored to the users's needs 
-can be designed.
+Structure object data layouts with 3 panel types and 4 other layout elements. Data fields are
+always contained in a panel. Nest panels to design a data input interface tailored to the user's needs.
 
 ![Layout Elements](../../../img/classes-layouts.png)
 
@@ -22,12 +21,12 @@ Moreover, within a panel fields can be put into the following layout Components
 * Field Container
 
 And last but not least there are two extra layout elements:
-* Text - to add minimally formatted text to an object layout. This can hold descriptions and hints which don't fit into 
-a field's tooltip. Please note that since release 4.4.2 it is possible to generate this text dynamically.
-Please read this [page](./01_Dynamic_Text_Labels.md) for further details.
+* Text - adds minimally formatted text to an object layout for descriptions and hints that don't fit into
+a field's tooltip. Since release 4.4.2, generate this text dynamically.
+See [Dynamic Text Labels](./01_Dynamic_Text_Labels.md) for details.
 * IFrame - provide a URL and make use of the context parameter to render the response of your choice.
-Please read this [page](./02_Preview_Iframe.md) for further details.
+See [Preview Iframe](./02_Preview_Iframe.md) for details.
 
-Pimcore uses Ext JS layout components for all object layout elements. For a deeper understanding of the layout elements, 
-please have a look at the [Ext JS documentation pages](https://docs.sencha.com/extjs/7.0.0/classic/Ext.html) and 
-[examples](http://www.sencha.com/products/js/).
+Pimcore uses Ext JS layout components for all object layout elements. See the
+[Ext JS documentation pages](https://docs.sencha.com/extjs/7.0.0/classic/Ext.html) and
+[examples](http://www.sencha.com/products/js/) for a deeper understanding.

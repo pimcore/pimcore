@@ -6,14 +6,14 @@ description: "Dynamically generating web links for data objects in documents and
 # Link Generator
 
 ### Summary
-Link Generators are used to dynamically generate web-links for objects and are automatically called when objects 
-are linked in document link editables, link document types and object link tags.
+Link Generators dynamically generate web-links for objects. Pimcore automatically calls them when objects
+are linked in document link editables, link document types, and object link tags.
 
 Additionally they are also enabling the preview tab for data objects.  
 
 Link generators are defined on class level, there are two ways to do this. 
 
-Either simply specify the class name or the name of a Symfony service (notice the prefix).
+Specify either the class name or a Symfony service name (note the `@` prefix).
 
 ![Link Generator Setup1](../../../img/linkgenerator_class.png)
 

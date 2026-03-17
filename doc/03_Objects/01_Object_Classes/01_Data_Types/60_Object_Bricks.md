@@ -28,7 +28,7 @@ By creating a tire product object, the tire object brick is added and so this ti
 
 ![Object bricks example](../../../img/ObjectsBricks_object_example.png)
 
-To one object a number of Objectbricks can be added, but just one instance per object brick type. 
+To one object a number of Objectbricks can be added, but only one instance per object brick type. 
 This is the main difference to Fieldcollections.
 Because only one instance per object brick can be added to an object, Objectbricks fully support inheritance on 
 field level. Each attribute of an object brick can be overwritten in child objects.
@@ -48,8 +48,8 @@ similar data types as Fieldcollections. The configuration can be accessed via
 
 To allow adding an Objectbrick to an object, two things have to be done:
 
-* In data components list (when you're creating the class) is Objectbricks data type. 
-This data type defines, where Objectbricks can be added. 
+* The data components list in the class editor contains the Objectbricks data type.
+This data type defines where Objectbricks can be added. 
 A field of this data type has to be added to the object class.
 
 ![Object data component](../../../img/ObjectsBricks_data_component.png)

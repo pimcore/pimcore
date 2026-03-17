@@ -7,7 +7,7 @@ description: "Nesting restrictions for data types like blocks, field collections
 
 ### Nesting of Data Types
 Data types cannot be arbitrarily nested within each other.
-For example, it is not possible to place a block inside another block, or a localized field inside another localized field.
+For example, do not nest blocks within blocks or localized fields within localized fields.
 Additionally, data type containers such as blocks or field collections cannot be nested more than two levels deep.
 
 For instance, the following structure is **not allowed**:

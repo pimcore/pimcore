@@ -5,9 +5,8 @@ description: "CRUD operations, listings, versioning, and advanced queries for da
 
 # Working With Objects via PHP API
 
-Pimcore provides an object orientated PHP API to work with Objects. There are several generic functionalities
-provided by Pimcore and for each Pimcore object class Pimcore generates corresponding PHP classes for working
-with these objects via a comfortable PHP API and take full advantage of an IDE (e.g. code completion etc.).
+Use Pimcore's object-oriented PHP API to work with Objects. Pimcore provides several generic functionalities
+and generates corresponding PHP classes for each object class, enabling full IDE support (code completion, etc.).
 
 ## CRUD Operations
 The following code snippet indicates how to access, create and modify an object programmatically:
@@ -65,17 +64,16 @@ $city->delete();
 <a name="objectsListing">&nbsp;</a>
 
 ## Object Listings
-Once data is available in a structured manner, it can not only be accessed more conveniently but also be filtered,
-sorted, grouped and displayed intuitively by the use of an object listing. Moreover, data can be exported very easily
-not only programmatically but also through the Pimcore object csv export.
+Once data is available in a structured manner, object listings provide convenient filtering,
+sorting, grouping, and display. Export data programmatically or through the Pimcore CSV export.
 
 Object listings are a simple way to retrieve objects from Pimcore while being able to filter and sort data along that
 process. Object listings also come with a built-in paginator that simplifies the display of results in a paged manner.
 
 When working with object listings, user defined routes come in handy while implementing object detail views.
 User defined routes allow directing requests to certain detail pages, even though the request does not portray the path
-of a document, but matches a certain route. For more information have a look at
-[Routing and URLs](../01_Documents/05_Routing_and_URLs/README.md).
+of a document, but matches a certain route. See
+[Routing and URLs](../01_Documents/05_Routing_and_URLs/README.md) for details.
 
 An object listing class is created automatically for each class defined in Pimcore. Objects for the class `Myobject`
 are retrieved through a listing as in the following example:
@@ -101,7 +99,7 @@ $entries->setCondition("city IN (?)", [["New York", "Chicago"]]);
 // or
 $entries->setCondition("city IN (:cities)", ["cities" => ["New York", "Chicago"]]); // named parameters
 
-//if necessary you can of course custom build your query
+//you can also build a custom query
 $entries->setCondition("name LIKE " . $entries->quote("%bernie%")); // make sure that you quote variables in conditions!
 
 // some data types support direct filtering, which can be verified via 'isFilterable()' method on field definition:
@@ -205,7 +203,7 @@ $entries->load();
 ```
 
 ### Get Objects matching a value of a property
-Often it's very useful to get a listing of objects or a single object where a property is matching exactly one value.
+Retrieve a listing of objects or a single object where a property matches exactly one value.
 This is especially useful to get an object matching a foreign key, or get a list of objects with only one condition.
 
 ```php
@@ -446,7 +444,7 @@ public function testAction(Request $request, \Knp\Component\Pager\PaginatorInter
 
 ### Access and modify internal object list query
 
-It is possible to access and modify the internal query from every object listing. The internal query is based
+Access and modify the internal query from any object listing. The internal query is based
 on `\Doctrine\DBAL\Query\QueryBuilder`.
 ```php
 <?php

@@ -6,13 +6,13 @@ description: "Controlling the preview tab with custom URL generation and paramet
 # Preview Generator
 
 ### Summary
-Preview Generators provide services to get more control over the preview tab. 
+Preview Generators give more control over the preview tab.
 They provide a UI component to pass additional parameters to a URL-generator.
 
 Providers need to implement: `\Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface`
 
-> As of Pimcore 10.6, a default implementation of a `PreviewGenerator` is provided. You only need to add
-> a [link generator](./06_Link_Generator.md). The generated URL will then be used for the preview.
+> As of Pimcore 10.6, a default `PreviewGenerator` implementation is included. Add
+> a [link generator](./06_Link_Generator.md) to use it. The generated URL will then be used for the preview.
 
 Parameters returned in the `getParams` method will be rendered as a select box. 
 Whatever the user chooses will be passed to the `generatePreviewUrl` method.

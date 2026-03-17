@@ -32,7 +32,7 @@ in the class settings as follows:
 
 
 #### Working with images in frontend
-The get a thumbnail of an image field, just call `getThumbnail()` on the returned asset object.
+To get a thumbnail of an image field, call `getThumbnail()` on the returned asset object.
 
 ```twig
 {% if object.myImage is instanceof('Pimcore\Model\Asset\Image') %}
@@ -40,13 +40,13 @@ The get a thumbnail of an image field, just call `getThumbnail()` on the returne
 {% endif %}
 ```
 
-Since `$object->getImage()` just returns an asset object, you can of course use all other thumbnail features of `Pimcore\Model\Asset\Image`.
+Since `$object->getImage()` returns an asset object, all other thumbnail features of `Pimcore\Model\Asset\Image` are available.
 
 
 
 ## External Image
 
-This one allows you to enter an external image URL which is then shown as a preview.
+The External Image field stores an external image URL, displayed as a preview.
 
 <div class="image-as-lightbox"></div>
 
@@ -104,7 +104,7 @@ whereas the values top, left, width, height are stored as percentages of the ima
 
 #### Get Hotspots
 
-To access the hotspots programmatically, following code snipped can be used.
+Access hotspots programmatically with the following code snippet:
 
 ```php
 $hotspotImage = $object->getHotspot1(); // name of the field in Pimcore is "hotspot1" in this case (class definition)
@@ -189,7 +189,7 @@ echo $hotspotImage->getThumbnail("myCustomThumbnail"); // this example returns t
 
 #### Thumbnail of image
 
-Of course you can use the above code regardless if the image is cropped or not:
+Use the above code regardless of whether the image has cropping information:
 
 ```php
 $hotspotImage->getThumbnail("myCustomThumbnail"); // $hotspotImage contains no cropping information, the thumbnail is returned as usual (see $assetImage->getThumbnail("..."); )

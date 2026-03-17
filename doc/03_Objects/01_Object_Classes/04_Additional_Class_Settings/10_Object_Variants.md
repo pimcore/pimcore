@@ -11,9 +11,9 @@ yellow t-shirt, a blue t-shirt, a red t-shirt etc. Most of the t-shirts' attribu
 just differ in color and EAN code.
 
 One way to achieve this is to make a generic t-shirt object and then create for each variant a child object within the 
-tree which inherits most attributes and sets only those which differ. This approach works fine, but if you have dozens or even hundreds of variants, your object tree becomes quite big and confusing.
+tree which inherits most attributes and sets only those which differ. This approach works, but dozens or hundreds of variants make the object tree large and difficult to navigate.
 
-This is where object variants come in. Basically, they are just objects which you can configure to be not shown in the object tree. In the tree, you just create the generic t-shirt. For each variant of this t-shirt, you create an object variant. While you can choose variants to not be shown in the tree, you will nevertheless be able to edit them via an own tab within the object editor.
+Object variants solve this. They are objects configured to be hidden from the object tree. In the tree, create the generic t-shirt. For each variant of this t-shirt, you create an object variant. While variants are hidden from the tree, edit them via a dedicated tab in the object editor.
 
 The only difference between objects and variants in behaviour is that you cannot add an object of another class below a variant.
 
@@ -25,7 +25,7 @@ As the normal object grid, the object variant grid supports paging, filtering, h
 inherited values. So even a big number of variants should be manageable.
 
 ## Create and organize Object Variants
-To use object variants, they have to be activated in the class definition first. Object variants only make sense, 
+Activate object variants in the class definition first. Object variants only make sense, 
 if inheritance is activated. Therefore, inheritance is a requirement for object variants.
 
 ![Object Variants](../../../img/classes-variants1.png)
@@ -36,7 +36,7 @@ are shown in a grid. Via buttons object variants can be created, opened and dele
 ![Object Variants](../../../img/classes-variants2.png)
 
 
-To create object variants via code, just create a normal object, set as parent the generic t-shirt and set the object 
+To create object variants via code, create a normal object, set the generic t-shirt as the parent, and set the object 
 type to `DataObject::OBJECT_TYPE_VARIANT`.
 
 ```php
@@ -51,8 +51,8 @@ $objectX->save();
 ## Query Object Variants
 
 #### Get all Object Variants of an object
-Getting all variants of an object is quite simple. Just call `getChildren` and pass the wanted object types as an array. 
-If only variants should be returned use following line.
+Call `getChildren` and pass the desired object types as an array.
+To return only variants:
 
 ```php
 $objectX->getChildren([DataObject::OBJECT_TYPE_VARIANT]);

@@ -17,7 +17,7 @@ listed with the other select widgets.
 ![GeoPoint Field](../../../img/classes-datatypes-geo1.jpg)
 
 The geopoint consists of two coordinates: latitude and longitude. In Pimcore Studio there is the same geopoint selector
-widget as shown above. It allows to find coordinates for a geographic point easily. In the database the values are 
+widget as shown above for selecting coordinates of a geographic point. In the database the values are
 stored in two columns which are called latitude and longitude. Programmatically the data for this field is 
 represented by `Pimcore\Model\DataObject\Data\Geopoint`. To set a geopoint programmatically, a new 
 `Pimcore\Model\DataObject\Data\GeoCoordinates` has to be instantiated:
@@ -59,8 +59,7 @@ $object->save();
 
 ![GeoPolygon Field](../../../img/classes-datatypes-geo3.jpg)
 
-The geopolygon is the third in the row of geo widgets. It allows to define a geographic area by setting an arbitrary 
-amount of geo points. In the database these points are stored in a single column of the data type LONGTEXT in the 
+The geopolygon is the third in the row of geo widgets. It defines a geographic area by setting multiple geo points. In the database these points are stored in a single column of the data type LONGTEXT in the 
 form of a serialized array of `Pimcore\Model\DataObject\Data\GeoCoordinates`. To set geopolygon data programmatically, an 
 array of Geopoints has to be passed to the setter:
 
@@ -82,7 +81,7 @@ $object->save();
 
 ![GeoPolyline Field](../../../img/classes-datatypes-geo4.jpg)
 
-It allows to define a geographic path by setting an arbitrary amount of geo points. In the database these points are 
+The geopolyline defines a geographic path by setting multiple geo points. In the database these points are 
 stored in a single column of the data type LONGTEXT in the form of a serialized array of 
 `Pimcore\Model\DataObject\Data\GeoCoordinates`. To set geopolygon data programmatically, an array of Geopoints has to be 
 passed to the setter:
