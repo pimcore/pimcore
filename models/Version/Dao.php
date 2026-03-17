@@ -125,7 +125,7 @@ class Dao extends Model\Dao\AbstractDao
                     WHERE ctype = ?
                     AND public = 0 AND autosave = 0
                     AND element.modificationDate >= a.`date`
-                    AND `date` < ? AND AND IFNULL(active,  0) = 0',
+                    AND `date` < ? AND IFNULL(active,  0) = 0',
                     [
                         $elementType['elementType'],
                         $deadline,
