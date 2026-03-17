@@ -15,27 +15,24 @@ namespace Pimcore\Bundle\InstallBundle;
 
 use Doctrine\DBAL\Connection;
 use Pimcore;
-use Pimcore\Bundle\InstallBundle\BundleConfig\BundleWriter;
+use Pimcore\Bundle\InstallBundle\BundleConfig\BundleInstaller;
 use Pimcore\Bundle\InstallBundle\Checkpoint\InstallerCheckpoint;
+use Pimcore\Bundle\InstallBundle\Console\ConsoleCommandRunner;
 use Pimcore\Bundle\InstallBundle\Database\DatabaseSetup;
 use Pimcore\Bundle\InstallBundle\Collector\ParameterCollector;
 use Pimcore\Bundle\InstallBundle\Env\EnvWriter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
-use Pimcore\Bundle\InstallBundle\EnvVarDefinition\MessengerTransportDefinitionInterface;
-use Pimcore\Bundle\InstallBundle\EnvVarDefinition\SearchEngineDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\Profile\DataSource\DataSourceInterface;
 use Pimcore\Bundle\InstallBundle\Profile\InstallProfileInterface;
-use Pimcore\Bundle\InstallBundle\Profile\PostInstallCommand;
-use Pimcore\Bundle\InstallBundle\Profile\PostInstallHookInterface;
+use Pimcore\Bundle\InstallBundle\PostInstall\PostInstallRunner;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallCommandsProviderInterface;
+use Pimcore\Bundle\InstallBundle\Profile\PostInstallHookInterface;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallContext;
 use Pimcore\Config;
-use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Authentication;
-use Pimcore\Tool\Console;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -43,7 +40,6 @@ use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 use Throwable;
 
 /**
@@ -94,8 +90,11 @@ class Installer
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly DatabaseSetup $databaseSetup = new DatabaseSetup(),
-        private readonly BundleWriter $bundleWriter = new BundleWriter(),
+        private readonly DatabaseSetup $databaseSetup,
+        private readonly DefinitionResolver $definitionResolver,
+        private readonly ConsoleCommandRunner $commandRunner,
+        private readonly BundleInstaller $bundleInstaller,
+        private readonly PostInstallRunner $postInstallRunner,
         private readonly ?\Closure $checkpointFactory = null,
         private readonly ?\Closure $envWriterFactory = null,
     ) {
@@ -144,29 +143,29 @@ class Installer
         bool $interactive,
         string $projectRoot,
     ): array {
-        $activeDefinitions = $this->mergeDefinitions(
+        $activeDefinitions = $this->definitionResolver->mergeDefinitions(
             $profile->getEnvVarDefinitions(),
             $extraDefinitions,
         );
 
-        $categoryErrors = $this->validateDefinitionCategories($activeDefinitions);
+        $categoryErrors = $this->definitionResolver->validateDefinitionCategories($activeDefinitions);
         if ($categoryErrors !== []) {
             return $categoryErrors;
         }
 
-        $skipErrors = $this->applySkipFlags($activeDefinitions, $skipKeys);
+        $skipErrors = $this->definitionResolver->applySkipFlags($activeDefinitions, $skipKeys);
         if ($skipErrors !== []) {
             return $skipErrors;
         }
 
-        $this->warnOnMissingBundles($profile, $io, $projectRoot);
+        $this->definitionResolver->warnOnMissingBundles($profile, $io, $projectRoot);
 
-        $bundleErrors = $this->validateProfileBundles($profile);
+        $bundleErrors = $this->definitionResolver->validateProfileBundles($profile);
         if ($bundleErrors !== []) {
             return $bundleErrors;
         }
 
-        $this->displayDefinitionSummary($activeDefinitions, $io);
+        $this->definitionResolver->displayDefinitionSummary($activeDefinitions, $io);
 
         $result = $this->collectAndValidateDefinitions(
             $activeDefinitions,
@@ -297,7 +296,7 @@ class Installer
             'Registering bundles...',
             sprintf('%d bundles registered', count($profile->getBundles())),
             function () use ($profile): void {
-                $this->registerBundles($profile);
+                $this->bundleInstaller->registerBundles($profile);
             },
         );
         if ($error !== null) {
@@ -331,7 +330,7 @@ class Installer
             'Installing bundles...',
             'Bundles installed',
             function () use ($profile, $io): void {
-                $this->installBundles($profile, $io);
+                $this->bundleInstaller->installBundles($profile, $io);
             },
         );
         if ($error !== null) {
@@ -363,7 +362,7 @@ class Installer
             'Rebuilding class definitions...',
             'Classes rebuilt',
             function (): void {
-                $this->rebuildClasses();
+                $this->commandRunner->rebuildClasses();
             },
             false,
         );
@@ -380,7 +379,7 @@ class Installer
             'Marking migrations as done...',
             'Migrations marked',
             function (): void {
-                $this->markMigrationsAsDone();
+                $this->commandRunner->markMigrationsAsDone();
             },
             false,
         );
@@ -389,7 +388,7 @@ class Installer
         }
 
         // Collect and run post-install commands
-        $postInstallCommands = $this->collectPostInstallCommands(
+        $postInstallCommands = $this->postInstallRunner->collectPostInstallCommands(
             $profile,
             $cliPostInstallProviders,
             $kernel,
@@ -404,7 +403,7 @@ class Installer
                 'Running post-install commands...',
                 sprintf('%d commands executed', count($postInstallCommands)),
                 function () use ($postInstallCommands, $io): void {
-                    $this->runPostInstallCommands($postInstallCommands, $io);
+                    $this->postInstallRunner->runPostInstallCommands($postInstallCommands, $io);
                 },
             );
             if ($error !== null) {
@@ -439,220 +438,6 @@ class Installer
         $checkpoint->remove();
 
         return $errors;
-    }
-
-    /**
-     * Merge profile definitions with CLI-provided definitions.
-     * CLI definitions override profile definitions on key collision.
-     *
-     * @param list<EnvVarDefinitionInterface> $profileDefs
-     * @param list<EnvVarDefinitionInterface> $extraDefs
-     *
-     * @return array<string, EnvVarDefinitionInterface> key => definition
-     */
-    private function mergeDefinitions(array $profileDefs, array $extraDefs): array
-    {
-        $merged = [];
-
-        foreach ($profileDefs as $def) {
-            $merged[$def->getKey()] = $def;
-        }
-
-        foreach ($extraDefs as $def) {
-            $merged[$def->getKey()] = $def;
-        }
-
-        return $merged;
-    }
-
-    /**
-     * Apply --skip flags: remove definitions matching skipped keys.
-     * Returns errors if trying to skip a required definition.
-     *
-     * @param array<string, EnvVarDefinitionInterface> $definitions modified in place
-     * @param list<string> $skipKeys
-     *
-     * @return list<string> errors
-     */
-    private function applySkipFlags(array &$definitions, array $skipKeys): array
-    {
-        $errors = [];
-
-        foreach ($skipKeys as $key) {
-            if (!isset($definitions[$key])) {
-                continue;
-            }
-
-            if ($definitions[$key]->isRequired()) {
-                $errors[] = sprintf(
-                    'Cannot skip required definition "%s" (%s)',
-                    $key,
-                    $definitions[$key]->getLabel(),
-                );
-
-                continue;
-            }
-
-            unset($definitions[$key]);
-        }
-
-        return $errors;
-    }
-
-    /**
-     * Check installed Composer packages for Pimcore bundles not in the profile.
-     * This is informational only — no error, just a warning.
-     */
-    private function warnOnMissingBundles(
-        InstallProfileInterface $profile,
-        SymfonyStyle $io,
-        string $projectRoot,
-    ): void {
-        $installedJsonPath = $projectRoot . '/vendor/composer/installed.json';
-        if (!file_exists($installedJsonPath)) {
-            return;
-        }
-
-        $content = file_get_contents($installedJsonPath);
-        if ($content === false) {
-            return;
-        }
-
-        $decoded = json_decode($content, true);
-        if (!is_array($decoded)) {
-            return;
-        }
-
-        // installed.json can be either {packages: [...]} or [...]
-        $packages = $decoded['packages'] ?? $decoded;
-        if (!is_array($packages)) {
-            return;
-        }
-
-        $profileBundles = $profile->getBundles();
-        $pimcoreBundlePackages = [];
-
-        foreach ($packages as $package) {
-            $name = $package['name'] ?? '';
-            $type = $package['type'] ?? '';
-
-            if ($type !== 'pimcore-bundle' || !is_string($name)) {
-                continue;
-            }
-
-            $extra = $package['extra'] ?? [];
-            $bundleClasses = $extra['pimcore']['bundles'] ?? [];
-            if (!is_array($bundleClasses)) {
-                continue;
-            }
-
-            foreach ($bundleClasses as $bundleClass) {
-                if (!in_array($bundleClass, $profileBundles, true)) {
-                    $pimcoreBundlePackages[$name] = $bundleClass;
-                }
-            }
-        }
-
-        if ($pimcoreBundlePackages !== []) {
-            $io->warning(sprintf(
-                'The following Pimcore bundles are installed via Composer but not '
-                . "included in this profile:\n  %s",
-                implode("\n  ", array_map(
-                    static fn (string $pkg, string $cls) => sprintf('%s (%s)', $pkg, $cls),
-                    array_keys($pimcoreBundlePackages),
-                    array_values($pimcoreBundlePackages),
-                )),
-            ));
-        }
-    }
-
-    /**
-     * Validate that all bundle FQCNs from the profile are loadable.
-     *
-     * @return list<string> errors
-     */
-    private function validateProfileBundles(InstallProfileInterface $profile): array
-    {
-        $errors = [];
-
-        foreach ($profile->getBundles() as $bundleFqcn) {
-            if (!class_exists($bundleFqcn)) {
-                $errors[] = sprintf(
-                    'Bundle class "%s" from profile "%s" does not exist. '
-                    . 'Is the package installed via Composer?',
-                    $bundleFqcn,
-                    $profile->getName(),
-                );
-            }
-        }
-
-        return $errors;
-    }
-
-    /**
-     * Validate that the profile contains exactly one implementation of each
-     * required definition category (search engine, messenger transport).
-     *
-     * @param array<string, EnvVarDefinitionInterface> $definitions
-     *
-     * @return list<string> errors
-     */
-    private function validateDefinitionCategories(array $definitions): array
-    {
-        $errors = [];
-
-        $searchEngineCount = 0;
-        $messengerTransportCount = 0;
-
-        foreach ($definitions as $definition) {
-            if ($definition instanceof SearchEngineDefinitionInterface) {
-                $searchEngineCount++;
-            }
-            if ($definition instanceof MessengerTransportDefinitionInterface) {
-                $messengerTransportCount++;
-            }
-        }
-
-        if ($searchEngineCount === 0) {
-            $errors[] = 'Profile must include exactly one SearchEngineDefinitionInterface '
-                . 'implementation (e.g., OpenSearchEnvVarDefinition or ElasticsearchEnvVarDefinition).';
-        } elseif ($searchEngineCount > 1) {
-            $errors[] = sprintf(
-                'Profile must include exactly one SearchEngineDefinitionInterface '
-                . 'implementation, but found %d.',
-                $searchEngineCount,
-            );
-        }
-
-        if ($messengerTransportCount === 0) {
-            $errors[] = 'Profile must include exactly one MessengerTransportDefinitionInterface '
-                . 'implementation (e.g., DoctrineMessengerEnvVarDefinition or '
-                . 'RabbitMqMessengerEnvVarDefinition).';
-        } elseif ($messengerTransportCount > 1) {
-            $errors[] = sprintf(
-                'Profile must include exactly one MessengerTransportDefinitionInterface '
-                . 'implementation, but found %d.',
-                $messengerTransportCount,
-            );
-        }
-
-        return $errors;
-    }
-
-    /**
-     * @param array<string, EnvVarDefinitionInterface> $definitions
-     */
-    private function displayDefinitionSummary(array $definitions, SymfonyStyle $io): void
-    {
-        $io->text('<info>Definitions:</info>');
-
-        foreach ($definitions as $definition) {
-            $marker = $definition->isRequired() ? '●' : '○';
-            $label = $definition->isRequired() ? 'required' : 'optional';
-            $io->text(sprintf('  %s %-20s %s', $marker, $definition->getKey(), $label));
-        }
-
-        $io->newLine();
     }
 
     /**
@@ -916,49 +701,6 @@ class Installer
         $io->text(sprintf('  <info>✓</info> %s', $dataSource->getLabel()));
     }
 
-    private function registerBundles(InstallProfileInterface $profile): void
-    {
-        $bundles = $profile->getBundles();
-
-        if ($bundles === []) {
-            return;
-        }
-
-        $this->bundleWriter->addBundlesToConfig($bundles, $bundles);
-    }
-
-    private function installBundles(InstallProfileInterface $profile, SymfonyStyle $io): void
-    {
-        $bundles = $profile->getBundles();
-        $total = count($bundles);
-
-        foreach ($bundles as $index => $bundleFqcn) {
-            if ($this->isBundleInstalled($bundleFqcn)) {
-                $io->text(sprintf(
-                    '  [%d/%d] %s ... already installed',
-                    $index + 1,
-                    $total,
-                    $this->getShortBundleName($bundleFqcn),
-                ));
-
-                continue;
-            }
-
-            $io->text(sprintf(
-                '  [%d/%d] %s ...',
-                $index + 1,
-                $total,
-                $this->getShortBundleName($bundleFqcn),
-            ));
-
-            $this->runCommand(
-                ['pimcore:bundle:install', $bundleFqcn],
-                'Installing ' . $this->getShortBundleName($bundleFqcn),
-                $io,
-            );
-        }
-    }
-
     private function installAssets(KernelInterface $kernel): void
     {
         $this->logger->info('Running assets:install command');
@@ -970,159 +712,6 @@ class Installer
         } catch (ProcessFailedException $e) {
             $this->logger->error('Assets installation failed: ' . $e->getMessage());
             throw $e;
-        }
-    }
-
-    private function rebuildClasses(): void
-    {
-        $this->runCommand(
-            ['pimcore:deployment:classes-rebuild', '-c'],
-            'Rebuilding class definitions',
-        );
-    }
-
-    private function markMigrationsAsDone(): void
-    {
-        $this->runCommand(
-            ['doctrine:migrations:sync-metadata-storage', '-q'],
-            'Sync migrations metadata storage',
-        );
-
-        $this->runCommand(
-            [
-                'doctrine:migrations:version',
-                '--all', '--add', '--prefix=Pimcore\\Bundle\\CoreBundle', '-n', '-q',
-            ],
-            'Marking all migrations as done',
-        );
-    }
-
-    /**
-     * Collect post-install commands from profile, CLI providers, and bundle installers.
-     * Deduplicate by command name (first wins), then sort by priority descending.
-     *
-     * @param list<PostInstallCommandsProviderInterface> $cliProviders
-     *
-     * @return list<PostInstallCommand>
-     */
-    private function collectPostInstallCommands(
-        InstallProfileInterface $profile,
-        array $cliProviders,
-        KernelInterface $kernel,
-    ): array {
-        $commands = [];
-
-        foreach ($profile->getPostInstallCommands() as $cmd) {
-            $commands[$cmd->getCommand()] = $cmd;
-        }
-
-        foreach ($profile->getBundles() as $bundleFqcn) {
-            try {
-                $bundle = $kernel->getBundle($this->getShortBundleName($bundleFqcn));
-                if (method_exists($bundle, 'getInstaller')) {
-                    $installer = $bundle->getInstaller();
-                    if ($installer instanceof PostInstallCommandsProviderInterface) {
-                        foreach ($installer->getPostInstallCommands() as $cmd) {
-                            if (!isset($commands[$cmd->getCommand()])) {
-                                $commands[$cmd->getCommand()] = $cmd;
-                            }
-                        }
-                    }
-                }
-            } catch (Throwable $e) {
-                $this->logger->warning(
-                    'Could not collect post-install commands from bundle {bundle}: {error}',
-                    ['bundle' => $bundleFqcn, 'error' => $e->getMessage()],
-                );
-            }
-        }
-
-        foreach ($cliProviders as $provider) {
-            foreach ($provider->getPostInstallCommands() as $cmd) {
-                if (!isset($commands[$cmd->getCommand()])) {
-                    $commands[$cmd->getCommand()] = $cmd;
-                }
-            }
-        }
-
-        $sorted = array_values($commands);
-        usort(
-            $sorted,
-            static fn (PostInstallCommand $a, PostInstallCommand $b) => $b->getPriority() <=> $a->getPriority(),
-        );
-
-        return $sorted;
-    }
-
-    /**
-     * @param list<PostInstallCommand> $commands
-     */
-    private function runPostInstallCommands(array $commands, SymfonyStyle $io): void
-    {
-        $total = count($commands);
-
-        foreach ($commands as $index => $command) {
-            $io->text(sprintf(
-                '  [%d/%d] %s ...',
-                $index + 1,
-                $total,
-                $command->getLabel(),
-            ));
-
-            $args = explode(' ', $command->getCommand());
-            $this->runCommand($args, $command->getLabel(), $io);
-        }
-    }
-
-    private function runCommand(
-        array $arguments,
-        string $taskName,
-        ?SymfonyStyle $io = null,
-    ): void {
-        array_splice($arguments, 0, 0, [
-            Console::getPhpCli(),
-            PIMCORE_PROJECT_ROOT . '/bin/console',
-        ]);
-
-        $this->logger->info('Running {command} command', [
-            'command' => implode(' ', $arguments),
-        ]);
-
-        $process = new Process($arguments);
-        $process->setTimeout(0);
-        $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            $e = new ProcessFailedException($process);
-            $this->logger->error($e->getMessage());
-
-            if ($io !== null) {
-                $errorOutput = trim($process->getErrorOutput());
-                if ($errorOutput !== '') {
-                    $io->getErrorStyle()->write($errorOutput);
-                }
-
-                $io->getErrorStyle()->note(
-                    $taskName . ' failed. Please run the following command manually:',
-                );
-                $io->getErrorStyle()->writeln(
-                    '  ' . str_replace(
-                        ["'", '\\'],
-                        ['', '\\\\'],
-                        $process->getCommandLine(),
-                    ),
-                );
-            }
-
-            throw $e;
-        }
-
-        if ($io !== null) {
-            $output = $process->getOutput();
-            if ($output !== '') {
-                $io->writeln($output);
-            }
         }
     }
 
@@ -1161,24 +750,6 @@ class Installer
         } catch (IOException $e) {
             $this->logger->error($e->getMessage());
         }
-    }
-
-    private function isBundleInstalled(string $bundleFqcn): bool
-    {
-        $shortName = $this->getShortBundleName($bundleFqcn);
-
-        return SettingsStore::get('BUNDLE_INSTALLED__' . $shortName, 'pimcore') !== null;
-    }
-
-    /**
-     * Extract short bundle name from FQCN.
-     * e.g. "Pimcore\Bundle\SeoBundle\PimcoreSeoBundle" → "PimcoreSeoBundle"
-     */
-    private function getShortBundleName(string $bundleFqcn): string
-    {
-        $parts = explode('\\', $bundleFqcn);
-
-        return end($parts);
     }
 
     private function calculateTotalSteps(InstallProfileInterface $profile): void

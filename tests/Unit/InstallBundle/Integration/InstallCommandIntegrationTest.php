@@ -16,7 +16,7 @@ namespace Pimcore\Tests\Unit\InstallBundle\Integration;
 use Pimcore\Bundle\InstallBundle\Command\InstallCommand;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Tests\Support\Test\TestCase;
-use Psr\Log\NullLogger;
+use Pimcore\Tests\Unit\InstallBundle\Support\InstallBundleTestHelperTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -34,6 +34,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 final class InstallCommandIntegrationTest extends TestCase
 {
+    use InstallBundleTestHelperTrait;
+
     private string $tempDir;
 
     protected function setUp(): void
@@ -205,10 +207,7 @@ final class InstallCommandIntegrationTest extends TestCase
 
     private function createCommand(): InstallCommand
     {
-        $installer = new Installer(
-            new NullLogger(),
-            new EventDispatcher(),
-        );
+        $installer = $this->createInstaller();
 
         return new InstallCommand($installer, new EventDispatcher());
     }
@@ -216,32 +215,5 @@ final class InstallCommandIntegrationTest extends TestCase
     private function createCommandTester(): CommandTester
     {
         return new CommandTester($this->createCommand());
-    }
-
-    private function removeDirectory(string $dir): void
-    {
-        if (!is_dir($dir)) {
-            return;
-        }
-
-        $items = scandir($dir);
-        if ($items === false) {
-            return;
-        }
-
-        foreach ($items as $item) {
-            if ($item === '.' || $item === '..') {
-                continue;
-            }
-
-            $path = $dir . '/' . $item;
-            if (is_dir($path)) {
-                $this->removeDirectory($path);
-            } else {
-                unlink($path);
-            }
-        }
-
-        rmdir($dir);
     }
 }

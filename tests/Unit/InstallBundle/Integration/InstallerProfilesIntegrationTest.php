@@ -30,7 +30,6 @@ use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Unit\InstallBundle\Support\InstallBundleTestHelperTrait;
 use Pimcore\Tests\Unit\InstallBundle\Support\NoopMessengerTransportDefinition;
 use Pimcore\Tests\Unit\InstallBundle\Support\NoopSearchEngineDefinition;
-use Psr\Log\NullLogger;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -61,10 +60,7 @@ final class InstallerProfilesIntegrationTest extends TestCase
         $this->tempDir = sys_get_temp_dir() . '/pimcore_phase1_integration_' . uniqid();
         mkdir($this->tempDir, 0777, true);
 
-        $this->installer = new Installer(
-            new NullLogger(),
-            new EventDispatcher(),
-        );
+        $this->installer = $this->createInstaller();
     }
 
     protected function tearDown(): void
@@ -259,7 +255,7 @@ final class InstallerProfilesIntegrationTest extends TestCase
             },
         );
 
-        $installer = new Installer(new NullLogger(), $dispatcher);
+        $installer = $this->createInstaller(eventDispatcher: $dispatcher);
 
         $envVarReader = new ArrayEnvVarReader();
         $envVarReader->set('DATABASE_URL', 'mysql://user:pass@localhost/db');

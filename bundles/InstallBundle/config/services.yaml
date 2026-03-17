@@ -3,6 +3,16 @@ services:
         autowire: true
         autoconfigure: true
 
+    Pimcore\Bundle\InstallBundle\:
+        resource: '../src/'
+        exclude:
+            - '../src/Event/'
+            - '../src/EnvVarDefinition/'
+            - '../src/Profile/'
+            - '../src/Collector/'
+            - '../src/Env/'
+            - '../src/Checkpoint/'
+
     Pimcore\Bundle\InstallBundle\Command\:
         resource: '../src/Command'
         public: true

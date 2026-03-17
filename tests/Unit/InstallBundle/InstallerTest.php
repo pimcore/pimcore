@@ -27,9 +27,7 @@ use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Unit\InstallBundle\Support\InstallBundleTestHelperTrait;
 use Pimcore\Tests\Unit\InstallBundle\Support\NoopMessengerTransportDefinition;
 use Pimcore\Tests\Unit\InstallBundle\Support\NoopSearchEngineDefinition;
-use Psr\Log\NullLogger;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Integration tests for the Installer's Phase 1 (runPhaseOne).
@@ -53,10 +51,7 @@ final class InstallerTest extends TestCase
         $this->tempDir = sys_get_temp_dir() . '/pimcore_installer_test_' . uniqid();
         mkdir($this->tempDir, 0777, true);
 
-        $this->installer = new Installer(
-            new NullLogger(),
-            new EventDispatcher(),
-        );
+        $this->installer = $this->createInstaller();
     }
 
     protected function tearDown(): void
