@@ -17,6 +17,7 @@ use Doctrine\DBAL\Connection;
 use Pimcore;
 use Pimcore\Bundle\InstallBundle\BundleConfig\BundleWriter;
 use Pimcore\Bundle\InstallBundle\Checkpoint\InstallerCheckpoint;
+use Pimcore\Bundle\InstallBundle\Database\DatabaseSetup;
 use Pimcore\Bundle\InstallBundle\Collector\ParameterCollector;
 use Pimcore\Bundle\InstallBundle\Env\EnvWriter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
@@ -30,19 +31,16 @@ use Pimcore\Bundle\InstallBundle\Profile\PostInstallCommand;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallCommandsProviderInterface;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallContext;
 use Pimcore\Config;
-use Pimcore\Db\Helper;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Authentication;
 use Pimcore\Tool\Console;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Cache\Adapter\DoctrineDbalAdapter;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Messenger\Bridge\Doctrine\Transport\Connection as DoctrineTransportConnection;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Throwable;
@@ -414,8 +412,6 @@ class Installer
         return $errors;
     }
 
-    // ─── Phase 1 Helpers ──────────────────────────────────
-
     /**
      * Merge profile definitions with CLI-provided definitions.
      * CLI definitions override profile definitions on key collision.
@@ -777,8 +773,6 @@ class Installer
         return [];
     }
 
-    // ─── Phase 2 Helpers ──────────────────────────────────
-
     /**
      * Execute a single installation step with checkpoint tracking.
      *
@@ -849,149 +843,7 @@ class Installer
      */
     private function setupDatabase(Connection $db): void
     {
-        $db->executeQuery('SET FOREIGN_KEY_CHECKS=0;');
-
-        $this->executeSqlFile($db, __DIR__ . '/../dump/install.sql');
-        $this->createInfrastructureTables($db);
-
-        $db->executeQuery('SET FOREIGN_KEY_CHECKS=1;');
-
-        $this->insertSystemUser($db);
-        $this->insertDatabaseContents($db);
-    }
-
-    /**
-     * Read a SQL file, strip comments, and execute each statement.
-     */
-    private function executeSqlFile(Connection $db, string $filePath): void
-    {
-        $sql = file_get_contents($filePath);
-
-        $sql = preg_replace(
-            "/\s*(?!<\")\/\*(?![!+])[^\*]+\*\/(?!\")\s*/",
-            '',
-            $sql,
-        );
-
-        $statements = explode(';', $sql);
-        foreach ($statements as $statement) {
-            $trimmed = trim($statement);
-            if ($trimmed !== '') {
-                $db->executeQuery($trimmed . ';');
-            }
-        }
-    }
-
-    /**
-     * Create Symfony cache and messenger transport tables.
-     */
-    private function createInfrastructureTables(Connection $db): void
-    {
-        $cacheAdapter = new DoctrineDbalAdapter($db);
-        $cacheAdapter->createTable();
-
-        $doctrineTransportConn = new DoctrineTransportConnection([], $db);
-        $doctrineTransportConn->setup();
-    }
-
-    private function insertSystemUser(Connection $db): void
-    {
-        $db->insert('users', [
-            'parentId' => 0,
-            'name' => 'system',
-            'admin' => 1,
-            'active' => 1,
-        ]);
-
-        $db->update('users', ['id' => 0], ['name' => 'system', 'type' => 'user']);
-    }
-
-    private function insertDatabaseContents(Connection $db): void
-    {
-        $this->insertRootAsset($db);
-        $this->insertRootDocument($db);
-        $this->insertRootObject($db);
-        $this->insertDefaultPermissions($db);
-    }
-
-    private function insertRootAsset(Connection $db): void
-    {
-        $db->insert('assets', Helper::quoteDataIdentifiers($db, [
-            'id' => 1,
-            'parentId' => 0,
-            'type' => 'folder',
-            'filename' => '',
-            'path' => '/',
-            'creationDate' => time(),
-            'modificationDate' => time(),
-            'userOwner' => 1,
-            'userModification' => 1,
-        ]));
-    }
-
-    private function insertRootDocument(Connection $db): void
-    {
-        $db->insert('documents', Helper::quoteDataIdentifiers($db, [
-            'id' => 1,
-            'parentId' => 0,
-            'type' => 'page',
-            'key' => '',
-            'path' => '/',
-            'index' => 999999,
-            'published' => 1,
-            'creationDate' => time(),
-            'modificationDate' => time(),
-            'userOwner' => 1,
-            'userModification' => 1,
-        ]));
-
-        $db->insert('documents_page', Helper::quoteDataIdentifiers($db, [
-            'id' => 1,
-            'controller' => 'App\\Controller\\DefaultController::defaultAction',
-            'template' => '',
-            'title' => '',
-            'description' => '',
-        ]));
-    }
-
-    private function insertRootObject(Connection $db): void
-    {
-        $db->insert('objects', Helper::quoteDataIdentifiers($db, [
-            'id' => 1,
-            'parentId' => 0,
-            'type' => 'folder',
-            'key' => '',
-            'path' => '/',
-            'index' => 999999,
-            'published' => 1,
-            'creationDate' => time(),
-            'modificationDate' => time(),
-            'userOwner' => 1,
-            'userModification' => 1,
-        ]));
-    }
-
-    private function insertDefaultPermissions(Connection $db): void
-    {
-        $userPermissions = [
-            'assets', 'classes', 'selectoptions', 'clear_cache',
-            'clear_fullpage_cache', 'clear_temp_files', 'dashboards',
-            'document_types', 'documents', 'emails', 'notes_events',
-            'objects', 'predefined_properties', 'asset_metadata',
-            'recyclebin', 'redirects', 'seemode', 'share_configurations',
-            'system_settings', 'tags_configuration', 'tags_assignment',
-            'tags_search', 'thumbnails', 'translations', 'users',
-            'website_settings', 'workflow_details', 'notifications',
-            'notifications_send', 'sites', 'objects_sort_method',
-            'objectbricks', 'fieldcollections', 'quantityValueUnits',
-            'classificationstore',
-        ];
-
-        foreach ($userPermissions as $permission) {
-            $db->insert('users_permission_definitions', [
-                $db->quoteIdentifier('key') => $permission,
-            ]);
-        }
+        (new DatabaseSetup())->createSchema($db);
     }
 
     /**
@@ -1191,8 +1043,6 @@ class Installer
             $this->runCommand($args, $command->getLabel(), $io);
         }
     }
-
-    // ─── Shared Helpers ───────────────────────────────────
 
     private function runCommand(
         array $arguments,

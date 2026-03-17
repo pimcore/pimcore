@@ -20,7 +20,7 @@ use Codeception\TestInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Exception;
-use Pimcore\Bundle\InstallBundle\Installer;
+use Pimcore\Bundle\InstallBundle\Database\DatabaseSetup;
 use Pimcore\Cache;
 use Pimcore\Event\TestEvents;
 use Pimcore\Model\DataObject;
@@ -28,6 +28,7 @@ use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Pimcore\Model\Document;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Pimcore\Tool\Authentication;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -202,16 +203,17 @@ class Pimcore extends Module\Symfony
 
         $this->connectDb($connection);
 
-        $installer = new Installer($this->getContainer()->get('monolog.logger.pimcore'), $this->getContainer()->get('event_dispatcher'));
-        $installer->setImportDatabaseDataDump(false);
-        $errors = $installer->setupDatabase($connection, [
-            'username' => 'admin',
-            'password' => microtime(),
-        ]);
+        (new DatabaseSetup())->createSchema($connection);
 
-        if ($errors) {
-            throw new Exception('Setup Database failed: ' . implode("\n", $errors));
-        }
+        $connection->insert('users', [
+            'parentId' => 0,
+            'name' => 'admin',
+            'password' => Authentication::getPasswordHash('admin', microtime()),
+            'active' => 1,
+            'admin' => 1,
+            'type' => 'user',
+            'language' => 'en',
+        ]);
 
         $this->debug(sprintf('[DB] Initialized the test DB %s', $dbName));
 
