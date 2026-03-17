@@ -223,6 +223,65 @@ ENV);
         $this->assertLessThan($posC, $posB);
     }
 
+    public function testOrphanedOpenMarkerIsCleanedUp(): void
+    {
+        file_put_contents($this->tempFile, <<<'ENV'
+APP_ENV=dev
+
+###> pimcore/pimcore ###
+DATABASE_URL="old"
+ENV);
+        // Missing close marker — orphaned open marker
+
+        $writer = new EnvWriter($this->tempFile);
+        $warnings = $writer->write([
+            'pimcore/pimcore' => ['DATABASE_URL' => 'new'],
+        ]);
+
+        $this->assertCount(1, $warnings);
+        $this->assertStringContainsString('Malformed', $warnings[0]);
+
+        $content = file_get_contents($this->tempFile);
+
+        // The old orphaned marker and its content should be removed
+        $this->assertStringNotContainsString('DATABASE_URL="old"', $content);
+
+        // The new section should be present
+        $this->assertStringContainsString('###> pimcore/pimcore ###', $content);
+        $this->assertStringContainsString('DATABASE_URL="new"', $content);
+        $this->assertStringContainsString('###< pimcore/pimcore ###', $content);
+
+        // User content should be preserved
+        $this->assertStringContainsString('APP_ENV=dev', $content);
+
+        // There should be exactly one open marker (not two)
+        $this->assertSame(1, substr_count($content, '###> pimcore/pimcore ###'));
+    }
+
+    public function testOrphanedCloseMarkerIsCleanedUp(): void
+    {
+        file_put_contents($this->tempFile, <<<'ENV'
+APP_ENV=dev
+
+DATABASE_URL="old"
+###< pimcore/pimcore ###
+ENV);
+        // Missing open marker — orphaned close marker
+
+        $writer = new EnvWriter($this->tempFile);
+        $warnings = $writer->write([
+            'pimcore/pimcore' => ['DATABASE_URL' => 'new'],
+        ]);
+
+        $this->assertCount(1, $warnings);
+
+        $content = file_get_contents($this->tempFile);
+
+        // There should be exactly one close marker (not two)
+        $this->assertSame(1, substr_count($content, '###< pimcore/pimcore ###'));
+        $this->assertStringContainsString('DATABASE_URL="new"', $content);
+    }
+
     public function testWriteReplacesOnlySameSection(): void
     {
         // Write initial two sections

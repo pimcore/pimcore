@@ -101,12 +101,13 @@ final readonly class EnvWriter
                     . $closeMarker . "\n"
                     . $after;
             } elseif ($openPos !== false || $closePos !== false) {
-                // Malformed: one marker without the other
+                // Malformed: one marker without the other — remove the orphan before appending
                 $warnings[] = sprintf(
                     'Malformed section markers for "%s" in %s. Appending new section.',
                     $sectionName,
                     $this->envFilePath,
                 );
+                $content = $this->removeOrphanedMarker($content, $openMarker, $closeMarker);
                 $content = $this->appendSection(
                     $content,
                     $openMarker,
@@ -153,6 +154,39 @@ final readonly class EnvWriter
         // Dollar signs must be escaped because dotenv parsers treat $VAR and ${VAR}
         // as variable references inside double-quoted values.
         return str_replace(['\\', '"', '$'], ['\\\\', '\\"', '\\$'], $value);
+    }
+
+    private function removeOrphanedMarker(
+        string $content,
+        string $openMarker,
+        string $closeMarker,
+    ): string {
+        $openPos = strpos($content, $openMarker);
+        $closePos = strpos($content, $closeMarker);
+
+        if ($openPos !== false && $closePos === false) {
+            // Orphaned open marker: remove from marker line to next blank line or EOF
+            $lineStart = strrpos($content, "\n", $openPos - strlen($content));
+            $lineStart = ($lineStart === false) ? 0 : $lineStart;
+
+            // Find the end of this partial section (next blank line or EOF)
+            $searchFrom = $openPos + strlen($openMarker);
+            $blankLine = strpos($content, "\n\n", $searchFrom);
+            $sectionEnd = ($blankLine === false) ? strlen($content) : $blankLine;
+
+            $content = substr($content, 0, $lineStart) . substr($content, $sectionEnd);
+        } elseif ($closePos !== false && $openPos === false) {
+            // Orphaned close marker: just remove the close marker line
+            $lineStart = strrpos($content, "\n", $closePos - strlen($content));
+            $lineStart = ($lineStart === false) ? 0 : $lineStart;
+
+            $lineEnd = strpos($content, "\n", $closePos);
+            $lineEnd = ($lineEnd === false) ? strlen($content) : $lineEnd + 1;
+
+            $content = substr($content, 0, $lineStart) . substr($content, $lineEnd);
+        }
+
+        return $content;
     }
 
     private function appendSection(
