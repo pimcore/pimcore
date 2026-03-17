@@ -663,7 +663,10 @@ class Installer
                     break;
                 }
 
-                $validationErrors = $definition->validate($collectedValues);
+                $validationErrors = $this->shouldSkipValidation($definition, $collectedValues)
+                    ? []
+                    : $definition->validate($collectedValues);
+
                 if ($validationErrors === []) {
                     $io->text('  <info>✓</info> Validation successful');
                     $resolvedByDefinition[$key] = [
@@ -703,6 +706,77 @@ class Installer
         }
 
         return ['resolved' => $resolvedByDefinition, 'errors' => $errors];
+    }
+
+    /**
+     * Determine whether to skip validate() for a definition whose final env vars
+     * were already present in the environment.
+     *
+     * When the ParameterCollector detects that all final (resolved) env vars for a
+     * definition are already set, it skips transient parameter prompts and populates
+     * collectedValues with the final DSN values directly. In this case, the
+     * definition's validate() method — which expects transient parameter keys like
+     * DATABASE_HOST, DATABASE_PORT, etc. — would fail because those keys are absent.
+     *
+     * We detect this situation by checking whether the collected values contain
+     * any transient parameters. If a definition has transient params but none appear
+     * in the collected values, the collector skipped them because the final env vars
+     * were pre-set — and we trust the pre-set values.
+     *
+     * @param array<string, string> $collectedValues
+     */
+    private function shouldSkipValidation(EnvVarDefinitionInterface $definition, array $collectedValues): bool
+    {
+        $transientNames = [];
+        foreach ($definition->getParameters() as $parameter) {
+            if ($parameter->isTransient()) {
+                $transientNames[] = $parameter->getEnvVarName();
+            }
+        }
+
+        if ($transientNames === []) {
+            return false;
+        }
+
+        foreach ($transientNames as $name) {
+            if (isset($collectedValues[$name])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Extract the final (resolved) env var values from collected values.
+     *
+     * When the ParameterCollector skipped transient params because all final
+     * env vars were already present, the collected values contain the final
+     * DSN values directly. This method extracts only those values that
+     * correspond to the definition's resolved env var names, which is what
+     * resolveEnvVars() would normally produce.
+     *
+     * @param array<string, string> $collectedValues
+     *
+     * @return array<string, string>
+     */
+    private function extractFinalEnvVars(EnvVarDefinitionInterface $definition, array $collectedValues): array
+    {
+        $dummyValues = [];
+        foreach ($definition->getParameters() as $param) {
+            $dummyValues[$param->getEnvVarName()] = $param->getDefaultValue() ?? '';
+        }
+
+        $resolvedNames = array_keys($definition->resolveEnvVars($dummyValues));
+        $result = [];
+
+        foreach ($resolvedNames as $name) {
+            if (isset($collectedValues[$name])) {
+                $result[$name] = $collectedValues[$name];
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -750,7 +824,10 @@ class Installer
             $definition = $data['definition'];
             $values = $data['values'];
 
-            $resolvedVars = $definition->resolveEnvVars($values);
+            $resolvedVars = $this->shouldSkipValidation($definition, $values)
+                ? $this->extractFinalEnvVars($definition, $values)
+                : $definition->resolveEnvVars($values);
+
             $sectionName = $definition->getSectionName();
 
             if (!isset($sectionedEnvVars[$sectionName])) {
