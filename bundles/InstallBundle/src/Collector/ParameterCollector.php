@@ -81,6 +81,9 @@ final readonly class ParameterCollector
         // so validation can work correctly.
         if ($allFinalVarsPresent) {
             foreach ($resolvedEnvVarNames as $envVarName) {
+                if (array_key_exists($envVarName, $collectedValues)) {
+                    continue;
+                }
                 $envValue = $this->envVarReader->get($envVarName);
                 if ($envValue !== null) {
                     $collectedValues[$envVarName] = $envValue;
@@ -131,49 +134,67 @@ final readonly class ParameterCollector
         SymfonyStyle $io,
         bool $interactive,
     ): string {
-        // Priority 1: Existing env var
         $envValue = $this->envVarReader->get($parameter->getEnvVarName());
+
+        if ($interactive) {
+            return $this->promptForParameter($parameter, $io, $envValue);
+        }
+
+        // Non-interactive: env var takes precedence, then default, then empty
         if ($envValue !== null) {
             return $envValue;
         }
 
-        // Priority 2: Interactive prompt
-        if ($interactive) {
-            return $this->promptForParameter($parameter, $io);
-        }
-
-        // Priority 3: Default value
-        if ($parameter->getDefaultValue() !== null) {
-            return $parameter->getDefaultValue();
-        }
-
-        // No value available — return empty string.
-        // The definition's validate() will catch required-but-missing values.
-        return '';
+        return $parameter->getDefaultValue() ?? '';
     }
 
+    /**
+     * Prompt the user for a parameter value.
+     *
+     * If an env var value is already set, it is offered as the pre-filled
+     * default so the user can press Enter to accept or type a new value.
+     * For secrets, the existing value is not displayed but the user is
+     * informed that a value is already configured.
+     */
     private function promptForParameter(
         ConfigParameter $parameter,
         SymfonyStyle $io,
+        ?string $envValue,
     ): string {
         if ($parameter->getDescription() !== null) {
             $io->text('<info>' . $parameter->getDescription() . '</info>');
         }
 
+        $suggestion = $envValue ?? $parameter->getDefaultValue();
+
+        if ($parameter->getType() === ParameterType::Secret) {
+            if ($envValue !== null) {
+                $io->text(sprintf('  <comment>%s is already configured. Press Enter to keep it.</comment>', $parameter->getEnvVarName()));
+            }
+
+            $input = $io->askHidden($parameter->getLabel());
+
+            // Empty input (Enter) with pre-existing value → keep it
+            if (($input === null || $input === '') && $envValue !== null) {
+                return $envValue;
+            }
+
+            return (string) $input;
+        }
+
         return match ($parameter->getType()) {
-            ParameterType::Secret => (string) $io->askHidden($parameter->getLabel()),
             ParameterType::Choice => (string) $io->choice(
                 $parameter->getLabel(),
                 $parameter->getChoices(),
-                $parameter->getDefaultValue(),
+                $suggestion,
             ),
             ParameterType::Boolean => $io->confirm(
                 $parameter->getLabel(),
-                ($parameter->getDefaultValue() ?? 'false') === 'true',
+                ($suggestion ?? 'false') === 'true',
             ) ? 'true' : 'false',
             default => (string) $io->ask(
                 $parameter->getLabel(),
-                $parameter->getDefaultValue(),
+                $suggestion,
             ),
         };
     }
