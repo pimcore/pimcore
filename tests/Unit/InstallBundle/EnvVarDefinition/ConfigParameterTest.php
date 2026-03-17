@@ -56,4 +56,42 @@ final class ConfigParameterTest extends TestCase
         $this->assertSame('opensearch', $param->getDefaultValue());
     }
 
+    public function testChoiceTypeRequiresNonEmptyChoices(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('choices');
+
+        new ConfigParameter(
+            'DRIVER',
+            'Driver',
+            ParameterType::Choice,
+            choices: [],
+        );
+    }
+
+    public function testNonChoiceTypeRejectsChoices(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('choices');
+
+        new ConfigParameter(
+            'HOST',
+            'Host',
+            ParameterType::String,
+            choices: ['a', 'b'],
+        );
+    }
+
+    public function testChoiceTypeWithValidChoicesSucceeds(): void
+    {
+        $param = new ConfigParameter(
+            'DRIVER',
+            'Driver',
+            ParameterType::Choice,
+            choices: ['mysql', 'pgsql'],
+        );
+
+        $this->assertSame(['mysql', 'pgsql'], $param->getChoices());
+    }
+
 }

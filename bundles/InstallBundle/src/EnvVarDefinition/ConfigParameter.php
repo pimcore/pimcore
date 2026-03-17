@@ -30,6 +30,18 @@ final readonly class ConfigParameter
         private ?string $description = null,
         private array $choices = [],
     ) {
+        if ($this->type === ParameterType::Choice && $this->choices === []) {
+            throw new \InvalidArgumentException(
+                'ConfigParameter with type Choice must have non-empty choices array.',
+            );
+        }
+
+        if ($this->type !== ParameterType::Choice && $this->choices !== []) {
+            throw new \InvalidArgumentException(sprintf(
+                'ConfigParameter with type %s must not have choices array.',
+                $this->type->name,
+            ));
+        }
     }
 
     public function getEnvVarName(): string
