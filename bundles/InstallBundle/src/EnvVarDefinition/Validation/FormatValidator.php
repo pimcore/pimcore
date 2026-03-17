@@ -130,15 +130,20 @@ final class FormatValidator
     }
 
     /**
-     * Return all collected errors and reset the internal state.
+     * Return all collected errors (read-only).
      *
      * @return list<string>
      */
     public function getErrors(): array
     {
-        $errors = $this->errors;
-        $this->errors = [];
+        return $this->errors;
+    }
 
-        return $errors;
+    /**
+     * Reset the internal error state.
+     */
+    public function clear(): void
+    {
+        $this->errors = [];
     }
 }

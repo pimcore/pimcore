@@ -226,7 +226,7 @@ final class FormatValidatorTest extends TestCase
         $this->assertTrue($this->validator->hasErrors());
     }
 
-    public function testGetErrorsReturnsAndResetsErrors(): void
+    public function testGetErrorsReturnsErrorsWithoutClearing(): void
     {
         $this->validator->requireNonEmpty('', 'Field');
 
@@ -236,7 +236,19 @@ final class FormatValidatorTest extends TestCase
         $this->assertCount(1, $errors);
         $this->assertSame('Field is required and cannot be empty.', $errors[0]);
 
-        // After getErrors(), internal state should be reset
+        // getErrors() is read-only — errors are still present
+        $this->assertTrue($this->validator->hasErrors());
+        $this->assertSame($errors, $this->validator->getErrors());
+    }
+
+    public function testClearResetsErrors(): void
+    {
+        $this->validator->requireNonEmpty('', 'Field');
+
+        $this->assertTrue($this->validator->hasErrors());
+
+        $this->validator->clear();
+
         $this->assertFalse($this->validator->hasErrors());
         $this->assertSame([], $this->validator->getErrors());
     }
