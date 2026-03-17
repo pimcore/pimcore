@@ -79,7 +79,7 @@ final readonly class DatabaseEnvVarDefinition implements EnvVarDefinitionInterfa
                 'DATABASE_PASSWORD',
                 'Database Password',
                 ParameterType::Secret,
-                required: false,
+                false,
                 transient: true,
             ),
         ];

@@ -340,7 +340,7 @@ class Installer
             function (): void {
                 $this->rebuildClasses();
             },
-            fatal: false,
+            false,
         );
         if ($error !== null) {
             $errors[] = $error;
@@ -357,7 +357,7 @@ class Installer
             function (): void {
                 $this->markMigrationsAsDone();
             },
-            fatal: false,
+            false,
         );
         if ($error !== null) {
             $errors[] = $error;

@@ -70,7 +70,7 @@ final readonly class OpenSearchEnvVarDefinition implements SearchEngineDefinitio
                 'PIMCORE_OPENSEARCH_PASSWORD',
                 'Password',
                 ParameterType::Secret,
-                required: false,
+                false,
                 transient: true,
             ),
             new ConfigParameter(

@@ -34,8 +34,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @internal
  */
 #[AsCommand(
-    name: 'pimcore:install',
-    description: 'Install Pimcore with a profile-based configuration',
+    'pimcore:install',
+    'Install Pimcore with a profile-based configuration',
 )]
 final class InstallCommand extends Command
 {
