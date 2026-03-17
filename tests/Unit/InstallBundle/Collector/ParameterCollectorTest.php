@@ -299,9 +299,9 @@ final class ParameterCollectorTest extends TestCase
             {
                 $result = [];
                 foreach ($this->parameters as $param) {
-                    if (!$param->transient) {
-                        $result[$param->envVarName] =
-                            $collectedValues[$param->envVarName] ?? '';
+                    if (!$param->isTransient()) {
+                        $result[$param->getEnvVarName()] =
+                            $collectedValues[$param->getEnvVarName()] ?? '';
                     }
                 }
 

@@ -63,8 +63,6 @@ final class InstallerTest extends TestCase
         parent::tearDown();
     }
 
-    // ─── Definition Merge + Dedup ────────────────────────────────
-
     public function testDefinitionMergeCliOverridesProfileOnKeyCollision(): void
     {
         $profileDef = $this->createMockDefinition(
@@ -139,11 +137,9 @@ final class InstallerTest extends TestCase
 
         // Both definitions should produce env vars
         $envContent = file_get_contents($this->tempDir . '/.env.local');
-        $this->assertStringContainsString('DB_HOST=localhost', $envContent);
-        $this->assertStringContainsString('REDIS_URL=redis://localhost:6379', $envContent);
+        $this->assertStringContainsString('DB_HOST="localhost"', $envContent);
+        $this->assertStringContainsString('REDIS_URL="redis://localhost:6379"', $envContent);
     }
-
-    // ─── Skip Flags ─────────────────────────────────────────────
 
     public function testSkipRequiredDefinitionReturnsError(): void
     {
@@ -211,7 +207,7 @@ final class InstallerTest extends TestCase
         // Redis should NOT be in .env.local
         $envContent = file_get_contents($this->tempDir . '/.env.local');
         $this->assertStringNotContainsString('REDIS_URL', $envContent);
-        $this->assertStringContainsString('DB_HOST=localhost', $envContent);
+        $this->assertStringContainsString('DB_HOST="localhost"', $envContent);
     }
 
     public function testSkipUnknownKeyIsSilentlyIgnored(): void
@@ -240,8 +236,6 @@ final class InstallerTest extends TestCase
 
         $this->assertSame([], $errors);
     }
-
-    // ─── Admin Credential Validation ────────────────────────────
 
     public function testAdminUsernameTooShortReturnsError(): void
     {
@@ -298,8 +292,6 @@ final class InstallerTest extends TestCase
         $this->assertNotEmpty($errors);
         $this->assertStringContainsString('password must be at least 4', $errors[0]);
     }
-
-    // ─── Validation Error Aggregation ───────────────────────────
 
     public function testValidationErrorsAreAggregated(): void
     {
@@ -408,8 +400,6 @@ final class InstallerTest extends TestCase
         );
     }
 
-    // ─── Multiple Definitions Error Aggregation ────────────────
-
     public function testMultipleDefinitionsWithErrorsCollectsAll(): void
     {
         $failingDef1 = $this->createFailingDefinition(
@@ -445,8 +435,6 @@ final class InstallerTest extends TestCase
         $this->assertStringContainsString('Database connection refused', $errors[0]);
         $this->assertStringContainsString('Redis unavailable', $errors[1]);
     }
-
-    // ─── Admin Credential Edge Cases ────────────────────────────
 
     public function testBothAdminCredentialsInvalidReportsBothErrors(): void
     {
@@ -544,8 +532,6 @@ final class InstallerTest extends TestCase
         $this->assertStringContainsString('password', $errors[0]);
     }
 
-    // ─── CLI + Profile Definition Merge ─────────────────────────
-
     public function testCliDefinitionsMergedWithProfileDefinitions(): void
     {
         $profileDef = $this->createMockDefinition(
@@ -584,11 +570,9 @@ final class InstallerTest extends TestCase
         $this->assertSame([], $errors);
 
         $envContent = file_get_contents($this->tempDir . '/.env.local');
-        $this->assertStringContainsString('DB_HOST=localhost', $envContent);
-        $this->assertStringContainsString('CUSTOM_URL=http://localhost:8080', $envContent);
+        $this->assertStringContainsString('DB_HOST="localhost"', $envContent);
+        $this->assertStringContainsString('CUSTOM_URL="http://localhost:8080"', $envContent);
     }
-
-    // ─── Env Var Precedence ─────────────────────────────────────
 
     public function testEnvVarTakesPrecedenceOverDefault(): void
     {
@@ -619,11 +603,9 @@ final class InstallerTest extends TestCase
         $this->assertSame([], $errors);
 
         $envContent = file_get_contents($this->tempDir . '/.env.local');
-        $this->assertStringContainsString('DB_HOST=env-host', $envContent);
+        $this->assertStringContainsString('DB_HOST="env-host"', $envContent);
         $this->assertStringNotContainsString('default-host', $envContent);
     }
-
-    // ─── Full Phase 1 With Mock Definitions ─────────────────────
 
     public function testFullPhaseOneWritesEnvLocalCorrectly(): void
     {
@@ -674,10 +656,10 @@ final class InstallerTest extends TestCase
         $this->assertStringContainsString('###< mercure ###', $envContent);
 
         // Check values
-        $this->assertStringContainsString('DB_HOST=db', $envContent);
-        $this->assertStringContainsString('DB_PORT=3306', $envContent);
-        $this->assertStringContainsString('DB_NAME=pimcore', $envContent);
-        $this->assertStringContainsString('MERCURE_URL=http://localhost/hub', $envContent);
+        $this->assertStringContainsString('DB_HOST="db"', $envContent);
+        $this->assertStringContainsString('DB_PORT="3306"', $envContent);
+        $this->assertStringContainsString('DB_NAME="pimcore"', $envContent);
+        $this->assertStringContainsString('MERCURE_URL="http://localhost/hub"', $envContent);
     }
 
     public function testPhaseOnePreservesExistingEnvLocalContent(): void
@@ -721,7 +703,7 @@ final class InstallerTest extends TestCase
 
         // Old section replaced with new content
         $this->assertStringNotContainsString('OLD_VAR=old-value', $envContent);
-        $this->assertStringContainsString('DB_HOST=new-host', $envContent);
+        $this->assertStringContainsString('DB_HOST="new-host"', $envContent);
     }
 
     public function testPhaseOneWithNoDefinitions(): void
@@ -744,8 +726,6 @@ final class InstallerTest extends TestCase
 
         $this->assertSame([], $errors);
     }
-
-    // ─── Bundle FQCN Validation ─────────────────────────────────
 
     public function testInvalidBundleFqcnReturnsError(): void
     {
@@ -781,8 +761,6 @@ final class InstallerTest extends TestCase
         $this->assertStringContainsString('does not exist', $errors[0]);
         $this->assertStringContainsString('NonExistent\\Bundle\\SomeFakeBundle', $errors[0]);
     }
-
-    // ─── Env Value Escaping ─────────────────────────────────────
 
     public function testSpecialCharactersInValuesAreEscaped(): void
     {
@@ -821,8 +799,6 @@ final class InstallerTest extends TestCase
         // Ensure $ is escaped
         $this->assertStringContainsString('\\$', $envContent);
     }
-
-    // ─── Definition Category Validation ─────────────────────────
 
     public function testMissingSearchEngineDefinitionReturnsError(): void
     {
@@ -948,8 +924,6 @@ final class InstallerTest extends TestCase
         $this->assertStringContainsString('exactly one', $errors[0]);
         $this->assertStringContainsString('found 2', $errors[0]);
     }
-
-    // ─── Helper Methods ─────────────────────────────────────────
 
     /**
      * Creates a mock definition that passes validation.

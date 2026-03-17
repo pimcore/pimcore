@@ -42,7 +42,7 @@ final class DatabaseEnvVarDefinitionTest extends TestCase
         $params = $this->definition->getParameters();
         $this->assertCount(5, $params);
 
-        $names = array_map(fn ($p) => $p->envVarName, $params);
+        $names = array_map(fn ($p) => $p->getEnvVarName(), $params);
         $this->assertSame(
             ['DATABASE_HOST', 'DATABASE_PORT', 'DATABASE_NAME', 'DATABASE_USER', 'DATABASE_PASSWORD'],
             $names,
@@ -50,7 +50,7 @@ final class DatabaseEnvVarDefinitionTest extends TestCase
 
         // All DB params are transient (assembled into DATABASE_URL)
         foreach ($params as $param) {
-            $this->assertTrue($param->transient, $param->envVarName . ' should be transient');
+            $this->assertTrue($param->isTransient(), $param->getEnvVarName() . ' should be transient');
         }
     }
 
