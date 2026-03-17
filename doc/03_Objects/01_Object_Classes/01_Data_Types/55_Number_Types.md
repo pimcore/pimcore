@@ -14,9 +14,7 @@ widgets and the fact that the slider has a min/max value and step size, which th
 
 ![Numeric Field](../../../img/classes-datatypes-number2.jpg)
 
-The numeric data field can be configured with a default value. In Pimcore Studio it is represented by a spinner field.
-
-![Numeric Configuration](../../../img/classes-datatypes-number1.jpg)
+The numeric data field can be configured with a default value.
 
 
 ## Numeric Range
@@ -39,7 +37,9 @@ the increment step and decimal precision.
 
 This is a numeric datatype that also allows to specify a unit.
 
-Start off with defining a global list of known units.
+Start off with defining a global list of known units via `Data Management` -> `Data Model Definitions` -> `Quantity Values`.
+
+<div class="image-as-lightbox"></div>
 
 ![Quantity Value Configuration](../../../img/classes-datatypes-number4.png)
 
@@ -53,14 +53,13 @@ $unit->setGroup("dimension");
 $unit->save();
 ```
 
-
-In the class editor, it is possible to restrict the list of valid units on a field-level. 
 It is also possible to import and export the units as json file. 
 For importing there is also a command: `pimcore:definition:import:units`
 
-![Quantity Value Configuration](../../../img/classes-datatypes-number5.png)
+In the class editor, it is possible to restrict the list of valid units on a field-level.
+Only those units will be available in the editor then.
 
-Only those units will be available then.
+<div class="image-as-lightbox"></div>
 
 ![Quantity Value Field](../../../img/classes-datatypes-number6.png)
 
@@ -80,8 +79,6 @@ $object->save();
 
 
 ## Quantity Value Range
-
-![Quantity Value Range Field](../../../img/classes-datatypes-number8.jpg)
 
 The `quantityValueRange` object field is basically the same as the `quantityValue` field,
 except that is has two input fields (minimum and maximum). Programmatically the values are

@@ -24,12 +24,16 @@ The object brick for tires has dimension, type, maximum speed and so on.
 
 By creating a tire product object, the tire object brick is added and so this tire product has all the tire attributes.
 
+<div class="image-as-lightbox"></div>
+
 ![Object bricks example](../../../img/ObjectsBricks_object_example.png)
 
 To one object a number of Objectbricks can be added, but just one instance per object brick type. 
 This is the main difference to Fieldcollections.
 Because only one instance per object brick can be added to an object, Objectbricks fully support inheritance on 
 field level. Each attribute of an object brick can be overwritten in child objects.
+
+<div class="image-as-lightbox"></div>
 
 ![Object bricks inheritance example](../../../img/ObjectsBricks_inheritance_example.png)
 
@@ -39,9 +43,8 @@ This is because the attributes of an object brick have to be defined like these 
 ## Definition of an Objectbrick
 
 As mentioned before, Objectbricks themselves are defined the same way as objects and Fieldcollections are and support 
-similar data types as Fieldcollections.
-
-![Object bricks menu](../../../img/ObjectsBricks_menu.png)
+similar data types as Fieldcollections. The configuration can be accessed via 
+`Data Management` -> `Data Model Definitions` -> `Object Bricks`. 
 
 To allow adding an Objectbrick to an object, two things have to be done:
 

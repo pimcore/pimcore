@@ -115,7 +115,7 @@ services:
 The second option for defining the calculation is providing a php calculator class. This is especially useful for more
 complex calculations and reusing the calculators. 
 
-The calculator class is a standard symfony service (or simple php class) that implements the `CalculatorClassInterface`.
+The calculator class is a standard Symfony service (or simple php class) that implements the `CalculatorClassInterface`.
 
 #### Setup in Class Definition
 The calculator class can be defined in two ways:  

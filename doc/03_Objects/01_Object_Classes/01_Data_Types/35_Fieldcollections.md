@@ -14,6 +14,8 @@ An object field collection is very similar to an object itself.
 It has a *class* or in this case **field definition** which needs to be made first, and then different field collection 
 definitions can be used to add sets of fields to an object. 
 
+<div class="image-as-lightbox"></div>
+
 ![Fieldcollection Configuration](../../../img/classes-datatypes-fieldcollection1.png)
 
 So with some restrictions you could say, a field collection is an object within an object. 
@@ -21,9 +23,13 @@ So with some restrictions you could say, a field collection is an object within 
 When adding a field collection field to an object's class definition, the developer needs to specify the allowed field 
 definition types for this field. 
 
+<div class="image-as-lightbox"></div>
+
 ![Fieldcollection Configuration](../../../img/classes-datatypes-fieldcollection2.png)
 
 The user can then decide which and how many of the available field definitions shall be added to the object.
+
+<div class="image-as-lightbox"></div>
 
 ![Fieldcollection Field](../../../img/classes-datatypes-fieldcollection3.png)
 

@@ -9,6 +9,8 @@ description: "Date and time fields represented by calendar widgets, stored as da
 
 The `date` and `date & time` object fields are represented by a calendar widget in Pimcore Studio.
 
+<div class="image-as-lightbox"></div>
+
 ![Date Field](../../../img/classes-datatypes-date1.jpg)
 
 In the database its data is saved either as `date`/`datetime` field type or as unix timestamp (`bigint(20)`) depending on the configured column type. Programmatically 
@@ -26,6 +28,8 @@ For the `date & time` object field timezones are taken into account when the "re
 
 The `time` data field is the same drop down list of day times as in the `date & time` field.
 
+<div class="image-as-lightbox"></div>
+
 ![Time Field](../../../img/classes-datatypes-date2.jpg)
 
 It's stored as a string in a VARCHAR(5) column in the database and can be set programmatically by simply passing a 
@@ -36,6 +40,8 @@ string like for example "11:00" to the field's setter.
 
 The `dateRange` object field consists of two `date` fields (start and end date) and can be filled
 with the usual calendar widget in Pimcore Studio or programmatically via the Pimcore API.
+
+<div class="image-as-lightbox"></div>
 
 ![Date Range Field](../../../img/classes-datatypes-date3.jpg)
 

@@ -13,12 +13,7 @@ You can also add some additional static data which will be passed to the data pr
 
 Note that there are two ways to define an options provider. 
 
-Either simply specify the class name ...
-
-![Select Field](../../../img/dynamic_select_class.png)
-
-... or the name of a Symfony service (notice the prefix).
-![Select Field](../../../img/dynamic_select_service.png)
+Either simply specify the FQCN or the name of a Symfony service with `@`-prefix.
 
 The services.yaml would then look like this:
 
@@ -41,7 +36,7 @@ You have to implement the `Pimcore\Model\DataObject\ClassDefinition\DynamicOptio
 ```php
 <?php
 
-namespace Website;
+namespace App;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
@@ -85,11 +80,13 @@ class OptionsProvider implements SelectOptionsProviderInterface
 
 This will generate the following options.
 
+<div class="image-as-lightbox"></div>
+
 ![Select Field](../../../img/dynselect2.png)
 
 ## Context Information for the Provider Class
 
-Note that depending the use case not all of the infos will be available.
+Note that depending on the use case not all of the infos will be available.
 Especially the existence of the object parameter cannot be guaranteed because the provider class will also be called when a class is saved or if you programmatically call $class->getFieldDefinitions().
 Layout definition calls can be distinguished from other ones by checking if the `purpose` parameter is set to `layout`
 

@@ -7,6 +7,8 @@ description: "Image fields store references to asset images, represented by a dr
 
 ## Image
 
+<div class="image-as-lightbox"></div>
+
 ![Image Field](../../../img/classes-datatypes-image1.jpg)
 
 An image field is stored in an INT column in the database. It holds the ID of the referenced `\Pimcore\Model\Asset\Image`. 
@@ -23,6 +25,8 @@ $object->save();
 
 The image field is represented in the UI by an image drop area. The image drop area's width and height can be configured 
 in the class settings as follows:
+
+<div class="image-as-lightbox"></div>
 
 ![Image Configuration](../../../img/classes-datatypes-image2.jpg)
 
@@ -44,6 +48,8 @@ Since `$object->getImage()` just returns an asset object, you can of course use 
 
 This one allows you to enter an external image URL which is then shown as a preview.
 
+<div class="image-as-lightbox"></div>
+
 ![External Image Field](../../../img/classes-datatypes-image3.jpg)
 
 ```twig
@@ -55,6 +61,8 @@ This one allows you to enter an external image URL which is then shown as a prev
 ## Image Gallery
 
 Is a collection of `Advanced Images` (see below). The sort order can be changed via drag & drop.
+
+<div class="image-as-lightbox"></div>
 
 ![Image Gallery](../../../img/image_gallery.png) 
 
@@ -86,6 +94,8 @@ $news->setGallery(new \Pimcore\Model\DataObject\Data\ImageGallery($items));
 
 This data type is an advanced extension to the image data type which allows defining hotspots, markers and cropping on 
 the assigned image.
+
+<div class="image-as-lightbox"></div>
 
 ![Image Advanced Field](../../../img/classes-datatypes-image4.png)
 

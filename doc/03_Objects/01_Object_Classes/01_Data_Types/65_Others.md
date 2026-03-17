@@ -128,7 +128,6 @@ A slug is the part of a URL which identifies a particular page on a website in a
 to read form. In other words, it’s the part of the URL that explains the page’s content.
 For example, if the URL is `https://demo.pimcore.fun/slug`, then the slug simply is `/slug`.
 
-![URL Slug](../../../img/classes-datatypes-urlslug.png)
 
 > Note that currently URL slugs are not supported inside [Blocks](./05_Blocks.md) & [Classification Stores](./15_Classification_Store.md).
 

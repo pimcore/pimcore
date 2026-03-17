@@ -16,31 +16,28 @@ The advantage of this, is to make it very easy to translate fields to the config
 First of all, you have to configure your localized fields and layouts within your class. This can be easily done in 
 the class editor.
 
+<div class="image-as-lightbox"></div>
+
 ![Add localized fields to a class](../../../img/Objects_LocalizedFields_add_data_component.png)
 
-Then add attributes, that need to be translated, into this container. 
+Then add attributes, that need to be translated, into this container as any other attributes. 
+Note, that not all field types are supported for localized fields. 
 
-![Add data component to localized fields](../../../img/Objects_LocalizedFields_add_inputs_to_lf.png)
+In the editor, the localized fields are displayed as normal fields with a language indication in the label. 
+Language switch is possible via the global language switcher in the bottom toolbar of the editor. 
 
-Pimcore generates the input widgets for every configured language.
-The result in your object editor will look like below:
+<div class="image-as-lightbox"></div>
 
 ![Localized page preview](../../../img/Objects_LocalizedFields_page_preview.png)
 
-By default, tabs are used if the number of languages does not exceed 15. 
-This limit can be changed via the field settings in the class configurator.
-
-![Change tabs limit in Localized Fields](../../../img/Objects_LocalizedFields_change_tabs_limit.png)
-
 ## Definition of available Languages
 If it's not already configured, please specify the valid languages for your website. 
-You can do this in `Settings` -> `System Settings` -> `Localization & Internationalization`
-
-![Add languages](../../../img/Objects_LocalizedFields_add_language.png)
+You can do this in `System` -> `System Settings` -> `Localization & Internationalization`.
 
 ## Definition of required Languages
-If you want to have mandatory fields in the localized fields but they are not mandatory for all languages, you can define
-which languages are required in `Settings` -> `System Settings` -> `Localization & Internationalization` with the `Mandatory language` checkbox on each language.
+If you want to have mandatory fields in the localized fields, but they are not mandatory for all languages, you can define
+which languages are required in `System` -> `System Settings` -> `Localization & Internationalization` with the 
+`Mandatory language` checkbox on each language.
 
 
 ## Inheritance

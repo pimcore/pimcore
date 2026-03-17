@@ -12,11 +12,14 @@ A block element can be placed into a localized field but can also contain a loca
 Nesting is not possible.
 
 > [!IMPORTANT]
-> Please note the limitations related to blocks and fieldcollections when creating the data model.
+> Please note the limitations related to blocks and field collections when creating the data model.
 > [More Information about Limitations](./999_Limitations.md) 
 
+<div class="image-as-lightbox"></div>
 
 ![Block data type](../../../img/ObjectsBlocks_data_container.png)
+
+<div class="image-as-lightbox"></div>
 
 ![Block, edit peview](../../../img/ObjectsBlocks_edit_preview.png)
 
@@ -28,10 +31,14 @@ Nesting is not possible.
 
 Let us consider the following class definition
 
+<div class="image-as-lightbox"></div>
+
 ![Class Definition](../../../img/block-classdefinition.png)
 
 and object data
- 
+
+<div class="image-as-lightbox"></div>
+
  ![Class Definition](../../../img/block-values.png)
 
 The value of the second input field can be retrieved as follows:

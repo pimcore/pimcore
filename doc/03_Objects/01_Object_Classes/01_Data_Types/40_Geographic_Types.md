@@ -12,6 +12,8 @@ listed with the other select widgets.
 
 ## Geopoint
 
+<div class="image-as-lightbox"></div>
+
 ![GeoPoint Field](../../../img/classes-datatypes-geo1.jpg)
 
 The geopoint consists of two coordinates: latitude and longitude. In Pimcore Studio there is the same geopoint selector
@@ -30,6 +32,8 @@ $object->save();
 
 
 ## Geobounds
+
+<div class="image-as-lightbox"></div>
 
 ![GeoBounds Field](../../../img/classes-datatypes-geo2.jpg)
 
@@ -51,6 +55,8 @@ $object->save();
 
 ## Geopolygon
 
+<div class="image-as-lightbox"></div>
+
 ![GeoPolygon Field](../../../img/classes-datatypes-geo3.jpg)
 
 The geopolygon is the third in the row of geo widgets. It allows to define a geographic area by setting an arbitrary 
@@ -71,6 +77,8 @@ $object->save();
 ```
 
 ## Geopolyline
+
+<div class="image-as-lightbox"></div>
 
 ![GeoPolyline Field](../../../img/classes-datatypes-geo4.jpg)
 
