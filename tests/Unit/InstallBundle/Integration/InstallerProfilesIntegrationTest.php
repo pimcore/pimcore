@@ -26,7 +26,6 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\SearchEngineDefinitionInterfac
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Bundle\InstallBundle\Profile\DataSource\DataSourceInterface;
 use Pimcore\Bundle\InstallBundle\Profile\InstallProfileInterface;
-use Pimcore\Bundle\InstallBundle\Profile\PostInstallContext;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Unit\InstallBundle\Support\InstallBundleTestHelperTrait;
 use Pimcore\Tests\Unit\InstallBundle\Support\NoopMessengerTransportDefinition;
@@ -363,10 +362,6 @@ final class InstallerProfilesIntegrationTest extends TestCase
             public function getPostInstallCommands(): array
             {
                 return [];
-            }
-
-            public function postInstall(PostInstallContext $context): void
-            {
             }
         };
     }

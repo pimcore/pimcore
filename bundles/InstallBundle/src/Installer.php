@@ -28,6 +28,7 @@ use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\Profile\DataSource\DataSourceInterface;
 use Pimcore\Bundle\InstallBundle\Profile\InstallProfileInterface;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallCommand;
+use Pimcore\Bundle\InstallBundle\Profile\PostInstallHookInterface;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallCommandsProviderInterface;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallContext;
 use Pimcore\Config;
@@ -385,22 +386,24 @@ class Installer
             }
         }
 
-        // Run profile postInstall()
-        $error = $this->executeStep(
-            self::STEP_RUN_PROFILE_POST_INSTALL,
-            $completedStep,
-            $checkpoint,
-            'profile_post_install',
-            'Running profile post-install...',
-            'Profile postInstall() completed',
-            function () use ($kernel, $profile, $io): void {
-                $db = $this->getDatabaseConnection($kernel);
-                $context = new PostInstallContext($db, $io);
-                $profile->postInstall($context);
-            },
-        );
-        if ($error !== null) {
-            return array_merge($errors, [$error]);
+        // Run profile postInstall() if profile implements the optional hook
+        if ($profile instanceof PostInstallHookInterface) {
+            $error = $this->executeStep(
+                self::STEP_RUN_PROFILE_POST_INSTALL,
+                $completedStep,
+                $checkpoint,
+                'profile_post_install',
+                'Running profile post-install...',
+                'Profile postInstall() completed',
+                function () use ($kernel, $profile, $io): void {
+                    $db = $this->getDatabaseConnection($kernel);
+                    $context = new PostInstallContext($db, $io);
+                    $profile->postInstall($context);
+                },
+            );
+            if ($error !== null) {
+                return array_merge($errors, [$error]);
+            }
         }
 
         // Finalize

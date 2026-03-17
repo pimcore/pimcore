@@ -15,7 +15,6 @@ namespace Pimcore\Bundle\InstallBundle\Profile;
 
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\Profile\DataSource\DataSourceInterface;
-use Throwable;
 
 interface InstallProfileInterface
 {
@@ -48,10 +47,4 @@ interface InstallProfileInterface
      */
     public function getPostInstallCommands(): array;
 
-    /**
-     * Project-specific post-install hook (runs after all commands).
-     *
-     * @throws Throwable if the post-install hook fails
-     */
-    public function postInstall(PostInstallContext $context): void;
 }
