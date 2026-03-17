@@ -1,34 +1,40 @@
+---
+title: Tags
+description: Create custom taxonomies to classify, filter, and search documents, assets, and data objects.
+---
+
 # Tags
 
 ## General
 
-Tags provide a way to create additional taxonomies and classifications for Documents, Assets and Data Objects. 
-
-Using tags, you can easily filter Pimcore Elements (Documents, Data Objects, Assets) and keep the additional search criteria to the application.
+Tags provide additional taxonomies and classifications for documents, assets, and data objects.
+Use them to filter elements in search by custom criteria beyond the built-in fields.
 
 ## Tags Definition
 
-The available tags have to be defined centrally (user permission *tags configuration* is necessary).
- 
-![Tags Pimcore menu](../img/tags_menu.png)
+Define available tags centrally in Pimcore Studio (requires the *tags configuration* user permission).
+
+![Tags menu in Pimcore Studio](../img/tags_menu.png)
 
 ## Tags Assignment
 
-In `Documents`, `Assets`, or `Data Objects` editor, there is an additional tab where tags can be assigned to the current element (user permission *tags assignment* is necessary).
+The **Tags** tab in the document, asset, or data object editor allows assigning tags to the current element
+(requires the *tags assignment* user permission).
 
 ![Tags assignment](../img/tags_assignment.png)
 
 ## Tags Usage
 
-In the `Search` dialog, tags can be selected as additional criteria for the search (user permission *tags search* necessary).
+In the Pimcore Studio search dialog, select tags as additional filter criteria
+(requires the *tags search* user permission).
 
 ![Tags usage](../img/tags_filtering.png)
 
-## Working With Tags via API
+## Working with Tags via API
 
-### Overview 
+### Overview
 
-For accessing and working with tags via API, take a look into `Pimcore\Model\Element\Tag`.
+Manage tags programmatically via static methods on `Pimcore\Model\Element\Tag`:
 
 ```php
 /**
@@ -74,21 +80,20 @@ public static function setTagsForElement(string $cType, int $cId, array $tags): 
 
 ### API Usage Examples
 
-#### *Get Tags for Element*
+#### Get Tags for an Element
 
-To get all tags from the element below: 
+Given this asset:
 
 ![API for gettings tags for the shown demo asset.](../img/tags_api_get_tags.png)
 
-You can use the `getTagsForElement` method by specifying the element type in the `$cType` parameter. 
-In the case above, the element type is `asset`. 
+Retrieve its tags by specifying the element type (`asset`) and ID:
 
 ```php
 $tags = \Pimcore\Model\Element\Tag::getTagsForElement('asset', 30);
 dump($tags);
 ```
 
-The output will be an array with the `Pimcore\Model\Element\Tag` elements.
+The result is an array of `Pimcore\Model\Element\Tag` objects:
 
 ```
 array:3 [▼
@@ -109,12 +114,12 @@ array:3 [▼
   }
   1 => Pimcore\Model\Element\Tag {#7357 ▶}
   2 => Pimcore\Model\Element\Tag {#7345 ▶}
-]  
+]
 ```
 
-#### *Assign a New Tag to an Element*
+#### Assign a New Tag to an Element
 
-To add a new tag to an element, you first need to create the new tag. Then you just have to use the `\Pimcore\Model\Element\Tag::addTagToElement` method to assign the tag to the chosen element (by element id).
+Create the tag first, then assign it:
 
 ```php
 $tag =  new \Pimcore\Model\Element\Tag();
@@ -127,9 +132,6 @@ try {
 
 ```
 
-The result will be:
-
 ![Assign new tag by API](../img/tags_api_assign_new_element.png)
 
-In the same way, you can use the rest of the available methods. 
-The type properties list is standard. You can use one of `document`, `asset` or `object`.
+The `$cType` parameter accepts `document`, `asset`, or `object`.

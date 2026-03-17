@@ -1,43 +1,49 @@
+---
+title: Object Data Inheritance in Action
+description: Practical examples of using data inheritance with virtual products to reduce maintenance effort.
+---
+
 # Object Data Inheritance in Action
 
-[Object Data Inheritance](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/03_Data_Inheritance.md) is a powerful feature to minimize the data maintenance effort for editors.
+[Object Data Inheritance](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/03_Data_Inheritance.md)
+minimizes data maintenance: child objects inherit field values from their parents and override only what differs.
 
-In our [e-commerce demo](https://github.com/pimcore/demo-ecommerce) we use data inheritance for fashion products with different colors and sizes - meaning
-we have a generic article with all the generic information (like names, descriptions, material, gender assignment, specific
-attributes etc.) and we have color and size variants that inherit all the data from it and overwrite just color and size.
-    
+The [e-commerce demo](https://github.com/pimcore/demo-ecommerce) applies this to fashion products
+with different colors and sizes. A generic article holds all shared information (names, descriptions, material,
+gender assignment, specific attributes). Color and size variants inherit everything and override only
+the relevant fields.
+
 ![Color and Size Variants](../12_Implementation_Inspirations/img/color-size-variants.jpg)
 
-This already massively reduces the data maintenance effort, since all the generic information needs to be entered and updated only once per generic article. 
+Enter and update generic information once per generic article - variants pick it up automatically,
+eliminating redundant data entry.
 
-**Reducing Maintenance Effort even more with Virtual Products**
+## Reducing Maintenance Further with Virtual Products
 
-In lots of domains, data maintenance effort can be reduced even more. Products from the same category, manufacturer, type or series, share a lot of common attributes - like assigned categories, assigned manufacturer, values for technical
-attributes, maybe even images etc. 
+Products in the same category, from the same manufacturer, or within a series share common attributes -
+assigned categories, manufacturer references, technical values, sometimes images.
 
-To take advantage of data inheritance for these use cases too, we recommend the concept of virtual products. 
-Virtual products are objects of the same type as products, with a special flag set. 
+Virtual products extend this pattern. They use the same class as real products but carry a special flag:
 
 ![Object Type](../12_Implementation_Inspirations/img/object-type.jpg)
 
-This flag is a normal object attribute and defines that these products are data containers only and are not considered 
-in output channels like product listings and exports.
- 
-Using virtual products, complex product hierarchies can be constructed and data can be maintained in a single place for minimal data maintenance effort. 
+This flag marks the object as a data container only, excluded from output channels like product listings
+and exports.
+
+With virtual products, build deep product hierarchies and maintain data in a single place:
 
 ![Virtual Product Hierarchy](../12_Implementation_Inspirations/img/hierarchy.jpg)
 
-With the [Custom Icons](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/02_Custom_Icons.md) feature, 
-icons can be modified for virtual products, like in this example grey icons for virtual products, colored icons for real
-products.
+Use [Custom Icons](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/02_Custom_Icons.md)
+to visually distinguish virtual products (e.g. grey icons) from real products (colored icons).
 
-With [Custom Layouts](../03_Objects/01_Object_Classes/03_Custom_Layouts.md) and 
-the tips of [Showing Custom Layouts based on Object Data](../10_Extending_Pimcore/03_Custom_Extension_Guides/13_Custom_Layouts_Based_on_Object_Data.md) it is even  
-possible to deliver a different object editor mask for virtual products with additional explanation texts and showing
-only attributes that should be modified on the current level by the editor.
+Combine [Custom Layouts](../03_Objects/01_Object_Classes/03_Custom_Layouts.md) with
+[Custom Layouts based on Object Data](../10_Extending_Pimcore/03_Custom_Extension_Guides/13_Custom_Layouts_Based_on_Object_Data.md)
+to show different editor masks for virtual products - for example, displaying only the attributes relevant
+to the current hierarchy level along with explanatory text.
 
-**Modifying inherited data**
+## Modifying Inherited Data
 
-Please make sure to understand the concept of [Data Inheritance](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/03_Data_Inheritance.md)
-in general and to take a deeper look at the `Modifying values from getters when using inheritance` section in the mentioned documentation.
-
+Review the [Data Inheritance](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/03_Data_Inheritance.md)
+documentation, especially the *Modifying values from getters when using inheritance* section, for details
+on how getter methods resolve inherited values.

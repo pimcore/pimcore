@@ -1,30 +1,33 @@
+---
+title: Versioning
+description: Track changes, compare revisions, and restore previous versions of documents, assets, and data objects.
+---
+
 # Versioning
 
 ## General
-All contents in Pimcore (documents, assets and objects) are versioned. You can have as many versions as you want.
-On each change a new version of the element is created.
 
-For example, if you would like to find the version history in objects you have to choose **Versions** tab.
+Pimcore versions all documents, assets, and data objects automatically. Every save creates a new version
+with no limit on retained versions unless configured otherwise.
 
-There you can see a list of changes, what is the difference between revisions and you can choose which version should be published.
+Open the **Versions** tab on any element to view the change history, compare revisions,
+and restore or publish a specific version.
 
 ![Object versions changeslist](../img/versioning_changeslist.png)
 
 
 ## Settings
 
-<div class="inline-imgs">
-
-You can configure the versioning behavior in the ![Settings](../img/Icon_settings.png) **Settings -> System Settings -> (Documents, Assets, Objects)**
-
-</div>
+Configure the number of retained versions and the retention period in the system settings
+for Documents, Assets, and Objects within Pimcore Studio.
 
 ![Objects version history settings](../img/versioning_settings.png)
 
-### Stack trace
+### Stack Trace
 
-Pimcore generates a stack trace in the db table for each version. You can deactivate this with the following settings:
-```yml
+Pimcore stores a stack trace in the database for each version. Disable this per element type:
+
+```yaml
 pimcore:
     assets:
         versions:
@@ -37,34 +40,33 @@ pimcore:
             disable_stack_trace: true
 ```
 
-Pimcore has a maintenance job (VersionsCleanupStackTraceDbTask) to cleanup stack trace for versions older than 7 days.
+A maintenance job (`VersionsCleanupStackTraceDbTask`) automatically removes stack traces older than 7 days.
 
-## Version storage
+## Version Storage
 
-For every version the metadata and, if present, binary data is stored. Since the amount of information can turn out to
-be too big real quick, Pimcore provides 3 different ways to handle the storage of version data.
+Every version stores metadata and, if present, binary data. Since version data can grow quickly,
+Pimcore provides three storage strategies.
 
 ### Configuration
 
 #### Filesystem
 
-*This is the default setting*. 
-To store version data in the filesystem, use the `FileSystemStorageAdapter`. 
+*This is the default.* Store version data on the filesystem using `FileSystemStorageAdapter`:
 
-```yml
+```yaml
 Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:
     public: true
     alias: Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter
 
 Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter: ~
 ```
-    
-#### Database 
-To store the version data in a database, use the `DatabaseVersionStorageAdapter` service.
-You need to pass a configured doctrine database connection as an argument. 
-Therefore, you are able to provide a connection to a completely separate database which may contains only the version data.    
 
-```yml
+#### Database
+
+Store version data in a database using `DatabaseVersionStorageAdapter`.
+Pass a configured Doctrine connection as an argument - this allows using a dedicated database for version data only:
+
+```yaml
 Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:
     public: true
     alias: Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter
@@ -74,7 +76,7 @@ Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter:
         $databaseConnection: '@doctrine.dbal.versioning_connection'
 ```
 
-The database needs to contain a table called `versionsData`. The following script can be used to create the table including the necessary columns.
+The target database needs a `versionsData` table. Create it with:
 
 ```sql
 CREATE TABLE `versionsData` (
@@ -89,8 +91,8 @@ CREATE TABLE `versionsData` (
 
 ### Delegate
 
-To store the version data based on a threshold in either the default storage location or a fallback storage location use `DelegateVersionStorageAdapter` service.
-If the size of metadata or binary data information exceeds the configured `byteThreshold` value, the version data is stored using the fallback adapter.
+Route version data to different storage backends based on size using `DelegateVersionStorageAdapter`.
+When metadata or binary data exceeds the configured `byteThreshold`, the fallback adapter handles storage:
 
 ```yaml
 Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface:
@@ -111,35 +113,32 @@ Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter:
         $databaseConnection: '@doctrine.dbal.versioning_connection'
 ```
 
-In this example the version data is stored in the database as long as neither the metadata nor the binary data exceeds 1000000 bytes in size.
-Otherwise, the filesystem is used as storage.
+In this example, version data up to 1,000,000 bytes goes to the database; larger data falls back to the filesystem.
 
-## Turn off Versioning for the Current Process
+## Disable Versioning for the Current Process
 
-Sometimes it is very useful to just deactivate versioning for a process. For example for importers or synchronization with 3rd party systems. 
-You can globally deactivate and activate the versioning with the following PHP code directly in your scripts:
+For bulk operations like imports or third-party synchronizations, disable versioning temporarily:
 
 ```php
-\Pimcore\Model\Version::disable(); // to disable versioning for the current process
-\Pimcore\Model\Version::enable(); // to enable versioning for the current process
+\Pimcore\Model\Version::disable(); // disable versioning for the current process
+\Pimcore\Model\Version::enable(); // re-enable versioning for the current process
 ```
 
-*Note:* With these commands you only deactivate/activate the versioning for the current PHP process. 
-This setting is not saved, and only affects changes on elements which are modified within this process! 
+This only affects the current PHP process. The setting is not persisted and does not affect other requests.
 
 
-## Working with PHP API
-When working with PHP API - especially when saving elements - you need to set the `userModification` so that a proper 
-user is shown in version history. 
+## Working with the PHP API
 
-When you set `userModification` to `0` Pimcore shows `system` as user in the version history. 
-
+When saving elements programmatically, set `userModification` so the correct user appears in version history.
+Set it to `0` to display `system` as the user:
 
 ```php
 $object->setUserModification(0);
 $object->save();
 ```
-### Example: How to get a previous version of an object
+
+### Retrieve a Previous Version
+
 ```php
 $versions = $currentObject->getVersions();
 $previousVersion = $versions[count($versions)-2];

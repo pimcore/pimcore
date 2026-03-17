@@ -1,20 +1,24 @@
+---
+title: Notes & Events
+description: Log changes and events on elements independently from versioning, with custom note types per element category.
+---
+
 # Notes & Events
 
 ## General
-Notes & Events are primarily used to log changes or events on elements independently from the versioning.
-This includes changes made by marketers, editors, automated importers / synchronisations, .... 
-Simply everything that has nothing to do with the data itself but is important to know. 
 
-## Use cases
+Notes & Events log changes or events on elements independently from versioning.
+Use them to record actions by marketers, editors, automated importers, or synchronizations -
+anything not captured in the data itself but relevant for context.
 
-* An importer (CLI-script) that adds information to objects which changes were made
-* Marketers / SEOs adding information which changes were made on documents like *"optimized for keyword xyz ..."*
+## Use Cases
 
-There are really nearly endless possibilities what to do with Notes & Events.
+* An importer that logs which field values it changed on an object
+* A marketer recording SEO optimizations performed on a document, e.g. *"optimized for keyword xyz"*
 
 ## Create Notes & Events
 
-### Using API
+### Using the API
 
 ```php
 use Pimcore\Model;
@@ -28,7 +32,7 @@ $note->setType("erp_import");
 $note->setTitle("changed availabilities to xyz");
 $note->setUser(0);
 
-// you can add as much additional data to notes & events as you want
+// attach additional data of various types
 $note->addData("myText", "text", "Some Text");
 $note->addData("myObject", "object", Model\DataObject::getById(7));
 $note->addData("myDocument", "document", Model\Document::getById(18));
@@ -37,47 +41,53 @@ $note->addData("myAsset", "asset", Model\Asset::getById(20));
 $note->save();
 ```
 
-And this is how the entry looks like:
+The resulting entry in Pimcore Studio:
 
 ![Notes & events - the grid preview](../img/notesandevents_preview.png)
 
-> **Note:** As the title of a note is translatable (admin domain) make sure you don't add variable text that would lead
-> to unintended translation entries. Use the description or data for details instead.
+> **Note:** Note titles are translatable (studio domain). Avoid variable text in titles to prevent
+> unintended translation entries. Use the description or data fields for dynamic details instead.
 
-### Add Events in Pimcore backend UI
+### Add Notes in Pimcore Studio
 
-You could also add the note directly in the edit view of objects, documents and assets.
+Add notes directly from the edit view of any object, document, or asset:
 
 ![Notes & events - add a note manually](../img/notesandevents_add_note.png)
 
 
-#### Specify Custom Types for Notes and Events
+#### Custom Note Types
 
-Via Pimcore configuration, the selectable types for notes and events can be specified per content type (asset, document, 
-data object), see sample config below:
+Configure the selectable note types per element type (asset, document, data object):
 
-```yml
+```yaml
 # config/config.yaml or any other Symfony config file
 
-pimcore_admin:
-    documents:
-        notes_events:
-            types:
-                - ""
-                - "content"
-                - "seo"
-                - "some other type"
-    assets:
-        notes_events:
-            types:
-                - ""
-                - "content"
-                - "license renewal"
-                - "some other type"
-    objects:
-        notes_events:
-            types:
-                - ""
-                - "manual data change"
-                - "some other type"
+pimcore_studio_backend:
+    notes:
+        types:
+            asset:
+                - ''
+                - content
+                - seo
+                - warning
+                - notice
+            document:
+                - ''
+                - content
+                - seo
+                - warning
+                - notice
+            data-object:
+                - ''
+                - content
+                - seo
+                - warning
+                - notice
 ```
+
+The defaults are `content`, `seo`, `warning`, and `notice`. Override them per element type as shown above.
+The key for data objects is `data-object` (hyphenated).
+
+For more details on extending note types, see the
+[Extending Notes](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/02_Installation_and_Configuration/03_Extending_Notes.md)
+guide in the Studio Backend Bundle documentation.

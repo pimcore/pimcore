@@ -1,35 +1,48 @@
+---
+title: Scheduling
+description: Automate publish, unpublish, delete, and version-publish actions for documents, assets, and data objects.
+---
+
 # Scheduling
 
 ## General
-Every element type in Pimcore (documents, objects, assets) has implemented a scheduler which provides the ability to create tasks like:
 
-* Publish
-* Unpublish
-* Delete
-* Publish version - Publish a specific version (You can read more about Versions in [the Versioning section](./01_Versioning.md))
+Every element type (documents, data objects, assets) supports scheduled tasks:
 
-Important: If object is already published, then using `Publish` option will not publish latest version(unpublished) so it is recommended to use `Publish version` option in that case.
+* **Publish** - Publish the element
+* **Unpublish** - Unpublish the element
+* **Delete** - Delete the element
+* **Publish version** - Publish a specific version (see [Versioning](./01_Versioning.md))
 
-**Note:** To use scheduler you have to configure "cronjobs". You can find more in the [System setup section](../backlog/23_Installation_and_Upgrade/03_System_Setup_and_Hosting/README.md).
+:::note
+If a data object is already published, the `Publish` action does not publish the latest unpublished version.
+Use `Publish version` to publish a specific version instead.
+:::
+
+Scheduled tasks require the Symfony Messenger worker to be running. Configure it with the `pimcore_messenger`
+transport as described in the
+[Symfony Messenger setup guide](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/03_Advanced_Installation_Topics/01_Symfony_Messenger.md).
+Alternatively, run scheduled tasks directly via `bin/console pimcore:maintenance -j scheduledtasks`.
 
 
 ## Usage
 
-Let's use objects as an example.
-In the Pimcore backend UI find the icon:
+Open the **Schedule** tab on a data object in Pimcore Studio:
 
-![Scheduling - the icon in editmode](../img/scheduling_editmode_icon.png)
+![Scheduling - the icon in the editor](../img/scheduling_editmode_icon.png)
 
-You can add a task by clicking on the **Add** button, which will add an empty row. 
-It has some configurable options: `date`, `time` and `action` (which should run with that task). 
-The `version` option will only be used if you chose the *"Publish version"* action.
-The `active` checkbox will indicates that the task was not finished yet.
+Click **Add** to create a new task row with these options:
 
-To make a task that automatically publishes an unpublished object just fill the values like in the picture, below:
+- `date` and `time` - When the task runs
+- `action` - Which operation to perform
+- `version` - Only used with the *Publish version* action
+- `active` - Indicates the task has not been processed yet
+
+To schedule automatic publishing of an unpublished object, configure the task as shown:
 
 ![Scheduling - the new task](../img/scheduling_new_task.png)
 
-The effect in the database will be:
+The resulting database entry:
 
 ```
 `schedule_tasks`
@@ -37,13 +50,10 @@ The effect in the database will be:
 '7', '76', 'object', '1474034700', 'publish', NULL, '1'
 ```
 
-When the `./bin/console pimcore:maintenance -j scheduledtasks` script will finish processing jobs you could see the changes.
-
-In the edit object view:
+After the maintenance worker processes the task:
 
 ![Scheduling - the processed task](../img/scheduling_processed_task.png)
 
-In the database:
 ```
 `schedule_tasks`
 # id, cid, ctype, date, action, version, active
