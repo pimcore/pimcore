@@ -1,3 +1,8 @@
+---
+title: Integrating Commerce Data
+description: Using Renderlets to embed product teasers in Pimcore documents.
+---
+
 # Integrating Commerce Data With Content
 
 A common requirement in e-commerce projects is integrating content and commerce data. Pimcore's integrated approach provides several tools to combine both seamlessly.
@@ -8,7 +13,7 @@ which provide a great way to integrate dynamic object (thus commerce) content to
 ![Demo](img/demo.jpg)
 
 
-Follow the steps to create a Product teaser similar to the one in our [demo](https://demo.pimcore.fun/).
+Follow the steps to create a product teaser similar to the one in the [Pimcore demo](https://demo.pimcore.com/).
 
 ### Create Area Brick `MyProductTeaser` with Renderlet 
 

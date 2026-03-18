@@ -1,3 +1,8 @@
+---
+title: Custom REST API Endpoint
+description: Exposing Pimcore data through custom Symfony controller actions.
+---
+
 # How to Build a Custom REST API Endpoint
 
 Pimcore offers a bundle called [Datahub](https://github.com/pimcore/data-hub), offering a highly configurable GraphQL interface on most Pimcore entities.

@@ -1,3 +1,8 @@
+---
+title: Implementing PIM
+description: Building a product data model with variants, bundles, object bricks, event listeners, and workflows.
+---
+
 # Implementing Product Information Management
 
 The concept of PIM encompasses a set of technologies and procedures that allow centralized management of product data and their distribution across different channels. In many common scenarios, information relating to products may come from multiple sources, potentially with different data structures, both due to different needs dictated by their distribution channels and through the provision of different technologies in distinct areas within the same company.

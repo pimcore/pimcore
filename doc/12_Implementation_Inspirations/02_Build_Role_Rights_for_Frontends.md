@@ -1,3 +1,8 @@
+---
+title: Build Role & Rights System for Frontends
+description: Combining Pimcore data objects with Symfony Security to build portal permission systems.
+---
+
 # Build Role & Rights System for Frontends
 
 A common use case for Pimcore applications are portals with user logins and a complex permission structure like for
