@@ -31,7 +31,6 @@ Each report uses a data source adapter to retrieve and prepare its data.
 Pimcore ships with the following adapters:
 
 - **SQL** - query data with custom SQL statements
-  ![Custom Reports Configuration](../img/custom-reports-config.png)
 
   :::caution
 
