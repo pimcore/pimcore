@@ -21,12 +21,9 @@ within a Pimcore application.
 
 <div class="inline-imgs">
 
-View and search logs in Pimcore Studio under ![Tools menu](../../img/Icon_tools.png) **Tools -> Application Logger**:
+View and search logs in Pimcore Studio under `System` -> `Application Logger`:
 
 </div>
-
-![Application logger menu](../../img/applogger_menu.png)
-
 
 ![Application logger preview](../../img/applogger_backend_preview.png)
 

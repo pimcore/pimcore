@@ -64,11 +64,7 @@ or `Full Username (user@domain.fr)` to set the full username.
 
 ## Usage Example
 
-Given an `Email Document` at `/email/myemaildocument` in Pimcore Studio:
-
-![Pimcore Mail](../../img/pimcore-mail.png)
-
-Send it from a controller action:
+Given an `Email Document` at `/email/myemaildocument` in Pimcore Documents. Send it from a controller action:
 
 ```php
 //dynamic parameters
@@ -115,11 +111,11 @@ with restrictive security policies for tags, filters, and functions.
 Allow additional capabilities via configuration:
 
 ```yaml
-    pimcore:
-          templating_engine:
-              twig:
-                sandbox_security_policy:
-                  tags: ['if']
-                  filters: ['upper']
-                  functions: ['include', 'path']
+pimcore:
+    templating_engine:
+        twig:
+            sandbox_security_policy:
+                tags: ['if']
+                filters: ['upper']
+                functions: ['include', 'path']
 ```
