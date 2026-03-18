@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterType;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\SearchEngineDefinitionInterface;
-use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Validation\FormatValidator;
 
 /**
  * Base class for search engine env var definitions (OpenSearch, Elasticsearch).
@@ -72,11 +71,8 @@ abstract readonly class AbstractSearchEngineEnvVarDefinition implements SearchEn
         $dsn = $collectedValues[$this->getEnvVarName()] ?? '';
         $label = $this->getLabel() . ' DSN';
 
-        $validator = new FormatValidator();
-        $validator->requireNonEmpty($dsn, $label);
-
-        if ($validator->hasErrors()) {
-            return $validator->getErrors();
+        if ($dsn === '') {
+            return [sprintf('%s is required and cannot be empty.', $label)];
         }
 
         $parsed = parse_url($dsn);
@@ -84,23 +80,19 @@ abstract readonly class AbstractSearchEngineEnvVarDefinition implements SearchEn
             return [sprintf('%s is not a valid URL.', $label)];
         }
 
-        $validator->requireUrlWithScheme($dsn, $label, [$this->getScheme()]);
-
-        if ($validator->hasErrors()) {
-            return $validator->getErrors();
+        $scheme = $parsed['scheme'] ?? '';
+        if ($scheme !== $this->getScheme()) {
+            return [sprintf(
+                '%s scheme must be "%s" (got "%s").',
+                $label,
+                $this->getScheme(),
+                $scheme,
+            )];
         }
 
         $host = $parsed['host'] ?? '';
         if ($host === '') {
-            $validator->requireNonEmpty('', $label . ' host');
-        }
-
-        if (isset($parsed['port'])) {
-            $validator->requirePortInRange($parsed['port'], $label . ' port');
-        }
-
-        if ($validator->hasErrors()) {
-            return $validator->getErrors();
+            return [sprintf('%s must contain a host.', $label)];
         }
 
         return $this->testConnection($parsed);

@@ -51,7 +51,7 @@ final class DatabaseSetup
             throw new \RuntimeException(sprintf('Could not read SQL file: %s', $filePath));
         }
 
-        $statements = $this->splitSqlStatements($sql);
+        $statements = self::splitSqlStatements($sql);
         foreach ($statements as $statement) {
             $db->executeQuery($statement . ';');
         }
@@ -62,7 +62,7 @@ final class DatabaseSetup
      *
      * @return list<string> non-empty trimmed statements (without trailing semicolons)
      */
-    private function splitSqlStatements(string $sql): array
+    public static function splitSqlStatements(string $sql): array
     {
         $statements = [];
         $current = '';
@@ -175,6 +175,7 @@ final class DatabaseSetup
         ]);
 
         $db->update('users', ['id' => 0], ['name' => 'system', 'type' => 'user']);
+        $db->executeStatement('ALTER TABLE users AUTO_INCREMENT = 1');
     }
 
     private function insertDatabaseContents(Connection $db): void

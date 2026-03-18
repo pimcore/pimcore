@@ -25,10 +25,6 @@ final class DatabaseSetupTest extends TestCase
 
     public function testSplitSqlStatementsHandlesSemicolonsInStrings(): void
     {
-        $setup = new DatabaseSetup();
-
-        $method = new \ReflectionMethod(DatabaseSetup::class, 'splitSqlStatements');
-
         $sql = <<<'SQL'
 CREATE TABLE test (id INT);
 INSERT INTO test VALUES (1);
@@ -36,7 +32,7 @@ INSERT INTO config (key, value) VALUES ('delimiter', 'a;b;c');
 INSERT INTO test VALUES (2);
 SQL;
 
-        $statements = $method->invoke($setup, $sql);
+        $statements = DatabaseSetup::splitSqlStatements($sql);
 
         $this->assertCount(4, $statements);
         $this->assertSame('CREATE TABLE test (id INT)', trim($statements[0]));
@@ -47,25 +43,19 @@ SQL;
 
     public function testSplitSqlStatementsHandlesEmptyInput(): void
     {
-        $setup = new DatabaseSetup();
-        $method = new \ReflectionMethod(DatabaseSetup::class, 'splitSqlStatements');
-
-        $statements = $method->invoke($setup, '');
+        $statements = DatabaseSetup::splitSqlStatements('');
 
         $this->assertSame([], $statements);
     }
 
     public function testSplitSqlStatementsHandlesSingleLineComments(): void
     {
-        $setup = new DatabaseSetup();
-        $method = new \ReflectionMethod(DatabaseSetup::class, 'splitSqlStatements');
-
         $sql = <<<'SQL'
 CREATE TABLE test (id INT); -- this is a comment; with semicolons
 INSERT INTO test VALUES (1);
 SQL;
 
-        $statements = $method->invoke($setup, $sql);
+        $statements = DatabaseSetup::splitSqlStatements($sql);
 
         $this->assertCount(2, $statements);
     }

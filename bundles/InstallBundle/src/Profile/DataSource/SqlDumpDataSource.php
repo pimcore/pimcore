@@ -15,6 +15,7 @@ namespace Pimcore\Bundle\InstallBundle\Profile\DataSource;
 
 use Doctrine\DBAL\Connection;
 use Exception;
+use Pimcore\Bundle\InstallBundle\Database\DatabaseSetup;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 
@@ -55,7 +56,10 @@ final readonly class SqlDumpDataSource implements DataSourceInterface
         foreach ($finder as $file) {
             $output->writeln(sprintf('  Importing %s...', $file->getFilename()));
             $sql = $file->getContents();
-            $connection->executeStatement($sql);
+            $statements = DatabaseSetup::splitSqlStatements($sql);
+            foreach ($statements as $statement) {
+                $connection->executeStatement($statement . ';');
+            }
         }
 
         // Mark as applied

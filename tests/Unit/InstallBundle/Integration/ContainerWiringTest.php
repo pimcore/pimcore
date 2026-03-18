@@ -59,7 +59,7 @@ final class ContainerWiringTest extends TestCase
         $this->assertNotNull($kernel->getContainer());
     }
 
-    public function testInstallerKernelRegistsCorrectBundles(): void
+    public function testInstallerKernelRegistersCorrectBundles(): void
     {
         $kernel = $this->bootInstallerKernel();
         $bundles = $kernel->getBundles();

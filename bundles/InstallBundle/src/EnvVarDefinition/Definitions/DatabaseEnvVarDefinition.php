@@ -98,14 +98,6 @@ final readonly class DatabaseEnvVarDefinition implements EnvVarDefinitionInterfa
             return [sprintf('%s must contain a host.', $label)];
         }
 
-        if (isset($parsed['port'])) {
-            $validator->requirePortInRange($parsed['port'], $label . ' port');
-        }
-
-        if ($validator->hasErrors()) {
-            return $validator->getErrors();
-        }
-
         $path = trim($parsed['path'] ?? '', '/');
         if ($path === '') {
             return [sprintf('%s must contain a database name in the path (e.g. mysql://...host/dbname).', $label)];
