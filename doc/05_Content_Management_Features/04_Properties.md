@@ -9,6 +9,8 @@ description: Attach custom key-value metadata to documents, assets, and data obj
 
 Every element (document, asset, data object) can carry custom properties, accessible via the **Properties** tab.
 
+<div class="image-as-lightbox"></div>
+
 ![Properties in the document](../img/properties_tab_editmode_preview.png)
 
 Properties control rendering behavior in templates. Common use cases:
@@ -34,13 +36,13 @@ repetitive configuration when adding properties to elements.
 **Predefined** does not mean the value is automatically available on every element.
 For globally available key-value pairs, use [Website Settings](../01_Documents/09_Website_Settings.md) instead.
 
+<div class="image-as-lightbox"></div>
+
 ![Predefined properties - selectbox](../img/properties_predefined_selectbox.png)
 
 ## Configuration Example
 
-Open **Settings > Predefined Properties** in Pimcore Studio to manage predefined properties.
-
-![Predefined properties configuration](../img/properties_predefined_configuration.png)
+Open **Data Management > Predefined Properties** in Pimcore Studio to manage predefined properties.
 
 | Name          | Required | Description                                                                                                             |
 |---------------|----------|-------------------------------------------------------------------------------------------------------------------------|

@@ -25,14 +25,14 @@ assigned categories, manufacturer references, technical values, sometimes images
 
 Virtual products extend this pattern. They use the same class as real products but carry a special flag:
 
-![Object Type](../12_Implementation_Inspirations/img/object-type.jpg)
+![Object Type](../img/object_type.png)
 
 This flag marks the object as a data container only, excluded from output channels like product listings
 and exports.
 
 With virtual products, build deep product hierarchies and maintain data in a single place:
 
-![Virtual Product Hierarchy](../12_Implementation_Inspirations/img/hierarchy.jpg)
+![Virtual Product Hierarchy](../img/object_hierarchy.png)
 
 Use [Custom Icons](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/02_Custom_Icons.md)
 to visually distinguish virtual products (e.g. grey icons) from real products (colored icons).

@@ -43,6 +43,8 @@ $note->save();
 
 The resulting entry in Pimcore Studio:
 
+<div class="image-as-lightbox"></div>
+
 ![Notes & events - the grid preview](../img/notesandevents_preview.png)
 
 > **Note:** Note titles are translatable (studio domain). Avoid variable text in titles to prevent

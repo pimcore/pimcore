@@ -5,7 +5,7 @@ description: Send and receive in-app notifications between users and groups, wit
 
 # Notifications
 
-Send messages to users directly within Pimcore Studio. The notification icon in the status bar
+Send messages to users directly within Pimcore Studio. The notification entry in the profile menu
 displays an unread count badge; clicking it opens the notifications tab.
 
 ![Notifications](../img/notifications_example.png)

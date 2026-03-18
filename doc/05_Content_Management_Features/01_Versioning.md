@@ -13,6 +13,8 @@ with no limit on retained versions unless configured otherwise.
 Open the **Versions** tab on any element to view the change history, compare revisions,
 and restore or publish a specific version.
 
+<div class="image-as-lightbox"></div>
+
 ![Object versions changeslist](../img/versioning_changeslist.png)
 
 
@@ -20,6 +22,8 @@ and restore or publish a specific version.
 
 Configure the number of retained versions and the retention period in the system settings
 for Documents, Assets, and Objects within Pimcore Studio.
+
+<div class="image-as-lightbox"></div>
 
 ![Objects version history settings](../img/versioning_settings.png)
 

@@ -29,6 +29,8 @@ Alternatively, run scheduled tasks directly via `bin/console pimcore:maintenance
 
 Open the **Schedule** tab on a data object in Pimcore Studio:
 
+<div class="image-as-lightbox"></div>
+
 ![Scheduling - the icon in the editor](../img/scheduling_editmode_icon.png)
 
 Click **Add** to create a new task row with these options:

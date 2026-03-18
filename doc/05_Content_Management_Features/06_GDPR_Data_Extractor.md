@@ -1,100 +1,139 @@
-# GDPR Data Extractor 
+---
+title: GDPR Data Extractor
+description: Search, export, and delete personal data stored across data objects, assets, users, and custom data sources.
+---
 
-The GDPR Data Extractor is a tool that helps the user to fulfill the *right of access by the data subject* and helps to
-export data that is stored for a specific person in different data sources like `data objects`, `sent mails`, `Pimcore
-user`, etc.
+# GDPR Data Extractor
+
+The GDPR Data Extractor supports the *right of access by the data subject* by searching and exporting
+personal data across data objects, sent mails, Pimcore users, and custom providers.
+
+<div class="image-as-lightbox"></div>
 
 ![GDPR Data Extractor](../img/gdpr-data-extractor.jpg)
 
-## Configuration 
-Via the configuration, following options can be set to modify the behaviour of the Data Extractor: 
-* What data object classes should be included (e.g. exclude data object classes without personal information like products)
-* What relation attributes should included recursively into the data export (e.g. include order items into export of orders)
-* Allow deletion of data object directly in result view
+## Configuration
 
-For Details see configuration reference as follows: 
+Define which data object classes and asset types the Data Extractor includes,
+and whether the result view allows direct deletion:
 
-```yml
-# Default configuration for "PimcoreAdminBundle"
-pimcore_admin:
+```yaml
+pimcore_studio_backend:
     gdpr_data_extractor:
-
         # Settings for DataObjects DataProvider
         dataObjects:
-
             # Configure which classes should be considered, array key is class name
             classes:
-
-                # Prototype: 
-                #     MY_CLASS_NAME: 
-                #               include: true
-                #               allowDelete: false
-                #               includedRelations:
-                #                       - manualSegments
-                #                       - calculatedSegments
-                #                         
-                -
-
-                    # Set if class should be considered in export.
-                    include:              true
-
-                    # Allow delete of objects directly in preview grid.
-                    allowDelete:          false
-
-                    # List relation attributes that should be included recursively into export.
-                    includedRelations:    []
-
+                Person:
+                    allowDelete: true    # Allow delete of objects directly in preview grid (default: false)
+                Customer:
+                    allowDelete: false
+        # Settings for Assets DataProvider
+        assets:
+            types:
+                # Configure which asset types should be considered
+                - image
+                - document
+                - video
 ```
 
+By default, the search covers all data object classes, the export includes all attributes
+directly on the data object, and deletion from the result list is off.
 
-Pimcore ships with a reasonable default configuration. By using it, all data object classes are considered in the search, 
-export concludes all attributes directly attached to the data object (no relations) and allows deletion of the data objects 
-directly in the result list. 
 
-> Please note: The GDPR search will be very limited if you haven't installed the simpleBackendSearchBundle!
- 
- 
-## Extending GDPR Data Extractor with Custom Data Sources
-It is possible to attach additional data sources to the GDPR Data Extractor with Pimcore Bundles. Thereby specific data 
-exports can be attached or external data sources can be included. 
+## Extending with Custom Data Sources
 
-To do so, following steps are necessary: 
+Add custom data sources to the GDPR Data Extractor to include application-specific data exports
+or external systems. Each custom provider requires both a PHP backend and a React/TypeScript frontend.
 
-1) Create a custom implementation of 
-[`Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface`](https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/src/GDPR/DataProvider/DataProviderInterface.php#L20). 
-The following functions need to be implemented:
+The [Studio Example Bundle](https://github.com/pimcore/studio-example-bundle/tree/main/assets/js/src/examples/gdpr-data-extractor)
+provides a complete working example (backend + frontend).
 
-    * `getSortPriority()` - Returns sort priority for the tabs - higher is sorted first.
-    * `getName()` - Returns the name of the data provider.
-    * `getJsClassName()` - Returns the name of the JavaScript class implementation for frontend presentation.
+### Backend: Implement the Data Provider
 
-2) Implement the specified JavaScript class with all the user interface with following restrictions:
+Implement `Pimcore\Bundle\StudioBackendBundle\Gdpr\Provider\DataProviderInterface`:
 
-    * The constructor gets the current `searchParams` as parameter.
-    * It needs to have a function `getPanel()` that returns a `Ext.Panel`.
+| Method | Description |
+|--------|-------------|
+| `findData(FilterParameter $filter): Collection` | Search data based on filter parameters |
+| `getName(): string` | Display name for the provider tab |
+| `getKey(): string` | Unique identifier |
+| `getSortPriority(): int` | Display order (higher = first) |
+| `getRequiredPermissions(): array` | Permission strings required to access this provider |
+| `getSingleItemForDownload(int $id): array\|Response` | Export a single item for download |
 
-3) Register your custom implementation as service. The service needs to be tagged with the tag `pimcore.gdpr.data-provider`.
-   If you're using autoconfiguration this will be automatically done for you, otherwise you need to specify the tag in
-   your service definition:
+Your provider class **must** accept an `array $gdprConfig = []` constructor parameter. A compiler
+pass injects the `pimcore_studio_backend.gdpr_data_extractor` configuration into every tagged
+provider. The container fails to build if the parameter is missing.
 
-    ```yml
-    # either enable autoconfigure as _defaults (or only for your service)
-    services:
-        _defaults:
-            autoconfigure: true
-            public: false
+Register the service with the `pimcore.studio_backend.gdpr_data_provider` tag:
 
-        App\GDPR\DataProvider\MyCustomDataProvider: ~
+```yaml
+services:
+    App\Gdpr\DataProvider\MyCustomDataProvider:
+        tags:
+            - { name: pimcore.studio_backend.gdpr_data_provider }
+```
 
-    # or specify the tag manually if not using autoconfiguration
-    services:
-        _defaults:
-            public: false
+See the
+[backend example](https://github.com/pimcore/studio-example-bundle/blob/main/src/Gdpr/MyDataProvider.php)
+and its
+[service registration](https://github.com/pimcore/studio-example-bundle/blob/main/config/services.yaml)
+in the Studio Example Bundle.
 
-        App\GDPR\DataProvider\MyCustomDataProvider:
-            tags:
-                - { name: pimcore.gdpr.data-provider }
-    ```
+### Frontend: Register a Dynamic Type Provider
 
-For an example see the implementation for the [customers data provider](https://github.com/pimcore/customer-data-framework/blob/master/src/GDPR/DataProvider/Customers.php) 
-in our customer management framework.
+The GDPR Extractor uses the Pimcore Studio **dynamic type system** to render a tab for each
+data provider. Every backend provider needs a corresponding frontend class that defines
+what the tab displays. Implement it as a
+[Pimcore Studio plugin](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/README.md)
+(Module Federation bundle).
+
+The built-in providers use this pattern:
+
+| Backend Provider | Frontend Dynamic Type | Key |
+|-----------------|----------------------|-----|
+| `DataObjectProvider` | `DynamicTypeDataObjectGDPRProvider` | `data_objects` |
+| `AssetsProvider` | `DynamicTypeAssetsGDPRProvider` | `assets` |
+| `PimcoreUserProvider` | `DynamicTypeUsersGDPRProvider` | `pimcore_users` |
+| `SentMailProvider` | `DynamicTypeEmailsGDPRProvider` | `sent_mails` |
+
+A custom provider frontend requires three steps, each linking to the corresponding source
+file in the Studio Example Bundle's
+[GDPR Data Extractor example](https://github.com/pimcore/studio-example-bundle/tree/main/assets/js/src/examples/gdpr-data-extractor):
+
+#### Step 1: Tab Component
+
+Create a React component that renders search results as a grid. The component receives data
+from the GDPR framework via `GDPRProviderTabProps` and maps it to table columns using
+TanStack Table's `createColumnHelper`. The SDK provides an `ExportButton` that triggers
+the backend's `getSingleItemForDownload()` for each row.
+
+See:
+[components/my-provider-tab.tsx](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/gdpr-data-extractor/components/my-provider-tab.tsx)
+
+#### Step 2: Dynamic Type Class
+
+Create a class extending `DynamicTypeAbstractGDPRProvider` that connects your tab component
+to the GDPR framework. The `id` property must match the `getKey()` return value of your
+backend provider.
+
+See:
+[dynamic-types/dynamic-type-my-provider.tsx](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/gdpr-data-extractor/dynamic-types/dynamic-type-my-provider.tsx)
+
+#### Step 3: Plugin and Module Registration
+
+Register the dynamic type in the plugin's `onInit` via the DI container, then register a module
+in `onStartup` that hooks it into the `DynamicTypeGDPRProviderRegistry`.
+
+See:
+[index.ts (plugin)](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/gdpr-data-extractor/index.ts)
+and
+[modules/my-provider-module.ts](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/gdpr-data-extractor/modules/my-provider-module.ts)
+
+### How the Framework Pairs Providers
+
+The framework matches each backend provider to its frontend tab by key: the backend's
+`getKey()` return value must equal the frontend dynamic type's `id`. When a user opens the
+GDPR Data Extractor, Pimcore Studio fetches the provider list from the backend API and
+renders a tab for each provider that has a matching frontend registration.

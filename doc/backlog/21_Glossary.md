@@ -49,4 +49,4 @@ And the HTML-markup will look like, below.
 > **Note**   
 > Since the glossary depends on languages you'll have to register a language first.
 
-[Read more about this topic here.](../04_Multi_Language_i18n/01_Localize_your_Documents.md)
+[Read more about this topic here.](../04_Multi_Language_i18n/01_Document_Localization.md)

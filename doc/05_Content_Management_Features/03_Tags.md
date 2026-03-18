@@ -12,7 +12,10 @@ Use them to filter elements in search by custom criteria beyond the built-in fie
 
 ## Tags Definition
 
-Define available tags centrally in Pimcore Studio (requires the *tags configuration* user permission).
+Define available tags centrally in Pimcore Studio under `Data Management` -> `Tag Configuration` 
+(requires the *tags configuration* user permission).
+
+<div class="image-as-lightbox"></div>
 
 ![Tags menu in Pimcore Studio](../img/tags_menu.png)
 
@@ -21,12 +24,16 @@ Define available tags centrally in Pimcore Studio (requires the *tags configurat
 The **Tags** tab in the document, asset, or data object editor allows assigning tags to the current element
 (requires the *tags assignment* user permission).
 
+<div class="image-as-lightbox"></div>
+
 ![Tags assignment](../img/tags_assignment.png)
 
 ## Tags Usage
 
 In the Pimcore Studio search dialog, select tags as additional filter criteria
 (requires the *tags search* user permission).
+
+<div class="image-as-lightbox"></div>
 
 ![Tags usage](../img/tags_filtering.png)
 
@@ -82,10 +89,6 @@ public static function setTagsForElement(string $cType, int $cId, array $tags): 
 
 #### Get Tags for an Element
 
-Given this asset:
-
-![API for gettings tags for the shown demo asset.](../img/tags_api_get_tags.png)
-
 Retrieve its tags by specifying the element type (`asset`) and ID:
 
 ```php
@@ -131,7 +134,5 @@ try {
 }
 
 ```
-
-![Assign new tag by API](../img/tags_api_assign_new_element.png)
 
 The `$cType` parameter accepts `document`, `asset`, or `object`.
