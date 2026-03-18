@@ -24,7 +24,7 @@ and other `pimcore_*` extensions. Place your overrides in config files under `co
 Pimcore ships a set of standard configuration files located not in `config/` but in the
 [PimcoreCoreBundle](https://github.com/pimcore/pimcore/tree/2026.x/bundles/CoreBundle/config/pimcore).
 This allows shipping and updating default configurations without affecting project code. See
-[Auto loading config and routing definitions](../../10_Extending_Pimcore/04_Pimcore_Bundle_Developers_Guide/03_Auto_Loading_Config_and_Routing.md)
+[Auto loading config and routing definitions](../../10_Extending_Pimcore/04_Pimcore_Bundle_Developers_Guide/04_Auto_Loading_Config_and_Routing.md)
 for details on how this works.
 
 Standard configs merge with your custom config in `config/` to build the final config tree. Debug the

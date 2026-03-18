@@ -63,7 +63,7 @@ class Kernel extends PimcoreKernel
 ```
 
 For more details on priorities, environments, and dependency handling, see
-[Bundle Collection](./04_Pimcore_Bundle_Developers_Guide/04_Bundle_Collection.md).
+[Bundle Collection](./04_Pimcore_Bundle_Developers_Guide/02_Bundle_Collection.md).
 
 ### Pimcore Bundles
 

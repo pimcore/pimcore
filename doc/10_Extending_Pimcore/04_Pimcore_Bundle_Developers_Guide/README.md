@@ -31,11 +31,11 @@ and composer configuration.
 
 1. **[Pimcore Bundles](./01_Pimcore_Bundles/README.md)** -
    `PimcoreBundleInterface`, composer setup, and version management
-2. **[Bundle Collection](./04_Bundle_Collection.md)** -
+2. **[Bundle Collection](./02_Bundle_Collection.md)** -
    register bundles with priorities, environments, and dependencies
-3. **[Loading Service Definitions](./02_Loading_Service_Definitions.md)** -
+3. **[Loading Service Definitions](./03_Loading_Service_Definitions.md)** -
    create DI extensions to load service configs from your bundle
-4. **[Auto Loading Config and Routing](./03_Auto_Loading_Config_and_Routing.md)** -
+4. **[Auto Loading Config and Routing](./04_Auto_Loading_Config_and_Routing.md)** -
    automatic config and routing loading from bundle directories
 5. **[Installers](./01_Pimcore_Bundles/01_Installers.md)** -
    installation, uninstallation, and database migrations
@@ -46,13 +46,13 @@ and composer configuration.
 
 Load custom services from your bundle by creating a DI extension.
 See the [Symfony Extensions Documentation](https://symfony.com/doc/current/bundles/extension.html)
-and the Pimcore-specific guide at [Loading Service Definitions](./02_Loading_Service_Definitions.md).
+and the Pimcore-specific guide at [Loading Service Definitions](./03_Loading_Service_Definitions.md).
 
 ### Auto-Loading Config and Routing Definitions
 
 Bundles provide config and routing definitions in `config/pimcore` (or `Resources/config/pimcore`)
 for automatic loading. See
-[Auto Loading Config and Routing](./03_Auto_Loading_Config_and_Routing.md).
+[Auto Loading Config and Routing](./04_Auto_Loading_Config_and_Routing.md).
 
 ### i18n / Translations
 
@@ -84,7 +84,7 @@ are then used by the Pimcore translation service.
 
 Use the [Symfony Security Component](https://symfony.com/doc/current/security.html)
 by auto-loading security configuration via the
-[config auto-loading mechanism](./03_Auto_Loading_Config_and_Routing.md).
+[config auto-loading mechanism](./04_Auto_Loading_Config_and_Routing.md).
 Define security rules in a dedicated `security.yaml` imported from your bundle's
 `config.yaml`.
 

@@ -65,7 +65,7 @@ that loads users from a defined class type and searches by a configured property
 from `App\Model\DataObject\User` and query the `username` field.
 
 Define a user provider service (ensure your bundle loads service definitions, see
-[Loading Service Definitions](../../10_Extending_Pimcore/04_Pimcore_Bundle_Developers_Guide/02_Loading_Service_Definitions.md)):
+[Loading Service Definitions](../../10_Extending_Pimcore/04_Pimcore_Bundle_Developers_Guide/03_Loading_Service_Definitions.md)):
 
 ```yaml
 # config/services.yaml

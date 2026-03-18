@@ -36,7 +36,7 @@ is presented and an can be entered within Pimcore objects.
 4) Register a datatype in Pimcore
 Register a datatype in Pimcore by extending the `pimcore.objects.class_definitions.data.map` configuration. 
 This can be done in any config file which is loaded (e.g. `config/config.yaml`), but if you provide the datatype 
-with a bundle you should define it in a configuration file which is [automatically loaded](../04_Pimcore_Bundle_Developers_Guide/03_Auto_Loading_Config_and_Routing.md). 
+with a bundle you should define it in a configuration file which is [automatically loaded](../04_Pimcore_Bundle_Developers_Guide/04_Auto_Loading_Config_and_Routing.md). 
 
    Example:
 

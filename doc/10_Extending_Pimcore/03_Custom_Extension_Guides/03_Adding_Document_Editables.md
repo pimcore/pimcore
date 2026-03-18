@@ -31,7 +31,7 @@ class Markdown extends \Pimcore\Model\Document\Editable
 
 Next we need to update `pimcore.documents.editables.map` configuration to include our editable. This can be done in any config
 file which is loaded (e.g. `/config/config.yaml`), but if you provide the editable with a bundle you should define it
-in a configuration file which is [automatically loaded](../04_Pimcore_Bundle_Developers_Guide/03_Auto_Loading_Config_and_Routing.md). Example:
+in a configuration file which is [automatically loaded](../04_Pimcore_Bundle_Developers_Guide/04_Auto_Loading_Config_and_Routing.md). Example:
 
 ```yaml
 # /config/config.yaml
