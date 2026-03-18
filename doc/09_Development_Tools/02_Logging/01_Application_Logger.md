@@ -29,24 +29,82 @@ View and search logs in Pimcore Studio under `System` -> `Application Logger`:
 
 ## Configuration
 
-The Application Logger supports minimum, maximum, or fixed log levels.
+Configure the Application Logger in your project's YAML configuration under the `pimcore.applicationlog` key.
 
-Log all messages with level `debug` or `info`:
+### Full Configuration Reference
+
 ```yaml
-applicationlog:
-    loggers:
-        db:
-            min_level_or_list: ['debug', 'info']
+pimcore:
+    applicationlog:
+        loggers:
+            db:
+                # Minimum log level or a list of specific levels to capture
+                # Default: 'debug'
+                min_level_or_list: 'debug'  # or ['debug', 'info'] for specific levels
+                # Maximum log level to capture
+                # Default: 'emergency'
+                max_level: 'emergency'
+        mail_notification:
+            # Enable email summaries of log entries
+            # Default: false
+            send_log_summary: false
+            # Minimum priority for entries included in the email summary.
+            # Use the level name or its numeric value:
+            # 8 (debug), 7 (info), 6 (notice), 5 (warning),
+            # 4 (error), 3 (critical), 2 (alert), 1 (emerg)
+            # Higher values are more inclusive.
+            # Default: null (all levels)
+            filter_priority: null
+            # Email addresses for log summaries, separated by ; or ,
+            mail_receiver: 'admin@example.com; ops@example.com'
+        # Number of days before log entries are moved to archive tables
+        # Default: 30
+        archive_treshold: 30
+        # Optional separate database for archive tables.
+        # Recommended for high-volume logging.
+        # Default: '' (same database)
+        archive_alternative_database: ''
+        # Storage engine for archive tables (e.g. ARCHIVE, InnoDB, Aria, MyISAM).
+        # When set to 'archive', auto-detects the best available engine.
+        # Default: 'archive'
+        archive_db_table_storage_engine: 'archive'
+        # Number of months before archive tables are deleted
+        # Default: 6
+        delete_archive_threshold: 6
+```
+
+### Log Level Filtering
+
+Log all messages with level `debug` or `info` only:
+```yaml
+pimcore:
+    applicationlog:
+        loggers:
+            db:
+                min_level_or_list: ['debug', 'info']
 ```
 
 Log all messages from level `info` through `emergency`:
 ```yaml
-applicationlog:
-    loggers:
-        db:
-            min_level_or_list: 'info'
-            max_level: 'emergency'
+pimcore:
+    applicationlog:
+        loggers:
+            db:
+                min_level_or_list: 'info'
+                max_level: 'emergency'
 ```
+
+### Mail Notifications
+
+When `send_log_summary` is enabled, the defined receivers receive log entries by email
+during the regular Pimcore maintenance cycle. The `filter_priority` controls which log
+messages are included (e.g. only errors and above).
+
+### Log Archival
+
+The archive function automatically creates database tables (`application_logs_archive_YYYY_MM`)
+for log entry archival. In the example above, log entries move to archive tables after 30 days.
+Archive tables are automatically deleted after the `delete_archive_threshold` (default: 6 months).
 
 ## How to Create Log Entries
 
@@ -309,17 +367,3 @@ $logger = \Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger::getInstance
 $logger->addWriter(new \Monolog\Handler\StreamHandler('php://output', \Monolog\Level::Info));
 ```
 
-## Configuration
-
-Configure the Application Logger in Pimcore Studio under the application logger settings:
-
-![Application logger settings](../../img/applogger_settings.png)
-
-When *Send log summary per mail* is activated, the defined receivers receive log entries by mail.
-The priority controls which log messages the mail contains
-(e.g. errors take precedence over info entries).
-
-The archive function automatically creates new database tables (`application_logs_archive_*`)
-for log entry archival.
-In the example above, log entries move to archive tables after 30 days.
-Optionally define a different database name for the archive tables.
