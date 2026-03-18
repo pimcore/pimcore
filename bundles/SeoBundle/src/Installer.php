@@ -21,16 +21,19 @@ class Installer extends SettingsStoreAwareInstaller
 
     protected const USER_PERMISSIONS = [
         'robots.txt',
+        'seo_document_editor',
     ];
 
     public function install(): void
     {
+        $this->installDatabaseTable();
         $this->addUserPermission();
         parent::install();
     }
 
     public function uninstall(): void
     {
+        $this->uninstallDatabaseTable();
         $this->removeUserPermission();
         parent::uninstall();
     }
@@ -55,6 +58,30 @@ class Installer extends SettingsStoreAwareInstaller
             $db->delete('users_permission_definitions', [
                 $db->quoteIdentifier('key') => $permission,
             ]);
+        }
+    }
+
+    private function installDatabaseTable(): void
+    {
+        $sqlPath = __DIR__ . '/Resources/install/';
+        $sqlFileNames = ['install.sql'];
+        $db = \Pimcore\Db::get();
+
+        foreach ($sqlFileNames as $fileName) {
+            $statement = file_get_contents($sqlPath.$fileName);
+            $db->executeQuery($statement);
+        }
+    }
+
+    private function uninstallDatabaseTable(): void
+    {
+        $sqlPath = __DIR__ . '/Resources/uninstall/';
+        $sqlFileNames = ['uninstall.sql'];
+        $db = \Pimcore\Db::get();
+
+        foreach ($sqlFileNames as $fileName) {
+            $statement = file_get_contents($sqlPath.$fileName);
+            $db->executeQuery($statement);
         }
     }
 }

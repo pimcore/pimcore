@@ -6,8 +6,7 @@
 The following bundles got removed
 - Glossary Bundle
 - Simple Backend Search Bundle
-- Static Routes Bundle
-- Parts of SeoBundle - All functionality except of the redirects and sitemaps won't be migrated to Pimcore Studio
+- Parts of SeoBundle - All functionalities except of the redirects and sitemaps won't be migrated to Pimcore Studio
 - WordExport Bundle
 - XliffBundle Export Bundle
 

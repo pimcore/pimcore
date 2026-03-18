@@ -30,6 +30,7 @@ use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
+use Pimcore\Bundle\StaticRoutesBundle\PimcoreStaticRoutesBundle;
 use Pimcore\Bundle\UuidBundle\PimcoreUuidBundle;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
@@ -62,6 +63,8 @@ class Installer
     public const INSTALLABLE_BUNDLES = [
         'PimcoreApplicationLoggerBundle' => PimcoreApplicationLoggerBundle::class,
         'PimcoreCustomReportsBundle' => PimcoreCustomReportsBundle::class,
+        'PimcoreSeoBundle' => PimcoreSeoBundle::class,
+        'PimcoreStaticRoutesBundle' => PimcoreStaticRoutesBundle::class,
         'PimcoreUuidBundle' => PimcoreUuidBundle::class,
         'PimcoreGenericExecutionEngineBundle' => PimcoreGenericExecutionEngineBundle::class,
     ];

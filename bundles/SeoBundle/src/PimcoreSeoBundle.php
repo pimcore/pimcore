@@ -14,30 +14,18 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SeoBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
-use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
-use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
-use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
-use Pimcore\HttpKernel\BundleCollection\BundleCollection;
-use Presta\SitemapBundle\PrestaSitemapBundle;
 
 /**
  * @deprecated version 12.3
  */
-class PimcoreSeoBundle extends AbstractPimcoreBundle implements DependentBundleInterface, PimcoreBundleAdminClassicInterface
+class PimcoreSeoBundle extends AbstractPimcoreBundle
 {
-    use BundleAdminClassicTrait;
     use PackageVersionTrait;
 
     public function __construct()
     {
-        trigger_deprecation(
-            'pimcore/seo-bundle',
-            '12.3',
-            'The SeoBundle is deprecated and will be discontinued with Pimcore Studio.'
-        );
     }
-
 
     public function getInstaller(): Installer
     {
@@ -49,8 +37,4 @@ class PimcoreSeoBundle extends AbstractPimcoreBundle implements DependentBundleI
         return dirname(__DIR__);
     }
 
-    public static function registerDependentBundles(BundleCollection $collection): void
-    {
-        $collection->addBundle(PrestaSitemapBundle::class);
-    }
 }
