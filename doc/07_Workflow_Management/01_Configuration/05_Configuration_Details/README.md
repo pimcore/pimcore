@@ -1,7 +1,16 @@
-# Details
+---
+title: Configuration Details
+description: Full YAML reference for workflow places, transitions, global actions, and notification settings.
+---
 
+# Configuration Details
 
-## Available options
+Workflow configuration uses the Symfony configuration tree in the `pimcore` namespace.
+Add workflow definitions under `pimcore.workflows` in your project's configuration files
+(e.g. `config/config.yaml`). Run `bin/console config:dump-reference PimcoreCoreBundle`
+to see all available options with inline descriptions.
+
+## Available Options
 
 ```yaml
 pimcore: 
@@ -21,7 +30,7 @@ pimcore:
             # When multiple custom view or permission settings from different places in different workflows are valid, the workflow with the highest priority will be used.
             priority:             0
 
-            # Will be used in the backend interface as nice name for the workflow. If not set the technical workflow name will be used as label too.
+            # Displayed in Pimcore Studio as the workflow name. If not set, the technical workflow name is used.
             label:                ~
 
             # Enable default audit trail feature provided by Symfony. Take a look at the Symfony docs for more details.
@@ -83,19 +92,19 @@ pimcore:
                 # Prototype
                 -
 
-                    # Nice name which will be used in the Pimcore backend.
+                    # Nice name displayed in Pimcore Studio.
                     label:                ~
 
-                    # Title/tooltip for this place when it is displayed in the header of the Pimcore element detail view in the backend.
+                    # Title/tooltip for this place when displayed in the header of the Pimcore element detail view in Pimcore Studio.
                     title:                ''
 
-                    # Color of the place which will be used in the Pimcore backend.
+                    # Color of the place displayed in Pimcore Studio.
                     color:                '#bfdadc'
 
                     # If set to true the color will be used as border and font color otherwise as background color.
                     colorInverted:        false
 
-                    # If set to false, the place will be hidden in the header of the Pimcore element detail view in the backend.
+                    # If set to false, the place will be hidden in the header of the Pimcore element detail view in Pimcore Studio.
                     visibleInHeader:      true
                     permissions:
 
@@ -181,7 +190,7 @@ pimcore:
                     to:                   []
                     options:
 
-                        # Nice name for the Pimcore backend.
+                        # Nice name displayed in Pimcore Studio.
                         label:                ~
                         notes:
 
@@ -197,7 +206,7 @@ pimcore:
                             # Can be used for data objects to prefill the comment field with data from the data object.
                             commentGetterFn:      ~
 
-                            # Set's the type string in the saved note.
+                            # Sets the type string in the saved note.
                             type:                 'Status update'
 
                             # An optional alternative "title" for the note, if blank the actions transition result is used.
@@ -236,7 +245,7 @@ pimcore:
                                 # Set position of custom HTML inside modal (top, center, bottom; default=top).
                                 position: 'top'
                             
-                        # CSS class to define the icon which will be used in the actions button in the backend.
+                        # CSS class to define the icon for the actions button in Pimcore Studio.
                         iconClass:            ~
                         # Forces an object layout after the transition was performed.
                         # This objectLayout setting overrules all objectLayout settings within the places configs.
@@ -249,10 +258,10 @@ pimcore:
                                 # A symfony expression can be configured here. All sets of notification which are matching the condition will be used.
                                 condition:            ~
 
-                                # Send a email notification to a list of users (user names) when the transition get's applied
+                                # Send an email notification to a list of users (user names) when the transition gets applied
                                 notifyUsers:          []
 
-                                # Send a email notification to a list of user roles (role names) when the transition get's applied
+                                # Send an email notification to a list of user roles (role names) when the transition gets applied
                                 notifyRoles:          []
 
                                 # Define which channel notification should be sent to, possible values "mail" and "pimcore_notification", default value is "mail".
@@ -280,12 +289,12 @@ pimcore:
                 # Prototype
                 -
 
-                    # Nice name for the Pimcore backend.
+                    # Nice name displayed in Pimcore Studio.
                     label:                ~
 
-                    # CSS class to define the icon which will be used in the actions button in the backend.
+                    # CSS class to define the icon for the actions button in Pimcore Studio.
                     iconClass:            ~
-                    
+
                     # Forces an object layout after the global action was performed.
                     # This objectLayout setting overrules all objectLayout settings within the places configs.
                     objectLayout:         false

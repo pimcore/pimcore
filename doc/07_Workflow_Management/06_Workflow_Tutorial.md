@@ -1,14 +1,21 @@
-# Simple Workflow Tutorial
+---
+title: Workflow Tutorial
+description: Step-by-step guide to building a product workflow with places, transitions, and custom layouts.
+---
 
-Let's make a one truly simple example workflow for product objects. 
+# Workflow Tutorial
+
+This tutorial builds a product workflow for data objects, covering places, transitions, guards,
+custom layouts, and additional fields.
 
 ## Create a class and custom layouts
 
-I've created the really simple product class (sku, localized name, localized picture and localized description, price and quantity).
+Start with a simple product class containing sku, localized name, localized picture,
+localized description, price, and quantity.
 
 ![Example product class](../img/workflow_example_product_class.png)
 
-Next, I added four custom layouts which later I will assign to the specific statuses.
+Add four custom layouts to assign to specific workflow statuses:
 
 * `newProduct` layout with ID = 1
 
@@ -29,9 +36,9 @@ Next, I added four custom layouts which later I will assign to the specific stat
 
 ## The workflow declaration
 
-Now create the base configuration in `config/config.yaml`
+Create the base configuration in `config/config.yaml`:
 
-```yml
+```yaml
 pimcore:
     workflows:
         workflow:
@@ -45,25 +52,21 @@ pimcore:
                 #TODO
 ```
 
-As you can see, the workflow is called **Product workflow**, we haven't added any places and transitions yet. 
-The workflow is available only for instances of `Pimcore\Model\DataObject\Product` objects. We use the workflow 
-type `state_machine`, so one transition can start from multiple places.  
+The workflow is called **Product Workflow** and applies only to instances of
+`Pimcore\Model\DataObject\Product`. The workflow type `state_machine` restricts the element to one active place at a time.
+Places and transitions are defined in the following sections.
 
 ### Specify places
 
-Now it's the best time to define some places for products. 
-
-What I want to achieve? Let's suppose that our new products are integrated with an external system and new positions comes 
-to Pimcore as empty objects only with SKU.
-
-I need to have ability to decide which products would be used in Pimcore, the rest of products I want to reject.
-To achieve that requirement, I have to make (at least) three places.
+Define places for products. In this scenario, new products arrive from an external system
+as empty objects with only a SKU. The workflow needs to support deciding which products
+to use in Pimcore and which to reject. This requires (at least) three places:
 
 * new - for the newest products
-* rejected - for products which I'm not going to use in the future. Also I would like to add some note with a reason here.
-* update content - for products I would like to publish 
+* rejected - for products that will not be used, with a required note explaining the reason
+* update content - for products to prepare for publishing
 
-```yml
+```yaml
 (...)
     places:
         new:
@@ -79,24 +82,24 @@ To achieve that requirement, I have to make (at least) three places.
             title: 'Updating content step'
             color: '#d9ef36'
             permissions:
-                - objectLayout: 2            
+                - objectLayout: 2
 
 (...)
 ```
 
-As you can see I used `objectLayout` key to define which custom layout would be used with the *new* status.
+The `objectLayout` key defines which custom layout to use for each place. Here, the *new* place
+uses custom layout 1 and *update_content* uses custom layout 2.
 
 
 ### Specify the first transitions
 
-As an administrator, I can decide which product can be processed and which shouldn't be.
+An administrator can decide which products to process and which to reject.
+Add two transitions:
 
-To do so, I need to add some actions.
+* reject product - changes the status for products not to be used
+* start processing - moves the product to the processing step
 
-* reject product - to change the status for products I don't want to use
-* start processing - to move the product to the processing step
-
-```yml
+```yaml
 (...)
     transitions:
         reject_product:
@@ -115,20 +118,19 @@ To do so, I need to add some actions.
 (...)
 ```
 
- 
-### More statuses actions and definitions
 
-Let's add 4 more places for updating content
+### More statuses, actions, and definitions
+
+Add 4 more places for the content update pipeline:
 
 * updating the content
 * updating the picture
 * updating the price and stock
-* mark content as a ready - move product back to the administrator
+* marking content as ready - moving the product back to the administrator
 
+Add these to the configuration file:
 
-Let's add few new rows in the configuration file
-
-```yml
+```yaml
 
 (...)
     places:
@@ -138,13 +140,13 @@ Let's add few new rows in the configuration file
             title: 'Update the product picture'
             color: '#d9ef36'
             permissions:
-                - objectLayout: 3            
+                - objectLayout: 3
         validate_stock_and_price:
             label: 'Validate Stock + Price'
             title: 'Check the quantity and the price'
             color: '#d9ef36'
             permissions:
-                - objectLayout: 4            
+                - objectLayout: 4
         content_prepared:
             label: 'Content Prepared'
             title: 'Content ready to publish'
@@ -180,16 +182,17 @@ Let's add few new rows in the configuration file
 
 ### Last actions: publish or rollback
 
-At the final stage of the workflow I would like to have three choices
+At the final stage, the workflow offers three choices:
 
-* Publish the product (with additional field called *"timeWorked"*)
-* Start workflow from the beginning
-* Reject the product (with note)
+* Publish the product (with an additional field called *"timeWorked"*)
+* Start the workflow from the beginning
+* Reject the product (with a note)
 
-We've already made the reject and start processing transition, the only thing here is to add an additional from place. 
-This can be done because we have workflow type `state_machine` activated, here our modified transition definitions.
+The reject and start processing transitions already exist. Add `content_prepared` as an additional
+`from` place. This works because the workflow type `state_machine` supports multiple `from` places
+per transition.
 
-```yml
+```yaml
 
 (...)
     transitions:
@@ -211,22 +214,22 @@ This can be done because we have workflow type `state_machine` activated, here o
                     commentRequired: false
 (...)
 ```
- 
-The last one we need is publishing - place and transition - that is only allowed to a certain role.
 
-```yml
+The final addition is a publish transition with a place and a guard restricting it to a certain role:
+
+```yaml
 (...)
     places:
         (...)
         accepted:
             label: 'Accepted product'
             color: '#28a013'
-(...)            
+(...)
 ```
 
-And, the transition with a *"timeWorked"* field.
+And the transition with a *"timeWorked"* additional field:
 
-```yml
+```yaml
 (...)
     transitions:
         (...)
@@ -244,13 +247,13 @@ And, the transition with a *"timeWorked"* field.
                           fieldType: 'input'
                           title: 'Time Spent'
                           required: true
-(...)                          
+(...)
 ```
 
 
 ### Workflow in action
 
-Below, you can find showcase of the workflow I've just prepared.
+The following table shows the workflow at each stage:
 
 | Status                                                  | Screenshot                                         |
 | ------------------------------------------------------- |----------------------------------------------------|
@@ -264,6 +267,6 @@ Below, you can find showcase of the workflow I've just prepared.
 
 ### Check the history
 
-In the *"Notes & Events"* tab, there is a list with every action used on the object via the Workflow module.
+The *"Notes & Events"* tab lists every action applied to the object through the workflow module.
 
 ![Notes & Events - notes from the workflow](../img/notesandevents_object_grid.png)

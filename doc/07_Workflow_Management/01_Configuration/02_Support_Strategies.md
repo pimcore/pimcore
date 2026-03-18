@@ -1,12 +1,17 @@
+---
+title: Support Strategies
+description: Control which elements a workflow applies to with class names, expressions, or custom services.
+---
+
 # Support Strategies
 
-The workflow engine offers several different ways to define which entities are supported by the configured workflow.
+The workflow engine offers several ways to define which entities a configured workflow supports.
 
-Important: The different configuration ways cannot be combined. It's necessary to choose one.
+The different configuration methods cannot be combined. Choose one.
 
 ## Supports
 
-The simplest way is to use `supports`. A single entity class name or an array of entity class names can be defined.
+Use `supports` to define a single entity class name or an array of entity class names.
 
 ##### Configuration Examples
 ```yaml
@@ -21,12 +26,12 @@ The simplest way is to use `supports`. A single entity class name or an array of
 
 ## Expression Support Strategy
 
-The expression support strategy can be used if a workflow should apply to a entity under certain circumstances only. 
-It's possible to define a symfony expression - the workflow then applies only if the expression is valid.
+The expression support strategy applies a workflow to an entity only under certain circumstances.
+Define a Symfony expression - the workflow applies only when the expression evaluates to true.
 
 ##### Configuration Example
 
-In the following example the workflow applies to products where the attribute "productType" is equal to "article".
+In the following example, the workflow applies to products where the attribute "productType" equals "article".
 
 ```yaml
    support_strategy:
@@ -38,7 +43,7 @@ In the following example the workflow applies to products where the attribute "p
 
 ## Custom Support Strategy
 
-If a very specific logic is needed it's possible to add a service which implements the 
+For custom logic, add a service that implements
 `Symfony\Component\Workflow\SupportStrategy\WorkflowSupportStrategyInterface`.
 
 ##### Configuration Example
@@ -48,7 +53,7 @@ If a very specific logic is needed it's possible to add a service which implemen
        service: App\Workflow\SupportStrategy
 ```
 
-##### Example Implementation (needs to be registered in the service container)
+##### Example Implementation (register in the service container)
 
 ```php
 <?php

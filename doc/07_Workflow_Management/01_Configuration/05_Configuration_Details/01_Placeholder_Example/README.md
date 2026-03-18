@@ -1,11 +1,17 @@
+---
+title: Placeholder Example
+description: Reuse workflow configurations across locales with YAML placeholders and anchors.
+---
+
 # Placeholder Example
 
-Workflows support placeholders. By using placeholders, it is possible, to reuse an existing workflow and reapply places and transitions onto a new workflow.
-## Available options
+Workflows support placeholders. Reuse an existing workflow definition and reapply places
+and transitions onto a new workflow by substituting placeholder values.
 
+## Available Options
 
 Example:
-```
+```yaml
 pimcore:
   workflows:
     product_workflow_local_de: &local_workflow_reference
@@ -42,7 +48,7 @@ pimcore:
                 - publish: true
 
              ...
-             
+
         transitions: &local_workflow_transitions_ref
             to_published:
                 to: local_400_published
@@ -55,7 +61,7 @@ pimcore:
 ```
 
 Example cloned workflows:
-```
+```yaml
     product_workflow_local_en:
         placeholders:
           '%%stateFieldName%%': 'translationStateEn'
@@ -110,4 +116,3 @@ Example cloned workflows:
       transitions:
         <<: *local_workflow_transitions_ref
 ```
-...
