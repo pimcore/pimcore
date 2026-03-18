@@ -75,14 +75,31 @@ Used for image, video, and document thumbnails served by the web application.
 
 ### Clearing Temporary Files
 
-Clear thumbnails using the dedicated command:
+Clear temporary files for a specific thumbnail configuration:
 
 ```bash
-bin/console pimcore:thumbnails:clear --type=image
-bin/console pimcore:thumbnails:clear --type=video
+# Clear temp files for a specific image thumbnail config
+bin/console pimcore:thumbnails:clear --type=image --name=myThumbnail
+
+# Clear temp files for a specific video thumbnail config
+bin/console pimcore:thumbnails:clear --type=video --name=myThumbnail
 ```
 
-Clear the private temporary directory programmatically using the global
+To clear all thumbnails and the asset cache programmatically:
+
+```php
+use Pimcore\Tool\Storage;
+use Pimcore\Db;
+
+// Clear all public thumbnails and the thumbnail database cache
+Storage::get('thumbnail')->deleteDirectory('/');
+Db::get()->executeQuery('TRUNCATE TABLE assets_image_thumbnail_cache');
+
+// Clear the asset cache (preview images, etc.)
+Storage::get('asset_cache')->deleteDirectory('/');
+```
+
+Clear the private temporary directory using the global
 `recursiveDelete()` helper (defined in `pimcore/lib/helper-functions.php`):
 
 ```php

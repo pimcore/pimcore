@@ -9,19 +9,30 @@ Pimcore provides the following tools to support deployment processes.
 
 ## Pimcore Configurations
 
-All Pimcore configurations are stored as YAML or PHP files on the file system.
-This makes them suitable for [version control](./01_Version_Control_Systems.md) and,
-combined with [configuration environments](../08_Development_Details/01_Configuration/01_Configuration_Environments.md),
-allows different configuration files per deployment stage.
+Pimcore has two categories of configuration:
 
-:::info Enterprise Repository
-The configuration examples below reference the `pimcore/demo-enterprise` repository,
-which requires access to the Pimcore enterprise package registry.
-:::
+**Symfony-only configurations** (`config/` directory) are standard Symfony YAML/PHP config files.
+These are always file-based, included in version control, and deployed alongside code.
+Use [Symfony configuration environments](https://symfony.com/doc/current/configuration.html#configuration-environments)
+to define different values per deployment stage.
 
-- [config/](https://github.com/pimcore/demo-enterprise/tree/2026.x/config)
-- [config/pimcore/](https://github.com/pimcore/demo-enterprise/tree/2026.x/config/pimcore)
-- [var/config/](https://github.com/pimcore/demo-enterprise/tree/2026.x/var/config)
+- [config/](https://github.com/pimcore/skeleton/tree/2026.x/config)
+- [config/pimcore/](https://github.com/pimcore/skeleton/tree/2026.x/config/pimcore)
+
+**Studio-editable configurations** (thumbnails, custom reports, static routes, perspectives,
+document types, predefined properties, custom views, etc.) use the `LocationAwareConfigRepository`,
+which supports two storage backends:
+
+- **`symfony-config`** - YAML files on the filesystem (default directory: `var/config/`).
+  Suitable for version control and file-based deployment.
+  In production without debug mode, these files are compiled into the Symfony container
+  and are read-only - changes on disk have no effect until the cache is rebuilt.
+- **`settings-store`** - Database-backed key-value storage.
+  Allows runtime editing through Pimcore Studio in production.
+
+Each configuration type has independent read and write targets, configurable per environment.
+See [Configuration Environments](../08_Development_Details/01_Configuration/01_Configuration_Environments.md)
+for details on setting up read/write targets and handling production deployments.
 
 
 ## Pimcore Class Definitions
