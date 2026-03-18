@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\InstallBundle\BundleConfig;
 use Pimcore\Bundle\InstallBundle\Console\ConsoleCommandRunner;
 use Pimcore\Bundle\InstallBundle\Profile\InstallProfileInterface;
 use Pimcore\Model\Tool\SettingsStore;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -27,7 +26,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class BundleInstaller
 {
     public function __construct(
-        private readonly LoggerInterface $logger,
         private readonly ConsoleCommandRunner $commandRunner,
         private readonly BundleWriter $bundleWriter = new BundleWriter(),
     ) {

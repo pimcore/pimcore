@@ -45,7 +45,7 @@ trait InstallBundleTestHelperTrait
             new DatabaseSetup(),
             new DefinitionResolver(),
             $commandRunner,
-            new BundleInstaller($logger, $commandRunner),
+            new BundleInstaller($commandRunner),
             new PostInstallRunner($logger, $commandRunner),
             $checkpointFactory,
             $envWriterFactory,

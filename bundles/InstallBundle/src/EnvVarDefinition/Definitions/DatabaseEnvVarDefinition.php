@@ -100,9 +100,10 @@ final readonly class DatabaseEnvVarDefinition implements EnvVarDefinitionInterfa
 
         if (isset($parsed['port'])) {
             $validator->requirePortInRange($parsed['port'], $label . ' port');
-            if ($validator->hasErrors()) {
-                return $validator->getErrors();
-            }
+        }
+
+        if ($validator->hasErrors()) {
+            return $validator->getErrors();
         }
 
         $path = trim($parsed['path'] ?? '', '/');

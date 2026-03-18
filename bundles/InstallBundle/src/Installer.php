@@ -52,7 +52,7 @@ use Throwable;
  */
 class Installer
 {
-    private const string NEEDS_INSTALL_MARKER = PIMCORE_PRIVATE_VAR . '/config/needs-install.lock';
+    public const string NEEDS_INSTALL_MARKER = PIMCORE_PRIVATE_VAR . '/config/needs-install.lock';
 
     /** Phase 2 step constants — used for checkpoint tracking */
     private const int STEP_SETUP_DATABASE = 12;
@@ -76,8 +76,6 @@ class Installer
     private const int STEP_RUN_POST_INSTALL_COMMANDS = 21;
 
     private const int STEP_RUN_PROFILE_POST_INSTALL = 22;
-
-    private const int STEP_FINALIZE = 23;
 
     private int $stepCounter = 0;
 
@@ -529,8 +527,8 @@ class Installer
     {
         $errors = [];
 
-        $username = $credentials['username'] ?? '';
-        $password = $credentials['password'] ?? '';
+        $username = $credentials['username'];
+        $password = $credentials['password'];
 
         if (strlen($username) < 4) {
             $errors[] = 'Admin username must be at least 4 characters';

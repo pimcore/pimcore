@@ -86,6 +86,10 @@ abstract readonly class AbstractSearchEngineEnvVarDefinition implements SearchEn
 
         $validator->requireUrlWithScheme($dsn, $label, [$this->getScheme()]);
 
+        if ($validator->hasErrors()) {
+            return $validator->getErrors();
+        }
+
         $host = $parsed['host'] ?? '';
         if ($host === '') {
             $validator->requireNonEmpty('', $label . ' host');
