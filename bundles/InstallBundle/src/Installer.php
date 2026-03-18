@@ -64,7 +64,6 @@ class Installer
         'PimcoreApplicationLoggerBundle' => PimcoreApplicationLoggerBundle::class,
         'PimcoreCustomReportsBundle' => PimcoreCustomReportsBundle::class,
         'PimcoreSeoBundle' => PimcoreSeoBundle::class,
-        'PimcoreStaticRoutesBundle' => PimcoreStaticRoutesBundle::class,
         'PimcoreUuidBundle' => PimcoreUuidBundle::class,
         'PimcoreGenericExecutionEngineBundle' => PimcoreGenericExecutionEngineBundle::class,
     ];
