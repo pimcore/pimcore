@@ -41,6 +41,3 @@ Here is an example of a rendered workflow custom report:
 Since `single_state` (and others) stores place information in data object attributes,
 Pimcore default object grids handle workflow reporting on Pimcore Objects.
 Create a corresponding grid configuration and use default filtering and sorting functionality.
-
-Additionally, extensions like [Advanced Object Search](https://github.com/pimcore/advanced-object-search)
-provide saved searches with predefined filters.
