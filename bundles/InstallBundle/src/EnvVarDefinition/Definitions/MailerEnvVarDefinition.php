@@ -18,9 +18,6 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterType;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Validation\FormatValidator;
 
-/**
- * @internal
- */
 final readonly class MailerEnvVarDefinition implements EnvVarDefinitionInterface
 {
     private const ALLOWED_SCHEMES = ['smtp', 'smtps', 'sendmail', 'native', 'null'];

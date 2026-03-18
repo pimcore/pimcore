@@ -35,6 +35,7 @@ use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Authentication;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -57,9 +58,9 @@ class Installer
     /** Phase 2 step constants — used for checkpoint tracking */
     private const int STEP_SETUP_DATABASE = 12;
 
-    private const int STEP_CREATE_ADMIN = 13;
+    private const int STEP_IMPORT_DATA_SOURCE = 13;
 
-    private const int STEP_IMPORT_DATA_SOURCE = 14;
+    private const int STEP_CREATE_ADMIN = 14;
 
     private const int STEP_REGISTER_BUNDLES = 15;
 
@@ -234,6 +235,7 @@ class Installer
         $kernel = $this->bootRealKernel($projectRoot);
 
         // Setup database
+        $hasDataSource = $profile->getDataSource() !== null;
         $error = $this->executeStep(
             self::STEP_SETUP_DATABASE,
             $completedStep,
@@ -241,33 +243,16 @@ class Installer
             'setup_database',
             'Setting up database...',
             'Schema created',
-            function () use ($kernel): void {
+            function () use ($kernel, $hasDataSource): void {
                 $db = $this->getDatabaseConnection($kernel);
-                $this->setupDatabase($db);
+                $this->setupDatabase($db, $hasDataSource);
             },
         );
         if ($error !== null) {
             return [$error];
         }
 
-        // Create admin user
-        $error = $this->executeStep(
-            self::STEP_CREATE_ADMIN,
-            $completedStep,
-            $checkpoint,
-            'create_admin',
-            'Creating admin user...',
-            'Admin user created',
-            function () use ($kernel, $adminCredentials): void {
-                $db = $this->getDatabaseConnection($kernel);
-                $this->createOrUpdateAdminUser($db, $adminCredentials);
-            },
-        );
-        if ($error !== null) {
-            return [$error];
-        }
-
-        // Import data source
+        // Import data source (before admin creation — dumps may contain user rows)
         $dataSource = $profile->getDataSource();
         if ($dataSource !== null) {
             $error = $this->executeStep(
@@ -285,6 +270,23 @@ class Installer
             if ($error !== null) {
                 return [$error];
             }
+        }
+
+        // Create/update admin user (after data import to overwrite any dump admin)
+        $error = $this->executeStep(
+            self::STEP_CREATE_ADMIN,
+            $completedStep,
+            $checkpoint,
+            'create_admin',
+            'Creating admin user...',
+            'Admin user created',
+            function () use ($kernel, $adminCredentials): void {
+                $db = $this->getDatabaseConnection($kernel);
+                $this->createOrUpdateAdminUser($db, $adminCredentials);
+            },
+        );
+        if ($error !== null) {
+            return [$error];
         }
 
         // Register bundles
@@ -312,8 +314,8 @@ class Installer
             'Rebooting kernel...',
             'Kernel rebooted',
             function () use (&$kernel, $projectRoot): void {
-                $this->clearKernelCacheDir($kernel);
                 $kernel->shutdown();
+                $this->clearKernelCacheDir($kernel);
                 $kernel = $this->bootRealKernel($projectRoot);
             },
         );
@@ -653,6 +655,14 @@ class Installer
 
     private function bootRealKernel(string $projectRoot): KernelInterface
     {
+        // Phase 1 wrote .env.local after the process started, so the current
+        // $_ENV / $_SERVER do not contain the new values (DATABASE_URL, etc.).
+        // Re-load all .env files with override so the kernel can resolve them.
+        $envFile = $projectRoot . '/.env';
+        if (is_file($envFile)) {
+            (new Dotenv())->bootEnv($envFile, overrideExistingVars: true);
+        }
+
         $environment = Config::getEnvironment();
 
         $kernelClass = $_ENV['PIMCORE_KERNEL_CLASS'] ?? \App\Kernel::class;
@@ -673,10 +683,15 @@ class Installer
 
     /**
      * Create database schema from install.sql and set up infrastructure tables.
+     * When no data source is present, also insert seed data (root nodes, system user, permissions).
      */
-    private function setupDatabase(Connection $db): void
+    private function setupDatabase(Connection $db, bool $hasDataSource): void
     {
         $this->databaseSetup->createSchema($db);
+
+        if (!$hasDataSource) {
+            $this->databaseSetup->insertSeedData($db);
+        }
     }
 
     /**

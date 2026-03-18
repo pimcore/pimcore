@@ -61,7 +61,7 @@ final class InstallCommandIntegrationTest extends TestCase
         ], ['interactive' => false]);
 
         $this->assertSame(1, $tester->getStatusCode());
-        $this->assertStringContainsString('--profile', $tester->getDisplay());
+        $this->assertStringContainsString('--install-profile', $tester->getDisplay());
     }
 
     public function testCommandFailsWithNonExistentProfileClass(): void
@@ -69,7 +69,7 @@ final class InstallCommandIntegrationTest extends TestCase
         $tester = $this->createCommandTester();
 
         $tester->execute([
-            '--profile' => 'NonExistent\\Profile\\Class',
+            '--install-profile' => 'NonExistent\\Profile\\Class',
             '--admin-username' => 'admin',
             '--admin-password' => 'admin123',
         ], ['interactive' => false]);
@@ -84,7 +84,7 @@ final class InstallCommandIntegrationTest extends TestCase
 
         // \stdClass exists but doesn't implement InstallProfileInterface
         $tester->execute([
-            '--profile' => \stdClass::class,
+            '--install-profile' => \stdClass::class,
             '--admin-username' => 'admin',
             '--admin-password' => 'admin123',
         ], ['interactive' => false]);
@@ -98,7 +98,7 @@ final class InstallCommandIntegrationTest extends TestCase
         $tester = $this->createCommandTester();
 
         $tester->execute([
-            '--profile' => 'NonExistent\\Profile',
+            '--install-profile' => 'NonExistent\\Profile',
             '--admin-password' => 'admin123',
         ], ['interactive' => false]);
 
@@ -116,7 +116,7 @@ final class InstallCommandIntegrationTest extends TestCase
         $tester = $this->createCommandTester();
 
         $tester->execute([
-            '--profile' => 'NonExistent\\Profile',
+            '--install-profile' => 'NonExistent\\Profile',
             '--admin-username' => 'admin',
         ], ['interactive' => false]);
 
@@ -134,7 +134,7 @@ final class InstallCommandIntegrationTest extends TestCase
         $tester = $this->createCommandTester();
 
         $tester->execute([
-            '--profile' => 'NonExistent\\Profile',
+            '--install-profile' => 'NonExistent\\Profile',
             '--env-definition' => ['NonExistent\\Definition\\Class'],
             '--admin-username' => 'admin',
             '--admin-password' => 'admin123',
@@ -149,7 +149,7 @@ final class InstallCommandIntegrationTest extends TestCase
         $tester = $this->createCommandTester();
 
         $tester->execute([
-            '--profile' => 'NonExistent\\Profile',
+            '--install-profile' => 'NonExistent\\Profile',
             '--post-install-commands' => ['NonExistent\\Provider\\Class'],
             '--admin-username' => 'admin',
             '--admin-password' => 'admin123',
@@ -181,7 +181,7 @@ final class InstallCommandIntegrationTest extends TestCase
         $command = $this->createCommand();
         $definition = $command->getDefinition();
 
-        $this->assertTrue($definition->hasOption('profile'));
+        $this->assertTrue($definition->hasOption('install-profile'));
         $this->assertTrue($definition->hasOption('env-definition'));
         $this->assertTrue($definition->hasOption('post-install-commands'));
         $this->assertTrue($definition->hasOption('skip'));

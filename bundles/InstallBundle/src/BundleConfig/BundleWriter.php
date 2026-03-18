@@ -15,7 +15,10 @@ namespace Pimcore\Bundle\InstallBundle\BundleConfig;
 use Pimcore\File;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
-class BundleWriter
+/**
+ * @internal
+ */
+final readonly class BundleWriter
 {
     public function addBundlesToConfig(array $bundles, array $availableBundles): void
     {

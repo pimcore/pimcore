@@ -50,6 +50,8 @@ final class ElasticsearchEnvVarDefinitionTest extends TestCase
         $this->assertSame('PIMCORE_ELASTICSEARCH_DSN', $params[0]->getEnvVarName());
         $this->assertNotNull($params[0]->getDefaultValue());
         $this->assertStringStartsWith('elasticsearch://', $params[0]->getDefaultValue());
+        $this->assertStringContainsString('ssl=true', $params[0]->getDefaultValue());
+        $this->assertStringContainsString('ssl_verify=true', $params[0]->getDefaultValue());
     }
 
     public function testResolveEnvVarsPassesThrough(): void

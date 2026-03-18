@@ -65,7 +65,7 @@ final class InstallCommand extends Command
                 . "  <comment>PIMCORE_ADMIN_PASSWORD</comment>  Admin password\n"
             )
             ->addOption(
-                'profile',
+                'install-profile',
                 null,
                 InputOption::VALUE_REQUIRED,
                 'FQCN of the install profile class (must implement InstallProfileInterface)',
@@ -142,9 +142,9 @@ final class InstallCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $profileFqcn = $input->getOption('profile');
+        $profileFqcn = $input->getOption('install-profile');
         if ($profileFqcn === null || $profileFqcn === '') {
-            $this->io->error('The --profile option is required.');
+            $this->io->error('The --install-profile option is required.');
 
             return Command::FAILURE;
         }

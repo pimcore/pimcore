@@ -33,14 +33,25 @@ final class DatabaseSetup
 {
     public function createSchema(Connection $db): void
     {
-        $db->executeQuery('SET FOREIGN_KEY_CHECKS=0;');
+        $db->executeStatement('SET FOREIGN_KEY_CHECKS=0;');
 
         $this->executeSqlFile($db, __DIR__ . '/../../dump/install.sql');
         $this->createInfrastructureTables($db);
 
-        $db->executeQuery('SET FOREIGN_KEY_CHECKS=1;');
+        $db->executeStatement('SET FOREIGN_KEY_CHECKS=1;');
 
         $this->insertSystemUser($db);
+    }
+
+    /**
+     * Insert seed data required for a fresh Pimcore installation:
+     * root asset/document/object nodes and default permissions.
+     *
+     * Skip this when a data source provides the complete dataset (e.g., SQL dumps
+     * that already contain root nodes and permissions).
+     */
+    public function insertSeedData(Connection $db): void
+    {
         $this->insertDatabaseContents($db);
     }
 
@@ -51,109 +62,7 @@ final class DatabaseSetup
             throw new \RuntimeException(sprintf('Could not read SQL file: %s', $filePath));
         }
 
-        $statements = self::splitSqlStatements($sql);
-        foreach ($statements as $statement) {
-            $db->executeQuery($statement . ';');
-        }
-    }
-
-    /**
-     * Split SQL into individual statements, respecting quoted strings and comments.
-     *
-     * @return list<string> non-empty trimmed statements (without trailing semicolons)
-     */
-    public static function splitSqlStatements(string $sql): array
-    {
-        $statements = [];
-        $current = '';
-        $length = strlen($sql);
-        $i = 0;
-
-        while ($i < $length) {
-            $char = $sql[$i];
-
-            // Single-quoted string
-            if ($char === "'") {
-                $current .= $char;
-                $i++;
-                while ($i < $length) {
-                    $current .= $sql[$i];
-                    if ($sql[$i] === "'" && ($i + 1 >= $length || $sql[$i + 1] !== "'")) {
-                        $i++;
-                        break;
-                    }
-                    if ($sql[$i] === "'" && $i + 1 < $length && $sql[$i + 1] === "'") {
-                        $current .= $sql[++$i];
-                    }
-                    $i++;
-                }
-                continue;
-            }
-
-            // Double-quoted identifier
-            if ($char === '"') {
-                $current .= $char;
-                $i++;
-                while ($i < $length) {
-                    $current .= $sql[$i];
-                    if ($sql[$i] === '"') {
-                        $i++;
-                        break;
-                    }
-                    $i++;
-                }
-                continue;
-            }
-
-            // Single-line comment: -- ...
-            if ($char === '-' && $i + 1 < $length && $sql[$i + 1] === '-') {
-                while ($i < $length && $sql[$i] !== "\n") {
-                    $i++;
-                }
-                continue;
-            }
-
-            // Multi-line comment: /* ... */ (skip only non-executable comments)
-            if ($char === '/' && $i + 1 < $length && $sql[$i + 1] === '*') {
-                // Preserve MySQL executable comments /*!...*/ by checking for !
-                if ($i + 2 < $length && $sql[$i + 2] === '!') {
-                    $current .= $char;
-                    $i++;
-                    continue;
-                }
-                $i += 2;
-                while ($i < $length) {
-                    if ($sql[$i] === '*' && $i + 1 < $length && $sql[$i + 1] === '/') {
-                        $i += 2;
-                        break;
-                    }
-                    $i++;
-                }
-                continue;
-            }
-
-            // Statement terminator
-            if ($char === ';') {
-                $trimmed = trim($current);
-                if ($trimmed !== '') {
-                    $statements[] = $trimmed;
-                }
-                $current = '';
-                $i++;
-                continue;
-            }
-
-            $current .= $char;
-            $i++;
-        }
-
-        // Handle last statement (no trailing semicolon)
-        $trimmed = trim($current);
-        if ($trimmed !== '') {
-            $statements[] = $trimmed;
-        }
-
-        return $statements;
+        $db->executeStatement($sql);
     }
 
     private function createInfrastructureTables(Connection $db): void

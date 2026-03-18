@@ -29,8 +29,6 @@ use Symfony\Component\Uid\Uuid;
  * provided, allowing CI/automation to skip them. The product key must be
  * obtained from https://license.pimcore.com after registration with the
  * generated secret and instance identifier.
- *
- * @internal
  */
 final class ProductRegistrationEnvVarDefinition implements EnvVarDefinitionInterface
 {
@@ -84,7 +82,7 @@ final class ProductRegistrationEnvVarDefinition implements EnvVarDefinitionInter
             new ConfigParameter(
                 'PIMCORE_PRODUCT_KEY',
                 'Product Key',
-                ParameterType::String,
+                ParameterType::Secret,
                 description: 'Product key obtained from https://license.pimcore.com',
             ),
         ];

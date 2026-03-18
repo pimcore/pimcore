@@ -24,7 +24,12 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\SearchEngineDefinitionInterfac
  * Subclasses only need to define their specific scheme, env var name, label,
  * section name, and default DSN.
  *
- * @internal
+ * The DSN query parameters `ssl` and `ssl_verify` are independent concerns:
+ *  - `ssl` controls whether HTTPS or HTTP is used for the connection.
+ *  - `ssl_verify` controls whether SSL certificates are verified.
+ *
+ * Example: `opensearch://admin@localhost:9200?ssl=true&ssl_verify=false`
+ * connects via HTTPS but skips certificate verification (useful for self-signed certs).
  */
 abstract readonly class AbstractSearchEngineEnvVarDefinition implements SearchEngineDefinitionInterface
 {
@@ -35,6 +40,8 @@ abstract readonly class AbstractSearchEngineEnvVarDefinition implements SearchEn
     abstract protected function getDefaultDsn(): string;
 
     abstract protected function getDefaultPort(): int;
+
+    abstract protected function getDefaultSsl(): bool;
 
     abstract protected function getDefaultSslVerify(): bool;
 
@@ -52,7 +59,7 @@ abstract readonly class AbstractSearchEngineEnvVarDefinition implements SearchEn
                 ParameterType::Url,
                 defaultValue: $this->getDefaultDsn(),
                 description: sprintf(
-                    '%s://user:pass@host:port?ssl_verify=bool',
+                    '%s://user:pass@host:port?ssl=bool&ssl_verify=bool',
                     $this->getScheme(),
                 ),
             ),
@@ -114,9 +121,11 @@ abstract readonly class AbstractSearchEngineEnvVarDefinition implements SearchEn
         if (isset($parsed['query'])) {
             parse_str($parsed['query'], $query);
         }
+
+        $useSsl = ($query['ssl'] ?? ($this->getDefaultSsl() ? 'true' : 'false')) === 'true';
         $sslVerify = ($query['ssl_verify'] ?? ($this->getDefaultSslVerify() ? 'true' : 'false')) === 'true';
 
-        $protocol = $sslVerify ? 'https' : 'http';
+        $protocol = $useSsl ? 'https' : 'http';
         $url = sprintf('%s://%s:%d', $protocol, $host, $port);
 
         $contextOptions = [

@@ -22,8 +22,6 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\MessengerTransportDefinitionIn
  * This is the default transport for all Pimcore messenger queues.
  * No user input is needed — the Doctrine connection is already
  * configured via DATABASE_URL.
- *
- * @internal
  */
 final readonly class DoctrineMessengerEnvVarDefinition implements MessengerTransportDefinitionInterface
 {

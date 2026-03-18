@@ -22,41 +22,4 @@ final class DatabaseSetupTest extends TestCase
         $installSqlPath = __DIR__ . '/../../../../bundles/InstallBundle/dump/install.sql';
         $this->assertFileExists($installSqlPath, 'install.sql must exist for DatabaseSetup to work');
     }
-
-    public function testSplitSqlStatementsHandlesSemicolonsInStrings(): void
-    {
-        $sql = <<<'SQL'
-CREATE TABLE test (id INT);
-INSERT INTO test VALUES (1);
-INSERT INTO config (key, value) VALUES ('delimiter', 'a;b;c');
-INSERT INTO test VALUES (2);
-SQL;
-
-        $statements = DatabaseSetup::splitSqlStatements($sql);
-
-        $this->assertCount(4, $statements);
-        $this->assertSame('CREATE TABLE test (id INT)', trim($statements[0]));
-        $this->assertSame('INSERT INTO test VALUES (1)', trim($statements[1]));
-        $this->assertStringContainsString("'a;b;c'", $statements[2]);
-        $this->assertSame('INSERT INTO test VALUES (2)', trim($statements[3]));
-    }
-
-    public function testSplitSqlStatementsHandlesEmptyInput(): void
-    {
-        $statements = DatabaseSetup::splitSqlStatements('');
-
-        $this->assertSame([], $statements);
-    }
-
-    public function testSplitSqlStatementsHandlesSingleLineComments(): void
-    {
-        $sql = <<<'SQL'
-CREATE TABLE test (id INT); -- this is a comment; with semicolons
-INSERT INTO test VALUES (1);
-SQL;
-
-        $statements = DatabaseSetup::splitSqlStatements($sql);
-
-        $this->assertCount(2, $statements);
-    }
 }

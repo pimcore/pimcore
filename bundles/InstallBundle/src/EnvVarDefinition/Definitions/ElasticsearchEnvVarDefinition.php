@@ -17,9 +17,7 @@ namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions;
  * Elasticsearch search engine definition.
  *
  * Collects a single `PIMCORE_ELASTICSEARCH_DSN` env var with the format:
- * elasticsearch://user:pass@host:port?ssl_verify=bool
- *
- * @internal
+ * elasticsearch://user:pass@host:port?ssl=bool&ssl_verify=bool
  */
 final readonly class ElasticsearchEnvVarDefinition extends AbstractSearchEngineEnvVarDefinition
 {
@@ -50,12 +48,17 @@ final readonly class ElasticsearchEnvVarDefinition extends AbstractSearchEngineE
 
     protected function getDefaultDsn(): string
     {
-        return 'elasticsearch://elastic@localhost:9200?ssl_verify=true';
+        return 'elasticsearch://elastic@localhost:9200?ssl=true&ssl_verify=true';
     }
 
     protected function getDefaultPort(): int
     {
         return 9200;
+    }
+
+    protected function getDefaultSsl(): bool
+    {
+        return true;
     }
 
     protected function getDefaultSslVerify(): bool

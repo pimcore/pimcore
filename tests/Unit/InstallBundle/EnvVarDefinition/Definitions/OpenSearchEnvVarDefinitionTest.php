@@ -50,6 +50,8 @@ final class OpenSearchEnvVarDefinitionTest extends TestCase
         $this->assertSame('PIMCORE_OPENSEARCH_DSN', $params[0]->getEnvVarName());
         $this->assertNotNull($params[0]->getDefaultValue());
         $this->assertStringStartsWith('opensearch://', $params[0]->getDefaultValue());
+        $this->assertStringContainsString('ssl=true', $params[0]->getDefaultValue());
+        $this->assertStringContainsString('ssl_verify=false', $params[0]->getDefaultValue());
     }
 
     public function testResolveEnvVarsPassesThrough(): void

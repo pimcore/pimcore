@@ -13,15 +13,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions;
 
+use Doctrine\Bundle\DoctrineBundle\ConnectionFactory;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Tools\DsnParser;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterType;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Validation\FormatValidator;
 
-/**
- * @internal
- */
 final readonly class DatabaseEnvVarDefinition implements EnvVarDefinitionInterface
 {
     private const ALLOWED_SCHEMES = ['mysql', 'mysqli', 'pdo-mysql'];
@@ -109,7 +108,9 @@ final readonly class DatabaseEnvVarDefinition implements EnvVarDefinitionInterfa
     private function testConnection(string $url): array
     {
         try {
-            $connection = DriverManager::getConnection(['url' => $url]);
+            $dsnParser = new DsnParser(ConnectionFactory::DEFAULT_SCHEME_MAP);
+            $params = $dsnParser->parse($url);
+            $connection = DriverManager::getConnection($params);
             $connection->executeQuery('SELECT 1');
             $connection->close();
         } catch (\Exception $e) {

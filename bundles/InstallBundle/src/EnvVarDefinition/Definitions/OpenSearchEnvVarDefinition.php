@@ -17,9 +17,7 @@ namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions;
  * OpenSearch search engine definition.
  *
  * Collects a single `PIMCORE_OPENSEARCH_DSN` env var with the format:
- * opensearch://user:pass@host:port?ssl_verify=bool
- *
- * @internal
+ * opensearch://user:pass@host:port?ssl=bool&ssl_verify=bool
  */
 final readonly class OpenSearchEnvVarDefinition extends AbstractSearchEngineEnvVarDefinition
 {
@@ -50,12 +48,17 @@ final readonly class OpenSearchEnvVarDefinition extends AbstractSearchEngineEnvV
 
     protected function getDefaultDsn(): string
     {
-        return 'opensearch://admin@localhost:9200?ssl_verify=false';
+        return 'opensearch://admin@localhost:9200?ssl=true&ssl_verify=false';
     }
 
     protected function getDefaultPort(): int
     {
         return 9200;
+    }
+
+    protected function getDefaultSsl(): bool
+    {
+        return true;
     }
 
     protected function getDefaultSslVerify(): bool

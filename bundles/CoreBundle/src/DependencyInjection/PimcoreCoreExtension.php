@@ -308,19 +308,20 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
     private function checkProductRegistration(array $config, ContainerBuilder $container): void
     {
-        //replace env placeholders in encryption secret to make sure we use the actual secret
+        $productIdentifier = $config['product_registration']['instance_identifier'] ?? null;
+        $container->setParameter('pimcore.product_registration.instance_identifier', $productIdentifier);
+
+        // Pimcore not installed — env vars using processors (default::) cannot be resolved
+        // at compile time, so skip the entire check when the install marker exists.
+        if (file_exists(Installer::NEEDS_INSTALL_MARKER)) {
+            return;
+        }
+
+        // Replace env placeholders in encryption secret to make sure we use the actual secret
         $encryptionSecret = $container->resolveEnvPlaceholders(
             $container->getParameter('pimcore.encryption.secret'),
             true
         );
-
-        $productIdentifier = $config['product_registration']['instance_identifier'] ?? null;
-        $container->setParameter('pimcore.product_registration.instance_identifier', $productIdentifier);
-
-        //Pimcore not installed, skipping check
-        if (empty($encryptionSecret) && file_exists(Installer::NEEDS_INSTALL_MARKER)) {
-            return;
-        }
 
         if (empty($encryptionSecret)) {
             throw new InvalidArgumentException(
@@ -330,7 +331,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             );
         }
 
-        //replace env placeholders in product identifier and product key
+        // Replace env placeholders in product identifier and product key
         $productIdentifier = $container->resolveEnvPlaceholders($productIdentifier, true);
         $productKey = $container->resolveEnvPlaceholders(
             $config['product_registration']['product_key'] ?? null,

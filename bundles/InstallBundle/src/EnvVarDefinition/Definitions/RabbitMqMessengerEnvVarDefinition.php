@@ -22,8 +22,6 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Validation\FormatValidator;
  * RabbitMQ-based messenger transport definition.
  *
  * Writes PIMCORE_MESSENGER_TRANSPORT_DSN with an AMQP URL.
- *
- * @internal
  */
 final readonly class RabbitMqMessengerEnvVarDefinition implements MessengerTransportDefinitionInterface
 {
