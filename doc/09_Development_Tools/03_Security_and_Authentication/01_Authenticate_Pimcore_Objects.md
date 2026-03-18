@@ -11,7 +11,7 @@ with users stored as Pimcore data objects.
 As an example, assume a user object defined in `App\Model\DataObject\User` that stores its password
 in a field named `password` (field type `Password`). The password field uses the `password_hash` algorithm,
 the standard way to handle passwords in PHP (internally using bcrypt). The class definition looks
-like this (a working example ships with the `demo-basic` install profile):
+like this:
 
 ![App\Model\DataObject\User](../../img/security_authentication_class_definition.png)
 
@@ -166,6 +166,7 @@ security:
 
 This provides a starting point for custom authentication based on Pimcore objects. For further information:
 
-* The [demo-enterprise](https://github.com/pimcore/demo-enterprise) repository,
-  which implements a full form/session login with CMF integration.
+* The [Security and Authentication overview](./README.md), which links to the
+  [demo-enterprise](https://github.com/pimcore/demo-enterprise) repository
+  with a full form/session login, CMF integration, and e-commerce cart migration.
 * The [Symfony Security Component documentation](https://symfony.com/doc/current/security.html)

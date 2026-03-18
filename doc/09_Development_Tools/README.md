@@ -15,7 +15,7 @@ with built-in logging and error handling.
 
 ## [Logging](./02_Logging/README.md)
 
-Pimcore log types (`<env>.log`, `php.log`, `usagelog.log`, `redirect.log`),
+Pimcore log types (`<env>-debug.log`, `<env>-error.log`, `usage.log`, `redirect.log`),
 custom log channels via Monolog, and the Application Logger bundle
 for database-backed log entries with email notifications.
 

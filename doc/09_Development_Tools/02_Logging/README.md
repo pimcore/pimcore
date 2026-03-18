@@ -8,27 +8,16 @@ description: Log types, custom log channels, and Monolog configuration.
 Pimcore stores all logs under `/var/log`. The maintenance command rotates and compresses
 them daily (7 days retention).
 
-## `<env>.log`
+## `<env>-debug.log` / `<env>-error.log`
 
-The primary log file and default logging location.
+The primary log files. In development, Pimcore writes debug-level messages to
+`dev-debug.log` and error-level messages to `dev-error.log`.
+In production, only `prod-error.log` is written by default.
 
 Pimcore uses Symfony's default Monolog logging with the following channels: `pimcore`, `pimcore_api`, `session`.
 For details, see [Symfony's Monolog documentation](https://symfony.com/doc/current/logging.html).
 
-## `php.log`
-
-By default, Pimcore writes PHP engine log messages to `php.log`.
-Override the path in your Symfony config:
-```yaml
-monolog:
-    handlers:
-        error:
-            type: stream
-            path: "%kernel.logs_dir%/own_php.log"
-            level: error
-```
-
-## usagelog.log
+## usage.log
 
 Records every action performed in Pimcore Studio.
 Deactivate it by configuring `disable_usage_statistics` in `config/config.yaml`:

@@ -12,80 +12,31 @@ The Generic Execution Engine provides:
 * State tracking and logging for job runs
 * Job run management (start, cancel, restart)
 
-## Installation
-
-1. Install the required dependencies:
-   ```bash
-   composer require phpdocumentor/reflection-docblock symfony/property-info
-   ```
-
-2. Enable the `PimcoreGenericExecutionEngineBundle` in `/config/bundles.php`:
-   ```php
-   Pimcore\Bundle\GenericExecutionEngineBundle\PimcoreGenericExecutionEngineBundle::class => ['all' => true],
-   ```
-
-3. Install the bundle:
-   ```bash
-   bin/console pimcore:bundle:install PimcoreGenericExecutionEngineBundle
-   ```
+The Generic Execution Engine ships with Pimcore core and is installed as part of
+[Pimcore Studio setup](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/03_Advanced_Installation_Topics/02_Pimcore_Studio_Setup.md).
+The Studio setup guide also covers Symfony Messenger worker configuration
+(supervisord, cron, development) and transport setup (Doctrine, RabbitMQ).
 
 ## Configuration
 
-### 1. Message Consumption
+### Message Consumption
 
-Ensure at least one Symfony Messenger worker consumes the `pimcore_generic_execution_engine` transport.
+At least one Symfony Messenger worker must consume the `pimcore_generic_execution_engine` transport.
+See the
+[Pimcore Studio setup guide](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/03_Advanced_Installation_Topics/02_Pimcore_Studio_Setup.md)
+for supervisord and cron configuration examples.
 
-#### Docker Deployments (Recommended for Production)
-
-Pimcore recommends using supervisord for production deployments. Add this configuration to your `supervisord.conf`:
-
-```ini title="supervisord.conf"
-[program:execution-engine]
-command=php /var/www/html/bin/console messenger:consume pimcore_generic_execution_engine --memory-limit=250M --time-limit=3600
-numprocs=1
-startsecs=0
-autostart=true
-autorestart=true
-process_name=%(program_name)s_%(process_num)02d
-stdout_logfile=/dev/fd/1
-stdout_logfile_maxbytes=0
-redirect_stderr=true
-```
-
-This ensures the message consumer runs automatically and restarts on failure.
-
-#### Alternative: Cron Job (Simple Deployments)
-
-Add this to your crontab to run the consumer every minute:
-```bash
-* * * * * cd /path/to/your/pimcore/project && php bin/console messenger:consume pimcore_generic_execution_engine --time-limit=60 > /dev/null 2>&1
-```
-
-#### Development: Manual Execution
-
-Run the consumer manually during development:
+For development, run the consumer manually:
 ```bash
 php bin/console messenger:consume pimcore_generic_execution_engine
 ```
 
+### Messenger Transport
 
-### 2. Messenger Transport
-
-This step is optional unless you use a different transport such as RabbitMQ.
-
-**Docker example setup:**
-Add this transport to `.docker/messenger.yaml` to maintain consistency with your existing RabbitMQ configuration:
-
-```yaml title="messenger.yaml"
-framework:
-    messenger:
-        transports:
-            # ... your existing transports
-            pimcore_generic_execution_engine: 'amqp://rabbitmq:5672/%2f/pimcore_generic_execution_engine'
-```
-
-**Custom setup:**
-The default Doctrine transport requires no additional configuration. Override it in `config/packages/messenger.yaml` to use a different transport.
+By default, the execution engine uses a Doctrine transport. No additional configuration is needed
+unless you use a different transport such as RabbitMQ.
+See [Symfony Messenger configuration](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/03_Advanced_Installation_Topics/01_Symfony_Messenger.md)
+for transport setup details.
 
 ## Verification
 
