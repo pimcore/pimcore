@@ -178,6 +178,7 @@
       "Pimcore\\Bundle\\CoreBundle\\": "bundles/CoreBundle/src/",
       "Pimcore\\Bundle\\ApplicationLoggerBundle\\": "bundles/ApplicationLoggerBundle/src/",
       "Pimcore\\Bundle\\UuidBundle\\": "bundles/UuidBundle/src/",
+      "Pimcore\\Bundle\\SeoBundle\\": "bundles/SeoBundle/src/",
       "Pimcore\\Bundle\\CustomReportsBundle\\": "bundles/CustomReportsBundle/src/",
       "Pimcore\\Bundle\\GenericExecutionEngineBundle\\": "bundles/GenericExecutionEngineBundle/src/"
     },
