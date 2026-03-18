@@ -259,11 +259,7 @@ class EditmodeListener implements EventSubscriberInterface
     {
         $disableMinifyJs = Pimcore::disableMinifyJs();
 
-        return [
-            '/bundles/pimcoreadmin/js/pimcore/common.js',
-            '/bundles/pimcoreadmin/js/lib/class.js',
-            '/bundles/pimcoreadmin/extjs/js/ext-all' . ($disableMinifyJs ? '-debug' : '') . '.js',
-        ];
+        return [];
     }
 
     protected function getEditmodeScripts(): array
@@ -271,40 +267,6 @@ class EditmodeListener implements EventSubscriberInterface
         return array_merge(
             [
                 '/bundles/fosjsrouting/js/router.js',
-                '/bundles/pimcoreadmin/js/pimcore/functions.js',
-                '/bundles/pimcoreadmin/js/pimcore/overrides.js',
-                '/bundles/pimcoreadmin/js/pimcore/tool/milestoneslider.js',
-                '/bundles/pimcoreadmin/js/pimcore/element/tag/imagehotspotmarkereditor.js',
-                '/bundles/pimcoreadmin/js/pimcore/element/tag/imagecropper.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js',
-                '/bundles/pimcoreadmin/js/pimcore/elementservice.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/edit/dnd.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editable.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/block.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/scheduledblock.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/date.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/relation.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/relations.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/checkbox.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/image.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/input.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/link.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/select.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/snippet.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/textarea.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/numeric.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/wysiwyg.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/renderlet.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/table.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/video.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/multiselect.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/area_abstract.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/areablock.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/area.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/pdf.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/embed.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/manager.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js',
             ],
             $this->bundleManager->getEditmodeJsPaths()
         );
@@ -312,14 +274,7 @@ class EditmodeListener implements EventSubscriberInterface
 
     protected function getEditmodeStylesheets(): array
     {
-        return array_merge(
-            [
-                '/bundles/pimcoreadmin/css/icons.css',
-                '/bundles/pimcoreadmin/extjs/css/PimcoreApp-all_1.css',
-                '/bundles/pimcoreadmin/extjs/css/PimcoreApp-all_2.css',
-                '/bundles/pimcoreadmin/css/editmode.css?_dc=' . time(),
-            ],
-            $this->bundleManager->getEditmodeCssPaths()
-        );
+        return $this->bundleManager->getEditmodeCssPaths();
+
     }
 }
