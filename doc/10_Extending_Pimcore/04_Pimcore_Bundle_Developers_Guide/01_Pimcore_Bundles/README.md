@@ -1,37 +1,45 @@
+---
+title: Pimcore Bundles
+description: PimcoreBundleInterface, composer setup, and version management.
+---
+
 # Pimcore Bundles
 
-Pimcore bundles follow the same rules as normal bundles, but need to implement [Pimcore\Extension\Bundle\PimcoreBundleInterface](https://github.com/pimcore/pimcore/blob/2026.x/lib/Extension/Bundle/PimcoreBundleInterface.php)
-in order to show up in the `pimcore:bundle:list` command. This gives you the following possibilities:
+Pimcore bundles follow the same rules as standard Symfony bundles but implement
+[`PimcoreBundleInterface`](https://github.com/pimcore/pimcore/blob/2026.x/lib/Extension/Bundle/PimcoreBundleInterface.php).
+This interface adds:
 
-* The bundle shows up in the `pimcore:bundle:list` command with info, if bundle can be installed or uninstalled.
-* The bundle can be installed with `pimcore:bundle:install` command or uninstall with `pimcore:bundle:uninstall`
-  command to trigger the installation/uninstallation, for example to install/update database structure.
-* The bundle adds methods to natively register JS and CSS files to be loaded with the admin interface and in editmode.
+- Visibility in the `pimcore:bundle:list` command with install/uninstall status
+- Installation via `pimcore:bundle:install` and removal via `pimcore:bundle:uninstall`
+  to trigger database setup, migrations, and other routines
+- Methods to register JS and CSS files for Pimcore Studio and editmode
 
-To get started quickly, you can extend `Pimcore\Extension\Bundle\AbstractPimcoreBundle` which already implements all methods defined by the interface.
-
-If you need to load assets (JS or CSS) in the Admin or Editmode UI please have a look at the [loading assets in the Admin UI](../../../backlog/13_Loading_Admin_UI_Assets.md) section in the docs.
+Extend `Pimcore\Extension\Bundle\AbstractPimcoreBundle` for a ready-made implementation
+of all interface methods.
 
 ## Installer
 
-By default, a Pimcore bundle does not define any installation or update routines, but you can use the `getInstaller()` method
-to return an instance of a `Pimcore\Extension\Bundle\Installer\InstallerInterface`. If a bundle returns an installer instance,
-this installer will be used by the command `pimcore:bundle:install` to allow installation/uninstallation.
+By default, a Pimcore bundle does not define installation or update routines.
+Override the `getInstaller()` method to return a
+`Pimcore\Extension\Bundle\Installer\InstallerInterface` instance. When present,
+`pimcore:bundle:install` uses this installer for installation and uninstallation.
 
-The `install` method can be used to create database tables and do other initial tasks. The `uninstall` method should make
-sure to undo all these things. The installer is also the right place to check for requirements such as minimum Pimcore
-version or read/write permissions on the filesystem.
+The `install` method creates database tables and runs other initial tasks.
+The `uninstall` method reverses those changes. The installer is also the right
+place to check requirements such as minimum Pimcore version or filesystem permissions.
 
 Read more in [Installers](./01_Installers.md).
 
-### Composer bundles
+### Composer Bundles
 
-If you provide your bundle via composer, it won't be automatically found. To include your package directory to the list
-of scanned paths, please set the package type of your package to `pimcore-bundle`. Additionally, if you set the specific
-bundle name through the `pimcore.bundles` composer extra config no filesystem scanning will be done which will have a
-positive effect on the bundle lookup performance.
+Bundles distributed via Composer are not automatically discovered. Set the package type
+to `pimcore-bundle` to include your package in the scanned paths. Explicitly setting
+the bundle class name through the `pimcore.bundles` composer extra config avoids
+filesystem scanning and improves lookup performance.
 
-> Whenever you can, you should explicitly set the bundle class name through the extra config.
+:::note
+Always set the bundle class name explicitly through the extra config when possible.
+:::
 
 An example of a `composer.json` defining a Pimcore bundle:
 
@@ -54,13 +62,11 @@ An example of a `composer.json` defining a Pimcore bundle:
 }
 ```
 
-#### Returning the composer package version
+#### Returning the Composer Package Version
 
-Pimcore provides a `Pimcore\Extension\Bundle\Traits\PackageVersionTrait` which you can include in your bundle. The trait
-includes a `getComposerPackageName` method which will return the name defined in your `composer.json` file.
-
-If you want to change the default behavior, all you need to do is to override the `getComposerPackageName` method returning
-the name of your composer package (e.g. `company/foo-bundle`):
+Include `Pimcore\Extension\Bundle\Traits\PackageVersionTrait` in your bundle to expose
+version information from your `composer.json`. Override `getComposerPackageName()`
+to return your package name (e.g. `company/foo-bundle`):
 
 ```php
 <?php

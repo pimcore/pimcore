@@ -1,28 +1,30 @@
+---
+title: Installers
+description: Bundle installation, migrations, and SettingsStoreAwareInstaller.
+---
+
 # Installers
 
-Besides being enabled, bundles may need to execute installation tasks in order to be fully functional. This may concern
-tasks like
+Bundles may need installation tasks beyond being enabled:
 
-* creating database tables
-* creating or updating class definitions
-* importing translations
-* updating database tables or definitions after an update to a newer version
-* ...
+- Creating database tables
+- Creating or updating class definitions
+- Importing translations
+- Updating database tables or definitions after a version upgrade
 
-To give bundles full control over their install routines, Pimcore only defines a basic installer interface which must be
-implemented by your installer. The methods implemented by your installer are triggered from commands like `pimcore:bundle:install`. The basic installer
-interface can be found in [InstallerInterface](https://github.com/pimcore/pimcore/blob/2026.x/lib/Extension/Bundle/Installer/InstallerInterface.php) which
-is implemented in [AbstractInstaller](https://github.com/pimcore/pimcore/blob/2026.x/lib/Extension/Bundle/Installer/AbstractInstaller.php)
-which you can use as starting point.
+Pimcore defines a basic
+[`InstallerInterface`](https://github.com/pimcore/pimcore/blob/2026.x/lib/Extension/Bundle/Installer/InstallerInterface.php),
+implemented in
+[`AbstractInstaller`](https://github.com/pimcore/pimcore/blob/2026.x/lib/Extension/Bundle/Installer/AbstractInstaller.php).
+Commands like `pimcore:bundle:install` trigger the methods on your installer.
 
-A pimcore bundle is expected to return an installer instance in `getInstaller()`. This method can also return `null` if you
-don't need any installation functionality. In this case, actions which would be handled by an installer will not be triggered 
-by the command `pimcore:bundle:install`.
+Return an installer instance from `getInstaller()` in your bundle class. Return `null`
+if your bundle has no installation routines - `pimcore:bundle:install` then skips
+installer actions for that bundle.
 
-It's recommended to define the installer as service and to fetch it from the container from your bundle class on demand.  
-As example:
+Define the installer as a service and fetch it from the container on demand:
 
-```yml
+```yaml
 services:
     App\Installer:
         public: true
@@ -46,38 +48,36 @@ class App extends AbstractPimcoreBundle
 
 ## Migrations
 
-A common task in evolving bundles is to update an already existing/installed data structure to a newer version while also
-supporting fresh installs of your bundle. To be able to apply versioned changes (migrations), Pimcore integrates the
-[Doctrine Migrations Bundle](https://symfony.com/doc/current/bundles/DoctrineMigrationsBundle/index.html)  which
-provides a powerful migration framework.
-For details how to work with migrations, please have a look at the [Doctrine Migrations Bundle documentation](https://symfony.com/doc/current/bundles/DoctrineMigrationsBundle/index.html).
+Evolving bundles need to update existing data structures while also supporting fresh
+installs. Pimcore integrates the
+[Doctrine Migrations Bundle](https://symfony.com/doc/current/bundles/DoctrineMigrationsBundle/index.html)
+for versioned schema changes.
 
 ### Pimcore Specifics
 
-Pimcore added an additional option (`--prefix=`) to the migration commands of Doctrine, to be able to filter the migration versions
-for a specific namespace. This gives you the possibility to control which migrations should be executed or not.
-A typical use case for that would be to just run the Pimcore core migrations or just the migrations for a specific bundle.
+Pimcore adds a `--prefix=` option to Doctrine migration commands, filtering migrations
+by namespace. This lets you run only core migrations or only migrations for a specific bundle.
 
-To make sure, the migration command only executes migrations from installed Pimcore bundles, it is recommended to extend
-the bundle migrations from `Pimcore\Migrations\BundleAwareMigration` and implement the `getBundleName` method.
-This abstract class checks if the given bundle is installed and skips the migration if necessary.  
-
+To ensure migration commands only execute migrations from installed Pimcore bundles,
+extend `Pimcore\Migrations\BundleAwareMigration` and implement the `getBundleName` method.
+This abstract class checks whether the bundle is installed and skips the migration if not.
 
 #### Console Examples
 
 ```bash
-# only run migrations for the Pimcore core
-./bin/console doctrine:migrations:migrate --prefix=Pimcore\\Bundle\\CoreBundle
+# run only Pimcore core migrations
+bin/console doctrine:migrations:migrate --prefix=Pimcore\\Bundle\\CoreBundle
 
 # list migrations for the CMF bundle
-./bin/console doctrine:migrations:list --prefix=CustomerManagementFrameworkBundle\\Migrations
+bin/console doctrine:migrations:list --prefix=CustomerManagementFrameworkBundle\\Migrations
 
 # run all migrations
-./bin/console doctrine:migrations:migrate 
-```  
+bin/console doctrine:migrations:migrate
+```
 
 #### Config Examples (`config.yaml`)
-```yml
+
+```yaml
 doctrine_migrations:
     migrations_paths:
         'Pimcore\Bundle\DataHubBundle\Migrations': '@PimcoreDataHubBundle/Migrations'
@@ -87,25 +87,23 @@ doctrine_migrations:
 
 ## SettingsStore Installer
 
-The `SettingsStoreAwareInstaller` adds the following functionality to the
-default `AbstractInstaller`:
+`SettingsStoreAwareInstaller` extends `AbstractInstaller` with:
 
-- Manage installation state with [Settings Store](../../../09_Development_Tools/07_Settings_Store.md)
-  (instead of checking executed migrations).
-- Optionally mark certain migrations as migrated during install.
-- Reset migration state of migrations (if there are any) during un-install.
-
+- Installation state tracking via [Settings Store](../../../09_Development_Tools/07_Settings_Store.md)
+  (instead of checking executed migrations)
+- Optional marking of migrations as migrated during install
+- Migration state reset during uninstall
 
 ### Implementation
 
-For using the SettingsStore Installer extend from the `SettingsStoreAwareInstaller` and implement standard `install`
-and `uninstall` methods. At the end of these methods either call the corresponding parent method or call
-`$this->markInstalled()` / `$this->markUninstalled()` to make sure SettingsStore is updated properly.
+Extend `SettingsStoreAwareInstaller` and implement the `install` and `uninstall` methods.
+At the end of each method, call the corresponding parent method or call
+`$this->markInstalled()` / `$this->markUninstalled()` to update the SettingsStore.
 
-If during install migrations upto a certain migration should be marked as migrated during install without actually executing
-them, then also implement the `getLastMigrationVersionClassName` method that returns the fully qualified class name of the
-last migration that should be marked as migrated.
-This is useful, when install routine already does all the necessary things that also would be done by the migrations.
+To mark migrations up to a certain version as migrated during install (without executing
+them), implement `getLastMigrationVersionClassName()` returning the fully qualified class
+name of the last migration to mark. This is useful when the install routine already
+performs the same work the migrations would do.
 
 ```php 
 <?php
@@ -141,7 +139,7 @@ class Installer extends SettingsStoreAwareInstaller
 }
 ```
 
-```yml 
+```yaml
     Pimcore\Bundle\DummyBundle\Installer:
         public: true
         arguments:
@@ -149,25 +147,26 @@ class Installer extends SettingsStoreAwareInstaller
 ```
 
 ### Installation
-During installation of the bundle following things will happen:
-- All statements of the `install` method are executed.
-- If implemented correctly, the bundle is marked as installed in the SettingsStore.
-- If configured, all defined migrations are marked as migrated (without actually executing them).
+
+During bundle installation:
+1. The `install` method executes.
+2. The bundle is marked as installed in the SettingsStore.
+3. If configured, defined migrations are marked as migrated (without executing them).
 
 ### Uninstallation
-During uninstallation of the bundle following things will happen:
-- All statements of the `uninstall` method are executed.
-- If implemented correctly, the bundle is marked as uninstalled in the SettingsStore.
-- Execution state of all bundle migrations that were already migrated will be reset (without actually executing them).
 
+During bundle uninstallation:
+1. The `uninstall` method executes.
+2. The bundle is marked as uninstalled in the SettingsStore.
+3. Migration state for all previously migrated bundle migrations resets
+   (without executing them).
 
 ### Migrations
-Working with migrations is the same as described in the Migration section above.
 
----
+Working with migrations follows the same process described in the Migrations section above.
 
-For further details please see
+## Further Reading
 
-* [Migrations](../../../09_Development_Tools/08_Migrations.md)
-* [Doctrine Migrations](https://www.doctrine-project.org/projects/migrations.html)
-* [Doctrine Migrations Bundle](https://symfony.com/doc/master/bundles/DoctrineMigrationsBundle/index.html)
+- [Migrations](../../../09_Development_Tools/08_Migrations.md)
+- [Doctrine Migrations](https://www.doctrine-project.org/projects/migrations.html)
+- [Doctrine Migrations Bundle](https://symfony.com/doc/master/bundles/DoctrineMigrationsBundle/index.html)

@@ -1,16 +1,22 @@
+---
+title: Bundle Collection
+description: Register bundles with priorities, environments, and dependencies.
+---
+
 # Bundle Collection
 
-The `BundleCollection` is a container which is used to register every used bundle. As Pimcore gathers bundles from multiple 
-sources - registered via code in `App\Kernel` and registered through `config/bundles.php` config, it makes sense to have 
-a unified API how bundles can be registered. 
+The `BundleCollection` provides a unified API for registering bundles. Pimcore gathers
+bundles from multiple sources (code in `App\Kernel` and `config/bundles.php`), so a
+single collection manages registration, priorities, and environment restrictions.
 
-While Symfony's standard edition uses a `registerBundles` method building an array of bundles to load, Pimcore expects you
-to register your bundles in the `registerBundlesToCollection()` method and to use the bundle collection to add bundles.
+Register your bundles in the `registerBundlesToCollection()` method on your Kernel class.
 
-> Bundles without a priority are registered with a default priority of 0. You can set a negative value if you need to set
-  a priority lower than default.
+:::note
+Bundles without a priority are registered with a default priority of 0.
+Set a negative value if you need a priority lower than default.
+:::
 
-Below are a couple of examples how the bundle collection can be used:
+Usage examples:
 
 ```php
 <?php
@@ -55,10 +61,9 @@ class Kernel extends PimcoreKernel
 
 ## Bundle Dependencies
 
-If a bundle depends on other bundles, e.g. because it uses features provided by a third-party bundle you need to
-make sure that third-party bundle is loaded together with your bundle. You can either instruct your users to manually
-load the bundles your bundle depends on in their `App\Kernel` or you can implement the [`DependentBundleInterface`](https://github.com/pimcore/pimcore/blob/2026.x/lib/HttpKernel/Bundle/DependentBundleInterface.php)
-and define a list of bundles which should be loaded together with your bundle:
+When a bundle depends on other bundles, implement
+[`DependentBundleInterface`](https://github.com/pimcore/pimcore/blob/2026.x/lib/HttpKernel/Bundle/DependentBundleInterface.php)
+to automatically register dependencies instead of requiring users to add them manually:
 
 ```php
 <?php
@@ -79,14 +84,11 @@ class CustomBundle extends Bundle implements DependentBundleInterface
 }
 ```
 
-**Important:** the `registerDependentBundles` method will be called as soon as your bundle is added to the collection. Even
-if your bundle has environment restrictions, the bundles added to the collection from `registerDependentBundles` will still
-be loaded. If you need to restrict the environments where the dependencies should be loaded, restrict them with the `env`
-argument to `addBundle()`. For performance reasons, you should add the bundle as lazy by adding a class name as string or
-by using `addItem` directly and passing a `LazyLoadedItem` instance. This ensures that the bundle instance is only built
-when it is really needed. Example:  
-
-As example:
+**Important:** `registerDependentBundles` is called as soon as your bundle is added
+to the collection. Even if your bundle has environment restrictions, dependencies
+registered from `registerDependentBundles` still load. Restrict dependency environments
+with the `env` argument to `addBundle()`. For performance, add dependencies as lazy
+(class name string or `LazyLoadedItem`) so the instance is only built when needed:
 
 ```php
 <?php
@@ -107,12 +109,12 @@ class CustomBundle extends Bundle implements DependentBundleInterface
 }
 ```
 
-## Overriding collection items
+## Overriding Collection Items
 
-In case bundle defines a dependency which has the wrong priority or environment restrictions for your project you can
-override the dependency definition by adding the item to the collection **before** it is loaded as dependency. The dependency
-is simply ignored and your item will be used. Let's assume `CustomBundle` defines `FooBundle` as dependency and loads it 
-with a priority of 10, but we need to set the priority to 25:
+Override a dependency's priority or environment restrictions by adding the item to the
+collection **before** it is loaded as a dependency. The duplicate registration is ignored,
+and your definition takes precedence. For example, if `CustomBundle` loads `FooBundle`
+with priority 10, but you need priority 25:
 
 ```php
 <?php

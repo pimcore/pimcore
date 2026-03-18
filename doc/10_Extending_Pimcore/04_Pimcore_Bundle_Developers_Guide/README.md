@@ -1,104 +1,111 @@
+---
+title: Bundle Developer's Guide
+description: Build reusable Pimcore bundles with installers, config, and services.
+---
+
 # Bundle Developer's Guide
 
-Since Pimcore utilizes the powerful Symfony Bundle system, let us refer to the [Symfony Bundle Documentation](https://symfony.com/doc/current/bundles.html) on how to get started with your custom bundles. A bundle can do anything - in fact, core Pimcore functionalities like the admin interface are implemented as bundles. From within your bundle, you have all possibilities to extend the system, from defining new services or routes to hook into the event system or provide controllers and views.
+Pimcore uses the Symfony bundle system. A bundle can define services, routes,
+controllers, views, and hook into the event system. Core Pimcore functionalities
+are themselves implemented as bundles.
 
-
-## Bundle Directory Structure
-
-See [Bundle Directory Structure](https://symfony.com/doc/current/bundles.html#bundle-directory-structure) for a standard bundle directory layout.
-
+For Symfony bundle fundamentals, see the
+[Symfony Bundle Documentation](https://symfony.com/doc/current/bundles.html),
+including the recommended
+[bundle directory structure](https://symfony.com/doc/current/bundles.html#bundle-directory-structure).
 
 ## Pimcore Bundles
 
-There is a special kind of bundle implementing `Pimcore\Extension\Bundle\PimcoreBundleInterface` which gives you additional
-possibilities. These bundles provide a similar API as plugins did in previous versions:
+Pimcore adds the `PimcoreBundleInterface` on top of standard Symfony bundles,
+providing installation support and admin UI integration:
 
-* The bundle shows up in the `pimcore:bundle:list` command with info if the bundle can be installed or uninstalled.
-* The bundle can be installed with `pimcore:bundle:install` or uninstalled with `pimcore:bundle:uninstall` to trigger the installation/uninstallation (e.g. to install/update database structure).
-* The bundle adds methods to natively register JS and CSS files to be loaded with the admin interface and in edit mode. 
+- The bundle shows up in `pimcore:bundle:list` with its install/uninstall status
+- Install with `pimcore:bundle:install`, uninstall with `pimcore:bundle:uninstall`
+  to trigger database setup, migrations, and other installation routines
+- Register JS and CSS files for Pimcore Studio and editmode
 
-See the [Pimcore Bundles](./01_Pimcore_Bundles/README.md) documentation to get started with Pimcore bundles.
+See [Pimcore Bundles](./01_Pimcore_Bundles/README.md) for the interface details
+and composer configuration.
 
-### Generating Pimcore Bundles
+## Recommended Reading Order
 
-With the [Pimcore Bundle Generator](https://github.com/pimcore/bundle-generator), we provide a tool for generating bundle skeletons. You can install and activate this bundle in your development instance and simplify starting the Pimcore bundle development.  
-
-```
-# generate bundle interactively
-$ bin/console pimcore:generate:bundle
-
-# generate bundle with a given name and don't ask questions
-$ bin/console pimcore:generate:bundle --namespace=Acme/FooBundle --no-interaction
-
-```
+1. **[Pimcore Bundles](./01_Pimcore_Bundles/README.md)** -
+   `PimcoreBundleInterface`, composer setup, and version management
+2. **[Bundle Collection](./04_Bundle_Collection.md)** -
+   register bundles with priorities, environments, and dependencies
+3. **[Loading Service Definitions](./02_Loading_Service_Definitions.md)** -
+   create DI extensions to load service configs from your bundle
+4. **[Auto Loading Config and Routing](./03_Auto_Loading_Config_and_Routing.md)** -
+   automatic config and routing loading from bundle directories
+5. **[Installers](./01_Pimcore_Bundles/01_Installers.md)** -
+   installation, uninstallation, and database migrations
 
 ## Common Tasks
 
-Below is a list of common tasks and how to achieve them inside your bundles. 
-
 ### Service Configuration
 
-If you want to provide custom services from within your bundle, you must create an `Extension` to load your service definitions. This topic is covered in detail in the [Extensions Documentation](https://symfony.com/doc/current/bundles/extension.html).
-
-You can find an example of how to create an extension for your bundles in [Loading Service Definitions](./02_Loading_Service_Definitions.md).
-
+Load custom services from your bundle by creating a DI extension.
+See the [Symfony Extensions Documentation](https://symfony.com/doc/current/bundles/extension.html)
+and the Pimcore-specific guide at [Loading Service Definitions](./02_Loading_Service_Definitions.md).
 
 ### Auto-Loading Config and Routing Definitions
 
-Bundles can provide config and routing definitions in `Resources/config/pimcore` which will be automatically loaded with the bundle. See [Auto loading config and routing definitions](./03_Auto_Loading_Config_and_Routing.md) for more information.
-
+Bundles provide config and routing definitions in `config/pimcore` (or `Resources/config/pimcore`)
+for automatic loading. See
+[Auto Loading Config and Routing](./03_Auto_Loading_Config_and_Routing.md).
 
 ### i18n / Translations
 
-See the [Symfony Translation Component Documentation](https://symfony.com/doc/current/translation.html#translation-resource-file-names-and-locations) for locations that will be automatically searched for translation files.
+Store translation files in your bundle's `Resources/translations/` directory
+in the format `locale.loader` (or `domain.locale.loader` for a specific translation domain).
 
-For bundles, translations should be stored in the `Resources/translations/` directory of the bundle in the format `locale.loader` (or `domain.locale.loader` if you want to handle a specific translation domain). In most cases, this will be something like `Resources/translations/en.yml`, which resolves to the default `messages` translation domain.
+Examples: `admin.en.yml`, `messages.en.yml`
 
-Example: admin.en.yml or messages.en.yml
+See the Symfony
+[Translation Component Documentation](https://symfony.com/doc/current/translation.html#translation-resource-file-names-and-locations)
+for all supported locations and formats.
 
-#### Translations Domain
-A translation domain is only considered valid when it is registered as follows:
+#### Translation Domains
+
+Register custom translation domains in your configuration:
+
 ```yaml
 pimcore:
     translations:
         domains:
             - site_1
             - site_2
-````
+```
 
-Then only translations stored in a dedicated domain table e.g. `translations_DOMAIN` are used by the Pimcore translation service.
+Translations stored in a dedicated domain table (e.g. `translations_DOMAIN`)
+are then used by the Pimcore translation service.
 
 ### Security / Authentication
 
-You can fully use the [Symfony Security Component](https://symfony.com/doc/current/security.html) by auto-loading
-the security configuration as documented above. The best practice is to define the security configuration in a dedicated `security.yaml`, which can be imported from your bundle's `config.yaml`.
+Use the [Symfony Security Component](https://symfony.com/doc/current/security.html)
+by auto-loading security configuration via the
+[config auto-loading mechanism](./03_Auto_Loading_Config_and_Routing.md).
+Define security rules in a dedicated `security.yaml` imported from your bundle's
+`config.yaml`.
 
-For further details on security please refer to [Security](../../09_Development_Tools/03_Security_and_Authentication/README.md).
-
+For further details, see
+[Security](../../09_Development_Tools/03_Security_and_Authentication/README.md).
 
 ### Events
 
-To hook into core functions, you can attach to any event provided by the [Pimcore event manager](../01_Events/README.md).
-Custom listeners can be registered from your bundle by defining an event listener service. Further reading:
- 
-* [Symfony Event Dispatcher](https://symfony.com/doc/current/event_dispatcher.html) for documentation on how to create event listeners and how to register them as a service.
-* [Pimcore Event Manager](../01_Events/README.md) for a list of available events.
+Hook into core functions by attaching to Pimcore events. Define event listener services
+in your bundle and register them with the Symfony EventDispatcher.
 
+- [Symfony Event Dispatcher](https://symfony.com/doc/current/event_dispatcher.html) -
+  creating and registering event listeners
+- [Pimcore Events](../01_Events/README.md) - available Pimcore events
 
 ### Local Storage for Your Bundle
 
-Sometimes a bundle needs to save files (e.g. generated files or cached data, ...). If the data is temporary and should be removed when the Symfony cache is cleared, please use a directory inside the cache directory. The core cache directory can
-be fetched from the `Kernel` and is registered as a parameter on the container:
+For temporary data removed on Symfony cache clear, use the cache directory:
 
-* `$kernel->getCacheDir()`
-* `%kernel.cache_dir%` parameter
+- `$kernel->getCacheDir()`
+- `%kernel.cache_dir%` parameter
 
-If you need persistent storage, create a unique directory in `PIMCORE_PRIVATE_VAR`, e.g. `var/bundles/YourBundleName`.
-
-### Extending the Admin UI
-
-The following section explains how to design and structure bundles and how to register for and utilize the events provided in the PHP backend and the Ext JS frontend: [Event_Listener_UI](../../backlog/06_Event_Listener_UI.md)
-
-### Adding Document Editables
-
-See [Adding Document Editables](../03_Custom_Extension_Guides/03_Adding_Document_Editables.md)
+For persistent storage, create a unique directory in `PIMCORE_PRIVATE_VAR`,
+e.g. `var/bundles/YourBundleName`.

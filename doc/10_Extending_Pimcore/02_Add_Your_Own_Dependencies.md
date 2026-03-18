@@ -1,29 +1,40 @@
+---
+title: Add Your Own Dependencies
+description: Install external packages and register third-party bundles.
+---
+
 # Add Your Own Dependencies and Packages
 
-Pimcore manages itself all dependencies using composer and therefore you can add your own dependencies by using 
- standard composer functionalities. 
+Pimcore uses Composer for dependency management.
+Add external packages with standard Composer commands.
 
 ## Basic Example
-Use composer in your project root directory, eg. 
+
+Run Composer in your project root directory:
+
 ```bash
 composer require mtdowling/cron-expression
 ```
 
-## Third party bundles
+## Third-Party Bundles
 
-You can install third party bundles via composer as shown above (as Pimcore is a standard Symfony application, you should
-be able to use any third-party Symfony bundle).
+Install third-party bundles via Composer. Pimcore is a standard Symfony
+application, so any Symfony bundle should work.
 
-To load a bundle with the application, it must first be enabled in `config/bundles.php` (see [bundles documentation](https://symfony.com/doc/current/bundles.html)).
-As Pimcore defines a `registerBundles` method base Kernel class, which is returns a list of default bundles and priority can be important for config auto loading, the
-Pimcore Kernel exposes a `registerBundlesToCollection`  method which allows to add bundles to a `BundleCollection` with
-an optional priority (higher priority is loaded first) and a list of environments to handle (e.g. load only in `dev`
-environment).
+To load a bundle with the application, enable it in `config/bundles.php`
+(see the Symfony [bundles documentation](https://symfony.com/doc/current/bundles.html)).
 
-> Bundles without a priority are registered with a default priority of 0. You can set a negative value if you need to set
-  a priority lower than default.
+The Pimcore Kernel's base class defines a `registerBundles` method that returns default
+bundles. Because bundle load order can matter for config auto-loading, the Kernel exposes
+a `registerBundlesToCollection` method. This method accepts a `BundleCollection` with
+optional priority (higher loads first) and environment restrictions (e.g. load only in `dev`).
 
-As an example, register a third party bundle on the collection:
+:::note
+Bundles without a priority are registered with a default priority of 0.
+Set a negative value if you need a priority lower than default.
+:::
+
+Register a third-party bundle on the collection:
 
 ```php
 <?php
@@ -51,12 +62,14 @@ class Kernel extends PimcoreKernel
 }
 ```
 
-You can read more about the bundle collection and handling of dependencies in [Bundle Collection](./04_Pimcore_Bundle_Developers_Guide/04_Bundle_Collection.md).
+For more details on priorities, environments, and dependency handling, see
+[Bundle Collection](./04_Pimcore_Bundle_Developers_Guide/04_Bundle_Collection.md).
 
 ### Pimcore Bundles
 
-For more information see [Pimcore Bundles](./04_Pimcore_Bundle_Developers_Guide/01_Pimcore_Bundles/README.md).
+Pimcore bundles extend the standard bundle concept with installation support and
+Pimcore Studio integration. Register them in `config/bundles.php` or manually via the
+`BundleCollection` as shown above. Use `pimcore:bundle:*` commands to list bundles
+or interact with the bundle installer (install/uninstall).
 
-Just like third party bundles, Pimcore bundles can be registered on the kernel by enabling them in the `config/bundles.php`
-or manually by adding them via code as shown above. You can use `pimcore:bundle:*` commands
-to list or interact with the bundle installer (install/uninstall/update).
+For more information, see [Pimcore Bundles](./04_Pimcore_Bundle_Developers_Guide/01_Pimcore_Bundles/README.md).
