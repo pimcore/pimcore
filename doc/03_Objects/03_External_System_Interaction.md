@@ -11,9 +11,9 @@ with only a few lines of code.
 
 Therefore the recommended way of interacting with external systems is using the PHP API of Pimcore and create a 
 interaction layer with your custom PHP code. This interaction layer can be within a [Pimcore bundle](../10_Extending_Pimcore/04_Pimcore_Bundle_Developers_Guide/README.md), a library component,
- a custom web service, a [CLI Command](../08_Development_Details/10_CLI_and_Pimcore_Console.md) or just a simple CLI script - you have the full flexibility.
+ a custom web service, a [CLI Command](../08_Development_Details/09_CLI_and_Pimcore_Console.md) or just a simple CLI script - you have the full flexibility.
 
-The following examples use plain CLI scripts. For production use, prefer [CLI Commands](../08_Development_Details/10_CLI_and_Pimcore_Console.md).
+The following examples use plain CLI scripts. For production use, prefer [CLI Commands](../08_Development_Details/09_CLI_and_Pimcore_Console.md).
 
 ## Import
 The following example indicates the creation of a new object of the class `myclass`. 
@@ -62,7 +62,7 @@ class AwesomeCommand extends AbstractCommand
 ```
 
 With a few lines of code, implement importer scripts to populate data objects. See
-Pimcore\Console for integrating custom CLI scripts into the [Pimcore console](../08_Development_Details/10_CLI_and_Pimcore_Console.md).
+Pimcore\Console for integrating custom CLI scripts into the [Pimcore console](../08_Development_Details/09_CLI_and_Pimcore_Console.md).
 
 ## Export
 Export data objects programmatically, similar to imports, by using object listings with a few lines of code.

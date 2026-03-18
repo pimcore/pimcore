@@ -1,5 +1,10 @@
+---
+title: Runtime Cache
+description: Handle cached API results and force-reload data from the database.
+---
+
 # Working With Runtime Cache
-Pimcore heavily uses runtime cache to cache API results for performance reasons. However, it is very crucial to understand that how to deal with cached results so that correct data should utilized from the API. Let's take few examples to understand similar situations:
+Pimcore uses a runtime cache extensively to store API results for performance. Understanding how to deal with cached results is essential to ensure your code always works with the correct data. The following examples illustrate common scenarios:
 
 ```php
 //Delete item from the list

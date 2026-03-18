@@ -1,3 +1,8 @@
+---
+title: Session Storage
+description: Choose a session storage backend for performance and scalability.
+---
+
 # Where To Store Sessions
 
 Pimcore uses the Symfony session component to handle sessions. By default, Symfony stores sessions in the filesystem.

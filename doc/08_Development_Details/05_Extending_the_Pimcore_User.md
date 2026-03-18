@@ -1,16 +1,20 @@
+---
+title: Extending the Pimcore User
+description: Associate Pimcore users with data objects for additional user information.
+---
+
 # Extending the Pimcore User
 
-Pimcore does not allow to extend the user directly. Instead it allows to create a relation 
-between a user and one or more Pimcore objects. This can be used to add information to a user 
-or to associate one or more objects directly with a system user. 
+Pimcore does not support extending the user directly. Instead it allows creating a relation
+between a user and one or more Pimcore objects. This can add information to a user
+or associate one or more objects directly with a system user.
 
-This article presents an example where the `member` object is associated with a Pimcore user. 
-The screenshots show how this can be achieved through the Pimcore backend UI. In the bottom
-there is also an example of how the user and member objects can be created and associated
-with each other programmatically.
+This article presents an example where the `member` object is associated with a Pimcore user.
+The screenshots show how to achieve this through Pimcore Studio. Further below
+is an example of how to create and associate user and member objects programmatically.
 
-Regardless of the creation method of users and objects, in the first step the member class 
-has to be defined in *Settings* > *Object* > *Classes*:
+Regardless of the creation method, define the member class first in
+the class editor in Pimcore Studio (mega menu: *Data Objects* > *Data Object Classes*):
 
 ![Member Class Config](../img/object-user1.png)
 
@@ -27,12 +31,12 @@ Pimcore users.
 
 In this example the user "jondoe" was selected.
 
-In the *Settings* > *Users* panel this relation is portrayed in the third tab of each 
-user which is called `This user is referenced in the following objects:`
+In Pimcore Studio (mega menu: *User Management* > *Users*) this relation appears in the third tab of each
+user, labeled `This user is referenced in the following objects:`
 
 ![User Object Relations](../img/object-user3.png)
 
-Objects and users are not necessarily always created through user input in Pimcore backend.
+Objects and users are not necessarily always created through user input in Pimcore Studio.
 Sometimes these objects are created programmatically in the context of importers. The 
 following code snippet shows how to first create the user and then the member object with 
 the relation to the previously created user:

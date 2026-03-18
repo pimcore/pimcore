@@ -1,3 +1,8 @@
+---
+title: Application Testing
+description: Set up PHPUnit and Codeception for testing Pimcore applications.
+---
+
 # Application Testing
 
 Pimcore applications can be tested with any PHP testing solution, but this page demonstrates 2 viable approaches:
@@ -17,7 +22,7 @@ bootstrap file to ensure the Pimcore startup process has everything it needs. St
 to your project:
 
 ```bash
-$ composer require --dev 'symfony/phpunit-bridge:*'
+composer require --dev 'symfony/phpunit-bridge:*'
 ```
 
 With `symfony/phpunit-bridge` comes `vendor/bin/simple-phpunit` which uses its own PHPUnit version. For `simple-phpunit` to use the right version, you need to exclude `phpunit` from the autoloader's classmap and afterwards update the autoloader with `composer dump-autoload -o`
@@ -112,7 +117,7 @@ This is everything you need to write simple unit tests which do not depend on Pi
 with Symfony's PHPUnit wrapper:
 
 ```
-$ vendor/bin/simple-phpunit
+vendor/bin/simple-phpunit
 
 PHPUnit 7.4.5 by Sebastian Bergmann and contributors.
 
@@ -235,7 +240,7 @@ tests which make changes to the database you'll probably want to run them on a d
 set. The example below just passes the DB connection as env variable:
 
 ```
-$ PIMCORE_TEST_DB_DSN="mysql://username:password@localhost/pimcore" vendor/bin/simple-phpunit
+PIMCORE_TEST_DB_DSN="mysql://username:password@localhost/pimcore" vendor/bin/simple-phpunit
 PHPUnit 7.4.5 by Sebastian Bergmann and contributors.
 
 Testing default
@@ -310,8 +315,8 @@ You can create any amount of test suites in Codeception. To match the PHPUnit ex
 structure in `tests/`:
 
 ```bash
-$ vendor/bin/codecept -c tests/codeception.dist.yml generate:suite unit
-$ vendor/bin/codecept -c tests/codeception.dist.yml generate:suite functional
+vendor/bin/codecept -c tests/codeception.dist.yml generate:suite unit
+vendor/bin/codecept -c tests/codeception.dist.yml generate:suite functional
 ```
 
 The config file above references a `_bootstrap.php` file. Create `tests/_bootstrap.php` with the following contents to make
@@ -477,7 +482,7 @@ As in the PHPUnit setup, the test setup expects the database connection as env v
 by configuring the DB DSN before running codeception:
 
 ```
-$ PIMCORE_TEST_DB_DSN="mysql://username:password@localhost/pimcore" vendor/bin/codecept run -c tests/codeception.dist.yml
+PIMCORE_TEST_DB_DSN="mysql://username:password@localhost/pimcore" vendor/bin/codecept run -c tests/codeception.dist.yml
 
 Codeception PHP Testing Framework v2.3.8
 Powered by PHPUnit 7.4.5 by Sebastian Bergmann and contributors.

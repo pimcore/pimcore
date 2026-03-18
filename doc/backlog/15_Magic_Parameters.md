@@ -4,18 +4,18 @@ Pimcore supports some *magic parameters* which can be added as parameter to ever
 
 ### pimcore_nocache
 Setting this parameter disables every kind of cache, eg.: `http://www.example.com/my/page?pimcore_nocache`  
-This parameter only works if [`DEBUG MODE`](../08_Development_Details/02_System_Settings.md) is on.
+This parameter only works if [`DEBUG MODE`](../08_Development_Details/01_Configuration/02_System_Settings.md) is on.
 
 ### pimcore_outputfilters_disabled
 Disables all output filters, incl. the output-cache. But this doesn't disable the internal object cache, 
 eg.: `http://www.example.com/my/page?pimcore_outputfilters_disabled=1`  
-This parameter only works if [`DEBUG MODE`](../08_Development_Details/02_System_Settings.md) is on.
+This parameter only works if [`DEBUG MODE`](../08_Development_Details/01_Configuration/02_System_Settings.md) is on.
 
 ### unminified_js
 
-Disables the JavaScript minifier. Useful for ExtJS debugging. Disabled by default if in [`DEV MODE`](../08_Development_Details/02_System_Settings.md). 
+Disables the JavaScript minifier. Useful for ExtJS debugging. Disabled by default if in [`DEV MODE`](../08_Development_Details/01_Configuration/02_System_Settings.md). 
 
-This parameter only works if [`DEBUG MODE`](../08_Development_Details/02_System_Settings.md) is on.
+This parameter only works if [`DEBUG MODE`](../08_Development_Details/01_Configuration/02_System_Settings.md) is on.
 
 ### pimcore_disable_host_redirect
 Disables the "redirect to main domain" feature. This is especially useful when using Pimcore behind 

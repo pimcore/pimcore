@@ -73,7 +73,7 @@ As an alternative also class export to json-files and the class import commands 
 
 ## Pimcore Console
 
-The [Pimcore Console](../08_Development_Details/10_CLI_and_Pimcore_Console.md) provides several useful tasks for deployment.
+The [Pimcore Console](../08_Development_Details/09_CLI_and_Pimcore_Console.md) provides several useful tasks for deployment.
  These tasks can be integrated into custom deployment workflows and tools. One example for them would be the Pimcore
  class definitions as described above.
 
@@ -99,7 +99,7 @@ To get a list of all available commands use `./bin/console list`.
 | pimcore:thumbnails:optimize-images        | Optimize file size of all images in `public/var/tmp`                                                                                 |
 | pimcore:thumbnails:video                  | Generate video thumbnails, useful to pre-generate thumbnails in the background. Use `--processes` option for parallel processing. |
 
-Find more about the Pimcore Console on the [dedicated page](../08_Development_Details/10_CLI_and_Pimcore_Console.md).
+Find more about the Pimcore Console on the [dedicated page](../08_Development_Details/09_CLI_and_Pimcore_Console.md).
 
 
 ## Content migration

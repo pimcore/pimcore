@@ -1,8 +1,13 @@
+---
+title: Preview Scheduled Content
+description: Preview content at any given time using the OutputTimestampResolver service.
+---
+
 # Preview Scheduled Content
 
-In Document preview tab Pimcore can provide a time slider to preview content at any given time. 
-To take advantage of this feature for you custom implementations (e.g. custom controller actions), 
-use the `OutputTimestampResolver` service and get the timestamp from it instead of using the current timestamp. 
+The Document preview tab provides a time slider to preview content at any given time.
+To use this feature in custom implementations (e.g. custom controller actions),
+use the `OutputTimestampResolver` service to get the timestamp instead of using the current timestamp. 
 
 ```php
 

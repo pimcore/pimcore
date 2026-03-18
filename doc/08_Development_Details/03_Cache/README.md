@@ -1,3 +1,8 @@
+---
+title: Cache
+description: Element cache, full page cache, and cache configuration with Redis or Doctrine.
+---
+
 # Cache
 
 Pimcore uses caches extensively for different types of data. The primary cache is a pure object 
@@ -8,8 +13,8 @@ a referenced object changes.
 The second cache is the output cache, which you can use either as pure page cache (configurable 
 in system settings), or as in-template cache (see more at [template extensions](../../01_Documents/02_Templates/02_Twig_Extensions/README.md)).
 
-The third cache is used for add-ons like the glossary, translations, database schemes, and so on. 
-The behavior of the caches is controlled by the add-on itself.
+The third cache is used for subsystems like translations, database schemes, and bundle-specific data.
+Each subsystem controls its own cache behavior.
 
 All of the described caches are utilizing the `Pimcore\Cache` interface to store their objects. `Pimcore\Cache` utilizes
 a `Pimcore\Cache\Core\CoreCacheHandler` to apply Pimcore's caching logic on top of a [`PSR-6`](http://www.php-fig.org/psr/psr-6/)
@@ -110,7 +115,7 @@ if(!$data = \Pimcore\Cache::load($cacheKey)) {
 
 #### Disable the Cache for a Single Request
 Sometimes it's useful to deactivate the cache for testing purposes for a single request. You 
-can do this by passing the URL parameter `pimcore_nocache=true`. Note: This is only possible if you are in [DEBUG MODE](../05_Debugging.md#debug-mode)
+can do this by passing the URL parameter `pimcore_nocache=true`. Note: This is only possible if you are in [DEBUG MODE](../04_Debugging.md#debug-mode)
 
 For example: `http://www.pimcore.org/download?pimcore_nocache=true` 
 

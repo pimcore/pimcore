@@ -1,3 +1,8 @@
+---
+title: Full Page Cache
+description: Configure and control the output cache for frontend responses.
+---
+
 # Full Page Cache (Output Cache)
 
 ## Overview
@@ -6,7 +11,7 @@
 ## Configure the Full Page Cache
 
 > **Please Note**  
-> The full page cache is disabled by default if you're logged into the admin interface or in the case
+> The full page cache is disabled by default if you're logged into Pimcore Studio or in the case
 > the debug mode ('APP_ENV=dev') is on.
 
 The full page cache only works with GET request, it takes the whole response (only for the frontend)
@@ -40,9 +45,9 @@ pimcore:
 | Option | Description |
 | ------ | ----------- |
 | Enable | Set to true to enable to full page cache. |
-| Lifetime | You can optionally define a lifetime (in seconds) for the full page cache. If you don't, the cache is evicted automatically when there is a modification in the Pimcore Backend UI. If there is a lifetime the item stays in the cache even when it is changed until the TTL is over. The lifetime is useful if you have embedded some items which are not directly in the CMS, like RSS feeds or external API content. It is also highly recommended to specify a lifetime on high traffic websites so that the frontend (caches) isn't affected by changes in the admin-UI. Otherwise on every change in the admin-UI the whole output-cache is flushed, which can have drastic effects on server performance. |
+| Lifetime | You can optionally define a lifetime (in seconds) for the full page cache. If you don't, the cache is evicted automatically when there is a modification in the Pimcore Studio. If there is a lifetime the item stays in the cache even when it is changed until the TTL is over. The lifetime is useful if you have embedded some items which are not directly in the CMS, like RSS feeds or external API content. It is also highly recommended to specify a lifetime on high traffic websites so that the frontend (caches) isn't affected by changes in the Pimcore Studio. Otherwise on every change in the Pimcore Studio the whole output-cache is flushed, which can have drastic effects on server performance. |
 | Exclude Patterns | You can define some exclude patterns where the cache doesn't affect. The patterns have to be valid regular expressions (including delimiters) and different patterns should be separated by `,` |
-| Disable Cookie | You can define an additional cookie-name which disables the cache. The cookie "pimcore_admin_sid" (used for the Pimcore admin UI) ALWAYS disables the output-cache to make editor's life easier ;-) 
+| Disable Cookie | You can define an additional cookie-name which disables the cache. The cookie "pimcore_admin_sid" (used for Pimcore Studio) always disables the output-cache so that editors see live content. | 
 
 
 ## Disable the Full Page Cache in your Code

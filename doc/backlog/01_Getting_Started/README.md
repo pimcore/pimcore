@@ -17,6 +17,6 @@ This section provides a quick getting started tutorial for Pimcore and covers th
 4. [Advanced Installation Topics](./03_Advanced_Installation_Topics/README.md):
    - [Symfony Messenger and How to Handle Failed Jobs](./03_Advanced_Installation_Topics/01_Symfony_Messenger.md)
 4. [ Directory Structure of Pimcore](./04_Directory_Structure.md)
-5. [Configuration](../../08_Development_Details/01_Configuration.md)
+5. [Configuration](../../08_Development_Details/01_Configuration/README.md)
 6. [Architecture Overview](./06_Architecture_Overview.md)
 7. [Creating your First Project](./07_Create_a_First_Project.md)

@@ -1,3 +1,8 @@
+---
+title: Core Tests
+description: Run and extend Pimcore's core test suite with Docker and Codeception.
+---
+
 # Core Testing
 
 Pimcore uses [Codeception](https://codeception.com/) for testing its core features. 

@@ -1,3 +1,8 @@
+---
+title: Working with Sessions
+description: Symfony session handling and custom session bags in Pimcore.
+---
+
 # Working With Sessions
 
 If you need sessions, please use the native session handling provided by Symfony (configured through the `framework.session` config). 
@@ -11,9 +16,11 @@ In case you need to add a custom session bag for your bundle or application, the
  
 namespace TestBundle\EventListener;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
- 
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
+
 class SessionBagListener implements EventSubscriberInterface
 {
     public static function getSubscribedEvents(): array
@@ -64,4 +71,5 @@ if ($request->hasSession()) {
 Symfony framework session is configured by default, so you don't need to configure the session in your `config.yaml`.
 
 
-Admin sessions `Pimcore\Tool\Session::getReadonly()` returns an `AttributeBagInterface`.
+For read-only access to Pimcore Studio sessions, use `Pimcore\Tool\Session::getReadonly()`, which returns
+an `AttributeBagInterface`.

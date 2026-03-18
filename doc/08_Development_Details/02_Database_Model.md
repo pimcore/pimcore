@@ -1,17 +1,20 @@
+---
+title: Database Model
+description: Default database tables and dynamically created object tables in Pimcore.
+---
+
 # Database Model
 
-Pimcore tries to keep a clean and optimized database model for managing the data. Nevertheless,
-there are quite a lot of tables around and finding the correct data might be a bit challenging at
-the beginning. 
+Pimcore maintains an optimized database model. The number of tables can make finding the right data
+challenging at first.
 
-Basically, there are two types of tables
-* Default tables which are created during install - for all sorts of data like assets, documents
-logs, versions, ... 
-* Dynamically created tables which are created during object data model configuration - mainly for all object related
-data. 
+There are two types of tables:
+
+* **Default tables** created during installation, covering assets, documents, logs, versions, and more.
+* **Dynamically created tables** generated during object data model configuration, primarily for object-related data.
 
 
-# Default Tables 
+## Default Tables
 These tables are created during Pimcore install and are always the same. 
 
 | Table                                   | Description                                                                                                                                                                                                             |
@@ -26,7 +29,6 @@ These tables are created during Pimcore install and are always the same.
 | classificationstore_keys                | Keys of Classification Store                                                                                                                                                                                            |
 | classificationstore_relations           | Relation Group - Key for Classification Store                                                                                                                                                                           |
 | classificationstore_stores              | Stores of Classification Store                                                                                                                                                                                          |
-| custom_layouts                          | Definition of the `custom layouts` for object classes                                                                                                                                                                   |
 | dependencies                            | Stores dependencies between elements such as objects, assets, documents                                                                                                                                                 |
 | documents                               | List of all documents, folders, links, hardlinks, emails and snippets of the document area with meta- and config-data, relations                                                                                        |
 | documents_editables                     | Editables of documents (data), in a serialized form                                                                                                                                                                     |
@@ -37,12 +39,10 @@ These tables are created during Pimcore install and are always the same.
 | documents_printpage                     | Extra config data                                                                                                                                                                                                       |
 | documents_snippet                       | Extra config data                                                                                                                                                                                                       |
 | documents_translations                  | Relation between same documents for different languages                                                                                                                                                                 |
-| edit_lock                               | Tracks which user opened which resource in the backend                                                                                                                                                               |
+| edit_lock                               | Tracks which user opened which resource in Pimcore Studio                                                                                                                                                            |
 | element_workflow_state                  | Keeps track of workflow state for all elements                                                                                                                                                                          |
 | email_blocklist                         | Blocklist for eMail-addresses                                                                                                                                                                                           
 | email_log                               | Log for sent emails                                                                                                                                                                                                     |
-| glossary                                | Words to auto-link in texts. See [Glossary](../backlog/21_Glossary.md)                                                                                                                                    |
-| http_error_log                          | HTTP error log                                                                                                                                                                                                          |
 | lock_keys                               | Store for Locking functionality                                                                                                                                                                                         |
 | notes                                   | [Notes](../05_Content_Management_Features/02_Notes_and_Events.md) for elements                                                                                                                                                   | 
 | notes_data                              | Additional data for notes                                                                                                                                                                                               | 
@@ -51,17 +51,17 @@ These tables are created during Pimcore install and are always the same.
 | properties                              | Data from the `properties` tab                                                                                                                                                                                          |
 | quantityvalue_units                     | Available quantities for quantity value object data type                                                                                                                                                                |
 | recyclebin                              | Stores metadata of deleted elements                                                                                                                                                                                     |
-| redirects                               | Stores redirects                                                                                                                                                                                                        | 
+| redirects                               | Stores redirects                                                                                                                                                                                                        |
+| settings_store                          | Key-value store for persisting settings through LocationAwareConfigRepository and runtime configuration. See [Settings Store](../09_Development_Tools/07_Settings_Store.md). | 
 | schedule_tasks                          | Stores scheduled tasks                                                                                                                                                                                                  |
-| search_backend_data                     | Stores the index for the backend search - is a InnoDb Table with fulltext capabilities                                                                                                                                  |
 | sites                                   | Stores [sites](../01_Documents/08_Working_with_Sites.md)                                                                                                                                                  |
 | tags                                    | Stores available [tags](../05_Content_Management_Features/03_Tags.md)                                                                                                                                                            
 | tags_assignment                         | Stores assignment of tags to elements                                                                                                                                                                                   |
 | tmp_store                               | Pimcore internal tmp store                                                                                                                                                                                              | 
-| tracking_events                         |                                                                                                                                                                                                                         |
-| translations_admin                      | Admin translations                                                                                                                                                                                                    |
+| tracking_events                         | Stores tracking event data for analytics integration                                                                                                                                                                    |
+| translations_admin                      | Pimcore Studio translations                                                                                                                                                                                           |
 | translations_messages                   | Frontend translations                                                                                                                                                                                                   |
-| tree_locks                              | Locks in Pimcore backend interface                                                                                                                                                                                |
+| tree_locks                              | Element tree locks in Pimcore Studio                                                                                                                                                                                  |
 | users                                   | Pimcore users                                                                                                                                                                                                           |
 | users_permission_definitions            | List of globally assignable user permissions                                                                                                                                                                            |
 | users_workspaces_asset                  | Stores user access permissions for asset folder                                                                                                                                                                         |
@@ -70,9 +70,9 @@ These tables are created during Pimcore install and are always the same.
 | uuids                                   | stores Unique Identifiers - if enabled                                                                                                                                                                                  |
 | versions                                | List of object/asset/document versions. Actual data is serialized and written to disk                                                                                                                                   |
 
-# Object Tables 
+## Object Tables
 These tables are created and modified dynamically during the configuration of the object data model. 
-As a result, they look different on an every Pimcore installation depending on the data model. 
+As a result, they look different on every Pimcore installation depending on the data model. 
 
 ### Objects
 As soon as a new object class is created in Pimcore, at least three tables are 
@@ -172,7 +172,7 @@ Table: object_store_(id)
 | Name | Data Type | Default | Comment |
 | ---- | --------- | ------- | ------- |
 | Geographic Point | double | NULL | Creates two columns: ‘(name)__longitude’ and ‘(name)__latitude’ |
-| Geographic Bounds | double | NULL | Creates four columns: ‘(name)__NElongitude’, ‘(name)__NElatitude’, ‘(name)__SWlongitude’ und ‘(name)__SWlatitude’ | 
+| Geographic Bounds | double | NULL | Creates four columns: ‘(name)__NElongitude’, ‘(name)__NElatitude’, ‘(name)__SWlongitude’ and ‘(name)__SWlatitude’ | 
 | Geographic Polygon | longtext | NULL | Serialized geo-data |
 
 

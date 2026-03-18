@@ -62,4 +62,4 @@ In document preview, Pimcore provides a time slider to get the preview for a cer
 the document has at least one scheduled block editable. 
 
 For details on how to create custom functionality using the time slider see 
-[Preview Scheduled Content](../../../08_Development_Details/08_Preview_Scheduled_Content.md).
+[Preview Scheduled Content](../../../08_Development_Details/07_Preview_Scheduled_Content.md).
