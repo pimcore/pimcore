@@ -39,10 +39,11 @@ final class ConsoleCommandRunner
         string $taskName,
         ?SymfonyStyle $io = null,
     ): void {
-        array_splice($arguments, 0, 0, [
+        $arguments = [
             Console::getPhpCli(),
             PIMCORE_PROJECT_ROOT . '/bin/console',
-        ]);
+            ...$arguments,
+        ];
 
         $this->logger->info('Running {command} command', [
             'command' => implode(' ', $arguments),
