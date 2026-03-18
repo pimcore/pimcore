@@ -1,119 +1,132 @@
+---
+title: Deployment Tools
+description: Configuration management, class definitions, and console commands for deployment.
+---
+
 # Deployment Tools
 
-Following tools are provided by Pimcore to support deployment processes.
+Pimcore provides the following tools to support deployment processes.
 
 ## Pimcore Configurations
 
-All Pimcore configurations are saved as YAML or PHP files on the file system. As a result they can be included into
-[version control systems](./01_Version_Control_Systems.md) and by utilizing the
-[multi environment feature](../backlog/03_Configuration_Environments.md) different configuration files for different deployment stages
-can be defined.
+All Pimcore configurations are stored as YAML or PHP files on the file system.
+This makes them suitable for [version control](./01_Version_Control_Systems.md) and,
+combined with [configuration environments](../08_Development_Details/01_Configuration/01_Configuration_Environments.md),
+allows different configuration files per deployment stage.
 
-* [https://github.com/pimcore/demo/tree/2025.x/config](https://github.com/pimcore/demo/tree/2025.x/config)
-* [https://github.com/pimcore/demo/tree/2025.x/config/pimcore](https://github.com/pimcore/demo/tree/2025.x/config/pimcore)
-* [https://github.com/pimcore/demo/tree/2025.x/var/config](https://github.com/pimcore/demo/tree/2025.x/var/config)
+:::info Enterprise Repository
+The configuration examples below reference the `pimcore/demo-enterprise` repository,
+which requires access to the Pimcore enterprise package registry.
+:::
+
+- [config/](https://github.com/pimcore/demo-enterprise/tree/2026.x/config)
+- [config/pimcore/](https://github.com/pimcore/demo-enterprise/tree/2026.x/config/pimcore)
+- [var/config/](https://github.com/pimcore/demo-enterprise/tree/2026.x/var/config)
 
 
 ## Pimcore Class Definitions
 
-As with Pimcore configurations also Pimcore class definitions are saved as PHP configuration files and therefore can
-be added to version control systems and be deployed to different deployment stages.
+Pimcore class definitions are stored as PHP configuration files and can be added to
+version control and deployed across stages.
 
-The PHP configuration files and PHP classes will be written to the `var/classes` directory by default.
-To disallow modification and turn a class to be read-only, you can create a copy
-at `config/pimcore/classes`.
+The PHP configuration files and classes are written to `var/classes` by default.
+To make a class read-only, create a copy at `config/pimcore/classes`.
 
-Regarding the class modification, there is also an optional env variable `PIMCORE_CLASS_DEFINITION_WRITABLE` that can be considered and set.
+The optional environment variable `PIMCORE_CLASS_DEFINITION_WRITABLE` controls write access:
 
-- `0` To disallow completely write access, including the creation of new classes.
-- `1` To allow the modification, including the classes in `config/pimcore/classes` that normally are read-only.
-- when `not set` classes in `config/pimcore/classes` are read-only, but new classes are allowed and will be created in `var/classes`. 
+- `0` - Disallow all write access, including creation of new classes.
+- `1` - Allow modification of all classes, including those in `config/pimcore/classes` that are normally read-only.
+- Not set - Classes in `config/pimcore/classes` are read-only; new classes are created in `var/classes`.
 
-With the env variable `PIMCORE_CLASS_DEFINITION_DIRECTORY` you can specify the directory to search for your class definitions
-if you do not want pimcore to search in `var/classes` or `config/pimcore/classes`.
+Use the environment variable `PIMCORE_CLASS_DEFINITION_DIRECTORY` to specify a custom directory
+for class definitions instead of `var/classes` or `config/pimcore/classes`.
 
-> **Note**: Changes on Pimcore class definitions not only have influence to configuration files but also on the database.
-> If deploying changes between different deployment stages also database changes need to be deployed. This can be done
-> with the `pimcore:deployment:classes-rebuild` command.
+:::note
+Changes to class definitions affect both configuration files and the database.
+When deploying changes between stages, deploy database changes with
+the `pimcore:deployment:classes-rebuild` command.
+:::
 
-
-After every code update you should use the `pimcore:deployment:classes-rebuild` command to push changes to the database.
-
-```bash
-./bin/console pimcore:deployment:classes-rebuild
-```
-
-If you need to update the database structure of your classes without dumping the classes to the file system, you can use the `--db-only` option.
+Run `pimcore:deployment:classes-rebuild` after every code update to push changes to the database:
 
 ```bash
-./bin/console pimcore:deployment:classes-rebuild --db-only
+bin/console pimcore:deployment:classes-rebuild
 ```
 
-To create new classes from your configuration files in the database you can use the `create-classes` option. 
+To update only the database structure without dumping classes to the file system:
 
 ```bash
-./bin/console pimcore:deployment:classes-rebuild --create-classes
+bin/console pimcore:deployment:classes-rebuild --db-only
 ```
 
-If you use [Composer's autoloader optimization](https://getcomposer.org/doc/articles/autoloader-optimization.md), you have to register the newly created classes via:
+To create new classes from configuration files in the database:
+
+```bash
+bin/console pimcore:deployment:classes-rebuild --create-classes
+```
+
+If you use [Composer's autoloader optimization](https://getcomposer.org/doc/articles/autoloader-optimization.md),
+register newly created classes with:
+
 ```bash
 composer dump-autoload --optimize
 ```
 
-As an alternative also class export to json-files and the class import commands can be used.
+As an alternative, use the class export/import commands for JSON-based definitions:
 
 ```bash
-./bin/console pimcore:definition:import:objectbrick /brick_jsonfile_path.json
+bin/console pimcore:definition:import:objectbrick /brick_jsonfile_path.json
 
-./bin/console pimcore:definition:import:fieldcollection /collection_jsonfile_path.json
+bin/console pimcore:definition:import:fieldcollection /collection_jsonfile_path.json
 
-./bin/console pimcore:definition:import:class /class_jsonfile_path.json
+bin/console pimcore:definition:import:class /class_jsonfile_path.json
 ```
 
 
 ## Pimcore Console
 
-The [Pimcore Console](../08_Development_Details/09_CLI_and_Pimcore_Console.md) provides several useful tasks for deployment.
- These tasks can be integrated into custom deployment workflows and tools. One example for them would be the Pimcore
- class definitions as described above.
+The [Pimcore Console](../08_Development_Details/09_CLI_and_Pimcore_Console.md)
+provides several useful commands for deployment.
+Integrate these into custom deployment workflows as needed.
 
-To get a list of all available commands use `./bin/console list`.
+Run `bin/console list` for a full list of available commands.
 
-#### Potentially useful commands:
+### Useful Deployment Commands
 
 | Command                                   | Description                                                                                                                       |
 |-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| pimcore:mysql-tools                       | Optimize and warm up mysql database                                                                                               |
-| pimcore:search-backend-reindex            | Re-indexes the backend search of Pimcore (only available if you have installed the simpleBackendSearchBundle)                     |
+| pimcore:mysql-tools                       | Optimize and warm up the MySQL database                                                                                           |
+| pimcore:search-backend-reindex            | Re-index the backend search (requires SimpleBackendSearchBundle)                                                                  |
 | pimcore:cache:clear                       | Clear Pimcore core caches                                                                                                         |
 | cache:clear                               | Clear Symfony caches                                                                                                              |
-| pimcore:cache:warming                     | [Warm up caches](../backlog/23_Installation_and_Upgrade/03_System_Setup_and_Hosting/09_Performance_Guide.md#pimcore-caching-redis)        |
-| pimcore:classificationstore:delete-store  | Delete Classification Store                                                                                                       |
-| pimcore:definition:import:class           | Import Class definition from a JSON export                                                                                        |
-| pimcore:definition:import:customlayout    | Import Customlayout definition from a JSON export                                                                                 |
-| pimcore:definition:import:fieldcollection | Import FieldCollection definition from a JSON export                                                                              |
-| pimcore:definition:import:objectbrick     | Import ObjectBrick definition from a JSON export                                                                                  |
-| pimcore:definition:import:units           | Import Quantity value units definition from a JSON export                                                                         |
-| pimcore:deployment:classes-rebuild        | Rebuilds classes and db structure based on updated `var/classes/definition_*.php` files                                           |
-| pimcore:thumbnails:image                  | Generate image thumbnails, useful to pre-generate thumbnails in the background. Use `--processes` option for parallel processing. |
-| pimcore:thumbnails:optimize-images        | Optimize file size of all images in `public/var/tmp`                                                                                 |
-| pimcore:thumbnails:video                  | Generate video thumbnails, useful to pre-generate thumbnails in the background. Use `--processes` option for parallel processing. |
+| pimcore:cache:warming                     | [Warm up caches](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/08_Performance_Guide.md#pimcore-caching-redis)        |
+| pimcore:classificationstore:delete-store  | Delete a Classification Store                                                                                                     |
+| pimcore:definition:import:class           | Import a class definition from a JSON export                                                                                      |
+| pimcore:definition:import:customlayout    | Import a custom layout definition from a JSON export                                                                              |
+| pimcore:definition:import:fieldcollection | Import a FieldCollection definition from a JSON export                                                                            |
+| pimcore:definition:import:objectbrick     | Import an ObjectBrick definition from a JSON export                                                                               |
+| pimcore:definition:import:units           | Import quantity value unit definitions from a JSON export                                                                         |
+| pimcore:deployment:classes-rebuild        | Rebuild classes and database structure based on updated `var/classes/definition_*.php` files                                      |
+| pimcore:thumbnails:image                  | Generate image thumbnails. Use `--processes` for parallel processing.                                                             |
+| pimcore:thumbnails:optimize-images        | Optimize file size of all images in `public/var/tmp`                                                                              |
+| pimcore:thumbnails:video                  | Generate video thumbnails. Use `--processes` for parallel processing.                                                             |
 
 Find more about the Pimcore Console on the [dedicated page](../08_Development_Details/09_CLI_and_Pimcore_Console.md).
 
 
-## Content migration
+## Content Migration
 
-The content migration between environments is not provided by Pimcore and it's not recommended at all.
+Pimcore does not provide content migration between environments and does not recommend it.
 
-The content should be created by editors in the production environment and visibility on the frontend can be managed
-by built-in features like publishing / unpublishing / [versioning](../05_Content_Management_Features/01_Versioning.md) /
-[scheduling](../05_Content_Management_Features/05_Scheduling.md) / preview the effect in editmode.
+Create and manage content in the production environment. Control visibility with built-in features:
+publishing/unpublishing, [versioning](../05_Content_Management_Features/01_Versioning.md),
+[scheduling](../05_Content_Management_Features/05_Scheduling.md), and editmode preview.
 
-Therefore, editors shouldn't work on different stages.
+Editors should create and modify content on a single environment (typically production)
+rather than maintaining content across multiple stages.
 
-Of course, the content migration is possible but this is always a very individual task depending on data model, environments
-and use cases.
-
-If you need some kind of content migration utilize the PHP API for [assets](../02_Assets/04_Working_with_Assets_via_PHP_API.md),
-[objects](../03_Objects/02_Working_with_Objects_via_PHP_API.md) and [documents](../01_Documents/14_Working_with_Documents_via_PHP_API.md) for doing so.
+If content migration is necessary, it is always a project-specific task depending on the data model,
+environments, and use cases. Use the PHP API for
+[assets](../02_Assets/04_Working_with_Assets_via_PHP_API.md),
+[objects](../03_Objects/02_Working_with_Objects_via_PHP_API.md), and
+[documents](../01_Documents/14_Working_with_Documents_via_PHP_API.md).

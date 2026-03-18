@@ -1,17 +1,24 @@
+---
+title: Deployment Recommendations
+description: Best practices and tools for deploying Pimcore applications.
+---
+
 # Deployment Recommendations
 
-## General
+Pimcore follows standard Symfony deployment practices.
+This chapter covers the tools and conventions specific to Pimcore on top of that foundation.
 
-Deployment scenarios are essential for enterprise systems. Since Pimcore is a framework that can be used in many different
-use cases, development workflows and environments, it cannot provide THE ONE solution for deployment. It only can 
-provide tools and best practices which can be utilized in the actual environment Pimcore is used. 
-
-Since Pimcore is more or less a standard Symfony project, all best practices and deployment options of 
-Symfony also apply (see links below).
-
-This chapter gives an overview of these tools and best practices by covering following topics: 
-
-* [Symfony Deployment](https://symfony.com/doc/current/deployment.html) 
-* [Usage of Version Control Systems](./01_Version_Control_Systems.md)
-* [Multi Environment Configurations](../backlog/03_Configuration_Environments.md)
-* [Available Deployment Tools](./02_Deployment_Tools.md)
+- [**Symfony Deployment**](https://symfony.com/doc/current/deployment.html) -
+  The official Symfony deployment guide applies to Pimcore projects.
+- [**Version Control**](./01_Version_Control_Systems.md) -
+  Git configuration and paths to exclude from tracking.
+- [**Configuration Environments**](../08_Development_Details/01_Configuration/01_Configuration_Environments.md) -
+  Environment-specific configuration for different deployment stages.
+- [**Deployment Tools**](./02_Deployment_Tools.md) -
+  Configuration management, class definitions, and console commands for deployment.
+- [**Backup**](./03_Backup.md) -
+  Components to back up and directories to exclude.
+- [**Cleanup Data Storage**](./04_Cleanup_Data_Storage.md) -
+  Ongoing maintenance of versioning data, logs, temporary files, and recycle bin.
+- [**Security Concept**](./05_Security_Concept.md) -
+  Multi-layer security approach for Pimcore applications.

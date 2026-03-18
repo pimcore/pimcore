@@ -1,103 +1,148 @@
+---
+title: Cleanup Data Storage
+description: Manage versioning data, logs, temporary files, and recycle bin storage.
+---
+
 # Cleanup Data Storage
 
-In general Pimcore is quite maintenance-free in terms of cleaning up the filesystem from temporary files, log files, 
-versioning information and other generated data. However there are some tweaks you can use to reduce or cleanup your 
-storage footprint on your filesystem. 
+Pimcore handles most filesystem cleanup automatically. The following recommendations help reduce
+and manage storage consumption.
 
 ## Versioning Data
-### Reduce the Amount of Versioning Steps of Assets, Objects and Documents
-Pimcore stores the meta-data for version in the database, however, the data itself is stored on the filesystem 
-(`var/versions`) as compressed files (gzip) to keep the database as lean as possible. 
-It's important to know that Pimcore stores complete dumps of the data at the time the version is created, it doesn't 
-use any kind of data differential/incremental or deduplication for several reasons. 
-This means that the versioning data can grow very fast, especially when dealing with huge Assets. 
-You can reduce the amount of restore points individually for Assets, Objects and Documents in the System Settings. 
 
-After you have reduced the value, it's recommended to run the following command manually 
-(it would also run automatically as part of the regular maintenance script): 
+### Reduce Version History Per Element
+
+Pimcore stores version metadata in the database and the version data itself as compressed files (gzip)
+in `var/versions`. Each version is a complete dump of the element at the time of creation -
+Pimcore does not use differential or incremental storage.
+
+This means versioning data can grow fast, especially for large assets.
+Reduce the number of stored versions per element type (assets, objects, documents)
+in Pimcore Studio under `System` > `System Settings` > `Documents/Objects/Assets`.
+
+After reducing the value, run the cleanup manually
+(it also runs automatically as part of regular maintenance):
+
 ```bash
-./bin/console pimcore:maintenance -j versioncleanup
+bin/console pimcore:maintenance -j versioncleanup
 ```
 
 #### Example
-Assuming an Asset, 100MB in size, in system settings 10 versioning steps are configured. Every time the Asset gets saved
-a new dump of the file is created, so the max. space required for this particular Asset is 1.1 GB 
-(100MB for the original Asset + 10 x 100MB for the version dumps). 
 
-### Flush all Versions of a certain Type
-Sometimes it's necessary to clean all versioning information for a certain type, eg. for Assets or Objects. 
-The easiest way is to do this manually with the following commands: 
+An asset of 100 MB with 10 versioning steps configured requires up to 1.1 GB of storage:
+100 MB for the original asset plus 10 x 100 MB for the version dumps.
 
-**WARNING: The following commands will delete all versioning information of your installation**
+### Flush All Versions of a Type
+
+To delete all versioning information for a specific type:
+
+:::warning
+The following commands delete all versioning information for the specified type.
+Back up the database and `var/versions/` directory before running them.
+:::
 
 ```bash
-// replace ### with the name of your database
-// you can also use "object" or "document" instead of "asset"
+# Replace ### with the name of your database
+# Use "object" or "document" instead of "asset" as needed
 mysql -e "DELETE FROM ###.versions WHERE ctype='asset';"
 rm -r var/versions/asset
 ```
 
 ## Logging Data
-All logging information is located in `var/log/`. Pimcore rotates & compresses and cleans up the logs automatically: 
-Rotate: when the file is bigger than 200MB  
-Compress: immediately after rotating (gzip)  
-Delete: After 30 days 
 
-Logs can be deleted manually at any time.  
-It's also possible to use a custom log rotator, for this purpose please deactivate the `logmaintenance` job in your
-maintenance command: `./bin/console pimcore:maintenance -J logmaintenance`
+All log files are stored in `var/log/`. Pimcore rotates, compresses, and cleans up logs automatically:
+
+- **Rotate**: when the file exceeds 200 MB
+- **Compress**: immediately after rotating (gzip)
+- **Delete**: after 30 days
+
+Delete logs manually at any time.
+To use a custom log rotator, deactivate the `logmaintenance` job:
+
+```bash
+bin/console pimcore:maintenance -J logmaintenance
+```
 
 ## Temporary Files
-Pimcore stores temporary files in 2 different locations, depending on whether they are public accessible or not.   
-**Private temporary directory**: `var/tmp/`  
-Used for uploads, imports, exports, page, previews, ...  
-**Public temporary directory**: `public/var/tmp/`  
-Used for image/video/document thumbnails used in the web-application. 
-  
+
+Pimcore stores temporary files in two locations based on their visibility:
+
+**Private temporary directory**: `var/tmp/`
+Used for uploads, imports, exports, and page previews.
+
+**Public temporary directory**: `public/var/tmp/`
+Used for image, video, and document thumbnails served by the web application.
+
 ### Clearing Temporary Files
+
+Clear thumbnails using the dedicated command:
+
+```bash
+bin/console pimcore:thumbnails:clear --type=image
+bin/console pimcore:thumbnails:clear --type=video
+```
+
+Clear the private temporary directory programmatically using the global
+`recursiveDelete()` helper (defined in `pimcore/lib/helper-functions.php`):
+
 ```php
-// clear public files
-Tool\Storage::get('thumbnail')->deleteDirectory('/');
-Db::get()->executeQuery('TRUNCATE TABLE assets_image_thumbnail_cache');
-
-Tool\Storage::get('asset_cache')->deleteDirectory('/');
-
-// clear system files
+// Deletes all files in the system temp directory but keeps the directory itself
 recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY, false);
 ```
-All temporary files can be deleted at any time.   
-**WARNING: Deleting all files in `public/var/tmp/` can have a huge impact on performance until all needed thumbnails are generated again.**
+
+All temporary files can be deleted at any time.
+
+:::warning
+Deleting all files in `public/var/tmp/` has a significant performance impact
+until all required thumbnails are regenerated.
+:::
 
 ## Recycle Bin
-Deleting items in Pimcore moves them to the recycle bin first. The recycle bin works quite similar to the versioning, 
-so the references are kept in the database but the contents itself are dumped into files in `var/recyclebin/`.   
-In the admin user-interface, under *Tools* > *Recycle Bin*, you can review items in the bin or flush the entire content. 
 
-If you need to delete items based on how long they were stored in the recycle bin, the following command may come in handy: 
+Deleting items in Pimcore moves them to the recycle bin first. The recycle bin stores references
+in the database and dumps the element contents into files in `var/recyclebin/`.
+
+In Pimcore Studio, open `Quick Access` > `Recycle Bin` to review items or flush the entire bin.
+
+To delete items based on age:
+
 ```bash
-./bin/console  pimcore:recyclebin:cleanup --older-than-days=60
+bin/console pimcore:recyclebin:cleanup --older-than-days=60
 ```
-It's also possible to flush the entire bin manually, this is especially useful when automating this process, or if you have a huge 
-amount of items in your recycle bin:   
+
+To flush the entire recycle bin manually (useful for automation or large bins):
+
+:::warning
+The following commands permanently delete all recycle bin data.
+Back up the database and `var/recyclebin/` directory before running them.
+:::
+
 ```bash
-// replace ### with the name of your database
+# Replace ### with the name of your database
 mysql -e "TRUNCATE TABLE ###.recyclebin;"
 rm -r var/recyclebin
 ```
 
-
-
-**WARNING: The recycle bin is an administrative tool that displays any user's deleted elements. 
-Due to the nature and complexity of the elements deletion and restoration process, this tool should be reserved for administrator and advanced users**
+:::warning
+The recycle bin is an administrative tool that displays deleted elements from all users.
+Due to the complexity of element deletion and restoration, reserve this tool
+for administrators and advanced users.
+:::
 
 ## Output Cache
-When enabled, the full page cache stores the whole frontend request response including the headers from a request and stores it into the cache. 
 
-The output cache can be cleared with the following snippet:
+When enabled, the full-page cache stores complete frontend responses (including headers)
+in the cache.
+
+Clear the output cache programmatically:
+
 ```php
-// remove "output" out of the ignored tags, if a cache lifetime is specified
+use Pimcore\Cache;
+
+// When a cache lifetime is set, the "output" tag is ignored by default during cache clear.
+// Remove it from the ignored list so the next clear call affects output cache entries.
 Cache::removeIgnoredTagOnClear('output');
 
-// empty document cache
+// Clear the document cache
 Cache::clearTags(['output', 'output_lifetime']);
 ```

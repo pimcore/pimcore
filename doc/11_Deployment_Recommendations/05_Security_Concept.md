@@ -1,107 +1,151 @@
+---
+title: Security Concept
+description: Multi-layer security approach for Pimcore applications.
+---
+
 # Security Concept
-We at Pimcore take security very seriously and recommend a multi-layer security concept to keep Pimcore-based solutions 
-safe. 
 
-As Pimcore is a framework and not an out-of-the-box solution, this multi-layer security concept has parts that are 
-provided by the core framework itself, and parts that need to be provided by the solution partner, 
-that delivers the solution. 
+Pimcore follows a multi-layer security concept. The framework provides built-in protections
+at the core level, while project-specific security measures are the responsibility
+of the integration partner.
 
+## Pimcore Core Level
 
-## Pimcore Core Level 
+### Coding Standards and Best Practices
 
-### Following Coding Standards & Best Practices
-To minimize the risk of security issues, we follow established and proven php coding standards as well as industry best 
-practices. The coding standards are based on so-called PSRs (PHP Standards Recommendations) developed by the 
-PHP Framework Interop Group (PHP-FIG) and are enforced during our continuous integration process at Github. 
-
-Pimcore is also a voting member of the PHP-FIG.
- 
+Pimcore follows established PHP coding standards and industry best practices to minimize
+security risks. The coding standards are based on PSRs (PHP Standards Recommendations)
+developed by the PHP Framework Interop Group (PHP-FIG) and are enforced during
+continuous integration at GitHub.
 
 ### Dependency Management
-Pimcore is based on the Symfony framework (PHP industry standard framework) and multiple additional components and 
-dependencies. All Dependencies are managed through Composer (the standard PHP dependency management solution) which makes 
-it easy and comfortable to keep all dependencies of Pimcore and your project up-to-date and safe. 
 
-Since Pimcore is a Symfony application, it can utilize all Symfony tools, like the 
-[Symfony Security Checker](https://symfony.com/doc/current/security/security_checker.html). 
+Pimcore is built on the Symfony framework and manages all dependencies through Composer,
+the standard PHP dependency management solution. This makes it straightforward to keep
+all dependencies up to date and secure.
+
+As a Symfony application, Pimcore supports all Symfony security tools, including the
+[Symfony Security Checker](https://symfony.com/doc/current/security/security_checker.html).
 
 ### Content Security Policy
-Pimcore provides a Content Security Policy handler, which enables an additional security layer to protect from certain attacks like Cross-Site Scripting (XSS) and data injection and so on, by adding `Content-Security-Policy` HTTP response header with [nonce](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce) to every request in Admin interface. The generated nonce encoded string is matched with the one provided in link or inline javascript, which allows them to be executed safely. 
-Content Security Policy is enabled by default.
+
+Pimcore Studio includes a Content Security Policy (CSP) handler that protects against
+Cross-Site Scripting (XSS) and data injection attacks by adding a `Content-Security-Policy`
+HTTP header with a [nonce](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce)
+to every Studio request. CSP is **enabled by default**.
+
 Read more about [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP).
 
-To allow external urls for each directive, add a custom configuration in `config/config.yaml` and provide a list in the configuration:
+#### Pimcore Studio CSP Configuration
+
+Configure the Studio CSP under `pimcore_studio_ui.csp_header`.
+To allow external URLs for specific directives:
+
 ```yaml
 # config/config.yaml
-pimcore_admin:
-    admin_csp_header:
+pimcore_studio_ui:
+    csp_header:
         additional_urls:
             script-src:
-                - 'https://oreo.cat/scripts/meow.js' 
-                - 'https://bagheera.cat'
+                - 'https://cdn.example.com/scripts/analytics.js'
             style-src:
-                - 'https://oreo.cat/scripts/meow.css'
+                - 'https://fonts.googleapis.com'
+            connect-src:
+                - 'https://api.example.com'
 ```
 
-To disable CSP set the `enabled` property to `false` in your configuration:
+Available directives: `default-src`, `script-src`, `style-src`, `connect-src`,
+`font-src`, `img-src`, `media-src`, `frame-src`, `worker-src`
+
+To disable CSP:
+
 ```yaml
 # config/config.yaml
-pimcore_admin:
-    admin_csp_header:
+pimcore_studio_ui:
+    csp_header:
         enabled: false
 ```
 
-If you are using third-party bundles or custom implementations that extend the Admin interface with custom views, you need to use the generated nonce string in your scripts.
-If a script does not contain a valid nonce, it is stopped from being executed with a warning in the console like:
+To exclude specific paths from CSP enforcement:
 
-`Refused to execute inline script because it violates the following Content Security Policy directive: ...`
-
-This issue can be resolved either by using Pimcore [Headscript extension](../01_Documents/02_Templates/02_Twig_Extensions/03_HeadScript.md) or add nonce script to inline scripts as follows:
-
-```twig
-<script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
+```yaml
+# config/config.yaml
+pimcore_studio_ui:
+    csp_header:
+        exclude_paths:
+            - '/pimcore-studio/custom-endpoint'
 ```
 
+If your bundle or custom implementation extends the Studio interface, add the generated nonce
+to inline scripts:
+
+```twig
+<script {{ pimcore_studio_csp.getNonceHtmlAttribute()|raw }}>
+```
+
+For advanced CSP extension (registering external origins from bundles, dev servers, or CDNs),
+see the
+[Studio UI Content Security Policy documentation](https://github.com/pimcore/studio-ui-bundle/blob/2026.x/doc/03_Configuration_and_Administration/01_Configuration/01_Content_Security_Policy.md).
+
+#### Frontend CSP
+
+CSP for customer-facing pages is a project-level responsibility.
+Configure CSP headers through your web server (Nginx, Apache) or Symfony response listeners.
+Pimcore does not enforce CSP on frontend document responses automatically.
+
 ### Handling Security Issues
-In the case of a security issue/vulnerability in the Pimcore core framework, we handle them with the following procedure: 
-- **Reporting Issue**: 
-Report issue via [Github security advisory mechanism](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability) of the corresponding repository, e.g. for [here for core framework](https://github.com/pimcore/pimcore/security). Not via public 
-issue tracker (according guidelines also available at public issue tracker)!
 
-- **Resolving Issue**: 
-  - Reported issue is forwarded directly to the Pimcore core team, verified and if confirmed, resolved in the following steps
-  - Send an acknowledgement to the reporter with an official statement
-  - Work on a patch
-  - If not already available, get a CVE identifier 
-  - Publish patch and/or new release of Pimcore
-  - Publish security announcement with at least affected versions, possible exploits and how to patch/upgrade
+Pimcore handles security vulnerabilities with the following procedure:
+
+- **Reporting**: Report issues via the
+  [GitHub security advisory mechanism](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability)
+  of the corresponding repository, e.g.
+  [core framework](https://github.com/pimcore/pimcore/security).
+  Do not use the public issue tracker.
+
+- **Resolution**:
+  1. Pimcore forwards the report to the core team for verification.
+  2. If confirmed, Pimcore sends an acknowledgement to the reporter.
+  3. Pimcore develops a patch and obtains a CVE identifier if not already available.
+  4. Pimcore publishes the patch and/or a new release.
+  5. Pimcore publishes a security announcement covering affected versions, possible exploits,
+     and how to patch or upgrade.
 
 
-## Project specific Level (provided by Integration Partner) 
+## Project-Specific Level (Integration Partner)
 
-### Following Coding Standards & Best Practices
-Same as for the core development, we recommend applying all the coding standards and best practices for solution development 
-too. 
+### HTTPS / TLS
+
+Serve all Pimcore endpoints over HTTPS, including Pimcore Studio (`/pimcore-studio`),
+API routes, and customer-facing pages. Configure TLS termination at the web server
+or load balancer level.
+
+### Coding Standards and Best Practices
+
+Apply the same coding standards and best practices used in core development to the solution.
 
 ### Dependency Management
-Same as for the core development, we also recommend security checks for all the additional solution dependencies. Also 
-for solutions, all Symfony tools, like the [Symfony Security Checker](https://symfony.com/doc/current/security/security_checker.html) 
-can be utilized.
 
-### Project Specific Penetration Testing
-Project specific penetration testing should uncover possible security issues in solution implementation. This testing 
-should be done on staging systems, without additional security layers such as WAF (Web Application Firewall) or IPS 
-(Intrusion Protection Systems) and should cover all [OWASP Top 10 risks](https://www.owasp.org/index.php/Top_10_2010-Main). 
+Run security checks for all additional solution dependencies. All Symfony tools, including the
+[Symfony Security Checker](https://symfony.com/doc/current/security/security_checker.html),
+are available for solution projects.
 
-Best results are expected when this testing is done by a third-party partner. 
+### Project-Specific Penetration Testing
 
+Penetration testing should uncover security issues in the solution implementation.
+Run tests on staging systems without additional security layers (WAF, IPS) and cover all
+[OWASP Top 10 risks](https://owasp.org/www-project-top-ten/).
 
-### WAF & IPS on production systems 
-Web Application Firewalls and Intrusion Protection Systems are systems that sit in front of the application, analyse all 
-traffic and try to filter malicious activities.
- 
-As standard php application, Pimcore supports all industry standard products such as ModSecurity, WAF safeguards of 
-Cloud Flare and others. Which to use is depending on the actual IT infrastructure. For Pimcore backend usage, some 
-additional rules might be necessary. 
+A third-party testing partner provides an independent assessment.
 
-WAF and IPS on production systems should be the last safety net in the multi-layer security concept. 
+### WAF and IPS on Production Systems
+
+Web Application Firewalls (WAF) and Intrusion Protection Systems (IPS) sit in front of the
+application, analyze traffic, and filter malicious activity.
+
+As a standard PHP application, Pimcore works with all industry-standard products such as
+ModSecurity, Cloudflare WAF, and others. The choice depends on the IT infrastructure.
+For Pimcore Studio, WAF rules may need to allow multipart file uploads,
+WebSocket connections (used by Mercure for real-time updates), and larger request bodies.
+
+WAF and IPS serve as the final safety net in the multi-layer security concept.

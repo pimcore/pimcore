@@ -1,32 +1,43 @@
-# Backup of Pimcore
+---
+title: Backup
+description: Components to back up and directories to exclude.
+---
 
-We recommend the usage of standard tools depending on your infrastructure for creating a backup of your Pimcore instance.
+# Backup
 
-No matter which solution you're using, it's crucial to back up the following components: 
-- All files in your project root, however you can normally exclude the following directories 
-`public/var/tmp`, `var/tmp`, `var/log`, `var/cache` and `var/sessions`
-- The entire database 
+Use standard backup tools appropriate to your infrastructure.
+Regardless of the tool, back up these components:
 
-## Poor man's backup using Unix tools
+- **All files in the project root**, excluding:
+  - `public/var/tmp` - regenerated thumbnails
+  - `var/tmp` - temporary upload/export files
+  - `var/log` - log files (rotated automatically)
+  - `var/cache` - Symfony/Pimcore cache (rebuilt automatically)
+- **The entire database**
 
-We definitely recommend to use a professional backup solution depending on your infrastructure, but sometimes a poor 
-man's backup can be quite handy :) 
+:::note
+`var/versions` contains version history dumps and can be large, especially for assets.
+Include it in backups to preserve version history, or exclude it if storage is constrained
+and version history is expendable.
+:::
+
+## Simple Backup Using Unix Tools
+
+Use a professional backup solution for production environments. For quick ad-hoc backups,
+standard Unix tools work:
 
 ```bash
-
-# change directory to your project root 
+# Change to the project root
 cd /var/www/your/project/
 
-# create an archive of the entire project root, excluding temporary files
-tar cfv /tmp/my-poor-mans-backup.tar ./
+# Create the MySQL dump
+mysqldump -u youruser -p yourdatabase > /tmp/pimcore-backup.sql
 
-# create the mysql dump
-mysqldump -u youruser -p yourdatabase > /tmp/my-poor-mans-backup.sql 
-
-# put the dump into the tar archive
-tar rf /tmp/my-poor-mans-backup.tar /tmp/my-poor-mans-backup.sql
-
-# zip the archive (of course you can also use xz or any other tool) 
-gzip /tmp/my-poor-mans-backup.tar
-
+# Create an archive of the project root and database dump, excluding regenerable directories
+tar cfz /tmp/pimcore-backup.tar.gz \
+  --exclude='public/var/tmp' \
+  --exclude='var/tmp' \
+  --exclude='var/log' \
+  --exclude='var/cache' \
+  ./ -C /tmp pimcore-backup.sql
 ```
