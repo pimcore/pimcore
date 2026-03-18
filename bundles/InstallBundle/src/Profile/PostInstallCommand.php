@@ -15,8 +15,6 @@ namespace Pimcore\Bundle\InstallBundle\Profile;
 
 /**
  * Represents a Symfony console command to run after installation.
- *
- * @internal
  */
 final readonly class PostInstallCommand
 {

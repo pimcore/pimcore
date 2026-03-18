@@ -16,9 +16,6 @@ namespace Pimcore\Bundle\InstallBundle\Profile;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * @internal
- */
 final readonly class PostInstallContext
 {
     public function __construct(

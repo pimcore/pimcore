@@ -25,8 +25,6 @@ use Symfony\Component\Finder\Finder;
  * Files are processed in alphabetical order (sorted by filename).
  * Uses a marker table to track whether the data source has already been applied,
  * supporting the checkpoint/resume-on-failure pattern.
- *
- * @internal
  */
 final readonly class SqlDumpDataSource implements DataSourceInterface
 {

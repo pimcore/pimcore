@@ -75,7 +75,9 @@ class Installer
 
     private const int STEP_RUN_POST_INSTALL_COMMANDS = 21;
 
-    private const int STEP_RUN_PROFILE_POST_INSTALL = 22;
+    private const int STEP_RUN_MAINTENANCE = 22;
+
+    private const int STEP_RUN_PROFILE_POST_INSTALL = 23;
 
     private int $stepCounter = 0;
 
@@ -407,6 +409,23 @@ class Installer
             if ($error !== null) {
                 return array_merge($errors, [$error]);
             }
+        }
+
+        // Run pimcore:maintenance (non-fatal)
+        $error = $this->executeStep(
+            self::STEP_RUN_MAINTENANCE,
+            $completedStep,
+            $checkpoint,
+            'run_maintenance',
+            'Running maintenance...',
+            'Maintenance completed',
+            function (): void {
+                $this->commandRunner->runMaintenance();
+            },
+            false,
+        );
+        if ($error !== null) {
+            $errors[] = $error;
         }
 
         // Run profile postInstall() if profile implements the optional hook
@@ -759,8 +778,8 @@ class Installer
             $this->totalSteps++;
         }
 
-        // Post-install commands and profile postInstall add 2 more potential steps
-        $this->totalSteps += 2;
+        // Post-install commands, maintenance, and profile postInstall add 3 more potential steps
+        $this->totalSteps += 3;
     }
 
     private function dispatchStep(string $type, string $message): void

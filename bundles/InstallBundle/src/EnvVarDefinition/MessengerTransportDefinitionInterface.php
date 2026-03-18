@@ -18,8 +18,6 @@ namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition;
  *
  * Profiles must include exactly one definition implementing this interface.
  * The installer validates this constraint during Phase 1.
- *
- * @internal
  */
 interface MessengerTransportDefinitionInterface extends EnvVarDefinitionInterface
 {

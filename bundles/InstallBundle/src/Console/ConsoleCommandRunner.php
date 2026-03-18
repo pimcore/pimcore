@@ -109,4 +109,12 @@ final class ConsoleCommandRunner
             'Marking all migrations as done',
         );
     }
+
+    public function runMaintenance(): void
+    {
+        $this->runCommand(
+            ['pimcore:maintenance'],
+            'Running maintenance tasks',
+        );
+    }
 }
