@@ -14,11 +14,12 @@ The screenshots show how to achieve this through Pimcore Studio. Further below
 is an example of how to create and associate user and member objects programmatically.
 
 Regardless of the creation method, define the member class first in
-the class editor in Pimcore Studio (mega menu: *Data Objects* > *Data Object Classes*):
+the class editor in Pimcore Studio 
+(`Data Management` -> `Data Model Definitions` -> `Classes`).
 
 ![Member Class Config](../img/object-user1.png)
 
-In this example, the class `member` has the three properties `location`, `name` and `user`. 
+In this example, the class `member` has the three properties `name`, `user` and `location`. 
 The class can have an arbitrary number of properties. What is important in this context is, 
 that it has a property of the type `User`. Speaking in code this would be a 
 `\Pimcore\Model\DataObject\ClassDefinition\Data\User`.
@@ -29,9 +30,9 @@ Pimcore users.
 
 ![Member Class object](../img/object-user2.png)
 
-In this example the user "jondoe" was selected.
+In this example the user "sam jackman" was selected.
 
-In Pimcore Studio (mega menu: *User Management* > *Users*) this relation appears in the third tab of each
+In Pimcore Studio (`System` -> `User & Roles` -> `Users`) this relation appears in the third tab of each
 user, labeled `This user is referenced in the following objects:`
 
 ![User Object Relations](../img/object-user3.png)

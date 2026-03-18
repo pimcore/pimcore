@@ -23,10 +23,11 @@ In addition to Symfony configurations, Pimcore supports environment-specific con
 * [https://github.com/pimcore/demo/tree/2026.x/var/config](https://github.com/pimcore/demo/tree/2026.x/var/config)
 
 
-## Configuration Storage Locations and Fallbacks
+## Configuration Storage Locations and Fallbacks (LocationAwareConfigRepository)
 
-For certain configurations editable through the user interface, Pimcore supports various storage types.
-Available storages in priority order:
+Pimcore's `LocationAwareConfigRepository` manages configuration storage for settings editable through
+Pimcore Studio. It supports multiple storage backends with automatic fallback. Available storages in
+priority order:
 
 - Symfony Config (YAML, requires container rebuild)
 - Pimcore [`SettingsStore`](../../09_Development_Tools/07_Settings_Store.md)

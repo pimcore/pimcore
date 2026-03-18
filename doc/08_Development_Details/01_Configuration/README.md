@@ -82,7 +82,7 @@ of defined constants.
 ### The PIMCORE_PROJECT_ROOT Constant
 
 The `PIMCORE_PROJECT_ROOT` constant resolves the application root directory (see
-[Directory Structure](../../backlog/01_Getting_Started/04_Directory_Structure.md)). Unlike the other constants,
+[Directory Structure](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/03_Create_a_First_Project/01_Directory_Structure.md)). Unlike the other constants,
 it is not defined in `constants.php` because Pimcore needs it to locate that file in the first place. Instead,
 `\Pimcore\Bootstrap::setProjectRoot()` defines it during bootstrapping.
 
