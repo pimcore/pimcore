@@ -123,7 +123,7 @@
     "symfony/var-dumper": "^7.4",
     "symfony/var-exporter": "^7.4",
     "symfony/web-profiler-bundle": "^7.4",
-    "symfony/webpack-encore-bundle": "^1.17 || ^2.0",
+    "symfony/webpack-encore-bundle": "^2.4",
     "symfony/workflow": "^7.4",
     "symfony/yaml": "^7.4",
     "tijsverkoyen/css-to-inline-styles": "^2.2.3",
