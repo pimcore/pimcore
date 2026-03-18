@@ -1,7 +1,14 @@
-# Application logger
+---
+title: Application Logger
+description: Log application events with database storage and email notifications.
+---
+
+# Application Logger
+
 :::caution
 
-To use this feature, please enable the `PimcoreApplicationLoggerBundle` in your `bundle.php` file and install it accordingly with the following command:
+To use this feature, enable the `PimcoreApplicationLoggerBundle` in your `bundle.php` file
+and install it:
 
 `bin/console pimcore:bundle:install PimcoreApplicationLoggerBundle`
 
@@ -9,11 +16,12 @@ To use this feature, please enable the `PimcoreApplicationLoggerBundle` in your 
 
 ## General
 
-The application logger bundle is a tool which developers can use to log certain events and errors within a Pimcore powered application.
+The Application Logger bundle lets developers log events and errors
+within a Pimcore application.
 
 <div class="inline-imgs">
 
-The logs are visible and searchable within the Pimcore Backend Interface ![Tools menu](../../img/Icon_tools.png) **Tools -> Application Logger**:
+View and search logs in Pimcore Studio under ![Tools menu](../../img/Icon_tools.png) **Tools -> Application Logger**:
 
 </div>
 
@@ -24,17 +32,17 @@ The logs are visible and searchable within the Pimcore Backend Interface ![Tools
 
 ## Configuration
 
-The application logger allows configuration of minimum, maximum or fixed log levels for the log entries.
+The Application Logger supports minimum, maximum, or fixed log levels.
 
-Example configuration for logging all messages with a level of *debug* or *info*.
+Log all messages with level `debug` or `info`:
 ```yaml
 applicationlog:
     loggers:
         db:
-            min_level_or_list: ['debug', 'info']        
+            min_level_or_list: ['debug', 'info']
 ```
 
-Example configuration for logging all messages with minimum level *info* and maximum level *emergency*.
+Log all messages from level `info` through `emergency`:
 ```yaml
 applicationlog:
     loggers:
@@ -43,10 +51,10 @@ applicationlog:
             max_level: 'emergency'
 ```
 
-## How to create log entries
+## How to Create Log Entries
 
-The application logger is a PSR-3 compatible component and available on the service container as service `Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger`
-and therefore it can be used the usual way.
+The Application Logger is a PSR-3 compatible component available as service
+`Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger`.
 
 ### Basic Usage - Example
 
@@ -69,7 +77,7 @@ class TestController extends FrontendController
         $logger->alert('Your alert');
         $logger->debug('Your debug message', ['foo' => 'bar']); // additional context information
     }
-    
+
     public function anotherAction(): void
     {
         // fetched from container
@@ -82,12 +90,12 @@ class TestController extends FrontendController
 #### Dependency Injection
 
 ```yaml
-App\YourService: 
+App\YourService:
     calls:
         - [setLogger, ['@Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger']]
 ```
 
-You can also make use of autowiring by defining the application logger as dependency:
+Or use autowiring:
 
 ```yaml
 services:
@@ -107,24 +115,24 @@ use Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger;
 class YourService
 {
     /**
-     * @var ApplicationLogger 
+     * @var ApplicationLogger
      */
     private $logger;
-    
+
     public function __construct(ApplicationLogger $logger)
     {
         $this->logger = $logger;
-        
+
         $logger->debug('Hello from YourService');
     }
 }
 ```
 
-### Usage as monolog handler
+### Usage as Monolog Handler
 
-Instead of using the `ApplicationLogger` class, you can configure monolog to use the application logger as monolog log handler
-and make full use of monolog's possibilities. To do so, Pimcore provides the `ApplicationLoggerDb` monolog handler which
-is already preconfigured as service and can easily be registered to monolog:
+Instead of using the `ApplicationLogger` class directly, configure Monolog
+to use the Application Logger as a Monolog handler.
+Pimcore provides the `ApplicationLoggerDb` handler, preconfigured as a service:
 
 ```yaml
 monolog:
@@ -135,19 +143,21 @@ monolog:
             type: service
             id: Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb
             channels: ["application_logger"]
-``` 
+```
 
-Note that the channel(s) need to exist. This can either by achieved by [configuring them manually](https://symfony.com/doc/current/logging/channels_handlers.html#creating-your-own-channel)
-or by using [DI tags](https://symfony.com/doc/current/reference/dic_tags.html#dic-tags-monolog) to select the logger for
-the channel you want to log to. When using DI tags, the channel will be created implicitly by monolog.
+The channel(s) must exist. Create them by [configuring them manually](https://symfony.com/doc/current/logging/channels_handlers.html#creating-your-own-channel)
+or by using [DI tags](https://symfony.com/doc/current/reference/dic_tags.html#dic-tags-monolog)
+to select the logger for the target channel.
+When using DI tags, Monolog creates the channel implicitly.
 
-> **IMPORTANT**: As the `ApplicationLoggerDb` handler has a dependency on the database connection it is important to exclude
-  channels logging database queries (typically the `doctrine` channel) from the handler to avoid infinite loops. Either
-  specify a allowlist of supported channels (as shown in the example above) or exclude the `doctrine` channel by setting
-  channels to `["!doctrine"]`.
-  
-As the `type: service` handler config does not support filtering by log level, you can use the `filter` handler type to
-wrap the application logger and to filter by a specific log level:
+> **IMPORTANT**: The `ApplicationLoggerDb` handler depends on the database connection.
+  Exclude channels logging database queries (typically the `doctrine` channel)
+  to avoid infinite loops.
+  Either specify an allowlist of supported channels (as shown above)
+  or exclude the `doctrine` channel by setting channels to `["!doctrine"]`.
+
+As the `type: service` handler config does not support filtering by log level,
+use the `filter` handler type to wrap the Application Logger:
 
 ```yaml
 monolog:
@@ -167,10 +177,12 @@ monolog:
             id: Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb
 ```
 
-Of course you can also use the handler in combination with other log handlers such as the [Fingers Crossed Handler](https://symfony.com/doc/current/logging.html#handlers-that-modify-log-entries).
-See the [Symfony Logging Documentation](https://symfony.com/doc/current/logging.html) for details.
+Combine this handler with other log handlers such as the
+[Fingers Crossed Handler](https://symfony.com/doc/current/logging.html#handlers-that-modify-log-entries).
+See the [Symfony Logging documentation](https://symfony.com/doc/current/logging.html) for details.
 
-As soon as the handler is configured, you can use it (as any other monolog logger) by using a DI tag to specify the channel you want to log to:
+Once the handler is configured, use it like any other Monolog logger by specifying
+a DI tag for the target channel:
 
 ```php
 <?php
@@ -185,20 +197,20 @@ use Psr\Log\LoggerInterface;
 class TestController
 {
     private LoggerInterface $logger;
-    
+
     public function __construct(LoggerInterface $logger)
     {
-        $this->logger = $logger;   
-    }   
-    
+        $this->logger = $logger;
+    }
+
     public function testAction(): void
     {
         $this->logger->error('Your error message');
-    }   
+    }
 }
 ```
 
-The service definition can add a DI tag to specify which logger should be injected:
+The service definition adds a DI tag to specify which logger to inject:
 
 ```yaml
 services:
@@ -207,11 +219,11 @@ services:
             $logger: '@logger'
         tags:
             - { name: monolog.logger, channel: application_logger }
-``` 
+```
 
-It's also possible to autowire the logger channel by changing the argument name format to `(channel name in camel case) + Logger`. 
+Autowire the logger channel by naming the argument as `(channel name in camel case) + Logger`.
 
-An example for channel `foo_bar`:
+Example for channel `foo_bar`:
 
 ```php
   public function __construct(LoggerInterface $fooBarLogger)
@@ -220,11 +232,11 @@ An example for channel `foo_bar`:
   }
 ```
 
-More details on [Logging Chanel Handlers](https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels)
+More details on [Logging Channel Handlers](https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels).
 
-### Special context variables
+### Special Context Variables
 
-There are some context variables with a special functionality: `fileObject`, `relatedObject`, `component`.
+Three context variables have special functionality: `fileObject`, `relatedObject`, `component`.
 
 ```php
 <?php
@@ -242,30 +254,30 @@ class TestController
     {
         $fileObject = new FileObject('some interesting data');
         $myObject   = DataObject::getById(73);
-        
+
         $logger->error('my error message', [
             'fileObject'    => $fileObject,
-            'relatedObject' => $myObject, 
+            'relatedObject' => $myObject,
             'component'     => 'different component',
             'source'        => 'Stack trace or context-relevant information' // optional, if empty, gets automatically filled with class:method:line from where the log got executed
         ]);
-        
+
         // ...
     }
 }
 ```
 
-In the application logger grid, the new row was created: *my error message* with related object. 
+In the Application Logger grid, the new row appears as *my error message* with a related object.
 
-If you click on the row you can go to the object editor by clicking on the *Related object* edit icon in the popup.
+Click the row to navigate to the object editor via the *Related object* edit icon in the popup.
 
 ![App logger popup](../../img/applogger_backend_popup.png)
 
 
-### Logging exceptions
+### Logging Exceptions
 
-The application logger provides a helper method to log exceptions and implicitly create a `FileObject` from the exception
-when writing the log entry. This can be done in 2 ways depending on how you use the application logger:
+The Application Logger provides a helper method to log exceptions
+and implicitly create a `FileObject` from the exception:
 
 ```php
 <?php
@@ -289,26 +301,28 @@ ApplicationLogger::logExceptionObject($logger, 'Oh no!', $exception, 'alert', $r
 ```
 
 
-### Setting an individual logger level
+### Setting an Individual Logger Level
 
-Adds a console logger and sets the minimum logging level to *INFO* (overwrites log level in Pimcore system settings):
+Add a console logger and set the minimum logging level to *INFO*
+(overwrites the log level in Pimcore configuration):
 
 ```php
-$logger = \Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger::getInstance("SAP_exporter", true); 
+$logger = \Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger::getInstance("SAP_exporter", true);
 // returns a PSR-3 compatible logger, registers a custom app logger as `pimcore.app_logger.SAP_exporter` on the service container
-$logger->addWriter(new \Monolog\Handler\StreamHandler('php://output'), \Monolog\Level::Info));
+$logger->addWriter(new \Monolog\Handler\StreamHandler('php://output', \Monolog\Level::Info));
 ```
 
 ## Configuration
 
-There are some options in the system settings to configure the application logger (within the *Debug* panel):
+Configure the Application Logger in Pimcore Studio under the application logger settings:
 
 ![Application logger settings](../../img/applogger_settings.png)
 
-When the *Send log summary per mail* checkbox is activated the defined receivers will receive log entries by mail. 
-The priority can be used to setup which log messages will be contained in the mail. 
-For example errors are more important than just info entries. 
+When *Send log summary per mail* is activated, the defined receivers receive log entries by mail.
+The priority controls which log messages the mail contains
+(e.g. errors take precedence over info entries).
 
-The archive function automatically creates new database tables to archive the log entries in the form `application_logs_archive_*`. 
-In the above example log entries will be moved after 30 days to these archive tables. 
-Optionally a different database name for the archive tables can be defined. 
+The archive function automatically creates new database tables (`application_logs_archive_*`)
+for log entry archival.
+In the example above, log entries move to archive tables after 30 days.
+Optionally define a different database name for the archive tables.

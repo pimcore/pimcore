@@ -1,17 +1,24 @@
+---
+title: Logging
+description: Log types, custom log channels, and Monolog configuration.
+---
+
 # Logging
 
-There are several different kinds of logs in Pimcore. All of them are located under `/var/log` and get rotated
-as well as compressed automatically on every day (7 days retention) by the maintenance command. 
- 
-## `<env>.log`
-This is definitely one of the most important logs and also the default logging location. 
+Pimcore stores all logs under `/var/log`. The maintenance command rotates and compresses
+them daily (7 days retention).
 
-Pimcore uses Symfony default monolog logging with following channels: `pimcore`, `pimcore_api`, `session`. 
-For details see [Symfonys monolog docs](https://symfony.com/doc/current/logging.html).
+## `<env>.log`
+
+The primary log file and default logging location.
+
+Pimcore uses Symfony's default Monolog logging with the following channels: `pimcore`, `pimcore_api`, `session`.
+For details, see [Symfony's Monolog documentation](https://symfony.com/doc/current/logging.html).
 
 ## `php.log`
-By default Pimcore writes PHP-Engine Log Messages to the file `php.log`.
-You can change this by adding the following to your symfony config:
+
+By default, Pimcore writes PHP engine log messages to `php.log`.
+Override the path in your Symfony config:
 ```yaml
 monolog:
     handlers:
@@ -22,7 +29,9 @@ monolog:
 ```
 
 ## usagelog.log
-In this log you can find every action done within the Pimcore Backend Interface. It can be deactivated by configuring `disable_usage_statistics` in `config/config.yaml`:
+
+Records every action performed in Pimcore Studio.
+Deactivate it by configuring `disable_usage_statistics` in `config/config.yaml`:
 
 ```yaml
 pimcore:
@@ -30,8 +39,8 @@ pimcore:
         disable_usage_statistics: true
 ```
 
-##### Example Entry: 
-``` 
+##### Example Entry:
+```
 2021-04-26T13:18:35+0200 : 2|Pimcore\Bundle\AdminBundle\Controller\Admin\Document\PageController::saveAction|pimcore_admin_document_page_save|{"task":"publish","id":"1","data":"{\"cImage_0\":{\"data\":{\"id\":337,\"path\":\"\\\/..."}
 2021-04-26T13:18:35+0200 : 2|Pimcore\Bundle\AdminBundle\Controller\Admin\Asset\AssetController::getImageThumbnailAction|pimcore_admin_asset_getimagethumbnail|{"id":"3","alt":"","height":"undefined","thumbnail":"portalCarousel","pimcore_editmode":"1"}
 ```
@@ -47,8 +56,9 @@ pimcore:
 | \{"task":"pub .... \}                                                                | Request Parameters (shortened & censored) |
 
 ## redirect.log
-Sometimes it's necessary to debug redirects, for example when a redirect ends in an infinite loop. 
-In this log you can see every request where a redirect takes action. 
+
+Useful for debugging redirects, for example when a redirect ends in an infinite loop.
+Every request where a redirect takes action is logged here.
 
 ##### Example
 ```
@@ -57,13 +67,16 @@ In this log you can see every request where a redirect takes action.
 
 :::info
 
-Redirects are logged into a `redirect` monolog log channel at info level. By default, Pimcore logs that channel into `var/log/redirect.log`.
-Of course, the corresponding monolog handler configuration can be adapted as needed.
+Redirects are logged into a `redirect` Monolog channel at info level.
+By default, Pimcore logs that channel into `var/log/redirect.log`.
+Adapt the corresponding Monolog handler configuration as needed.
 
 :::
 
 ## Writing Your Own Log Files
-To create a custom log entry, we need to create the monolog log channels and log handlers configuration. Here is an example on how to log in a custom filename called `custom.log`
+
+Create a custom log entry by configuring Monolog channels and handlers.
+Example for a custom `custom.log` file:
 
 ```yaml
 monolog:
@@ -76,7 +89,8 @@ monolog:
     channels: [custom_log, some_other_channel]
 
 ```
-It is possible to inject the `Psr\Log\LoggerInterface` by changing the variable name eg. `$customLogLogger` (camel case channel name + `Logger`) and Symfony will automatically wire the specified channel.
+Inject `Psr\Log\LoggerInterface` by naming the variable `$customLogLogger`
+(camel-case channel name + `Logger`). Symfony automatically wires the specified channel.
 
 ```php
 class SomeService {
@@ -87,4 +101,4 @@ class SomeService {
 }
 ```
 
-For more, please refer to [Monolog Documentation](https://symfony.com/doc/6.2/logging/channels_handlers.html)
+For more, refer to the [Monolog documentation](https://symfony.com/doc/current/logging/channels_handlers.html).

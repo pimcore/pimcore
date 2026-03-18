@@ -1,17 +1,22 @@
+---
+title: Authenticate Against Pimcore Objects
+description: Implement Symfony Security authentication with Pimcore data objects.
+---
+
 # Authenticate Against Pimcore Objects
 
-As Symfony's security component is quite complex, Pimcore provides base implementations to facilitate integrating the security
-configuration with users stored as Pimcore objects.
+Pimcore provides base implementations to facilitate integrating Symfony's Security component
+with users stored as Pimcore data objects.
 
-As example, assume we have a user object which is defined in a `App\Model\DataObject\User` class and stores its password
-in a field named `password` (field type `Password`). The password field is configured to use the `password_hash` algorithm
-which is the standard way to handle passwords in PHP these days (internally it uses bcrypt). The class definition looks
-like this (you can find a working example in the `demo-basic` install profile):
+As an example, assume a user object defined in `App\Model\DataObject\User` that stores its password
+in a field named `password` (field type `Password`). The password field uses the `password_hash` algorithm,
+the standard way to handle passwords in PHP (internally using bcrypt). The class definition looks
+like this (a working example ships with the `demo-basic` install profile):
 
 ![App\Model\DataObject\User](../../img/security_authentication_class_definition.png)
 
-As a user object needs to implement the `UserInterface` provided by Symfony, we override the generated class and implement
-the remaining methods which are not implemented by field getters:
+Since a user object must implement the `UserInterface` provided by Symfony, override the generated class
+and implement the remaining methods not covered by field getters:
 
 ```php
 <?php
@@ -29,8 +34,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User extends BaseUser implements UserInterface
 {
     /**
-     * Trigger the hash calculation to remove the plain text password from the instance. 
-     * 
+     * Trigger the hash calculation to remove the plain text password from the instance.
+     *
      * This is necessary to make sure no plain text passwords are serialized.
      */
     public function eraseCredentials(): void
@@ -42,7 +47,7 @@ class User extends BaseUser implements UserInterface
 }
 ```
 
-Next, we configure Pimcore to use our overridden class:
+Next, configure Pimcore to use the overridden class:
 
 ```yaml
 # config/config.yaml
@@ -53,13 +58,13 @@ pimcore:
 ```
 
 
-## Loading users with a User Provider
+## Loading Users with a User Provider
 
-A user provider is responsible for finding matching user objects for a given username. Pimcore ships an `ObjectUserProvider`
-which loads users from a defined class type and searches the username for a configured property. In our case, we want to
-load users from the `App\Model\DataObject\User` and query the `username` field. To be able to use our user class in the
-security configuration, we define a user provider service which is configured to load our user implementation (make sure
-your bundle is able to load service definitions, see
+A user provider finds matching user objects for a given username. Pimcore ships an `ObjectUserProvider`
+that loads users from a defined class type and searches by a configured property. Here, load users
+from `App\Model\DataObject\User` and query the `username` field.
+
+Define a user provider service (ensure your bundle loads service definitions, see
 [Loading Service Definitions](../../10_Extending_Pimcore/04_Pimcore_Bundle_Developers_Guide/02_Loading_Service_Definitions.md)):
 
 ```yaml
@@ -74,32 +79,35 @@ services:
         arguments: ['App\Model\DataObject\User', 'username']
 ```
 
-We'll use this service later in our security configuration to tell the firewall where to load its users from. For details
-have a look at `ObjectUserProvider` which is basically calling `User::getByUsername($username, 1)` internally. If you have
-more complex use cases you can extend the `ObjectUserProvider` or ship your completely custom implementation.
+This service is used later in the security configuration to tell the firewall
+where to load users from. Internally, `ObjectUserProvider` calls
+`User::getByUsername($username, 1)`. For more complex use cases,
+extend `ObjectUserProvider` or provide a custom implementation.
 
-For more information see [How to Create a custom User Provider](https://symfony.com/doc/current/security/custom_provider.html)
+For more information, see
+[How to Create a custom User Provider](https://symfony.com/doc/current/security/custom_provider.html)
 on the Symfony docs.
 
 
-## Password hashing
-The standard approach of hashing and verifying a user's password in Symfony is to delegate the logic to a `PasswordHasherInterface`
-which is responsible for calculating and verifying password hashes. As Pimcore's `Password` field definition already provides
-this logic, the password hasher needs to be configured to delegate the logic to the user object.
+## Password Hashing
 
-Symfony builds and caches one password hasher instance per user type (class). To be able to delegate the calculation to the user
-object it is necessary to build an password hasher instance which is scoped to the user object and can access the user's properties
-at runtime. Pimcore adds this as additional layer of configuration which allows to specify a password hasher factory per user
-type which in turn can decide if it needs to build dedicated instances of password hashers per user.
+The standard approach for hashing and verifying passwords in Symfony delegates the logic
+to a `PasswordHasherInterface`. Since Pimcore's `Password` field definition already provides
+this logic, the password hasher delegates to the user object.
 
-To be able to integrate our user object, we need 2 integration points:
+Symfony builds and caches one password hasher instance per user type (class). To delegate
+calculation to the user object, an additional layer builds password hasher instances
+scoped to individual user objects at runtime.
 
-* A `PasswordFieldHasher` which has access to the user instance and delegates calculation and verification of the password
-  hash to the password field definition. The password hasher needs to be configured with the name of the field it should operate 
-  on (`password` in our case).
-* A `UserAwarePasswordHasherFactory` which builds a dedicated instance of a `PasswordFieldHasher` per user object.
+Two integration points are required:
 
-To achieve this, we define a factory service which builds `PasswordFieldHasher` instances as specified above:
+* A `PasswordFieldHasher` that accesses the user instance and delegates hash calculation
+  and verification to the password field definition. Configure it with the field name
+  (`password` in this case).
+* A `UserAwarePasswordHasherFactory` that builds a dedicated `PasswordFieldHasher` instance
+  per user object.
+
+Define the factory service:
 ```yaml
 # The password hasher factory is responsible for verifying the password hash for a given user. As we need some special
 # handling to be able to work with the password field, we use the UserAwarePasswordHasherFactory  to build a dedicated
@@ -112,9 +120,10 @@ services:
             - ['password']
 ```
 
-Now, instead of configuring the password hasher in `security.password_hashers` as it is the standard Symfony way, configure your password hasher
-factory service instead in `pimcore.security.password_hasher_factories`. This is just an additional way of building password hashers - if 
-you don't need any user specific handling, just stick to the standard Symfony way.
+Instead of configuring the password hasher in `security.password_hashers` (the standard Symfony way),
+register the factory in `pimcore.security.password_hasher_factories`.
+This is an additional way of building password hashers. For cases without user-specific handling,
+use the standard Symfony approach.
 
 ```yaml
 pimcore:
@@ -124,14 +133,15 @@ pimcore:
             App\Model\DataObject\User: website_demo.security.password_hasher_factory
 ```
 
-When a password hasher is loaded for a `App\Model\DataObject\User` object, the UserAwarePasswordHasherFactory will build a dedicated
-instance of `PasswordFieldHasher` instead of always returning the same instance for all users.
+When a password hasher is loaded for an `App\Model\DataObject\User` object,
+the `UserAwarePasswordHasherFactory` builds a dedicated `PasswordFieldHasher` instance
+instead of returning the same instance for all users.
 
 
-## Configuring the firewall
+## Configuring the Firewall
 
-As all our needed services are in place, we can start to use them from the firewall configuration. As an example, let's 
-configure a simple firewall which authenticates via HTTP basic auth. Our final configuration looks like the following:
+With all services in place, use them in the firewall configuration. As an example,
+configure a firewall with HTTP basic auth:
 
 ```yaml
 pimcore:
@@ -154,8 +164,8 @@ security:
             http_basic: ~
 ```
 
-This should get you started with a custom authentication system based on Pimcore objects. For further information see:
+This provides a starting point for custom authentication based on Pimcore objects. For further information:
 
-* The [Demo](https://github.com/pimcore/demo) which acts as base for
-  this guide and implements a form/session login.
+* The [demo-enterprise](https://github.com/pimcore/demo-enterprise) repository,
+  which implements a full form/session login with CMF integration.
 * The [Symfony Security Component documentation](https://symfony.com/doc/current/security.html)

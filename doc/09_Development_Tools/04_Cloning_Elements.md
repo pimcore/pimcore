@@ -1,18 +1,20 @@
+---
+title: Cloning Elements
+description: Clone and copy documents, assets, and data objects programmatically.
+---
+
 # Cloning Elements
 
-Use
+Use `Service::cloneMe()` to get an in-memory copy of any element (anything implementing `ElementInterface`):
 
 ```php
 $new = Pimcore\Model\Element\Service::cloneMe($source)
 ```
 
-to get a safe copy of the original element (everything that implements ElementInterface).
-Note that this will not update any internal references.
-For example: 
-A relation inside the source element pointing to the source element will still reference the source element in the copy.
+This does not update internal references.
+For example, a relation in the source element pointing to itself still references the source element in the copy.
 
-If you want to get a persistent copy use the `copyAsChild` method of the corresponding service.
-E.g.
+For a persistent copy, use the `copyAsChild` method of the corresponding service:
 
 ```php
 $user = \Pimcore\Model\User::getById(123);
@@ -26,14 +28,11 @@ $documentService->copyAsChild($target, $source); // additional arguments are ava
 $objectService = new \Pimcore\Model\DataObject\Service($user);
 $objectService->copyAsChild($target, $source);
 ```
-where `$source` is the source element and `$target` the parent element of the new element.
-This will also create a unique element key (or filename for asset elements).
+Where `$source` is the source element and `$target` the parent element of the new element.
+This also creates a unique element key (or filename for asset elements).
 
-If you also want to update the references there is a helper method which accomplishes this for you.
-Just call the service's `rewriteIds` and provide a mapper config.
- 
- Example:
- 
+To update references in the copy, call the service's `rewriteIds` method with a mapper config:
+
  ```php
  $rewriteConfig = array(
      "object" => array(
@@ -42,5 +41,4 @@ Just call the service's `rewriteIds` and provide a mapper config.
  );
  $object = DataObject\Service::rewriteIds($object, $rewriteConfig);
  ```
- meaning that in the copy everything point to object with ID 176 will be replaced with a reference pointing to object 190.
- 
+ This replaces all references to object ID 176 with references to object ID 190 in the copy.

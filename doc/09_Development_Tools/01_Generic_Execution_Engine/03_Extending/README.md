@@ -1,22 +1,27 @@
-# Extending Generic Execution Engine
+---
+title: Extending the Execution Engine
+description: React to job run state changes via events.
+---
 
-## Extending Generic Execution Engine via Events
+# Extending the Generic Execution Engine
 
-Currently, it is possible to use the following event to extend the Generic Execution Engine:
+## Events
+
+The following event extends the Generic Execution Engine:
 
 * `Pimcore\Bundle\GenericExecutionEngineBundle\Event\JobRunStateChangedEvent`
 
-With this event it is possible to react to changes in the state of a job run.
-The event is dispatched whenever the state of a job run changes. The event object contains the job run ID, the previous state and the new state.
+This event fires whenever a job run's state changes.
+The event object contains the job run ID, the previous state, and the new state.
 
 ### Example
 
-The following example notifies a user via email when a job run fails.
+Send an email notification when a job run fails:
 
 ```php
 <?php
 
-namespace AppBundle\EventListener;
+namespace App\EventListener;
 
 use Pimcore\Bundle\GenericExecutionEngineBundle\Event\JobRunStateChangedEvent;
 use Pimcore\Mail;
@@ -24,17 +29,17 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SendEmailOnFailedState implements EventSubscriberInterface
 {
-    
-    public static function getSubscribedEvents()
+
+    public static function getSubscribedEvents(): array
     {
         return [
             JobRunStateChangedEvent::class  => 'onFailedState',
         ];
     }
 
-    public function onFailedState(JobRunStateChangedEvent $event)
+    public function onFailedState(JobRunStateChangedEvent $event): void
     {
-        $state = $event->getNewState(); 
+        $state = $event->getNewState();
         if ($state !== 'failed') {
             return;
         }

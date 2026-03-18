@@ -1,31 +1,40 @@
-# Step configuration
+---
+title: Step Configuration
+description: Configure job step properties and selection processing modes.
+---
 
-The configuration of a step is done via the `JobStep` object. 
-The `JobStep` is part of the `Job` object and contains the following properties:
+# Step Configuration
 
-- `name`: The name of the step.
-- `messageClass`: The message class that should be dispatched.
-- `configuration`: The configuration of the step.
-- `selectionMode`: The selection mode of the step.
+Configure each step via the `JobStep` object.
+A `JobStep` is part of a `Job` and contains the following properties:
+
+- `name` - Identifies the step in the job run log.
+- `messageClass` - The message class dispatched when the step executes.
+- `configuration` - An array of arbitrary data available to the step handler.
+- `selectionProcessingMode` - The selection processing mode (see below).
 
 ## Name
-The name of the step is a string that is used to identify the step in the job run log.
 
-## Message class
-The message class is the class of the message that should be dispatched when the step is executed.
+A string identifier for the step, displayed in the job run log.
+
+## Message Class
+
+The fully qualified class name of the message dispatched when the step executes.
 
 ## Configuration
-The configuration of a step is an array that can contain any kind of data that is necessary for the step handler to execute the step.
 
-Additionally, you can refer environment variables in the configuration by using the following syntax: `job_env('<env_variable_name>')`.
+An array containing any data the step handler needs.
 
-## Selection Processing mode
-The selection processing mode of a step is an enum that defines how the step should process the selected elements.
+Reference environment variables in the configuration using: `job_env('<env_variable_name>')`.
 
-- `SelectionProcessingMode::FOR_EACH`: The step is executed for each selected element.
-For example if you pass 10 selected elements to the job, the message gets dispatched 10 times and the step handler therefore is executed 10 times.
-Use `getSubjectFromMessage()` in `AbstractAutomationActionHandler` method to access the current element in the handler.
+## Selection Processing Mode
 
-- `SelectionProcessingMode::FOR_ALL`: The step is executed once for all selected elements.
-If you pass 10 selected elements to the job, the message gets dispatched once and the step handler therefore is executed once.
-Use `getSubjectsFromMessage()` in `AbstractAutomationActionHandler` method to access all elements in the handler.
+An enum (`SelectionProcessingMode`) that defines how the step processes selected elements:
+
+- **`SelectionProcessingMode::FOR_EACH`** - The step executes once per selected element.
+  Passing 10 elements dispatches the message 10 times.
+  Use `getSubjectFromMessage()` in `AbstractAutomationActionHandler` to access the current element.
+
+- **`SelectionProcessingMode::ONCE`** - The step executes once regardless of how many elements
+  are selected. Passing 10 elements dispatches the message once.
+  Use `getSubjectsFromMessage()` in `AbstractAutomationActionHandler` to access all elements.

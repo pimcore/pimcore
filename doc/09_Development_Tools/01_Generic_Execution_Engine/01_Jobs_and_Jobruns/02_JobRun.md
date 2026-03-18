@@ -1,29 +1,42 @@
-## Job Runs
-Job Runs are the entity for storing information about runs of a job. There is the
-[`Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface`] for all kind of CRUD operations on job runs.
+---
+title: Job Runs
+description: Manage job run state, logging, cancellation, and rerun.
+---
 
-### Localization of Current Message
-The current message of a job run can be localized. That means, that in user interface, the message is translated into
-the users' language. To ease handling of these messages, the `JobRunRepository` provides a specialized
-`updateLogLocalized` method, which helps you to create a localized log entry. It writes the untranslated message to the
-job run object, but translates the message to english and adds it to the job run log, based on the execution context of the Job Run.
+# Job Runs
 
-You can pass the `message` to the method, which then again can be translated using Pimcore's `Translations` menu by selecting `your custom` domain.
-In addition, it is also possible to add a translation directly in the corresponding  `your-domain.<language>.yaml` file.
+Job runs store information about each execution of a job.
+Use [`Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunRepositoryInterface`]
+for all CRUD operations on job runs.
+
+## Localization of Current Message
+
+The current message of a job run supports localization. In the user interface,
+the message is translated into the user's language.
+The `JobRunRepository` provides a `updateLogLocalized` method that writes
+the untranslated message to the job run object and adds an English translation
+to the job run log, based on the execution context.
+
+Pass the `message` parameter to the method. Translate it using Pimcore's
+`Translations` menu by selecting your custom domain,
+or add a translation directly in the corresponding `your-domain.<language>.yaml` file.
 
 :::info
-By default, the admin domain is used for the translation. If you want to use a different domain, you can set it in the `pimcore_generic_execution_engine` configuration.
+By default, the `admin` domain handles translations. To use a different domain,
+set it in the `pimcore_generic_execution_engine` configuration.
 :::
 
-As example see:
-```php 
+Example:
+```php
 $this->jobRunRepository->updateLogLocalized(
     $jobRun, 'pimcore_copilot_job_execution_job_cancelled', ['%job_run_id%' => $jobRun->getId()]
 );
 ```
 
 ## Accessing JobStep in Handler
-The `JobStep` object can be accessed in the handler via the `getJobStep` method. This can be useful if you need to access the step configuration in the handler.
+
+Access the `JobStep` object in a handler via the job run's step list.
+This is useful for reading step configuration at runtime.
 
 ```php
 $jobRun = $this->getJobRun($message);
@@ -31,62 +44,64 @@ $steps = $jobRun->getJob()?->getSteps();
 if($steps !== null) {
     $step = $steps[$jobRun->getCurrentStep()] ?? null;
     if($step) {
-        return $step->getSelectionMode();
+        return $step->getSelectionProcessingMode();
     }
 }
 ```
 
 ## Cancel Job Run
 
-To cancel a job run, you can use the `cancelJobRun` method of the `JobExecutionAgentInterface`. 
-This method accepts the job run id as an argument.
+Cancel a job run via `JobExecutionAgentInterface::cancelJobRun()`:
 
 ```php
 $jobExecutionAgent->cancelJobRun($jobRun->getId());
 ```
 
-The state of the job run will be set to `cancelled` and the job run will be stopped.
+The state changes to `cancelled` and execution stops.
 
 ## Rerun Job Run
 
-To rerun a job run, you can use the `rerunJobRun` method of the `JobExecutionAgentInterface`.
+Rerun a job run via `JobExecutionAgentInterface::rerunJobRun()`:
 
 ```php
 $jobExecutionAgent->rerunJobRun($jobRun->getId(), $ownerId);
 ```
 
-The state of the job run will be set to `running` and the job run will be restarted.
+The state resets to `running` and execution restarts.
 
-## Cancel single steps of a Job Run
+## Cancel Single Steps
 
-Right now it is not possible to cancel single steps of a job run. Currently, only the whole job run can be cancelled.
+Cancelling individual steps is not supported.
+Cancel only the entire job run.
 
 ## Job Run States
 
-The following states are available for a job run:
+| State | Description |
+|-------|-------------|
+| `running` | Currently executing |
+| `failed` | Execution failed |
+| `finished` | Completed successfully |
+| `cancelled` | Cancelled by user |
+| `finished_with_errors` | Completed with one or more errors |
 
-- `running` - The job run is currently running.
-- `failed` - The job run has failed.
-- `finished` - The job run has completed successfully.
-- `cancelled` - The job run has been cancelled.
-- `finished_with_errors` - The job run has completed, but one or more errors occurred.
+## Adding Additional Log Entries
 
-## Adding additional log entries
-
-To update the log you have to inject the `JobRunExtractorInterface` and use its `logMessageToJobRun` method.
-This can be useful if you want to provide additional information about why a job run was cancelled or failed.
+Inject `JobRunExtractorInterface` and use `logMessageToJobRun` to add
+custom log entries, for example to explain why a job run failed or was cancelled:
 
 ```php
  $this->jobRunExtractor->logMessageToJobRun(
-            $jobRun,   
+            $jobRun,
             'translation_key',
             [
                 '%param1%' => $var1,
-                '%param2%' => $var2                
+                '%param2%' => $var2
             ]
 );
 ```
 
 ## Job Run Error Logs
-Job Run Error Logs are the entity for storing log information about Job Run. There is the
-[`Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepositoryInterface`] for all kind of CRUD operations on these logs.
+
+Job run error logs store detailed log information per job run.
+Use [`Pimcore\Bundle\GenericExecutionEngineBundle\Repository\JobRunErrorLogRepositoryInterface`]
+for CRUD operations on these logs.

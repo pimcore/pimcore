@@ -1,17 +1,23 @@
+---
+title: Password Hashing
+description: Configure the password hashing algorithm for Pimcore users and objects.
+---
+
 # Configure Password Hashing Algorithm
 
-Pimcore uses PHP's default password hashing algorithm by default, which currently equals to `BCrypt` with a cost of `10`
-(see [`PASSWORD_DEFAULT`](https://www.php.net/manual/en/password.constants.php#constant.password-default)), but the algorithm 
-can also be configured (see here for [possible algorithms and their options](https://www.php.net/manual/en/password.constants.php)),
-for example:
+Pimcore uses PHP's default password hashing algorithm, which currently equals `BCrypt` with a cost of `10`
+(see [`PASSWORD_DEFAULT`](https://www.php.net/manual/en/password.constants.php#constant.password-default)).
+The algorithm is configurable
+(see [possible algorithms and their options](https://www.php.net/manual/en/password.constants.php)):
 
- ```yaml
+```yaml
 pimcore:
     security:
         password:
             algorithm: !php/const PASSWORD_BCRYPT
             options:
                 cost: 13
-  ```
+```
 
-This config will be used for Pimcore's backend users and [fields of type `Password` in custom Pimcore Objects](./01_Authenticate_Pimcore_Objects.md).
+This configuration applies to Pimcore Studio users and
+[fields of type `Password` in custom Pimcore Objects](./01_Authenticate_Pimcore_Objects.md).

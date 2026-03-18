@@ -1,20 +1,48 @@
+---
+title: Security and Authentication
+description: Symfony Security integration for frontend authentication in Pimcore.
+---
+
 # Security and Authentication
 
-You can make full use of the [Symfony Security Component](https://symfony.com/doc/current/security.html) to handle complex
-authentication/authorization scenarios. 
-Please be aware that also the Pimcore admin UI uses the Security component, so be careful
-when changing/modifying the configuration. 
+Pimcore integrates with the [Symfony Security Component](https://symfony.com/doc/current/security.html)
+for authentication and authorization.
+Pimcore Studio uses its own security firewall; configure separate firewalls
+for any frontend authentication requirements.
 
-## Login example
+## Login Example
 
-The [Demo CMS profile](https://github.com/pimcore/demo) provides a simple login
-example using a `User` Pimcore object and a `form_login` authenticator which allows a site-wide login with public and
-secured areas:
- 
-* [security.yaml](https://github.com/pimcore/demo/blob/2025.x/config/packages/security.yaml)
-* [AccountController](https://github.com/pimcore/demo/blob/2025.x/src/Controller/AccountController.php)
+The [demo-enterprise](https://github.com/pimcore/demo-enterprise) repository (branch: `2026.x`)
+provides a full login implementation with form-based authentication, CSRF protection,
+remember-me support, CMF `CustomerObjectUserProvider`, and e-commerce cart migration on login.
 
-A simplified guide to this setup is illustrated in [Authenticate against Pimcore Objects](./01_Authenticate_Pimcore_Objects.md).
+Key files:
 
-For more complex examples, custom user providers and a full configuration reference please read the
-[Symfony Security Component documentation](https://symfony.com/doc/current/security.html).
+- [`config/packages/security.yaml`](https://github.com/pimcore/demo-enterprise/blob/2026.x/config/packages/security.yaml)
+  - Firewalls, user providers, access control rules
+- [`src/Controller/AccountController.php`](https://github.com/pimcore/demo-enterprise/blob/2026.x/src/Controller/AccountController.php)
+  - Login/logout controller actions
+- [`src/Form/LoginFormType.php`](https://github.com/pimcore/demo-enterprise/blob/2026.x/src/Form/LoginFormType.php)
+  - Login form definition
+- [`src/EventListener/AuthenticationLoginListener.php`](https://github.com/pimcore/demo-enterprise/blob/2026.x/src/EventListener/AuthenticationLoginListener.php)
+  - Post-login hooks (e.g. cart migration)
+
+:::info
+
+The `demo-enterprise` repository is private and requires an enterprise license.
+The [simplified authentication guide](./01_Authenticate_Pimcore_Objects.md) below
+covers the same concepts with a publicly accessible, minimal example.
+
+:::
+
+## Simplified Guide
+
+For basic setups without CMF or e-commerce, follow the step-by-step guide at
+[Authenticate Against Pimcore Objects](./01_Authenticate_Pimcore_Objects.md).
+It covers user providers, password hashing with `PasswordFieldHasher`,
+and firewall configuration using Pimcore data objects.
+
+## Further Reading
+
+- [Configure Password Hashing](./00_Configure_Password_Hashing_Algorithm.md)
+- [Symfony Security Component documentation](https://symfony.com/doc/current/security.html)

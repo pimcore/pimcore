@@ -1,27 +1,30 @@
+---
+title: Settings Store
+description: Key-value store API for persisting bundle and application settings.
+---
+
 # Settings Store
 
-The settings store is a simple key value store and allows to persist any kind of settings into the
-Pimcore database via API. There is no user interface for the Settings Store available. Compared to the
-`TmpStore` the settings do not have an expiry date and will not be cleaned up.
+The Settings Store is a key-value store that persists settings into the Pimcore database via API.
+No user interface is available. Unlike `TmpStore`, settings have no expiry date and are not cleaned up.
 
-Sample use cases for settings store are:
-- Persist if a bundle is installed.
-- Runtime settings of a bundle.
-- ...
+Use cases:
+- Track whether a bundle is installed
+- Store runtime settings of a bundle
 
-The stored settings can be namespaced/grouped with a `scope` attribute and can be of following scalar data
-types usable with `SettingsStore::TYPE_*` constants:
+Settings support namespacing/grouping via a `scope` attribute and accept the following scalar data types
+(use `SettingsStore::TYPE_*` constants):
 - `SettingsStore::TYPE_STRING` (`string`)
 - `SettingsStore::TYPE_BOOLEAN` (`bool`)
 - `SettingsStore::TYPE_INTEGER` (`int`)
 - `SettingsStore::TYPE_FLOAT` (`float`)
 
-We highly recommend to use the `scope` attribute when using the settings store for a bundle (e.g. the bundles name),
-while you can omit it when using the settings store for your app.
+Use the `scope` attribute when storing settings for a bundle (e.g. the bundle name).
+Omit it when using the Settings Store for your application.
 
 ### Sample Usage
 
-Recommended
+With scope (recommended for bundles):
 
 ```php
 
@@ -39,7 +42,7 @@ SettingsStore::delete('my-setting-id', 'bundle-settings-1');
 
 ```
 
-OR
+Without scope:
 
 ```php
 
