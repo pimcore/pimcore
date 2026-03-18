@@ -21,12 +21,18 @@ Create a new empty custom report.
 See [custom reports](../06_Reporting/01_Custom_Reports.md).
 
 After creating it, configure the Source Definition, Column Configuration, and Chart Settings:
+
+<div class="image-as-lightbox"></div>
+
 ![Source Definition](../img/workflow-report-source-definition.png)
 
 Save it and start using it.
 Filter globally by state and status, order and filter the columns, and export results.
 
 Here is an example of a rendered workflow custom report:
+
+<div class="image-as-lightbox"></div>
+
 ![Rendered workflow custom report](../img/workflow-report-result.png)
 
 

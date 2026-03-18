@@ -13,23 +13,25 @@ custom layouts, and additional fields.
 Start with a simple product class containing sku, localized name, localized picture,
 localized description, price, and quantity.
 
+<div class="image-as-lightbox"></div>
+
 ![Example product class](../img/workflow_example_product_class.png)
 
 Add four custom layouts to assign to specific workflow statuses:
 
-* `newProduct` layout with ID = 1
+* `newProduct` layout with ID = `newProduct`
 
 ![The new product custom layout](../img/workflow_example_product_cl_1.png)
 
-* `fillContents` layout with ID = 2
+* `fillContents` layout with ID = `fillContents`
 
 ![The fill contents custom layout](../img/workflow_example_product_cl_2.png)
 
-* `updatePicture` layout with ID = 3
+* `updatePicture` layout with ID = `updatePicture`
 
 ![The update picture custom layout](../img/workflow_example_product_cl_3.png)
 
-* `validateQtyPrice` layout with ID = 4
+* `validateQtyPrice` layout with ID = `validateQtyPrice`
 
 ![The validate qty and price custom layout](../img/workflow_example_product_cl_4.png)
 
@@ -41,7 +43,7 @@ Create the base configuration in `config/config.yaml`:
 ```yaml
 pimcore:
     workflows:
-        workflow:
+        my_workflow:
             label: 'Product Workflow'
             type: 'state_machine'
             supports:
@@ -73,7 +75,7 @@ to use in Pimcore and which to reject. This requires (at least) three places:
             label: 'New product'
             color: '#377ea9'
             permissions:
-                - objectLayout: 1
+                - objectLayout: 'newProduct'
         rejected:
             label: 'Rejected product'
             color: '#28a013'
@@ -82,7 +84,7 @@ to use in Pimcore and which to reject. This requires (at least) three places:
             title: 'Updating content step'
             color: '#d9ef36'
             permissions:
-                - objectLayout: 2
+                - objectLayout: 'fillContents'
 
 (...)
 ```
@@ -140,13 +142,13 @@ Add these to the configuration file:
             title: 'Update the product picture'
             color: '#d9ef36'
             permissions:
-                - objectLayout: 3
+                - objectLayout: 'updatePicture'
         validate_stock_and_price:
             label: 'Validate Stock + Price'
             title: 'Check the quantity and the price'
             color: '#d9ef36'
             permissions:
-                - objectLayout: 4
+                - objectLayout: 'validateQtyPrice'
         content_prepared:
             label: 'Content Prepared'
             title: 'Content ready to publish'
@@ -255,18 +257,20 @@ And the transition with a *"timeWorked"* additional field:
 
 The following table shows the workflow at each stage:
 
-| Status                                                  | Screenshot                                         |
-| ------------------------------------------------------- |----------------------------------------------------|
-| Initial status when new object comes into the system    | ![Initial Place](../img/workflow_editmode_1.png)   |
-| Update Content                                          | ![Update Content](../img/workflow_editmode_2.png)  |
-| Update Picture                                          | ![Update Picture](../img/workflow_editmode_3.png)  |
-| Validate Price and Stock                                | ![Validate](../img/workflow_editmode_4.png)        |
-| Content is ready                                        | ![Content Ready](../img/workflow_editmode_5.png)   |
-| Publish the Product                                     | ![Publish Product](../img/workflow_editmode_6.png) |
+| Status                                                  | Screenshot                                                                               |
+| ------------------------------------------------------- |------------------------------------------------------------------------------------------|
+| Initial status when new object comes into the system    | <div class="image-as-lightbox"></div> ![Initial Place](../img/workflow_editmode_1.png)   |
+| Update Content                                          | <div class="image-as-lightbox"></div> ![Update Content](../img/workflow_editmode_2.png)  |
+| Update Picture                                          | <div class="image-as-lightbox"></div> ![Update Picture](../img/workflow_editmode_3.png)  |
+| Validate Price and Stock                                | <div class="image-as-lightbox"></div> ![Validate](../img/workflow_editmode_4.png)        |
+| Content is ready                                        | <div class="image-as-lightbox"></div> ![Content Ready](../img/workflow_editmode_5.png)   |
+| Publish the Product                                     | <div class="image-as-lightbox"></div> ![Publish Product](../img/workflow_editmode_6.png) |
 
 
 ### Check the history
 
 The *"Notes & Events"* tab lists every action applied to the object through the workflow module.
+
+<div class="image-as-lightbox"></div>
 
 ![Notes & Events - notes from the workflow](../img/notesandevents_object_grid.png)

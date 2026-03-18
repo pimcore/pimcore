@@ -54,6 +54,8 @@ at certain places. Otherwise, they behave like transitions.
 When workflows are configured for an element, an additional tab displays workflow details
 including all configured workflows, their current places, and a workflow graph.
 
+<div class="image-as-lightbox"></div>
+
 ![Workflow Overview](../img/workflow-overview.jpg)
 
 :::note
@@ -63,6 +65,8 @@ Rendering the workflow graph requires `graphviz` as an additional system require
 ### Workflow History
 
 The *"Notes & Events"* tab lists every action applied to the element through the workflow module.
+
+<div class="image-as-lightbox"></div>
 
 ![Notes & Events - notes from the workflow](../img/notesandevents_object_grid.png)
 
