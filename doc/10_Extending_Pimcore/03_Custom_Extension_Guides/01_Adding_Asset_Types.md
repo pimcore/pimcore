@@ -1,16 +1,15 @@
 # Adding Asset Types
 
 This feature allows users to add their own custom asset types.
-To register new custom asset types, you must follow these steps:
+To register a new custom asset type, follow these three steps:
 
+## 1) Create the PHP Asset Class
 
-## 1) Create the PHP asset class
+The asset class must extend an existing `Pimcore\Model\Asset` subclass. Choose the base class
+that best matches your type's storage behavior — for example, extend `Asset\Document` for
+office-like files, or `Asset\Image` for image variants.
 
-The asset **must** extend `Pimcore\Model\Asset`. Let´s create a class for InDesign (the namespace does not matter)
-but it's best practice to put your assets into a `Model\Asset` sub-namespace):
-
-For examples have a look at the Pimcore core asset types at
-[github](https://github.com/pimcore/pimcore/tree/2026.x/models/Asset).
+Place the class in a `Model\Asset` sub-namespace:
 
 ```php
 <?php
@@ -24,21 +23,16 @@ class InDesign extends \Pimcore\Model\Asset
 }
 ```
 
-## 2) Create JavaScript class for the asset view editor:
+For reference, see the built-in asset types in [pimcore/pimcore on GitHub](https://github.com/pimcore/pimcore/tree/2026.x/models/Asset).
 
-It needs to extend `pimcore.asset.asset`, be located in the namespace `pimcore.asset` and named after the
-`$type` property of the corresponding PHP class.
+## 2) Register the Asset in Configuration
 
-For examples have a look at the Pimcore core asset types at
-[github](https://github.com/pimcore/admin-ui-classic-bundle/tree/1.x/public/js/pimcore/asset)
-
-## 3) Register the asset on the asset type map
-
-Next we need to update the `pimcore.assets.type_definitions.map` configuration to include our asset. This can be done in any config
-file which is loaded (e.g. `/config/config.yaml`). The matching has to be an array of regular expressions of your data type.
+Add your type to the `pimcore.assets.type_definitions.map` configuration. The `matching`
+array contains regular expressions — when a file is uploaded, its filename is tested against
+these patterns to determine the asset type automatically.
 
 ```yaml
-# /config/config.yaml
+# config/config.yaml
 
 pimcore:
     assets:
@@ -48,3 +42,19 @@ pimcore:
                     class: \App\Model\Asset\InDesign
                     matching: ["/\\.indd/"]
 ```
+
+No database migration is needed — the `assets.type` column is `varchar(20)`.
+
+## 3) Add a Studio UI Frontend Plugin
+
+To give your asset type a proper editor in Pimcore Studio, create a frontend plugin that:
+
+1. **Creates a `TabManager`** subclass with your type name
+2. **Registers the type** in the `Asset/Editor/TypeRegistry`
+3. **Registers editor tabs** (Custom Metadata, Properties, Versions, etc.)
+
+For a complete working example, see the
+[Custom Asset Type example](https://github.com/pimcore/studio-example-bundle/tree/main/assets/js/src/examples/custom-asset-type)
+in the Studio Example Bundle and the
+[Plugin Development Examples](https://pimcore.com/docs/platform/Studio_UI/Extending/Plugin_Development_Examples/Custom_Asset_Type)
+documentation.
