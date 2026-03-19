@@ -14,13 +14,16 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\InstallBundle\Profile\DataSource;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Exception;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Imports SQL dump files from a directory.
  *
+ * Supports both plain `.sql` and gzip-compressed `.sql.gz` files.
  * Files are processed in alphabetical order (sorted by filename).
  * Uses a marker table to track whether the data source has already been applied,
  * supporting the checkpoint/resume-on-failure pattern.
@@ -48,16 +51,25 @@ final readonly class SqlDumpDataSource implements DataSourceInterface
         }
 
         $finder = new Finder();
-        $finder->files()->in($this->dumpDirectory)->name('*.sql')->sortByName();
+        $finder->files()
+            ->in($this->dumpDirectory)
+            ->name(['*.sql', '*.sql.gz'])
+            ->sortByName();
 
-        $connection->executeStatement('SET FOREIGN_KEY_CHECKS=0;');
+        $isMysql = $connection->getDatabasePlatform() instanceof AbstractMySQLPlatform;
+
+        if ($isMysql) {
+            $connection->executeStatement('SET FOREIGN_KEY_CHECKS=0;');
+        }
 
         foreach ($finder as $file) {
             $output->writeln(sprintf('  Importing %s...', $file->getFilename()));
-            $connection->executeStatement($file->getContents());
+            $connection->executeStatement($this->readFileContents($file));
         }
 
-        $connection->executeStatement('SET FOREIGN_KEY_CHECKS=1;');
+        if ($isMysql) {
+            $connection->executeStatement('SET FOREIGN_KEY_CHECKS=1;');
+        }
 
         // Mark as applied
         $connection->executeStatement(sprintf(
@@ -65,9 +77,18 @@ final readonly class SqlDumpDataSource implements DataSourceInterface
             $this->markerTable,
         ));
         $connection->executeStatement(sprintf(
-            'INSERT INTO `%s` (applied_at) VALUES (NOW())',
+            'INSERT INTO `%s` (applied_at) VALUES (CURRENT_TIMESTAMP)',
             $this->markerTable,
         ));
+    }
+
+    private function readFileContents(SplFileInfo $file): string
+    {
+        if (str_ends_with($file->getFilename(), '.gz')) {
+            return file_get_contents('compress.zlib://' . $file->getPathname());
+        }
+
+        return $file->getContents();
     }
 
     public function isApplied(Connection $connection): bool
