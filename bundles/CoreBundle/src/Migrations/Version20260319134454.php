@@ -15,12 +15,13 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Doctrine\Migrations\Exception\IrreversibleMigration;
 
 final class Version20260319134454 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Remove http_error_log';
+        return 'Remove http_error_log (irreversible; table must be recreated manually if needed)';
     }
 
     public function up(Schema $schema): void
@@ -33,6 +34,6 @@ final class Version20260319134454 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // do nothing, please manually copy the code from 12.x install.sql
+        throw new IrreversibleMigration('This migration drops the legacy http_error_log table and cannot be reversed automatically. Please recreate the table manually using the 12.x install.sql definition if a rollback is required.');
     }
 }
