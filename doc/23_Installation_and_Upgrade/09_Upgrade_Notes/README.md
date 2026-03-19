@@ -3,12 +3,12 @@
 ## Pimcore 2026.1.0
 
 #### Removed deprecated and discontinued bundles
-The following bundles have been removed
-- Glossary Bundle
-- Simple Backend Search Bundle
+The following bundles have been removed:
+- GlossaryBundle
+- SimpleBackendSearchBundle
 - Parts of SeoBundle - All functionality, except for redirects and sitemaps, will not be migrated to Pimcore Studio
-- WordExport Bundle
-- Xliff Export Bundle
+- WordExportBundle
+- XliffBundle
 
 ### [General]
 
@@ -34,16 +34,16 @@ The following bundles have been removed
 ### Deprecations
 
 #### Deprecated and Discontinued 
-The following bundles have been deprecated and will not be migrated to Pimcore Studio
-- Glossary Bundle
-- Simple Backend Search Bundle
-- Static Routes Bundle
+The following bundles have been deprecated and will not be migrated to Pimcore Studio:
+- GlossaryBundle
+- SimpleBackendSearchBundle
+- StaticRoutesBundle
 - Parts of SeoBundle - All functionality, except for redirects and sitemaps, will not be migrated to Pimcore Studio
-- WordExport Bundle
-- Xliff Export Bundle
+- WordExportBundle
+- XliffBundle
 
 #### Deprecated because directly integrated into Studio 
-- SimpleBackendSearch Bundle
+- SimpleBackendSearchBundle
 
 #### [Symfony 6.x Components Support]
 
