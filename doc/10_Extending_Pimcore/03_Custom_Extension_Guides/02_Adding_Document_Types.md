@@ -121,6 +121,22 @@ For the full plugin scaffold (build configuration, `WebpackEntryPointProvider`, 
 [Getting Started with Your First Plugin](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/01_Getting_Started_with_Your_First_Plugin.md)
 guide.
 
+## 5) Backend API Adapter (Optional)
+
+If your custom document type has custom properties or settings that need to be processed when saving or returned in the 
+Studio API detail endpoint, you need to register a **document type adapter** in the Studio Backend Bundle.
+
+Without an adapter, the document's standard editables (from `PageSnippet`) still work, but custom fields won't be 
+processed through the save pipeline or normalized for the API response.
+
+This is **not required** for simple page-like types that only use standard document editables 
+(like the `book` example). It becomes necessary when your document type adds custom properties, 
+custom settings, or needs to transform data during save/load.
+
+For details on implementing a document type adapter, see the
+[Custom Document Types](https://github.com/pimcore/studio-backend-bundle/blob/2025.x/doc/03_Extending/07_Documents/01_Custom_Document_Types.md)
+documentation in the Studio Backend Bundle.
+
 ## Do not use to override a class
 
 The `type_definitions` should only be used to add new documents.
