@@ -17,6 +17,7 @@ use Pimcore\Bundle\InstallBundle\Collector\ArrayEnvVarReader;
 use Pimcore\Bundle\InstallBundle\Collector\ParameterCollector;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
+use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterHintProviderInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterType;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -492,6 +493,69 @@ final class ParameterCollectorTest extends TestCase
         $this->assertStringContainsString('MY_SECRET is already configured', $rendered);
     }
 
+    public function testInteractiveDisplaysParameterHintBeforePrompt(): void
+    {
+        $definition = $this->createHintProvidingDefinition(
+            [
+                new ConfigParameter('FIRST_VAR', 'First', ParameterType::String, defaultValue: 'aaa'),
+                new ConfigParameter('SECOND_VAR', 'Second', ParameterType::String, defaultValue: 'bbb'),
+            ],
+            function (string $envVarName, array $collectedSoFar): ?string {
+                if ($envVarName === 'SECOND_VAR') {
+                    return 'Hint for second based on: ' . ($collectedSoFar['FIRST_VAR'] ?? 'unknown');
+                }
+
+                return null;
+            },
+        );
+
+        $output = new \Symfony\Component\Console\Output\BufferedOutput();
+        $io = $this->createInteractiveIoWithOutput("\n\n", $output);
+        $values = $this->collector->collect($definition, $io, true);
+
+        $this->assertSame(['FIRST_VAR' => 'aaa', 'SECOND_VAR' => 'bbb'], $values);
+        $rendered = $output->fetch();
+        $this->assertStringContainsString('Hint for second based on: aaa', $rendered);
+    }
+
+    public function testNonInteractiveDoesNotCallParameterHint(): void
+    {
+        $hintCalled = false;
+        $definition = $this->createHintProvidingDefinition(
+            [
+                new ConfigParameter('TEST_VAR', 'Test', ParameterType::String, defaultValue: 'val'),
+            ],
+            function () use (&$hintCalled): ?string {
+                $hintCalled = true;
+
+                return 'Should not appear';
+            },
+        );
+
+        $io = $this->createNonInteractiveIo();
+        $this->collector->collect($definition, $io, false);
+
+        $this->assertFalse($hintCalled);
+    }
+
+    public function testHintNotCalledForNonHintDefinition(): void
+    {
+        $definition = $this->createSimpleDefinition(
+            'test',
+            true,
+            [new ConfigParameter('TEST_VAR', 'Test', ParameterType::String, defaultValue: 'val')],
+        );
+
+        $output = new \Symfony\Component\Console\Output\BufferedOutput();
+        $io = $this->createInteractiveIoWithOutput("\n", $output);
+        $values = $this->collector->collect($definition, $io, true);
+
+        $this->assertSame(['TEST_VAR' => 'val'], $values);
+        $rendered = $output->fetch();
+        // note blocks contain "!" prefix — verify none is present
+        $this->assertStringNotContainsString('! ', $rendered);
+    }
+
     /**
      * Creates a simple definition with the given key, required flag, and parameters.
      *
@@ -551,6 +615,73 @@ final class ParameterCollectorTest extends TestCase
             public function validate(array $collectedValues): array
             {
                 return [];
+            }
+        };
+    }
+
+    /**
+     * Creates a definition that also implements ParameterHintProviderInterface.
+     *
+     * @param list<ConfigParameter> $parameters
+     * @param \Closure(string, array<string, string>): ?string $hintCallback
+     */
+    private function createHintProvidingDefinition(
+        array $parameters,
+        \Closure $hintCallback,
+    ): EnvVarDefinitionInterface {
+        return new class($parameters, $hintCallback)
+            implements EnvVarDefinitionInterface, ParameterHintProviderInterface
+        {
+            public function __construct(
+                private readonly array $parameters,
+                private readonly \Closure $hintCallback,
+            ) {
+            }
+
+            public function getKey(): string
+            {
+                return 'hint-test';
+            }
+
+            public function getLabel(): string
+            {
+                return 'Hint Test';
+            }
+
+            public function isRequired(): bool
+            {
+                return true;
+            }
+
+            public function getSectionName(): string
+            {
+                return 'test';
+            }
+
+            public function getParameters(): array
+            {
+                return $this->parameters;
+            }
+
+            public function resolveEnvVars(array $collectedValues): array
+            {
+                $result = [];
+                foreach ($this->parameters as $param) {
+                    $name = $param->getEnvVarName();
+                    $result[$name] = $collectedValues[$name] ?? '';
+                }
+
+                return $result;
+            }
+
+            public function validate(array $collectedValues): array
+            {
+                return [];
+            }
+
+            public function getParameterHint(string $envVarName, array $collectedSoFar): ?string
+            {
+                return ($this->hintCallback)($envVarName, $collectedSoFar);
             }
         };
     }

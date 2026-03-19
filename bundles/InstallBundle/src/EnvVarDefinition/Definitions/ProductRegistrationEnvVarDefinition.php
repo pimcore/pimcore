@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions;
 use Defuse\Crypto\Key;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
+use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterHintProviderInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterType;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Validation\FormatValidator;
 use Pimcore\ProductRegistration\RegistrationValidator;
@@ -30,7 +31,7 @@ use Symfony\Component\Uid\Uuid;
  * obtained from https://license.pimcore.com after registration with the
  * generated secret and instance identifier.
  */
-final class ProductRegistrationEnvVarDefinition implements EnvVarDefinitionInterface
+final class ProductRegistrationEnvVarDefinition implements EnvVarDefinitionInterface, ParameterHintProviderInterface
 {
     private readonly string $defaultEncryptionSecret;
 
@@ -120,6 +121,35 @@ final class ProductRegistrationEnvVarDefinition implements EnvVarDefinitionInter
         }
 
         return $this->validateProductKey($secret, $instanceIdentifier, $productKey);
+    }
+
+    public function getParameterHint(string $envVarName, array $collectedSoFar): ?string
+    {
+        if ($envVarName !== 'PIMCORE_PRODUCT_KEY') {
+            return null;
+        }
+
+        $secret = $collectedSoFar['PIMCORE_ENCRYPTION_SECRET'] ?? '';
+        $instanceIdentifier = $collectedSoFar['PIMCORE_INSTANCE_IDENTIFIER'] ?? '';
+
+        if ($secret === '' || $instanceIdentifier === '') {
+            return null;
+        }
+
+        try {
+            Key::loadFromAsciiSafeString($secret);
+        } catch (\Exception) {
+            return null;
+        }
+
+        $instanceHash = hash_hmac('sha256', $instanceIdentifier, $secret);
+
+        return sprintf(
+            "Register your product to obtain a product key:\n"
+            . 'https://license.pimcore.com/register?instance_identifier=%s&instance_hash=%s',
+            $instanceIdentifier,
+            $instanceHash,
+        );
     }
 
     private function validateEncryptionSecret(string $secret): array

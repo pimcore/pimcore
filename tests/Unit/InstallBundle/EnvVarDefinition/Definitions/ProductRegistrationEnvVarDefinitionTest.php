@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Unit\InstallBundle\EnvVarDefinition\Definitions;
 
 use Defuse\Crypto\Key;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions\ProductRegistrationEnvVarDefinition;
+use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterHintProviderInterface;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
@@ -180,5 +181,67 @@ final class ProductRegistrationEnvVarDefinitionTest extends TestCase
             $secondCallParams[1]->getDefaultValue(),
             'PIMCORE_INSTANCE_IDENTIFIER default should be stable across calls',
         );
+    }
+
+    public function testImplementsParameterHintProviderInterface(): void
+    {
+        $this->assertInstanceOf(ParameterHintProviderInterface::class, $this->definition);
+    }
+
+    public function testGetParameterHintReturnsNullForNonProductKey(): void
+    {
+        $hint = $this->definition->getParameterHint('PIMCORE_ENCRYPTION_SECRET', []);
+        $this->assertNull($hint);
+
+        $hint = $this->definition->getParameterHint('PIMCORE_INSTANCE_IDENTIFIER', [
+            'PIMCORE_ENCRYPTION_SECRET' => 'some-secret',
+        ]);
+        $this->assertNull($hint);
+    }
+
+    public function testGetParameterHintReturnsRegistrationLinkForProductKey(): void
+    {
+        $secret = Key::createNewRandomKey()->saveToAsciiSafeString();
+        $instanceId = 'test-instance-123';
+
+        $hint = $this->definition->getParameterHint('PIMCORE_PRODUCT_KEY', [
+            'PIMCORE_ENCRYPTION_SECRET' => $secret,
+            'PIMCORE_INSTANCE_IDENTIFIER' => $instanceId,
+        ]);
+
+        $this->assertNotNull($hint);
+        $this->assertStringContainsString('https://license.pimcore.com/register', $hint);
+        $this->assertStringContainsString('instance_identifier=' . $instanceId, $hint);
+        $this->assertStringContainsString('instance_hash=', $hint);
+    }
+
+    public function testGetParameterHintReturnsNullWhenSecretMissing(): void
+    {
+        $hint = $this->definition->getParameterHint('PIMCORE_PRODUCT_KEY', [
+            'PIMCORE_INSTANCE_IDENTIFIER' => 'test-id',
+        ]);
+
+        $this->assertNull($hint);
+    }
+
+    public function testGetParameterHintReturnsNullWhenSecretInvalid(): void
+    {
+        $hint = $this->definition->getParameterHint('PIMCORE_PRODUCT_KEY', [
+            'PIMCORE_ENCRYPTION_SECRET' => 'not-a-valid-key',
+            'PIMCORE_INSTANCE_IDENTIFIER' => 'test-id',
+        ]);
+
+        $this->assertNull($hint);
+    }
+
+    public function testGetParameterHintReturnsNullWhenIdentifierMissing(): void
+    {
+        $secret = Key::createNewRandomKey()->saveToAsciiSafeString();
+
+        $hint = $this->definition->getParameterHint('PIMCORE_PRODUCT_KEY', [
+            'PIMCORE_ENCRYPTION_SECRET' => $secret,
+        ]);
+
+        $this->assertNull($hint);
     }
 }

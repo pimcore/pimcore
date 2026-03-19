@@ -15,6 +15,7 @@ namespace Pimcore\Bundle\InstallBundle\Collector;
 
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
+use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterHintProviderInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterType;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -55,9 +56,20 @@ final readonly class ParameterCollector
         }
 
         $parameters = $definition->getParameters();
+        $hintProvider = $definition instanceof ParameterHintProviderInterface ? $definition : null;
 
         $collectedValues = [];
         foreach ($parameters as $parameter) {
+            if ($interactive && $hintProvider !== null) {
+                $hint = $hintProvider->getParameterHint(
+                    $parameter->getEnvVarName(),
+                    $collectedValues,
+                );
+                if ($hint !== null) {
+                    $io->note($hint);
+                }
+            }
+
             $value = $this->collectParameter($parameter, $io, $interactive);
             $collectedValues[$parameter->getEnvVarName()] = $value;
         }
