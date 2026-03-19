@@ -26,7 +26,7 @@ Better replace the strings manually with your IDE instead of as a batch process.
   The return types will be added to Pimcore classes, so you _**must**_ add return types to your classes extending Pimcore.
   You could use the patch-type-declarations tool, provided by symfony, to check for affected methods. For details please have a look [here](https://symfony.com/doc/5.4/setup/upgrade_major.html#4-update-your-code-to-work-with-the-new-version).
 
-- [Javascript] Replace plugins with [event listener](../../backlog/06_Event_Listener_UI.md) as follows:
+- [Javascript] Replace plugins with event listeners as follows:
     ```javascript
     pimcore.registerNS("pimcore.plugin.MyTestBundle");
 

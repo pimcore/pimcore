@@ -228,7 +228,7 @@ For details also see [Adaptive Design](../../13_Adaptive_Design_Helper.md).
 
 ### `pimcore_glossary` (deprecated)
 
-The `pimcore_glossary` filter replaces glossary terms. See [Glossary](../../../backlog/21_Glossary.md) for details.
+The `pimcore_glossary` filter replaces glossary terms.
 
 ```twig
 {% apply pimcore_glossary %}

@@ -21,8 +21,8 @@ Your server setup (VHost, `ServerAlias`) must be configured so that requests for
 domains are delegated to Pimcore.
  
  
-Now also the routing functionalities [Custom Routes](../backlog/02_MVC_Custom_Routes.md) and [Redirects](./05_Routing_and_URLs/02_Redirects.md) 
-can be configured site specific. 
+Routing functionalities like [Redirects](./05_Routing_and_URLs/02_Redirects.md)
+support site-specific configuration.
 Also, lots of other Pimcore tools and functionalities like Glossary, Tag & Snippet Management, Marketing Settings 
 (Google Analytics, Google Search Console, Google Tag Manager) and Website Settings are site specific. 
 

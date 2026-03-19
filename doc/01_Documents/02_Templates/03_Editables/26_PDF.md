@@ -5,8 +5,8 @@ description: Embed PDF and other document assets into pages with preview image g
 
 # PDF Editable
 
-> This editable requires Ghostscript installed on your server. 
-> See [System Requirements](../../../backlog/23_Installation_and_Upgrade/01_System_Requirements.md)
+> This editable requires Ghostscript installed on your server.
+> See [System Requirements](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/01_System_Requirements.md)
 
 ## General
 

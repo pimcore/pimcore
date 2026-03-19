@@ -43,7 +43,6 @@ allows defining URLs for data objects. These must be unique and are evaluated pe
 #### 5. Custom Routes
 For pages without a corresponding document (product lists, checkout flows, etc.),
 Custom Routes map URL patterns to specific controllers.
-See [Custom Routes](../../backlog/02_MVC_Custom_Routes.md) for details.
 
 #### 6. Redirects
 All redirects with priority lower than 99 are processed last, ordered by their configured priority.

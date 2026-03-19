@@ -121,7 +121,8 @@ For example: `http://www.pimcore.org/download?pimcore_nocache=true`
 
 This will disable the entire cache, not only the output-cache. To disable only the output-cache 
 you can add this URL parameter: `?pimcore_outputfilters_disabled=true`
-Here you can find more [magic parameters](../../backlog/15_Magic_Parameters.md).
+Other debug parameters include `pimcore_outputfilters_disabled` (disables output filters only)
+and `pimcore_debug_translations` (returns translation keys instead of values).
 
 
 If you want to disable the cache in your code, you can use: 
