@@ -1,92 +1,138 @@
 # Modifying Permissions Based on Object Data
 
-The event [`OBJECT_GET_PRE_SEND_DATA`](https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/src/Event/AdminEvents.php#L328-L340)
-can be used to manipulate the server response before object data is sent to Pimcore Backend UI when opening the detail
-view of a Pimcore object. 
+The GenericDataIndex `PermissionEvent` can be used to modify element permissions based on data stored inside the
+object itself. It fires when permissions are resolved and allows you to modify them before they reach Studio.
 
-**Imagine following use case:** 
+**Imagine following use case:**
 Your PIM system aggregates different sources (e.g. multiple ERP systems from different sub companies) of products and merges
-them to one single product hierarchy tree in order to have one single tree of products. 
-So all editors can see all products in one place and get a good overview of all available products, which is great.  
+them to one single product hierarchy tree in order to have one single tree of products.
+So all editors can see all products in one place and get a good overview of all available products, which is great.
 
-When it comes to editing though, not all editors should be able to edit all products. The editing permissions for products 
+When it comes to editing though, not all editors should be able to edit all products. The editing permissions for products
 should be based on the ERP system they originate from.
-Since the products are merged together into one tree structure, setting up such a permission structure might become tricky, 
-especially when products are moved around in the object tree. 
-
+Since the products are merged together into one tree structure, setting up such a permission structure might become tricky,
+especially when products are moved around in the object tree.
 
 **Solution**
 
-1) Define additional permissions by adding additional entries into the table `users_permission_definitions`. These permission
-entries are visible and can be configured in users and roles permission settings. 
-![User Permissions](../../12_Implementation_Inspirations/img/user-permissions.jpg)
+Use the `PermissionEvent` from the GenericDataIndex bundle to modify user permissions on the fly based on object data
+when the object is accessed. The event provides:
 
- 
-2) Use the `OBJECT_GET_PRE_SEND_DATA` event to modify user permissions on the fly based on object data (e.g. objects origin) 
-when opening the object. 
-To do so create a [Event Listener](../01_Events/README.md) 
-with following content: 
+- **`getElement()`** — returns a `DataObjectSearchResultItem` (provides `getClassName()`, `getId()`, `getSearchIndexData()`)
+- **`getPermissions()`** — returns a mutable `DataObjectPermissions` object with setters like `setSave()`, `setPublish()`, `setDelete()`, etc.
 
+> For full details on the PermissionEvent and workspace permissions, see the
+> [GenericDataIndex Permissions & Workspaces documentation](https://github.com/pimcore/generic-data-index-bundle/blob/2025.x/doc/04_Searching_For_Data_In_Index/08_Permissions_Workspaces/README.md).
 
-`config/services.yaml`
-```yml
-services:
-    app.event_listener.my_event_listner:
-        class: App\EventListener\MyEventListener
-        arguments:
-            - '@Pimcore\Security\User\UserLoader'
-        tags:
-            - { name: kernel.event_listener, event: pimcore.admin.dataobject.get.preSendData, method: checkPermissions }
-```
-
-`src/EventListener/MyEventListener`
+Create an [Event Subscriber](../01_Events/README.md) that subscribes to the `PermissionEvent`:
 
 ```php
 <?php
 
-namespace App\EventListener;
+declare(strict_types=1);
 
-use ... 
+namespace App\EventSubscriber;
 
-class MyEventListener
+use Pimcore\Bundle\GenericDataIndexBundle\Event\DataObject\PermissionEvent;
+use Pimcore\Model\DataObject\Product;
+use Pimcore\Security\User\UserLoader;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class DataObjectPermissionSubscriber implements EventSubscriberInterface
 {
-    protected UserLoader $userLoader;
-
-    public function __construct(UserLoader $userLoader)
-    {
-        $this->userLoader = $userLoader;
+    public function __construct(
+        private readonly UserLoader $userLoader,
+    ) {
     }
 
-
-    public function checkPermissions(GenericEvent $event): void
+    public static function getSubscribedEvents(): array
     {
-        $object = $event->getArgument("object");
-        if($object instanceof Product) {
+        return [
+            PermissionEvent::class => 'checkPermissions',
+        ];
+    }
 
-            //data element that is send to Pimcore backend UI
-            $data = $event->getArgument("data");
+    public function checkPermissions(PermissionEvent $event): void
+    {
+        $element = $event->getElement();
 
-            //get product origin
-            $origin = 'erp1';
+        if ($element->getClassName() !== 'Product') {
+            return;
+        }
 
-            //get current user
-            $user = $this->userLoader->getUser();
+        $product = Product::getById($element->getId());
 
-            //check if allowed and if not change permission
-            if(!$user || !$user->isAllowed("editing_origin_$origin")) {
+        if ($product === null) {
+            return;
+        }
 
-                $data['userPermissions']['save'] = false;
-                $data['userPermissions']['publish'] = false;
-                $data['userPermissions']['unpublish'] = false;
-                $data['userPermissions']['delete'] = false;
-                $data['userPermissions']['create'] = false;
-                $data['userPermissions']['rename'] = false;
+        // Get product origin (e.g. which ERP system it comes from)
+        $origin = $product->getOrigin() ?? 'unknown';
 
-            }
-
-            $event->setArgument("data", $data);
+        // Check if the current user has permission for this origin
+        $user = $this->userLoader->getUser();
+        if (!$user || !$user->isAllowed("editing_origin_$origin")) {
+            $permissions = $event->getPermissions();
+            $permissions->setSave(false);
+            $permissions->setPublish(false);
+            $permissions->setUnpublish(false);
+            $permissions->setDelete(false);
+            $permissions->setCreate(false);
+            $permissions->setRename(false);
         }
     }
 }
-
 ```
+
+With Symfony's autowiring and autoconfiguration enabled (the default), the subscriber is automatically registered —
+no manual service definition needed.
+
+## Available Permission Setters
+
+The `DataObjectPermissions` class (extending `BasePermissions`) provides these setters:
+
+| Method | Description |
+|--------|-------------|
+| `setSave(bool)` | Allow/deny saving |
+| `setPublish(bool)` | Allow/deny publishing |
+| `setUnpublish(bool)` | Allow/deny unpublishing |
+| `setDelete(bool)` | Allow/deny deletion |
+| `setRename(bool)` | Allow/deny renaming |
+| `setView(bool)` | Allow/deny viewing |
+| `setList(bool)` | Allow/deny listing |
+| `setCreate(bool)` | Allow/deny creating children |
+| `setSettings(bool)` | Allow/deny editing settings |
+| `setVersions(bool)` | Allow/deny version management |
+| `setProperties(bool)` | Allow/deny property editing |
+| `setLocalizedEdit(?string)` | Restrict editable localized fields |
+| `setLocalizedView(?string)` | Restrict viewable localized fields |
+
+## Using Search Index Data Instead of Loading the Object
+
+For better performance, you can read field values directly from the search index data instead of loading the
+full Pimcore object. This avoids a database query per permission check:
+
+```php
+public function checkPermissions(PermissionEvent $event): void
+{
+    $element = $event->getElement();
+
+    if ($element->getClassName() !== 'Product') {
+        return;
+    }
+
+    $indexData = $element->getSearchIndexData();
+    $origin = $indexData['origin'] ?? 'unknown';
+
+    $user = $this->userLoader->getUser();
+    if (!$user || !$user->isAllowed("editing_origin_$origin")) {
+        $permissions = $event->getPermissions();
+        $permissions->setSave(false);
+        $permissions->setPublish(false);
+        $permissions->setUnpublish(false);
+    }
+}
+```
+
+> **Note:** The structure of `getSearchIndexData()` depends on how fields are indexed. Check your index mapping
+> to confirm the field name and format.

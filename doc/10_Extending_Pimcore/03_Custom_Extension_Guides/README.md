@@ -74,7 +74,7 @@ which layers it touches so you know what to expect before diving in.
 | Guide | Description | Layers |
 |-------|-------------|--------|
 | [Add Your Own Permissions](./06_Add_Your_Own_Permissions.md) | Register and manage custom permission keys | Core |
-| [Modifying Permissions on Object Data](./12_Modifying_Permissions_on_Object_Data.md) | Dynamically adjust field-level permissions based on object data | Core |
+| [Modifying Permissions on Object Data](./12_Modifying_Permissions_on_Object_Data.md) | Modify element permissions based on object data using the GenericDataIndex PermissionEvent | Core, Backend |
 
 ## Icons and Appearance
 
