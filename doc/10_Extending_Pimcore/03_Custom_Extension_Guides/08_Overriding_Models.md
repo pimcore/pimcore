@@ -1,25 +1,32 @@
-# Overriding Models / Entities in Pimcore
- 
-Sometimes it is necessary to override certain functionalities of Pimcore's core models, therefore it is possible to 
-override the core models with your own classes. 
+---
+title: Overriding Models
+description: Override Pimcore core model classes with custom implementations.
+---
 
-Currently this works for all implementations of the following classes (but not for these classes directly): 
+# Overriding Models
+
+Override core model classes to add custom methods, modify behavior, or extend
+functionality without editing vendor code. This works for all concrete
+subclasses of the following base classes (but not for the base classes
+themselves):
+
 - `Pimcore\Model\Document`
 - `Pimcore\Model\Document\Listing`
-- `Pimcore\Model\AbstractObject`
+- `Pimcore\Model\DataObject\AbstractObject`
 - `Pimcore\Model\DataObject\Listing`
 - `Pimcore\Model\Asset`
-- `Pimcore\Model\Asset\Listing` 
+- `Pimcore\Model\Asset\Listing`
 
-So for example overriding a listing class of a custom class definition like `Pimcore\Model\DataObject\News\Listing` or 
-`Pimcore\Model\Asset\Image` is supported. 
+For example, overriding `Pimcore\Model\DataObject\News\Listing` or
+`Pimcore\Model\Asset\Image` is supported. Overriding the abstract base classes
+directly (e.g. `Pimcore\Model\Asset`) is not possible because it would break
+the class hierarchy for all subclasses.
 
-But you cannot override `Pimcore\Model\Asset` (or the other abstract model classes) ifself (as it is the parent class of for example `Pimcore\Model\Asset\Image` and that would mean to change the class hierarchy). 
+## Configure an Override
 
-## Configure an Override 
-
-The configuration is a simple key / value map in your `config/config.yaml` using the key 
-`pimcore.models.class_overrides`, for example: 
+Add a key/value mapping under `pimcore.models.class_overrides` in your
+`config/config.yaml`. Your override class must extend the original class -
+failing to do so will break the system.
 
 ```yaml
 pimcore:
@@ -29,35 +36,26 @@ pimcore:
             'Pimcore\Model\DataObject\News\Listing': 'App\Model\DataObject\News\Listing'
 ```
 
-**It is crucial that your override class extends the origin class, if not you'll break the entire system.**
-
-> **Don't forget to clear all caches (Symfony + Data Cache) after you have configured a class override**
-`./bin/console cache:clear --no-warmup && ./bin/console pimcore:cache:clear`
-
-## Example 
-
-In your `config/config.yaml`: 
-
-```yaml
-pimcore:
-    models:
-        class_overrides:
-            'Pimcore\Model\DataObject\News': 'App\Model\DataObject\News'
-```
-
-Your `App\Model\DataObject\News`: 
+Your `App\Model\DataObject\News`:
 
 ```php
-<?php 
+<?php
 
-namespace App\Model\DataObject; 
+namespace App\Model\DataObject;
 
 class News extends \Pimcore\Model\DataObject\News
 {
-    // start overriding stuff 
     public function getMyCustomAttribute(): mixed
     {
-        ...
+        // ...
     }
 }
 ```
+
+:::warning
+Clear all caches (Symfony + Data Cache) after configuring a class override:
+
+```bash
+bin/console cache:clear --no-warmup && bin/console pimcore:cache:clear
+```
+:::

@@ -1,11 +1,44 @@
+---
+title: Maintenance Tasks
+description: Register scheduled maintenance tasks with the Pimcore maintenance system.
+---
+
 # Maintenance Tasks
 
-Pimcore offers you to run scheduled maintenance tasks. This allows you to periodically do stuff like cleanups. 
-It is essential that the maintenance cron job is set up properly, see the [Installation Guide](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/README.md).
+Pimcore runs scheduled maintenance tasks for periodic operations such as
+cleanups, cache invalidation, or data synchronization. The maintenance cron job
+must be configured correctly - see the
+[Installation Guide](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/README.md).
 
-## Register a new Maintenance Task
+## Register a Maintenance Task
 
-To register a new Maintenance Task, create a new class and implement the interface `Pimcore\Maintenance\TaskInterface`. Register your class to the symfony container with the tag `pimcore.maintenance.task` and a `type` attribute:   
+Create a class that implements `Pimcore\Maintenance\TaskInterface` and register
+it as a Symfony service with the `pimcore.maintenance.task` tag and a `type`
+attribute.
+
+The interface requires a single `execute(): void` method:
+
+```php
+<?php
+
+namespace App\Maintenance;
+
+use Pimcore\Maintenance\TaskInterface;
+
+class MyMaintenanceTask implements TaskInterface
+{
+    public function execute(): void
+    {
+        // Perform cleanup, sync, or other periodic work.
+        // This runs on every maintenance cycle, so guard
+        // expensive operations with your own timing logic
+        // (e.g. check a timestamp or lock file and skip
+        // if the last run was too recent).
+    }
+}
+```
+
+Register the service:
 
 ```yaml
 App\Maintenance\MyMaintenanceTask:
@@ -13,21 +46,29 @@ App\Maintenance\MyMaintenanceTask:
         - { name: pimcore.maintenance.task, type: my_maintenance_task }
 ```
 
-Pimcore will then call your maintenance task on the maintenance cron job you have to configure. You will have to take care about timing operations inside the Task yourself.
+Pimcore calls `execute()` on every maintenance cron run. The framework does not
+throttle individual tasks, so your implementation must handle frequency checks
+internally (for example, by storing a last-run timestamp and returning early
+when the interval has not elapsed).
 
-## Register a new Maintenance Task using a separate messenger transport
+## Use a Separate Messenger Transport
 
-First follow the steps mentioned above, then add the `messengerMessageClass` property to your tag, as shown in the example below.
-Pimcore then will make sure to add this specific message to the messenger bus.
+To offload the task to an asynchronous messenger transport, add the
+`messengerMessageClass` attribute to the tag:
 
 ```yaml
 App\Maintenance\MyMaintenanceTask:
     tags:
-        - { name: pimcore.maintenance.task, type: my_maintenance_task, messengerMessageClass: '\App\Messenger\MyMaintenanceMessage' }
+        -
+            name: pimcore.maintenance.task
+            type: my_maintenance_task
+            messengerMessageClass: '\App\Messenger\MyMaintenanceMessage'
 ```
 
-**Please be aware:** 
-You need to implement both the message and the handler class. 
-After that you can route your message to the corresponding transport.
+:::note
+You must implement both the message class and its handler, then route
+the message to the desired transport in your messenger configuration.
+:::
 
-For a full example you can have a look at the `\Pimcore\Messenger\ScheduledTaskMessage` class and its usage.
+See `Pimcore\Messenger\ScheduledTaskMessage` and its handler
+`Pimcore\Messenger\Handler\ScheduledTaskHandler` for a full working example.

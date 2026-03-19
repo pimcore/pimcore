@@ -1,34 +1,46 @@
+---
+title: Custom Persistent Models
+description: Store custom data using Doctrine ORM or the Pimcore DAO pattern.
+---
+
 # Custom Persistent Models
 
-## When to use Custom Models
+## When to Use Custom Models
 
-Pimcore objects are very flexible but shouldn't be used to store all types of data. For example, it doesn't make sense
-to implement a rating-, comments- or a complex blog system on top of the Pimcore objects. Sometimes people also
-try to implement quite interesting things just to get a unique object key or to build n to n relationships. This sometimes produces
-really ugly code with a lot of overhead which could be very slow, hard to refactor, and you will have a lot of pain if you have to merge multiple
-installations.
+Pimcore data objects are flexible but not the right fit for every data structure.
+Ratings, comments, complex blog systems, unique key generation, or n-to-n
+relationship tables are better served by dedicated database models. Custom models
+avoid overhead, improve performance, and simplify merging across installations.
 
-Pimcore provides 2 possible ways of working with custom entities namely Doctrine ORM and Pimcore Dao.
+Pimcore supports two approaches: Doctrine ORM and the Pimcore DAO pattern.
 
-## Option 1: Use Doctrine ORM
-Pimcore comes already with the Doctrine bundle, so you can easily create your own entities.
-Please check [https://symfony.com/doc/current/doctrine.html](https://symfony.com/doc/current/doctrine.html) for more details.
+## Option 1: Doctrine ORM
 
-Beware that Pimcore uses the default Doctrine connection as well as the default Entity manager.
-For the default connection you are only allowed to use the default entity manager.
-Every other entity manager will throw an exception when you use the Doctrine schema tool.
+Pimcore ships with the Doctrine bundle, so you can create standard Doctrine
+entities. See the
+[Symfony Doctrine documentation](https://symfony.com/doc/current/doctrine.html)
+for details.
 
-If you want to use a different entity manager you also need to use a different connection.
-The connection needs to use a different database otherwise tables will be dropped.
+:::warning
+Pimcore uses the default Doctrine connection and the default entity manager.
+You may only use the default entity manager for the default connection. Any
+additional entity manager will throw an exception when you run the Doctrine
+schema tool.
 
-## Option 2: Working with Pimcore Data Access Objects (Dao)
+If you need a separate entity manager, you must also configure a separate
+database connection pointing to a different database. Using the same database
+with a different entity manager causes table drops.
+:::
 
-This example will show you how you can save a custom model in the database.
+## Option 2: Pimcore Data Access Objects (DAO)
+
+This section walks through building a custom model backed by the Pimcore DAO
+layer.
 
 ### Database
-As a first step, create the database structure for the model. For this example I'll use a very easy model called vote. It just
-has an id, a username (just a string) and a score. If you want to write a model for a bundle you have to create the
-table(s) during the installation.
+
+Create the table for your model. For bundles, create the table during
+bundle installation.
 
 ```sql
 CREATE TABLE `votes` (
@@ -39,11 +51,20 @@ CREATE TABLE `votes` (
 ) DEFAULT CHARSET=utf8mb4
 ```
 
-Please keep in mind that this is just a generic example, you also could create other and more complex models.
+### Model
 
-## Model
-The next step is to implement the model. To make it easy the model is stored into the `src/` library. You also could place
-it into a bundle library.
+Each database column needs a corresponding property with getter and setter
+methods. The properties are public for simplicity, but the getters are required
+because the DAO's `save()` method uses them to extract values.
+
+The model extends `Pimcore\Model\AbstractModel`, which provides DAO
+integration. `AbstractModel` uses a `__call()` magic method that delegates
+unknown method calls to the DAO. This is how `save()` and `delete()` work:
+calling `$vote->save()` triggers `AbstractModel::__call('save')`, which
+forwards to `Dao::save()`.
+
+The `getById()` method is an explicit static factory that instantiates the
+model and loads data through the DAO.
 
 ```php
 # src/Model/Vote.php
@@ -62,9 +83,6 @@ class Vote extends AbstractModel
 
     public ?int $score = null;
 
-    /**
-     * get score by id
-     */
     public static function getById(int $id): ?self
     {
         try {
@@ -77,6 +95,14 @@ class Vote extends AbstractModel
         }
 
         return null;
+    }
+
+    /**
+     * Returns a new Listing instance for querying votes.
+     */
+    public static function getList(): Vote\Listing
+    {
+        return new Vote\Listing();
     }
 
     public function setScore(?int $score): void
@@ -111,22 +137,16 @@ class Vote extends AbstractModel
 }
 ```
 
-For every field in the database we need a corresponding property and a Setter/Getter. This is not really necessary, it
-just depends on your DAO, just read on and have a look at the save method in the DAO.
-
-The `save` and `getById` methods just call the corresponding DAO methods.
-
-The `getDao` method looks for the nearest DAO. It just appends Dao to the class name, if the class exists you are ready
-to use the DAO. If the class doesn't exist, it just continue searching using the next namespace.
-
-Small example: `App\Model\Vote` looks for `App\Model\Vote\Dao`, `App\Model\Dao`, `App\Dao`.
-
+The `getDao()` method resolves the DAO class by appending `\Dao` to the model's
+namespace and walking up the hierarchy. For `App\Model\Vote`, it checks
+`App\Model\Vote\Dao`, then `App\Model\Dao`, then `App\Dao`.
 
 ### DAO
-Now we are ready to implement the Dao:
+
+The DAO handles all database operations:
 
 ```php
-#src/Model/Vote/Dao.php
+# src/Model/Vote/Dao.php
 <?php
 
 namespace App\Model\Vote;
@@ -139,28 +159,28 @@ class Dao extends AbstractDao
     protected string $tableName = 'votes';
 
     /**
-     * get vote by id
-     *
      * @throws NotFoundException
      */
     public function getById(?int $id = null): void
     {
-        if ($id !== null)  {
+        if ($id !== null) {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchAssociative('SELECT * FROM '.$this->tableName.' WHERE id = ?', [$this->model->getId()]);
+        $data = $this->db->fetchAssociative(
+            'SELECT * FROM ' . $this->tableName . ' WHERE id = ?',
+            [$this->model->getId()]
+        );
 
         if (!$data) {
-            throw new NotFoundException("Object with the ID " . $this->model->getId() . " doesn't exists");
+            throw new NotFoundException(
+                "Object with the ID " . $this->model->getId() . " doesn't exist"
+            );
         }
 
         $this->assignVariablesToModel($data);
     }
 
-    /**
-     * save vote
-     */
     public function save(): void
     {
         $vars = get_object_vars($this->model);
@@ -200,39 +220,31 @@ class Dao extends AbstractDao
         $this->model->setId($this->db->lastInsertId());
     }
 
-    /**
-     * delete vote
-     */
     public function delete(): void
     {
         $this->db->delete($this->tableName, ["id" => $this->model->getId()]);
     }
-
 }
 ```
 
-Please keep in mind that this is just a very easy example DAO. Of course, you can do much more complex stuff like implementing joins,
-save dependencies or whatever you want.
-
-
 ### Using the Model
-
-Now you can use your Model in your service-layer.
 
 ```php
 $vote = new \App\Model\Vote();
 $vote->setScore(3);
-$vote->setUsername('foobar!'.mt_rand(1, 999));
+$vote->setUsername('foobar!' . random_int(1, 999));
 $vote->save();
 ```
 
-
 ### Listing
-If you need to query the data using a Pimcore entity list, you also need to implement a `Listing` and `Listing\Dao` class:
+
+To query votes using a Pimcore listing, implement a `Listing` and
+`Listing\Dao` class. `AbstractListing` already implements `Iterator` and
+`Countable`, so your listing only needs to add pagination support and any
+custom properties.
 
 ```php
-#src/Model/Vote/Listing.php
-
+# src/Model/Vote/Listing.php
 <?php
 
 namespace App\Model\Vote;
@@ -243,23 +255,15 @@ use Pimcore\Model\Paginator\PaginateListingInterface;
 class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {
     /**
-     * List of Votes.
+     * Optional: locale for localized queries.
      */
-    public ?array $data = null;
-
     public ?string $locale = null;
 
-    /**
-     * get total count.
-     */
     public function count(): int
     {
         return $this->getTotalCount();
     }
 
-    /**
-     * get all items.
-     */
     public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);
@@ -269,8 +273,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     }
 
     /**
-     * Get Paginator Adapter.
-     *
      * @return $this
      */
     public function getPaginatorAdapter(): static
@@ -278,82 +280,22 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
         return $this;
     }
 
-    /**
-     * Set Locale.
-     */
     public function setLocale(?string $locale): void
     {
         $this->locale = $locale;
     }
 
-    /**
-     * Get Locale.
-     */
     public function getLocale(): ?string
     {
         return $this->locale;
     }
-
-    /**
-     * Methods for Iterator.
-     */
-
-    /**
-     * Rewind.
-     */
-    public function rewind(): void
-    {
-        $this->getData();
-        reset($this->data);
-    }
-
-    /**
-     * current.
-     */
-    public function current(): mixed
-    {
-        $this->getData();
-
-        return current($this->data);
-    }
-
-    /**
-     * key.
-     */
-    public function key(): mixed
-    {
-        $this->getData();
-
-        return key($this->data);
-    }
-
-    /**
-     * next.
-     */
-    public function next(): void
-    {
-        $this->getData();
-        next($this->data);
-    }
-
-    /**
-     * valid.
-     */
-    public function valid(): bool
-    {
-        $this->getData();
-
-        return $this->current() !== false;
-    }
 }
 ```
-
 
 ### Listing\Dao
 
 ```php
-#src/Model/Vote/Listing/Dao.php
-
+# src/Model/Vote/Listing/Dao.php
 <?php
 
 namespace App\Model\Vote\Listing;
@@ -369,11 +311,6 @@ class Dao extends Listing\Dao\AbstractDao
 
     protected string $tableName = 'votes';
 
-    /**
-     * Get tableName, either for localized or non-localized data.
-     *
-     * @throws \Exception
-     */
     protected function getTableName(): string
     {
         return $this->tableName;
@@ -382,8 +319,8 @@ class Dao extends Listing\Dao\AbstractDao
     public function getQueryBuilder(): DoctrineQueryBuilder
     {
         $queryBuilder = $this->db->createQueryBuilder();
-        $field = $this->getTableName().'.id';
-        $queryBuilder->select(sprintf('SQL_CALC_FOUND_ROWS %s as id', $field));
+        $field = $this->getTableName() . '.id';
+        $queryBuilder->select($field . ' as id');
         $queryBuilder->from($this->getTableName());
 
         $this->applyListingParametersToQueryBuilder($queryBuilder);
@@ -392,13 +329,10 @@ class Dao extends Listing\Dao\AbstractDao
     }
 
     /**
-     * Loads objects from the database.
-     *
      * @return Model\Vote[]
      */
     public function load(): array
     {
-        // load id's
         $list = $this->loadIdList();
 
         $objects = [];
@@ -414,25 +348,20 @@ class Dao extends Listing\Dao\AbstractDao
     }
 
     /**
-     * Loads a list for the specified parameters, returns an array of ids.
-     *
      * @return int[]
-     * @throws \Exception
      */
     public function loadIdList(): array
     {
         $query = $this->getQueryBuilder();
-        $objectIds = $this->db->fetchFirstColumn($query->getSQL(), $query->getParameters(), $query->getParameterTypes());
-        $this->totalCount = (int) $this->db->fetchOne('SELECT FOUND_ROWS()');
+        $objectIds = $this->db->fetchFirstColumn(
+            $query->getSQL(),
+            $query->getParameters(),
+            $query->getParameterTypes()
+        );
 
         return array_map('intval', $objectIds);
     }
 
-    /**
-     * Get Count.
-     *
-     * @throws \Exception
-     */
     public function getCount(): int
     {
         if ($this->model->isLoaded()) {
@@ -444,28 +373,32 @@ class Dao extends Listing\Dao\AbstractDao
         }
     }
 
-    /**
-     * Get Total Count.
-     *
-     * @throws \Exception
-     */
     public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder();
-        $this->prepareQueryBuilderForTotalCount($queryBuilder, $this->getTableName() . '.id');
-        
-        if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
-            return (int)$this->db->fetchOne('SELECT COUNT(*)  FROM (' . $queryBuilder->getSQL() . ') as XYZ');
+        $this->prepareQueryBuilderForTotalCount(
+            $queryBuilder,
+            $this->getTableName() . '.id'
+        );
+
+        if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy')
+            || $this->isQueryBuilderPartInUse($queryBuilder, 'having')
+        ) {
+            return (int)$this->db->fetchOne(
+                'SELECT COUNT(*) FROM (' . $queryBuilder->getSQL() . ') as XYZ'
+            );
         } else {
-            return (int)$this->db->fetchOne($queryBuilder->getSql(), $queryBuilder->getParameters(), $queryBuilder->getParameterTypes());
+            return (int)$this->db->fetchOne(
+                $queryBuilder->getSQL(),
+                $queryBuilder->getParameters(),
+                $queryBuilder->getParameterTypes()
+            );
         }
     }
 }
 ```
 
-
 ### Using the Listing
-Now you can use your Listing in your service-layer.
 
 ```php
 $list = \App\Model\Vote::getList();
