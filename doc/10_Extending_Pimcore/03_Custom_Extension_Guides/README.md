@@ -34,7 +34,7 @@ which layers it touches so you know what to expect before diving in.
 | Guide | Description | Layers |
 |-------|-------------|--------|
 | [Adding Object Datatypes](./04_Adding_Object_Datatypes.md) | Add custom data types to Pimcore data objects | Core |
-| [Adding Object Layout Types](./05_Adding_Object_Layout_Types.md) | Add custom layout types for data object editing | Core |
+| [Adding Object Layout Types](./05_Adding_Object_Layout_Types.md) | Add custom layout types for data object editing | Core, UI |
 | [Field Definition Adapters](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/05_Data_Objects/01_Field_Definition_Adapters.md) | Customize how data object field definitions are processed | Backend |
 | [Custom Layouts Based on Object Data](./13_Custom_Layouts_Based_on_Object_Data.md) | Dynamically select custom layouts based on object data by decorating the Studio Backend LayoutService | Backend |
 
@@ -73,7 +73,7 @@ which layers it touches so you know what to expect before diving in.
 
 | Guide | Description | Layers |
 |-------|-------------|--------|
-| [Add Your Own Permissions](./06_Add_Your_Own_Permissions.md) | Register and manage custom permission keys | Core |
+| [Add Your Own Permissions](./06_Add_Your_Own_Permissions.md) | Register custom permission keys and check them in Studio Backend (`#[IsGranted]`) and Studio UI (`isAllowed()`) | Core, Backend, UI |
 | [Modifying Permissions on Object Data](./12_Modifying_Permissions_on_Object_Data.md) | Modify element permissions based on object data using the GenericDataIndex PermissionEvent | Core, Backend |
 
 ## Icons and Appearance
