@@ -1,0 +1,41 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # Generic URL generator accepting a path
+    Pimcore\Bundle\SeoBundle\Sitemap\UrlGeneratorInterface: '@Pimcore\Bundle\SeoBundle\Sitemap\UrlGenerator'
+    Pimcore\Bundle\SeoBundle\Sitemap\UrlGenerator: ~
+
+    # Filters
+    Pimcore\Bundle\SeoBundle\Sitemap\Element\Filter\PublishedFilter: ~
+    Pimcore\Bundle\SeoBundle\Sitemap\Element\Filter\PropertiesFilter: ~
+
+    # Processors
+    Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\ModificationDateProcessor: ~
+    Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\PropertiesProcessor: ~
+
+    #
+    # DOCUMENTS
+    #
+    # Services valid for documents
+
+    # Default filters for DocumentTreeGenerator
+    Pimcore\Bundle\SeoBundle\Sitemap\Document\Filter\DocumentTypeFilter: ~
+    Pimcore\Bundle\SeoBundle\Sitemap\Document\Filter\SiteRootFilter: ~
+
+    # Default document URL generator
+    Pimcore\Bundle\SeoBundle\Sitemap\Document\DocumentUrlGeneratorInterface: '@Pimcore\Bundle\SeoBundle\Sitemap\Document\DocumentUrlGenerator'
+    Pimcore\Bundle\SeoBundle\Sitemap\Document\DocumentUrlGenerator: ~
+
+    # Default document tree generator
+    Pimcore\Bundle\SeoBundle\Sitemap\Document\DocumentTreeGenerator:
+        arguments:
+            $filters:
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Element\Filter\PublishedFilter'
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Element\Filter\PropertiesFilter'
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Document\Filter\DocumentTypeFilter'
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Document\Filter\SiteRootFilter'
+            $processors:
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\ModificationDateProcessor'
+                - '@Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\PropertiesProcessor'

@@ -7,4 +7,5 @@ services:
     Pimcore\Bundle\SeoBundle\EventListener\UrlSlugUpdateListener: ~
     Pimcore\Bundle\SeoBundle\EventListener\DocumentListener: ~
     # Sitemap listener delegating work to configured generators
+    Pimcore\Bundle\SeoBundle\EventListener\SitemapGeneratorListener: ~
     Pimcore\Bundle\SeoBundle\EventListener\RoutingListener: ~
