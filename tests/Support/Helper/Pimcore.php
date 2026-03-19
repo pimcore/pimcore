@@ -203,7 +203,9 @@ class Pimcore extends Module\Symfony
 
         $this->connectDb($connection);
 
-        (new DatabaseSetup())->createSchema($connection);
+        $databaseSetup = new DatabaseSetup();
+        $databaseSetup->createSchema($connection);
+        $databaseSetup->insertSeedData($connection);
 
         $connection->insert('users', [
             'parentId' => 0,
