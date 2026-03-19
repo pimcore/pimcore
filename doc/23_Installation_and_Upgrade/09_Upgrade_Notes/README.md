@@ -6,7 +6,8 @@
 The following bundles have been removed:
 - GlossaryBundle
 - SimpleBackendSearchBundle
-- Parts of SeoBundle - All functionality, except for redirects and sitemaps, will not be migrated to Pimcore Studio
+- SeoBundle: dropped `http_error_log` feature and DB Table, and removed Document SEO Editor
+- StaticRouteBundle
 - WordExportBundle
 - XliffBundle
 
