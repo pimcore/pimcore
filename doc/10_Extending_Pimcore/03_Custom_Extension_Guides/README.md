@@ -22,4 +22,3 @@ Step-by-step guides for extending Pimcore with custom implementations.
 | [Adding Button to Object Editor](./11_Adding_Button_to_Object_Editor.md) | Add custom buttons to the object editor interface |
 | [Modifying Permissions on Object Data](./12_Modifying_Permissions_on_Object_Data.md) | Dynamically adjust field-level permissions based on object data |
 | [Custom Layouts Based on Object Data](./13_Custom_Layouts_Based_on_Object_Data.md) | Show different layouts depending on the object's data |
-| [Open By External Id](./14_Open_By_External_Id.md) | Open elements in the editor using external identifiers |
