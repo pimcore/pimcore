@@ -27,18 +27,6 @@ class PimcoreSeoBundle extends AbstractPimcoreBundle implements DependentBundleI
     {
     }
 
-    public function getCssPaths(): array
-    {
-        return [
-            '/bundles/pimcoreseo/css/icons.css',
-        ];
-    }
-
-    public function getJsPaths(): array
-    {
-        return [];
-    }
-
     public function getInstaller(): Installer
     {
         return $this->container->get(Installer::class);
