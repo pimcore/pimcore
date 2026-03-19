@@ -16,9 +16,6 @@ namespace Pimcore\Bundle\SeoBundle;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-/**
- * @deprecated version 12.3
- */
 class PimcoreSeoBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
