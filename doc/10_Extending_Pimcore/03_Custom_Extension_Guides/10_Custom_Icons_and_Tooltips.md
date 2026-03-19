@@ -1,161 +1,156 @@
-# Custom Icons & Tooltips for Documents/Assets & Data Objects
+# Custom Icons & Tooltips in the Element Tree and Editor Tabs
 
-Pimcore allows to dynamically define custom element icons & tooltips in the element tree. In addition, the icon of the editor tab can
-be changed.
+Pimcore Studio lets you customize how elements appear in the **tree** and **editor tabs** by overriding their **icon** and **tooltip** via backend event subscribers. The Studio UI automatically renders these customizations — no frontend plugin code is needed for basic cases.
 
-#### Properties that can be changed
-* Element CSS class
-* Element icon
-* Element icon class
-* Tree node tooltip
-* Element Text
+## Custom Attributes
 
-## How to override the default style
- 
-The basic idea is to provide one's own implementation of `Pimcore\Model\Element\AdminStyle`.
- 
-This can be achieved by attaching a listener to the [`AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE`](https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/src/Event/AdminEvents.php#L428-L439) event. 
+The `CustomAttributes` schema on every tree response supports these fields:
 
-Example:
+| Field | Type | Rendered in tree? |
+|-------|------|:-----------------:|
+| `icon` | `ElementIcon` (type + value) | Yes |
+| `tooltip` | `string` (HTML) | Yes (on hover) |
+| `additionalIcons` | `string[]` | Not yet |
+| `key` | `string` | Not yet |
+| `additionalCssClasses` | `string[]` | Not yet |
 
-In `config/services.yaml` add
+The `icon` field accepts an `ElementIcon` with two properties:
+- **`type`**: Either `'name'` (a named icon from the Studio icon set) or `'path'` (URL path to a custom SVG/image).
+- **`value`**: The icon name or path.
 
-```yaml
-  App\EventListener\AdminStyleListener:
-    tags:
-      - { name: kernel.event_listener, event: pimcore.admin.resolve.elementAdminStyle, method: onResolveElementAdminStyle }
-```
+## How to Override — Backend Event Subscriber
 
-Create AdminStyleListener in EventListeners
+Subscribe to `pre_response.*` events to modify the `CustomAttributes` before the response is sent to the frontend. Each element type has its own event:
+
+| Element type | Context | Event name | Event class |
+|-------------|---------|------------|-------------|
+| Data Object | Tree | `pre_response.data_object` | `DataObjectEvent` |
+| Data Object | Editor tab | `pre_response.data_object_detail` | `DataObjectDetailEvent` |
+| Asset | Tree | `pre_response.asset` | `AssetEvent` |
+| Document | Tree | `pre_response.document` | `DocumentEvent` |
+
+> **Important:** To customize the icon everywhere (tree **and** editor tabs), subscribe to **both** the tree event and the detail event. The tree endpoint and the detail/editor endpoint fire separate events.
+
+### Example: Custom Icon and Tooltip for Data Objects (Tree and Editor Tabs)
+
+This subscriber sets a flag icon and an HTML tooltip for all objects of class "Demo" — in both the tree and the editor tab:
 
 ```php
 <?php
+declare(strict_types=1);
 
-namespace App\EventListener;
+namespace App\EventSubscriber;
 
-class AdminStyleListener
+use Pimcore\Bundle\StudioBackendBundle\DataObject\Event\PreResponse\DataObjectDetailEvent;
+use Pimcore\Bundle\StudioBackendBundle\DataObject\Event\PreResponse\DataObjectEvent;
+use Pimcore\Bundle\StudioBackendBundle\Element\Schema\CustomAttributes;
+use Pimcore\Bundle\StudioBackendBundle\Response\ElementIcon;
+use Pimcore\Bundle\StudioBackendBundle\Util\Constant\ElementIconTypes;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class CustomTreeStyleSubscriber implements EventSubscriberInterface
 {
-    public function onResolveElementAdminStyle(\Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent $event): void
+    public static function getSubscribedEvents(): array
     {
-        $element = $event->getElement();
-        // decide which default styles you want to override
-        if ($element instanceof \App\Model\Product\Car) {
-            $event->setAdminStyle(new \App\Model\Product\AdminStyle\Car($element));
-        }
+        return [
+            DataObjectEvent::EVENT_NAME => 'handleDataObject',
+            DataObjectDetailEvent::EVENT_NAME => 'handleDataObjectDetail',
+        ];
     }
-}
 
-```
-
- 
-### Example: Custom Icon for the Car DataObject
-
-This will change the `Car` icon depending on the car type:
-
-```php
-namespace App\Model\Product\AdminStyle;
-
-use Pimcore\Model\DataObject;
-use Pimcore\Model\Element\AdminStyle;
-
-class Car extends AdminStyle
-{
-    protected ElementInterface $element;
-
-    public function __construct(ElementInterface $element)
+    public function handleDataObject(DataObjectEvent $event): void
     {
-        parent::__construct($element);
+        $dataObject = $event->getDataObject();
 
-        $this->element = $element;
-
-        if ($element instanceof \App\Model\Product\Car) {
-            DataObject\Service::useInheritedValues(true, function () use ($element) {
-                if ($element->getObjectType() == 'actual-car') {
-                    // setting this to false is necessary for the elementIcon to actually be used
-                    $this->elementIconClass = false;
-                    $this->elementIcon = '/bundles/pimcoreadmin/img/twemoji/1f697.svg';
-                }
-            });
+        if ($dataObject->getClassName() !== 'Demo') {
+            return;
         }
+
+        $this->applyDemoStyle($event->getCustomAttributes(), $dataObject->getId());
+        $event->setCustomAttributes($event->getCustomAttributes());
     }
-}
-```
 
-Result:
-
-![Class Icons](../../img/classes-icons2.png)
-
-
-## Example: Custom Tooltips
-
-It is possible to define custom tooltips which are shown while hovering over the element tree.
-
-The example outlines how to provide a custom tooltip for `Car` objects.
-
-```php
-    public function getElementQtipConfig(): ?array
+    public function handleDataObjectDetail(DataObjectDetailEvent $event): void
     {
-        if ($this->element instanceof \App\Model\Product\Car) {
-            $element = $this->element;
+        $dataObject = $event->getDataObject();
 
-            return DataObject\Service::useInheritedValues(true, function () use ($element) {
-                $text = '<h1>' . $element->getName() . '</h1>';
-
-                $mainImage = $element->getMainImage();
-                if ($mainImage) {
-                    $thumbnail = $mainImage->getThumbnail("content");
-                    $text .= '<p><img src="' . $thumbnail . '" width="150" height="150"/></p>';
-                }
-
-                $text .= wordwrap($this->element->getDescription(), 50, "<br>");
-
-                return [
-                    "title" => "ID: " . $element->getId() . " - Year: " . $element->getProductionYear(),
-                    "text" => $text,
-                ];
-            });
+        if ($dataObject->getClassName() !== 'Demo') {
+            return;
         }
 
-        return parent::getElementQtipConfig();
+        $this->applyDemoStyle($event->getCustomAttributes(), $dataObject->getId());
+        $event->setCustomAttributes($event->getCustomAttributes());
     }
-```
 
-Result:
-
-![Class Icons](../../img/classes-icons3.png)
-
-#### Example: Custom Style for Assets
-
-This will display the modification date and image size as additional information. Besides that, it shows
-a different icon for all assets starting with a capital 'C' in their key. 
-
-```php
-namespace App\Model\Product\AdminStyle;
-
-use Pimcore\Model\Asset;
-use Pimcore\Model\Element\AdminStyle;
-
-class AssetEventStyle extends AdminStyle
-{
-    public function __construct(ElementInterface $element)
+    private function applyDemoStyle(CustomAttributes $customAttributes, int $id): void
     {
-        parent::__construct($element);
+        // Use a named icon from the Studio icon set
+        $customAttributes->setIcon(
+            new ElementIcon(
+                ElementIconTypes::NAME->value,
+                'flag'
+            )
+        );
 
-        if ($element instanceof Asset\Image) {
-            if (strpos($element->getKey(), 'C') === 0) {
-                $this->elementIconClass = null;
-                $this->elementIcon = '/bundles/pimcoreadmin/img/twemoji/1f61c.svg';
-            }
-
-            $this->elementQtipConfig = [
-                'title' => 'ID: ' . $element->getId(),
-                'text' => 'Path: ' . $element->getFullPath()
-                        . '<br>Modified: ' . date('c', $element->getModificationDate())
-                        . '<br>Size:  '. $element->getWidth() . 'x' . $element->getHeight() . " px"
-            ];
-        }
+        // HTML tooltip shown on hover in the tree
+        $customAttributes->setTooltip(
+            '<b>Demo Object</b><br>ID: ' . $id
+        );
     }
 }
 ```
 
-![Class Icons](../../img/asset-tree-custom-icon.png)
+With `autoconfigure: true` in your `services.yaml`, the subscriber is automatically registered — no manual tag needed.
+
+### Example: Custom Icon for Assets
+
+This subscriber sets a star icon for all assets whose filename starts with `important_`:
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace App\EventSubscriber;
+
+use Pimcore\Bundle\StudioBackendBundle\Asset\Event\PreResponse\AssetEvent;
+use Pimcore\Bundle\StudioBackendBundle\Response\ElementIcon;
+use Pimcore\Bundle\StudioBackendBundle\Util\Constant\ElementIconTypes;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class CustomAssetStyleSubscriber implements EventSubscriberInterface
+{
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            AssetEvent::EVENT_NAME => 'handleAsset',
+        ];
+    }
+
+    public function handleAsset(AssetEvent $event): void
+    {
+        $asset = $event->getAsset();
+
+        if (!str_starts_with($asset->getFilename(), 'important_')) {
+            return;
+        }
+
+        $customAttributes = $event->getCustomAttributes();
+
+        $customAttributes->setIcon(
+            new ElementIcon(
+                ElementIconTypes::NAME->value,
+                'star'
+            )
+        );
+
+        $customAttributes->setTooltip(
+            '<b>' . htmlspecialchars($asset->getFilename()) . '</b>'
+            . '<br>Type: ' . $asset->getType()
+        );
+
+        $event->setCustomAttributes($customAttributes);
+    }
+}
+```
+
+For a full list of available `pre_response.*` events, see [Additional and Custom Attributes](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/01_Additional_and_Custom_Attributes.md).

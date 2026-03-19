@@ -80,7 +80,7 @@ which layers it touches so you know what to expect before diving in.
 
 | Guide | Description | Layers |
 |-------|-------------|--------|
-| [Custom Icons and Tooltips](./10_Custom_Icons_and_Tooltips.md) | Define dynamic icons and tooltips in the element tree | Core |
+| [Custom Icons and Tooltips](./10_Custom_Icons_and_Tooltips.md) | Override element tree icons and tooltips via Studio Backend `pre_response.*` events and `CustomAttributes` | Backend |
 | [Custom Icons (Studio)](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/06_Adding_Custom_Icons.md) | Add custom icon sets to Pimcore Studio | UI |
 
 ## GDPR and Compliance
