@@ -1,99 +1,119 @@
 # Showing Custom Layouts Based on Object Data
 
-The event [`OBJECT_GET_PRE_SEND_DATA`](https://github.com/pimcore/admin-ui-classic-bundle/blob/1.x/src/Event/AdminEvents.php#L328-L340)
-can be used to manipulate the server response before object data is sent to Pimcore Backend UI when opening the detail
-view of a Pimcore object. 
+When editing data objects, it is often useful to show different [Custom Layouts](../../03_Objects/01_Object_Classes/03_Custom_Layouts.md) 
+depending on the object's data — for example, showing only the relevant fields for a given hierarchy level in a product structure.
 
-**Imagine following use case:** 
-Products (stored as Pimcore objects) are organized in a certain hierarchy and take advantage of Pimcores data 
+**Imagine following use case:**
+Products (stored as Pimcore objects) are organized in a certain hierarchy and take advantage of Pimcore's data
 inheritance. An example would be the structure we use in our e-commerce demo application where we have three levels
 of product hierarchy: article, color variant, size variant.
 To minimize maintenance effort, certain attributes should only be maintained on a certain hierarchy level (e.g. product
 name on article level, color and images on color variant level, size on size variant level).
- 
-In order to make this simple for the editors, they only should see the attributes they need to maintain on the corresponding
-hierarchy level. 
 
+In order to make this simple for the editors, they only should see the attributes they need to maintain on the corresponding
+hierarchy level.
 
 **Solution**
 
-1) Create a [Custom Layout](../../03_Objects/01_Object_Classes/03_Custom_Layouts.md) 
-for every hierarchy level. 
-![Custom Layout Definitions](../../12_Implementation_Inspirations/img/custom-layout-definition.jpg)
+1) Create a [Custom Layout](../../03_Objects/01_Object_Classes/03_Custom_Layouts.md) for every hierarchy level.
 
- 
-2) Use the `OBJECT_GET_PRE_SEND_DATA` event to decide which custom layouts should be shown to the user based the hierarchy level. 
-To do so create a [Event Listener](../01_Events/README.md) 
-with following content: 
+2) Decorate the Studio Backend `LayoutServiceInterface` to dynamically select a custom layout based on
+object data when the default layout is requested.
 
+## How Layout Resolution Works in Studio
 
-`config/services.yaml`
-```yml
-services:
-    app.event_listener.my_event_listner:
-        class: App\EventListener\MyEventListener
-        tags:
-            - { name: kernel.event_listener, event: pimcore.admin.dataobject.get.preSendData, method: selectCustomLayout }
-```
+Studio Backend resolves layouts through the `LayoutServiceInterface`. When the Studio UI opens a data object,
+it makes two API calls:
 
-`src/EventListener/MyEventListener`
+1. `GET /api/class/custom-layout/editor/collection/{objectId}` — fetches the list of available layouts
+2. `GET /api/data-objects/{id}/layout?layoutId=0` — fetches the actual layout definition
+
+The UI defaults to `layoutId=0` (the main layout) unless a workflow or the `default` flag on a custom layout
+overrides this. By decorating the `LayoutServiceInterface`, you can intercept this default request and
+return a different layout based on the object's data.
+
+## Service Decorator
+
+The decorator wraps the original `LayoutServiceInterface`, checks the object's data when the default layout
+(`layoutId=0`) or no layout is requested, and forwards a custom layout ID to the original service when
+the criteria match. When the user explicitly picks a different layout from the layout switcher, the decorator
+passes it through unchanged.
 
 ```php
 <?php
-namespace App\EventListener;
 
-use ... 
+declare(strict_types=1);
 
-class MyEventListener
+namespace App\DataObject\Service;
+
+use Pimcore\Bundle\StudioBackendBundle\DataObject\Schema\Layout;
+use Pimcore\Bundle\StudioBackendBundle\DataObject\Service\LayoutServiceInterface;
+use Pimcore\Model\DataObject\Car;
+
+final readonly class CustomLayoutService implements LayoutServiceInterface
 {
-    public function selectCustomLayout(GenericEvent $event): void
-    {
-        $object = $event->getArgument('object');
-        if ($object instanceof Product) {
-            //get product hierarchy level
-            $hierarchyLevel = $object->getLevel(); 
+    private const CAR_TODO_LAYOUT_ID = 'CarTodo';
 
-            //data element that is send to Pimcore backend UI
-            $data = $event->getArgument('data');
-
-            switch ($hierarchyLevel) {
-                case 'Article':
-                    $data = $this->doModifyCustomLayouts($data, $object, 2, [0, 1]);
-                    break;
-                case 'Color Variant':
-                    $data = $this->doModifyCustomLayouts($data, $object, 1, [0, 2]);
-                    break;
-                default:
-                    $data = $this->doModifyCustomLayouts($data, $object, 0, [1, 2]);
-                    break;
-            }
-            
-            $event->setArgument('data', $data);
-        }
+    public function __construct(
+        private LayoutServiceInterface $inner,
+    ) {
     }
 
-    private function doModifyCustomLayouts(array $data, Product $object, int $customLayoutToSelect, array $layoutsToRemove): array
+    public function getDataObjectLayout(int $id, ?string $layoutId = null): Layout
     {
-        //set current layout to subcategory layout
-        $data['currentLayoutId'] = $customLayoutToSelect;
-        $customLayout = CustomLayout::getById($customLayoutToSelect);
-        $data['layout'] = $customLayout->getLayoutDefinitions();
-        Service::enrichLayoutDefinition($data['layout'], $object);
-        
-        if (!empty($layoutsToRemove)) {
-            //remove main layout from valid layouts
-            $validLayouts = $data['validLayouts'];
-            foreach($validLayouts as $key => $validLayout) {
-                if(in_array($validLayout['id'], $layoutsToRemove)) {
-                    unset($validLayouts[$key]);
-                }
+        if ($layoutId === null || $layoutId === '0') {
+            $resolvedId = $this->resolveLayoutId($id);
+            if ($resolvedId !== null) {
+                $layoutId = $resolvedId;
             }
-            $data['validLayouts'] = array_values($validLayouts);            
         }
 
-        return $data; 
+        return $this->inner->getDataObjectLayout($id, $layoutId);
+    }
+
+    public function getClassLayout(string $classId): Layout
+    {
+        return $this->inner->getClassLayout($classId);
+    }
+
+    private function resolveLayoutId(int $id): ?string
+    {
+        $car = Car::getById($id);
+
+        if ($car === null) {
+            return null;
+        }
+
+        if ($car->getObjectType() === 'actual-car') {
+            return self::CAR_TODO_LAYOUT_ID;
+        }
+
+        return null;
     }
 }
-
-
 ```
+
+## Service Registration
+
+Register the decorator in `config/services.yaml`:
+
+```yaml
+services:
+    App\DataObject\Service\CustomLayoutService:
+        decorates: Pimcore\Bundle\StudioBackendBundle\DataObject\Service\LayoutServiceInterface
+        arguments:
+            $inner: '@.inner'
+```
+
+The `decorates` key wraps the original service. The `$inner` argument gives you access to the original
+implementation, including its workflow integration and permission checks.
+
+## How It Works
+
+- When a user opens a Car with `objectType = "actual-car"`, the decorator intercepts the default layout
+  request (`layoutId=0`) and returns the `CarTodo` custom layout instead
+- When a Car has any other `objectType`, the decorator returns `null` and the original service follows its
+  normal resolution chain (workflow layout → default class layout)
+- When the user explicitly selects a different layout from the layout switcher (e.g. `layoutId=CP`),
+  the decorator passes it through unchanged — only `null` and `'0'` are intercepted
+- Non-Car objects are unaffected — `Car::getById()` returns `null` and the original flow takes over

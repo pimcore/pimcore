@@ -36,7 +36,7 @@ which layers it touches so you know what to expect before diving in.
 | [Adding Object Datatypes](./04_Adding_Object_Datatypes.md) | Add custom data types to Pimcore data objects | Core |
 | [Adding Object Layout Types](./05_Adding_Object_Layout_Types.md) | Add custom layout types for data object editing | Core |
 | [Field Definition Adapters](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/05_Data_Objects/01_Field_Definition_Adapters.md) | Customize how data object field definitions are processed | Backend |
-| [Custom Layouts Based on Object Data](./13_Custom_Layouts_Based_on_Object_Data.md) | Show different layouts depending on the object's data | Core |
+| [Custom Layouts Based on Object Data](./13_Custom_Layouts_Based_on_Object_Data.md) | Dynamically select custom layouts based on object data by decorating the Studio Backend LayoutService | Backend |
 
 ## API and Endpoints
 
