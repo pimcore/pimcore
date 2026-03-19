@@ -53,8 +53,10 @@ To give your asset type a proper editor in Pimcore Studio, create a frontend plu
 2. **Registers the type** in the `Asset/Editor/TypeRegistry`
 3. **Registers editor tabs** (Custom Metadata, Properties, Versions, etc.)
 
-For a complete working example, see the
-[Custom Asset Type example](https://github.com/pimcore/studio-example-bundle/tree/main/assets/js/src/examples/custom-asset-type)
-in the Studio Example Bundle and the
-[Plugin Development Examples](https://pimcore.com/docs/platform/Studio_UI/Extending/Plugin_Development_Examples/Custom_Asset_Type)
-documentation.
+The complete working example is in the [Studio Example Bundle](https://github.com/pimcore/studio-example-bundle/tree/main/assets/js/src/examples/custom-asset-type):
+
+- [Plugin entry (index.ts)](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/custom-asset-type/index.ts) — binds TabManager and registers the module
+- [Module (indesign-asset-module.tsx)](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/custom-asset-type/modules/indesign-asset-module.tsx) — registers type, tabs, and context menu
+- [TabManager (indesign-tab-manager.ts)](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/custom-asset-type/asset/editor/types/indesign/tab-manager/indesign-tab-manager.ts) — extends `TabManager` with `type = 'indesign'`
+
+See also the [Plugin Development Examples](https://pimcore.com/docs/platform/Studio_UI/Extending/Plugin_Development_Examples/Custom_Asset_Type) documentation.
