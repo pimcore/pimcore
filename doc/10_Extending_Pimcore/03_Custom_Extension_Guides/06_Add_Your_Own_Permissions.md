@@ -22,39 +22,66 @@ You should now be able to select the permission in the users/roles tabs:
 
 ## Verify the permission
 
-### Inside an AdminController
+### Studio Backend (PHP controller)
+
+Use Symfony's `#[IsGranted]` attribute on your Studio Backend controller actions. The `UserPermissionVoter` automatically picks up all keys from `users_permission_definitions` — no extra registration needed:
+
 ```php
 namespace App\Controller;
 
-use Pimcore\Controller\UserAwareController;
-use Pimcore\Controller\Traits\JsonHelperTrait;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Pimcore\Bundle\StudioBackendBundle\Controller\AbstractApiController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class AdminController extends UserAwareController
+class MyCustomController extends AbstractApiController
 {
-    use JsonHelperTrait;
-
-    #[Route('/admin/my-admin-action')]
-    public function myAdminAction(Request $request): Response
+    #[Route('/studio/api/my-custom-action', methods: ['GET'])]
+    #[IsGranted('my_custom_permission')]
+    public function myCustomAction(): JsonResponse
     {
-        $pimcoreUser = $this->getPimcoreUser();
-
-        if ($pimcoreUser?->isAllowed('my_permission')) {
-            // ...
-        }
-        
-        return $this->jsonResponse(['success' => true]);
+        // Only users with 'my_custom_permission' can reach this action.
+        // Admins are always allowed.
+        return new JsonResponse(['success' => true]);
     }
 }
 ```
 
-### In the frontend (bundle)
-```js
-document.addEventListener(pimcore.events.pimcoreReady, (e) => {
-    if(pimcore.currentuser.permissions.indexOf("my_permission") >= 0) {
-        //...
-    }
-});
+> **Note:** The `UserPermissionVoter` in `studio-backend-bundle` reads every key from `users_permission_definitions` at runtime. Any custom permission you add to that table is immediately usable with `#[IsGranted]` — no voter or config registration required.
+
+### Studio Frontend (plugin)
+
+Import `isAllowed` or `getCurrentUser` from the Studio UI SDK's auth module:
+
+```typescript
+import { isAllowed, getCurrentUser } from '@pimcore/studio-ui-bundle/modules/auth'
+
+// Simple boolean check — returns true for admins automatically
+if (isAllowed('my_custom_permission')) {
+  // User has the permission
+}
+
+// Access the full user object for more detailed checks
+const user = getCurrentUser()
+console.log(user.permissions) // string[] of granted permission keys
+console.log(user.isAdmin)     // boolean
+```
+
+> **Note:** `getCurrentUser()` and `isAllowed()` read from the Redux store. They are available once the user is 
+> authenticated — use them in React components or event handlers, not during plugin `onStartup`.
+
+Inside a React component, use the `useUser` hook instead:
+
+```tsx
+import { useUser } from '@pimcore/studio-ui-bundle/modules/auth'
+
+function MyComponent () {
+  const user = useUser()
+
+  if (!user.permissions.includes('my_custom_permission')) {
+    return null
+  }
+
+  return <div>Protected content</div>
+}
 ```
