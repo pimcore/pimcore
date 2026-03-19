@@ -36,7 +36,8 @@ Install external Composer packages and register third-party Symfony bundles.
 
 **[Custom Extension Guides](./03_Custom_Extension_Guides/README.md)**
 Step-by-step guides for specific customizations: custom asset types, document types,
-data types, permissions, persistent models, and more.
+data types, permissions, persistent models, and more. Includes a cross-bundle index
+of all extension guides across all three layers.
 
 **[Bundle Developer's Guide](./04_Pimcore_Bundle_Developers_Guide/README.md)**
 Build reusable, distributable Pimcore bundles with installers, service definitions,
@@ -57,8 +58,13 @@ The Studio UI Bundle provides a plugin/module architecture, component registry,
 dependency injection, and dynamic type system for client-side customization of
 Pimcore Studio.
 
-See the full reference:
-**[Extending Pimcore Studio](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/README.md)**
+Start with the plugin development guide. The SDK Overview provides background on the
+module system and component registry that plugins build on.
+
+- **[Extending Pimcore Studio](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/README.md)** -
+  plugin development guide and examples
+- **[Studio UI SDK Overview](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/01_Architecture_Overview/01_SDK_Overview/README.md)** -
+  SDK architecture, module system, dependency injection, and component registry
 
 ## See Also
 
@@ -66,5 +72,3 @@ See the full reference:
   override Pimcore constants (asset directory, temp directory, etc.)
 - [Parent Class for Objects](../03_Objects/01_Object_Classes/04_Additional_Class_Settings/04_Parent_Class.md) -
   inject additional functionality into object classes
-- [Overriding Models](./03_Custom_Extension_Guides/08_Overriding_Models.md) -
-  replace default Pimcore model implementations

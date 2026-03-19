@@ -137,3 +137,10 @@ The framework matches each backend provider to its frontend tab by key: the back
 `getKey()` return value must equal the frontend dynamic type's `id`. When a user opens the
 GDPR Data Extractor, Pimcore Studio fetches the provider list from the backend API and
 renders a tab for each provider that has a matching frontend registration.
+
+## Further Reading
+
+- [Extending GDPR Data Providers](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/12_Extending_GDPR_Data_Providers.md) -
+  detailed backend reference with full code example and configuration options table
+- [GDPR Data Extractor Plugin Example](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/11_GDPR_Data_Extractor.md) -
+  frontend plugin overview linking to the Studio Example Bundle
