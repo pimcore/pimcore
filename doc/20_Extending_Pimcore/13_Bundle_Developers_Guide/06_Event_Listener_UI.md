@@ -2,7 +2,7 @@
 
 ## General
 
-You can set this up via an event listener:
+You can set up this via an event listener:
 
 ```yaml
 services:
