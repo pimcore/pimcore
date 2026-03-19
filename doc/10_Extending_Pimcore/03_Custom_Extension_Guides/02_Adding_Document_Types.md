@@ -1,49 +1,128 @@
 # Adding Document Types
 
-Defining custom documents can be done in the config via a static mapping from document type to class name.
+Custom document types extend Pimcore's document system with new types that appear in the
+document tree alongside pages, snippets, emails, etc. A custom document type requires both
+a PHP backend (model + configuration) and a Pimcore Studio frontend (plugin with editor
+registration).
 
-Prior to 10.6, the only way to define custom documents was to create them in a special namespace `Pimcore\Model\Document`. This
-is still possible, but the document can be in any namespace as long as the document is correctly registered.
+A complete working example is available in the
+[Studio Example Bundle](https://github.com/pimcore/studio-example-bundle/tree/main/assets/js/src/examples/custom-document-type).
 
-To register a new document, you need to follow 2 steps:
+## 1) Create the Document Model Class
 
-### 1) Create the document class
-
-The document **must** extend `Pimcore\Model\Document`. Lets create a `Book` document (the namespace does not matter
-but it's best practice to put your documents into a `Model\Document` sub-namespace):
+The document class must extend an existing Pimcore document type. For page-like documents,
+extend `Pimcore\Model\Document\Page`:
 
 ```php
-<?php
 // src/Model/Document/Book.php
-
 namespace App\Model\Document;
 
-class Book extends \Pimcore\Model\Document
+use Pimcore\Model\Document\Page;
+
+class Book extends Page
 {
-    // do override the type here
     protected string $type = 'book';
 }
 ```
 
-### 2) Register the document on the document type map
+## 2) Register the Document Type
 
-Next we need to update `pimcore.documents.type_definitions.map` configuration to include our document. This can be done in any config
-file which is loaded (e.g. `/config/config.yaml`), but if you provide the editable with a bundle you should define it
-in a configuration file which is [automatically loaded](../04_Pimcore_Bundle_Developers_Guide/04_Auto_Loading_Config_and_Routing.md). Example:
+Add the type to `pimcore.documents.type_definitions.map`. In a bundle, place a
+`config.yaml` file in `config/pimcore/` — Pimcore
+[auto-loads](../04_Pimcore_Bundle_Developers_Guide/04_Auto_Loading_Config_and_Routing.md)
+config files from this directory:
 
 ```yaml
-# /config/config.yaml
-
+# config/pimcore/config.yaml
 pimcore:
     documents:
         type_definitions:
             map:
-                book: 
+                book:
                     class: \App\Model\Document\Book
+                    direct_route: true
+                    predefined_document_types: true
 ```
 
-### Do not use to override a class
+In an application (without a bundle), use a project config file instead:
 
-The type_definitions should only be used to add new documents.
-If you want to override an existing class please use the `pimcore:models:class_overrides` instead.
+```yaml
+# config/config.yaml
+pimcore:
+    documents:
+        type_definitions:
+            map:
+                book:
+                    class: \App\Model\Document\Book
+                    direct_route: true
+```
+
+## 3) Add the Type to the Database ENUM
+
+The `documents` table stores the type in an ENUM column. Custom types must be added to
+this ENUM via a bundle installer or migration:
+
+```php
+$db->executeQuery(
+    'ALTER TABLE documents MODIFY COLUMN `type` ENUM(:enums)',
+    ['enums' => array_merge($currentEnumTypes, ['book'])],
+    ['enums' => ArrayParameterType::STRING]
+);
+```
+
+See the
+[example bundle installer](https://github.com/pimcore/studio-example-bundle/blob/main/src/Installer.php)
+for the full implementation.
+
+### Storage: When Do You Need a Custom Table?
+
+Each built-in document type stores its data in a dedicated table (e.g., `documents_page`,
+`documents_email`). When your custom type extends an existing type like `Page`, it reuses
+that type's table (`documents_page`) and no additional table is needed. This is sufficient
+when your custom type adds no extra persistent fields.
+
+If your document type requires **additional database columns**, you need to:
+
+1. Create a dedicated table (e.g., `documents_book`) in your installer
+2. Create a custom `Dao` class that reads/writes from that table
+
+For a reference implementation, see the
+[Web-to-Print bundle](https://github.com/pimcore/web-to-print-bundle), which adds
+a `documents_printpage` table with extra fields like `lastgenerated` and
+`lastgeneratemessage`. The relevant files are:
+
+- [PrintAbstract/Dao.php](https://github.com/pimcore/web-to-print-bundle/blob/1.x/src/Model/Document/PrintAbstract/Dao.php) — custom Dao using `documents_printpage`
+- [Installer.php](https://github.com/pimcore/web-to-print-bundle/blob/1.x/src/Installer.php) — creates the table and modifies the ENUM
+
+## 4) Register the Frontend Editor (Pimcore Studio)
+
+The document needs a Pimcore Studio plugin that registers the editor tabs, sidebars, and
+context menu entry. This involves:
+
+1. **TabManager** — a class extending `TabManager` from `@pimcore/studio-ui-bundle/modules/element`
+   that defines which tabs the editor shows (Edit, Preview, Properties, Versions, etc.)
+2. **SidebarManager** — bound as `DocumentSidebarManager` from `@pimcore/studio-ui-bundle/modules/document`,
+   using the service ID pattern `Document/Editor/Sidebar/${Type}SidebarManager`
+3. **TypeRegistry** — registers the document type name and its tab manager service ID
+4. **Context menu** — adds an "Add Book" entry to the document tree right-click menu using
+   `useAddDocument` from `@pimcore/studio-ui-bundle/modules/document`
+
+The sidebar manager service ID **must** follow the convention
+`Document/Editor/Sidebar/${CapitalizedType}SidebarManager` (e.g., `Document/Editor/Sidebar/BookSidebarManager`),
+as the Studio UI core resolves it by this pattern.
+
+See the complete frontend example:
+
+- [Plugin entry (index.ts)](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/custom-document-type/index.ts) — binds TabManager and SidebarManager
+- [Module (book-document-module.tsx)](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/custom-document-type/modules/book-document-module.tsx) — registers type, tabs, sidebars, context menu
+- [TabManager (book-tab-manager.ts)](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/custom-document-type/document/editor/types/book/tab-manager/book-tab-manager.ts) — extends `TabManager` with `type = 'book'`
+
+For the full plugin scaffold (build configuration, `WebpackEntryPointProvider`, etc.), see the
+[Getting Started with Your First Plugin](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/01_Getting_Started_with_Your_First_Plugin.md)
+guide.
+
+## Do not use to override a class
+
+The `type_definitions` should only be used to add new documents.
+If you want to override an existing class, use `pimcore:models:class_overrides` instead.
 For a more detailed explanation see [Overriding Models](./08_Overriding_Models.md).
