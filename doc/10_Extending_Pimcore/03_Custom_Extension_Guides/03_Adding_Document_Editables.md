@@ -1,19 +1,16 @@
-# Adding Document Editables 
+# Adding Document Editables
 
-With bundles, it is also possible to add an individual Document Editable. 
+With bundles, it is also possible to add an individual Document Editable.
 
-Previously, the only way to define editables was to create them in a special namespace `Pimcore\Model\Document\Editable`. This
-is still possible, but now editables can be in any namespace as long as the editable is correctly registered. Registration
-can be done via 2 config entries which define a list of prefixes (namespaces) to be searched and a static mapping from
-editable name to class name. For best performance, you should always use the class mapping as it avoids having to look
-up class names.
+A complete working example is available in the
+[Studio Example Bundle](https://github.com/pimcore/studio-example-bundle/tree/main/assets/js/src/examples/custom-document-editable).
 
 To register a new editable, you need to follow 3 steps:
 
-## 1) Create the editable class
+## 1) Create the Editable Class
 
-The editable **must** extend `Pimcore\Model\Document\Editable`. Lets create a `Markdown` editable (the namespace does not matter
-but it's best practice to put your editables into a `Model\Document\Editable` sub-namespace):
+The editable **must** extend `Pimcore\Model\Document\Editable`. It's best practice to put 
+your editables into a `Model\Document\Editable` sub-namespace:
 
 ```php
 <?php
@@ -21,20 +18,20 @@ but it's best practice to put your editables into a `Model\Document\Editable` su
 
 namespace App\Model\Document\Editable;
 
-class Markdown extends \Pimcore\Model\Document\Editable
+class Markdown extends \Pimcore\Model\Document\Editable implements \Pimcore\Model\Document\Editable\EditmodeDataInterface
 {
-    // methods as required by Pimcore\Model\Document\Editable and Pimcore\Model\Document\Editable\EditableInterface
+    // methods as required by Pimcore\Model\Document\Editable and Pimcore\Model\Document\Editable\EditmodeDataInterface
 }
 ```
 
-## 2) Register the editable on the editable map
+## 2) Register the Editable on the Editable Map
 
 Next we need to update `pimcore.documents.editables.map` configuration to include our editable. This can be done in any config
 file which is loaded (e.g. `/config/config.yaml`), but if you provide the editable with a bundle you should define it
 in a configuration file which is [automatically loaded](../04_Pimcore_Bundle_Developers_Guide/04_Auto_Loading_Config_and_Routing.md). Example:
 
 ```yaml
-# /config/config.yaml
+# config/pimcore/config.yaml
 
 pimcore:
     documents:
@@ -43,49 +40,47 @@ pimcore:
                 markdown: \App\Model\Document\Editable\Markdown
 ```
 
-## 3) Create frontend JS
+## 3) Create the Studio UI Plugin
 
-For the frontend, a JavaScript class needs to be added `pimcore.document.editables.markdown`. It can 
-extend any of the existing `pimcore.document.editables.*` class and must return it's type by overwriting 
-the function `getType()`. If you extend from other bundles editables make sure your bundle is loaded after your parent editable has been initialized.
+In Pimcore Studio, custom editables are registered as dynamic types via a Studio plugin. You need to:
 
-```js
-// /public/js/pimcore/document/editables/markdown.js
+1. Create a class extending `DynamicTypeDocumentEditableAbstract` that returns a React component from `getEditableDataComponent()`
+2. Register it with the `DynamicTypeDocumentEditableRegistry` via a module
+3. Wire everything together in a plugin
 
-pimcore.registerNS("pimcore.document.editables.markdown");
-pimcore.document.editables.markdown = Class.create(pimcore.document.editables.textarea, {
-    getType: function () {
-        return "markdown";
-    }
-});
-```
+**Important:** The framework injects `value` and `onChange` props onto the **root element** returned by 
+`getEditableDataComponent()` via `React.cloneElement`. Your root component must accept and forward these props to 
+the actual input element.
 
-This JS file must be included in editmode. You can tell Pimcore to do so by implementing `addJSFiles()`
-in event listener. 
+You can use the `InheritanceOverlay` component 
+(exported from `@pimcore/studio-ui-bundle/modules/document`) to support document inheritance, 
+and `createStyles` from `antd-style` for theme-aware styling.
 
-```php
-// src/EventListener/PimcoreAdminListener.php
+### Register the Bundle for the Document Editor Iframe
 
-namespace App\EventListener;
+Document editables render inside an iframe that has its own plugin loading mechanism. Your bundle's 
+`WebpackEntryPointProvider` must be tagged with **both** the main and the document editor iframe 
+entry point provider tags, otherwise your editable type will not be available in edit mode:
 
-use Pimcore\Event\BundleManager\PathsEvent;
-
-class PimcoreAdminListener
-{
-    public function addJSFiles(PathsEvent $event): void
-    {
-        $event->addPaths([
-            '/bundles/app/js/pimcore/document/editables/markdown.js',
-        ]);
-    }
-}
-
-```
-
-Register event listener:
 ```yaml
+# config/services.yaml
+
 services:
-  App\EventListener\PimcoreAdminListener:
-    tags:
-      - { name: kernel.event_listener, event: pimcore.bundle_manager.paths.editmode_js, method: addJSFiles }
+    App\Webpack\WebpackEntryPointProvider:
+        tags:
+            - { name: pimcore_studio_ui.webpack_entry_point_provider }
+            - { name: pimcore_studio_ui.webpack_entry_point_provider.document_editor_iframe }
 ```
+
+### Example Files
+
+The complete working example is in the [Studio Example Bundle](https://github.com/pimcore/studio-example-bundle/tree/main/assets/js/src/examples/custom-document-editable):
+
+- [Plugin entry (index.ts)](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/custom-document-editable/index.ts) — binds the dynamic type and registers the module
+- [Module (markdown-editable-module.tsx)](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/custom-document-editable/modules/markdown-editable-module.tsx) — registers the type in the `DynamicTypeDocumentEditableRegistry`
+- [Dynamic type (dynamic-type-document-editable-markdown.tsx)](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/custom-document-editable/dynamic-types/definitions/dynamic-type-document-editable-markdown.tsx) — extends `DynamicTypeDocumentEditableAbstract` with a `<textarea>` component
+- [Styles (dynamic-type-document-editable-markdown.styles.ts)](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/custom-document-editable/dynamic-types/definitions/dynamic-type-document-editable-markdown.styles.ts) — theme-aware styling via `createStyles`
+- [PHP editable class (Markdown.php)](https://github.com/pimcore/studio-example-bundle/blob/main/src/Model/Document/Editable/Markdown.php) — backend editable model
+- [Service config (services.yaml)](https://github.com/pimcore/studio-example-bundle/blob/main/config/services.yaml) — entry point provider with iframe tag
+
+For more information about creating Studio plugins, see the [Plugin Development Guide](https://github.com/pimcore/studio-ui-bundle/blob/2025.x/doc/04_Extending/01_Plugin_Development.md).
