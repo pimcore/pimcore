@@ -24,18 +24,13 @@ use Pimcore;
 use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
 use Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle;
 use Pimcore\Bundle\GenericExecutionEngineBundle\PimcoreGenericExecutionEngineBundle;
-use Pimcore\Bundle\GlossaryBundle\PimcoreGlossaryBundle;
 use Pimcore\Bundle\InstallBundle\BundleConfig\BundleWriter;
 use Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
-use Pimcore\Bundle\SimpleBackendSearchBundle\PimcoreSimpleBackendSearchBundle;
-use Pimcore\Bundle\StaticRoutesBundle\PimcoreStaticRoutesBundle;
 use Pimcore\Bundle\UuidBundle\PimcoreUuidBundle;
-use Pimcore\Bundle\WordExportBundle\PimcoreWordExportBundle;
-use Pimcore\Bundle\XliffBundle\PimcoreXliffBundle;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Helper;
@@ -62,18 +57,13 @@ class Installer
 {
     const NEEDS_INSTALL_MARKER = PIMCORE_PRIVATE_VAR . '/config/needs-install.lock';
 
-    const RECOMMENDED_BUNDLES = ['PimcoreSimpleBackendSearchBundle'];
+    const RECOMMENDED_BUNDLES = [];
 
     public const INSTALLABLE_BUNDLES = [
         'PimcoreApplicationLoggerBundle' => PimcoreApplicationLoggerBundle::class,
         'PimcoreCustomReportsBundle' => PimcoreCustomReportsBundle::class,
-        'PimcoreGlossaryBundle' => PimcoreGlossaryBundle::class,
         'PimcoreSeoBundle' => PimcoreSeoBundle::class,
-        'PimcoreSimpleBackendSearchBundle' => PimcoreSimpleBackendSearchBundle::class,
-        'PimcoreStaticRoutesBundle' => PimcoreStaticRoutesBundle::class,
         'PimcoreUuidBundle' => PimcoreUuidBundle::class,
-        'PimcoreWordExportBundle' => PimcoreWordExportBundle::class,
-        'PimcoreXliffBundle' => PimcoreXliffBundle::class,
         'PimcoreGenericExecutionEngineBundle' => PimcoreGenericExecutionEngineBundle::class,
     ];
 

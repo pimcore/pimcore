@@ -175,5 +175,5 @@ Pimcore provides a few special functionalities to make templates even more power
 These are explained in following sub chapters:
 
 * [Template inheritance and Layouts](./01_Layouts.md) - Use layouts and template inheritance to define everything that repeats on a page. 
-* [Template Extensions](./02_Template_Extensions/README.md) - Use twig extensions for things like includes, translations, cache, glossary, etc.
+* [Template Extensions](./02_Template_Extensions/README.md) - Use twig extensions for things like includes, translations, cache, etc.
 * [Thumbnails](./04_Thumbnails.md) - Learn how to include images into templates with using Thumbnails.

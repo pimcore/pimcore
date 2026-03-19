@@ -51,9 +51,6 @@ Pimcore ships with a reasonable default configuration. By using it, all data obj
 export concludes all attributes directly attached to the data object (no relations) and allows deletion of the data objects 
 directly in the result list. 
 
-> Please note: The GDPR search will be very limited if haven`t installed the simpleBackendSearchBundle!
- 
- 
 ## Extending GDPR Data Extractor with Custom Data Sources
 It is possible to attach additional data sources to the GDPR Data Extractor with Pimcore Bundles. Thereby specific data 
 exports can be attached or external data sources can be included. 
