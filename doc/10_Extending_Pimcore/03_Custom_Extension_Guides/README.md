@@ -52,7 +52,7 @@ which layers it touches so you know what to expect before diving in.
 
 | Guide | Description | Layers |
 |-------|-------------|--------|
-| [Extending Grid with Custom Columns](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/02_Extending_Grid_with_Custom_Columns.md) | Add custom columns to the element grid | Backend |
+| [Custom Grid Columns](./11_Custom_Grid_Columns.md) | Add custom columns to the element grid (backend definition, resolver, collector; optional frontend cell type) | Backend, UI |
 | [Extending Filters](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/08_Extending_Filters/README.md) | Add custom search index and listing filters | Backend |
 | [Custom Listing](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/10_Custom_Listing.md) | Build custom listing views in the frontend | UI |
 
