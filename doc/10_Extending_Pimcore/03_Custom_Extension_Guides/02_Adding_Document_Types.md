@@ -87,12 +87,12 @@ If your document type requires **additional database columns**, you need to:
 2. Create a custom `Dao` class that reads/writes from that table
 
 For a reference implementation, see the
-[Web-to-Print bundle](https://github.com/pimcore/web-to-print-bundle), which adds
+[Web-to-Print bundle](https://github.com/pimcore/ee-web-to-print-bundle), which adds
 a `documents_printpage` table with extra fields like `lastgenerated` and
 `lastgeneratemessage`. The relevant files are:
 
-- [PrintAbstract/Dao.php](https://github.com/pimcore/web-to-print-bundle/blob/1.x/src/Model/Document/PrintAbstract/Dao.php) — custom Dao using `documents_printpage`
-- [Installer.php](https://github.com/pimcore/web-to-print-bundle/blob/1.x/src/Installer.php) — creates the table and modifies the ENUM
+- [PrintAbstract/Dao.php](https://github.com/pimcore/ee-web-to-print-bundle/blob/2026.x/src/Model/Document/PrintAbstract/Dao.php) — custom Dao using `documents_printpage`
+- [Installer.php](https://github.com/pimcore/ee-web-to-print-bundle/blob/2026.x/src/Installer.php) — creates the table and modifies the ENUM
 
 ## 4) Register the Frontend Editor (Pimcore Studio)
 
