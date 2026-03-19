@@ -8,8 +8,7 @@ screenshot shows.
 
 **Solution**
 
-1) Create a bundle with a Pimcore Backend Interface java script extension as described 
-[here](../../backlog/06_Event_Listener_UI.md). 
+1) Create a bundle with a JavaScript extension for Pimcore Studio.
 
 2) Implement a listener for the `postOpenObject` event like follows: 
 

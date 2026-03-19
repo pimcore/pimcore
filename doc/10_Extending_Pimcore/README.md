@@ -1,6 +1,6 @@
 ---
 title: Extending Pimcore
-description: Extension points and mechanisms for customizing Pimcore.
+description: Extension points and mechanisms for customizing Pimcore across core, backend API, and frontend layers.
 ---
 
 # Extending Pimcore
@@ -8,9 +8,24 @@ description: Extension points and mechanisms for customizing Pimcore.
 Pimcore builds on Symfony's extension mechanisms and adds its own extension points.
 Most projects start with data modeling, controllers, templates, and documents,
 all achievable through configuration and standard Symfony patterns.
-When you need to go further, Pimcore provides several dedicated extension paths.
+When you need to go further, Pimcore provides dedicated extension points across
+three layers.
 
-## Extension Points
+## Architecture: Where to Extend What
+
+Pimcore's extension points span three layers, each documented in its own chapter:
+
+| Layer | What it covers | When to use |
+|-------|---------------|-------------|
+| **Core Framework** (this chapter) | Events, models, bundles, data types, Symfony DI, Composer dependencies | PHP/Symfony-level customization, data model extensions, lifecycle hooks, distributable bundles |
+| **[Studio Backend API](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/README.md)** | API endpoints, response customization, grid columns, filters, metadata adapters | Customizing the REST API layer that powers Pimcore Studio |
+| **[Studio UI](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/README.md)** | Plugins, tabs, widgets, navigation, context menus, sidebar extensions | Extending the Pimcore Studio frontend with custom UI components |
+
+**Cross-cutting extensions** (e.g. adding a custom asset type or document type) typically
+require changes across multiple layers. The guides in this chapter cover the full workflow
+and link to the Studio Backend and Studio UI documentation for layer-specific detail.
+
+## Core Framework Extensions
 
 **[Events and Event Listeners](./01_Events/README.md)**
 Hook into Pimcore's lifecycle (element CRUD, cache, mail, workflows) using
@@ -27,10 +42,23 @@ data types, permissions, persistent models, and more.
 Build reusable, distributable Pimcore bundles with installers, service definitions,
 auto-loaded configuration, and migrations.
 
+## Studio Backend Extensions
+
+The Studio Backend Bundle exposes extension points for the API layer that powers
+Pimcore Studio: custom endpoints, response enrichment via events, grid columns,
+filters, metadata adapters, and OpenAPI integration.
+
+See the full reference:
+**[Extending Pimcore Studio Backend](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/README.md)**
+
+## Studio UI Extensions
+
+The Studio UI Bundle provides a plugin/module architecture, component registry,
+dependency injection, and dynamic type system for client-side customization of
+Pimcore Studio.
+
+See the full reference:
 **[Extending Pimcore Studio](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/README.md)**
-Extend the Pimcore Studio interface with custom plugins using the Studio UI SDK.
-The SDK provides a plugin/module architecture, component registry, dependency injection,
-and dynamic type system for client-side customization.
 
 ## See Also
 

@@ -1,6 +1,6 @@
 ---
 title: Studio Backend Events
-description: Events for customizing Studio Backend API responses.
+description: Overview of Studio Backend API events and where to find the full reference.
 ---
 
 # Studio Backend Events
@@ -9,13 +9,15 @@ The Studio Backend Bundle dispatches events that allow customization of API resp
 and element resolution behavior. These events use the Symfony EventDispatcher and
 follow the `EventSubscriberInterface` pattern.
 
-## PreResponse Events
+The two main event categories are:
 
-The Studio Backend fires PreResponse events before returning API responses for elements.
-Use these to add custom attributes, modify response data, or inject additional
-information into the API output.
+- **PreResponse events** - fired before the API returns a response for an element
+  (asset, data object, document). Use these to add custom attributes, modify response
+  data, or inject additional information into the API output.
+- **ElementResolveEvent** - fired during element resolution to customize how elements
+  are looked up by ID or search term.
 
-Key event classes include:
+Key event classes:
 
 - `Pimcore\Bundle\StudioBackendBundle\Asset\Event\PreResponse\AssetEvent` -
   fired before asset API responses
@@ -24,47 +26,14 @@ Key event classes include:
 - `Pimcore\Bundle\StudioBackendBundle\Document\Event\PreResponse\DocumentEvent` -
   fired before document API responses
 - `Pimcore\Bundle\StudioBackendBundle\Element\Event\PreResolve\ElementResolveEvent` -
-  fired during element resolution to customize how elements are looked up by ID or search term
+  fired during element resolution
 
-## Example: Adding Custom Attributes to Asset Responses
+## Full Reference
 
-```php
-<?php
+The canonical documentation for Studio Backend events - including the complete event list,
+all available event classes, and detailed code examples - lives in the Studio Backend Bundle:
 
-namespace App\EventSubscriber;
-
-use Pimcore\Bundle\StudioBackendBundle\Asset\Event\PreResponse\AssetEvent;
-use Pimcore\Bundle\StudioBackendBundle\Asset\Schema\Type\Image;
-use Pimcore\Bundle\StudioBackendBundle\Element\Schema\CustomAttributes;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-
-class AssetResponseSubscriber implements EventSubscriberInterface
-{
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            AssetEvent::EVENT_NAME => 'onAssetEvent',
-        ];
-    }
-
-    public function onAssetEvent(AssetEvent $event): void
-    {
-        if ($event->getAsset() instanceof Image) {
-            $event->addAdditionalAttribute('isImage', true);
-        }
-
-        $event->setCustomAttributes(
-            new CustomAttributes(
-                key: 'My Awesome Key',
-                additionalCssClasses: ['my-awesome-css-class'],
-            )
-        );
-    }
-}
-```
-
-## Further Reading
-
-For the full list of Studio Backend events and additional examples, see
-[Extending via Events](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/11_Extending_via_Events.md)
-in the Studio Backend Bundle documentation.
+- [Additional and Custom Attributes](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/01_Additional_and_Custom_Attributes.md) -
+  enrich API responses with custom data via PreResponse events
+- [Extending via Events](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/11_Extending_via_Events.md) -
+  full event reference with examples for element resolution and response customization
