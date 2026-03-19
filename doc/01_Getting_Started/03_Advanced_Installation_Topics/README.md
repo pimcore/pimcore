@@ -57,7 +57,7 @@ By default, here's what's included in the Recommended Bundles list:
 
 - [PimcoreApplicationLoggerBundle](../../18_Tools_and_Features/17_Application_Logger.md)
 - [PimcoreCustomReportsBundle](../../18_Tools_and_Features/29_Custom_Reports.md)
-- PimcoreSeoBundle (for SEO-related topics: [Robots.txt](../../18_Tools_and_Features/38_Robots.txt.md)
+- PimcoreSeoBundle (for SEO-related topics such as [Robots.txt](../../18_Tools_and_Features/38_Robots.txt.md))
 - [PimcoreQuillBundle](https://github.com/pimcore/quill-bundle/blob/1.x/README.md) (for default WYSIWYG editor)
 - [PimcoreUuidBundle](../../19_Development_Tools_and_Details/19_UUID_Support.md)
 
