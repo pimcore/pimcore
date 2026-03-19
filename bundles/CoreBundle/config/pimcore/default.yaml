@@ -348,3 +348,7 @@ pimcore:
 
     dependency:
         enabled: true
+
+scheb_two_factor:
+    google:
+        server_name: "%router.request_context.host%"
