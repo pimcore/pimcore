@@ -13,7 +13,7 @@ Add external packages with standard Composer commands.
 Run Composer in your project root directory:
 
 ```bash
-composer require mtdowling/cron-expression
+composer require dragonmantank/cron-expression
 ```
 
 ## Third-Party Bundles
