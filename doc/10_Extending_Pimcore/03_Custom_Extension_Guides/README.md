@@ -35,15 +35,15 @@ which layers it touches so you know what to expect before diving in.
 |-------|-------------|--------|
 | [Adding Object Datatypes](./04_Adding_Object_Datatypes.md) | Add custom data types to Pimcore data objects | Core |
 | [Adding Object Layout Types](./05_Adding_Object_Layout_Types.md) | Add custom layout types for data object editing | Core, UI |
-| [Field Definition Adapters](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/05_Data_Objects/01_Field_Definition_Adapters.md) | Customize how data object field definitions are processed | Backend |
+| [Field Definition Adapters](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/06_Data_Objects/01_Field_Definition_Adapters.md) | Customize how data object field definitions are processed | Backend |
 | [Custom Layouts Based on Object Data](./13_Custom_Layouts_Based_on_Object_Data.md) | Dynamically select custom layouts based on object data by decorating the Studio Backend LayoutService | Backend |
 
 ## API and Endpoints
 
 | Guide | Description | Layers |
 |-------|-------------|--------|
-| [Extending Endpoints](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/04_Extending_Endpoints.md) | Add custom API endpoints to the Studio Backend | Backend |
-| [Extending OpenAPI](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/06_Extending_OpenApi.md) | Extend the OpenAPI specification with custom schemas | Backend |
+| [Extending Endpoints](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/03_Extending_Endpoints.md) | Add custom API endpoints to the Studio Backend | Backend |
+| [Extending OpenAPI](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/04_Extending_OpenApi.md) | Extend the OpenAPI specification with custom schemas | Backend |
 | [Additional and Custom Attributes](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/02_Additional_and_Custom_Attributes.md) | Enrich API responses with custom data via PreResponse events | Backend |
 | [Extending Updater and Patcher](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/10_Extending_Updater_and_Patcher.md) | Extend the element update and patch pipeline | Backend |
 | [API Data in Plugins](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/08_Use_API_Data.md) | Fetch and use Studio Backend API data in plugins | UI |
