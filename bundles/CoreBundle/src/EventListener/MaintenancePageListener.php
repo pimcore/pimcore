@@ -39,7 +39,6 @@ class MaintenancePageListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            //run after Pimcore\Bundle\AdminBundle\EventListener\AdminSessionBagListener
             KernelEvents::REQUEST => ['onKernelRequest', 126],
         ];
     }

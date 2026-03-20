@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-class PimcoreApplicationLoggerExtension extends Extension implements PrependExtensionInterface
+class PimcoreApplicationLoggerExtension extends Extension
 {
     /**
      * @throws Exception
@@ -33,17 +33,5 @@ class PimcoreApplicationLoggerExtension extends Extension implements PrependExte
         );
 
         $loader->load('services.yaml');
-    }
-
-    public function prepend(ContainerBuilder $container): void
-    {
-        if ($container->hasExtension('pimcore_admin')) {
-            $loader = new YamlFileLoader(
-                $container,
-                new FileLocator(__DIR__ . '/../../config')
-            );
-
-            $loader->load('admin-classic.yaml');
-        }
     }
 }

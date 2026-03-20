@@ -67,17 +67,6 @@ class LogController extends UserAwareController implements KernelControllerEvent
 
         $qb->orderBy('id', 'DESC');
 
-        if (class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge(
-                $request->request->all(),
-                $request->query->all()
-            ));
-
-            if ($sortingSettings['orderKey']) {
-                $qb->orderBy($db->quoteIdentifier($sortingSettings['orderKey']), $sortingSettings['order']);
-            }
-        }
-
         $priority = $requestSource->getString('priority');
         if (!empty($priority)) {
             $qb->andWhere($qb->expr()->eq('priority', ':priority'));

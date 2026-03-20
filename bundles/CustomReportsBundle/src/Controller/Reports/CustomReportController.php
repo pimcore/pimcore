@@ -272,31 +272,6 @@ class CustomReportController extends UserAwareController
         ]);
     }
 
-    #[Route('/data', name: 'pimcore_bundle_customreports_customreport_data', methods: ['POST'])]
-    public function dataAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('reports');
-        if (!class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
-            throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
-        }
-        $offset = ParameterBagHelper::getInt($request->request, 'start', 0);
-        $limit = ParameterBagHelper::getInt($request->request, 'limit', 40);
-        $config = Tool\Config::getByName($request->request->getString('name'));
-        if (!$config) {
-            throw $this->createNotFoundException();
-        }
-        $configuration = $config->getDataSourceConfig();
-        $adapter = Tool\Config::getAdapter($configuration, $config);
-        $sortFilters = $this->getSortAndFilters($request, $configuration);
-        $result = $adapter->getData($sortFilters['filters'], $sortFilters['sort'], $sortFilters['dir'], $offset, $limit, null, $sortFilters['drillDownFilters']);
-
-        return $this->jsonResponse([
-            'success' => true,
-            'data' => $result['data'],
-            'total' => $result['total'],
-        ]);
-    }
-
     #[Route(
         '/drill-down-options',
         name: 'pimcore_bundle_customreports_customreport_drilldownoptions',
@@ -458,9 +433,7 @@ class CustomReportController extends UserAwareController
         $sortingSettings = null;
         $sort = null;
         $dir = null;
-        if (class_exists('\Pimcore\Bundle\AdminBundle\Helper\QueryParams')) {
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
-        }
+
         if (is_array($sortingSettings) && $sortingSettings['orderKey']) {
             $sort = $sortingSettings['orderKey'];
             $dir = $sortingSettings['order'];

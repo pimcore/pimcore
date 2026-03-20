@@ -17,10 +17,6 @@ use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use Exception;
 use Pimcore;
-use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\ConfigElementInterface;
-use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Operator\AbstractOperator;
-use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Service as GridColumnConfigService;
-use Pimcore\Bundle\AdminBundle\Service\GridData;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
@@ -539,34 +535,6 @@ class Service extends Model\Element\Service
 
             return $result;
         });
-    }
-
-    /**
-     * @deprecated Since 11.3, please use GridData\DataObject::getHelperDefinitions() instead (requires pimcore/admin-ui-classic-bundle v1.5)
-     */
-    public static function getHelperDefinitions(): array
-    {
-        if (class_exists(GridData\DataObject::class)) {
-            return GridData\DataObject::getHelperDefinitions();
-        }
-
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '11.3.0',
-            sprintf('The "%s" method is deprecated here and moved to admin-ui-classc-bundle v1.5, use "%s" instead.', __METHOD__, 'Pimcore\Bundle\AdminBundle\Service\GridData::getHelperDefinitions()')
-        );
-
-        $stack = Pimcore::getContainer()->get('request_stack');
-        if ($stack->getMainRequest()?->hasSession()) {
-            $session = $stack->getSession();
-
-            return Session::useBag($session, function (AttributeBagInterface $session) {
-                return $session->get('helpercolumns', []);
-            }, 'pimcore_gridconfig');
-        }
-
-        return [];
-
     }
 
     public static function getLanguagePermissions(Fieldcollection\Data\AbstractData|Objectbrick\Data\AbstractData|AbstractObject $object, Model\User $user, string $type): ?array
@@ -1913,25 +1881,6 @@ class Service extends Model\Element\Service
         }
 
         return '';
-    }
-
-    /**
-     * @deprecated Since 11.3, please use \Pimcore\Bundle\AdminBundle\Service\DataObject::getInheritedData() instead
-     */
-    protected static function getInheritedData(Concrete $object, string $key, string $requestedLanguage): array
-    {
-        if (!$parent = self::hasInheritableParentObject($object)) {
-            return [];
-        }
-
-        if ($inheritedValue = self::getStoreValueForObject($parent, $key, $requestedLanguage)) {
-            return [
-                'parent' => $parent,
-                'value' => $inheritedValue,
-            ];
-        }
-
-        return self::getInheritedData($parent, $key, $requestedLanguage);
     }
 
     public static function useInheritedValues(bool $inheritValues, callable $fn, array $fnArgs = []): mixed

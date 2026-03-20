@@ -10,8 +10,6 @@ in order to show up in the `pimcore:bundle:list` command. This gives you the fol
 
 To get started quickly, you can extend `Pimcore\Extension\Bundle\AbstractPimcoreBundle` which already implements all methods defined by the interface.
 
-If you need to load assets (JS or CSS) in the Admin or Editmode UI please have a look at the [loading assets in the Admin UI](../13_Loading_Admin_UI_Assets.md) section in the docs.
-
 ## Installer
 
 By default, a Pimcore bundle does not define any installation or update routines, but you can use the `getInstaller()` method
