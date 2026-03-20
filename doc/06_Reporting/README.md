@@ -1,5 +1,6 @@
 ---
 title: Reporting
+description: Overview of Pimcore reporting tools, including custom reports, statistics explorer, and dashboards for querying and visualizing data.
 ---
 
 # Reporting

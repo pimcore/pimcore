@@ -1,9 +1,9 @@
 ---
-title: Auto Loading Config and Routing
+title: Autoloading Config and Routing
 description: Automatic config and routing loading from bundle directories.
 ---
 
-# Auto Loading Config and Routing Definitions
+# Autoloading Config and Routing Definitions
 
 Symfony does not load configuration or routing definitions from bundles by default,
 expecting everything in `config/`. Pimcore extends this by automatically loading

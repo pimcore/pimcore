@@ -3,7 +3,7 @@ title: Object Bricks
 description: "Extend objects with additional attributes without changing the class definition."
 ---
 
-# Objects Bricks
+# Object Bricks
 
 ## General
 

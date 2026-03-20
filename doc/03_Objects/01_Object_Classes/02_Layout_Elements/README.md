@@ -12,7 +12,7 @@ always contained in a panel. Nest panels to design a data input interface tailor
 
 The three available panel types are:
 * Panel - a plain panel holding fields
-* Region - a region panel able to hold nested panel's in its regions north, east, west and south
+* Region - a region panel able to hold nested panels in its regions north, east, west and south
 * Tabpanel - a panel holding further nested panels as tabs
 
 Moreover, within a panel fields can be put into the following layout Components
