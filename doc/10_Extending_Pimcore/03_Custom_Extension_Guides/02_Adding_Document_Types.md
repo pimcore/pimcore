@@ -1,3 +1,8 @@
+---
+title: Adding Document Types
+description: Register custom document types with PHP model, config, database ENUM, and Studio UI plugin.
+---
+
 # Adding Document Types
 
 Custom document types extend Pimcore's document system with new types that appear in the
@@ -28,7 +33,7 @@ class Book extends Page
 ## 2) Register the Document Type
 
 Add the type to `pimcore.documents.type_definitions.map`. In a bundle, place a
-`config.yaml` file in `config/pimcore/` — Pimcore
+`config.yaml` file in `config/pimcore/`. Pimcore
 [auto-loads](../04_Pimcore_Bundle_Developers_Guide/04_Auto_Loading_Config_and_Routing.md)
 config files from this directory:
 

@@ -1,7 +1,14 @@
+---
+title: Add Your Own Permissions
+description: Register custom permissions and check them in Studio Backend and Studio UI.
+---
+
 # Add Your Own Permissions
 
-## Add your permission to the database
-Permissions are stored in the `users_permission_definitions` table in your database. Use the `Definition` model to create your custom permission:
+## Register the Permission
+
+Create a custom permission key using the `Definition` model. Pimcore stores permissions in the
+`users_permission_definitions` table:
 
 ```php
 use Pimcore\Model\User\Permission\Definition;
@@ -24,7 +31,8 @@ You should now be able to select the permission in the users/roles tabs:
 
 ### Studio Backend (PHP controller)
 
-Use Symfony's `#[IsGranted]` attribute on your Studio Backend controller actions. The `UserPermissionVoter` automatically picks up all keys from `users_permission_definitions` — no extra registration needed:
+Use Symfony's `#[IsGranted]` attribute on your Studio Backend controller actions. The `UserPermissionVoter` 
+automatically picks up all keys from `users_permission_definitions`, so no extra registration is needed:
 
 ```php
 namespace App\Controller;
@@ -47,7 +55,9 @@ class MyCustomController extends AbstractApiController
 }
 ```
 
-> **Note:** The `UserPermissionVoter` in `studio-backend-bundle` reads every key from `users_permission_definitions` at runtime. Any custom permission you add to that table is immediately usable with `#[IsGranted]` — no voter or config registration required.
+:::note
+The `UserPermissionVoter` in `studio-backend-bundle` reads every key from `users_permission_definitions` at runtime. Any custom permission you add to that table is immediately usable with `#[IsGranted]`. No voter or config registration required.
+:::
 
 ### Studio Frontend (plugin)
 
@@ -56,7 +66,7 @@ Import `isAllowed` or `getCurrentUser` from the Studio UI SDK's auth module:
 ```typescript
 import { isAllowed, getCurrentUser } from '@pimcore/studio-ui-bundle/modules/auth'
 
-// Simple boolean check — returns true for admins automatically
+// Simple boolean check - returns true for admins automatically
 if (isAllowed('my_custom_permission')) {
   // User has the permission
 }
@@ -67,8 +77,10 @@ console.log(user.permissions) // string[] of granted permission keys
 console.log(user.isAdmin)     // boolean
 ```
 
-> **Note:** `getCurrentUser()` and `isAllowed()` read from the Redux store. They are available once the user is 
-> authenticated — use them in React components or event handlers, not during plugin `onStartup`.
+:::note
+`getCurrentUser()` and `isAllowed()` read from the Redux store. They are available once the user is
+authenticated. Use them in React components or event handlers, not during plugin `onStartup`.
+:::
 
 Inside a React component, use the `useUser` hook instead:
 

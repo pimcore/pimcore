@@ -1,12 +1,16 @@
+---
+title: Adding Asset Types
+description: Register custom asset types with PHP class, config, and Studio UI plugin.
+---
+
 # Adding Asset Types
 
-This feature allows users to add their own custom asset types.
-To register a new custom asset type, follow these three steps:
+Register a custom asset type in three steps:
 
 ## 1) Create the PHP Asset Class
 
 The asset class must extend an existing `Pimcore\Model\Asset` subclass. Choose the base class
-that best matches your type's storage behavior — for example, extend `Asset\Document` for
+that best matches your type's storage behavior. For example, extend `Asset\Document` for
 office-like files, or `Asset\Image` for image variants.
 
 Place the class in a `Model\Asset` sub-namespace:
@@ -28,7 +32,7 @@ For reference, see the built-in asset types in [pimcore/pimcore on GitHub](https
 ## 2) Register the Asset in Configuration
 
 Add your type to the `pimcore.assets.type_definitions.map` configuration. The `matching`
-array contains regular expressions — when a file is uploaded, its filename is tested against
+array contains regular expressions. When a file is uploaded, its filename is tested against
 these patterns to determine the asset type automatically.
 
 ```yaml
@@ -43,7 +47,7 @@ pimcore:
                     matching: ["/\\.indd/"]
 ```
 
-No database migration is needed — the `assets.type` column is `varchar(20)`.
+No database migration is needed. The `assets.type` column is `varchar(20)`.
 
 ## 3) Add a Studio UI Frontend Plugin
 

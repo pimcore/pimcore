@@ -1,3 +1,8 @@
+---
+title: Custom Grid Columns
+description: Add custom columns to the element grid with backend definition, resolver, collector, and optional frontend cell type.
+---
+
 # Custom Grid Columns
 
 > **Working example:** The

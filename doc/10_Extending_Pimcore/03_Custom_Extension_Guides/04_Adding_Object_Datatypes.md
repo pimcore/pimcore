@@ -1,3 +1,8 @@
+---
+title: Adding Object Datatypes
+description: Register custom data object field types across core, search index, backend API, and frontend.
+---
+
 # Adding Object Datatypes
 
 > **Working example:** The

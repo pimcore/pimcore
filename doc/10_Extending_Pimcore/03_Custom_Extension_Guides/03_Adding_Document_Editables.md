@@ -1,11 +1,14 @@
-# Adding Document Editables
+---
+title: Adding Document Editables
+description: Create custom document editables with PHP class, config, and Studio UI plugin.
+---
 
-With bundles, it is also possible to add an individual Document Editable.
+# Adding Document Editables
 
 A complete working example is available in the
 [Studio Example Bundle](https://github.com/pimcore/studio-example-bundle/tree/main/assets/js/src/examples/custom-document-editable).
 
-To register a new editable, you need to follow 3 steps:
+Register a custom editable in three steps:
 
 ## 1) Create the Editable Class
 

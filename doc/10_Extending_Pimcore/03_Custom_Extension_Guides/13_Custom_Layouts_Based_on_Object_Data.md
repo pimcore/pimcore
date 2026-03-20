@@ -1,24 +1,23 @@
+---
+title: Custom Layouts Based on Object Data
+description: Dynamically select custom layouts based on object data by decorating the Studio Backend LayoutService.
+---
+
 # Showing Custom Layouts Based on Object Data
 
-When editing data objects, it is often useful to show different [Custom Layouts](../../03_Objects/01_Object_Classes/03_Custom_Layouts.md) 
-depending on the object's data — for example, showing only the relevant fields for a given hierarchy level in a product structure.
+Show different [Custom Layouts](../../03_Objects/01_Object_Classes/03_Custom_Layouts.md)
+depending on the object's data, for example showing only the relevant fields for a given
+hierarchy level in a product structure.
 
-**Imagine following use case:**
-Products (stored as Pimcore objects) are organized in a certain hierarchy and take advantage of Pimcore's data
-inheritance. An example would be the structure we use in our e-commerce demo application where we have three levels
-of product hierarchy: article, color variant, size variant.
-To minimize maintenance effort, certain attributes should only be maintained on a certain hierarchy level (e.g. product
-name on article level, color and images on color variant level, size on size variant level).
+**Example scenario:** Products use data inheritance with three hierarchy levels (article,
+color variant, size variant). Each level maintains different attributes. Editors should only
+see the fields relevant to their hierarchy level.
 
-In order to make this simple for the editors, they only should see the attributes they need to maintain on the corresponding
-hierarchy level.
+**Approach:**
 
-**Solution**
-
-1) Create a [Custom Layout](../../03_Objects/01_Object_Classes/03_Custom_Layouts.md) for every hierarchy level.
-
-2) Decorate the Studio Backend `LayoutServiceInterface` to dynamically select a custom layout based on
-object data when the default layout is requested.
+1. Create a [Custom Layout](../../03_Objects/01_Object_Classes/03_Custom_Layouts.md) for each hierarchy level.
+2. Decorate the Studio Backend `LayoutServiceInterface` to dynamically select a custom layout
+   based on object data when the default layout is requested.
 
 ## How Layout Resolution Works in Studio
 
@@ -115,5 +114,5 @@ implementation, including its workflow integration and permission checks.
 - When a Car has any other `objectType`, the decorator returns `null` and the original service follows its
   normal resolution chain (workflow layout → default class layout)
 - When the user explicitly selects a different layout from the layout switcher (e.g. `layoutId=CP`),
-  the decorator passes it through unchanged — only `null` and `'0'` are intercepted
-- Non-Car objects are unaffected — `Car::getById()` returns `null` and the original flow takes over
+  the decorator passes it through unchanged; only `null` and `'0'` are intercepted
+- Non-Car objects are unaffected. `Car::getById()` returns `null` and the original flow takes over

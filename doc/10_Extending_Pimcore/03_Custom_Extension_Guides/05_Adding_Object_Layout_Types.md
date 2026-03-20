@@ -1,3 +1,8 @@
+---
+title: Adding Object Layout Types
+description: Register custom layout types for data object editing across core and frontend.
+---
+
 # Adding Object Layout Types
 
 > **Working example:** The

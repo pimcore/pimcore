@@ -1,22 +1,19 @@
+---
+title: Modifying Permissions on Object Data
+description: Dynamically adjust element permissions based on object data using GenericDataIndex events.
+---
+
 # Modifying Permissions Based on Object Data
 
-The GenericDataIndex `PermissionEvent` can be used to modify element permissions based on data stored inside the
-object itself. It fires when permissions are resolved and allows you to modify them before they reach Studio.
+The GenericDataIndex `PermissionEvent` fires when permissions are resolved and lets you modify them
+before they reach Pimcore Studio. Use this to restrict editing based on object data rather than tree
+structure.
 
-**Imagine following use case:**
-Your PIM system aggregates different sources (e.g. multiple ERP systems from different sub companies) of products and merges
-them to one single product hierarchy tree in order to have one single tree of products.
-So all editors can see all products in one place and get a good overview of all available products, which is great.
+**Example scenario:** A PIM system aggregates products from multiple ERP systems into one shared
+object tree. All editors see every product, but editing permissions depend on the product's origin
+ERP system. Since products move around in the tree, folder-based permissions are unreliable.
 
-When it comes to editing though, not all editors should be able to edit all products. The editing permissions for products
-should be based on the ERP system they originate from.
-Since the products are merged together into one tree structure, setting up such a permission structure might become tricky,
-especially when products are moved around in the object tree.
-
-**Solution**
-
-Use the `PermissionEvent` from the GenericDataIndex bundle to modify user permissions on the fly based on object data
-when the object is accessed. The event provides:
+The `PermissionEvent` solves this by letting you modify permissions per object at access time. The event provides:
 
 - **`getElement()`** — returns a `DataObjectSearchResultItem` (provides `getClassName()`, `getId()`, `getSearchIndexData()`)
 - **`getPermissions()`** — returns a mutable `DataObjectPermissions` object with setters like `setSave()`, `setPublish()`, `setDelete()`, etc.
@@ -84,8 +81,8 @@ class DataObjectPermissionSubscriber implements EventSubscriberInterface
 }
 ```
 
-With Symfony's autowiring and autoconfiguration enabled (the default), the subscriber is automatically registered —
-no manual service definition needed.
+With Symfony's autowiring and autoconfiguration enabled (the default), the subscriber is automatically registered.
+No manual service definition needed.
 
 ## Available Permission Setters
 
