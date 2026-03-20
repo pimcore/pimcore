@@ -10,9 +10,6 @@ parameters:
         - phpstan-bootstrap.php
 
     excludePaths:
-        - bundles/SeoBundle/src/Controller/Traits/DocumentTreeConfigWrapperTrait.php
-        - bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/Assets.php
-        - bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
         - lib/Translation/Translator.php
 
     symfony:
@@ -25,9 +22,6 @@ parameters:
             identifier: missingType.generics
         -
             identifier: missingType.iterableValue
-        -
-            identifier: instanceof.alwaysTrue
-            path: bundles/GlossaryBundle/src/Tool/Processor.php
 
     # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:

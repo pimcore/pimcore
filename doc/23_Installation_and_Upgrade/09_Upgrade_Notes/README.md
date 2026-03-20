@@ -2,6 +2,15 @@
 
 ## Pimcore 2026.1.0
 
+#### Removed deprecated and discontinued bundles
+The following bundles have been removed:
+- GlossaryBundle
+- SimpleBackendSearchBundle
+- SeoBundle: dropped `http_error_log` feature and DB Table, and removed Document SEO Editor
+- StaticRouteBundle
+- WordExportBundle
+- XliffBundle
+
 ### [General]
 
 - Added support for PHP `8.5` and bumped minimum requirement of Symfony to `7.4`.
@@ -26,16 +35,16 @@
 ### Deprecations
 
 #### Deprecated and Discontinued 
-The following bundles got deprecated and won't be migrated to Pimcore Studio
-- Glossary Bundle
-- Simple Backend Search Bundle
-- Static Routes Bundle
-- Parts of SeoBundle - All functionality except of the redirects and sitemaps won't be migrated to Pimcore Studio
-- WordExport Bundle
-- XliffBundle Export Bundle
+The following bundles have been deprecated and will not be migrated to Pimcore Studio:
+- GlossaryBundle
+- SimpleBackendSearchBundle
+- StaticRoutesBundle
+- Parts of SeoBundle - All functionality, except for redirects and sitemaps, will not be migrated to Pimcore Studio
+- WordExportBundle
+- XliffBundle
 
 #### Deprecated because directly integrated into Studio 
-- SimpleBackendSearch Bundle
+- SimpleBackendSearchBundle
 
 #### [Symfony 6.x Components Support]
 
