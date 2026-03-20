@@ -547,9 +547,7 @@ final class User extends User\UserRole implements UserInterface
     public function getFirstAllowedPerspective(): string
     {
         $perspectives = $this->getMergedPerspectives();
-        if (!empty($perspectives)) {
-            return $perspectives[0];
-        }
+        return $perspectives[0] ?? '';
     }
 
     /**

@@ -435,7 +435,7 @@ class CustomReportController extends UserAwareController
 
         $sortingSettings = \Pimcore\Model\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
 
-        if (is_array($sortingSettings) && $sortingSettings['orderKey']) {
+        if ($sortingSettings['orderKey']) {
             $sort = $sortingSettings['orderKey'];
             $dir = $sortingSettings['order'];
         }
