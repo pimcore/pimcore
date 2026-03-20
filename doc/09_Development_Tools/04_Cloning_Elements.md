@@ -8,7 +8,7 @@ description: Clone and copy documents, assets, and data objects programmatically
 Use `Service::cloneMe()` to get an in-memory copy of any element (anything implementing `ElementInterface`):
 
 ```php
-$new = Pimcore\Model\Element\Service::cloneMe($source)
+$new = Pimcore\Model\Element\Service::cloneMe($source);
 ```
 
 This does not update internal references.
