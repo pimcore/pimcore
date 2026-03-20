@@ -49,10 +49,8 @@ final readonly class ParameterCollector
         bool $interactive,
     ): ?array {
         // Optional definition gate
-        if (!$definition->isRequired()) {
-            if (!$this->shouldConfigureOptional($definition, $io, $interactive)) {
-                return null;
-            }
+        if (!$definition->isRequired() && !$this->shouldConfigureOptional($definition, $io, $interactive)) {
+            return null;
         }
 
         $parameters = $definition->getParameters();
@@ -140,15 +138,25 @@ final readonly class ParameterCollector
         $suggestion = $envValue ?? $parameter->getDefaultValue();
 
         if ($parameter->getType() === ParameterType::Secret) {
-            if ($envValue !== null) {
-                $io->text(sprintf('  <comment>%s is already configured. Press Enter to keep it.</comment>', $parameter->getEnvVarName()));
+            if ($suggestion !== null) {
+                if ($envValue !== null) {
+                    $io->text(sprintf(
+                        '  <comment>%s is already configured. Press Enter to keep it.</comment>',
+                        $parameter->getEnvVarName(),
+                    ));
+                } else {
+                    $io->text(sprintf(
+                        '  <comment>%s has an auto-generated default. Press Enter to accept it.</comment>',
+                        $parameter->getEnvVarName(),
+                    ));
+                }
             }
 
             $input = $io->askHidden($parameter->getLabel());
 
             // Empty input (Enter) with pre-existing value → keep it
-            if (($input === null || $input === '') && $envValue !== null) {
-                return $envValue;
+            if (($input === null || $input === '') && $suggestion !== null) {
+                return $suggestion;
             }
 
             return (string) $input;

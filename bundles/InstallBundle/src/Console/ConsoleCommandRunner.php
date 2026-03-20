@@ -118,4 +118,12 @@ final class ConsoleCommandRunner
             'Running maintenance tasks',
         );
     }
+
+    public function installAssets(): void
+    {
+        $this->runCommand(
+            ['assets:install'],
+            'Installing assets',
+        );
+    }
 }

@@ -16,12 +16,12 @@ namespace Pimcore\Bundle\InstallBundle;
 use Doctrine\DBAL\Connection;
 use Pimcore;
 use Pimcore\Bundle\InstallBundle\BundleConfig\BundleInstaller;
-use Pimcore\Bundle\InstallBundle\Checkpoint\InstallerCheckpoint;
 use Pimcore\Bundle\InstallBundle\Console\ConsoleCommandRunner;
 use Pimcore\Bundle\InstallBundle\Database\DatabaseSetup;
 use Pimcore\Bundle\InstallBundle\Collector\ParameterCollector;
 use Pimcore\Bundle\InstallBundle\Env\EnvWriter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
+use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ResolvedDefinition;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\Profile\DataSource\DataSourceInterface;
@@ -31,8 +31,6 @@ use Pimcore\Bundle\InstallBundle\Profile\PostInstallCommandsProviderInterface;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallHookInterface;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallContext;
 use Pimcore\Config;
-use Pimcore\Tool\AssetsInstaller;
-use Pimcore\Tool\Authentication;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Dotenv\Dotenv;
@@ -40,7 +38,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Throwable;
 
 /**
@@ -51,41 +48,17 @@ use Throwable;
  *
  * @internal
  */
-class Installer
+final class Installer
 {
     public const string NEEDS_INSTALL_MARKER = PIMCORE_PRIVATE_VAR . '/config/needs-install.lock';
-
-    /** Phase 2 step constants — used for checkpoint tracking */
-    private const int STEP_SETUP_DATABASE = 12;
-
-    private const int STEP_IMPORT_DATA_SOURCE = 13;
-
-    private const int STEP_CREATE_ADMIN = 14;
-
-    private const int STEP_REGISTER_BUNDLES = 15;
-
-    private const int STEP_REBOOT_KERNEL = 16;
-
-    private const int STEP_INSTALL_BUNDLES = 17;
-
-    private const int STEP_INSTALL_ASSETS = 18;
-
-    private const int STEP_REBUILD_CLASSES = 19;
-
-    private const int STEP_MARK_MIGRATIONS = 20;
-
-    private const int STEP_RUN_POST_INSTALL_COMMANDS = 21;
-
-    private const int STEP_RUN_MAINTENANCE = 22;
-
-    private const int STEP_RUN_PROFILE_POST_INSTALL = 23;
 
     private int $stepCounter = 0;
 
     private int $totalSteps = 0;
 
+    private ?KernelInterface $lastBootedKernel = null;
+
     /**
-     * @param (\Closure(string): InstallerCheckpoint)|null $checkpointFactory
      * @param (\Closure(string): EnvWriter)|null $envWriterFactory
      */
     public function __construct(
@@ -96,18 +69,8 @@ class Installer
         private readonly ConsoleCommandRunner $commandRunner,
         private readonly BundleInstaller $bundleInstaller,
         private readonly PostInstallRunner $postInstallRunner,
-        private readonly ?\Closure $checkpointFactory = null,
         private readonly ?\Closure $envWriterFactory = null,
     ) {
-    }
-
-    private function createCheckpoint(string $projectRoot): InstallerCheckpoint
-    {
-        if ($this->checkpointFactory !== null) {
-            return ($this->checkpointFactory)($projectRoot);
-        }
-
-        return new InstallerCheckpoint($projectRoot);
     }
 
     private function createEnvWriter(string $envFilePath): EnvWriter
@@ -124,7 +87,7 @@ class Installer
      *
      * @param InstallProfileInterface $profile The install profile
      * @param list<EnvVarDefinitionInterface> $extraDefinitions CLI-provided definitions
-     * @param list<string> $skipKeys Keys of definitions to skip
+     * @param list<string|null> $skipValidation Skip validation flags from CLI
      * @param array{username: string, password: string} $adminCredentials
      * @param bool $interactive Whether to prompt interactively
      * @param string $projectRoot Absolute path to project root
@@ -137,7 +100,7 @@ class Installer
     public function runPhaseOne(
         InstallProfileInterface $profile,
         array $extraDefinitions,
-        array $skipKeys,
+        array $skipValidation,
         array $adminCredentials,
         ParameterCollector $parameterCollector,
         SymfonyStyle $io,
@@ -154,11 +117,6 @@ class Installer
             return $categoryErrors;
         }
 
-        $skipErrors = $this->definitionResolver->applySkipFlags($activeDefinitions, $skipKeys);
-        if ($skipErrors !== []) {
-            return $skipErrors;
-        }
-
         $this->definitionResolver->warnOnMissingBundles($profile, $io, $projectRoot);
 
         $bundleErrors = $this->definitionResolver->validateProfileBundles($profile);
@@ -173,13 +131,14 @@ class Installer
             $parameterCollector,
             $io,
             $interactive,
+            $skipValidation,
         );
 
         if ($result['errors'] !== []) {
             return $result['errors'];
         }
 
-        $credentialErrors = $this->validateAdminCredentials($adminCredentials);
+        $credentialErrors = $this->databaseSetup->validateAdminCredentials($adminCredentials);
         if ($credentialErrors !== []) {
             return $credentialErrors;
         }
@@ -199,7 +158,7 @@ class Installer
     /**
      * Run Phase 2: database setup, bundle install, post-install commands.
      *
-     * Boots the real kernel, performs all installation steps with checkpoint tracking.
+     * Boots the real kernel, performs all installation steps.
      *
      * @param InstallProfileInterface $profile The install profile
      * @param list<PostInstallCommandsProviderInterface> $cliPostInstallProviders CLI post-install providers
@@ -218,243 +177,82 @@ class Installer
         SymfonyStyle $io,
         string $projectRoot,
     ): array {
-        $checkpoint = $this->createCheckpoint($projectRoot);
-        $completedStep = $checkpoint->getCompletedStep();
-
-        if ($completedStep !== null) {
-            $io->note(sprintf(
-                'Resuming from step %d (previous run detected)',
-                $completedStep + 1,
-            ));
-        }
-
         $this->calculateTotalSteps($profile);
         $errors = [];
 
         $this->dispatchStep('boot_kernel', 'Booting application kernel...');
         $kernel = $this->bootRealKernel($projectRoot);
 
-        // Setup database
-        $hasDataSource = $profile->getDataSource() !== null;
-        $error = $this->executeStep(
-            self::STEP_SETUP_DATABASE,
-            $completedStep,
-            $checkpoint,
-            'setup_database',
-            'Setting up database...',
-            'Schema created',
-            function () use ($kernel, $hasDataSource): void {
-                $db = $this->getDatabaseConnection($kernel);
-                $this->setupDatabase($db, $hasDataSource);
-            },
-        );
+        $error = $this->executeStepSetupDatabase($kernel, $profile);
         if ($error !== null) {
             return [$error];
         }
 
-        // Import data source (before admin creation — dumps may contain user rows)
-        $dataSource = $profile->getDataSource();
-        if ($dataSource !== null) {
-            $error = $this->executeStep(
-                self::STEP_IMPORT_DATA_SOURCE,
-                $completedStep,
-                $checkpoint,
-                'import_data',
-                'Importing data...',
-                $dataSource->getLabel(),
-                function () use ($dataSource, $kernel, $io): void {
-                    $db = $this->getDatabaseConnection($kernel);
-                    $this->importDataSource($dataSource, $db, $io);
-                },
-            );
-            if ($error !== null) {
-                return [$error];
-            }
-        }
-
-        // Create/update admin user (after data import to overwrite any dump admin)
-        $error = $this->executeStep(
-            self::STEP_CREATE_ADMIN,
-            $completedStep,
-            $checkpoint,
-            'create_admin',
-            'Creating admin user...',
-            'Admin user created',
-            function () use ($kernel, $adminCredentials): void {
-                $db = $this->getDatabaseConnection($kernel);
-                $this->createOrUpdateAdminUser($db, $adminCredentials);
-            },
-        );
+        $error = $this->executeStepImportDataSource($kernel, $profile, $io);
         if ($error !== null) {
             return [$error];
         }
 
-        // Register bundles
-        $error = $this->executeStep(
-            self::STEP_REGISTER_BUNDLES,
-            $completedStep,
-            $checkpoint,
-            'register_bundles',
-            'Registering bundles...',
-            sprintf('%d bundles registered', count($profile->getBundles())),
-            function () use ($profile): void {
-                $this->bundleInstaller->registerBundles($profile);
-            },
-        );
+        $error = $this->executeStepCreateAdmin($kernel, $adminCredentials);
         if ($error !== null) {
             return [$error];
         }
 
-        // Reboot kernel (bundles.php changed)
-        $error = $this->executeStep(
-            self::STEP_REBOOT_KERNEL,
-            $completedStep,
-            $checkpoint,
-            'reboot_kernel',
-            'Rebooting kernel...',
-            'Kernel rebooted',
-            function () use (&$kernel, $projectRoot): void {
-                $kernel->shutdown();
-                $this->clearKernelCacheDir($kernel);
-                $kernel = $this->bootRealKernel($projectRoot);
-            },
-        );
+        $error = $this->executeStepRegisterBundles($profile);
         if ($error !== null) {
             return [$error];
         }
 
-        // Install bundles
-        $error = $this->executeStep(
-            self::STEP_INSTALL_BUNDLES,
-            $completedStep,
-            $checkpoint,
-            'install_bundles',
-            'Installing bundles...',
-            'Bundles installed',
-            function () use ($profile, $io): void {
-                $this->bundleInstaller->installBundles($profile, $io);
-            },
-        );
+        $error = $this->executeStepRebootKernel($kernel, $projectRoot);
+        if ($error !== null) {
+            return [$error];
+        }
+        // Kernel reference updated after reboot
+        $kernel = $this->lastBootedKernel;
+
+        $error = $this->executeStepInstallBundles($profile, $io);
         if ($error !== null) {
             return [$error];
         }
 
-        // Install assets
-        $error = $this->executeStep(
-            self::STEP_INSTALL_ASSETS,
-            $completedStep,
-            $checkpoint,
-            'install_assets',
-            'Installing assets...',
-            'Assets installed',
-            function () use ($kernel): void {
-                $this->installAssets($kernel);
-            },
-        );
+        $error = $this->executeStepInstallAssets();
         if ($error !== null) {
             return [$error];
         }
 
-        // Rebuild classes (non-fatal)
-        $error = $this->executeStep(
-            self::STEP_REBUILD_CLASSES,
-            $completedStep,
-            $checkpoint,
-            'rebuild_classes',
-            'Rebuilding class definitions...',
-            'Classes rebuilt',
-            function (): void {
-                $this->commandRunner->rebuildClasses();
-            },
-            false,
-        );
+        $error = $this->executeStepRebuildClasses();
         if ($error !== null) {
             $errors[] = $error;
         }
 
-        // Mark migrations as done (non-fatal)
-        $error = $this->executeStep(
-            self::STEP_MARK_MIGRATIONS,
-            $completedStep,
-            $checkpoint,
-            'mark_migrations',
-            'Marking migrations as done...',
-            'Migrations marked',
-            function (): void {
-                $this->commandRunner->markMigrationsAsDone();
-            },
-            false,
-        );
+        $error = $this->executeStepMarkMigrations();
         if ($error !== null) {
             $errors[] = $error;
         }
 
-        // Collect and run post-install commands
-        $postInstallCommands = $this->postInstallRunner->collectPostInstallCommands(
+        $error = $this->executeStepPostInstallCommands(
             $profile,
             $cliPostInstallProviders,
             $kernel,
+            $io,
         );
-
-        if ($postInstallCommands !== []) {
-            $error = $this->executeStep(
-                self::STEP_RUN_POST_INSTALL_COMMANDS,
-                $completedStep,
-                $checkpoint,
-                'post_install_commands',
-                'Running post-install commands...',
-                sprintf('%d commands executed', count($postInstallCommands)),
-                function () use ($postInstallCommands, $io): void {
-                    $this->postInstallRunner->runPostInstallCommands($postInstallCommands, $io);
-                },
-            );
-            if ($error !== null) {
-                return array_merge($errors, [$error]);
-            }
+        if ($error !== null) {
+            return array_merge($errors, [$error]);
         }
 
-        // Run pimcore:maintenance (non-fatal)
-        $error = $this->executeStep(
-            self::STEP_RUN_MAINTENANCE,
-            $completedStep,
-            $checkpoint,
-            'run_maintenance',
-            'Running maintenance...',
-            'Maintenance completed',
-            function (): void {
-                $this->commandRunner->runMaintenance();
-            },
-            false,
-        );
+        $error = $this->executeStepRunMaintenance();
         if ($error !== null) {
             $errors[] = $error;
         }
 
-        // Run profile postInstall() if profile implements the optional hook
-        if ($profile instanceof PostInstallHookInterface) {
-            $error = $this->executeStep(
-                self::STEP_RUN_PROFILE_POST_INSTALL,
-                $completedStep,
-                $checkpoint,
-                'profile_post_install',
-                'Running profile post-install...',
-                'Profile postInstall() completed',
-                function () use ($kernel, $profile, $io): void {
-                    $db = $this->getDatabaseConnection($kernel);
-                    $context = new PostInstallContext($db, $io);
-                    $profile->postInstall($context);
-                },
-            );
-            if ($error !== null) {
-                return array_merge($errors, [$error]);
-            }
+        $error = $this->executeStepProfilePostInstall($profile, $kernel, $io);
+        if ($error !== null) {
+            return array_merge($errors, [$error]);
         }
 
-        // Finalize
         $this->dispatchStep('finalize', 'Finalizing installation...');
         $this->clearKernelCacheDir($kernel);
         $this->cleanupNeedsInstallMarker();
-        $checkpoint->remove();
 
         return $errors;
     }
@@ -464,9 +262,10 @@ class Installer
      * for interactive mode.
      *
      * @param array<string, EnvVarDefinitionInterface> $activeDefinitions
+     * @param list<string|null> $skipValidation Skip validation flags from CLI
      *
      * @return array{
-     *     resolved: array<string, array{definition: EnvVarDefinitionInterface, values: array<string, string>}>,
+     *     resolved: array<string, ResolvedDefinition>,
      *     errors: list<string>,
      * }
      */
@@ -475,6 +274,7 @@ class Installer
         ParameterCollector $parameterCollector,
         SymfonyStyle $io,
         bool $interactive,
+        array $skipValidation,
     ): array {
         $resolvedByDefinition = [];
         $errors = [];
@@ -496,14 +296,17 @@ class Installer
                     break;
                 }
 
+                if ($this->definitionResolver->shouldSkipValidation($definition, $skipValidation)) {
+                    $io->text('  <comment>!</comment> Validation skipped');
+                    $resolvedByDefinition[$key] = new ResolvedDefinition($definition, $collectedValues);
+                    break;
+                }
+
                 $validationErrors = $definition->validate($collectedValues);
 
                 if ($validationErrors === []) {
                     $io->text('  <info>✓</info> Validation successful');
-                    $resolvedByDefinition[$key] = [
-                        'definition' => $definition,
-                        'values' => $collectedValues,
-                    ];
+                    $resolvedByDefinition[$key] = new ResolvedDefinition($definition, $collectedValues);
                     break;
                 }
 
@@ -511,27 +314,14 @@ class Installer
                     $io->error(sprintf('%s: %s', $definition->getLabel(), $error));
                 }
 
-                if ($interactive && $attempt < $maxRetries) {
-                    if (!$io->confirm('Retry?', true)) {
-                        $errors = array_merge($errors, array_map(
-                            static fn (string $err) => sprintf(
-                                '%s: %s',
-                                $definition->getLabel(),
-                                $err,
-                            ),
-                            $validationErrors,
-                        ));
-                        break;
-                    }
-                } else {
-                    $errors = array_merge($errors, array_map(
-                        static fn (string $err) => sprintf(
-                            '%s: %s',
-                            $definition->getLabel(),
-                            $err,
-                        ),
-                        $validationErrors,
-                    ));
+                $shouldRetry = $interactive && $attempt < $maxRetries && $io->confirm('Retry?', true);
+
+                if (!$shouldRetry) {
+                    $errors = array_merge(
+                        $errors,
+                        $this->formatDefinitionErrors($definition, $validationErrors),
+                    );
+                    break;
                 }
             }
         }
@@ -540,35 +330,29 @@ class Installer
     }
 
     /**
-     * @param array{username: string, password: string} $credentials
+     * @param list<string> $validationErrors
      *
-     * @return list<string> errors
+     * @return list<string>
      */
-    private function validateAdminCredentials(array $credentials): array
+    private function formatDefinitionErrors(
+        EnvVarDefinitionInterface $definition,
+        array $validationErrors,
+    ): array {
+        return array_map(
+            static fn (string $err) => sprintf('%s: %s', $definition->getLabel(), $err),
+            $validationErrors,
+        );
+    }
+
+    private function getDatabaseConnection(KernelInterface $kernel): Connection
     {
-        $errors = [];
-
-        $username = $credentials['username'];
-        $password = $credentials['password'];
-
-        if (strlen($username) < 4) {
-            $errors[] = 'Admin username must be at least 4 characters';
-        }
-
-        if (strlen($password) < 4) {
-            $errors[] = 'Admin password must be at least 4 characters';
-        }
-
-        return $errors;
+        return $kernel->getContainer()->get('doctrine.dbal.default_connection');
     }
 
     /**
      * Resolve env vars from each definition and write to .env.local.
      *
-     * @param array<string, array{
-     *     definition: EnvVarDefinitionInterface,
-     *     values: array<string, string>,
-     * }> $resolvedByDefinition
+     * @param array<string, ResolvedDefinition> $resolvedByDefinition
      *
      * @return list<string> errors
      */
@@ -579,12 +363,9 @@ class Installer
     ): array {
         $sectionedEnvVars = [];
 
-        foreach ($resolvedByDefinition as $data) {
-            /** @var EnvVarDefinitionInterface $definition */
-            $definition = $data['definition'];
-            $values = $data['values'];
-
-            $resolvedVars = $definition->resolveEnvVars($values);
+        foreach ($resolvedByDefinition as $resolved) {
+            $definition = $resolved->getDefinition();
+            $resolvedVars = $definition->resolveEnvVars($resolved->getValues());
 
             $sectionName = $definition->getSectionName();
 
@@ -609,34 +390,26 @@ class Installer
     }
 
     /**
-     * Execute a single installation step with checkpoint tracking.
+     * Execute a single installation step.
      *
-     * Returns null on success (or if the step was skipped), or an error string on failure.
+     * Returns null on success, or an error string on failure.
      * Fatal steps should cause the caller to return early; non-fatal errors are collected.
      */
     private function executeStep(
-        int $step,
-        ?int $completedStep,
-        InstallerCheckpoint $checkpoint,
         string $stepType,
         string $stepMessage,
         string $details,
         callable $action,
         bool $fatal = true,
     ): ?string {
-        if (!$this->shouldRunStep($step, $completedStep)) {
-            return null;
-        }
-
         $this->dispatchStep($stepType, $stepMessage);
 
         try {
             $action();
-            $checkpoint->markStepCompleted($step, $details);
+            $this->logger->info($details);
 
             return null;
         } catch (Throwable $e) {
-            $checkpoint->markStepFailed($step, $e->getMessage());
             $label = rtrim($stepMessage, '.');
             $this->logger->error($label . ' failed', ['exception' => $e]);
 
@@ -644,13 +417,210 @@ class Installer
         }
     }
 
-    private function shouldRunStep(int $step, ?int $completedStep): bool
-    {
-        if ($completedStep === null) {
-            return true;
+    private function executeStepSetupDatabase(
+        KernelInterface $kernel,
+        InstallProfileInterface $profile,
+    ): ?string {
+        $hasDataSource = $profile->getDataSource() !== null;
+
+        return $this->executeStep(
+            'setup_database',
+            'Setting up database...',
+            'Schema created',
+            function () use ($kernel, $hasDataSource): void {
+                $db = $this->getDatabaseConnection($kernel);
+                $this->databaseSetup->createSchema($db);
+
+                if (!$hasDataSource) {
+                    $this->databaseSetup->insertSeedData($db);
+                }
+            },
+        );
+    }
+
+    private function executeStepImportDataSource(
+        KernelInterface $kernel,
+        InstallProfileInterface $profile,
+        SymfonyStyle $io,
+    ): ?string {
+        $dataSource = $profile->getDataSource();
+        if ($dataSource === null) {
+            return null;
         }
 
-        return $step > $completedStep;
+        return $this->executeStep(
+            'import_data',
+            'Importing data...',
+            $dataSource->getLabel(),
+            function () use ($dataSource, $kernel, $io): void {
+                $db = $this->getDatabaseConnection($kernel);
+                $this->importDataSource($dataSource, $db, $io);
+            },
+        );
+    }
+
+    /**
+     * @param array{username: string, password: string} $credentials
+     */
+    private function executeStepCreateAdmin(
+        KernelInterface $kernel,
+        array $credentials,
+    ): ?string {
+        return $this->executeStep(
+            'create_admin',
+            'Creating admin user...',
+            'Admin user created',
+            function () use ($kernel, $credentials): void {
+                $db = $this->getDatabaseConnection($kernel);
+                $this->databaseSetup->createOrUpdateAdminUser($db, $credentials);
+            },
+        );
+    }
+
+    private function executeStepRegisterBundles(InstallProfileInterface $profile): ?string
+    {
+        return $this->executeStep(
+            'register_bundles',
+            'Registering bundles...',
+            sprintf('%d bundles registered', count($profile->getBundles())),
+            function () use ($profile): void {
+                $this->bundleInstaller->registerBundles($profile);
+            },
+        );
+    }
+
+    private function executeStepRebootKernel(
+        KernelInterface $kernel,
+        string $projectRoot,
+    ): ?string {
+        return $this->executeStep(
+            'reboot_kernel',
+            'Rebooting kernel...',
+            'Kernel rebooted',
+            function () use ($kernel, $projectRoot): void {
+                $kernel->shutdown();
+                $this->clearKernelCacheDir($kernel);
+                $this->lastBootedKernel = $this->bootRealKernel($projectRoot);
+            },
+        );
+    }
+
+    private function executeStepInstallBundles(
+        InstallProfileInterface $profile,
+        SymfonyStyle $io,
+    ): ?string {
+        return $this->executeStep(
+            'install_bundles',
+            'Installing bundles...',
+            'Bundles installed',
+            function () use ($profile, $io): void {
+                $this->bundleInstaller->installBundles($profile, $io, skipPostChangeCommands: true);
+            },
+        );
+    }
+
+    private function executeStepInstallAssets(): ?string
+    {
+        return $this->executeStep(
+            'install_assets',
+            'Installing assets...',
+            'Assets installed',
+            function (): void {
+                $this->commandRunner->installAssets();
+            },
+        );
+    }
+
+    private function executeStepRebuildClasses(): ?string
+    {
+        return $this->executeStep(
+            'rebuild_classes',
+            'Rebuilding class definitions...',
+            'Classes rebuilt',
+            function (): void {
+                $this->commandRunner->rebuildClasses();
+            },
+            false,
+        );
+    }
+
+    private function executeStepMarkMigrations(): ?string
+    {
+        return $this->executeStep(
+            'mark_migrations',
+            'Marking migrations as done...',
+            'Migrations marked',
+            function (): void {
+                $this->commandRunner->markMigrationsAsDone();
+            },
+            false,
+        );
+    }
+
+    /**
+     * @param list<PostInstallCommandsProviderInterface> $cliPostInstallProviders
+     */
+    private function executeStepPostInstallCommands(
+        InstallProfileInterface $profile,
+        array $cliPostInstallProviders,
+        KernelInterface $kernel,
+        SymfonyStyle $io,
+    ): ?string {
+        $postInstallCommands = $this->postInstallRunner->collectPostInstallCommands(
+            $profile,
+            $cliPostInstallProviders,
+            $kernel,
+        );
+
+        if ($postInstallCommands === []) {
+            return null;
+        }
+
+        return $this->executeStep(
+            'post_install_commands',
+            'Running post-install commands...',
+            sprintf('%d commands executed', count($postInstallCommands)),
+            function () use ($postInstallCommands, $io): void {
+                $this->postInstallRunner->runPostInstallCommands(
+                    $postInstallCommands,
+                    $io,
+                );
+            },
+        );
+    }
+
+    private function executeStepRunMaintenance(): ?string
+    {
+        return $this->executeStep(
+            'run_maintenance',
+            'Running maintenance...',
+            'Maintenance completed',
+            function (): void {
+                $this->commandRunner->runMaintenance();
+            },
+            false,
+        );
+    }
+
+    private function executeStepProfilePostInstall(
+        InstallProfileInterface $profile,
+        KernelInterface $kernel,
+        SymfonyStyle $io,
+    ): ?string {
+        if (!$profile instanceof PostInstallHookInterface) {
+            return null;
+        }
+
+        return $this->executeStep(
+            'profile_post_install',
+            'Running profile post-install...',
+            'Profile postInstall() completed',
+            function () use ($kernel, $profile, $io): void {
+                $db = $this->getDatabaseConnection($kernel);
+                $context = new PostInstallContext($db, $io);
+                $profile->postInstall($context);
+            },
+        );
     }
 
     private function bootRealKernel(string $projectRoot): KernelInterface
@@ -673,46 +643,9 @@ class Installer
         Pimcore::setKernel($kernel);
         $kernel->boot();
 
+        $this->lastBootedKernel = $kernel;
+
         return $kernel;
-    }
-
-    private function getDatabaseConnection(KernelInterface $kernel): Connection
-    {
-        return $kernel->getContainer()->get('doctrine.dbal.default_connection');
-    }
-
-    /**
-     * Create database schema from install.sql and set up infrastructure tables.
-     * When no data source is present, also insert seed data (root nodes, system user, permissions).
-     */
-    private function setupDatabase(Connection $db, bool $hasDataSource): void
-    {
-        $this->databaseSetup->createSchema($db);
-
-        if (!$hasDataSource) {
-            $this->databaseSetup->insertSeedData($db);
-        }
-    }
-
-    /**
-     * @param array{username: string, password: string} $credentials
-     */
-    private function createOrUpdateAdminUser(Connection $db, array $credentials): void
-    {
-        $username = $credentials['username'];
-        $password = $credentials['password'];
-
-        $db->delete('users', ['name' => $username]);
-
-        $db->insert('users', [
-            'parentId' => 0,
-            'name' => $username,
-            'password' => Authentication::getPasswordHash($username, $password),
-            'active' => 1,
-            'admin' => 1,
-            'type' => 'user',
-            'language' => 'en',
-        ]);
     }
 
     private function importDataSource(
@@ -731,20 +664,6 @@ class Installer
 
         $dataSource->apply($db, $io);
         $io->text(sprintf('  <info>✓</info> %s', $dataSource->getLabel()));
-    }
-
-    private function installAssets(KernelInterface $kernel): void
-    {
-        $this->logger->info('Running assets:install command');
-
-        $assetsInstaller = $kernel->getContainer()->get(AssetsInstaller::class);
-
-        try {
-            $assetsInstaller->install(['ansi' => false]);
-        } catch (ProcessFailedException $e) {
-            $this->logger->error('Assets installation failed: ' . $e->getMessage());
-            throw $e;
-        }
     }
 
     private function clearKernelCacheDir(KernelInterface $kernel): void
@@ -786,15 +705,28 @@ class Installer
 
     private function calculateTotalSteps(InstallProfileInterface $profile): void
     {
-        // Base steps: boot, db, admin, register, reboot, install, assets, classes, migrations, finalize
-        $this->totalSteps = 10;
+        $steps = 0;
+
+        $steps++; // boot_kernel
+        $steps++; // setup_database
 
         if ($profile->getDataSource() !== null) {
-            $this->totalSteps++;
+            $steps++; // import_data
         }
 
-        // Post-install commands, maintenance, and profile postInstall add 3 more potential steps
-        $this->totalSteps += 3;
+        $steps++; // create_admin
+        $steps++; // register_bundles
+        $steps++; // reboot_kernel
+        $steps++; // install_bundles
+        $steps++; // install_assets
+        $steps++; // rebuild_classes
+        $steps++; // mark_migrations
+        $steps++; // post_install_commands
+        $steps++; // run_maintenance
+        $steps++; // profile_post_install
+        $steps++; // finalize
+
+        $this->totalSteps = $steps;
     }
 
     private function dispatchStep(string $type, string $message): void

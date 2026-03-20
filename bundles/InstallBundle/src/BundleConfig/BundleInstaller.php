@@ -39,21 +39,26 @@ final class BundleInstaller
             return;
         }
 
-        $this->bundleWriter->addBundlesToConfig($bundles, $bundles);
+        $this->bundleWriter->addBundlesToConfig($bundles);
     }
 
-    public function installBundles(InstallProfileInterface $profile, SymfonyStyle $io): void
-    {
+    public function installBundles(
+        InstallProfileInterface $profile,
+        SymfonyStyle $io,
+        bool $skipPostChangeCommands = false,
+    ): void {
         $bundles = $profile->getBundles();
         $total = count($bundles);
 
         foreach ($bundles as $index => $bundleFqcn) {
+            $shortName = BundleNameHelper::getShortName($bundleFqcn);
+
             if ($this->isBundleInstalled($bundleFqcn)) {
                 $io->text(sprintf(
                     '  [%d/%d] %s ... already installed',
                     $index + 1,
                     $total,
-                    $this->getShortBundleName($bundleFqcn),
+                    $shortName,
                 ));
 
                 continue;
@@ -63,12 +68,17 @@ final class BundleInstaller
                 '  [%d/%d] %s ...',
                 $index + 1,
                 $total,
-                $this->getShortBundleName($bundleFqcn),
+                $shortName,
             ));
 
+            $command = ['pimcore:bundle:install', $bundleFqcn];
+            if ($skipPostChangeCommands) {
+                $command[] = '--no-post-change-commands';
+            }
+
             $this->commandRunner->runCommand(
-                ['pimcore:bundle:install', $bundleFqcn],
-                'Installing ' . $this->getShortBundleName($bundleFqcn),
+                $command,
+                'Installing ' . $shortName,
                 $io,
             );
         }
@@ -76,19 +86,8 @@ final class BundleInstaller
 
     public function isBundleInstalled(string $bundleFqcn): bool
     {
-        $shortName = $this->getShortBundleName($bundleFqcn);
+        $shortName = BundleNameHelper::getShortName($bundleFqcn);
 
         return SettingsStore::get('BUNDLE_INSTALLED__' . $shortName, 'pimcore') !== null;
-    }
-
-    /**
-     * Extract short bundle name from FQCN.
-     * e.g. "Pimcore\Bundle\SeoBundle\PimcoreSeoBundle" -> "PimcoreSeoBundle"
-     */
-    public function getShortBundleName(string $bundleFqcn): string
-    {
-        $parts = explode('\\', $bundleFqcn);
-
-        return end($parts);
     }
 }

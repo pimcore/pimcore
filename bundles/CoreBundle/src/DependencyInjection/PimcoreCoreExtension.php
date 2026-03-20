@@ -311,8 +311,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $productIdentifier = $config['product_registration']['instance_identifier'] ?? null;
         $container->setParameter('pimcore.product_registration.instance_identifier', $productIdentifier);
 
-        // Pimcore not installed — env vars using processors (default::) cannot be resolved
-        // at compile time, so skip the entire check when the install marker exists.
+        // Pimcore not installed — env vars are empty (fallback defaults), so skip
+        // the product registration check when the install marker exists.
         if (file_exists(Installer::NEEDS_INSTALL_MARKER)) {
             return;
         }

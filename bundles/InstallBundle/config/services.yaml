@@ -11,7 +11,9 @@ services:
             - '../src/Profile/'
             - '../src/Collector/'
             - '../src/Env/'
-            - '../src/Checkpoint/'
+
+    Pimcore\Bundle\InstallBundle\Collector\EnvVarReaderInterface:
+        class: Pimcore\Bundle\InstallBundle\Collector\SystemEnvVarReader
 
     Pimcore\Bundle\InstallBundle\Command\:
         resource: '../src/Command'

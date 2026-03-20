@@ -31,11 +31,11 @@ use Symfony\Component\Uid\Uuid;
  * obtained from https://license.pimcore.com after registration with the
  * generated secret and instance identifier.
  */
-final class ProductRegistrationEnvVarDefinition implements EnvVarDefinitionInterface, ParameterHintProviderInterface
+final readonly class ProductRegistrationEnvVarDefinition implements EnvVarDefinitionInterface, ParameterHintProviderInterface
 {
-    private readonly string $defaultEncryptionSecret;
+    private string $defaultEncryptionSecret;
 
-    private readonly string $defaultInstanceIdentifier;
+    private string $defaultInstanceIdentifier;
 
     public function __construct()
     {

@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\Command;
 
+use Pimcore\Bundle\InstallBundle\Collector\EnvVarReaderInterface;
 use Pimcore\Bundle\InstallBundle\Collector\ParameterCollector;
-use Pimcore\Bundle\InstallBundle\Collector\SystemEnvVarReader;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
@@ -46,6 +46,7 @@ final class InstallCommand extends Command
     public function __construct(
         private readonly Installer $installer,
         private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly EnvVarReaderInterface $envVarReader,
     ) {
         parent::__construct();
     }
@@ -60,6 +61,8 @@ final class InstallCommand extends Command
                 . "Every configuration value can be pre-set via environment variables for\n"
                 . "non-interactive (CI) usage. See the profile documentation for the\n"
                 . "supported env var names.\n\n"
+                . "Use <comment>--skip-validation</comment> to skip all connection/format checks, or\n"
+                . "<comment>--skip-validation=<key></comment> to skip specific definitions.\n\n"
                 . "Admin credentials can be set via:\n"
                 . "  <comment>PIMCORE_ADMIN_USER</comment>     Admin username\n"
                 . "  <comment>PIMCORE_ADMIN_PASSWORD</comment>  Admin password\n"
@@ -83,10 +86,10 @@ final class InstallCommand extends Command
                 'FQCN of PostInstallCommandsProviderInterface implementations',
             )
             ->addOption(
-                'skip',
+                'skip-validation',
                 null,
-                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                'Skip definitions by key (e.g., --skip=redis --skip=rabbitmq)',
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'Skip env var validation (no value = skip all, with value = skip by key/class name/FQCN)',
             )
             ->addOption(
                 'admin-username',
@@ -178,6 +181,8 @@ final class InstallCommand extends Command
         }
 
         $interactive = $input->isInteractive();
+        $skipValidation = $input->getOption('skip-validation');
+
         if ($interactive && !$this->io->confirm(
             'This will install Pimcore with the given settings. Do you want to continue?',
         )) {
@@ -186,14 +191,13 @@ final class InstallCommand extends Command
 
         $this->setupProgressBar($output);
 
-        $skipKeys = $input->getOption('skip');
-        $parameterCollector = new ParameterCollector(new SystemEnvVarReader());
+        $parameterCollector = new ParameterCollector($this->envVarReader);
         $projectRoot = PIMCORE_PROJECT_ROOT;
 
         $phase1Errors = $this->installer->runPhaseOne(
             $profile,
             $extraDefinitions,
-            $skipKeys,
+            $skipValidation,
             $adminCredentials,
             $parameterCollector,
             $this->io,
@@ -383,7 +387,7 @@ final class InstallCommand extends Command
             return $value;
         }
 
-        return $this->getEnvVar($envVarName);
+        return $this->envVarReader->get($envVarName);
     }
 
     private function resolveAdminUsername(InputInterface $input): ?string
@@ -394,17 +398,6 @@ final class InstallCommand extends Command
     private function resolveAdminPassword(InputInterface $input): ?string
     {
         return $this->resolveOptionOrEnv($input, 'admin-password', 'PIMCORE_ADMIN_PASSWORD');
-    }
-
-    private function getEnvVar(string $name): ?string
-    {
-        $value = $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name);
-
-        if ($value === false || $value === '') {
-            return null;
-        }
-
-        return (string) $value;
     }
 
     private function setupProgressBar(OutputInterface $output): void

@@ -17,6 +17,7 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\MessengerTransportDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\SearchEngineDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\Profile\InstallProfileInterface;
+use ReflectionClass;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -49,40 +50,6 @@ final class DefinitionResolver
         }
 
         return $merged;
-    }
-
-    /**
-     * Apply --skip flags: remove definitions matching skipped keys.
-     * Returns errors if trying to skip a required definition.
-     *
-     * @param array<string, EnvVarDefinitionInterface> $definitions modified in place
-     * @param list<string> $skipKeys
-     *
-     * @return list<string> errors
-     */
-    public function applySkipFlags(array &$definitions, array $skipKeys): array
-    {
-        $errors = [];
-
-        foreach ($skipKeys as $key) {
-            if (!isset($definitions[$key])) {
-                continue;
-            }
-
-            if ($definitions[$key]->isRequired()) {
-                $errors[] = sprintf(
-                    'Cannot skip required definition "%s" (%s)',
-                    $key,
-                    $definitions[$key]->getLabel(),
-                );
-
-                continue;
-            }
-
-            unset($definitions[$key]);
-        }
-
-        return $errors;
     }
 
     /**
@@ -239,5 +206,50 @@ final class DefinitionResolver
         }
 
         $io->newLine();
+    }
+
+    /**
+     * Determine whether validation should be skipped for a given definition.
+     *
+     * @param list<string|null> $skipValidation Raw CLI option values:
+     *                                          empty array = validate all,
+     *                                          [null] = skip all,
+     *                                          ['key', 'ClassName', ...] = skip matching
+     */
+    public function shouldSkipValidation(
+        EnvVarDefinitionInterface $definition,
+        array $skipValidation,
+    ): bool {
+        if ($skipValidation === []) {
+            return false;
+        }
+
+        if (in_array(null, $skipValidation, true)) {
+            return true;
+        }
+
+        $definitionKey = strtolower($definition->getKey());
+        $definitionFqcn = $definition::class;
+        $definitionShortName = strtolower(
+            (new ReflectionClass($definition))->getShortName(),
+        );
+
+        foreach ($skipValidation as $value) {
+            $lowerValue = strtolower((string) $value);
+
+            if ($lowerValue === $definitionKey) {
+                return true;
+            }
+
+            if ($lowerValue === strtolower($definitionFqcn)) {
+                return true;
+            }
+
+            if ($lowerValue === $definitionShortName) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -138,12 +138,4 @@ final class FormatValidator
     {
         return $this->errors;
     }
-
-    /**
-     * Reset the internal error state.
-     */
-    public function clear(): void
-    {
-        $this->errors = [];
-    }
 }

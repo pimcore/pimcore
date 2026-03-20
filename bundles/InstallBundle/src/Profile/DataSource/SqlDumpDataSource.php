@@ -26,7 +26,7 @@ use Symfony\Component\Finder\SplFileInfo;
  * Supports both plain `.sql` and gzip-compressed `.sql.gz` files.
  * Files are processed in alphabetical order (sorted by filename).
  * Uses a marker table to track whether the data source has already been applied,
- * supporting the checkpoint/resume-on-failure pattern.
+ * preventing duplicate imports on manual re-runs.
  */
 final readonly class SqlDumpDataSource implements DataSourceInterface
 {

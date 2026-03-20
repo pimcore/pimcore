@@ -27,13 +27,11 @@ trait InstallBundleTestHelperTrait
     /**
      * Create a fully-wired Installer with all required dependencies.
      *
-     * @param (\Closure(string): \Pimcore\Bundle\InstallBundle\Checkpoint\InstallerCheckpoint)|null $checkpointFactory
      * @param (\Closure(string): \Pimcore\Bundle\InstallBundle\Env\EnvWriter)|null $envWriterFactory
      */
     protected function createInstaller(
         ?LoggerInterface $logger = null,
         ?EventDispatcherInterface $eventDispatcher = null,
-        ?\Closure $checkpointFactory = null,
         ?\Closure $envWriterFactory = null,
     ): Installer {
         $logger ??= new NullLogger();
@@ -47,7 +45,6 @@ trait InstallBundleTestHelperTrait
             $commandRunner,
             new BundleInstaller($commandRunner),
             new PostInstallRunner($logger, $commandRunner),
-            $checkpointFactory,
             $envWriterFactory,
         );
     }

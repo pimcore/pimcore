@@ -32,7 +32,7 @@ interface DataSourceInterface
 
     /**
      * Whether this data source has already been applied.
-     * Used by checkpoint/resume logic.
+     * Used by the installer to avoid re-importing on manual re-runs.
      */
     public function isApplied(Connection $connection): bool;
 }

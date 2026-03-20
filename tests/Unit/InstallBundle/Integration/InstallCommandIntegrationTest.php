@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\InstallBundle\Integration;
 
+use Pimcore\Bundle\InstallBundle\Collector\ArrayEnvVarReader;
 use Pimcore\Bundle\InstallBundle\Command\InstallCommand;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -184,17 +185,9 @@ final class InstallCommandIntegrationTest extends TestCase
         $this->assertTrue($definition->hasOption('install-profile'));
         $this->assertTrue($definition->hasOption('env-definition'));
         $this->assertTrue($definition->hasOption('post-install-commands'));
-        $this->assertTrue($definition->hasOption('skip'));
+        $this->assertTrue($definition->hasOption('skip-validation'));
         $this->assertTrue($definition->hasOption('admin-username'));
         $this->assertTrue($definition->hasOption('admin-password'));
-    }
-
-    public function testSkipOptionAcceptsMultipleValues(): void
-    {
-        $command = $this->createCommand();
-        $option = $command->getDefinition()->getOption('skip');
-
-        $this->assertTrue($option->isArray());
     }
 
     public function testEnvDefinitionOptionAcceptsMultipleValues(): void
@@ -209,7 +202,7 @@ final class InstallCommandIntegrationTest extends TestCase
     {
         $installer = $this->createInstaller();
 
-        return new InstallCommand($installer, new EventDispatcher());
+        return new InstallCommand($installer, new EventDispatcher(), new ArrayEnvVarReader());
     }
 
     private function createCommandTester(): CommandTester

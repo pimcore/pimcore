@@ -1,6 +1,9 @@
 parameters:
     locale: en
     pimcore.messenger.transport_dsn: '%env(resolve:PIMCORE_MESSENGER_TRANSPORT_DSN)%'
+    env(PIMCORE_ENCRYPTION_SECRET): ''
+    env(PIMCORE_INSTANCE_IDENTIFIER): ''
+    env(PIMCORE_PRODUCT_KEY): ''
 
 framework:
     translator:
@@ -352,8 +355,8 @@ pimcore:
         enabled: true
 
     encryption:
-        secret: '%env(default::PIMCORE_ENCRYPTION_SECRET)%'
+        secret: '%env(PIMCORE_ENCRYPTION_SECRET)%'
 
     product_registration:
-        instance_identifier: '%env(default::PIMCORE_INSTANCE_IDENTIFIER)%'
-        product_key: '%env(default::PIMCORE_PRODUCT_KEY)%'
+        instance_identifier: '%env(PIMCORE_INSTANCE_IDENTIFIER)%'
+        product_key: '%env(PIMCORE_PRODUCT_KEY)%'

@@ -27,7 +27,7 @@ use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Unit\InstallBundle\Support\InstallBundleTestHelperTrait;
 use Pimcore\Tests\Unit\InstallBundle\Support\NoopMessengerTransportDefinition;
 use Pimcore\Tests\Unit\InstallBundle\Support\NoopSearchEngineDefinition;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Pimcore\Tests\Unit\InstallBundle\Support\NoopSearchEngineDefinitionThatFails;
 
 /**
  * Integration tests for the Installer's Phase 1 (runPhaseOne).
@@ -136,102 +136,6 @@ final class InstallerTest extends TestCase
         $envContent = file_get_contents($this->tempDir . '/.env.local');
         $this->assertStringContainsString('DB_HOST="localhost"', $envContent);
         $this->assertStringContainsString('REDIS_URL="redis://localhost:6379"', $envContent);
-    }
-
-    public function testSkipRequiredDefinitionReturnsError(): void
-    {
-        $requiredDef = $this->createMockDefinition(
-            'database',
-            true,
-            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
-            ['DB_HOST'],
-        );
-
-        $profile = $this->createMockProfile([$requiredDef]);
-        $envVarReader = new ArrayEnvVarReader();
-        $collector = new ParameterCollector($envVarReader);
-
-        $errors = $this->installer->runPhaseOne(
-            $profile,
-            [],
-            ['database'],
-            ['username' => 'admin', 'password' => 'admin123'],
-            $collector,
-            $this->createNonInteractiveIo(),
-            false,
-            $this->tempDir,
-        );
-
-        $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('Cannot skip required definition', $errors[0]);
-        $this->assertStringContainsString('database', $errors[0]);
-    }
-
-    public function testSkipOptionalDefinitionRemovesIt(): void
-    {
-        $requiredDef = $this->createMockDefinition(
-            'database',
-            true,
-            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
-            ['DB_HOST'],
-        );
-        $optionalDef = $this->createMockDefinition(
-            'redis',
-            false,
-            [new ConfigParameter('REDIS_URL', 'Redis', ParameterType::Url, defaultValue: 'redis://localhost')],
-            ['REDIS_URL'],
-        );
-
-        $envVarReader = new ArrayEnvVarReader();
-        $envVarReader->set('REDIS_URL', 'redis://localhost:6379');
-
-        $profile = $this->createMockProfile([$requiredDef, $optionalDef]);
-        $collector = new ParameterCollector($envVarReader);
-
-        $errors = $this->installer->runPhaseOne(
-            $profile,
-            [],
-            ['redis'],
-            ['username' => 'admin', 'password' => 'admin123'],
-            $collector,
-            $this->createNonInteractiveIo(),
-            false,
-            $this->tempDir,
-        );
-
-        $this->assertSame([], $errors);
-
-        // Redis should NOT be in .env.local
-        $envContent = file_get_contents($this->tempDir . '/.env.local');
-        $this->assertStringNotContainsString('REDIS_URL', $envContent);
-        $this->assertStringContainsString('DB_HOST="localhost"', $envContent);
-    }
-
-    public function testSkipUnknownKeyIsSilentlyIgnored(): void
-    {
-        $requiredDef = $this->createMockDefinition(
-            'database',
-            true,
-            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
-            ['DB_HOST'],
-        );
-
-        $profile = $this->createMockProfile([$requiredDef]);
-        $envVarReader = new ArrayEnvVarReader();
-        $collector = new ParameterCollector($envVarReader);
-
-        $errors = $this->installer->runPhaseOne(
-            $profile,
-            [],
-            ['nonexistent-key'],
-            ['username' => 'admin', 'password' => 'admin123'],
-            $collector,
-            $this->createNonInteractiveIo(),
-            false,
-            $this->tempDir,
-        );
-
-        $this->assertSame([], $errors);
     }
 
     public function testAdminUsernameTooShortReturnsError(): void
@@ -920,6 +824,129 @@ final class InstallerTest extends TestCase
         $this->assertNotEmpty($errors);
         $this->assertStringContainsString('exactly one', $errors[0]);
         $this->assertStringContainsString('found 2', $errors[0]);
+    }
+
+    public function testSkipValidationGlobalSkipsAllValidation(): void
+    {
+        $failingDef = $this->createFailingDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['Connection refused'],
+        );
+
+        $profile = $this->createMockProfile([$failingDef]);
+        $collector = new ParameterCollector(new ArrayEnvVarReader());
+
+        $errors = $this->installer->runPhaseOne(
+            $profile,
+            [],
+            [null],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        $this->assertSame([], $errors);
+        $envContent = file_get_contents($this->tempDir . '/.env.local');
+        $this->assertStringContainsString('DB_HOST="localhost"', $envContent);
+    }
+
+    public function testSkipValidationByKeySkipsOnlyMatchingDefinition(): void
+    {
+        $failingDef = $this->createFailingDefinition(
+            'redis',
+            true,
+            [new ConfigParameter('REDIS_URL', 'Redis', ParameterType::Url, defaultValue: 'redis://localhost')],
+            ['Redis unavailable'],
+        );
+        $passingDef = $this->createMockDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['DB_HOST'],
+        );
+
+        $profile = $this->createMockProfile([$passingDef, $failingDef]);
+        $collector = new ParameterCollector(new ArrayEnvVarReader());
+
+        $errors = $this->installer->runPhaseOne(
+            $profile,
+            [],
+            ['redis'],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        $this->assertSame([], $errors);
+        $envContent = file_get_contents($this->tempDir . '/.env.local');
+        $this->assertStringContainsString('DB_HOST="localhost"', $envContent);
+        $this->assertStringContainsString('REDIS_URL="redis://localhost"', $envContent);
+    }
+
+    public function testSkipValidationByShortClassNameSkipsMatchingDefinition(): void
+    {
+        $failingDef = new NoopSearchEngineDefinitionThatFails();
+        $passingDef = $this->createMockDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['DB_HOST'],
+        );
+        $messengerDef = $this->createNoopMessengerTransportDefinition();
+
+        $profile = $this->createMockProfile(
+            [$passingDef, $failingDef, $messengerDef],
+            includeDefaultMarkerDefs: false,
+        );
+        $collector = new ParameterCollector(new ArrayEnvVarReader());
+
+        $errors = $this->installer->runPhaseOne(
+            $profile,
+            [],
+            ['NoopSearchEngineDefinitionThatFails'],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        $this->assertSame([], $errors);
+        $envContent = file_get_contents($this->tempDir . '/.env.local');
+        $this->assertStringContainsString('DB_HOST="localhost"', $envContent);
+    }
+
+    public function testSkipValidationNonMatchingKeyStillValidates(): void
+    {
+        $failingDef = $this->createFailingDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['Connection refused'],
+        );
+
+        $profile = $this->createMockProfile([$failingDef]);
+        $collector = new ParameterCollector(new ArrayEnvVarReader());
+
+        $errors = $this->installer->runPhaseOne(
+            $profile,
+            [],
+            ['redis'],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        $this->assertNotEmpty($errors);
+        $this->assertStringContainsString('Connection refused', $errors[0]);
     }
 
     /**

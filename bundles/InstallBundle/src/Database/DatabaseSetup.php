@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\InstallBundle\Database;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Pimcore\Db\Helper;
+use Pimcore\Tool\Authentication;
 use Symfony\Component\Cache\Adapter\DoctrineDbalAdapter;
 use Symfony\Component\Messenger\Bridge\Doctrine\Transport\Connection as DoctrineTransportConnection;
 
@@ -29,16 +31,22 @@ use Symfony\Component\Messenger\Bridge\Doctrine\Transport\Connection as Doctrine
  *
  * @internal
  */
-final class DatabaseSetup
+final readonly class DatabaseSetup
 {
     public function createSchema(Connection $db): void
     {
-        $db->executeStatement('SET FOREIGN_KEY_CHECKS=0;');
+        $isMySQL = $db->getDatabasePlatform() instanceof AbstractMySQLPlatform;
+
+        if ($isMySQL) {
+            $db->executeStatement('SET FOREIGN_KEY_CHECKS=0;');
+        }
 
         $this->executeSqlFile($db, __DIR__ . '/../../dump/install.sql');
         $this->createInfrastructureTables($db);
 
-        $db->executeStatement('SET FOREIGN_KEY_CHECKS=1;');
+        if ($isMySQL) {
+            $db->executeStatement('SET FOREIGN_KEY_CHECKS=1;');
+        }
 
         $this->insertSystemUser($db);
     }
@@ -173,5 +181,53 @@ final class DatabaseSetup
                 $db->quoteIdentifier('key') => $permission,
             ]);
         }
+    }
+
+    /**
+     * Validate admin credentials before creating the user.
+     *
+     * @param array{username: string, password: string} $credentials
+     *
+     * @return list<string> errors (empty = valid)
+     */
+    public function validateAdminCredentials(array $credentials): array
+    {
+        $errors = [];
+
+        $username = $credentials['username'];
+        $password = $credentials['password'];
+
+        if (strlen($username) < 4) {
+            $errors[] = 'Admin username must be at least 4 characters';
+        }
+
+        if (strlen($password) < 4) {
+            $errors[] = 'Admin password must be at least 4 characters';
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Create or replace the admin user in the database.
+     *
+     * @param array{username: string, password: string} $credentials
+     */
+    public function createOrUpdateAdminUser(Connection $db, array $credentials): void
+    {
+        $username = $credentials['username'];
+        $password = $credentials['password'];
+
+        $db->delete('users', ['name' => $username]);
+
+        $db->insert('users', [
+            'parentId' => 0,
+            'name' => $username,
+            'password' => Authentication::getPasswordHash($username, $password),
+            'active' => 1,
+            'admin' => 1,
+            'type' => 'user',
+            'language' => 'en',
+        ]);
     }
 }

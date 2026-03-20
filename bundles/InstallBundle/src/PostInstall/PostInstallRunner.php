@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\PostInstall;
 
+use Pimcore\Bundle\InstallBundle\BundleConfig\BundleNameHelper;
 use Pimcore\Bundle\InstallBundle\Console\ConsoleCommandRunner;
 use Pimcore\Bundle\InstallBundle\Profile\InstallProfileInterface;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallCommand;
@@ -57,7 +58,7 @@ final class PostInstallRunner
 
         foreach ($profile->getBundles() as $bundleFqcn) {
             try {
-                $bundle = $kernel->getBundle($this->getShortBundleName($bundleFqcn));
+                $bundle = $kernel->getBundle(BundleNameHelper::getShortName($bundleFqcn));
                 if (method_exists($bundle, 'getInstaller')) {
                     $installer = $bundle->getInstaller();
                     if ($installer instanceof PostInstallCommandsProviderInterface) {
@@ -108,15 +109,8 @@ final class PostInstallRunner
                 $command->getLabel(),
             ));
 
-            $args = explode(' ', $command->getCommand());
+            $args = array_merge([$command->getCommand()], $command->getArguments());
             $this->commandRunner->runCommand($args, $command->getLabel(), $io);
         }
-    }
-
-    private function getShortBundleName(string $bundleFqcn): string
-    {
-        $parts = explode('\\', $bundleFqcn);
-
-        return end($parts);
     }
 }
