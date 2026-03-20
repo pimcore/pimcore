@@ -53,11 +53,11 @@ class Kernel extends PimcoreKernel
     public function registerBundlesToCollection(BundleCollection $collection): void
     {
         if (class_exists('\\XYZBundle\\XYZBundle')) {
-            $collection->addBundle(new \XYZBundle\XYZBundle);
+            $collection->addBundle(new \XYZBundle\XYZBundle());
         }
 
         // add a custom third-party bundle here with a high priority and only for dev environment
-        $collection->addBundle(new Third\Party\PartyBundle, 10, ['dev']);
+        $collection->addBundle(new Third\Party\PartyBundle(), 10, ['dev']);
     }
 }
 ```
