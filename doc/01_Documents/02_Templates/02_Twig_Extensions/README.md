@@ -41,7 +41,6 @@ the following tables give just a short overview of all available extensions.
 | `pimcorecache`                                                          | Simple in-template caching functionality                                          |
 | `pimcore_cache()` (deprecated)                                          | Simple in-template caching functionality (deprecated legacy version)              |
 | `pimcore_device()`                                                      | Helps implementing adaptive designs                                               |
-| `pimcore_glossary` (deprecated)                                         | Twig Filter: Apply filter on content to pass it to Glossary engine                |
 | `pimcore_placeholder()`                                                 | Adding and embedding custom placeholders, e.g. for special header tags, etc.      |
 | `pimcore_head_link()`                                                   | Embedding / managing referenced stylesheets (alternative to `assets()`)           |
 | `pimcore_head_meta()`                                                   | Managing your \<meta\> elements in your HTML document                             |
@@ -226,15 +225,6 @@ This extension makes it easy to implement "Adaptive Design" in Pimcore.
    
 For details also see [Adaptive Design](../../13_Adaptive_Design_Helper.md).
 
-### `pimcore_glossary` (deprecated)
-
-The `pimcore_glossary` filter replaces glossary terms.
-
-```twig
-{% apply pimcore_glossary %}
-My content
-{% endapply %}
-``` 
 
 ### `pimcore_placeholder` 
 See [Placeholder Template Extension](00_Placeholder.md)

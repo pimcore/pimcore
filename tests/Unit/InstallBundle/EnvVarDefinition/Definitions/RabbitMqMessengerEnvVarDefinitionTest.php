@@ -1,0 +1,92 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
+namespace Pimcore\Tests\Unit\InstallBundle\EnvVarDefinition\Definitions;
+
+use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions\RabbitMqMessengerEnvVarDefinition;
+use Pimcore\Bundle\InstallBundle\EnvVarDefinition\MessengerTransportDefinitionInterface;
+use Pimcore\Tests\Support\Test\TestCase;
+
+/**
+ * @internal
+ */
+final class RabbitMqMessengerEnvVarDefinitionTest extends TestCase
+{
+    private RabbitMqMessengerEnvVarDefinition $definition;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->definition = new RabbitMqMessengerEnvVarDefinition();
+    }
+
+    public function testImplementsMessengerTransportDefinitionInterface(): void
+    {
+        $this->assertInstanceOf(MessengerTransportDefinitionInterface::class, $this->definition);
+    }
+
+    public function testMetadata(): void
+    {
+        $this->assertSame('messenger-rabbitmq', $this->definition->getKey());
+        $this->assertSame('Messenger Transport (RabbitMQ)', $this->definition->getLabel());
+        $this->assertTrue($this->definition->isRequired());
+        $this->assertSame('pimcore/pimcore', $this->definition->getSectionName());
+    }
+
+    public function testResolveEnvVars(): void
+    {
+        $envVars = $this->definition->resolveEnvVars([
+            'PIMCORE_MESSENGER_TRANSPORT_DSN' => 'amqp://guest:guest@127.0.0.1:5672/%2f',
+        ]);
+
+        $this->assertSame(
+            'amqp://guest:guest@127.0.0.1:5672/%2f',
+            $envVars['PIMCORE_MESSENGER_TRANSPORT_DSN'],
+        );
+    }
+
+    public function testValidateRejectsEmptyUrl(): void
+    {
+        $errors = $this->definition->validate(['PIMCORE_MESSENGER_TRANSPORT_DSN' => '']);
+
+        $this->assertNotEmpty($errors);
+        $this->assertStringContainsString('required', strtolower($errors[0]));
+    }
+
+    public function testValidateRejectsInvalidScheme(): void
+    {
+        $errors = $this->definition->validate([
+            'PIMCORE_MESSENGER_TRANSPORT_DSN' => 'http://guest:guest@localhost:5672/%2f',
+        ]);
+
+        $this->assertNotEmpty($errors);
+        $this->assertStringContainsString('amqp://', $errors[0]);
+    }
+
+    public function testValidateRejectsMalformedUrl(): void
+    {
+        $errors = $this->definition->validate([
+            'PIMCORE_MESSENGER_TRANSPORT_DSN' => 'not-a-url',
+        ]);
+
+        $this->assertNotEmpty($errors);
+        $this->assertStringContainsString('Invalid', $errors[0]);
+    }
+
+    public function testParametersContainDsn(): void
+    {
+        $params = $this->definition->getParameters();
+        $this->assertCount(1, $params);
+        $this->assertSame('PIMCORE_MESSENGER_TRANSPORT_DSN', $params[0]->getEnvVarName());
+    }
+}

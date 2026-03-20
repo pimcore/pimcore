@@ -23,7 +23,7 @@ domains are delegated to Pimcore.
  
 Routing functionalities like [Redirects](./05_Routing_and_URLs/02_Redirects.md)
 support site-specific configuration.
-Also, lots of other Pimcore tools and functionalities like Glossary, Tag & Snippet Management, Marketing Settings 
+Also, lots of other Pimcore tools and functionalities like Tag & Snippet Management, Marketing Settings 
 (Google Analytics, Google Search Console, Google Tag Manager) and Website Settings are site specific. 
 
 
