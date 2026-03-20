@@ -430,9 +430,10 @@ class CustomReportController extends UserAwareController
     // gets the sort, direction, filters, drilldownfilters from grid or initial config
     private function getSortAndFilters(Request $request, stdClass $configuration): array
     {
-        $sortingSettings = null;
         $sort = null;
         $dir = null;
+
+        $sortingSettings = \Pimcore\Model\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
 
         if (is_array($sortingSettings) && $sortingSettings['orderKey']) {
             $sort = $sortingSettings['orderKey'];
