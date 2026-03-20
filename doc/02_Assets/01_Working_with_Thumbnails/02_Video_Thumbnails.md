@@ -11,7 +11,7 @@ a custom preview image from the video.
 > **IMPORTANT**
 > To use all the following functionalities, you must install FFMPEG on the server.
 > For details, see
-> [Additional Tools Installation](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/06_Additional_Tools_Installation.md).
+> [Additional Tools Installation](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/07_Additional_Tools_Installation.md).
 
 ## Explanation of the Transformations
 

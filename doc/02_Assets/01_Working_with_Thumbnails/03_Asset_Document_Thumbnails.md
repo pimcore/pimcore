@@ -11,9 +11,9 @@ PDF, XLS(X), ODT, ODS, ODP, and many others.
 You can use existing image thumbnail configurations to create a thumbnail of your choice.
 
 This feature requires Ghostscript and at least
-[Gotenberg](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#gotenberg)
+[Gotenberg](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/07_Additional_Tools_Installation.md#gotenberg)
 or
-[LibreOffice](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/06_Additional_Tools_Installation.md#libreoffice-pdftotext-inkscape)
+[LibreOffice](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/07_Additional_Tools_Installation.md#libreoffice-pdftotext-inkscape)
 to be installed on the server.
 
 > **Important**

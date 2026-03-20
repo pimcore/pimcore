@@ -121,7 +121,7 @@ widgetRegistry.registerWidget({
 > [iframe-widget.tsx](https://github.com/pimcore/studio-example-bundle/blob/main/assets/js/src/examples/custom-widgets/components/iframe-widget.tsx)
 > in the example bundle.
 
-:::notice
+:::note
 
 When embedding external content via `<iframe>`, two CSP
 layers apply:

@@ -1,48 +1,57 @@
 ---
 title: Core Framework
+description: Documentation for the Pimcore Core Framework - data modeling, content management, workflows, and extensibility.
 ---
 
-# Pimcore Core Framework Documentation
+# Pimcore Core Framework
 
-> This documentation section provides all information you need to use the Core Framework of Pimcore. 
-> 
-> We've aimed this part of the documentation at a developer's audience.
+The Core Framework (`pimcore/pimcore`) provides the foundation for managing structured and
+unstructured data in Pimcore. It handles data modeling, content management, workflows, and
+the extension infrastructure that the rest of the platform builds on.
 
-Pimcore provides a fully flexible and extendable platform for managing and exploiting data of any type. The Core Framework is the foundation of the whole platform and provides a lot of basic functionalities.
+This documentation covers the core framework specifically. For the Studio Backend API and
+Studio UI frontend, see the sidebar sections
+[Studio Backend](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/README.md)
+and
+[Studio UI](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/README.md).
 
-The system is written in PHP, follows the Model-View-Controller (MVC) pattern and relies on the Symfony Framework.
+## Element Types
 
-Pimcore provides the management of three types of elements that cover any kind of data: Documents, Assets and Objects. Following the principle of single-source publishing, each type is saved only once with a single ID that serves as a reference ID whenever it is reused somewhere.
+Pimcore manages three element types. Each element is stored once with a unique ID that serves
+as the reference wherever it is reused (single-source publishing).
 
-The Core Framework comes with several core features that can be fully adapted or extended with additional bundles (see the Pimcore Extensions section for existing extensions maintained by Pimcore).
+- [Documents](./01_Documents/README.md) - web pages, email templates, print pages, and other
+  structured content with editable regions and dynamic rendering
+- [Assets](./02_Assets/README.md) - media library and digital asset management with
+  automatic thumbnail generation, metadata handling, and format conversion
+- [Objects](./03_Objects/README.md) - custom data models with class definitions, field types,
+  data inheritance, localization, and classification stores (PIM / MDM)
 
-## Documentation Overview
+## Content and Data Management
 
-The Core Framework documentation is divided into three sections that aim to guide the reader through its first use of the platform:
+- [Multilanguage and Localization](./04_Multi_Language_i18n/README.md) - shared translations,
+  localized fields, language fallbacks, and locale-aware content delivery
+- [Content Management Features](./05_Content_Management_Features/README.md) - properties,
+  tags, notes, glossary, redirects, GDPR data extraction, and custom views
+- [Reporting](./06_Reporting/README.md) - custom reports based on SQL queries or data adapters
+- [Workflow Management](./07_Workflow_Management/README.md) - state machines for editorial
+  and approval workflows with configurable actions, notifications, and permissions
 
-* See the [Element Types](#element-types) section for details about managed elements in Pimcore and associated actions.
-* See the [Platform Topics](#platform-topics) section for documentation about all features implemented within Pimcore.
+## Development
 
-### Element Types
-* [Documents - *Managing Web Pages*](./01_Documents/README.md)
-* [Assets - *Media Library / Digital Asset Management*](./02_Assets/README.md)
-* [Objects - *Custom Data Models / Entities, PIM / MDM*](./03_Objects/README.md)
+- [Development Details](./08_Development_Details/README.md) - configuration, cache, session,
+  database, authentication, and other framework internals
+- [Development Tools](./09_Development_Tools/README.md) - console commands, profiler,
+  generic execution engine, and debugging utilities
+- [Extending Pimcore](./10_Extending_Pimcore/README.md) - events, bundles, custom data types,
+  permissions, and a cross-layer index of all extension guides across core, Studio Backend,
+  and Studio UI
+- [Deployment Recommendations](./11_Deployment_Recommendations/README.md) - environments,
+  configuration management, and deployment tools
 
-### Platform Topics
-* [Multilanguage & Localization](./04_Multi_Language_i18n/README.md)
-* [Content Management Features](./05_Content_Management_Features/README.md)
-* [Reporting](./06_Reporting/README.md)
-* [Workflow Management](./07_Workflow_Management/README.md)
-* [Development Details](./08_Development_Details/README.md)
-* [Development Tools](./09_Development_Tools/README.md)
-* [Extending Pimcore](./10_Extending_Pimcore/README.md)
-* [Deployment Recommendations](./11_Deployment_Recommendations/README.md)
-* [Implementation Inspirations](./12_Implementation_Inspirations/README.md)
-* [Upgrade Notes](./13_Upgrade_Notes/README.md)
+## Reference
 
-
-## Additional resources for getting started with Pimcore
-- [Pimcore Demo Application](https://demo.pimcore.fun): See Pimcore in action and also use it as a blueprint application
-  for your own implementations.
-- [Pimcore Academy](https://pimcore.com/academy): The training platform Pimcore Academy offers on-demand video courses
-  about many Pimcore topics. 
+- [Implementation Inspirations](./12_Implementation_Inspirations/README.md) - patterns and
+  examples for common implementation scenarios
+- [Upgrade Notes](./13_Upgrade_Notes/README.md) - version-specific migration guides and
+  breaking changes

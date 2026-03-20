@@ -74,8 +74,7 @@ of the event's purpose and the event object it dispatches.
 
 - [FrontendEvents](https://github.com/pimcore/pimcore/blob/2026.x/lib/Event/FrontendEvents.php) -
   frontend rendering events
-- [BundleManagerEvents](https://github.com/pimcore/pimcore/blob/2026.x/lib/Event/BundleManagerEvents.php) -
-  inject JS/CSS files into Pimcore Studio or editmode
+
 
 ### Other
 

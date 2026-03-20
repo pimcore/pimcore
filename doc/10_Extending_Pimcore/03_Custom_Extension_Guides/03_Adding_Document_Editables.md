@@ -86,4 +86,4 @@ The complete working example is in the [Studio Example Bundle](https://github.co
 - [PHP editable class (Markdown.php)](https://github.com/pimcore/studio-example-bundle/blob/main/src/Model/Document/Editable/Markdown.php) — backend editable model
 - [Service config (services.yaml)](https://github.com/pimcore/studio-example-bundle/blob/main/config/services.yaml) — entry point provider with iframe tag
 
-For more information about creating Studio plugins, see the [Plugin Development Guide](https://github.com/pimcore/studio-ui-bundle/blob/2025.x/doc/04_Extending/01_Plugin_Development.md).
+For more information about creating Studio plugins, see the [Getting Started with Your First Plugin](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/01_Getting_Started_with_Your_First_Plugin.md).

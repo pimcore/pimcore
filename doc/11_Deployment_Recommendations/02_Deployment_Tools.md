@@ -110,7 +110,7 @@ Run `bin/console list` for a full list of available commands.
 | pimcore:search-backend-reindex            | Re-index the backend search (requires SimpleBackendSearchBundle)                                                                  |
 | pimcore:cache:clear                       | Clear Pimcore core caches                                                                                                         |
 | cache:clear                               | Clear Symfony caches                                                                                                              |
-| pimcore:cache:warming                     | [Warm up caches](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/08_Performance_Guide.md#pimcore-caching-redis)        |
+| pimcore:cache:warming                     | [Warm up caches](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/09_Performance_Guide.md#pimcore-caching-redis)        |
 | pimcore:classificationstore:delete-store  | Delete a Classification Store                                                                                                     |
 | pimcore:definition:import:class           | Import a class definition from a JSON export                                                                                      |
 | pimcore:definition:import:customlayout    | Import a custom layout definition from a JSON export                                                                              |
