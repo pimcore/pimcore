@@ -37,31 +37,15 @@ class Admin
     {
         $languageDirs = [];
         $translatedLanguages = [];
-        $languages = [];
 
         $container = Pimcore::getContainer();
 
-        if ($container->hasParameter('pimcore_admin.translations.path')) {
-            $baseResource = $container->getParameter('pimcore_admin.translations.path');
-            $languageDir = Pimcore::getKernel()->locateResource($baseResource);
+        $appDefaultPath = $container->getParameter('translator.default_path');
 
-            if (is_dir($languageDir)) {
-                $languageDirs[] = $languageDir;
-            }
+        if (is_dir($appDefaultPath)) {
+            $languageDirs[] = $appDefaultPath;
         }
-
-        if ($container->hasParameter('translator.default_path')) {
-            $appDefaultPath = $container->getParameter('translator.default_path');
-
-            if (is_dir($appDefaultPath)) {
-                $languageDirs[] = $appDefaultPath;
-            }
-        }
-
-        $adminLanguages = $container->hasParameter('pimcore_admin.admin_languages')
-            ? $container->getParameter('pimcore_admin.admin_languages')
-            : [];
-
+        
         $localeService = $container->get(LocaleServiceInterface::class);
 
         foreach ($languageDirs as $filesDir) {
@@ -99,22 +83,7 @@ class Admin
             }
         }
 
-        $translatedLanguages = array_unique($translatedLanguages);
-
-        foreach ($adminLanguages as $adminLanguage) {
-            if (
-                in_array($adminLanguage, $translatedLanguages, true) ||
-                in_array(Locale::getPrimaryLanguage($adminLanguage), $translatedLanguages, true)
-            ) {
-                $languages[] = $adminLanguage;
-            }
-        }
-
-        if (empty($languages)) {
-            $languages = $translatedLanguages;
-        }
-
-        return array_unique($languages);
+        return array_unique($translatedLanguages);
     }
 
     public static function getMinimizedScriptPath(string $scriptContent): array
