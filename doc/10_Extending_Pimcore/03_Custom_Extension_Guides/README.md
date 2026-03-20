@@ -58,16 +58,17 @@ which layers it touches so you know what to expect before diving in.
 
 ## UI: Navigation, Tabs, and Widgets
 
-| Guide | Description | Layers |
-|-------|-------------|--------|
-| [Getting Started with Your First Plugin](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/01_Getting_Started_with_Your_First_Plugin.md) | Set up a Studio UI plugin project from scratch | UI |
-| [Main Navigation Entry](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/01_Add_a_Main_Navigation_Entry.md) | Add entries to the Pimcore Studio main navigation | UI |
-| [Left Sidebar Entry](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/02_Add_an_Entry_to_the_Left_Sidebar.md) | Add custom entries to the left sidebar | UI |
-| [Tab Manager](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/04_Use_the_Tab_Manager.md) | Register custom tabs in element editors | UI |
-| [Widget Manager](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/05_Use_the_Widget_Manager.md) | Register custom dashboard widgets | UI |
-| [Context Menus](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/09_Customize_Context_Menus.md) | Add or modify context menu entries | UI |
-| [Dynamic Types](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/07_Use_Dynamic_Types.md) | Use the dynamic type system for extensible rendering | UI |
-| [Perspectives and Widgets](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/09_Perspectives/README.md) | Register custom perspective widgets (backend config) | Backend |
+| Guide | Description                                                                                | Layers |
+|-------|--------------------------------------------------------------------------------------------|--------|
+| [Getting Started with Your First Plugin](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/01_Getting_Started_with_Your_First_Plugin.md) | Set up a Studio UI plugin project from scratch                                             | UI |
+| [Main Navigation Entry](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/01_Add_a_Main_Navigation_Entry.md) | Add entries to the Pimcore Studio main navigation                                          | UI |
+| [Left Sidebar Entry](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/02_Add_an_Entry_to_the_Left_Sidebar.md) | Add custom entries to the left sidebar                                                     | UI |
+| [Tab Manager](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/04_Use_the_Tab_Manager.md) | Register custom tabs in element editors                                                    | UI |
+| [Widget Manager](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/05_Use_the_Widget_Manager.md) | Register and open custom widgets programmatically, integrate with the perspective editor   | UI |
+| [Context Menus](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/09_Customize_Context_Menus.md) | Add or modify context menu entries                                                         | UI |
+| [Dynamic Types](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/07_Use_Dynamic_Types.md) | Use the dynamic type system for extensible rendering                                       | UI |
+| [Custom Perspective Widgets](./14_Custom_Perspective_Widgets.md) | Add custom widget types to perspectives (schema, repository, hydrator, Widget Editor type) | Backend, UI |
+| [Perspectives Overview](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/09_Perspectives/README.md) | Perspective configuration and context menu permissions                                     | Backend |
 
 ## Permissions and Security
 
