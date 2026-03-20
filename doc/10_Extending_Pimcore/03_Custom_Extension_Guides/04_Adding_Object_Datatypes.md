@@ -233,7 +233,7 @@ the `pimcore.studio_backend.search_index.data_object.filter` tag.
 See the
 [data-quality-management-bundle](https://github.com/pimcore/data-quality-management-bundle)
 `MarkFilter` for a reference implementation, and the
-[Extending Search Index Filters](https://github.com/pimcore/studio-backend-bundle/blob/2025.x/doc/03_Extending/08_Extending_Filters/01_Extending_Search_Index_Filters.md)
+[Extending Search Index Filters](https://github.com/pimcore/studio-backend-bundle/blob/2025.x/doc/03_Extending/09_Extending_Filters/01_Extending_Search_Index_Filters.md)
 documentation for details.
 
 ---

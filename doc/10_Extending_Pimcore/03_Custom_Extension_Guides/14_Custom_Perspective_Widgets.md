@@ -72,7 +72,7 @@ config arrays into your typed schema object. Register with the
 
 For detailed backend documentation including configuration
 storage options, wrapper repositories, and restrictions, see
-[Extending Widgets](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/09_Perspectives/01_Extending_Widgets.md).
+[Extending Widgets](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/11_Perspectives/01_Extending_Widgets.md).
 
 ---
 

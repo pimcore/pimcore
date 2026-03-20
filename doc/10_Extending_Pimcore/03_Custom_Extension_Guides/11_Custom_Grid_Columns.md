@@ -45,7 +45,7 @@ match the `id` property of the frontend
 If your column uses a built-in frontend type, you only need the
 backend layer. The Studio UI already knows how to render those
 cells. See the
-[Built-in Frontend Types](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/02_Extending_Grid_with_Custom_Columns.md#built-in-frontend-types)
+[Built-in Frontend Types](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/08_Extending_Grid_with_Custom_Columns.md#built-in-frontend-types)
 table in the Studio Backend documentation for the full
 `FrontendType` enum reference.
 
@@ -67,7 +67,7 @@ tag:
 Declares the column type, capabilities (`isSortable()`,
 `isFilterable()`, `isExportable()`), and the `getFrontendType()`
 value that determines cell rendering. See
-[Column Definition](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/02_Extending_Grid_with_Custom_Columns.md#column-definition)
+[Column Definition](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/08_Extending_Grid_with_Custom_Columns.md#column-definition)
 for the full interface reference and example.
 
 ### Column Resolver
@@ -77,7 +77,7 @@ Fetches the column value for a given element. Implement
 `StudioElementColumnResolverInterface` (for `StudioElementInterface`
 from GDI). Both can be implemented; the core interface has higher
 priority. See
-[Column Resolver](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/02_Extending_Grid_with_Custom_Columns.md#column-resolver)
+[Column Resolver](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/08_Extending_Grid_with_Custom_Columns.md#column-resolver)
 for the `ColumnData` constructor signature and example.
 
 ### Column Collector
@@ -85,7 +85,7 @@ for the `ColumnData` constructor signature and example.
 Provides the list of available columns by returning
 `ColumnConfiguration` objects. Receives all registered column
 definitions keyed by type. See
-[Column Collector](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/02_Extending_Grid_with_Custom_Columns.md#column-collector)
+[Column Collector](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/08_Extending_Grid_with_Custom_Columns.md#column-collector)
 for the `ColumnConfiguration` constructor signature and example.
 
 ### Service Registration
@@ -106,7 +106,7 @@ services:
 ```
 
 For full details and code examples, see
-[Extending Grid with Custom Columns](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/02_Extending_Grid_with_Custom_Columns.md)
+[Extending Grid with Custom Columns](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/08_Extending_Grid_with_Custom_Columns.md)
 in the Studio Backend documentation.
 
 ---

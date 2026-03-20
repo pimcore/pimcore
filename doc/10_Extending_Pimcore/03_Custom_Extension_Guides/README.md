@@ -18,7 +18,7 @@ which layers it touches so you know what to expect before diving in.
 | Guide | Description | Layers |
 |-------|-------------|--------|
 | [Adding Asset Types](./01_Adding_Asset_Types.md) | Define custom asset types beyond the built-in set | Core, UI |
-| [Asset Metadata Adapters](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/03_Assets/01_Extending_Metadata_Adapters.md) | Customize how asset metadata is read and written | Backend |
+| [Asset Metadata Adapters](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/05_Assets/01_Extending_Metadata_Adapters.md) | Customize how asset metadata is read and written | Backend |
 | [Editor Toolbar Button](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/03_Add_Additional_Asset_Editor_Toolbar_Button.md) | Add custom buttons to editor toolbars (example uses asset editor; the same ComponentRegistry slot pattern works for data object and document editors) | UI |
 
 ## Documents
@@ -44,7 +44,7 @@ which layers it touches so you know what to expect before diving in.
 |-------|-------------|--------|
 | [Extending Endpoints](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/04_Extending_Endpoints.md) | Add custom API endpoints to the Studio Backend | Backend |
 | [Extending OpenAPI](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/06_Extending_OpenApi.md) | Extend the OpenAPI specification with custom schemas | Backend |
-| [Additional and Custom Attributes](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/01_Additional_and_Custom_Attributes.md) | Enrich API responses with custom data via PreResponse events | Backend |
+| [Additional and Custom Attributes](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/02_Additional_and_Custom_Attributes.md) | Enrich API responses with custom data via PreResponse events | Backend |
 | [Extending Updater and Patcher](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/10_Extending_Updater_and_Patcher.md) | Extend the element update and patch pipeline | Backend |
 | [API Data in Plugins](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/08_Use_API_Data.md) | Fetch and use Studio Backend API data in plugins | UI |
 
@@ -53,7 +53,7 @@ which layers it touches so you know what to expect before diving in.
 | Guide | Description | Layers |
 |-------|-------------|--------|
 | [Custom Grid Columns](./11_Custom_Grid_Columns.md) | Add custom columns to the element grid (backend definition, resolver, collector; optional frontend cell type) | Backend, UI |
-| [Extending Filters](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/08_Extending_Filters/README.md) | Add custom search index and listing filters | Backend |
+| [Extending Filters](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/09_Extending_Filters/README.md) | Add custom search index and listing filters | Backend |
 | [Custom Listing](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/10_Custom_Listing.md) | Build custom listing views in the frontend | UI |
 
 ## UI: Navigation, Tabs, and Widgets
@@ -68,7 +68,7 @@ which layers it touches so you know what to expect before diving in.
 | [Context Menus](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/09_Customize_Context_Menus.md) | Add or modify context menu entries                                                         | UI |
 | [Dynamic Types](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/04_Extending/02_Plugin_Development_Examples/07_Use_Dynamic_Types.md) | Use the dynamic type system for extensible rendering                                       | UI |
 | [Custom Perspective Widgets](./14_Custom_Perspective_Widgets.md) | Add custom widget types to perspectives (schema, repository, hydrator, Widget Editor type) | Backend, UI |
-| [Perspectives Overview](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/09_Perspectives/README.md) | Perspective configuration and context menu permissions                                     | Backend |
+| [Perspectives Overview](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/11_Perspectives/README.md) | Perspective configuration and context menu permissions                                     | Backend |
 
 ## Permissions and Security
 

@@ -162,4 +162,4 @@ class CustomAssetStyleSubscriber implements EventSubscriberInterface
 }
 ```
 
-For a full list of available `pre_response.*` events, see [Additional and Custom Attributes](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/01_Additional_and_Custom_Attributes.md).
+For a full list of available `pre_response.*` events, see [Additional and Custom Attributes](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/02_Additional_and_Custom_Attributes.md).

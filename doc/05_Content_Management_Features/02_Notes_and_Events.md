@@ -91,5 +91,5 @@ The defaults are `content`, `seo`, `warning`, and `notice`. Override them per el
 The key for data objects is `data-object` (hyphenated).
 
 For more details on extending note types, see the
-[Extending Notes](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/02_Installation_and_Configuration/03_Extending_Notes.md)
+[Extending Notes](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/02_Installation_and_Configuration/03_Defining_Note_Types.md)
 guide in the Studio Backend Bundle documentation.

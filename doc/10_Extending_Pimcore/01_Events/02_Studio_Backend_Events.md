@@ -33,7 +33,7 @@ Key event classes:
 The canonical documentation for Studio Backend events - including the complete event list,
 all available event classes, and detailed code examples - lives in the Studio Backend Bundle:
 
-- [Additional and Custom Attributes](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/01_Additional_and_Custom_Attributes.md) -
+- [Additional and Custom Attributes](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/02_Additional_and_Custom_Attributes.md) -
   enrich API responses with custom data via PreResponse events
-- [Extending via Events](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/11_Extending_via_Events.md) -
+- [Extending via Events](https://github.com/pimcore/studio-backend-bundle/blob/1.x/doc/03_Extending/01_Extending_via_Events.md) -
   full event reference with examples for element resolution and response customization
