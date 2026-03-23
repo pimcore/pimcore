@@ -15,24 +15,30 @@ namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions;
 
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\MessengerTransportDefinitionInterface;
+use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterHintProviderInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterType;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Validation\FormatValidator;
 
 /**
- * RabbitMQ-based messenger transport definition.
+ * AMQP-based messenger transport definition.
  *
  * Writes PIMCORE_MESSENGER_TRANSPORT_DSN with an AMQP URL.
+ *
+ * The DSN must end with a trailing "/" because Pimcore appends
+ * queue names directly to this value in bundle YAML configs.
  */
-final readonly class RabbitMqMessengerEnvVarDefinition implements MessengerTransportDefinitionInterface
+final readonly class AmqpMessengerEnvVarDefinition implements
+    MessengerTransportDefinitionInterface,
+    ParameterHintProviderInterface
 {
     public function getKey(): string
     {
-        return 'messenger-rabbitmq';
+        return 'messenger-amqp';
     }
 
     public function getLabel(): string
     {
-        return 'Messenger Transport (RabbitMQ)';
+        return 'Messenger Transport (AMQP)';
     }
 
     public function isRequired(): bool
@@ -50,9 +56,9 @@ final readonly class RabbitMqMessengerEnvVarDefinition implements MessengerTrans
         return [
             new ConfigParameter(
                 'PIMCORE_MESSENGER_TRANSPORT_DSN',
-                'RabbitMQ URL',
+                'AMQP DSN',
                 ParameterType::Url,
-                defaultValue: 'amqp://guest:guest@127.0.0.1:5672/%2f',
+                defaultValue: 'amqp://guest:guest@127.0.0.1:5672/%2f/',
             ),
         ];
     }
@@ -61,7 +67,7 @@ final readonly class RabbitMqMessengerEnvVarDefinition implements MessengerTrans
     {
         return [
             'PIMCORE_MESSENGER_TRANSPORT_DSN' => $collectedValues['PIMCORE_MESSENGER_TRANSPORT_DSN']
-                ?? 'amqp://guest:guest@127.0.0.1:5672/%2f',
+                ?? 'amqp://guest:guest@127.0.0.1:5672/%2f/',
         ];
     }
 
@@ -71,14 +77,29 @@ final readonly class RabbitMqMessengerEnvVarDefinition implements MessengerTrans
 
         $validator = new FormatValidator();
         $validator
-            ->requireNonEmpty($url, 'RabbitMQ URL')
-            ->requireUrlWithScheme($url, 'RabbitMQ', ['amqp', 'amqps']);
+            ->requireNonEmpty($url, 'AMQP DSN')
+            ->requireUrlWithScheme($url, 'AMQP', ['amqp', 'amqps']);
 
         if ($validator->hasErrors()) {
             return $validator->getErrors();
         }
 
+        if (!str_ends_with($url, '/')) {
+            return [
+                'AMQP DSN must end with "/" for queue name concatenation'
+                . ' (e.g. amqp://guest:guest@127.0.0.1:5672/%2f/).',
+            ];
+        }
+
         return $this->testConnection($url);
+    }
+
+    public function getParameterHint(string $envVarName, array $collectedSoFar): ?string
+    {
+        return "The messenger transport DSN must end with a trailing \"/\" for queue name\n"
+            . "concatenation. Pimcore appends queue names directly to this value.\n"
+            . "\n"
+            . 'AMQP format: amqp://user:pass@host:5672/%2f/';
     }
 
     private function testConnection(string $url): array
@@ -90,7 +111,7 @@ final readonly class RabbitMqMessengerEnvVarDefinition implements MessengerTrans
         $socket = @fsockopen($host, $port, $errno, $errstr, 3.0);
         if ($socket === false) {
             return [sprintf(
-                'RabbitMQ connection failed at %s:%d — %s.',
+                'AMQP connection failed at %s:%d — %s.',
                 $host,
                 $port,
                 $errstr,

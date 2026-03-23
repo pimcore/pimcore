@@ -14,16 +14,22 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions;
 
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\MessengerTransportDefinitionInterface;
+use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterHintProviderInterface;
 
 /**
  * Doctrine-based messenger transport definition.
  *
- * Writes PIMCORE_MESSENGER_TRANSPORT_DSN=doctrine://default.
+ * Writes PIMCORE_MESSENGER_TRANSPORT_DSN=doctrine://default?queue_name=
  * This is the default transport for all Pimcore messenger queues.
  * No user input is needed — the Doctrine connection is already
  * configured via DATABASE_URL.
+ *
+ * The trailing ?queue_name= is required because Pimcore appends
+ * queue names directly to this value in bundle YAML configs.
  */
-final readonly class DoctrineMessengerEnvVarDefinition implements MessengerTransportDefinitionInterface
+final readonly class DoctrineMessengerEnvVarDefinition implements
+    MessengerTransportDefinitionInterface,
+    ParameterHintProviderInterface
 {
     public function getKey(): string
     {
@@ -53,12 +59,20 @@ final readonly class DoctrineMessengerEnvVarDefinition implements MessengerTrans
     public function resolveEnvVars(array $collectedValues): array
     {
         return [
-            'PIMCORE_MESSENGER_TRANSPORT_DSN' => 'doctrine://default',
+            'PIMCORE_MESSENGER_TRANSPORT_DSN' => 'doctrine://default?queue_name=',
         ];
     }
 
     public function validate(array $collectedValues): array
     {
         return [];
+    }
+
+    public function getParameterHint(string $envVarName, array $collectedSoFar): ?string
+    {
+        return "The messenger transport DSN includes a trailing separator for queue name\n"
+            . "concatenation. Pimcore appends queue names directly to this value.\n"
+            . "\n"
+            . 'Doctrine format: doctrine://default?queue_name=';
     }
 }

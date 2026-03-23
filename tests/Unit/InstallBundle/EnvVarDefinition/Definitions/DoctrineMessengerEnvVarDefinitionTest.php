@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Unit\InstallBundle\EnvVarDefinition\Definitions;
 
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions\DoctrineMessengerEnvVarDefinition;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\MessengerTransportDefinitionInterface;
+use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterHintProviderInterface;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
@@ -35,6 +36,11 @@ final class DoctrineMessengerEnvVarDefinitionTest extends TestCase
         $this->assertInstanceOf(MessengerTransportDefinitionInterface::class, $this->definition);
     }
 
+    public function testImplementsParameterHintProviderInterface(): void
+    {
+        $this->assertInstanceOf(ParameterHintProviderInterface::class, $this->definition);
+    }
+
     public function testMetadata(): void
     {
         $this->assertSame('messenger-doctrine', $this->definition->getKey());
@@ -48,7 +54,7 @@ final class DoctrineMessengerEnvVarDefinitionTest extends TestCase
         $envVars = $this->definition->resolveEnvVars([]);
 
         $this->assertSame(
-            'doctrine://default',
+            'doctrine://default?queue_name=',
             $envVars['PIMCORE_MESSENGER_TRANSPORT_DSN'],
         );
     }
@@ -63,5 +69,13 @@ final class DoctrineMessengerEnvVarDefinitionTest extends TestCase
         $errors = $this->definition->validate([]);
 
         $this->assertSame([], $errors);
+    }
+
+    public function testParameterHintReturnsDoctrineFormat(): void
+    {
+        $hint = $this->definition->getParameterHint('PIMCORE_MESSENGER_TRANSPORT_DSN', []);
+
+        $this->assertNotNull($hint);
+        $this->assertStringContainsString('doctrine://default?queue_name=', $hint);
     }
 }
