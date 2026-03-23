@@ -28,27 +28,49 @@ class QueryParams
         $orderKey = null;
         $order = null;
 
-        $sortParam = isset($params['sort']) ? $params['sort'] : false;
-        if ($sortParam) {
-            $sortParam = json_decode($sortParam, true);
-            $sortParam = $sortParam[0];
+        $sortParamRaw = $params['sort'] ?? null;
+        if ($sortParamRaw !== null && $sortParamRaw !== '') {
+            $decoded = json_decode($sortParamRaw, true);
 
-            $order = strtoupper($sortParam['direction']) === 'DESC' ? 'DESC' : 'ASC';
+            if (is_array($decoded) && isset($decoded[0]) && is_array($decoded[0])) {
+                $sortParam = $decoded[0];
 
-            if (substr($sortParam['property'], 0, 1) != '~') {
-                $orderKey = $sortParam['property'];
-            } else {
-                $orderKey = $sortParam['property'];
+                $direction = isset($sortParam['direction']) ? strtoupper((string) $sortParam['direction']) : null;
+                $order = $direction === 'DESC' ? 'DESC' : 'ASC';
 
-                $parts = explode('~', $orderKey);
+                if (!isset($sortParam['property']) || !is_string($sortParam['property']) || $sortParam['property'] === '') {
+                    return ['orderKey' => $orderKey, 'order' => $order];
+                }
 
-                $fieldname = $parts[2];
-                $groupKeyId = $parts[3];
-                $groupKeyId = explode('-', $groupKeyId);
-                $groupId = (int) $groupKeyId[0];
-                $keyid = (int) $groupKeyId[1];
+                if (substr($sortParam['property'], 0, 1) !== '~') {
+                    $orderKey = $sortParam['property'];
+                } else {
+                    $orderKey = $sortParam['property'];
 
-                return ['orderKey' => $sortParam['property'], 'fieldname' => $fieldname, 'groupId' => $groupId, 'keyId' => $keyid, 'order' => $order, 'isFeature' => 1];
+                    $parts = explode('~', $orderKey);
+                    if (count($parts) < 4) {
+                        return ['orderKey' => $orderKey, 'order' => $order];
+                    }
+
+                    $fieldname = $parts[2];
+                    $groupKeyId = $parts[3];
+                    $groupKeyIdParts = explode('-', $groupKeyId);
+                    if (count($groupKeyIdParts) < 2) {
+                        return ['orderKey' => $orderKey, 'order' => $order];
+                    }
+
+                    $groupId = (int) $groupKeyIdParts[0];
+                    $keyid = (int) $groupKeyIdParts[1];
+
+                    return [
+                        'orderKey' => $sortParam['property'],
+                        'fieldname' => $fieldname,
+                        'groupId' => $groupId,
+                        'keyId' => $keyid,
+                        'order' => $order,
+                        'isFeature' => 1,
+                    ];
+                }
             }
         }
 
