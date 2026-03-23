@@ -21,7 +21,14 @@ use Carbon\Carbon;
 class QueryParams
 {
     /**
-     * @return array  [orderKey => null|string, order => null|string]
+     * @return array{
+     *     orderKey: string|null,
+     *     order: string|null,
+     *     fieldname?: string,
+     *     groupId?: int,
+     *     keyId?: int,
+     *     isFeature?: int
+     * }
      */
     public static function extractSortingSettings(array $params): array
     {

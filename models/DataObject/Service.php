@@ -535,21 +535,9 @@ class Service extends Model\Element\Service
         });
     }
 
-    /**
-     * @deprecated Since 11.3, please use GridData\DataObject::getHelperDefinitions() instead (requires pimcore/admin-ui-classic-bundle v1.5)
-     */
+
     public static function getHelperDefinitions(): array
     {
-        if (class_exists(GridData\DataObject::class)) {
-            return GridData\DataObject::getHelperDefinitions();
-        }
-
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '11.3.0',
-            sprintf('The "%s" method is deprecated here and moved to admin-ui-classc-bundle v1.5, use "%s" instead.', __METHOD__, 'Pimcore\Bundle\AdminBundle\Service\GridData::getHelperDefinitions()')
-        );
-
         $stack = Pimcore::getContainer()->get('request_stack');
         if ($stack->getMainRequest()?->hasSession()) {
             $session = $stack->getSession();

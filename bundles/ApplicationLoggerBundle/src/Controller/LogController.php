@@ -68,7 +68,6 @@ class LogController extends UserAwareController implements KernelControllerEvent
 
         $qb->orderBy('id', 'DESC');
 
-        // TODO: not sure if that was an admin-ui only, remove this block once dealing with this QueryParams moved to core
         $sortingSettings = QueryParams::extractSortingSettings(array_merge(
             $request->request->all(),
             $request->query->all()
