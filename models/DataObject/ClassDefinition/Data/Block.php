@@ -30,7 +30,7 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface, FieldDefinitionEnrichmentModelInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface, FieldDefinitionEnrichmentModelInterface
 {
     use DataObject\Traits\ClassSavedTrait;
     use DataObject\Traits\FieldDefinitionEnrichmentDataTrait;
@@ -466,6 +466,44 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $value['type'] = 'html';
 
         return $value;
+    }
+
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
+    {
+        $data = $this->getDataFromObjectParam($container, $params);
+
+        if (is_array($data)) {
+            foreach ($data as $item) {
+                if (!is_array($item)) {
+                    continue;
+                }
+
+                foreach ($this->getFieldDefinitions() as $fieldDefinition) {
+                    if (!$fieldDefinition instanceof IdRewriterInterface) {
+                        continue;
+                    }
+
+                    $blockElement = $item[$fieldDefinition->getName()] ?? null;
+                    if (!$blockElement instanceof DataObject\Data\BlockElement) {
+                        continue;
+                    }
+
+                    $blockElement->setData(
+                        $fieldDefinition->rewriteIds(
+                            $container,
+                            $idMapping,
+                            [
+                                ...$params,
+                                // \Pimcore\Model\DataObject\ClassDefinition\Data::getDataFromObjectParam() reads 'injectedData'
+                                'injectedData' => $blockElement->getData(),
+                            ],
+                        ),
+                    );
+                }
+            }
+        }
+
+        return $data;
     }
 
     /**
