@@ -1,5 +1,6 @@
 parameters:
     locale: en
+    env(PIMCORE_MESSENGER_TRANSPORT_DSN): 'doctrine://default'
     pimcore.messenger.transport_dsn: '%env(resolve:PIMCORE_MESSENGER_TRANSPORT_DSN)%'
     env(PIMCORE_ENCRYPTION_SECRET): ''
     env(PIMCORE_INSTANCE_IDENTIFIER): ''
