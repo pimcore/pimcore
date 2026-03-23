@@ -477,7 +477,7 @@ class Service extends Model\Element\Service
 
         return null;
     }
-    
+
     /**
      * @internal
      */
