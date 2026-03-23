@@ -62,6 +62,9 @@ PIMCORE_MESSENGER_TRANSPORT_DSN=doctrine://default?queue_name=
 
 # AMQP
 PIMCORE_MESSENGER_TRANSPORT_DSN=amqp://guest:guest@rabbit:5672/%2f/
+
+# Redis
+PIMCORE_MESSENGER_TRANSPORT_DSN=redis://localhost:6379/
 ```
 
 All Pimcore bundle transport configs now use the container parameter `%pimcore.messenger.transport_dsn%` with direct concatenation:
