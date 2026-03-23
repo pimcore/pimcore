@@ -104,15 +104,15 @@ class QueryParams
                 $date = Carbon::createFromTimestamp($f->value, date_default_timezone_get())->setTime(0, 0, 0);
 
                 if ($f->operator == 'eq') {
-                    $conditions[$f->property][] = ' ' . $f->property . ' >= ' .
+                    $conditions[$f->property][] = ' ' . $db->quoteIdentifier($f->property) . ' >= ' .
                         $db->quote((string)$date->getTimestamp());
-                    $conditions[$f->property][] = ' ' . $f->property . ' <= ' .
+                    $conditions[$f->property][] = ' ' . $db->quoteIdentifier($f->property) . ' <= ' .
                         $db->quote((string)$date->addDay()->subSecond()->getTimestamp());
                 } elseif ($f->operator == 'lt') {
-                    $conditions[$f->property][] = ' ' . $f->property . ' < ' .
+                    $conditions[$f->property][] = ' ' . $db->quoteIdentifier($f->property) . ' < ' .
                         $db->quote((string)$date->getTimestamp());
                 } elseif ($f->operator == 'gt') {
-                    $conditions[$f->property][] = ' ' . $f->property . ' > ' .
+                    $conditions[$f->property][] = ' ' . $db->quoteIdentifier($f->property) . ' > ' .
                         $db->quote((string)$date->addDay()->subSecond()->getTimestamp());
                 }
             } else {
