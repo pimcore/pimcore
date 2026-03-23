@@ -110,7 +110,7 @@ final class InstallerProfilesIntegrationTest extends TestCase
 
         // Verify env var values
         $this->assertStringContainsString('DATABASE_URL="mysql://pimcore:secret@db:3306/pimcore"', $envContent);
-        $this->assertStringContainsString('PIMCORE_MESSENGER_TRANSPORT_DSN="doctrine://default"', $envContent);
+        $this->assertStringContainsString('PIMCORE_MESSENGER_TRANSPORT_DSN="doctrine://default?queue_name="', $envContent);
         $this->assertStringContainsString('PIMCORE_OPENSEARCH_DSN="opensearch://admin:admin@opensearch:9200?ssl_verify=false"', $envContent);
         $this->assertStringContainsString('MERCURE_JWT_KEY="a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4"', $envContent);
         $this->assertStringContainsString('MERCURE_URL="http://localhost/hub"', $envContent);

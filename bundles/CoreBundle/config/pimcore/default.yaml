@@ -1,6 +1,6 @@
 parameters:
     locale: en
-    env(PIMCORE_MESSENGER_TRANSPORT_DSN): 'doctrine://default'
+    env(PIMCORE_MESSENGER_TRANSPORT_DSN): 'doctrine://default?queue_name='
     pimcore.messenger.transport_dsn: '%env(resolve:PIMCORE_MESSENGER_TRANSPORT_DSN)%'
     env(PIMCORE_ENCRYPTION_SECRET): ''
     env(PIMCORE_INSTANCE_IDENTIFIER): ''
@@ -35,13 +35,13 @@ framework:
             main: native://default
     messenger:
         transports:
-            pimcore_core: "%pimcore.messenger.transport_dsn%?queue_name=pimcore_core"
-            pimcore_maintenance: "%pimcore.messenger.transport_dsn%?queue_name=pimcore_maintenance"
-            pimcore_scheduled_tasks: "%pimcore.messenger.transport_dsn%?queue_name=pimcore_scheduled_tasks"
-            pimcore_image_optimize: "%pimcore.messenger.transport_dsn%?queue_name=pimcore_image_optimize"
-            pimcore_asset_update: "%pimcore.messenger.transport_dsn%?queue_name=pimcore_asset_update"
+            pimcore_core: "%pimcore.messenger.transport_dsn%pimcore_core"
+            pimcore_maintenance: "%pimcore.messenger.transport_dsn%pimcore_maintenance"
+            pimcore_scheduled_tasks: "%pimcore.messenger.transport_dsn%pimcore_scheduled_tasks"
+            pimcore_image_optimize: "%pimcore.messenger.transport_dsn%pimcore_image_optimize"
+            pimcore_asset_update: "%pimcore.messenger.transport_dsn%pimcore_asset_update"
             #Dependency resolving is synchronous by default, use the following commented lines below (transports/routing) to make it async
-            #pimcore_dependencies: "doctrine://default?queue_name=pimcore_dependencies"
+            #pimcore_dependencies: "%pimcore.messenger.transport_dsn%pimcore_dependencies"
         routing:
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
             'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core

@@ -18,12 +18,16 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\MessengerTransportDefinitionIn
 /**
  * Doctrine-based messenger transport definition.
  *
- * Writes PIMCORE_MESSENGER_TRANSPORT_DSN=doctrine://default.
+ * Writes PIMCORE_MESSENGER_TRANSPORT_DSN=doctrine://default?queue_name=
  * This is the default transport for all Pimcore messenger queues.
  * No user input is needed — the Doctrine connection is already
  * configured via DATABASE_URL.
+ *
+ * The trailing ?queue_name= is required because Pimcore appends
+ * queue names directly to this value in bundle YAML configs.
  */
-final readonly class DoctrineMessengerEnvVarDefinition implements MessengerTransportDefinitionInterface
+final readonly class DoctrineMessengerEnvVarDefinition implements
+    MessengerTransportDefinitionInterface
 {
     public function getKey(): string
     {
@@ -53,7 +57,7 @@ final readonly class DoctrineMessengerEnvVarDefinition implements MessengerTrans
     public function resolveEnvVars(array $collectedValues): array
     {
         return [
-            'PIMCORE_MESSENGER_TRANSPORT_DSN' => 'doctrine://default',
+            'PIMCORE_MESSENGER_TRANSPORT_DSN' => 'doctrine://default?queue_name=',
         ];
     }
 

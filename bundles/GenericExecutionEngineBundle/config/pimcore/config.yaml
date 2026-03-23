@@ -16,6 +16,6 @@ framework:
         enabled: true
         transports:
             pimcore_generic_execution_engine:
-                dsn: '%pimcore.messenger.transport_dsn%?queue_name=pimcore_generic_execution_engine'
+                dsn: '%pimcore.messenger.transport_dsn%pimcore_generic_execution_engine'
                 retry_strategy:
                     max_retries: 0 # no retries to prevent data corruption
