@@ -471,17 +471,17 @@ class Service extends Model\Element\Service
     public static function expandGridColumnForExport(array $helperDefinitions, string $key): ?array
     {
         $config = self::getConfigForHelperDefinition($helperDefinitions, $key);
-        if (class_exists(AbstractOperator::class) && $config instanceof AbstractOperator && $config->expandLocales()) {
+        if ($config && is_object($config) && method_exists($config, 'expandLocales') && method_exists($config, 'getValidLanguages') && $config->expandLocales()) {
             return $config->getValidLanguages();
         }
 
         return null;
     }
-
+    
     /**
      * @internal
      */
-    public static function getConfigForHelperDefinition(array $helperDefinitions, string $key, array $context = []): ?ConfigElementInterface
+    public static function getConfigForHelperDefinition(array $helperDefinitions, string $key, array $context = []): mixed
     {
         $cacheKey = 'gridcolumn_config_' . $key;
         if (isset($context['language'])) {
@@ -495,9 +495,6 @@ class Service extends Model\Element\Service
 
             // TODO refactor how the service is accessed into something non-static and inject the service there
             $service = Pimcore::getContainer()->get(GridColumnConfigService::class);
-            if (!$service) {
-                throw new AdminClassicBundleNotFoundException('Admin Bundle not found. Please install the package pimcore/admin-ui-classic-bundle.');
-            }
             $config = $service->buildOutputDataConfig([$attributes], $context);
 
             if (!$config) {
@@ -517,12 +514,15 @@ class Service extends Model\Element\Service
         }
 
         return self::useInheritedValues(true, static function () use ($object, $config) {
+            if (!is_object($config) || !method_exists($config, 'getLabeledValue')) {
+                return null;
+            }
             $labeledValue = $config->getLabeledValue($object);
             if (!$labeledValue || !isset($labeledValue->value)) {
                 return null;
             }
             $result = $labeledValue->value;
-            if (!empty($config->getRenderer())) {
+            if (method_exists($config, 'getRenderer') && !empty($config->getRenderer())) {
                 $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($config->getRenderer());
                 /** @var Model\DataObject\ClassDefinition\Data $rendererImpl */
                 $rendererImpl = new $classname();
