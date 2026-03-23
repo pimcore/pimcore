@@ -1893,9 +1893,6 @@ class Service extends Model\Element\Service
         return '';
     }
 
-    /**
-     * @deprecated Since 11.3, please use \Pimcore\Bundle\AdminBundle\Service\DataObject::getInheritedData() instead
-     */
     protected static function getInheritedData(Concrete $object, string $key, string $requestedLanguage): array
     {
         if (!$parent = self::hasInheritableParentObject($object)) {
