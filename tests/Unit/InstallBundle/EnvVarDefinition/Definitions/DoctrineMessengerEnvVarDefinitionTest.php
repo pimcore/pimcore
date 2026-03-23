@@ -36,9 +36,9 @@ final class DoctrineMessengerEnvVarDefinitionTest extends TestCase
         $this->assertInstanceOf(MessengerTransportDefinitionInterface::class, $this->definition);
     }
 
-    public function testImplementsParameterHintProviderInterface(): void
+    public function testDoesNotImplementParameterHintProviderInterface(): void
     {
-        $this->assertInstanceOf(ParameterHintProviderInterface::class, $this->definition);
+        $this->assertNotInstanceOf(ParameterHintProviderInterface::class, $this->definition);
     }
 
     public function testMetadata(): void
@@ -69,13 +69,5 @@ final class DoctrineMessengerEnvVarDefinitionTest extends TestCase
         $errors = $this->definition->validate([]);
 
         $this->assertSame([], $errors);
-    }
-
-    public function testParameterHintReturnsDoctrineFormat(): void
-    {
-        $hint = $this->definition->getParameterHint('PIMCORE_MESSENGER_TRANSPORT_DSN', []);
-
-        $this->assertNotNull($hint);
-        $this->assertStringContainsString('doctrine://default?queue_name=', $hint);
     }
 }

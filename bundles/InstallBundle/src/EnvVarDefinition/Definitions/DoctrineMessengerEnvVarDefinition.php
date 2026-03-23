@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions;
 
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\MessengerTransportDefinitionInterface;
-use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterHintProviderInterface;
 
 /**
  * Doctrine-based messenger transport definition.
@@ -28,8 +27,7 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterHintProviderInterface
  * queue names directly to this value in bundle YAML configs.
  */
 final readonly class DoctrineMessengerEnvVarDefinition implements
-    MessengerTransportDefinitionInterface,
-    ParameterHintProviderInterface
+    MessengerTransportDefinitionInterface
 {
     public function getKey(): string
     {
@@ -66,13 +64,5 @@ final readonly class DoctrineMessengerEnvVarDefinition implements
     public function validate(array $collectedValues): array
     {
         return [];
-    }
-
-    public function getParameterHint(string $envVarName, array $collectedSoFar): ?string
-    {
-        return "The messenger transport DSN includes a trailing separator for queue name\n"
-            . "concatenation. Pimcore appends queue names directly to this value.\n"
-            . "\n"
-            . 'Doctrine format: doctrine://default?queue_name=';
     }
 }

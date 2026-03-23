@@ -94,7 +94,7 @@ final readonly class AmqpMessengerEnvVarDefinition implements
         return $this->testConnection($url);
     }
 
-    public function getParameterHint(string $envVarName, array $collectedSoFar): ?string
+    public function getParameterHint(string $envVarName, array $collectedSoFar): string
     {
         return "The messenger transport DSN must end with a trailing \"/\" for queue name\n"
             . "concatenation. Pimcore appends queue names directly to this value.\n"
