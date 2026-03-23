@@ -116,7 +116,7 @@ class QueryParams
                         $db->quote((string)$date->addDay()->subSecond()->getTimestamp());
                 }
             } else {
-                throw new \Exception('Filer of type ' . $f->type . ' not jet supported.');
+                throw new \Exception('Filter of type ' . $f->type . ' not yet supported.');
             }
         }
 
