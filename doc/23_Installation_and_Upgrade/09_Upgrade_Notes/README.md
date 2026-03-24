@@ -13,6 +13,7 @@ The following bundles have been removed:
 
 ### [General]
 
+- The `reset_password` rate limiter configuration has been moved to the studio-backend bundle and is no longer part of Pimcore's core configuration.
 - Added support for PHP `8.5` and bumped minimum requirement of Symfony to `7.4`.
 - Dropped support for PHP `8.3` and Symfony `6`.
  
