@@ -52,18 +52,18 @@ final class AmqpMessengerEnvVarDefinitionTest extends TestCase
     public function testResolveEnvVars(): void
     {
         $envVars = $this->definition->resolveEnvVars([
-            'PIMCORE_MESSENGER_TRANSPORT_DSN' => 'amqp://guest:guest@127.0.0.1:5672/%2f/',
+            'PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX' => 'amqp://guest:guest@127.0.0.1:5672/%2f/',
         ]);
 
         $this->assertSame(
             'amqp://guest:guest@127.0.0.1:5672/%2f/',
-            $envVars['PIMCORE_MESSENGER_TRANSPORT_DSN'],
+            $envVars['PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX'],
         );
     }
 
     public function testValidateRejectsEmptyUrl(): void
     {
-        $errors = $this->definition->validate(['PIMCORE_MESSENGER_TRANSPORT_DSN' => '']);
+        $errors = $this->definition->validate(['PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX' => '']);
 
         $this->assertNotEmpty($errors);
         $this->assertStringContainsString('required', strtolower($errors[0]));
@@ -72,7 +72,7 @@ final class AmqpMessengerEnvVarDefinitionTest extends TestCase
     public function testValidateRejectsInvalidScheme(): void
     {
         $errors = $this->definition->validate([
-            'PIMCORE_MESSENGER_TRANSPORT_DSN' => 'http://guest:guest@localhost:5672/%2f/',
+            'PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX' => 'http://guest:guest@localhost:5672/%2f/',
         ]);
 
         $this->assertNotEmpty($errors);
@@ -82,7 +82,7 @@ final class AmqpMessengerEnvVarDefinitionTest extends TestCase
     public function testValidateRejectsMalformedUrl(): void
     {
         $errors = $this->definition->validate([
-            'PIMCORE_MESSENGER_TRANSPORT_DSN' => 'not-a-url',
+            'PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX' => 'not-a-url',
         ]);
 
         $this->assertNotEmpty($errors);
@@ -92,7 +92,7 @@ final class AmqpMessengerEnvVarDefinitionTest extends TestCase
     public function testValidateRejectsDsnWithoutTrailingSlash(): void
     {
         $errors = $this->definition->validate([
-            'PIMCORE_MESSENGER_TRANSPORT_DSN' => 'amqp://guest:guest@127.0.0.1:5672/%2f',
+            'PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX' => 'amqp://guest:guest@127.0.0.1:5672/%2f',
         ]);
 
         $this->assertNotEmpty($errors);
@@ -104,7 +104,7 @@ final class AmqpMessengerEnvVarDefinitionTest extends TestCase
         // Connection will fail in test env (no AMQP broker), but we verify
         // that no FORMAT errors are returned — only connection errors.
         $errors = $this->definition->validate([
-            'PIMCORE_MESSENGER_TRANSPORT_DSN' => 'amqp://guest:guest@127.0.0.1:5672/%2f/',
+            'PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX' => 'amqp://guest:guest@127.0.0.1:5672/%2f/',
         ]);
 
         // Either empty (broker reachable) or connection error (not a format error)
@@ -127,7 +127,7 @@ final class AmqpMessengerEnvVarDefinitionTest extends TestCase
 
     public function testParameterHintReturnsAmqpFormat(): void
     {
-        $hint = $this->definition->getParameterHint('PIMCORE_MESSENGER_TRANSPORT_DSN', []);
+        $hint = $this->definition->getParameterHint('PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX', []);
 
         $this->assertNotNull($hint);
         $this->assertStringContainsString('amqp://', $hint);
@@ -138,6 +138,6 @@ final class AmqpMessengerEnvVarDefinitionTest extends TestCase
     {
         $params = $this->definition->getParameters();
         $this->assertCount(1, $params);
-        $this->assertSame('PIMCORE_MESSENGER_TRANSPORT_DSN', $params[0]->getEnvVarName());
+        $this->assertSame('PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX', $params[0]->getEnvVarName());
     }
 }

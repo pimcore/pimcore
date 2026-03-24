@@ -22,7 +22,7 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Validation\FormatValidator;
 /**
  * AMQP-based messenger transport definition.
  *
- * Writes PIMCORE_MESSENGER_TRANSPORT_DSN with an AMQP URL.
+ * Writes PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX with an AMQP URL.
  *
  * The DSN must end with a trailing "/" because Pimcore appends
  * queue names directly to this value in bundle YAML configs.
@@ -55,7 +55,7 @@ final readonly class AmqpMessengerEnvVarDefinition implements
     {
         return [
             new ConfigParameter(
-                'PIMCORE_MESSENGER_TRANSPORT_DSN',
+                'PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX',
                 'AMQP DSN',
                 ParameterType::Url,
                 defaultValue: 'amqp://guest:guest@127.0.0.1:5672/%2f/',
@@ -66,14 +66,14 @@ final readonly class AmqpMessengerEnvVarDefinition implements
     public function resolveEnvVars(array $collectedValues): array
     {
         return [
-            'PIMCORE_MESSENGER_TRANSPORT_DSN' => $collectedValues['PIMCORE_MESSENGER_TRANSPORT_DSN']
+            'PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX' => $collectedValues['PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX']
                 ?? 'amqp://guest:guest@127.0.0.1:5672/%2f/',
         ];
     }
 
     public function validate(array $collectedValues): array
     {
-        $url = $collectedValues['PIMCORE_MESSENGER_TRANSPORT_DSN'] ?? '';
+        $url = $collectedValues['PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX'] ?? '';
 
         $validator = new FormatValidator();
         $validator

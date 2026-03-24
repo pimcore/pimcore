@@ -47,7 +47,7 @@ The old configuration approach with separate `hosts` arrays in YAML is replaced 
 
 **This is a breaking change for existing installations.**
 
-The `PIMCORE_MESSENGER_TRANSPORT_DSN` env var format has changed. 
+The `PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX` env var (previously named `PIMCORE_MESSENGER_TRANSPORT_DSN`) format has changed. 
 It must now include a **trailing separator** for queue name concatenation, because Pimcore bundle configs append queue names directly to this value.
 
 **Before (old format):**
@@ -58,33 +58,33 @@ PIMCORE_MESSENGER_TRANSPORT_DSN=doctrine://default
 **After (new format):**
 ```
 # Doctrine
-PIMCORE_MESSENGER_TRANSPORT_DSN=doctrine://default?queue_name=
+PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=doctrine://default?queue_name=
 
 # AMQP
-PIMCORE_MESSENGER_TRANSPORT_DSN=amqp://guest:guest@rabbit:5672/%2f/
+PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=amqp://guest:guest@rabbit:5672/%2f/
 
 # Redis
-PIMCORE_MESSENGER_TRANSPORT_DSN=redis://localhost:6379/
+PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=redis://localhost:6379/
 ```
 
-All Pimcore bundle transport configs now use the container parameter `%pimcore.messenger.transport_dsn%` with direct concatenation:
+All Pimcore bundle transport configs now use the container parameter `%pimcore.messenger.transport_dsn_prefix%` with direct concatenation:
 
 ```yaml
 framework:
     messenger:
         transports:
-            pimcore_core: '%pimcore.messenger.transport_dsn%pimcore_core'
-            pimcore_maintenance: '%pimcore.messenger.transport_dsn%pimcore_maintenance'
+            pimcore_core: '%pimcore.messenger.transport_dsn_prefix%pimcore_core'
+            pimcore_maintenance: '%pimcore.messenger.transport_dsn_prefix%pimcore_maintenance'
 ```
 
 A container-level default is provided in `bundles/CoreBundle/config/pimcore/default.yaml`:
 
 ```yaml
 parameters:
-    env(PIMCORE_MESSENGER_TRANSPORT_DSN): 'doctrine://default?queue_name='
+    env(PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX): 'doctrine://default?queue_name='
 ```
-If you have `PIMCORE_MESSENGER_TRANSPORT_DSN` explicitly set in your `.env` or environment, update its value to include the trailing separator. For Doctrine, change `doctrine://default` to `doctrine://default?queue_name=`. Failure to do this will result in invalid transport DSNs like `doctrine://defaultpimcore_core`.
-If you have custom transport definitions in your bundle or project YAML that hardcode `doctrine://default?queue_name=`, replace them with `'%pimcore.messenger.transport_dsn%'` concatenation to support backend-agnostic transport switching.
+If you have `PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX` (or the old `PIMCORE_MESSENGER_TRANSPORT_DSN`) explicitly set in your `.env` or environment, update its value to include the trailing separator and use the new name. For Doctrine, change `doctrine://default` to `doctrine://default?queue_name=`. Failure to do this will result in invalid transport DSNs like `doctrine://defaultpimcore_core`.
+If you have custom transport definitions in your bundle or project YAML that hardcode `doctrine://default?queue_name=`, replace them with `'%pimcore.messenger.transport_dsn_prefix%'` concatenation to support backend-agnostic transport switching.
 
 ## Pimcore 12.3.0
 
