@@ -1,6 +1,6 @@
 # Upgrade Notes
 
-## Pimcore 13.0.0
+## Pimcore 2026.1.0
 
 ### [General]
 
