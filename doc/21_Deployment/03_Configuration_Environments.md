@@ -107,11 +107,6 @@ pimcore_custom_reports:
             write_target:
                 type: 'symfony-config'
 
-pimcore_static_routes:
-    config_location:
-        staticroutes:
-            write_target:
-                type: 'symfony-config'
        ...
 ```
 

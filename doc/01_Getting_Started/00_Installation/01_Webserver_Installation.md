@@ -91,7 +91,6 @@ In a typical Pimcore installation, you should set up workers for these transport
 | 3 | pimcore_scheduled_tasks        | [Scheduled tasks](../../18_Tools_and_Features/03_Scheduling.md)                                  |
 | 4 | pimcore_image_optimize         | Execute optimizers on Asset image thumbnails                                                     |
 | 5 | pimcore_asset_update           | Process Asset metadata e.g. Documents page count, Video duration/dimensions, Image previews etc. |
-| 6 | pimcore_search_backend_message | Update the index for Pimcore backend search. Only if you install `SimpleBackendSearchBundle`     |
 
 Beware that the actual transports depend on which core bundles you installed. Therefore, you will need to adjust the list accordingly to your installation.
 Use `bin/console debug:messenger` to list all available transports.
