@@ -133,8 +133,6 @@
     "umpirsky/country-list": "^2.0.6"
   },
   "conflict": {
-    "doctrine/doctrine-migrations-bundle": ">=3.4.0",
-    "doctrine/dbal": ">=4.3",
     "sabre/dav": "4.2.2",
     "symfony/symfony": "*",
     "symfony/web-link": "<7.4",
