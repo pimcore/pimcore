@@ -8,7 +8,7 @@ a referenced object changes.
 The second cache is the output cache, which you can use either as pure page cache (configurable 
 in system settings), or as in-template cache (see more at [template extensions](../../02_MVC/02_Template/02_Template_Extensions/README.md)).
 
-The third cache is used for add-ons like the glossary, translations, database schemes, and so on. 
+The third cache is used for add-ons like the translations, database schemes, and so on. 
 The behavior of the caches is controlled by the add-on itself.
 
 All of the described caches are utilizing the `Pimcore\Cache` interface to store their objects. `Pimcore\Cache` utilizes

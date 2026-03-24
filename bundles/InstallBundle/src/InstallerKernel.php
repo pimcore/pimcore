@@ -75,7 +75,7 @@ class InstallerKernel extends Kernel
 
     protected function configureContainer(ContainerConfigurator $configurator): void
     {
-        $configurator->parameters()->set('secret', uniqid('installer-', true));
+        $configurator->parameters()->set('secret', bin2hex(random_bytes(16)));
         $configurator->import('@PimcoreInstallBundle/config/config.yaml');
 
         // load installer config files if available

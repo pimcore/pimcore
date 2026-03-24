@@ -22,7 +22,6 @@ class Installer extends SettingsStoreAwareInstaller
     protected const USER_PERMISSIONS = [
         'robots.txt',
         'seo_document_editor',
-        'http_errors',
     ];
 
     public function install(): void
