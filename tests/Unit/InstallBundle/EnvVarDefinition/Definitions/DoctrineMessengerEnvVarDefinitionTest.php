@@ -55,7 +55,7 @@ final class DoctrineMessengerEnvVarDefinitionTest extends TestCase
 
         $this->assertSame(
             'doctrine://default?queue_name=',
-            $envVars['PIMCORE_MESSENGER_TRANSPORT_DSN'],
+            $envVars['PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX'],
         );
     }
 
