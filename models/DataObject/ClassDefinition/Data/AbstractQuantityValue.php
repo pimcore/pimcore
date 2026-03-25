@@ -53,7 +53,6 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
      */
     public bool $autoConvert = false;
 
-    private ?TranslatorInterface $translator = null;
     public function getUnitWidth(): int|string|null
     {
         return $this->unitWidth;
