@@ -943,6 +943,7 @@ final class Configuration implements ConfigurationInterface
                     ->defaultValue('App\\Controller\\DefaultController::defaultAction')
                 ->end()
                 ->arrayNode('error_pages')
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('default')
                             ->defaultNull()
