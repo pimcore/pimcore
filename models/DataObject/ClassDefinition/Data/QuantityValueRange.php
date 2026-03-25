@@ -50,12 +50,22 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      */
     public bool $autoConvert = false;
 
+    /**
+     * Lazily-resolved translator instance.
+     *
+     * @internal
+     */
+    protected ?TranslatorInterface $translator = null;
 
-    public TranslatorInterface $translator;
-
-    public function __constructor(TranslatorInterface $translator): void
+    protected function getTranslator(): TranslatorInterface
     {
-        $this->translator = $translator;
+        if ($this->translator === null) {
+            /** @var TranslatorInterface $translator */
+            $translator = Pimcore::getContainer()->get(TranslatorInterface::class);
+            $this->translator = $translator;
+        }
+
+        return $this->translator;
     }
 
     public function getUnitWidth(): string|int
@@ -248,7 +258,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             $unit = $data->getUnit();
 
             if ($unit instanceof DataObject\QuantityValue\Unit) {
-                $export .= $this->translator->trans($unit->getAbbreviation(), [], 'admin');;
+                $export .= $this->translator->trans($unit->getAbbreviation(), [], 'admin');
             }
 
             return $export;

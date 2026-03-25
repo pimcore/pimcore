@@ -53,14 +53,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
      */
     public bool $autoConvert = false;
 
-    public TranslatorInterface $translator;
-
-    public function __constructor(TranslatorInterface $translator): void
-    {
-        $this->translator = $translator;
-
-    }
-
+    public ?TranslatorInterface $translator = null;
     public function getUnitWidth(): int|string|null
     {
         return $this->unitWidth;
@@ -155,7 +148,12 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
             if ($data->getUnitId()) {
                 $unitDefinition = Model\DataObject\QuantityValue\Unit::getById($data->getUnitId());
                 if ($unitDefinition) {
-                    $unit = $this->translator->trans($unitDefinition->getAbbreviation(), [], 'admin');
+                    $translator = Pimcore::getContainer()->get(TranslatorInterface::class);
+                    if ($translator instanceof TranslatorInterface) {
+                        $unit = $translator->trans($unitDefinition->getAbbreviation(), [], 'admin');
+                    } else {
+                        $unit = $unitDefinition->getAbbreviation();
+                    }
                 }
             }
 
