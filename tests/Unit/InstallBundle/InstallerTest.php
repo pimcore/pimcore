@@ -959,7 +959,6 @@ final class InstallerTest extends TestCase
         $this->assertStringContainsString('connections:', $content);
         $this->assertStringContainsString('default:', $content);
         $this->assertStringContainsString('mapping_types:', $content);
-        $this->assertStringContainsString('enum: string', $content);
         $this->assertStringContainsString('bit: boolean', $content);
     }
 
@@ -1027,7 +1026,6 @@ doctrine:
         connections:
             default:
                 mapping_types:
-                    enum: string
                     bit: boolean
 
 YAML;

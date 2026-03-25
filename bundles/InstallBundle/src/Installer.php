@@ -396,7 +396,7 @@ final class Installer
     /**
      * Write static Doctrine mapping types config.
      *
-     * Registers database type mappings (e.g. BIT -> boolean, ENUM -> string)
+     * Registers database type mappings (e.g. BIT -> boolean)
      * that Doctrine DBAL does not support natively. Without this config,
      * introspecting a schema containing these column types throws
      * "Unknown database type" errors.
@@ -420,7 +420,6 @@ doctrine:
         connections:
             default:
                 mapping_types:
-                    enum: string
                     bit: boolean
 
 YAML;
