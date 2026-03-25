@@ -149,11 +149,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
                 $unitDefinition = Model\DataObject\QuantityValue\Unit::getById($data->getUnitId());
                 if ($unitDefinition) {
                     $translator = Pimcore::getContainer()->get(TranslatorInterface::class);
-                    if ($translator instanceof TranslatorInterface) {
-                        $unit = $translator->trans($unitDefinition->getAbbreviation(), [], 'admin');
-                    } else {
-                        $unit = $unitDefinition->getAbbreviation();
-                    }
+                    $unit = $translator->trans($unitDefinition->getAbbreviation(), [], 'admin');
                 }
             }
 
