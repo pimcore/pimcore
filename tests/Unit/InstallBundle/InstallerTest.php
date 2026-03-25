@@ -1027,7 +1027,6 @@ doctrine:
         connections:
             default:
                 mapping_types:
-                    enum: string
                     bit: boolean
 
 YAML;
