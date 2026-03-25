@@ -716,7 +716,6 @@ CREATE TABLE `gridconfigs` (
     INDEX `shareBetweenFolders` (`shareBetweenFolders`)
 )
 DEFAULT CHARSET=utf8mb4;
-;
 
 DROP TABLE IF EXISTS `gridconfig_favourites`;
 CREATE TABLE `gridconfig_favourites` (
@@ -733,7 +732,6 @@ CREATE TABLE `gridconfig_favourites` (
     CONSTRAINT `fk_gridconfig_favourites_gridconfigs` FOREIGN KEY (`gridConfigId`) REFERENCES `gridconfigs` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 )
 DEFAULT CHARSET=utf8mb4;
-;
 
 DROP TABLE IF EXISTS `gridconfig_shares`;
 CREATE TABLE `gridconfig_shares` (
@@ -745,7 +743,6 @@ CREATE TABLE `gridconfig_shares` (
     CONSTRAINT `fk_gridconfig_shares_gridconfigs` FOREIGN KEY (`gridConfigId`) REFERENCES `gridconfigs` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 )
 DEFAULT CHARSET=utf8mb4;
-;
 
 DROP TABLE IF EXISTS `importconfigs`;
 CREATE TABLE `importconfigs` (
@@ -764,7 +761,6 @@ CREATE TABLE `importconfigs` (
 	INDEX `shareGlobally` (`shareGlobally`)
 )
 DEFAULT CHARSET=utf8mb4;
-;
 
 DROP TABLE IF EXISTS `importconfig_shares`;
 CREATE TABLE `importconfig_shares` (
@@ -774,7 +770,6 @@ CREATE TABLE `importconfig_shares` (
 	INDEX `sharedWithUserId` (`sharedWithUserId`)
 )
 DEFAULT CHARSET=utf8mb4;
-;
 
 DROP TABLE IF EXISTS `notifications`;
 CREATE TABLE `notifications` (

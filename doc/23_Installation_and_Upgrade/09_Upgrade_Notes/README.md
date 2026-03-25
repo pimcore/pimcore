@@ -1,7 +1,91 @@
 # Upgrade Notes
 
-## Pimcore 13.0.0
+## Pimcore 2026.1.0
+
+#### Removed deprecated and discontinued bundles
+The following bundles have been removed:
+- GlossaryBundle
+- SimpleBackendSearchBundle
+- SeoBundle: dropped `http_error_log` feature and DB Table, and removed Document SEO Editor
+- StaticRouteBundle
+- WordExportBundle
+- XliffBundle
+
+### [General]
 - The space between quantity value and unit is removed across all data types.
+- The `reset_password` rate limiter configuration has been moved to the studio-backend bundle and is no longer part of Pimcore's core configuration.
+- Added support for PHP `8.5` and bumped minimum requirement of Symfony to `7.4`.
+- Dropped support for PHP `8.3` and Symfony `6`.
+ 
+#### [DataObjects]
+
+- Add a new optional `$parameters` argument to `Concrete::saveVersion()` to allow passing of arguments to events.
+
+#### [Installer]
+
+The installer has been completely redesigned with a **profile-based architecture**. The old `pimcore:install` command with individual parameters (`--mysql-host-socket`, `--mysql-username`, `--mysql-password`, `--mysql-database`, etc.) has been removed and replaced with a profile-driven system.
+The installer is now invoked with:
+
+```bash
+vendor/bin/pimcore-install --install-profile=App\\Install\\MyProfile
+```
+
+If you have scripts or CI pipelines that invoke `pimcore:install` with the old options, update them to use `--install-profile` with a profile class. Create an install profile implementing `InstallProfileInterface` for your project.
+
+Please see the documentation for further information: https://docs.pimcore.com/platform/
+
+#### [OpenSearch / Elasticsearch DSN Configuration]
+
+Search engine configuration now uses DSN-based env vars instead of separate host/port/authentication parameters:
+
+- **OpenSearch:** `PIMCORE_OPENSEARCH_DSN=opensearch://admin:admin@localhost:9200?ssl=true`
+- **Elasticsearch:** `PIMCORE_ELASTICSEARCH_DSN=elasticsearch://elastic:changeme@localhost:9200`
+
+The DSN is parsed at runtime in the client factory. 
+The old configuration approach with separate `hosts` arrays in YAML is replaced by a single `dsn` config option.
+
+#### [Messenger Transport DSN Changes]
+
+**This is a breaking change for existing installations.**
+
+The `PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX` env var (previously named `PIMCORE_MESSENGER_TRANSPORT_DSN`) format has changed. 
+It must now include a **trailing separator** for queue name concatenation, because Pimcore bundle configs append queue names directly to this value.
+
+**Before (old format):**
+```
+PIMCORE_MESSENGER_TRANSPORT_DSN=doctrine://default
+```
+
+**After (new format):**
+```
+# Doctrine
+PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=doctrine://default?queue_name=
+
+# AMQP
+PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=amqp://guest:guest@rabbit:5672/%2f/
+
+# Redis
+PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=redis://localhost:6379/
+```
+
+All Pimcore bundle transport configs now use the container parameter `%pimcore.messenger.transport_dsn_prefix%` with direct concatenation:
+
+```yaml
+framework:
+    messenger:
+        transports:
+            pimcore_core: '%pimcore.messenger.transport_dsn_prefix%pimcore_core'
+            pimcore_maintenance: '%pimcore.messenger.transport_dsn_prefix%pimcore_maintenance'
+```
+
+A container-level default is provided in `bundles/CoreBundle/config/pimcore/default.yaml`:
+
+```yaml
+parameters:
+    env(PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX): 'doctrine://default?queue_name='
+```
+If you have `PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX` (or the old `PIMCORE_MESSENGER_TRANSPORT_DSN`) explicitly set in your `.env` or environment, update its value to include the trailing separator and use the new name. For Doctrine, change `doctrine://default` to `doctrine://default?queue_name=`. Failure to do this will result in invalid transport DSNs like `doctrine://defaultpimcore_core`.
+If you have custom transport definitions in your bundle or project YAML that hardcode `doctrine://default?queue_name=`, replace them with `'%pimcore.messenger.transport_dsn_prefix%'` concatenation to support backend-agnostic transport switching.
 
 ## Pimcore 12.3.0
 
@@ -18,16 +102,16 @@
 ### Deprecations
 
 #### Deprecated and Discontinued 
-The following bundles got deprecated and won't be migrated to Pimcore Studio
-- Glossary Bundle
-- Simple Backend Search Bundle
-- Static Routes Bundle
-- Parts of SeoBundle - All functionality except of the redirects and sitemaps won't be migrated to Pimcore Studio
-- WordExport Bundle
-- XliffBundle Export Bundle
+The following bundles have been deprecated and will not be migrated to Pimcore Studio:
+- GlossaryBundle
+- SimpleBackendSearchBundle
+- StaticRoutesBundle
+- Parts of SeoBundle - All functionality, except for redirects and sitemaps, will not be migrated to Pimcore Studio
+- WordExportBundle
+- XliffBundle
 
 #### Deprecated because directly integrated into Studio 
-- SimpleBackendSearch Bundle
+- SimpleBackendSearchBundle
 
 #### [Symfony 6.x Components Support]
 
@@ -151,7 +235,7 @@ Edition or Enterprise/PaaS Edition under a commercial agreement, nothing changes
 existing contracts, rights, and usage terms remain fully intact — POCL has no impact on your
 deployment or support.
 
-Please read the [Pimcore Open Core License](https://github.com/pimcore/pimcore/blob/12.x/LICENSE.md) carefully
+Please read the [Pimcore Open Core License](https://github.com/pimcore/pimcore/blob/2026.x/LICENSE.md) carefully
 and check whether you can continue to use the free Pimcore Community edition.
 **If you continue to use the Community Edition with the Admin UI Classic bundle, [you need to purchase an
 additional perpetual license at a price of €1,480 at our store](https://store.pimcore.com/shop/admin-ui-classic-bundle-for-community-edition-pocl-license-134) because of ExtJS licencing limitations.**

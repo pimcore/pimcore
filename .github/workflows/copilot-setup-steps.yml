@@ -26,7 +26,7 @@ jobs:
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "8.3"
+          php-version: "8.4"
 
       - name: Install SSH Key # this is necessary for Composer to be able to clone source from pimcore/ee-pimcore
         uses: shimataro/ssh-key-action@v2
