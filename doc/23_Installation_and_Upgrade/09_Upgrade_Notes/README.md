@@ -12,7 +12,7 @@ The following bundles have been removed:
 - XliffBundle
 
 ### [General]
-
+- The hard-coded space between quantity value and unit has been removed for class definition quantity fields (e.g. `AbstractQuantityValue`, `QuantityValueRange`). Spacing and formatting between value and unit is now controlled by locale- and translation-based formatting instead of being fixed in the code.
 - The `reset_password` rate limiter configuration has been moved to the studio-backend bundle and is no longer part of Pimcore's core configuration.
 - Added support for PHP `8.5` and bumped minimum requirement of Symfony to `7.4`.
 - Dropped support for PHP `8.3` and Symfony `6`.
