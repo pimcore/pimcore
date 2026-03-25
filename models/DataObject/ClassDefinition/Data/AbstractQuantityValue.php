@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 use Pimcore\Normalizer\NormalizerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractQuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -51,6 +52,14 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
      * @internal
      */
     public bool $autoConvert = false;
+
+    public TranslatorInterface $translator;
+
+    public function __constructor(TranslatorInterface $translator): void
+    {
+        $this->translator = $translator;
+
+    }
 
     public function getUnitWidth(): int|string|null
     {
@@ -146,7 +155,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
             if ($data->getUnitId()) {
                 $unitDefinition = Model\DataObject\QuantityValue\Unit::getById($data->getUnitId());
                 if ($unitDefinition) {
-                    $unit = $unitDefinition->getAbbreviation();
+                    $unit = $this->translator->trans($unitDefinition->getAbbreviation(), [], 'admin');
                 }
             }
 

@@ -19,6 +19,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class QuantityValueRange extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -48,6 +49,14 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      * @internal
      */
     public bool $autoConvert = false;
+
+
+    public TranslatorInterface $translator;
+
+    public function __constructor(TranslatorInterface $translator): void
+    {
+        $this->translator = $translator;
+    }
 
     public function getUnitWidth(): string|int
     {
@@ -239,7 +248,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             $unit = $data->getUnit();
 
             if ($unit instanceof DataObject\QuantityValue\Unit) {
-                $export .= $unit->getAbbreviation();
+                $export .= $this->translator->trans($unit->getAbbreviation(), [], 'admin');;
             }
 
             return $export;
