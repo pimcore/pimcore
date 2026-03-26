@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Workflow;
@@ -42,8 +39,9 @@ class Service
             $dateTime = new DateTime();
 
             if (empty($fc['timeformat']) || $fc['timeformat'] === 'milliseconds') {
-                $dateTime->setTimestamp($value / 1000);
-            } else {
+                $numericValue = is_numeric($value) ? $value : $dateTime->getTimestamp();
+                $dateTime->setTimestamp(intval($numericValue / 1000));
+            } elseif (is_numeric($value)) {
                 $dateTime->setTimestamp($value);
             }
             $data['value'] = $dateTime;
@@ -95,7 +93,7 @@ class Service
      *
      * @return Element\Note $note
      */
-    public static function createActionNote(Element\ElementInterface $element, string $type, string $title, string $description, array $noteData, User $user = null): Element\Note
+    public static function createActionNote(Element\ElementInterface $element, string $type, string $title, string $description, array $noteData, ?User $user = null): Element\Note
     {
         //prepare some vars for creating the note
         if (!$user) {

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -24,6 +21,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 use Pimcore\Normalizer\NormalizerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractQuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -108,7 +106,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
         $this->autoConvert = $autoConvert;
     }
 
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -125,12 +123,12 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
         ];
     }
 
-    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): array
+    public function getDataForQueryResource(mixed $data, ?Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return [
@@ -142,14 +140,15 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
         return null;
     }
 
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             $unit = '';
             if ($data->getUnitId()) {
                 $unitDefinition = Model\DataObject\QuantityValue\Unit::getById($data->getUnitId());
                 if ($unitDefinition) {
-                    $unit = ' ' . $unitDefinition->getAbbreviation();
+                    $translator = Pimcore::getContainer()->get(TranslatorInterface::class);
+                    $unit = $translator->trans($unitDefinition->getAbbreviation(), [], 'admin');
                 }
             }
 
@@ -172,7 +171,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
     /**
      * display the quantity value field data in the grid
      */
-    public function getDataForGrid(mixed $data, Concrete $object = null, array $params = []): ?array
+    public function getDataForGrid(mixed $data, ?Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             $unit = $data->getUnit();
@@ -215,7 +214,9 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
     {
         $obj = parent::__set_state($data);
 
-        $obj->configureOptions();
+        if (Pimcore::inAdmin()) {
+            $obj->configureOptions();
+        }
 
         return $obj;
     }

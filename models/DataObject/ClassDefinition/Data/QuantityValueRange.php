@@ -2,25 +2,24 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Exception;
+use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class QuantityValueRange extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -50,6 +49,24 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      * @internal
      */
     public bool $autoConvert = false;
+
+    /**
+     * Lazily-resolved translator instance.
+     *
+     * @internal
+     */
+    protected ?TranslatorInterface $translator = null;
+
+    protected function getTranslator(): TranslatorInterface
+    {
+        if ($this->translator === null) {
+            /** @var TranslatorInterface $translator */
+            $translator = Pimcore::getContainer()->get(TranslatorInterface::class);
+            $this->translator = $translator;
+        }
+
+        return $this->translator;
+    }
 
     public function getUnitWidth(): string|int
     {
@@ -109,7 +126,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data instanceof DataObject\Data\QuantityValueRange) {
             return [
@@ -130,9 +147,17 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
     {
-        if (isset($data[$this->getName() . '__minimum'], $data[$this->getName() . '__maximum'], $data[$this->getName() . '__unit'])) {
+        if (array_key_exists($this->getName() . '__minimum', $data) &&
+            array_key_exists($this->getName() . '__maximum', $data) &&
+            array_key_exists($this->getName() . '__unit', $data) &&
+            !(
+                is_null($data[$this->getName() . '__minimum']) &&
+                is_null($data[$this->getName() . '__maximum']) &&
+                is_null($data[$this->getName() . '__unit'])
+            )
+        ) {
             $quantityValueRange = new DataObject\Data\QuantityValueRange(
                 $data[$this->getName() . '__minimum'],
                 $data[$this->getName() . '__maximum'],
@@ -155,7 +180,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -165,7 +190,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof DataObject\Data\QuantityValueRange) {
             return [
@@ -183,20 +208,24 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
     {
         if (is_array($data) && (isset($data['minimum']) || isset($data['maximum']) || isset($data['unit']))) {
             if ($data['unit'] === -1 || empty($data['unit'])) {
                 $data['unit'] = null;
             }
 
-            return new DataObject\Data\QuantityValueRange($data['minimum'], $data['maximum'], $data['unit']);
+            return new DataObject\Data\QuantityValueRange(
+                is_null($data['minimum']) ? null : (float) $data['minimum'],
+                is_null($data['maximum']) ? null : (float) $data['maximum'],
+                $data['unit']
+            );
         }
 
         return null;
     }
 
-    public function getDataFromGridEditor(array $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
+    public function getDataFromGridEditor(array $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -206,7 +235,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DataObject\Data\QuantityValueRange) {
             return $data->__toString();
@@ -229,7 +258,8 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             $unit = $data->getUnit();
 
             if ($unit instanceof DataObject\QuantityValue\Unit) {
-                $export .= ' ' . $unit->getAbbreviation();
+                $translator = $this->getTranslator();
+                $export .= $translator->trans($unit->getAbbreviation(), [], 'admin');
             }
 
             return $export;
@@ -258,7 +288,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
 
     public function getDataForGrid(
         ?DataObject\Data\QuantityValueRange $data,
-        DataObject\Concrete $object = null,
+        ?DataObject\Concrete $object = null,
         array $params = []
     ): ?array {
         $gridData = $this->getDataForEditmode($data, $object, $params);
@@ -286,19 +316,20 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             throw new ValidationException('Expected an instance of QuantityValueRange');
         }
 
+        $minimum = $data?->getMinimum();
+        $maximum = $data?->getMaximum();
+
         if ($omitMandatoryCheck === false && $this->getMandatory()
             && ($data === null
-                || $data->getMinimum() === null
-                || $data->getMaximum() === null
+                || $minimum === null
+                || $maximum === null
                 || $data->getUnitId() === null
             )
         ) {
             throw new ValidationException(sprintf('Empty mandatory field [ %s ]', $fieldName));
         }
 
-        if (!empty($data)) {
-            $minimum = $data->getMinimum();
-            $maximum = $data->getMaximum();
+        if ($minimum || $maximum) {
 
             if (!is_numeric($minimum) || !is_numeric($maximum)) {
                 throw new ValidationException(sprintf('Invalid dimension unit data: %s', $fieldName));
@@ -334,7 +365,10 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
-        $obj->configureOptions();
+
+        if (Pimcore::inAdmin()) {
+            $obj->configureOptions();
+        }
 
         return $obj;
     }

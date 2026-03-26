@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset\Image;
@@ -41,7 +38,7 @@ final class Thumbnail implements ThumbnailInterface
      */
     protected static array $hasListenersCache = [];
 
-    public function __construct(Image $asset, array|string|Thumbnail\Config $config = null, bool $deferred = true)
+    public function __construct(Image $asset, array|string|Thumbnail\Config|null $config = null, bool $deferred = true)
     {
         $this->asset = $asset;
         $this->deferred = $deferred;
@@ -83,6 +80,8 @@ final class Thumbnail implements ThumbnailInterface
             $event = new GenericEvent($this, [
                 'pathReference' => $pathReference,
                 'frontendPath' => $path,
+                'asset' => $this->getAsset(),
+                'config' => $this->getConfig(),
             ]);
             Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
             $path = $event->getArgument('frontendPath');
@@ -161,10 +160,13 @@ final class Thumbnail implements ThumbnailInterface
 
     private function addCacheBuster(string $path, array $options, Asset $asset): string
     {
-        if (isset($options['cacheBuster']) && $options['cacheBuster']) {
-            if (!str_starts_with($path, 'http')) {
-                $path = '/cache-buster-' . $asset->getVersionCount() . $path;
-            }
+        if (
+            isset($options['cacheBuster']) &&
+            $options['cacheBuster'] &&
+            !str_starts_with($path, 'http') &&
+            !str_starts_with($path, '/cache-buster-')
+        ) {
+            $path = '/cache-buster-' . $asset->getVersionCount() . $path;
         }
 
         return $path;
@@ -315,13 +317,22 @@ final class Thumbnail implements ThumbnailInterface
         $titleText = !empty($options['title']) ? $options['title'] : (!empty($attributes['title']) ? $attributes['title'] : '');
 
         if (empty($titleText) && (!isset($options['disableAutoTitle']) || !$options['disableAutoTitle'])) {
-            if ($image->getMetadata('title')) {
+            $customTitle = Pimcore\Config::getSystemConfiguration('assets')['metadata']['title'];
+            if (!empty($customTitle) && $image->getMetadata($customTitle)) {
+                $titleText = $image->getMetadata($customTitle);
+            } elseif ($image->getMetadata('title')) {
                 $titleText = $image->getMetadata('title');
+            } else {
+                //don't change the one that is already set
             }
         }
 
         if (empty($altText) && (!isset($options['disableAutoAlt']) || !$options['disableAutoAlt'])) {
-            if ($image->getMetadata('alt')) {
+
+            $customAlt = Pimcore\Config::getSystemConfiguration('assets')['metadata']['alt'];
+            if (!empty($customAlt) && $image->getMetadata($customAlt)) {
+                $altText = $image->getMetadata($customAlt);
+            } elseif ($image->getMetadata('alt')) {
                 $altText = $image->getMetadata('alt');
             } elseif (isset($options['defaultalt'])) {
                 $altText = $options['defaultalt'];
@@ -331,18 +342,28 @@ final class Thumbnail implements ThumbnailInterface
         }
 
         // get copyright from asset
-        if (
-            (!isset($options['disableAutoCopyright']) || !$options['disableAutoCopyright']) &&
-            $image->getMetadata('copyright')
-        ) {
-            if (!empty($altText)) {
-                $altText .= ' | ';
+
+        if (!isset($options['disableAutoCopyright']) || !$options['disableAutoCopyright']) {
+
+            $customCopyright = Pimcore\Config::getSystemConfiguration('assets')['metadata']['copyright'];
+            if (!empty($customCopyright) && $image->getMetadata($customCopyright)) {
+                $copyrightText = $image->getMetadata($customCopyright);
+            } elseif ($image->getMetadata('copyright')) {
+                $copyrightText = $image->getMetadata('copyright');
+            } else {
+                // no value found, skip it
             }
-            if (!empty($titleText)) {
-                $titleText .= ' | ';
+
+            if (isset($copyrightText)) {
+                if (!empty($altText)) {
+                    $altText .= ' | ';
+                }
+                if (!empty($titleText)) {
+                    $titleText .= ' | ';
+                }
+                $altText .= ('© ' . $copyrightText);
+                $titleText .= ('© ' . $copyrightText);
             }
-            $altText .= ('© ' . $image->getMetadata('copyright'));
-            $titleText .= ('© ' . $image->getMetadata('copyright'));
         }
 
         $attributes['alt'] = $altText;
@@ -433,7 +454,8 @@ final class Thumbnail implements ThumbnailInterface
     private function getSrcset(Config $thumbConfig, Image $image, array $options, ?string $mediaQuery = null): string
     {
         $srcSetValues = [];
-        foreach ([1, 2] as $highRes) {
+        $maxDpiFactor = $thumbConfig::getMaxDpiFactor();
+        for ($highRes=1; $highRes <= $maxDpiFactor; $highRes++) {
             $thumbConfigRes = clone $thumbConfig;
             if ($mediaQuery) {
                 $thumbConfigRes->selectMedia($mediaQuery);

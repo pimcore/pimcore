@@ -65,12 +65,12 @@ This launches the interactive installer with a few questions. Make sure that you
 
 :::info
 
- Pimcore allows a fully automated installation process. Read more here: [Advanced Installation Topics](../02_Advanced_Installation_Topics/README.md)
+ Pimcore allows a fully automated installation process. Read more here: [Advanced Installation Topics](../03_Advanced_Installation_Topics/README.md)
 
 :::
 
 ##### Open Admin Interface
-After the installer has finished, you can open the admin interface: `https://your-host.com/admin`
+After the installer has finished and your [server is configured](../../23_Installation_and_Upgrade/README.md), you can open the admin interface: `https://your-host.com/admin`
 
 ##### Debugging Installation Issues
 
@@ -91,7 +91,6 @@ In a typical Pimcore installation, you should set up workers for these transport
 | 3 | pimcore_scheduled_tasks        | [Scheduled tasks](../../18_Tools_and_Features/03_Scheduling.md)                                  |
 | 4 | pimcore_image_optimize         | Execute optimizers on Asset image thumbnails                                                     |
 | 5 | pimcore_asset_update           | Process Asset metadata e.g. Documents page count, Video duration/dimensions, Image previews etc. |
-| 6 | pimcore_search_backend_message | Update the index for Pimcore backend search. Only if you install `SimpleBackendSearchBundle`     |
 
 Beware that the actual transports depend on which core bundles you installed. Therefore, you will need to adjust the list accordingly to your installation.
 Use `bin/console debug:messenger` to list all available transports.
@@ -121,14 +120,14 @@ worker processes in production. The following is a simplified example of mainten
 */5 * * * * /your/project/bin/console messenger:consume pimcore_image_optimize --time-limit=300
 ```
 
-Refer to [Symfony Messenger](../02_Advanced_Installation_Topics/01_Symfony_Messenger.md) for further information on working
+Refer to [Symfony Messenger](../03_Advanced_Installation_Topics/01_Symfony_Messenger.md) for further information on working
 with the messenger component in Pimcore.
 
 > Depending on installed and activated extensions, it might be necessary to add additional transports to the messenger consume command. Please look at the documentation of corresponding extensions for more details. 
 
 Keep in mind that the cron job has to run as the same user as the web interface to avoid permission issues (eg. `www-data`).
 
-For information about how to handle failed jobs, see this [section](../02_Advanced_Installation_Topics/01_Symfony_Messenger.md).
+For information about how to handle failed jobs, see this [section](../03_Advanced_Installation_Topics/01_Symfony_Messenger.md).
 
 ## Caching
 Make sure to use any sort of [caching](https://pimcore.com/docs/platform/Pimcore/Development_Tools_and_Details/Cache/) to improve performance. We recommend Redis cache storage.
@@ -139,11 +138,11 @@ If you would like to know more about the installation process or if you are havi
 
 ## 7. Further Reading
 
-- [Symfony Messenger](../02_Advanced_Installation_Topics/01_Symfony_Messenger.md)
-- [Advanced Installation Topics](../02_Advanced_Installation_Topics/README.md)
+- [Symfony Messenger](../03_Advanced_Installation_Topics/01_Symfony_Messenger.md)
+- [Advanced Installation Topics](../03_Advanced_Installation_Topics/README.md)
 - [Apache Configuration](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md)
 - [Nginx Configuration](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md)
 - [Database Setup](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/05_DB_Setup.md)
 - [Additional Tools Installation](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md)
 
-Next up - [Directories Structure](../03_Directory_Structure.md)
+Next up - [Directories Structure](../04_Directory_Structure.md)

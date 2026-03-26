@@ -13,8 +13,8 @@ or (e.g. in *prod* environments) you can configure everything via real environme
 
 In addition to Symfony configurations, Pimcore also supports environment specific configs for: 
 
-* [https://github.com/pimcore/demo/tree/11.x/config/pimcore](https://github.com/pimcore/demo/tree/11.x/config/pimcore) 
-* [https://github.com/pimcore/demo/tree/11.x/var/config](https://github.com/pimcore/demo/tree/11.x/var/config)
+* [https://github.com/pimcore/demo/tree/2025.x/config/pimcore](https://github.com/pimcore/demo/tree/2025.x/config/pimcore) 
+* [https://github.com/pimcore/demo/tree/2025.x/var/config](https://github.com/pimcore/demo/tree/2025.x/var/config)
 
 
 ## Configuration Storage Locations & Fallbacks
@@ -107,17 +107,12 @@ pimcore_custom_reports:
             write_target:
                 type: 'symfony-config'
 
-pimcore_static_routes:
-    config_location:
-        staticroutes:
-            write_target:
-                type: 'symfony-config'
        ...
 ```
 
 #### Production environment with `symfony-config`
 When using `symfony-config` write target, configs are written to Symfony Config files (`yaml`), which are only getting revalidated in debug mode. So if you're
-changing configs in production you won't see any update, because these configs are read only.
+changing configs in production, you won't see any update because these configs are read-only.
 
 If you'd like to allow changes in production, switch to the alternate `settings-store` config storage. 
 You can do so by adding the following to your `symfony-config`. e.g.:
@@ -135,3 +130,13 @@ With `settings-store` target, one can update/change configurations in production
 This is not the case with `symfony-config` write target, as configurations are read-only and deployed from different environment. So we need to explicitly revalidate the generated files either through command or custom script. 
 
 For example, to revalidate image or video thumbnails either run command `pimcore:thumbnails:clear` or call `Asset\Image\Thumbnail\Config::clearTempFiles()` after deploying changes on thumbnail configurations.
+
+
+#### Troubleshooting: save button is grayed out
+
+Please note that the saving button would be disabled (grayed out) under the following conditions:
+
+- when `write_target` is intentionally set to `disabled`
+- as specified above about production enviroment, when set to `symfony-config` and not being in debug mode
+- when the `write_target` is `symfony-config` and the `yaml` file does not exist, or it is not writeable (according to file-system permissions)
+- when the `read_target` is set but it does not match with the `write_target`.

@@ -1,0 +1,27 @@
+name: "Composer outdated check - monthly minor check"
+
+on:
+    workflow_dispatch:
+    schedule:
+        - cron:  '0 7 1 * *'
+
+permissions:
+  contents: read
+
+jobs:
+    composer-checks:
+        uses: pimcore/workflows-collection-public/.github/workflows/reusable-composer-checks.yaml@main
+        if: github.repository_owner == 'pimcore'
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - { php-version: 8.5, branch: 2026.x }
+                    - { php-version: 8.4, branch: 12.3 }
+                    - { php-version: 8.3, branch: 11.5 }
+        with:
+            php-version: ${{ matrix.php-version }}
+            branch: ${{ matrix.branch }}
+            ignore-list: "public"
+            version-type: "-m"
+        secrets: inherit

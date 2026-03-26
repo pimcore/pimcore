@@ -2,22 +2,20 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Config;
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
@@ -112,7 +110,7 @@ class RoutingListener implements EventSubscriberInterface
             $site = Site::getByDomain($host);
         } elseif ($this->requestHelper->isObjectPreviewRequestByAdmin($request)) {
             // When rendering an object's preview tab, resolve the site via a parameter
-            $siteId = $request->query->getInt(PreviewGeneratorInterface::PARAMETER_SITE);
+            $siteId = ParameterBagHelper::getInt($request->query, PreviewGeneratorInterface::PARAMETER_SITE);
             $site = Site::getById($siteId);
         }
 

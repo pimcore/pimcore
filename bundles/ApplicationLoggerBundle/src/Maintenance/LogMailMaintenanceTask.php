@@ -2,21 +2,20 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\ApplicationLoggerBundle\Maintenance;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
+use Pimcore\Bundle\ApplicationLoggerBundle\Enum\LogLevel;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
@@ -37,22 +36,27 @@ class LogMailMaintenanceTask implements TaskInterface
         $this->config = $config;
     }
 
+    /**
+     * @throws Exception
+     */
     public function execute(): void
     {
-        $db = $this->db;
 
         if (!empty($this->config['applicationlog']['mail_notification']['send_log_summary'])) {
             $receivers = preg_split('/,|;/', $this->config['applicationlog']['mail_notification']['mail_receiver']);
 
-            array_walk($receivers, function (&$value) {
+            array_walk($receivers, static function (&$value) {
                 $value = trim($value);
             });
 
-            $logLevel = (int) ($this->config['applicationlog']['mail_notification']['filter_priority'] ?? null);
+            $logLevel = ($this->config['applicationlog']['mail_notification']['filter_priority'] ?? null);
+            $logLevel = $logLevel === null ? LogLevel::Debug : LogLevel::getLogLevel($logLevel);
 
-            $query = 'SELECT * FROM '.ApplicationLoggerDb::TABLE_NAME." WHERE maintenanceChecked IS NULL AND priority <= $logLevel order by id desc";
+            $query = 'SELECT * FROM '
+                .ApplicationLoggerDb::TABLE_NAME
+                .' WHERE maintenanceChecked IS NULL AND priority <= ' . $logLevel->value . ' ORDER BY id DESC';
 
-            $rows = $db->fetchAllAssociative($query);
+            $rows = $this->db->fetchAllAssociative($query);
             $limit = 100;
             $rowsProcessed = 0;
 
@@ -88,6 +92,12 @@ class LogMailMaintenanceTask implements TaskInterface
         // flag them as checked, regardless if email notifications are enabled or not
         // otherwise, when activating email notifications, you'll receive all log-messages from the past and not
         // since the point when you enabled the notifications
-        $db->executeQuery('UPDATE '.ApplicationLoggerDb::TABLE_NAME.' set maintenanceChecked = 1 WHERE maintenanceChecked != 1 OR maintenanceChecked IS NULL');
+        $this->db->executeQuery(
+            'UPDATE '
+            . ApplicationLoggerDb::TABLE_NAME
+            . ' SET maintenanceChecked = 1 '
+            . 'WHERE maintenanceChecked != 1 '
+            . 'OR maintenanceChecked IS NULL'
+        );
     }
 }

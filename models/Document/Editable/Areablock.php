@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -25,7 +22,6 @@ use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\EditableRenderer;
-use Pimcore\Tool;
 use Pimcore\Tool\HtmlUtils;
 
 /**
@@ -214,7 +210,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      *
      * @return string|void
      */
-    public function content(Area\Info $info = null, array $templateParams = [], bool $return = false)
+    public function content(?Area\Info $info = null, array $templateParams = [], bool $return = false)
     {
         if (!$info) {
             $info = $this->buildInfoObject();
@@ -251,13 +247,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
     public function setDataFromResource(mixed $data): static
     {
-        $unserializedData = Tool\Serialize::unserialize($data);
-
-        if (is_array($unserializedData)) {
-            $this->indices = $unserializedData;
-        } else {
-            $this->indices = [];
-        }
+        $unserializedData = $this->getUnserializedData($data) ?? [];
+        $this->indices = $unserializedData;
 
         return $this;
     }
@@ -361,7 +352,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $this->outputEditmode($html);
     }
 
-    public function blockStart(Area\Info $info = null): array
+    public function blockStart(?Area\Info $info = null): array
     {
         $this->blockStarted = true;
         $attributes = [

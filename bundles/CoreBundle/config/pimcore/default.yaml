@@ -1,5 +1,10 @@
 parameters:
     locale: en
+    env(PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX): 'doctrine://default?queue_name='
+    pimcore.messenger.transport_dsn_prefix: '%env(resolve:PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX)%'
+    env(PIMCORE_ENCRYPTION_SECRET): ''
+    env(PIMCORE_INSTANCE_IDENTIFIER): ''
+    env(PIMCORE_PRODUCT_KEY): ''
 
 framework:
     translator:
@@ -11,7 +16,7 @@ framework:
         strict_requirements: ~
         utf8: true
     csrf_protection: ~
-    validation: { enable_annotations: true }
+    validation: { enable_attributes: true }
     default_locale:  "%locale%"
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
@@ -30,13 +35,13 @@ framework:
             main: native://default
     messenger:
         transports:
-            pimcore_core: "doctrine://default?queue_name=pimcore_core"
-            pimcore_maintenance: "doctrine://default?queue_name=pimcore_maintenance"
-            pimcore_scheduled_tasks: "doctrine://default?queue_name=pimcore_scheduled_tasks"
-            pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
-            pimcore_asset_update: "doctrine://default?queue_name=pimcore_asset_update"
+            pimcore_core: "%pimcore.messenger.transport_dsn_prefix%pimcore_core"
+            pimcore_maintenance: "%pimcore.messenger.transport_dsn_prefix%pimcore_maintenance"
+            pimcore_scheduled_tasks: "%pimcore.messenger.transport_dsn_prefix%pimcore_scheduled_tasks"
+            pimcore_image_optimize: "%pimcore.messenger.transport_dsn_prefix%pimcore_image_optimize"
+            pimcore_asset_update: "%pimcore.messenger.transport_dsn_prefix%pimcore_asset_update"
             #Dependency resolving is synchronous by default, use the following commented lines below (transports/routing) to make it async
-            #pimcore_dependencies: "doctrine://default?queue_name=pimcore_dependencies"
+            #pimcore_dependencies: "%pimcore.messenger.transport_dsn_prefix%pimcore_dependencies"
         routing:
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
             'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
@@ -52,11 +57,6 @@ framework:
         default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:
-    rate_limiter:
-        reset_password:
-            policy: 'fixed_window'
-            limit: 5
-            interval: '5 minutes'
     html_sanitizer:
         sanitizers:
             pimcore.wysiwyg_sanitizer:
@@ -69,7 +69,7 @@ framework:
                 allow_elements:
                     span: [ 'class', 'style', 'id' ]
                     div: [ 'class', 'style', 'id' ]
-                    p: [ 'class', 'style', 'id' ]
+                    p: [ 'class', 'style', 'id', 'dir', 'data-cell' ]
                     strong: 'class'
                     em: 'class'
                     h1: [ 'class', 'id' ]
@@ -82,11 +82,11 @@ framework:
                     table: [ 'class', 'style', 'cellspacing', 'cellpadding', 'border', 'width', 'height', 'id' ]
                     colgroup: 'class'
                     col: [ 'class', 'style', 'id' ]
-                    thead: [ 'class', 'id' ]
-                    tbody: [ 'class', 'id' ]
-                    tr: [ 'class', 'id' ]
-                    td: [ 'class', 'id' ]
-                    th: [ 'class', 'id', 'scope' ]
+                    thead: [ 'class', 'id', 'style' ]
+                    tbody: [ 'class', 'id', 'style' ]
+                    tr: [ 'class', 'id', 'style', 'colspan', 'rowspan' ]
+                    td: [ 'class', 'id', 'style', 'colspan', 'rowspan', 'data-row', 'width', 'height' ]
+                    th: [ 'class', 'id', 'scope', 'style', 'colspan', 'rowspan', 'width', 'height' ]
                     ul: [ 'class', 'style', 'id' ]
                     li: [ 'class', 'style', 'id' ]
                     ol: [ 'class', 'style', 'id' ]
@@ -100,7 +100,7 @@ framework:
                     s: [ 'class', 'id' ]
                     iframe: [ 'frameborder', 'height', 'longdesc', 'name', 'sandbox', 'scrolling', 'src', 'title', 'width' ]
                     br: ''
-                    img: [ 'class', 'alt', 'style', 'src' ]
+                    img: [ 'class', 'id', 'alt', 'style', 'src' ]
                     hr: ''
             pimcore.translation_sanitizer:
                 allow_attributes:
@@ -140,6 +140,7 @@ doctrine:
         default_connection: default
         connections:
             default:
+                url: '%env(resolve:DATABASE_URL)%'
                 driver: pdo_mysql
                 charset: UTF8MB4
                 logging: false
@@ -149,7 +150,7 @@ doctrine:
                 default_table_options:
                     charset: UTF8MB4
                     engine: InnoDB
-                    collate: utf8mb4_general_ci
+                    collate: utf8mb4_unicode_520_ci
 
 # Monolog Configuration
 monolog:
@@ -339,6 +340,7 @@ pimcore:
 
     gotenberg:
         base_url: 'http://gotenberg:3000'
+        ping_cache_ttl: 60
 
     config_location:
         select_options:
@@ -347,3 +349,10 @@ pimcore:
 
     dependency:
         enabled: true
+
+    encryption:
+        secret: '%env(PIMCORE_ENCRYPTION_SECRET)%'
+
+    product_registration:
+        instance_identifier: '%env(PIMCORE_INSTANCE_IDENTIFIER)%'
+        product_key: '%env(PIMCORE_PRODUCT_KEY)%'

@@ -1,21 +1,19 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Dependency;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\DBAL\ParameterType;
 use Exception;
 use Pimcore;
 use Pimcore\Db\Helper;
@@ -37,7 +35,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      *
      */
-    public function getBySourceId(int $id = null, string $type = null): void
+    public function getBySourceId(?int $id = null, ?string $type = null): void
     {
         if ($id && $type) {
             $this->model->setSourceId($id);
@@ -60,11 +58,11 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     public function getFilterRequiresByPath(
-        int $offset = null,
-        int $limit = null,
-        string $value = null,
-        string $orderBy = null,
-        string $orderDirection = null): array
+        ?int $offset = null,
+        ?int $limit = null,
+        ?string $value = null,
+        ?string $orderBy = null,
+        ?string $orderDirection = null): array
     {
 
         $sourceId = (int)$this->model->getSourceId();
@@ -87,42 +85,48 @@ class Dao extends Model\Dao\AbstractDao
         $query = "
         SELECT id, type
         FROM (
-            SELECT d.targetid as id, d.targettype as type
+            SELECT d.targetid AS id, d.targettype AS type
             FROM dependencies d
-            INNER JOIN objects o ON o.id = d.targetid AND d.targettype= 'object'
-            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(o.path, o.key)) RLIKE '".$value."'
+            INNER JOIN objects o ON o.id = d.targetid AND d.targettype = 'object'
+            WHERE d.sourcetype = :sourceType AND d.sourceid = :sourceId AND LOWER(CONCAT(o.path, o.key)) RLIKE :value
             UNION
-            SELECT d.targetid as id, d.targettype as type
+            SELECT d.targetid AS id, d.targettype AS type
             FROM dependencies d
-            INNER JOIN documents doc ON doc.id = d.targetid AND d.targettype= 'document'
-            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(doc.path, doc.key)) RLIKE '".$value."'
+            INNER JOIN documents doc ON doc.id = d.targetid AND d.targettype = 'document'
+            WHERE d.sourcetype = :sourceType AND d.sourceid = :sourceId AND LOWER(CONCAT(doc.path, doc.key)) RLIKE :value
             UNION
-            SELECT d.targetid as id, d.targettype as type
+            SELECT d.targetid AS id, d.targettype AS type
             FROM dependencies d
-            INNER JOIN assets a ON a.id = d.targetid AND d.targettype= 'asset'
-            WHERE d.sourcetype = '" . $sourceType. "' AND d.sourceid = " . $sourceId . " AND LOWER(CONCAT(a.path, a.filename)) RLIKE '".$value."'
+            INNER JOIN assets a ON a.id = d.targetid AND d.targettype = 'asset'
+            WHERE d.sourcetype = :sourceType AND d.sourceid = :sourceId AND LOWER(CONCAT(a.path, a.filename)) RLIKE :value
         ) dep
         ORDER BY " . $orderBy . ' ' . $orderDirection;
+
+        $params = [
+            'sourceType' => $sourceType,
+            'sourceId'   => $sourceId,
+            'value'      => preg_quote((string) $value),
+        ];
+
+        $types = [
+            'sourceType' => ParameterType::STRING,
+            'sourceId'   => ParameterType::INTEGER,
+            'value'      => ParameterType::STRING,
+        ];
 
         if ($offset !== null && $limit !== null) {
             $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
         }
 
-        $requiresByPath = $this->db->fetchAllAssociative($query);
-
-        if (count($requiresByPath) > 0) {
-            return $requiresByPath;
-        } else {
-            return [];
-        }
+        return $this->db->fetchAllAssociative($query, $params, $types);
     }
 
     public function getFilterRequiredByPath(
-        int $offset = null,
-        int $limit = null,
-        string $value = null,
-        string $orderBy = null,
-        string $orderDirection = null
+        ?int $offset = null,
+        ?int $limit = null,
+        ?string $value = null,
+        ?string $orderBy = null,
+        ?string $orderDirection = null
     ): array {
 
         $targetId = (int)$this->model->getSourceId();
@@ -145,34 +149,40 @@ class Dao extends Model\Dao\AbstractDao
         $query = "
         SELECT id, type
         FROM (
-            SELECT d.sourceid as id, d.sourcetype as type
+            SELECT d.sourceid AS id, d.sourcetype AS type
             FROM dependencies d
-            INNER JOIN objects o ON o.id = d.sourceid AND d.targettype= 'object'
-            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(o.path, o.key)) RLIKE '".$value."'
+            INNER JOIN objects o ON o.id = d.sourceid AND d.targettype = 'object'
+            WHERE d.targettype = :targetType AND d.targetid = :targetId AND LOWER(CONCAT(o.path, o.key)) RLIKE :value
             UNION
-            SELECT d.sourceid as id, d.sourcetype as type
+            SELECT d.sourceid AS id, d.sourcetype AS type
             FROM dependencies d
-            INNER JOIN documents doc ON doc.id = d.sourceid AND d.targettype= 'document'
-            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(doc.path, doc.key)) RLIKE '".$value."'
+            INNER JOIN documents doc ON doc.id = d.sourceid AND d.targettype = 'document'
+            WHERE d.targettype = :targetType AND d.targetid = :targetId AND LOWER(CONCAT(doc.path, doc.key)) RLIKE :value
             UNION
-            SELECT d.sourceid as id, d.sourcetype as type
+            SELECT d.sourceid AS id, d.sourcetype AS type
             FROM dependencies d
-            INNER JOIN assets a ON a.id = d.sourceid AND d.targettype= 'asset'
-            WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND LOWER(CONCAT(a.path, a.filename)) RLIKE '".$value."'
+            INNER JOIN assets a ON a.id = d.sourceid AND d.targettype = 'asset'
+            WHERE d.targettype = :targetType AND d.targetid = :targetId AND LOWER(CONCAT(a.path, a.filename)) RLIKE :value
         ) dep
         ORDER BY " . $orderBy . ' ' . $orderDirection;
+
+        $params = [
+            'targetType' => $targetType,
+            'targetId'   => $targetId,
+            'value'      => preg_quote((string) $value),
+        ];
+
+        $types = [
+            'targetType' => ParameterType::STRING,
+            'targetId'   => ParameterType::INTEGER,
+            'value'      => ParameterType::STRING,
+        ];
 
         if ($offset !== null && $limit !== null) {
             $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
         }
 
-        $requiredByPath = $this->db->fetchAllAssociative($query);
-
-        if (count($requiredByPath) > 0) {
-            return $requiredByPath;
-        } else {
-            return [];
-        }
+        return $this->db->fetchAllAssociative($query, $params, $types);
     }
 
     /**
@@ -285,7 +295,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      *
      */
-    public function getRequiredBy(int $offset = null, int $limit = null): array
+    public function getRequiredBy(?int $offset = null, ?int $limit = null): array
     {
         $query = '
             SELECT dependencies.sourceid, dependencies.sourcetype FROM dependencies
@@ -314,7 +324,7 @@ class Dao extends Model\Dao\AbstractDao
         return $requiredBy;
     }
 
-    public function getRequiredByWithPath(int $offset = null, int $limit = null, string $orderBy = null, string $orderDirection = null): array
+    public function getRequiredByWithPath(?int $offset = null, ?int $limit = null, ?string $orderBy = null, ?string $orderDirection = null): array
     {
         $targetId = $this->model->getSourceId();
 

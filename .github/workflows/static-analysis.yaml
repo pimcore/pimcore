@@ -5,23 +5,24 @@ on:
     workflow_dispatch:
     schedule:
         -   cron: '0 3 * * *'
-    pull_request:
+    pull_request_target:
         branches:
-            - "[0-9]+.[0-9]+"
-            - "[0-9]+.x"
+            - "2026.*"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
     push:
         branches:
-            - "[0-9]+.[0-9]+"
-            - "[0-9]+.x"
+            - "2026.*"
             - "*_actions"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
 
 env:
+    PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_CI_INSTANCE_IDENTIFIER }}
+    PIMCORE_ENCRYPTION_SECRET: ${{ secrets.PIMCORE_CI_ENCRYPTION_SECRET }}
+    PIMCORE_PRODUCT_KEY: ${{ secrets.PIMCORE_CI_PRODUCT_KEY }}
     PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
     APP_ENV: test
     PIMCORE_TEST: 1
@@ -33,22 +34,26 @@ permissions:
 jobs:
     static-analysis-phpstan:
         name: "Static Analysis with PHPStan"
-        runs-on: "ubuntu-20.04"
+        runs-on: "ubuntu-latest"
         continue-on-error: ${{ matrix.experimental }}
         strategy:
             matrix:
                 include:
-                    - { php-version: "8.3", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.3", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.2", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.2", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.2", dependencies: "highest", experimental: true, symfony: "6.4.x-dev", composer-options: "" }
-                    - { php-version: "8.1", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.1", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.4", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.4", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.5", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.5", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
 
         steps:
-            - name: "Checkout code"
-              uses: "actions/checkout@v2"
+            - name: Checkout PR head (only for pull_request_target)
+              if: github.event_name == 'pull_request_target'
+              uses: "actions/checkout@v4"
+              with:
+                ref: "refs/pull/${{ github.event.pull_request.number }}/merge"
+
+            - name: Checkout PR head (for push or other events)
+              if: github.event_name != 'pull_request_target'
+              uses: "actions/checkout@v4"
 
             - name: "Install PHP"
               uses: "shivammathur/setup-php@v2"
@@ -88,7 +93,7 @@ jobs:
 
             - name: "Upload baseline file"
               if: ${{ failure() }}
-              uses: actions/upload-artifact@v2
+              uses: actions/upload-artifact@v4
               with:
                   name: phpstan-baseline.neon
                   path: phpstan-baseline.neon

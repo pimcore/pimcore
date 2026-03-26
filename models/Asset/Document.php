@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset;
@@ -48,7 +45,7 @@ class Document extends Model\Asset
      *
      * @internal
      */
-    public function processPageCount(string $path = null): bool
+    public function processPageCount(?string $path = null): bool
     {
         if (!$this->isPageCountProcessingEnabled()) {
             return false;
@@ -57,7 +54,7 @@ class Document extends Model\Asset
         if (!\Pimcore\Document::isAvailable()) {
             Logger::error(
                 sprintf(
-                    "Couldn't create image-thumbnail of document %s as no document adapter is available",
+                    "Couldn't process page count of document %s as no document adapter is available",
                     $this->getRealFullPath()
                 )
             );
@@ -75,6 +72,8 @@ class Document extends Model\Asset
         } catch (Exception $e) {
             Logger::error((string) $e);
             $this->setCustomSetting('document_page_count', 'failed');
+
+            return false;
         }
 
         return true;
@@ -102,26 +101,8 @@ class Document extends Model\Asset
         int $page = 1,
         bool $deferred = false
     ): Document\ImageThumbnailInterface {
-        if (!$this->isThumbnailsEnabled()) {
+        if (!$this->isThumbnailsEnabled() || !\Pimcore\Document::isAvailable()) {
             return new Document\ImageThumbnail(null);
-        }
-
-        if ($this->isPageCountProcessingEnabled()) {
-            if (!\Pimcore\Document::isAvailable()) {
-                Logger::error(
-                    sprintf(
-                        "Couldn't create image-thumbnail of document %s as no document adapter is available",
-                        $this->getRealFullPath()
-                    )
-                );
-
-                return new Document\ImageThumbnail(null);
-            }
-
-            if (!$this->getCustomSetting('document_page_count')) {
-                Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
-                $this->addToUpdateTaskQueue();
-            }
         }
 
         return new Document\ImageThumbnail($this, $thumbnailName, $page, $deferred);
@@ -130,40 +111,24 @@ class Document extends Model\Asset
     /**
      * @throws Exception
      */
-    public function getText(int $page = null): ?string
+    public function getText(?int $page = null): ?string
     {
         if (!$this->isTextProcessingEnabled()) {
             return null;
         }
 
-        if ($this->isPageCountProcessingEnabled()) {
-            if (!\Pimcore\Document::isAvailable() || !\Pimcore\Document::isFileTypeSupported($this->getFilename())) {
-                Logger::warning(
-                    sprintf(
-                        "Couldn't get text out of document %s as no supported document adapter is available",
-                        $this->getRealFullPath()
-                    )
-                );
-            } elseif (!$this->getCustomSetting('document_page_count')) {
-                Logger::info(
-                    sprintf(
-                        'Unable to fetch text of %s as it was not processed yet by the maintenance script',
-                        $this->getRealFullPath()
-                    )
-                );
-            } else {
-                $cacheKey = 'asset_document_text_' . $this->getId() . '_' . ($page ? $page : 'all');
-                if (!$text = Cache::load($cacheKey)) {
-                    $document = \Pimcore\Document::getInstance();
-                    $text = $document->getText($page, $this);
-                    Cache::save($text, $cacheKey, $this->getCacheTags(), null, 99, true);
-                }
-
-                return (string)$text;
-            }
+        if (!\Pimcore\Document::isAvailable() || !\Pimcore\Document::isFileTypeSupported($this->getFilename())) {
+            return null;
         }
 
-        return null;
+        $cacheKey = 'asset_document_text_' . $this->getId() . '_' . ($page ? $page : 'all');
+        if (!$text = Cache::load($cacheKey)) {
+            $document = \Pimcore\Document::getInstance();
+            $text = $document->getText($page, $this);
+            Cache::save($text, $cacheKey, $this->getCacheTags(), null, 99, true);
+        }
+
+        return (string) $text;
     }
 
     public function checkIfPdfContainsJS(): bool
@@ -214,12 +179,18 @@ class Document extends Model\Asset
         return null;
     }
 
-    private function isThumbnailsEnabled(): bool
+    /**
+     * @internal
+     */
+    public function isThumbnailsEnabled(): bool
     {
         return Config::getSystemConfiguration('assets')['document']['thumbnails']['enabled'];
     }
 
-    private function isPageCountProcessingEnabled(): bool
+    /**
+     * @internal
+     */
+    public function isPageCountProcessingEnabled(): bool
     {
         return Config::getSystemConfiguration('assets')['document']['process_page_count'];
     }

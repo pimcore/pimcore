@@ -29,7 +29,6 @@ All Twig extension functions are described below in detail, the following tables
 | `pimcorecache`                                                          | Simple in-template caching functionality                                          |
 | `pimcore_cache()` (deprecated)                                          | Simple in-template caching functionality (deprecated legacy version)              |
 | `pimcore_device()`                                                      | Helps implementing adaptive designs                                               |
-| `pimcore_glossary`                                                      | Twig Filter: Apply filter on content to pass it to Glossary engine                |
 | `pimcore_placeholder()`                                                 | Adding and embedding custom placeholders, e.g. for special header tags, etc.      |
 | `pimcore_head_link()`                                                   | Embeding / managing referenced stylesheets (alternative to `assets()`)            |
 | `pimcore_head_meta()`                                                   | Managing your \<meta\> elements in your HTML document                             |
@@ -47,13 +46,13 @@ All Twig extension functions are described below in detail, the following tables
 
 Pimcore also adds some Twig tests for evaluating boolean conditions e.g.
 ```twig
-{# using 'instaceof' checks if object is instanceof provided classname #}
-{% if (product is instanceof('App\\Model\\Product\\Car')) %}
+{# using 'instanceof' checks if object is instanceof provided classname #}
+{% if product is instanceof('App\\Model\\Product\\Car') %}
     ...
 {% endif %}
 
 {# using 'pimcore_data_object' checks if object is instanceof \Pimcore\Model\DataObject\Concrete #}
-{% if (product is pimcore_data_object) %}
+{% if product is pimcore_data_object %}
  ...
 {% endif %}
 ```
@@ -182,15 +181,6 @@ This extension makes it easy to implement "Adaptive Design" in Pimcore.
    
 For details also see [Adaptive Design](../../../19_Development_Tools_and_Details/21_Adaptive_Design_Helper.md).
 
-### `pimcore_glossary`
-
-The `pimcore_glossary` filter replaces glossary terms. See [Glossary](../../../18_Tools_and_Features/21_Glossary.md) for details.
-
-```twig
-{% apply pimcore_glossary %}
-My content
-{% endapply %}
-``` 
 
 ### `pimcore_placeholder` 
 See [Placeholder Template Extension](00_Placeholder.md)
@@ -225,17 +215,17 @@ This is especially useful for footers, headers, navigations, sidebars, teasers, 
  
  ##### Example
 ```twig
-{#include path#}
+{# include path #}
 {{ pimcore_inc("/shared/boxes/buttons") }}
  
-{#include ID#}
+{# include ID #}
 {{ pimcore_inc(256) }}
 
-{#include object#}
+{# include object #}
 {% set doc = pimcore_doc(477) %}
 {{ pimcore_inc(doc, {param: 'value'}) }}
   
-{#disable caching#}
+{# disable caching #}
 {{ pimcore_inc(123, null, false) }}
 ```
 
@@ -253,7 +243,7 @@ IndexController.php (whatever controller / method is designated for /some/other/
 ```php
 public function otherDocumentAction(Request $request): array
 {
-    return ['parameterToPass' => $request->get('parameterToPass')];
+    return ['parameterToPass' => $request->query->get('parameterToPass')];
 }
 ```
 
@@ -261,7 +251,7 @@ more Convenient way
 ```php
 public function otherDocumentAction(Request $request): Response
 {
-    return $this->render(":Default:someOtherDocument.html.twig", ['parameterToPass' => $request->get('parameterToPass')]);
+    return $this->render(":Default:someOtherDocument.html.twig", ['parameterToPass' => $request->query->get('parameterToPass')]);
 }
 ```
 
@@ -318,5 +308,5 @@ All parameters are optional here:
  ##### Example
 ```twig
 {% set object = pimcore_object(769) %}
-{{  pimcore_url({'object': object}) }}
+{{ pimcore_url({'object': object}) }}
 ```

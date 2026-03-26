@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tests\Support\Test\DataType;
@@ -99,6 +96,34 @@ abstract class AbstractDataTypeTestCase extends TestCase
         return true;
     }
 
+    abstract protected function createTestObject(array $fields = [], ?array &$params = []): Unittest;
+
+    abstract public function refreshObject(): void;
+
+    public function testMarshallDateRange(): void
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillDateRange',
+                'field' => 'dateRange',
+            ],
+        ]);
+
+        $before = $this->testObject->getDateRange();
+        $this->assertNotNull($before);
+
+        $version = $this->testObject->getLatestVersion(includingPublished: true);
+        $data = $version->loadData(true);
+
+        $after = $data->getDateRange();
+        $this->assertNotSame($before, $after);
+        $this->assertEquals($before->getEndDate(), $after->getEndDate());
+        $this->assertEquals($before->getRecurrences(), $after->getRecurrences());
+        $this->assertEquals($before->getStartDate(), $after->getStartDate());
+        $this->assertEquals($before->isEndExcluded(), $after->isEndExcluded());
+        $this->assertEquals($before->isStartExcluded(), $after->isStartExcluded());
+    }
+
     public function testBooleanSelect(): void
     {
         $this->createTestObject('booleanSelect');
@@ -106,10 +131,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->refreshObject();
         $this->testDataHelper->assertBooleanSelect($this->testObject, 'booleanSelect', $this->seed);
     }
-
-    abstract protected function createTestObject(array $fields = [], ?array &$params = []): Unittest;
-
-    abstract public function refreshObject(): void;
 
     public function testBricks(): void
     {
@@ -242,7 +263,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject([
             [
-                'method' => 'fillMultiSelect',
+                'method' => 'fillCountryMultiSelect',
                 'field' => 'countries',
             ],
         ]);
@@ -257,6 +278,19 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
         $this->testDataHelper->assertDate($this->testObject, 'date', $this->seed);
+    }
+
+    public function testDateRange(): void
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillDateRange',
+                'field' => 'dateRange',
+            ],
+        ]);
+
+        $this->refreshObject();
+        $this->testDataHelper->assertDatePeriod($this->testObject, 'dateRange', $this->seed);
     }
 
     public function testDateTime(): void
@@ -471,13 +505,13 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject([
             [
-                'method' => 'fillMultiSelect',
+                'method' => 'fillLanguageMultiSelect',
                 'field' => 'languages',
             ],
         ]);
 
         $this->refreshObject();
-        $this->testDataHelper->assertCountryMultiSelect($this->testObject, 'languages', $this->seed);
+        $this->testDataHelper->assertLanguageMultiSelect($this->testObject, 'languages', $this->seed);
     }
 
     public function testLastname(): void
@@ -623,6 +657,19 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
         $this->testDataHelper->assertMultiSelect($this->testObject, 'multiselect', $this->seed);
+    }
+
+    public function testMultiSelectWithEnforceValidation(): void
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillMultiSelectEnforced',
+                'field' => 'multiselectenforced',
+            ],
+        ]);
+
+        $this->refreshObject();
+        $this->testDataHelper->assertMultiSelectEnforced($this->testObject, 'multiselectenforced', $this->seed);
     }
 
     public function testNumeric(): void

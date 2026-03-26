@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -33,6 +30,23 @@ use Pimcore\Model\Element;
  */
 class Renderlet extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface, LazyLoadingInterface
 {
+    /**
+     * Known config keys of this editable.
+     * These are passed to the controller as attributes.
+     * Everything else is passed to the controller as query parameters.
+     */
+    private const CONFIG_KEYS = [
+        'controller' => true,
+        'template' => true,
+        'className' => true,
+        'height' => true,
+        'width' => true,
+        'reload' => true,
+        'title' => true,
+        'type' => true,
+        'class' => true,
+    ];
+
     /**
      * Contains the ID of the linked object
      *
@@ -95,7 +109,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     {
         // TODO inject services via DI when editables are built through container
         $container = Pimcore::getContainer();
-        $editableHandler = $container->get(EditableHandler::class);
 
         if (empty($this->config['controller']) && !empty($this->config['template'])) {
             $this->config['controller'] = $container->getParameter('pimcore.documents.default_controller');
@@ -125,25 +138,30 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
                 $targetingConfigurator->configureTargetGroup($this->o);
             }
 
-            $blockparams = ['controller', 'template'];
-
-            $params = [
-                'template' => isset($this->config['template']) ? $this->config['template'] : null,
+            $attributes = [
+                'template' => $this->config['template'] ?? null,
                 'id' => $this->id,
                 'type' => $this->type,
                 'subtype' => $this->subtype,
                 'pimcore_request_source' => 'renderlet',
             ];
+            $query = [];
 
             foreach ($this->config as $key => $value) {
-                if (!array_key_exists($key, $params) && !in_array($key, $blockparams)) {
-                    $params[$key] = $value;
+                if ('controller' !== $key && !array_key_exists($key, $attributes)) {
+                    // Todo: pass only config keys as attributes in Pimcore 13
+                    $attributes[$key] = $value;
+                }
+
+                if (!isset(self::CONFIG_KEYS[$key])) {
+                    $query[$key] = $value;
                 }
             }
 
-            return $editableHandler->renderAction(
+            return $container->get(EditableHandler::class)->renderAction(
                 $this->config['controller'],
-                $params
+                $attributes,
+                $query,
             );
         }
 
@@ -157,27 +175,17 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      */
     public function setDataFromResource(mixed $data): static
     {
-        if (is_array($data)) {
-            $processedData = $data;
-        } elseif (is_string($data)) {
-            $unserializedData = \Pimcore\Tool\Serialize::unserialize($data);
-            if (!is_array($unserializedData)) {
-                throw new InvalidArgumentException('Unserialized data must be an array.');
-            }
-            $processedData = $unserializedData;
-        } else {
-            throw new InvalidArgumentException('Data must be a string or an array.');
-        }
+        $unserializedData = $this->getUnserializedData($data) ?? [];
 
         foreach (['id', 'type', 'subtype'] as $key) {
-            if (!array_key_exists($key, $processedData)) {
+            if (!array_key_exists($key, $unserializedData)) {
                 throw new InvalidArgumentException("Key '{$key}' is missing in the data array.");
             }
         }
 
-        $this->id = $processedData['id'];
-        $this->type = (string) $processedData['type'];
-        $this->subtype = $processedData['subtype'];
+        $this->id = $unserializedData['id'];
+        $this->type = (string) $unserializedData['type'];
+        $this->subtype = $unserializedData['subtype'];
 
         $this->setElement();
 
@@ -238,7 +246,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     /**
      * get correct type of object as string
      */
-    private function getObjectType(Element\ElementInterface $object = null): ?string
+    private function getObjectType(?Element\ElementInterface $object = null): ?string
     {
         $this->load();
 

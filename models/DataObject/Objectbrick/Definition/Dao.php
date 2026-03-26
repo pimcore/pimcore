@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\Objectbrick\Definition;
@@ -96,8 +93,7 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();
 
-            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
-                && $value instanceof DataObject\ClassDefinition\Data) {
+            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
                 // if a datafield requires more than one column in the datastore table => only for non-relation types
                 if (!$value->isRelationType()) {
                     if (is_array($value->getColumnType())) {
@@ -132,7 +128,6 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
-                && $value instanceof DataObject\ClassDefinition\Data
             ) {
                 // if a datafield requires more than one column in the query table
                 if (is_array($value->getQueryColumnType())) {

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -62,24 +59,15 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         if ($this->date instanceof Carbon) {
             if (isset($this->config['outputIsoFormat']) && $this->config['outputIsoFormat']) {
                 return $this->date->isoFormat($this->config['outputIsoFormat']);
-            } elseif (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '11.2',
-                    'Using "outputFormat" config for %s editable is deprecated, use "outputIsoFormat" config instead.',
-                    __CLASS__
-                );
-
-                return $this->date->formatLocalized($this->config['outputFormat']);
-            } else {
-                if (isset($this->config['format']) && $this->config['format']) {
-                    $format = $this->config['format'];
-                } else {
-                    $format = DateTimeInterface::ATOM;
-                }
-
-                return $this->date->format($format);
             }
+
+            if (isset($this->config['format']) && $this->config['format']) {
+                $format = $this->config['format'];
+            } else {
+                $format = DateTimeInterface::ATOM;
+            }
+
+            return $this->date->format($format);
         }
 
         return '';

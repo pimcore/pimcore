@@ -40,13 +40,6 @@ These methods are: `openItemSelector`, `showQuickSearch`, `hideQuickSearch` and 
 - The `showQuickSearch` and `hideQuickSearch` is responsible for managing the quickSearch.
 - The `getObjectRelationInlineSearchRoute` has to return the route to `DataObjectController::optionsAction`.
 
-For reference, you can check the implementation in the PimcoreSimpleBackendSearchBundle.
-See [service.js](https://github.com/pimcore/pimcore/blob/11.x/bundles/SimpleBackendSearchBundle/public/js/pimcore/element/service.js) 
-and [selector.js](https://github.com/pimcore/pimcore/blob/11.x/bundles/SimpleBackendSearchBundle/public/js/pimcore/element/selector/selector.js).
-
-## Using Pimcore without the SimpleBackendSearchBundle
-
-If you use Pimcore without the SimpleBackendSearchBundle you have to consider the following drawbacks.
 
 **SearchButton**
 
@@ -63,4 +56,3 @@ Pimcore will also have no search button in the toolbar. According to that the qu
 **GDPR Search**
 
 Pimcore will only have a very basic implementation of the GDPR search.
-Especially for searching through data objects it's highly recommended to use the SimpleBackendSearchBundle.

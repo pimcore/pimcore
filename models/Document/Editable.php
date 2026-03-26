@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Document;
@@ -30,7 +27,9 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Tool\HtmlUtils;
+use Pimcore\Tool\Serialize;
 use RuntimeException;
+use Stringable;
 use Throwable;
 
 /**
@@ -38,7 +37,7 @@ use Throwable;
  * @method void save()
  * @method void delete()
  */
-abstract class Editable extends Model\AbstractModel implements Model\Document\Editable\EditableInterface
+abstract class Editable extends Model\AbstractModel implements Model\Document\Editable\EditableInterface, Stringable
 {
     /**
      * Contains some configurations for the editmode, or the thumbnail name, ...
@@ -542,7 +541,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @throws Exception
      */
-    public static function buildEditableName(string $type, string $name, Document $document = null): string
+    public static function buildEditableName(string $type, string $name, ?Document $document = null): string
     {
         // do NOT allow dots (.) and colons (:) here as they act as delimiters
         // for block hierarchy in the new naming scheme (see #1467)!
@@ -715,5 +714,22 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $this->editableDefinitionCollector = $editableDefinitionCollector;
 
         return $this;
+    }
+
+    protected function getUnserializedData(mixed $data): ?array
+    {
+        if (is_array($data) || is_null($data)) {
+            return $data;
+        }
+        if (is_string($data)) {
+            $unserializedData = Serialize::unserialize($data);
+            if (!is_array($unserializedData) && !is_null($unserializedData)) {
+                throw new InvalidArgumentException('Unserialized data must be an array or null.');
+            }
+
+            return $unserializedData;
+        }
+
+        throw new InvalidArgumentException('Data must be a string, an array or null.');
     }
 }

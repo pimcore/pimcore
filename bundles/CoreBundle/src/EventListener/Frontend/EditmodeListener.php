@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
@@ -70,6 +67,10 @@ class EditmodeListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
+        if ($request->query->getBoolean('pimcore_studio')) {
+            return;
+        }
+
         if (!$event->isMainRequest()) {
             return; // only resolve editmode in frontend
         }
@@ -87,6 +88,10 @@ class EditmodeListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         $response = $event->getResponse();
+
+        if ($request->query->getBoolean('pimcore_studio')) {
+            return;
+        }
 
         if (!$event->isMainRequest()) {
             return; // only main requests inject editmode assets
@@ -254,11 +259,7 @@ class EditmodeListener implements EventSubscriberInterface
     {
         $disableMinifyJs = Pimcore::disableMinifyJs();
 
-        return [
-            '/bundles/pimcoreadmin/js/pimcore/common.js',
-            '/bundles/pimcoreadmin/js/lib/class.js',
-            '/bundles/pimcoreadmin/extjs/js/ext-all' . ($disableMinifyJs ? '-debug' : '') . '.js',
-        ];
+        return [];
     }
 
     protected function getEditmodeScripts(): array
@@ -266,40 +267,6 @@ class EditmodeListener implements EventSubscriberInterface
         return array_merge(
             [
                 '/bundles/fosjsrouting/js/router.js',
-                '/bundles/pimcoreadmin/js/pimcore/functions.js',
-                '/bundles/pimcoreadmin/js/pimcore/overrides.js',
-                '/bundles/pimcoreadmin/js/pimcore/tool/milestoneslider.js',
-                '/bundles/pimcoreadmin/js/pimcore/element/tag/imagehotspotmarkereditor.js',
-                '/bundles/pimcoreadmin/js/pimcore/element/tag/imagecropper.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js',
-                '/bundles/pimcoreadmin/js/pimcore/elementservice.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/edit/dnd.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editable.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/block.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/scheduledblock.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/date.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/relation.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/relations.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/checkbox.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/image.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/input.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/link.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/select.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/snippet.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/textarea.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/numeric.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/wysiwyg.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/renderlet.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/table.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/video.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/multiselect.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/area_abstract.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/areablock.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/area.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/pdf.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/embed.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/editables/manager.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js',
             ],
             $this->bundleManager->getEditmodeJsPaths()
         );
@@ -307,14 +274,7 @@ class EditmodeListener implements EventSubscriberInterface
 
     protected function getEditmodeStylesheets(): array
     {
-        return array_merge(
-            [
-                '/bundles/pimcoreadmin/css/icons.css',
-                '/bundles/pimcoreadmin/extjs/css/PimcoreApp-all_1.css',
-                '/bundles/pimcoreadmin/extjs/css/PimcoreApp-all_2.css',
-                '/bundles/pimcoreadmin/css/editmode.css?_dc=' . time(),
-            ],
-            $this->bundleManager->getEditmodeCssPaths()
-        );
+        return $this->bundleManager->getEditmodeCssPaths();
+
     }
 }

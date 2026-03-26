@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\SeoBundle\Model;
@@ -24,6 +21,7 @@ use Pimcore\Bundle\SeoBundle\Event\RedirectEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Document;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Request;
@@ -136,9 +134,36 @@ final class Redirect extends AbstractModel
         return $this->source;
     }
 
+    /**
+     * Target as string, can be target path or document id
+     */
     public function getTarget(): ?string
     {
         return $this->target;
+    }
+
+    /**
+     * resolved target path with handling for document ids as `target`
+     *   - tries to resolve the target as document by id and take its full path
+     *   - if no document can be found the target is used as target path
+     *   - ensures a slash at the beginning of the target string
+     */
+    public function getTargetPath(): string
+    {
+        $redirectTarget = $this->target;
+        $targetDocumentPath = null;
+
+        if (is_numeric($redirectTarget)) {
+            $targetDocumentPath = Document::getById((int)$redirectTarget)?->getFullPath();
+        }
+
+        $resolvedPath = ($targetDocumentPath ?? $redirectTarget) ?? '';
+
+        if (!str_starts_with($resolvedPath, '/')) {
+            return '/'.$resolvedPath;
+        }
+
+        return $resolvedPath;
     }
 
     public function setId(int $id): static
@@ -351,7 +376,7 @@ final class Redirect extends AbstractModel
         return $this->userModification;
     }
 
-    public function setUserModification(int $userModification): void
+    public function setUserModification(?int $userModification): void
     {
         $this->userModification = $userModification;
     }

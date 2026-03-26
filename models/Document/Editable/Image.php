@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -20,7 +17,6 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementDescriptor;
-use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -268,9 +264,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     public function setDataFromResource(mixed $data): static
     {
-        if (strlen($data) > 2) {
-            $data = Serialize::unserialize($data);
-        }
+        $unserializedData = $this->getUnserializedData($data) ?? [];
 
         $rewritePath = function ($data) {
             if (!is_array($data)) {
@@ -291,15 +285,10 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             return $data;
         };
 
-        if (array_key_exists('marker', $data) && is_array($data['marker']) && count($data['marker']) > 0) {
-            $data['marker'] = $rewritePath($data['marker']);
-        }
+        $unserializedData['marker'] = $rewritePath($unserializedData['marker'] ?? []);
+        $unserializedData['hotspots'] = $rewritePath($unserializedData['hotspots'] ?? []);
 
-        if (array_key_exists('hotspots', $data) && is_array($data['hotspots']) && count($data['hotspots']) > 0) {
-            $data['hotspots'] = $rewritePath($data['hotspots']);
-        }
-
-        $this->setData($data);
+        $this->setData($unserializedData);
 
         return $this;
     }
