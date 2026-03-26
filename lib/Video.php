@@ -20,6 +20,7 @@ use Exception;
  */
 class Video
 {
+    private static ?Video\AdapterInterface $defaultAdapterInstance = null;
     /**
      *
      *
@@ -27,9 +28,14 @@ class Video
      */
     public static function getInstance(?string $adapter = null): ?Video\AdapterInterface
     {
+        $adapterClass = '\\Pimcore\\Video\\Adapter\\' . $adapter;
+
+        if (self::$defaultAdapterInstance !== null && get_class(self::$defaultAdapterInstance) === $adapterClass) {
+            return self::$defaultAdapterInstance;
+        }
+
         try {
             if ($adapter) {
-                $adapterClass = '\\Pimcore\\Video\\Adapter\\' . $adapter;
                 if (Tool::classExists($adapterClass)) {
                     return new $adapterClass();
                 } else {
@@ -60,6 +66,10 @@ class Video
 
     private static function getDefaultAdapter(): ?Video\AdapterInterface
     {
+        if (self::$defaultAdapterInstance !== null) {
+            return self::$defaultAdapterInstance;
+        }
+
         $adapters = ['Ffmpeg'];
 
         foreach ($adapters as $adapter) {
@@ -68,7 +78,7 @@ class Video
                 try {
                     $adapter = new $adapterClass();
                     if ($adapter->isAvailable()) {
-                        return $adapter;
+                        return self::$defaultAdapterInstance = $adapter;
                     }
                 } catch (Exception $e) {
                     Logger::warning((string) $e);

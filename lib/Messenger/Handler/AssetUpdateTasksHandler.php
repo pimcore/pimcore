@@ -100,18 +100,12 @@ class AssetUpdateTasksHandler
     {
         $failed = true;
 
-        $converter = \Pimcore\Video::getInstance();
-        if ($converter !== null) {
-            $filePath = $asset->getLocalFile();
-            $converter->load($filePath, ['asset' => $asset]);
-
-            if ($duration = $converter->getDuration()) {
-                $asset->setCustomSetting('duration', $duration);
-                if ($dimensions = $converter->getDimensions()) {
-                    $asset->setCustomSetting('videoWidth', $dimensions['width']);
-                    $asset->setCustomSetting('videoHeight', $dimensions['height']);
-                    $failed = false;
-                }
+        if ($duration = $asset->getDurationFromBackend()) {
+            $asset->setCustomSetting('duration', $duration);
+            if ($dimensions = $asset->getDimensionsFromBackend()) {
+                $asset->setCustomSetting('videoWidth', $dimensions['width']);
+                $asset->setCustomSetting('videoHeight', $dimensions['height']);
+                $failed = false;
             }
         }
 
