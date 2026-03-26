@@ -25,7 +25,7 @@ class Video
      *
      * @throws Exception
      */
-    public static function getInstance(?string $adapter = null): ?Video\Adapter
+    public static function getInstance(?string $adapter = null): ?Video\AdapterInterface
     {
         try {
             if ($adapter) {
@@ -58,7 +58,7 @@ class Video
         return false;
     }
 
-    private static function getDefaultAdapter(): ?Video\Adapter
+    private static function getDefaultAdapter(): ?Video\AdapterInterface
     {
         $adapters = ['Ffmpeg'];
 

@@ -34,6 +34,8 @@ class Ffmpeg extends Adapter
 
     protected ?float $inputSeeking = null;
 
+    private ?string $cachedVideoInfo = null;
+
     public function isAvailable(): bool
     {
         try {
@@ -62,6 +64,7 @@ class Ffmpeg extends Adapter
     {
         $this->file = $file;
         $this->setProcessId(uniqid());
+        $this->cachedVideoInfo = null;
 
         return $this;
     }
@@ -234,6 +237,10 @@ class Ffmpeg extends Adapter
      */
     protected function getVideoInfo(): string
     {
+        if ($this->cachedVideoInfo !== null) {
+            return $this->cachedVideoInfo;
+        }
+
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-info-' . uniqid() . '.out';
 
         $cmd = [static::getFfmpegCli(), '-i', realpath($this->file)];
@@ -250,7 +257,9 @@ class Ffmpeg extends Adapter
         $contents = file_get_contents($tmpFile);
         unlink($tmpFile);
 
-        return $contents;
+        $this->cachedVideoInfo = $contents;
+
+        return $this->cachedVideoInfo;
     }
 
     public function getDuration(): ?float

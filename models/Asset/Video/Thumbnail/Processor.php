@@ -21,7 +21,7 @@ use Pimcore\Messenger\VideoConvertMessage;
 use Pimcore\Model;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
-use Pimcore\Video\Adapter;
+use Pimcore\Video\AdapterInterface;
 use Symfony\Component\Lock\LockFactory;
 
 /**
@@ -40,7 +40,7 @@ class Processor
     ];
 
     /**
-     * @var \Pimcore\Video\Adapter[]
+     * @var \Pimcore\Video\AdapterInterface[]
      */
     protected array $queue = [];
 
@@ -162,7 +162,7 @@ class Processor
         return $instance;
     }
 
-    private static function applyTransformations(Adapter $converter, array $transformations): void
+    private static function applyTransformations(AdapterInterface $converter, array $transformations): void
     {
         foreach ($transformations as $transformation) {
             if (!empty($transformation)) {

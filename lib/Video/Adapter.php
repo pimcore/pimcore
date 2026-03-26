@@ -16,7 +16,7 @@ namespace Pimcore\Video;
 /**
  * @internal
  */
-abstract class Adapter
+abstract class Adapter implements AdapterInterface
 {
     public int $videoBitrate;
 
