@@ -167,23 +167,7 @@ class Dao extends Model\Dao\AbstractDao
                         foreach ($value->getColumnType() as $fkey => $fvalue) {
                             $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
                             $protectedDatastoreColumns[] = $key . '__' . $fkey;
-                            $foreignKeyName = self::getForeignKeyName($objectDatastoreTable, $key . '__' . $fkey);
-
-                            if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
-                                    || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
-                                && $fkey === 'unit'
-                                && $this->foreignKeyDoesNotExist($objectDatastoreTable, $foreignKeyName)
-                            ) {
-                                $this->db->executeQuery(
-                                    sprintf(
-                                        'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
-                                            REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
-                                        $objectDatastoreTable,
-                                        $foreignKeyName,
-                                        $key . '__' . $fkey
-                                    )
-                                );
-                            }
+                            $this->ensureForeignKeys($objectDatastoreTable, $key, $fkey, $value);
                         }
                     } elseif ($value->getColumnType()) {
                         $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');

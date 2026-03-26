@@ -237,8 +237,25 @@ trait Dao
         return (count($exists) > 0) && ($exists[0] > 0);
     }
 
-    protected function foreignKeyDoesNotExist(string $table, string $foreignKeyName): bool
+    protected function ensureForeignKeys(string $tableStore, string $key, string $fkey, $value): void
     {
-        return !$this->foreignKeyExists($table, $foreignKeyName);
+        $foreignKeyName = $this->getForeignKeyName($tableStore, $key . '__' . $fkey);
+
+        if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
+                || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
+            && $fkey === 'unit'
+            && !$this->foreignKeyExists($tableStore, $foreignKeyName)
+        ) {
+            $this->db->executeQuery(
+                sprintf(
+                    'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
+                                            REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
+                    $tableStore,
+                    $foreignKeyName,
+                    $key . '__' . $fkey
+                )
+            );
+        }
     }
+
 }

@@ -28,6 +28,18 @@ final class Version20240323121349 extends AbstractMigration
         return 'Rebuild classes, objects-bricks and field collections to add foreign key for quantity value units';
     }
 
+    public function preUp(Schema $schema): void
+    {
+        //disable foreign key checks
+        $this->connection->executeQuery('SET foreign_key_checks = 0');
+    }
+
+    public function postUp(Schema $schema): void
+    {
+        //enable foreign key checks
+        $this->connection->executeQuery('SET foreign_key_checks = 1');
+    }
+
     public function up(Schema $schema): void
     {
         $classDefinitions = new DataObject\ClassDefinition\Listing();
