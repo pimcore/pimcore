@@ -12,7 +12,7 @@ The following bundles have been removed:
 - XliffBundle
 
 ### [General]
-- Thumbnail generation adapters now implement `Video/AdadpterInterface` and `Document/AdapterInterface` and improved adapters' initialization.
+- Thumbnail generation adapters now implement `Video/AdapterInterface` and `Document/AdapterInterface` and improved adapters' initialization.
 - The abstract class `Pimcore\Video\Adapter` has been removed. `Pimcore\Video\Adapter\Ffmpeg` now directly implements `Pimcore\Video\AdapterInterface`. If you extended `Pimcore\Video\Adapter`, update your class to implement `Pimcore\Video\AdapterInterface` directly.
 - The hard-coded space between quantity value and unit has been removed for class definition quantity fields (e.g. `AbstractQuantityValue`, `QuantityValueRange`). Spacing and formatting between value and unit is now controlled by locale- and translation-based formatting instead of being fixed in the code.
 - The `reset_password` rate limiter configuration has been moved to the studio-backend bundle and is no longer part of Pimcore's core configuration.
