@@ -100,7 +100,7 @@ class Dao extends Model\Dao\AbstractDao
                         foreach ($value->getColumnType() as $fkey => $fvalue) {
                             $this->addModifyColumn($tableStore, $key . '__' . $fkey, $fvalue, '', 'NULL');
                             $protectedColumnsStore[] = $key . '__' . $fkey;
-                            $this->ensureForeignKeys($tableQuery, $key, $fkey, $value);
+                            $this->ensureForeignKeys($tableStore, $key, $fkey, $value);
                         }
                     } elseif ($value->getColumnType()) {
                         $this->addModifyColumn($tableStore, $key, $value->getColumnType(), '', 'NULL');
