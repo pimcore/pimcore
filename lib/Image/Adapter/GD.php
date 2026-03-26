@@ -14,10 +14,11 @@ declare(strict_types=1);
 namespace Pimcore\Image\Adapter;
 
 use GdImage;
-use Pimcore\Image\Adapter;
+use Pimcore\Image\AdapterInterface;
 
-class GD extends Adapter
+class GD implements AdapterInterface
 {
+    use ImageAdapterTrait;
     protected string $path;
 
     /**

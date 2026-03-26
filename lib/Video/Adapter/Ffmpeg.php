@@ -16,14 +16,31 @@ namespace Pimcore\Video\Adapter;
 use Exception;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
-use Pimcore\Video\Adapter;
+use Pimcore\Video\AdapterInterface;
 use Symfony\Component\Process\Process;
 
 /**
  * @internal
  */
-class Ffmpeg extends Adapter
+class Ffmpeg implements AdapterInterface
 {
+    public int $videoBitrate;
+
+    public int $audioBitrate;
+
+    public string $format;
+
+    public array $medias;
+
+    public string $destinationFile;
+
+    public string $storageFile;
+
+    /**
+     * length in seconds
+     */
+    public int $length;
+
     public string $file;
 
     protected string $processId;
@@ -35,6 +52,72 @@ class Ffmpeg extends Adapter
     protected ?float $inputSeeking = null;
 
     private ?string $cachedVideoInfo = null;
+
+    public function getAudioBitrate(): int
+    {
+        return $this->audioBitrate;
+    }
+
+    public function getVideoBitrate(): int
+    {
+        return $this->videoBitrate;
+    }
+
+    public function getMedias(): ?array
+    {
+        return $this->medias;
+    }
+
+    public function setMedias(?array $medias): void
+    {
+        $this->medias = $medias;
+    }
+
+    public function setFormat(string $format): static
+    {
+        $this->format = $format;
+
+        return $this;
+    }
+
+    public function getFormat(): string
+    {
+        return $this->format;
+    }
+
+    public function setDestinationFile(string $destinationFile): static
+    {
+        $this->destinationFile = $destinationFile;
+
+        return $this;
+    }
+
+    public function getDestinationFile(): string
+    {
+        return $this->destinationFile;
+    }
+
+    public function setLength(int $length): static
+    {
+        $this->length = $length;
+
+        return $this;
+    }
+
+    public function getLength(): int
+    {
+        return $this->length;
+    }
+
+    public function getStorageFile(): string
+    {
+        return $this->storageFile;
+    }
+
+    public function setStorageFile(string $storageFile): void
+    {
+        $this->storageFile = $storageFile;
+    }
 
     public function isAvailable(): bool
     {
@@ -358,7 +441,7 @@ class Ffmpeg extends Adapter
     {
         $videoBitrate = (int) ceil($videoBitrate / 2) * 2;
 
-        parent::setVideoBitrate($videoBitrate);
+        $this->videoBitrate = $videoBitrate;
 
         if ($videoBitrate) {
             $this->addArgument('-vb', $videoBitrate . 'k');
@@ -371,7 +454,7 @@ class Ffmpeg extends Adapter
     {
         $audioBitrate = (int) ceil($audioBitrate / 2) * 2;
 
-        parent::setAudioBitrate($audioBitrate);
+        $this->audioBitrate = $audioBitrate;
 
         if ($audioBitrate) {
             $this->addArgument('-ab', $audioBitrate . 'k');

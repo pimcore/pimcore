@@ -19,7 +19,7 @@ use Pimcore;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
-use Pimcore\Image\Adapter;
+use Pimcore\Image\AdapterInterface;
 use Pimcore\Logger;
 use Pimcore\Messenger\OptimizeImageMessage;
 use Pimcore\Model\Asset;
@@ -395,7 +395,7 @@ class Processor
         ];
     }
 
-    private static function applyTransformations(Adapter $image, Asset $asset, Config $config, ?array $transformations): void
+    private static function applyTransformations(AdapterInterface $image, Asset $asset, Config $config, ?array $transformations): void
     {
         if ($transformations) {
             $sourceImageWidth = PHP_INT_MAX;

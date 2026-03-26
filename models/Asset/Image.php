@@ -172,7 +172,7 @@ EOT;
      * @throws Exception
      *
      */
-    public static function getImageTransformInstance(): ?\Pimcore\Image\Adapter
+    public static function getImageTransformInstance(): ?\Pimcore\Image\AdapterInterface
     {
         try {
             $image = \Pimcore\Image::getInstance();
@@ -180,7 +180,7 @@ EOT;
             $image = null;
         }
 
-        if (!$image instanceof \Pimcore\Image\Adapter) {
+        if (!$image instanceof \Pimcore\Image\AdapterInterface) {
             throw new Exception("Couldn't get instance of image tranform processor.");
         }
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * This source file is available under the terms of the
@@ -10,12 +11,15 @@
  *  @license    Pimcore Open Core License (POCL)
  */
 
-namespace Pimcore\Image;
+namespace Pimcore\Image\Adapter;
 
 use Exception;
 use Pimcore\Logger;
 
-abstract class Adapter implements AdapterInterface
+/**
+ * @internal
+ */
+trait ImageAdapterTrait
 {
     protected int $width;
 
@@ -36,8 +40,6 @@ abstract class Adapter implements AdapterInterface
     protected bool $preserveMetaData = false;
 
     protected ?string $sourceImageFormat = null;
-
-    protected mixed $resource = null;
 
     private bool $forceProcessICCProfiles = false;
 
@@ -75,9 +77,6 @@ abstract class Adapter implements AdapterInterface
         return $this->width;
     }
 
-    /**
-     * @todo: duplication found? (pimcore/lib/Pimcore/Document/Adapter.php::removeTmpFiles)
-     */
     protected function removeTmpFiles(): void
     {
         // remove tmp files
@@ -300,30 +299,6 @@ abstract class Adapter implements AdapterInterface
     {
         return $this;
     }
-
-    /**
-     * @deprecated Provided by AdapterInterface::load() instead
-     */
-    abstract public function load(string $imagePath, array $options = []): static|false;
-
-    /**
-     * @deprecated Provided by AdapterInterface::save() instead
-     */
-    abstract public function save(string $path, ?string $format = null, ?int $quality = null): static;
-
-    abstract protected function destroy(): void;
-
-    /**
-     * @deprecated Provided by AdapterInterface::getContentOptimizedFormat() instead
-     */
-    abstract public function getContentOptimizedFormat(): string;
-
-    /**
-     * @deprecated Provided by AdapterInterface::supportsFormat() instead
-     *
-     * @internal
-     */
-    abstract public function supportsFormat(string $format, bool $force = false): bool;
 
     public function preModify(): void
     {

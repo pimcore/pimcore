@@ -18,13 +18,16 @@ use ImagickDraw;
 use ImagickPixel;
 use Pimcore\Cache;
 use Pimcore\Config;
-use Pimcore\Image\Adapter;
+use Pimcore\Image\AdapterInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Symfony\Component\Filesystem\Filesystem;
 
-class Imagick extends Adapter
+class Imagick implements AdapterInterface
 {
+    use ImageAdapterTrait {
+        getVectorRasterDimensions as traitGetVectorRasterDimensions;
+    }
     protected static ?string $RGBColorProfile = null;
 
     protected static ?string $CMYKColorProfile = null;
@@ -1033,7 +1036,7 @@ class Imagick extends Adapter
             return $vectorDimensions;
         }
 
-        return parent::getVectorRasterDimensions();
+        return $this->traitGetVectorRasterDimensions();
     }
 
     public function supportsFormat(string $format, bool $force = false): bool

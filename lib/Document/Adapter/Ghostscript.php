@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Document\Adapter;
 
 use Exception;
-use Pimcore\Document\Adapter;
+use Pimcore\Document\AdapterInterface;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -27,9 +27,29 @@ use function sprintf;
 /**
  * @internal
  */
-class Ghostscript extends Adapter
+class Ghostscript implements AdapterInterface
 {
     use TemporaryFileHelperTrait;
+
+    protected ?Asset\Document $asset = null;
+
+    protected array $tmpFiles = [];
+
+    protected function removeTmpFiles(): void
+    {
+        if (!empty($this->tmpFiles)) {
+            foreach ($this->tmpFiles as $tmpFile) {
+                if (file_exists($tmpFile)) {
+                    unlink($tmpFile);
+                }
+            }
+        }
+    }
+
+    public function __destruct()
+    {
+        $this->removeTmpFiles();
+    }
 
     private ?string $version = null;
 
