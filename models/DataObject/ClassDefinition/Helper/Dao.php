@@ -14,7 +14,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use function Symfony\Component\String\s;
 
 /**
  * @internal
@@ -121,8 +120,9 @@ trait Dao
             if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
                 $dropColumns[] = 'DROP COLUMN `' . $value . '`';
 
-                if (s($value)->endsWith('__unit') === true
-                    && $this->foreignKeyExists($table, self::getForeignKeyName($table, $value))
+                if (
+                    str_ends_with($value, '__unit') &&
+                    $this->foreignKeyExists($table, self::getForeignKeyName($table, $value))
                 ) {
                     $this->db->executeQuery(
                         sprintf(
