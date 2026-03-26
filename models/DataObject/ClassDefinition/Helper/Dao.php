@@ -128,7 +128,7 @@ trait Dao
                         sprintf(
                             'ALTER TABLE `%s` DROP FOREIGN KEY %s',
                             $table,
-                            self::getForeignKeyName($table, $value)
+                            $this->db->quoteIdentifier(self::getForeignKeyName($table, $value))
                         )
                     );
                 }
