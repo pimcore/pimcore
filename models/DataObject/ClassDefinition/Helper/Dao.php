@@ -13,6 +13,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use function Symfony\Component\String\s;
 
 /**
@@ -20,7 +21,7 @@ use function Symfony\Component\String\s;
  */
 trait Dao
 {
-    protected function addIndexToField(DataObject\ClassDefinition\Data $field, string $table, string $columnTypeGetter = 'getColumnType', bool $considerUniqueIndex = false, bool $isLocalized = false, bool $isFieldcollection = false): void
+    protected function addIndexToField(Data $field, string $table, string $columnTypeGetter = 'getColumnType', bool $considerUniqueIndex = false, bool $isLocalized = false, bool $isFieldcollection = false): void
     {
         $columnType = $field->$columnTypeGetter();
 
@@ -237,7 +238,7 @@ trait Dao
         return (count($exists) > 0) && ($exists[0] > 0);
     }
 
-    protected function ensureForeignKeys(string $tableStore, string $key, string $fkey, $value): void
+    protected function ensureForeignKeys(string $tableStore, string $key, string $fkey, Data $value): void
     {
         $foreignKeyName = $this->getForeignKeyName($tableStore, $key . '__' . $fkey);
 
