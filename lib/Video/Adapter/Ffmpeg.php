@@ -82,6 +82,9 @@ class Ffmpeg implements AdapterInterface
         $this->file = $file;
         $this->setProcessId(uniqid());
         $this->cachedVideoInfo = null;
+        $this->arguments = [];
+        $this->videoFilter = [];
+        $this->inputSeeking = null;
 
         return $this;
     }
