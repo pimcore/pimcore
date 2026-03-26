@@ -240,7 +240,7 @@ trait Dao
 
     protected function ensureForeignKeys(string $tableStore, string $key, string $fkey, Data $value): void
     {
-        $foreignKeyName = $this->getForeignKeyName($tableStore, $key . '__' . $fkey);
+        $foreignKeyName = self::getForeignKeyName($tableStore, $key . '__' . $fkey);
 
         if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
                 || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
