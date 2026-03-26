@@ -134,7 +134,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
                     // after we got the lock, check again if the image exists in the meantime - if not - generate it
                     if (!$storage->fileExists($cacheFilePath)) {
                         $tempFile = File::getLocalTempFilePath('png');
-                        $converter = Video::getInstance();
+                        $converter = Video::newInstance();
                         $converter->load($this->asset->getLocalFile());
                         if (false === $converter->saveImage($tempFile, (int) $timeOffset)) {
                             Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');

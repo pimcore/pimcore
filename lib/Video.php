@@ -21,34 +21,57 @@ use Exception;
 class Video
 {
     private static ?Video\AdapterInterface $defaultAdapterInstance = null;
+
     /**
-     *
+     * Returns the cached default adapter, or a new named adapter instance.
+     * Use for read-only operations (e.g. getDuration, getDimensions).
      *
      * @throws Exception
      */
     public static function getInstance(?string $adapter = null): ?Video\AdapterInterface
     {
-        try {
-            if ($adapter) {
-                $adapterClass = '\\Pimcore\\Video\\Adapter\\' . $adapter;
-                if (Tool::classExists($adapterClass)) {
-                    return new $adapterClass();
-                } else {
-                    throw new Exception('Video-transcode adapter `' . $adapter . '´ does not exist.');
-                }
-            } else {
-                return self::getDefaultAdapter();
-            }
-        } catch (Exception $e) {
-            Logger::crit('Unable to load video adapter: ' . $e->getMessage());
-
-            throw $e;
+        if ($adapter) {
+            return self::resolveAdapterInstance($adapter);
         }
+
+        return self::getDefaultAdapter();
+    }
+
+    /**
+     * Always returns a fresh adapter instance.
+     * Use for stateful operations (e.g. thumbnail processing).
+     *
+     * @throws Exception
+     */
+    public static function newInstance(?string $adapter = null): ?Video\AdapterInterface
+    {
+        if ($adapter) {
+            return self::resolveAdapterInstance($adapter);
+        }
+
+        $default = self::getDefaultAdapter();
+
+        return $default !== null ? new (get_class($default))() : null;
     }
 
     public static function isAvailable(): bool
     {
         return self::getDefaultAdapter() !== null;
+    }
+
+    /**
+     * Resolves and instantiates a named adapter class.
+     *
+     * @throws Exception
+     */
+    private static function resolveAdapterInstance(string $adapter): Video\AdapterInterface
+    {
+        $adapterClass = '\\Pimcore\\Video\\Adapter\\' . $adapter;
+        if (!Tool::classExists($adapterClass)) {
+            throw new Exception('Video-transcode adapter `' . $adapter . '´ does not exist.');
+        }
+
+        return new $adapterClass();
     }
 
     private static function getDefaultAdapter(): ?Video\AdapterInterface
@@ -57,9 +80,7 @@ class Video
             return self::$defaultAdapterInstance;
         }
 
-        $adapters = ['Ffmpeg'];
-
-        foreach ($adapters as $adapter) {
+        foreach (['Ffmpeg'] as $adapter) {
             $adapterClass = '\\Pimcore\\Video\\Adapter\\' . $adapter;
             if (Tool::classExists($adapterClass)) {
                 try {
