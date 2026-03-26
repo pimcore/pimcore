@@ -28,10 +28,14 @@ class Video
      */
     public static function getInstance(?string $adapter = null): ?Video\AdapterInterface
     {
-        $adapterClass = '\\Pimcore\\Video\\Adapter\\' . $adapter;
+        $adapterClass = null;
 
-        if (self::$defaultAdapterInstance !== null && get_class(self::$defaultAdapterInstance) === $adapterClass) {
-            return self::$defaultAdapterInstance;
+        if ($adapter) {
+            $adapterClass = '\\Pimcore\\Video\\Adapter\\' . $adapter;
+
+            if (self::$defaultAdapterInstance !== null && get_class(self::$defaultAdapterInstance) === $adapterClass) {
+                return self::$defaultAdapterInstance;
+            }
         }
 
         try {
