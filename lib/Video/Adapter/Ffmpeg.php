@@ -16,14 +16,31 @@ namespace Pimcore\Video\Adapter;
 use Exception;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
-use Pimcore\Video\Adapter;
+use Pimcore\Video\AdapterInterface;
 use Symfony\Component\Process\Process;
 
 /**
  * @internal
  */
-class Ffmpeg extends Adapter
+class Ffmpeg implements AdapterInterface
 {
+    public int $videoBitrate;
+
+    public int $audioBitrate;
+
+    public string $format;
+
+    public array $medias;
+
+    public string $destinationFile;
+
+    public string $storageFile;
+
+    /**
+     * length in seconds
+     */
+    public int $length;
+
     public string $file;
 
     protected string $processId;
@@ -354,11 +371,29 @@ class Ffmpeg extends Adapter
         return $this->arguments;
     }
 
+    public function setAudioBitrate(int $audioBitrate): static
+    {
+        $audioBitrate = (int) ceil($audioBitrate / 2) * 2;
+
+        $this->audioBitrate = $audioBitrate;
+
+        if ($audioBitrate) {
+            $this->addArgument('-ab', $audioBitrate . 'k');
+        }
+
+        return $this;
+    }
+
+    public function getAudioBitrate(): int
+    {
+        return $this->audioBitrate;
+    }
+
     public function setVideoBitrate(int $videoBitrate): static
     {
         $videoBitrate = (int) ceil($videoBitrate / 2) * 2;
 
-        parent::setVideoBitrate($videoBitrate);
+        $this->videoBitrate = $videoBitrate;
 
         if ($videoBitrate) {
             $this->addArgument('-vb', $videoBitrate . 'k');
@@ -367,17 +402,65 @@ class Ffmpeg extends Adapter
         return $this;
     }
 
-    public function setAudioBitrate(int $audioBitrate): static
+    public function getVideoBitrate(): int
     {
-        $audioBitrate = (int) ceil($audioBitrate / 2) * 2;
+        return $this->videoBitrate;
+    }
 
-        parent::setAudioBitrate($audioBitrate);
+    public function getMedias(): ?array
+    {
+        return $this->medias;
+    }
 
-        if ($audioBitrate) {
-            $this->addArgument('-ab', $audioBitrate . 'k');
-        }
+    public function setMedias(?array $medias): void
+    {
+        $this->medias = $medias;
+    }
+
+    public function setFormat(string $format): static
+    {
+        $this->format = $format;
 
         return $this;
+    }
+
+    public function getFormat(): string
+    {
+        return $this->format;
+    }
+
+    public function setDestinationFile(string $destinationFile): static
+    {
+        $this->destinationFile = $destinationFile;
+
+        return $this;
+    }
+
+    public function getDestinationFile(): string
+    {
+        return $this->destinationFile;
+    }
+
+    public function setLength(int $length): static
+    {
+        $this->length = $length;
+
+        return $this;
+    }
+
+    public function getLength(): int
+    {
+        return $this->length;
+    }
+
+    public function getStorageFile(): string
+    {
+        return $this->storageFile;
+    }
+
+    public function setStorageFile(string $storageFile): void
+    {
+        $this->storageFile = $storageFile;
     }
 
     public function resize(int $width, int $height): void
