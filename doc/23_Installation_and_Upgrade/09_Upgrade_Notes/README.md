@@ -18,11 +18,15 @@ The following bundles have been removed:
 - Dropped support for PHP `8.3` and Symfony `6`.
  
 #### [DataObjects]
-
 - Add a new optional `$parameters` argument to `Concrete::saveVersion()` to allow passing of arguments to events.
 
 #### [Models]
 - Added a new optional `$parameters` argument to `AbstractUser::save()` and `AbstractUser::delete()`, as well as their interface methods, to allow passing of arguments to `UserRoleEvent`.
+
+#### [Generic Execution Engine]
+- Added an `$offset` parameter to support paging in `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
+- Added the possibility to pass an optional `$criteria` array to `getTotalCount()`, `getJobRunById()`, `getJobRunsByUserId()` and `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
+- Added the possibility to pass optional `$ownerId` and `$executionContext` parameters to `getTotalCount()`.
 
 #### [Installer]
 
