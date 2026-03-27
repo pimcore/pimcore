@@ -1,5 +1,12 @@
 flysystem:
     storages:
+        pimcore.admin.storage:
+            # Storage for shared admin resources, such as the user avatar, custom logos, ...
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: '%kernel.project_dir%/var/admin'
+            
         pimcore.document_static.storage:
             # Storage for generated static document pages, e.g. .html files generated out of Pimcore documents
             # which are then delivered directly by the web-server

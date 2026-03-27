@@ -35,48 +35,55 @@ class Admin
      */
     public static function getLanguages(): array
     {
-        $baseResource = Pimcore::getContainer()->getParameter('pimcore_admin.translations.path');
-        $languageDir = Pimcore::getKernel()->locateResource($baseResource);
-        $adminLanguages = Pimcore::getContainer()->getParameter('pimcore_admin.admin_languages');
-        $appDefaultPath = Pimcore::getContainer()->getParameter('translator.default_path');
-
-        $languageDirs = [$languageDir, $appDefaultPath];
+        $languageDirs = [];
         $translatedLanguages = [];
+
+        $container = Pimcore::getContainer();
+
+        $appDefaultPath = $container->getParameter('translator.default_path');
+
+        if (is_dir($appDefaultPath)) {
+            $languageDirs[] = $appDefaultPath;
+        }
+        
+        $localeService = $container->get(LocaleServiceInterface::class);
+
         foreach ($languageDirs as $filesDir) {
-            if (is_dir($filesDir)) {
-                $files = scandir($filesDir);
-                foreach ($files as $file) {
-                    if (is_file($filesDir . '/' . $file)) {
-                        $parts = explode('.', $file);
+            $files = scandir($filesDir);
 
-                        $languageCode = $parts[0];
-                        if ($parts[0] === 'admin') {
-                            // this is for the app specific translations
-                            $languageCode = $parts[1];
-                        }
+            if ($files === false) {
+                continue;
+            }
+            foreach ($files as $file) {
+                $filePath = $filesDir . '/' . $file;
 
-                        if ($parts[1] === 'json' || $parts[0] === 'admin') {
-                            if (Pimcore::getContainer()->get(LocaleServiceInterface::class)->isLocale($languageCode)) {
-                                $translatedLanguages[] = $languageCode;
-                            }
-                        }
+                if (!is_file($filePath)) {
+                    continue;
+                }
+
+                $parts = explode('.', $file);
+
+                if (count($parts) < 2) {
+                    continue;
+                }
+
+                $languageCode = $parts[0];
+
+                if ($parts[0] === 'admin' && isset($parts[1])) {
+                    $languageCode = $parts[1];
+                }
+
+                $extension = end($parts);
+
+                if ($extension === 'json' || $parts[0] === 'admin') {
+                    if ($localeService->isLocale($languageCode)) {
+                        $translatedLanguages[] = $languageCode;
                     }
                 }
             }
         }
 
-        $languages = [];
-        foreach ($adminLanguages as $adminLanguage) {
-            if (in_array($adminLanguage, $translatedLanguages, true) || in_array(Locale::getPrimaryLanguage($adminLanguage), $translatedLanguages, true)) {
-                $languages[] = $adminLanguage;
-            }
-        }
-
-        if (empty($languages)) {
-            $languages = $translatedLanguages;
-        }
-
-        return array_unique($languages);
+        return array_unique($translatedLanguages);
     }
 
     public static function getMinimizedScriptPath(string $scriptContent): array
