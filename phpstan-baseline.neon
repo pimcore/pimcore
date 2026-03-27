@@ -211,18 +211,6 @@ parameters:
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
 			identifier: ergebnis.declareStrictTypes
 			count: 1
-			path: lib/Extension/Bundle/PimcoreBundleAdminClassicInterface.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: lib/Extension/Bundle/Traits/BundleAdminClassicTrait.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
 			path: lib/Image/Adapter.php
 
 
