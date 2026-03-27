@@ -21,6 +21,9 @@ The following bundles have been removed:
 
 - Add a new optional `$parameters` argument to `Concrete::saveVersion()` to allow passing of arguments to events.
 
+#### [Models]
+- Added a new optional `$parameters` argument to `AbstractUser::save()` and `AbstractUser::delete()`, as well as their interface methods, to allow passing of arguments to `UserRoleEvent`.
+
 #### [Installer]
 
 The installer has been completely redesigned with a **profile-based architecture**. The old `pimcore:install` command with individual parameters (`--mysql-host-socket`, `--mysql-username`, `--mysql-password`, `--mysql-database`, etc.) has been removed and replaced with a profile-driven system.
