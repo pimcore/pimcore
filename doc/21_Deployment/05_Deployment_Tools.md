@@ -84,7 +84,6 @@ To get a list of all available commands use `./bin/console list`.
 | Command                                   | Description                                                                                                                       |
 |-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
 | pimcore:mysql-tools                       | Optimize and warm up mysql database                                                                                               |
-| pimcore:search-backend-reindex            | Re-indexes the backend search of Pimcore (only available if you have installed the simpleBackendSearchBundle)                     |
 | pimcore:cache:clear                       | Clear Pimcore core caches                                                                                                         |
 | cache:clear                               | Clear Symfony caches                                                                                                              |
 | pimcore:cache:warming                     | [Warm up caches](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/09_Performance_Guide.md#pimcore-caching-redis)        |

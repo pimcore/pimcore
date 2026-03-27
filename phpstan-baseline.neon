@@ -1,6 +1,38 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#Call to method (castToArray|ifString|ifNull|addDefaultsIfNotSet|arrayNode|children|append|integerNode|scalarNode|booleanNode|enumNode|variableNode)\(\) on an unknown class#'
+			identifier: class.notFound
+			path: bundles/CoreBundle/src/DependencyInjection/ConfigurationHelper.php
+
+		-
+			message: '#Call to method (castToArray|ifString|ifNull|addDefaultsIfNotSet|arrayNode|children|append|integerNode|scalarNode|booleanNode|enumNode|variableNode)\(\) on an unknown class#'
+			identifier: class.notFound
+			path: bundles/CoreBundle/src/DependencyInjection/Configuration.php
+
+		-
+			message: '#Call to method (castToArray|ifString|ifNull|addDefaultsIfNotSet|arrayNode|children|append|integerNode|scalarNode|booleanNode|enumNode|variableNode)\(\) on an unknown class#'
+			identifier: class.notFound
+			path: bundles/CustomReportsBundle/src/DependencyInjection/Configuration.php
+
+		-
+			message: '#Call to method (castToArray|ifString|ifNull|addDefaultsIfNotSet|arrayNode|children|append|integerNode|scalarNode|booleanNode|enumNode|variableNode)\(\) on an unknown class#'
+			identifier: class.notFound
+			path: bundles/GenericExecutionEngineBundle/src/DependencyInjection/Configuration.php
+
+		-
+			message: '#Call to method (castToArray|ifString|ifNull|addDefaultsIfNotSet|arrayNode|children|append|integerNode|scalarNode|booleanNode|enumNode|variableNode)\(\) on an unknown class#'
+			identifier: class.notFound
+			path: bundles/SeoBundle/src/DependencyInjection/Configuration.php
+
+
+		-
+			message: '#Call to method (castToArray|ifString|ifNull|addDefaultsIfNotSet|arrayNode|children|append|integerNode|scalarNode|booleanNode|enumNode|variableNode)\(\) on an unknown class#'
+			identifier: class.notFound
+			path: bundles/UuidBundle/src/DependencyInjection/Configuration.php
+
+
+		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
 			identifier: ergebnis.declareStrictTypes
 			count: 1
@@ -88,24 +120,6 @@ parameters:
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
 			identifier: ergebnis.declareStrictTypes
 			count: 1
-			path: bundles/GlossaryBundle/src/DependencyInjection/Configuration.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/GlossaryBundle/src/Model/Glossary/Dao.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/GlossaryBundle/src/Model/Glossary/Listing/Dao.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
 			path: bundles/InstallBundle/src/BundleConfig/BundleWriter.php
 
 		-
@@ -119,120 +133,6 @@ parameters:
 			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/InstallBundle/src/Event/InstallEvents.php
-
-		-
-			message: '#^Call to an undefined method Pimcore\\Bundle\\SeoBundle\\Controller\\Document\\DocumentController\:\:getTreeNodeConfig\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: bundles/SeoBundle/src/Controller/Document/DocumentController.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/SeoBundle/src/Controller/Document/DocumentController.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/SeoBundle/src/Controller/MiscController.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/SeoBundle/src/Model/Redirect/Dao.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/SeoBundle/src/Model/Redirect/Listing/Dao.php
-
-		-
-			message: '#^Access to constant CONTEXT_SEARCH on an unknown class Pimcore\\Bundle\\AdminBundle\\Event\\ElementAdminStyleEvent\.$#'
-			identifier: class.notFound
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
-
-		-
-			message: '#^Access to constant RESOLVE_ELEMENT_ADMIN_STYLE on an unknown class Pimcore\\Bundle\\AdminBundle\\Event\\AdminEvents\.$#'
-			identifier: class.notFound
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
-
-		-
-			message: '#^Call to method getAdminStyle\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\Event\\ElementAdminStyleEvent\.$#'
-			identifier: class.notFound
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
-
-		-
-			message: '#^Call to method getFilterCondition\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\Helper\\GridHelperService\.$#'
-			identifier: class.notFound
-			count: 2
-			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
-
-		-
-			message: '#^Instantiated class Pimcore\\Bundle\\AdminBundle\\Event\\ElementAdminStyleEvent not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
-
-		-
-			message: '#^Parameter \$gridHelperService of method Pimcore\\Bundle\\SimpleBackendSearchBundle\\Controller\\SearchController\:\:findAction\(\) has invalid type Pimcore\\Bundle\\AdminBundle\\Helper\\GridHelperService\.$#'
-			identifier: class.notFound
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/Controller/SearchController.php
-
-		-
-			message: '#^Method Pimcore\\Bundle\\SimpleBackendSearchBundle\\MessageHandler\\SearchBackendHandler\:\:process\(\) is unused\.$#'
-			identifier: method.unused
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
-
-		-
-			message: '#^Method Pimcore\\Bundle\\SimpleBackendSearchBundle\\MessageHandler\\SearchBackendHandler\:\:shouldFlush\(\) is unused\.$#'
-			identifier: method.unused
-			count: 1
-			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/StaticRoutesBundle/src/DependencyInjection/Configuration.php
-
-		-
-			message: '#^Call to method addSetting\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\Event\\IndexActionSettingsEvent\.$#'
-			identifier: class.notFound
-			count: 1
-			path: bundles/StaticRoutesBundle/src/EventListener/IndexSettingsListener.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/StaticRoutesBundle/src/EventListener/IndexSettingsListener.php
-
-		-
-			message: '#^Parameter \$settingsEvent of method Pimcore\\Bundle\\StaticRoutesBundle\\EventListener\\IndexSettingsListener\:\:indexSettings\(\) has invalid type Pimcore\\Bundle\\AdminBundle\\Event\\IndexActionSettingsEvent\.$#'
-			identifier: class.notFound
-			count: 1
-			path: bundles/StaticRoutesBundle/src/EventListener/IndexSettingsListener.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/StaticRoutesBundle/src/Model/Staticroute/Dao.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/StaticRoutesBundle/src/Model/Staticroute/Listing/Dao.php
 
 		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
@@ -275,18 +175,6 @@ parameters:
 			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: bundles/UuidBundle/src/PimcoreUuidBundle.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/WordExportBundle/src/Controller/TranslationController.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/XliffBundle/src/Event/Model/TranslationXliffEvent.php
 
 		-
 			message: '#^Call to function is_subclass_of\(\) with ''\\\\App\\\\Kernel'' and ''Pimcore\\\\Kernel'' will always evaluate to true\.$#'

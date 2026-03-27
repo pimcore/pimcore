@@ -23,7 +23,6 @@ class CoreModel extends Model
     {
         parent::_beforeSuite($settings);
         $this->installSeoBundle();
-        $this->installSimpleBackendSearchBundle();
     }
 
     private function installSeoBundle(): void
@@ -39,16 +38,5 @@ class CoreModel extends Model
 
         //explicitly load installed classes so that the new ones are used during tests
         Autoloader::load(Redirect::class);
-    }
-
-    private function installSimpleBackendSearchBundle(): void
-    {
-        /** @var Pimcore $pimcoreModule */
-        $pimcoreModule = $this->getModule('\\'.Pimcore::class);
-
-        $this->debug('[PimcoreSimpleBackendSearchBundle] Running SimpleBackendSearchBundle installer');
-
-        $installer = $pimcoreModule->getContainer()->get(\Pimcore\Bundle\SimpleBackendSearchBundle\Installer::class);
-        $installer->install();
     }
 }

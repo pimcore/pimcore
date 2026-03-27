@@ -11,11 +11,6 @@ Disables all output filters, incl. the output-cache. But this doesn't disable th
 eg.: `http://www.example.com/my/page?pimcore_outputfilters_disabled=1`  
 This parameter only works if [`DEBUG MODE`](../18_Tools_and_Features/25_System_Settings.md) is on.
 
-### unminified_js
-
-Disables the JavaScript minifier. Useful for ExtJS debugging. Disabled by default if in [`DEV MODE`](../18_Tools_and_Features/25_System_Settings.md). 
-
-This parameter only works if [`DEBUG MODE`](../18_Tools_and_Features/25_System_Settings.md) is on.
 
 ### pimcore_disable_host_redirect
 Disables the "redirect to main domain" feature. This is especially useful when using Pimcore behind 
