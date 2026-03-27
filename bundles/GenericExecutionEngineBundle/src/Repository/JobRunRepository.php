@@ -248,8 +248,6 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
     {
         if ($executionContext) {
             $params['executionContext'] = $executionContext;
-        } else {
-            unset($params['executionContext']);
         }
 
         return $params;
