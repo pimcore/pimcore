@@ -25,7 +25,8 @@ The following bundles have been removed:
 
 #### [Generic Execution Engine]
 - Added an `$offset` parameter to support paging in `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
-- Added possibility to pass a `$criteria` array to `getTotalCount()`, `getJobRunById()`, `getJobRunsByUserId()` and `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
+- Added the possibility to pass an optional `$criteria` array to `getTotalCount()`, `getJobRunById()`, `getJobRunsByUserId()` and `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
+- Added the possibility to pass optional `$ownerId` and `$executionContext` parameters to `getTotalCount()`.
 
 #### [Installer]
 
