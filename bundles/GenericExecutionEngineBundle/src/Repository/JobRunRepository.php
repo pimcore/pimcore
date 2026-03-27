@@ -204,7 +204,14 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
         $params = $this->setExecutionContext($params, $executionContext);
         $params['state'] = JobRunStates::RUNNING;
 
-        return $this->getJobRunsByUserId($ownerId, $orderBy, $limit, $offset, $executionContext, $params);
+        return $this->getJobRunsByUserId(
+            ownerId: $ownerId,
+            orderBy: $orderBy,
+            limit: $limit,
+            executionContext: $executionContext,
+            offset: $offset,
+            criteria: $params
+        );
     }
 
     public function getLastJobRunByName(string $name): ?JobRun
