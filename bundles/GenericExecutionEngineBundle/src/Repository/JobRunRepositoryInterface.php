@@ -71,7 +71,7 @@ interface JobRunRepositoryInterface
         array $criteria = []
     ): array;
 
-    public function getTotalCount(array $criteria = []): int;
+    public function getTotalCount(array $criteria = [], ?int $ownerId = null, ?string $executionContext = null): int;
 
     public function getRunningJobsByUserId(
         int $ownerId,
