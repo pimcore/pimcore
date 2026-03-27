@@ -259,8 +259,6 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
     {
         if ($ownerId !== null && !$this->permissionService->isAllowedToSeeAllJobRuns()) {
             $params['ownerId'] = $ownerId;
-        } else {
-            unset($params['ownerId']);
         }
 
         return $params;
