@@ -490,7 +490,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         foreach ($a1 as $key => $value) {
             if (array_key_exists($key, $a2)) {
                 if (is_array($value)) {
-                    $a2[$key] = $this->mergeArrays($a2[$key], $value);
+                    $a2[$key] = $this->mergeArrays($value, $a2[$key]);
                 } else {
                     $a2[$key] = $value;
                 }
