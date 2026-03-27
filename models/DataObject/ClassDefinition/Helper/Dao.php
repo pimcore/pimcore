@@ -121,7 +121,7 @@ trait Dao
                 $dropColumns[] = 'DROP COLUMN `' . $value . '`';
 
                 if (
-                    str_ends_with($value, '__unit') &&
+                    str_ends_with(strtolower($value), '__unit') &&
                     $this->foreignKeyExists($table, self::getForeignKeyName($table, $value))
                 ) {
                     $this->db->executeQuery(
