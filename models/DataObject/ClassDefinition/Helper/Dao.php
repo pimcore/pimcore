@@ -243,14 +243,15 @@ trait Dao
         $foreignKeyName = self::getForeignKeyName($tableStore, $key . '__' . $fkey);
 
         if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
-                || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange)
+                || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange
+                || $value instanceof DataObject\ClassDefinition\Data\InputQuantityValue)
             && $fkey === 'unit'
             && !$this->foreignKeyExists($tableStore, $foreignKeyName)
         ) {
             $this->db->executeQuery(
                 sprintf(
                     'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
-                                            REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL',
+                                            REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL ON UPDATE CASCADE',
                     $tableStore,
                     $foreignKeyName,
                     $key . '__' . $fkey
