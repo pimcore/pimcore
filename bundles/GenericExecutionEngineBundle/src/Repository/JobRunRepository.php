@@ -182,7 +182,7 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
         );
     }
 
-    public function getTotalCount(array $criteria = [], ?int $ownerId = null, ?string $executionContext = null): int
+    public function getTotalCount(?int $ownerId = null, ?string $executionContext = null, array $criteria = []): int
     {
         $params = $this->setOwnerId($criteria, $ownerId);
         $params = $this->setExecutionContext($params, $executionContext);
