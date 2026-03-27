@@ -24,7 +24,7 @@ The following bundles have been removed:
 - Added a new optional `$parameters` argument to `AbstractUser::save()` and `AbstractUser::delete()`, as well as their interface methods, to allow passing of arguments to `UserRoleEvent`.
 
 #### [Generic Execution Engine]
-- Added a `$offset` parameter to ease paging feature in `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
+- Added an `$offset` parameter to support paging in `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
 - Added possibility to pass a `$criteria` array to `getTotalCount()`, `getJobRunById()`, `getJobRunsByUserId()` and `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
 
 #### [Installer]
