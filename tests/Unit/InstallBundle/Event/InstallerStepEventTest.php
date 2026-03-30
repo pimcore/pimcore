@@ -43,55 +43,6 @@ final class InstallerStepEventTest extends TestCase
         $this->assertInstanceOf(Event::class, $event);
     }
 
-    public function testGetStepReturnsInstallStepEnum(): void
-    {
-        $event = new InstallerStepEvent(
-            InstallStep::CollectAndValidate,
-            'Collecting configuration...',
-            1,
-            5,
-        );
-
-        $this->assertSame(InstallStep::CollectAndValidate, $event->getStep());
-        $this->assertInstanceOf(InstallStep::class, $event->getStep());
-    }
-
-    public function testGetMessageReturnsMessage(): void
-    {
-        $event = new InstallerStepEvent(
-            InstallStep::WriteDoctrineConfig,
-            'Writing Doctrine config...',
-            2,
-            10,
-        );
-
-        $this->assertSame('Writing Doctrine config...', $event->getMessage());
-    }
-
-    public function testGetStepNumberReturnsStepNumber(): void
-    {
-        $event = new InstallerStepEvent(
-            InstallStep::BootKernel,
-            'Booting kernel...',
-            3,
-            10,
-        );
-
-        $this->assertSame(3, $event->getStepNumber());
-    }
-
-    public function testGetTotalStepsReturnsTotalSteps(): void
-    {
-        $event = new InstallerStepEvent(
-            InstallStep::Finalize,
-            'Finalizing...',
-            10,
-            10,
-        );
-
-        $this->assertSame(10, $event->getTotalSteps());
-    }
-
     public function testConstructorSetsAllProperties(): void
     {
         $step = InstallStep::SetupDatabase;

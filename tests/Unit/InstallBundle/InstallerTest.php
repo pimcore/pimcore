@@ -1350,28 +1350,7 @@ YAML;
         array $bundles = [],
         bool $includeDefaultMarkerDefs = true,
     ): InstallProfileInterface {
-        $allDefs = $definitions;
-
-        if ($includeDefaultMarkerDefs) {
-            $hasSearchEngine = false;
-            $hasMessengerTransport = false;
-
-            foreach ($allDefs as $def) {
-                if ($def instanceof SearchEngineDefinitionInterface) {
-                    $hasSearchEngine = true;
-                }
-                if ($def instanceof MessengerTransportDefinitionInterface) {
-                    $hasMessengerTransport = true;
-                }
-            }
-
-            if (!$hasSearchEngine) {
-                $allDefs[] = $this->createNoopSearchEngineDefinition();
-            }
-            if (!$hasMessengerTransport) {
-                $allDefs[] = $this->createNoopMessengerTransportDefinition();
-            }
-        }
+        $allDefs = $this->resolveDefinitionsWithMarkerDefs($definitions, $includeDefaultMarkerDefs);
 
         return new class($allDefs, $bundles, $skippedSteps) implements InstallProfileInterface, InstallStepFilterInterface {
             /**
@@ -1424,8 +1403,45 @@ YAML;
     }
 
     // -----------------------------------------------------------------------
-    // Original helper methods
+    // Helper methods
     // -----------------------------------------------------------------------
+
+    /**
+     * Resolves definitions with optional marker definitions for search engine and messenger transport.
+     *
+     * @param list<EnvVarDefinitionInterface> $definitions
+     *
+     * @return list<EnvVarDefinitionInterface>
+     */
+    private function resolveDefinitionsWithMarkerDefs(
+        array $definitions,
+        bool $includeDefaultMarkerDefs,
+    ): array {
+        if (!$includeDefaultMarkerDefs) {
+            return $definitions;
+        }
+
+        $hasSearchEngine = false;
+        $hasMessengerTransport = false;
+
+        foreach ($definitions as $def) {
+            if ($def instanceof SearchEngineDefinitionInterface) {
+                $hasSearchEngine = true;
+            }
+            if ($def instanceof MessengerTransportDefinitionInterface) {
+                $hasMessengerTransport = true;
+            }
+        }
+
+        if (!$hasSearchEngine) {
+            $definitions[] = $this->createNoopSearchEngineDefinition();
+        }
+        if (!$hasMessengerTransport) {
+            $definitions[] = $this->createNoopMessengerTransportDefinition();
+        }
+
+        return $definitions;
+    }
 
     /**
      * Creates a mock definition that passes validation.
@@ -1572,28 +1588,10 @@ YAML;
         array $bundles = [],
         bool $includeDefaultMarkerDefs = true,
     ): InstallProfileInterface {
-        $allDefs = array_merge($definitions, $extraDefinitions);
-
-        if ($includeDefaultMarkerDefs) {
-            $hasSearchEngine = false;
-            $hasMessengerTransport = false;
-
-            foreach ($allDefs as $def) {
-                if ($def instanceof SearchEngineDefinitionInterface) {
-                    $hasSearchEngine = true;
-                }
-                if ($def instanceof MessengerTransportDefinitionInterface) {
-                    $hasMessengerTransport = true;
-                }
-            }
-
-            if (!$hasSearchEngine) {
-                $allDefs[] = $this->createNoopSearchEngineDefinition();
-            }
-            if (!$hasMessengerTransport) {
-                $allDefs[] = $this->createNoopMessengerTransportDefinition();
-            }
-        }
+        $allDefs = $this->resolveDefinitionsWithMarkerDefs(
+            array_merge($definitions, $extraDefinitions),
+            $includeDefaultMarkerDefs,
+        );
 
         return new class($allDefs, $bundles) implements InstallProfileInterface {
             public function __construct(
