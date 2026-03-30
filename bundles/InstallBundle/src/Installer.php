@@ -202,82 +202,141 @@ final class Installer
         SymfonyStyle $io,
         string $projectRoot,
     ): array {
+        $this->resolveSkippedSteps($profile);
         $this->calculateTotalSteps($profile);
         $errors = [];
 
-        $this->dispatchStep(InstallStep::BootKernel, 'Booting application kernel...');
-        $kernel = $this->bootRealKernel($projectRoot);
-
-        $error = $this->executeStepSetupDatabase($kernel, $profile);
-        if ($error !== null) {
-            return [$error];
-        }
-
-        $error = $this->executeStepImportDataSource($kernel, $profile, $io);
-        if ($error !== null) {
-            return [$error];
-        }
-
-        $error = $this->executeStepCreateAdmin($kernel, $adminCredentials);
-        if ($error !== null) {
-            return [$error];
-        }
-
-        $error = $this->executeStepRegisterBundles($profile);
-        if ($error !== null) {
-            return [$error];
-        }
-
-        $error = $this->executeStepRebootKernel($kernel, $projectRoot);
-        if ($error !== null) {
-            return [$error];
-        }
-        // Kernel reference updated after reboot
         $kernel = $this->lastBootedKernel;
 
-        $error = $this->executeStepInstallBundles($profile, $io);
-        if ($error !== null) {
-            return [$error];
+        if ($this->isStepSkipped(InstallStep::BootKernel)) {
+            $this->skipStep(InstallStep::BootKernel, 'Booting application kernel...');
+        } else {
+            $this->dispatchStep(InstallStep::BootKernel, 'Booting application kernel...');
+            $kernel = $this->bootRealKernel($projectRoot);
         }
 
-        $error = $this->executeStepInstallAssets();
-        if ($error !== null) {
-            return [$error];
+        if ($this->isStepSkipped(InstallStep::SetupDatabase)) {
+            $this->skipStep(InstallStep::SetupDatabase, 'Setting up database...');
+        } else {
+            $error = $this->executeStepSetupDatabase($kernel, $profile);
+            if ($error !== null) {
+                return [$error];
+            }
         }
 
-        $error = $this->executeStepRebuildClasses();
-        if ($error !== null) {
-            $errors[] = $error;
+        if ($this->isStepSkipped(InstallStep::ImportData)) {
+            $this->skipStep(InstallStep::ImportData, 'Importing data...');
+        } else {
+            $error = $this->executeStepImportDataSource($kernel, $profile, $io);
+            if ($error !== null) {
+                return [$error];
+            }
         }
 
-        $error = $this->executeStepMarkMigrations();
-        if ($error !== null) {
-            $errors[] = $error;
+        if ($this->isStepSkipped(InstallStep::CreateAdmin)) {
+            $this->skipStep(InstallStep::CreateAdmin, 'Creating admin user...');
+        } else {
+            $error = $this->executeStepCreateAdmin($kernel, $adminCredentials);
+            if ($error !== null) {
+                return [$error];
+            }
         }
 
-        $error = $this->executeStepPostInstallCommands(
-            $profile,
-            $cliPostInstallProviders,
-            $kernel,
-            $io,
-        );
-        if ($error !== null) {
-            return array_merge($errors, [$error]);
+        if ($this->isStepSkipped(InstallStep::RegisterBundles)) {
+            $this->skipStep(InstallStep::RegisterBundles, 'Registering bundles...');
+        } else {
+            $error = $this->executeStepRegisterBundles($profile);
+            if ($error !== null) {
+                return [$error];
+            }
         }
 
-        $error = $this->executeStepRunMaintenance();
-        if ($error !== null) {
-            $errors[] = $error;
+        if ($this->isStepSkipped(InstallStep::RebootKernel)) {
+            $this->skipStep(InstallStep::RebootKernel, 'Rebooting kernel...');
+        } else {
+            $error = $this->executeStepRebootKernel($kernel, $projectRoot);
+            if ($error !== null) {
+                return [$error];
+            }
+            // Kernel reference updated after reboot
+            $kernel = $this->lastBootedKernel;
         }
 
-        $error = $this->executeStepProfilePostInstall($profile, $kernel, $io);
-        if ($error !== null) {
-            return array_merge($errors, [$error]);
+        if ($this->isStepSkipped(InstallStep::InstallBundles)) {
+            $this->skipStep(InstallStep::InstallBundles, 'Installing bundles...');
+        } else {
+            $error = $this->executeStepInstallBundles($profile, $io);
+            if ($error !== null) {
+                return [$error];
+            }
         }
 
-        $this->dispatchStep(InstallStep::Finalize, 'Finalizing installation...');
-        $this->clearKernelCacheDir($kernel);
-        $this->cleanupNeedsInstallMarker();
+        if ($this->isStepSkipped(InstallStep::InstallAssets)) {
+            $this->skipStep(InstallStep::InstallAssets, 'Installing assets...');
+        } else {
+            $error = $this->executeStepInstallAssets();
+            if ($error !== null) {
+                return [$error];
+            }
+        }
+
+        if ($this->isStepSkipped(InstallStep::RebuildClasses)) {
+            $this->skipStep(InstallStep::RebuildClasses, 'Rebuilding class definitions...');
+        } else {
+            $error = $this->executeStepRebuildClasses();
+            if ($error !== null) {
+                $errors[] = $error;
+            }
+        }
+
+        if ($this->isStepSkipped(InstallStep::MarkMigrations)) {
+            $this->skipStep(InstallStep::MarkMigrations, 'Marking migrations as done...');
+        } else {
+            $error = $this->executeStepMarkMigrations();
+            if ($error !== null) {
+                $errors[] = $error;
+            }
+        }
+
+        if ($this->isStepSkipped(InstallStep::PostInstallCommands)) {
+            $this->skipStep(InstallStep::PostInstallCommands, 'Running post-install commands...');
+        } else {
+            $error = $this->executeStepPostInstallCommands(
+                $profile,
+                $cliPostInstallProviders,
+                $kernel,
+                $io,
+            );
+            if ($error !== null) {
+                return array_merge($errors, [$error]);
+            }
+        }
+
+        if ($this->isStepSkipped(InstallStep::RunMaintenance)) {
+            $this->skipStep(InstallStep::RunMaintenance, 'Running maintenance...');
+        } else {
+            $error = $this->executeStepRunMaintenance();
+            if ($error !== null) {
+                $errors[] = $error;
+            }
+        }
+
+        if ($this->isStepSkipped(InstallStep::ProfilePostInstall)) {
+            $this->skipStep(InstallStep::ProfilePostInstall, 'Running profile post-install...');
+        } else {
+            $error = $this->executeStepProfilePostInstall($profile, $kernel, $io);
+            if ($error !== null) {
+                return array_merge($errors, [$error]);
+            }
+        }
+
+        if ($this->isStepSkipped(InstallStep::Finalize)) {
+            $this->skipStep(InstallStep::Finalize, 'Finalizing installation...');
+        } else {
+            $this->dispatchStep(InstallStep::Finalize, 'Finalizing installation...');
+            $this->clearKernelCacheDir($kernel);
+            $this->cleanupNeedsInstallMarker();
+        }
 
         return $errors;
     }
