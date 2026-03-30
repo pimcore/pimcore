@@ -112,54 +112,70 @@ final class Installer
         bool $interactive,
         string $projectRoot,
     ): array {
-        $activeDefinitions = $this->definitionResolver->mergeDefinitions(
-            $profile->getEnvVarDefinitions(),
-            $extraDefinitions,
-        );
+        $this->resolveSkippedSteps($profile);
 
-        $categoryErrors = $this->definitionResolver->validateDefinitionCategories($activeDefinitions);
-        if ($categoryErrors !== []) {
-            return $categoryErrors;
+        $result = ['resolved' => [], 'errors' => []];
+
+        if ($this->isStepSkipped(InstallStep::CollectAndValidate)) {
+            $this->skipStep(InstallStep::CollectAndValidate, 'Collecting and validating configuration...');
+        } else {
+            $activeDefinitions = $this->definitionResolver->mergeDefinitions(
+                $profile->getEnvVarDefinitions(),
+                $extraDefinitions,
+            );
+
+            $categoryErrors = $this->definitionResolver->validateDefinitionCategories($activeDefinitions);
+            if ($categoryErrors !== []) {
+                return $categoryErrors;
+            }
+
+            $this->definitionResolver->warnOnMissingBundles($profile, $io, $projectRoot);
+
+            $bundleErrors = $this->definitionResolver->validateProfileBundles($profile);
+            if ($bundleErrors !== []) {
+                return $bundleErrors;
+            }
+
+            $this->definitionResolver->displayDefinitionSummary($activeDefinitions, $io);
+
+            $result = $this->collectAndValidateDefinitions(
+                $activeDefinitions,
+                $parameterCollector,
+                $io,
+                $interactive,
+                $skipValidation,
+            );
+
+            if ($result['errors'] !== []) {
+                return $result['errors'];
+            }
+
+            $credentialErrors = $this->databaseSetup->validateAdminCredentials($adminCredentials);
+            if ($credentialErrors !== []) {
+                return $credentialErrors;
+            }
         }
 
-        $this->definitionResolver->warnOnMissingBundles($profile, $io, $projectRoot);
+        if ($this->isStepSkipped(InstallStep::WriteEnv)) {
+            $this->skipStep(InstallStep::WriteEnv, 'Writing .env.local...');
+        } else {
+            $this->dispatchStep(InstallStep::WriteEnv, 'Writing .env.local...');
+            $writeErrors = $this->writeEnvLocal($result['resolved'], $projectRoot, $io);
 
-        $bundleErrors = $this->definitionResolver->validateProfileBundles($profile);
-        if ($bundleErrors !== []) {
-            return $bundleErrors;
+            if ($writeErrors !== []) {
+                return $writeErrors;
+            }
+
+            $io->text('  <info>✓</info> .env.local written');
         }
 
-        $this->definitionResolver->displayDefinitionSummary($activeDefinitions, $io);
-
-        $result = $this->collectAndValidateDefinitions(
-            $activeDefinitions,
-            $parameterCollector,
-            $io,
-            $interactive,
-            $skipValidation,
-        );
-
-        if ($result['errors'] !== []) {
-            return $result['errors'];
+        if ($this->isStepSkipped(InstallStep::WriteDoctrineConfig)) {
+            $this->skipStep(InstallStep::WriteDoctrineConfig, 'Writing Doctrine mapping types config...');
+        } else {
+            $this->dispatchStep(InstallStep::WriteDoctrineConfig, 'Writing Doctrine mapping types config...');
+            $this->writeDoctrineConfig($projectRoot);
+            $io->text('  <info>✓</info> Doctrine mapping types config written');
         }
-
-        $credentialErrors = $this->databaseSetup->validateAdminCredentials($adminCredentials);
-        if ($credentialErrors !== []) {
-            return $credentialErrors;
-        }
-
-        $this->dispatchStep(InstallStep::WriteEnv, 'Writing .env.local...');
-        $writeErrors = $this->writeEnvLocal($result['resolved'], $projectRoot, $io);
-
-        if ($writeErrors !== []) {
-            return $writeErrors;
-        }
-
-        $io->text('  <info>✓</info> .env.local written');
-
-        $this->dispatchStep(InstallStep::WriteDoctrineConfig, 'Writing Doctrine mapping types config...');
-        $this->writeDoctrineConfig($projectRoot);
-        $io->text('  <info>✓</info> Doctrine mapping types config written');
 
         return [];
     }
