@@ -20,14 +20,19 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\MessengerTransportDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterType;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\SearchEngineDefinitionInterface;
+use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
+use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Bundle\InstallBundle\Profile\DataSource\DataSourceInterface;
 use Pimcore\Bundle\InstallBundle\Profile\InstallProfileInterface;
+use Pimcore\Bundle\InstallBundle\Profile\InstallStep;
+use Pimcore\Bundle\InstallBundle\Profile\InstallStepFilterInterface;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Unit\InstallBundle\Support\InstallBundleTestHelperTrait;
 use Pimcore\Tests\Unit\InstallBundle\Support\NoopMessengerTransportDefinition;
 use Pimcore\Tests\Unit\InstallBundle\Support\NoopSearchEngineDefinition;
 use Pimcore\Tests\Unit\InstallBundle\Support\NoopSearchEngineDefinitionThatFails;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Integration tests for the Installer's Phase 1 (runPhaseOne).
@@ -1062,6 +1067,365 @@ YAML;
         $this->assertNotEmpty($errors);
         $this->assertStringContainsString('Connection refused', $errors[0]);
     }
+
+    // -----------------------------------------------------------------------
+    // Install step filtering tests
+    // -----------------------------------------------------------------------
+
+    public function testPhaseOneSkipWriteEnvDoesNotWriteEnvLocal(): void
+    {
+        $def = $this->createMockDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['DB_HOST'],
+        );
+
+        $profile = $this->createMockProfileWithSkippedSteps(
+            [$def],
+            [InstallStep::WriteEnv],
+        );
+
+        $envVarReader = new ArrayEnvVarReader();
+        $collector = new ParameterCollector($envVarReader);
+
+        $errors = $this->installer->runPhaseOne(
+            $profile,
+            [],
+            [],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        $this->assertSame([], $errors);
+        $this->assertFileDoesNotExist($this->tempDir . '/.env.local');
+
+        // Doctrine config should still be written
+        $this->assertFileExists($this->tempDir . '/config/packages/doctrine_mapping_types.yaml');
+    }
+
+    public function testPhaseOneSkipWriteDoctrineConfigDoesNotWriteConfig(): void
+    {
+        $def = $this->createMockDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['DB_HOST'],
+        );
+
+        $profile = $this->createMockProfileWithSkippedSteps(
+            [$def],
+            [InstallStep::WriteDoctrineConfig],
+        );
+
+        $envVarReader = new ArrayEnvVarReader();
+        $collector = new ParameterCollector($envVarReader);
+
+        $errors = $this->installer->runPhaseOne(
+            $profile,
+            [],
+            [],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        $this->assertSame([], $errors);
+        $this->assertFileDoesNotExist($this->tempDir . '/config/packages/doctrine_mapping_types.yaml');
+
+        // .env.local should still be written
+        $this->assertFileExists($this->tempDir . '/.env.local');
+        $envContent = file_get_contents($this->tempDir . '/.env.local');
+        $this->assertStringContainsString('DB_HOST="localhost"', $envContent);
+    }
+
+    public function testPhaseOneSkipCollectAndValidateBypassesValidation(): void
+    {
+        $failingDef = $this->createFailingDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['Connection refused'],
+        );
+
+        $profile = $this->createMockProfileWithSkippedSteps(
+            [$failingDef],
+            [InstallStep::CollectAndValidate],
+        );
+
+        $envVarReader = new ArrayEnvVarReader();
+        $collector = new ParameterCollector($envVarReader);
+
+        $errors = $this->installer->runPhaseOne(
+            $profile,
+            [],
+            [],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        // No errors — validation was bypassed
+        $this->assertSame([], $errors);
+    }
+
+    public function testPhaseOneSkipAllStepsWritesNothing(): void
+    {
+        $def = $this->createMockDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['DB_HOST'],
+        );
+
+        $profile = $this->createMockProfileWithSkippedSteps(
+            [$def],
+            [InstallStep::CollectAndValidate, InstallStep::WriteEnv, InstallStep::WriteDoctrineConfig],
+        );
+
+        $envVarReader = new ArrayEnvVarReader();
+        $collector = new ParameterCollector($envVarReader);
+
+        $errors = $this->installer->runPhaseOne(
+            $profile,
+            [],
+            [],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        $this->assertSame([], $errors);
+        $this->assertFileDoesNotExist($this->tempDir . '/.env.local');
+        $this->assertFileDoesNotExist($this->tempDir . '/config/packages/doctrine_mapping_types.yaml');
+    }
+
+    public function testPhaseOneWithoutInstallStepFilterInterfaceRunsAllSteps(): void
+    {
+        $def = $this->createMockDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['DB_HOST'],
+        );
+
+        // Use a normal profile without InstallStepFilterInterface
+        $profile = $this->createMockProfile([$def]);
+
+        $envVarReader = new ArrayEnvVarReader();
+        $collector = new ParameterCollector($envVarReader);
+
+        $errors = $this->installer->runPhaseOne(
+            $profile,
+            [],
+            [],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        $this->assertSame([], $errors);
+
+        // Both files should be written — all steps ran
+        $this->assertFileExists($this->tempDir . '/.env.local');
+        $envContent = file_get_contents($this->tempDir . '/.env.local');
+        $this->assertStringContainsString('DB_HOST="localhost"', $envContent);
+
+        $this->assertFileExists($this->tempDir . '/config/packages/doctrine_mapping_types.yaml');
+    }
+
+    public function testPhaseOneEventsUseInstallStepEnum(): void
+    {
+        $eventDispatcher = new EventDispatcher();
+
+        /** @var list<InstallerStepEvent> $receivedEvents */
+        $receivedEvents = [];
+        $eventDispatcher->addListener(
+            InstallEvents::EVENT_NAME_STEP,
+            static function (InstallerStepEvent $event) use (&$receivedEvents): void {
+                $receivedEvents[] = $event;
+            },
+        );
+
+        $installer = $this->createInstaller(eventDispatcher: $eventDispatcher);
+
+        $def = $this->createMockDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['DB_HOST'],
+        );
+
+        $profile = $this->createMockProfile([$def]);
+        $envVarReader = new ArrayEnvVarReader();
+        $collector = new ParameterCollector($envVarReader);
+
+        $installer->runPhaseOne(
+            $profile,
+            [],
+            [],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        $this->assertNotEmpty($receivedEvents);
+
+        foreach ($receivedEvents as $event) {
+            $this->assertInstanceOf(InstallStep::class, $event->getStep());
+        }
+    }
+
+    public function testPhaseOneSkippedStepsDoNotProduceEvents(): void
+    {
+        $eventDispatcher = new EventDispatcher();
+
+        /** @var list<InstallStep> $receivedSteps */
+        $receivedSteps = [];
+        $eventDispatcher->addListener(
+            InstallEvents::EVENT_NAME_STEP,
+            static function (InstallerStepEvent $event) use (&$receivedSteps): void {
+                $receivedSteps[] = $event->getStep();
+            },
+        );
+
+        $installer = $this->createInstaller(eventDispatcher: $eventDispatcher);
+
+        $def = $this->createMockDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['DB_HOST'],
+        );
+
+        $profile = $this->createMockProfileWithSkippedSteps(
+            [$def],
+            [InstallStep::WriteEnv, InstallStep::WriteDoctrineConfig],
+        );
+
+        $envVarReader = new ArrayEnvVarReader();
+        $collector = new ParameterCollector($envVarReader);
+
+        $installer->runPhaseOne(
+            $profile,
+            [],
+            [],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        // Only CollectAndValidate should fire — WriteEnv and WriteDoctrineConfig are skipped
+        $this->assertCount(1, $receivedSteps);
+        $this->assertSame(InstallStep::CollectAndValidate, $receivedSteps[0]);
+        $this->assertNotContains(InstallStep::WriteEnv, $receivedSteps);
+        $this->assertNotContains(InstallStep::WriteDoctrineConfig, $receivedSteps);
+    }
+
+    /**
+     * Creates a mock profile implementing both InstallProfileInterface and InstallStepFilterInterface.
+     *
+     * @param list<EnvVarDefinitionInterface> $definitions
+     * @param list<InstallStep> $skippedSteps
+     * @param list<class-string> $bundles
+     */
+    private function createMockProfileWithSkippedSteps(
+        array $definitions,
+        array $skippedSteps,
+        array $bundles = [],
+        bool $includeDefaultMarkerDefs = true,
+    ): InstallProfileInterface {
+        $allDefs = $definitions;
+
+        if ($includeDefaultMarkerDefs) {
+            $hasSearchEngine = false;
+            $hasMessengerTransport = false;
+
+            foreach ($allDefs as $def) {
+                if ($def instanceof SearchEngineDefinitionInterface) {
+                    $hasSearchEngine = true;
+                }
+                if ($def instanceof MessengerTransportDefinitionInterface) {
+                    $hasMessengerTransport = true;
+                }
+            }
+
+            if (!$hasSearchEngine) {
+                $allDefs[] = $this->createNoopSearchEngineDefinition();
+            }
+            if (!$hasMessengerTransport) {
+                $allDefs[] = $this->createNoopMessengerTransportDefinition();
+            }
+        }
+
+        return new class($allDefs, $bundles, $skippedSteps) implements InstallProfileInterface, InstallStepFilterInterface {
+            /**
+             * @param list<EnvVarDefinitionInterface> $definitions
+             * @param list<class-string> $bundles
+             * @param list<InstallStep> $skippedSteps
+             */
+            public function __construct(
+                private readonly array $definitions,
+                private readonly array $bundles,
+                private readonly array $skippedSteps,
+            ) {
+            }
+
+            public function getName(): string
+            {
+                return 'test-profile-with-skipped-steps';
+            }
+
+            public function getDescription(): string
+            {
+                return 'Test profile with skipped install steps';
+            }
+
+            public function getBundles(): array
+            {
+                return $this->bundles;
+            }
+
+            public function getEnvVarDefinitions(): array
+            {
+                return $this->definitions;
+            }
+
+            public function getDataSource(): ?DataSourceInterface
+            {
+                return null;
+            }
+
+            public function getPostInstallCommands(): array
+            {
+                return [];
+            }
+
+            public function getSkippedInstallSteps(): array
+            {
+                return $this->skippedSteps;
+            }
+        };
+    }
+
+    // -----------------------------------------------------------------------
+    // Original helper methods
+    // -----------------------------------------------------------------------
 
     /**
      * Creates a mock definition that passes validation.
