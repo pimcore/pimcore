@@ -148,7 +148,7 @@ final class Installer
             return $credentialErrors;
         }
 
-        $this->dispatchStep('write_env', 'Writing .env.local...');
+        $this->dispatchStep(InstallStep::WriteEnv, 'Writing .env.local...');
         $writeErrors = $this->writeEnvLocal($result['resolved'], $projectRoot, $io);
 
         if ($writeErrors !== []) {
@@ -157,7 +157,7 @@ final class Installer
 
         $io->text('  <info>✓</info> .env.local written');
 
-        $this->dispatchStep('write_doctrine_config', 'Writing Doctrine mapping types config...');
+        $this->dispatchStep(InstallStep::WriteDoctrineConfig, 'Writing Doctrine mapping types config...');
         $this->writeDoctrineConfig($projectRoot);
         $io->text('  <info>✓</info> Doctrine mapping types config written');
 
@@ -189,7 +189,7 @@ final class Installer
         $this->calculateTotalSteps($profile);
         $errors = [];
 
-        $this->dispatchStep('boot_kernel', 'Booting application kernel...');
+        $this->dispatchStep(InstallStep::BootKernel, 'Booting application kernel...');
         $kernel = $this->bootRealKernel($projectRoot);
 
         $error = $this->executeStepSetupDatabase($kernel, $profile);
@@ -259,7 +259,7 @@ final class Installer
             return array_merge($errors, [$error]);
         }
 
-        $this->dispatchStep('finalize', 'Finalizing installation...');
+        $this->dispatchStep(InstallStep::Finalize, 'Finalizing installation...');
         $this->clearKernelCacheDir($kernel);
         $this->cleanupNeedsInstallMarker();
 
@@ -287,7 +287,7 @@ final class Installer
     ): array {
         $resolvedByDefinition = [];
         $errors = [];
-        $this->dispatchStep('collect_validate', 'Collecting and validating configuration...');
+        $this->dispatchStep(InstallStep::CollectAndValidate, 'Collecting and validating configuration...');
 
         foreach ($activeDefinitions as $key => $definition) {
             $io->section($definition->getLabel());
@@ -439,13 +439,13 @@ YAML;
      * Fatal steps should cause the caller to return early; non-fatal errors are collected.
      */
     private function executeStep(
-        string $stepType,
+        InstallStep $step,
         string $stepMessage,
         string $details,
         callable $action,
         bool $fatal = true,
     ): ?string {
-        $this->dispatchStep($stepType, $stepMessage);
+        $this->dispatchStep($step, $stepMessage);
 
         try {
             $action();
@@ -467,7 +467,7 @@ YAML;
         $hasDataSource = $profile->getDataSource() !== null;
 
         return $this->executeStep(
-            'setup_database',
+            InstallStep::SetupDatabase,
             'Setting up database...',
             'Schema created',
             function () use ($kernel, $hasDataSource): void {
@@ -492,7 +492,7 @@ YAML;
         }
 
         return $this->executeStep(
-            'import_data',
+            InstallStep::ImportData,
             'Importing data...',
             $dataSource->getLabel(),
             function () use ($dataSource, $kernel, $io): void {
@@ -510,7 +510,7 @@ YAML;
         array $credentials,
     ): ?string {
         return $this->executeStep(
-            'create_admin',
+            InstallStep::CreateAdmin,
             'Creating admin user...',
             'Admin user created',
             function () use ($kernel, $credentials): void {
@@ -523,7 +523,7 @@ YAML;
     private function executeStepRegisterBundles(InstallProfileInterface $profile): ?string
     {
         return $this->executeStep(
-            'register_bundles',
+            InstallStep::RegisterBundles,
             'Registering bundles...',
             sprintf('%d bundles registered', count($profile->getBundles())),
             function () use ($profile): void {
@@ -537,7 +537,7 @@ YAML;
         string $projectRoot,
     ): ?string {
         return $this->executeStep(
-            'reboot_kernel',
+            InstallStep::RebootKernel,
             'Rebooting kernel...',
             'Kernel rebooted',
             function () use ($kernel, $projectRoot): void {
@@ -553,7 +553,7 @@ YAML;
         SymfonyStyle $io,
     ): ?string {
         return $this->executeStep(
-            'install_bundles',
+            InstallStep::InstallBundles,
             'Installing bundles...',
             'Bundles installed',
             function () use ($profile, $io): void {
@@ -565,7 +565,7 @@ YAML;
     private function executeStepInstallAssets(): ?string
     {
         return $this->executeStep(
-            'install_assets',
+            InstallStep::InstallAssets,
             'Installing assets...',
             'Assets installed',
             function (): void {
@@ -577,7 +577,7 @@ YAML;
     private function executeStepRebuildClasses(): ?string
     {
         return $this->executeStep(
-            'rebuild_classes',
+            InstallStep::RebuildClasses,
             'Rebuilding class definitions...',
             'Classes rebuilt',
             function (): void {
@@ -590,7 +590,7 @@ YAML;
     private function executeStepMarkMigrations(): ?string
     {
         return $this->executeStep(
-            'mark_migrations',
+            InstallStep::MarkMigrations,
             'Marking migrations as done...',
             'Migrations marked',
             function (): void {
@@ -620,7 +620,7 @@ YAML;
         }
 
         return $this->executeStep(
-            'post_install_commands',
+            InstallStep::PostInstallCommands,
             'Running post-install commands...',
             sprintf('%d commands executed', count($postInstallCommands)),
             function () use ($postInstallCommands, $io): void {
@@ -635,7 +635,7 @@ YAML;
     private function executeStepRunMaintenance(): ?string
     {
         return $this->executeStep(
-            'run_maintenance',
+            InstallStep::RunMaintenance,
             'Running maintenance...',
             'Maintenance completed',
             function (): void {
@@ -655,7 +655,7 @@ YAML;
         }
 
         return $this->executeStep(
-            'profile_post_install',
+            InstallStep::ProfilePostInstall,
             'Running profile post-install...',
             'Profile postInstall() completed',
             function () use ($kernel, $profile, $io): void {
@@ -789,11 +789,11 @@ YAML;
         $this->totalSteps = $steps;
     }
 
-    private function dispatchStep(string $type, string $message): void
+    private function dispatchStep(InstallStep $step, string $message): void
     {
         $this->stepCounter++;
 
-        $event = new InstallerStepEvent($type, $message, $this->stepCounter, $this->totalSteps);
+        $event = new InstallerStepEvent($step, $message, $this->stepCounter, $this->totalSteps);
         $this->eventDispatcher->dispatch($event, InstallEvents::EVENT_NAME_STEP);
     }
 }
