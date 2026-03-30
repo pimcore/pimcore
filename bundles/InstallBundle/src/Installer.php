@@ -842,24 +842,62 @@ YAML;
     {
         $steps = 0;
 
-        $steps++; // boot_kernel
-        $steps++; // setup_database
-
-        if ($profile->getDataSource() !== null) {
-            $steps++; // import_data
+        // Phase 2 steps
+        if (!$this->isStepSkipped(InstallStep::BootKernel)) {
+            $steps++;
         }
 
-        $steps++; // create_admin
-        $steps++; // register_bundles
-        $steps++; // reboot_kernel
-        $steps++; // install_bundles
-        $steps++; // install_assets
-        $steps++; // rebuild_classes
-        $steps++; // mark_migrations
-        $steps++; // post_install_commands
-        $steps++; // run_maintenance
-        $steps++; // profile_post_install
-        $steps++; // finalize
+        if (!$this->isStepSkipped(InstallStep::SetupDatabase)) {
+            $steps++;
+        }
+
+        if (!$this->isStepSkipped(InstallStep::ImportData) && $profile->getDataSource() !== null) {
+            $steps++;
+        }
+
+        if (!$this->isStepSkipped(InstallStep::CreateAdmin)) {
+            $steps++;
+        }
+
+        if (!$this->isStepSkipped(InstallStep::RegisterBundles)) {
+            $steps++;
+        }
+
+        if (!$this->isStepSkipped(InstallStep::RebootKernel)) {
+            $steps++;
+        }
+
+        if (!$this->isStepSkipped(InstallStep::InstallBundles)) {
+            $steps++;
+        }
+
+        if (!$this->isStepSkipped(InstallStep::InstallAssets)) {
+            $steps++;
+        }
+
+        if (!$this->isStepSkipped(InstallStep::RebuildClasses)) {
+            $steps++;
+        }
+
+        if (!$this->isStepSkipped(InstallStep::MarkMigrations)) {
+            $steps++;
+        }
+
+        if (!$this->isStepSkipped(InstallStep::PostInstallCommands)) {
+            $steps++;
+        }
+
+        if (!$this->isStepSkipped(InstallStep::RunMaintenance)) {
+            $steps++;
+        }
+
+        if (!$this->isStepSkipped(InstallStep::ProfilePostInstall)) {
+            $steps++;
+        }
+
+        if (!$this->isStepSkipped(InstallStep::Finalize)) {
+            $steps++;
+        }
 
         $this->totalSteps = $steps;
     }
