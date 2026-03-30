@@ -113,6 +113,8 @@ final class Installer
         string $projectRoot,
     ): array {
         $this->resolveSkippedSteps($profile);
+        $this->calculatePhaseOneTotalSteps();
+        $this->stepCounter = 0;
 
         $result = ['resolved' => [], 'errors' => []];
 
@@ -203,17 +205,26 @@ final class Installer
         string $projectRoot,
     ): array {
         $this->resolveSkippedSteps($profile);
-        $this->calculateTotalSteps($profile);
+        $this->calculatePhaseTwoTotalSteps($profile);
+        $this->stepCounter = 0;
         $errors = [];
-
-        $kernel = $this->lastBootedKernel;
 
         if ($this->isStepSkipped(InstallStep::BootKernel)) {
             $this->skipStep(InstallStep::BootKernel, 'Booting application kernel...');
+
+            if ($this->lastBootedKernel === null) {
+                throw new \LogicException(
+                    'Cannot skip BootKernel: no kernel was booted previously.'
+                    . ' BootKernel can only be skipped when a kernel is already available'
+                    . ' (e.g. from a previous phase or custom bootstrap).',
+                );
+            }
         } else {
             $this->dispatchStep(InstallStep::BootKernel, 'Booting application kernel...');
-            $kernel = $this->bootRealKernel($projectRoot);
+            $this->bootRealKernel($projectRoot);
         }
+
+        $kernel = $this->lastBootedKernel;
 
         if ($this->isStepSkipped(InstallStep::SetupDatabase)) {
             $this->skipStep(InstallStep::SetupDatabase, 'Setting up database...');
@@ -746,6 +757,29 @@ YAML;
         $this->skippedSteps = $profile instanceof InstallStepFilterInterface
             ? $profile->getSkippedInstallSteps()
             : [];
+
+        $this->enforceStepDependencies();
+    }
+
+    /**
+     * Enforce implicit step dependencies.
+     *
+     * Some steps depend on earlier steps having run. When a prerequisite step
+     * is skipped, its dependent steps must also be skipped to avoid runtime
+     * errors (e.g. writing an empty .env.local, or passing a null kernel).
+     */
+    private function enforceStepDependencies(): void
+    {
+        // WriteEnv depends on CollectAndValidate: without collected data,
+        // writing .env.local would create an empty file or overwrite existing values.
+        if ($this->isStepSkipped(InstallStep::CollectAndValidate)
+            && !$this->isStepSkipped(InstallStep::WriteEnv)) {
+            $this->skippedSteps[] = InstallStep::WriteEnv;
+            $this->logger->info(
+                'Implicitly skipping WriteEnv because CollectAndValidate is skipped'
+                . ' (no collected values to write)',
+            );
+        }
     }
 
     private function isStepSkipped(InstallStep $step): bool
@@ -838,7 +872,26 @@ YAML;
         }
     }
 
-    private function calculateTotalSteps(InstallProfileInterface $profile): void
+    private function calculatePhaseOneTotalSteps(): void
+    {
+        $steps = 0;
+
+        if (!$this->isStepSkipped(InstallStep::CollectAndValidate)) {
+            $steps++;
+        }
+
+        if (!$this->isStepSkipped(InstallStep::WriteEnv)) {
+            $steps++;
+        }
+
+        if (!$this->isStepSkipped(InstallStep::WriteDoctrineConfig)) {
+            $steps++;
+        }
+
+        $this->totalSteps = $steps;
+    }
+
+    private function calculatePhaseTwoTotalSteps(InstallProfileInterface $profile): void
     {
         $steps = 0;
 

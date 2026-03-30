@@ -1337,6 +1337,111 @@ YAML;
         $this->assertNotContains(InstallStep::WriteDoctrineConfig, $receivedSteps);
     }
 
+    public function testPhaseOneSkipCollectAndValidateImplicitlySkipsWriteEnv(): void
+    {
+        $eventDispatcher = new EventDispatcher();
+
+        /** @var list<InstallStep> $receivedSteps */
+        $receivedSteps = [];
+        $eventDispatcher->addListener(
+            InstallEvents::EVENT_NAME_STEP,
+            static function (InstallerStepEvent $event) use (&$receivedSteps): void {
+                $receivedSteps[] = $event->getStep();
+            },
+        );
+
+        $installer = $this->createInstaller(eventDispatcher: $eventDispatcher);
+
+        $def = $this->createMockDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['DB_HOST'],
+        );
+
+        // Only skip CollectAndValidate — WriteEnv should be implicitly skipped too
+        $profile = $this->createMockProfileWithSkippedSteps(
+            [$def],
+            [InstallStep::CollectAndValidate],
+        );
+
+        $envVarReader = new ArrayEnvVarReader();
+        $collector = new ParameterCollector($envVarReader);
+
+        $errors = $installer->runPhaseOne(
+            $profile,
+            [],
+            [],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        $this->assertSame([], $errors);
+
+        // WriteEnv implicitly skipped — no .env.local should be created
+        $this->assertFileDoesNotExist($this->tempDir . '/.env.local');
+
+        // Only WriteDoctrineConfig should fire (CollectAndValidate + WriteEnv both skipped)
+        $this->assertCount(1, $receivedSteps);
+        $this->assertSame(InstallStep::WriteDoctrineConfig, $receivedSteps[0]);
+        $this->assertNotContains(InstallStep::CollectAndValidate, $receivedSteps);
+        $this->assertNotContains(InstallStep::WriteEnv, $receivedSteps);
+    }
+
+    public function testPhaseOneTotalStepsReflectsSkippedSteps(): void
+    {
+        $eventDispatcher = new EventDispatcher();
+
+        /** @var list<InstallerStepEvent> $receivedEvents */
+        $receivedEvents = [];
+        $eventDispatcher->addListener(
+            InstallEvents::EVENT_NAME_STEP,
+            static function (InstallerStepEvent $event) use (&$receivedEvents): void {
+                $receivedEvents[] = $event;
+            },
+        );
+
+        $installer = $this->createInstaller(eventDispatcher: $eventDispatcher);
+
+        $def = $this->createMockDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['DB_HOST'],
+        );
+
+        // Skip WriteEnv — should leave 2 active steps
+        $profile = $this->createMockProfileWithSkippedSteps(
+            [$def],
+            [InstallStep::WriteEnv],
+        );
+
+        $envVarReader = new ArrayEnvVarReader();
+        $collector = new ParameterCollector($envVarReader);
+
+        $installer->runPhaseOne(
+            $profile,
+            [],
+            [],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        // 2 events dispatched (CollectAndValidate, WriteDoctrineConfig)
+        $this->assertCount(2, $receivedEvents);
+
+        // Total steps should be 2, not 3
+        foreach ($receivedEvents as $event) {
+            $this->assertSame(2, $event->getTotalSteps());
+        }
+    }
+
     /**
      * Creates a mock profile implementing both InstallProfileInterface and InstallStepFilterInterface.
      *
