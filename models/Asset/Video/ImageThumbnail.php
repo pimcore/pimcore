@@ -142,13 +142,13 @@ final class ImageThumbnail implements ImageThumbnailInterface
                         }
                         $converter->load($this->asset->getLocalFile());
                         if (false === $converter->saveImage($tempFile, (int) $timeOffset)) {
-                            Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
+                            Logger::info('Creation of image thumbnail for video ' . $this->asset->getRealFullPath() . ' failed.');
 
                             return;
                         }
                         $tempFileContent = file_get_contents($tempFile);
                         if (false === $tempFileContent) {
-                            Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
+                            Logger::info('Could not read temporary image thumbnail file for video ' . $this->asset->getRealFullPath() . '.');
 
                             return;
                         }
