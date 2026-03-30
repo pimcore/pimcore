@@ -113,7 +113,7 @@ class Processor
             $storagePath = $thumbDir . '/' . $filename;
             $tmpPath = File::getLocalTempFilePath($format);
 
-            if ($converter = \Pimcore\Video::getInstance()) {
+            if ($converter = \Pimcore\Video::newInstance()) {
                 $converter->setAudioBitrate($config->getAudioBitrate());
                 $converter->setVideoBitrate($config->getVideoBitrate());
                 $converter->setFormat($format);
@@ -125,7 +125,7 @@ class Processor
                     $medias = $config->getMedias();
                     foreach ($medias as $media => $transformations) {
                         //used just to generate arguments for medias
-                        if ($subConverter = \Pimcore\Video::getInstance()) {
+                        if ($subConverter = \Pimcore\Video::newInstance()) {
                             self::applyTransformations($subConverter, $transformations);
                             $medias[$media]['converter'] = $subConverter;
                         }

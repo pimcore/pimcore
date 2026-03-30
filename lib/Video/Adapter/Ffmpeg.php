@@ -417,7 +417,7 @@ class Ffmpeg implements AdapterInterface
 
     public function setMedias(?array $medias): void
     {
-        $this->medias = $medias;
+        $this->medias = $medias ?? [];
     }
 
     public function setFormat(string $format): static
