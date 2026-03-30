@@ -135,6 +135,11 @@ final class ImageThumbnail implements ImageThumbnailInterface
                     if (!$storage->fileExists($cacheFilePath)) {
                         $tempFile = File::getLocalTempFilePath('png');
                         $converter = Video::newInstance();
+                        if ($converter === null) {
+                            Logger::error('No video adapter available to create image thumbnail for video ' . $this->asset->getRealFullPath() . '.');
+
+                            return;
+                        }
                         $converter->load($this->asset->getLocalFile());
                         if (false === $converter->saveImage($tempFile, (int) $timeOffset)) {
                             Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');

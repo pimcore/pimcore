@@ -30,11 +30,17 @@ class Video
      */
     public static function getInstance(?string $adapter = null): ?Video\AdapterInterface
     {
-        if ($adapter) {
-            return self::resolveAdapterInstance($adapter);
-        }
+        try {
+            if ($adapter) {
+                return self::resolveAdapterInstance($adapter);
+            }
 
-        return self::getDefaultAdapter();
+            return self::getDefaultAdapter();
+        } catch (Exception $e) {
+            Logger::crit('Unable to load video adapter: ' . $e->getMessage());
+
+            throw $e;
+        }
     }
 
     /**
@@ -69,6 +75,10 @@ class Video
         $adapterClass = '\\Pimcore\\Video\\Adapter\\' . $adapter;
         if (!Tool::classExists($adapterClass)) {
             throw new Exception('Video-transcode adapter `' . $adapter . '´ does not exist.');
+        }
+
+        if (!is_subclass_of($adapterClass, Video\AdapterInterface::class)) {
+            throw new Exception('Video-transcode adapter `' . $adapter . '´ must implement ' . Video\AdapterInterface::class . '.');
         }
 
         return new $adapterClass();

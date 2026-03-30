@@ -269,6 +269,9 @@ class Ffmpeg implements AdapterInterface
         $process->start();
 
         $tmpHandle = fopen($tmpFile, 'a');
+        if ($tmpHandle === false) {
+            throw new Exception('Failed to open temporary file for video info: ' . $tmpFile);
+        }
         $process->wait(function ($type, $buffer) use ($tmpHandle) {
             fwrite($tmpHandle, $buffer);
         });
@@ -276,6 +279,10 @@ class Ffmpeg implements AdapterInterface
 
         $contents = file_get_contents($tmpFile);
         unlink($tmpFile);
+
+        if ($contents === false) {
+            throw new Exception('Failed to read video info from temporary file: ' . $tmpFile);
+        }
 
         $this->cachedVideoInfo = $contents;
 
