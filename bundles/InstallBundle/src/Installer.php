@@ -26,6 +26,8 @@ use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
 use Pimcore\Bundle\InstallBundle\Profile\DataSource\DataSourceInterface;
 use Pimcore\Bundle\InstallBundle\Profile\InstallProfileInterface;
+use Pimcore\Bundle\InstallBundle\Profile\InstallStep;
+use Pimcore\Bundle\InstallBundle\Profile\InstallStepFilterInterface;
 use Pimcore\Bundle\InstallBundle\PostInstall\PostInstallRunner;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallCommandsProviderInterface;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallHookInterface;
@@ -57,6 +59,9 @@ final class Installer
     private int $totalSteps = 0;
 
     private ?KernelInterface $lastBootedKernel = null;
+
+    /** @var InstallStep[] */
+    private array $skippedSteps = [];
 
     /**
      * @param (\Closure(string): EnvWriter)|null $envWriterFactory
@@ -659,6 +664,23 @@ YAML;
                 $profile->postInstall($context);
             },
         );
+    }
+
+    private function resolveSkippedSteps(InstallProfileInterface $profile): void
+    {
+        $this->skippedSteps = $profile instanceof InstallStepFilterInterface
+            ? $profile->getSkippedInstallSteps()
+            : [];
+    }
+
+    private function isStepSkipped(InstallStep $step): bool
+    {
+        return in_array($step, $this->skippedSteps, true);
+    }
+
+    private function skipStep(InstallStep $step, string $message): void
+    {
+        $this->logger->info(sprintf('Skipping step "%s": %s', $step->value, $message));
     }
 
     private function bootRealKernel(string $projectRoot): KernelInterface
