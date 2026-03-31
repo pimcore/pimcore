@@ -49,10 +49,10 @@ final class Version20260331112000 extends AbstractMigration
             $columnType = strtolower($col['COLUMN_TYPE']);
 
             // Step 1a: Clean up orphaned unit references — set to NULL if the unit no longer exists
-            // Use explicit COLLATE to handle potential collation mismatches between tables
+            // Use LEFT JOIN with explicit COLLATE to handle potential collation mismatches between tables
             $this->connection->executeStatement(
                 sprintf(
-                    'UPDATE `%s` SET `%s` = NULL WHERE `%s` IS NOT NULL AND `%s` COLLATE utf8mb4_unicode_ci NOT IN (SELECT `id` COLLATE utf8mb4_unicode_ci FROM `quantityvalue_units`)',
+                    'UPDATE `%s` t LEFT JOIN `quantityvalue_units` u ON t.`%s` COLLATE utf8mb4_unicode_ci = u.`id` COLLATE utf8mb4_unicode_ci SET t.`%s` = NULL WHERE t.`%s` IS NOT NULL AND u.`id` IS NULL',
                     $tableName,
                     $columnName,
                     $columnName,
