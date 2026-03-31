@@ -48,6 +48,7 @@ class DaoForeignKeyTest extends TestCase
             ->willReturn('utf8mb4_general_ci');
 
         // Expect executeQuery to be called with the ALTER TABLE statement (only FK, no collation change needed)
+        $resultMock = $this->createMock(\Doctrine\DBAL\Result::class);
         $mockDb->expects($this->once())
             ->method('executeQuery')
             ->with($this->callback(function (string $sql) {
@@ -56,7 +57,8 @@ class DaoForeignKeyTest extends TestCase
                     && str_contains($sql, 'quantityvalue_units')
                     && str_contains($sql, 'ON DELETE SET NULL')
                     && str_contains($sql, 'ON UPDATE CASCADE');
-            }));
+            }))
+            ->willReturn($resultMock);
 
         $dao = $this->createDaoWithDb($mockDb);
         $dao->callEnsureForeignKeys('test_table', 'myfield', 'unit', $field);
@@ -130,9 +132,10 @@ class DaoForeignKeyTest extends TestCase
             ->willReturn('utf8mb4_general_ci');
 
         // Expect TWO executeQuery calls: one for collation fix, one for FK creation
+        $resultMock = $this->createMock(\Doctrine\DBAL\Result::class);
         $mockDb->expects($this->exactly(2))
             ->method('executeQuery')
-            ->willReturnCallback(function (string $sql) {
+            ->willReturnCallback(function (string $sql) use ($resultMock) {
                 static $callCount = 0;
                 $callCount++;
 
@@ -144,7 +147,7 @@ class DaoForeignKeyTest extends TestCase
                     $this->assertStringContainsString('FOREIGN KEY', $sql);
                 }
 
-                return 0;
+                return $resultMock;
             });
 
         $dao = $this->createDaoWithDb($mockDb);
