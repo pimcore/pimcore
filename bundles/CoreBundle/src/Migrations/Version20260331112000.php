@@ -18,7 +18,7 @@ use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\DefinitionWriteException;
 
-final class Version20240323121349 extends AbstractMigration
+final class Version20260331112000 extends AbstractMigration
 {
     public function getDescription(): string
     {
