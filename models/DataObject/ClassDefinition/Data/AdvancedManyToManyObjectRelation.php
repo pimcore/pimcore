@@ -40,13 +40,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * @internal
      *
-     * @var string[]|string|null
-     */
-    public array|string|null $visibleFields = null;
-
-    /**
-     * @internal
-     *
      */
     public array $columns = [];
 
@@ -567,28 +560,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     public function getAllowedClassId(): ?string
     {
         return $this->allowedClassId;
-    }
-
-    public function setVisibleFields(array|string|null $visibleFields): static
-    {
-        /**
-         * @extjs6
-         */
-        if (is_array($visibleFields)) {
-            if (count($visibleFields)) {
-                $visibleFields = implode(',', $visibleFields);
-            } else {
-                $visibleFields = null;
-            }
-        }
-        $this->visibleFields = $visibleFields;
-
-        return $this;
-    }
-
-    public function getVisibleFields(): array|string|null
-    {
-        return $this->visibleFields;
     }
 
     /**
