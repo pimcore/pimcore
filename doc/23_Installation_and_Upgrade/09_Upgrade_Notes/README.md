@@ -53,6 +53,25 @@ Search engine configuration now uses DSN-based env vars instead of separate host
 The DSN is parsed at runtime in the client factory. 
 The old configuration approach with separate `hosts` arrays in YAML is replaced by a single `dsn` config option.
 
+#### [Admin Storage]
+
+A new `pimcore.admin.storage` Flysystem storage has been added to core defaults (`flysystem.yaml`) for shared admin resources such as user avatars and custom logos. The storage defaults to a local adapter at `%kernel.project_dir%/var/admin`. If your project already defines a `pimcore.admin.storage` Flysystem storage, ensure it does not conflict with the new default.
+
+The `pimcore_admin.translations.path` container parameter is no longer read by `Pimcore\Tool\Admin::getLanguages()`. Admin UI translations are now resolved exclusively via the standard `translator.default_path` parameter. If you previously relied on `pimcore_admin.translations.path` to provide additional admin translation directories, migrate to placing those files under the path defined by `translator.default_path`.
+
+#### [Doctrine]
+
+The `enum: string` Doctrine DBAL mapping type override has been removed from the installer-generated `doctrine.yaml` configuration. If your project's database contains `ENUM` columns and you relied on this mapping to prevent Doctrine schema exceptions, add the mapping explicitly to your own `config/packages/doctrine.yaml`:
+
+```yaml
+doctrine:
+    dbal:
+        connections:
+            default:
+                mapping_types:
+                    enum: string
+```
+
 #### [Messenger Transport DSN Changes]
 
 **This is a breaking change for existing installations.**
