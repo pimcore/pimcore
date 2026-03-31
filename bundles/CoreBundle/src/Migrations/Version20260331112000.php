@@ -25,6 +25,11 @@ final class Version20260331112000 extends AbstractMigration
         return 'Add foreign key constraints for quantity value unit columns: clean up orphaned references, fix column types and rebuild definitions';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         // Step 1: Find all __unit columns across object tables and clean up orphaned references
@@ -44,9 +49,10 @@ final class Version20260331112000 extends AbstractMigration
             $columnType = strtolower($col['COLUMN_TYPE']);
 
             // Step 1a: Clean up orphaned unit references — set to NULL if the unit no longer exists
-            $this->addSql(
+            // Use explicit COLLATE to handle potential collation mismatches between tables
+            $this->connection->executeStatement(
                 sprintf(
-                    'UPDATE `%s` SET `%s` = NULL WHERE `%s` IS NOT NULL AND `%s` NOT IN (SELECT `id` FROM `quantityvalue_units`)',
+                    'UPDATE `%s` SET `%s` = NULL WHERE `%s` IS NOT NULL AND `%s` COLLATE utf8mb4_unicode_ci NOT IN (SELECT `id` COLLATE utf8mb4_unicode_ci FROM `quantityvalue_units`)',
                     $tableName,
                     $columnName,
                     $columnName,
@@ -56,7 +62,7 @@ final class Version20260331112000 extends AbstractMigration
 
             // Step 1b: Fix VARCHAR mismatch — change varchar(64) to varchar(50) to match quantityvalue_units.id
             if ($columnType === 'varchar(64)') {
-                $this->addSql(
+                $this->connection->executeStatement(
                     sprintf(
                         'ALTER TABLE `%s` MODIFY `%s` varchar(50) DEFAULT NULL',
                         $tableName,

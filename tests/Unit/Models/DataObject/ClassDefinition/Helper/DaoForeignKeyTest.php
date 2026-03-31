@@ -38,7 +38,16 @@ class DaoForeignKeyTest extends TestCase
             ->method('fetchFirstColumn')
             ->willReturn([0]);
 
-        // Expect executeQuery to be called with the ALTER TABLE statement
+        // ensureMatchingCollation queries column info and referenced collation
+        $mockDb->expects($this->once())
+            ->method('fetchAssociative')
+            ->willReturn(['COLLATION_NAME' => 'utf8mb4_general_ci', 'COLUMN_TYPE' => 'varchar(50)']);
+
+        $mockDb->expects($this->once())
+            ->method('fetchOne')
+            ->willReturn('utf8mb4_general_ci');
+
+        // Expect executeQuery to be called with the ALTER TABLE statement (only FK, no collation change needed)
         $mockDb->expects($this->once())
             ->method('executeQuery')
             ->with($this->callback(function (string $sql) {
@@ -102,6 +111,46 @@ class DaoForeignKeyTest extends TestCase
         $dao->callEnsureForeignKeys('test_table', 'myfield', 'unit', new QuantityValue());
     }
 
+    public function testEnsureForeignKeysFixesCollationMismatch(): void
+    {
+        $mockDb = $this->createMock(Connection::class);
+
+        // foreignKeyExists returns false
+        $mockDb->expects($this->once())
+            ->method('fetchFirstColumn')
+            ->willReturn([0]);
+
+        // Column has different collation than the referenced column
+        $mockDb->expects($this->once())
+            ->method('fetchAssociative')
+            ->willReturn(['COLLATION_NAME' => 'utf8mb4_unicode_520_ci', 'COLUMN_TYPE' => 'varchar(50)']);
+
+        $mockDb->expects($this->once())
+            ->method('fetchOne')
+            ->willReturn('utf8mb4_general_ci');
+
+        // Expect TWO executeQuery calls: one for collation fix, one for FK creation
+        $mockDb->expects($this->exactly(2))
+            ->method('executeQuery')
+            ->willReturnCallback(function (string $sql) {
+                static $callCount = 0;
+                $callCount++;
+
+                if ($callCount === 1) {
+                    $this->assertStringContainsString('COLLATE utf8mb4_general_ci', $sql);
+                    $this->assertStringContainsString('MODIFY', $sql);
+                } else {
+                    $this->assertStringContainsString('ADD CONSTRAINT', $sql);
+                    $this->assertStringContainsString('FOREIGN KEY', $sql);
+                }
+
+                return 0;
+            });
+
+        $dao = $this->createDaoWithDb($mockDb);
+        $dao->callEnsureForeignKeys('test_table', 'myfield', 'unit', new QuantityValue());
+    }
+
     /**
      * Creates a test double that exposes the trait's ensureForeignKeys method.
      */
@@ -110,6 +159,7 @@ class DaoForeignKeyTest extends TestCase
         return new class($db) {
             use \Pimcore\Model\DataObject\ClassDefinition\Helper\Dao {
                 ensureForeignKeys as public callEnsureForeignKeys;
+                ensureMatchingCollation as protected;
                 foreignKeyExists as protected;
             }
 
@@ -128,6 +178,16 @@ class DaoForeignKeyTest extends TestCase
 
             protected function resetValidTableColumnsCache(string $table): void
             {
+            }
+
+            public static function getForeignKeyName(string $table, string $column): string
+            {
+                $fkName = 'fk_' . $table . '__' . $column;
+                if (strlen($fkName) > 64) {
+                    $fkName = substr($fkName, 0, 55) . '_' . hash('crc32', $fkName);
+                }
+
+                return $fkName;
             }
         };
     }
