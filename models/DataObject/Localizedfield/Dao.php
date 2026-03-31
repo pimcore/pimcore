@@ -856,6 +856,7 @@ QUERY;
                             foreach ($value->getColumnType() as $fkey => $fvalue) {
                                 $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
                                 $protectedColumns[] = $key . '__' . $fkey;
+                                $this->ensureForeignKeys($table, $key, $fkey, $value);
                             }
                         } else {
                             $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
@@ -925,6 +926,7 @@ QUERY;
                             foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
                                 $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
                                 $protectedColumns[] = $key.'__'.$fkey;
+                                $this->ensureForeignKeys($queryTable, $key, $fkey, $value);
                             }
                         } elseif ($value->getQueryColumnType()) {
                             $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL');

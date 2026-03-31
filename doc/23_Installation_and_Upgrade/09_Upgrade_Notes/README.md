@@ -16,7 +16,7 @@ The following bundles have been removed:
 - The `reset_password` rate limiter configuration has been moved to the studio-backend bundle and is no longer part of Pimcore's core configuration.
 - Added support for PHP `8.5` and bumped minimum requirement of Symfony to `7.4`.
 - Dropped support for PHP `8.3` and Symfony `6`.
-- [QuantityValue] Introduced foreign key constraints on the automatically generated `__unit` columns for quantity fields (e.g. `QuantityValue`, `QuantityValueRange`) in object store and query tables. These constraints enforce referential integrity with the `quantityvalue_units` table by ensuring that all referenced unit IDs exist and by automatically setting the unit reference to `NULL` if the referenced unit is deleted.
+- [QuantityValue] Introduced foreign key constraints on `__unit` columns in object store, query, localized, objectbrick and fieldcollection tables for `QuantityValue`, `InputQuantityValue` and `QuantityValueRange` fields. These constraints reference `quantityvalue_units(id)` with `ON DELETE SET NULL` and `ON UPDATE CASCADE`, ensuring referential integrity. The migration automatically cleans up orphaned unit references (setting them to `NULL`) and changes the `__unit` column type from `varchar(64)` to `varchar(50)` to match the referenced `quantityvalue_units.id` column. If you have custom unit IDs longer than 50 characters, they will be truncated.
  
 #### [DataObjects]
 
