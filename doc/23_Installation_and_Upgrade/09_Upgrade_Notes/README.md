@@ -16,9 +16,10 @@ The following bundles have been removed:
 - The abstract class `Pimcore\Video\Adapter` has been removed. `Pimcore\Video\Adapter\Ffmpeg` now directly implements `Pimcore\Video\AdapterInterface`. If you extended `Pimcore\Video\Adapter`, update your class to implement `Pimcore\Video\AdapterInterface` directly.
 - The hard-coded space between quantity value and unit has been removed for class definition quantity fields (e.g. `AbstractQuantityValue`, `QuantityValueRange`). Spacing and formatting between value and unit is now controlled by locale- and translation-based formatting instead of being fixed in the code.
 - The `reset_password` rate limiter configuration has been moved to the studio-backend bundle and is no longer part of Pimcore's core configuration.
+- Removed legacy Admin UI (Classic UI) `EditmodeListener`.
 - Added support for PHP `8.5` and bumped minimum requirement of Symfony to `7.4`.
 - Dropped support for PHP `8.3` and Symfony `6`.
- 
+
 #### [DataObjects]
 - Add a new optional `$parameters` argument to `Concrete::saveVersion()` to allow passing of arguments to events.
 
@@ -50,33 +51,14 @@ Search engine configuration now uses DSN-based env vars instead of separate host
 - **OpenSearch:** `PIMCORE_OPENSEARCH_DSN=opensearch://admin:admin@localhost:9200?ssl=true`
 - **Elasticsearch:** `PIMCORE_ELASTICSEARCH_DSN=elasticsearch://elastic:changeme@localhost:9200`
 
-The DSN is parsed at runtime in the client factory. 
+The DSN is parsed at runtime in the client factory.
 The old configuration approach with separate `hosts` arrays in YAML is replaced by a single `dsn` config option.
-
-#### [Admin Storage]
-
-A new `pimcore.admin.storage` Flysystem storage has been added to core defaults (`flysystem.yaml`) for shared admin resources such as user avatars and custom logos. The storage defaults to a local adapter at `%kernel.project_dir%/var/admin`. If your project already defines a `pimcore.admin.storage` Flysystem storage, ensure it does not conflict with the new default.
-
-The `pimcore_admin.translations.path` container parameter is no longer read by `Pimcore\Tool\Admin::getLanguages()`. Admin UI translations are now resolved exclusively via the standard `translator.default_path` parameter. If you previously relied on `pimcore_admin.translations.path` to provide additional admin translation directories, migrate to placing those files under the path defined by `translator.default_path`.
-
-#### [Doctrine]
-
-The `enum: string` Doctrine DBAL mapping type override has been removed from the installer-generated `doctrine.yaml` configuration. If your project's database contains `ENUM` columns and you relied on this mapping to prevent Doctrine schema exceptions, add the mapping explicitly to your own `config/packages/doctrine.yaml`:
-
-```yaml
-doctrine:
-    dbal:
-        connections:
-            default:
-                mapping_types:
-                    enum: string
-```
 
 #### [Messenger Transport DSN Changes]
 
 **This is a breaking change for existing installations.**
 
-The `PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX` env var (previously named `PIMCORE_MESSENGER_TRANSPORT_DSN`) format has changed. 
+The `PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX` env var (previously named `PIMCORE_MESSENGER_TRANSPORT_DSN`) format has changed.
 It must now include a **trailing separator** for queue name concatenation, because Pimcore bundle configs append queue names directly to this value.
 
 **Before (old format):**
@@ -122,14 +104,14 @@ If you have custom transport definitions in your bundle or project YAML that har
 -   Added a new command `pimcore:classes:changes` to list all Class Definition that have been changed. This command helps in tracking modifications and can be useful for auditing and version control purposes.
 -   Added possibility to `pimcore:classificationstore:delete-store` to pass `--inactive-only` flag to only delete inactive (soft deleted from UI) classification stores Keys.
 -   Added a new command `pimcore:migrate:mail-logs-folder-structure` to migrate all mail log files to a new folder structure (YYYY/MM/DD/\<log filename\>).
--   Added a thumbnail setting option to use Crop Box (the visible area), instead of Media Box when converting documents via Ghostscript. 
+-   Added a thumbnail setting option to use Crop Box (the visible area), instead of Media Box when converting documents via Ghostscript.
 -   Added the Twig function `pimcore_count_block(blockname)` to get the count for `pimcoreblock` editable.
--   Refactored VersionCleanupTask for improved performance and reduced SQL query amounts. Added a new configuration option `disable_events` under each version’s configuration block. When enabled, PRE/POST delete events will be suppressed during the version cleanup process to reduce overhead and speed up execution. 
+-   Refactored VersionCleanupTask for improved performance and reduced SQL query amounts. Added a new configuration option `disable_events` under each version’s configuration block. When enabled, PRE/POST delete events will be suppressed during the version cleanup process to reduce overhead and speed up execution.
 -   Added a new configuration option for Select and MultiSelect object types to enforce validation when setting values via PHP API.
 
 ### Deprecations
 
-#### Deprecated and Discontinued 
+#### Deprecated and Discontinued
 The following bundles have been deprecated and will not be migrated to Pimcore Studio:
 - GlossaryBundle
 - SimpleBackendSearchBundle
@@ -138,7 +120,7 @@ The following bundles have been deprecated and will not be migrated to Pimcore S
 - WordExportBundle
 - XliffBundle
 
-#### Deprecated because directly integrated into Studio 
+#### Deprecated because directly integrated into Studio
 - SimpleBackendSearchBundle
 
 #### [Symfony 6.x Components Support]
@@ -150,7 +132,7 @@ This is part of the migration to Symfony 7, which requires updating all Symfony 
 Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 13.0.
 
 **Note:**
-If you want to stay on Symfony 6.x after updating to this version, you can use the `pimcore/symfony-freeze` metapackage to prevent 
+If you want to stay on Symfony 6.x after updating to this version, you can use the `pimcore/symfony-freeze` metapackage to prevent
 automatic upgrades to Symfony 7.x:
 
 ```bash
@@ -826,7 +808,7 @@ The tokens for password reset are now stored in the DB and are one time use only
 
 ```json
 "extra": {
-  "symfony-assets-install": "relative"
+"symfony-assets-install": "relative"
 }
 ```
 
