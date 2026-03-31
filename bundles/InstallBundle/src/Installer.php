@@ -152,6 +152,10 @@ final class Installer
 
         $io->text('  <info>✓</info> .env.local written');
 
+        $this->dispatchStep('write_doctrine_config', 'Writing Doctrine mapping types config...');
+        $this->writeDoctrineConfig($projectRoot);
+        $io->text('  <info>✓</info> Doctrine mapping types config written');
+
         return [];
     }
 
@@ -387,6 +391,40 @@ final class Installer
         }
 
         return [];
+    }
+
+    /**
+     * Write static Doctrine mapping types config.
+     *
+     * Registers database type mappings (e.g. BIT -> boolean)
+     * that Doctrine DBAL does not support natively. Without this config,
+     * introspecting a schema containing these column types throws
+     * "Unknown database type" errors.
+     *
+     * This config was historically part of Pimcore's default.yaml but was
+     * moved to installer-generated config in PR #7848 to avoid container
+     * build failures when no database connection is configured yet.
+     */
+    private function writeDoctrineConfig(string $projectRoot): void
+    {
+        $configDir = $projectRoot . '/config/packages';
+        $filesystem = new Filesystem();
+
+        if (!$filesystem->exists($configDir)) {
+            $filesystem->mkdir($configDir);
+        }
+
+        $content = <<<'YAML'
+doctrine:
+    dbal:
+        connections:
+            default:
+                mapping_types:
+                    bit: boolean
+
+YAML;
+
+        $filesystem->dumpFile($configDir . '/doctrine_mapping_types.yaml', $content);
     }
 
     /**

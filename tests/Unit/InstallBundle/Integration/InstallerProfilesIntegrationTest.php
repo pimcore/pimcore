@@ -76,7 +76,7 @@ final class InstallerProfilesIntegrationTest extends TestCase
         // Pre-set env vars for all definitions
         $envVarReader->set('DATABASE_URL', 'mysql://pimcore:secret@db:3306/pimcore');
         $envVarReader->set('PIMCORE_OPENSEARCH_DSN', 'opensearch://admin:admin@opensearch:9200?ssl_verify=false');
-        $envVarReader->set('PIMCORE_MESSENGER_TRANSPORT_DSN', 'doctrine://default');
+        $envVarReader->set('PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX', 'doctrine://default');
         $envVarReader->set('MERCURE_JWT_KEY', 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4');
         $envVarReader->set('MERCURE_URL', 'http://localhost/hub');
         $envVarReader->set('MERCURE_SERVER_URL', 'http://mercure/.well-known/mercure');
@@ -110,7 +110,7 @@ final class InstallerProfilesIntegrationTest extends TestCase
 
         // Verify env var values
         $this->assertStringContainsString('DATABASE_URL="mysql://pimcore:secret@db:3306/pimcore"', $envContent);
-        $this->assertStringContainsString('PIMCORE_MESSENGER_TRANSPORT_DSN="doctrine://default"', $envContent);
+        $this->assertStringContainsString('PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX="doctrine://default?queue_name="', $envContent);
         $this->assertStringContainsString('PIMCORE_OPENSEARCH_DSN="opensearch://admin:admin@opensearch:9200?ssl_verify=false"', $envContent);
         $this->assertStringContainsString('MERCURE_JWT_KEY="a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4"', $envContent);
         $this->assertStringContainsString('MERCURE_URL="http://localhost/hub"', $envContent);
@@ -161,7 +161,7 @@ final class InstallerProfilesIntegrationTest extends TestCase
         $envVarReader = new ArrayEnvVarReader();
         $envVarReader->set('DATABASE_URL', 'mysql://user:pass@localhost/db');
         $envVarReader->set('PIMCORE_OPENSEARCH_DSN', 'opensearch://localhost:9200?ssl_verify=false');
-        $envVarReader->set('PIMCORE_MESSENGER_TRANSPORT_DSN', 'doctrine://default');
+        $envVarReader->set('PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX', 'doctrine://default');
         $envVarReader->set('MERCURE_JWT_KEY', 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4');
         $envVarReader->set('MERCURE_URL', 'http://localhost/hub');
         $envVarReader->set('MERCURE_SERVER_URL', 'http://mercure/.well-known/mercure');
@@ -182,11 +182,11 @@ final class InstallerProfilesIntegrationTest extends TestCase
 
         $envContent = file_get_contents($this->tempDir . '/.env.local');
 
-        // DATABASE_URL and PIMCORE_MESSENGER_TRANSPORT_DSN should be
+        // DATABASE_URL and PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX should be
         // in the same pimcore/pimcore section
         $pimcoreSection = $this->extractSection($envContent, 'pimcore/pimcore');
         $this->assertStringContainsString('DATABASE_URL=', $pimcoreSection);
-        $this->assertStringContainsString('PIMCORE_MESSENGER_TRANSPORT_DSN=', $pimcoreSection);
+        $this->assertStringContainsString('PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=', $pimcoreSection);
 
         // OpenSearch DSN should be in the opensearch-client section
         $opensearchSection = $this->extractSection($envContent, 'pimcore/opensearch-client');
@@ -204,7 +204,7 @@ final class InstallerProfilesIntegrationTest extends TestCase
         $envVarReader = new ArrayEnvVarReader();
         $envVarReader->set('DATABASE_URL', 'mysql://user:pass@localhost/db');
         $envVarReader->set('PIMCORE_OPENSEARCH_DSN', 'opensearch://localhost:9200?ssl_verify=false');
-        $envVarReader->set('PIMCORE_MESSENGER_TRANSPORT_DSN', 'doctrine://default');
+        $envVarReader->set('PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX', 'doctrine://default');
         $envVarReader->set('MERCURE_JWT_KEY', 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4');
         $envVarReader->set('MERCURE_URL', 'http://localhost/hub');
         $envVarReader->set('MERCURE_SERVER_URL', 'http://mercure/.well-known/mercure');
@@ -240,7 +240,7 @@ final class InstallerProfilesIntegrationTest extends TestCase
 
         // But required definitions should still be present
         $this->assertStringContainsString('DATABASE_URL=', $envContent);
-        $this->assertStringContainsString('PIMCORE_MESSENGER_TRANSPORT_DSN=', $envContent);
+        $this->assertStringContainsString('PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=', $envContent);
     }
 
     public function testPhaseOneEventsAreDispatched(): void
@@ -260,7 +260,7 @@ final class InstallerProfilesIntegrationTest extends TestCase
         $envVarReader = new ArrayEnvVarReader();
         $envVarReader->set('DATABASE_URL', 'mysql://user:pass@localhost/db');
         $envVarReader->set('PIMCORE_OPENSEARCH_DSN', 'opensearch://localhost:9200?ssl_verify=false');
-        $envVarReader->set('PIMCORE_MESSENGER_TRANSPORT_DSN', 'doctrine://default');
+        $envVarReader->set('PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX', 'doctrine://default');
         $envVarReader->set('MERCURE_JWT_KEY', 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4');
         $envVarReader->set('MERCURE_URL', 'http://localhost/hub');
         $envVarReader->set('MERCURE_SERVER_URL', 'http://mercure/.well-known/mercure');

@@ -3,8 +3,6 @@ name: "PHPStan Static Analysis 11.x"
 
 on:
     workflow_dispatch:
-    schedule:
-        -   cron: '0 3 * * *'
     pull_request_target:
         branches:
             - "11.*"

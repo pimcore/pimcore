@@ -40,7 +40,7 @@ final readonly class NoopMessengerTransportDefinition implements MessengerTransp
 
     public function resolveEnvVars(array $collectedValues): array
     {
-        return ['NOOP_MESSENGER_DSN' => 'doctrine://default'];
+        return ['NOOP_MESSENGER_DSN' => 'doctrine://default?queue_name='];
     }
 
     public function validate(array $collectedValues): array

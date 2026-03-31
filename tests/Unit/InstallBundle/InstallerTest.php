@@ -922,6 +922,120 @@ final class InstallerTest extends TestCase
         $this->assertStringContainsString('DB_HOST="localhost"', $envContent);
     }
 
+    public function testPhaseOneWritesDoctrineConfigFile(): void
+    {
+        $def = $this->createMockDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['DB_HOST'],
+        );
+
+        $profile = $this->createMockProfile([$def]);
+        $envVarReader = new ArrayEnvVarReader();
+        $collector = new ParameterCollector($envVarReader);
+
+        $errors = $this->installer->runPhaseOne(
+            $profile,
+            [],
+            [],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        $this->assertSame([], $errors);
+
+        $configFile = $this->tempDir . '/config/packages/doctrine_mapping_types.yaml';
+        $this->assertFileExists($configFile);
+
+        $content = file_get_contents($configFile);
+
+        // Verify the YAML structure contains the required mapping types
+        $this->assertStringContainsString('doctrine:', $content);
+        $this->assertStringContainsString('dbal:', $content);
+        $this->assertStringContainsString('connections:', $content);
+        $this->assertStringContainsString('default:', $content);
+        $this->assertStringContainsString('mapping_types:', $content);
+        $this->assertStringContainsString('bit: boolean', $content);
+    }
+
+    public function testPhaseOneCreatesConfigPackagesDirectoryIfMissing(): void
+    {
+        // Ensure config/packages does NOT exist before running
+        $this->assertDirectoryDoesNotExist($this->tempDir . '/config/packages');
+
+        $def = $this->createMockDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['DB_HOST'],
+        );
+
+        $profile = $this->createMockProfile([$def]);
+        $envVarReader = new ArrayEnvVarReader();
+        $collector = new ParameterCollector($envVarReader);
+
+        $errors = $this->installer->runPhaseOne(
+            $profile,
+            [],
+            [],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        $this->assertSame([], $errors);
+        $this->assertDirectoryExists($this->tempDir . '/config/packages');
+        $this->assertFileExists($this->tempDir . '/config/packages/doctrine_mapping_types.yaml');
+    }
+
+    public function testPhaseOneDoctrineConfigExactContent(): void
+    {
+        $def = $this->createMockDefinition(
+            'database',
+            true,
+            [new ConfigParameter('DB_HOST', 'Host', ParameterType::String, defaultValue: 'localhost')],
+            ['DB_HOST'],
+        );
+
+        $profile = $this->createMockProfile([$def]);
+        $envVarReader = new ArrayEnvVarReader();
+        $collector = new ParameterCollector($envVarReader);
+
+        $errors = $this->installer->runPhaseOne(
+            $profile,
+            [],
+            [],
+            ['username' => 'admin', 'password' => 'admin123'],
+            $collector,
+            $this->createNonInteractiveIo(),
+            false,
+            $this->tempDir,
+        );
+
+        $this->assertSame([], $errors);
+
+        $expectedContent = <<<'YAML'
+doctrine:
+    dbal:
+        connections:
+            default:
+                mapping_types:
+                    bit: boolean
+
+YAML;
+
+        $actualContent = file_get_contents(
+            $this->tempDir . '/config/packages/doctrine_mapping_types.yaml',
+        );
+        $this->assertSame($expectedContent, $actualContent);
+    }
+
     public function testSkipValidationNonMatchingKeyStillValidates(): void
     {
         $failingDef = $this->createFailingDefinition(
