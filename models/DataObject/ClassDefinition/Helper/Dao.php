@@ -250,8 +250,6 @@ trait Dao
         ) {
             $columnName = $key . '__' . $fkey;
 
-            $this->ensureMatchingCollation($tableStore, $columnName, 'quantityvalue_units', 'id');
-
             $this->db->executeQuery(
                 sprintf(
                     'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
@@ -259,43 +257,6 @@ trait Dao
                     $tableStore,
                     $foreignKeyName,
                     $columnName
-                )
-            );
-        }
-    }
-
-    /**
-     * Ensures that a column's collation matches the referenced column's collation.
-     * This is required for foreign key constraints in MySQL/MariaDB.
-     */
-    protected function ensureMatchingCollation(string $table, string $column, string $referencedTable, string $referencedColumn): void
-    {
-        $columnInfo = $this->db->fetchAssociative(
-            'SELECT COLLATION_NAME, COLUMN_TYPE
-             FROM information_schema.COLUMNS
-             WHERE TABLE_SCHEMA = DATABASE()
-               AND TABLE_NAME = ?
-               AND COLUMN_NAME = ?',
-            [$table, $column]
-        );
-
-        $referencedCollation = $this->db->fetchOne(
-            'SELECT COLLATION_NAME
-             FROM information_schema.COLUMNS
-             WHERE TABLE_SCHEMA = DATABASE()
-               AND TABLE_NAME = ?
-               AND COLUMN_NAME = ?',
-            [$referencedTable, $referencedColumn]
-        );
-
-        if ($columnInfo && $referencedCollation && $columnInfo['COLLATION_NAME'] !== $referencedCollation) {
-            $this->db->executeQuery(
-                sprintf(
-                    'ALTER TABLE `%s` MODIFY `%s` %s COLLATE %s DEFAULT NULL',
-                    $table,
-                    $column,
-                    $columnInfo['COLUMN_TYPE'],
-                    $referencedCollation
                 )
             );
         }

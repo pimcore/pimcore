@@ -18,7 +18,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValueRange;
-use Pimcore\Tests\Support\Test\TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests the ensureForeignKeys() method from the Helper\Dao trait
@@ -38,16 +38,7 @@ class DaoForeignKeyTest extends TestCase
             ->method('fetchFirstColumn')
             ->willReturn([0]);
 
-        // ensureMatchingCollation queries column info and referenced collation
-        $mockDb->expects($this->once())
-            ->method('fetchAssociative')
-            ->willReturn(['COLLATION_NAME' => 'utf8mb4_general_ci', 'COLUMN_TYPE' => 'varchar(50)']);
-
-        $mockDb->expects($this->once())
-            ->method('fetchOne')
-            ->willReturn('utf8mb4_general_ci');
-
-        // Expect executeQuery to be called with the ALTER TABLE statement (only FK, no collation change needed)
+        // Expect executeQuery to be called with the ALTER TABLE statement
         $resultMock = $this->createMock(\Doctrine\DBAL\Result::class);
         $mockDb->expects($this->once())
             ->method('executeQuery')
@@ -113,47 +104,6 @@ class DaoForeignKeyTest extends TestCase
         $dao->callEnsureForeignKeys('test_table', 'myfield', 'unit', new QuantityValue());
     }
 
-    public function testEnsureForeignKeysFixesCollationMismatch(): void
-    {
-        $mockDb = $this->createMock(Connection::class);
-
-        // foreignKeyExists returns false
-        $mockDb->expects($this->once())
-            ->method('fetchFirstColumn')
-            ->willReturn([0]);
-
-        // Column has different collation than the referenced column
-        $mockDb->expects($this->once())
-            ->method('fetchAssociative')
-            ->willReturn(['COLLATION_NAME' => 'utf8mb4_unicode_520_ci', 'COLUMN_TYPE' => 'varchar(50)']);
-
-        $mockDb->expects($this->once())
-            ->method('fetchOne')
-            ->willReturn('utf8mb4_general_ci');
-
-        // Expect TWO executeQuery calls: one for collation fix, one for FK creation
-        $resultMock = $this->createMock(\Doctrine\DBAL\Result::class);
-        $mockDb->expects($this->exactly(2))
-            ->method('executeQuery')
-            ->willReturnCallback(function (string $sql) use ($resultMock) {
-                static $callCount = 0;
-                $callCount++;
-
-                if ($callCount === 1) {
-                    $this->assertStringContainsString('COLLATE utf8mb4_general_ci', $sql);
-                    $this->assertStringContainsString('MODIFY', $sql);
-                } else {
-                    $this->assertStringContainsString('ADD CONSTRAINT', $sql);
-                    $this->assertStringContainsString('FOREIGN KEY', $sql);
-                }
-
-                return $resultMock;
-            });
-
-        $dao = $this->createDaoWithDb($mockDb);
-        $dao->callEnsureForeignKeys('test_table', 'myfield', 'unit', new QuantityValue());
-    }
-
     /**
      * Creates a test double that exposes the trait's ensureForeignKeys method.
      */
@@ -162,7 +112,6 @@ class DaoForeignKeyTest extends TestCase
         return new class($db) {
             use \Pimcore\Model\DataObject\ClassDefinition\Helper\Dao {
                 ensureForeignKeys as public callEnsureForeignKeys;
-                ensureMatchingCollation as protected;
                 foreignKeyExists as protected;
             }
 
