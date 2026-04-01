@@ -417,7 +417,7 @@ final class InstallCommand extends Command
 
                 $this->progressBar->setMaxSteps($event->getTotalSteps());
                 $this->progressBar->setMessage($event->getMessage());
-                $this->progressBar->setProgress($event->getStep());
+                $this->progressBar->setProgress($event->getStepNumber());
             },
         );
     }
