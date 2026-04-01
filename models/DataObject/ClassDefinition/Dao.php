@@ -166,6 +166,7 @@ class Dao extends Model\Dao\AbstractDao
                         foreach ($value->getColumnType() as $fkey => $fvalue) {
                             $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
                             $protectedDatastoreColumns[] = $key . '__' . $fkey;
+                            $this->ensureForeignKeys($objectDatastoreTable, $key, $fkey, $value);
                         }
                     } elseif ($value->getColumnType()) {
                         $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
@@ -182,6 +183,7 @@ class Dao extends Model\Dao\AbstractDao
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
                         $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
                         $protectedColumns[] = $key . '__' . $fkey;
+                        $this->ensureForeignKeys($objectTable, $key, $fkey, $value);
                     }
                 } elseif ($value->getQueryColumnType()) {
                     $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');

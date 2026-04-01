@@ -13,13 +13,14 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 /**
  * @internal
  */
 trait Dao
 {
-    protected function addIndexToField(DataObject\ClassDefinition\Data $field, string $table, string $columnTypeGetter = 'getColumnType', bool $considerUniqueIndex = false, bool $isLocalized = false, bool $isFieldcollection = false): void
+    protected function addIndexToField(Data $field, string $table, string $columnTypeGetter = 'getColumnType', bool $considerUniqueIndex = false, bool $isLocalized = false, bool $isFieldcollection = false): void
     {
         $columnType = $field->$columnTypeGetter();
 
@@ -118,9 +119,24 @@ trait Dao
             //if (!in_array($value, $protectedColumns)) {
             if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
                 $dropColumns[] = 'DROP COLUMN `' . $value . '`';
+
+                if (
+                    str_ends_with(strtolower($value), '__unit') &&
+                    $this->foreignKeyExists($table, self::getForeignKeyName($table, $value))
+                ) {
+                    $this->db->executeQuery(
+                        sprintf(
+                            'ALTER TABLE `%s` DROP FOREIGN KEY %s',
+                            $table,
+                            $this->db->quoteIdentifier(self::getForeignKeyName($table, $value))
+                        )
+                    );
+                }
+
                 $this->removeIndices($table, [$value], []);
             }
         }
+
         if ($dropColumns) {
             $this->db->executeQuery('ALTER TABLE `' . $table . '` ' . implode(', ', $dropColumns) . ';');
             $this->resetValidTableColumnsCache($table);
@@ -204,4 +220,46 @@ trait Dao
     {
         return !$this->indexExists($table, $prefix, $indexName);
     }
+
+    protected function foreignKeyExists(string $table, string $foreignKeyName): bool
+    {
+        $exists = $this->db->fetchFirstColumn(
+            'SELECT COUNT(*)
+            FROM information_schema.referential_constraints
+            WHERE table_name = ?
+                AND constraint_name = ?
+                AND constraint_schema = DATABASE();',
+            [
+                $table,
+                $foreignKeyName,
+            ]
+        );
+
+        return (count($exists) > 0) && ($exists[0] > 0);
+    }
+
+    protected function ensureForeignKeys(string $tableStore, string $key, string $fkey, Data $value): void
+    {
+        $foreignKeyName = self::getForeignKeyName($tableStore, $key . '__' . $fkey);
+
+        if (($value instanceof DataObject\ClassDefinition\Data\QuantityValue
+                || $value instanceof DataObject\ClassDefinition\Data\QuantityValueRange
+                || $value instanceof DataObject\ClassDefinition\Data\InputQuantityValue)
+            && $fkey === 'unit'
+            && !$this->foreignKeyExists($tableStore, $foreignKeyName)
+        ) {
+            $columnName = $key . '__' . $fkey;
+
+            $this->db->executeQuery(
+                sprintf(
+                    'ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`)
+                                            REFERENCES `quantityvalue_units` (`id`) ON DELETE SET NULL ON UPDATE CASCADE',
+                    $tableStore,
+                    $foreignKeyName,
+                    $columnName
+                )
+            );
+        }
+    }
+
 }

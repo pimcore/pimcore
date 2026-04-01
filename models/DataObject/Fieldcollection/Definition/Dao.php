@@ -71,6 +71,7 @@ class Dao extends Model\Dao\AbstractDao
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
                         $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
                         $protectedColums[] = $key . '__' . $fkey;
+                        $this->ensureForeignKeys($table, $key, $fkey, $value);
                     }
                 } else {
                     if ($value->getColumnType()) {
