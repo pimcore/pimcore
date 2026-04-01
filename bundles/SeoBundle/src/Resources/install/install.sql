@@ -18,4 +18,4 @@ CREATE TABLE IF NOT EXISTS `redirects` (
      PRIMARY KEY (`id`),
      KEY `priority` (`priority`),
      INDEX `routing_lookup` (`active`, `regex`, `sourceSite`, `source`, `type`, `expiry`, `priority`)
-) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci ROW_FORMAT=DYNAMIC;
