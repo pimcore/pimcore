@@ -120,7 +120,7 @@ class Dao extends Model\Dao\AbstractDao
 			  `oo_className` varchar(255) default '" . $this->model->getName() . "',
 			  PRIMARY KEY  (`oo_id`),
 			  CONSTRAINT `".self::getForeignKeyName($objectTable, 'oo_id').'` FOREIGN KEY (`oo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-			) DEFAULT CHARSET=utf8mb4;');
+			) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
 
         // update default value of classname columns
         $this->db->executeQuery('ALTER TABLE `' . $objectTable . "` ALTER COLUMN `oo_className` SET DEFAULT '" . $this->model->getName() . "';");
@@ -129,7 +129,7 @@ class Dao extends Model\Dao\AbstractDao
 			  `oo_id` int(11) UNSIGNED NOT NULL default '0',
 			  PRIMARY KEY  (`oo_id`),
 			  CONSTRAINT `".self::getForeignKeyName($objectDatastoreTable, 'oo_id').'` FOREIGN KEY (`oo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-			) DEFAULT CHARSET=utf8mb4;');
+			) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
 
         $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTableRelation . "` (
               `id` BIGINT(20) NOT NULL PRIMARY KEY  AUTO_INCREMENT,
@@ -145,7 +145,7 @@ class Dao extends Model\Dao\AbstractDao
               INDEX `reverse_lookup` (`dest_id`, `type`),
               INDEX `fieldname` (`fieldname`),
 			  CONSTRAINT `".self::getForeignKeyName($objectDatastoreTableRelation, 'src_id').'` FOREIGN KEY (`src_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-        ) DEFAULT CHARSET=utf8mb4;');
+        ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
 
         $this->handleEncryption($this->model, [$objectTable, $objectDatastoreTable, $objectDatastoreTableRelation]);
 

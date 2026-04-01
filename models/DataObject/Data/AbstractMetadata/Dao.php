@@ -73,7 +73,7 @@ class Dao extends Model\Dao\AbstractDao
               INDEX `index` (`index`),
               CONSTRAINT `".self::getForeignKeyName($table, 'id').'` FOREIGN KEY (`id`)
               REFERENCES objects (`id`) ON DELETE CASCADE
-		) DEFAULT CHARSET=utf8mb4;');
+		) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
 
         $this->handleEncryption($class, [$table]);
     }
