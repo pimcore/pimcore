@@ -130,7 +130,7 @@ final class Requirements
                   id int(11) NOT NULL AUTO_INCREMENT,
                   field varchar(190) DEFAULT NULL,
                   PRIMARY KEY (id)
-                ) DEFAULT CHARSET=utf8mb4;');
+                ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
         } catch (Exception $e) {
             $queryCheck = false;
         }

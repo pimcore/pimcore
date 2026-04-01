@@ -66,7 +66,7 @@ class Dao extends Model\Dao\AbstractDao
           INDEX `id` (`id`),
           INDEX `fieldname` (`fieldname`),
           CONSTRAINT `".self::getForeignKeyName($tableStore, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
-		) DEFAULT CHARSET=utf8mb4;');
+		) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
 
         $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $tableQuery . "` (
 		  `id` int(11) UNSIGNED NOT NULL default '0',
@@ -75,7 +75,7 @@ class Dao extends Model\Dao\AbstractDao
           INDEX `id` (`id`),
           INDEX `fieldname` (`fieldname`),
           CONSTRAINT `".self::getForeignKeyName($tableQuery, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
-		) DEFAULT CHARSET=utf8mb4;');
+		) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
 
         $existingColumnsStore = $this->getValidTableColumns($tableStore, false); // no caching of table definition
         $columnsToRemoveStore = $existingColumnsStore;

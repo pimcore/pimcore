@@ -810,7 +810,7 @@ QUERY;
               INDEX `fieldname` (`fieldname`),
               INDEX `language` (`language`),
               CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-            ) DEFAULT CHARSET=utf8mb4;'
+            ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;'
             );
         } else {
             $this->db->executeQuery(
@@ -820,7 +820,7 @@ QUERY;
               PRIMARY KEY (`ooo_id`,`language`),
               INDEX `language` (`language`),
               CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-            ) DEFAULT CHARSET=utf8mb4;'
+            ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;'
             );
         }
 
@@ -886,7 +886,7 @@ QUERY;
                       PRIMARY KEY (`ooo_id`,`language`),
                       INDEX `language` (`language`),
                       CONSTRAINT `".self::getForeignKeyName($queryTable, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-                    ) DEFAULT CHARSET=utf8mb4;'
+                    ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;'
                 );
 
                 $this->handleEncryption($this->model->getClass(), [$queryTable]);
