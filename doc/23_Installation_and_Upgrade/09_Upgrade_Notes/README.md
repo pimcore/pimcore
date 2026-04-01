@@ -20,7 +20,7 @@ The following bundles have been removed:
 - Dropped support for PHP `8.3` and Symfony `6`.
  
 #### [Database]
-- All `utf8mb4` tables and columns now explicitly use the `utf8mb4_unicode_520_ci` collation to match Doctrine's `default_table_options` configuration. Previously, `install.sql` and Dao `CREATE TABLE` statements specified `DEFAULT CHARSET=utf8mb4` without an explicit `COLLATE` clause, which caused MySQL/MariaDB to assign the charset's built-in default collation (`utf8mb4_general_ci`) instead of the intended `utf8mb4_unicode_520_ci`. A migration is included that fixes collation on all existing `utf8mb4` tables and columns (excluding intentional `utf8mb4_bin` columns). This migration may take some time on large databases due to the number of `ALTER TABLE` statements.
+- All `utf8mb4` tables and columns now explicitly use the `utf8mb4_unicode_520_ci` collation to match Doctrine's `default_table_options` configuration. Previously, `install.sql` and Dao `CREATE TABLE` statements specified `DEFAULT CHARSET=utf8mb4` without an explicit `COLLATE` clause, which caused MySQL/MariaDB to assign the charset's built-in default collation (`utf8mb4_general_ci`) instead of the intended `utf8mb4_unicode_520_ci`. Existing installations need to update the collation of their tables and columns manually. Please refer to the [V12 to V13 upgrade guide](../07_Updating_Pimcore/14_V12_to_V13.md) for details.
 
 #### [DataObjects]
 - Add a new optional `$parameters` argument to `Concrete::saveVersion()` to allow passing of arguments to events.
