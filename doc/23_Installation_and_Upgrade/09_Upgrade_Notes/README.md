@@ -19,6 +19,9 @@ The following bundles have been removed:
 - Added support for PHP `8.5` and bumped minimum requirement of Symfony to `7.4`.
 - Dropped support for PHP `8.3` and Symfony `6`.
  
+#### [Database]
+- All `utf8mb4` tables now use `utf8mb4_unicode_520_ci` as their default collation to match Doctrine's `default_table_options` configuration. Columns inherit this collation unless a different one is explicitly defined (for example `utf8mb4_bin` for case-sensitive keys). Previously, `install.sql` and Dao `CREATE TABLE` statements specified `DEFAULT CHARSET=utf8mb4` without an explicit `COLLATE` clause, which caused MySQL/MariaDB to assign the charset's built-in default collation (`utf8mb4_general_ci`) instead of the intended `utf8mb4_unicode_520_ci`. Existing installations need to update the collation of their tables and columns manually. Please refer to the [V12 to V13 upgrade guide](../07_Updating_Pimcore/14_V12_to_V13.md) for details.
+
 #### [DataObjects]
 - Add a new optional `$parameters` argument to `Concrete::saveVersion()` to allow passing of arguments to events.
 
@@ -128,7 +131,7 @@ Support for all Symfony 6.x components will be removed in next major version.
 This is part of the migration to Symfony 7, which requires updating all Symfony dependencies to version 7.3 or higher.
 
 **Action Required:**
-Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 13.0.
+Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 2026.1.
 
 **Note:**
 If you want to stay on Symfony 6.x after updating to this version, you can use the `pimcore/symfony-freeze` metapackage to prevent 
@@ -146,7 +149,7 @@ To ensure all core Symfony components are on version 7.x minimum (recommended fo
 composer require pimcore/symfony-freeze:^7.0
 ```
 
-**Note:** The `pimcore/symfony-freeze` package is only intended for Pimcore 12.3 and 12.x development versions. It will not be needed for Pimcore 13, as Symfony 6 support will be removed entirely.
+**Note:** The `pimcore/symfony-freeze` package is only intended for Pimcore 12.3 and 12.x development versions. It will not be needed for Pimcore 2026.1, as Symfony 6 support will be removed entirely.
 
 
 #### [Doctrine Annotations]
@@ -159,7 +162,7 @@ No action required for most users. If your custom code relies on `doctrine/annot
 
 #### [Symfony Templating Component]
 
-The `Symfony\Component\Templating\EngineInterface` and related templating services are deprecated and will be removed in version 13.0.
+The `Symfony\Component\Templating\EngineInterface` and related templating services are deprecated and will be removed in version 2026.1.
 This is part of the migration to Symfony 7, which no longer includes the `symfony/templating` component.
 
 **What's Deprecated:**
@@ -186,7 +189,7 @@ All functionality remains the same, but the interface changes from the Symfony t
 
 #### Folder structure for email logs
 
-The command `pimcore:migrate:mail-logs-folder-structure` and supporting the old structure are deprecated and will be removed in version 13.0.
+The command `pimcore:migrate:mail-logs-folder-structure` and supporting the old structure are deprecated and will be removed in version 2026.1.
 
 **Action Required:**
 Execute the command `pimcore:migrate:mail-logs-folder-structure` or move the files manually to YYYY/MM/DD/\<log filename\>.
