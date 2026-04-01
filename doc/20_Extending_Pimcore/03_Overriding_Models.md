@@ -9,7 +9,10 @@ Currently this works for all implementations of the following classes (but not f
 - `Pimcore\Model\AbstractObject`
 - `Pimcore\Model\DataObject\Listing`
 - `Pimcore\Model\Asset`
-- `Pimcore\Model\Asset\Listing` 
+- `Pimcore\Model\Asset\Listing`
+- `Pimcore\Model\AbstractObject`
+- `Pimcore\Model\DataObject\Objectbrick\Data\AbstractData`
+- `Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData`
 
 So for example overriding a listing class of a custom class definition like `Pimcore\Model\DataObject\News\Listing` or 
 `Pimcore\Model\Asset\Image` is supported. 

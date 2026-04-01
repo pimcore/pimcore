@@ -55,8 +55,10 @@ class ObjectBrickContainerClassBuilder implements ObjectBrickContainerClassBuild
                 $cd .= "\t\t\t\t" . '//check if parent object has brick, and if so, create an empty brick to enable inheritance' . "\n";
                 $cd .= "\t\t\t\t" . '$parentBrick = $this->getObject()->getValueFromParent("' . $fieldName . '")->get' . ucfirst($brickKey) . '($includeDeletedBricks);'. "\n";
                 $cd .= "\t\t\t\t" . 'if (!empty($parentBrick)) {' . "\n";
+                $cd .= "\t\t\t\t\t" . '$modelFactory = \Pimcore::getContainer()->get(\'pimcore.model.factory\');' . "\n";
                 $cd .= "\t\t\t\t\t" . '$brickType = "\\\Pimcore\\\Model\\\DataObject\\\Objectbrick\\\Data\\\" . ucfirst($parentBrick->getType());' . "\n";
-                $cd .= "\t\t\t\t\t" . '$brick = new $brickType($this->getObject());' . "\n";
+                $cd .= "\t\t\t\t\t" . '$brick = $modelFactory->build($brickType);' . "\n";
+                $cd .= "\t\t\t\t\t" . '$brick->setObject($this->getObject());' . "\n";
                 $cd .= "\t\t\t\t\t" . '$brick->setFieldname("' . $fieldName . '");' . "\n";
                 $cd .= "\t\t\t\t\t" . '$this->set'. ucfirst($brickKey) . '($brick);' . "\n";
                 $cd .= "\t\t\t\t\t" . 'return $brick;' . "\n";
