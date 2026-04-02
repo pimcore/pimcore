@@ -67,6 +67,16 @@ services:
             $serviceControllers: '%pimcore.service_controllers%'
 
     #
+    # EVENT LISTENERS/SUBSCRIBERS
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\ThumbnailResponseSubscriber:
+        arguments:
+            $enabled: '%pimcore.assets.thumbnails.clean_response_headers%'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    #
     # HTTP/REST clients
     #
 
