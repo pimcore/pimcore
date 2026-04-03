@@ -425,7 +425,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return [
             'minimum' => 'double',
             'maximum' => 'double',
-            'unit' => 'varchar(64)',
+            'unit' => 'varchar(50)',
         ];
     }
 

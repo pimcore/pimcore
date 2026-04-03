@@ -26,6 +26,7 @@ use Pimcore\Bundle\InstallBundle\EnvVarDefinition\SearchEngineDefinitionInterfac
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Bundle\InstallBundle\Profile\DataSource\DataSourceInterface;
 use Pimcore\Bundle\InstallBundle\Profile\InstallProfileInterface;
+use Pimcore\Bundle\InstallBundle\Profile\InstallStep;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Unit\InstallBundle\Support\InstallBundleTestHelperTrait;
 use Pimcore\Tests\Unit\InstallBundle\Support\NoopMessengerTransportDefinition;
@@ -251,7 +252,7 @@ final class InstallerProfilesIntegrationTest extends TestCase
         $dispatcher->addListener(
             'pimcore.installer.step',
             function ($event) use (&$dispatchedSteps): void {
-                $dispatchedSteps[] = $event->getType();
+                $dispatchedSteps[] = $event->getStep();
             },
         );
 
@@ -279,9 +280,10 @@ final class InstallerProfilesIntegrationTest extends TestCase
             $this->tempDir,
         );
 
-        // Phase 1 dispatches steps for 'collect_validate' and 'write_env'
-        $this->assertContains('collect_validate', $dispatchedSteps);
-        $this->assertContains('write_env', $dispatchedSteps);
+        // Phase 1 dispatches steps for collect/validate, write env, and write doctrine config
+        $this->assertContains(InstallStep::CollectAndValidate, $dispatchedSteps);
+        $this->assertContains(InstallStep::WriteEnv, $dispatchedSteps);
+        $this->assertContains(InstallStep::WriteDoctrineConfig, $dispatchedSteps);
     }
 
     /**
