@@ -47,7 +47,7 @@
     "composer-runtime-api": "^2.0",
     "composer/ca-bundle": "^1.2",
     "defuse/php-encryption": "^2.2.0",
-    "doctrine/dbal": "^4.0",
+    "doctrine/dbal": "^4.4",
     "doctrine/doctrine-bundle": "^2.13.2",
     "doctrine/doctrine-migrations-bundle": "^3.2.2",
     "doctrine/inflector": "^2.0.2",
@@ -133,8 +133,6 @@
     "umpirsky/country-list": "^2.0.6"
   },
   "conflict": {
-    "doctrine/doctrine-migrations-bundle": ">=3.4.0",
-    "doctrine/dbal": ">=4.3",
     "sabre/dav": "4.2.2",
     "symfony/symfony": "*",
     "symfony/web-link": "<7.4",

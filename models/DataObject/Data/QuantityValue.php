@@ -64,7 +64,7 @@ class QuantityValue extends AbstractQuantityValue
                 $unitAbbreviation = $translator->trans($unit->getAbbreviation(), [], 'admin');
             }
 
-            $value .= ' ' . $unitAbbreviation;
+            $value .= $unitAbbreviation;
         }
 
         return $value ? (string)$value : '';

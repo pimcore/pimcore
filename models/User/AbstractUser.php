@@ -154,15 +154,18 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
      *
      * @throws Exception
      */
-    public function save(): static
+    public function save(array $parameters = []): static
     {
         $isUpdate = false;
+        $preUserRoleEvent = new UserRoleEvent($this, $parameters);
         if ($this->getId()) {
             $isUpdate = true;
-            $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::PRE_UPDATE);
+            $this->dispatchEvent($preUserRoleEvent, UserRoleEvents::PRE_UPDATE);
         } else {
-            $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::PRE_ADD);
+            $this->dispatchEvent($preUserRoleEvent, UserRoleEvents::PRE_ADD);
         }
+
+        $parameters = $preUserRoleEvent->getArguments();
 
         if (!preg_match('/^[a-zA-Z0-9\-\.~_@]+$/', $this->getName())) {
             throw new Exception('Invalid name for user/role `' . $this->getName() . '` (allowed characters: a-z A-Z 0-9 -.~_@)');
@@ -184,10 +187,11 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
             throw $e;
         }
 
+        $postUserRoleEvent = new UserRoleEvent($this, $parameters);
         if ($isUpdate) {
-            $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_UPDATE);
+            $this->dispatchEvent($postUserRoleEvent, UserRoleEvents::POST_UPDATE);
         } else {
-            $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_ADD);
+            $this->dispatchEvent($postUserRoleEvent, UserRoleEvents::POST_ADD);
         }
 
         return $this;
@@ -196,14 +200,16 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
     /**
      * @throws Exception
      */
-    public function delete(): void
+    public function delete(array $parameters = []): void
     {
         if ($this->getId() < 1) {
             throw new Exception('Deleting the system user is not allowed!');
         }
         $parentUserId = $this->getParentId();
 
-        $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::PRE_DELETE);
+        $preUserRoleEvent = new UserRoleEvent($this, $parameters);
+        $this->dispatchEvent($preUserRoleEvent, UserRoleEvents::PRE_DELETE);
+        $parameters = $preUserRoleEvent->getArguments();
 
         $type = $this->getType();
 
@@ -234,7 +240,7 @@ abstract class AbstractUser extends Model\AbstractModel implements AbstractUserI
             }
         }
 
-        $this->dispatchEvent(new UserRoleEvent($this), UserRoleEvents::POST_DELETE);
+        $this->dispatchEvent(new UserRoleEvent($this, $parameters), UserRoleEvents::POST_DELETE);
     }
 
     /**

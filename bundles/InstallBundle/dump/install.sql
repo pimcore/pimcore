@@ -22,7 +22,7 @@ CREATE TABLE `assets` (
   KEY `filename` (`filename`),
   KEY `modificationDate` (`modificationDate`),
   KEY `versionCount` (`versionCount`)
-) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `assets_metadata`;
 CREATE TABLE `assets_metadata` (
@@ -34,7 +34,7 @@ CREATE TABLE `assets_metadata` (
   PRIMARY KEY (`cid`, `name`, `language`),
   INDEX `name` (`name`),
   CONSTRAINT `FK_assets_metadata_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `assets_image_thumbnail_cache`;
 CREATE TABLE `assets_image_thumbnail_cache` (
@@ -47,7 +47,7 @@ CREATE TABLE `assets_image_thumbnail_cache` (
     `height` SMALLINT UNSIGNED DEFAULT NULL,
     PRIMARY KEY (`cid`, `name`, `filename`),
     CONSTRAINT `FK_assets_image_thumbnail_cache_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `cache_items`; /* this table is created by the installer (see: Pimcore\Bundle\InstallBundle\Installer::setupDatabase) */
 
@@ -58,7 +58,7 @@ CREATE TABLE `classes` (
     `definitionModificationDate` INT(11) UNSIGNED NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `name` (`name`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `dependencies` ;
 CREATE TABLE `dependencies` (
@@ -70,7 +70,7 @@ CREATE TABLE `dependencies` (
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `combi` (`sourcetype`, `sourceid`, `targettype`, `targetid`),
 	INDEX `targettype_targetid` (`targettype`, `targetid`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `documents` ;
 CREATE TABLE `documents` (
@@ -93,7 +93,7 @@ CREATE TABLE `documents` (
   KEY `published` (`published`),
   KEY `modificationDate` (`modificationDate`),
   KEY `versionCount` (`versionCount`)
-) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `documents_editables`;
 CREATE TABLE `documents_editables` (
@@ -103,7 +103,7 @@ CREATE TABLE `documents_editables` (
   `data` longtext,
   PRIMARY KEY (`documentId`,`name`),
   CONSTRAINT `fk_documents_editables_documents` FOREIGN KEY (`documentId`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `documents_email`;
 CREATE TABLE `documents_email` (
@@ -119,7 +119,7 @@ CREATE TABLE `documents_email` (
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_documents_email_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `documents_hardlink`;
 CREATE TABLE `documents_hardlink` (
@@ -130,7 +130,7 @@ CREATE TABLE `documents_hardlink` (
   PRIMARY KEY `id` (`id`),
   KEY `sourceId` (`sourceId`),
   CONSTRAINT `fk_documents_hardlink_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `documents_link`;
 CREATE TABLE `documents_link` (
@@ -141,7 +141,7 @@ CREATE TABLE `documents_link` (
   `linktype` enum('direct','internal') default NULL,
   PRIMARY KEY  (`id`),
   CONSTRAINT `fk_documents_link_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `documents_page` ;
 CREATE TABLE `documents_page` (
@@ -159,7 +159,7 @@ CREATE TABLE `documents_page` (
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`),
   CONSTRAINT `fk_documents_page_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `documents_snippet`;
 CREATE TABLE `documents_snippet` (
@@ -170,7 +170,7 @@ CREATE TABLE `documents_snippet` (
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_documents_snippet_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `documents_translations`;
 CREATE TABLE `documents_translations` (
@@ -181,7 +181,7 @@ CREATE TABLE `documents_translations` (
   KEY `id` (`id`),
   KEY `language` (`language`),
   CONSTRAINT `fk_documents_translations_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 
 DROP TABLE IF EXISTS `edit_lock`;
@@ -195,7 +195,7 @@ CREATE TABLE `edit_lock` (
   PRIMARY KEY  (`id`),
   KEY `ctype` (`ctype`),
   KEY `cidtype` (`cid`,`ctype`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 
 DROP TABLE IF EXISTS `email_blocklist`;
@@ -204,7 +204,7 @@ CREATE TABLE `email_blocklist` (
   `creationDate` INT(11) UNSIGNED DEFAULT '0',
   `modificationDate` INT(11) UNSIGNED DEFAULT '0',
   PRIMARY KEY (`address`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 
 DROP TABLE IF EXISTS `email_log`;
@@ -226,7 +226,7 @@ CREATE TABLE `email_log` (
   FULLTEXT KEY `fulltext` (`from`,`to`,`cc`,`bcc`,`subject`,`params`),
   INDEX `document_id` (`documentId`),
   CONSTRAINT `fk_email_log_documents` FOREIGN KEY (`documentId`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `lock_keys`;
 CREATE TABLE `lock_keys` (
@@ -253,7 +253,7 @@ CREATE TABLE `notes` (
   KEY `cid_ctype` (`cid`, `ctype`),
   KEY `date` (`date`),
   KEY `user` (`user`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `notes_data`;
 CREATE TABLE `notes_data` (
@@ -264,7 +264,7 @@ CREATE TABLE `notes_data` (
   `data` text,
   PRIMARY KEY (`auto_id`),
   UNIQUE KEY `UNIQ_E5A8E5E2BF3967505E237E06` (`id`,`name`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `objects`;
 CREATE TABLE `objects` (
@@ -294,7 +294,7 @@ CREATE TABLE `objects` (
   KEY `modificationDate` (`modificationDate`),
   KEY `classId` (`classId`),
   KEY `versionCount` (`versionCount`)
-) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `properties`;
 CREATE TABLE `properties` (
@@ -307,7 +307,7 @@ CREATE TABLE `properties` (
   `inheritable` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`cid`,`ctype`,`name`),
   KEY `getall` (`cpath`, `ctype`, `inheritable`)
-) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `recyclebin`;
 CREATE TABLE `recyclebin` (
@@ -320,7 +320,7 @@ CREATE TABLE `recyclebin` (
   `deletedby` varchar(50) DEFAULT NULL,
   PRIMARY KEY  (`id`),
   INDEX `recyclebin_date` (`date`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `schedule_tasks`;
 CREATE TABLE `schedule_tasks` (
@@ -337,7 +337,7 @@ CREATE TABLE `schedule_tasks` (
   KEY `ctype` (`ctype`),
   KEY `active` (`active`),
   KEY `version` (`version`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `sites`;
 CREATE TABLE `sites` (
@@ -353,7 +353,7 @@ CREATE TABLE `sites` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `rootId` (`rootId`),
   CONSTRAINT `fk_sites_documents` FOREIGN KEY (`rootId`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS  `tags`;
 CREATE TABLE `tags` (
@@ -366,7 +366,7 @@ CREATE TABLE `tags` (
   KEY `parentid` (`parentId`),
   KEY `name` (`name`),
   UNIQUE INDEX `idPath_name` (`idPath`,`name`)
-) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS  `tags_assignment`;
 CREATE TABLE `tags_assignment` (
@@ -376,7 +376,7 @@ CREATE TABLE `tags_assignment` (
   PRIMARY KEY (`tagid`,`cid`,`ctype`),
   KEY `ctype` (`ctype`),
   KEY `ctype_cid` (`cid`,`ctype`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `tmp_store`;
 CREATE TABLE `tmp_store` (
@@ -390,7 +390,7 @@ CREATE TABLE `tmp_store` (
   KEY `tag` (`tag`),
   KEY `date` (`date`),
   KEY `expiryDate` (`expiryDate`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `settings_store`;
 CREATE TABLE `settings_store` (
@@ -400,7 +400,7 @@ CREATE TABLE `settings_store` (
   `type` enum('bool','int','float','string') NOT NULL DEFAULT 'string',
   PRIMARY KEY (`id`, `scope`),
   KEY `scope` (`scope`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `translations_messages`;
 CREATE TABLE `translations_messages` (
@@ -414,7 +414,7 @@ CREATE TABLE `translations_messages` (
   `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `tree_locks`;
 CREATE TABLE `tree_locks` (
@@ -424,7 +424,7 @@ CREATE TABLE `tree_locks` (
   PRIMARY KEY (`id`,`type`),
   KEY `type` (`type`),
   KEY `locked` (`locked`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
@@ -464,14 +464,14 @@ CREATE TABLE `users` (
   KEY `parentId` (`parentId`),
   KEY `name` (`name`),
   KEY `password` (`password`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `users_permission_definitions`;
 CREATE TABLE `users_permission_definitions` (
   `key` varchar(50) NOT NULL DEFAULT '',
   `category` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`key`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `users_workspaces_asset`;
 CREATE TABLE `users_workspaces_asset` (
@@ -493,7 +493,7 @@ CREATE TABLE `users_workspaces_asset` (
   UNIQUE INDEX `idx_users_workspaces_list_permission` (`userId`, `cpath`, `list`),
   CONSTRAINT `fk_users_workspaces_asset_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT `fk_users_workspaces_asset_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `users_workspaces_document`;
 CREATE TABLE `users_workspaces_document` (
@@ -517,7 +517,7 @@ CREATE TABLE `users_workspaces_document` (
   UNIQUE INDEX `idx_users_workspaces_list_permission` (`userId`, `cpath`, `list`),
   CONSTRAINT `fk_users_workspaces_document_documents` FOREIGN KEY (`cid`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT `fk_users_workspaces_document_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `users_workspaces_object`;
 CREATE TABLE `users_workspaces_object` (
@@ -544,7 +544,7 @@ CREATE TABLE `users_workspaces_object` (
   UNIQUE INDEX `idx_users_workspaces_list_permission` (`userId`, `cpath`, `list`),
   CONSTRAINT `fk_users_workspaces_object_objects` FOREIGN KEY (`cid`) REFERENCES `objects` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT `fk_users_workspaces_object_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `versions`;
 CREATE TABLE `versions` (
@@ -573,7 +573,7 @@ CREATE TABLE `versions` (
   KEY `autoSave` (`autoSave`),
   KEY `stackTrace` (`stackTrace`(1)),
   KEY `versionCount` (`versionCount`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `website_settings`;
 CREATE TABLE `website_settings` (
@@ -588,7 +588,7 @@ CREATE TABLE `website_settings` (
     PRIMARY KEY (`id`),
     INDEX `name` (`name`),
     INDEX `siteId` (`siteId`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `classificationstore_relations`;
 DROP TABLE IF EXISTS `classificationstore_collectionrelations`;
@@ -600,7 +600,7 @@ CREATE TABLE `classificationstore_stores` (
 	`description` LONGTEXT NULL,
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `classificationstore_groups`;
 CREATE TABLE `classificationstore_groups` (
@@ -614,7 +614,7 @@ CREATE TABLE `classificationstore_groups` (
 	PRIMARY KEY (`id`),
 	INDEX `storeId` (`storeId`),
 	INDEX `name` (`name`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `classificationstore_keys`;
 CREATE TABLE `classificationstore_keys` (
@@ -633,7 +633,7 @@ CREATE TABLE `classificationstore_keys` (
 	INDEX `enabled` (`enabled`),
 	INDEX `type` (`type`),
 	INDEX `storeId` (`storeId`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 CREATE TABLE `classificationstore_relations` (
 	`groupId` INT(11) unsigned NOT NULL,
@@ -645,7 +645,7 @@ CREATE TABLE `classificationstore_relations` (
 	INDEX `mandatory` (`mandatory`),
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE,
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_keys` FOREIGN KEY (`keyId`) REFERENCES `classificationstore_keys` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `classificationstore_collections`;
 CREATE TABLE `classificationstore_collections` (
@@ -657,7 +657,7 @@ CREATE TABLE `classificationstore_collections` (
 	`modificationDate` INT(11) UNSIGNED NULL DEFAULT '0',
 	PRIMARY KEY (`id`),
 	INDEX `storeId` (`storeId`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 
 CREATE TABLE `classificationstore_collectionrelations` (
@@ -666,7 +666,7 @@ CREATE TABLE `classificationstore_collectionrelations` (
     `sorter` INT(10) NULL DEFAULT '0',
 	PRIMARY KEY (`colId`, `groupId`),
 	CONSTRAINT `FK_classificationstore_collectionrelations_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `quantityvalue_units`;
 CREATE TABLE `quantityvalue_units` (
@@ -682,7 +682,7 @@ CREATE TABLE `quantityvalue_units` (
 	PRIMARY KEY (`id`),
 	INDEX `fk_baseunit` (`baseunit`),
 	CONSTRAINT `fk_baseunit` FOREIGN KEY (`baseunit`) REFERENCES `quantityvalue_units` (`id`) ON UPDATE CASCADE ON DELETE SET NULL
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `element_workflow_state`;
 CREATE TABLE `element_workflow_state` (
@@ -691,7 +691,7 @@ CREATE TABLE `element_workflow_state` (
   `place` text DEFAULT NULL,
   `workflow` varchar(100) NOT NULL,
   PRIMARY KEY (`cid`,`ctype`,`workflow`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `gridconfigs`;
 CREATE TABLE `gridconfigs` (
@@ -715,8 +715,7 @@ CREATE TABLE `gridconfigs` (
 	INDEX `shareGlobally` (`shareGlobally`),
     INDEX `shareBetweenFolders` (`shareBetweenFolders`)
 )
-DEFAULT CHARSET=utf8mb4;
-;
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `gridconfig_favourites`;
 CREATE TABLE `gridconfig_favourites` (
@@ -732,8 +731,7 @@ CREATE TABLE `gridconfig_favourites` (
     INDEX `grid_config_id` (`gridConfigId`),
     CONSTRAINT `fk_gridconfig_favourites_gridconfigs` FOREIGN KEY (`gridConfigId`) REFERENCES `gridconfigs` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 )
-DEFAULT CHARSET=utf8mb4;
-;
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `gridconfig_shares`;
 CREATE TABLE `gridconfig_shares` (
@@ -744,8 +742,7 @@ CREATE TABLE `gridconfig_shares` (
     INDEX `grid_config_id` (`gridConfigId`),
     CONSTRAINT `fk_gridconfig_shares_gridconfigs` FOREIGN KEY (`gridConfigId`) REFERENCES `gridconfigs` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 )
-DEFAULT CHARSET=utf8mb4;
-;
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `importconfigs`;
 CREATE TABLE `importconfigs` (
@@ -763,8 +760,7 @@ CREATE TABLE `importconfigs` (
 	INDEX `classId` (`classId`),
 	INDEX `shareGlobally` (`shareGlobally`)
 )
-DEFAULT CHARSET=utf8mb4;
-;
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `importconfig_shares`;
 CREATE TABLE `importconfig_shares` (
@@ -773,8 +769,7 @@ CREATE TABLE `importconfig_shares` (
 	PRIMARY KEY (`importConfigId`, `sharedWithUserId`),
 	INDEX `sharedWithUserId` (`sharedWithUserId`)
 )
-DEFAULT CHARSET=utf8mb4;
-;
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `notifications`;
 CREATE TABLE `notifications` (
@@ -792,7 +787,7 @@ CREATE TABLE `notifications` (
   `payload` LONGTEXT NULL,
   `isStudio` TINYINT(1) DEFAULT 0 NOT NULL, -- TODO: Remove with end of Classic-UI
   INDEX `recipient` (`recipient`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 
 DROP TABLE IF EXISTS `object_url_slugs`;
@@ -816,7 +811,7 @@ CREATE TABLE `object_url_slugs` (
       INDEX `siteId` (`siteId`),
       INDEX `fieldname_ownertype_position_objectId` (`fieldname`,`ownertype`,`position`,`objectId`),
       CONSTRAINT `fk_object_url_slugs__objectId` FOREIGN KEY (`objectId`) REFERENCES objects (`id`) ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `webdav_locks`;
 CREATE TABLE `webdav_locks` (

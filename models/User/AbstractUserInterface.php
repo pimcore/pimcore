@@ -50,12 +50,12 @@ interface AbstractUserInterface extends ModelInterface
      *
      * @throws Exception
      */
-    public function save(): static;
+    public function save(array $parameters = []): static;
 
     /**
      * @throws Exception
      */
-    public function delete(): void;
+    public function delete(array $parameters = []): void;
 
     /**
      * @return $this

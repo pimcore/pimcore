@@ -12,17 +12,97 @@ The following bundles have been removed:
 - XliffBundle
 
 ### [General]
-
+- Thumbnail generation adapters now implement `Video\AdapterInterface` and `Document\AdapterInterface` and improved adapters' initialization.
+- The abstract class `Pimcore\Video\Adapter` has been removed. `Pimcore\Video\Adapter\Ffmpeg` now directly implements `Pimcore\Video\AdapterInterface`. If you extended `Pimcore\Video\Adapter`, update your class to implement `Pimcore\Video\AdapterInterface` directly.
+- The hard-coded space between quantity value and unit has been removed for class definition quantity fields (e.g. `AbstractQuantityValue`, `QuantityValueRange`). Spacing and formatting between value and unit is now controlled by locale- and translation-based formatting instead of being fixed in the code.
+- The `reset_password` rate limiter configuration has been moved to the studio-backend bundle and is no longer part of Pimcore's core configuration.
 - Added support for PHP `8.5` and bumped minimum requirement of Symfony to `7.4`.
 - Dropped support for PHP `8.3` and Symfony `6`.
+- [QuantityValue] Introduced foreign key constraints on `__unit` columns in object store, query, localized, objectbrick and fieldcollection tables for `QuantityValue`, `InputQuantityValue` and `QuantityValueRange` fields. These constraints reference `quantityvalue_units(id)` with `ON DELETE SET NULL` and `ON UPDATE CASCADE`, ensuring referential integrity. The migration automatically cleans up orphaned unit references (setting them to `NULL`) and changes the `__unit` column type from `varchar(64)` to `varchar(50)` to match the referenced `quantityvalue_units.id` column. If you have custom unit IDs longer than 50 characters, they will be truncated.
  
-#### [DataObjects]
+#### [Database]
+- All `utf8mb4` tables now use `utf8mb4_unicode_520_ci` as their default collation to match Doctrine's `default_table_options` configuration. Columns inherit this collation unless a different one is explicitly defined (for example `utf8mb4_bin` for case-sensitive keys). Previously, `install.sql` and Dao `CREATE TABLE` statements specified `DEFAULT CHARSET=utf8mb4` without an explicit `COLLATE` clause, which caused MySQL/MariaDB to assign the charset's built-in default collation (`utf8mb4_general_ci`) instead of the intended `utf8mb4_unicode_520_ci`. Existing installations need to update the collation of their tables and columns manually. Please refer to the [V12 to V13 upgrade guide](../07_Updating_Pimcore/14_V12_to_V13.md) for details.
 
+#### [DataObjects]
 - Add a new optional `$parameters` argument to `Concrete::saveVersion()` to allow passing of arguments to events.
 - Removed the following methods from `Pimcore\Model\DataObject\Service` as part of the Admin UI removal:
     - `calculateCellValue()`
     - `mapFieldname()`
     - `getDataForEditmode()` in `ManyToManyObjectRelation` and `AdvancedManyToManyObjectRelation` now uses `Element\Service::gridElementData()` instead of the removed `Service::gridObjectData()`. As a result, the returned data for each related object no longer includes computed grid columns (e.g. brick fields, localized fields, classification store values, or helper columns). Only the base element data (id, type, path, etc.) is returned. If you rely on additional field data being present in the editmode payload of these relations, you need to fetch it separately.
+
+#### [Models]
+- Added a new optional `$parameters` argument to `AbstractUser::save()` and `AbstractUser::delete()`, as well as their interface methods, to allow passing of arguments to `UserRoleEvent`.
+
+#### [Generic Execution Engine]
+- Added an `$offset` parameter to support paging in `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
+- Added the possibility to pass an optional `$criteria` array to `getTotalCount()`, `getJobRunById()`, `getJobRunsByUserId()` and `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
+- Added the possibility to pass optional `$ownerId` and `$executionContext` parameters to `getTotalCount()`.
+
+#### [Installer]
+
+The installer has been completely redesigned with a **profile-based architecture**. The old `pimcore:install` command with individual parameters (`--mysql-host-socket`, `--mysql-username`, `--mysql-password`, `--mysql-database`, etc.) has been removed and replaced with a profile-driven system.
+The installer is now invoked with:
+
+```bash
+vendor/bin/pimcore-install --install-profile=App\\Install\\MyProfile
+```
+
+If you have scripts or CI pipelines that invoke `pimcore:install` with the old options, update them to use `--install-profile` with a profile class. Create an install profile implementing `InstallProfileInterface` for your project.
+
+Please see the documentation for further information: https://docs.pimcore.com/platform/
+
+#### [OpenSearch / Elasticsearch DSN Configuration]
+
+Search engine configuration now uses DSN-based env vars instead of separate host/port/authentication parameters:
+
+- **OpenSearch:** `PIMCORE_OPENSEARCH_DSN=opensearch://admin:admin@localhost:9200?ssl=true`
+- **Elasticsearch:** `PIMCORE_ELASTICSEARCH_DSN=elasticsearch://elastic:changeme@localhost:9200`
+
+The DSN is parsed at runtime in the client factory. 
+The old configuration approach with separate `hosts` arrays in YAML is replaced by a single `dsn` config option.
+
+#### [Messenger Transport DSN Changes]
+
+**This is a breaking change for existing installations.**
+
+The `PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX` env var (previously named `PIMCORE_MESSENGER_TRANSPORT_DSN`) format has changed. 
+It must now include a **trailing separator** for queue name concatenation, because Pimcore bundle configs append queue names directly to this value.
+
+**Before (old format):**
+```
+PIMCORE_MESSENGER_TRANSPORT_DSN=doctrine://default
+```
+
+**After (new format):**
+```
+# Doctrine
+PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=doctrine://default?queue_name=
+
+# AMQP
+PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=amqp://guest:guest@rabbit:5672/%2f/
+
+# Redis
+PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=redis://localhost:6379/
+```
+
+All Pimcore bundle transport configs now use the container parameter `%pimcore.messenger.transport_dsn_prefix%` with direct concatenation:
+
+```yaml
+framework:
+    messenger:
+        transports:
+            pimcore_core: '%pimcore.messenger.transport_dsn_prefix%pimcore_core'
+            pimcore_maintenance: '%pimcore.messenger.transport_dsn_prefix%pimcore_maintenance'
+```
+
+A container-level default is provided in `bundles/CoreBundle/config/pimcore/default.yaml`:
+
+```yaml
+parameters:
+    env(PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX): 'doctrine://default?queue_name='
+```
+If you have `PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX` (or the old `PIMCORE_MESSENGER_TRANSPORT_DSN`) explicitly set in your `.env` or environment, update its value to include the trailing separator and use the new name. For Doctrine, change `doctrine://default` to `doctrine://default?queue_name=`. Failure to do this will result in invalid transport DSNs like `doctrine://defaultpimcore_core`.
+If you have custom transport definitions in your bundle or project YAML that hardcode `doctrine://default?queue_name=`, replace them with `'%pimcore.messenger.transport_dsn_prefix%'` concatenation to support backend-agnostic transport switching.
 
 ## Pimcore 12.3.0
 
@@ -56,7 +136,7 @@ Support for all Symfony 6.x components will be removed in next major version.
 This is part of the migration to Symfony 7, which requires updating all Symfony dependencies to version 7.3 or higher.
 
 **Action Required:**
-Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 13.0.
+Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 2026.1.
 
 **Note:**
 If you want to stay on Symfony 6.x after updating to this version, you can use the `pimcore/symfony-freeze` metapackage to prevent 
@@ -74,7 +154,7 @@ To ensure all core Symfony components are on version 7.x minimum (recommended fo
 composer require pimcore/symfony-freeze:^7.0
 ```
 
-**Note:** The `pimcore/symfony-freeze` package is only intended for Pimcore 12.3 and 12.x development versions. It will not be needed for Pimcore 13, as Symfony 6 support will be removed entirely.
+**Note:** The `pimcore/symfony-freeze` package is only intended for Pimcore 12.3 and 12.x development versions. It will not be needed for Pimcore 2026.1, as Symfony 6 support will be removed entirely.
 
 
 #### [Doctrine Annotations]
@@ -87,7 +167,7 @@ No action required for most users. If your custom code relies on `doctrine/annot
 
 #### [Symfony Templating Component]
 
-The `Symfony\Component\Templating\EngineInterface` and related templating services are deprecated and will be removed in version 13.0.
+The `Symfony\Component\Templating\EngineInterface` and related templating services are deprecated and will be removed in version 2026.1.
 This is part of the migration to Symfony 7, which no longer includes the `symfony/templating` component.
 
 **What's Deprecated:**
@@ -114,7 +194,7 @@ All functionality remains the same, but the interface changes from the Symfony t
 
 #### Folder structure for email logs
 
-The command `pimcore:migrate:mail-logs-folder-structure` and supporting the old structure are deprecated and will be removed in version 13.0.
+The command `pimcore:migrate:mail-logs-folder-structure` and supporting the old structure are deprecated and will be removed in version 2026.1.
 
 **Action Required:**
 Execute the command `pimcore:migrate:mail-logs-folder-structure` or move the files manually to YYYY/MM/DD/\<log filename\>.

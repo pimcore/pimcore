@@ -62,7 +62,7 @@ class Installer extends SettingsStoreAwareInstaller
           KEY `relatedobject` (`relatedobject`),
           KEY `priority` (`priority`),
           KEY `maintenanceChecked` (`maintenanceChecked`)
-        ) DEFAULT CHARSET=utf8mb4;");
+        ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;");
     }
 
     private function dropApplicationLogTable(): void

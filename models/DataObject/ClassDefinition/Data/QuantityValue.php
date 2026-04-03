@@ -159,20 +159,20 @@ class QuantityValue extends AbstractQuantityValue
         if ($this->getInteger()) {
             return [
                 'value' => 'bigint(20)',
-                'unit' => 'varchar(64)',
+                'unit' => 'varchar(50)',
             ];
         }
 
         if ($this->isDecimalType()) {
             return [
                 'value' => $this->buildDecimalColumnType(),
-                'unit' => 'varchar(64)',
+                'unit' => 'varchar(50)',
             ];
         }
 
         return [
             'value' => 'double',
-            'unit' => 'varchar(64)',
+            'unit' => 'varchar(50)',
         ];
     }
 
