@@ -201,10 +201,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     {
         $return = [];
 
-        $visibleFieldsArray = $this->getVisibleFields() ? explode(',', $this->getVisibleFields()) : [];
-
-        $gridFields = $visibleFieldsArray;
-
         // add data
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $mkey => $metaObject) {

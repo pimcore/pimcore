@@ -110,6 +110,10 @@ class QueryParams
         $conditions = [];
 
         $filters = json_decode($filterString);
+        if (!is_array($filters) && !is_object($filters)) {
+            return $returnString ? '' : [];
+        }
+
         $db = \Pimcore\Db::get();
         foreach ($filters as $f) {
             if ($f->type == 'string') {

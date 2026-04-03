@@ -201,17 +201,10 @@ class EditmodeListener implements EventSubscriberInterface
     {
         $libraries = $this->getEditmodeLibraries();
         $scripts = $this->getEditmodeScripts();
-        $stylesheets = $this->getEditmodeStylesheets();
 
         $headHtml = "\n\n\n<!-- pimcore editmode -->\n";
         $headHtml .= '<meta name="google" value="notranslate">';
         $headHtml .= "\n\n";
-
-        // include stylesheets
-        foreach ($stylesheets as $stylesheet) {
-            $headHtml .= '<link rel="stylesheet" type="text/css" href="' . $stylesheet . '?_dc=' . Version::getRevision() . '" />';
-            $headHtml .= "\n";
-        }
 
         $headHtml .= "\n\n";
 
@@ -264,17 +257,9 @@ class EditmodeListener implements EventSubscriberInterface
 
     protected function getEditmodeScripts(): array
     {
-        return array_merge(
-            [
-                '/bundles/fosjsrouting/js/router.js',
-            ],
-            $this->bundleManager->getEditmodeJsPaths()
-        );
+        return [
+            '/bundles/fosjsrouting/js/router.js',
+        ];
     }
 
-    protected function getEditmodeStylesheets(): array
-    {
-        return $this->bundleManager->getEditmodeCssPaths();
-
-    }
 }
