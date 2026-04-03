@@ -2,13 +2,162 @@
 
 ## Pimcore 2026.1.0
 
-### [General]
+### Tasks to Do Prior the Update
 
+#### Symfony 7.3+ Required
+
+Pimcore 13 requires **Symfony 7.3 or higher**. All Symfony 6.x components are no longer supported.
+
+1. Update all Symfony components to version 7.3 or higher
+2. Test your application thoroughly with Symfony 7.x
+3. Remove any explicit Symfony 6.x version constraints from your `composer.json`
+
+#### Migrate Folder structure for email logs
+The folder structure for email logs has changed to YYYY/MM/DD/\<log filename\>.
+Please execute the command `pimcore:migrate:mail-logs-folder-structure` to move the files into the new folder structure or move the files manually.
+
+
+#### Database Collation: utf8mb4_unicode_520_ci
+
+Pimcore 2026.1 now explicitly uses `utf8mb4_unicode_520_ci` as the collation for all `utf8mb4` tables and columns. Previous versions specified `DEFAULT CHARSET=utf8mb4` without an explicit `COLLATE` clause in `install.sql` and Dao `CREATE TABLE` statements. Due to MySQL/MariaDB behavior, this caused the charset's built-in default collation (for example `utf8mb4_general_ci` on MySQL 5.7 / MariaDB or `utf8mb4_0900_ai_ci` on MySQL 8) to be used instead of the database-level default (`utf8mb4_unicode_520_ci`).
+
+This mismatch can cause issues with foreign key constraints between tables that have different collations and may lead to unexpected sorting behavior.
+
+**Important:** Some columns intentionally use a different collation (e.g. `utf8mb4_bin` for case-sensitive keys and JSON data). These columns must **not** be changed. The queries below only target columns that use the typical default, non-binary `utf8mb4` collations (`utf8mb4_general_ci` and `utf8mb4_0900_ai_ci`); adjust this list if your server uses a different default.
+
+Use the following SQL to identify all affected tables and columns in your database:
+
+```sql
+-- List all tables with default non-binary utf8mb4 table collations
+SELECT TABLE_NAME, TABLE_COLLATION
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA = 'your_database_name'
+  AND TABLE_TYPE = 'BASE TABLE'
+  AND TABLE_COLLATION IN ('utf8mb4_general_ci', 'utf8mb4_0900_ai_ci')
+ORDER BY TABLE_NAME;
+
+-- List all columns with default non-binary utf8mb4 collations
+SELECT TABLE_NAME, COLUMN_NAME, COLUMN_TYPE, COLLATION_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'your_database_name'
+  AND COLLATION_NAME IN ('utf8mb4_general_ci', 'utf8mb4_0900_ai_ci')
+ORDER BY TABLE_NAME, COLUMN_NAME;
+```
+
+### [General]
+- Thumbnail generation adapters now implement `Video\AdapterInterface` and `Document\AdapterInterface` and improved adapters' initialization.
+- The abstract class `Pimcore\Video\Adapter` has been removed. `Pimcore\Video\Adapter\Ffmpeg` now directly implements `Pimcore\Video\AdapterInterface`. If you extended `Pimcore\Video\Adapter`, update your class to implement `Pimcore\Video\AdapterInterface` directly.
+- The hard-coded space between quantity value and unit has been removed for class definition quantity fields (e.g. `AbstractQuantityValue`, `QuantityValueRange`). Spacing and formatting between value and unit is now controlled by locale- and translation-based formatting instead of being fixed in the code.
+- The `reset_password` rate limiter configuration has been moved to the studio-backend bundle and is no longer part of Pimcore's core configuration.
+- Removed legacy Admin UI (Classic UI) `EditmodeListener`.
 - Added support for PHP `8.5` and bumped minimum requirement of Symfony to `7.4`.
 - Dropped support for PHP `8.3` and Symfony `6`.
- 
-#### [DataObjects]
+- [QuantityValue] Introduced foreign key constraints on `__unit` columns in object store, query, localized, objectbrick and fieldcollection tables for `QuantityValue`, `InputQuantityValue` and `QuantityValueRange` fields. These constraints reference `quantityvalue_units(id)` with `ON DELETE SET NULL` and `ON UPDATE CASCADE`, ensuring referential integrity. The migration automatically cleans up orphaned unit references (setting them to `NULL`) and changes the `__unit` column type from `varchar(64)` to `varchar(50)` to match the referenced `quantityvalue_units.id` column. If you have custom unit IDs longer than 50 characters, they will be truncated.
+
+#### Removed deprecated and discontinued bundles
+The following bundles have been removed:
+- GlossaryBundle
+- SimpleBackendSearchBundle
+- SeoBundle: dropped `http_error_log` feature and DB Table, and removed Document SEO Editor
+- StaticRouteBundle
+- WordExportBundle
+- XliffBundle
+
+### [DataObjects]
 
 - Add a new optional `$parameters` argument to `Concrete::saveVersion()` to allow passing of arguments to events.
 
+### [Database]
+- All `utf8mb4` tables now use `utf8mb4_unicode_520_ci` as their default collation to match Doctrine's `default_table_options` configuration. Columns inherit this collation unless a different one is explicitly defined (for example `utf8mb4_bin` for case-sensitive keys). Previously, `install.sql` and Dao `CREATE TABLE` statements specified `DEFAULT CHARSET=utf8mb4` without an explicit `COLLATE` clause, which caused MySQL/MariaDB to assign the charset's built-in default collation (`utf8mb4_general_ci`) instead of the intended `utf8mb4_unicode_520_ci`. Existing installations need to update the collation of their tables and columns manually. Please refer to the [V12 to V13 upgrade guide](../07_Updating_Pimcore/14_V12_to_V13.md) for details.
+
+### [Models]
+- Added a new optional `$parameters` argument to `AbstractUser::save()` and `AbstractUser::delete()`, as well as their interface methods, to allow passing of arguments to `UserRoleEvent`.
+
+### [Generic Execution Engine]
+- Added an `$offset` parameter to support paging in `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
+- Added the possibility to pass an optional `$criteria` array to `getTotalCount()`, `getJobRunById()`, `getJobRunsByUserId()` and `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
+- Added the possibility to pass optional `$ownerId` and `$executionContext` parameters to `getTotalCount()`.
+
+### [Installer]
+
+The installer has been completely redesigned with a **profile-based architecture**. The old `pimcore:install` command with individual parameters (`--mysql-host-socket`, `--mysql-username`, `--mysql-password`, `--mysql-database`, etc.) has been removed and replaced with a profile-driven system.
+The installer is now invoked with:
+
+```bash
+vendor/bin/pimcore-install --install-profile=App\\Install\\MyProfile
+```
+
+If you have scripts or CI pipelines that invoke `pimcore:install` with the old options, update them to use `--install-profile` with a profile class. Create an install profile implementing `InstallProfileInterface` for your project.
+
+Please see the documentation for further information: https://docs.pimcore.com/platform/
+
+### [OpenSearch / Elasticsearch DSN Configuration]
+
+Search engine configuration now uses DSN-based env vars instead of separate host/port/authentication parameters:
+
+- **OpenSearch:** `PIMCORE_OPENSEARCH_DSN=opensearch://admin:admin@localhost:9200?ssl=true`
+- **Elasticsearch:** `PIMCORE_ELASTICSEARCH_DSN=elasticsearch://elastic:changeme@localhost:9200`
+
+The DSN is parsed at runtime in the client factory.
+The old configuration approach with separate `hosts` arrays in YAML is replaced by a single `dsn` config option.
+
+### [Messenger Transport DSN Changes]
+
+**This is a breaking change for existing installations.**
+
+The `PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX` env var (previously named `PIMCORE_MESSENGER_TRANSPORT_DSN`) format has changed.
+It must now include a **trailing separator** for queue name concatenation, because Pimcore bundle configs append queue names directly to this value.
+
+**Before (old format):**
+```
+PIMCORE_MESSENGER_TRANSPORT_DSN=doctrine://default
+```
+
+**After (new format):**
+```
+# Doctrine
+PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=doctrine://default?queue_name=
+
+# AMQP
+PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=amqp://guest:guest@rabbit:5672/%2f/
+
+# Redis
+PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=redis://localhost:6379/
+```
+
+All Pimcore bundle transport configs now use the container parameter `%pimcore.messenger.transport_dsn_prefix%` with direct concatenation:
+
+```yaml
+framework:
+    messenger:
+        transports:
+            pimcore_core: '%pimcore.messenger.transport_dsn_prefix%pimcore_core'
+            pimcore_maintenance: '%pimcore.messenger.transport_dsn_prefix%pimcore_maintenance'
+```
+
+A container-level default is provided in `bundles/CoreBundle/config/pimcore/default.yaml`:
+
+```yaml
+parameters:
+    env(PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX): 'doctrine://default?queue_name='
+```
+If you have `PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX` (or the old `PIMCORE_MESSENGER_TRANSPORT_DSN`) explicitly set in your `.env` or environment, update its value to include the trailing separator and use the new name. For Doctrine, change `doctrine://default` to `doctrine://default?queue_name=`. Failure to do this will result in invalid transport DSNs like `doctrine://defaultpimcore_core`.
+If you have custom transport definitions in your bundle or project YAML that hardcode `doctrine://default?queue_name=`, replace them with `'%pimcore.messenger.transport_dsn_prefix%'` concatenation to support backend-agnostic transport switching.
+
+### Symfony Templating Component Removed
+
+The `Symfony\Component\Templating\EngineInterface` and related services have been completely removed.
+
+**What's Removed:**
+
+-   `pimcore.templating.engine.delegating` service
+-   `Symfony\Component\Templating\EngineInterface` support
+-   `Pimcore\Templating\TwigDefaultDelegatingEngine` class
+
+**Action Required:**
+Update your code to use `Twig\Environment` directly instead of `EngineInterface`.
+
+### QuantityValue Formatting Changes
+
+-   The space between QuantityValue value and unit is going to be removed. Please make sure any custom code that relies on the space is updated accordingly.
 
