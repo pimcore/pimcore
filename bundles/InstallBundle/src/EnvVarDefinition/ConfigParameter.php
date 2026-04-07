@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition;
 
+use InvalidArgumentException;
+
 final readonly class ConfigParameter
 {
     /**
@@ -28,13 +30,13 @@ final readonly class ConfigParameter
         private array $choices = [],
     ) {
         if ($this->type === ParameterType::Choice && $this->choices === []) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'ConfigParameter with type Choice must have non-empty choices array.',
             );
         }
 
         if ($this->type !== ParameterType::Choice && $this->choices !== []) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'ConfigParameter with type %s must not have choices array.',
                 $this->type->name,
             ));
@@ -78,5 +80,4 @@ final readonly class ConfigParameter
     {
         return $this->choices;
     }
-
 }

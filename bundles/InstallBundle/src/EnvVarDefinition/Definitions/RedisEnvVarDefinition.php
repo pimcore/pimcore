@@ -13,10 +13,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions;
 
+use Exception;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterType;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\Validation\FormatValidator;
+use Redis;
 
 final readonly class RedisEnvVarDefinition implements EnvVarDefinitionInterface
 {
@@ -85,7 +87,7 @@ final readonly class RedisEnvVarDefinition implements EnvVarDefinitionInterface
         $parsed = parse_url($url);
 
         try {
-            $redis = new \Redis();
+            $redis = new Redis();
             $host = $parsed['host'] ?? '127.0.0.1';
             $port = $parsed['port'] ?? 6379;
 
@@ -108,7 +110,7 @@ final readonly class RedisEnvVarDefinition implements EnvVarDefinitionInterface
 
             $redis->ping();
             $redis->close();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return ['Redis connection failed: ' . $e->getMessage()];
         }
 

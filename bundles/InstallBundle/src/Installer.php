@@ -13,25 +13,27 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle;
 
+use Closure;
 use Doctrine\DBAL\Connection;
+use LogicException;
 use Pimcore;
 use Pimcore\Bundle\InstallBundle\BundleConfig\BundleInstaller;
+use Pimcore\Bundle\InstallBundle\Collector\ParameterCollector;
 use Pimcore\Bundle\InstallBundle\Console\ConsoleCommandRunner;
 use Pimcore\Bundle\InstallBundle\Database\DatabaseSetup;
-use Pimcore\Bundle\InstallBundle\Collector\ParameterCollector;
 use Pimcore\Bundle\InstallBundle\Env\EnvWriter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ResolvedDefinition;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\Event\InstallEvents;
+use Pimcore\Bundle\InstallBundle\PostInstall\PostInstallRunner;
 use Pimcore\Bundle\InstallBundle\Profile\DataSource\DataSourceInterface;
 use Pimcore\Bundle\InstallBundle\Profile\InstallProfileInterface;
 use Pimcore\Bundle\InstallBundle\Profile\InstallStep;
 use Pimcore\Bundle\InstallBundle\Profile\InstallStepFilterInterface;
-use Pimcore\Bundle\InstallBundle\PostInstall\PostInstallRunner;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallCommandsProviderInterface;
-use Pimcore\Bundle\InstallBundle\Profile\PostInstallHookInterface;
 use Pimcore\Bundle\InstallBundle\Profile\PostInstallContext;
+use Pimcore\Bundle\InstallBundle\Profile\PostInstallHookInterface;
 use Pimcore\Config;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -64,7 +66,7 @@ final class Installer
     private array $skippedSteps = [];
 
     /**
-     * @param (\Closure(string): EnvWriter)|null $envWriterFactory
+     * @param (Closure(string): EnvWriter)|null $envWriterFactory
      */
     public function __construct(
         private readonly LoggerInterface $logger,
@@ -74,7 +76,7 @@ final class Installer
         private readonly ConsoleCommandRunner $commandRunner,
         private readonly BundleInstaller $bundleInstaller,
         private readonly PostInstallRunner $postInstallRunner,
-        private readonly ?\Closure $envWriterFactory = null,
+        private readonly ?Closure $envWriterFactory = null,
     ) {
     }
 
@@ -213,7 +215,7 @@ final class Installer
             $this->skipStep(InstallStep::BootKernel, 'Booting application kernel...');
 
             if ($this->lastBootedKernel === null) {
-                throw new \LogicException(
+                throw new LogicException(
                     'Cannot skip BootKernel: no kernel was booted previously.'
                     . ' BootKernel can only be skipped when a kernel is already available'
                     . ' (e.g. from a previous phase or custom bootstrap).',
@@ -388,12 +390,14 @@ final class Installer
                 $collectedValues = $parameterCollector->collect($definition, $io, $interactive);
                 if ($collectedValues === null) {
                     $io->text('  Skipped');
+
                     break;
                 }
 
                 if ($this->definitionResolver->shouldSkipValidation($definition, $skipValidation)) {
                     $io->text('  <comment>!</comment> Validation skipped');
                     $resolvedByDefinition[$key] = new ResolvedDefinition($definition, $collectedValues);
+
                     break;
                 }
 
@@ -402,6 +406,7 @@ final class Installer
                 if ($validationErrors === []) {
                     $io->text('  <info>✓</info> Validation successful');
                     $resolvedByDefinition[$key] = new ResolvedDefinition($definition, $collectedValues);
+
                     break;
                 }
 
@@ -416,6 +421,7 @@ final class Installer
                         $errors,
                         $this->formatDefinitionErrors($definition, $validationErrors),
                     );
+
                     break;
                 }
             }

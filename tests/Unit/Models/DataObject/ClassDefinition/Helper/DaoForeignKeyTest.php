@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Helper;
 
 use Doctrine\DBAL\Connection;
+use PHPUnit\Framework\TestCase;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValueRange;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Tests the ensureForeignKeys() method from the Helper\Dao trait

@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Unit\InstallBundle\Profile\DataSource;
 use Doctrine\DBAL\DriverManager;
 use Pimcore\Bundle\InstallBundle\Profile\DataSource\SqlDumpDataSource;
 use Pimcore\Tests\Support\Test\TestCase;
+use RuntimeException;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -177,7 +178,7 @@ final class SqlDumpDataSourceTest extends TestCase
     {
         $dataSource = new SqlDumpDataSource('/nonexistent/path/abc123');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Dump directory not found');
 
         $dataSource->apply($this->createSqliteConnection(), new BufferedOutput());

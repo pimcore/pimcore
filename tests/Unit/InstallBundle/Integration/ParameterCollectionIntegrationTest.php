@@ -221,9 +221,7 @@ final class ParameterCollectionIntegrationTest extends TestCase
         array $parameters,
         array $resolvedEnvVarNames,
     ): EnvVarDefinitionInterface {
-        return new class($key, $required, $parameters, $resolvedEnvVarNames)
-            implements EnvVarDefinitionInterface
-        {
+        return new class($key, $required, $parameters, $resolvedEnvVarNames) implements EnvVarDefinitionInterface {
             public function __construct(
                 private readonly string $key,
                 private readonly bool $required,

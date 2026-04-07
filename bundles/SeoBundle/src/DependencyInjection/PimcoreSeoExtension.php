@@ -78,5 +78,4 @@ final class PimcoreSeoExtension extends ConfigurableExtension
         $collection->setPublic(false);
         $listener->setArgument('$generators', $collection);
     }
-
 }

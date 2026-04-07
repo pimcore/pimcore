@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\InstallBundle\Collector;
 
+use Closure;
 use Pimcore\Bundle\InstallBundle\Collector\ArrayEnvVarReader;
 use Pimcore\Bundle\InstallBundle\Collector\ParameterCollector;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
@@ -650,9 +651,7 @@ final class ParameterCollectorTest extends TestCase
         bool $required,
         array $parameters,
     ): EnvVarDefinitionInterface {
-        return new class($key, $required, $parameters)
-            implements EnvVarDefinitionInterface
-        {
+        return new class($key, $required, $parameters) implements EnvVarDefinitionInterface {
             public function __construct(
                 private readonly string $key,
                 private readonly bool $required,
@@ -707,18 +706,16 @@ final class ParameterCollectorTest extends TestCase
      * Creates a definition that also implements ParameterHintProviderInterface.
      *
      * @param list<ConfigParameter> $parameters
-     * @param \Closure(string, array<string, string>): ?string $hintCallback
+     * @param Closure(string, array<string, string>): ?string $hintCallback
      */
     private function createHintProvidingDefinition(
         array $parameters,
-        \Closure $hintCallback,
+        Closure $hintCallback,
     ): EnvVarDefinitionInterface {
-        return new class($parameters, $hintCallback)
-            implements EnvVarDefinitionInterface, ParameterHintProviderInterface
-        {
+        return new class($parameters, $hintCallback) implements EnvVarDefinitionInterface, ParameterHintProviderInterface {
             public function __construct(
                 private readonly array $parameters,
-                private readonly \Closure $hintCallback,
+                private readonly Closure $hintCallback,
             ) {
             }
 

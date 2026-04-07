@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\InstallBundle\Profile\DataSource;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Exception;
+use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -44,7 +45,7 @@ final readonly class SqlDumpDataSource implements DataSourceInterface
     public function apply(Connection $connection, OutputInterface $output): void
     {
         if (!is_dir($this->dumpDirectory)) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Dump directory not found: %s',
                 $this->dumpDirectory,
             ));

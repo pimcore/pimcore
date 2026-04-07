@@ -15,9 +15,9 @@ namespace Pimcore\Tests\Unit\InstallBundle\Integration;
 
 use Pimcore\Bundle\InstallBundle\Collector\ArrayEnvVarReader;
 use Pimcore\Bundle\InstallBundle\Command\InstallCommand;
-use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Unit\InstallBundle\Support\InstallBundleTestHelperTrait;
+use stdClass;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -85,7 +85,7 @@ final class InstallCommandIntegrationTest extends TestCase
 
         // \stdClass exists but doesn't implement InstallProfileInterface
         $tester->execute([
-            '--install-profile' => \stdClass::class,
+            '--install-profile' => stdClass::class,
             '--admin-username' => 'admin',
             '--admin-password' => 'admin123',
         ], ['interactive' => false]);

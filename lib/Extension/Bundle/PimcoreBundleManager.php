@@ -15,13 +15,10 @@ declare(strict_types=1);
 namespace Pimcore\Extension\Bundle;
 
 use InvalidArgumentException;
-use Pimcore\Event\BundleManager\PathsEvent;
-use Pimcore\Event\BundleManagerEvents;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\HttpKernel\BundleCollection\ItemInterface;
 use Pimcore\Kernel;
-use Pimcore\Routing\RouteReferenceInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;

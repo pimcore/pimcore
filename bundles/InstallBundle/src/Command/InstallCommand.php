@@ -29,6 +29,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Throwable;
 
 /**
  * @internal
@@ -259,7 +260,7 @@ final class InstallCommand extends Command
 
         try {
             $instance = new $fqcn();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->io->error(sprintf(
                 'Failed to instantiate %s "%s": %s',
                 lcfirst($typeLabel),

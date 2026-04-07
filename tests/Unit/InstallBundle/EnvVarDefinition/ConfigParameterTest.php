@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\InstallBundle\EnvVarDefinition;
 
+use InvalidArgumentException;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterType;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -58,7 +59,7 @@ final class ConfigParameterTest extends TestCase
 
     public function testChoiceTypeRequiresNonEmptyChoices(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('choices');
 
         new ConfigParameter(
@@ -71,7 +72,7 @@ final class ConfigParameterTest extends TestCase
 
     public function testNonChoiceTypeRejectsChoices(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('choices');
 
         new ConfigParameter(
@@ -93,5 +94,4 @@ final class ConfigParameterTest extends TestCase
 
         $this->assertSame(['mysql', 'pgsql'], $param->getChoices());
     }
-
 }
