@@ -162,8 +162,8 @@
     "elasticsearch/elasticsearch": "Required for Elastic Search service",
     "webmozarts/console-parallelization": "Required for parallelization of console commands",
     "symfony/dotenv": "Required for loading environment vars from .env files",
-    "pimcore/studio-ui-bundle": "^1.0",
-    "pimcore/studio-backend-bundle": "^1.0"
+    "pimcore/studio-backend-bundle": "^2026.1",
+    "pimcore/studio-ui-bundle": "^2026.1"
   },
   "autoload": {
     "files": [
