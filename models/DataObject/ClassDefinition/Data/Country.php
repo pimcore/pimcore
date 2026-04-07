@@ -34,8 +34,18 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         return true;
     }
 
-    public function setRestrictTo(?string $restrictTo): void
+    public function setRestrictTo(array|string|null $restrictTo): void
     {
+        if (is_array($restrictTo)) {
+            $restrictTo = array_filter(
+                $restrictTo,
+                static function ($value): bool {
+                    return $value !== '@extjs6';
+                }
+            );
+
+            $restrictTo = implode(',', $restrictTo);
+        }
         $this->restrictTo = $restrictTo;
     }
 
