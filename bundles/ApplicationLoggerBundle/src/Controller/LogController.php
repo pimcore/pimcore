@@ -25,6 +25,7 @@ use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Helper\ParameterBagHelper;
+use Pimcore\Model\Helper\QueryParams;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -67,15 +68,13 @@ class LogController extends UserAwareController implements KernelControllerEvent
 
         $qb->orderBy('id', 'DESC');
 
-        if (class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge(
-                $request->request->all(),
-                $request->query->all()
-            ));
+        $sortingSettings = QueryParams::extractSortingSettings(array_merge(
+            $request->request->all(),
+            $request->query->all()
+        ));
 
-            if ($sortingSettings['orderKey']) {
-                $qb->orderBy($db->quoteIdentifier($sortingSettings['orderKey']), $sortingSettings['order']);
-            }
+        if ($sortingSettings['orderKey']) {
+            $qb->orderBy($db->quoteIdentifier($sortingSettings['orderKey']), $sortingSettings['order']);
         }
 
         $priority = $requestSource->getString('priority');

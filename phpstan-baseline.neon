@@ -86,23 +86,7 @@ parameters:
 			count: 1
 			path: bundles/CustomReportsBundle/src/DependencyInjection/Configuration.php
 
-		-
-			message: '#^Call to method addSetting\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\Event\\IndexActionSettingsEvent\.$#'
-			identifier: class.notFound
-			count: 1
-			path: bundles/CustomReportsBundle/src/EventListener/IndexSettingsListener.php
 
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: bundles/CustomReportsBundle/src/EventListener/IndexSettingsListener.php
-
-		-
-			message: '#^Parameter \$settingsEvent of method Pimcore\\Bundle\\CustomReportsBundle\\EventListener\\IndexSettingsListener\:\:indexSettings\(\) has invalid type Pimcore\\Bundle\\AdminBundle\\Event\\IndexActionSettingsEvent\.$#'
-			identifier: class.notFound
-			count: 1
-			path: bundles/CustomReportsBundle/src/EventListener/IndexSettingsListener.php
 
 		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
@@ -217,18 +201,6 @@ parameters:
 			identifier: trait.unused
 			count: 1
 			path: lib/Event/Traits/ResponseAwareTrait.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: lib/Extension/Bundle/PimcoreBundleAdminClassicInterface.php
-
-		-
-			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
-			identifier: ergebnis.declareStrictTypes
-			count: 1
-			path: lib/Extension/Bundle/Traits/BundleAdminClassicTrait.php
 
 		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'
@@ -645,41 +617,6 @@ parameters:
 			count: 1
 			path: models/DataObject/SelectOptions/Traits/EnumTryFromNullableTrait.php
 
-		-
-			message: '#^Call to method expandLocales\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\DataObject\\GridColumnConfig\\ConfigElementInterface\.$#'
-			identifier: class.notFound
-			count: 1
-			path: models/DataObject/Service.php
-
-		-
-			message: '#^Call to method getLabeledValue\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\DataObject\\GridColumnConfig\\ConfigElementInterface\.$#'
-			identifier: class.notFound
-			count: 1
-			path: models/DataObject/Service.php
-
-		-
-			message: '#^Call to method getRenderer\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\DataObject\\GridColumnConfig\\ConfigElementInterface\.$#'
-			identifier: class.notFound
-			count: 2
-			path: models/DataObject/Service.php
-
-		-
-			message: '#^Call to method getValidLanguages\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\DataObject\\GridColumnConfig\\ConfigElementInterface\.$#'
-			identifier: class.notFound
-			count: 1
-			path: models/DataObject/Service.php
-
-		-
-			message: '#^Class Pimcore\\Bundle\\AdminBundle\\DataObject\\GridColumnConfig\\Service not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: models/DataObject/Service.php
-
-		-
-			message: '#^Method Pimcore\\Model\\DataObject\\Service\:\:getConfigForHelperDefinition\(\) has invalid return type Pimcore\\Bundle\\AdminBundle\\DataObject\\GridColumnConfig\\ConfigElementInterface\.$#'
-			identifier: class.notFound
-			count: 1
-			path: models/DataObject/Service.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'
@@ -980,18 +917,6 @@ parameters:
 			identifier: ergebnis.declareStrictTypes
 			count: 1
 			path: models/Translation/Listing/Dao.php
-
-		-
-			message: '#^Call to static method get\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\Perspective\\Config\.$#'
-			identifier: class.notFound
-			count: 1
-			path: models/User.php
-
-		-
-			message: '#^Call to static method getAvailablePerspectives\(\) on an unknown class Pimcore\\Bundle\\AdminBundle\\Perspective\\Config\.$#'
-			identifier: class.notFound
-			count: 1
-			path: models/User.php
 
 		-
 			message: '#^File is missing a "declare\(strict_types\=1\)" declaration\.$#'

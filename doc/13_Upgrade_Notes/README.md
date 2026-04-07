@@ -66,6 +66,11 @@ The following bundles have been removed:
 ### [DataObjects]
 
 - Add a new optional `$parameters` argument to `Concrete::saveVersion()` to allow passing of arguments to events.
+- Removed the following methods from `Pimcore\Model\DataObject\Service` as part of the Admin UI removal:
+    - `calculateCellValue()`
+    - `mapFieldname()`
+    - `getDataForEditmode()` in `ManyToManyObjectRelation` and `AdvancedManyToManyObjectRelation` now uses `Element\Service::gridElementData()` instead of the removed `Service::gridObjectData()`. As a result, the returned data for each related object no longer includes computed grid columns (e.g. brick fields, localized fields, classification store values, or helper columns). Only the base element data (id, type, path, etc.) is returned. If you rely on additional field data being present in the editmode payload of these relations, you need to fetch it separately.
+
 
 ### [Database]
 - All `utf8mb4` tables now use `utf8mb4_unicode_520_ci` as their default collation to match Doctrine's `default_table_options` 

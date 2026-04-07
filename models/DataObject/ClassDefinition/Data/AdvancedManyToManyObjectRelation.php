@@ -201,17 +201,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     {
         $return = [];
 
-        $visibleFieldsArray = $this->getVisibleFields() ? explode(',', $this->getVisibleFields()) : [];
-
-        $gridFields = $visibleFieldsArray;
-
         // add data
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $mkey => $metaObject) {
                 $index = $mkey + 1;
                 $object = $metaObject->getObject();
                 if ($object instanceof DataObject\Concrete) {
-                    $columnData = DataObject\Service::gridObjectData($object, $gridFields, null, ['purpose' => 'editmode']);
+                    $columnData = Element\Service::gridElementData($object);
                     foreach ($this->getColumns() as $c) {
                         $getter = 'get' . ucfirst($c['key']);
 
