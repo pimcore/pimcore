@@ -142,6 +142,7 @@
     "pimcore/web2print-tools-bundle": "<6.0",
     "sabre/dav": "4.2.2",
     "symfony/symfony": "*",
+    "symfony/event-dispatcher": "6.4.36 || 7.4.8",
     "symfony/web-link": "<6.0",
     "thecodingmachine/safe": "<2.0",
     "twig/twig": ">=3.9.0 <3.14.0",
