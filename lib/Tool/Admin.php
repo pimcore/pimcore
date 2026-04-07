@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Pimcore\Tool;
 
 use Exception;
-use Locale;
 use Pimcore;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
@@ -45,7 +44,7 @@ class Admin
         if (is_dir($appDefaultPath)) {
             $languageDirs[] = $appDefaultPath;
         }
-        
+
         $localeService = $container->get(LocaleServiceInterface::class);
 
         foreach ($languageDirs as $filesDir) {

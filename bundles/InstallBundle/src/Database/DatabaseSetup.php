@@ -17,6 +17,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Pimcore\Db\Helper;
 use Pimcore\Tool\Authentication;
+use RuntimeException;
 use Symfony\Component\Cache\Adapter\DoctrineDbalAdapter;
 use Symfony\Component\Messenger\Bridge\Doctrine\Transport\Connection as DoctrineTransportConnection;
 
@@ -67,7 +68,7 @@ final readonly class DatabaseSetup
     {
         $sql = file_get_contents($filePath);
         if ($sql === false) {
-            throw new \RuntimeException(sprintf('Could not read SQL file: %s', $filePath));
+            throw new RuntimeException(sprintf('Could not read SQL file: %s', $filePath));
         }
 
         $db->executeStatement($sql);

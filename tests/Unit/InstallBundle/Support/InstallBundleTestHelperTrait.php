@@ -1,8 +1,19 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
 namespace Pimcore\Tests\Unit\InstallBundle\Support;
 
+use Closure;
 use Pimcore\Bundle\InstallBundle\BundleConfig\BundleInstaller;
 use Pimcore\Bundle\InstallBundle\Console\ConsoleCommandRunner;
 use Pimcore\Bundle\InstallBundle\Database\DatabaseSetup;
@@ -27,12 +38,12 @@ trait InstallBundleTestHelperTrait
     /**
      * Create a fully-wired Installer with all required dependencies.
      *
-     * @param (\Closure(string): \Pimcore\Bundle\InstallBundle\Env\EnvWriter)|null $envWriterFactory
+     * @param (Closure(string): \Pimcore\Bundle\InstallBundle\Env\EnvWriter)|null $envWriterFactory
      */
     protected function createInstaller(
         ?LoggerInterface $logger = null,
         ?EventDispatcherInterface $eventDispatcher = null,
-        ?\Closure $envWriterFactory = null,
+        ?Closure $envWriterFactory = null,
     ): Installer {
         $logger ??= new NullLogger();
         $commandRunner = new ConsoleCommandRunner($logger);

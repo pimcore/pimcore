@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions;
 
+use Exception;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterType;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\SearchEngineDefinitionInterface;
@@ -156,7 +157,7 @@ abstract readonly class AbstractSearchEngineEnvVarDefinition implements SearchEn
                     $url,
                 )];
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [sprintf('%s connection failed: %s', $this->getLabel(), $e->getMessage())];
         }
 

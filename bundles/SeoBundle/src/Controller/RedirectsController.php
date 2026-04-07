@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SeoBundle\Controller;
 
 use Exception;
-use Pimcore\Model\Helper\QueryParams;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\Csv;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
@@ -24,6 +23,7 @@ use Pimcore\Controller\UserAwareController;
 use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use Pimcore\Model\Helper\QueryParams;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;

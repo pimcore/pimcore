@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\InstallBundle;
 
+use ArrayObject;
 use Pimcore\Bundle\InstallBundle\Collector\ArrayEnvVarReader;
 use Pimcore\Bundle\InstallBundle\Collector\ParameterCollector;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
@@ -230,10 +231,10 @@ final class InstallerTest extends TestCase
 
     public function testValidationNotCalledForSkippedOptionalDefinition(): void
     {
-        $tracker = new \ArrayObject(['count' => 0]);
+        $tracker = new ArrayObject(['count' => 0]);
 
         $optionalDef = new class($tracker) implements EnvVarDefinitionInterface {
-            public function __construct(private readonly \ArrayObject $tracker)
+            public function __construct(private readonly ArrayObject $tracker)
             {
             }
 
@@ -1561,9 +1562,7 @@ YAML;
         array $resolvedEnvVarNames,
         string $sectionName = 'test',
     ): EnvVarDefinitionInterface {
-        return new class($key, $required, $parameters, $resolvedEnvVarNames, $sectionName)
-            implements EnvVarDefinitionInterface
-        {
+        return new class($key, $required, $parameters, $resolvedEnvVarNames, $sectionName) implements EnvVarDefinitionInterface {
             public function __construct(
                 private readonly string $key,
                 private readonly bool $required,
@@ -1627,9 +1626,7 @@ YAML;
         array $parameters,
         array $validationErrors,
     ): EnvVarDefinitionInterface {
-        return new class($key, $required, $parameters, $validationErrors)
-            implements EnvVarDefinitionInterface
-        {
+        return new class($key, $required, $parameters, $validationErrors) implements EnvVarDefinitionInterface {
             public function __construct(
                 private readonly string $key,
                 private readonly bool $required,

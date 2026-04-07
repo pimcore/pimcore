@@ -17,7 +17,6 @@ namespace Pimcore\Tests\Support\Helper;
 // all public methods declared in helper class will be available in $I
 
 use Codeception\Lib\ModuleContainer;
-use Pimcore\Tests\Support\Util\Autoloader;
 
 class Unit extends \Codeception\Module
 {

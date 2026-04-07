@@ -46,5 +46,4 @@ interface InstallProfileInterface
      * @return list<PostInstallCommand>
      */
     public function getPostInstallCommands(): array;
-
 }

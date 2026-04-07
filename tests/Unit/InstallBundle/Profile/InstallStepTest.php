@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Unit\InstallBundle\Profile;
 
 use Pimcore\Bundle\InstallBundle\Profile\InstallStep;
 use Pimcore\Tests\Support\Test\TestCase;
+use ValueError;
 
 /**
  * @internal
@@ -72,7 +73,7 @@ final class InstallStepTest extends TestCase
 
     public function testFromThrowsValueErrorForInvalidString(): void
     {
-        $this->expectException(\ValueError::class);
+        $this->expectException(ValueError::class);
 
         InstallStep::from('nonexistent_step');
     }

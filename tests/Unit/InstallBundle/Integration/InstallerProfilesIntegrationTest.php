@@ -480,9 +480,7 @@ final class InstallerProfilesIntegrationTest extends TestCase
         array $resolvedEnvVarNames,
         string $sectionName = 'test',
     ): EnvVarDefinitionInterface {
-        return new class($key, $required, $parameters, $resolvedEnvVarNames, $sectionName)
-            implements EnvVarDefinitionInterface
-        {
+        return new class($key, $required, $parameters, $resolvedEnvVarNames, $sectionName) implements EnvVarDefinitionInterface {
             public function __construct(
                 private readonly string $key,
                 private readonly bool $required,

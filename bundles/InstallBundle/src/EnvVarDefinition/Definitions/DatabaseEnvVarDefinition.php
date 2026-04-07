@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions;
 use Doctrine\Bundle\DoctrineBundle\ConnectionFactory;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Tools\DsnParser;
+use Exception;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterType;
@@ -113,7 +114,7 @@ final readonly class DatabaseEnvVarDefinition implements EnvVarDefinitionInterfa
             $connection = DriverManager::getConnection($params);
             $connection->executeQuery('SELECT 1');
             $connection->close();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return ['Database connection failed: ' . $e->getMessage()];
         }
 

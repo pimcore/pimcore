@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\InstallBundle\EnvVarDefinition\Definitions;
 
 use Defuse\Crypto\Key;
+use Exception;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ConfigParameter;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\EnvVarDefinitionInterface;
 use Pimcore\Bundle\InstallBundle\EnvVarDefinition\ParameterHintProviderInterface;
@@ -138,7 +139,7 @@ final readonly class ProductRegistrationEnvVarDefinition implements EnvVarDefini
 
         try {
             Key::loadFromAsciiSafeString($secret);
-        } catch (\Exception) {
+        } catch (Exception) {
             return null;
         }
 
@@ -156,7 +157,7 @@ final readonly class ProductRegistrationEnvVarDefinition implements EnvVarDefini
     {
         try {
             Key::loadFromAsciiSafeString($secret);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [sprintf(
                 'Invalid encryption secret: %s. '
                 . 'Run "vendor/bin/generate-defuse-key" to generate a valid key.',
@@ -177,7 +178,7 @@ final readonly class ProductRegistrationEnvVarDefinition implements EnvVarDefini
             $registrationValidator->validateProductKey($productKey);
         } catch (InvalidConfigurationException $e) {
             return [$e->getMessage()];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [sprintf('Product key validation failed: %s', $e->getMessage())];
         }
 
@@ -188,7 +189,7 @@ final readonly class ProductRegistrationEnvVarDefinition implements EnvVarDefini
     {
         try {
             return Key::createNewRandomKey()->saveToAsciiSafeString();
-        } catch (\Exception) {
+        } catch (Exception) {
             return '';
         }
     }
