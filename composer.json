@@ -136,6 +136,7 @@
     "sabre/dav": "4.2.2",
     "symfony/symfony": "*",
     "symfony/web-link": "<7.4",
+    "symfony/event-dispatcher": "7.4.8",
     "thecodingmachine/safe": "<2.0",
     "twig/twig": ">=3.9.0 <3.14.0",
     "php-http/discovery": "<1.20"
