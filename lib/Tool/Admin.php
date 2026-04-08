@@ -39,6 +39,7 @@ class Admin
 
         $container = Pimcore::getContainer();
 
+        // @phpstan-ignore-next-line
         if ($container->hasParameter('pimcore_studio_backend.translations.path')) {
             $baseResource = $container->getParameter('pimcore_studio_backend.translations.path');
 
