@@ -212,6 +212,9 @@ class Document extends Element\AbstractElement
             // Getting classname from document resolver
             $className = Pimcore::getContainer()->get('pimcore.class.resolver.document')->resolve($document->getType());
 
+            if (!$className){
+                return null;
+            }
             /** @var Document $newDocument */
             $newDocument = self::getModelFactory()->build($className);
 
