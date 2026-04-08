@@ -79,13 +79,13 @@ class Admin
 
                 $languageCode = $parts[0];
 
-                if ($parts[0] === 'studio' && isset($parts[1])) {
+                if (($parts[0] === 'admin' || $parts[0] === 'studio') && isset($parts[1])) {
                     $languageCode = $parts[1];
                 }
 
                 $extension = end($parts);
 
-                if ($extension === 'json' || $parts[0] === 'studio') {
+                if ($extension === 'json' || $parts[0] === 'admin' || $parts[0] === 'studio') {
                     if ($localeService->isLocale($languageCode)) {
                         $translatedLanguages[] = $languageCode;
                     }
