@@ -39,6 +39,16 @@ class Admin
 
         $container = Pimcore::getContainer();
 
+        if ($container->hasParameter('pimcore_studio_backend.translations.path')) {
+            $baseResource = $container->getParameter('pimcore_studio_backend.translations.path');
+
+            $languageDir = Pimcore::getKernel()->locateResource($baseResource);
+
+            if (is_dir($languageDir)) {
+                $languageDirs[] = $languageDir;
+            }
+        }
+
         $appDefaultPath = $container->getParameter('translator.default_path');
 
         if (is_dir($appDefaultPath)) {
