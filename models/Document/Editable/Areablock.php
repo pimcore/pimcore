@@ -149,6 +149,9 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             if (!empty($config['allowed']) && !in_array($index['type'], $config['allowed'])) {
                 $disabled = true;
             }
+            if (!empty($config['disallowed']) && in_array($index['type'], $config['disallowed'])) {
+                $disabled = true;
+            }
 
             $brickTypeLimit = $config['limits'][$this->currentIndex['type']] ?? 100000;
             $brickTypeUsageCounter = $this->brickTypeUsageCounter[$this->currentIndex['type']] ?? 0;
