@@ -111,6 +111,9 @@ class EditableHandler implements LoggerAwareInterface
             if (!(empty($options['allowed']) || in_array($brick->getId(), $options['allowed']))) {
                 continue;
             }
+            if (!empty($options['disallowed']) && in_array($brick->getId(), $options['disallowed'])) {
+                continue;
+            }
 
             $name = $brick->getName();
             $desc = $brick->getDescription();
