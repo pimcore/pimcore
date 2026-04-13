@@ -91,7 +91,7 @@ The following bundles have been removed:
 
 ### [Installer]
 
-The installer has been completely redesigned with a **profile-based architecture**. The old `pimcore:install` command with individual parameters has been removed and replaced with a profile-driven system.
+The installer has been completely redesigned with a **profile-based architecture**. The old individual CLI options for `pimcore:install` have been removed, and the command now uses a profile-driven setup via `--install-profile`.
 
 #### New Command Invocation
 
@@ -160,13 +160,13 @@ All `PIMCORE_INSTALL_*` environment variables have been **removed**. The old ins
 
 #### Configuration Output Changes
 
-The installer no longer writes YAML config files. All configuration is written to **`.env.local`** using Symfony Flex-style section markers (`###> section-name ###` / `###< section-name ###`):
+The installer no longer writes the former local/user configuration YAML files for database and product registration settings. These values are now written to **`.env.local`** using Symfony Flex-style section markers (`###> section-name ###` / `###< section-name ###`). The installer still generates `config/packages/doctrine_mapping_types.yaml` for Doctrine mapping types.
 
 | Old Config File | New Location |
 |---|---|
 | `config/local/database.yaml` | `.env.local` (`DATABASE_URL`) |
 | `config/local/product_registration.yaml` | `.env.local` (`PIMCORE_ENCRYPTION_SECRET`, `PIMCORE_INSTANCE_IDENTIFIER`, `PIMCORE_PRODUCT_KEY`) |
-| `system.yml` / `system.template.yml` | No longer written by the installer |
+| `system.yml` / `system.template.yml` | Legacy system config files are no longer written by the installer |
 
 #### Removed Classes and Events
 
