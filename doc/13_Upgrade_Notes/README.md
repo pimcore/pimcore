@@ -91,7 +91,10 @@ The following bundles have been removed:
 
 ### [Installer]
 
-The installer has been completely redesigned with a **profile-based architecture**. The old `pimcore:install` command with individual parameters (`--mysql-host-socket`, `--mysql-username`, `--mysql-password`, `--mysql-database`, etc.) has been removed and replaced with a profile-driven system.
+The installer has been completely redesigned with a **profile-based architecture**. The old individual CLI options for `pimcore:install` have been removed, and the command now uses a profile-driven setup via `--install-profile`.
+
+#### New Command Invocation
+
 The installer is now invoked with:
 
 ```bash
@@ -101,6 +104,91 @@ vendor/bin/pimcore-install --install-profile=App\\Install\\MyProfile
 If you have scripts or CI pipelines that invoke `pimcore:install` with the old options, update them to use `--install-profile` with a profile class. Create an install profile implementing `InstallProfileInterface` for your project.
 
 Please see the documentation for further information: https://docs.pimcore.com/platform/
+
+#### Removed CLI Options
+
+The following CLI options have been **removed**:
+
+| Old Option | Replacement |
+|---|---|
+| `--mysql-host-socket` | Use `DATABASE_URL` env var (Doctrine DSN format) |
+| `--mysql-username` | Use `DATABASE_URL` env var |
+| `--mysql-password` | Use `DATABASE_URL` env var |
+| `--mysql-database` | Use `DATABASE_URL` env var |
+| `--mysql-port` | Use `DATABASE_URL` env var |
+| `--mysql-ssl-cert-path` | Use `DATABASE_URL` env var |
+| `--encryption-secret` | Use `PIMCORE_ENCRYPTION_SECRET` env var directly |
+| `--instance-identifier` | Use `PIMCORE_INSTANCE_IDENTIFIER` env var directly |
+| `--product-key` | Use `PIMCORE_PRODUCT_KEY` env var directly |
+| `--install-bundles` | Bundles are now defined by the install profile's `getBundles()` method |
+| `--skip-database-structure` | Use `InstallStepFilterInterface` in your profile to skip steps |
+| `--skip-database-data` | Use `InstallStepFilterInterface` in your profile to skip steps |
+| `--skip-database-data-dump` | Use `InstallStepFilterInterface` in your profile to skip steps |
+| `--skip-database-config` | Configuration is now written to `.env.local`; to avoid writing installer-generated config, use `InstallStepFilterInterface` to skip `WriteEnv` and, if needed, `WriteDoctrineConfig` |
+| `--skip-product-registration-config` | Configuration is now written to `.env.local`; to avoid writing installer-generated config, use `InstallStepFilterInterface` to skip `WriteEnv` |
+| `--only-steps` | Use `InstallStepFilterInterface` to control which `InstallStep` enum values are skipped |
+
+The options `--admin-username` and `--admin-password` are **retained** but now also accept the env vars `PIMCORE_ADMIN_USER` and `PIMCORE_ADMIN_PASSWORD` respectively.
+
+#### New CLI Options
+
+| New Option | Description |
+|---|---|
+| `--install-profile` | **(Required)** FQCN of the install profile class implementing `InstallProfileInterface` |
+| `--env-definition` | FQCN(s) of additional `EnvVarDefinitionInterface` implementations (repeatable) |
+| `--post-install-commands` | FQCN(s) of `PostInstallCommandsProviderInterface` implementations (repeatable) |
+| `--skip-validation` | Skip env var validation (no value = skip all; with value = skip by key/class/FQCN) |
+
+#### Removed Environment Variables (`PIMCORE_INSTALL_*` Prefix)
+
+All `PIMCORE_INSTALL_*` environment variables have been **removed**. The old installer derived env vars by prepending `PIMCORE_INSTALL_` to the uppercased option name. These are replaced by standard env var names:
+
+`DATABASE_URL` uses Doctrine DSN syntax and can describe either a TCP connection (for example `mysql://user:pass@host:3306/dbname`) or a unix socket connection.
+
+| Old Env Var | New Env Var |
+|---|---|
+| `PIMCORE_INSTALL_ADMIN_USERNAME` | `PIMCORE_ADMIN_USER` |
+| `PIMCORE_INSTALL_ADMIN_PASSWORD` | `PIMCORE_ADMIN_PASSWORD` |
+| `PIMCORE_INSTALL_MYSQL_HOST_SOCKET` | `DATABASE_URL` (Doctrine DSN format, e.g. `mysql://user:pass@localhost/dbname?unix_socket=/var/run/mysqld/mysqld.sock`) |
+| `PIMCORE_INSTALL_MYSQL_USERNAME` | `DATABASE_URL` |
+| `PIMCORE_INSTALL_MYSQL_PASSWORD` | `DATABASE_URL` |
+| `PIMCORE_INSTALL_MYSQL_DATABASE` | `DATABASE_URL` |
+| `PIMCORE_INSTALL_MYSQL_PORT` | `DATABASE_URL` |
+| `PIMCORE_INSTALL_MYSQL_SSL_CERT_PATH` | `DATABASE_URL` |
+| `PIMCORE_INSTALL_ENCRYPTION_SECRET` | `PIMCORE_ENCRYPTION_SECRET` |
+| `PIMCORE_INSTALL_INSTANCE_IDENTIFIER` | `PIMCORE_INSTANCE_IDENTIFIER` |
+| `PIMCORE_INSTALL_PRODUCT_KEY` | `PIMCORE_PRODUCT_KEY` |
+| `PIMCORE_INSTALL_INSTALL_BUNDLES` | Removed — bundles are defined by the profile |
+
+#### Configuration Output Changes
+
+The installer no longer writes the former local/user configuration YAML files for database and product registration settings. These values are now written to **`.env.local`** using Symfony Flex-style section markers (`###> section-name ###` / `###< section-name ###`). The installer still generates `config/packages/doctrine_mapping_types.yaml` for Doctrine mapping types.
+
+| Old Config File | New Location |
+|---|---|
+| `config/local/database.yaml` | `.env.local` (`DATABASE_URL`) |
+| `config/local/product_registration.yaml` | `.env.local` (`PIMCORE_ENCRYPTION_SECRET`, `PIMCORE_INSTANCE_IDENTIFIER`, `PIMCORE_PRODUCT_KEY`) |
+| `system.yml` / `system.template.yml` | Legacy system config files are no longer written by the installer |
+
+#### Removed Classes and Events
+
+- `Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter` — removed (no more YAML config writing)
+- `Pimcore\Bundle\InstallBundle\Event\BundleSetupEvent` — removed (bundles are now defined by the profile)
+- `Pimcore\Bundle\InstallBundle\DependencyInjection\Configuration` — removed (no more `pimcore_install.parameters.database_credentials` config tree)
+- The `config/installer.yaml` option `pimcore_install.parameters.database_credentials` is no longer supported. Use `DATABASE_URL` env var or the interactive installer prompts instead.
+
+#### Two-Phase Architecture
+
+The installer now runs in two phases:
+1. **Phase 1** (lightweight `InstallerKernel`): Collects and validates all env vars from the profile's `EnvVarDefinitionInterface` implementations, writes `.env.local`, writes Doctrine config.
+2. **Phase 2** (real `App\Kernel`): Sets up the database, imports data sources, creates admin user, registers and installs bundles, runs post-install commands.
+
+#### Profile Extensibility
+
+Install profiles can implement additional interfaces for advanced control:
+- `InstallStepFilterInterface` — skip specific install steps (useful for PaaS environments)
+- `PostInstallHookInterface` — run custom PHP code near the end of phase 2, before finalization steps such as cache clearing and install marker cleanup
+- `DataSourceInterface` — import SQL dumps or other data during installation
 
 ### [OpenSearch / Elasticsearch DSN Configuration]
 
