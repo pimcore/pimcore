@@ -124,8 +124,8 @@ The following CLI options have been **removed**:
 | `--skip-database-structure` | Use `InstallStepFilterInterface` in your profile to skip steps |
 | `--skip-database-data` | Use `InstallStepFilterInterface` in your profile to skip steps |
 | `--skip-database-data-dump` | Use `InstallStepFilterInterface` in your profile to skip steps |
-| `--skip-database-config` | Configuration is now written to `.env.local`, not YAML files |
-| `--skip-product-registration-config` | Configuration is now written to `.env.local`, not YAML files |
+| `--skip-database-config` | Configuration is now written to `.env.local`; to avoid writing installer-generated config, use `InstallStepFilterInterface` to skip `WriteEnv` and, if needed, `WriteDoctrineConfig` |
+| `--skip-product-registration-config` | Configuration is now written to `.env.local`; to avoid writing installer-generated config, use `InstallStepFilterInterface` to skip `WriteEnv` |
 | `--only-steps` | Use `InstallStepFilterInterface` to control which `InstallStep` enum values are skipped |
 
 The options `--admin-username` and `--admin-password` are **retained** but now also accept the env vars `PIMCORE_ADMIN_USER` and `PIMCORE_ADMIN_PASSWORD` respectively.
@@ -143,11 +143,13 @@ The options `--admin-username` and `--admin-password` are **retained** but now a
 
 All `PIMCORE_INSTALL_*` environment variables have been **removed**. The old installer derived env vars by prepending `PIMCORE_INSTALL_` to the uppercased option name. These are replaced by standard env var names:
 
+`DATABASE_URL` uses Doctrine DSN syntax and can describe either a TCP connection (for example `mysql://user:pass@host:3306/dbname`) or a unix socket connection.
+
 | Old Env Var | New Env Var |
 |---|---|
 | `PIMCORE_INSTALL_ADMIN_USERNAME` | `PIMCORE_ADMIN_USER` |
 | `PIMCORE_INSTALL_ADMIN_PASSWORD` | `PIMCORE_ADMIN_PASSWORD` |
-| `PIMCORE_INSTALL_MYSQL_HOST_SOCKET` | `DATABASE_URL` (Doctrine DSN format, e.g. `mysql://user:pass@host:3306/dbname`) |
+| `PIMCORE_INSTALL_MYSQL_HOST_SOCKET` | `DATABASE_URL` (Doctrine DSN format, e.g. `mysql://user:pass@localhost/dbname?unix_socket=/var/run/mysqld/mysqld.sock`) |
 | `PIMCORE_INSTALL_MYSQL_USERNAME` | `DATABASE_URL` |
 | `PIMCORE_INSTALL_MYSQL_PASSWORD` | `DATABASE_URL` |
 | `PIMCORE_INSTALL_MYSQL_DATABASE` | `DATABASE_URL` |
@@ -185,7 +187,7 @@ The installer now runs in two phases:
 
 Install profiles can implement additional interfaces for advanced control:
 - `InstallStepFilterInterface` — skip specific install steps (useful for PaaS environments)
-- `PostInstallHookInterface` — run custom PHP code after all steps complete
+- `PostInstallHookInterface` — run custom PHP code near the end of phase 2, before finalization steps such as cache clearing and install marker cleanup
 - `DataSourceInterface` — import SQL dumps or other data during installation
 
 ### [OpenSearch / Elasticsearch DSN Configuration]
