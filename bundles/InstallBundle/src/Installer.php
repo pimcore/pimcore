@@ -808,10 +808,7 @@ YAML;
             (new Dotenv())->bootEnv($envFile, overrideExistingVars: true);
         }
 
-        // Load startup.php if it exists — this is critical for PaaS environments
-        // (e.g. Platform.sh) where platform relationships override env vars
-        // (DATABASE_URL, search engine DSN, messenger transport, etc.).
-        // Must run AFTER Dotenv so startup.php values take precedence.
+        // Load startup.php if it exists — this is critical for PaaS environments     
         $startupFile = $projectRoot . '/config/pimcore/startup.php';
         if (file_exists($startupFile)) {
             include_once $startupFile;
