@@ -808,7 +808,7 @@ YAML;
             (new Dotenv())->bootEnv($envFile, overrideExistingVars: true);
         }
 
-        // Load startup.php if it exists — this is critical for PaaS environments     
+        // Load startup.php if it exists — this is critical for PaaS environments
         $startupFile = $projectRoot . '/config/pimcore/startup.php';
         if (file_exists($startupFile)) {
             // @phpstan-ignore-next-line
