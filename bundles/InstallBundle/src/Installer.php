@@ -811,7 +811,8 @@ YAML;
         // Load startup.php if it exists — this is critical for PaaS environments     
         $startupFile = $projectRoot . '/config/pimcore/startup.php';
         if (file_exists($startupFile)) {
-            include_once $startupFile;
+            // @phpstan-ignore-next-line
+            include $startupFile;
         }
 
         $environment = Config::getEnvironment();
