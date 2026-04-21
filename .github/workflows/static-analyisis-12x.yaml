@@ -1,5 +1,5 @@
 
-name: "PHPStan Static Analysis 11.x"
+name: "PHPStan Static Analysis 12.x"
 
 on:
     workflow_dispatch:
