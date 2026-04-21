@@ -58,7 +58,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($item) {
             if ($item['serialized']) {
-                $item['data'] = unserialize($item['data']);
+                $item['data'] = @unserialize($item['data'], ['allowed_classes' => false]);
             }
 
             $item['serialized'] = (bool)$item['serialized'];
