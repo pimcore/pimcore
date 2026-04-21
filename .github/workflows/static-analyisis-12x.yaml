@@ -51,7 +51,7 @@ jobs:
               if: github.event_name == 'schedule'
               uses: "actions/checkout@v4"
               with:
-                ref: "11.5"
+                ref: "12.3"
 
             - name: Checkout PR head (for push or workflow_dispatch)
               if: github.event_name != 'pull_request_target' && github.event_name != 'schedule'
