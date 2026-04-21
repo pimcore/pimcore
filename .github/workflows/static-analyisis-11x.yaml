@@ -5,13 +5,13 @@ on:
     workflow_dispatch:
     pull_request_target:
         branches:
-            - "11.*"
+            - "12.*"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
     push:
         branches:
-            - "11.*"
+            - "12.*"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
@@ -33,14 +33,10 @@ jobs:
         strategy:
             matrix:
                 include:
+                    - { php-version: "8.4", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.4", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
                     - { php-version: "8.3", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
                     - { php-version: "8.3", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.2", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.2", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.2", dependencies: "highest", experimental: true, symfony: "6.4.x-dev", composer-options: "" }
-                    - { php-version: "8.1", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.1", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
-
         steps:
             - name: Checkout PR head (only for pull_request_target)
               if: github.event_name == 'pull_request_target'
