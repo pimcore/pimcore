@@ -24,7 +24,6 @@ use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Tool\Text\Csv;
 use stdClass;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @internal
@@ -42,7 +41,7 @@ class Admin
 
         $container = Pimcore::getContainer();
 
-        if (!$container instanceof ContainerInterface) {
+        if ($container === null) {
             throw new \RuntimeException('Container is not available');
         }
 
