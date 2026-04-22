@@ -24,6 +24,7 @@ use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Tool\Text\Csv;
 use stdClass;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @internal
@@ -40,6 +41,10 @@ class Admin
         $languages = [];
 
         $container = Pimcore::getContainer();
+
+        if (!$container instanceof ContainerInterface) {
+            throw new \RuntimeException('Container is not available');
+        }
 
         if ($container->hasParameter('pimcore_admin.translations.path')) {
             $baseResource = $container->getParameter('pimcore_admin.translations.path');
