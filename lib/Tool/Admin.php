@@ -41,10 +41,6 @@ class Admin
 
         $container = Pimcore::getContainer();
 
-        if ($container === null) {
-            throw new \RuntimeException('Container is not available');
-        }
-
         if ($container->hasParameter('pimcore_admin.translations.path')) {
             $baseResource = $container->getParameter('pimcore_admin.translations.path');
             $languageDir = Pimcore::getKernel()->locateResource($baseResource);

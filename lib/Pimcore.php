@@ -127,7 +127,7 @@ class Pimcore
      */
     public static function getContainer(): ?ContainerInterface
     {
-        return static::getKernel()->getContainer();
+        return static::getKernel()?->getContainer() ?? null;
     }
 
     /**
