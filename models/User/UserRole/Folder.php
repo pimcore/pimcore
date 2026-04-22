@@ -50,10 +50,13 @@ class Folder extends Model\User\AbstractUser
     {
         if ($this->children === null) {
             if ($this->getId()) {
-                $list = new Role\Listing();
-                $list->setCondition('parentId = ?', $this->getId());
+                $roleList = new Role\Listing();
+                $roleList->setCondition('parentId = ?', $this->getId());
 
-                $this->children = $list->getRoles();
+                $folderList = new Role\Folder\Listing();
+                $folderList->setCondition('parentId = ?', $this->getId());
+
+                $this->children = array_merge($folderList->load(), $roleList->load());
             } else {
                 $this->children = [];
             }

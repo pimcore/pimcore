@@ -53,8 +53,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $condition = ' WHERE ';
         }
 
-        $types = [$this->model->getType(), $this->model->getType() . 'folder'];
-        $condition .= "id > 0 AND `type` IN ('" . implode("','", $types) . "')";
+        $condition .= "id > 0 AND `type` = '" . $this->model->getType() . "'";
 
         return $condition;
     }
