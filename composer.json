@@ -143,14 +143,14 @@
   },
   "require-dev": {
     "behat/gherkin": "4.15.0",
-    "codeception/codeception": "^5.3",
+    "codeception/codeception": "^5.3.5",
     "codeception/stub": "^4.1.4",
     "codeception/module-symfony": "^3.5",
     "composer/composer": "*",
     "ergebnis/phpstan-rules": "^2.9.0",
     "phpstan/phpstan": "2.1.26",
     "phpstan/phpstan-symfony": "^2.0.2",
-    "phpunit/phpunit": "^10.5",
+    "phpunit/phpunit": "^12.5.23 || ^13.1.7",
     "symfony/dotenv": "^7.4",
     "symfony/runtime": "^7.4",
     "webmozarts/console-parallelization": "^2.1"
@@ -217,7 +217,9 @@
       "Pimcore\\Composer::installAssets"
     ]
   },
-  "bin": ["bin/pimcore-install"],
+  "bin": [
+    "bin/pimcore-install"
+  ],
   "config": {
     "sort-packages": true,
     "preferred-install": {
