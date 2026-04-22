@@ -1,5 +1,5 @@
 
-name: "PHPStan Static Analysis 11.x"
+name: "PHPStan Static Analysis 12.3"
 
 on:
     workflow_dispatch:
@@ -17,6 +17,9 @@ on:
             - 'bundles/**/public/**'
 
 env:
+    PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_CI_INSTANCE_IDENTIFIER }}
+    PIMCORE_ENCRYPTION_SECRET: ${{ secrets.PIMCORE_CI_ENCRYPTION_SECRET }}
+    PIMCORE_PRODUCT_KEY: ${{ secrets.PIMCORE_CI_PRODUCT_KEY }}
     PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
     APP_ENV: test
     PIMCORE_TEST: 1
