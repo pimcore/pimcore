@@ -195,7 +195,7 @@ class Sql extends AbstractAdapter
 
             if ($fields && !$extractAllFields) {
                 $quotedFields = array_map(fn($f) => $db->quoteIdentifier($f), $fields);
-                $data = 'SELECT ' . implode(',', $quotedFields) . ' FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+                $data = 'SELECT ' . implode(', ', $quotedFields) . ' FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             } else {
                 $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             }
