@@ -194,7 +194,8 @@ class Sql extends AbstractAdapter
             $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
 
             if ($fields && !$extractAllFields) {
-                $data = 'SELECT `' . implode('`,`', $fields) . '` FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+                $quotedFields = array_map(fn($f) => $db->quoteIdentifier($f), $fields);
+                $data = 'SELECT ' . implode(', ', $quotedFields) . ' FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             } else {
                 $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             }
