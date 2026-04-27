@@ -49,9 +49,18 @@ final class LogLine
     private function extract(string $logLine): void
     {
         $logLine = trim($logLine);
-        $dateTimeString = substr($logLine, 0, 25);
-        $log = substr($logLine, 27);
-        $dateTime = DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $dateTimeString);
+
+        $separatorPos = strpos($logLine, ': ');
+        if ($separatorPos === false) {
+            throw new InvalidArgumentException('Invalid Time Format given');
+        }
+
+        $dateTimeString = substr($logLine, 0, $separatorPos);
+        $log = substr($logLine, $separatorPos + 2);
+        $dateTime =
+            DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $dateTimeString)
+            ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:sO', $dateTimeString)
+            ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s\Z', $dateTimeString);
 
         if ($dateTime === false) {
             throw new InvalidArgumentException('Invalid Time Format given');
