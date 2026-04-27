@@ -49,6 +49,7 @@ final class LogLine
     private function extract(string $logLine): void
     {
         $logLine = trim($logLine);
+        $logLine = "2026-04-24T11:04:27+02:00: Variant Generation done";
 
         $separatorPos = strpos($logLine, ': ');
         if ($separatorPos === false) {
@@ -60,7 +61,7 @@ final class LogLine
         $dateTime =
             DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $dateTimeString)
             ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:sO', $dateTimeString)
-            ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s\Z', $dateTimeString);
+            ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s\Z', $dateTimeString, new \DateTimeZone('UTC'));
 
         if ($dateTime === false) {
             throw new InvalidArgumentException('Invalid Time Format given');
