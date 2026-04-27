@@ -49,7 +49,6 @@ final class LogLine
     private function extract(string $logLine): void
     {
         $logLine = trim($logLine);
-        $logLine = "2026-04-24T11:04:27+02:00: Variant Generation done";
 
         $separatorPos = strpos($logLine, ': ');
         if ($separatorPos === false) {
