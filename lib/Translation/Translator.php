@@ -32,8 +32,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     protected array $initializedCatalogues = [];
 
+    // TODO: remove in 2027
     protected string $adminPath = '';
 
+    // TODO: remove in 2027
     protected array $adminTranslationMapping = [];
 
     /**
@@ -63,16 +65,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
         if (null === $domain) {
             $domain = Translation::DOMAIN_DEFAULT;
-        }
-
-        if ($domain === Translation::DOMAIN_ADMIN && !empty($this->adminTranslationMapping)) {
-            if (null === $locale) {
-                $locale = $this->getLocale();
-            }
-
-            if (array_key_exists($locale, $this->adminTranslationMapping)) {
-                $locale = $this->adminTranslationMapping[$locale];
-            }
         }
 
         $catalogue = $this->getCatalogue($locale);

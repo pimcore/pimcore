@@ -70,11 +70,11 @@ class Service
         foreach ($units as &$unit) {
             try {
                 if ($unit->getAbbreviation()) {
-                    $unit->setAbbreviation(Translation::getByKeyLocalized($unit->getAbbreviation(), Translation::DOMAIN_ADMIN,
+                    $unit->setAbbreviation(Translation::getByKeyLocalized($unit->getAbbreviation(), Translation::DOMAIN_BACKEND,
                         true, true));
                 }
                 if ($unit->getLongname()) {
-                    $unit->setLongname(Translation::getByKeyLocalized($unit->getLongname(), Translation::DOMAIN_ADMIN, true,
+                    $unit->setLongname(Translation::getByKeyLocalized($unit->getLongname(), Translation::DOMAIN_BACKEND, true,
                         true));
                 }
                 $result[] = $unit->getObjectVars();

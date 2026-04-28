@@ -17,7 +17,6 @@ use Exception;
 use Pimcore;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
-use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\User;
 use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Tool\Text\Csv;
@@ -29,62 +28,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Admin
 {
-    /**
-     * finds installed languages
-     */
-    public static function getLanguages(): array
-    {
-        $languageDirs = [];
-        $translatedLanguages = [];
-
-        $container = Pimcore::getContainer();
-
-        $appDefaultPath = $container->getParameter('translator.default_path');
-
-        if (is_dir($appDefaultPath)) {
-            $languageDirs[] = $appDefaultPath;
-        }
-
-        $localeService = $container->get(LocaleServiceInterface::class);
-
-        foreach ($languageDirs as $filesDir) {
-            $files = scandir($filesDir);
-
-            if ($files === false) {
-                continue;
-            }
-            foreach ($files as $file) {
-                $filePath = $filesDir . '/' . $file;
-
-                if (!is_file($filePath)) {
-                    continue;
-                }
-
-                $parts = explode('.', $file);
-
-                if (count($parts) < 2) {
-                    continue;
-                }
-
-                $languageCode = $parts[0];
-
-                if ($parts[0] === 'admin' && isset($parts[1])) {
-                    $languageCode = $parts[1];
-                }
-
-                $extension = end($parts);
-
-                if ($extension === 'json' || $parts[0] === 'admin') {
-                    if ($localeService->isLocale($languageCode)) {
-                        $translatedLanguages[] = $languageCode;
-                    }
-                }
-            }
-        }
-
-        return array_unique($translatedLanguages);
-    }
-
     public static function getMinimizedScriptPath(string $scriptContent): array
     {
         $scriptPath = 'minified_javascript_core_'.md5($scriptContent).'.js';

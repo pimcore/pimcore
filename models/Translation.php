@@ -23,7 +23,6 @@ use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\TranslationEvents;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
 use Pimcore\Translation\TranslationEntriesDumper;
 use stdClass;
@@ -39,6 +38,8 @@ final class Translation extends AbstractModel
     use RecursionBlockingEventDispatchHelperTrait;
 
     const DOMAIN_DEFAULT = 'messages';
+
+    const DOMAIN_BACKEND = 'backend';
 
     const DOMAIN_ADMIN = 'admin';
 
@@ -201,10 +202,6 @@ final class Translation extends AbstractModel
      */
     public static function getValidLanguages(string $domain = self::DOMAIN_DEFAULT): array
     {
-        if ($domain == self::DOMAIN_ADMIN) {
-            return \Pimcore\Tool\Admin::getLanguages();
-        }
-
         return Tool::getValidLanguages();
     }
 
@@ -307,23 +304,6 @@ final class Translation extends AbstractModel
      */
     public static function getByKeyLocalized(string $id, string $domain = self::DOMAIN_DEFAULT, bool $create = false, bool $returnIdIfEmpty = false, ?string $language = null): ?string
     {
-        if ($domain == self::DOMAIN_ADMIN) {
-            if ($user = Tool\Admin::getCurrentUser()) {
-                $language = $user->getLanguage();
-            } elseif ($user = Tool\Authentication::authenticateSession()) {
-                $language = $user->getLanguage();
-            }
-
-            if (!$language) {
-                $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
-            }
-
-            if (!in_array($language, Tool\Admin::getLanguages())) {
-                $config = SystemSettingsConfig::get()['general'];
-                $language = $config['language'] ?? null;
-            }
-        }
-
         if (!$language) {
             $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
             if (!$language) {

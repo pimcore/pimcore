@@ -329,7 +329,7 @@ pimcore:
     translations:
         domains:
             - messages
-            - admin
+            - backend
 
     templating_engine:
         twig:

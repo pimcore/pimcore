@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Logger;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification\Service\NotificationService;
+use Pimcore\Model\Translation;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -55,7 +56,7 @@ class PimcoreNotificationService extends AbstractNotificationService
                 $title = $this->translator->trans(
                     'workflow_change_email_notification_subject',
                     [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()],
-                    'admin',
+                    Translation::DOMAIN_BACKEND,
                     $language
                 );
                 $message = $this->translator->trans(
@@ -63,17 +64,17 @@ class PimcoreNotificationService extends AbstractNotificationService
                     [
                         $subjectType . ' ' . $subject->getFullPath(),
                         $subject->getId(),
-                        $this->translator->trans($transition->getLabel(), [], 'admin', $language),
-                        $this->translator->trans($workflow->getName(), [], 'admin', $language),
+                        $this->translator->trans($transition->getLabel(), [], Translation::DOMAIN_BACKEND, $language),
+                        $this->translator->trans($workflow->getName(), [], Translation::DOMAIN_BACKEND, $language),
                     ],
-                    'admin',
+                    Translation::DOMAIN_BACKEND,
                     $language
                 );
 
                 $noteInfo = $this->getNoteInfo($subject->getId());
                 if ($noteInfo) {
                     $message .= "\n\n";
-                    $message .= $this->translator->trans('workflow_change_email_notification_note', [], 'admin') . "\n";
+                    $message .= $this->translator->trans('workflow_change_email_notification_note', [], Translation::DOMAIN_BACKEND) . "\n";
                     $message .= $noteInfo;
                 }
 

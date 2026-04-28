@@ -19,6 +19,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Model\DataObject\SelectOptions\Config;
 use Pimcore\Model\DataObject\SelectOptions\Data\SelectOption;
+use Pimcore\Model\Translation;
 use Pimcore\Tool\Admin;
 
 class SelectOptionsOptionsProvider implements SelectOptionsProviderInterface
@@ -44,7 +45,7 @@ class SelectOptionsOptionsProvider implements SelectOptionsProviderInterface
         return array_map(
             fn (SelectOption $selectOption) => [
                 'value' => $selectOption->getValue(),
-                'key' => $translator->trans($selectOption->getLabel(), [], 'admin'),
+                'key' => $translator->trans($selectOption->getLabel(), [], Translation::DOMAIN_BACKEND),
             ],
             $selectOptionsConfiguration->getSelectOptions(),
         );

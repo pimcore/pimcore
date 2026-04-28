@@ -83,10 +83,8 @@ class Dao extends Model\Dao\AbstractDao
         $sanitizer = $this->model->getTranslationSanitizer();
 
         $editableLanguages = [];
-        if ($this->model->getDomain() != Model\Translation::DOMAIN_ADMIN) {
-            if ($user = User::getById($this->model->getUserModification())) {
-                $editableLanguages = $user->getAllowedLanguagesForEditingWebsiteTranslations();
-            }
+        if ($user = User::getById($this->model->getUserModification())) {
+            $editableLanguages = $user->getAllowedLanguagesForEditingWebsiteTranslations();
         }
 
         if ($this->model->getKey() !== '') {

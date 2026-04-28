@@ -4,6 +4,18 @@
 
 ### Tasks to Do Prior the Update
 
+#### Admin Translation Domain Replaced by Backend Domain
+
+The `admin` translation domain has been removed and replaced by the new `backend` domain, which is treated like any other custom domain without special handling.
+
+**Changes required:**
+
+- Replace usages of `Translation::DOMAIN_ADMIN` with `Translation::DOMAIN_BACKEND` in your custom code.
+  `Translation::DOMAIN_ADMIN` is kept for BC but the `admin` domain is **no longer registered by default**.
+- `Tool\Admin::getLanguages()` has been removed with no replacement.
+- The `translations.domains` configuration now includes `backend` instead of `admin` by default.
+  If you have customized this config, update it accordingly.
+
 #### Symfony 7.3+ Required
 
 Pimcore 13 requires **Symfony 7.3 or higher**. All Symfony 6.x components are no longer supported.
