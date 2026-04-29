@@ -63,8 +63,7 @@ class Sql extends AbstractAdapter
         if ($configuration) {
             $sql = $this->buildQueryString($configuration);
         }
-        $sqlStripped = preg_replace('/\/\*.*?\*\//s', ' ', $sql);
-        $sqlStripped = preg_replace('/--[^\n]*/', ' ', $sqlStripped ?? '');
+        $sqlStripped = $this->stripSqlCommentsForValidation($sql);
 
         if (
             !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped ?? '', $matches)
@@ -192,8 +191,7 @@ class Sql extends AbstractAdapter
             }
         }
 
-        $sqlStripped = preg_replace('/\/\*.*?\*\//s', ' ', $sql);
-        $sqlStripped = preg_replace('/--[^\n]*/', ' ', $sqlStripped ?? '');
+        $sqlStripped = $this->stripSqlCommentsForValidation($sql);
         if (
             !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped ?? '', $matches)
         ) {
@@ -242,5 +240,13 @@ class Sql extends AbstractAdapter
                 $filteredData
             ),
         ];
+    }
+
+    private function stripSqlCommentsForValidation(string $sql): string
+    {
+        $sqlStripped = preg_replace('/\/\*!\d*\s*(.*?)\*\//s', ' $1 ', $sql);
+        $sqlStripped = preg_replace('/\/\*(?!\!).*?\*\//s', ' ', $sqlStripped ?? '');
+        $sqlStripped = preg_replace('/\s+/', ' ', $sqlStripped ?? '');
+        return $sqlStripped;
     }
 }
