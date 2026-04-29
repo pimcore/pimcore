@@ -490,7 +490,6 @@ class CustomReportController extends UserAwareController
     }
 
     /**
-     * @param Tool\Config $config
      * @throws AccessDeniedHttpException
      */
     private function assertUserCanAccessReport(Tool\Config $config): void
