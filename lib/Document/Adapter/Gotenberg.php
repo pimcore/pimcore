@@ -16,12 +16,12 @@ namespace Pimcore\Document\Adapter;
 use Exception;
 use Gotenberg\Gotenberg as GotenbergAPI;
 use Gotenberg\Stream;
+use GuzzleHttp\Psr7\LazyOpenStream;
 use Pimcore\Config;
 use Pimcore\Helper\GotenbergHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Storage;
-use GuzzleHttp\Psr7\LazyOpenStream;
 
 /**
  * @internal
