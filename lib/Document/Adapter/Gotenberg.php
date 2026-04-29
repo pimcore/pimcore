@@ -116,10 +116,10 @@ class Gotenberg extends Ghostscript
             $psrStream = null;
 
             try {
-                $psrStream = new LazyOpenStream($localAssetTmpPath, 'r');
+                $psrStream = new LazyOpenStream($localAssetTmpPath, 'rb');
 
                 $request = GotenbergAPI::libreOffice(Config::getSystemConfiguration('gotenberg')['base_url'])
-                    ->convert(new \Gotenberg\Stream($asset->getFilename(), $psrStream));
+                    ->convert(new Stream($asset->getFilename(), $psrStream));
 
                 $response = GotenbergAPI::send($request);
                 $fileContent = $response->getBody()->getContents();
