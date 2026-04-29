@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 use function array_key_exists;
@@ -489,7 +490,7 @@ class CustomReportController extends UserAwareController
     }
 
     /**
-     * @param Config $config
+     * @param Tool\Config $config
      * @throws AccessDeniedHttpException
      */
     private function assertUserCanAccessReport(Tool\Config $config): void
