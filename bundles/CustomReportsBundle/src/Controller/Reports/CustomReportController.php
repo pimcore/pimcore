@@ -322,6 +322,9 @@ class CustomReportController extends UserAwareController
         if (!$config) {
             throw $this->createNotFoundException();
         }
+
+        $this->assertUserCanAccessReport($config);
+
         $configuration = $config->getDataSourceConfig();
 
         $adapter = Tool\Config::getAdapter($configuration, $config);
