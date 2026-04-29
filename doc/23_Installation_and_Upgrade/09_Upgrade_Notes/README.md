@@ -32,7 +32,7 @@ Support for all Symfony 6.x components will be removed in next major version.
 This is part of the migration to Symfony 7, which requires updating all Symfony dependencies to version 7.3 or higher.
 
 **Action Required:**
-Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 13.0.
+Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 2026.1.
 
 **Note:**
 If you want to stay on Symfony 6.x after updating to this version, you can use the `pimcore/symfony-freeze` metapackage to prevent 
@@ -50,7 +50,7 @@ To ensure all core Symfony components are on version 7.x minimum (recommended fo
 composer require pimcore/symfony-freeze:^7.0
 ```
 
-**Note:** The `pimcore/symfony-freeze` package is only intended for Pimcore 12.3 and 12.x development versions. It will not be needed for Pimcore 13, as Symfony 6 support will be removed entirely.
+**Note:** The `pimcore/symfony-freeze` package is only intended for Pimcore 12.3 and 12.x development versions. It will not be needed for Pimcore 2026, as Symfony 6 support will be removed entirely.
 
 
 #### [Doctrine Annotations]
