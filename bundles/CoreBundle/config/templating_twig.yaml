@@ -81,5 +81,3 @@ services:
     Twig\Extension\SandboxExtension:
         arguments:
             $policy: '@Pimcore\Twig\Sandbox\SecurityPolicy'
-
-    Pimcore\Twig\Extension\AdminExtension: ~
