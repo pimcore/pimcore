@@ -63,8 +63,11 @@ class Sql extends AbstractAdapter
         if ($configuration) {
             $sql = $this->buildQueryString($configuration);
         }
+        $sqlStripped = $this->stripSqlCommentsForValidation($sql);
 
-        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
+        if (
+            !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped, $matches)
+        ) {
             $sql .= ' LIMIT 0,1';
             $db = Db::get();
             $res = $db->fetchAssociative($sql);
@@ -188,7 +191,10 @@ class Sql extends AbstractAdapter
             }
         }
 
-        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
+        $sqlStripped = $this->stripSqlCommentsForValidation($sql);
+        if (
+            !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped, $matches)
+        ) {
             $condition = implode(' AND ', $condition);
 
             $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
@@ -234,5 +240,13 @@ class Sql extends AbstractAdapter
                 $filteredData
             ),
         ];
+    }
+
+    private function stripSqlCommentsForValidation(string $sql): string
+    {
+        $sqlStripped = preg_replace('/\/\*!\d*\s*(.*?)\*\//s', ' $1 ', $sql);
+        $sqlStripped = preg_replace('/\/\*(?!\!).*?\*\//s', ' ', $sqlStripped ?? '');
+        $sqlStripped = preg_replace('/\s+/', ' ', $sqlStripped ?? '');
+        return $sqlStripped;
     }
 }
