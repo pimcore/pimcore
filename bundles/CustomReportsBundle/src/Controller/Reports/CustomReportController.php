@@ -15,6 +15,7 @@ namespace Pimcore\Bundle\CustomReportsBundle\Controller\Reports;
 
 use Exception;
 use Pimcore\Bundle\CustomReportsBundle\Tool;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
@@ -27,6 +28,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 use function array_key_exists;
@@ -152,6 +154,9 @@ class CustomReportController extends UserAwareController
         if (!$report) {
             throw $this->createNotFoundException();
         }
+
+        $this->assertUserCanAccessReport($report);
+
         $data = $report->getObjectVars();
         $data['writeable'] = $report->isWriteable();
 
@@ -285,6 +290,9 @@ class CustomReportController extends UserAwareController
         if (!$config) {
             throw $this->createNotFoundException();
         }
+
+        $this->assertUserCanAccessReport($config);
+
         $configuration = $config->getDataSourceConfig();
         $adapter = Tool\Config::getAdapter($configuration, $config);
         $sortFilters = $this->getSortAndFilters($request, $configuration);
@@ -333,6 +341,8 @@ class CustomReportController extends UserAwareController
         if (!$config) {
             throw $this->createNotFoundException();
         }
+        $this->assertUserCanAccessReport($config);
+
         $configuration = $config->getDataSourceConfig();
         $adapter = Tool\Config::getAdapter($configuration, $config);
         $sortFilters = $this->getSortAndFilters($request, $configuration);
@@ -376,6 +386,8 @@ class CustomReportController extends UserAwareController
         if (!$config) {
             throw $this->createNotFoundException();
         }
+
+        $this->assertUserCanAccessReport($config);
 
         $columns = $config->getColumnConfiguration();
         $fields = [];
@@ -473,5 +485,20 @@ class CustomReportController extends UserAwareController
         }
 
         return ['sort' => $sort, 'dir' => $dir, 'filters' => $filters, 'drillDownFilters' => $drillDownFilters];
+    }
+
+    /**
+     * @param Config $config
+     * @return bool
+     * @throws AccessDeniedHttpException
+     */
+    private function assertUserCanAccessReport(Tool\Config $config): bool
+    {
+        $user = $this->getPimcoreUser();
+        if ($user === null || !$config->isUserAllowed($user)) {
+            throw $this->createAccessDeniedHttpException();
+        }
+
+        return true;
     }
 }
