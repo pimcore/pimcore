@@ -435,7 +435,7 @@ class Config extends Model\AbstractModel implements JsonSerializable
 
     public function isUserAllowed(User|UserProxy $user): bool
     {
-        if ($user instanceof UserProxy){
+        if ($user instanceof UserProxy) {
             $user = $user->getUser();
         }
 
