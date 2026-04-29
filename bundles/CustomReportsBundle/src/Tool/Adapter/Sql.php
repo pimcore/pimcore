@@ -63,8 +63,12 @@ class Sql extends AbstractAdapter
         if ($configuration) {
             $sql = $this->buildQueryString($configuration);
         }
+        $sqlStripped = preg_replace('/\/\*.*?\*\//s', ' ', $sql);
+        $sqlStripped = preg_replace('/--[^\n]*/', ' ', $sqlStripped ?? '');
 
-        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
+        if (
+            !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped ?? '', $matches)
+        ) {
             $sql .= ' LIMIT 0,1';
             $db = Db::get();
             $res = $db->fetchAssociative($sql);
@@ -168,7 +172,7 @@ class Sql extends AbstractAdapter
 
                     if (($type == 'date') && $operator == 'eq') {
                         $condition[] = $db->quoteIdentifier(
-                            $filter['property']) .
+                                $filter['property']) .
                             ' BETWEEN ' .
                             $db->quote($value) .
                             ' AND ' .
@@ -188,13 +192,17 @@ class Sql extends AbstractAdapter
             }
         }
 
-        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
+        $sqlStripped = preg_replace('/\/\*.*?\*\//s', ' ', $sql);
+        $sqlStripped = preg_replace('/--[^\n]*/', ' ', $sqlStripped ?? '');
+        if (
+            !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped ?? '', $matches)
+        ) {
             $condition = implode(' AND ', $condition);
 
             $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
 
             if ($fields && !$extractAllFields) {
-                $quotedFields = array_map(fn ($f) => $db->quoteIdentifier($f), $fields);
+                $quotedFields = array_map(fn($f) => $db->quoteIdentifier($f), $fields);
                 $data = 'SELECT ' . implode(', ', $quotedFields) . ' FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             } else {
                 $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
