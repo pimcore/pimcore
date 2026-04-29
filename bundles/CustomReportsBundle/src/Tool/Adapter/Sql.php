@@ -66,7 +66,7 @@ class Sql extends AbstractAdapter
         $sqlStripped = $this->stripSqlCommentsForValidation($sql);
 
         if (
-            !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped ?? '', $matches)
+            !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped, $matches)
         ) {
             $sql .= ' LIMIT 0,1';
             $db = Db::get();
@@ -193,7 +193,7 @@ class Sql extends AbstractAdapter
 
         $sqlStripped = $this->stripSqlCommentsForValidation($sql);
         if (
-            !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped ?? '', $matches)
+            !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped, $matches)
         ) {
             $condition = implode(' AND ', $condition);
 
