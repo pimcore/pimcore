@@ -63,7 +63,7 @@ No action required for most users. If your custom code relies on `doctrine/annot
 
 #### [Symfony Templating Component]
 
-The `Symfony\Component\Templating\EngineInterface` and related templating services are deprecated and will be removed in version 13.0.
+The `Symfony\Component\Templating\EngineInterface` and related templating services are deprecated and will be removed in version 2026.1.
 This is part of the migration to Symfony 7, which no longer includes the `symfony/templating` component.
 
 **What's Deprecated:**
@@ -90,7 +90,7 @@ All functionality remains the same, but the interface changes from the Symfony t
 
 #### Folder structure for email logs
 
-The command `pimcore:migrate:mail-logs-folder-structure` and supporting the old structure are deprecated and will be removed in version 13.0.
+The command `pimcore:migrate:mail-logs-folder-structure` and supporting the old structure are deprecated and will be removed in version 2026.1.
 
 **Action Required:**
 Execute the command `pimcore:migrate:mail-logs-folder-structure` or move the files manually to YYYY/MM/DD/\<log filename\>.
