@@ -247,6 +247,7 @@ class Sql extends AbstractAdapter
         $sqlStripped = preg_replace('/\/\*!\d*\s*(.*?)\*\//s', ' $1 ', $sql);
         $sqlStripped = preg_replace('/\/\*(?!\!).*?\*\//s', ' ', $sqlStripped ?? '');
         $sqlStripped = preg_replace('/\s+/', ' ', $sqlStripped ?? '');
+
         return $sqlStripped;
     }
 }
