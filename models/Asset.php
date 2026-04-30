@@ -688,7 +688,7 @@ class Asset extends Element\AbstractElement
         $typeChanged = false;
 
         if ($this->getType() != 'folder') {
-            if ($this->getDataChanged()) {
+            if (!$this->getDataChanged()) {
                 $src = $this->getStream();
 
                 if (!$storage->fileExists($path) || !stream_is_local($storage->readStream($path))) {
@@ -731,7 +731,7 @@ class Asset extends Element\AbstractElement
                     // ignore, fallback
                 }
 
-                if (!$mimeType) {
+                if (!$mimeType || $mimeType === 'application/octet-stream') {
                     $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
                 }
                 $this->setMimeType($mimeType);
