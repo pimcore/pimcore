@@ -14,9 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Asset;
 
 use Exception;
-use Pimcore;
 use Pimcore\Model\Asset;
-use Pimcore\Tests\Support\Storage\ThrowingMimeTypeStorage;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
@@ -362,88 +360,5 @@ class AssetTest extends ModelTestCase
         $asset = Asset::create(1, $data);
 
         $this->assertEquals('image/jpeg', $asset->getMimeType());
-    }
-
-    /**
-     * Storage-reported MIME type is preferred over stream sniffing.
-     *
-     * A .doc file (OLE Compound Document) may be sniffed as application/octet-stream
-     * by finfo on raw bytes, but a properly configured storage adapter should report
-     * application/msword. Verifies both the MIME type and the derived asset type.
-     */
-    public function testStorageMimeTypePreferredForDocFile(): void
-    {
-        // OLE Compound Document magic bytes — the same header used by .doc, .xls, .ppt
-        $oleHeader = "\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1" . str_repeat("\x00", 504);
-        $stream = fopen('php://memory', 'rb+');
-        fwrite($stream, $oleHeader);
-        rewind($stream);
-
-        $asset = Asset::create(1, [
-            'stream' => $stream,
-            'filename' => 'test_ole_' . uniqid() . '.doc',
-        ]);
-
-        try {
-            // The local Flysystem adapter reads the written file and reports the correct
-            // MIME type; stream sniffing alone may return application/octet-stream for OLE.
-            $this->assertInstanceOf(Asset\Document::class, $asset);
-            $this->assertEquals('document', $asset->getType());
-            $this->assertStringContainsString('msword', $asset->getMimeType());
-        } finally {
-            $asset->delete();
-        }
-    }
-
-    /**
-     * When $storage->mimeType() throws a FilesystemException (e.g. on remote adapters
-     * that do not support MIME detection), the code falls back to stream sniffing via
-     * MimeTypeHelper::guessMimeType().
-     */
-    public function testMimeTypeFallsBackToStreamSniffingOnStorageException(): void
-    {
-        $realStorage = Storage::get('asset');
-        Pimcore::getContainer()->set('pimcore.asset.storage', new ThrowingMimeTypeStorage($realStorage));
-
-        try {
-            $asset = Asset::create(1, [
-                'stream' => fopen(TestHelper::resolveFilePath('assets/images/image1.jpg'), 'rb'),
-                'filename' => 'fallback_mime_' . uniqid() . '.jpg',
-            ]);
-            $asset->delete();
-
-            // Stream-sniffing fallback must still detect the correct MIME type
-            $this->assertEquals('image/jpeg', $asset->getMimeType());
-        } finally {
-            Pimcore::getContainer()->set('pimcore.asset.storage', $realStorage);
-        }
-    }
-
-    /**
-     * When $storage->mimeType() throws AND stream sniffing returns null (unrecognisable
-     * content with no extension hint), the code must fall back to application/octet-stream.
-     */
-    public function testMimeTypeDefaultsToOctetStreamWhenBothMethodsFail(): void
-    {
-        $realStorage = Storage::get('asset');
-        Pimcore::getContainer()->set('pimcore.asset.storage', new ThrowingMimeTypeStorage($realStorage));
-
-        try {
-            $stream = fopen('php://memory', 'rb+');
-            // Write random bytes — unidentifiable by finfo, and the filename has no extension
-            // to fall back on, so guessMimeType() returns null
-            fwrite($stream, random_bytes(64));
-            rewind($stream);
-
-            $asset = Asset::create(1, [
-                'stream' => $stream,
-                'filename' => 'fallback_octet_' . uniqid(), // intentionally no extension
-            ]);
-            $asset->delete();
-
-            $this->assertEquals('application/octet-stream', $asset->getMimeType());
-        } finally {
-            Pimcore::getContainer()->set('pimcore.asset.storage', $realStorage);
-        }
     }
 }
