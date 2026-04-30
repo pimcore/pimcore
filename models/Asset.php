@@ -1658,31 +1658,31 @@ class Asset extends Element\AbstractElement
         try {
             $movedFiles = [];
             $children = $storage->listContents($oldPath, true);
-            $totalChildren = 0;
+            $totalFiles = 0;
 
             /** @var \League\Flysystem\StorageAttributes $child */
             foreach ($children as $child) {
                 if ($child instanceof \League\Flysystem\FileAttributes) {
-                    ++$totalChildren;
+                    ++$totalFiles;
                     $src  = $child['path'];
-                    $dest = str_replace($oldPath, $newPath, '/' . $src);
+                    $dest = $newPath . substr('/' . $src, strlen($oldPath));
 
                     $storage->move($src, $dest);
                     $movedFiles[$dest] = $src;
                 }
             }
 
-            if ($totalChildren > 0) {
+            if ($totalFiles > 0) {
                 $movedCount = count($movedFiles);
 
-                if ($movedCount === $totalChildren) {
+                if ($movedCount === $totalFiles) {
                     $storage->deleteDirectory($oldPath);
                 } else {
                     \Pimcore\Logger::info(
                         sprintf(
                             'Moved %d/%d files from %s to %s. No exception was thrown for %d files,
                             so the source directory was not deleted.',
-                            $movedCount, $totalChildren, $oldPath, $newPath, $totalChildren - $movedCount
+                            $movedCount, $totalFiles, $oldPath, $newPath, $totalFiles - $movedCount
                         )
                     );
                 }
