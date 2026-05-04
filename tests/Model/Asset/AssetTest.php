@@ -438,12 +438,11 @@ class AssetTest extends ModelTestCase
 
         $locatorProp->setValue($storageService, $mockLocator);
 
+        $this->expectException(UnableToMoveFile::class);
+
         try {
             $srcRoot->setParentId($destParent->getId());
             $srcRoot->save();
-            $this->fail('Expected an exception to be thrown during the partial fallback move.');
-        } catch (\Throwable) {
-            // Expected — the second file move throws, rolling back the partial move
         } finally {
             $locatorProp->setValue($storageService, $realLocator);
         }
