@@ -260,10 +260,13 @@ class AssetTest extends ModelTestCase
      */
     public function testFolderMoveWithNestedSubdirectoriesFallback(): void
     {
-        // Build: /src-root/sub/image.jpg
-        $srcRoot = Asset\Service::createFolderByPath('/test-fallback-src-' . uniqid());
-        $sub     = Asset\Service::createFolderByPath($srcRoot->getFullPath() . '/sub');
-        $image   = TestHelper::createImageAsset('image', null, true, 'assets/images/image1.jpg');
+        // Build:
+        //   /src-root/sub/image.jpg   (file inside a nested subfolder)
+        //   /src-root/empty/          (empty nested subfolder — no files)
+        $srcRoot  = Asset\Service::createFolderByPath('/test-fallback-src-' . uniqid());
+        $sub      = Asset\Service::createFolderByPath($srcRoot->getFullPath() . '/sub');
+        $emptyDir = Asset\Service::createFolderByPath($srcRoot->getFullPath() . '/empty');
+        $image    = TestHelper::createImageAsset('image', null, true, 'assets/images/image1.jpg');
         $image->setParentId($sub->getId());
         $image->save();
 
@@ -295,6 +298,9 @@ class AssetTest extends ModelTestCase
 
         $mockStorage->method('deleteDirectory')
             ->willReturnCallback(fn (string $path) => $realStorage->deleteDirectory($path));
+
+        $mockStorage->method('createDirectory')
+            ->willReturnCallback(fn (string $path) => $realStorage->createDirectory($path));
 
         $mockStorage->method('directoryExists')
             ->willReturnCallback(fn (string $path) => $realStorage->directoryExists($path));
@@ -335,6 +341,11 @@ class AssetTest extends ModelTestCase
         $this->assertTrue(
             $realStorage->directoryExists($newPath),
             'Destination directory must exist after the fallback move.'
+        );
+
+        $this->assertTrue(
+            $realStorage->directoryExists($newPath . '/empty'),
+            'Empty subdirectory must be recreated at the destination during the fallback move.'
         );
     }
 
