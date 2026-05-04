@@ -457,6 +457,21 @@ class AssetTest extends ModelTestCase
             $realStorage->directoryExists($oldPath),
             'Source directory must still exist after a rolled-back partial move.'
         );
+
+        // Verify the file that was successfully moved before the failure was
+        // restored to the source — and is no longer present at the destination.
+        $file1StoragePath = $file1->getRealFullPath();
+        $file1DestPath    = str_replace($oldPath, $newRootPath, $file1StoragePath);
+
+        $this->assertTrue(
+            $realStorage->fileExists($file1StoragePath),
+            'File moved before the failure must be restored to the source by rollback.'
+        );
+
+        $this->assertFalse(
+            $realStorage->fileExists($file1DestPath),
+            'File moved before the failure must no longer exist at the destination after rollback.'
+        );
     }
 
     /**
