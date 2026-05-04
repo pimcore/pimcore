@@ -1663,7 +1663,6 @@ class Asset extends Element\AbstractElement
             $totalChildren = count($fileChildren);
 
             if ($totalChildren > 0) {
-                /** @var \League\Flysystem\FileAttributes $child */
                 foreach ($fileChildren as $child) {
                     $src  = $child['path'];
                     $dest = str_replace($oldPath, $newPath, '/' . $src);
