@@ -1657,8 +1657,9 @@ class Asset extends Element\AbstractElement
 
         try {
             $movedFiles = [];
-            $children = $storage->listContents($oldPath, true);
-            $totalChildren = iterator_count($children);
+
+            $children = $storage->listContents($oldPath, true)->toArray();
+            $totalChildren = count($children);
 
             if ($totalChildren > 0) {
                 /** @var \League\Flysystem\StorageAttributes $child */
