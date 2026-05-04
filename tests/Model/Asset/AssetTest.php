@@ -263,7 +263,9 @@ class AssetTest extends ModelTestCase
         // Build: /src-root/sub/image.jpg
         $srcRoot = Asset\Service::createFolderByPath('/test-fallback-src-' . uniqid());
         $sub     = Asset\Service::createFolderByPath($srcRoot->getFullPath() . '/sub');
-        TestHelper::createImageAsset('image', $sub->getId(), true, 'assets/images/image1.jpg');
+        $image   = TestHelper::createImageAsset('image', null, true, 'assets/images/image1.jpg');
+        $image->setParentId($sub->getId());
+        $image->save();
 
         $destParent = Asset\Service::createFolderByPath('/test-fallback-dest-' . uniqid());
         $oldPath    = $srcRoot->getRealFullPath();
