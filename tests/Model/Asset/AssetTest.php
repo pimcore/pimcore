@@ -383,14 +383,21 @@ class AssetTest extends ModelTestCase
 
         $mockStorage->method('move')
             ->willReturnCallback(
-                function (string $source, string $dest) use ($realStorage, $oldPath, &$fallbackFileMoveCount): void {
+                function (string $source, string $dest) use ($realStorage, $oldPath, $newRootPath, &$fallbackFileMoveCount): void {
                     if ($source === $oldPath) {
                         // Force the file-by-file fallback path
                         throw UnableToMoveFile::fromLocationTo($source, $dest);
                     }
 
+                    // Rollback moves go from destination back to source — always allow them
+                    // through so the rollback loop itself is not disrupted by the mock.
+                    if (str_starts_with($source, $newRootPath)) {
+                        $realStorage->move($source, $dest);
+                        return;
+                    }
+
                     if ($fallbackFileMoveCount >= 1) {
-                        // Fail on the second file move inside the fallback to trigger rollback
+                        // Fail on the second forward file move to trigger rollback
                         throw UnableToMoveFile::fromLocationTo($source, $dest);
                     }
 
