@@ -350,6 +350,109 @@ class AssetTest extends ModelTestCase
     }
 
     /**
+     * Verifies that the updateChildPaths() rollback correctly removes any
+     * destination directories that were created before a mid-move failure.
+     * Without this, a failed partial move leaves orphaned directories behind
+     * at the destination while the source tree is still intact.
+     */
+    public function testFolderMoveRollbackCleansUpCreatedDirectories(): void
+    {
+        // Build:
+        //   /src-root/empty/    (empty subfolder — createDirectory at dest must be rolled back)
+        //   /src-root/file1.jpg (first file — moved to dest before the failure, must be moved back)
+        //   /src-root/file2.jpg (second file — its move will throw, triggering rollback)
+        $srcRoot  = Asset\Service::createFolderByPath('/test-rollback-src-' . uniqid());
+        Asset\Service::createFolderByPath($srcRoot->getFullPath() . '/empty');
+
+        $file1 = TestHelper::createImageAsset('file1', null, true, 'assets/images/image1.jpg');
+        $file1->setParentId($srcRoot->getId());
+        $file1->save();
+
+        $file2 = TestHelper::createImageAsset('file2', null, true, 'assets/images/image2.jpg');
+        $file2->setParentId($srcRoot->getId());
+        $file2->save();
+
+        $destParent  = Asset\Service::createFolderByPath('/test-rollback-dest-' . uniqid());
+        $oldPath     = $srcRoot->getRealFullPath();
+        $newRootPath = $destParent->getRealFullPath() . '/' . $srcRoot->getKey();
+
+        $realStorage = Storage::get('asset');
+
+        $fallbackFileMoveCount = 0;
+        $mockStorage = $this->createMock(FilesystemOperator::class);
+
+        $mockStorage->method('move')
+            ->willReturnCallback(
+                function (string $source, string $dest) use ($realStorage, $oldPath, &$fallbackFileMoveCount): void {
+                    if ($source === $oldPath) {
+                        // Force the file-by-file fallback path
+                        throw UnableToMoveFile::fromLocationTo($source, $dest);
+                    }
+
+                    if ($fallbackFileMoveCount >= 1) {
+                        // Fail on the second file move inside the fallback to trigger rollback
+                        throw UnableToMoveFile::fromLocationTo($source, $dest);
+                    }
+
+                    $realStorage->move($source, $dest);
+                    $fallbackFileMoveCount++;
+                }
+            );
+
+        $mockStorage->method('listContents')
+            ->willReturnCallback(
+                fn (string $path, bool $deep = false) => $realStorage->listContents($path, $deep)
+            );
+
+        $mockStorage->method('deleteDirectory')
+            ->willReturnCallback(fn (string $path) => $realStorage->deleteDirectory($path));
+
+        $mockStorage->method('createDirectory')
+            ->willReturnCallback(fn (string $path) => $realStorage->createDirectory($path));
+
+        $mockStorage->method('directoryExists')
+            ->willReturnCallback(fn (string $path) => $realStorage->directoryExists($path));
+
+        $mockStorage->method('fileExists')
+            ->willReturnCallback(fn (string $path) => $realStorage->fileExists($path));
+
+        $storageService = Pimcore::getContainer()->get(Storage::class);
+        $locatorProp    = new \ReflectionProperty(Storage::class, 'locator');
+        $locatorProp->setAccessible(true);
+        $realLocator = $locatorProp->getValue($storageService);
+
+        $mockLocator = $this->createMock(ContainerInterface::class);
+        $mockLocator->method('get')
+            ->willReturnCallback(
+                fn (string $id) => $id === 'pimcore.asset.storage'
+                    ? $mockStorage
+                    : $realLocator->get($id)
+            );
+
+        $locatorProp->setValue($storageService, $mockLocator);
+
+        try {
+            $srcRoot->setParentId($destParent->getId());
+            $srcRoot->save();
+            $this->fail('Expected an exception to be thrown during the partial fallback move.');
+        } catch (\Throwable) {
+            // Expected — the second file move throws, rolling back the partial move
+        } finally {
+            $locatorProp->setValue($storageService, $realLocator);
+        }
+
+        $this->assertFalse(
+            $realStorage->directoryExists($newRootPath . '/empty'),
+            'Destination directory created before the failure must be deleted by rollback.'
+        );
+
+        $this->assertTrue(
+            $realStorage->directoryExists($oldPath),
+            'Source directory must still exist after a rolled-back partial move.'
+        );
+    }
+
+    /**
      * Verifies that an asset can be saved with custom user modification id.
      *
      */
