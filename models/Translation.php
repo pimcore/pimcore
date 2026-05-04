@@ -41,8 +41,6 @@ final class Translation extends AbstractModel
 
     const DOMAIN_BACKEND = 'backend';
 
-    const DOMAIN_ADMIN = 'admin';
-
     protected ?string $key = null;
 
     /**

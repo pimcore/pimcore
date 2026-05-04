@@ -11,7 +11,7 @@ The `admin` translation domain has been removed and replaced by the new `backend
 **Changes required:**
 
 - Replace usages of `Translation::DOMAIN_ADMIN` with `Translation::DOMAIN_BACKEND` in your custom code.
-  `Translation::DOMAIN_ADMIN` is kept for BC but the `admin` domain is **no longer registered by default**.
+  `Translation::DOMAIN_ADMIN` has been removed.
 - `Tool\Admin::getLanguages()` has been removed with no replacement.
 - The `translations.domains` configuration now includes `backend` instead of `admin` by default.
   If you have customized this config, update it accordingly.

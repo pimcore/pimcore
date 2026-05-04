@@ -32,12 +32,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     protected array $initializedCatalogues = [];
 
-    // TODO: remove in 2027
-    protected string $adminPath = '';
-
-    // TODO: remove in 2027
-    protected array $adminTranslationMapping = [];
-
     /**
      * If true, the translator will just return the translation key instead of actually translating
      * the message. Can be useful for debugging and to get an overview over used translation keys on
@@ -293,42 +287,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
 
         return !empty($translated) ? $translated : $id;
-    }
-
-    /**
-     * @internal
-     *
-     */
-    public function getAdminPath(): string
-    {
-        return $this->adminPath;
-    }
-
-    /**
-     *
-     * @internal
-     */
-    public function setAdminPath(string $adminPath): void
-    {
-        $this->adminPath = $adminPath;
-    }
-
-    /**
-     * @internal
-     *
-     */
-    public function getAdminTranslationMapping(): array
-    {
-        return $this->adminTranslationMapping;
-    }
-
-    /**
-     * @internal
-     *
-     */
-    public function setAdminTranslationMapping(array $adminTranslationMapping): void
-    {
-        $this->adminTranslationMapping = $adminTranslationMapping;
     }
 
     public function getDisableTranslations(): bool
