@@ -14,10 +14,14 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Asset;
 
 use Exception;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\UnableToMoveFile;
+use Pimcore;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class AssetTest
@@ -244,6 +248,92 @@ class AssetTest extends ModelTestCase
     public function reloadAsset(): void
     {
         $this->testAsset = Asset::getById($this->testAsset->getId(), ['force' => true]);
+    }
+
+    /**
+     * Regression test for the updateChildPaths() fallback path:
+     * when a single storage->move() of a folder fails with UnableToMoveFile,
+     * the method must move all descendant files individually and then delete
+     * the source directory — even when the folder tree contains nested
+     * subdirectories (which listContents() returns as DirectoryAttributes that
+     * must not be counted against the moved-file total).
+     */
+    public function testFolderMoveWithNestedSubdirectoriesFallback(): void
+    {
+        // Build: /src-root/sub/image.jpg
+        $srcRoot = Asset\Service::createFolderByPath('/test-fallback-src-' . uniqid());
+        $sub     = Asset\Service::createFolderByPath($srcRoot->getFullPath() . '/sub');
+        TestHelper::createImageAsset('image', $sub->getId(), true, 'assets/images/image1.jpg');
+
+        $destParent = Asset\Service::createFolderByPath('/test-fallback-dest-' . uniqid());
+        $oldPath    = $srcRoot->getRealFullPath();
+
+        // Wrap the real storage: throw UnableToMoveFile only for the top-level
+        // folder move so that the file-by-file fallback in updateChildPaths() is
+        // exercised. All other calls (listContents, individual file moves,
+        // deleteDirectory) are delegated to the real storage.
+        $realStorage = Storage::get('asset');
+
+        $mockStorage = $this->createMock(FilesystemOperator::class);
+
+        $mockStorage->method('move')
+            ->willReturnCallback(
+                function (string $source, string $dest) use ($realStorage, $oldPath): void {
+                    if ($source === $oldPath) {
+                        throw UnableToMoveFile::fromLocationTo($source, $dest);
+                    }
+                    $realStorage->move($source, $dest);
+                }
+            );
+
+        $mockStorage->method('listContents')
+            ->willReturnCallback(
+                fn (string $path, bool $deep = false) => $realStorage->listContents($path, $deep)
+            );
+
+        $mockStorage->method('deleteDirectory')
+            ->willReturnCallback(fn (string $path) => $realStorage->deleteDirectory($path));
+
+        $mockStorage->method('directoryExists')
+            ->willReturnCallback(fn (string $path) => $realStorage->directoryExists($path));
+
+        $mockStorage->method('fileExists')
+            ->willReturnCallback(fn (string $path) => $realStorage->fileExists($path));
+
+        // Inject mock storage via the Storage service's internal locator
+        $storageService = Pimcore::getContainer()->get(Storage::class);
+        $locatorProp    = new \ReflectionProperty(Storage::class, 'locator');
+        $locatorProp->setAccessible(true);
+        $realLocator = $locatorProp->getValue($storageService);
+
+        $mockLocator = $this->createMock(ContainerInterface::class);
+        $mockLocator->method('get')
+            ->willReturnCallback(
+                fn (string $id) => $id === 'pimcore.asset.storage'
+                    ? $mockStorage
+                    : $realLocator->get($id)
+            );
+
+        $locatorProp->setValue($storageService, $mockLocator);
+
+        try {
+            $srcRoot->setParentId($destParent->getId());
+            $srcRoot->save();
+        } finally {
+            // Always restore the real locator
+            $locatorProp->setValue($storageService, $realLocator);
+        }
+
+        $this->assertFalse(
+            $realStorage->directoryExists($oldPath),
+            'Source directory must be deleted after all files are moved via the fallback path.'
+        );
+
+        $newPath = $srcRoot->getRealFullPath();
+        $this->assertTrue(
+            $realStorage->directoryExists($newPath),
+            'Destination directory must exist after the fallback move.'
+        );
     }
 
     /**
