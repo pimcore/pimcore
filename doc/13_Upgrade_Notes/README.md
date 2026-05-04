@@ -1,5 +1,14 @@
 # Upgrade Notes
 
+## Pimcore 2026.2.0
+
+### [General]
+- [Assets][Thumbnails][CDN] New core events for thumbnail-config lifecycle were introduced to support CDN purge integration:
+    - `Pimcore\Event\ImageThumbnailConfigEvents::POST_UPDATE` and `POST_DELETE`
+    - `Pimcore\Event\VideoThumbnailConfigEvents::POST_UPDATE` and `POST_DELETE`
+    - Payload classes: `Pimcore\Event\Model\Asset\Image\Thumbnail\ConfigEvent` and `Pimcore\Event\Model\Asset\Video\Thumbnail\ConfigEvent` (both expose `getConfig(): Config`).
+    - The events are dispatched from `Asset\Image\Thumbnail\Config\Dao::save()/delete()` and `Asset\Video\Thumbnail\Config\Dao::save()/delete()` after the underlying settings store and cache writes succeed. They fire on every save/delete path, including admin UI, API and programmatic changes (the magic `__call` delegation also routes through the Dao). Subscribers can use them to react to thumbnail-pipeline changes — Pimcore's bundled `CdnPurgeListener` uses them to dispatch `thumb-{configName}` CDN purges.
+
 ## Pimcore 2026.1.0
 
 ### Tasks to Do Prior the Update

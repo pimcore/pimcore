@@ -132,6 +132,7 @@ final class Configuration implements ConfigurationInterface
         $this->addGotenbergNode($rootNode);
         $this->addDependencyNode($rootNode);
         $this->addProductRegistrationNode($rootNode);
+        $this->addCdnNode($rootNode);
 
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
@@ -2104,6 +2105,32 @@ final class Configuration implements ConfigurationInterface
                     ->scalarNode('product_key')
                         ->info('Product registration key obtained during product registration. ' .
                                'It is based on `instance_identifier` and `pimcore.encryption.secret`.')
+                    ->end()
+                ->end()
+            ->end()
+        ;
+    }
+
+    private function addCdnNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('cdn')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('fastly')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->scalarNode('api_token')
+                                    ->info('Fastly API token with purge_select scope. Use env var FASTLY_API_TOKEN.')
+                                    ->defaultValue('%env(FASTLY_API_TOKEN)%')
+                                ->end()
+                                ->scalarNode('service_id')
+                                    ->info('Fastly service ID. Use env var FASTLY_SERVICE_ID.')
+                                    ->defaultValue('%env(FASTLY_SERVICE_ID)%')
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end()

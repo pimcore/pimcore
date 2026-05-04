@@ -125,6 +125,10 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('message_handler.yaml');
         $loader->load('class_builder.yaml');
         $loader->load('serializer.yaml');
+        $loader->load('cdn.yaml');
+
+        $container->setParameter('pimcore.cdn.fastly.api_token', $config['cdn']['fastly']['api_token']);
+        $container->setParameter('pimcore.cdn.fastly.service_id', $config['cdn']['fastly']['service_id']);
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);

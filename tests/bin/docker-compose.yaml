@@ -15,8 +15,11 @@ services:
 
     php:
 #        user: '1000:1000' # set to your uid:gid
-        image: pimcore/pimcore:php8.3-debug-latest
+        image: pimcore/pimcore:php8.4-debug-latest
         environment:
+            PIMCORE_ENCRYPTION_SECRET: "def00000ad77c36a568b35a6b38fd862609e9db6eac59585405fa179ae89199f217eb6c8ffb3c63223734302753686dfaa126bdc74302b84689a09dc87babda938e6cdeb"
+            PIMCORE_INSTANCE_IDENTIFIER: "4q7D8GcezCZp2rhuTt7xk8"
+            PIMCORE_PRODUCT_KEY: "eyJwYXlsb2FkIjoie1wiaWRcIjpcIjk1OGExM2NmNTY3Mzk1MmY0NjgyMDU5NjU0MDgyMTVjMzgxNWMxYWMyNmEzZjE2YjRkMzM2YTlmZDlhMGI5ZmVcIixcInRpbWVzdGFtcFwiOjE3NDcwNDQyMDZ9Iiwic2lnbmF0dXJlIjoiTUVRQ0lFdE1kUzhuTHUwaU1sS1VHVXBZWEhxbVZMa1hNU1I5eGJscXdUV1FXdFBHQWlCY1NZczBhRmUxcFBPYWFhVDZjNElhS3dVRWpMYmN2SXJpUkM3XC9ZNG1aWkE9PSJ9"
             PHP_IDE_CONFIG: "serverName=localhost"
             COMPOSER_HOME: /var/www/html
             PIMCORE_PROJECT_ROOT: /var/www/html
