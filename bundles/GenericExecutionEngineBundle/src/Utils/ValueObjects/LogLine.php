@@ -15,6 +15,7 @@ namespace Pimcore\Bundle\GenericExecutionEngineBundle\Utils\ValueObjects;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
 use InvalidArgumentException;
 
 /**
@@ -60,7 +61,7 @@ final class LogLine
         $dateTime =
             DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $dateTimeString)
             ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:sO', $dateTimeString)
-            ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s\Z', $dateTimeString, new \DateTimeZone('UTC'));
+            ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s\Z', $dateTimeString, new DateTimeZone('UTC'));
 
         if ($dateTime === false) {
             throw new InvalidArgumentException('Invalid Time Format given');
