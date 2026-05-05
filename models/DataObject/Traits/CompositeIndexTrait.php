@@ -56,15 +56,14 @@ trait CompositeIndexTrait
 
         foreach ($newIndicesFilteredByType as $newIndex) {
             $key = $newIndex['index_key'];
-            $columns = $newIndex['index_columns'];
-
             self::assertValidIdentifier($key);
+            
+            $columns = $newIndex['index_columns'];
             foreach ($columns as $column) {
                 self::assertValidIdentifier($column);
             }
 
             $prefixedKey = 'c_' . $key;
-
             $newIndicesMap[$prefixedKey] = implode(',', $columns);
             $newIndicesColumnsMap[$prefixedKey] = $columns;
         }
