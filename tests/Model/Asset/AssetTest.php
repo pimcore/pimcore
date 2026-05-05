@@ -22,7 +22,6 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
 use Psr\Container\ContainerInterface;
-use ReflectionProperty;
 
 /**
  * Class AssetTest
@@ -312,7 +311,7 @@ class AssetTest extends ModelTestCase
 
         // Inject mock storage via the Storage service's internal locator
         $storageService = Pimcore::getContainer()->get(Storage::class);
-        $locatorProp    = new ReflectionProperty(Storage::class, 'locator');
+        $locatorProp    = new \ReflectionProperty(Storage::class, 'locator');
         $locatorProp->setAccessible(true);
         $realLocator = $locatorProp->getValue($storageService);
 
@@ -415,7 +414,6 @@ class AssetTest extends ModelTestCase
                     // through so the rollback loop itself is not disrupted by the mock.
                     if (str_starts_with($source, $newRootPath)) {
                         $realStorage->move($source, $dest);
-
                         return;
                     }
 
@@ -447,7 +445,7 @@ class AssetTest extends ModelTestCase
             ->willReturnCallback(fn (string $path) => $realStorage->fileExists($path));
 
         $storageService = Pimcore::getContainer()->get(Storage::class);
-        $locatorProp    = new ReflectionProperty(Storage::class, 'locator');
+        $locatorProp    = new \ReflectionProperty(Storage::class, 'locator');
         $locatorProp->setAccessible(true);
         $realLocator = $locatorProp->getValue($storageService);
 
