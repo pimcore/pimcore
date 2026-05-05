@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Traits;
 
 use Doctrine\DBAL\Connection;
+use InvalidArgumentException;
 
 /**
  * @internal
@@ -57,7 +58,7 @@ trait CompositeIndexTrait
         foreach ($newIndicesFilteredByType as $newIndex) {
             $key = $newIndex['index_key'];
             self::assertValidIdentifier($key);
-            
+
             $columns = $newIndex['index_columns'];
             foreach ($columns as $column) {
                 self::assertValidIdentifier($column);
@@ -104,16 +105,16 @@ trait CompositeIndexTrait
     }
 
     /**
-     * @throws \InvalidArgumentException if the identifier contains disallowed characters
+     * @throws InvalidArgumentException if the identifier contains disallowed characters
      */
     public static function assertValidIdentifier(string $identifier): void
     {
         if ($identifier === '') {
-            throw new \InvalidArgumentException('Identifier must be a non-empty string.');
+            throw new InvalidArgumentException('Identifier must be a non-empty string.');
         }
 
         if (!preg_match('/^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/', $identifier)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'Invalid composite index identifier "%s": must start with a letter and contain only alphanumeric characters, underscores, and hyphens (max 64 chars).',
                     $identifier
