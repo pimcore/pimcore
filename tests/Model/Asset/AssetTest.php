@@ -438,14 +438,22 @@ class AssetTest extends ModelTestCase
 
         $locatorProp->setValue($storageService, $mockLocator);
 
-        $this->expectException(UnableToMoveFile::class);
+        $caughtException = null;
 
         try {
             $srcRoot->setParentId($destParent->getId());
             $srcRoot->save();
+        } catch (UnableToMoveFile $e) {
+            $caughtException = $e;
         } finally {
             $locatorProp->setValue($storageService, $realLocator);
         }
+
+        $this->assertInstanceOf(
+            UnableToMoveFile::class,
+            $caughtException,
+            'Expected save() to throw UnableToMoveFile after a partial move failure.'
+        );
 
         $this->assertFalse(
             $realStorage->directoryExists($newRootPath . '/empty'),
