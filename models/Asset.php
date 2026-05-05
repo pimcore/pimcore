@@ -1659,36 +1659,36 @@ class Asset extends Element\AbstractElement
             $movedFiles = [];
             $createdDirs = [];
 
-            $children = $storage->listContents($oldPath, true)->toArray();
-            $totalChildren = count($children);
+            $children = $storage->listContents($oldPath, true);
+            $totalChildren = 0;
 
-            if ($totalChildren > 0) {
-                foreach ($children as $child) {
-                    $src  = $child['path'];
-                    $dest = str_replace($oldPath, $newPath, '/' . $src);
+            foreach ($children as $child) {
+                $src  = $child['path'];
+                $dest = str_replace($oldPath, $newPath, '/' . $src);
 
-                    if ($child instanceof \League\Flysystem\FileAttributes) {
-                        $storage->move($src, $dest);
-                        $movedFiles[$dest] = $src;
-                    } elseif ($child instanceof \League\Flysystem\DirectoryAttributes) {
-                        $storage->createDirectory($dest);
-                        $createdDirs[] = $dest;
-                    }
+                if ($child instanceof \League\Flysystem\FileAttributes) {
+                    $storage->move($src, $dest);
+                    $movedFiles[$dest] = $src;
+                } elseif ($child instanceof \League\Flysystem\DirectoryAttributes) {
+                    $storage->createDirectory($dest);
+                    $createdDirs[] = $dest;
                 }
 
-                $movedCount = count($movedFiles) + count($createdDirs);
+                $totalChildren++;
+            }
 
-                if ($movedCount === $totalChildren) {
-                    $storage->deleteDirectory($oldPath);
-                } else {
-                    \Pimcore\Logger::info(
-                        sprintf(
-                            'Moved %d/%d children from %s to %s. No exception was thrown for %d children,
-                            so the source directory was not deleted.',
-                            $movedCount, $totalChildren, $oldPath, $newPath, $totalChildren - $movedCount
-                        )
-                    );
-                }
+            $movedCount = count($movedFiles) + count($createdDirs);
+
+            if ($movedCount === $totalChildren) {
+                $storage->deleteDirectory($oldPath);
+            } else {
+                \Pimcore\Logger::info(
+                    sprintf(
+                        'Moved %d/%d children from %s to %s. No exception was thrown for %d children,
+                        so the source directory was not deleted.',
+                        $movedCount, $totalChildren, $oldPath, $newPath, $totalChildren - $movedCount
+                    )
+                );
             }
         } catch (Throwable $e) {
             Logger::error(sprintf('Asset Move to %s failed: %s', $newPath, $e->getMessage()));
