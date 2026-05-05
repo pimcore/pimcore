@@ -501,35 +501,13 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     private function getErrorCode(string $message = ''): string
     {
-        $width = $this->getWidth();
-        // If contains at least one digit (0-9), then assume it is a value that can be calculated,
-        // otherwise it is likely be `auto`,`inherit`,etc..
-        if (preg_match('/[\d]/', (string) $width)) {
-            // when is numeric, assume there are no length units nor %, and considering the value as pixels
-            if (is_numeric($width)) {
-                $width .= 'px';
-            }
-            $width = 'calc(' . $width . ' - 1px)';
-        }
-
-        $height = $this->getHeight();
-        if (preg_match('/[\d]/', (string) $height)) {
-            if (is_numeric($height)) {
-                $height .= 'px';
-            }
-            $height = 'calc(' . $height . ' - 1px)';
-        }
-
-        // only display error message in debug mode
-        if (!Pimcore::inDebugMode()) {
-            $message = '';
-        }
+        $messageAttr = $message !== ''
+            ? ' data-message="' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '"'
+            : '';
 
         $code = '
         <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
-            <div class="pimcore_editable_video_error" style="text-align:center; width: ' . $width . '; height: ' . $height . '; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
-                ' . $message . '
-            </div>
+            <div class="pimcore_editable_video_error"' . $messageAttr . ' style="width: ' . $this->getWidthWithUnit() . '; height: ' . $this->getHeightWithUnit() . ';"></div>
         </div>';
 
         return $code;
@@ -951,30 +929,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     private function getProgressCode(?string $thumbnail = null): string
     {
-        $uid = $this->getUniqId();
         $code = '
         <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
-            <style type="text/css">
-                #' . $uid . ' .pimcore_editable_video_progress_status {
-                    box-sizing:content-box;
-                    background:#fff url(/bundles/pimcoreadmin/img/video-loading.gif) center center no-repeat;
-                    width:66px;
-                    height:66px;
-                    padding:20px;
-                    border:1px solid #555;
-                    box-shadow: 2px 2px 5px #333;
-                    border-radius:20px;
-                    margin: 0 20px 0 20px;
-                    top: calc(50% - 66px);
-                    left: calc(50% - 66px);
-                    position:absolute;
-                    opacity: 0.8;
-                }
-            </style>
-            <div class="pimcore_editable_video_progress" id="' . $uid . '">
-                <img src="' . $thumbnail . '" style="width: ' . $this->getWidthWithUnit() . '; height: ' . $this->getHeightWithUnit() . ';">
-                <div class="pimcore_editable_video_progress_status"></div>
-            </div>
+            <div class="pimcore_editable_video_progress" style="width: ' . $this->getWidthWithUnit() . '; height: ' . $this->getHeightWithUnit() . ';"></div>
         </div>';
 
         return $code;
