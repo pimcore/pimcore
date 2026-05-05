@@ -1657,38 +1657,34 @@ class Asset extends Element\AbstractElement
 
         try {
             $movedFiles = [];
-            $createdDirs = [];
-
             $children = $storage->listContents($oldPath, true);
-            $totalChildren = 0;
+            $totalChildren = iterator_count($children);
 
-            foreach ($children as $child) {
-                $src  = $child['path'];
-                $dest = str_replace($oldPath, $newPath, '/' . $src);
+            if ($totalChildren > 0) {
+                /** @var \League\Flysystem\StorageAttributes $child */
+                foreach ($children as $child) {
+                    if ($child instanceof \League\Flysystem\FileAttributes) {
+                        $src  = $child['path'];
+                        $dest = str_replace($oldPath, $newPath, '/' . $src);
 
-                if ($child instanceof \League\Flysystem\FileAttributes) {
-                    $storage->move($src, $dest);
-                    $movedFiles[$dest] = $src;
-                } elseif ($child instanceof \League\Flysystem\DirectoryAttributes) {
-                    $storage->createDirectory($dest);
-                    $createdDirs[] = $dest;
+                        $storage->move($src, $dest);
+                        $movedFiles[$dest] = $src;
+                    }
                 }
 
-                $totalChildren++;
-            }
+                $movedCount = count($movedFiles);
 
-            $movedCount = count($movedFiles) + count($createdDirs);
-
-            if ($movedCount === $totalChildren) {
-                $storage->deleteDirectory($oldPath);
-            } else {
-                \Pimcore\Logger::info(
-                    sprintf(
-                        'Moved %d/%d children from %s to %s. No exception was thrown for %d children,
-                        so the source directory was not deleted.',
-                        $movedCount, $totalChildren, $oldPath, $newPath, $totalChildren - $movedCount
-                    )
-                );
+                if ($movedCount === $totalChildren) {
+                    $storage->deleteDirectory($oldPath);
+                } else {
+                    \Pimcore\Logger::info(
+                        sprintf(
+                            'Moved %d/%d files from %s to %s. No exception was thrown for %d files,
+                            so the source directory was not deleted.',
+                            $movedCount, $totalChildren, $oldPath, $newPath, $totalChildren - $movedCount
+                        )
+                    );
+                }
             }
         } catch (Throwable $e) {
             Logger::error(sprintf('Asset Move to %s failed: %s', $newPath, $e->getMessage()));
@@ -1697,12 +1693,9 @@ class Asset extends Element\AbstractElement
                 return;
             }
 
-            // rollback moved files and created directories
+            // rollback moved files
             foreach ($movedFiles as $src => $dest) {
                 $storage->move($src, $dest);
-            }
-            foreach ($createdDirs as $dir) {
-                $storage->deleteDirectory($dir);
             }
 
             // trigger database rollback
