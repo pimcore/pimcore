@@ -270,8 +270,9 @@ class AssetTest extends ModelTestCase
         $image->setParentId($sub->getId());
         $image->save();
 
-        $destParent = Asset\Service::createFolderByPath('/test-fallback-dest-' . uniqid());
-        $oldPath    = $srcRoot->getRealFullPath();
+        $destParent          = Asset\Service::createFolderByPath('/test-fallback-dest-' . uniqid());
+        $oldPath             = $srcRoot->getRealFullPath();
+        $imageOldStoragePath = $image->getRealFullPath();
 
         // Wrap the real storage: throw UnableToMoveFile only for the top-level
         // folder move so that the file-by-file fallback in updateChildPaths() is
@@ -346,6 +347,21 @@ class AssetTest extends ModelTestCase
         $this->assertTrue(
             $realStorage->directoryExists($newPath . '/empty'),
             'Empty subdirectory must be recreated at the destination during the fallback move.'
+        );
+
+        // Verify that the nested asset file was actually relocated to the new
+        // subtree and is no longer at its old path.  A path-mapping bug could
+        // still pass the directory checks above while silently losing the file.
+        $imageNewStoragePath = str_replace($oldPath, $newPath, $imageOldStoragePath);
+
+        $this->assertFalse(
+            $realStorage->fileExists($imageOldStoragePath),
+            'Image file must no longer exist at the source path after the fallback move.'
+        );
+
+        $this->assertTrue(
+            $realStorage->fileExists($imageNewStoragePath),
+            'Image file must be present at the destination path after the fallback move.'
         );
     }
 
