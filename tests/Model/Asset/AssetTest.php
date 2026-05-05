@@ -370,15 +370,20 @@ class AssetTest extends ModelTestCase
      * destination directories that were created before a mid-move failure.
      * Without this, a failed partial move leaves orphaned directories behind
      * at the destination while the source tree is still intact.
+     *
+     * The tree contains multiple nested subdirectory levels so that the
+     * directory-rollback loop is exercised for more than one $createdDirs entry.
      */
     public function testFolderMoveRollbackCleansUpCreatedDirectories(): void
     {
         // Build:
-        //   /src-root/empty/    (empty subfolder — createDirectory at dest must be rolled back)
+        //   /src-root/sub/      (subfolder — createDirectory at dest must be rolled back)
+        //   /src-root/sub/deep/ (nested subfolder — verifies the loop runs for multiple dirs)
         //   /src-root/file1.jpg (first file — moved to dest before the failure, must be moved back)
         //   /src-root/file2.jpg (second file — its move will throw, triggering rollback)
-        $srcRoot  = Asset\Service::createFolderByPath('/test-rollback-src-' . uniqid());
-        Asset\Service::createFolderByPath($srcRoot->getFullPath() . '/empty');
+        $srcRoot = Asset\Service::createFolderByPath('/test-rollback-src-' . uniqid());
+        Asset\Service::createFolderByPath($srcRoot->getFullPath() . '/sub');
+        Asset\Service::createFolderByPath($srcRoot->getFullPath() . '/sub/deep');
 
         $file1 = TestHelper::createImageAsset('file1', null, true, 'assets/images/image1.jpg');
         $file1->setParentId($srcRoot->getId());
@@ -472,8 +477,13 @@ class AssetTest extends ModelTestCase
         );
 
         $this->assertFalse(
-            $realStorage->directoryExists($newRootPath . '/empty'),
-            'Destination directory created before the failure must be deleted by rollback.'
+            $realStorage->directoryExists($newRootPath . '/sub'),
+            'Destination directory "sub" created before the failure must be deleted by rollback.'
+        );
+
+        $this->assertFalse(
+            $realStorage->directoryExists($newRootPath . '/sub/deep'),
+            'Nested destination directory "sub/deep" created before the failure must be deleted by rollback.'
         );
 
         $this->assertTrue(
