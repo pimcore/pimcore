@@ -95,7 +95,7 @@ class Service extends Model\AbstractModel
         $elementType = self::getElementType($element);
         $parentId = $element->getParentId();
         $parentElement = null;
-        if (isset($parentId)) {
+        if ($parentId) {
             $parentElement = self::getElementById($elementType, $parentId);
         }
 
@@ -123,7 +123,7 @@ class Service extends Model\AbstractModel
         $elementType = self::getElementType($element);
         $parentId = $element->getParentId();
         $parentElement = null;
-        if (isset($parentId)) {
+        if ($parentId) {
             $parentElement = self::getElementById($elementType, $parentId);
         }
 
@@ -1132,16 +1132,6 @@ class Service extends Model\AbstractModel
                     }
                 ),
                 new PimcoreClassDefinitionMatcher(Data\CustomDataCopyInterface::class)
-            );
-
-            $deepCopy->prependTypeFilter(
-                new class implements TypeFilter {
-                    public function apply($element): CarbonPeriod
-                    {
-                        return CarbonPeriod::instance($element);
-                    }
-                },
-                new TypeMatcher(CarbonPeriod::class),
             );
         }
 
