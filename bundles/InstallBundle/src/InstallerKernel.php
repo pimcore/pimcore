@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle;
 
+use Exception;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -74,17 +75,7 @@ class InstallerKernel extends Kernel
     }
 
     /**
-     * Overrides MicroKernelTrait::registerContainerConfiguration() to load the
-     * installer container configuration directly via the LoaderInterface, instead
-     * of going through MicroKernelTrait's private configureContainer() method.
-     *
-     * MicroKernelTrait::configureContainer() is a private method whose signature
-     * has changed between Symfony versions (e.g. between 7.3 and 7.4). Overriding
-     * it via the trait composition therefore couples this kernel to a non-public
-     * API of Symfony. The installer kernel only needs to register a small, fixed
-     * set of configuration files and is CLI-only (no HTTP routing), so we can
-     * bypass the trait's container/routing wiring entirely and rely solely on
-     * the public Symfony Kernel contract (registerContainerConfiguration()).
+     * @throws Exception
      */
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
@@ -105,7 +96,6 @@ class InstallerKernel extends Kernel
 
         $loader->load('@PimcoreInstallBundle/config/config.yaml');
 
-        // Load installer config files if available
         foreach (['php', 'yaml', 'yml', 'xml'] as $extension) {
             $file = sprintf('%s/config/installer.%s', $this->getProjectDir(), $extension);
 
