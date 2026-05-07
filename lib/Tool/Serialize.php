@@ -28,13 +28,13 @@ final class Serialize
 
     public static function unserialize(?string $data = null, array|bool $allowedClasses = true): mixed
     {
-        if ($data !== null) {
-            $data = unserialize($data, [
-                'allowed_classes' => $allowedClasses,
-            ]);
+        if ($data === null || $data === '') {
+            return $data;
         }
 
-        return $data;
+        return unserialize($data, [
+            'allowed_classes' => $allowedClasses,
+        ]);
     }
 
     /**

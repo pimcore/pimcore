@@ -30,7 +30,11 @@ class Service
     {
         $log = [];
         if (file_exists(self::getDeleteLogFile())) {
-            $log = unserialize(file_get_contents(self::getDeleteLogFile()), ['allowed_classes' => false]);
+            $raw = file_get_contents(self::getDeleteLogFile());
+            if (is_string($raw)) {
+                $log = unserialize($raw, ['allowed_classes' => false]);
+            }
+
             if (!is_array($log)) {
                 $log = [];
             } else {

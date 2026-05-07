@@ -61,7 +61,7 @@ class Dao extends Model\Dao\AbstractDao
             $sitesRaw = $this->db->fetchAllAssociative('SELECT id,domains FROM sites');
             $wildcardDomains = [];
             foreach ($sitesRaw as $site) {
-                if (!empty($site['domains']) && strpos($site['domains'], '*')) {
+                if (!empty($site['domains']) && strpos($site['domains'], '*') !== false) {
                     $siteDomains = unserialize($site['domains'], ['allowed_classes' => false]);
                     if (is_array($siteDomains) && count($siteDomains) > 0) {
                         foreach ($siteDomains as $siteDomain) {
