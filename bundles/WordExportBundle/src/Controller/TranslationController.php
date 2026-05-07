@@ -62,7 +62,10 @@ class TranslationController extends UserAwareController
                 if (!in_array($element->getType(), ['page', 'snippet', 'email', 'object'])) {
                     continue;
                 }
-
+                if (!$element->isAllowed('view')){
+                    continue;
+                }
+                
                 if ($element instanceof ElementInterface) {
                     $output .= '<h1 class="element-headline">' . ucfirst(
                         $element->getType()
