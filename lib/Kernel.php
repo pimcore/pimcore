@@ -27,6 +27,8 @@ use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Event\SystemEvents;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
+use ReflectionException;
+use ReflectionMethod;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -137,8 +139,8 @@ abstract class Kernel extends SymfonyKernel
     {
         foreach (['configureContainer', 'configureRoutes'] as $method) {
             try {
-                $declaringClass = (new \ReflectionMethod($this, $method))->getDeclaringClass()->getName();
-            } catch (\ReflectionException) {
+                $declaringClass = (new ReflectionMethod($this, $method))->getDeclaringClass()->getName();
+            } catch (ReflectionException) {
                 continue;
             }
 
