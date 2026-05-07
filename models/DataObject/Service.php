@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use DeepCopy\DeepCopy;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use Exception;
@@ -43,7 +44,6 @@ use Pimcore\Tool\Session;
 use stdClass;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\VarExporter\VarExporter;
 use Throwable;
 
 /**
@@ -986,7 +986,7 @@ class Service extends Model\Element\Service
     public static function getSuperLayoutDefinition(Concrete $object): mixed
     {
         $mainLayout = $object->getClass()->getLayoutDefinitions();
-        $superLayout = eval('return ' . VarExporter::export($mainLayout) . ';');
+        $superLayout = (new DeepCopy())->copy($mainLayout);
 
         self::createSuperLayout($superLayout);
 
