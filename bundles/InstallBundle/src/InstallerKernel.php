@@ -18,9 +18,9 @@ use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\MonologBundle\MonologBundle;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 /**
  * @internal
@@ -73,23 +73,45 @@ class InstallerKernel extends Kernel
         return $bundles;
     }
 
-    protected function configureContainer(ContainerConfigurator $configurator): void
+    /**
+     * Overrides MicroKernelTrait::registerContainerConfiguration() to load the
+     * installer container configuration directly via the LoaderInterface, instead
+     * of going through MicroKernelTrait's private configureContainer() method.
+     *
+     * MicroKernelTrait::configureContainer() is a private method whose signature
+     * has changed between Symfony versions (e.g. between 7.3 and 7.4). Overriding
+     * it via the trait composition therefore couples this kernel to a non-public
+     * API of Symfony. The installer kernel only needs to register a small, fixed
+     * set of configuration files and is CLI-only (no HTTP routing), so we can
+     * bypass the trait's container/routing wiring entirely and rely solely on
+     * the public Symfony Kernel contract (registerContainerConfiguration()).
+     */
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
-        $configurator->parameters()->set('secret', uniqid('installer-', true));
-        $configurator->import('@PimcoreInstallBundle/config/config.yaml');
+        // Register the synthetic "kernel" service. This is normally done by
+        // MicroKernelTrait::registerContainerConfiguration() and is required so
+        // that other services may depend on the kernel via DI.
+        $loader->load(function (ContainerBuilder $container): void {
+            if (!$container->hasDefinition('kernel')) {
+                $container->register('kernel', static::class)
+                    ->addTag('controller.service_arguments')
+                    ->setAutoconfigured(true)
+                    ->setSynthetic(true)
+                    ->setPublic(true);
+            }
 
-        // load installer config files if available
+            $container->setParameter('secret', uniqid('installer-', true));
+        });
+
+        $loader->load('@PimcoreInstallBundle/config/config.yaml');
+
+        // Load installer config files if available
         foreach (['php', 'yaml', 'yml', 'xml'] as $extension) {
             $file = sprintf('%s/config/installer.%s', $this->getProjectDir(), $extension);
 
             if (file_exists($file)) {
-                $configurator->import($file);
+                $loader->load($file);
             }
         }
-    }
-
-    protected function configureRoutes(RoutingConfigurator $routes): void
-    {
-        // nothing to do
     }
 }
