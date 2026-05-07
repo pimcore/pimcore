@@ -43,6 +43,7 @@ use Pimcore\Tool\Session;
 use stdClass;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\VarExporter\VarExporter;
 use Throwable;
 
 /**
@@ -985,7 +986,7 @@ class Service extends Model\Element\Service
     public static function getSuperLayoutDefinition(Concrete $object): mixed
     {
         $mainLayout = $object->getClass()->getLayoutDefinitions();
-        $superLayout = unserialize(serialize($mainLayout));
+        $superLayout = eval('return ' . VarExporter::export($mainLayout) . ';');
 
         self::createSuperLayout($superLayout);
 
