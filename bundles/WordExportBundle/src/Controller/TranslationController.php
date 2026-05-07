@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Service;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
