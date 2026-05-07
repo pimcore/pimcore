@@ -65,11 +65,11 @@ class TranslationController extends UserAwareController
                 ) {
                     continue;
                 }
-                
+
                 $output .= '<h1 class="element-headline">' . ucfirst(
-                     $element->getType()
-                 ) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
-                
+                    $element->getType()
+                ) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
+
                 if ($element instanceof PageSnippet) {
                     if ($element instanceof Page) {
                         $structuredDataEmpty = true;
