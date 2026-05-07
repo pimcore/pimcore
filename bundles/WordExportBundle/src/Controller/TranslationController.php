@@ -58,11 +58,12 @@ class TranslationController extends UserAwareController
                 $element = \Pimcore\Model\Element\Service::getElementById($el['type'], $el['id']);
                 $output = '';
 
-                // check supported types (subtypes)
-                if (!in_array($element->getType(), ['page', 'snippet', 'email', 'object'])) {
-                    continue;
-                }
-                if (!$element->isAllowed('view')){
+                // check supported types (subtypes) and if user has view permission
+                if (
+                    !$element ||
+                    !in_array($element->getType(), ['page', 'snippet', 'email', 'object'], true) ||
+                    !$element->isAllowed('view')
+                ) {
                     continue;
                 }
                 
