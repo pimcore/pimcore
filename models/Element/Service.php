@@ -94,7 +94,10 @@ class Service extends Model\AbstractModel
         $path = '';
         $elementType = self::getElementType($element);
         $parentId = $element->getParentId();
-        $parentElement = self::getElementById($elementType, $parentId);
+        $parentElement = null;
+        if (isset($parentId)) {
+            $parentElement = self::getElementById($elementType, $parentId);
+        }
 
         if ($parentElement) {
             $path = self::getTypePath($parentElement);
@@ -119,7 +122,10 @@ class Service extends Model\AbstractModel
         $path = '';
         $elementType = self::getElementType($element);
         $parentId = $element->getParentId();
-        $parentElement = self::getElementById($elementType, $parentId);
+        $parentElement = null;
+        if (isset($parentId)) {
+            $parentElement = self::getElementById($elementType, $parentId);
+        }
 
         if ($parentElement) {
             $path = self::getSortIndexPath($parentElement);
