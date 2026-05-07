@@ -26,10 +26,12 @@ final class Serialize
         return serialize($data);
     }
 
-    public static function unserialize(?string $data = null): mixed
+    public static function unserialize(?string $data = null, array|bool $allowedClasses = true): mixed
     {
-        if ($data) {
-            $data = unserialize($data);
+        if ($data !== null) {
+            $data = unserialize($data, [
+                'allowed_classes' => $allowedClasses,
+            ]);
         }
 
         return $data;
