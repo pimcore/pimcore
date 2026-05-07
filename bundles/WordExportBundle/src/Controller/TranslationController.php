@@ -61,7 +61,7 @@ class TranslationController extends UserAwareController
                 // check supported types (subtypes) and if user has view permission
                 if (
                     !in_array($element?->getType(), ['page', 'snippet', 'email', 'object'], true) ||
-                    !$element?->isAllowed('view')
+                    !$element->isAllowed('view')
                 ) {
                     continue;
                 }
