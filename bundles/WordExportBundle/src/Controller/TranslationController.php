@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Service;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -58,16 +57,17 @@ class TranslationController extends UserAwareController
                 $element = \Pimcore\Model\Element\Service::getElementById($el['type'], $el['id']);
                 $output = '';
 
-                // check supported types (subtypes)
-                if (!in_array($element->getType(), ['page', 'snippet', 'email', 'object'])) {
+                // check supported types (subtypes) and if user has view permission
+                if (
+                    !in_array($element?->getType(), ['page', 'snippet', 'email', 'object'], true) ||
+                    !$element->isAllowed('view')
+                ) {
                     continue;
                 }
 
-                if ($element instanceof ElementInterface) {
-                    $output .= '<h1 class="element-headline">' . ucfirst(
-                        $element->getType()
-                    ) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
-                }
+                $output .= '<h1 class="element-headline">' . ucfirst(
+                    $element->getType()
+                ) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
 
                 if ($element instanceof PageSnippet) {
                     if ($element instanceof Page) {
