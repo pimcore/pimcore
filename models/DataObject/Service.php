@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
-use DeepCopy\DeepCopy;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
 use Exception;
