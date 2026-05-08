@@ -83,13 +83,6 @@ class Tree extends DAV\Tree
                 $asset->setParentId($parent->getId());
             }
 
-            if (isset($sourceAsset)) {
-                if (!$sourceAsset->isAllowed('delete', $user)) {
-                    throw new Forbidden('No delete permission on source');
-                }
-                $sourceAsset->delete();
-            }
-
             if (isset($parent)) {
                 if (!$parent->isAllowed('create', $user)) {
                     throw new Forbidden('No create permission on destination folder');
@@ -99,7 +92,14 @@ class Tree extends DAV\Tree
             if (!$asset->isAllowed('save', $user)) {
                 throw new Forbidden('No save permission on asset');
             }
-
+            
+            if (isset($sourceAsset)) {
+                if (!$sourceAsset->isAllowed('delete', $user)) {
+                    throw new Forbidden('No delete permission on source');
+                }
+                $sourceAsset->delete();
+            }
+            
             $asset->setUserModification($user->getId());
             $asset->save();
         } catch (Forbidden $e) {
