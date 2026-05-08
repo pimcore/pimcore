@@ -17,8 +17,6 @@ use PDO;
 use Pimcore\Controller\Controller;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
-use Pimcore\Tool\Admin;
-use Sabre\DAV\Exception\NotAuthenticated;
 /**
  * @internal
  */

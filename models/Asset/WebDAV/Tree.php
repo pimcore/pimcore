@@ -102,6 +102,8 @@ class Tree extends DAV\Tree
 
             $asset->setUserModification($user->getId());
             $asset->save();
+        } catch (Forbidden $e) {
+            throw $e;
         } catch (Exception $e) {
             Logger::error((string) $e);
             throw $e;
