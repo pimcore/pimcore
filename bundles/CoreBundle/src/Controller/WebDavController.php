@@ -17,6 +17,7 @@ use PDO;
 use Pimcore\Controller\Controller;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Tool\Authentication;
 
 /**
  * @internal
@@ -25,6 +26,11 @@ class WebDavController extends Controller
 {
     public function webdavAction(): void
     {
+        $user = Authentication::authenticateSession();
+        if (!$user) {
+            exit;
+        }
+
         $homeDir = Asset::getById(1);
 
         try {

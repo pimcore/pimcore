@@ -17,7 +17,9 @@ use Exception;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
+use Pimcore\Tool\Admin;
 use Sabre\DAV;
+use Sabre\DAV\Exception\Forbidden;
 
 /**
  * @internal
@@ -32,6 +34,8 @@ class Tree extends DAV\Tree
      */
     public function move($sourcePath, $destinationPath): void
     {
+        $user = Admin::getCurrentUser();
+
         $nameParts = explode('/', $sourcePath);
         $nameParts[count($nameParts) - 1] = Element\Service::getValidKey($nameParts[count($nameParts) - 1], 'asset');
         $sourcePath = implode('/', $nameParts);
@@ -41,14 +45,20 @@ class Tree extends DAV\Tree
         $destinationPath = implode('/', $nameParts);
 
         try {
-            if (dirname($sourcePath) == dirname($destinationPath)) {
-                $asset = null;
+            if (dirname($sourcePath) === dirname($destinationPath)) {
+                $asset = Asset::getByPath('/' . $destinationPath);
 
-                if ($asset = Asset::getByPath('/' . $destinationPath)) {
+                if ($asset) {
                     // If we got here, this means the destination exists, and needs to be overwritten
+                    // NB: due to the nature of how the WebDav might be used with third party software (like Photoshop),
+                    // a move in here it has to be an overwrite in the history of destination file to keep the file
+                    // history and make it seamlessly and quickly reverted within the file change history.
+                    // It also helps keeping the hardcoded reference or dependencies of a specific asset ID that might
+                    // be used elsewhere in the project that users/collaborators given only WebDav access have
+                    // no control nor access.
                     $sourceAsset = Asset::getByPath('/' . $sourcePath);
                     $asset->setData($sourceAsset->getData());
-                    $sourceAsset->delete();
+
                 }
 
                 // see: Asset\WebDAV\File::delete() why this is necessary
@@ -58,7 +68,6 @@ class Tree extends DAV\Tree
                     if ($asset) {
                         $sourceAsset = Asset::getByPath('/' . $sourcePath);
                         $asset->setData($sourceAsset->getData());
-                        $sourceAsset->delete();
                     }
                 }
 
@@ -74,7 +83,20 @@ class Tree extends DAV\Tree
                 $asset->setParentId($parent->getId());
             }
 
-            $user = \Pimcore\Tool\Admin::getCurrentUser();
+            if (isset($sourceAsset)){
+                if (!$sourceAsset->isAllowed('delete', $user)) {
+                    throw new Forbidden('No delete permission on source');
+                }
+                $sourceAsset->delete();
+            }
+
+            if (isset($parent)){
+                if (!$parent->isAllowed('create', $user)) {
+                    throw new Forbidden('No create permission on destination folder');
+                }
+            }
+
+
             $asset->setUserModification($user->getId());
             $asset->save();
         } catch (Exception $e) {
