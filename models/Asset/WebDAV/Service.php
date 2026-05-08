@@ -32,7 +32,7 @@ class Service
         if (file_exists(self::getDeleteLogFile())) {
             $raw = file_get_contents(self::getDeleteLogFile());
             if (is_string($raw)) {
-                $log = unserialize($raw, ['allowed_classes' => false]);
+                $log = unserialize($raw, ['allowed_classes' => [Asset::class]]);
             }
 
             if (!is_array($log)) {
