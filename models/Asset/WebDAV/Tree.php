@@ -91,11 +91,14 @@ class Tree extends DAV\Tree
             }
 
             if (isset($parent)) {
-                if (!$parent->isAllowed('create', $user) || !$parent->isAllowed('save', $user)) {
+                if (!$parent->isAllowed('create', $user)) {
                     throw new Forbidden('No create permission on destination folder');
                 }
             }
 
+            if (!$asset->isAllowed('save', $user)) {
+                throw new Forbidden('No save permission on asset');
+            }
 
             $asset->setUserModification($user->getId());
             $asset->save();
