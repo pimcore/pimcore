@@ -53,7 +53,7 @@ jobs:
             PIMCORE_TEST_REDIS_DSN: "redis://127.0.0.1:63379"
             MINIO_ACCESS_KEY: "PIMCORE_OBJECT_STORAGE_ACCESS_KEY"
             MINIO_SECRET_KEY: "PIMCORE_OBJECT_STORAGE_SECRET_KEY"
-            BRANCH_NAME: ${{ github.head_ref || github.ref }}
+            BRANCH_NAME: ${{ github.event.pull_request.head.sha || github.sha }}
 
         secrets:
             PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_CI_INSTANCE_IDENTIFIER }}
