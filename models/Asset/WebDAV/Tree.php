@@ -36,6 +36,9 @@ class Tree extends DAV\Tree
     public function move($sourcePath, $destinationPath): void
     {
         $user = Admin::getCurrentUser();
+        if ($user === null) {
+            throw new Forbidden('No authenticated user available');
+        }
 
         $nameParts = explode('/', $sourcePath);
         $nameParts[count($nameParts) - 1] = Element\Service::getValidKey($nameParts[count($nameParts) - 1], 'asset');
