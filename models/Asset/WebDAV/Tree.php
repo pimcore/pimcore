@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
+use Pimcore\Tool\Serialize;
 use Sabre\DAV;
 
 /**
@@ -54,7 +55,7 @@ class Tree extends DAV\Tree
                 // see: Asset\WebDAV\File::delete() why this is necessary
                 $log = Asset\WebDAV\Service::getDeleteLog();
                 if (!$asset && array_key_exists('/' .$destinationPath, $log)) {
-                    $asset = \Pimcore\Tool\Serialize::unserialize($log['/' .$destinationPath]['data']);
+                    $asset = Serialize::unserialize($log['/' . $destinationPath]['data'], false);
                     if ($asset) {
                         $sourceAsset = Asset::getByPath('/' . $sourcePath);
                         $asset->setData($sourceAsset->getData());
