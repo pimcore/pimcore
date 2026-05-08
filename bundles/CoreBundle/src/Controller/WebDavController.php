@@ -18,8 +18,7 @@ use Pimcore\Controller\Controller;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Admin;
-use Pimcore\Tool\Authentication;
-
+use Sabre\DAV\Exception\NotAuthenticated;
 /**
  * @internal
  */
@@ -27,11 +26,6 @@ class WebDavController extends Controller
 {
     public function webdavAction(): void
     {
-        $user = Admin::getCurrentUser();
-        if (!$user) {
-            exit;
-        }
-
         $homeDir = Asset::getById(1);
 
         try {
