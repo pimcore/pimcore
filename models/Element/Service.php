@@ -95,7 +95,7 @@ class Service extends Model\AbstractModel
         $elementType = self::getElementType($element);
         $parentId = $element->getParentId();
         $parentElement = null;
-        if ($parentId) {
+        if ($parentId !== null && $parentId !== 0) {
             $parentElement = self::getElementById($elementType, $parentId);
         }
 
@@ -123,7 +123,7 @@ class Service extends Model\AbstractModel
         $elementType = self::getElementType($element);
         $parentId = $element->getParentId();
         $parentElement = null;
-        if ($parentId) {
+        if ($parentId !== null && $parentId !== 0) {
             $parentElement = self::getElementById($elementType, $parentId);
         }
 
