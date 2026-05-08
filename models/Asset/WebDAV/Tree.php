@@ -96,16 +96,17 @@ class Tree extends DAV\Tree
             if (!$asset->isAllowed('publish', $user)) {
                 throw new Forbidden('No publish permission on target asset');
             }
-            
-            if (isset($sourceAsset)) {
-                if (!$sourceAsset->isAllowed('delete', $user)) {
-                    throw new Forbidden('No delete permission on source');
-                }
-                $sourceAsset->delete();
+
+            if (isset($sourceAsset) && !$sourceAsset->isAllowed('delete', $user)) {
+                throw new Forbidden('No delete permission on source');
             }
-            
+
             $asset->setUserModification($user->getId());
             $asset->save();
+
+            if (isset($sourceAsset)) {
+                $sourceAsset->delete();
+            }
         } catch (Forbidden $e) {
             throw $e;
         } catch (Exception $e) {
