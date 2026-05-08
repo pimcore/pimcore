@@ -93,8 +93,8 @@ class Tree extends DAV\Tree
                 }
             }
 
-            if (!$asset->isAllowed('save', $user)) {
-                throw new Forbidden('No save permission on asset');
+            if (!$asset->isAllowed('publish', $user)) {
+                throw new Forbidden('No publish permission on target asset');
             }
             
             if (isset($sourceAsset)) {
