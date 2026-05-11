@@ -105,6 +105,9 @@ class RewriteMimeTypeCommand extends AbstractCommand
 
                 $asset->getDao()->update();
 
+                // invalidate persistent cache so stale Cache::load('asset_<id>') entries are evicted
+                $asset->clearDependentCache();
+
                 // set asset to registry
                 $cacheKey = ElementService::getElementCacheTag('asset', $asset->getId());
                 RuntimeCache::set($cacheKey, $asset);
@@ -113,7 +116,7 @@ class RewriteMimeTypeCommand extends AbstractCommand
                     // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
                     // the type (image, document, ...) depends on the mime-type
                     RuntimeCache::set($cacheKey, null);
-                    Asset::getById($asset->getId()); // call it to load it to the runtime cache again
+                    Asset::getById($asset->getId(), ['force' => true]); // force DB reload to bypass any stale cache
                 }
 
 
