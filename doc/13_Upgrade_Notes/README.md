@@ -269,3 +269,22 @@ Update your code to use `Twig\Environment` directly instead of `EngineInterface`
 
 -   The space between QuantityValue value and unit is going to be removed. Please make sure any custom code that relies on the space is updated accordingly.
 
+### Deprecated Kernel Extension Hooks
+
+Overriding `Pimcore\Kernel::configureContainer()` and `Pimcore\Kernel::configureRoutes()` is now deprecated and will be removed in **Pimcore 2027.1**.
+
+These methods were exposed as `protected` on `Pimcore\Kernel` via trait aliases of `Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait`'s **private** methods. Symfony does not consider them part of its public API and has changed their signatures between minor versions, which can break Pimcore subclasses on Symfony upgrades.
+
+**Migration:**
+
+Replace overrides of `configureContainer()` with one of the following stable, public extension points:
+
+-   Move container configuration to `config/packages/*.yaml` (or `config/packages/<env>/*.yaml`).
+-   Add a [compiler pass](https://symfony.com/doc/current/service_container/compiler_passes.html) for programmatic container manipulation.
+-   Override the public `Pimcore\Kernel::registerContainerConfiguration(LoaderInterface $loader)` method directly. Call `parent::registerContainerConfiguration($loader)` first, then load additional configuration via `$loader->load(...)`.
+
+Replace overrides of `configureRoutes()` with one of the following:
+
+-   Move routes to `config/routes/*.yaml`.
+-   Register a custom routing loader as a service tagged `routing.loader`.
+
