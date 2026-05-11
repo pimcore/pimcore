@@ -24,7 +24,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'pimcore:cdn:purge',
-    description: 'Purge CDN cache by asset ID, thumbnail config, surrogate tag, or URL',
+    description: 'Purge CDN cache for Pimcore assets and thumbnail configurations',
 )]
 class CdnPurgeCommand extends Command
 {
@@ -38,25 +38,28 @@ class CdnPurgeCommand extends Command
         $this
             ->addOption('asset', 'a', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Asset ID(s) — purges asset-{id} (all thumbnails) and asset-path-{hash} (original) tags. Loads the asset from the database to compute the path hash; unknown IDs are reported and skipped.')
             ->addOption('config', 'c', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Thumbnail config name(s) — purges thumb-{config} tag for all assets using that config')
-            ->addOption('tag', 't', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Arbitrary surrogate-key tag(s)')
-            ->addOption('url', 'u', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Full URL(s) to purge')
             ->setHelp(<<<'HELP'
-Directly invokes the configured CDN purge client (bypasses the message queue).
+Recovery and automation tool for invalidating Pimcore-specific CDN tags.
 
-Purge all thumbnails for asset ID 42:
+Routine purges happen automatically on asset save/update via the CDN purge
+listener — you should not normally need this command. Use it for:
+
+  * Recovery scenarios (manual flush after a queue failure or stale cache)
+  * Automation (deploy hooks, content migration scripts, runbooks)
+  * Computing Pimcore-specific surrogate tags (asset-path-{hash}) that are
+    impractical to reproduce by hand in your CDN's admin panel.
+
+For ad-hoc purges of arbitrary URLs or surrogate keys you already know,
+prefer your CDN provider's admin panel — that is the simpler interface.
+
+Purge all thumbnails (and the original) for asset ID 42:
   <info>pimcore:cdn:purge --asset 42</info>
 
 Purge all assets using the "product-thumb" thumbnail config:
   <info>pimcore:cdn:purge --config product-thumb</info>
 
-Purge a specific tag:
-  <info>pimcore:cdn:purge --tag asset-42-thumb-product-thumb</info>
-
-Purge by URL:
-  <info>pimcore:cdn:purge --url https://cdn.example.com/var/assets/image.jpg</info>
-
 <comment>Note: Purge-all is not supported via this command.
-To purge everything, use your CDN provider's dashboard or API directly.</comment>
+To purge everything, use your CDN provider's admin panel or API directly.</comment>
 HELP
             );
     }
@@ -67,11 +70,9 @@ HELP
 
         $assetIds = $input->getOption('asset');
         $configs = $input->getOption('config');
-        $tags = $input->getOption('tag');
-        $urls = $input->getOption('url');
 
-        if (empty($assetIds) && empty($configs) && empty($tags) && empty($urls)) {
-            $io->error('At least one of --asset, --config, --tag, or --url must be provided.');
+        if (empty($assetIds) && empty($configs)) {
+            $io->error('At least one of --asset or --config must be provided.');
 
             return Command::FAILURE;
         }
@@ -99,19 +100,8 @@ HELP
             $allTags[] = 'thumb-' . $configName;
         }
 
-        foreach ($tags as $tag) {
-            $allTags[] = $tag;
-        }
-
-        if (!empty($allTags)) {
-            $io->writeln(sprintf('Purging %d tag(s): %s', count($allTags), implode(', ', $allTags)));
-            $this->purgeClient->purgeByTags($allTags);
-        }
-
-        foreach ($urls as $url) {
-            $io->writeln('Purging URL: ' . $url);
-            $this->purgeClient->purgeByUrl($url);
-        }
+        $io->writeln(sprintf('Purging %d tag(s): %s', count($allTags), implode(', ', $allTags)));
+        $this->purgeClient->purgeByTags($allTags);
 
         $io->success('CDN purge dispatched.');
 

@@ -19,6 +19,7 @@ use Pimcore\Cdn\PurgeClientInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class CdnPurgeCommandTest extends TestCase
@@ -28,19 +29,13 @@ class CdnPurgeCommandTest extends TestCase
      */
     private function makeClient(): array
     {
-        $calls = new \ArrayObject(['purgeByTags' => [], 'purgeByUrl' => []]);
+        $calls = new \ArrayObject(['purgeByTags' => []]);
         $client = $this->createMock(PurgeClientInterface::class);
         $client->method('purgeByTags')
             ->willReturnCallback(function (array $tags) use ($calls): void {
                 $existing = $calls['purgeByTags'];
                 $existing[] = $tags;
                 $calls['purgeByTags'] = $existing;
-            });
-        $client->method('purgeByUrl')
-            ->willReturnCallback(function (string $url) use ($calls): void {
-                $existing = $calls['purgeByUrl'];
-                $existing[] = $url;
-                $calls['purgeByUrl'] = $existing;
             });
 
         return [$client, $calls];
@@ -128,24 +123,6 @@ class CdnPurgeCommandTest extends TestCase
         $this->assertSame([['thumb-product-thumb']], $calls['purgeByTags']);
     }
 
-    public function testTagOptionPurgesArbitraryTag(): void
-    {
-        [$client, $calls] = $this->makeClient();
-        $this->runCommand($client, ['--tag' => ['custom-tag']]);
-
-        $this->assertSame([['custom-tag']], $calls['purgeByTags']);
-    }
-
-    public function testUrlOptionCallsPurgeByUrl(): void
-    {
-        [$client, $calls] = $this->makeClient();
-        $url = 'https://cdn.example.com/var/assets/image.jpg';
-        $this->runCommand($client, ['--url' => [$url]]);
-
-        $this->assertSame([$url], $calls['purgeByUrl']);
-        $this->assertEmpty($calls['purgeByTags']);
-    }
-
     public function testMultipleAssetsArePassedAsOneBatchCall(): void
     {
         [$client, $calls] = $this->makeClient();
@@ -161,24 +138,20 @@ class CdnPurgeCommandTest extends TestCase
         $this->assertSame($expected, $calls['purgeByTags'][0]);
     }
 
-    public function testMixedOptionsAreAllResolved(): void
+    public function testAssetAndConfigOptionsAreCombinedIntoOneBatch(): void
     {
         [$client, $calls] = $this->makeClient();
-        $url = 'https://cdn.example.com/img.jpg';
 
         $this->runCommand($client, [
             '--asset' => ['10'],
             '--config' => ['hero'],
-            '--tag' => ['manual-tag'],
-            '--url' => [$url],
         ], [10 => '/x.jpg']);
 
-        $allTags = $calls['purgeByTags'][0] ?? [];
+        $this->assertCount(1, $calls['purgeByTags']);
+        $allTags = $calls['purgeByTags'][0];
         $this->assertContains('asset-10', $allTags);
         $this->assertContains($this->expectedPathHashTag('/x.jpg'), $allTags);
         $this->assertContains('thumb-hero', $allTags);
-        $this->assertContains('manual-tag', $allTags);
-        $this->assertContains($url, $calls['purgeByUrl']);
     }
 
     public function testNoOptionsReturnsFailure(): void
@@ -205,15 +178,38 @@ class CdnPurgeCommandTest extends TestCase
         $this->assertStringContainsString('Purge-all is not supported', $command->getHelp());
     }
 
-    public function testMultipleUrlsEachCallPurgeByUrl(): void
+    public function testHelpPositionsCommandAsRecoveryAndAutomationTool(): void
     {
-        [$client, $calls] = $this->makeClient();
-        $urls = ['https://cdn.example.com/a.jpg', 'https://cdn.example.com/b.jpg'];
+        $command = new CdnPurgeCommand($this->createMock(PurgeClientInterface::class));
 
-        $this->runCommand($client, ['--url' => $urls]);
+        $help = $command->getHelp();
+        $this->assertStringContainsString('recovery', strtolower($help));
+        $this->assertStringContainsString('automation', strtolower($help));
+        $this->assertStringContainsString('admin panel', strtolower($help));
+    }
 
-        $this->assertCount(2, $calls['purgeByUrl']);
-        $this->assertSame($urls[0], $calls['purgeByUrl'][0]);
-        $this->assertSame($urls[1], $calls['purgeByUrl'][1]);
+    public function testUrlOptionIsRemoved(): void
+    {
+        [$client] = $this->makeClient();
+        $this->expectException(InvalidOptionException::class);
+
+        $this->runCommand($client, ['--url' => ['https://cdn.example.com/img.jpg']]);
+    }
+
+    public function testTagOptionIsRemoved(): void
+    {
+        [$client] = $this->makeClient();
+        $this->expectException(InvalidOptionException::class);
+
+        $this->runCommand($client, ['--tag' => ['custom-tag']]);
+    }
+
+    public function testCommandNeverCallsPurgeByUrl(): void
+    {
+        $client = $this->createMock(PurgeClientInterface::class);
+        $client->expects($this->never())->method('purgeByUrl');
+
+        $this->runCommand($client, ['--asset' => ['1']], [1 => '/a.jpg']);
+        $this->runCommand($client, ['--config' => ['hero']]);
     }
 }
