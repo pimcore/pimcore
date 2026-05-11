@@ -44,7 +44,7 @@ readonly class TranslationService implements TranslationServiceInterface
         return $this->translator->trans(
             'application_logger_log_level_' . $key,
             [],
-            'admin'
+            'backend'
         );
     }
 }

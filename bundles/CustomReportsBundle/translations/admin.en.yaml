@@ -1,9 +1,0 @@
-custom_reports: Custom Reports
-keybinding_customReports: Custom Reports
-custom_report_permissions: Permission
-keybinding_reports: Report
-reports: Reports
-mandatory_fields_missing: 'Please fill in the following mandatory fields:'
-csv_delimiter: CSV Delimiter
-include_headers: Include Headers
-export_csv_options: Export CSV Options

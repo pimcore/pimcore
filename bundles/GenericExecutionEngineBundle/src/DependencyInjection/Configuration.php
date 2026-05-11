@@ -36,8 +36,8 @@ class Configuration implements ConfigurationInterface
                 ->prototype('array')
                     ->children()
                         ->scalarNode('translations_domain')
-                            ->info('Translation domain which should be used by the job run. Default value is "admin".')
-                            ->defaultValue('admin')
+                            ->info('Translation domain which should be used by the job run. Default value is "backend".')
+                            ->defaultValue('backend')
                         ->end()
                         ->enumNode('error_handling')
                             ->values(

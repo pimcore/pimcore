@@ -12,14 +12,14 @@
     <meta charset="UTF-8">
 </head>
 <body>
-{{ translator.trans('workflow_change_email_notification_text', [subjectType ~ ' ' ~ subject.getFullPath(), subject.getId(), translator.trans(action, [], 'admin', lang), translator.trans(workflow.getName(), [], 'admin', lang)], 'admin', lang) }}<br>
+{{ translator.trans('workflow_change_email_notification_text', [subjectType ~ ' ' ~ subject.getFullPath(), subject.getId(), translator.trans(action, [], 'backend', lang), translator.trans(workflow.getName(), [], 'backend', lang)], 'backend', lang) }}<br>
 {% if deeplink|trim is not empty %}
-    <a href="{{ deeplink }}" target="_blank">{{ translator.trans('workflow_change_email_notification_deeplink', [], 'admin', lang) }}</a><br>
+    <a href="{{ deeplink }}" target="_blank">{{ translator.trans('workflow_change_email_notification_deeplink', [], 'backend', lang) }}</a><br>
 {% endif %}
 <br>
 
 {% if note_description|trim is not empty %}
-    <strong>{{ translator.trans('workflow_change_email_notification_note', [], 'admin', lang) }}</strong>
+    <strong>{{ translator.trans('workflow_change_email_notification_note', [], 'backend', lang) }}</strong>
     <p>{{ note_description }}</p>
 {% endif %}
 </body>

@@ -44,7 +44,7 @@ interface JobRunRepositoryInterface
         array $params = [],
         bool $updateCurrentMessage = true,
         string $defaultLocale = 'en',
-        string $domain = 'admin'
+        string $domain = 'backend'
     ): void;
 
     /**

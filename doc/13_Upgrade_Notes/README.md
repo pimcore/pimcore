@@ -1,5 +1,17 @@
 # Upgrade Notes
 
+## Pimcore 2026.1.3
+
+### [Translations] Admin Translation Domain Removed
+
+The `admin` translation domain has been fully removed. Only translation keys that were actively used by Pimcore core have been migrated to the `backend` domain automatically via a database migration.
+
+**Action required:**
+
+- **Custom translation keys** that were stored in the `admin` domain are **not** migrated automatically. You must migrate them to the `backend` domain (or any other appropriate domain) yourself.
+- Review your translations in the Pimcore backend and re-create any custom `admin` domain entries under the `backend` domain.
+- Update any custom code that references the `admin` domain directly (e.g. `trans('my.key', [], 'admin')`) to use `backend` or your own domain instead.
+
 ## Pimcore 2026.1.0
 
 ### Tasks to Do Prior the Update
@@ -25,9 +37,9 @@ Pimcore 13 requires **Symfony 7.3 or higher**. All Symfony 6.x components are no
 3. Remove any explicit Symfony 6.x version constraints from your `composer.json`
 
 #### Migrate Folder structure for email logs
+
 The folder structure for email logs has changed to YYYY/MM/DD/\<log filename\>.
 Please execute the command `pimcore:migrate:mail-logs-folder-structure` to move the files into the new folder structure or move the files manually.
-
 
 #### Database Collation: utf8mb4_unicode_520_ci
 
@@ -57,6 +69,7 @@ ORDER BY TABLE_NAME, COLUMN_NAME;
 ```
 
 ### [General]
+
 - Thumbnail generation adapters now implement `Video\AdapterInterface` and `Document\AdapterInterface` and improved adapters' initialization.
 - The abstract class `Pimcore\Video\Adapter` has been removed. `Pimcore\Video\Adapter\Ffmpeg` now directly implements `Pimcore\Video\AdapterInterface`. If you extended `Pimcore\Video\Adapter`, update your class to implement `Pimcore\Video\AdapterInterface` directly.
 - The hard-coded space between quantity value and unit has been removed for class definition quantity fields (e.g. `AbstractQuantityValue`, `QuantityValueRange`). Spacing and formatting between value and unit is now controlled by locale- and translation-based formatting instead of being fixed in the code.
@@ -67,7 +80,9 @@ ORDER BY TABLE_NAME, COLUMN_NAME;
 - [QuantityValue] Introduced foreign key constraints on `__unit` columns in object store, query, localized, objectbrick and fieldcollection tables for `QuantityValue`, `InputQuantityValue` and `QuantityValueRange` fields. These constraints reference `quantityvalue_units(id)` with `ON DELETE SET NULL` and `ON UPDATE CASCADE`, ensuring referential integrity. The migration automatically cleans up orphaned unit references (setting them to `NULL`) and changes the `__unit` column type from `varchar(64)` to `varchar(50)` to match the referenced `quantityvalue_units.id` column. If you have custom unit IDs longer than 50 characters, they will be truncated.
 
 #### Removed deprecated and discontinued bundles
+
 The following bundles have been removed:
+
 - GlossaryBundle
 - SimpleBackendSearchBundle
 - SeoBundle: dropped `http_error_log` feature and DB Table, and removed Document SEO Editor
@@ -83,20 +98,22 @@ The following bundles have been removed:
     - `mapFieldname()`
     - `getDataForEditmode()` in `ManyToManyObjectRelation` and `AdvancedManyToManyObjectRelation` now uses `Element\Service::gridElementData()` instead of the removed `Service::gridObjectData()`. As a result, the returned data for each related object no longer includes computed grid columns (e.g. brick fields, localized fields, classification store values, or helper columns). Only the base element data (id, type, path, etc.) is returned. If you rely on additional field data being present in the editmode payload of these relations, you need to fetch it separately.
 
-
 ### [Database]
-- All `utf8mb4` tables now use `utf8mb4_unicode_520_ci` as their default collation to match Doctrine's `default_table_options` 
-  configuration. Columns inherit this collation unless a different one is explicitly defined (for example `utf8mb4_bin` 
-  for case-sensitive keys). Previously, `install.sql` and Dao `CREATE TABLE` statements specified `DEFAULT CHARSET=utf8mb4` 
-  without an explicit `COLLATE` clause, which caused MySQL/MariaDB to assign the charset's built-in default collation 
-  (`utf8mb4_general_ci`) instead of the intended `utf8mb4_unicode_520_ci`. 
-  Existing installations need to update the collation of their tables and columns manually, details see 
-  'Tasks to Do Prior the Update' chapter above. 
+
+- All `utf8mb4` tables now use `utf8mb4_unicode_520_ci` as their default collation to match Doctrine's `default_table_options`
+  configuration. Columns inherit this collation unless a different one is explicitly defined (for example `utf8mb4_bin`
+  for case-sensitive keys). Previously, `install.sql` and Dao `CREATE TABLE` statements specified `DEFAULT CHARSET=utf8mb4`
+  without an explicit `COLLATE` clause, which caused MySQL/MariaDB to assign the charset's built-in default collation
+  (`utf8mb4_general_ci`) instead of the intended `utf8mb4_unicode_520_ci`.
+  Existing installations need to update the collation of their tables and columns manually, details see
+  'Tasks to Do Prior the Update' chapter above.
 
 ### [Models]
+
 - Added a new optional `$parameters` argument to `AbstractUser::save()` and `AbstractUser::delete()`, as well as their interface methods, to allow passing of arguments to `UserRoleEvent`.
 
 ### [Generic Execution Engine]
+
 - Added an `$offset` parameter to support paging in `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
 - Added the possibility to pass an optional `$criteria` array to `getTotalCount()`, `getJobRunById()`, `getJobRunsByUserId()` and `getRunningJobsByUserId()` in `JobRunRepositoryInterface`.
 - Added the possibility to pass optional `$ownerId` and `$executionContext` parameters to `getTotalCount()`.
@@ -121,35 +138,35 @@ Please see the documentation for further information: https://docs.pimcore.com/p
 
 The following CLI options have been **removed**:
 
-| Old Option | Replacement |
-|---|---|
-| `--mysql-host-socket` | Use `DATABASE_URL` env var (Doctrine DSN format) |
-| `--mysql-username` | Use `DATABASE_URL` env var |
-| `--mysql-password` | Use `DATABASE_URL` env var |
-| `--mysql-database` | Use `DATABASE_URL` env var |
-| `--mysql-port` | Use `DATABASE_URL` env var |
-| `--mysql-ssl-cert-path` | Use `DATABASE_URL` env var |
-| `--encryption-secret` | Use `PIMCORE_ENCRYPTION_SECRET` env var directly |
-| `--instance-identifier` | Use `PIMCORE_INSTANCE_IDENTIFIER` env var directly |
-| `--product-key` | Use `PIMCORE_PRODUCT_KEY` env var directly |
-| `--install-bundles` | Bundles are now defined by the install profile's `getBundles()` method |
-| `--skip-database-structure` | Use `InstallStepFilterInterface` in your profile to skip steps |
-| `--skip-database-data` | Use `InstallStepFilterInterface` in your profile to skip steps |
-| `--skip-database-data-dump` | Use `InstallStepFilterInterface` in your profile to skip steps |
-| `--skip-database-config` | Configuration is now written to `.env.local`; to avoid writing installer-generated config, use `InstallStepFilterInterface` to skip `WriteEnv` and, if needed, `WriteDoctrineConfig` |
-| `--skip-product-registration-config` | Configuration is now written to `.env.local`; to avoid writing installer-generated config, use `InstallStepFilterInterface` to skip `WriteEnv` |
-| `--only-steps` | Use `InstallStepFilterInterface` to control which `InstallStep` enum values are skipped |
+| Old Option                           | Replacement                                                                                                                                                                          |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `--mysql-host-socket`                | Use `DATABASE_URL` env var (Doctrine DSN format)                                                                                                                                     |
+| `--mysql-username`                   | Use `DATABASE_URL` env var                                                                                                                                                           |
+| `--mysql-password`                   | Use `DATABASE_URL` env var                                                                                                                                                           |
+| `--mysql-database`                   | Use `DATABASE_URL` env var                                                                                                                                                           |
+| `--mysql-port`                       | Use `DATABASE_URL` env var                                                                                                                                                           |
+| `--mysql-ssl-cert-path`              | Use `DATABASE_URL` env var                                                                                                                                                           |
+| `--encryption-secret`                | Use `PIMCORE_ENCRYPTION_SECRET` env var directly                                                                                                                                     |
+| `--instance-identifier`              | Use `PIMCORE_INSTANCE_IDENTIFIER` env var directly                                                                                                                                   |
+| `--product-key`                      | Use `PIMCORE_PRODUCT_KEY` env var directly                                                                                                                                           |
+| `--install-bundles`                  | Bundles are now defined by the install profile's `getBundles()` method                                                                                                               |
+| `--skip-database-structure`          | Use `InstallStepFilterInterface` in your profile to skip steps                                                                                                                       |
+| `--skip-database-data`               | Use `InstallStepFilterInterface` in your profile to skip steps                                                                                                                       |
+| `--skip-database-data-dump`          | Use `InstallStepFilterInterface` in your profile to skip steps                                                                                                                       |
+| `--skip-database-config`             | Configuration is now written to `.env.local`; to avoid writing installer-generated config, use `InstallStepFilterInterface` to skip `WriteEnv` and, if needed, `WriteDoctrineConfig` |
+| `--skip-product-registration-config` | Configuration is now written to `.env.local`; to avoid writing installer-generated config, use `InstallStepFilterInterface` to skip `WriteEnv`                                       |
+| `--only-steps`                       | Use `InstallStepFilterInterface` to control which `InstallStep` enum values are skipped                                                                                              |
 
 The options `--admin-username` and `--admin-password` are **retained** but now also accept the env vars `PIMCORE_ADMIN_USER` and `PIMCORE_ADMIN_PASSWORD` respectively.
 
 #### New CLI Options
 
-| New Option | Description |
-|---|---|
-| `--install-profile` | **(Required)** FQCN of the install profile class implementing `InstallProfileInterface` |
-| `--env-definition` | FQCN(s) of additional `EnvVarDefinitionInterface` implementations (repeatable) |
-| `--post-install-commands` | FQCN(s) of `PostInstallCommandsProviderInterface` implementations (repeatable) |
-| `--skip-validation` | Skip env var validation (no value = skip all; with value = skip by key/class/FQCN) |
+| New Option                | Description                                                                             |
+| ------------------------- | --------------------------------------------------------------------------------------- |
+| `--install-profile`       | **(Required)** FQCN of the install profile class implementing `InstallProfileInterface` |
+| `--env-definition`        | FQCN(s) of additional `EnvVarDefinitionInterface` implementations (repeatable)          |
+| `--post-install-commands` | FQCN(s) of `PostInstallCommandsProviderInterface` implementations (repeatable)          |
+| `--skip-validation`       | Skip env var validation (no value = skip all; with value = skip by key/class/FQCN)      |
 
 #### Removed Environment Variables (`PIMCORE_INSTALL_*` Prefix)
 
@@ -157,30 +174,30 @@ All `PIMCORE_INSTALL_*` environment variables have been **removed**. The old ins
 
 `DATABASE_URL` uses Doctrine DSN syntax and can describe either a TCP connection (for example `mysql://user:pass@host:3306/dbname`) or a unix socket connection.
 
-| Old Env Var | New Env Var |
-|---|---|
-| `PIMCORE_INSTALL_ADMIN_USERNAME` | `PIMCORE_ADMIN_USER` |
-| `PIMCORE_INSTALL_ADMIN_PASSWORD` | `PIMCORE_ADMIN_PASSWORD` |
-| `PIMCORE_INSTALL_MYSQL_HOST_SOCKET` | `DATABASE_URL` (Doctrine DSN format, e.g. `mysql://user:pass@localhost/dbname?unix_socket=/var/run/mysqld/mysqld.sock`) |
-| `PIMCORE_INSTALL_MYSQL_USERNAME` | `DATABASE_URL` |
-| `PIMCORE_INSTALL_MYSQL_PASSWORD` | `DATABASE_URL` |
-| `PIMCORE_INSTALL_MYSQL_DATABASE` | `DATABASE_URL` |
-| `PIMCORE_INSTALL_MYSQL_PORT` | `DATABASE_URL` |
-| `PIMCORE_INSTALL_MYSQL_SSL_CERT_PATH` | `DATABASE_URL` |
-| `PIMCORE_INSTALL_ENCRYPTION_SECRET` | `PIMCORE_ENCRYPTION_SECRET` |
-| `PIMCORE_INSTALL_INSTANCE_IDENTIFIER` | `PIMCORE_INSTANCE_IDENTIFIER` |
-| `PIMCORE_INSTALL_PRODUCT_KEY` | `PIMCORE_PRODUCT_KEY` |
-| `PIMCORE_INSTALL_INSTALL_BUNDLES` | Removed — bundles are defined by the profile |
+| Old Env Var                           | New Env Var                                                                                                             |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `PIMCORE_INSTALL_ADMIN_USERNAME`      | `PIMCORE_ADMIN_USER`                                                                                                    |
+| `PIMCORE_INSTALL_ADMIN_PASSWORD`      | `PIMCORE_ADMIN_PASSWORD`                                                                                                |
+| `PIMCORE_INSTALL_MYSQL_HOST_SOCKET`   | `DATABASE_URL` (Doctrine DSN format, e.g. `mysql://user:pass@localhost/dbname?unix_socket=/var/run/mysqld/mysqld.sock`) |
+| `PIMCORE_INSTALL_MYSQL_USERNAME`      | `DATABASE_URL`                                                                                                          |
+| `PIMCORE_INSTALL_MYSQL_PASSWORD`      | `DATABASE_URL`                                                                                                          |
+| `PIMCORE_INSTALL_MYSQL_DATABASE`      | `DATABASE_URL`                                                                                                          |
+| `PIMCORE_INSTALL_MYSQL_PORT`          | `DATABASE_URL`                                                                                                          |
+| `PIMCORE_INSTALL_MYSQL_SSL_CERT_PATH` | `DATABASE_URL`                                                                                                          |
+| `PIMCORE_INSTALL_ENCRYPTION_SECRET`   | `PIMCORE_ENCRYPTION_SECRET`                                                                                             |
+| `PIMCORE_INSTALL_INSTANCE_IDENTIFIER` | `PIMCORE_INSTANCE_IDENTIFIER`                                                                                           |
+| `PIMCORE_INSTALL_PRODUCT_KEY`         | `PIMCORE_PRODUCT_KEY`                                                                                                   |
+| `PIMCORE_INSTALL_INSTALL_BUNDLES`     | Removed — bundles are defined by the profile                                                                            |
 
 #### Configuration Output Changes
 
 The installer no longer writes the former local/user configuration YAML files for database and product registration settings. These values are now written to **`.env.local`** using Symfony Flex-style section markers (`###> section-name ###` / `###< section-name ###`). The installer still generates `config/packages/doctrine_mapping_types.yaml` for Doctrine mapping types.
 
-| Old Config File | New Location |
-|---|---|
-| `config/local/database.yaml` | `.env.local` (`DATABASE_URL`) |
+| Old Config File                          | New Location                                                                                     |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `config/local/database.yaml`             | `.env.local` (`DATABASE_URL`)                                                                    |
 | `config/local/product_registration.yaml` | `.env.local` (`PIMCORE_ENCRYPTION_SECRET`, `PIMCORE_INSTANCE_IDENTIFIER`, `PIMCORE_PRODUCT_KEY`) |
-| `system.yml` / `system.template.yml` | Legacy system config files are no longer written by the installer |
+| `system.yml` / `system.template.yml`     | Legacy system config files are no longer written by the installer                                |
 
 #### Removed Classes and Events
 
@@ -192,12 +209,14 @@ The installer no longer writes the former local/user configuration YAML files fo
 #### Two-Phase Architecture
 
 The installer now runs in two phases:
+
 1. **Phase 1** (lightweight `InstallerKernel`): Collects and validates all env vars from the profile's `EnvVarDefinitionInterface` implementations, writes `.env.local`, writes Doctrine config.
 2. **Phase 2** (real `App\Kernel`): Sets up the database, imports data sources, creates admin user, registers and installs bundles, runs post-install commands.
 
 #### Profile Extensibility
 
 Install profiles can implement additional interfaces for advanced control:
+
 - `InstallStepFilterInterface` — skip specific install steps (useful for PaaS environments)
 - `PostInstallHookInterface` — run custom PHP code near the end of phase 2, before finalization steps such as cache clearing and install marker cleanup
 - `DataSourceInterface` — import SQL dumps or other data during installation
@@ -220,11 +239,13 @@ The `PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX` env var (previously named `PIMCORE_
 It must now include a **trailing separator** for queue name concatenation, because Pimcore bundle configs append queue names directly to this value.
 
 **Before (old format):**
+
 ```
 PIMCORE_MESSENGER_TRANSPORT_DSN=doctrine://default
 ```
 
 **After (new format):**
+
 ```
 # Doctrine
 PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX=doctrine://default?queue_name=
@@ -242,16 +263,17 @@ All Pimcore bundle transport configs now use the container parameter `%pimcore.m
 framework:
     messenger:
         transports:
-            pimcore_core: '%pimcore.messenger.transport_dsn_prefix%pimcore_core'
-            pimcore_maintenance: '%pimcore.messenger.transport_dsn_prefix%pimcore_maintenance'
+            pimcore_core: "%pimcore.messenger.transport_dsn_prefix%pimcore_core"
+            pimcore_maintenance: "%pimcore.messenger.transport_dsn_prefix%pimcore_maintenance"
 ```
 
 A container-level default is provided in `bundles/CoreBundle/config/pimcore/default.yaml`:
 
 ```yaml
 parameters:
-    env(PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX): 'doctrine://default?queue_name='
+    env(PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX): "doctrine://default?queue_name="
 ```
+
 If you have `PIMCORE_MESSENGER_TRANSPORT_DSN_PREFIX` (or the old `PIMCORE_MESSENGER_TRANSPORT_DSN`) explicitly set in your `.env` or environment, update its value to include the trailing separator and use the new name. For Doctrine, change `doctrine://default` to `doctrine://default?queue_name=`. Failure to do this will result in invalid transport DSNs like `doctrine://defaultpimcore_core`.
 If you have custom transport definitions in your bundle or project YAML that hardcode `doctrine://default?queue_name=`, replace them with `'%pimcore.messenger.transport_dsn_prefix%'` concatenation to support backend-agnostic transport switching.
 
@@ -261,14 +283,13 @@ The `Symfony\Component\Templating\EngineInterface` and related services have bee
 
 **What's Removed:**
 
--   `pimcore.templating.engine.delegating` service
--   `Symfony\Component\Templating\EngineInterface` support
--   `Pimcore\Templating\TwigDefaultDelegatingEngine` class
+- `pimcore.templating.engine.delegating` service
+- `Symfony\Component\Templating\EngineInterface` support
+- `Pimcore\Templating\TwigDefaultDelegatingEngine` class
 
 **Action Required:**
 Update your code to use `Twig\Environment` directly instead of `EngineInterface`.
 
 ### QuantityValue Formatting Changes
 
--   The space between QuantityValue value and unit is going to be removed. Please make sure any custom code that relies on the space is updated accordingly.
-
+- The space between QuantityValue value and unit is going to be removed. Please make sure any custom code that relies on the space is updated accordingly.
