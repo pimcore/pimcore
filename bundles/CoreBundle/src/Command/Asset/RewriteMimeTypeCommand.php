@@ -15,14 +15,12 @@ namespace Pimcore\Bundle\CoreBundle\Command\Asset;
 
 use Pimcore;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Db\Helper;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element\Service as ElementService;
 use Pimcore\Tool\Storage;
 use Pimcore\Helper\MimeTypeHelper;
 use Pimcore\Cache\RuntimeCache;
 use League\Flysystem\FilesystemException;
-use League\Flysystem\Visibility;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -84,8 +82,12 @@ class RewriteMimeTypeCommand extends AbstractCommand
                 }
 
                 if (!$mimeType || $mimeType === 'application/octet-stream') {
-                    $src = $asset->getStream();
-                    $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
+                     try {
+                         $src = $asset->getStream();
+                         $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
+                     } finally {
+                         $asset->setStream(null);
+                     }
                 }
 
                 if ($asset->getMimeType() === $mimeType) {
