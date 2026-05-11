@@ -225,4 +225,53 @@ class CdnSurrogateKeyListenerTest extends TestCase
         $this->assertStringContainsString('asset-55', $response->headers->get('Surrogate-Key'));
         $this->assertStringContainsString('thumb-hero', $response->headers->get('Surrogate-Key'));
     }
+
+    // -----------------------------------------------------------------------
+    // Public thumbnail URLs without the /var/tmp/thumbnails/ prefix
+    //
+    // The _pimcore_service_thumbnail route accepts URLs of the form
+    // `{prefix}{type}-thumb__{id}__{name}/{filename}` where {prefix} is any path
+    // (`.*`). Deployments that do NOT rewrite the request URI to include
+    // `/var/tmp/thumbnails/` (e.g. plain nginx/Apache reverse proxies in front
+    // of Pimcore) still need surrogate keys emitted; otherwise tag-based
+    // invalidation is impossible on those origins.
+    // -----------------------------------------------------------------------
+
+    public function testPublicImageThumbnailUrlWithoutInternalPrefixEmitsTags(): void
+    {
+        $path = '/products/category/image-thumb__42__product-hero/image.jpg';
+        $event = $this->makeEvent($path);
+        $response = $this->dispatch('fastly', $event);
+
+        $this->assertSame(
+            'asset-42 thumb-product-hero asset-42-thumb-product-hero',
+            $response->headers->get('Surrogate-Key'),
+        );
+        $this->assertSame(
+            'asset-42 thumb-product-hero asset-42-thumb-product-hero',
+            $response->headers->get('Cache-Tag'),
+        );
+    }
+
+    public function testPublicVideoThumbnailUrlWithoutInternalPrefixEmitsTags(): void
+    {
+        $path = '/media/video-thumb__7__hero-video/frame_001.jpg';
+        $event = $this->makeEvent($path);
+        $response = $this->dispatch('fastly', $event);
+
+        $this->assertSame(
+            'asset-7 thumb-hero-video asset-7-thumb-hero-video',
+            $response->headers->get('Surrogate-Key'),
+        );
+    }
+
+    public function testThumbnailUrlAtPathRootWithoutPrefixEmitsTags(): void
+    {
+        $path = '/image-thumb__1__cfg/img.jpg';
+        $event = $this->makeEvent($path);
+        $response = $this->dispatch('fastly', $event);
+
+        $this->assertStringContainsString('asset-1', $response->headers->get('Surrogate-Key'));
+        $this->assertStringContainsString('thumb-cfg', $response->headers->get('Surrogate-Key'));
+    }
 }

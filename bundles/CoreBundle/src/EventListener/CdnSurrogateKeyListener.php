@@ -35,7 +35,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class CdnSurrogateKeyListener implements EventSubscriberInterface
 {
-    private const THUMBNAIL_PATTERN = '#^/var/tmp/thumbnails/(image|video)-thumb__(\d+)__([^/]+)/#';
+    private const THUMBNAIL_PATTERN = '#(?:^|/)(image|video)-thumb__(\d+)__([^/]+)/#';
 
     private const ORIGINAL_ASSET_PATTERN = '#^/var/assets/#';
 

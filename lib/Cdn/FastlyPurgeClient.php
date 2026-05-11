@@ -21,8 +21,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 #[AutoconfigureTag('pimcore.cdn.purge_client', ['provider' => 'fastly'])]
 class FastlyPurgeClient implements PurgeClientInterface
 {
-    private const API_BASE = 'https://api.fastly.com';
-
     public function __construct(
         private readonly ClientInterface $httpClient,
         private readonly LoggerInterface $logger,
@@ -30,12 +28,14 @@ class FastlyPurgeClient implements PurgeClientInterface
         private readonly string $apiToken,
         #[Autowire('%pimcore.cdn.fastly.service_id%')]
         private readonly string $serviceId,
+        #[Autowire('%pimcore.cdn.fastly.api_base_url%')]
+        private readonly string $apiBaseUrl,
     ) {
     }
 
     public function purgeByTag(string $tag): void
     {
-        $this->request('POST', sprintf('%s/service/%s/purge/%s', self::API_BASE, $this->serviceId, $tag));
+        $this->request('POST', sprintf('%s/service/%s/purge/%s', $this->apiBaseUrl, $this->serviceId, $tag));
     }
 
     public function purgeByTags(array $tags): void
@@ -44,7 +44,7 @@ class FastlyPurgeClient implements PurgeClientInterface
             return;
         }
 
-        $this->request('POST', sprintf('%s/service/%s/purge', self::API_BASE, $this->serviceId), [
+        $this->request('POST', sprintf('%s/service/%s/purge', $this->apiBaseUrl, $this->serviceId), [
             'headers' => ['Surrogate-Key' => implode(' ', $tags)],
         ]);
     }

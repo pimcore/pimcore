@@ -8,6 +8,7 @@ parameters:
     env(CDN_PROVIDER): ''
     env(FASTLY_API_TOKEN): ''
     env(FASTLY_SERVICE_ID): ''
+    env(FASTLY_API_BASE_URL): 'https://api.fastly.com'
 
 framework:
     translator:

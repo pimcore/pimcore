@@ -26,6 +26,8 @@ class FastlyPurgeClientTest extends TestCase
 
     private const SERVICE_ID = 'svc123';
 
+    private const API_BASE_URL = 'https://api.fastly.com';
+
     private ClientInterface $httpClient;
 
     private LoggerInterface $logger;
@@ -36,7 +38,13 @@ class FastlyPurgeClientTest extends TestCase
     {
         $this->httpClient = $this->createMock(ClientInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->client = new FastlyPurgeClient($this->httpClient, $this->logger, self::API_TOKEN, self::SERVICE_ID);
+        $this->client = new FastlyPurgeClient(
+            $this->httpClient,
+            $this->logger,
+            self::API_TOKEN,
+            self::SERVICE_ID,
+            self::API_BASE_URL,
+        );
     }
 
     private function mockResponse(int $statusCode): ResponseInterface
@@ -154,5 +162,49 @@ class FastlyPurgeClientTest extends TestCase
 
         $this->assertSame(self::API_TOKEN, $capturedOptions['headers']['Fastly-Key']);
         $this->assertSame('application/json', $capturedOptions['headers']['Accept']);
+    }
+
+    public function testCustomApiBaseUrlIsUsed(): void
+    {
+        $client = new FastlyPurgeClient(
+            $this->httpClient,
+            $this->logger,
+            self::API_TOKEN,
+            self::SERVICE_ID,
+            'http://fastly-mock:8080',
+        );
+
+        $this->httpClient->expects($this->once())
+            ->method('request')
+            ->with(
+                'POST',
+                'http://fastly-mock:8080/service/' . self::SERVICE_ID . '/purge/asset-99',
+                $this->callback(fn (array $opts) => ($opts['headers']['Fastly-Key'] ?? null) === self::API_TOKEN),
+            )
+            ->willReturn($this->mockResponse(200));
+
+        $client->purgeByTag('asset-99');
+    }
+
+    public function testCustomApiBaseUrlIsUsedForBatchPurge(): void
+    {
+        $client = new FastlyPurgeClient(
+            $this->httpClient,
+            $this->logger,
+            self::API_TOKEN,
+            self::SERVICE_ID,
+            'http://fastly-mock:8080',
+        );
+
+        $this->httpClient->expects($this->once())
+            ->method('request')
+            ->with(
+                'POST',
+                'http://fastly-mock:8080/service/' . self::SERVICE_ID . '/purge',
+                $this->callback(fn (array $opts) => ($opts['headers']['Surrogate-Key'] ?? null) === 'asset-1 asset-2'),
+            )
+            ->willReturn($this->mockResponse(200));
+
+        $client->purgeByTags(['asset-1', 'asset-2']);
     }
 }
