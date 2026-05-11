@@ -62,6 +62,7 @@ class RewriteMimeTypeCommand extends AbstractCommand
         $list->setCondition(implode(' AND ', $conditions));
         $total = $list->getTotalCount();
         $perLoop = 10;
+        $storage = Storage::get('asset');
 
         for ($i = 0; $i < (ceil($total / $perLoop)); $i++) {
             $list->setLimit($perLoop);
@@ -70,7 +71,6 @@ class RewriteMimeTypeCommand extends AbstractCommand
             foreach ($assets as $asset) {
                 $output->writeln($asset->getFullPath());
 
-                $storage = Storage::get('asset');
                 $path = $asset->getRealFullPath();
                 $mimeType = null;
                 $typeChanged = false;
