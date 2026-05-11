@@ -98,7 +98,7 @@ class RewriteMimeTypeCommand extends AbstractCommand
 
                 // set type
                 $type = Asset::getTypeFromMimeMapping($mimeType, $asset->getFilename());
-                if ($type != $asset->getType()) {
+                if ($type !== $asset->getType()) {
                     $asset->setType($type);
                     $typeChanged = true;
                 }
