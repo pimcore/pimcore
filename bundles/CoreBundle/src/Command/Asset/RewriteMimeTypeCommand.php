@@ -44,9 +44,8 @@ class RewriteMimeTypeCommand extends AbstractCommand
                 'c',
                 InputOption::VALUE_OPTIONAL,
                 'Should a new version be created for the asset (default: false)',
-                false
-            );
-    }
+                InputOption::VALUE_NONE,
+                'Create a new version for the asset'
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
