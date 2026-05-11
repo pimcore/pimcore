@@ -6,6 +6,8 @@
 
 The `admin` translation domain has been fully removed. Only translation keys that were actively used by Pimcore core have been migrated to the `backend` domain automatically via a database migration.
 
+ **Note:** The `admin` domain still exists as a fallback for backwards compatibility. Translations not found in the `backend` domain will still be looked up in `admin` if the table is present.
+ 
 **Action required:**
 
 - **Custom translation keys** that were stored in the `admin` domain are **not** migrated automatically. You must migrate them to the `backend` domain (or any other appropriate domain) yourself.

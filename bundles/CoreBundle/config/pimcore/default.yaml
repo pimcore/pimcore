@@ -330,6 +330,7 @@ pimcore:
         domains:
             - messages
             - backend
+            - admin
 
     templating_engine:
         twig:
