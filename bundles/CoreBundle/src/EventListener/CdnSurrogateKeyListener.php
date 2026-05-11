@@ -35,9 +35,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class CdnSurrogateKeyListener implements EventSubscriberInterface
 {
-    private const THUMBNAIL_PATTERN = '#(?:^|/)(image|video)-thumb__(\d+)__([a-zA-Z0-9_\-]+)/#';
+    public const THUMBNAIL_PATTERN = '#(?:^|/)(image|video)-thumb__(\d+)__([a-zA-Z0-9_\-]+)/#';
 
-    private const ORIGINAL_ASSET_PATTERN = '#^/var/assets/#';
+    public const ORIGINAL_ASSET_PATTERN = '#^/var/assets/#';
 
     public function __construct(
         #[Autowire('%env(CDN_PROVIDER)%')]

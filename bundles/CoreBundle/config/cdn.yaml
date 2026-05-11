@@ -25,3 +25,5 @@ services:
     Pimcore\Bundle\CoreBundle\EventListener\CdnPurgeListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\CdnSurrogateKeyListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\CdnAssetCookieStripperListener: ~
