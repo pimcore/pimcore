@@ -17,6 +17,7 @@ use PDO;
 use Pimcore\Controller\Controller;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+
 /**
  * @internal
  */

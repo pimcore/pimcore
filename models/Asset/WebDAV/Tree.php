@@ -111,6 +111,7 @@ class Tree extends DAV\Tree
             throw $e;
         } catch (Exception $e) {
             Logger::error((string) $e);
+
             throw $e;
         }
     }
