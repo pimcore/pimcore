@@ -274,4 +274,51 @@ class CdnSurrogateKeyListenerTest extends TestCase
         $this->assertStringContainsString('asset-1', $response->headers->get('Surrogate-Key'));
         $this->assertStringContainsString('thumb-cfg', $response->headers->get('Surrogate-Key'));
     }
+
+    // -----------------------------------------------------------------------
+    // Thumbnail name char-class alignment with Asset\Service::extractThumbnailInfoFromUri
+    //
+    // The canonical Pimcore regex (models/Asset/Service.php) constrains thumbnail
+    // names to [a-zA-Z0-9_\-]+. We mirror that constraint so the listener never
+    // emits tags for paths that Asset routing wouldn't accept as a thumbnail.
+    // -----------------------------------------------------------------------
+
+    public function testThumbnailNameWithDotIsNotMatched(): void
+    {
+        // A dot is outside [a-zA-Z0-9_\-] — Pimcore routing would reject this as a
+        // thumbnail name, so the listener must not emit thumbnail tags for it.
+        $path = '/var/tmp/thumbnails/image-thumb__1__bad.name/img.jpg';
+        $event = $this->makeEvent($path);
+        $response = $this->dispatch('fastly', $event);
+
+        $this->assertNull($response->headers->get('Surrogate-Key'));
+    }
+
+    public function testThumbnailNameWithSpaceIsNotMatched(): void
+    {
+        $path = '/var/tmp/thumbnails/image-thumb__1__bad name/img.jpg';
+        $event = $this->makeEvent($path);
+        $response = $this->dispatch('fastly', $event);
+
+        $this->assertNull($response->headers->get('Surrogate-Key'));
+    }
+
+    public function testThumbnailNameWithPercentIsNotMatched(): void
+    {
+        $path = '/var/tmp/thumbnails/image-thumb__1__bad%name/img.jpg';
+        $event = $this->makeEvent($path);
+        $response = $this->dispatch('fastly', $event);
+
+        $this->assertNull($response->headers->get('Surrogate-Key'));
+    }
+
+    public function testThumbnailNameWithMixedCaseLettersAndDigitsIsMatched(): void
+    {
+        // Belt-and-suspenders coverage of the [a-zA-Z0-9_\-]+ class.
+        $path = '/var/tmp/thumbnails/image-thumb__1__MyConfig_v2-XL_99/img.jpg';
+        $event = $this->makeEvent($path);
+        $response = $this->dispatch('fastly', $event);
+
+        $this->assertStringContainsString('thumb-MyConfig_v2-XL_99', $response->headers->get('Surrogate-Key'));
+    }
 }

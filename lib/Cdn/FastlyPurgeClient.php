@@ -35,7 +35,10 @@ class FastlyPurgeClient implements PurgeClientInterface
 
     public function purgeByTag(string $tag): void
     {
-        $this->request('POST', sprintf('%s/service/%s/purge/%s', $this->apiBaseUrl, $this->serviceId, $tag));
+        // Surrogate keys are URL path segments; reserved characters (e.g. '/', ' ') must be
+        // percent-encoded so they reach Fastly intact. rawurlencode() is idempotent on the
+        // safe character class, so already-clean tags pass through unchanged.
+        $this->request('POST', sprintf('%s/service/%s/purge/%s', $this->apiBaseUrl, $this->serviceId, rawurlencode($tag)));
     }
 
     public function purgeByTags(array $tags): void
@@ -57,15 +60,7 @@ class FastlyPurgeClient implements PurgeClientInterface
     private function request(string $method, string $url, array $options = []): void
     {
         try {
-            $response = $this->httpClient->request($method, $url, array_merge_recursive([
-                'headers' => [
-                    'Fastly-Key' => $this->apiToken,
-                    'Accept' => 'application/json',
-                ],
-                // Do not throw on 4xx/5xx — we want to log status and continue
-                // (Fastly purge is idempotent; transient errors should not crash the worker).
-                'http_errors' => false,
-            ], $options));
+            $response = $this->httpClient->request($method, $url, $this->mergeRequestOptions($options));
 
             $statusCode = $response->getStatusCode();
             if ($statusCode < 200 || $statusCode >= 300) {
@@ -82,5 +77,36 @@ class FastlyPurgeClient implements PurgeClientInterface
 
             throw $e;
         }
+    }
+
+    /**
+     * Merge caller-supplied Guzzle options with this client's defaults.
+     *
+     * Uses array_replace() for top-level options so a colliding scalar (e.g. http_errors)
+     * is REPLACED rather than promoted to a list — array_merge_recursive() would turn
+     * [false] + [true] into [false, true], which Guzzle rejects at runtime. Headers are
+     * merged key-by-key with the same replace semantics so callers can override a single
+     * default header (e.g. Accept) without dropping the others (e.g. Fastly-Key).
+     *
+     * @param array<string, mixed> $overrides
+     *
+     * @return array<string, mixed>
+     */
+    private function mergeRequestOptions(array $overrides): array
+    {
+        $defaults = [
+            'headers' => [
+                'Fastly-Key' => $this->apiToken,
+                'Accept' => 'application/json',
+            ],
+            // Do not throw on 4xx/5xx — we want to log status and continue
+            // (Fastly purge is idempotent; transient errors should not crash the worker).
+            'http_errors' => false,
+        ];
+
+        $merged = array_replace($defaults, $overrides);
+        $merged['headers'] = array_replace($defaults['headers'], $overrides['headers'] ?? []);
+
+        return $merged;
     }
 }

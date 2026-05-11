@@ -20,6 +20,7 @@ use Pimcore\Event\Model\Asset\Image\Thumbnail\ConfigEvent as ImageThumbnailConfi
 use Pimcore\Event\Model\Asset\Video\Thumbnail\ConfigEvent as VideoThumbnailConfigEvent;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Event\VideoThumbnailConfigEvents;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -34,8 +35,11 @@ use Symfony\Component\Messenger\MessageBusInterface;
  */
 class CdnPurgeListener implements EventSubscriberInterface
 {
-    public function __construct(private readonly MessageBusInterface $bus)
-    {
+    public function __construct(
+        private readonly MessageBusInterface $bus,
+        #[Autowire('%env(CDN_PROVIDER)%')]
+        private readonly string $cdnProvider,
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -52,21 +56,37 @@ class CdnPurgeListener implements EventSubscriberInterface
 
     public function onAssetUpdate(AssetEvent $event): void
     {
+        if ($this->cdnProvider === '') {
+            return;
+        }
+
         $this->dispatchAssetPurge($event);
     }
 
     public function onAssetDelete(AssetEvent $event): void
     {
+        if ($this->cdnProvider === '') {
+            return;
+        }
+
         $this->dispatchAssetPurge($event);
     }
 
     public function onImageThumbnailConfigChange(ImageThumbnailConfigEvent $event): void
     {
+        if ($this->cdnProvider === '') {
+            return;
+        }
+
         $this->dispatchThumbConfigPurge($event->getConfig()->getName());
     }
 
     public function onVideoThumbnailConfigChange(VideoThumbnailConfigEvent $event): void
     {
+        if ($this->cdnProvider === '') {
+            return;
+        }
+
         $this->dispatchThumbConfigPurge($event->getConfig()->getName());
     }
 

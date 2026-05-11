@@ -212,4 +212,28 @@ class CdnPurgeCommandTest extends TestCase
         $this->runCommand($client, ['--asset' => ['1']], [1 => '/a.jpg']);
         $this->runCommand($client, ['--config' => ['hero']]);
     }
+
+    public function testDuplicateAssetIdsAreDeduplicatedBeforePurge(): void
+    {
+        // Repeating the same --asset value would otherwise emit the asset-{id} and
+        // asset-path-{hash} tags twice, bloating the Surrogate-Key header sent to the CDN.
+        [$client, $calls] = $this->makeClient();
+        $this->runCommand($client, ['--asset' => ['42', '42']], [42 => '/img.jpg']);
+
+        $this->assertCount(1, $calls['purgeByTags']);
+        $batch = $calls['purgeByTags'][0];
+        $this->assertSame(count($batch), count(array_unique($batch)), 'Batch should contain no duplicate tags');
+        $this->assertSame(
+            ['asset-42', $this->expectedPathHashTag('/img.jpg')],
+            $batch,
+        );
+    }
+
+    public function testDuplicateConfigsAreDeduplicatedBeforePurge(): void
+    {
+        [$client, $calls] = $this->makeClient();
+        $this->runCommand($client, ['--config' => ['hero', 'hero']]);
+
+        $this->assertSame([['thumb-hero']], $calls['purgeByTags']);
+    }
 }

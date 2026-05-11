@@ -100,6 +100,12 @@ HELP
             $allTags[] = 'thumb-' . $configName;
         }
 
+        // Deduplicate: callers may pass the same --asset or --config twice (e.g. via shell
+        // expansion or scripted invocation), and an asset+config combination can produce the
+        // same path-hash. Sending duplicate keys to Fastly wastes the per-request budget
+        // (max 256 keys / batch purge) without changing the purge result.
+        $allTags = array_values(array_unique($allTags));
+
         $io->writeln(sprintf('Purging %d tag(s): %s', count($allTags), implode(', ', $allTags)));
         $this->purgeClient->purgeByTags($allTags);
 

@@ -37,9 +37,9 @@ class CdnPurgeListenerTest extends TestCase
         return $asset;
     }
 
-    private function makeListener(MessageBusInterface $bus): CdnPurgeListener
+    private function makeListener(MessageBusInterface $bus, string $provider = 'fastly'): CdnPurgeListener
     {
-        return new CdnPurgeListener($bus);
+        return new CdnPurgeListener($bus, $provider);
     }
 
     /**
@@ -225,5 +225,51 @@ class CdnPurgeListenerTest extends TestCase
         $this->assertArrayHasKey('pimcore.asset.image.thumbnailConfig.postDelete', $events);
         $this->assertArrayHasKey('pimcore.asset.video.thumbnailConfig.postUpdate', $events);
         $this->assertArrayHasKey('pimcore.asset.video.thumbnailConfig.postDelete', $events);
+    }
+
+    // -----------------------------------------------------------------------
+    // CDN-disabled gating: when CDN_PROVIDER is empty, the listener must
+    // not enqueue any messages — otherwise the doctrine messenger transport
+    // would accumulate no-op purges that nobody consumes.
+    // -----------------------------------------------------------------------
+
+    public function testAssetUpdateDoesNotDispatchWhenCdnDisabled(): void
+    {
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $asset = $this->makeAsset(42, '/products/image.jpg');
+        $this->makeListener($bus, '')->onAssetUpdate(new AssetEvent($asset));
+
+        $this->assertCount(0, $dispatched);
+    }
+
+    public function testAssetDeleteDoesNotDispatchWhenCdnDisabled(): void
+    {
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $asset = $this->makeAsset(42, '/products/image.jpg');
+        $this->makeListener($bus, '')->onAssetDelete(new AssetEvent($asset));
+
+        $this->assertCount(0, $dispatched);
+    }
+
+    public function testImageThumbnailConfigChangeDoesNotDispatchWhenCdnDisabled(): void
+    {
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $event = new ImageThumbnailConfigEvent($this->makeImageConfig('hero'));
+        $this->makeListener($bus, '')->onImageThumbnailConfigChange($event);
+
+        $this->assertCount(0, $dispatched);
+    }
+
+    public function testVideoThumbnailConfigChangeDoesNotDispatchWhenCdnDisabled(): void
+    {
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $event = new VideoThumbnailConfigEvent($this->makeVideoConfig('preview'));
+        $this->makeListener($bus, '')->onVideoThumbnailConfigChange($event);
+
+        $this->assertCount(0, $dispatched);
     }
 }
