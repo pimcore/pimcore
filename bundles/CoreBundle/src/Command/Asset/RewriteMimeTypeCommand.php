@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Asset;
 
+use League\Flysystem\FilesystemException;
 use Pimcore;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Helper\MimeTypeHelper;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element\Service as ElementService;
 use Pimcore\Tool\Storage;
-use Pimcore\Helper\MimeTypeHelper;
-use Pimcore\Cache\RuntimeCache;
-use League\Flysystem\FilesystemException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -53,7 +53,7 @@ class RewriteMimeTypeCommand extends AbstractCommand
 
         if ($idsArg = $input->getArgument('ids')) {
             $ids = array_map('intval', explode(',', $idsArg[0]));
-            $conditions []= sprintf('id IN (%s)', implode(',', $ids));
+            $conditions[]= sprintf('id IN (%s)', implode(',', $ids));
         }
 
         $createVersion = $input->getOption('create-version');
@@ -74,6 +74,7 @@ class RewriteMimeTypeCommand extends AbstractCommand
                 $path = $asset->getRealFullPath();
                 $mimeType = null;
                 $typeChanged = false;
+
                 try {
                     $mimeType = $storage->mimeType($path);
                 } catch (FilesystemException $e) {
@@ -81,16 +82,17 @@ class RewriteMimeTypeCommand extends AbstractCommand
                 }
 
                 if (!$mimeType || $mimeType === 'application/octet-stream') {
-                     try {
-                         $src = $asset->getStream();
-                         $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
-                     } finally {
-                         $asset->setStream(null);
-                     }
+                    try {
+                        $src = $asset->getStream();
+                        $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
+                    } finally {
+                        $asset->setStream(null);
+                    }
                 }
 
                 if ($asset->getMimeType() === $mimeType) {
                     $output->writeln($asset->getFullPath() . ' - MIME type is already correct, skipping');
+
                     continue;
                 }
 
@@ -119,12 +121,10 @@ class RewriteMimeTypeCommand extends AbstractCommand
                     Asset::getById($asset->getId(), ['force' => true]); // force DB reload to bypass any stale cache
                 }
 
-
                 if ($createVersion) {
                     $asset->saveVersion(false, true, 'change MIME-Type');
                 }
             }
-
 
             Pimcore::collectGarbage();
         }

@@ -725,6 +725,7 @@ class Asset extends Element\AbstractElement
                 }
 
                 $mimeType = null;
+
                 try {
                     $mimeType = $storage->mimeType($path);
                 } catch (FilesystemException $e) {
