@@ -49,7 +49,7 @@ class RewriteMimeTypeCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $conditions = ['type != "folder"'];
+        $conditions = ["`type` != 'folder'"];
 
         if ($idsArg = $input->getArgument('ids')) {
             $ids = array_map('intval', explode(',', $idsArg[0]));
