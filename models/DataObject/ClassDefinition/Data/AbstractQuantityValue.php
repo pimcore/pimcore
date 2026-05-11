@@ -20,6 +20,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
+use Pimcore\Model\Translation;
 use Pimcore\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -148,7 +149,7 @@ abstract class AbstractQuantityValue extends Data implements ResourcePersistence
                 $unitDefinition = Model\DataObject\QuantityValue\Unit::getById($data->getUnitId());
                 if ($unitDefinition) {
                     $translator = Pimcore::getContainer()->get(TranslatorInterface::class);
-                    $unit = $translator->trans($unitDefinition->getAbbreviation(), [], 'admin');
+                    $unit = $translator->trans($unitDefinition->getAbbreviation(), [], Translation::DOMAIN_BACKEND);
                 }
             }
 

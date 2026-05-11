@@ -20,6 +20,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Translation;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
@@ -185,7 +186,7 @@ class NotificationEmailService extends AbstractNotificationService
             $this->translator->trans(
                 'workflow_change_email_notification_subject',
                 [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()],
-                'admin',
+                Translation::DOMAIN_BACKEND,
                 $language
             )
         );

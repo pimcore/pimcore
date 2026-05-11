@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
+use Pimcore\Model\Translation;
 
 /**
  * @method DataObject\Data\ObjectMetadata\Dao getDao()
@@ -699,7 +700,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
                 if (!$fieldFound) {
                     $this->visibleFieldDefinitions[$field]['name'] = $field;
-                    $this->visibleFieldDefinitions[$field]['title'] = $translator->trans($field, [], 'admin');
+                    $this->visibleFieldDefinitions[$field]['title'] = $translator->trans($field, [], Translation::DOMAIN_BACKEND);
                     $this->visibleFieldDefinitions[$field]['fieldtype'] = 'input';
                 }
             } else {

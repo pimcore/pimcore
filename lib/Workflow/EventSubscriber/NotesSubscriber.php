@@ -17,6 +17,7 @@ use Pimcore\Event\Workflow\GlobalActionEvent;
 use Pimcore\Event\WorkflowEvents;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Translation;
 use Pimcore\Workflow;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -122,7 +123,7 @@ class NotesSubscriber implements EventSubscriberInterface
                     : $additionalFieldConfig['name'];
 
                 throw new ValidationException(
-                    $this->translator->trans('workflow_notes_requred_field_message', [$label], 'admin')
+                    $this->translator->trans('workflow_notes_requred_field_message', [$label], Translation::DOMAIN_BACKEND)
                 );
             }
 

@@ -18,6 +18,7 @@ use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Translation;
 use Pimcore\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -259,7 +260,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
 
             if ($unit instanceof DataObject\QuantityValue\Unit) {
                 $translator = $this->getTranslator();
-                $export .= $translator->trans($unit->getAbbreviation(), [], 'admin');
+                $export .= $translator->trans($unit->getAbbreviation(), [], Translation::DOMAIN_BACKEND);
             }
 
             return $export;

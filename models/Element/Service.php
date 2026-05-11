@@ -52,6 +52,7 @@ use Pimcore\Tool\Serialize;
 use ReflectionProperty;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Pimcore\Model\Translation;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 use UnitEnum;
@@ -1197,7 +1198,7 @@ class Service extends Model\AbstractModel
             'ctype' => $note->getCtype(),
             'cpath' => $cpath,
             'date' => $note->getDate(),
-            'title' => Pimcore::getContainer()->get(TranslatorInterface::class)->trans($note->getTitle(), [], 'admin'),
+            'title' => Pimcore::getContainer()->get(TranslatorInterface::class)->trans($note->getTitle(), [], Translation::DOMAIN_BACKEND),
             'description' => $note->getDescription(),
             'locked' => $note->getLocked(),
         ];

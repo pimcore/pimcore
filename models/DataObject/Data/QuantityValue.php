@@ -18,6 +18,7 @@ use NumberFormatter;
 use Pimcore;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Pimcore\Model\Translation;
 
 class QuantityValue extends AbstractQuantityValue
 {
@@ -61,7 +62,7 @@ class QuantityValue extends AbstractQuantityValue
                 $unitAbbreviation = $unit->getId();
             } else {
                 $translator = Pimcore::getContainer()->get('translator');
-                $unitAbbreviation = $translator->trans($unit->getAbbreviation(), [], 'admin');
+                $unitAbbreviation = $translator->trans($unit->getAbbreviation(), [], Translation::DOMAIN_BACKEND);
             }
 
             $value .= $unitAbbreviation;

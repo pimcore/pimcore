@@ -16,6 +16,7 @@ namespace Pimcore\Model\DataObject\Data;
 use Exception;
 use Pimcore;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Pimcore\Model\Translation;
 
 class InputQuantityValue extends AbstractQuantityValue
 {
@@ -46,7 +47,7 @@ class InputQuantityValue extends AbstractQuantityValue
         $value = $this->getValue();
         if ($this->getUnit() instanceof Unit) {
             $translator = Pimcore::getContainer()->get('translator');
-            $value .= $translator->trans($this->getUnit()->getAbbreviation(), [], 'admin');
+            $value .= $translator->trans($this->getUnit()->getAbbreviation(), [], Translation::DOMAIN_BACKEND);
         }
 
         return $value ?? '';

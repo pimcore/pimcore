@@ -18,6 +18,7 @@ use Pimcore;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
+use Pimcore\Model\Translation;
 
 class QuantityValueRange extends AbstractQuantityValue
 {
@@ -95,7 +96,7 @@ class QuantityValueRange extends AbstractQuantityValue
 
         if ($unit instanceof Unit) {
             $translator = Pimcore::getContainer()->get('translator');
-            $unit = $translator->trans($unit->getAbbreviation(), [], 'admin');
+            $unit = $translator->trans($unit->getAbbreviation(), [], Translation::DOMAIN_BACKEND);
         }
 
         return sprintf('[%s, %s] %s', $minimum, $maximum, $unit);

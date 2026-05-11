@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
+use Pimcore\Model\Translation;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface, LayoutDefinitionEnrichmentInterface
@@ -473,7 +474,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
                 if (!$fieldFound) {
                     $this->visibleFieldDefinitions[$field]['name'] = $field;
-                    $this->visibleFieldDefinitions[$field]['title'] = $translator->trans($field, [], 'admin');
+                    $this->visibleFieldDefinitions[$field]['title'] = $translator->trans($field, [], Translation::DOMAIN_BACKEND);
                     $this->visibleFieldDefinitions[$field]['fieldtype'] = 'input';
                 }
             } else {

@@ -18,6 +18,7 @@ use Pimcore;
 use Pimcore\Helper\ContrastColor;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
+use Pimcore\Model\Translation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Workflow\Manager;
@@ -85,7 +86,7 @@ class OptionsProvider implements SelectOptionsProviderInterface
         return sprintf('<div class="pimcore-workflow-place-indicator" style="background-color: %s; color:%s">%s</div>',
             $placeConfig->getColor(),
             ContrastColor::getContrastColor($placeConfig->getColor()),
-            $this->translator->trans($placeConfig->getLabel(), [], 'admin')
+            $this->translator->trans($placeConfig->getLabel(), [], Translation::DOMAIN_BACKEND)
         );
     }
 
