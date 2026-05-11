@@ -4,7 +4,7 @@
 
 ### [Assets]
 
--   The MIME type is now read from the storage adapter after the file is written, with a fallback to stream sniffing and finally `application/octet-stream`. Existing assets (e.g. `.doc`/`.xls`/`.ppt` files previously misdetected as `application/octet-stream`) must be re-uploaded to pick up the corrected MIME type.
+-   The MIME type is now read from the storage adapter after the file is written, with a fallback to stream sniffing and finally `application/octet-stream`. Existing assets (e.g. `.doc`/`.xls`/`.ppt` files previously misdetected as `application/octet-stream`) need to be re-uploaded or have their MIME type rewritten to pick up the corrected MIME type.
 -   Added a new command `pimcore:assets:rewrite-mime-type` to rewrite the MIME type of existing assets without re-uploading them.
 
 ## Pimcore 12.3.0
