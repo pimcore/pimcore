@@ -130,10 +130,6 @@ final class Version20250312132759 extends AbstractMigration
             return is_array(@unserialize($value, ['allowed_classes' => false]));
         }
 
-        if (!str_starts_with($value, '{')) {
-            return false;
-        }
-
         $decoded = json_decode($value, true);
 
         return json_last_error() === JSON_ERROR_NONE && is_array($decoded);
