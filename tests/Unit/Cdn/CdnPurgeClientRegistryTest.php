@@ -18,6 +18,7 @@ use Pimcore\Cdn\CdnPurgeClientRegistry;
 use Pimcore\Cdn\PurgeClientInterface;
 use Pimcore\Tests\Support\Test\TestCase;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class CdnPurgeClientRegistryTest extends TestCase
 {
@@ -31,14 +32,28 @@ class CdnPurgeClientRegistryTest extends TestCase
         return $mock;
     }
 
+    /**
+     * Wrap a map of provider-name => client in a Symfony ServiceLocator, mirroring
+     * what the AutowireLocator attribute injects at runtime. Each closure is invoked
+     * lazily on $clients->get($key), so unused providers stay un-instantiated.
+     *
+     * @param array<string, PurgeClientInterface> $clients
+     */
+    private function buildLocator(array $clients): ServiceLocator
+    {
+        $factories = [];
+        foreach ($clients as $key => $client) {
+            $factories[$key] = static fn (): PurgeClientInterface => $client;
+        }
+
+        return new ServiceLocator($factories);
+    }
+
     private function buildRegistry(array $clients, string $provider): CdnPurgeClientRegistry
     {
         $logger = $this->createMock(LoggerInterface::class);
 
-        // Wrap in an ArrayIterator keyed by provider name, matching TaggedIterator indexAttribute behavior
-        $iterator = new \ArrayIterator($clients);
-
-        return new CdnPurgeClientRegistry($iterator, $provider, $logger);
+        return new CdnPurgeClientRegistry($this->buildLocator($clients), $provider, $logger);
     }
 
     public function testEmptyProviderResolvesToNullClient(): void
@@ -74,7 +89,7 @@ class CdnPurgeClientRegistryTest extends TestCase
         );
 
         $registry = new CdnPurgeClientRegistry(
-            new \ArrayIterator(['null' => $nullClient]),
+            $this->buildLocator(['null' => $nullClient]),
             'unknown-provider',
             $logger,
         );
@@ -114,5 +129,28 @@ class CdnPurgeClientRegistryTest extends TestCase
 
         $registry = $this->buildRegistry(['fastly' => $fastlyClient, 'null' => $this->createMock(PurgeClientInterface::class)], 'fastly');
         $registry->purgeByUrl('https://cdn.example.com/var/assets/image.jpg');
+    }
+
+    public function testNonSelectedClientFactoryIsNotInvoked(): void
+    {
+        // Locks in the AutowireLocator lazy-instantiation contract: when CDN_PROVIDER
+        // selects one client, factories for other providers must never be invoked.
+        // Regression guard against accidental reintroduction of iterator_to_array()
+        // (which would force eager construction of every tagged service, including
+        // FastlyPurgeClient and its required env vars on installs that do not use it).
+        $fastlyClient = $this->createMock(PurgeClientInterface::class);
+        $fastlyClient->expects($this->once())->method('purgeByTag');
+
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $locator = new ServiceLocator([
+            'fastly' => static fn (): PurgeClientInterface => $fastlyClient,
+            'null' => static function (): PurgeClientInterface {
+                self::fail('NullPurgeClient factory must not be invoked when a different provider is selected.');
+            },
+        ]);
+
+        $registry = new CdnPurgeClientRegistry($locator, 'fastly', $logger);
+        $registry->purgeByTag('asset-1');
     }
 }
