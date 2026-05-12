@@ -81,6 +81,7 @@ final class Version20250312132759 extends AbstractMigration
     }
 
     /**
+     * @throws Exception
      * @throws JsonException
      */
     private function migrateAsset(array $assetData, bool $up = true): void
@@ -104,7 +105,7 @@ final class Version20250312132759 extends AbstractMigration
                 json_decode($value, true, 512, JSON_THROW_ON_ERROR)
             );
 
-        $this->addSql(
+        $this->connection->executeStatement(
             sprintf(
                 'UPDATE %s SET %s = ? WHERE %s = ?',
                 $this->connection->quoteIdentifier(self::ASSET_TABLE),
