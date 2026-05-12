@@ -71,7 +71,7 @@ final class Version20260504092057 extends AbstractMigration
 
             $backendTranslation = Translation::getByKey($key, Translation::DOMAIN_BACKEND, true);
             foreach ($adminTranslation->getTranslations() as $locale => $value) {
-                if (!$backendTranslation->hasTranslation($locale)) {
+                if (empty($backendTranslation->getTranslation($locale))) {
                     $backendTranslation->addTranslation($locale, $value);
                 }
             }
