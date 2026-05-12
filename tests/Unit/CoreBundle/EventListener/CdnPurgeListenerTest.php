@@ -95,6 +95,29 @@ class CdnPurgeListenerTest extends TestCase
         $this->assertContains('asset-path-' . $expectedHash, $tags);
     }
 
+    public function testOnAssetUpdateAlsoPurgesOldPathWhenAssetWasRenamed(): void
+    {
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $newPath = '/products/new-name.jpg';
+        $oldPath = '/products/old-name.jpg';
+        $asset = $this->makeAsset(42, $newPath);
+
+        $event = new AssetEvent($asset);
+        $event->setArgument('oldPath', $oldPath);
+
+        $this->makeListener($bus)->onAssetUpdate($event);
+
+        $newPathHash = substr(hash('sha256', '/var/assets' . $newPath), 0, 12);
+        $oldPathHash = substr(hash('sha256', '/var/assets' . $oldPath), 0, 12);
+
+        $tags = array_map(fn (PurgeCdnTagMessage $m) => $m->tag, $dispatched->getArrayCopy());
+        $this->assertEqualsCanonicalizing(
+            ['asset-42', 'asset-path-' . $newPathHash, 'asset-path-' . $oldPathHash],
+            $tags
+        );
+    }
+
     public function testPostDeleteAlsoDispatchesTwoMessages(): void
     {
         [$bus, $dispatched] = $this->captureBusDispatches();

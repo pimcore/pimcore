@@ -60,7 +60,11 @@ class CdnPurgeListener implements EventSubscriberInterface
             return;
         }
 
-        $this->dispatchAssetPurge($event);
+        // On rename/move, AssetEvent carries the previous path so we can purge its CDN entry too;
+        // otherwise the stale asset-path-{hash} would linger until natural TTL.
+        $oldPath = $event->hasArgument('oldPath') ? $event->getArgument('oldPath') : null;
+
+        $this->dispatchAssetPurge($event, $oldPath);
     }
 
     public function onAssetDelete(AssetEvent $event): void
@@ -90,7 +94,7 @@ class CdnPurgeListener implements EventSubscriberInterface
         $this->dispatchThumbConfigPurge($event->getConfig()->getName());
     }
 
-    private function dispatchAssetPurge(AssetEvent $event): void
+    private function dispatchAssetPurge(AssetEvent $event, ?string $oldPath = null): void
     {
         $asset = $event->getAsset();
 
@@ -102,6 +106,13 @@ class CdnPurgeListener implements EventSubscriberInterface
         $assetWebPath = '/var/assets' . $asset->getFullPath();
         $pathHash = substr(hash('sha256', $assetWebPath), 0, 12);
         $this->bus->dispatch(new PurgeCdnTagMessage('asset-path-' . $pathHash));
+
+        // If the asset was renamed/moved, also purge the previous path so its CDN-cached
+        // response does not linger until natural TTL under the old URL.
+        if ($oldPath !== null && $oldPath !== $asset->getFullPath()) {
+            $oldPathHash = substr(hash('sha256', '/var/assets' . $oldPath), 0, 12);
+            $this->bus->dispatch(new PurgeCdnTagMessage('asset-path-' . $oldPathHash));
+        }
     }
 
     private function dispatchThumbConfigPurge(string $configName): void
