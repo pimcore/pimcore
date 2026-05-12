@@ -44,7 +44,16 @@ framework:
             pimcore_scheduled_tasks: "%pimcore.messenger.transport_dsn_prefix%pimcore_scheduled_tasks"
             pimcore_image_optimize: "%pimcore.messenger.transport_dsn_prefix%pimcore_image_optimize"
             pimcore_asset_update: "%pimcore.messenger.transport_dsn_prefix%pimcore_asset_update"
-            pimcore_cdn_purge: "%pimcore.messenger.transport_dsn_prefix%pimcore_cdn_purge"
+            pimcore_cdn_purge:
+                dsn: '%pimcore.messenger.transport_dsn_prefix%pimcore_cdn_purge'
+                retry_strategy:
+                    max_retries: 5
+                    delay: 2000
+                    multiplier: 2
+                    max_delay: 60000
+                failure_transport: pimcore_cdn_purge_failed
+            pimcore_cdn_purge_failed:
+                dsn: '%pimcore.messenger.transport_dsn_prefix%pimcore_cdn_purge_failed'
             #Dependency resolving is synchronous by default, use the following commented lines below (transports/routing) to make it async
             #pimcore_dependencies: "%pimcore.messenger.transport_dsn_prefix%pimcore_dependencies"
         routing:
