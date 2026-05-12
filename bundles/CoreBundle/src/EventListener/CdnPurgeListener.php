@@ -109,7 +109,7 @@ class CdnPurgeListener implements EventSubscriberInterface
 
         // If the asset was renamed/moved, also purge the previous path so its CDN-cached
         // response does not linger until natural TTL under the old URL.
-        if ($oldPath !== null && $oldPath !== $asset->getFullPath()) {
+        if ($oldPath !== null && $oldPath !== '' && $oldPath !== $asset->getFullPath()) {
             $oldPathHash = substr(hash('sha256', '/var/assets' . $oldPath), 0, 12);
             $this->bus->dispatch(new PurgeCdnTagMessage('asset-path-' . $oldPathHash));
         }

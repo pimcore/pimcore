@@ -118,6 +118,52 @@ class CdnPurgeListenerTest extends TestCase
         );
     }
 
+    public function testOnAssetUpdateDoesNotPurgeOldPathWhenIdenticalToCurrentPath(): void
+    {
+        // Defensive: a non-rename POST_UPDATE may still carry an oldPath argument equal
+        // to the new path. The listener must not dispatch a redundant third message.
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $path = '/products/image.jpg';
+        $asset = $this->makeAsset(42, $path);
+
+        $event = new AssetEvent($asset);
+        $event->setArgument('oldPath', $path);
+
+        $this->makeListener($bus)->onAssetUpdate($event);
+
+        $pathHash = substr(hash('sha256', '/var/assets' . $path), 0, 12);
+
+        $tags = array_map(fn (PurgeCdnTagMessage $m) => $m->tag, $dispatched->getArrayCopy());
+        $this->assertEqualsCanonicalizing(
+            ['asset-42', 'asset-path-' . $pathHash],
+            $tags
+        );
+    }
+
+    public function testOnAssetUpdateIgnoresEmptyOldPath(): void
+    {
+        // Defensive: a buggy event payload may set oldPath to '' — must not be hashed
+        // (would produce a meaningless asset-path-{hash} for /var/assets alone).
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $path = '/products/image.jpg';
+        $asset = $this->makeAsset(42, $path);
+
+        $event = new AssetEvent($asset);
+        $event->setArgument('oldPath', '');
+
+        $this->makeListener($bus)->onAssetUpdate($event);
+
+        $pathHash = substr(hash('sha256', '/var/assets' . $path), 0, 12);
+
+        $tags = array_map(fn (PurgeCdnTagMessage $m) => $m->tag, $dispatched->getArrayCopy());
+        $this->assertEqualsCanonicalizing(
+            ['asset-42', 'asset-path-' . $pathHash],
+            $tags
+        );
+    }
+
     public function testPostDeleteAlsoDispatchesTwoMessages(): void
     {
         [$bus, $dispatched] = $this->captureBusDispatches();
