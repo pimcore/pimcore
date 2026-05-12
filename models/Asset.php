@@ -548,6 +548,7 @@ class Asset extends Element\AbstractElement
                 // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
                 if ($this->getType() != 'folder') {
                     $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
+                    $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
                 }
             },
             onCommit: function () use (&$parameters, &$isUpdate, &$differentOldPath, &$updatedChildren) {
@@ -691,15 +692,20 @@ class Asset extends Element\AbstractElement
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
 
-                if (!$storage->fileExists($path) || !stream_is_local($storage->readStream($path))) {
+                $existingStream = $storage->fileExists($path) ? $storage->readStream($path) : null;
+                if (!$existingStream || !stream_is_local($existingStream)) {
                     // write stream directly if target file doesn't exist or if target is a remote storage
                     // this is because we don't have hardlinks there, so we don't need to consider them (see below)
+                    if (is_resource($existingStream)) {
+                        fclose($existingStream);
+                    }
                     $storage->writeStream($path, $src);
                 } else {
                     // We don't open a stream on existing files, because they could be possibly used by versions
                     // using hardlinks, so it's safer to write them to a temp file first, so the inode and therefore
                     // also the versioning information persists. Using the stream on the existing file would overwrite the
                     // contents of the inode and therefore leads to wrong version data
+                    fclose($existingStream);
                     $pathInfo = pathinfo($this->getFilename());
                     $tempFilePath = $this->getRealPath() . uniqid('temp_');
                     if ($pathInfo['extension'] ?? false) {
