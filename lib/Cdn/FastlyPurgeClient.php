@@ -57,6 +57,11 @@ class FastlyPurgeClient implements PurgeClientInterface
         $this->request('PURGE', $url);
     }
 
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @throws \Throwable when the HTTP request fails or Fastly returns a non-2xx response
+     */
     private function request(string $method, string $url, array $options = []): void
     {
         try {

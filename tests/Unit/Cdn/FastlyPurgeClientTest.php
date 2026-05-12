@@ -140,7 +140,7 @@ class FastlyPurgeClientTest extends TestCase
         $this->logger->expects($this->atLeastOnce())->method('error');
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageMatches('/401/');
+        $this->expectExceptionMessageMatches('/HTTP 401/');
 
         $this->client->purgeByTag('asset-1');
     }
@@ -155,7 +155,7 @@ class FastlyPurgeClientTest extends TestCase
         $this->logger->expects($this->atLeastOnce())->method('error');
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageMatches('/503/');
+        $this->expectExceptionMessageMatches('/HTTP 503/');
 
         $this->client->purgeByUrl('https://cdn.example.com/var/assets/image.jpg');
     }
