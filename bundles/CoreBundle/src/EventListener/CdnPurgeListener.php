@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Cdn\Message\PurgeCdnTagMessage;
+use Pimcore\Cdn\Message\PurgeCdnUrlMessage;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\ImageThumbnailConfigEvents;
 use Pimcore\Event\Model\Asset\Image\Thumbnail\ConfigEvent as ImageThumbnailConfigEvent;
@@ -39,6 +40,8 @@ class CdnPurgeListener implements EventSubscriberInterface
         private readonly MessageBusInterface $bus,
         #[Autowire('%env(CDN_PROVIDER)%')]
         private readonly string $cdnProvider,
+        #[Autowire('%env(CDN_BASE_URL)%')]
+        private readonly string $cdnBaseUrl = '',
     ) {
     }
 
@@ -112,6 +115,19 @@ class CdnPurgeListener implements EventSubscriberInterface
         if ($oldPath !== null && $oldPath !== '' && $oldPath !== $asset->getFullPath()) {
             $oldPathHash = substr(hash('sha256', '/var/assets' . $oldPath), 0, 12);
             $this->bus->dispatch(new PurgeCdnTagMessage('asset-path-' . $oldPathHash));
+        }
+
+        // URL-based purges for original assets: nginx serves /var/assets/* directly off
+        // disk so PHP never emits a Cache-Tag/Surrogate-Key for them, and tag-based
+        // purge cannot reach them. When CDN_BASE_URL is configured, also issue an
+        // absolute-URL purge against the public CDN host.
+        if ($this->cdnBaseUrl !== '') {
+            $base = rtrim($this->cdnBaseUrl, '/');
+            $this->bus->dispatch(new PurgeCdnUrlMessage($base . '/var/assets' . $asset->getFullPath()));
+
+            if ($oldPath !== null && $oldPath !== '' && $oldPath !== $asset->getFullPath()) {
+                $this->bus->dispatch(new PurgeCdnUrlMessage($base . '/var/assets' . $oldPath));
+            }
         }
     }
 

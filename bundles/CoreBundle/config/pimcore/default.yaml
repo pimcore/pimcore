@@ -6,6 +6,7 @@ parameters:
     env(PIMCORE_INSTANCE_IDENTIFIER): ''
     env(PIMCORE_PRODUCT_KEY): ''
     env(CDN_PROVIDER): ''
+    env(CDN_BASE_URL): ''
     env(FASTLY_API_TOKEN): ''
     env(FASTLY_API_SERVICE): ''
     env(FASTLY_API_BASE_URL): 'https://api.fastly.com'

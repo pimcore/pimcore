@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Unit\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\CdnPurgeListener;
 use Pimcore\Cdn\Message\PurgeCdnTagMessage;
+use Pimcore\Cdn\Message\PurgeCdnUrlMessage;
 use Pimcore\Event\Model\Asset\Image\Thumbnail\ConfigEvent as ImageThumbnailConfigEvent;
 use Pimcore\Event\Model\Asset\Video\Thumbnail\ConfigEvent as VideoThumbnailConfigEvent;
 use Pimcore\Event\Model\AssetEvent;
@@ -37,9 +38,9 @@ class CdnPurgeListenerTest extends TestCase
         return $asset;
     }
 
-    private function makeListener(MessageBusInterface $bus, string $provider = 'fastly'): CdnPurgeListener
+    private function makeListener(MessageBusInterface $bus, string $provider = 'fastly', string $cdnBaseUrl = ''): CdnPurgeListener
     {
-        return new CdnPurgeListener($bus, $provider);
+        return new CdnPurgeListener($bus, $provider, $cdnBaseUrl);
     }
 
     /**
@@ -340,5 +341,91 @@ class CdnPurgeListenerTest extends TestCase
         $this->makeListener($bus, '')->onVideoThumbnailConfigChange($event);
 
         $this->assertCount(0, $dispatched);
+    }
+
+    // -----------------------------------------------------------------------
+    // URL-based purges for original assets (nginx serves /var/assets/* directly
+    // off disk, so PHP never emits Cache-Tag for them and tag-purge cannot
+    // reach them). When CDN_BASE_URL is configured, the listener must also
+    // dispatch PurgeCdnUrlMessage for the absolute URL of the original asset.
+    // -----------------------------------------------------------------------
+
+    public function testOnAssetUpdateDispatchesUrlPurgeForOriginalAssetWhenCdnBaseUrlConfigured(): void
+    {
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $asset = $this->makeAsset(42, '/products/photo.jpg');
+        $this->makeListener($bus, 'fastly', 'https://cdn.example.com')
+            ->onAssetUpdate(new AssetEvent($asset));
+
+        $urlMessages = array_values(array_filter(
+            $dispatched->getArrayCopy(),
+            fn (object $m) => $m instanceof PurgeCdnUrlMessage
+        ));
+
+        $this->assertCount(1, $urlMessages);
+        $this->assertSame('https://cdn.example.com/var/assets/products/photo.jpg', $urlMessages[0]->url);
+    }
+
+    public function testOnAssetUpdateDispatchesUrlPurgeForBothPathsOnRenameWhenCdnBaseUrlConfigured(): void
+    {
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $asset = $this->makeAsset(42, '/products/new.jpg');
+        $event = new AssetEvent($asset);
+        $event->setArgument('oldPath', '/products/old.jpg');
+
+        $this->makeListener($bus, 'fastly', 'https://cdn.example.com')->onAssetUpdate($event);
+
+        $urls = array_map(
+            fn (PurgeCdnUrlMessage $m) => $m->url,
+            array_values(array_filter(
+                $dispatched->getArrayCopy(),
+                fn (object $m) => $m instanceof PurgeCdnUrlMessage
+            ))
+        );
+        sort($urls);
+
+        $this->assertSame(
+            [
+                'https://cdn.example.com/var/assets/products/new.jpg',
+                'https://cdn.example.com/var/assets/products/old.jpg',
+            ],
+            $urls
+        );
+    }
+
+    public function testOnAssetUpdateDoesNotDispatchUrlPurgeWhenCdnBaseUrlEmpty(): void
+    {
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $asset = $this->makeAsset(42, '/products/photo.jpg');
+        $this->makeListener($bus, 'fastly', '')->onAssetUpdate(new AssetEvent($asset));
+
+        $urlMessages = array_filter(
+            $dispatched->getArrayCopy(),
+            fn (object $m) => $m instanceof PurgeCdnUrlMessage
+        );
+
+        $this->assertCount(0, $urlMessages);
+        // Tag dispatches still happen (asset-id + path-hash).
+        $this->assertCount(2, $dispatched);
+    }
+
+    public function testOnAssetDeleteDispatchesUrlPurgeForOriginalAsset(): void
+    {
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $asset = $this->makeAsset(42, '/products/gone.jpg');
+        $this->makeListener($bus, 'fastly', 'https://cdn.example.com')
+            ->onAssetDelete(new AssetEvent($asset));
+
+        $urlMessages = array_values(array_filter(
+            $dispatched->getArrayCopy(),
+            fn (object $m) => $m instanceof PurgeCdnUrlMessage
+        ));
+
+        $this->assertCount(1, $urlMessages);
+        $this->assertSame('https://cdn.example.com/var/assets/products/gone.jpg', $urlMessages[0]->url);
     }
 }
