@@ -91,9 +91,14 @@ final class Version20260504092057 extends AbstractMigration
                 continue;
             }
 
-            $adminTranslation = Translation::getByKey($key, 'admin', true);
+            $adminTranslation = Translation::getByKey($key, 'admin');
+            $adminTranslationExists = $adminTranslation !== null;
+            if (!$adminTranslationExists) {
+                $adminTranslation = Translation::getByKey($key, 'admin', true);
+            }
+
             foreach ($backendTranslation->getTranslations() as $locale => $value) {
-                if (!$adminTranslation->hasTranslation($locale)) {
+                if (!$adminTranslationExists || !$adminTranslation->hasTranslation($locale)) {
                     $adminTranslation->addTranslation($locale, $value);
                 }
             }
