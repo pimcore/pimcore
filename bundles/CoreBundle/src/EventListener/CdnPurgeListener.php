@@ -123,12 +123,26 @@ class CdnPurgeListener implements EventSubscriberInterface
         // absolute-URL purge against the public CDN host.
         if ($this->cdnBaseUrl !== '') {
             $base = rtrim($this->cdnBaseUrl, '/');
-            $this->bus->dispatch(new PurgeCdnUrlMessage($base . '/var/assets' . $asset->getFullPath()));
+            $this->bus->dispatch(new PurgeCdnUrlMessage($base . $this->buildAssetUrlPath($asset->getFullPath())));
 
             if ($oldPath !== null && $oldPath !== '' && $oldPath !== $asset->getFullPath()) {
-                $this->bus->dispatch(new PurgeCdnUrlMessage($base . '/var/assets' . $oldPath));
+                $this->bus->dispatch(new PurgeCdnUrlMessage($base . $this->buildAssetUrlPath($oldPath)));
             }
         }
+    }
+
+    /**
+     * Build the public URL path (under /var/assets) for an asset, percent-encoding each
+     * path segment. Asset filenames may contain spaces or non-ASCII characters; the CDN
+     * stores its cache key under the browser-encoded form, so the purge URL must match.
+     * Forward slashes between segments are preserved unencoded.
+     */
+    private function buildAssetUrlPath(string $assetFullPath): string
+    {
+        $segments = explode('/', ltrim($assetFullPath, '/'));
+        $encoded = array_map('rawurlencode', $segments);
+
+        return '/var/assets/' . implode('/', $encoded);
     }
 
     private function dispatchThumbConfigPurge(string $configName): void

@@ -428,4 +428,61 @@ class CdnPurgeListenerTest extends TestCase
         $this->assertCount(1, $urlMessages);
         $this->assertSame('https://cdn.example.com/var/assets/products/gone.jpg', $urlMessages[0]->url);
     }
+
+    // -----------------------------------------------------------------------
+    // Asset paths may legitimately contain spaces, unicode characters, and
+    // other non-URL-safe characters (Pimcore allows them as filenames). When
+    // building the absolute purge URL, each path segment must be percent-
+    // encoded so the URL sent to the CDN matches the cache key the CDN
+    // stored when the browser-encoded GET request hit the edge.
+    // -----------------------------------------------------------------------
+
+    public function testOnAssetUpdateUrlPurgeEncodesPathSegmentsForOriginalAsset(): void
+    {
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        // Path containing a space and a non-ASCII character (umlaut).
+        $asset = $this->makeAsset(42, '/Car Images/Mötley.jpg');
+        $this->makeListener($bus, 'fastly', 'https://cdn.example.com')
+            ->onAssetUpdate(new AssetEvent($asset));
+
+        $urlMessages = array_values(array_filter(
+            $dispatched->getArrayCopy(),
+            fn (object $m) => $m instanceof PurgeCdnUrlMessage
+        ));
+
+        $this->assertCount(1, $urlMessages);
+        $this->assertSame(
+            'https://cdn.example.com/var/assets/Car%20Images/M%C3%B6tley.jpg',
+            $urlMessages[0]->url
+        );
+    }
+
+    public function testOnAssetUpdateUrlPurgeEncodesBothPathsOnRename(): void
+    {
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $asset = $this->makeAsset(42, '/Car Images/Mötley.jpg');
+        $event = new AssetEvent($asset);
+        $event->setArgument('oldPath', '/Old Folder/Lého.jpg');
+
+        $this->makeListener($bus, 'fastly', 'https://cdn.example.com')->onAssetUpdate($event);
+
+        $urls = array_map(
+            fn (PurgeCdnUrlMessage $m) => $m->url,
+            array_values(array_filter(
+                $dispatched->getArrayCopy(),
+                fn (object $m) => $m instanceof PurgeCdnUrlMessage
+            ))
+        );
+        sort($urls);
+
+        $this->assertSame(
+            [
+                'https://cdn.example.com/var/assets/Car%20Images/M%C3%B6tley.jpg',
+                'https://cdn.example.com/var/assets/Old%20Folder/L%C3%A9ho.jpg',
+            ],
+            $urls
+        );
+    }
 }
