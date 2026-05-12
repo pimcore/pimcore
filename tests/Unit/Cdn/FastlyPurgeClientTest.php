@@ -124,7 +124,40 @@ class FastlyPurgeClientTest extends TestCase
                 $this->arrayHasKey('status'),
             );
 
+        $this->expectException(\RuntimeException::class);
+
         $this->client->purgeByTag('asset-1');
+    }
+
+    public function testPurgeByTagThrowsRuntimeExceptionOnFastlyHttpError(): void
+    {
+        // A 401 from Fastly (e.g. revoked/expired API token) must surface as a thrown
+        // exception so Symfony Messenger sees the failure and applies its retry policy.
+        // Silently logging-and-returning would mark the message successful and the cache
+        // would never be purged.
+        $this->httpClient->method('request')->willReturn($this->mockResponse(401));
+
+        $this->logger->expects($this->atLeastOnce())->method('error');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessageMatches('/401/');
+
+        $this->client->purgeByTag('asset-1');
+    }
+
+    public function testPurgeByUrlThrowsRuntimeExceptionOnFastlyHttpError(): void
+    {
+        // A 503 from Fastly (transient upstream error) must surface as a thrown exception
+        // so Messenger's retry policy can re-attempt the purge instead of silently
+        // dropping the work.
+        $this->httpClient->method('request')->willReturn($this->mockResponse(503));
+
+        $this->logger->expects($this->atLeastOnce())->method('error');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessageMatches('/503/');
+
+        $this->client->purgeByUrl('https://cdn.example.com/var/assets/image.jpg');
     }
 
     public function testExceptionIsLoggedAndRethrown(): void

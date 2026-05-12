@@ -61,14 +61,6 @@ class FastlyPurgeClient implements PurgeClientInterface
     {
         try {
             $response = $this->httpClient->request($method, $url, $this->mergeRequestOptions($options));
-
-            $statusCode = $response->getStatusCode();
-            if ($statusCode < 200 || $statusCode >= 300) {
-                $this->logger->error(
-                    'Fastly purge request failed. Method: {method}, URL: {url}, Status: {status}',
-                    ['method' => $method, 'url' => $url, 'status' => $statusCode]
-                );
-            }
         } catch (\Throwable $e) {
             $this->logger->error(
                 'Fastly purge request threw an exception. Method: {method}, URL: {url}, Error: {error}',
@@ -76,6 +68,24 @@ class FastlyPurgeClient implements PurgeClientInterface
             );
 
             throw $e;
+        }
+
+        $statusCode = $response->getStatusCode();
+        if ($statusCode < 200 || $statusCode >= 300) {
+            $this->logger->error(
+                'Fastly purge request failed. Method: {method}, URL: {url}, Status: {status}',
+                ['method' => $method, 'url' => $url, 'status' => $statusCode]
+            );
+
+            // Throw so Symfony Messenger sees the failure and applies its retry policy.
+            // Returning silently here would mark the message handled and a revoked token
+            // or transient 5xx would result in a permanently un-purged cache entry.
+            throw new \RuntimeException(sprintf(
+                'Fastly purge request failed with HTTP %d for %s %s',
+                $statusCode,
+                $method,
+                $url
+            ));
         }
     }
 
