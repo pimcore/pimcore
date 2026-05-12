@@ -120,11 +120,23 @@ final class Version20250312132759 extends AbstractMigration
 
     private function isTargetColumn(string $value, bool $up): bool
     {
+        $value = trim($value);
+
         if ($up) {
-            return str_starts_with($value, 'a:');
+            if (preg_match('/^a:\d+:\{.*\}$/s', $value) !== 1) {
+                return false;
+            }
+
+            return is_array(@unserialize($value, ['allowed_classes' => false]));
         }
 
-        return str_starts_with($value, '{');
+        if (!str_starts_with($value, '{')) {
+            return false;
+        }
+
+        $decoded = json_decode($value, true);
+
+        return json_last_error() === JSON_ERROR_NONE && is_array($decoded);
     }
 
     private function alterColumn(bool $up = true): void
