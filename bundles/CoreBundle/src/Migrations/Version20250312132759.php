@@ -66,13 +66,14 @@ final class Version20250312132759 extends AbstractMigration
      */
     private function migrateAssets(bool $up = true): void
     {
-        $assets = $this->connection->fetchAllAssociative(
-            sprintf(
-                'select %s, %s from assets',
-                $this->connection->quoteIdentifier(self::ID_COLUMN),
-                $this->connection->quoteIdentifier(self::SETTINGS_COLUMN)
-            )
+        $sql = sprintf(
+            'SELECT %s, %s FROM %s',
+            $this->connection->quoteIdentifier(self::ID_COLUMN),
+            $this->connection->quoteIdentifier(self::SETTINGS_COLUMN),
+            $this->connection->quoteIdentifier(self::ASSET_TABLE)
         );
+
+        $assets = $this->connection->iterateAssociative($sql);
 
         foreach ($assets as $asset) {
             $this->migrateAsset($asset, $up);
@@ -84,41 +85,46 @@ final class Version20250312132759 extends AbstractMigration
      */
     private function migrateAsset(array $assetData, bool $up = true): void
     {
-        foreach ($assetData as $column => $value) {
-            if (
-                !is_string($value) ||
-                empty($value) ||
-                !$this->isTargetColumn($value, $up)
-            ) {
-                continue;
-            }
+        $value = $assetData[self::SETTINGS_COLUMN] ?? null;
 
-            $data = $up ?
-                unserialize($value, ['allowed_classes' => false]) :
-                json_decode($value, true, 512, JSON_THROW_ON_ERROR);
-
-            $data = $up ?
-                json_encode($data, JSON_THROW_ON_ERROR) :
-                serialize($data);
-
-            $this->addSql(
-                sprintf(
-                    'UPDATE %s SET %s = ? WHERE id = ?',
-                    $this->connection->quoteIdentifier(self::ASSET_TABLE),
-                    $this->connection->quoteIdentifier($column)
-                ),
-                [
-                    $data,
-                    $assetData['id'],
-                ]
-            );
+        if (
+            !is_string($value) ||
+            $value === '' ||
+            !$this->isTargetColumn($value, $up)
+        ) {
+            return;
         }
+
+        $converted = $up
+            ? json_encode(
+                unserialize($value, ['allowed_classes' => false]),
+                JSON_THROW_ON_ERROR
+            )
+            : serialize(
+                json_decode($value, true, 512, JSON_THROW_ON_ERROR)
+            );
+
+        $this->addSql(
+            sprintf(
+                'UPDATE %s SET %s = ? WHERE %s = ?',
+                $this->connection->quoteIdentifier(self::ASSET_TABLE),
+                $this->connection->quoteIdentifier(self::SETTINGS_COLUMN),
+                $this->connection->quoteIdentifier(self::ID_COLUMN)
+            ),
+            [
+                $converted,
+                $assetData[self::ID_COLUMN],
+            ]
+        );
     }
 
     private function isTargetColumn(string $value, bool $up): bool
     {
-        return ($up === true && preg_match('/^a:\d+:\{.*\}$/s', $value)) ||
-            ($up === false && preg_match('/^\{.*\}$/', $value));
+        if ($up) {
+            return str_starts_with($value, 'a:');
+        }
+
+        return str_starts_with($value, '{');
     }
 
     private function alterColumn(bool $up = true): void
