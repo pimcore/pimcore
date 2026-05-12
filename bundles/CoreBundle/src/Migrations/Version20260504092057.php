@@ -62,6 +62,12 @@ final class Version20260504092057 extends AbstractMigration
             KEY `language` (`language`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci");
 
+        if (empty($this->connection->fetchAllAssociative("SHOW TABLES LIKE 'translations_admin'"))) {
+            $this->write('Skipping migration: translations_admin table does not exist.');
+
+            return;
+        }
+
         $inList = "'" . implode("', '", self::KEYS) . "'";
 
         // Copy all rows (every locale, including ones absent from getValidLanguages()) and preserve type.
@@ -87,6 +93,12 @@ final class Version20260504092057 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
+        if (empty($this->connection->fetchAllAssociative("SHOW TABLES LIKE 'translations_admin'"))) {
+            $this->write('Skipping revert: translations_admin table does not exist.');
+
+            return;
+        }
+
         $inList = "'" . implode("', '", self::KEYS) . "'";
 
         $this->addSql(
