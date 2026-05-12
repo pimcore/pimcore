@@ -122,22 +122,15 @@ final class Version20250312132759 extends AbstractMigration
     private function isTargetColumn(string $value, bool $up): bool
     {
         if ($up) {
-            return str_starts_with($value, 'a:')
-                && is_array(@unserialize($value, ['allowed_classes' => false]));
+            return str_starts_with($value, 'a:');
         }
-    
-        if (!str_starts_with(ltrim($value), '{')) {
-            return false;
-        }
-    
-        json_decode($value, true);
-    
-        return json_last_error() === JSON_ERROR_NONE;
+
+        return str_starts_with($value, '{');
     }
 
     private function alterColumn(bool $up = true): void
     {
-        $this->addSql(
+        $this->connection->executeStatement(
             sprintf(
                 'ALTER TABLE %s MODIFY COLUMN %s %s',
                 $this->connection->quoteIdentifier(self::ASSET_TABLE),
