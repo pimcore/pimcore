@@ -249,10 +249,8 @@ final class Translation extends AbstractModel
         $languages = $languages ? array_intersect(static::getValidLanguages($domain), $languages) : static::getValidLanguages($domain);
 
         try {
-            if ($domain == self::DOMAIN_ADMIN) {
-                $languages = null;
-            }
-            $translation->getDao()->getByKey($id, $languages);
+            $daoLanguages = $domain == self::DOMAIN_ADMIN ? null : $languages;
+            $translation->getDao()->getByKey($id, $daoLanguages);
         } catch (Exception $e) {
             if (!$create && !$returnIdIfEmpty) {
                 return null;
