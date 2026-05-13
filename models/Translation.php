@@ -235,7 +235,7 @@ final class Translation extends AbstractModel
     public static function getByKey(string $id, string $domain = self::DOMAIN_DEFAULT, bool $create = false, bool $returnIdIfEmpty = false, ?array $languages = null): ?static
     {
         $cacheKey = 'translation_' . $id . '_' . $domain;
-        if (is_array($languages)) {
+        if ($domain !== self::DOMAIN_ADMIN && is_array($languages)) {
             $cacheKey .= '_' . implode('-', $languages);
         }
 
@@ -249,7 +249,7 @@ final class Translation extends AbstractModel
         $languages = $languages ? array_intersect(static::getValidLanguages($domain), $languages) : static::getValidLanguages($domain);
 
         try {
-            $daoLanguages = $domain == self::DOMAIN_ADMIN ? null : $languages;
+            $daoLanguages = $domain === self::DOMAIN_ADMIN ? null : $languages;
             $translation->getDao()->getByKey($id, $daoLanguages);
         } catch (Exception $e) {
             if (!$create && !$returnIdIfEmpty) {
