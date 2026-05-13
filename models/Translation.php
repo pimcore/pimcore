@@ -201,10 +201,6 @@ final class Translation extends AbstractModel
      */
     public static function getValidLanguages(string $domain = self::DOMAIN_DEFAULT): array
     {
-        if ($domain == self::DOMAIN_ADMIN) {
-            return \Pimcore\Tool\Admin::getLanguages();
-        }
-
         return Tool::getValidLanguages();
     }
 
@@ -253,6 +249,9 @@ final class Translation extends AbstractModel
         $languages = $languages ? array_intersect(static::getValidLanguages($domain), $languages) : static::getValidLanguages($domain);
 
         try {
+            if ($domain == self::DOMAIN_ADMIN) {
+                $languages = null;
+            }
             $translation->getDao()->getByKey($id, $languages);
         } catch (Exception $e) {
             if (!$create && !$returnIdIfEmpty) {
