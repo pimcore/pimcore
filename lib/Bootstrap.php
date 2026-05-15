@@ -18,7 +18,6 @@ use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Tool\Admin;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;

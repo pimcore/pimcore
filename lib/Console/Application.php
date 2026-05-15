@@ -19,7 +19,6 @@ use Pimcore\Event\System\ConsoleEvent;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Migrations\FilteredMigrationsRepository;
 use Pimcore\Migrations\FilteredTableMetadataStorage;
-use Pimcore\Tool\Admin;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Pimcore\Version;
 use RuntimeException;

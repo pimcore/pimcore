@@ -15,7 +15,6 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Exception;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Tool\Admin;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
