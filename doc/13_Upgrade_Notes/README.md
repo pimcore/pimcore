@@ -1,5 +1,28 @@
 # Upgrade Notes
 
+## Pimcore 2026.2.0
+
+### [Maintenance Mode]
+- The legacy file-based maintenance mode backward-compatibility layer has been fully removed. The following deprecated static methods have been deleted from `Pimcore\Tool\Admin`:
+    - `getMaintenanceModeFile()`
+    - `getMaintenanceModeScheduleLoginFile()`
+    - `activateMaintenanceMode()`
+    - `deactivateMaintenanceMode()`
+    - `isInMaintenanceMode()`
+    - `isMaintenanceModeScheduledForLogin()`
+    - `scheduleMaintenanceModeOnLogin()`
+    - `unscheduleMaintenanceModeOnLogin()`
+
+  If you are still using any of these methods, replace them with the `Pimcore\Maintenance\Mode\MaintenanceModeHelperInterface` service. Inject it via the service container and use `activate()`, `deactivate()`, and `isActive()` instead.
+
+- The BC fallback that read the legacy `maintenance.php` configuration file has also been removed from `MaintenanceModeCommand`, `MaintenancePageListener`, `Bootstrap`, and `Console\Application`. Any existing `var/config/maintenance.php` file will be ignored. Ensure maintenance mode is managed exclusively through `MaintenanceModeHelperInterface`.
+
+- `Admin::getMinimizedScriptPath()` has been removed from `Pimcore\Tool\Admin`.
+
+### [Translations]
+- `Translation::DOMAIN_ADMIN` constant is deprecated since 2026.2 and will be removed in a future release. Avoid referencing the `admin` translation domain directly.
+- `Translator::$adminPath` and `Translator::$adminTranslationMapping` properties are deprecated since 2026.2.
+
 ## Pimcore 2026.1.0
 
 ### Tasks to Do Prior the Update
