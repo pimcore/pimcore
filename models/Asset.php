@@ -354,6 +354,7 @@ class Asset extends Element\AbstractElement
                 unset($data['sourcePath']);
             }
 
+            $mimeType = self::resolveMimeTypeFromMapping($mimeType, $data['filename']);
             $type = self::getTypeFromMimeMapping($mimeType, $data['filename']);
             // only check maxpixels if it is an image
             if ($type === 'image' && $mimeTypeGuessData) {
@@ -443,6 +444,30 @@ class Asset extends Element\AbstractElement
         $list->setValues($config);
 
         return $list;
+    }
+
+    /**
+     *
+     *
+     * @internal
+     */
+    public static function resolveMimeTypeFromMapping(string $detectedMimeType, string $filename): string
+    {
+        if ($detectedMimeType === 'directory') {
+            return $detectedMimeType;
+        }
+
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        if ($extension === '') {
+            return $detectedMimeType;
+        }
+
+        $mappings = Config::getSystemConfiguration('assets')['mime_mappings'] ?? [];
+        if (isset($mappings[$extension])) {
+            return (string)$mappings[$extension];
+        }
+
+        return $detectedMimeType;
     }
 
     /**
@@ -735,6 +760,8 @@ class Asset extends Element\AbstractElement
                 if (!$mimeType || $mimeType === 'application/octet-stream') {
                     $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
                 }
+
+                $mimeType = self::resolveMimeTypeFromMapping($mimeType, $this->getFilename());
                 $this->setMimeType($mimeType);
                 $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 

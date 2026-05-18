@@ -753,6 +753,28 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end();
         $this->addImplementationNodeFromArrayDefinition($assetsNode, 'type_definitions');
+
+        $assetsNode
+            ->children()
+                ->arrayNode('mime_mappings')
+                    ->info('Override MIME type detection by file extension. Map of lowercase file extensions (without leading dot) to MIME type, e.g. `indd: application/x-indesign`.')
+                    ->useAttributeAsKey('name')
+                    ->normalizeKeys(false)
+                    ->beforeNormalization()
+                        ->ifArray()
+                        ->then(function (array $v) {
+                            $result = [];
+                            foreach ($v as $extension => $mimeType) {
+                                $extension = ltrim((string)$extension, '.');
+                                $result[strtolower($extension)] = $mimeType;
+                            }
+
+                            return $result;
+                        })
+                    ->end()
+                    ->scalarPrototype()->end()
+                ->end()
+            ->end();
     }
 
     /**
