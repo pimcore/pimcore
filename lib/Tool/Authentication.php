@@ -54,7 +54,12 @@ class Authentication
 
             if ($user instanceof \Pimcore\Security\User\User && self::isValidUser($user->getUser())) {
                 $pimcoreUser = $user->getUser();
-                $pimcoreUser->setLastLoginDate(); //set user current login date
+                // update last login date if last login timestamp was more than few seconds ago
+                // this is to reduce potential many last login update queries within a small time frame
+                if ($pimcoreUser->getLastLogin() <= time() - 15) {
+                    $pimcoreUser->setLastLogin(time());
+                    $pimcoreUser->setLastLoginDate(); //set user current login date
+                }
 
                 return $pimcoreUser;
             }

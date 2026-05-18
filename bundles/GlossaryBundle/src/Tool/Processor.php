@@ -115,7 +115,6 @@ class Processor
         $data['count'] = array_fill(0, count($data['search']), 0);
 
         $es->each(function ($parentNode, $i) use ($options, $data) {
-            /** @var DomCrawler|null $parentNode */
             $text = $parentNode->html();
             if (
                 $parentNode instanceof DomCrawler &&

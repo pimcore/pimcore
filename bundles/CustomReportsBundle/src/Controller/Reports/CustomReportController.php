@@ -18,6 +18,7 @@ use Pimcore\Bundle\CustomReportsBundle\Tool;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
 use stdClass;
@@ -26,6 +27,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 use function array_key_exists;
@@ -151,6 +153,9 @@ class CustomReportController extends UserAwareController
         if (!$report) {
             throw $this->createNotFoundException();
         }
+
+        $this->assertUserCanAccessReport($report);
+
         $data = $report->getObjectVars();
         $data['writeable'] = $report->isWriteable();
 
@@ -278,12 +283,15 @@ class CustomReportController extends UserAwareController
         if (!class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
             throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
         }
-        $offset = $request->request->getInt('start', 0);
-        $limit = $request->request->getInt('limit', 40);
+        $offset = ParameterBagHelper::getInt($request->request, 'start', 0);
+        $limit = ParameterBagHelper::getInt($request->request, 'limit', 40);
         $config = Tool\Config::getByName($request->request->getString('name'));
         if (!$config) {
             throw $this->createNotFoundException();
         }
+
+        $this->assertUserCanAccessReport($config);
+
         $configuration = $config->getDataSourceConfig();
         $adapter = Tool\Config::getAdapter($configuration, $config);
         $sortFilters = $this->getSortAndFilters($request, $configuration);
@@ -313,6 +321,9 @@ class CustomReportController extends UserAwareController
         if (!$config) {
             throw $this->createNotFoundException();
         }
+
+        $this->assertUserCanAccessReport($config);
+
         $configuration = $config->getDataSourceConfig();
 
         $adapter = Tool\Config::getAdapter($configuration, $config);
@@ -332,6 +343,8 @@ class CustomReportController extends UserAwareController
         if (!$config) {
             throw $this->createNotFoundException();
         }
+        $this->assertUserCanAccessReport($config);
+
         $configuration = $config->getDataSourceConfig();
         $adapter = Tool\Config::getAdapter($configuration, $config);
         $sortFilters = $this->getSortAndFilters($request, $configuration);
@@ -369,11 +382,14 @@ class CustomReportController extends UserAwareController
             $drillDownFilters = json_decode($drillDownFilters, true);
         }
         $includeHeaders = $request->query->getBoolean('headers');
+        $delimiter = $request->query->getString('delimiter', ';');
 
         $config = Tool\Config::getByName($request->query->getString('name'));
         if (!$config) {
             throw $this->createNotFoundException();
         }
+
+        $this->assertUserCanAccessReport($config);
 
         $columns = $config->getColumnConfiguration();
         $fields = [];
@@ -387,7 +403,7 @@ class CustomReportController extends UserAwareController
 
         $adapter = Tool\Config::getAdapter($configuration, $config);
 
-        $offset = $request->query->getInt('offset');
+        $offset = ParameterBagHelper::getInt($request->query, 'offset');
         $limit = 5000;
         $result = $adapter->getData($filters, $sort, $dir, $offset * $limit, $limit, $fields, $drillDownFilters);
         ++$offset;
@@ -402,12 +418,12 @@ class CustomReportController extends UserAwareController
         $fp = fopen($exportFile, 'a');
 
         if ($includeHeaders) {
-            fputcsv($fp, $fields, ';');
+            fputcsv($fp, $fields, $delimiter);
         }
 
         foreach ($result['data'] as $row) {
             $row = Service::escapeCsvRecord($row);
-            fputcsv($fp, array_values($row), ';');
+            fputcsv($fp, array_values($row), $delimiter);
         }
 
         fclose($fp);
@@ -471,5 +487,16 @@ class CustomReportController extends UserAwareController
         }
 
         return ['sort' => $sort, 'dir' => $dir, 'filters' => $filters, 'drillDownFilters' => $drillDownFilters];
+    }
+
+    /**
+     * @throws AccessDeniedHttpException
+     */
+    private function assertUserCanAccessReport(Tool\Config $config): void
+    {
+        $user = $this->getPimcoreUser();
+        if ($user === null || !$config->isUserAllowed($user)) {
+            throw $this->createAccessDeniedHttpException();
+        }
     }
 }

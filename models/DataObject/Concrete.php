@@ -118,8 +118,19 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     $value = $this->$getter();
 
                     $omitMandatoryCheck = $this->getOmitMandatoryCheck();
-                    // when adding a new object, skip check on mandatory fields with default value
-                    if (empty($value) && !$isUpdate && method_exists($fd, 'getDefaultValue') && !empty($fd->getDefaultValue())
+
+                    // when adding a new object, skip check on mandatory for fields
+                    // with default value or default value or default value generator
+                    if (!$omitMandatoryCheck && empty($value) && !$isUpdate &&
+                        (
+                            (
+                                method_exists($fd, 'getDefaultValue') &&
+                                !empty($fd->getDefaultValue())
+                            ) || (
+                                method_exists($fd, 'getDefaultValueGenerator') &&
+                                $fd->getDefaultValueGenerator() !== ''
+                            )
+                        )
                     ) {
                         $omitMandatoryCheck = true;
                     }

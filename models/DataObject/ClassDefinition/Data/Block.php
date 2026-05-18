@@ -812,12 +812,24 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         }
 
         if (is_array($data)) {
+            $unsupportedFd = [
+                Classificationstore::class,
+                Fieldcollections::class,
+                Localizedfields::class,
+            ];
+
             foreach ($data as $blockElements) {
                 foreach ($blockElements as $elementName => $blockElement) {
                     $fd = $this->getFieldDefinition($elementName);
 
                     if ($fd instanceof PreGetDataInterface) {
-                        $blockElement->setData($fd->preGetData($blockElement, array_merge($params, ['data' => $blockElement->getData()])));
+                        if (!array_filter($unsupportedFd, fn ($i) => $fd instanceof $i)) {
+                            $preGetData = $fd->preGetData(
+                                $blockElement,
+                                array_merge($params, ['data' => $blockElement->getData()])
+                            );
+                            $blockElement->setData($preGetData);
+                        }
                     }
                 }
             }

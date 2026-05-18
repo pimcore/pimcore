@@ -1067,11 +1067,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     public function getThumbnail(string|Asset\Video\Thumbnail\Config $config): array
     {
-        if ($this->getVideoAsset()) {
-            return $this->getVideoAsset()->getThumbnail($config);
-        }
-
-        return [];
+        return $this->getVideoAsset()?->getThumbnail($config) ?? [];
     }
 
     public function rewriteIds(array $idMapping): void

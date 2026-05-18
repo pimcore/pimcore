@@ -6,7 +6,7 @@ Since we're building on top of Symfony and in an app, Pimcore and Symfony code g
 For further information on how you can ensure that your application won't break when upgrading to a newer version of the same major release branch, please have a look at
 https://symfony.com/doc/current/contributing/code/bc.html
 
-## Upgrading within Version 11
+## Upgrading within Version 12
 
 :::tip
 
@@ -26,3 +26,4 @@ We recommend using the Pimcore Platform Version. Details see [here](https://pimc
 - [Preparing for Version 11](./11_Preparing_for_V11.md)
 - [Upgrade from Version 10 to Version 11](./12_V10_to_V11.md)
 - [Upgrade from Version 11 to Version 12](./13_V11_to_V12.md)
+- [Upgrade from Version 12 to Version 2026](./14_V12_to_V2026.md)

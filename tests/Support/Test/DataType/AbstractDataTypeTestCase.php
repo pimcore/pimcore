@@ -263,7 +263,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject([
             [
-                'method' => 'fillMultiSelect',
+                'method' => 'fillCountryMultiSelect',
                 'field' => 'countries',
             ],
         ]);
@@ -505,13 +505,13 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject([
             [
-                'method' => 'fillMultiSelect',
+                'method' => 'fillLanguageMultiSelect',
                 'field' => 'languages',
             ],
         ]);
 
         $this->refreshObject();
-        $this->testDataHelper->assertCountryMultiSelect($this->testObject, 'languages', $this->seed);
+        $this->testDataHelper->assertLanguageMultiSelect($this->testObject, 'languages', $this->seed);
     }
 
     public function testLastname(): void
@@ -657,6 +657,19 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
         $this->testDataHelper->assertMultiSelect($this->testObject, 'multiselect', $this->seed);
+    }
+
+    public function testMultiSelectWithEnforceValidation(): void
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillMultiSelectEnforced',
+                'field' => 'multiselectenforced',
+            ],
+        ]);
+
+        $this->refreshObject();
+        $this->testDataHelper->assertMultiSelectEnforced($this->testObject, 'multiselectenforced', $this->seed);
     }
 
     public function testNumeric(): void

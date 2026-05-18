@@ -28,8 +28,9 @@ class SettingsController extends UserAwareController
     #[Route('/staticroutes', name: 'pimcore_bundle_staticroutes_settings_staticroutes', methods: ['POST'])]
     public function staticroutesAction(Request $request): JsonResponse
     {
+        $this->checkPermission('routes');
+
         if ($request->request->has('data')) {
-            $this->checkPermission('routes');
 
             $data = $this->decodeJson($request->request->getString('data'));
 

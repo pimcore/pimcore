@@ -995,8 +995,10 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     {
         $class = $this->getFieldDefinitions([]);
         foreach ($compositeIndices as $indexInd => $compositeIndex) {
+            $this->getDao()->assertValidIdentifier($compositeIndex['index_key'] ?? '');
             foreach ($compositeIndex['index_columns'] as $fieldInd => $fieldName) {
                 if (isset($class[$fieldName]) && $class[$fieldName] instanceof ManyToOneRelation) {
+                    $this->getDao()->assertValidIdentifier($fieldName);
                     $compositeIndices[$indexInd]['index_columns'][$fieldInd] = $fieldName . '__id';
                     $compositeIndices[$indexInd]['index_columns'][] = $fieldName . '__type';
                     $compositeIndices[$indexInd]['index_columns'] = array_unique($compositeIndices[$indexInd]['index_columns']);

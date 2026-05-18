@@ -41,7 +41,6 @@ use Pimcore\Tool;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Tool\Session;
 use stdClass;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Throwable;
@@ -986,7 +985,7 @@ class Service extends Model\Element\Service
     public static function getSuperLayoutDefinition(Concrete $object): mixed
     {
         $mainLayout = $object->getClass()->getLayoutDefinitions();
-        $superLayout = unserialize(serialize($mainLayout));
+        $superLayout = self::cloneDefinition($mainLayout);
 
         self::createSuperLayout($superLayout);
 
@@ -1440,15 +1439,17 @@ class Service extends Model\Element\Service
 
     private static function evaluateExpression(Model\DataObject\ClassDefinition\Data\CalculatedValue $fd, Concrete $object, ?DataObject\Data\CalculatedValue $data): mixed
     {
-        $expressionLanguage = new ExpressionLanguage();
-        //overwrite constant function to aviod exposing internal information
-        $expressionLanguage->register('constant', function ($str) {
-            throw new SyntaxError('`constant` function not available');
-        }, function ($arguments, $str) {
-            throw new SyntaxError('`constant` function not available');
-        });
+        // TODO refactor in a future PR to allow these to be injected
+        $container = Pimcore::getContainer();
+        $expressionLanguage = $container->get('pimcore.calculated_value.expression_language');
 
-        return $expressionLanguage->evaluate($fd->getCalculatorExpression(), ['object' => $object, 'data' => $data]);
+        return $expressionLanguage->evaluate(
+            $fd->getCalculatorExpression(),
+            [
+                'object' => $object,
+                'data' => $data,
+            ]
+        );
     }
 
     /**
