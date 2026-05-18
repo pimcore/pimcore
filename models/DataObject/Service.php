@@ -701,7 +701,7 @@ class Service extends Model\Element\Service
     public static function getSuperLayoutDefinition(Concrete $object): mixed
     {
         $mainLayout = $object->getClass()->getLayoutDefinitions();
-        $superLayout = unserialize(serialize($mainLayout));
+        $superLayout = self::cloneDefinition($mainLayout);
 
         self::createSuperLayout($superLayout);
 
