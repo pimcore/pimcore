@@ -223,18 +223,42 @@ class Manager
     ): Marking {
         $this->notesSubscriber->setAdditionalData($additionalData);
 
-        $marking = $workflow->apply($subject, $transition, $additionalData);
+        $markingStore = $workflow->getMarkingStore();
+        $previousMarking = $markingStore->getMarking($subject);
+        $previousPublishedState = ($subject instanceof Concrete || $subject instanceof PageSnippet)
+            ? $subject->isPublished()
+            : null;
 
-        $this->notesSubscriber->setAdditionalData([]);
+        try {
+            $marking = $workflow->apply($subject, $transition, $additionalData);
+        } finally {
+            $this->notesSubscriber->setAdditionalData([]);
+        }
 
         $transition = $this->getTransitionByName($workflow->getName(), $transition);
         $changePublishedState = $transition instanceof Transition ? $transition->getChangePublishedState() : null;
 
         if ($saveSubject) {
-            if ($changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION) {
-                $subject->saveVersion();
-            } else {
-                $subject->save();
+            try {
+                if ($changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION) {
+                    $subject->saveVersion();
+                } else {
+                    $subject->save();
+                }
+            } catch (\Throwable $e) {
+                // Roll back the workflow place and published state when the
+                // post-transition save fails (e.g. due to a mandatory field
+                // validation error on a force_published transition). Otherwise
+                // marking stores that persist immediately (such as the
+                // state_table store) leave the subject in an inconsistent state.
+                $markingStore->setMarking($subject, $previousMarking);
+                if ($previousPublishedState !== null
+                    && ($subject instanceof Concrete || $subject instanceof PageSnippet)
+                ) {
+                    $subject->setPublished($previousPublishedState);
+                }
+
+                throw $e;
             }
         }
 
@@ -267,6 +291,7 @@ class Manager
         $this->eventDispatcher->dispatch($event, WorkflowEvents::PRE_GLOBAL_ACTION);
 
         $markingStore = $workflow->getMarkingStore();
+        $previousMarking = $markingStore->getMarking($subject);
 
         if (!empty($globalActionObj->getTos())) {
             $places = [];
@@ -281,7 +306,16 @@ class Manager
         $this->notesSubscriber->setAdditionalData([]);
 
         if ($saveSubject && $subject instanceof ElementInterface) {
-            $subject->save();
+            try {
+                $subject->save();
+            } catch (\Throwable $e) {
+                // Roll back the workflow place if the save fails so marking
+                // stores that persist immediately do not leave the subject in
+                // an inconsistent state (see pimcore/pimcore#18178).
+                $markingStore->setMarking($subject, $previousMarking);
+
+                throw $e;
+            }
         }
 
         return $markingStore->getMarking($subject);
