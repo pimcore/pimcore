@@ -1197,6 +1197,8 @@ class Service extends Model\Element\Service
             return null;
         }
 
+        $data->setCalculatorData($fd->getCalculatorData());
+
         return DataObject\Service::useInheritedValues(true, static function () use ($fd, $object, $data) {
             switch ($fd->getCalculatorType()) {
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
@@ -1253,6 +1255,8 @@ class Service extends Model\Element\Service
         ) {
             $object = $object->getObject();
         }
+
+        $data->setCalculatorData($fd->getCalculatorData());
 
         return DataObject\Service::useInheritedValues(true, static function () use ($object, $fd, $data) {
             switch ($fd->getCalculatorType()) {

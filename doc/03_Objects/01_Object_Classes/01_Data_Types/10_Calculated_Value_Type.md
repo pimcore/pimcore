@@ -162,6 +162,30 @@ class Calculator implements CalculatorClassInterface
 
 The calculator class sums the x and y values from the corresponding language tab.
 
+#### Passing arguments to the calculator class
+
+Optionally, additional data can be configured for the calculator class in the class definition (field
+`calculatorData`). The value is a free-form string (e.g. a plain value, a comma-separated list or a JSON
+encoded structure) and is exposed to the calculator through the context via `$context->getCalculatorData()`.
+This allows reusing the same calculator class for simple variations without having to define a dedicated
+calculator class per variation.
+
+```php
+public function compute(Concrete $object, CalculatedValue $context): string
+{
+    $factor = (float) ($context->getCalculatorData() ?? '1');
+    $language = $context->getPosition();
+
+    return (string) (($object->getXValue($language) + $object->getYValue($language)) * $factor);
+}
+```
+
+When using the expression calculator type, the value is also available on the `data` variable:
+
+```
+data.getCalculatorData()
+```
+
 Implement the `getCalculatedValueForEditMode` method in addition to `compute`.
 This method provides the display value in object edit mode:
 
