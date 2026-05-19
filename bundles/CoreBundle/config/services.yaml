@@ -3,6 +3,12 @@ services:
         autowire: true
         autoconfigure: true
 
+    _instanceof:
+        # all services implementing the TemplateProviderInterface contribute
+        # additional selectable templates to the ControllerDataProvider
+        Pimcore\Controller\Config\TemplateProviderInterface:
+            tags: ['pimcore.template_provider']
+
     #
     # SECURITY
     #
@@ -65,6 +71,7 @@ services:
         public : true
         arguments:
             $serviceControllers: '%pimcore.service_controllers%'
+            $templateProviders: !tagged_iterator pimcore.template_provider
 
     #
     # HTTP/REST clients

@@ -45,10 +45,19 @@ class ControllerDataProvider
         '*.twig',
     ];
 
-    public function __construct(KernelInterface $kernel, array $serviceControllers)
+    /**
+     * @var iterable<TemplateProviderInterface>
+     */
+    private iterable $templateProviders;
+
+    /**
+     * @param iterable<TemplateProviderInterface> $templateProviders
+     */
+    public function __construct(KernelInterface $kernel, array $serviceControllers, iterable $templateProviders = [])
     {
         $this->kernel = $kernel;
         $this->serviceControllers = $serviceControllers;
+        $this->templateProviders = $templateProviders;
     }
 
     /**
@@ -154,7 +163,11 @@ class ControllerDataProvider
             }
         }
 
-        return $this->templates = array_merge(...$templates);
+        foreach ($this->templateProviders as $templateProvider) {
+            $templates[] = $templateProvider->getTemplates();
+        }
+
+        return $this->templates = array_values(array_unique(array_merge(...$templates)));
     }
 
     /**
