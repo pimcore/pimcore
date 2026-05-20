@@ -461,7 +461,7 @@ class Dao extends Model\Element\Dao
             ");
         } else {
             $classIds = $this->db->fetchFirstColumn(
-                "SELECT DISTINCT classId FROM objects WHERE `path` like ? AND `type` = 'object'",
+                "SELECT DISTINCT classId FROM objects WHERE `path` like ? AND `type` = 'object' AND classId IS NOT NULL AND classId != ''",
                 [Helper::escapeLike($path) . '/%']
             );
         }
