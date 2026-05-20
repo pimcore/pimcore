@@ -26,6 +26,27 @@ use Throwable;
 class Helper
 {
     /**
+     * MySQL / MariaDB vendor error codes that DBAL maps to
+     * UniqueConstraintViolationException.
+     *
+     * Pimcore only supports MySQL-family databases (MySQL, MariaDB, Percona,
+     * AWS Aurora) — see the system requirements — so no other vendors are
+     * considered here.
+     *
+     * @var int[]
+     */
+    private const array DUPLICATE_KEY_VENDOR_CODES = [
+        // ER_DUP_ENTRY
+        1062,
+        // ER_FOREIGN_DUPLICATE_KEY
+        1557,
+        // ER_DUP_ENTRY_WITH_KEY_NAME
+        1569,
+        // ER_DUP_ENTRY_AUTOINCREMENT_CASE
+        1586,
+    ];
+
+    /**
      * @param array<string, mixed> $data The data to be inserted or updated into the database table.
      * Array key corresponds to the database column, array value to the actual value.
      * @param string[] $keys If the table needs to be updated, the columns listed in this parameter will be used as criteria/condition for the where clause.
@@ -101,18 +122,6 @@ class Helper
 
         $connection->update($table, $data, $criteria);
     }
-
-    /**
-     * Pimcore only supports MySQL-family databases (MySQL, MariaDB, Percona,
-     * AWS Aurora) — see the system requirements — so no other vendors are
-     * considered here.
-     */
-    private const DUPLICATE_KEY_VENDOR_CODES = [
-        1062,
-        1557,
-        1569,
-        1586,
-    ];
 
     private static function isDuplicateKeyException(Throwable $exception): bool
     {
