@@ -451,20 +451,28 @@ class Dao extends Model\Element\Dao
     public function getClasses(): array
     {
         $path = $this->model->getRealFullPath();
-        if (!$this->model->getId() || $this->model->getId() == 1) {
-            $classIds = $this->db->fetchFirstColumn("
-                SELECT DISTINCT classId
-                FROM objects
-                WHERE `type` = 'object'
-                    AND classId IS NOT NULL
-                    AND classId != ''
-            ");
-        } else {
-            $classIds = $this->db->fetchFirstColumn(
-                "SELECT DISTINCT classId FROM objects WHERE `path` like ? AND `type` = 'object' AND classId IS NOT NULL AND classId != ''",
-                [Helper::escapeLike($path) . '/%']
-            );
+        $pathCondition = '';
+        $params = [];
+        
+        if ($path && (int) $this->model->getId() > 1) {
+            $pathCondition = ' AND path LIKE ?';
+            $params[] = Helper::escapeLike($path) . '/%';
         }
+        
+        $classIds = $this->db->fetchFirstColumn(
+            sprintf(
+                '
+                    SELECT DISTINCT classId
+                    FROM objects
+                    WHERE type = "object"
+                      AND classId IS NOT NULL
+                      AND classId != ""
+                      %s
+                ',
+                $pathCondition
+            ),
+            $params
+        );
 
         $classes = [];
         foreach ($classIds as $classId) {
