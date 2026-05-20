@@ -23,7 +23,6 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Db\Helper;
 use RuntimeException;
-use Throwable;
 
 /**
  * @internal
@@ -37,7 +36,7 @@ class HelperTest extends TestCase
 
         $connection->expects(self::once())
             ->method('insert')
-            ->willThrowException(new UniqueConstraintViolationException('dup', self::makeDriverException(1062, '23000')));
+            ->willThrowException(new UniqueConstraintViolationException(self::makeDriverException(1062, '23000'), null));
 
         $connection->expects(self::once())
             ->method('update')
@@ -106,12 +105,9 @@ class HelperTest extends TestCase
         );
     }
 
-    /**
-     * @throws DBALException
-     */
     public function testUpsertRethrowsNonDuplicateKeyDbalExceptions(): void
     {
-        $deadlock = new DeadlockException('deadlock', self::makeDriverException(1213, '40001'));
+        $deadlock = new DeadlockException(self::makeDriverException(1213, '40001'), null);
 
         $connection = $this->createMock(Connection::class);
         $connection->method('quoteIdentifier')->willReturnCallback(static fn (string $id): string => '`' . $id . '`');
