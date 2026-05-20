@@ -462,11 +462,11 @@ class Dao extends Model\Element\Dao
         $classIds = $this->db->fetchFirstColumn(
             sprintf(
                 '
-                    SELECT DISTINCT classId
+                    SELECT DISTINCT `classId`
                     FROM objects
-                    WHERE type = "object"
-                      AND classId IS NOT NULL
-                      AND classId != ""
+                    WHERE `type` = \'object\'
+                      AND `classId` IS NOT NULL
+                      AND `classId` != \'\'
                       %s
                 ',
                 $pathCondition
