@@ -428,6 +428,7 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
         }
         this.searchParams.message = formValues.message;
         this.searchParams.pid = formValues.pid;
+        this.searchParams.userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
         var proxy = this.store.getProxy();
         proxy.extraParams = this.searchParams;
