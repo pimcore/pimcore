@@ -54,18 +54,21 @@ class HelperTest extends TestCase
     }
 
     /**
-     * Regression test: a raw driver-level exception (not converted to
-     * UniqueConstraintViolationException by DBAL) carrying SQLSTATE 23000 /
-     * vendor code 1062 must still trigger the update fallback.
+     * Regression test: a generic DBAL exception (not converted to
+     * UniqueConstraintViolationException by DBAL) carrying vendor code 1062
+     * must still trigger the update fallback. This can happen e.g. when
+     * custom middleware short-circuits DBAL's exception conversion.
      */
-    public function testUpsertFallsBackOnRawDriverDuplicateKeyException(): void
+    public function testUpsertFallsBackOnGenericDbalDuplicateKeyException(): void
     {
+        $dbalException = new class('duplicate', 1062) extends RuntimeException implements DBALException {};
+
         $connection = $this->createMock(Connection::class);
         $connection->method('quoteIdentifier')->willReturnCallback(static fn (string $id): string => '`' . $id . '`');
 
         $connection->expects(self::once())
             ->method('insert')
-            ->willThrowException(self::makeDriverException(1062, '23000'));
+            ->willThrowException($dbalException);
 
         $connection->expects(self::once())
             ->method('update')
