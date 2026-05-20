@@ -18,6 +18,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Exception as DriverExceptionInterface;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Exception\DeadlockException;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
 use PHPUnit\Framework\TestCase;
@@ -119,6 +120,29 @@ class HelperTest extends TestCase
         $connection->expects(self::never())->method('update');
 
         $this->expectException(DeadlockException::class);
+
+        Helper::upsert($connection, 'tmp_store', ['id' => 'maintenance.pid', 'data' => 'foo'], ['id']);
+    }
+
+    /**
+     * Regression test: a non-duplicate-key exception that happens to share
+     * SQLSTATE 23000 (e.g. a MySQL foreign-key violation, code 1452) must
+     * NOT trigger the update fallback and must be re-thrown unchanged.
+     */
+    public function testUpsertRethrowsNonDuplicateIntegrityViolationsWithSqlState23000(): void
+    {
+        $fkViolation = new ForeignKeyConstraintViolationException(self::makeDriverException(1452, '23000'), null);
+
+        $connection = $this->createMock(Connection::class);
+        $connection->method('quoteIdentifier')->willReturnCallback(static fn (string $id): string => '`' . $id . '`');
+
+        $connection->expects(self::once())
+            ->method('insert')
+            ->willThrowException($fkViolation);
+
+        $connection->expects(self::never())->method('update');
+
+        $this->expectException(ForeignKeyConstraintViolationException::class);
 
         Helper::upsert($connection, 'tmp_store', ['id' => 'maintenance.pid', 'data' => 'foo'], ['id']);
     }

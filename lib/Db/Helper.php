@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Pimcore\Db;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Exception as DriverExceptionInterface;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Exception\DriverException;
@@ -27,7 +26,6 @@ use Throwable;
 class Helper
 {
     /**
-     *
      * @param array<string, mixed> $data The data to be inserted or updated into the database table.
      * Array key corresponds to the database column, array value to the actual value.
      * @param string[] $keys If the table needs to be updated, the columns listed in this parameter will be used as criteria/condition for the where clause.
@@ -35,7 +33,11 @@ class Helper
      * The values for the specified keys are read from the $data parameter.
      *
      * @return int|string|null last insert id or null if the insert was not successful or it was an update.
-     * @throws DBALException
+     *
+     * @throws DBALException If the INSERT fails for a reason other than a duplicate-key violation
+     *                       (e.g. deadlock, lock-wait timeout, FK violation, connection loss) and
+     *                       if the UPDATE fallback itself fails.
+     * @throws LogicException If a column listed in $keys is not present in $data.
      */
     public static function upsert(
         Connection $connection,
@@ -58,6 +60,15 @@ class Helper
 
             return null;
         } catch (DBALException $exception) {
+            // DBAL normally converts a duplicate-key insert into
+            // UniqueConstraintViolationException, but in some setups
+            // (custom middleware, transaction/connection edge cases, lost
+            // connection during the statement) the driver-level exception
+            // can propagate without being re-classified. Fall back to the
+            // update path only when we can positively identify a duplicate-
+            // key error by MySQL/MariaDB vendor code; re-throw everything
+            // else (deadlocks, lock-wait timeouts, FK violations, NOT NULL
+            // violations, connection loss, ...).
             if (!self::isDuplicateKeyException($exception)) {
                 throw $exception;
             }
@@ -71,7 +82,9 @@ class Helper
     /**
      * @param array<string, mixed> $data
      * @param string[] $keys
-     * @throws DBALException
+     *
+     * @throws DBALException If the UPDATE fails.
+     * @throws LogicException If a column listed in $keys is not present in $data.
      */
     private static function upsertUpdateFallback(
         Connection $connection,
@@ -89,13 +102,21 @@ class Helper
         $connection->update($table, $data, $criteria);
     }
 
+    /**
+     * Pimcore only supports MySQL-family databases (MySQL, MariaDB, Percona,
+     * AWS Aurora) — see the system requirements — so no other vendors are
+     * considered here.
+     */
+    private const DUPLICATE_KEY_VENDOR_CODES = [
+        1062,
+        1557,
+        1569,
+        1586,
+    ];
+
     private static function isDuplicateKeyException(Throwable $exception): bool
     {
-        if ((int) $exception->getCode() === 1062) {
-            return true;
-        }
-
-        if ($exception instanceof DriverExceptionInterface && $exception->getSQLState() === '23000') {
+        if (in_array((int) $exception->getCode(), self::DUPLICATE_KEY_VENDOR_CODES, true)) {
             return true;
         }
 
