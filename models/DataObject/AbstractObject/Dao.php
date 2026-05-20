@@ -455,7 +455,8 @@ class Dao extends Model\Element\Dao
             $classIds = $this->db->fetchFirstColumn("
                 SELECT DISTINCT classId
                 FROM objects
-                WHERE classId IS NOT NULL
+                WHERE `type` = 'object'
+                    AND classId IS NOT NULL
                     AND classId != ''
             ");
         } else {
