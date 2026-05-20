@@ -453,12 +453,12 @@ class Dao extends Model\Element\Dao
         $path = $this->model->getRealFullPath();
         $pathCondition = '';
         $params = [];
-        
+
         if ($path && (int) $this->model->getId() > 1) {
             $pathCondition = ' AND path LIKE ?';
             $params[] = Helper::escapeLike($path) . '/%';
         }
-        
+
         $classIds = $this->db->fetchFirstColumn(
             sprintf(
                 '
