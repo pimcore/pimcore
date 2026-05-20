@@ -14,11 +14,15 @@ declare(strict_types=1);
 namespace Pimcore\Db;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Exception as DriverExceptionInterface;
 use Doctrine\DBAL\Driver\Result;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Exception\DriverException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
 use LogicException;
 use Pimcore\Model\Element\ValidationException;
+use Throwable;
 
 class Helper
 {
@@ -31,6 +35,7 @@ class Helper
      * The values for the specified keys are read from the $data parameter.
      *
      * @return int|string|null last insert id or null if the insert was not successful or it was an update.
+     * @throws DBALException
      */
     public static function upsert(
         Connection $connection,
@@ -48,17 +53,58 @@ class Helper
             } catch (DriverException) {
                 return null;
             }
-        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $exception) {
-            $critera = [];
-            foreach ($keys as $key) {
-                $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
-                $critera[$key] = $data[$key] ?? throw new LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
+        } catch (UniqueConstraintViolationException) {
+            self::upsertUpdateFallback($connection, $table, $data, $keys, $quoteIdentifiers);
+
+            return null;
+        } catch (DBALException $exception) {
+            if (!self::isDuplicateKeyException($exception)) {
+                throw $exception;
             }
 
-            $connection->update($table, $data, $critera);
+            self::upsertUpdateFallback($connection, $table, $data, $keys, $quoteIdentifiers);
 
             return null;
         }
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @param string[] $keys
+     * @throws DBALException
+     */
+    private static function upsertUpdateFallback(
+        Connection $connection,
+        string $table,
+        array $data,
+        array $keys,
+        bool $quoteIdentifiers
+    ): void {
+        $criteria = [];
+        foreach ($keys as $key) {
+            $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
+            $criteria[$key] = $data[$key] ?? throw new LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
+        }
+
+        $connection->update($table, $data, $criteria);
+    }
+
+    private static function isDuplicateKeyException(Throwable $exception): bool
+    {
+        if ((int) $exception->getCode() === 1062) {
+            return true;
+        }
+
+        if ($exception instanceof DriverExceptionInterface && $exception->getSQLState() === '23000') {
+            return true;
+        }
+
+        $previous = $exception->getPrevious();
+        if ($previous instanceof Throwable) {
+            return self::isDuplicateKeyException($previous);
+        }
+
+        return false;
     }
 
     public static function fetchPairs(Connection $db, string $sql, array $params = [], array $types = []): array
