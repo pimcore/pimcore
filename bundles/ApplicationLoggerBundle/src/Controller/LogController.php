@@ -155,7 +155,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         ]);
     }
 
-    private function parseDateObject(?string $date, ?string $time, string $userTimezone = ''): ?DateTime
+    private function parseDateObject(?string $date, ?string $time, string $userTimezone = null): ?DateTime
     {
         if (empty($date)) {
             return null;
