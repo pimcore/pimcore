@@ -164,7 +164,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $pattern = '/^(?P<date>\d{4}\-\d{2}\-\d{2})T(?P<time>\d{2}:\d{2}:\d{2})$/';
 
         $tz = new \DateTimeZone('UTC');
-        if ($userTimezone !== '') {
+        if ($userTimezone !== null && $userTimezone !== '') {
             try {
                 $tz = new \DateTimeZone($userTimezone);
             } catch (\Exception) {
