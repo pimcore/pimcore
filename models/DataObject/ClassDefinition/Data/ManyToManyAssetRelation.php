@@ -14,13 +14,13 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Exception;
+use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
-use Pimcore\Normalizer\NormalizerInterface;
 
 class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefinitionEnrichmentInterface
 {
@@ -187,10 +187,6 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 $id = $element['id'] ?? null;
-                if (null === $id && isset($element[0])) {
-                    $id = $element[0];
-                }
-
                 if ($id === null) {
                     continue;
                 }
@@ -324,14 +320,11 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
      */
     public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->maxItems = $mainDefinition->maxItems;
-        $this->assetUploadPath = $mainDefinition->assetUploadPath;
-        $this->relationType = $mainDefinition->relationType;
-        $this->objectsAllowed = $mainDefinition->objectsAllowed;
-        $this->assetsAllowed = $mainDefinition->assetsAllowed;
-        $this->assetTypes = $mainDefinition->assetTypes;
-        $this->documentsAllowed = $mainDefinition->documentsAllowed;
-        $this->documentTypes = $mainDefinition->documentTypes;
+        parent::synchronizeWithMainDefinition($mainDefinition);
+
+        if ($mainDefinition instanceof self) {
+            $this->visibleFields = $mainDefinition->getVisibleFields();
+        }
     }
 
     /**
@@ -420,15 +413,16 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
         return null;
     }
 
-    public function isFilterable(): bool
-    {
-        return true;
-    }
-
     public function addListingFilter(DataObject\Listing $listing, float|array|int|string|Model\Element\ElementInterface $data, string $operator = '='): DataObject\Listing
     {
         if ($data instanceof Asset) {
             $data = $data->getId();
+        } elseif (is_array($data)) {
+            $data = $data['id'] ?? null;
+        }
+
+        if ($data === null) {
+            throw new InvalidArgumentException('Please provide an asset id, an asset, or an array containing the key "id".');
         }
 
         if ($operator === '=') {
@@ -437,12 +431,7 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
             return $listing;
         }
 
-        throw new Exception('Filtering '.__CLASS__.' does only support "=" operator');
-    }
-
-    public function getQueryColumnType(): string
-    {
-        return 'text';
+        throw new InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 
     public function getFieldType(): string
