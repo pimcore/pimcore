@@ -84,12 +84,14 @@ class LogController extends UserAwareController implements KernelControllerEvent
             $qb->setParameter('priority', $priority, ParameterType::INTEGER);
         }
 
-        if ($fromDate = $this->parseDateObject($requestSource->getString('fromDate'), $requestSource->getString('fromTime'))) {
-            $qb->andWhere('timestamp > :fromDate');
+        $userTimezone = $requestSource->getString('userTimezone');
+
+        if ($fromDate = $this->parseDateObject($requestSource->getString('fromDate'), $requestSource->getString('fromTime'), $userTimezone)) {
+            $qb->andWhere('timestamp >= :fromDate');
             $qb->setParameter('fromDate', $fromDate, Types::DATETIME_MUTABLE);
         }
 
-        if ($toDate = $this->parseDateObject($requestSource->getString('toDate'), $requestSource->getString('toTime'))) {
+        if ($toDate = $this->parseDateObject($requestSource->getString('toDate'), $requestSource->getString('toTime'), $userTimezone)) {
             $qb->andWhere('timestamp <= :toDate');
             $qb->setParameter('toDate', $toDate, Types::DATETIME_MUTABLE);
         }
@@ -153,7 +155,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         ]);
     }
 
-    private function parseDateObject(?string $date, ?string $time): ?DateTime
+    private function parseDateObject(?string $date, ?string $time, ?string $userTimezone = null): ?DateTime
     {
         if (empty($date)) {
             return null;
@@ -161,14 +163,25 @@ class LogController extends UserAwareController implements KernelControllerEvent
 
         $pattern = '/^(?P<date>\d{4}\-\d{2}\-\d{2})T(?P<time>\d{2}:\d{2}:\d{2})$/';
 
+        $tz = new \DateTimeZone('UTC');
+        if ($userTimezone !== null && $userTimezone !== '') {
+            try {
+                $tz = new \DateTimeZone($userTimezone);
+            } catch (\Exception) {
+                $tz = new \DateTimeZone('UTC');
+            }
+        }
+
         $dateTime = null;
         if (preg_match($pattern, $date, $dateMatches)) {
             if (!empty($time) && preg_match($pattern, $time, $timeMatches)) {
-                $dateTime = new DateTime(sprintf('%sT%s', $dateMatches['date'], $timeMatches['time']));
+                $dateTime = new DateTime(sprintf('%sT%s', $dateMatches['date'], $timeMatches['time']), $tz);
             } else {
-                $dateTime = new DateTime($date);
+                $dateTime = new DateTime($date, $tz);
             }
         }
+
+        $dateTime?->setTimezone(new \DateTimeZone('UTC'));
 
         return $dateTime;
     }
