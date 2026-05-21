@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Exception;
 use Pimcore;
 use Pimcore\Db;
@@ -28,13 +29,6 @@ class AdvancedManyToManyAssetRelation extends ManyToManyAssetRelation implements
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
-
-    /**
-     * @internal
-     *
-     * @var array<string, array<string, mixed>>
-     */
-    public array $visibleFieldDefinitions = [];
 
     /**
      * @internal
@@ -73,8 +67,8 @@ class AdvancedManyToManyAssetRelation extends ManyToManyAssetRelation implements
                         'fieldname' => $this->getName(),
                         'index' => $counter,
                     ];
+                    $counter++;
                 }
-                $counter++;
             }
 
             return $return;
@@ -102,10 +96,13 @@ class AdvancedManyToManyAssetRelation extends ManyToManyAssetRelation implements
             $existingTargets = [];
             if (!empty($targets)) {
                 $existingTargets = $db->fetchFirstColumn(
-                    'SELECT id FROM assets WHERE id IN (' . implode(',', $targets) . ')'
+                    'SELECT id FROM assets WHERE id IN (?)',
+                    [$targets],
+                    [ArrayParameterType::INTEGER]
                 );
             }
 
+            $sources = [];
             foreach ($data as $key => $relation) {
                 if (empty($relation['dest_id'])) {
                     continue;
@@ -120,7 +117,11 @@ class AdvancedManyToManyAssetRelation extends ManyToManyAssetRelation implements
                     continue;
                 }
 
-                $source = DataObject::getById($relation['src_id']);
+                $sourceId = $relation['src_id'] ?? null;
+                if (!array_key_exists($sourceId, $sources)) {
+                    $sources[$sourceId] = DataObject::getById($sourceId);
+                }
+                $source = $sources[$sourceId];
                 if ($source instanceof DataObject\Concrete) {
                     /** @var DataObject\Data\ElementMetadata $metaData */
                     $metaData = Pimcore::getContainer()->get('pimcore.model.factory')
