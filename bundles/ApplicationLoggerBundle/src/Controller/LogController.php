@@ -15,9 +15,11 @@ namespace Pimcore\Bundle\ApplicationLoggerBundle\Controller;
 
 use Carbon\Carbon;
 use DateTime;
+use DateTimeZone;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Types;
+use Exception;
 use Pimcore\Bundle\ApplicationLoggerBundle\Enum\LogLevel;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface;
@@ -163,12 +165,12 @@ class LogController extends UserAwareController implements KernelControllerEvent
 
         $pattern = '/^(?P<date>\d{4}\-\d{2}\-\d{2})T(?P<time>\d{2}:\d{2}:\d{2})$/';
 
-        $tz = new \DateTimeZone('UTC');
+        $tz = new DateTimeZone('UTC');
         if ($userTimezone !== null && $userTimezone !== '') {
             try {
-                $tz = new \DateTimeZone($userTimezone);
-            } catch (\Exception) {
-                $tz = new \DateTimeZone('UTC');
+                $tz = new DateTimeZone($userTimezone);
+            } catch (Exception) {
+                $tz = new DateTimeZone('UTC');
             }
         }
 
@@ -181,7 +183,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
             }
         }
 
-        $dateTime?->setTimezone(new \DateTimeZone('UTC'));
+        $dateTime?->setTimezone(new DateTimeZone('UTC'));
 
         return $dateTime;
     }
