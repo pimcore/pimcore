@@ -87,7 +87,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $userTimezone = $requestSource->getString('userTimezone');
 
         if ($fromDate = $this->parseDateObject($requestSource->getString('fromDate'), $requestSource->getString('fromTime'), $userTimezone)) {
-            $qb->andWhere('timestamp > :fromDate');
+            $qb->andWhere('timestamp >= :fromDate');
             $qb->setParameter('fromDate', $fromDate, Types::DATETIME_MUTABLE);
         }
 
