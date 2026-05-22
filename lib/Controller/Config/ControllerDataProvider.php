@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Controller\Config;
 
+use Pimcore\Controller\Config\Bundle\BundleProvider;
+use Pimcore\Controller\Config\Template\TemplateProviderInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Provides bundle/controller/action/template selection options which can be
@@ -29,60 +29,34 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 class ControllerDataProvider
 {
-    private ?KernelInterface $kernel = null;
+    private BundleProvider $bundleProvider;
 
     /**
      * id -> class mapping array of controllers defined as services
-     *
      */
     private array $serviceControllers;
-
-    private ?array $bundles = null;
-
-    private ?array $templates = null;
-
-    private array $templateNamePatterns = [
-        '*.twig',
-    ];
 
     /**
      * @var iterable<TemplateProviderInterface>
      */
     private iterable $templateProviders;
 
+    private ?array $templates = null;
+
     /**
      * @param iterable<TemplateProviderInterface> $templateProviders
      */
-    public function __construct(KernelInterface $kernel, array $serviceControllers, iterable $templateProviders = [])
-    {
-        $this->kernel = $kernel;
+    public function __construct(
+        BundleProvider $bundleProvider,
+        array $serviceControllers,
+        iterable $templateProviders,
+    ) {
+        $this->bundleProvider = $bundleProvider;
         $this->serviceControllers = $serviceControllers;
         $this->templateProviders = $templateProviders;
     }
 
     /**
-     * Returns all eligible bundles
-     *
-     * @return BundleInterface[]
-     */
-    private function getBundles(): array
-    {
-        if (null !== $this->bundles) {
-            return $this->bundles;
-        }
-
-        $this->bundles = [];
-        foreach ($this->kernel->getBundles() as $bundle) {
-            if ($this->isValidNamespace(get_class($bundle))) {
-                $this->bundles[$bundle->getName()] = $bundle;
-            }
-        }
-
-        return $this->bundles;
-    }
-
-    /**
-     *
      * @throws ReflectionException
      */
     public function getControllerReferences(): array
@@ -91,7 +65,7 @@ class ControllerDataProvider
 
         foreach ($this->serviceControllers as $id => $className) {
             // exclude controllers from known core namespaces
-            if (!$this->isValidNamespace($className)) {
+            if (!$this->bundleProvider->isValidNamespace($className)) {
                 continue;
             }
 
@@ -103,8 +77,7 @@ class ControllerDataProvider
             }
         }
 
-        $bundles = $this->getBundles();
-        foreach ($bundles as $bundle) {
+        foreach ($this->bundleProvider->getBundles() as $bundle) {
             $controllerDirectory = rtrim($bundle->getPath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Controller';
             if (!file_exists($controllerDirectory)) {
                 continue;
@@ -142,11 +115,9 @@ class ControllerDataProvider
     }
 
     /**
-     * Builds the list of selectable templates by scanning for `*.twig` files in the project's
-     * `templates/` directory and in the `templates/` (or `Resources/views/`) directory of every
-     * registered bundle, except bundles excluded by {@see self::isValidNamespace()} (Symfony,
-     * Doctrine, Pimcore, Sensio). Templates contributed by {@see TemplateProviderInterface}
-     * implementations are merged in as well; the resulting list is deduplicated.
+     * Builds the list of selectable templates from given {@see TemplateProviderInterface} instances.
+     *
+     * The resulting list is deduplicated.
      *
      * @return string[]
      */
@@ -157,69 +128,10 @@ class ControllerDataProvider
         }
 
         $templates = [];
-
-        if (is_dir($symfonyPath = PIMCORE_PROJECT_ROOT.'/templates')) {
-            $templates[] = $this->findTemplates($symfonyPath);
-        }
-
-        foreach ($this->getBundles() as $bundle) {
-            if (is_dir($bundlePath = $bundle->getPath().'/Resources/views') || is_dir($bundlePath = $bundle->getPath().'/templates')) {
-                $templates[] = $this->findTemplates($bundlePath, $bundle->getName());
-            }
-        }
-
         foreach ($this->templateProviders as $templateProvider) {
             $templates[] = $templateProvider->getTemplates();
         }
 
-        if ($templates === []) {
-            return $this->templates = [];
-        }
-
         return $this->templates = array_values(array_unique(array_merge(...$templates)));
-    }
-
-    /**
-     * Finds templates in a certain path. If bundleName is null, the global notation (templates/)
-     * will be used.
-     *
-     * @return string[]
-     */
-    private function findTemplates(string $path, ?string $bundleName = null): array
-    {
-        $finder = new Finder();
-        $finder
-            ->files()
-            ->in($path);
-
-        foreach ($this->templateNamePatterns as $namePattern) {
-            $finder->name($namePattern);
-        }
-
-        if ($bundleName && str_ends_with($bundleName, 'Bundle')) {
-            $bundleName = substr($bundleName, 0, -6);
-        }
-
-        $templates = [];
-        foreach ($finder as $file) {
-            $name = $file->getRelativePathname();
-            $templates[] = $bundleName ? sprintf('@%s/%s', $bundleName, $name) : $name;
-        }
-
-        return $templates;
-    }
-
-    /**
-     * Checks if bundle/controller namespace is not excluded (all core bundles should be excluded here)
-     *
-     *
-     */
-    protected function isValidNamespace(string $namespace): bool
-    {
-        if (preg_match('/^(Symfony|Doctrine|Pimcore|Sensio)/', $namespace)) {
-            return false;
-        }
-
-        return true;
     }
 }

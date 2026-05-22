@@ -67,6 +67,16 @@ services:
             $serviceControllers: '%pimcore.service_controllers%'
             $templateProviders: !tagged_iterator pimcore.template_provider
 
+    Pimcore\Controller\Config\Template\ProjectTemplateProvider:
+        tags: [ 'pimcore.template_provider' ]
+
+    Pimcore\Controller\Config\Template\BundleTemplateProvider:
+        tags: [ 'pimcore.template_provider' ]
+
+    Pimcore\Controller\Config\Template\TemplateFinder: ~
+
+    Pimcore\Controller\Config\Bundle\BundleProvider: ~
+
     #
     # HTTP/REST clients
     #
