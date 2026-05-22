@@ -13,11 +13,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Traits;
 
+use RuntimeException;
+
 /**
  * @internal
  */
 trait LocateFileTrait
 {
+    /*
+     * @throws RuntimeException
+     */
     protected function locateDefinitionFile(string $key, string $pathTemplate): string
     {
         $customFile = sprintf(
