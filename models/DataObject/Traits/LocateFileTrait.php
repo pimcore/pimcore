@@ -25,41 +25,72 @@ trait LocateFileTrait
      */
     protected function locateDefinitionFile(string $key, string $pathTemplate): string
     {
-        $customFile = sprintf(
-            '%s/' . $pathTemplate,
-            PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY,
-            $key
-        );
+        $customBase = realpath(PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY);
 
-        $realCustomFile = realpath($customFile);
+        if ($customBase !== false) {
+            $customFile = sprintf('%s/' . $pathTemplate, $customBase, $key);
+            $realCustomFile = realpath($customFile);
 
-        if (
-            $realCustomFile !== false &&
-            is_file($realCustomFile) &&
-            str_starts_with(
-                $realCustomFile,
-                realpath(PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY)
-            )
-        ) {
-            return $realCustomFile;
+            if (
+                $realCustomFile !== false &&
+                is_file($realCustomFile) &&
+                str_starts_with($realCustomFile, $customBase . DIRECTORY_SEPARATOR)
+            ) {
+                return $realCustomFile;
+            }
         }
 
-        $defaultFile = sprintf(
-            '%s/' . $pathTemplate,
-            PIMCORE_CLASS_DEFINITION_DIRECTORY,
-            $key
-        );
+        $defaultBase = realpath(PIMCORE_CLASS_DEFINITION_DIRECTORY);
 
-        $realDefaultFile = realpath($defaultFile);
+        if ($defaultBase !== false) {
+            $defaultFile = sprintf('%s/' . $pathTemplate, $defaultBase, $key);
+            $realDefaultFile = realpath($defaultFile);
 
-        if (
-            $realDefaultFile !== false &&
-            str_starts_with(
-                $realDefaultFile,
-                realpath(PIMCORE_CLASS_DEFINITION_DIRECTORY)
-            )
-        ) {
-            return $realDefaultFile;
+            if (
+                $realDefaultFile !== false &&
+                is_file($realDefaultFile) &&
+                str_starts_with($realDefaultFile, $defaultBase . DIRECTORY_SEPARATOR)
+            ) {
+                return $realDefaultFile;
+            }
+        }
+
+        throw new RuntimeException('Invalid file path');
+    }
+
+    /*
+     * @throws RuntimeException
+     */
+    protected function locateFile(string $key, string $pathTemplate): string
+    {
+        $customBase = realpath(PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY);
+
+        if ($customBase !== false) {
+            $customFile = sprintf('%s/' . $pathTemplate, $customBase, $key);
+            $realCustomFile = realpath($customFile);
+
+            if (
+                $realCustomFile !== false &&
+                is_file($realCustomFile) &&
+                str_starts_with($realCustomFile, $customBase . DIRECTORY_SEPARATOR)
+            ) {
+                return $realCustomFile;
+            }
+        }
+
+        $defaultBase = realpath(PIMCORE_CLASS_DIRECTORY);
+
+        if ($defaultBase !== false) {
+            $defaultFile = sprintf('%s/' . $pathTemplate, $defaultBase, $key);
+            $realDefaultFile = realpath($defaultFile);
+
+            if (
+                $realDefaultFile !== false &&
+                is_file($realDefaultFile) &&
+                str_starts_with($realDefaultFile, $defaultBase . DIRECTORY_SEPARATOR)
+            ) {
+                return $realDefaultFile;
+            }
         }
 
         throw new RuntimeException('Invalid file path');
