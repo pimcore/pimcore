@@ -69,6 +69,10 @@ trait LocateFileTrait
      */
     protected function locateFile(string $key, string $pathTemplate): string
     {
+        if (str_contains($key, '/') || str_contains($key, '\\') || str_contains($key, '..')) {
+            throw new RuntimeException('Invalid key');
+        }
+
         $customBase = realpath(PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY);
 
         if ($customBase !== false) {
@@ -86,19 +90,21 @@ trait LocateFileTrait
 
         $defaultBase = realpath(PIMCORE_CLASS_DIRECTORY);
 
-        if ($defaultBase !== false) {
-            $defaultFile = sprintf('%s/' . $pathTemplate, $defaultBase, $key);
-            $realDefaultFile = realpath($defaultFile);
-
-            if (
-                $realDefaultFile !== false &&
-                is_file($realDefaultFile) &&
-                str_starts_with($realDefaultFile, $defaultBase . DIRECTORY_SEPARATOR)
-            ) {
-                return $realDefaultFile;
-            }
+        if ($defaultBase === false) {
+            throw new RuntimeException('Invalid file path');
         }
 
-        throw new RuntimeException('Invalid file path');
+        $defaultFile = sprintf('%s/' . $pathTemplate, $defaultBase, $key);
+        $realDefaultFile = realpath($defaultFile);
+
+        if ($realDefaultFile !== false) {
+            if (!str_starts_with($realDefaultFile, $defaultBase . DIRECTORY_SEPARATOR)) {
+                throw new RuntimeException('Invalid file path');
+            }
+
+            return $realDefaultFile;
+        }
+
+        return $defaultFile;
     }
 }
