@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Pimcore\Controller\Config\Template;
 
 use Pimcore\Controller\Config\Bundle\BundleProvider;
+use function sprintf;
 
 /**
  * Builds the list of selectable templates by scanning for `*.twig` files in the `templates/` (or `Resources/views/`)
@@ -22,10 +23,18 @@ final readonly class BundleTemplateProvider implements TemplateProviderInterface
         $templates = [];
         foreach ($this->bundleProvider->getBundles() as $bundle) {
             if (is_dir($bundlePath = $bundle->getPath().'/templates') || is_dir($bundlePath = $bundle->getPath().'/Resources/views')) {
-                $templates[] = $this->finder->findTemplates($bundlePath, $bundle->getName());
+                $bundleName = $bundle->getName();
+
+                if (str_ends_with($bundleName, 'Bundle')) {
+                    $bundleName = substr($bundleName, 0, -6);
+                }
+
+                foreach ($this->finder->findTemplates($bundlePath) as $template) {
+                    $templates[] = sprintf('@%s/%s', $bundleName, $template);
+                }
             }
         }
 
-        return array_merge(...$templates);
+        return $templates;
     }
 }

@@ -8,25 +8,20 @@ use Symfony\Component\Finder\Finder;
 final readonly class TemplateFinder
 {
     /**
-     * Finds templates in a certain path. If bundleName is null, the global notation (templates/) will be used.
+     * Finds templates in a certain path.
      *
      * @return list<string>
      */
-    public function findTemplates(string $path, ?string $bundleName = null): array
+    public function findTemplates(string $path): array
     {
         $finder = new Finder()
             ->files()
             ->in($path)
             ->name('*.twig');
 
-        if ($bundleName && str_ends_with($bundleName, 'Bundle')) {
-            $bundleName = substr($bundleName, 0, -6);
-        }
-
         $templates = [];
         foreach ($finder as $file) {
-            $name = $file->getRelativePathname();
-            $templates[] = $bundleName ? sprintf('@%s/%s', $bundleName, $name) : $name;
+            $templates[] = $file->getRelativePathname();
         }
 
         return $templates;
