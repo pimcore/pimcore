@@ -142,8 +142,13 @@ class ControllerDataProvider
     }
 
     /**
-     * Builds a list of all available templates in bundles, in app/Resources/views, and Symfony locations
+     * Builds the list of selectable templates by scanning for `*.twig` files in the project's
+     * `templates/` directory and in the `templates/` (or `Resources/views/`) directory of every
+     * registered bundle, except bundles excluded by {@see self::isValidNamespace()} (Symfony,
+     * Doctrine, Pimcore, Sensio). Templates contributed by {@see TemplateProviderInterface}
+     * implementations are merged in as well; the resulting list is deduplicated.
      *
+     * @return string[]
      */
     public function getTemplates(): array
     {

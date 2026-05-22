@@ -25,9 +25,8 @@ namespace Pimcore\Controller\Config;
  * those scanned paths (e.g. dynamically generated ones).
  *
  * Implementations are collected by {@see ControllerDataProvider} via the
- * `pimcore.template_provider` service tag. CoreBundle service definitions may
- * receive this tag through autoconfiguration, but services defined outside of
- * that scope must add the `pimcore.template_provider` tag explicitly.
+ * `pimcore.template_provider` service tag, so every implementation must be
+ * tagged with `pimcore.template_provider` to be picked up.
  */
 interface TemplateProviderInterface
 {

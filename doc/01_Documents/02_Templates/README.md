@@ -57,6 +57,29 @@ That template is used for auto-rendering when the controller does not return a r
 See [MVC in Pimcore](../01_MVC_in_Pimcore.md) for details on how documents resolve
 their controller and template.
 
+### The Template Dropdown
+
+The template selector shown in a document's settings (and when configuring static routes)
+is populated by scanning for `*.twig` files in the project's `templates/` directory and in
+the `templates/` (or `Resources/views/`) directory of every registered bundle, except bundles
+whose namespace starts with `Symfony`, `Doctrine`, `Pimcore`, or `Sensio` (so Pimcore's own
+bundle templates are not listed). Project templates are listed by their relative path
+(`content/default.html.twig`), bundle templates with the Twig namespace notation
+(`@AppBundle/content/default.html.twig`).
+
+To add templates that live outside those scanned paths (e.g. dynamically generated ones),
+implement `Pimcore\Controller\Config\TemplateProviderInterface` and tag the service with
+`pimcore.template_provider`:
+
+```yaml
+services:
+    App\Templating\MyTemplateProvider:
+        tags: ['pimcore.template_provider']
+```
+
+Each name returned by `getTemplates()` must use the same notation as the scanned templates
+(a project-relative path or a `@Namespace/...` name) and is merged into the dropdown.
+
 ## Editables
 
 Editables are the bridge between templates and Pimcore Studio.
