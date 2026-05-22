@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
+use Pimcore\Controller\Config\Template\TemplateProviderInterface;
 use const PASSWORD_ARGON2I;
 use const PASSWORD_ARGON2ID;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
@@ -941,6 +942,13 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('default_controller')
                     ->defaultValue('App\\Controller\\DefaultController::defaultAction')
+                ->end()
+                ->booleanNode('auto_provide_templates')
+                    ->defaultTrue()
+                    ->info(sprintf(
+                        'Automatically provide the list of selectable templates for a document. If false, you must provide your own templates by creating a "%s" service and tagging it as "pimcore.template_provider".',
+                        TemplateProviderInterface::class,
+                    ))
                 ->end()
                 ->arrayNode('error_pages')
                     ->addDefaultsIfNotSet()

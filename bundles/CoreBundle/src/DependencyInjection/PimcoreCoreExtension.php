@@ -18,6 +18,8 @@ use Monolog\Level;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Bundle\InstallBundle\Installer;
+use Pimcore\Controller\Config\Template\BundleTemplateProvider;
+use Pimcore\Controller\Config\Template\ProjectTemplateProvider;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
@@ -125,6 +127,11 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('message_handler.yaml');
         $loader->load('class_builder.yaml');
         $loader->load('serializer.yaml');
+
+        if (false === $config['documents']['auto_provide_templates']) {
+            $container->removeDefinition(ProjectTemplateProvider::class);
+            $container->removeDefinition(BundleTemplateProvider::class);
+        }
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
