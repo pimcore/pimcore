@@ -109,21 +109,21 @@ class Dao extends Model\Dao\AbstractDao
         $objectDatastoreTableRelation = 'object_relations_' . $this->model->getId();
         $objectView = 'object_' . $this->model->getId();
 
-        $qObjectTable = $this->db->quoteSingleIdentifier($objectTable);
-        $qObjectDatastoreTable = $this->db->quoteSingleIdentifier($objectDatastoreTable);
-        $qObjectDatastoreTableRelation = $this->db->quoteSingleIdentifier($objectDatastoreTableRelation);
-        $qObjectView = $this->db->quoteSingleIdentifier($objectView);
+        $qObjectTable = $this->db->quoteIdentifier($objectTable);
+        $qObjectDatastoreTable = $this->db->quoteIdentifier($objectDatastoreTable);
+        $qObjectDatastoreTableRelation = $this->db->quoteIdentifier($objectDatastoreTableRelation);
+        $qObjectView = $this->db->quoteIdentifier($objectView);
 
-        $qObjectsTable = $this->db->quoteSingleIdentifier('objects');
-        $qId = $this->db->quoteSingleIdentifier('id');
-        $qOoId = $this->db->quoteSingleIdentifier('oo_id');
-        $qOoClassId = $this->db->quoteSingleIdentifier('oo_classId');
-        $qOoClassName = $this->db->quoteSingleIdentifier('oo_className');
+        $qObjectsTable = $this->db->quoteIdentifier('objects');
+        $qId = $this->db->quoteIdentifier('id');
+        $qOoId = $this->db->quoteIdentifier('oo_id');
+        $qOoClassId = $this->db->quoteIdentifier('oo_classId');
+        $qOoClassName = $this->db->quoteIdentifier('oo_className');
 
         $protectedColumns = ['oo_id', 'oo_classId', 'oo_className'];
         $protectedDatastoreColumns = ['oo_id'];
 
-        $fk1 = $this->db->quoteSingleIdentifier(
+        $fk1 = $this->db->quoteIdentifier(
             self::getForeignKeyName($objectTable, 'oo_id')
         );
 
@@ -157,7 +157,7 @@ class Dao extends Model\Dao\AbstractDao
             ]
         );
 
-        $fk2 = $this->db->quoteSingleIdentifier(
+        $fk2 = $this->db->quoteIdentifier(
             self::getForeignKeyName($objectDatastoreTable, 'oo_id')
         );
 
@@ -174,11 +174,11 @@ class Dao extends Model\Dao\AbstractDao
         "
         );
 
-        $fk3 = $this->db->quoteSingleIdentifier(
+        $fk3 = $this->db->quoteIdentifier(
             self::getForeignKeyName($objectDatastoreTableRelation, 'src_id')
         );
 
-        $qSrcId = $this->db->quoteSingleIdentifier('src_id');
+        $qSrcId = $this->db->quoteIdentifier('src_id');
 
         $this->db->executeStatement(
             "
@@ -304,7 +304,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->update('objects', ['className' => $newName], ['classId' => $this->model->getId()]);
 
-        $this->db->executeStatement('update ' . $this->db->quoteSingleIdentifier('object_query_' . $this->model->getId()) .
+        $this->db->executeStatement('update ' . $this->db->quoteIdentifier('object_query_' . $this->model->getId()) .
         ' set oo_classname = :className', ['className' => $newName]);
     }
 
