@@ -20,23 +20,43 @@ trait LocateFileTrait
 {
     protected function locateDefinitionFile(string $key, string $pathTemplate): string
     {
-        $customFile = sprintf('%s/' . $pathTemplate, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY, $key);
+        $customFile = sprintf(
+            '%s/' . $pathTemplate,
+            PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY,
+            $key
+        );
 
-        if (is_file($customFile)) {
-            return $customFile;
+        $realCustomFile = realpath($customFile);
+
+        if (
+            $realCustomFile !== false &&
+            is_file($realCustomFile) &&
+            str_starts_with(
+                $realCustomFile,
+                realpath(PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY)
+            )
+        ) {
+            return $realCustomFile;
         }
 
-        return sprintf('%s/' . $pathTemplate, PIMCORE_CLASS_DEFINITION_DIRECTORY, $key);
-    }
+        $defaultFile = sprintf(
+            '%s/' . $pathTemplate,
+            PIMCORE_CLASS_DEFINITION_DIRECTORY,
+            $key
+        );
 
-    protected function locateFile(string $key, string $pathTemplate): string
-    {
-        $customFile = sprintf('%s/' . $pathTemplate, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY, $key);
+        $realDefaultFile = realpath($defaultFile);
 
-        if (is_file($customFile)) {
-            return $customFile;
+        if (
+            $realDefaultFile !== false &&
+            str_starts_with(
+                $realDefaultFile,
+                realpath(PIMCORE_CLASS_DEFINITION_DIRECTORY)
+            )
+        ) {
+            return $realDefaultFile;
         }
 
-        return sprintf('%s/' . $pathTemplate, PIMCORE_CLASS_DIRECTORY, $key);
+        throw new RuntimeException('Invalid file path');
     }
 }
