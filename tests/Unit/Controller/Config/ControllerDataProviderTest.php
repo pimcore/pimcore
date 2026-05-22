@@ -102,13 +102,20 @@ class ControllerDataProviderTest extends TestCase
 
     public function testGetTemplatesIsMemoised(): void
     {
+        $templateProvider = $this->createMock(TemplateProviderInterface::class);
+        $templateProvider
+            ->expects($this->once())
+            ->method('getTemplates')
+            ->willReturn(['@Agent/memoised.html.twig']);
+
         $provider = new ControllerDataProvider(
             $this->createKernel(),
             [],
-            [$this->createTemplateProvider(['@Agent/memoised.html.twig'])]
+            [$templateProvider]
         );
 
-        $this->assertSame($provider->getTemplates(), $provider->getTemplates());
+        $this->assertSame(['@Agent/memoised.html.twig'], $provider->getTemplates());
+        $this->assertSame(['@Agent/memoised.html.twig'], $provider->getTemplates());
     }
 
     public function testGetTemplatesWorksWithoutTemplateProviders(): void

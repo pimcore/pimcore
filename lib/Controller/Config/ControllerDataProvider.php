@@ -167,6 +167,10 @@ class ControllerDataProvider
             $templates[] = $templateProvider->getTemplates();
         }
 
+        if ($templates === []) {
+            return $this->templates = [];
+        }
+
         return $this->templates = array_values(array_unique(array_merge(...$templates)));
     }
 
