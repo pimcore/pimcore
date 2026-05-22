@@ -20,9 +20,7 @@ use RuntimeException;
  */
 trait LocateFileTrait
 {
-    /*
-     * @throws RuntimeException
-     */
+    // @throws RuntimeException
     protected function locateDefinitionFile(string $key, string $pathTemplate): string
     {
         if (str_contains($key, '/') || str_contains($key, '\\') || str_contains($key, '..')) {
@@ -64,9 +62,7 @@ trait LocateFileTrait
         return $defaultFile;
     }
 
-    /*
-     * @throws RuntimeException
-     */
+    // @throws RuntimeException
     protected function locateFile(string $key, string $pathTemplate): string
     {
         if (str_contains($key, '/') || str_contains($key, '\\') || str_contains($key, '..')) {
