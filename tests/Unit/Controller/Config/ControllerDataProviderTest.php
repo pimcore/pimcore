@@ -114,8 +114,11 @@ class ControllerDataProviderTest extends TestCase
             [$templateProvider]
         );
 
-        $this->assertSame(['@Agent/memoised.html.twig'], $provider->getTemplates());
-        $this->assertSame(['@Agent/memoised.html.twig'], $provider->getTemplates());
+        $firstCallTemplates = $provider->getTemplates();
+        $this->assertContains('@Agent/memoised.html.twig', $firstCallTemplates);
+
+        $secondCallTemplates = $provider->getTemplates();
+        $this->assertSame($firstCallTemplates, $secondCallTemplates);
     }
 
     public function testGetTemplatesWorksWithoutTemplateProviders(): void

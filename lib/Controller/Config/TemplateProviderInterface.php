@@ -24,9 +24,10 @@ namespace Pimcore\Controller\Config;
  * bundles. Implement this interface to contribute templates that live outside
  * those scanned paths (e.g. dynamically generated ones).
  *
- * Services implementing this interface are automatically tagged with
- * `pimcore.template_provider` (autoconfiguration is enabled for CoreBundle
- * services) and collected by {@see ControllerDataProvider}.
+ * Implementations are collected by {@see ControllerDataProvider} via the
+ * `pimcore.template_provider` service tag. CoreBundle service definitions may
+ * receive this tag through autoconfiguration, but services defined outside of
+ * that scope must add the `pimcore.template_provider` tag explicitly.
  */
 interface TemplateProviderInterface
 {
