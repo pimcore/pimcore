@@ -21,6 +21,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
+use Pimcore\Model\Metadata\Predefined;
 
 class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefinitionEnrichmentInterface
 {
@@ -152,7 +153,6 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
 
                     if (!empty($visibleFieldsArray)) {
                         foreach ($visibleFieldsArray as $field) {
-                            // don't override existing system columns (id, fullpath, subtype, etc.)
                             if (array_key_exists($field, $row)) {
                                 continue;
                             }
@@ -317,9 +317,42 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
         $visibleFields = explode(',', (string) $this->visibleFields);
 
         foreach ($visibleFields as $field) {
+            $field = trim($field);
             $this->visibleFieldDefinitions[$field]['name'] = $field;
             $this->visibleFieldDefinitions[$field]['title'] = $translator->trans($field, [], 'admin');
             $this->visibleFieldDefinitions[$field]['fieldtype'] = 'input';
+
+            try {
+                $predefined = Predefined::getByName($field);
+                if ($predefined && $predefined->getType()) {
+                    $metaType = $predefined->getType();
+                    $typeMap = [
+                        'input' => 'input',
+                        'textarea' => 'textarea',
+                        'checkbox' => 'checkbox',
+                        'date' => 'date',
+                    ];
+
+                    if (isset($typeMap[$metaType])) {
+                        $this->visibleFieldDefinitions[$field]['fieldtype'] = $typeMap[$metaType];
+                    } elseif ($metaType === 'select') {
+                        $this->visibleFieldDefinitions[$field]['fieldtype'] = 'select';
+                        $config = $predefined->getConfig();
+                        if ($config) {
+                            $options = [];
+                            foreach (explode(',', $config) as $option) {
+                                $option = trim($option);
+                                if ($option !== '') {
+                                    $options[] = ['key' => $option, 'value' => $option];
+                                }
+                            }
+                            $this->visibleFieldDefinitions[$field]['options'] = $options;
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                // Predefined metadata not found or error — keep default 'input'
+            }
         }
 
         return $this;
@@ -330,6 +363,10 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
         if (is_array($value)) {
             $result = [];
             foreach ($value as $elementData) {
+                $type = $elementData['type'] ?? 'asset';
+                if ($type !== 'asset') {
+                    continue;
+                }
                 $id = $elementData['id'];
                 $asset = Asset::getById($id);
                 if ($asset instanceof Asset) {
