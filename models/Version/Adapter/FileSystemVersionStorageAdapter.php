@@ -126,22 +126,21 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
 
     private function deleteFileIfExists(string $path): bool
     {
-        if (!$this->storage->fileExists($path)) {
-            return false;
-        }
-
         try {
             $this->storage->delete($path);
 
             return true;
         } catch (UnableToDeleteFile $e) {
-            // Ignore races where the file disappeared after fileExists() but before delete().
+            // Tolerate races where the file was deleted concurrently between
+            // our intent to delete it and the actual unlink. If it is gone
+            // either way, treat the outcome as a successful deletion so the
+            // caller can still sweep empty parent directories.
             if ($this->storage->fileExists($path)) {
                 throw $e;
             }
-        }
 
-        return false;
+            return true;
+        }
     }
 
     public function getStorageType(
