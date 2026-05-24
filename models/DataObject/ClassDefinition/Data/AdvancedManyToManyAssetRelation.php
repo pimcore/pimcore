@@ -273,11 +273,6 @@ class AdvancedManyToManyAssetRelation extends ManyToManyAssetRelation implements
         return $assetMetadata;
     }
 
-    public function getDataFromGridEditor(array $data, ?Concrete $object = null, array $params = []): ?array
-    {
-        return $this->getDataFromEditmode($data, $object, $params);
-    }
-
     public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         $items = [];
@@ -476,8 +471,8 @@ class AdvancedManyToManyAssetRelation extends ManyToManyAssetRelation implements
 
             $counter = 1;
             foreach ($assetsMetadata as $mkey => $meta) {
-                $ownerName = isset($relation['ownername']) ? $relation['ownername'] : '';
-                $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : '';
+                $ownerName = $relation['ownername'] ?? '';
+                $ownerType = $relation['ownertype'] ?? '';
                 $meta->save($objectConcrete, $ownerType, $ownerName, $position, $counter);
                 $counter++;
             }
