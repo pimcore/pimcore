@@ -51,6 +51,11 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
         return false;
     }
 
+    public function getDocumentsAllowed(): bool
+    {
+        return false;
+    }
+
     public function getAssetsAllowed(): bool
     {
         return true;
@@ -202,17 +207,6 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
         return $assets;
     }
 
-    /**
-     * @param null|DataObject\Concrete $object
-     *
-     * @see Data::getDataFromEditmode
-     *
-     */
-    public function getDataFromGridEditor(array $data, ?DataObject\Concrete $object = null, array $params = []): ?array
-    {
-        return $this->getDataFromEditmode($data, $object, $params);
-    }
-
     public function getDataForGrid(?array $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $gridData = $this->getDataForEditmode($data, $object, $params);
@@ -280,41 +274,6 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
         }
     }
 
-    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if (is_array($data)) {
-            $paths = [];
-            foreach ($data as $eo) {
-                if ($eo instanceof Element\ElementInterface) {
-                    $paths[] = $eo->getRealFullPath();
-                }
-            }
-
-            return implode(',', $paths);
-        }
-
-        return '';
-    }
-
-    public function resolveDependencies(mixed $data): array
-    {
-        $dependencies = [];
-
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $asset) {
-                if ($asset instanceof Asset) {
-                    $dependencies['asset_' . $asset->getId()] = [
-                        'id' => $asset->getId(),
-                        'type' => 'asset',
-                    ];
-                }
-            }
-        }
-
-        return $dependencies;
-    }
-
     /**
      * @param DataObject\ClassDefinition\Data\ManyToManyAssetRelation $mainDefinition
      */
@@ -366,44 +325,15 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
         return $this;
     }
 
-    protected function getPhpdocType(): string
-    {
-        return $this->getPhpDocClassString(true);
-    }
-
-    public function normalize(mixed $value, array $params = []): ?array
-    {
-        if (is_array($value)) {
-            $result = [];
-            foreach ($value as $element) {
-                $type = Element\Service::getElementType($element);
-                $id = $element->getId();
-                $result[] = [
-                    'type' => $type,
-                    'id' => $id,
-                ];
-            }
-
-            return $result;
-        }
-
-        return null;
-    }
-
-    /** See marshal
-     *
-     *
-     */
     public function denormalize(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
             $result = [];
             foreach ($value as $elementData) {
-                $type = $elementData['type'];
                 $id = $elementData['id'];
-                $element = Element\Service::getElementById($type, $id);
-                if ($element) {
-                    $result[] = $element;
+                $asset = Asset::getById($id);
+                if ($asset instanceof Asset) {
+                    $result[] = $asset;
                 }
             }
 
