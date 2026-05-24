@@ -364,6 +364,108 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
         throw new InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
+    {
+        $data = $this->getDataFromObjectParam($object, $params);
+        if (is_array($data)) {
+            $paths = [];
+            foreach ($data as $eo) {
+                if ($eo instanceof Element\ElementInterface) {
+                    $paths[] = $eo->getRealFullPath();
+                }
+            }
+
+            return implode(',', $paths);
+        }
+
+        return '';
+    }
+
+    protected function buildUniqueKeyForDiffEditor(array $item): string
+    {
+        return (string) $item['id'];
+    }
+
+    protected function processDiffDataForEditMode(?array $originalData, ?array $data, ?DataObject\Concrete $object = null, array $params = []): ?array
+    {
+        if ($data) {
+            $data = $data[0];
+
+            $items = $data['data'];
+            $newItems = [];
+            if ($items) {
+                foreach ($items as $in) {
+                    $item = [];
+                    $item['id'] = $in['id'];
+                    $item['path'] = $in['fullpath'];
+                    $item['type'] = $in['type'] ?? 'asset';
+
+                    $unique = $this->buildUniqueKeyForDiffEditor($item);
+
+                    $itemId = json_encode($item);
+                    $raw = $itemId;
+
+                    $newItems[] = [
+                        'itemId' => $itemId,
+                        'title' => $item['path'],
+                        'raw' => $raw,
+                        'gridrow' => $item,
+                        'unique' => $unique,
+                    ];
+                }
+                $data['data'] = $newItems;
+            }
+
+            $data['value'] = [
+                'type' => 'grid',
+                'columnConfig' => [
+                    'id' => [
+                        'width' => 60,
+                    ],
+                    'path' => [
+                        'flex' => 2,
+                    ],
+                ],
+                'html' => $this->getVersionPreview($originalData, $object, $params),
+            ];
+
+            $newData = [];
+            $newData[] = $data;
+
+            return $newData;
+        }
+
+        return $data;
+    }
+
+    public function getDiffDataForEditMode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
+    {
+        $originalData = $data;
+        $data = parent::getDiffDataForEditMode($data, $object, $params);
+        $data = $this->processDiffDataForEditMode($originalData, $data, $object, $params);
+
+        return $data;
+    }
+
+    public function getDiffDataFromEditmode(array $data, ?DataObject\Concrete $object = null, array $params = []): ?array
+    {
+        if ($data) {
+            $tabledata = $data[0]['data'];
+
+            $result = [];
+            if ($tabledata) {
+                foreach ($tabledata as $in) {
+                    $out = json_decode($in['raw'], true);
+                    $result[] = $out;
+                }
+            }
+
+            return $this->getDataFromEditmode($result, $object, $params);
+        }
+
+        return null;
+    }
+
     public function getFieldType(): string
     {
         return 'manyToManyAssetRelation';
