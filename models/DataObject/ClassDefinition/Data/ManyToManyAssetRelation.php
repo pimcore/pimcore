@@ -418,7 +418,7 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
         return '';
     }
 
-    protected function buildUniqueKeyForDiffEditor(array $item): string
+    public function buildUniqueKeyForDiffEditor(array $item): string
     {
         return (string) $item['id'];
     }
