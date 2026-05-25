@@ -138,7 +138,7 @@ class AdvancedManyToManyAssetRelation extends ManyToManyAssetRelation implements
                     $ownertype = $relation['ownertype'] ?? '';
                     $ownername = $relation['ownername'] ?? '';
                     $position = $relation['position'] ?? '0';
-                    $index = $key + 1;
+                    $index = $relation['index'] ?? ($key + 1);
 
                     $metaData->load(
                         $source,
