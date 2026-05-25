@@ -192,6 +192,8 @@ class Document extends Model\Asset
                 break;
             }
 
+            // NOTE: raw string matching produces false positives (see #16955) — /JS can appear
+            // in font names, operator sequences, or other non-JavaScript PDF structures.
             if (str_contains($chunk, '/JS') || str_contains($chunk, '/JavaScript')) {
                 $this->setCustomSetting(
                     self::CUSTOM_SETTING_PDF_SCAN_STATUS,
