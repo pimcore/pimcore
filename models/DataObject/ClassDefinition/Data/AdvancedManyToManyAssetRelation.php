@@ -258,6 +258,61 @@ class AdvancedManyToManyAssetRelation extends AdvancedManyToManyRelation impleme
         return null;
     }
 
+    protected function processDiffDataForEditMode(?array $originalData, ?array $data, ?DataObject\Concrete $object = null, array $params = []): ?array
+    {
+        if ($data) {
+            $data = $data[0];
+
+            $items = $data['data'];
+            $newItems = [];
+            if ($items) {
+                $columns = array_merge(['id', 'fullpath'], $this->getColumnKeys());
+                foreach ($items as $itemBeforeCleanup) {
+                    $unique = $this->buildUniqueKeyForDiffEditor($itemBeforeCleanup);
+                    $item = [];
+
+                    foreach ($itemBeforeCleanup as $key => $value) {
+                        if (in_array($key, $columns)) {
+                            $item[$key] = $value;
+                        }
+                    }
+
+                    $itemId = json_encode($item);
+                    $raw = $itemId;
+
+                    $newItems[] = [
+                        'itemId' => $itemId,
+                        'title' => $item['fullpath'] ?? '',
+                        'raw' => $raw,
+                        'gridrow' => $item,
+                        'unique' => $unique,
+                    ];
+                }
+                $data['data'] = $newItems;
+            }
+
+            $data['value'] = [
+                'type' => 'grid',
+                'columnConfig' => [
+                    'id' => [
+                        'width' => 60,
+                    ],
+                    'fullpath' => [
+                        'flex' => 2,
+                    ],
+                ],
+                'html' => $this->getVersionPreview($originalData, $object, $params),
+            ];
+
+            $newData = [];
+            $newData[] = $data;
+
+            return $newData;
+        }
+
+        return $data;
+    }
+
     public function enrichLayoutDefinition(?DataObject\Concrete $object, array $context = []): static
     {
         if (!$this->visibleFields) {
