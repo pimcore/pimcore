@@ -15,19 +15,44 @@ namespace Pimcore\Messenger\Handler;
 
 use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Messenger\MaintenanceTaskMessage;
+use Symfony\Component\Messenger\Handler\Acknowledger;
+use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
+use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
+use Throwable;
 
 /**
  * @internal
  */
-class MaintenanceTaskHandler
+class MaintenanceTaskHandler implements BatchHandlerInterface
 {
+    use BatchHandlerTrait;
+    use HandlerHelperTrait;
+
     public function __construct(
         private ExecutorInterface $maintenanceExecutor
     ) {
     }
 
-    public function __invoke(MaintenanceTaskMessage $message): void
+    public function __invoke(MaintenanceTaskMessage $message, ?Acknowledger $ack = null): mixed
     {
-        $this->maintenanceExecutor->executeTask($message->getName());
+        return $this->handle($message, $ack);
+    }
+
+    // @phpstan-ignore-next-line
+    private function process(array $jobs): void
+    {
+        $jobs = $this->filterUnique($jobs, static function (MaintenanceTaskMessage $message) {
+            return $message->getName();
+        });
+
+        foreach ($jobs as [$message, $ack]) {
+            try {
+                $this->maintenanceExecutor->executeTask($message->getName());
+
+                $ack->ack($message);
+            } catch (Throwable $e) {
+                $ack->nack($e);
+            }
+        }
     }
 }
