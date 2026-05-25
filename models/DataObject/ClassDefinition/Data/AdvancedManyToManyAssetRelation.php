@@ -758,6 +758,11 @@ class AdvancedManyToManyAssetRelation extends ManyToManyAssetRelation implements
         return $data;
     }
 
+    public function isOptimizedAdminLoading(): bool
+    {
+        return false;
+    }
+
     public function getAllowMultipleAssignments(): bool
     {
         return $this->allowMultipleAssignments;
