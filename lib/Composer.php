@@ -221,6 +221,34 @@ class Composer
         return preg_replace("/\033\[[^m]*m/", '', $string);
     }
 
+    private static function getConfiguredCacheBaseDir(Event $event): string
+    {
+        $rootPath = static::getRootPath($event);
+
+        foreach (['PIMCORE_SYMFONY_CACHE_DIRECTORY', 'APP_CACHE_DIR'] as $envVar) {
+            $value = static::readEnvVar($envVar);
+            if (null !== $value) {
+                if (!str_starts_with($value, '/') && !preg_match('/^[A-Za-z]:[\\\\\/]/', $value)) {
+                    $value = $rootPath . '/' . ltrim($value, '/\\');
+                }
+
+                return $value;
+            }
+        }
+
+        return $rootPath . '/var/cache';
+    }
+
+    private static function readEnvVar(string $envVar): ?string
+    {
+        $value = getenv($envVar);
+        if (false === $value || '' === $value) {
+            $value = $_SERVER[$envVar] ?? $_ENV[$envVar] ?? null;
+        }
+
+        return null === $value || '' === $value ? null : $value;
+    }
+
     /**
      *
      * The following is copied from \Sensio\Bundle\DistributionBundle\Composer\ScriptHandler
@@ -282,7 +310,7 @@ class Composer
         // Nothing to clear on a fresh project. During create-project, the
         // cache directory usually does not exist yet. Running cache:clear
         // would bootstrap the kernel and can fail before installation is done.
-        $cacheDir = static::getRootPath($event) . '/var/cache';
+        $cacheDir = static::getConfiguredCacheBaseDir($event);
         if (!is_dir($cacheDir)) {
             $event->getIO()->write(
                 '<comment>Skipping cache:clear: no compiled cache found.</comment>'
