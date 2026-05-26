@@ -392,6 +392,8 @@ class AdvancedManyToManyAssetRelation extends AdvancedManyToManyRelation impleme
 
         if ($mainDefinition instanceof self) {
             $this->visibleFields = $mainDefinition->getVisibleFields();
+            $this->enableBatchEdit = $mainDefinition->getEnableBatchEdit();
+            $this->allowMultipleAssignments = $mainDefinition->getAllowMultipleAssignments();
         }
     }
 
