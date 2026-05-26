@@ -35,6 +35,7 @@ class Document extends Model\Asset
     {
         if ($this->getDataChanged()) {
             $this->removeCustomSetting('document_page_count');
+            $this->removeCustomSetting(self::CUSTOM_SETTING_PDF_SCAN_STATUS);
         }
 
         parent::update($params);
@@ -166,6 +167,9 @@ class Document extends Model\Asset
         return null;
     }
 
+    /**
+     * Returns whether a scan was performed (not whether JS was found). Use getScanStatus() for the result.
+     */
     public function checkIfPdfContainsJS(): bool
     {
         if (!$this->isPdfScanningEnabled()) {

@@ -713,10 +713,6 @@ class Asset extends Element\AbstractElement
 
         if ($this->getType() != 'folder') {
             if ($this->getDataChanged()) {
-                if ($this instanceof Asset\Document) {
-                    $this->removeCustomSetting(Asset\Document::CUSTOM_SETTING_PDF_SCAN_STATUS);
-                }
-
                 $src = $this->getStream();
 
                 if (!$storage->fileExists($path) || !stream_is_local($storage->readStream($path))) {
