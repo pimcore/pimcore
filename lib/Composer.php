@@ -226,7 +226,7 @@ class Composer
         $rootPath = static::getRootPath($event);
 
         foreach (['PIMCORE_SYMFONY_CACHE_DIRECTORY', 'APP_CACHE_DIR'] as $envVar) {
-            $value = static::readEnvVar($envVar);
+            $value = self::readEnvVar($envVar);
             if (null !== $value) {
                 if (!str_starts_with($value, '/') && !preg_match('/^[A-Za-z]:[\\\\\/]/', $value)) {
                     $value = $rootPath . '/' . ltrim($value, '/\\');
@@ -310,7 +310,7 @@ class Composer
         // Nothing to clear on a fresh project. During create-project, the
         // cache directory usually does not exist yet. Running cache:clear
         // would bootstrap the kernel and can fail before installation is done.
-        $cacheDir = static::getConfiguredCacheBaseDir($event);
+        $cacheDir = self::getConfiguredCacheBaseDir($event);
         if (!is_dir($cacheDir)) {
             $event->getIO()->write(
                 '<comment>Skipping cache:clear: no compiled cache found.</comment>'
