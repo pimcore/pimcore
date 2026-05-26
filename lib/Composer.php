@@ -279,6 +279,18 @@ class Composer
             return;
         }
 
+        // Nothing to clear on a fresh project. During create-project, the
+        // cache directory usually does not exist yet. Running cache:clear
+        // would bootstrap the kernel and can fail before installation is done.
+        $cacheDir = static::getRootPath($event) . '/var/cache';
+        if (!is_dir($cacheDir)) {
+            $event->getIO()->write(
+                '<comment>Skipping cache:clear: no compiled cache found.</comment>'
+            );
+
+            return;
+        }
+
         $command = ['cache:clear'];
         if (!$options['symfony-cache-warmup']) {
             $command[] = '--no-warmup';
