@@ -47,7 +47,7 @@ class MaintenanceTaskHandlerTest extends TestCase
 
         $acks = [];
         $makeAck = function (string $label) use (&$acks): Acknowledger {
-            $ack = new Acknowledger(MaintenanceTaskHandler::class, function () {});
+            $ack = new Acknowledger(MaintenanceTaskHandler::class, function (?\Throwable $e = null, mixed $result = null) {});
             $acks[$label] = $ack;
 
             return $ack;
@@ -79,7 +79,7 @@ class MaintenanceTaskHandlerTest extends TestCase
 
         $handler = new MaintenanceTaskHandler($executor);
 
-        $ack = new Acknowledger(MaintenanceTaskHandler::class, function () {});
+        $ack = new Acknowledger(MaintenanceTaskHandler::class, function (?\Throwable $e = null, mixed $result = null) {});
 
         $handler(new MaintenanceTaskMessage('failing_task'), $ack);
         $handler->flush(true);
@@ -102,7 +102,7 @@ class MaintenanceTaskHandlerTest extends TestCase
 
         $acks = [];
         $makeAck = function () use (&$acks): Acknowledger {
-            $ack = new Acknowledger(MaintenanceTaskHandler::class, function () {});
+            $ack = new Acknowledger(MaintenanceTaskHandler::class, function (?\Throwable $e = null, mixed $result = null) {});
             $acks[] = $ack;
 
             return $ack;
