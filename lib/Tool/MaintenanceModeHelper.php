@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
-use Doctrine\DBAL\Connection;
 use Exception;
 use InvalidArgumentException;
 use Pimcore;
@@ -29,7 +28,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
 
     protected const OFF = 'OFF';
 
-    public function __construct(protected RequestStack $requestStack, protected Connection $db)
+    public function __construct(protected RequestStack $requestStack)
     {
     }
 
@@ -85,9 +84,6 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
         } catch (Exception $exception) {
             // The cache entry is not set, we try to load it from the database
             try {
-                if (!$this->db->isConnected()) {
-                    $this->db->getNativeConnection();
-                }
                 $tmpStore = TmpStore::get(self::ENTRY_ID);
             } catch (Exception $e) {
                 return null;
