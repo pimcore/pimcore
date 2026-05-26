@@ -16,7 +16,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Exception;
 use InvalidArgumentException;
 use Pimcore;
-use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -105,50 +104,33 @@ class AdvancedManyToManyAssetRelation extends AdvancedManyToManyRelation impleme
         throw new Exception('invalid data passed to getDataForQueryResource - must be array');
     }
 
-    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
-        $return = [];
+        $return = parent::getDataForEditmode($data, $object, $params);
+
         $visibleFieldsArray = $this->getVisibleFields() ? explode(',', (string) $this->getVisibleFields()) : [];
+        if (!is_array($return) || empty($visibleFieldsArray)) {
+            return $return;
+        }
 
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $mkey => $metaAsset) {
-                $index = $mkey + 1;
-                $asset = $metaAsset->getElement();
-                if ($asset instanceof Asset) {
-                    $row = Element\Service::gridElementData($asset);
+        foreach ($return as &$row) {
+            $asset = Asset::getById($row['id']);
+            if (!$asset instanceof Asset) {
+                continue;
+            }
 
-                    if (!empty($visibleFieldsArray)) {
-                        foreach ($visibleFieldsArray as $field) {
-                            if (array_key_exists($field, $row)) {
-                                continue;
-                            }
-
-                            $getter = 'get' . ucfirst($field);
-                            if (method_exists($asset, $getter)) {
-                                $row[$field] = $asset->{$getter}();
-                                continue;
-                            }
-
-                            $row[$field] = $asset->getMetadata($field);
-                        }
-                    }
-
-                    foreach ($this->getColumns() as $c) {
-                        $getter = 'get' . ucfirst($c['key']);
-
-                        try {
-                            $row[$c['key']] = $metaAsset->$getter();
-                        } catch (Exception $e) {
-                            Logger::debug('Meta column ' . $c['key'] . ' does not exist');
-                        }
-                    }
-
-                    $row['rowId'] = $row['id'] . self::RELATION_ID_SEPARATOR . $index . self::RELATION_ID_SEPARATOR . ($row['type'] ?? 'asset');
-
-                    $return[] = $row;
+            foreach ($visibleFieldsArray as $field) {
+                if (array_key_exists($field, $row)) {
+                    continue;
                 }
+
+                $getter = 'get' . ucfirst($field);
+                $row[$field] = method_exists($asset, $getter)
+                    ? $asset->{$getter}()
+                    : $asset->getMetadata($field);
             }
         }
+        unset($row);
 
         return $return;
     }
@@ -162,7 +144,7 @@ class AdvancedManyToManyAssetRelation extends AdvancedManyToManyRelation impleme
             foreach ($gridData as &$relatedElementData) {
                 $nicePath = $this->getNicePath($relatedElementData, $object, $params);
                 if ($nicePath) {
-                    $relatedElementData['fullpath'] = $nicePath;
+                    $relatedElementData['path'] = $nicePath;
                 }
             }
             unset($relatedElementData);
