@@ -225,7 +225,7 @@ class Composer
     {
         $rootPath = static::getRootPath($event);
 
-        foreach (['PIMCORE_SYMFONY_CACHE_DIRECTORY', 'APP_CACHE_DIR'] as $envVar) {
+        foreach (['APP_CACHE_DIR', 'PIMCORE_SYMFONY_CACHE_DIRECTORY'] as $envVar) {
             $value = self::readEnvVar($envVar);
             if (null !== $value) {
                 if (!str_starts_with($value, '/') && !preg_match('/^[A-Za-z]:[\\\\\/]/', $value)) {
@@ -311,7 +311,7 @@ class Composer
         // cache directory usually does not exist yet. Running cache:clear
         // would bootstrap the kernel and can fail before installation is done.
         $cacheDir = self::getConfiguredCacheBaseDir($event);
-        if (!is_dir($cacheDir)) {
+        if (!is_dir($cacheDir) && !$options['symfony-cache-warmup']) {
             $event->getIO()->write(
                 '<comment>Skipping cache:clear: no compiled cache found.</comment>'
             );
