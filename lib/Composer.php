@@ -240,10 +240,7 @@ class Composer
         }
 
         if (defined('PIMCORE_SYMFONY_CACHE_DIRECTORY')) {
-            $pimcoreCacheDir = constant('PIMCORE_SYMFONY_CACHE_DIRECTORY');
-            if (is_string($pimcoreCacheDir) && '' !== $pimcoreCacheDir) {
-                return self::normalizeCacheBaseDir($rootPath, $pimcoreCacheDir);
-            }
+            return self::normalizeCacheBaseDir($rootPath, (string) constant('PIMCORE_SYMFONY_CACHE_DIRECTORY'));
         }
 
         $pimcoreCacheDir = self::readEnvVar('PIMCORE_SYMFONY_CACHE_DIRECTORY');
