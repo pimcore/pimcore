@@ -17,6 +17,7 @@ use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Installer\PackageEvent;
 use Composer\Script\Event;
 use RuntimeException;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Throwable;
@@ -228,7 +229,7 @@ class Composer
         foreach (['APP_CACHE_DIR', 'PIMCORE_SYMFONY_CACHE_DIRECTORY'] as $envVar) {
             $value = self::readEnvVar($envVar);
             if (null !== $value) {
-                if (!str_starts_with($value, '/') && !preg_match('/^[A-Za-z]:[\\\\\/]/', $value)) {
+                if (!Path::isAbsolute($value)) {
                     $value = $rootPath . '/' . ltrim($value, '/\\');
                 }
 
