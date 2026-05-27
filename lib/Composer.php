@@ -226,18 +226,41 @@ class Composer
     {
         $rootPath = static::getRootPath($event);
 
-        foreach (['APP_CACHE_DIR', 'PIMCORE_SYMFONY_CACHE_DIRECTORY'] as $envVar) {
-            $value = self::readEnvVar($envVar);
-            if (null !== $value) {
-                if (!Path::isAbsolute($value)) {
-                    $value = $rootPath . '/' . ltrim($value, '/\\');
-                }
+        $appCacheDir = self::readEnvVar('APP_CACHE_DIR');
+        if (null !== $appCacheDir) {
+            return self::normalizeCacheBaseDir($rootPath, $appCacheDir);
+        }
 
-                return $value;
+        if (!defined('PIMCORE_SYMFONY_CACHE_DIRECTORY')) {
+            $customConstantsFile = $rootPath . '/config/pimcore/constants.php';
+            if (file_exists($customConstantsFile)) {
+                // @phpstan-ignore-next-line
+                include_once $customConstantsFile;
             }
         }
 
+        if (defined('PIMCORE_SYMFONY_CACHE_DIRECTORY')) {
+            $pimcoreCacheDir = constant('PIMCORE_SYMFONY_CACHE_DIRECTORY');
+            if (is_string($pimcoreCacheDir) && '' !== $pimcoreCacheDir) {
+                return self::normalizeCacheBaseDir($rootPath, $pimcoreCacheDir);
+            }
+        }
+
+        $pimcoreCacheDir = self::readEnvVar('PIMCORE_SYMFONY_CACHE_DIRECTORY');
+        if (null !== $pimcoreCacheDir) {
+            return self::normalizeCacheBaseDir($rootPath, $pimcoreCacheDir);
+        }
+
         return $rootPath . '/var/cache';
+    }
+
+    private static function normalizeCacheBaseDir(string $rootPath, string $cacheBaseDir): string
+    {
+        if (Path::isAbsolute($cacheBaseDir)) {
+            return $cacheBaseDir;
+        }
+
+        return $rootPath . '/' . ltrim($cacheBaseDir, '/\\');
     }
 
     private static function readEnvVar(string $envVar): ?string
