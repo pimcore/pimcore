@@ -723,7 +723,18 @@ class Asset extends Element\AbstractElement
                 if (!is_resource($src)) {
                     $src = $this->getStream();
                 }
-                $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
+
+                $mimeType = null;
+
+                try {
+                    $mimeType = $storage->mimeType($path);
+                } catch (FilesystemException $e) {
+                    // ignore, fallback
+                }
+
+                if (!$mimeType || $mimeType === 'application/octet-stream') {
+                    $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
+                }
                 $this->setMimeType($mimeType);
                 $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
@@ -1658,30 +1669,31 @@ class Asset extends Element\AbstractElement
         try {
             $movedFiles = [];
             $children = $storage->listContents($oldPath, true);
-            $totalChildren = iterator_count($children);
+            $totalFiles = 0;
 
-            if ($totalChildren > 0) {
-                /** @var \League\Flysystem\StorageAttributes $child */
-                foreach ($children as $child) {
-                    if ($child instanceof \League\Flysystem\FileAttributes) {
-                        $src  = $child['path'];
-                        $dest = str_replace($oldPath, $newPath, '/' . $src);
+            /** @var \League\Flysystem\StorageAttributes $child */
+            foreach ($children as $child) {
+                if ($child instanceof \League\Flysystem\FileAttributes) {
+                    ++$totalFiles;
+                    $src  = $child['path'];
+                    $dest = $newPath . substr('/' . $src, strlen($oldPath));
 
-                        $storage->move($src, $dest);
-                        $movedFiles[$dest] = $src;
-                    }
+                    $storage->move($src, $dest);
+                    $movedFiles[$dest] = $src;
                 }
+            }
 
+            if ($totalFiles > 0) {
                 $movedCount = count($movedFiles);
 
-                if ($movedCount === $totalChildren) {
+                if ($movedCount === $totalFiles) {
                     $storage->deleteDirectory($oldPath);
                 } else {
                     \Pimcore\Logger::info(
                         sprintf(
                             'Moved %d/%d files from %s to %s. No exception was thrown for %d files,
                             so the source directory was not deleted.',
-                            $movedCount, $totalChildren, $oldPath, $newPath, $totalChildren - $movedCount
+                            $movedCount, $totalFiles, $oldPath, $newPath, $totalFiles - $movedCount
                         )
                     );
                 }
