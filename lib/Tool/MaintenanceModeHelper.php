@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
+use Doctrine\DBAL\Connection;
 use Exception;
 use InvalidArgumentException;
 use Pimcore;
@@ -28,7 +29,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
 
     protected const OFF = 'OFF';
 
-    public function __construct(protected RequestStack $requestStack)
+    public function __construct(protected RequestStack $requestStack, protected Connection $db)
     {
     }
 

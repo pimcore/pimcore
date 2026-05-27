@@ -231,18 +231,6 @@ class Composer
             return self::normalizeCacheBaseDir($rootPath, $appCacheDir);
         }
 
-        if (!defined('PIMCORE_SYMFONY_CACHE_DIRECTORY')) {
-            $customConstantsFile = $rootPath . '/config/pimcore/constants.php';
-            if (file_exists($customConstantsFile)) {
-                // @phpstan-ignore-next-line
-                include_once $customConstantsFile;
-            }
-        }
-
-        if (defined('PIMCORE_SYMFONY_CACHE_DIRECTORY')) {
-            return self::normalizeCacheBaseDir($rootPath, (string) constant('PIMCORE_SYMFONY_CACHE_DIRECTORY'));
-        }
-
         $pimcoreCacheDir = self::readEnvVar('PIMCORE_SYMFONY_CACHE_DIRECTORY');
         if (null !== $pimcoreCacheDir) {
             return self::normalizeCacheBaseDir($rootPath, $pimcoreCacheDir);
@@ -258,6 +246,14 @@ class Composer
         }
 
         return $rootPath . '/' . ltrim($cacheBaseDir, '/\\');
+    }
+
+    private static function getConfiguredCacheDir(Event $event): string
+    {
+        $cacheBaseDir = self::getConfiguredCacheBaseDir($event);
+        $environment = self::readEnvVar('APP_ENV') ?? 'dev';
+
+        return $cacheBaseDir . '/' . $environment;
     }
 
     private static function readEnvVar(string $envVar): ?string
@@ -331,7 +327,7 @@ class Composer
         // Nothing to clear on a fresh project. During create-project, the
         // cache directory usually does not exist yet. Running cache:clear
         // would bootstrap the kernel and can fail before installation is done.
-        $cacheDir = self::getConfiguredCacheBaseDir($event);
+        $cacheDir = self::getConfiguredCacheDir($event);
         if (!is_dir($cacheDir) && !$options['symfony-cache-warmup']) {
             $event->getIO()->write(
                 '<comment>Skipping cache:clear: no compiled cache found.</comment>'
