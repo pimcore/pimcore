@@ -293,11 +293,6 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->dispatchTargetsChangedMessage($newData, $existingDepencies);
     }
-
-    /**
-     * @param array<array{id: int, type: string}> $newTargets
-     * @param array<string, array<int, int>> $removedTargetsByType targetType => [targetId => rowId]
-     */
     private function dispatchTargetsChangedMessage(array $newTargets, array $removedTargetsByType): void
     {
         $addedTargets = [];
