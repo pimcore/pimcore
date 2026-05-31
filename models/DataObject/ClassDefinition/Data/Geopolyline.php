@@ -45,7 +45,8 @@ class Geopolyline extends AbstractGeo implements
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
-        return Serialize::unserialize($data);
+        // Geo coordinates are stored as plain arrays; no object classes are expected.
+        return Serialize::unserialize($data, false);
     }
 
     /**

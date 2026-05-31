@@ -103,6 +103,7 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
 
     public function unmarshalAfterDecryption(mixed $value, ?Concrete $object = null, array $params = []): mixed
     {
-        return Serialize::unserialize($value);
+        // Geo field data is always a plain array of coordinates; no object classes are expected.
+        return Serialize::unserialize($value, false);
     }
 }

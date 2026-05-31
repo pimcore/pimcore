@@ -17,6 +17,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\RgbaColor as RgbaColorData;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
@@ -288,7 +289,8 @@ class RgbaColor extends Data implements
 
     public function unmarshalAfterDecryption(mixed $value, ?Concrete $object = null, array $params = []): mixed
     {
-        return Serialize::unserialize($value);
+        // Only a RgbaColor data object is expected here.
+        return Serialize::unserialize($value, [RgbaColorData::class]);
     }
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool

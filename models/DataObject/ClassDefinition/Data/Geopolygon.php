@@ -71,7 +71,9 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
-        return Serialize::unserialize($data);
+        // Geo coordinates are stored as plain arrays of [latitude, longitude] pairs;
+        // no object classes are expected.
+        return Serialize::unserialize($data, false);
     }
 
     /**
