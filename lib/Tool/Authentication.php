@@ -86,10 +86,13 @@ class Authentication
         // The unserialize_callback_func guard above catches *unknown* class names
         // but does NOT prevent Object Injection via gadget chains built from
         // already-loaded classes. Providing an explicit allowed_classes list
-        // eliminates that attack surface.
+        // significantly reduces that attack surface.
         $allowedClasses = [
             PostAuthenticationToken::class,
             AbstractToken::class,
+            \Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken::class,
+            \Symfony\Component\Security\Core\Authentication\Token\RememberMeToken::class,
+            \Symfony\Component\Security\Core\Authentication\Token\SwitchUserToken::class,
         ];
 
         try {
