@@ -24,8 +24,10 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\User;
 use Pimcore\Security\User\UserProvider;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken;
 
 class Authentication
 {
@@ -80,8 +82,18 @@ class Authentication
             return $prevErrorHandler ? $prevErrorHandler($type, $msg, $file, $line, $context) : false;
         });
 
+        // Restrict deserialization to known Symfony security token classes.
+        // The unserialize_callback_func guard above catches *unknown* class names
+        // but does NOT prevent Object Injection via gadget chains built from
+        // already-loaded classes. Providing an explicit allowed_classes list
+        // eliminates that attack surface.
+        $allowedClasses = [
+            PostAuthenticationToken::class,
+            AbstractToken::class,
+        ];
+
         try {
-            $token = unserialize($serializedToken);
+            $token = unserialize($serializedToken, ['allowed_classes' => $allowedClasses]);
         } catch (ErrorException $e) {
             if (0x37313BC !== $e->getCode()) {
                 throw $e;
