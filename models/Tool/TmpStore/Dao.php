@@ -62,6 +62,7 @@ class Dao extends Model\Dao\AbstractDao
                     \Pimcore\Model\Asset\Image\Thumbnail\Config::class,
                     \Pimcore\Model\Asset\Video\Thumbnail\Processor::class,
                     \Pimcore\Model\Asset\Video\Thumbnail\Config::class,
+                    \Pimcore\Video\Adapter\Ffmpeg::class,
                 ]]);
             }
 
