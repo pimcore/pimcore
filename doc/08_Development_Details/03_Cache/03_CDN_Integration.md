@@ -24,8 +24,8 @@ Set these environment variables on your runtime:
 | `CDN_PROVIDER`        | yes         | `fastly`                         | Activates the CDN listeners. Empty/unset disables all CDN behavior — Pimcore will not emit cache tags or dispatch purges.                                     |
 | `FASTLY_API_TOKEN`    | for Fastly  | `xxxxxxxx`                       | Fastly API token with the `purge` scope.                                                                                                                      |
 | `FASTLY_API_SERVICE`  | for Fastly  | `abc123…`                        | Fastly service ID.                                                                                                                                            |
-| `FASTLY_API_BASE_URL` | no          | `https://api.fastly.com` (default) | Override the Fastly API base URL (useful for testing against a mock such as WireMock).                                                                       |
-| `CDN_BASE_URL`        | no          | `https://cdn.example.com`        | Public base URL of the CDN. Required only if you need URL-based purges of original (non-thumbnail) asset URLs — see [Original Assets](#original-assets-limitation). |
+| `FASTLY_API_BASE_URL` | no          | `https://api.fastly.com` (default) | Override the Fastly API base URL if your environment needs a custom API endpoint/proxy.                                                                       |
+| `CDN_BASE_URL`        | no          | `https://cdn.example.com`        | Public base URL of the CDN. Required when original assets are served statically and must be purged by URL — see [Original Assets](#original-assets). |
 
 Once `CDN_PROVIDER` is set, three event listeners activate:
 
@@ -57,8 +57,8 @@ For original asset URLs (`/var/assets/...`) the same listener also computes:
   original. The hash is the first 12 hex characters of
   `sha256('/var/assets' + asset_full_path)`.
 
-…but see the [Original Assets limitation](#original-assets-limitation) below
-for why the path-hash tag often cannot reach the actual cached object.
+…but this only reaches the cached object if `/var/assets/...` responses pass
+through PHP. See [Original Assets](#original-assets).
 
 ## Cookie Stripping
 
@@ -188,31 +188,34 @@ The CDN edge must be configured to:
    `POST /service/{service_id}/purge` (with `Surrogate-Key` header) for
    `PurgeCdnTagMessage`. Both are handled by `FastlyPurgeClient`.
 
-A local development stack based on Varnish + WireMock is provided in
-`tests/bin/docker-compose.yaml` and replicates the Fastly behavior end-to-end.
+## Original Assets
 
-## Original Assets Limitation
+For original assets (`/var/assets/...`) there are two valid operation modes.
 
-Original (non-thumbnail) asset URLs such as `/var/assets/products/photo.jpg`
-are typically served by nginx directly off disk via `try_files`. PHP — and
-therefore `CdnSurrogateKeyListener` — never runs for these requests. As a
-consequence:
+### Mode A: Tag-based purge for originals
 
-- Originals **do not carry a `Cache-Tag` / `Surrogate-Key` header** at the
-  edge.
-- **Tag-based purge does not invalidate originals** — the
-  `asset-path-{hash}` tag is computed but no cached object at the edge is
-  ever labelled with it.
+Use this mode if you want `asset-path-{hash}` surrogate tags to invalidate
+cached original assets.
 
-To work around this, set `CDN_BASE_URL` to your CDN's public origin.
-`CdnPurgeListener` will then additionally dispatch `PurgeCdnUrlMessage` for
-the original URL on every asset update/delete (and for the old URL after a
-rename or move). The Fastly client issues a
-`PURGE https://cdn.example.com/var/assets/...` against the asset URL, which
-removes the cached object regardless of any surrogate-key state.
+Requirement: original asset requests must be handled by PHP on cache fill,
+not served directly as static files. If the web server serves the file from
+disk before Symfony runs, `CdnSurrogateKeyListener` cannot emit
+`Surrogate-Key`/`Cache-Tag` and tag purge has nothing to target.
 
-If `CDN_BASE_URL` is not set, originals will only refresh when their natural
-TTL expires.
+For Upsun/Platform.sh style routing, configure `/var/assets` to pass through
+`/index.php` and avoid static short-circuiting for these paths.
+
+### Mode B: URL purge for originals (static serving)
+
+Use this mode if you keep `/var/assets` as static-file serving.
+
+In this case, original responses usually do not carry CDN tags. Configure
+`CDN_BASE_URL` so `CdnPurgeListener` dispatches `PurgeCdnUrlMessage` on
+asset update/delete (including old URL on rename/move). Fastly then issues a
+direct `PURGE https://cdn.example.com/var/assets/...` by URL.
+
+If `CDN_BASE_URL` is not set in static mode, originals refresh only when TTL
+expires naturally.
 
 ## Adding a New CDN Provider
 
@@ -244,41 +247,12 @@ template.
 > generic provider-selector based on `CDN_PROVIDER` is planned for a future
 > phase.
 
-## Known Limitations (Phase 1)
+## Verification Guidance
 
-- **Originals require `CDN_BASE_URL`** for purging — see
-  [Original Assets](#original-assets-limitation).
-- **No private/auth-aware caching**: any path matching the asset/thumbnail
-  patterns is cached publicly. If you have private assets, gate them upstream
-  of Pimcore or add path-based exclusions at the edge.
-- **Signed URLs**: `Request::getPathInfo()` ignores query strings, so signed
-  URLs with different signatures collide on the same surrogate key. Either
-  exclude signed paths from caching or include the signature in the cache key
-  via VCL.
-- **`Cache-Tag` is not stripped at the edge**: asset IDs and thumbnail
-  config names are visible to downstream clients. Consider stripping
-  `Cache-Tag` (and any leaked `Surrogate-Key`) in your edge config if this
-  is a concern.
-- **Image-optimization mode** (Fastly IO, Cloudflare Polish, Imgix, …) is
-  not yet supported. Pimcore continues to generate its own thumbnail variants
-  and the CDN caches them as-is.
-- **`CDN_PROVIDER` is wired specifically for `fastly`.** Other values are
-  recognized by the generic listeners (tagging, cookie stripping, purge
-  message dispatch) but require a custom `PurgeClientInterface`
-  implementation to actually deliver the purges.
+For deployment verification, test against your target CDN endpoint and check:
 
-## Testing Locally
-
-The repository includes a Varnish + WireMock stack in
-`tests/bin/docker-compose.yaml` that mimics Fastly behavior end-to-end. It
-is used by the integration test suite and can be brought up for manual
-exploration:
-
-```bash
-cd tests/bin
-docker compose up -d
-```
-
-WireMock records every API request issued against the mock Fastly endpoint,
-which makes it straightforward to verify that a purge was dispatched with
-the expected tags.
+1. `Cache-Tag`/`Surrogate-Key` presence on 2xx thumbnail responses.
+2. Expected behavior for originals based on your selected mode in
+   [Original Assets](#original-assets).
+3. Messenger queue health for `pimcore_cdn_purge` and
+   `pimcore_cdn_purge_failed`.
