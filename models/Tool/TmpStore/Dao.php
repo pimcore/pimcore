@@ -58,7 +58,11 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($item) {
             if ($item['serialized']) {
-                $item['data'] = unserialize($item['data']);
+                $item['data'] = unserialize($item['data'], ['allowed_classes' => [
+                    \Pimcore\Model\Asset\Image\Thumbnail\Config::class,
+                    \Pimcore\Model\Asset\Video\Thumbnail\Processor::class,
+                    \Pimcore\Model\Asset\Video\Thumbnail\Config::class,
+                ]]);
             }
 
             $item['serialized'] = (bool)$item['serialized'];
