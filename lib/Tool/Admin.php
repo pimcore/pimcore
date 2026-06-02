@@ -15,14 +15,11 @@ namespace Pimcore\Tool;
 
 use Exception;
 use Pimcore;
-use Pimcore\Event\SystemEvents;
-use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\User;
 use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Tool\Text\Csv;
 use stdClass;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * @internal
