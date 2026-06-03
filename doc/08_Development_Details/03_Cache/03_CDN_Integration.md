@@ -66,9 +66,7 @@ Pimcore's personalization bundle sets cookies (`_pc_tss`, `_pc_tvs`) on every
 response, including assets. Most CDNs refuse to cache responses that carry a
 `Set-Cookie` header. `CdnAssetCookieStripperListener` runs at priority `-200`
 (after the targeting listener at `-115`) and removes all cookies from
-responses whose path matches the thumbnail or original-asset patterns:
-
-- Thumbnails: `^/(image|video)-thumb__\d+__([^/]+)/`
+- Thumbnails: `(?:^|/)(image|video)-thumb__\d+__([a-zA-Z0-9_\-]+)/`
 - Originals: `^/var/assets/`
 
 When `CDN_PROVIDER` is empty, this listener is inert and cookies pass through
@@ -243,9 +241,7 @@ alias when `CDN_PROVIDER` is set to your provider's identifier. The Fastly
 implementation in `bundles/CoreBundle/config/cdn.yaml` is a reference
 template.
 
-> **Multi-provider selection** is currently hard-wired to `fastly`. A
-> generic provider-selector based on `CDN_PROVIDER` is planned for a future
-> phase.
+> **Multi-provider selection** is controlled by `CDN_PROVIDER` and the `pimcore.cdn.purge_client` service tags (the registry resolves the selected provider lazily).
 
 ## Verification Guidance
 
