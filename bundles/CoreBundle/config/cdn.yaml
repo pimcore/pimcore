@@ -1,0 +1,29 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # CDN purge client infrastructure
+    #
+
+    Pimcore\Cdn\NullPurgeClient: ~
+
+    Pimcore\Cdn\FastlyPurgeClient: ~
+
+    Pimcore\Cdn\CdnPurgeClientRegistry: ~
+
+    Pimcore\Cdn\PurgeClientInterface:
+        alias: Pimcore\Cdn\CdnPurgeClientRegistry
+
+    Pimcore\Cdn\Message\Handler\PurgeCdnMessageHandler: ~
+
+    #
+    # CDN event listeners
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\CdnPurgeListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\CdnSurrogateKeyListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\CdnAssetCookieStripperListener: ~

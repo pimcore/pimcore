@@ -132,6 +132,7 @@ final class Configuration implements ConfigurationInterface
         $this->addGotenbergNode($rootNode);
         $this->addDependencyNode($rootNode);
         $this->addProductRegistrationNode($rootNode);
+        $this->addCdnNode($rootNode);
 
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
@@ -2104,6 +2105,40 @@ final class Configuration implements ConfigurationInterface
                     ->scalarNode('product_key')
                         ->info('Product registration key obtained during product registration. ' .
                                'It is based on `instance_identifier` and `pimcore.encryption.secret`.')
+                    ->end()
+                ->end()
+            ->end()
+        ;
+    }
+
+    private function addCdnNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('cdn')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('base_url')
+                            ->info('Public base URL of the CDN (scheme + host) used for URL-based purges of original assets that nginx serves directly off disk and that therefore never receive a Cache-Tag from PHP, e.g. https://cdn.example.com. Use env var CDN_BASE_URL.')
+                            ->defaultValue('%env(CDN_BASE_URL)%')
+                        ->end()
+                        ->arrayNode('fastly')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->scalarNode('api_token')
+                                    ->info('Fastly API token with purge_select scope. Use env var FASTLY_API_TOKEN.')
+                                    ->defaultValue('%env(FASTLY_API_TOKEN)%')
+                                ->end()
+                                ->scalarNode('service_id')
+                                    ->info('Fastly service ID. Use env var FASTLY_API_SERVICE.')
+                                    ->defaultValue('%env(FASTLY_API_SERVICE)%')
+                                ->end()
+                                ->scalarNode('api_base_url')
+                                    ->info('Base URL for the Fastly API. Override for local testing against a mock. Use env var FASTLY_API_BASE_URL.')
+                                    ->defaultValue('%env(FASTLY_API_BASE_URL)%')
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end()

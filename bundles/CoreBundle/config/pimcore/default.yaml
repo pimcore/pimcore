@@ -5,6 +5,11 @@ parameters:
     env(PIMCORE_ENCRYPTION_SECRET): ''
     env(PIMCORE_INSTANCE_IDENTIFIER): ''
     env(PIMCORE_PRODUCT_KEY): ''
+    env(CDN_PROVIDER): ''
+    env(CDN_BASE_URL): ''
+    env(FASTLY_API_TOKEN): ''
+    env(FASTLY_API_SERVICE): ''
+    env(FASTLY_API_BASE_URL): 'https://api.fastly.com'
 
 framework:
     translator:
@@ -40,6 +45,16 @@ framework:
             pimcore_scheduled_tasks: "%pimcore.messenger.transport_dsn_prefix%pimcore_scheduled_tasks"
             pimcore_image_optimize: "%pimcore.messenger.transport_dsn_prefix%pimcore_image_optimize"
             pimcore_asset_update: "%pimcore.messenger.transport_dsn_prefix%pimcore_asset_update"
+            pimcore_cdn_purge:
+                dsn: '%pimcore.messenger.transport_dsn_prefix%pimcore_cdn_purge'
+                retry_strategy:
+                    max_retries: 5
+                    delay: 2000
+                    multiplier: 2
+                    max_delay: 60000
+                failure_transport: pimcore_cdn_purge_failed
+            pimcore_cdn_purge_failed:
+                dsn: '%pimcore.messenger.transport_dsn_prefix%pimcore_cdn_purge_failed'
             #Dependency resolving is synchronous by default, use the following commented lines below (transports/routing) to make it async
             #pimcore_dependencies: "%pimcore.messenger.transport_dsn_prefix%pimcore_dependencies"
         routing:
@@ -54,6 +69,8 @@ framework:
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
             'Pimcore\Messenger\ScheduledTaskMessage': pimcore_scheduled_tasks
             #'Pimcore\Messenger\ElementDependenciesMessage': pimcore_dependencies
+            'Pimcore\Cdn\Message\PurgeCdnTagMessage': pimcore_cdn_purge
+            'Pimcore\Cdn\Message\PurgeCdnUrlMessage': pimcore_cdn_purge
         default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:
