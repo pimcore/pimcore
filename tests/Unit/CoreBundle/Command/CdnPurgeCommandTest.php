@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\CoreBundle\Command;
 
+use ArrayObject;
 use Pimcore\Bundle\CoreBundle\Command\CdnPurgeCommand;
 use Pimcore\Cdn\PurgeClientInterface;
 use Pimcore\Model\Asset;
@@ -25,11 +26,11 @@ use Symfony\Component\Console\Tester\CommandTester;
 class CdnPurgeCommandTest extends TestCase
 {
     /**
-     * @return array{0: PurgeClientInterface, 1: \ArrayObject<string, array>}
+     * @return array{0: PurgeClientInterface, 1: ArrayObject<string, array>}
      */
     private function makeClient(): array
     {
-        $calls = new \ArrayObject(['purgeByTags' => []]);
+        $calls = new ArrayObject(['purgeByTags' => []]);
         $client = $this->createMock(PurgeClientInterface::class);
         $client->method('purgeByTags')
             ->willReturnCallback(function (array $tags) use ($calls): void {

@@ -15,8 +15,10 @@ namespace Pimcore\Cdn;
 
 use GuzzleHttp\ClientInterface;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Throwable;
 
 #[AutoconfigureTag('pimcore.cdn.purge_client', ['provider' => 'fastly'])]
 class FastlyPurgeClient implements PurgeClientInterface
@@ -60,13 +62,13 @@ class FastlyPurgeClient implements PurgeClientInterface
     /**
      * @param array<string, mixed> $options
      *
-     * @throws \Throwable when the HTTP request fails or Fastly returns a non-2xx response
+     * @throws Throwable when the HTTP request fails or Fastly returns a non-2xx response
      */
     private function request(string $method, string $url, array $options = []): void
     {
         try {
             $response = $this->httpClient->request($method, $url, $this->mergeRequestOptions($options));
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error(
                 'Fastly purge request threw an exception. Method: {method}, URL: {url}, Error: {error}',
                 ['method' => $method, 'url' => $url, 'error' => $e->getMessage()]
@@ -85,7 +87,7 @@ class FastlyPurgeClient implements PurgeClientInterface
             // Throw so Symfony Messenger sees the failure and applies its retry policy.
             // Returning silently here would mark the message handled and a revoked token
             // or transient 5xx would result in a permanently un-purged cache entry.
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Fastly purge request failed with HTTP %d for %s %s',
                 $statusCode,
                 $method,

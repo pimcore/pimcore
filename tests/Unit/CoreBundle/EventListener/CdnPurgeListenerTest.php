@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\CoreBundle\EventListener;
 
+use ArrayObject;
 use Pimcore\Bundle\CoreBundle\EventListener\CdnPurgeListener;
 use Pimcore\Cdn\Message\PurgeCdnTagMessage;
 use Pimcore\Cdn\Message\PurgeCdnUrlMessage;
@@ -44,11 +45,11 @@ class CdnPurgeListenerTest extends TestCase
     }
 
     /**
-     * @return array{0: MessageBusInterface, 1: \ArrayObject<int, object>}
+     * @return array{0: MessageBusInterface, 1: ArrayObject<int, object>}
      */
     private function captureBusDispatches(): array
     {
-        $dispatched = new \ArrayObject();
+        $dispatched = new ArrayObject();
         $bus = $this->createMock(MessageBusInterface::class);
         $bus->method('dispatch')
             ->willReturnCallback(function (object $message) use ($dispatched) {

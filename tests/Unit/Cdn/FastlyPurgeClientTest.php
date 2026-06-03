@@ -19,6 +19,8 @@ use Pimcore\Cdn\FastlyPurgeClient;
 use Pimcore\Tests\Support\Test\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use ReflectionMethod;
+use RuntimeException;
 
 class FastlyPurgeClientTest extends TestCase
 {
@@ -124,7 +126,7 @@ class FastlyPurgeClientTest extends TestCase
                 $this->arrayHasKey('status'),
             );
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $this->client->purgeByTag('asset-1');
     }
@@ -139,7 +141,7 @@ class FastlyPurgeClientTest extends TestCase
 
         $this->logger->expects($this->atLeastOnce())->method('error');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches('/HTTP 401/');
 
         $this->client->purgeByTag('asset-1');
@@ -154,7 +156,7 @@ class FastlyPurgeClientTest extends TestCase
 
         $this->logger->expects($this->atLeastOnce())->method('error');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches('/HTTP 503/');
 
         $this->client->purgeByUrl('https://cdn.example.com/var/assets/image.jpg');
@@ -162,7 +164,7 @@ class FastlyPurgeClientTest extends TestCase
 
     public function testExceptionIsLoggedAndRethrown(): void
     {
-        $exception = new \RuntimeException('connection refused');
+        $exception = new RuntimeException('connection refused');
 
         $this->httpClient->method('request')->willThrowException($exception);
 
@@ -173,7 +175,7 @@ class FastlyPurgeClientTest extends TestCase
                 $this->arrayHasKey('error'),
             );
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('connection refused');
 
         $this->client->purgeByTag('asset-1');
@@ -285,7 +287,7 @@ class FastlyPurgeClientTest extends TestCase
         //
         // We test the private merger directly via reflection so the assertion targets the
         // actual bug surface, independent of whether request() currently exposes an override path.
-        $merger = new \ReflectionMethod($this->client, 'mergeRequestOptions');
+        $merger = new ReflectionMethod($this->client, 'mergeRequestOptions');
 
         $merged = $merger->invoke($this->client, [
             'http_errors' => true,
