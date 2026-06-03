@@ -77,6 +77,31 @@ class CdnAssetCookieStripperListenerTest extends TestCase
         $this->assertCount(0, $response->headers->getCookies(), 'All Set-Cookie headers should be stripped on original-asset responses');
     }
 
+    public function testPreservesNonPersonalizationCookiesOnAssetPath(): void
+    {
+        // A project may legitimately set its own cookie on an asset path (e.g. a gated
+        // download controller). Only the personalization cookies must be stripped — the
+        // project's cookie has to survive.
+        $event = $this->makeEvent('/var/assets/Sample%20Content/foo.jpg');
+        $event->getResponse()->headers->setCookie(Cookie::create('app_session', 'keep-me'));
+
+        $response = $this->dispatch('fastly', $event);
+
+        $names = array_map(static fn (Cookie $c): string => $c->getName(), $response->headers->getCookies());
+        $this->assertSame(['app_session'], $names, 'Only personalization cookies should be stripped; other cookies are preserved');
+    }
+
+    public function testDoesNotStripOnNonSuccessResponse(): void
+    {
+        // CDN tagging/caching is limited to 2xx. A 403 (e.g. gated asset) or any non-2xx
+        // response is never cached, so its cookies — possibly a session/auth cookie — must
+        // be left intact.
+        $event = $this->makeEvent('/var/assets/Sample%20Content/foo.jpg', statusCode: 403);
+        $response = $this->dispatch('fastly', $event);
+
+        $this->assertCount(2, $response->headers->getCookies(), 'Cookies must not be stripped on non-2xx responses');
+    }
+
     public function testDoesNotStripOnNonAssetResponse(): void
     {
         // Homepage / generic page — cookies must survive so personalization keeps working.

@@ -29,16 +29,30 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * any response with Set-Cookie as private by default and refuse to cache it, defeating the
  * Surrogate-Key tagging that CdnSurrogateKeyListener attaches to those same responses.
  *
- * What: At priority -200 (after TargetingListener) we strip Set-Cookie on responses whose
- * request path matches the same patterns CdnSurrogateKeyListener tags. The cookies were
- * never useful for an asset/thumbnail anyway (the browser does not act on them when fetching
- * an image), so removing them has no client-visible effect.
+ * What: At priority -200 (after TargetingListener) we strip Set-Cookie on 2xx responses whose
+ * request path matches the same patterns CdnSurrogateKeyListener tags. Only the known
+ * personalization cookies are removed (see STRIPPED_COOKIES) — any other cookie a project sets
+ * on these paths is left untouched, so a deliberately private/gated asset response keeps its
+ * own cookies (and stays uncacheable, which is the project's intent). The personalization
+ * cookies were never useful for an asset/thumbnail anyway (the browser does not act on them
+ * when fetching an image), so removing them has no client-visible effect.
+ *
+ * Status guard: Only 2xx responses are touched, mirroring CdnSurrogateKeyListener — error and
+ * redirect responses are never CDN-cached, so their cookies must be left intact.
  *
  * Gating: Only active when CDN_PROVIDER env var is set. Sites without a CDN keep their
  * original cookie behavior unchanged.
  */
 class CdnAssetCookieStripperListener implements EventSubscriberInterface
 {
+    /**
+     * Personalization cookies set by PersonalizationBundle's TargetingListener on every frontend
+     * response. They are the only cookies that legitimately need stripping from asset/thumbnail
+     * responses to keep them CDN-cacheable. PersonalizationBundle is an optional package, so its
+     * cookie names are referenced here as literals rather than imported constants.
+     */
+    public const STRIPPED_COOKIES = ['_pc_tss', '_pc_tvs'];
+
     public function __construct(
         #[Autowire('%env(CDN_PROVIDER)%')]
         private readonly string $cdnProvider,
@@ -77,11 +91,21 @@ class CdnAssetCookieStripperListener implements EventSubscriberInterface
 
         $response = $event->getResponse();
 
+        // Only 2xx responses are CDN-cached/tagged (see CdnSurrogateKeyListener). Never touch
+        // cookies on error or redirect responses — e.g. a 302 to login or a 403 on a gated
+        // asset path must keep its session cookie intact.
+        if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
+            return;
+        }
+
         // Symfony stores cookies in a queue accessed by getCookies()/clearCookie(). The
         // raw 'Set-Cookie' header is rebuilt from this queue at send time, so removing the
-        // header alone is not enough — we must clear the queue.
+        // header alone is not enough — we must clear the queue. Strip only the known
+        // personalization cookies; any other cookie on this path is intentionally preserved.
         foreach ($response->headers->getCookies() as $cookie) {
-            $response->headers->removeCookie($cookie->getName(), $cookie->getPath(), $cookie->getDomain());
+            if (in_array($cookie->getName(), self::STRIPPED_COOKIES, true)) {
+                $response->headers->removeCookie($cookie->getName(), $cookie->getPath(), $cookie->getDomain());
+            }
         }
     }
 }
