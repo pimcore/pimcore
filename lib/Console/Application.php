@@ -89,7 +89,7 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
             }
 
             if ($event->getInput()->hasOption('maintenance-mode') &&
-            $event->getInput()->getOption('maintenance-mode')) {
+                $event->getInput()->getOption('maintenance-mode')) {
                 // enable maintenance mode if requested
                 $maintenanceModeId = 'cache-warming-dummy-session-id';
 
