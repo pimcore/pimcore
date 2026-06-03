@@ -77,14 +77,31 @@ HELP
             return Command::FAILURE;
         }
 
+        // Asset IDs must be positive integers. A non-numeric value (e.g. "foo") would
+        // otherwise build a meaningless "asset-foo" tag and load asset 0. Fail fast on
+        // malformed input rather than partially purging the valid IDs in the same call.
+        $invalidIds = array_filter(
+            $assetIds,
+            static fn (string $id): bool => !ctype_digit($id) || (int) $id < 1,
+        );
+        if ($invalidIds !== []) {
+            $io->error(sprintf(
+                'Invalid asset ID(s): %s. Asset IDs must be positive integers.',
+                implode(', ', $invalidIds),
+            ));
+
+            return Command::FAILURE;
+        }
+
         $allTags = [];
 
         foreach ($assetIds as $id) {
+            $id = (int) $id;
             $allTags[] = 'asset-' . $id;
 
             // Also purge the original asset CDN entry via path hash.
             // Identical hashing to CdnSurrogateKeyListener / CdnPurgeListener: sha256 of '/var/assets' + full path, first 12 hex chars.
-            $asset = $this->loadAsset((int) $id);
+            $asset = $this->loadAsset($id);
             if ($asset === null) {
                 $io->warning(sprintf('Asset with ID "%s" not found — only the asset-%s thumbnail tag will be purged, the original CDN entry cannot be resolved without a path.', $id, $id));
 

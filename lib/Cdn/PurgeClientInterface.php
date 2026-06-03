@@ -30,10 +30,13 @@ interface PurgeClientInterface
     /**
      * Purge a specific URL from the CDN cache.
      *
-     * Intended for targeted manual operations: admin-triggered single-asset purge CLI command,
-     * future admin UI "force refresh" action, or debugging. Event-driven invalidation uses
-     * purgeByTag exclusively. Implementations must treat this as a best-effort operation —
-     * URL-based purge is not available on all providers (e.g., Varnish with BAN-based purge).
+     * Used for targeted manual operations (the pimcore:cdn:purge CLI command, a future admin UI
+     * "force refresh" action, or debugging) and, for original assets served statically from
+     * /var/assets, by the event-driven purge listener when CDN_BASE_URL is configured — those
+     * responses never carry a Surrogate-Key/Cache-Tag header, so they can only be invalidated by
+     * URL. Thumbnail invalidation remains tag-based via purgeByTag. Implementations must treat
+     * this as a best-effort operation — URL-based purge is not available on all providers
+     * (e.g., Varnish with BAN-based purge).
      */
     public function purgeByUrl(string $url): void;
 }

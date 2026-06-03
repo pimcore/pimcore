@@ -114,8 +114,10 @@ class FastlyPurgeClient implements PurgeClientInterface
                 'Fastly-Key' => $this->apiToken,
                 'Accept' => 'application/json',
             ],
-            // Do not throw on 4xx/5xx — we want to log status and continue
-            // (Fastly purge is idempotent; transient errors should not crash the worker).
+            // Disable Guzzle's automatic exception on 4xx/5xx so request() can read the
+            // status code, log it, and throw its own RuntimeException. That explicit throw
+            // is what lets Symfony Messenger see the failure and apply its retry policy —
+            // this flag does not mean "log and continue", it only defers the throw to us.
             'http_errors' => false,
         ];
 

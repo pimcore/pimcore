@@ -40,7 +40,7 @@ class CdnPurgeListener implements EventSubscriberInterface
         private readonly MessageBusInterface $bus,
         #[Autowire('%env(CDN_PROVIDER)%')]
         private readonly string $cdnProvider,
-        #[Autowire('%env(CDN_BASE_URL)%')]
+        #[Autowire('%pimcore.cdn.base_url%')]
         private readonly string $cdnBaseUrl = '',
     ) {
     }

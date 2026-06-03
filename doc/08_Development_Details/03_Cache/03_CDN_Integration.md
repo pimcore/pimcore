@@ -236,10 +236,22 @@ final class MyCdnPurgeClient implements PurgeClientInterface
 }
 ```
 
-Register it as a service and wire it as the `Pimcore\Cdn\PurgeClientInterface`
-alias when `CDN_PROVIDER` is set to your provider's identifier. The Fastly
-implementation in `bundles/CoreBundle/config/cdn.yaml` is a reference
-template.
+Register it as a service and tag it with `pimcore.cdn.purge_client`, setting the
+`provider` attribute to the identifier you will use in `CDN_PROVIDER`:
+
+```yaml
+services:
+    App\Cdn\MyCdnPurgeClient:
+        tags:
+            - { name: pimcore.cdn.purge_client, provider: mycdn }
+```
+
+`CdnPurgeClientRegistry` collects every tagged client and lazily resolves the one
+whose `provider` matches `CDN_PROVIDER` at runtime. You do **not** replace the
+`Pimcore\Cdn\PurgeClientInterface` alias — it points at the registry, which does
+the selection. The Fastly implementation in `bundles/CoreBundle/config/cdn.yaml`
+(tagged via the `#[AutoconfigureTag]` attribute on `FastlyPurgeClient`) is a
+reference template.
 
 > **Multi-provider selection** is controlled by `CDN_PROVIDER` and the `pimcore.cdn.purge_client` service tags (the registry resolves the selected provider lazily).
 

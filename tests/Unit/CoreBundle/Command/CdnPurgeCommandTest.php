@@ -123,6 +123,39 @@ class CdnPurgeCommandTest extends TestCase
         $this->assertSame([['thumb-product-thumb']], $calls['purgeByTags']);
     }
 
+    public function testNonNumericAssetIdReturnsFailureWithoutPurging(): void
+    {
+        $client = $this->createMock(PurgeClientInterface::class);
+        $client->expects($this->never())->method('purgeByTags');
+
+        $tester = $this->runCommand($client, ['--asset' => ['foo']]);
+
+        $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+        $this->assertStringContainsString('Invalid asset ID', $tester->getDisplay());
+    }
+
+    public function testNonPositiveAssetIdReturnsFailureWithoutPurging(): void
+    {
+        $client = $this->createMock(PurgeClientInterface::class);
+        $client->expects($this->never())->method('purgeByTags');
+
+        $tester = $this->runCommand($client, ['--asset' => ['0']]);
+
+        $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+        $this->assertStringContainsString('Invalid asset ID', $tester->getDisplay());
+    }
+
+    public function testInvalidAssetIdIsRejectedBeforeAnyValidIdIsPurged(): void
+    {
+        // Fail fast on malformed input — do not partially purge the valid IDs in the same call.
+        $client = $this->createMock(PurgeClientInterface::class);
+        $client->expects($this->never())->method('purgeByTags');
+
+        $tester = $this->runCommand($client, ['--asset' => ['42', 'foo']], [42 => '/a.jpg']);
+
+        $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+    }
+
     public function testMultipleAssetsArePassedAsOneBatchCall(): void
     {
         [$client, $calls] = $this->makeClient();
