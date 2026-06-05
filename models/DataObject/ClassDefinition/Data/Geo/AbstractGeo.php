@@ -108,4 +108,5 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
             \Pimcore\Model\DataObject\Data\GeoCoordinates::class,
             \Pimcore\Model\DataObject\Data\Geobounds::class,
         ]);
+    }
 }
