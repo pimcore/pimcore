@@ -71,9 +71,10 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
-        // Geo coordinates are stored as plain arrays of [latitude, longitude] pairs;
-        // no object classes are expected.
-        return Serialize::unserialize($data, false);
+        return Serialize::unserialize(
+            $data,
+            ['allowed_classes' => [\Pimcore\Model\DataObject\Data\GeoCoordinates::class]]
+        );
     }
 
     /**
