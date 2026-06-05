@@ -396,7 +396,6 @@ trait ImageThumbnailTrait
             }
         }
 
-
         $pathReference = $this->getPathReference(false);
         if ($pathReference['type'] === 'asset') {
             return $this->asset->getFileSize();
