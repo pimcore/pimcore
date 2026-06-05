@@ -45,11 +45,8 @@ class Geopolyline extends AbstractGeo implements
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
-        // Geo coordinates are stored as plain arrays; no object classes are expected.
-        return Serialize::unserialize(
-            $data,
-            [\Pimcore\Model\DataObject\Data\GeoCoordinates::class]
-        );
+        // Geo polylines are stored as an array of GeoCoordinates objects; restrict deserialization accordingly.
+        return Serialize::unserialize($data, [DataObject\Data\GeoCoordinates::class]);
     }
 
     /**
