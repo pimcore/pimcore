@@ -73,7 +73,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     {
         return Serialize::unserialize(
             $data,
-            ['allowed_classes' => [\Pimcore\Model\DataObject\Data\GeoCoordinates::class]]
+            [\Pimcore\Model\DataObject\Data\GeoCoordinates::class]
         );
     }
 
