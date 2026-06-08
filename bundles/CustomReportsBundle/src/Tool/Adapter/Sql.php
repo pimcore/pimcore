@@ -93,6 +93,9 @@ class Sql extends AbstractAdapter
 
         foreach (['sql', 'from', 'where', 'groupby'] as $key) {
             if (!empty($config[$key])) {
+                if (!is_string($config[$key])) {
+                    throw new InvalidArgumentException(sprintf('Invalid "%s" SQL fragment; expected string.', $key));
+                }
                 $this->validateSqlFragment($config[$key]);
             }
         }
