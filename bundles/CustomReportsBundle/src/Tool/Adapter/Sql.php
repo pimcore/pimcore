@@ -96,7 +96,12 @@ class Sql extends AbstractAdapter
                 if (!is_string($config[$key])) {
                     throw new InvalidArgumentException(sprintf('Invalid "%s" SQL fragment; expected string.', $key));
                 }
-                $this->validateSqlFragment($config[$key]);
+
+                try {
+                    $this->validateSqlFragment($config[$key]);
+                } catch (InvalidArgumentException $e) {
+                    throw new InvalidArgumentException(sprintf('Unsafe "%s" SQL fragment: %s', $key, $e->getMessage()), 0, $e);
+                }
             }
         }
 
