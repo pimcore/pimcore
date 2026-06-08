@@ -160,6 +160,7 @@ class Sql extends AbstractAdapter
         $forbiddenPatterns = [
             '/;/',
             '/--/',
+            '/#/',
             '/\/\*/',
             '/\*\//',
             '/\bDROP\b/i',
@@ -173,9 +174,7 @@ class Sql extends AbstractAdapter
 
         foreach ($forbiddenPatterns as $pattern) {
             if (preg_match($pattern, $sql)) {
-                throw new InvalidArgumentException(
-                    'Unsafe SQL fragment detected.'
-                );
+                throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, and DDL/DML are not allowed).');
             }
         }
     }
