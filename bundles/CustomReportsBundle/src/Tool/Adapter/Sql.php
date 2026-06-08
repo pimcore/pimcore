@@ -157,23 +157,34 @@ class Sql extends AbstractAdapter
 
     private function validateSqlFragment(string $sql): void
     {
+        // Remove quoted strings/identifiers to avoid false positives (e.g. INSERT() function, literals containing "--", "#", ";", etc.)
+        $sqlForValidation = preg_replace(
+            [
+                "/'(?:''|\\\\'|[^'])*'/s",
+                '/"(?:""|\\\\"|[^"])*"/s',
+                '/`[^`]*`/s',
+            ],
+            ["''", '""', '``'],
+            $sql
+        ) ?? $sql;
+
         $forbiddenPatterns = [
             '/;/',
-            '/--/',
+            '/--\s/', // comment start (MySQL-style, requires whitespace after --)
             '/#/',
             '/\/\*/',
             '/\*\//',
             '/\bDROP\b/i',
-            '/\bDELETE\b/i',
-            '/\bUPDATE\b/i',
-            '/\bINSERT\b/i',
+            '/\bDELETE\s+FROM\b/i',
+            '/\bUPDATE\s+\S+\s+SET\b/i',
+            '/\bINSERT\s+INTO\b/i',
             '/\bALTER\b/i',
             '/\bCREATE\b/i',
             '/\bTRUNCATE\b/i',
         ];
 
         foreach ($forbiddenPatterns as $pattern) {
-            if (preg_match($pattern, $sql)) {
+            if (preg_match($pattern, $sqlForValidation)) {
                 throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, and DDL/DML are not allowed).');
             }
         }
