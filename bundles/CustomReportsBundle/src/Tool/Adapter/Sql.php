@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
 use Exception;
+use InvalidArgumentException;
 use Pimcore\Db;
 use stdClass;
 
@@ -81,10 +82,21 @@ class Sql extends AbstractAdapter
         throw new Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
     }
 
-    protected function buildQueryString(stdClass $config, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): string
-    {
-        $config = (array)$config;
+    protected function buildQueryString(
+        stdClass $config,
+        bool $ignoreSelectAndGroupBy = false,
+        ?array $drillDownFilters = null,
+        ?string $selectField = null
+    ): string {
+        $config = (array) $config;
         $sql = '';
+
+        foreach (['sql', 'from', 'where', 'groupby'] as $key) {
+            if (!empty($config[$key])) {
+                $this->validateSqlFragment($config[$key]);
+            }
+        }
+
         if (!empty($config['sql']) && !$ignoreSelectAndGroupBy) {
             if (!str_starts_with(strtoupper(trim($config['sql'])), 'SELECT')) {
                 $sql .= 'SELECT';
@@ -96,42 +108,76 @@ class Sql extends AbstractAdapter
         } else {
             $sql .= 'SELECT *';
         }
+
         if (!empty($config['from'])) {
             if (!str_starts_with(strtoupper(trim($config['from'])), 'FROM')) {
-                $sql .= "\n" . 'FROM ';
+                $sql .= "\nFROM ";
             }
             $sql .= "\n" . $config['from'];
         }
 
         if (!empty($config['where'])) {
             if (str_starts_with(strtoupper(trim($config['where'])), 'WHERE')) {
-                $config['where'] = preg_replace('/^\s*WHERE\s*/', '', $config['where']);
+                $config['where'] = preg_replace('/^\s*WHERE\s*/i', '', $config['where']);
             }
-            $sql .= "\n" . 'WHERE (' . $config['where'] . ')';
+
+            $sql .= "\nWHERE (" . $config['where'] . ')';
         }
 
         if (!empty($config['groupby']) && !$ignoreSelectAndGroupBy) {
             if (!str_starts_with(strtoupper(trim($config['groupby'])), 'GROUP BY')) {
-                $sql .= ' GROUP BY ';
+                $sql .= "\nGROUP BY ";
             }
+
             $sql .= "\n" . $config['groupby'];
         }
 
         if ($drillDownFilters) {
             $havingParts = [];
             $db = Db::get();
+
             foreach ($drillDownFilters as $field => $value) {
-                if ($value !== '' && $value !== null) {
-                    $havingParts[] = ($db->quoteIdentifier($field) .' = ' . $db->quote($value));
+                if ($value === '' || $value === null) {
+                    continue;
                 }
+
+                $havingParts[] =
+                    $db->quoteIdentifier($field)
+                    . ' = '
+                    . $db->quote($value);
             }
 
             if ($havingParts) {
-                $sql .= ' HAVING ' . implode(' AND ', $havingParts);
+                $sql .= "\nHAVING " . implode(' AND ', $havingParts);
             }
         }
 
         return $sql;
+    }
+
+    private function validateSqlFragment(string $sql): void
+    {
+        $forbiddenPatterns = [
+            '/;/',
+            '/--/',
+            '/\/\*/',
+            '/\*\//',
+            '/\bDROP\b/i',
+            '/\bDELETE\b/i',
+            '/\bUPDATE\b/i',
+            '/\bINSERT\b/i',
+            '/\bALTER\b/i',
+            '/\bCREATE\b/i',
+            '/\bTRUNCATE\b/i',
+        ];
+
+        foreach ($forbiddenPatterns as $pattern) {
+            if (preg_match($pattern, $sql)) {
+                throw new InvalidArgumentException(
+                    'Unsafe SQL fragment detected.'
+                );
+            }
+        }
     }
 
     protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): ?array
