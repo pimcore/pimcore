@@ -1153,7 +1153,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             ));
         }
 
-        if (!preg_match('/^[a-zA-Z0-9_]+$/', $this->getId())) {
+        if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_]*$/', $this->getId())) {
             throw new Exception(sprintf(
                 'Invalid ID `%s` for class definition %s',
                 $this->getId(),
