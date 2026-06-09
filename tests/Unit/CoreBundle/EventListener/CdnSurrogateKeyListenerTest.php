@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\CdnSurrogateKeyListener;
+use Pimcore\Cdn\CdnCacheabilityResolver;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,7 +40,7 @@ class CdnSurrogateKeyListenerTest extends TestCase
 
     private function dispatch(string $cdnProvider, ResponseEvent $event): Response
     {
-        $listener = new CdnSurrogateKeyListener($cdnProvider);
+        $listener = new CdnSurrogateKeyListener(new CdnCacheabilityResolver($cdnProvider, []));
         $listener->onKernelResponse($event);
 
         return $event->getResponse();
@@ -320,5 +321,41 @@ class CdnSurrogateKeyListenerTest extends TestCase
         $response = $this->dispatch('fastly', $event);
 
         $this->assertStringContainsString('thumb-MyConfig_v2-XL_99', $response->headers->get('Surrogate-Key'));
+    }
+
+    // -----------------------------------------------------------------------
+    // New guards: query string, excluded path, no-store
+    // -----------------------------------------------------------------------
+
+    public function testDoesNotEmitTagsForQueryStringRequest(): void
+    {
+        $listener = new CdnSurrogateKeyListener(new CdnCacheabilityResolver('fastly', []));
+        $event = $this->makeEvent('/var/assets/folder/x.jpg?sig=abc', 200);
+
+        $listener->onKernelResponse($event);
+
+        self::assertFalse($event->getResponse()->headers->has('Surrogate-Key'));
+        self::assertFalse($event->getResponse()->headers->has('Cache-Tag'));
+    }
+
+    public function testDoesNotEmitTagsForExcludedPath(): void
+    {
+        $listener = new CdnSurrogateKeyListener(new CdnCacheabilityResolver('fastly', ['#^/var/assets/private/#']));
+        $event = $this->makeEvent('/var/assets/private/secret.jpg', 200);
+
+        $listener->onKernelResponse($event);
+
+        self::assertFalse($event->getResponse()->headers->has('Surrogate-Key'));
+    }
+
+    public function testDoesNotEmitTagsWhenResponseHasNoStore(): void
+    {
+        $listener = new CdnSurrogateKeyListener(new CdnCacheabilityResolver('fastly', []));
+        $event = $this->makeEvent('/var/assets/folder/x.jpg', 200);
+        $event->getResponse()->headers->set('Cache-Control', 'no-store');
+
+        $listener->onKernelResponse($event);
+
+        self::assertFalse($event->getResponse()->headers->has('Surrogate-Key'));
     }
 }

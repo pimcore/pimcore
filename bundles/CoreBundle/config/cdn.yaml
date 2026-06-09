@@ -27,3 +27,22 @@ services:
     Pimcore\Bundle\CoreBundle\EventListener\CdnSurrogateKeyListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\CdnAssetCookieStripperListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\CdnImageThumbnailUrlListener: ~
+
+    #
+    # CDN image optimizer infrastructure
+    #
+
+    Pimcore\Cdn\NullImageTransformAdapter: ~
+
+    Pimcore\Cdn\FastlyImageOptimizerAdapter: ~
+
+    Pimcore\Cdn\CdnImageTransformAdapterRegistry: ~
+
+    Pimcore\Cdn\ImageTransformAdapterInterface:
+        alias: Pimcore\Cdn\CdnImageTransformAdapterRegistry
+
+    Pimcore\Cdn\ThumbnailTransformResolver: ~
+
+    Pimcore\Cdn\CdnCacheabilityResolver: ~

@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\CdnAssetCookieStripperListener;
+use Pimcore\Cdn\CdnCacheabilityResolver;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,7 +48,7 @@ class CdnAssetCookieStripperListenerTest extends TestCase
 
     private function dispatch(string $cdnProvider, ResponseEvent $event): Response
     {
-        $listener = new CdnAssetCookieStripperListener($cdnProvider);
+        $listener = new CdnAssetCookieStripperListener(new CdnCacheabilityResolver($cdnProvider, []));
         $listener->onKernelResponse($event);
 
         return $event->getResponse();
@@ -144,5 +145,22 @@ class CdnAssetCookieStripperListenerTest extends TestCase
         $this->assertIsArray($entry);
         $this->assertSame('onKernelResponse', $entry[0]);
         $this->assertLessThan(-115, $entry[1], 'Listener must run after TargetingListener (priority -115)');
+    }
+
+    public function testDoesNotStripCookiesForQueryStringRequest(): void
+    {
+        $event = $this->makeEvent('/var/assets/Sample%20Content/foo.jpg?sig=abc');
+        $response = $this->dispatch('fastly', $event);
+
+        self::assertCount(2, $response->headers->getCookies(), 'cookies preserved for signed/query-string requests');
+    }
+
+    public function testDoesNotStripCookiesWhenResponseHasNoStore(): void
+    {
+        $event = $this->makeEvent('/var/assets/Sample%20Content/foo.jpg');
+        $event->getResponse()->headers->set('Cache-Control', 'no-store');
+        $response = $this->dispatch('fastly', $event);
+
+        self::assertCount(2, $response->headers->getCookies(), 'cookies preserved on no-store responses');
     }
 }

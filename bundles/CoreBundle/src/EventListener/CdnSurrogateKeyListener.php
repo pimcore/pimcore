@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Pimcore\Cdn\CdnCacheabilityResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -40,8 +40,7 @@ class CdnSurrogateKeyListener implements EventSubscriberInterface
     public const ORIGINAL_ASSET_PATTERN = '#^/var/assets/#';
 
     public function __construct(
-        #[Autowire('%env(CDN_PROVIDER)%')]
-        private readonly string $cdnProvider,
+        private readonly CdnCacheabilityResolver $cacheabilityResolver,
     ) {
     }
 
@@ -58,21 +57,11 @@ class CdnSurrogateKeyListener implements EventSubscriberInterface
             return;
         }
 
-        // CDN disabled — nothing to emit.
-        if ($this->cdnProvider === '') {
-            return;
-        }
-
-        $response = $event->getResponse();
-
-        // Never tag non-2xx responses — caching error responses at the CDN would serve
-        // stale errors to all users until TTL expiry.
-        if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
+        if (!$this->cacheabilityResolver->isCdnCacheable($event->getRequest(), $event->getResponse())) {
             return;
         }
 
         $path = $event->getRequest()->getPathInfo();
-
         $tags = $this->resolveTagsForPath($path);
 
         if (empty($tags)) {
@@ -80,7 +69,7 @@ class CdnSurrogateKeyListener implements EventSubscriberInterface
         }
 
         $tagString = implode(' ', $tags);
-
+        $response = $event->getResponse();
         $response->headers->set('Surrogate-Key', $tagString);
         $response->headers->set('Cache-Tag', $tagString);
     }

@@ -1,0 +1,87 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
+namespace Pimcore\Cdn;
+
+use Pimcore\Bundle\CoreBundle\EventListener\CdnSurrogateKeyListener;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+/**
+ * @internal
+ *
+ * Single source of truth for "should the CDN cache this response?". Consumed by both
+ * CdnSurrogateKeyListener (whether to emit Surrogate-Key/Cache-Tag) and
+ * CdnAssetCookieStripperListener (whether to strip personalization cookies), so the two
+ * cannot drift apart.
+ */
+class CdnCacheabilityResolver
+{
+    /**
+     * @param string[] $excludedPaths Regular-expression patterns matched against the request path info.
+     */
+    public function __construct(
+        #[Autowire('%env(CDN_PROVIDER)%')]
+        private readonly string $cdnProvider,
+        #[Autowire('%pimcore.cdn.excluded_paths%')]
+        private readonly array $excludedPaths,
+    ) {
+    }
+
+    public function isCdnCacheable(Request $request, Response $response): bool
+    {
+        // 1. CDN enabled.
+        if ($this->cdnProvider === '') {
+            return false;
+        }
+
+        // 2. 2xx only — error/redirect responses are never CDN-cached.
+        if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
+            return false;
+        }
+
+        // 3. No query string — signed/dynamic URLs (auth, cache-busters) bypass the public cache.
+        if ($request->getQueryString() !== null) {
+            return false;
+        }
+
+        $path = $request->getPathInfo();
+
+        // 4. Not an operator-excluded path.
+        foreach ($this->excludedPaths as $pattern) {
+            if (preg_match($pattern, $path)) {
+                return false;
+            }
+        }
+
+        // 5. Response does not carry `no-store` (the only reliable opt-out; see hasRestrictiveCacheControl()).
+        if ($this->hasRestrictiveCacheControl($response)) {
+            return false;
+        }
+
+        // 6. Path is an asset/thumbnail path.
+        return (bool) preg_match(CdnSurrogateKeyListener::THUMBNAIL_PATTERN, $path)
+            || (bool) preg_match(CdnSurrogateKeyListener::ORIGINAL_ASSET_PATTERN, $path);
+    }
+
+    private function hasRestrictiveCacheControl(Response $response): bool
+    {
+        // Only `no-store` is a reliable "do not cache" signal. Symfony's ResponseHeaderBag
+        // emits a default `no-cache, private` when no Cache-Control is set, so `private` and
+        // `no-cache` cannot be distinguished from the framework default and must NOT be treated
+        // as opt-outs (that would suppress tagging on ordinary asset responses). A project that
+        // wants to keep a gated asset response off the CDN must send `Cache-Control: no-store`.
+        return $response->headers->hasCacheControlDirective('no-store');
+    }
+}

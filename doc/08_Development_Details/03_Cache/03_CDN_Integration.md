@@ -26,6 +26,7 @@ Set these environment variables on your runtime:
 | `FASTLY_API_SERVICE`  | for Fastly  | `abc123…`                        | Fastly service ID.                                                                                                                                            |
 | `FASTLY_API_BASE_URL` | no          | `https://api.fastly.com` (default) | Override the Fastly API base URL if your environment needs a custom API endpoint/proxy.                                                                       |
 | `CDN_BASE_URL`        | no          | `https://cdn.example.com`        | Public base URL of the CDN. Required when original assets are served statically and must be purged by URL — see [Original Assets](#original-assets). |
+| `CDN_IMAGE_OPTIMIZER` | no          | `fastly`                         | Enables CDN-side image transformation (Fastly Image Optimizer). Empty = Pimcore generates thumbnails as usual. Independent of `CDN_PROVIDER`. Requires `CDN_BASE_URL`. |
 
 Once `CDN_PROVIDER` is set, three event listeners activate:
 
@@ -60,12 +61,45 @@ For original asset URLs (`/var/assets/...`) the same listener also computes:
 …but this only reaches the cached object if `/var/assets/...` responses pass
 through PHP. See [Original Assets](#original-assets).
 
+## Image Optimizer Mode (opt-in)
+
+When `CDN_IMAGE_OPTIMIZER=fastly`, Pimcore stops generating thumbnail files for eligible image
+variants and instead returns a Fastly Image Optimizer URL that transforms the **original** asset
+at the edge. The customer API is unchanged — `$asset->getThumbnail('cfg')->getPath()` returns the
+CDN URL transparently. `CDN_PROVIDER` (purge) and `CDN_IMAGE_OPTIMIZER` (transform) are independent
+switches.
+
+**Eligibility.** A thumbnail is rewritten only when both hold; otherwise Pimcore generates it as usual:
+
+1. The asset is a raster image (JPEG/PNG/GIF/WebP/AVIF). Vector graphics (SVG), video thumbnails,
+   and document previews are never rewritten.
+2. The thumbnail config uses only translatable transforms: `resize`, `scaleByWidth`,
+   `scaleByHeight`, `contain`, `cover`, `crop`, plus format/quality and 2x high-resolution. A config
+   using anything else (`frame`, `rotate`, `mirror`, `trim`, `roundCorners`, color adjustments,
+   focal-point cover, `cropPercent`) falls back to Pimcore generation.
+
+**`CDN_BASE_URL` is required** in optimizer mode (used to build absolute transformation URLs);
+the Fastly adapter throws if it is missing.
+
+**Purging transforms — Mode A is required.** Fastly IO copies the **origin original's**
+`Surrogate-Key` onto every transform it derives. That inheritance only happens when the original
+`/var/assets/...` response actually carries the header — i.e. originals are routed through PHP
+(**Mode A**, see [Original Assets](#original-assets)). With Mode A, an `asset-path-{hash}` purge on
+asset update invalidates the original and all its transforms at once. In **Mode B** (static
+originals) transforms are **not** tag-purgeable and expire only by TTL — Mode A is therefore the
+expected routing for optimizer mode.
+
+**Thumbnail-config edits.** Edge transforms are keyed by the original's surrogate keys, not by a
+named config, so editing a thumbnail config does **not** invalidate already-cached transforms via
+`thumb-{config}`. To force refresh after a config change, purge the affected assets
+(`pimcore:cdn:purge --asset <id>`) or wait for TTL.
+
 ## Cookie Stripping
 
 Pimcore's personalization bundle sets cookies (`_pc_tss`, `_pc_tvs`) on every
 response, including assets. Most CDNs refuse to cache responses that carry a
 `Set-Cookie` header. `CdnAssetCookieStripperListener` runs at priority `-200`
-(after the targeting listener at `-115`) and removes all cookies from
+(after the targeting listener at `-115`) and removes the personalization cookies (`_pc_tss`, `_pc_tvs`) from
 - Thumbnails: `(?:^|/)(image|video)-thumb__\d+__([a-zA-Z0-9_\-]+)/`
 - Originals: `^/var/assets/`
 
@@ -214,6 +248,28 @@ direct `PURGE https://cdn.example.com/var/assets/...` by URL.
 
 If `CDN_BASE_URL` is not set in static mode, originals refresh only when TTL
 expires naturally.
+
+## Private / Access-Controlled Assets
+
+The CDN listeners never emit cache tags (and never strip cookies) for a response when:
+
+- the response carries `Cache-Control: no-store` (set this on gated/access-controlled asset
+  controllers to keep them off the CDN), or
+- the request path matches a pattern in `pimcore.cdn.excluded_paths`, or
+- the request carries a query string (signed URLs / cache-busters bypass the public cache).
+
+> Note: only `no-store` is honored as an opt-out. `private` and `no-cache` are **not** treated as
+> opt-outs because Symfony emits a default `Cache-Control: no-cache, private` on responses that set
+> no explicit cache headers, making them indistinguishable from a deliberate choice. Use `no-store`.
+
+Configure path exclusions in YAML:
+
+```yaml
+pimcore:
+    cdn:
+        excluded_paths:
+            - '#^/var/assets/private/#'
+```
 
 ## Adding a New CDN Provider
 

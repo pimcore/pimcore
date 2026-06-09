@@ -1,0 +1,81 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
+namespace Pimcore\Bundle\CoreBundle\EventListener;
+
+use Pimcore\Cdn\ImageTransformAdapterInterface;
+use Pimcore\Cdn\ThumbnailTransformResolver;
+use Pimcore\Event\FrontendEvents;
+use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Asset\Image\Thumbnail\Config;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
+
+/**
+ * @internal
+ *
+ * Rewrites eligible image-thumbnail URLs to CDN image-optimizer URLs at render time.
+ *
+ * Active only when CDN_IMAGE_OPTIMIZER is set. A variant is rewritten only when:
+ *  - the asset is a raster image (not a vector/SVG), and
+ *  - the thumbnail config is fully translatable (ThumbnailTransformResolver returns non-null).
+ * Otherwise the Pimcore-resolved frontendPath is left untouched (Pimcore generates the thumbnail).
+ */
+class CdnImageThumbnailUrlListener implements EventSubscriberInterface
+{
+    public function __construct(
+        private readonly ImageTransformAdapterInterface $adapter,
+        private readonly ThumbnailTransformResolver $transformResolver,
+        #[Autowire('%env(CDN_IMAGE_OPTIMIZER)%')]
+        private readonly string $imageOptimizer,
+    ) {
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            FrontendEvents::ASSET_IMAGE_THUMBNAIL => 'onThumbnailPath',
+        ];
+    }
+
+    public function onThumbnailPath(GenericEvent $event): void
+    {
+        if ($this->imageOptimizer === '') {
+            return;
+        }
+
+        $asset = $event->getArgument('asset');
+
+        // Media-type guard: only raster images are eligible. Vector graphics (SVG), and any
+        // non-image subject, stay on the Pimcore pipeline.
+        if (!$asset instanceof Image || $asset->isVectorGraphic()) {
+            return;
+        }
+
+        $config = $event->getArgument('config');
+
+        if (!$config instanceof Config) {
+            return;
+        }
+
+        $params = $this->transformResolver->resolve($config);
+        if ($params === null) {
+            // Config uses a transform we cannot faithfully reproduce on the CDN — fall back.
+            return;
+        }
+
+        $originalPath = '/var/assets' . $asset->getRealFullPath();
+        $event->setArgument('frontendPath', $this->adapter->buildUrl($originalPath, $params));
+    }
+}
