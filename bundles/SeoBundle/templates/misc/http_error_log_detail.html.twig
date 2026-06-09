@@ -44,19 +44,17 @@
 <h2>{{ data["code"] }} | {{ data["uri"] }}</h2>
 
 {% for key,value in data %}
-    {% if key in ["parametersGet", "parametersPost", "serverVars", "cookies"] %}
-        {% if value is not empty %}
-            <h2 class="sub">{{ key|trans([], 'admin') }}</h2>
+    {% if value is not empty and key == "parametersGet" %}
+        <h2 class="sub">{{ key|trans([], 'admin') }}</h2>
 
-            <table>
-                {% for key,value in value %}
-                    <tr>
-                        <th valign="top">{{ key }}</th>
-                        <td valign="top">{{ value }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
-        {% endif %}
+        <table>
+            {% for key,value in value %}
+                <tr>
+                    <th valign="top">{{ key }}</th>
+                    <td valign="top">{{ value }}</td>
+                </tr>
+            {% endfor %}
+        </table>
     {% endif %}
 {% endfor %}
 

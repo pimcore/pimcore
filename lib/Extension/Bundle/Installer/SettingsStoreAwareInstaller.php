@@ -2,20 +2,18 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Extension\Bundle\Installer;
 
+use Doctrine\DBAL\Exception\TableExistsException;
 use Doctrine\Migrations\DependencyFactory;
 use Doctrine\Migrations\Version\Direction;
 use Doctrine\Migrations\Version\ExecutionResult;
@@ -84,7 +82,11 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
 
                 if (!$executedMigrations->hasMigration($version)) {
                     $migrationResult = new ExecutionResult($version, Direction::UP);
-                    $metadataStorage->ensureInitialized();
+
+                    try {
+                        $metadataStorage->ensureInitialized();
+                    } catch (TableExistsException $exception) {
+                    }
                     $metadataStorage->complete($migrationResult);
                 }
 

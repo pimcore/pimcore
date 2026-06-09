@@ -1,15 +1,12 @@
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
- */
+* This source file is available under the terms of the
+* Pimcore Open Core License (POCL)
+* Full copyright and license information is available in
+* LICENSE.md which is distributed with this source code.
+*
+*  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.com)
+*  @license    Pimcore Open Core License (POCL)
+*/
 
 pimcore.registerNS("pimcore.bundle.applicationlogger.log.admin");
 pimcore.bundle.applicationlogger.log.admin = Class.create({
@@ -246,7 +243,7 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
                     forceFit:true,
                     // loadMask: false,
                     getRowClass: function(record) {
-                        return 'log-type-' + record.get('priority');
+                        return 'log-type-' + record.get('prioritykeyname').toLowerCase();
                     },
                     enableTextSelection: true
                 },
@@ -431,6 +428,11 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
         }
         this.searchParams.message = formValues.message;
         this.searchParams.pid = formValues.pid;
+        try {
+            this.searchParams.userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+        } catch (e) {
+            this.searchParams.userTimezone = '';
+        }
 
         var proxy = this.store.getProxy();
         proxy.extraParams = this.searchParams;

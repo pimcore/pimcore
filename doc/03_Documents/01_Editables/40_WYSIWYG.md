@@ -25,11 +25,11 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 }) }}
 ```
 
-## Enable Quill 
-Quill is the new recommended editor. Please check the bundle [readme](https://github.com/pimcore/quill-bundle/blob/1.x/README.md) for installation instructions.
+## Enable TinyMCE (included in Professional & Enterprise editions)
+To activate TinyMCE please follow the [instructions in our documentation](https://docs.pimcore.com/platform/TinyMCE_WYSWIYG_Editor/).
 
-## Enable TinyMce (deprecated)
-In Pimcore 11 the default editor changed from CKEditor to TinyMCE and has been moved into [PimcoreTinymceBundle](https://github.com/pimcore/pimcore/blob/11.x/bundles/TinymceBundle/README.md). Check the bundle readme for installation instructions.
+## Enable Quill 
+Quill is the new recommended editor for Pimcore Community Edition. Please check the bundle [readme](https://github.com/pimcore/quill-bundle/blob/1.x/README.md) for installation instructions.
 
 ## Add a Custom Editor
 Make sure that you add the Editor to `pimcore.wysiwyg.editors`. This array can be used to have different editors for different use cases (documents, objects ...):

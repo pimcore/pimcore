@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model;
@@ -239,7 +236,7 @@ final class Translation extends AbstractModel
      *
      * @throws Exception
      */
-    public static function getByKey(string $id, string $domain = self::DOMAIN_DEFAULT, bool $create = false, bool $returnIdIfEmpty = false, array $languages = null): ?static
+    public static function getByKey(string $id, string $domain = self::DOMAIN_DEFAULT, bool $create = false, bool $returnIdIfEmpty = false, ?array $languages = null): ?static
     {
         $cacheKey = 'translation_' . $id . '_' . $domain;
         if (is_array($languages)) {
@@ -308,7 +305,7 @@ final class Translation extends AbstractModel
      *
      * @throws Exception
      */
-    public static function getByKeyLocalized(string $id, string $domain = self::DOMAIN_DEFAULT, bool $create = false, bool $returnIdIfEmpty = false, string $language = null): ?string
+    public static function getByKeyLocalized(string $id, string $domain = self::DOMAIN_DEFAULT, bool $create = false, bool $returnIdIfEmpty = false, ?string $language = null): ?string
     {
         if ($domain == self::DOMAIN_ADMIN) {
             if ($user = Tool\Admin::getCurrentUser()) {
@@ -349,13 +346,15 @@ final class Translation extends AbstractModel
         return $translation->getDao()->isAValidDomain($domain);
     }
 
-    public function save(): void
+    public function save(array $parameters = []): void
     {
-        $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
+        $preTranslationEvent = new TranslationEvent($this, $parameters);
+        $this->dispatchEvent($preTranslationEvent, TranslationEvents::PRE_SAVE);
+        $parameters = $preTranslationEvent->getArguments();
 
         $this->getDao()->save();
 
-        $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::POST_SAVE);
+        $this->dispatchEvent(new TranslationEvent($this, $parameters), TranslationEvents::POST_SAVE);
 
         self::clearDependentCache();
     }
@@ -381,7 +380,7 @@ final class Translation extends AbstractModel
      *
      * @internal
      */
-    public static function importTranslationsFromFile(string $file, string $domain = self::DOMAIN_DEFAULT, bool $replaceExistingTranslations = true, array $languages = null, stdClass $dialect = null): array
+    public static function importTranslationsFromFile(string $file, string $domain = self::DOMAIN_DEFAULT, bool $replaceExistingTranslations = true, ?array $languages = null, ?stdClass $dialect = null): array
     {
         $delta = [];
 

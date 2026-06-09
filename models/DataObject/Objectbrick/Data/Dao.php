@@ -1,22 +1,18 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\Objectbrick\Data;
 
 use Exception;
-use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -32,6 +28,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
 class Dao extends Model\Dao\AbstractDao
 {
     protected ?DataObject\Concrete\Dao\InheritanceHelper $inheritanceHelper = null;
+
+    private const SQL_SELECT_ALL = 'SELECT * FROM ';
 
     /**
      *
@@ -56,17 +54,14 @@ class Dao extends Model\Dao\AbstractDao
             $data['id'] = $object->getId();
             $data['fieldname'] = $this->model->getFieldname();
 
-            $dirtyRelations = [];
-            $db = Db::get();
-
             if (($params['isUpdate'] ?? false) === false && $this->model->getObject()->getClass()->getAllowInherit()) {
                 // if this is a fresh object, then we don't need the check
                 $isBrickUpdate = false; // used to indicate whether we want to consider the default value
             } else {
                 // or brick has been added
                 $existsResult = $this->db->fetchOne(
-                    'SELECT id FROM ' . $storetable . ' WHERE id = ? LIMIT 1',
-                    [$object->getId()]
+                    'SELECT id FROM ' . $storetable . ' WHERE id = ? AND fieldname = ? LIMIT 1',
+                    [$object->getId(), $this->model->getFieldname()]
                 );
 
                 $isBrickUpdate = (bool)$existsResult; // used to indicate whether we want to consider the default value
@@ -111,14 +106,15 @@ class Dao extends Model\Dao\AbstractDao
                         $this->model->set($fieldName, $fd->getDataFromResource($insertData, $object, $fieldDefinitionParams));
                     }
 
-                    if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
-                        $this->model->markFieldDirty($fieldName, false);
-                    }
+                    $this->model->markFieldDirty($fieldName, false);
                 }
             }
 
             if ($isBrickUpdate) {
-                $this->db->update($storetable, Helper::quoteDataIdentifiers($this->db, $data), ['id'=> $object->getId()]);
+                $this->db->update($storetable, Helper::quoteDataIdentifiers($this->db, $data), [
+                'id'=> $object->getId(),
+                'fieldname' => $this->model->getFieldname(),
+            ]);
             } else {
                 $this->db->insert($storetable, Helper::quoteDataIdentifiers($this->db, $data));
             }
@@ -132,7 +128,10 @@ class Dao extends Model\Dao\AbstractDao
             $data['fieldname'] = $this->model->getFieldname();
 
             $this->inheritanceHelper->resetFieldsToCheck();
-            $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $querytable . ' WHERE id = ?', [$object->getId()]);
+            $oldData = $this->db->fetchAssociative(
+                self::SQL_SELECT_ALL . $querytable . ' WHERE id = ? AND fieldname = ?',
+                [$object->getId(), $this->model->getFieldname()]
+            );
 
             $inheritanceEnabled = $object->getClass()->getAllowInherit();
             $parentData = null;
@@ -144,13 +143,15 @@ class Dao extends Model\Dao\AbstractDao
                     // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
                     // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                     // so the data of the parent cannot be changed while this transaction is on progress
-                    $parentData = $this->db->fetchAssociative('SELECT * FROM ' . $querytable . ' WHERE id = ? FOR UPDATE', [$parentForInheritance->getId()]);
+                    $parentData = $this->db->fetchAssociative(
+                        self::SQL_SELECT_ALL . $querytable . ' WHERE id = ? AND fieldname = ? FOR UPDATE',
+                        [$parentForInheritance->getId(), $this->model->getFieldname()]
+                    );
                 }
             }
 
             foreach ($fieldDefinitions as $key => $fd) {
-                if ($fd instanceof QueryResourcePersistenceAwareInterface
-                    && $fd instanceof DataObject\ClassDefinition\Data) {
+                if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                     $method = 'get' . $key;
                     $fieldValue = $this->model->$method();
                     $insertData = $fd->getDataForQueryResource($fieldValue, $object);
@@ -255,13 +256,16 @@ class Dao extends Model\Dao\AbstractDao
     {
         // update data for store table
         $storeTable = $this->model->getDefinition()->getTableName($object->getClass(), false);
-        $this->db->delete($storeTable, ['id' => $object->getId()]);
+        $this->db->delete($storeTable, ['id' => $object->getId(), 'fieldname' => $this->model->getFieldname()]);
 
         // update data for query table
         $queryTable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
-        $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $queryTable . ' WHERE id = ?', [$object->getId()]);
-        $this->db->delete($queryTable, ['id' => $object->getId()]);
+        $oldData = $this->db->fetchAssociative(self::SQL_SELECT_ALL . $queryTable . ' WHERE id = ? AND fieldname = ?', [
+            $object->getId(),
+            $this->model->getFieldname(),
+        ]);
+        $this->db->delete($queryTable, ['id' => $object->getId(), 'fieldname' => $this->model->getFieldname()]);
 
         //update data for relations table
         $this->db->delete('object_relations_' . $object->getClassId(), [

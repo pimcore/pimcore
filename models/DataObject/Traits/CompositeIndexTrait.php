@@ -2,21 +2,19 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\Traits;
 
 use Doctrine\DBAL\Connection;
+use InvalidArgumentException;
 
 /**
  * @internal
@@ -55,11 +53,20 @@ trait CompositeIndexTrait
         });
 
         $newIndicesMap = [];
+        $newIndicesColumnsMap = [];
+
         foreach ($newIndicesFilteredByType as $newIndex) {
             $key = $newIndex['index_key'];
-            $columns = $newIndex['index_columns'];
+            self::assertValidIdentifier($key);
 
-            $newIndicesMap['c_' . $key] = implode(',', $columns);
+            $columns = $newIndex['index_columns'];
+            foreach ($columns as $column) {
+                self::assertValidIdentifier($column);
+            }
+
+            $prefixedKey = 'c_' . $key;
+            $newIndicesMap[$prefixedKey] = implode(',', $columns);
+            $newIndicesColumnsMap[$prefixedKey] = $columns;
         }
 
         $drop = [];
@@ -76,14 +83,42 @@ trait CompositeIndexTrait
             }
         }
 
+        $quotedTable = $this->db->quoteIdentifier($table);
         foreach ($drop as $key) {
-            $this->db->executeQuery('ALTER TABLE `'.$table.'` DROP INDEX `'. $key.'`;');
+            $this->db->executeQuery(
+                'ALTER TABLE ' . $quotedTable . ' DROP INDEX ' . $this->db->quoteIdentifier($key) . ';'
+            );
         }
 
         foreach ($add as $key) {
-            $columnName = $newIndicesMap[$key];
+
+            $quotedColumns = implode(', ', array_map(
+                fn (string $col) => $this->db->quoteIdentifier($col),
+                $newIndicesColumnsMap[$key]
+            ));
+
             $this->db->executeQuery(
-                'ALTER TABLE `'.$table.'` ADD INDEX `' . $key.'` ('.$columnName.');'
+                'ALTER TABLE ' . $quotedTable .
+                ' ADD INDEX ' . $this->db->quoteIdentifier($key) . ' (' . $quotedColumns . ');'
+            );
+        }
+    }
+
+    /**
+     * @throws InvalidArgumentException if the identifier contains disallowed characters
+     */
+    public static function assertValidIdentifier(string $identifier): void
+    {
+        if ($identifier === '') {
+            throw new InvalidArgumentException('Identifier must be a non-empty string.');
+        }
+
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/', $identifier)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Invalid composite index identifier "%s": must start with a letter and contain only alphanumeric characters, underscores, and hyphens (max 64 chars).',
+                    $identifier
+                )
             );
         }
     }

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tests\Support\Util;
@@ -466,13 +463,14 @@ class TestHelper
         $testDataHelper->fillTime($object, 'time', $seed);
         $testDataHelper->fillSelect($object, 'select', $seed);
         $testDataHelper->fillMultiSelect($object, 'multiselect', $seed);
+        $testDataHelper->fillMultiSelectEnforced($object, 'multiselectenforced', $seed);
         $testDataHelper->fillUser($object, 'user', $seed);
         $testDataHelper->fillCheckbox($object, 'checkbox', $seed);
         $testDataHelper->fillBooleanSelect($object, 'booleanSelect', $seed);
         $testDataHelper->fillWysiwyg($object, 'wysiwyg', $seed);
         $testDataHelper->fillPassword($object, 'password', $seed);
-        $testDataHelper->fillMultiSelect($object, 'countries', $seed);
-        $testDataHelper->fillMultiSelect($object, 'languages', $seed);
+        $testDataHelper->fillCountryMultiSelect($object, 'countries', $seed);
+        $testDataHelper->fillLanguageMultiSelect($object, 'languages', $seed);
         $testDataHelper->fillGeoCoordinates($object, 'point', $seed);
         $testDataHelper->fillGeobounds($object, 'bounds', $seed);
         $testDataHelper->fillGeopolygon($object, 'poly', $seed);

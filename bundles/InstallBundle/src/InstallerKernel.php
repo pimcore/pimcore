@@ -3,27 +3,25 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\InstallBundle;
 
+use Exception;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\MonologBundle\MonologBundle;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 /**
  * @internal
@@ -76,23 +74,34 @@ class InstallerKernel extends Kernel
         return $bundles;
     }
 
-    protected function configureContainer(ContainerConfigurator $configurator): void
+    /**
+     * @throws Exception
+     */
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
-        $configurator->parameters()->set('secret', uniqid('installer-', true));
-        $configurator->import('@PimcoreInstallBundle/config/config.yaml');
+        // Register the synthetic "kernel" service. This is normally done by
+        // MicroKernelTrait::registerContainerConfiguration() and is required so
+        // that other services may depend on the kernel via DI.
+        $loader->load(function (ContainerBuilder $container): void {
+            if (!$container->hasDefinition('kernel')) {
+                $container->register('kernel', static::class)
+                    ->addTag('controller.service_arguments')
+                    ->setAutoconfigured(true)
+                    ->setSynthetic(true)
+                    ->setPublic(true);
+            }
 
-        // load installer config files if available
+            $container->setParameter('secret', uniqid('installer-', true));
+        });
+
+        $loader->load('@PimcoreInstallBundle/config/config.yaml');
+
         foreach (['php', 'yaml', 'yml', 'xml'] as $extension) {
             $file = sprintf('%s/config/installer.%s', $this->getProjectDir(), $extension);
 
             if (file_exists($file)) {
-                $configurator->import($file);
+                $loader->load($file);
             }
         }
-    }
-
-    protected function configureRoutes(RoutingConfigurator $routes): void
-    {
-        // nothing to do
     }
 }

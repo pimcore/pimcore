@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -100,7 +97,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      *
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         $result = [];
 
@@ -160,7 +157,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      *
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $count = 0;
@@ -249,7 +246,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
 
         $result = [];
@@ -293,7 +290,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $result = [];
         $count = 0;
@@ -354,68 +351,58 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Concrete $object
-     *
      * @throws Exception
      */
     protected function getBlockDataFromContainer(Concrete $object, array $params = []): mixed
     {
-        $data = null;
-
         $context = $params['context'] ?? null;
 
         if (isset($context['containerType'])) {
             if ($context['containerType'] === 'fieldcollection') {
                 $fieldname = $context['fieldname'];
 
-                if ($object instanceof DataObject\Concrete) {
-                    $containerGetter = 'get' . ucfirst($fieldname);
-                    $container = $object->$containerGetter();
-                    if ($container) {
-                        $originalIndex = $context['oIndex'];
+                $containerGetter = 'get' . ucfirst($fieldname);
+                $container = $object->$containerGetter();
+                if ($container) {
+                    $originalIndex = $context['oIndex'];
 
-                        // field collection or block items
-                        if (!is_null($originalIndex)) {
-                            $items = $container->getItems();
+                    // field collection or block items
+                    if (!is_null($originalIndex)) {
+                        $items = $container->getItems();
 
-                            if ($items && count($items) > $originalIndex) {
-                                $item = $items[$originalIndex];
+                        if ($items && count($items) > $originalIndex) {
+                            $item = $items[$originalIndex];
 
-                                $getter = 'get' . ucfirst($this->getName());
-                                $data = $item->$getter();
+                            $getter = 'get' . ucfirst($this->getName());
 
-                                return $data;
-                            }
-                        } else {
-                            return null;
+                            return $item->$getter();
                         }
                     } else {
                         return null;
                     }
+                } else {
+                    return null;
                 }
             } elseif ($context['containerType'] === 'objectbrick') {
                 $fieldname = $context['fieldname'];
 
-                if ($object instanceof DataObject\Concrete) {
-                    $containerGetter = 'get' . ucfirst($fieldname);
-                    $container = $object->$containerGetter();
-                    if ($container) {
-                        $brickGetter = 'get' . ucfirst($context['containerKey']);
-                        /** @var DataObject\Objectbrick\Data\AbstractData|null $brickData */
-                        $brickData = $container->$brickGetter();
+                $containerGetter = 'get' . ucfirst($fieldname);
+                $container = $object->$containerGetter();
+                if ($container) {
+                    $brickGetter = 'get' . ucfirst($context['containerKey']);
+                    /** @var DataObject\Objectbrick\Data\AbstractData|null $brickData */
+                    $brickData = $container->$brickGetter();
 
-                        if ($brickData) {
-                            $blockGetter = $params['blockGetter'];
-                            $data = $brickData->$blockGetter();
+                    if ($brickData) {
+                        $blockGetter = $params['blockGetter'];
 
-                            return $data;
-                        }
+                        return $brickData->$blockGetter();
                     }
                 }
             }
         }
 
-        return $data;
+        return null;
     }
 
     /**
@@ -423,7 +410,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return $this->getDiffVersionPreview($data, $object, $params)['html'];
     }
@@ -444,7 +431,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): array
+    public function getDiffVersionPreview(?array $data, ?Concrete $object = null, array $params = []): array
     {
         $html = '';
         if (is_array($data)) {
@@ -738,51 +725,107 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
     }
 
-    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): mixed
-    {
+    public function load(
+        Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object,
+        array $params = []
+    ): mixed {
         $field = $this->getName();
         $db = Db::get();
         $data = null;
 
         if ($object instanceof DataObject\Concrete) {
-            $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $object->getClassId() . ' where oo_id  = ' . $object->getId();
+
+            $objectDatastoreTable = 'object_store_' . $object->getClassId();
+            $qObjectDatastoreTable = $db->quoteIdentifier($objectDatastoreTable);
+
+            $query = 'SELECT ' . $db->quoteIdentifier($field)
+                . ' FROM ' . $qObjectDatastoreTable
+                . ' WHERE oo_id = ' . (int) $object->getId();
+
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $object, $params);
+
         } elseif ($object instanceof DataObject\Localizedfield) {
+
             $context = $params['context'];
             $object = $context['object'];
             $containerType = $context['containerType'] ?? null;
 
             if ($containerType === 'fieldcollection') {
-                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $context['containerKey'] . '_localized_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($context['fieldname']) . ' and `index` =  ' . $context['index'];
+
+                $table = 'object_collection_' . $context['containerKey']
+                    . '_localized_' . $object->getClassId();
+
+                $qTable = $db->quoteIdentifier($table);
+
+                $query = 'SELECT ' . $db->quoteIdentifier($field)
+                    . ' FROM ' . $qTable
+                    . ' WHERE language = ' . $db->quote($params['language'])
+                    . ' AND ooo_id = ' . (int) $object->getId()
+                    . ' AND fieldname = ' . $db->quote($context['fieldname'])
+                    . ' AND `index` = ' . (int) $context['index'];
+
             } elseif ($containerType === 'objectbrick') {
-                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_brick_localized_' . $context['containerKey'] . '_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($context['fieldname']);
+
+                $table = 'object_brick_localized_' . $context['containerKey']
+                    . '_' . $object->getClassId();
+
+                $qTable = $db->quoteIdentifier($table);
+
+                $query = 'SELECT ' . $db->quoteIdentifier($field)
+                    . ' FROM ' . $qTable
+                    . ' WHERE language = ' . $db->quote($params['language'])
+                    . ' AND ooo_id = ' . (int) $object->getId()
+                    . ' AND fieldname = ' . $db->quote($context['fieldname']);
+
             } else {
-                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_localized_data_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId();
+
+                $table = 'object_localized_data_' . $object->getClassId();
+                $qTable = $db->quoteIdentifier($table);
+
+                $query = 'SELECT ' . $db->quoteIdentifier($field)
+                    . ' FROM ' . $qTable
+                    . ' WHERE language = ' . $db->quote($params['language'])
+                    . ' AND ooo_id = ' . (int) $object->getId();
             }
+
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $object, $params);
+
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $context = $params['context'];
 
+            $context = $params['context'];
             $object = $context['object'];
-            $brickType = $context['containerKey'];
-            $brickField = $context['brickField'];
-            $fieldname = $context['fieldname'];
-            $query = 'select ' . $db->quoteIdentifier($brickField) . ' from object_brick_store_' . $brickType . '_' . $object->getClassId()
-                . ' where  id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fieldname);
+
+            $table = 'object_brick_store_' . $context['containerKey']
+                . '_' . $object->getClassId();
+
+            $qTable = $db->quoteIdentifier($table);
+
+            $query = 'SELECT ' . $db->quoteIdentifier($context['brickField'])
+                . ' FROM ' . $qTable
+                . ' WHERE id = ' . (int) $object->getId()
+                . ' AND fieldname = ' . $db->quote($context['fieldname']);
+
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $object, $params);
+
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+
             $context = $params['context'];
-            $collectionType = $context['containerKey'];
             $object = $context['object'];
-            $fcField = $context['fieldname'];
 
-            //TODO index!!!!!!!!!!!!!!
+            $table = 'object_collection_' . $context['containerKey']
+                . '_' . $object->getClassId();
 
-            $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $collectionType . '_' . $object->getClassId()
-                . ' where  id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fcField) . ' and `index` = ' . $context['index'];
+            $qTable = $db->quoteIdentifier($table);
+
+            $query = 'SELECT ' . $db->quoteIdentifier($field)
+                . ' FROM ' . $qTable
+                . ' WHERE id = ' . (int) $object->getId()
+                . ' AND fieldname = ' . $db->quote($context['fieldname'])
+                . ' AND `index` = ' . (int) $context['index'];
+
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $object, $params);
         }
@@ -801,7 +844,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $params['fieldname'] = $this->getName();
         if ($container instanceof DataObject\Concrete) {
             $data = $container->getObjectVar($this->getName());
-        } elseif ($container instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $data = $container->getObjectVar($this->getName());
@@ -823,6 +866,31 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $container->$setter($data);
             }
         }
+
+        if (is_array($data)) {
+            $unsupportedFd = [
+                Classificationstore::class,
+                Fieldcollections::class,
+                Localizedfields::class,
+            ];
+
+            foreach ($data as $blockElements) {
+                foreach ($blockElements as $elementName => $blockElement) {
+                    $fd = $this->getFieldDefinition($elementName);
+
+                    if ($fd instanceof PreGetDataInterface) {
+                        if (!array_filter($unsupportedFd, fn ($i) => $fd instanceof $i)) {
+                            $preGetData = $fd->preGetData(
+                                $blockElement,
+                                array_merge($params, ['data' => $blockElement->getData()])
+                            );
+                            $blockElement->setData($preGetData);
+                        }
+                    }
+                }
+            }
+        }
+
         $this->preSetData($container, $data, $params);
 
         return is_array($data) ? $data : [];

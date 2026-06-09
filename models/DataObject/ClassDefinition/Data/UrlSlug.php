@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -59,7 +56,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      *
      * @param null|Model\DataObject\Concrete $object
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $result = [];
         if (is_array($data)) {
@@ -89,7 +86,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * @return Model\DataObject\Data\UrlSlug[]
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $result = [];
         if (is_array($data)) {
@@ -114,7 +111,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      *
      * @return Model\DataObject\Data\UrlSlug[]
      */
-    public function getDataFromGridEditor(float $data, Concrete $object = null, array $params = []): array
+    public function getDataFromGridEditor(float $data, ?Concrete $object = null, array $params = []): array
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -237,7 +234,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * @param Model\DataObject\Concrete|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Localizedfield|null $object
      */
-    public function prepareDataForPersistence(mixed $data, Localizedfield|AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): ?array
+    public function prepareDataForPersistence(mixed $data, Localizedfield|AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): ?array
     {
         $return = [];
 
@@ -381,7 +378,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return true;
     }
 
-    protected function getPreviewData(?array $data, Concrete $object = null, array $params = [], string $lineBreak = '<br />'): ?string
+    protected function getPreviewData(?array $data, ?Concrete $object = null, array $params = [], string $lineBreak = '<br />'): ?string
     {
         if (is_array($data) && count($data) > 0) {
             $pathes = [];
@@ -402,7 +399,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return null;
     }
 
-    public function getVersionPreview(mixed $data, Model\DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?Model\DataObject\Concrete $object = null, array $params = []): string
     {
         return $this->getPreviewData($data, $object, $params) ?? '';
     }
@@ -410,7 +407,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * @param null|Model\DataObject\Data\UrlSlug[] $data
      */
-    public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): array
+    public function getDataForGrid(?array $data, ?Concrete $object = null, array $params = []): array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
@@ -480,9 +477,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 $container->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($container);
 
-                if ($container instanceof Model\Element\DirtyIndicatorInterface) {
-                    $container->markFieldDirty($this->getName(), false);
-                }
+                $container->markFieldDirty($this->getName(), false);
             }
         } elseif ($container instanceof Model\DataObject\Localizedfield) {
             $data = $params['data'];
@@ -563,12 +558,12 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
+        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
+        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]|null';
     }
 
     public function normalize(mixed $value, array $params = []): ?array

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Document\Adapter;
@@ -19,6 +16,7 @@ namespace Pimcore\Document\Adapter;
 use Exception;
 use Gotenberg\Gotenberg as GotenbergAPI;
 use Gotenberg\Stream;
+use GuzzleHttp\Psr7\LazyOpenStream;
 use Pimcore\Config;
 use Pimcore\Helper\GotenbergHelper;
 use Pimcore\Logger;
@@ -115,11 +113,13 @@ class Gotenberg extends Ghostscript
         if (!$storage->fileExists($storagePath)) {
             $localAssetTmpPath = $asset->getLocalFile();
 
+            $psrStream = null;
+
             try {
+                $psrStream = new LazyOpenStream($localAssetTmpPath, 'rb');
+
                 $request = GotenbergAPI::libreOffice(Config::getSystemConfiguration('gotenberg')['base_url'])
-                    ->convert(
-                        Stream::path($localAssetTmpPath)
-                    );
+                    ->convert(new Stream($asset->getFilename(), $psrStream));
 
                 $response = GotenbergAPI::send($request);
                 $fileContent = $response->getBody()->getContents();
@@ -130,6 +130,10 @@ class Gotenberg extends Ghostscript
                 Logger::error($message. $e->getMessage());
 
                 throw $e;
+            } finally {
+                if ($psrStream instanceof \Psr\Http\Message\StreamInterface) {
+                    $psrStream->close();
+                }
             }
         }
 

@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
@@ -50,7 +47,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(string $id = null): void
+    public function getById(?string $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -66,7 +63,13 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             }
 
             if ($data && is_string($data['layoutDefinitions'] ?? null)) {
-                $data['layoutDefinitions'] = unserialize($data['layoutDefinitions']);
+                //Legacy fallback, see save() nested json_decode json_encode
+                $layoutDefinitions = \Pimcore\Tool\Serialize::unserialize($data['layoutDefinitions'], false);
+                if (is_array($layoutDefinitions)) {
+                    $data['layoutDefinitions'] = Model\DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($layoutDefinitions, true);
+                } else {
+                    $data['layoutDefinitions'] = $layoutDefinitions;
+                }
             } elseif (is_array($data['layoutDefinitions'] ?? null)) {
                 $data['layoutDefinitions'] = Model\DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($data['layoutDefinitions'], true);
             }

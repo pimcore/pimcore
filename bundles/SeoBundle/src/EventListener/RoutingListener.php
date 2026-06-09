@@ -3,16 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\SeoBundle\EventListener;
@@ -20,6 +17,7 @@ namespace Pimcore\Bundle\SeoBundle\EventListener;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -52,6 +50,10 @@ class RoutingListener implements EventSubscriberInterface
         }
 
         $request = $event->getRequest();
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
         $response = $this->redirectHandler->checkForRedirect($request, true);
         if ($response) {
             $event->setResponse($response);
@@ -64,10 +66,15 @@ class RoutingListener implements EventSubscriberInterface
             return;
         }
 
+        $request = $event->getRequest();
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
         // in case routing didn't find a matching route, check for redirects without override
         $exception = $event->getThrowable();
         if ($exception instanceof NotFoundHttpException) {
-            $response = $this->redirectHandler->checkForRedirect($event->getRequest(), false);
+            $response = $this->redirectHandler->checkForRedirect($request, false);
             if ($response) {
                 $event->setResponse($response);
             }

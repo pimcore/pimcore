@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\WordExportBundle\Controller;
@@ -25,30 +22,22 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Service;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/translation")
- *
- */
+#[Route('/translation')]
 class TranslationController extends UserAwareController
 {
     use JsonHelperTrait;
 
     private const PERMISSION = 'word_export';
 
-    /**
-     * @Route("/word-export", name="pimcore_bundle_wordexport_translation_wordexport", methods={"POST"})
-     *
-     *
-     */
+    #[Route('/word-export', name: 'pimcore_bundle_wordexport_translation_wordexport', methods: ['POST'])]
     public function wordExportAction(Request $request, Filesystem $filesystem): JsonResponse
     {
         $this->checkPermission(self::PERMISSION);
@@ -68,16 +57,17 @@ class TranslationController extends UserAwareController
                 $element = \Pimcore\Model\Element\Service::getElementById($el['type'], $el['id']);
                 $output = '';
 
-                // check supported types (subtypes)
-                if (!in_array($element->getType(), ['page', 'snippet', 'email', 'object'])) {
+                // check supported types (subtypes) and if user has view permission
+                if (
+                    !in_array($element?->getType(), ['page', 'snippet', 'email', 'object'], true) ||
+                    !$element->isAllowed('view')
+                ) {
                     continue;
                 }
 
-                if ($element instanceof ElementInterface) {
-                    $output .= '<h1 class="element-headline">' . ucfirst(
-                        $element->getType()
-                    ) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
-                }
+                $output .= '<h1 class="element-headline">' . ucfirst(
+                    $element->getType()
+                ) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
 
                 if ($element instanceof PageSnippet) {
                     if ($element instanceof Page) {
@@ -249,11 +239,11 @@ class TranslationController extends UserAwareController
         ]);
     }
 
-    /**
-     * @Route("/word-export-download", name="pimcore_bundle_wordexport_translation_wordexportdownload", methods={"GET"})
-     *
-     *
-     */
+    #[Route(
+        '/word-export-download',
+        name: 'pimcore_bundle_wordexport_translation_wordexportdownload',
+        methods: ['GET']
+    )]
     public function wordExportDownloadAction(Request $request): Response
     {
         $this->checkPermission(self::PERMISSION);

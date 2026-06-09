@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tests\Support\Helper\DataType;
@@ -137,7 +134,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
-        $expected = ['1', '2'];
+        $expected = ['AU', 'IT'];
 
         $this->assertEquals($expected, $value);
     }
@@ -397,7 +394,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected->getHotspots(), $value->getHotspots());
     }
 
-    private function createHotspots(int $idx = null, int $seed = 0): array
+    private function createHotspots(?int $idx = null, int $seed = 0): array
     {
         $result = [];
 
@@ -520,7 +517,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
-        $expected = ['1', '3'];
+        $expected = ['de', 'it'];
 
         $this->assertEquals($expected, $value);
     }
@@ -567,11 +564,58 @@ class TestDataHelper extends AbstractTestDataHelper
     public function assertMultiSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
+        $validationException = false;
+
         $value = $object->$getter();
-        $expected = ['1', '2'];
+        $expected = ['cat', 'tiger'];
 
         $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
+
+        // Testing default behavior when enforceValidation is disabled
+        $object->$setter(['dragon']);
+
+        try {
+            $object->save();
+            $this->assertTrue(true); //save successfull without exceptions
+        } catch (Exception $e) {
+            if (
+                str_contains($e->getMessage(), 'Invalid multiselect option') &&
+                str_contains($e->getMessage(), 'dragon')
+            ) {
+                $validationException = true;
+            }
+        }
+        $this->assertFalse($validationException);
+    }
+
+    public function assertMultiSelectEnforced(Concrete $object, string $field, int $seed = 1): void
+    {
+        $getter = 'get' . ucfirst($field);
+        $setter = 'set' . ucfirst($field);
+        $validationException = false;
+
+        $value = $object->$getter();
+        $expected = ['cat', 'tiger'];
+
+        $this->assertIsEqual($object, $field, $expected, $value);
+        $this->assertEquals($expected, $value);
+
+        $object->$setter(['dragon']);
+
+        try {
+            $object->save();
+            $this->assertFalse(true);
+        } catch (Exception $e) {
+            if (
+                str_contains($e->getMessage(), 'Invalid multiselect option') &&
+                str_contains($e->getMessage(), 'dragon')
+            ) {
+                $validationException = true;
+            }
+        }
+        $this->assertTrue($validationException);
     }
 
     public function assertMultihref(Concrete $object, string $field, int $seed = 1): void
@@ -1026,7 +1070,7 @@ class TestDataHelper extends AbstractTestDataHelper
     public function fillCountryMultiSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
-        $object->$setter(['1', '2']);
+        $object->$setter(['AU', 'IT']);
     }
 
     public function fillDate(Concrete $object, string $field, int $seed = 1): void
@@ -1223,7 +1267,7 @@ class TestDataHelper extends AbstractTestDataHelper
     public function fillLanguageMultiSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
-        $object->$setter(['1', '2']);
+        $object->$setter(['de', 'it']);
     }
 
     public function fillLastname(Concrete $object, string $field, int $seed = 1, ?string $language = null): void
@@ -1271,7 +1315,13 @@ class TestDataHelper extends AbstractTestDataHelper
     public function fillMultiSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
-        $object->$setter(['1', '2']);
+        $object->$setter(['cat', 'tiger']);
+    }
+
+    public function fillMultiSelectEnforced(Concrete $object, string $field, int $seed = 1): void
+    {
+        $setter = 'set' . ucfirst($field);
+        $object->$setter(['cat', 'tiger']);
     }
 
     public function fillMultihref(Concrete $object, string $field, int $seed = 1): void
