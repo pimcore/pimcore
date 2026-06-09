@@ -81,13 +81,18 @@ switches.
 **`CDN_BASE_URL` is required** in optimizer mode (used to build absolute transformation URLs);
 the Fastly adapter throws if it is missing.
 
-**Purging transforms — Mode A is required.** Fastly IO copies the **origin original's**
-`Surrogate-Key` onto every transform it derives. That inheritance only happens when the original
-`/var/assets/...` response actually carries the header — i.e. originals are routed through PHP
-(**Mode A**, see [Original Assets](#original-assets)). With Mode A, an `asset-path-{hash}` purge on
-asset update invalidates the original and all its transforms at once. In **Mode B** (static
-originals) transforms are **not** tag-purgeable and expire only by TTL — Mode A is therefore the
-expected routing for optimizer mode.
+**Purging transforms.** With static originals (**Mode B**, the default — see
+[Original Assets](#original-assets)) edge transforms are **not** tag-purgeable: they carry no
+inherited `Surrogate-Key` and refresh only when their TTL expires. To force a refresh sooner,
+either URL-purge the original (`CdnPurgeListener` dispatches this on asset update when
+`CDN_BASE_URL` is set) or version the asset URL so an edit produces a new cache key.
+
+Tag-based purge of transforms (an `asset-path-{hash}` purge invalidating the original and all its
+transforms at once) requires the original `/var/assets/...` response to carry the header, which
+in turn requires originals to be served through PHP (**Mode A**). Mode A is **not** provided out of
+the box — Pimcore has no route that serves original assets through PHP — so it is an optional,
+custom add-on (see [Original Assets](#original-assets)). For most projects TTL refresh plus
+URL-purge is sufficient.
 
 **Thumbnail-config edits.** Edge transforms are keyed by the original's surrogate keys, not by a
 named config, so editing a thumbnail config does **not** invalidate already-cached transforms via
@@ -222,32 +227,41 @@ The CDN edge must be configured to:
 
 ## Original Assets
 
-For original assets (`/var/assets/...`) there are two valid operation modes.
+For original assets (`/var/assets/...`) there are two operation modes.
 
-### Mode A: Tag-based purge for originals
+### Mode B: URL purge for originals (static serving) — default
 
-Use this mode if you want `asset-path-{hash}` surrogate tags to invalidate
-cached original assets.
+This is the default and recommended mode: keep `/var/assets` as static-file
+serving so the web server streams the file directly off disk (fast, with native
+range and conditional-request support).
 
-Requirement: original asset requests must be handled by PHP on cache fill,
-not served directly as static files. If the web server serves the file from
-disk before Symfony runs, `CdnSurrogateKeyListener` cannot emit
-`Surrogate-Key`/`Cache-Tag` and tag purge has nothing to target.
+Original responses do not carry CDN tags in this mode (the PHP kernel never runs
+for a statically-served file). Configure `CDN_BASE_URL` so `CdnPurgeListener`
+dispatches `PurgeCdnUrlMessage` on asset update/delete (including the old URL on
+rename/move); Fastly then issues a direct `PURGE https://cdn.example.com/var/assets/...`
+by URL. If `CDN_BASE_URL` is not set, originals refresh only when TTL expires.
 
-For Upsun/Platform.sh style routing, configure `/var/assets` to pass through
-`/index.php` and avoid static short-circuiting for these paths.
+> Do **not** route `/var/assets/*` through `/index.php` on Upsun/Platform.sh
+> expecting Mode A — Pimcore has no route that serves original assets through PHP,
+> so every original would return 404. See Mode A below.
 
-### Mode B: URL purge for originals (static serving)
+### Mode A: Tag-based purge for originals (optional, custom — not shipped)
 
-Use this mode if you keep `/var/assets` as static-file serving.
+Use this only if you specifically need `asset-path-{hash}` surrogate tags to
+invalidate cached originals (and, by inheritance, their Fastly IO transforms)
+instead of relying on URL-purge / TTL.
 
-In this case, original responses usually do not carry CDN tags. Configure
-`CDN_BASE_URL` so `CdnPurgeListener` dispatches `PurgeCdnUrlMessage` on
-asset update/delete (including old URL on rename/move). Fastly then issues a
-direct `PURGE https://cdn.example.com/var/assets/...` by URL.
+Requirement: original asset requests must be handled by PHP on cache fill, not
+served directly as static files — otherwise `CdnSurrogateKeyListener` cannot emit
+`Surrogate-Key`/`Cache-Tag`. **Pimcore does not provide a controller for this**;
+only thumbnails have a PHP serving route. To enable Mode A you must add your own
+controller/route that streams originals from the asset storage (mirroring
+`PublicServicesController::thumbnailAction`) so the response is produced by PHP,
+then point `/var/assets` routing at `/index.php`.
 
-If `CDN_BASE_URL` is not set in static mode, originals refresh only when TTL
-expires naturally.
+Be aware this re-implements static file serving in PHP: you are responsible for
+HTTP range (`206`) and conditional (`304`) handling, and you accept the per-request
+kernel overhead on originals (mitigated, but not eliminated, by edge caching).
 
 ## Private / Access-Controlled Assets
 
