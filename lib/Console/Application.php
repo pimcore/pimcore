@@ -69,7 +69,8 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
         $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) use ($kernel, $maintenanceModeHelper) {
             // skip if maintenance mode is on and the flag is not set
             if (($maintenanceModeHelper->isActive() || Admin::isInMaintenanceMode()) &&
-                !$event->getInput()->getOption('ignore-maintenance-mode')
+                (!$event->getInput()->hasOption('ignore-maintenance-mode') ||
+                 !$event->getInput()->getOption('ignore-maintenance-mode'))
             ) {
                 throw new RuntimeException(
                     'In maintenance mode - set the flag --ignore-maintenance-mode to force execution!'
@@ -87,7 +88,8 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
                 }
             }
 
-            if ($event->getInput()->getOption('maintenance-mode')) {
+            if ($event->getInput()->hasOption('maintenance-mode') &&
+                $event->getInput()->getOption('maintenance-mode')) {
                 // enable maintenance mode if requested
                 $maintenanceModeId = 'cache-warming-dummy-session-id';
 
@@ -107,7 +109,8 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
         });
 
         $dispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEvent $event) use ($maintenanceModeHelper) {
-            if ($event->getInput()->getOption('maintenance-mode')) {
+            if ($event->getInput()->hasOption('maintenance-mode') &&
+                $event->getInput()->getOption('maintenance-mode')) {
                 $event->getOutput()->writeln('Deactivating maintenance mode...');
                 //BC Layer for Admin::activateMaintenanceMode, if the maintenance file already exists
                 if (Admin::isInMaintenanceMode()) {
