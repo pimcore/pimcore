@@ -29,7 +29,11 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
 
     protected const OFF = 'OFF';
 
-    public function __construct(protected RequestStack $requestStack, protected Connection $db)
+    public function __construct(
+        protected RequestStack $requestStack,
+        /** @deprecated - will be removed in Pimcore 2027.1.0 **/
+        protected Connection $db
+    )
     {
     }
 
