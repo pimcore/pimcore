@@ -33,8 +33,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
         protected RequestStack $requestStack,
         /** @deprecated - will be removed in Pimcore 2027.1.0 **/
         protected Connection $db
-    )
-    {
+    ) {
     }
 
     public function activate(string $sessionId): void
