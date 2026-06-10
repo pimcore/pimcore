@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Unit\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\CdnImageThumbnailUrlListener;
 use Pimcore\Cdn\ImageTransformAdapterInterface;
+use Pimcore\Cdn\ThumbnailTransform;
 use Pimcore\Cdn\ThumbnailTransformResolver;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
@@ -51,12 +52,12 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
     public function testRewritesEligibleImageThumbnail(): void
     {
         $resolver = $this->createMock(ThumbnailTransformResolver::class);
-        $resolver->method('resolve')->willReturn(['width' => 400, 'height' => 300]);
+        $resolver->method('resolve')->willReturn(new ThumbnailTransform(400, 300));
 
         $adapter = $this->createMock(ImageTransformAdapterInterface::class);
         $adapter->expects(self::once())
             ->method('buildUrl')
-            ->with('/var/assets/folder/photo.jpg', ['width' => 400, 'height' => 300])
+            ->with('/var/assets/folder/photo.jpg', new ThumbnailTransform(400, 300))
             ->willReturn('https://cdn.example.com/var/assets/folder/photo.jpg?width=400&height=300');
 
         $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS);
@@ -89,7 +90,7 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
         $adapter->expects(self::never())->method('buildUrl');
 
         $listener = new CdnImageThumbnailUrlListener($adapter, $this->createMock(ThumbnailTransformResolver::class), 'fastly', self::SOURCE_FORMATS);
-        $event = $this->event($this->image('/folder/logo.svg', vector: true), new Config());
+        $event = $this->event($this->image('/folder/logo.svg', true), new Config());
 
         $listener->onThumbnailPath($event);
 
@@ -136,7 +137,7 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
         // A raster format Fastly IO cannot ingest (TIFF) must fall back to Pimcore,
         // even though it is not a vector graphic and the config is translatable.
         $resolver = $this->createMock(ThumbnailTransformResolver::class);
-        $resolver->method('resolve')->willReturn(['width' => 100]);
+        $resolver->method('resolve')->willReturn(new ThumbnailTransform(100));
 
         $adapter = $this->createMock(ImageTransformAdapterInterface::class);
         $adapter->expects(self::never())->method('buildUrl');
@@ -152,7 +153,7 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
     public function testDoesNotRewritePhotoshop(): void
     {
         $resolver = $this->createMock(ThumbnailTransformResolver::class);
-        $resolver->method('resolve')->willReturn(['width' => 100]);
+        $resolver->method('resolve')->willReturn(new ThumbnailTransform(100));
 
         $adapter = $this->createMock(ImageTransformAdapterInterface::class);
         $adapter->expects(self::never())->method('buildUrl');
@@ -169,12 +170,12 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
     {
         // The allowlist is configurable: adding image/tiff makes a TIFF eligible.
         $resolver = $this->createMock(ThumbnailTransformResolver::class);
-        $resolver->method('resolve')->willReturn(['width' => 100]);
+        $resolver->method('resolve')->willReturn(new ThumbnailTransform(100));
 
         $adapter = $this->createMock(ImageTransformAdapterInterface::class);
         $adapter->expects(self::once())
             ->method('buildUrl')
-            ->with('/var/assets/folder/scan.tif', ['width' => 100])
+            ->with('/var/assets/folder/scan.tif', new ThumbnailTransform(100))
             ->willReturn('https://cdn.example.com/var/assets/folder/scan.tif?width=100');
 
         $formats = [...self::SOURCE_FORMATS, 'image/tiff'];
@@ -192,7 +193,7 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
     public function testMatchesMimeTypeCaseInsensitively(): void
     {
         $resolver = $this->createMock(ThumbnailTransformResolver::class);
-        $resolver->method('resolve')->willReturn(['width' => 100]);
+        $resolver->method('resolve')->willReturn(new ThumbnailTransform(100));
 
         $adapter = $this->createMock(ImageTransformAdapterInterface::class);
         $adapter->expects(self::once())
@@ -213,12 +214,12 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
     public function testPassesUnencodedRealPathForSpecialCharFilenames(): void
     {
         $resolver = $this->createMock(ThumbnailTransformResolver::class);
-        $resolver->method('resolve')->willReturn(['width' => 100]);
+        $resolver->method('resolve')->willReturn(new ThumbnailTransform(100));
 
         $adapter = $this->createMock(ImageTransformAdapterInterface::class);
         $adapter->expects(self::once())
             ->method('buildUrl')
-            ->with('/var/assets/Car Images/Mötley.jpg', ['width' => 100])
+            ->with('/var/assets/Car Images/Mötley.jpg', new ThumbnailTransform(100))
             ->willReturn('https://cdn.example.com/var/assets/Car%20Images/M%C3%B6tley.jpg?width=100');
 
         $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS);

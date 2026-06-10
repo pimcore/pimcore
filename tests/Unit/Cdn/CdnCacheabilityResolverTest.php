@@ -15,20 +15,24 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Cdn;
 
 use Pimcore\Cdn\CdnCacheabilityResolver;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CdnCacheabilityResolverTest extends TestCase
 {
-    private function resolver(string $provider = 'fastly', array $excluded = []): CdnCacheabilityResolver
+    private function resolver(string $provider = 'fastly', array $excluded = [], bool $isAdmin = false): CdnCacheabilityResolver
     {
-        return new CdnCacheabilityResolver($provider, $excluded);
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn($isAdmin);
+
+        return new CdnCacheabilityResolver($provider, $excluded, $contextResolver);
     }
 
-    private function req(string $uri): Request
+    private function req(string $uri, string $method = 'GET'): Request
     {
-        return Request::create($uri);
+        return Request::create($uri, $method);
     }
 
     private function res(int $status = 200, ?string $cacheControl = null): Response
@@ -55,8 +59,29 @@ class CdnCacheabilityResolverTest extends TestCase
 
     public function testDisabledWhenCdnProviderEmpty(): void
     {
-        $r = $this->resolver(provider: '');
+        $r = $this->resolver('');
         self::assertFalse($r->isCdnCacheable($this->req('/var/assets/folder/x.jpg'), $this->res()));
+    }
+
+    public function testNonCacheableHttpMethodNotCacheable(): void
+    {
+        // Only GET/HEAD responses may be CDN-cached; a 2xx to a POST must not be tagged.
+        $r = $this->resolver();
+        self::assertFalse($r->isCdnCacheable($this->req('/var/assets/folder/x.jpg', 'POST'), $this->res()));
+        self::assertFalse($r->isCdnCacheable($this->req('/var/assets/folder/x.jpg', 'DELETE'), $this->res()));
+    }
+
+    public function testHeadMethodIsCacheable(): void
+    {
+        $r = $this->resolver();
+        self::assertTrue($r->isCdnCacheable($this->req('/var/assets/folder/x.jpg', 'HEAD'), $this->res()));
+    }
+
+    public function testAdminContextNotCacheable(): void
+    {
+        // Backend/admin requests (e.g. tree-preview thumbnails) must never be public-CDN-cached.
+        $r = $this->resolver(isAdmin: true);
+        self::assertFalse($r->isCdnCacheable($this->req('/foo/image-thumb__1__cfg/x.jpg'), $this->res()));
     }
 
     public function testNon2xxNotCacheable(): void

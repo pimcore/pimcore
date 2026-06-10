@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Unit\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\CdnSurrogateKeyListener;
 use Pimcore\Cdn\CdnCacheabilityResolver;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,7 +41,9 @@ class CdnSurrogateKeyListenerTest extends TestCase
 
     private function dispatch(string $cdnProvider, ResponseEvent $event): Response
     {
-        $listener = new CdnSurrogateKeyListener(new CdnCacheabilityResolver($cdnProvider, []));
+        $listener = new CdnSurrogateKeyListener(
+            new CdnCacheabilityResolver($cdnProvider, [], $this->createMock(PimcoreContextResolver::class)),
+        );
         $listener->onKernelResponse($event);
 
         return $event->getResponse();
@@ -329,7 +332,9 @@ class CdnSurrogateKeyListenerTest extends TestCase
 
     public function testDoesNotEmitTagsForQueryStringRequest(): void
     {
-        $listener = new CdnSurrogateKeyListener(new CdnCacheabilityResolver('fastly', []));
+        $listener = new CdnSurrogateKeyListener(
+            new CdnCacheabilityResolver('fastly', [], $this->createMock(PimcoreContextResolver::class)),
+        );
         $event = $this->makeEvent('/var/assets/folder/x.jpg?sig=abc', 200);
 
         $listener->onKernelResponse($event);
@@ -340,7 +345,9 @@ class CdnSurrogateKeyListenerTest extends TestCase
 
     public function testDoesNotEmitTagsForExcludedPath(): void
     {
-        $listener = new CdnSurrogateKeyListener(new CdnCacheabilityResolver('fastly', ['#^/var/assets/private/#']));
+        $listener = new CdnSurrogateKeyListener(
+            new CdnCacheabilityResolver('fastly', ['#^/var/assets/private/#'], $this->createMock(PimcoreContextResolver::class)),
+        );
         $event = $this->makeEvent('/var/assets/private/secret.jpg', 200);
 
         $listener->onKernelResponse($event);
@@ -350,7 +357,9 @@ class CdnSurrogateKeyListenerTest extends TestCase
 
     public function testDoesNotEmitTagsWhenResponseHasNoStore(): void
     {
-        $listener = new CdnSurrogateKeyListener(new CdnCacheabilityResolver('fastly', []));
+        $listener = new CdnSurrogateKeyListener(
+            new CdnCacheabilityResolver('fastly', [], $this->createMock(PimcoreContextResolver::class)),
+        );
         $event = $this->makeEvent('/var/assets/folder/x.jpg', 200);
         $event->getResponse()->headers->set('Cache-Control', 'no-store');
 

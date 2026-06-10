@@ -29,7 +29,7 @@ class CdnImageTransformAdapterRegistry implements ImageTransformAdapterInterface
      * @param ContainerInterface $adapters PSR-11 locator keyed by the `optimizer` tag attribute.
      */
     public function __construct(
-        #[AutowireLocator('pimcore.cdn.image_transform_adapter', indexAttribute: 'optimizer')]
+        #[AutowireLocator('pimcore.cdn.image_transform_adapter', 'optimizer')]
         private readonly ContainerInterface $adapters,
         #[Autowire('%env(CDN_IMAGE_OPTIMIZER)%')]
         private readonly string $optimizer,
@@ -37,9 +37,9 @@ class CdnImageTransformAdapterRegistry implements ImageTransformAdapterInterface
     ) {
     }
 
-    public function buildUrl(string $originalPath, array $params): string
+    public function buildUrl(string $originalPath, ThumbnailTransform $transform): string
     {
-        return $this->getAdapter()->buildUrl($originalPath, $params);
+        return $this->getAdapter()->buildUrl($originalPath, $transform);
     }
 
     private function getAdapter(): ImageTransformAdapterInterface

@@ -34,7 +34,7 @@ class CdnPurgeClientRegistry implements PurgeClientInterface
      *                                    env vars eagerly).
      */
     public function __construct(
-        #[AutowireLocator('pimcore.cdn.purge_client', indexAttribute: 'provider')]
+        #[AutowireLocator('pimcore.cdn.purge_client', 'provider')]
         private readonly ContainerInterface $clients,
         #[Autowire('%env(CDN_PROVIDER)%')]
         private readonly string $provider,

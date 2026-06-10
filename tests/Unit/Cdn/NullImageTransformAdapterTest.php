@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Cdn;
 
 use Pimcore\Cdn\NullImageTransformAdapter;
+use Pimcore\Cdn\ThumbnailTransform;
 use Pimcore\Tests\Support\Test\TestCase;
 
 class NullImageTransformAdapterTest extends TestCase
@@ -25,7 +26,7 @@ class NullImageTransformAdapterTest extends TestCase
 
         self::assertSame(
             '/var/assets/folder/image.jpg',
-            $adapter->buildUrl('/var/assets/folder/image.jpg', ['width' => 400]),
+            $adapter->buildUrl('/var/assets/folder/image.jpg', new ThumbnailTransform(400)),
         );
     }
 }

@@ -18,26 +18,18 @@ use Pimcore\Model\Asset\Image\Thumbnail\Config;
 /**
  * @internal
  *
- * Translates a Pimcore image thumbnail Config into a provider-agnostic normalized parameter set,
- * or null when the config uses a transform we cannot faithfully reproduce on the CDN (caller then
- * falls back to Pimcore's own thumbnail generation).
+ * Translates a Pimcore image thumbnail Config into a provider-agnostic, normalized
+ * {@see ThumbnailTransform}, or null when the config uses a transform we cannot faithfully
+ * reproduce on the CDN (caller then falls back to Pimcore's own thumbnail generation).
  */
 class ThumbnailTransformResolver
 {
-    /**
-     * @return array<string, mixed>|null
-     */
-    public function resolve(Config $config): ?array
+    public function resolve(Config $config): ?ThumbnailTransform
     {
-        $params = [
-            'width' => null,
-            'height' => null,
-            'fit' => null,
-            'crop' => null,
-            'format' => null,
-            'quality' => null,
-            'dpr' => null,
-        ];
+        $width = null;
+        $height = null;
+        $fit = null;
+        $crop = null;
 
         foreach ($config->getItems() as $item) {
             if (empty($item) || !isset($item['method'])) {
@@ -48,38 +40,38 @@ class ThumbnailTransformResolver
 
             switch ($item['method']) {
                 case 'resize':
-                    $params['width'] = isset($args['width']) ? (int) $args['width'] : null;
-                    $params['height'] = isset($args['height']) ? (int) $args['height'] : null;
-                    $params['fit'] = null;
+                    $width = isset($args['width']) ? (int) $args['width'] : null;
+                    $height = isset($args['height']) ? (int) $args['height'] : null;
+                    $fit = null;
 
                     break;
                 case 'scaleByWidth':
-                    $params['width'] = isset($args['width']) ? (int) $args['width'] : null;
+                    $width = isset($args['width']) ? (int) $args['width'] : null;
 
                     break;
                 case 'scaleByHeight':
-                    $params['height'] = isset($args['height']) ? (int) $args['height'] : null;
+                    $height = isset($args['height']) ? (int) $args['height'] : null;
 
                     break;
                 case 'contain':
-                    $params['width'] = isset($args['width']) ? (int) $args['width'] : null;
-                    $params['height'] = isset($args['height']) ? (int) $args['height'] : null;
-                    $params['fit'] = 'bounds';
+                    $width = isset($args['width']) ? (int) $args['width'] : null;
+                    $height = isset($args['height']) ? (int) $args['height'] : null;
+                    $fit = 'bounds';
 
                     break;
                 case 'cover':
-                    $params['width'] = isset($args['width']) ? (int) $args['width'] : null;
-                    $params['height'] = isset($args['height']) ? (int) $args['height'] : null;
-                    $params['fit'] = 'cover';
+                    $width = isset($args['width']) ? (int) $args['width'] : null;
+                    $height = isset($args['height']) ? (int) $args['height'] : null;
+                    $fit = 'cover';
 
                     break;
                 case 'crop':
-                    $params['crop'] = [
-                        'x' => (int) ($args['x'] ?? 0),
-                        'y' => (int) ($args['y'] ?? 0),
-                        'width' => (int) ($args['width'] ?? 0),
-                        'height' => (int) ($args['height'] ?? 0),
-                    ];
+                    $crop = new CropRegion(
+                        (int) ($args['x'] ?? 0),
+                        (int) ($args['y'] ?? 0),
+                        (int) ($args['width'] ?? 0),
+                        (int) ($args['height'] ?? 0),
+                    );
 
                     break;
                 default:
@@ -88,24 +80,26 @@ class ThumbnailTransformResolver
             }
         }
 
-        $format = $config->getFormat();
+        $configFormat = $config->getFormat();
         // Pimcore's "SOURCE"/empty format means "keep source / auto-negotiate"; map to Fastly auto.
-        if ($format === '' || strtoupper($format) === 'SOURCE') {
-            $params['format'] = 'auto';
-        } else {
-            $params['format'] = strtolower($format);
-        }
+        $format = ($configFormat === '' || strtoupper($configFormat) === 'SOURCE')
+            ? 'auto'
+            : strtolower($configFormat);
 
-        $quality = $config->getQuality();
-        if ($quality > 0) {
-            $params['quality'] = $quality;
-        }
+        $configQuality = $config->getQuality();
+        $quality = $configQuality > 0 ? $configQuality : null;
 
         $highRes = $config->getHighResolution();
-        if ($highRes !== null && $highRes >= 2.0) {
-            $params['dpr'] = 2;
-        }
+        $dpr = ($highRes !== null && $highRes >= 2.0) ? 2 : null;
 
-        return $params;
+        return new ThumbnailTransform(
+            $width,
+            $height,
+            $fit,
+            $crop,
+            $format,
+            $quality,
+            $dpr,
+        );
     }
 }

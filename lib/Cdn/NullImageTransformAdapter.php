@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag('pimcore.cdn.image_transform_adapter', ['optimizer' => 'null'])]
 class NullImageTransformAdapter implements ImageTransformAdapterInterface
 {
-    public function buildUrl(string $originalPath, array $params): string
+    public function buildUrl(string $originalPath, ThumbnailTransform $transform): string
     {
         return $originalPath;
     }

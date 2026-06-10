@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Cdn;
 
 use Pimcore\Bundle\CoreBundle\EventListener\CdnSurrogateKeyListener;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,43 +37,56 @@ class CdnCacheabilityResolver
         private readonly string $cdnProvider,
         #[Autowire('%pimcore.cdn.excluded_paths%')]
         private readonly array $excludedPaths,
+        private readonly PimcoreContextResolver $contextResolver,
     ) {
     }
 
     public function isCdnCacheable(Request $request, Response $response): bool
     {
+        // Cheap scalar/header guards first; the expensive path regexes run last.
+
         // 1. CDN enabled.
         if ($this->cdnProvider === '') {
             return false;
         }
 
-        // 2. 2xx only — error/redirect responses are never CDN-cached.
+        // 2. Only cacheable HTTP methods (GET/HEAD) — a 2xx to a POST/PUT/DELETE is never CDN-cached.
+        if (!$request->isMethodCacheable()) {
+            return false;
+        }
+
+        // 3. 2xx only — error/redirect responses are never CDN-cached.
         if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
             return false;
         }
 
-        // 3. No query string — signed/dynamic URLs (auth, cache-busters) bypass the public cache.
+        // 4. No query string — signed/dynamic URLs (auth, cache-busters) bypass the public cache.
         if ($request->getQueryString() !== null) {
+            return false;
+        }
+
+        // 5. Not a backend/admin request — those (e.g. tree-preview thumbnails) are never public-CDN-cached.
+        if ($this->contextResolver->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
+            return false;
+        }
+
+        // 6. Response does not carry `no-store` (the only reliable opt-out; see hasRestrictiveCacheControl()).
+        if ($this->hasRestrictiveCacheControl($response)) {
             return false;
         }
 
         $path = $request->getPathInfo();
 
-        // 4. Not an operator-excluded path.
+        // 7. Not an operator-excluded path (regex — kept after the cheap guards above).
         foreach ($this->excludedPaths as $pattern) {
             if (preg_match($pattern, $path)) {
                 return false;
             }
         }
 
-        // 5. Response does not carry `no-store` (the only reliable opt-out; see hasRestrictiveCacheControl()).
-        if ($this->hasRestrictiveCacheControl($response)) {
-            return false;
-        }
-
-        // 6. Path is an asset/thumbnail path.
-        return (bool) preg_match(CdnSurrogateKeyListener::THUMBNAIL_PATTERN, $path)
-            || (bool) preg_match(CdnSurrogateKeyListener::ORIGINAL_ASSET_PATTERN, $path);
+        // 8. Path is an asset/thumbnail path (regex, last).
+        return preg_match(CdnSurrogateKeyListener::THUMBNAIL_PATTERN, $path)
+            || preg_match(CdnSurrogateKeyListener::ORIGINAL_ASSET_PATTERN, $path);
     }
 
     private function hasRestrictiveCacheControl(Response $response): bool

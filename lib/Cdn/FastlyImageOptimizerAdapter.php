@@ -26,7 +26,7 @@ class FastlyImageOptimizerAdapter implements ImageTransformAdapterInterface
     ) {
     }
 
-    public function buildUrl(string $originalPath, array $params): string
+    public function buildUrl(string $originalPath, ThumbnailTransform $transform): string
     {
         if ($this->baseUrl === '') {
             // Optimizer mode requires an absolute CDN host; refuse to emit a broken relative URL.
@@ -35,47 +35,44 @@ class FastlyImageOptimizerAdapter implements ImageTransformAdapterInterface
             );
         }
 
-        $query = $this->buildQuery($params);
+        $query = $this->buildQuery($transform);
         $path = $this->encodePath($originalPath);
         $url = rtrim($this->baseUrl, '/') . $path;
 
         return $query === '' ? $url : $url . '?' . $query;
     }
 
-    /**
-     * @param array<string, mixed> $params
-     */
-    private function buildQuery(array $params): string
+    private function buildQuery(ThumbnailTransform $transform): string
     {
         $parts = [];
 
-        if (!empty($params['width'])) {
-            $parts['width'] = (int) $params['width'];
+        if ($transform->width !== null) {
+            $parts['width'] = $transform->width;
         }
-        if (!empty($params['height'])) {
-            $parts['height'] = (int) $params['height'];
+        if ($transform->height !== null) {
+            $parts['height'] = $transform->height;
         }
-        if (!empty($params['fit'])) {
-            $parts['fit'] = (string) $params['fit'];
+        if ($transform->fit !== null && $transform->fit !== '') {
+            $parts['fit'] = $transform->fit;
         }
-        if (!empty($params['crop']) && is_array($params['crop'])) {
-            $c = $params['crop'];
+        if ($transform->crop !== null) {
+            $c = $transform->crop;
             // Fastly crop: width,height,x{n},y{n}
-            $parts['crop'] = sprintf('%d,%d,x%d,y%d', $c['width'], $c['height'], $c['x'], $c['y']);
+            $parts['crop'] = sprintf('%d,%d,x%d,y%d', $c->width, $c->height, $c->x, $c->y);
         }
-        if (!empty($params['format'])) {
-            if ($params['format'] === 'auto') {
+        if ($transform->format !== null && $transform->format !== '') {
+            if ($transform->format === 'auto') {
                 // Fastly content negotiation (Accept header) rather than a fixed format.
                 $parts['auto'] = 'webp';
             } else {
-                $parts['format'] = (string) $params['format'];
+                $parts['format'] = $transform->format;
             }
         }
-        if (!empty($params['quality'])) {
-            $parts['quality'] = (int) $params['quality'];
+        if ($transform->quality !== null) {
+            $parts['quality'] = $transform->quality;
         }
-        if (!empty($params['dpr'])) {
-            $parts['dpr'] = (int) $params['dpr'];
+        if ($transform->dpr !== null) {
+            $parts['dpr'] = $transform->dpr;
         }
 
         $pairs = [];

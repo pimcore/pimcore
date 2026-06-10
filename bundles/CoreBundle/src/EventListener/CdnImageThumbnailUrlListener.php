@@ -79,13 +79,13 @@ class CdnImageThumbnailUrlListener implements EventSubscriberInterface
             return;
         }
 
-        $params = $this->transformResolver->resolve($config);
-        if ($params === null) {
+        $transform = $this->transformResolver->resolve($config);
+        if ($transform === null) {
             // Config uses a transform we cannot faithfully reproduce on the CDN — fall back.
             return;
         }
 
         $originalPath = '/var/assets' . $asset->getRealFullPath();
-        $event->setArgument('frontendPath', $this->adapter->buildUrl($originalPath, $params));
+        $event->setArgument('frontendPath', $this->adapter->buildUrl($originalPath, $transform));
     }
 }

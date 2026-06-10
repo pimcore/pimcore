@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Cdn;
 
+use Pimcore\Cdn\CropRegion;
 use Pimcore\Cdn\ThumbnailTransformResolver;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -40,70 +41,70 @@ class ThumbnailTransformResolverTest extends TestCase
     public function testResizeMapsToWidthHeightExact(): void
     {
         $resolver = new ThumbnailTransformResolver();
-        $params = $resolver->resolve($this->config([
+        $t = $resolver->resolve($this->config([
             ['method' => 'resize', 'arguments' => ['width' => 400, 'height' => 300]],
         ], 'jpeg', 82));
 
-        self::assertSame(400, $params['width']);
-        self::assertSame(300, $params['height']);
-        self::assertNull($params['fit']);
-        self::assertSame('jpeg', $params['format']);
-        self::assertSame(82, $params['quality']);
+        self::assertSame(400, $t->width);
+        self::assertSame(300, $t->height);
+        self::assertNull($t->fit);
+        self::assertSame('jpeg', $t->format);
+        self::assertSame(82, $t->quality);
     }
 
     public function testContainMapsToFitBounds(): void
     {
         $resolver = new ThumbnailTransformResolver();
-        $params = $resolver->resolve($this->config([
+        $t = $resolver->resolve($this->config([
             ['method' => 'contain', 'arguments' => ['width' => 400, 'height' => 300]],
         ]));
 
-        self::assertSame('bounds', $params['fit']);
-        self::assertSame(400, $params['width']);
-        self::assertSame(300, $params['height']);
+        self::assertSame('bounds', $t->fit);
+        self::assertSame(400, $t->width);
+        self::assertSame(300, $t->height);
     }
 
     public function testCoverMapsToFitCover(): void
     {
         $resolver = new ThumbnailTransformResolver();
-        $params = $resolver->resolve($this->config([
+        $t = $resolver->resolve($this->config([
             ['method' => 'cover', 'arguments' => ['width' => 200, 'height' => 200, 'positioning' => 'center']],
         ]));
 
-        self::assertSame('cover', $params['fit']);
-        self::assertSame(200, $params['width']);
-        self::assertSame(200, $params['height']);
+        self::assertSame('cover', $t->fit);
+        self::assertSame(200, $t->width);
+        self::assertSame(200, $t->height);
     }
 
     public function testScaleByWidthSetsWidthOnly(): void
     {
         $resolver = new ThumbnailTransformResolver();
-        $params = $resolver->resolve($this->config([
+        $t = $resolver->resolve($this->config([
             ['method' => 'scaleByWidth', 'arguments' => ['width' => 800]],
         ]));
 
-        self::assertSame(800, $params['width']);
-        self::assertNull($params['height']);
+        self::assertSame(800, $t->width);
+        self::assertNull($t->height);
     }
 
     public function testCropMapsToCropBox(): void
     {
         $resolver = new ThumbnailTransformResolver();
-        $params = $resolver->resolve($this->config([
+        $t = $resolver->resolve($this->config([
             ['method' => 'crop', 'arguments' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 50]],
         ]));
 
-        self::assertSame(['x' => 10, 'y' => 20, 'width' => 100, 'height' => 50], $params['crop']);
+        self::assertEquals(new CropRegion(10, 20, 100, 50), $t->crop);
     }
 
     public function testHighResolutionSetsDpr(): void
     {
         $resolver = new ThumbnailTransformResolver();
-        $params = $resolver->resolve($this->config([
+        $t = $resolver->resolve($this->config([
             ['method' => 'resize', 'arguments' => ['width' => 400, 'height' => 300]],
         ], 'jpeg', null, 2.0));
 
-        self::assertSame(2, $params['dpr']);
+        self::assertSame(2, $t->dpr);
     }
 
     public function testUnsupportedTransformReturnsNull(): void
@@ -127,11 +128,11 @@ class ThumbnailTransformResolverTest extends TestCase
     public function testFormatSourceMapsToAuto(): void
     {
         $resolver = new ThumbnailTransformResolver();
-        $params = $resolver->resolve($this->config([
+        $t = $resolver->resolve($this->config([
             ['method' => 'resize', 'arguments' => ['width' => 400, 'height' => 300]],
         ], 'SOURCE'));
 
-        self::assertSame('auto', $params['format']);
+        self::assertSame('auto', $t->format);
     }
 
     public function testMixedSupportedAndUnsupportedMethodReturnsNull(): void
@@ -147,11 +148,11 @@ class ThumbnailTransformResolverTest extends TestCase
     public function testScaleByHeightSetsHeightOnly(): void
     {
         $resolver = new ThumbnailTransformResolver();
-        $params = $resolver->resolve($this->config([
+        $t = $resolver->resolve($this->config([
             ['method' => 'scaleByHeight', 'arguments' => ['height' => 600]],
         ]));
 
-        self::assertSame(600, $params['height']);
-        self::assertNull($params['width']);
+        self::assertSame(600, $t->height);
+        self::assertNull($t->width);
     }
 }

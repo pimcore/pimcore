@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Unit\Cdn;
 
 use Pimcore\Cdn\CdnImageTransformAdapterRegistry;
 use Pimcore\Cdn\ImageTransformAdapterInterface;
+use Pimcore\Cdn\ThumbnailTransform;
 use Pimcore\Tests\Support\Test\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -54,7 +55,7 @@ class CdnImageTransformAdapterRegistryTest extends TestCase
             $this->createMock(LoggerInterface::class),
         );
 
-        self::assertSame('https://cdn.example/x.jpg?width=10', $registry->buildUrl('/var/assets/x.jpg', ['width' => 10]));
+        self::assertSame('https://cdn.example/x.jpg?width=10', $registry->buildUrl('/var/assets/x.jpg', new ThumbnailTransform(10)));
     }
 
     public function testEmptyOptimizerResolvesToNull(): void
@@ -68,7 +69,7 @@ class CdnImageTransformAdapterRegistryTest extends TestCase
             $this->createMock(LoggerInterface::class),
         );
 
-        self::assertSame('/var/assets/x.jpg', $registry->buildUrl('/var/assets/x.jpg', []));
+        self::assertSame('/var/assets/x.jpg', $registry->buildUrl('/var/assets/x.jpg', new ThumbnailTransform()));
     }
 
     public function testUnknownOptimizerLogsWarningAndFallsBackToNull(): void
@@ -84,6 +85,6 @@ class CdnImageTransformAdapterRegistryTest extends TestCase
             $logger,
         );
 
-        self::assertSame('/var/assets/x.jpg', $registry->buildUrl('/var/assets/x.jpg', []));
+        self::assertSame('/var/assets/x.jpg', $registry->buildUrl('/var/assets/x.jpg', new ThumbnailTransform()));
     }
 }

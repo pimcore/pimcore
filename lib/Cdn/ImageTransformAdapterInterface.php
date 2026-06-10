@@ -17,15 +17,14 @@ interface ImageTransformAdapterInterface
 {
     /**
      * Build a CDN image-transformation URL for the given original asset path and normalized
-     * transform parameters.
+     * transform.
      *
-     * @param string               $originalPath Relative origin path of the original asset
-     *                                            (e.g. /var/assets/folder/image.jpg), unencoded.
-     * @param array<string, mixed> $params       Normalized params (see ThumbnailTransformResolver):
-     *                                            width, height, fit, crop, format, quality, dpr.
+     * @param string            $originalPath Relative origin path of the original asset
+     *                                        (e.g. /var/assets/folder/image.jpg), unencoded.
+     * @param ThumbnailTransform $transform   Normalized transform (see ThumbnailTransformResolver).
      *
      * @return string Absolute CDN URL ready for use in <img src>, or the original path unchanged
      *                when the adapter is a no-op.
      */
-    public function buildUrl(string $originalPath, array $params): string;
+    public function buildUrl(string $originalPath, ThumbnailTransform $transform): string;
 }
