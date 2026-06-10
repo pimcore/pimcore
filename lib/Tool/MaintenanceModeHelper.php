@@ -29,7 +29,11 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
 
     protected const OFF = 'OFF';
 
-    public function __construct(protected RequestStack $requestStack, protected Connection $db)
+    public function __construct(
+        protected RequestStack $requestStack,
+        /** @deprecated - will be removed in Pimcore 2027.1.0 **/
+        protected Connection $db
+    )
     {
     }
 
@@ -85,9 +89,6 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
         } catch (Exception $exception) {
             // The cache entry is not set, we try to load it from the database
             try {
-                if (!$this->db->isConnected()) {
-                    $this->db->getNativeConnection();
-                }
                 $tmpStore = TmpStore::get(self::ENTRY_ID);
             } catch (Exception $e) {
                 return null;
