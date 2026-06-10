@@ -29,6 +29,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  *
  * Active only when CDN_IMAGE_OPTIMIZER is set. A variant is rewritten only when:
  *  - the asset is a raster image (not a vector/SVG), and
+ *  - the asset's source MIME type is in the configured optimizer allowlist
+ *    (pimcore.cdn.image_optimizer_source_formats — the formats the optimizer can ingest), and
  *  - the thumbnail config is fully translatable (ThumbnailTransformResolver returns non-null).
  * Otherwise the Pimcore-resolved frontendPath is left untouched (Pimcore generates the thumbnail).
  */
@@ -39,6 +41,8 @@ class CdnImageThumbnailUrlListener implements EventSubscriberInterface
         private readonly ThumbnailTransformResolver $transformResolver,
         #[Autowire('%env(CDN_IMAGE_OPTIMIZER)%')]
         private readonly string $imageOptimizer,
+        #[Autowire('%pimcore.cdn.image_optimizer_source_formats%')]
+        private readonly array $sourceFormats,
     ) {
     }
 
@@ -60,6 +64,12 @@ class CdnImageThumbnailUrlListener implements EventSubscriberInterface
         // Media-type guard: only raster images are eligible. Vector graphics (SVG), and any
         // non-image subject, stay on the Pimcore pipeline.
         if (!$asset instanceof Image || $asset->isVectorGraphic()) {
+            return;
+        }
+
+        // Source-format guard: only rewrite source formats the optimizer can actually ingest.
+        // Other rasters (e.g. TIFF, PSD) stay on the Pimcore pipeline.
+        if (!in_array(strtolower((string) $asset->getMimeType()), $this->sourceFormats, true)) {
             return;
         }
 

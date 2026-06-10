@@ -129,6 +129,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $container->setParameter('pimcore.cdn.base_url', $config['cdn']['base_url']);
         $container->setParameter('pimcore.cdn.excluded_paths', $config['cdn']['excluded_paths']);
+        $container->setParameter('pimcore.cdn.image_optimizer_source_formats', $config['cdn']['image_optimizer_source_formats']);
         $container->setParameter('pimcore.cdn.fastly.api_token', $config['cdn']['fastly']['api_token']);
         $container->setParameter('pimcore.cdn.fastly.service_id', $config['cdn']['fastly']['service_id']);
         $container->setParameter('pimcore.cdn.fastly.api_base_url', $config['cdn']['fastly']['api_base_url']);

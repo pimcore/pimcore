@@ -24,14 +24,17 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class CdnImageThumbnailUrlListenerTest extends TestCase
 {
-    private function image(string $fullPath, bool $vector = false): Image
+    private const SOURCE_FORMATS = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+    private function image(string $fullPath, bool $vector = false, string $mime = 'image/jpeg'): Image
     {
         $image = $this->getMockBuilder(Image::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getRealFullPath', 'isVectorGraphic'])
+            ->onlyMethods(['getRealFullPath', 'isVectorGraphic', 'getMimeType'])
             ->getMock();
         $image->method('getRealFullPath')->willReturn($fullPath);
         $image->method('isVectorGraphic')->willReturn($vector);
+        $image->method('getMimeType')->willReturn($mime);
 
         return $image;
     }
@@ -56,7 +59,7 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
             ->with('/var/assets/folder/photo.jpg', ['width' => 400, 'height' => 300])
             ->willReturn('https://cdn.example.com/var/assets/folder/photo.jpg?width=400&height=300');
 
-        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly');
+        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS);
         $event = $this->event($this->image('/folder/photo.jpg'), new Config());
 
         $listener->onThumbnailPath($event);
@@ -72,7 +75,7 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
         $adapter = $this->createMock(ImageTransformAdapterInterface::class);
         $adapter->expects(self::never())->method('buildUrl');
 
-        $listener = new CdnImageThumbnailUrlListener($adapter, $this->createMock(ThumbnailTransformResolver::class), '');
+        $listener = new CdnImageThumbnailUrlListener($adapter, $this->createMock(ThumbnailTransformResolver::class), '', self::SOURCE_FORMATS);
         $event = $this->event($this->image('/folder/photo.jpg'), new Config());
 
         $listener->onThumbnailPath($event);
@@ -85,7 +88,7 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
         $adapter = $this->createMock(ImageTransformAdapterInterface::class);
         $adapter->expects(self::never())->method('buildUrl');
 
-        $listener = new CdnImageThumbnailUrlListener($adapter, $this->createMock(ThumbnailTransformResolver::class), 'fastly');
+        $listener = new CdnImageThumbnailUrlListener($adapter, $this->createMock(ThumbnailTransformResolver::class), 'fastly', self::SOURCE_FORMATS);
         $event = $this->event($this->image('/folder/logo.svg', vector: true), new Config());
 
         $listener->onThumbnailPath($event);
@@ -106,7 +109,7 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
             'config' => new Config(),
         ]);
 
-        $listener = new CdnImageThumbnailUrlListener($adapter, $this->createMock(ThumbnailTransformResolver::class), 'fastly');
+        $listener = new CdnImageThumbnailUrlListener($adapter, $this->createMock(ThumbnailTransformResolver::class), 'fastly', self::SOURCE_FORMATS);
         $listener->onThumbnailPath($event);
 
         self::assertSame('/var/tmp/thumbnails/image-thumb__1__cfg/x.jpg', $event->getArgument('frontendPath'));
@@ -120,12 +123,91 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
         $adapter = $this->createMock(ImageTransformAdapterInterface::class);
         $adapter->expects(self::never())->method('buildUrl');
 
-        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly');
+        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS);
         $event = $this->event($this->image('/folder/photo.jpg'), new Config());
 
         $listener->onThumbnailPath($event);
 
         self::assertSame('/var/tmp/thumbnails/image-thumb__1__cfg/x.jpg', $event->getArgument('frontendPath'));
+    }
+
+    public function testDoesNotRewriteNonIngestibleRaster(): void
+    {
+        // A raster format Fastly IO cannot ingest (TIFF) must fall back to Pimcore,
+        // even though it is not a vector graphic and the config is translatable.
+        $resolver = $this->createMock(ThumbnailTransformResolver::class);
+        $resolver->method('resolve')->willReturn(['width' => 100]);
+
+        $adapter = $this->createMock(ImageTransformAdapterInterface::class);
+        $adapter->expects(self::never())->method('buildUrl');
+
+        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS);
+        $event = $this->event($this->image('/folder/scan.tif', mime: 'image/tiff'), new Config());
+
+        $listener->onThumbnailPath($event);
+
+        self::assertSame('/var/tmp/thumbnails/image-thumb__1__cfg/x.jpg', $event->getArgument('frontendPath'));
+    }
+
+    public function testDoesNotRewritePhotoshop(): void
+    {
+        $resolver = $this->createMock(ThumbnailTransformResolver::class);
+        $resolver->method('resolve')->willReturn(['width' => 100]);
+
+        $adapter = $this->createMock(ImageTransformAdapterInterface::class);
+        $adapter->expects(self::never())->method('buildUrl');
+
+        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS);
+        $event = $this->event($this->image('/folder/clipping.psd', mime: 'image/x-photoshop'), new Config());
+
+        $listener->onThumbnailPath($event);
+
+        self::assertSame('/var/tmp/thumbnails/image-thumb__1__cfg/x.jpg', $event->getArgument('frontendPath'));
+    }
+
+    public function testRewritesWhenFormatAddedToAllowlist(): void
+    {
+        // The allowlist is configurable: adding image/tiff makes a TIFF eligible.
+        $resolver = $this->createMock(ThumbnailTransformResolver::class);
+        $resolver->method('resolve')->willReturn(['width' => 100]);
+
+        $adapter = $this->createMock(ImageTransformAdapterInterface::class);
+        $adapter->expects(self::once())
+            ->method('buildUrl')
+            ->with('/var/assets/folder/scan.tif', ['width' => 100])
+            ->willReturn('https://cdn.example.com/var/assets/folder/scan.tif?width=100');
+
+        $formats = [...self::SOURCE_FORMATS, 'image/tiff'];
+        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', $formats);
+        $event = $this->event($this->image('/folder/scan.tif', mime: 'image/tiff'), new Config());
+
+        $listener->onThumbnailPath($event);
+
+        self::assertSame(
+            'https://cdn.example.com/var/assets/folder/scan.tif?width=100',
+            $event->getArgument('frontendPath'),
+        );
+    }
+
+    public function testMatchesMimeTypeCaseInsensitively(): void
+    {
+        $resolver = $this->createMock(ThumbnailTransformResolver::class);
+        $resolver->method('resolve')->willReturn(['width' => 100]);
+
+        $adapter = $this->createMock(ImageTransformAdapterInterface::class);
+        $adapter->expects(self::once())
+            ->method('buildUrl')
+            ->willReturn('https://cdn.example.com/var/assets/folder/photo.jpg?width=100');
+
+        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS);
+        $event = $this->event($this->image('/folder/photo.jpg', mime: 'IMAGE/JPEG'), new Config());
+
+        $listener->onThumbnailPath($event);
+
+        self::assertSame(
+            'https://cdn.example.com/var/assets/folder/photo.jpg?width=100',
+            $event->getArgument('frontendPath'),
+        );
     }
 
     public function testPassesUnencodedRealPathForSpecialCharFilenames(): void
@@ -139,7 +221,7 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
             ->with('/var/assets/Car Images/Mötley.jpg', ['width' => 100])
             ->willReturn('https://cdn.example.com/var/assets/Car%20Images/M%C3%B6tley.jpg?width=100');
 
-        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly');
+        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS);
         $event = $this->event($this->image('/Car Images/Mötley.jpg'), new Config());
 
         $listener->onThumbnailPath($event);
