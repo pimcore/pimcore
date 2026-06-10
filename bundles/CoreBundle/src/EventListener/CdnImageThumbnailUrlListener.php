@@ -36,14 +36,19 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class CdnImageThumbnailUrlListener implements EventSubscriberInterface
 {
+    /** @var string[] Lowercased source MIME types the optimizer can ingest. */
+    private readonly array $sourceFormats;
+
     public function __construct(
         private readonly ImageTransformAdapterInterface $adapter,
         private readonly ThumbnailTransformResolver $transformResolver,
         #[Autowire('%env(CDN_IMAGE_OPTIMIZER)%')]
         private readonly string $imageOptimizer,
         #[Autowire('%pimcore.cdn.image_optimizer_source_formats%')]
-        private readonly array $sourceFormats,
+        array $sourceFormats,
     ) {
+        // Normalize to lowercase so the allowlist match is case-insensitive on both sides.
+        $this->sourceFormats = array_map('strtolower', $sourceFormats);
     }
 
     public static function getSubscribedEvents(): array
@@ -86,6 +91,13 @@ class CdnImageThumbnailUrlListener implements EventSubscriberInterface
         }
 
         $originalPath = '/var/assets' . $asset->getRealFullPath();
-        $event->setArgument('frontendPath', $this->adapter->buildUrl($originalPath, $transform));
+        $url = $this->adapter->buildUrl($originalPath, $transform);
+
+        // A no-op adapter (e.g. NullImageTransformAdapter, used when CDN_IMAGE_OPTIMIZER is unset
+        // or set to an unknown value) returns the original path unchanged — keep the Pimcore-generated
+        // thumbnail rather than pointing the URL at the full-size original.
+        if ($url !== $originalPath) {
+            $event->setArgument('frontendPath', $url);
+        }
     }
 }

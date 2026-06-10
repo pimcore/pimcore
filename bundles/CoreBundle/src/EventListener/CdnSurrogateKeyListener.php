@@ -35,10 +35,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class CdnSurrogateKeyListener implements EventSubscriberInterface
 {
-    public const THUMBNAIL_PATTERN = '#(?:^|/)(image|video)-thumb__(\d+)__([a-zA-Z0-9_\-]+)/#';
-
-    public const ORIGINAL_ASSET_PATTERN = '#^/var/assets/#';
-
     public function __construct(
         private readonly CdnCacheabilityResolver $cacheabilityResolver,
     ) {
@@ -79,7 +75,7 @@ class CdnSurrogateKeyListener implements EventSubscriberInterface
      */
     private function resolveTagsForPath(string $path): array
     {
-        if (preg_match(self::THUMBNAIL_PATTERN, $path, $matches)) {
+        if (preg_match(CdnCacheabilityResolver::THUMBNAIL_PATTERN, $path, $matches)) {
             [, , $assetId, $configName] = $matches;
 
             return [
@@ -89,7 +85,7 @@ class CdnSurrogateKeyListener implements EventSubscriberInterface
             ];
         }
 
-        if (preg_match(self::ORIGINAL_ASSET_PATTERN, $path)) {
+        if (preg_match(CdnCacheabilityResolver::ORIGINAL_ASSET_PATTERN, $path)) {
             $pathHash = substr(hash('sha256', $path), 0, 12);
 
             return ['asset-path-' . $pathHash];

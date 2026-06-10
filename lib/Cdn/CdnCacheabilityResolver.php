@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Cdn;
 
-use Pimcore\Bundle\CoreBundle\EventListener\CdnSurrogateKeyListener;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,6 +28,10 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CdnCacheabilityResolver
 {
+    public const THUMBNAIL_PATTERN = '#(?:^|/)(image|video)-thumb__(\d+)__([a-zA-Z0-9_\-]+)/#';
+
+    public const ORIGINAL_ASSET_PATTERN = '#^/var/assets/#';
+
     /**
      * @param string[] $excludedPaths Regular-expression patterns matched against the request path info.
      */
@@ -85,8 +88,8 @@ class CdnCacheabilityResolver
         }
 
         // 8. Path is an asset/thumbnail path (regex, last).
-        return preg_match(CdnSurrogateKeyListener::THUMBNAIL_PATTERN, $path)
-            || preg_match(CdnSurrogateKeyListener::ORIGINAL_ASSET_PATTERN, $path);
+        return preg_match(self::THUMBNAIL_PATTERN, $path)
+            || preg_match(self::ORIGINAL_ASSET_PATTERN, $path);
     }
 
     private function hasRestrictiveCacheControl(Response $response): bool

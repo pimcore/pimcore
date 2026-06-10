@@ -211,6 +211,47 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
         );
     }
 
+    public function testDoesNotOverwriteWhenAdapterReturnsOriginalUnchanged(): void
+    {
+        // Misconfigured CDN_IMAGE_OPTIMIZER → registry falls back to NullImageTransformAdapter,
+        // which returns the original path unchanged. The listener must keep the Pimcore thumbnail
+        // rather than overwriting frontendPath with the full-size original URL.
+        $resolver = $this->createMock(ThumbnailTransformResolver::class);
+        $resolver->method('resolve')->willReturn(new ThumbnailTransform(100));
+
+        $adapter = $this->createMock(ImageTransformAdapterInterface::class);
+        $adapter->method('buildUrl')->willReturn('/var/assets/folder/photo.jpg');
+
+        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS);
+        $event = $this->event($this->image('/folder/photo.jpg'), new Config());
+
+        $listener->onThumbnailPath($event);
+
+        self::assertSame('/var/tmp/thumbnails/image-thumb__1__cfg/x.jpg', $event->getArgument('frontendPath'));
+    }
+
+    public function testMatchesAllowlistCaseInsensitively(): void
+    {
+        // A mixed-case configured allowlist entry must still match a lowercase asset MIME type.
+        $resolver = $this->createMock(ThumbnailTransformResolver::class);
+        $resolver->method('resolve')->willReturn(new ThumbnailTransform(100));
+
+        $adapter = $this->createMock(ImageTransformAdapterInterface::class);
+        $adapter->expects(self::once())
+            ->method('buildUrl')
+            ->willReturn('https://cdn.example.com/var/assets/folder/photo.jpg?width=100');
+
+        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', ['IMAGE/JPEG']);
+        $event = $this->event($this->image('/folder/photo.jpg'), new Config());
+
+        $listener->onThumbnailPath($event);
+
+        self::assertSame(
+            'https://cdn.example.com/var/assets/folder/photo.jpg?width=100',
+            $event->getArgument('frontendPath'),
+        );
+    }
+
     public function testPassesUnencodedRealPathForSpecialCharFilenames(): void
     {
         $resolver = $this->createMock(ThumbnailTransformResolver::class);
