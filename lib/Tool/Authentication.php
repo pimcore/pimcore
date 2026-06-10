@@ -82,11 +82,10 @@ class Authentication
             return $prevErrorHandler ? $prevErrorHandler($type, $msg, $file, $line, $context) : false;
         });
 
-        // Restrict deserialization to known Symfony security token classes.
+        // Restrict deserialization to the token + user classes we expect in the admin session.
         // The unserialize_callback_func guard above catches *unknown* class names
-        // but does NOT prevent Object Injection via gadget chains built from
-        // already-loaded classes. Providing an explicit allowed_classes list
-        // significantly reduces that attack surface.
+        // but does NOT prevent Object Injection via gadget chains built from already-loaded classes.
+        // Providing an explicit allowed_classes list significantly reduces that attack surface.
         $allowedClasses = [
             // token classes
             PostAuthenticationToken::class,
