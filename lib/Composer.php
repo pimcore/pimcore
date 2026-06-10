@@ -17,7 +17,6 @@ use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Installer\PackageEvent;
 use Composer\Script\Event;
 use RuntimeException;
-use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Throwable;
@@ -222,50 +221,6 @@ class Composer
         return preg_replace("/\033\[[^m]*m/", '', $string);
     }
 
-    private static function getConfiguredCacheBaseDir(Event $event): string
-    {
-        $rootPath = static::getRootPath($event);
-
-        $appCacheDir = self::readEnvVar('APP_CACHE_DIR');
-        if (null !== $appCacheDir) {
-            return self::normalizeCacheBaseDir($rootPath, $appCacheDir);
-        }
-
-        $pimcoreCacheDir = self::readEnvVar('PIMCORE_SYMFONY_CACHE_DIRECTORY');
-        if (null !== $pimcoreCacheDir) {
-            return self::normalizeCacheBaseDir($rootPath, $pimcoreCacheDir);
-        }
-
-        return $rootPath . '/var/cache';
-    }
-
-    private static function normalizeCacheBaseDir(string $rootPath, string $cacheBaseDir): string
-    {
-        if (Path::isAbsolute($cacheBaseDir)) {
-            return $cacheBaseDir;
-        }
-
-        return $rootPath . '/' . ltrim($cacheBaseDir, '/\\');
-    }
-
-    private static function getConfiguredCacheDir(Event $event): string
-    {
-        $cacheBaseDir = self::getConfiguredCacheBaseDir($event);
-        $environment = self::readEnvVar('APP_ENV') ?? 'dev';
-
-        return $cacheBaseDir . '/' . $environment;
-    }
-
-    private static function readEnvVar(string $envVar): ?string
-    {
-        $value = getenv($envVar);
-        if (false === $value || '' === $value) {
-            $value = $_SERVER[$envVar] ?? $_ENV[$envVar] ?? null;
-        }
-
-        return null === $value || '' === $value ? null : $value;
-    }
-
     /**
      *
      * The following is copied from \Sensio\Bundle\DistributionBundle\Composer\ScriptHandler
@@ -321,18 +276,6 @@ class Composer
         $consoleDir = static::getConsoleDir($event, 'clear the cache');
 
         if (null === $consoleDir) {
-            return;
-        }
-
-        // Nothing to clear on a fresh project. During create-project, the
-        // cache directory usually does not exist yet. Running cache:clear
-        // would bootstrap the kernel and can fail before installation is done.
-        $cacheDir = self::getConfiguredCacheDir($event);
-        if (!is_dir($cacheDir) && !$options['symfony-cache-warmup']) {
-            $event->getIO()->write(
-                '<comment>Skipping cache:clear: no compiled cache found.</comment>'
-            );
-
             return;
         }
 
