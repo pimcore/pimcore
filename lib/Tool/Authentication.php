@@ -88,11 +88,15 @@ class Authentication
         // already-loaded classes. Providing an explicit allowed_classes list
         // significantly reduces that attack surface.
         $allowedClasses = [
+            // token classes
             PostAuthenticationToken::class,
-            AbstractToken::class,
             \Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken::class,
             \Symfony\Component\Security\Core\Authentication\Token\RememberMeToken::class,
             \Symfony\Component\Security\Core\Authentication\Token\SwitchUserToken::class,
+
+            // user classes contained within the token
+            \Pimcore\Security\User\User::class,
+            \Pimcore\Model\User::class,
         ];
 
         try {
