@@ -65,7 +65,7 @@ class Dao extends Model\Dao\AbstractDao
                         $extraAllowedClasses = (array) $container->getParameter('pimcore.tmp_store.unserialize_allowed_classes');
                     }
                 }
-
+                $extraAllowedClasses = array_values(array_unique(array_filter($extraAllowedClasses, 'is_string')));
                 $allowedClasses = array_merge([
                     \Pimcore\Model\Asset\Image\Thumbnail\Config::class,
                     \Pimcore\Model\Asset\Video\Thumbnail\Processor::class,
