@@ -59,7 +59,7 @@ class CdnCacheabilityResolver
         }
 
         // 3. 2xx only — error/redirect responses are never CDN-cached.
-        if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
+        if (!$response->isSuccessful()) {
             return false;
         }
 
