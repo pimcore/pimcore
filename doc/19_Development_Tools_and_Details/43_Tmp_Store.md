@@ -48,8 +48,7 @@ When Pimcore reads a serialized object from the `tmp_store` table it passes an `
 PHP's `unserialize()` to prevent deserialization of unexpected classes (see [PHP docs](https://www.php.net/manual/en/function.unserialize.php)).
 
 If your code stores custom objects in `TmpStore` you must register those classes through the Symfony
-configuration, otherwise they will be rejected and the entry will be deleted automatically:
-
+configuration, otherwise they will be rejected when reading from the store (i.e. `TmpStore::get()` returns `null`):
 ```yaml
 # config/packages/pimcore.yaml
 pimcore:
