@@ -74,9 +74,9 @@ class Dao extends Model\Dao\AbstractDao
                     \Pimcore\Video\Adapter\Ffmpeg::class,
                 ], $extraAllowedClasses);
 
-                 if ($item['data'] === '' || $item['data'] === null) {
-                     return false;
-                 }
+                if ($item['data'] === '' || $item['data'] === null) {
+                    return false;
+                }
 
                 try {
                     $deserialized = \Pimcore\Tool\Serialize::unserialize($item['data'], $allowedClasses);
