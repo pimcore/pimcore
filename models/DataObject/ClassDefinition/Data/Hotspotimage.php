@@ -128,7 +128,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
             // check if the data is JSON (backward compatibility)
             $md = json_decode($metaData, true);
             if (!$md) {
-                $md = Serialize::unserialize($metaData, false);
+                $md = Serialize::unserialize($metaData, [Element\Data\MarkerHotspotItem::class]);
             } elseif (is_array($md)) {
                 $md['hotspots'] = $md;
             }
