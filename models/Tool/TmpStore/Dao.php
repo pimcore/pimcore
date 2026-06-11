@@ -73,23 +73,22 @@ class Dao extends Model\Dao\AbstractDao
                     \Pimcore\Video\Adapter\Ffmpeg::class,
                 ], $extraAllowedClasses);
 
-$deserialized = unserialize($item['data'], ['allowed_classes' => $allowedClasses]);
+                $deserialized = \Pimcore\Tool\Serialize::unserialize($item['data'], $allowedClasses);
 
-$containsIncomplete = static function (mixed $value) use (&$containsIncomplete): bool {
-    if ($value instanceof \__PHP_Incomplete_Class) {
-        return true;
-    }
+                $containsIncomplete = static function (mixed $value) use (&$containsIncomplete): bool {
+                    if ($value instanceof \__PHP_Incomplete_Class) {
+                        return true;
+                    }
 
-    if (is_array($value)) {
-        foreach ($value as $v) {
-            if ($containsIncomplete($v)) {
-                return true;
-            }
-        }
+                    if (is_array($value)) {
+                        foreach ($value as $v) {
+                            if ($containsIncomplete($v)) {
+                                return true;
+                            }
+                        }
 
-        return false;
-    }
-
+                        return false;
+                    }
     if (is_object($value)) {
         foreach ((array) $value as $v) {
             if ($containsIncomplete($v)) {
