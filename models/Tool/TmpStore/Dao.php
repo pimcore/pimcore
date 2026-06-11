@@ -12,9 +12,14 @@
 
 namespace Pimcore\Model\Tool\TmpStore;
 
+use __PHP_Incomplete_Class;
 use Exception;
+use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
+use ReflectionReference;
+use Throwable;
 
 /**
  * @internal
@@ -59,10 +64,10 @@ class Dao extends Model\Dao\AbstractDao
         if ($item) {
             if ($item['serialized']) {
                 $extraAllowedClasses = [];
-                if (\Pimcore::hasContainer()) {
+                if (Pimcore::hasContainer()) {
                     try {
-                        $extraAllowedClasses = (array) \Pimcore::getContainer()->getParameter('pimcore.tmp_store.unserialize_allowed_classes');
-                    } catch (\InvalidArgumentException) {
+                        $extraAllowedClasses = (array) Pimcore::getContainer()->getParameter('pimcore.tmp_store.unserialize_allowed_classes');
+                    } catch (InvalidArgumentException) {
                         // parameter not configured
                     }
                 }
@@ -80,7 +85,7 @@ class Dao extends Model\Dao\AbstractDao
 
                 try {
                     $deserialized = \Pimcore\Tool\Serialize::unserialize($item['data'], $allowedClasses);
-                } catch (\Throwable) {
+                } catch (Throwable) {
                     return false;
                 }
 
@@ -88,7 +93,7 @@ class Dao extends Model\Dao\AbstractDao
                 $seenReferenceIds = [];
 
                 $containsIncomplete = static function (mixed $value) use (&$containsIncomplete, &$seenObjectIds, &$seenReferenceIds): bool {
-                    if ($value instanceof \__PHP_Incomplete_Class) {
+                    if ($value instanceof __PHP_Incomplete_Class) {
                         return true;
                     }
 
@@ -110,7 +115,7 @@ class Dao extends Model\Dao\AbstractDao
 
                     if (is_array($value)) {
                         foreach ($value as $k => $v) {
-                            $ref = \ReflectionReference::fromArrayElement($value, $k);
+                            $ref = ReflectionReference::fromArrayElement($value, $k);
                             if ($ref) {
                                 $rid = $ref->getId();
                                 if (isset($seenReferenceIds[$rid])) {
