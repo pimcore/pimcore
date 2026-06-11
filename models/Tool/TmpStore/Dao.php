@@ -60,7 +60,10 @@ class Dao extends Model\Dao\AbstractDao
             if ($item['serialized']) {
                 $extraAllowedClasses = [];
                 if (\Pimcore::hasContainer()) {
-                    $extraAllowedClasses = (array) \Pimcore::getContainer()->getParameter('pimcore.tmp_store.unserialize_allowed_classes');
+                    $container = \Pimcore::getContainer();
+                    if ($container && $container->hasParameter('pimcore.tmp_store.unserialize_allowed_classes')) {
+                        $extraAllowedClasses = (array) $container->getParameter('pimcore.tmp_store.unserialize_allowed_classes');
+                    }
                 }
 
                 $allowedClasses = array_merge([
