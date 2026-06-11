@@ -58,7 +58,83 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($item) {
             if ($item['serialized']) {
-                $item['data'] = unserialize($item['data']);
+                $extraAllowedClasses = [];
+                if (\Pimcore::hasContainer()) {
+                    try {
+                        $extraAllowedClasses = (array) \Pimcore::getContainer()->getParameter('pimcore.tmp_store.unserialize_allowed_classes');
+                    } catch (\InvalidArgumentException) {
+                        // parameter not configured
+                    }
+                }
+                $extraAllowedClasses = array_values(array_unique(array_filter($extraAllowedClasses, 'is_string')));
+                $allowedClasses = array_merge([
+                    \Pimcore\Model\Asset\Image\Thumbnail\Config::class,
+                    \Pimcore\Model\Asset\Video\Thumbnail\Processor::class,
+                    \Pimcore\Model\Asset\Video\Thumbnail\Config::class,
+                    \Pimcore\Video\Adapter\Ffmpeg::class,
+                ], $extraAllowedClasses);
+
+                if ($item['data'] === '' || $item['data'] === null) {
+                    return false;
+                }
+
+                try {
+                    $deserialized = \Pimcore\Tool\Serialize::unserialize($item['data'], $allowedClasses);
+                } catch (\Throwable) {
+                    return false;
+                }
+
+                $seenObjectIds = [];
+                $seenReferenceIds = [];
+
+                $containsIncomplete = static function (mixed $value) use (&$containsIncomplete, &$seenObjectIds, &$seenReferenceIds): bool {
+                    if ($value instanceof \__PHP_Incomplete_Class) {
+                        return true;
+                    }
+
+                    if (is_object($value)) {
+                        $oid = spl_object_id($value);
+                        if (isset($seenObjectIds[$oid])) {
+                            return false;
+                        }
+                        $seenObjectIds[$oid] = true;
+
+                        foreach ((array) $value as $v) {
+                            if ($containsIncomplete($v)) {
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    }
+
+                    if (is_array($value)) {
+                        foreach ($value as $k => $v) {
+                            $ref = \ReflectionReference::fromArrayElement($value, $k);
+                            if ($ref) {
+                                $rid = $ref->getId();
+                                if (isset($seenReferenceIds[$rid])) {
+                                    continue;
+                                }
+                                $seenReferenceIds[$rid] = true;
+                            }
+
+                            if ($containsIncomplete($v)) {
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    }
+
+                    return false;
+                };
+
+                if (($deserialized === false && $item['data'] !== serialize(false)) || $containsIncomplete($deserialized)) {
+                    return false;
+                }
+
+                $item['data'] = $deserialized;
             }
 
             $item['serialized'] = (bool)$item['serialized'];
