@@ -75,13 +75,22 @@ class Dao extends Model\Dao\AbstractDao
 
                 $deserialized = \Pimcore\Tool\Serialize::unserialize($item['data'], $allowedClasses);
 
-                $containsIncomplete = static function (mixed $value) use (&$containsIncomplete): bool {
+                $seenObjectIds = [];
+                $seenReferenceIds = [];
+
+                $containsIncomplete = static function (mixed $value) use (&$containsIncomplete, &$seenObjectIds, &$seenReferenceIds): bool {
                     if ($value instanceof \__PHP_Incomplete_Class) {
                         return true;
                     }
 
-                    if (is_array($value)) {
-                        foreach ($value as $v) {
+                    if (is_object($value)) {
+                        $oid = spl_object_id($value);
+                        if (isset($seenObjectIds[$oid])) {
+                            return false;
+                        }
+                        $seenObjectIds[$oid] = true;
+
+                        foreach ((array) $value as $v) {
                             if ($containsIncomplete($v)) {
                                 return true;
                             }
@@ -89,12 +98,24 @@ class Dao extends Model\Dao\AbstractDao
 
                         return false;
                     }
-                    if (is_object($value)) {
-                        foreach ((array) $value as $v) {
+
+                    if (is_array($value)) {
+                        foreach ($value as $k => $v) {
+                            $ref = \ReflectionReference::fromArrayElement($value, $k);
+                            if ($ref) {
+                                $rid = $ref->getId();
+                                if (isset($seenReferenceIds[$rid])) {
+                                    continue;
+                                }
+                                $seenReferenceIds[$rid] = true;
+                            }
+
                             if ($containsIncomplete($v)) {
                                 return true;
                             }
                         }
+
+                        return false;
                     }
 
                     return false;
