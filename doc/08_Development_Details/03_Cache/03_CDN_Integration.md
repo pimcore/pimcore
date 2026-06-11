@@ -164,9 +164,9 @@ unchanged.
 | `VideoThumbnailConfigEvents::POST_UPDATE`   | Dispatch `thumb-{configName}` (global, across all assets).                                            |
 | `VideoThumbnailConfigEvents::POST_DELETE`   | Same as above.                                                                                        |
 
-Purges are dispatched as `PurgeCdnTagMessage` (and, if `CDN_BASE_URL` is set,
-`PurgeCdnUrlMessage`) onto the `pimcore_cdn_purge` Symfony Messenger
-transport. A worker consumes the queue and calls the configured
+All tags of one event are dispatched as a single `PurgeCdnTagsMessage` (and,
+if `CDN_BASE_URL` is set, per-URL `PurgeCdnUrlMessage`s) onto the
+`pimcore_cdn_purge` Symfony Messenger transport. A worker consumes the queue and calls the configured
 `PurgeClientInterface` implementation (currently `FastlyPurgeClient`).
 
 > **Asset paths with special characters**
@@ -269,7 +269,7 @@ The CDN edge must be configured to:
 3. **Accept `PURGE` requests** against asset URLs for `PurgeCdnUrlMessage`,
    and the Fastly batch-purge endpoint
    `POST /service/{service_id}/purge` (with `Surrogate-Key` header) for
-   `PurgeCdnTagMessage`. Both are handled by `FastlyPurgeClient`.
+   `PurgeCdnTagsMessage`. Both are handled by `FastlyPurgeClient`.
 
 ## Original Assets
 

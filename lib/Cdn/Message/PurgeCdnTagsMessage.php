@@ -13,9 +13,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Cdn\Message;
 
-final readonly class PurgeCdnTagMessage
+/**
+ * Carries all surrogate-key tags of one purge-triggering event as a single message,
+ * so one event costs one transport insert and one (chunked) provider request instead
+ * of one per tag.
+ */
+final readonly class PurgeCdnTagsMessage
 {
-    public function __construct(public string $tag)
+    /**
+     * @param string[] $tags
+     */
+    public function __construct(public array $tags)
     {
     }
 }

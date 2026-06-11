@@ -70,7 +70,7 @@ framework:
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
             'Pimcore\Messenger\ScheduledTaskMessage': pimcore_scheduled_tasks
             #'Pimcore\Messenger\ElementDependenciesMessage': pimcore_dependencies
-            'Pimcore\Cdn\Message\PurgeCdnTagMessage': pimcore_cdn_purge
+            'Pimcore\Cdn\Message\PurgeCdnTagsMessage': pimcore_cdn_purge
             'Pimcore\Cdn\Message\PurgeCdnUrlMessage': pimcore_cdn_purge
             'Pimcore\Cdn\Message\PurgeCdnAssetTreeMessage': pimcore_cdn_purge
         default_bus: messenger.bus.pimcore-core

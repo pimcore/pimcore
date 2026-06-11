@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Cdn\CdnAssetTag;
 use Pimcore\Cdn\Message\PurgeCdnAssetTreeMessage;
-use Pimcore\Cdn\Message\PurgeCdnTagMessage;
+use Pimcore\Cdn\Message\PurgeCdnTagsMessage;
 use Pimcore\Cdn\Message\PurgeCdnUrlMessage;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\ImageThumbnailConfigEvents;
@@ -119,23 +119,20 @@ class CdnPurgeListener implements EventSubscriberInterface
         // side never emitted and double-encode the purge URL below.
         $fullPath = $asset->getRealFullPath();
 
-        // Purge all thumbnail variants for this asset.
-        $this->bus->dispatch(new PurgeCdnTagMessage($this->assetTag->forAsset($asset->getId())));
-
-        // Purge the original asset CDN entry using a path hash (no DB lookup needed — path
-        // is available directly from the asset object, same string hashed on the response side).
-        $this->bus->dispatch(new PurgeCdnTagMessage(
-            $this->assetTag->forPath($this->assetWebPath->forFullPath($fullPath))
-        ));
+        $tags = [
+            // All thumbnail variants of this asset.
+            $this->assetTag->forAsset($asset->getId()),
+            // The original asset CDN entry, via a path hash (no DB lookup needed — path
+            // is available directly from the asset object, same string hashed on the response side).
+            $this->assetTag->forPath($this->assetWebPath->forFullPath($fullPath)),
+        ];
 
         $renamed = $oldPath !== null && $oldPath !== '' && $oldPath !== $fullPath;
 
         // If the asset was renamed/moved, also purge the previous path so its CDN-cached
         // response does not linger until natural TTL under the old URL.
         if ($renamed) {
-            $this->bus->dispatch(new PurgeCdnTagMessage(
-                $this->assetTag->forPath($this->assetWebPath->forFullPath($oldPath))
-            ));
+            $tags[] = $this->assetTag->forPath($this->assetWebPath->forFullPath($oldPath));
 
             // Renaming/moving a folder repaths all descendants via a single SQL UPDATE
             // (Dao::updateChildPaths) with no per-child events — their CDN entries under
@@ -144,6 +141,10 @@ class CdnPurgeListener implements EventSubscriberInterface
                 $this->bus->dispatch(new PurgeCdnAssetTreeMessage($oldPath, $fullPath));
             }
         }
+
+        // One message for all tags of this event: one transport insert in the editor's
+        // save flow and one (chunked) provider request in the worker, instead of one each per tag.
+        $this->bus->dispatch(new PurgeCdnTagsMessage($tags));
 
         // URL-based purges for original assets: nginx serves /var/assets/* directly off
         // disk so PHP never emits a Cache-Tag/Surrogate-Key for them, and tag-based
@@ -164,6 +165,6 @@ class CdnPurgeListener implements EventSubscriberInterface
         // Purges every CDN-cached image tagged with thumb-{configName}, regardless of asset.
         // The combined surrogate key asset-{id}-thumb-{configName} also expires via this tag because
         // CDN surrogate-key purges match any object that lists the tag in its Surrogate-Key header.
-        $this->bus->dispatch(new PurgeCdnTagMessage($this->assetTag->forThumbConfig($configName)));
+        $this->bus->dispatch(new PurgeCdnTagsMessage([$this->assetTag->forThumbConfig($configName)]));
     }
 }

@@ -23,6 +23,8 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
  */
 class CdnImageTransformAdapterRegistry implements ImageTransformAdapterInterface
 {
+    use CdnServiceLocatorTrait;
+
     private ?ImageTransformAdapterInterface $resolved = null;
 
     /**
@@ -48,19 +50,15 @@ class CdnImageTransformAdapterRegistry implements ImageTransformAdapterInterface
             return $this->resolved;
         }
 
-        // Empty CDN_IMAGE_OPTIMIZER maps to 'null' key (NullImageTransformAdapter).
-        $key = $this->optimizer === '' ? 'null' : $this->optimizer;
+        /** @var ImageTransformAdapterInterface $adapter */
+        $adapter = $this->resolveFromLocator(
+            $this->adapters,
+            $this->optimizer,
+            $this->logger,
+            'CDN image optimizer "{optimizer}" is not registered, falling back to NullImageTransformAdapter.',
+            ['optimizer' => $this->optimizer],
+        );
 
-        if (!$this->adapters->has($key)) {
-            if ($key !== 'null') {
-                $this->logger->warning(
-                    'CDN image optimizer "{optimizer}" is not registered, falling back to NullImageTransformAdapter.',
-                    ['optimizer' => $this->optimizer]
-                );
-            }
-            $key = 'null';
-        }
-
-        return $this->resolved = $this->adapters->get($key);
+        return $this->resolved = $adapter;
     }
 }

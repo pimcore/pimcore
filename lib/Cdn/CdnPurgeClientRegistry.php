@@ -23,6 +23,8 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
  */
 class CdnPurgeClientRegistry implements PurgeClientInterface
 {
+    use CdnServiceLocatorTrait;
+
     private ?PurgeClientInterface $resolved = null;
 
     /**
@@ -48,20 +50,16 @@ class CdnPurgeClientRegistry implements PurgeClientInterface
             return $this->resolved;
         }
 
-        // Empty CDN_PROVIDER maps to 'null' key (NullPurgeClient), not an empty-string key.
-        $providerKey = $this->provider === '' ? 'null' : $this->provider;
+        /** @var PurgeClientInterface $client */
+        $client = $this->resolveFromLocator(
+            $this->clients,
+            $this->provider,
+            $this->logger,
+            'CDN provider "{provider}" is not registered, falling back to NullPurgeClient.',
+            ['provider' => $this->provider],
+        );
 
-        if (!$this->clients->has($providerKey)) {
-            if ($providerKey !== 'null') {
-                $this->logger->warning(
-                    'CDN provider "{provider}" is not registered, falling back to NullPurgeClient.',
-                    ['provider' => $this->provider]
-                );
-            }
-            $providerKey = 'null';
-        }
-
-        return $this->resolved = $this->clients->get($providerKey);
+        return $this->resolved = $client;
     }
 
     public function purgeByTag(string $tag): void
