@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Cdn;
 
+use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Cdn\CropRegion;
 use Pimcore\Cdn\FastlyImageOptimizerAdapter;
 use Pimcore\Cdn\ThumbnailTransform;
@@ -24,7 +25,7 @@ class FastlyImageOptimizerAdapterTest extends TestCase
 {
     private function adapter(string $baseUrl = 'https://cdn.example.com'): FastlyImageOptimizerAdapter
     {
-        return new FastlyImageOptimizerAdapter($baseUrl);
+        return new FastlyImageOptimizerAdapter(new AssetWebPath(), $baseUrl);
     }
 
     public function testBuildsAbsoluteUrlWithDimensionsFitFormatQuality(): void

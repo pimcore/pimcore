@@ -21,6 +21,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 class FastlyImageOptimizerAdapter implements ImageTransformAdapterInterface
 {
     public function __construct(
+        private readonly AssetWebPath $assetWebPath,
         #[Autowire('%pimcore.cdn.base_url%')]
         private readonly string $baseUrl,
     ) {
@@ -36,7 +37,7 @@ class FastlyImageOptimizerAdapter implements ImageTransformAdapterInterface
         }
 
         $query = $this->buildQuery($transform);
-        $path = $this->encodePath($originalPath);
+        $path = $this->assetWebPath->encode($originalPath);
         $url = rtrim($this->baseUrl, '/') . $path;
 
         return $query === '' ? $url : $url . '?' . $query;
@@ -81,17 +82,5 @@ class FastlyImageOptimizerAdapter implements ImageTransformAdapterInterface
         }
 
         return implode('&', $pairs);
-    }
-
-    /**
-     * Percent-encode each path segment (filenames may contain spaces / non-ASCII), preserving the
-     * slashes between segments — same rule as CdnPurgeListener::buildAssetUrlPath().
-     */
-    private function encodePath(string $originalPath): string
-    {
-        $segments = explode('/', ltrim($originalPath, '/'));
-        $encoded = array_map('rawurlencode', $segments);
-
-        return '/' . implode('/', $encoded);
     }
 }

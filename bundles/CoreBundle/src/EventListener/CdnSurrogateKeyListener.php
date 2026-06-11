@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Cdn\CdnAssetTag;
 use Pimcore\Cdn\CdnCacheabilityResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -37,6 +38,7 @@ class CdnSurrogateKeyListener implements EventSubscriberInterface
 {
     public function __construct(
         private readonly CdnCacheabilityResolver $cacheabilityResolver,
+        private readonly CdnAssetTag $assetTag,
     ) {
     }
 
@@ -77,18 +79,17 @@ class CdnSurrogateKeyListener implements EventSubscriberInterface
     {
         if (preg_match(CdnCacheabilityResolver::THUMBNAIL_PATTERN, $path, $matches)) {
             [, , $assetId, $configName] = $matches;
+            $assetId = (int) $assetId;
 
             return [
-                'asset-' . $assetId,
-                'thumb-' . $configName,
-                'asset-' . $assetId . '-thumb-' . $configName,
+                $this->assetTag->forAsset($assetId),
+                $this->assetTag->forThumbConfig($configName),
+                $this->assetTag->forAssetThumb($assetId, $configName),
             ];
         }
 
         if (preg_match(CdnCacheabilityResolver::ORIGINAL_ASSET_PATTERN, $path)) {
-            $pathHash = substr(hash('sha256', $path), 0, 12);
-
-            return ['asset-path-' . $pathHash];
+            return [$this->assetTag->forPath($path)];
         }
 
         return [];

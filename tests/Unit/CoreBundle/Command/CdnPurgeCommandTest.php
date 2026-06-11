@@ -16,6 +16,8 @@ namespace Pimcore\Tests\Unit\CoreBundle\Command;
 
 use ArrayObject;
 use Pimcore\Bundle\CoreBundle\Command\CdnPurgeCommand;
+use Pimcore\Cdn\AssetWebPath;
+use Pimcore\Cdn\CdnAssetTag;
 use Pimcore\Cdn\PurgeClientInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -58,7 +60,7 @@ class CdnPurgeCommandTest extends TestCase
             /** @param array<int, Asset> $assets */
             public function __construct(PurgeClientInterface $client, private readonly array $assets)
             {
-                parent::__construct($client);
+                parent::__construct($client, new CdnAssetTag(), new AssetWebPath());
             }
 
             protected function loadAsset(int $id): ?Asset
@@ -207,14 +209,14 @@ class CdnPurgeCommandTest extends TestCase
 
     public function testHelpMentionsPurgeAllNotSupported(): void
     {
-        $command = new CdnPurgeCommand($this->createMock(PurgeClientInterface::class));
+        $command = new CdnPurgeCommand($this->createMock(PurgeClientInterface::class), new CdnAssetTag(), new AssetWebPath());
 
         $this->assertStringContainsString('Purge-all is not supported', $command->getHelp());
     }
 
     public function testHelpPositionsCommandAsRecoveryAndAutomationTool(): void
     {
-        $command = new CdnPurgeCommand($this->createMock(PurgeClientInterface::class));
+        $command = new CdnPurgeCommand($this->createMock(PurgeClientInterface::class), new CdnAssetTag(), new AssetWebPath());
 
         $help = $command->getHelp();
         $this->assertStringContainsString('recovery', strtolower($help));

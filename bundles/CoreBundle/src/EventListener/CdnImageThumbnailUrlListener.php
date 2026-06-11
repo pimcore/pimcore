@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Cdn\ImageTransformAdapterInterface;
 use Pimcore\Cdn\ThumbnailTransformResolver;
 use Pimcore\Event\FrontendEvents;
@@ -46,6 +47,7 @@ class CdnImageThumbnailUrlListener implements EventSubscriberInterface
         private readonly string $imageOptimizer,
         #[Autowire('%pimcore.cdn.image_optimizer_source_formats%')]
         array $sourceFormats,
+        private readonly AssetWebPath $assetWebPath,
     ) {
         // Normalize to lowercase so the allowlist match is case-insensitive on both sides.
         $this->sourceFormats = array_map('strtolower', $sourceFormats);
@@ -98,7 +100,7 @@ class CdnImageThumbnailUrlListener implements EventSubscriberInterface
             return;
         }
 
-        $originalPath = '/var/assets' . $asset->getRealFullPath();
+        $originalPath = $this->assetWebPath->forFullPath($asset->getRealFullPath());
         $url = $this->adapter->buildUrl($originalPath, $transform);
 
         // A no-op adapter (e.g. NullImageTransformAdapter, used when CDN_IMAGE_OPTIMIZER is unset

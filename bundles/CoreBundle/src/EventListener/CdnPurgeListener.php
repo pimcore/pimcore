@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Cdn\AssetWebPath;
+use Pimcore\Cdn\CdnAssetTag;
 use Pimcore\Cdn\Message\PurgeCdnTagMessage;
 use Pimcore\Cdn\Message\PurgeCdnUrlMessage;
 use Pimcore\Event\AssetEvents;
@@ -38,6 +40,8 @@ class CdnPurgeListener implements EventSubscriberInterface
 {
     public function __construct(
         private readonly MessageBusInterface $bus,
+        private readonly CdnAssetTag $assetTag,
+        private readonly AssetWebPath $assetWebPath,
         #[Autowire('%env(CDN_PROVIDER)%')]
         private readonly string $cdnProvider,
         #[Autowire('%pimcore.cdn.base_url%')]
@@ -102,19 +106,22 @@ class CdnPurgeListener implements EventSubscriberInterface
         $asset = $event->getAsset();
 
         // Purge all thumbnail variants for this asset.
-        $this->bus->dispatch(new PurgeCdnTagMessage('asset-' . $asset->getId()));
+        $this->bus->dispatch(new PurgeCdnTagMessage($this->assetTag->forAsset($asset->getId())));
 
         // Purge the original asset CDN entry using a path hash (no DB lookup needed — path
         // is available directly from the asset object, same string hashed on the response side).
-        $assetWebPath = '/var/assets' . $asset->getFullPath();
-        $pathHash = substr(hash('sha256', $assetWebPath), 0, 12);
-        $this->bus->dispatch(new PurgeCdnTagMessage('asset-path-' . $pathHash));
+        $this->bus->dispatch(new PurgeCdnTagMessage(
+            $this->assetTag->forPath($this->assetWebPath->forFullPath($asset->getFullPath()))
+        ));
+
+        $renamed = $oldPath !== null && $oldPath !== '' && $oldPath !== $asset->getFullPath();
 
         // If the asset was renamed/moved, also purge the previous path so its CDN-cached
         // response does not linger until natural TTL under the old URL.
-        if ($oldPath !== null && $oldPath !== '' && $oldPath !== $asset->getFullPath()) {
-            $oldPathHash = substr(hash('sha256', '/var/assets' . $oldPath), 0, 12);
-            $this->bus->dispatch(new PurgeCdnTagMessage('asset-path-' . $oldPathHash));
+        if ($renamed) {
+            $this->bus->dispatch(new PurgeCdnTagMessage(
+                $this->assetTag->forPath($this->assetWebPath->forFullPath($oldPath))
+            ));
         }
 
         // URL-based purges for original assets: nginx serves /var/assets/* directly off
@@ -123,26 +130,12 @@ class CdnPurgeListener implements EventSubscriberInterface
         // absolute-URL purge against the public CDN host.
         if ($this->cdnBaseUrl !== '') {
             $base = rtrim($this->cdnBaseUrl, '/');
-            $this->bus->dispatch(new PurgeCdnUrlMessage($base . $this->buildAssetUrlPath($asset->getFullPath())));
+            $this->bus->dispatch(new PurgeCdnUrlMessage($base . $this->assetWebPath->encode($this->assetWebPath->forFullPath($asset->getFullPath()))));
 
-            if ($oldPath !== null && $oldPath !== '' && $oldPath !== $asset->getFullPath()) {
-                $this->bus->dispatch(new PurgeCdnUrlMessage($base . $this->buildAssetUrlPath($oldPath)));
+            if ($renamed) {
+                $this->bus->dispatch(new PurgeCdnUrlMessage($base . $this->assetWebPath->encode($this->assetWebPath->forFullPath($oldPath))));
             }
         }
-    }
-
-    /**
-     * Build the public URL path (under /var/assets) for an asset, percent-encoding each
-     * path segment. Asset filenames may contain spaces or non-ASCII characters; the CDN
-     * stores its cache key under the browser-encoded form, so the purge URL must match.
-     * Forward slashes between segments are preserved unencoded.
-     */
-    private function buildAssetUrlPath(string $assetFullPath): string
-    {
-        $segments = explode('/', ltrim($assetFullPath, '/'));
-        $encoded = array_map('rawurlencode', $segments);
-
-        return '/var/assets/' . implode('/', $encoded);
     }
 
     private function dispatchThumbConfigPurge(string $configName): void
@@ -150,6 +143,6 @@ class CdnPurgeListener implements EventSubscriberInterface
         // Purges every CDN-cached image tagged with thumb-{configName}, regardless of asset.
         // The combined surrogate key asset-{id}-thumb-{configName} also expires via this tag because
         // CDN surrogate-key purges match any object that lists the tag in its Surrogate-Key header.
-        $this->bus->dispatch(new PurgeCdnTagMessage('thumb-' . $configName));
+        $this->bus->dispatch(new PurgeCdnTagMessage($this->assetTag->forThumbConfig($configName)));
     }
 }

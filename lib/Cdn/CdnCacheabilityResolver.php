@@ -30,7 +30,7 @@ class CdnCacheabilityResolver
 {
     public const THUMBNAIL_PATTERN = '#(?:^|/)(image|video)-thumb__(\d+)__([a-zA-Z0-9_\-]+)/#';
 
-    public const ORIGINAL_ASSET_PATTERN = '#^/var/assets/#';
+    public const ORIGINAL_ASSET_PATTERN = '#^' . AssetWebPath::PREFIX . '/#';
 
     /**
      * @param string[] $excludedPaths Regular-expression patterns matched against the request path info.

@@ -4,6 +4,14 @@ services:
         autoconfigure: true
 
     #
+    # CDN shared helpers (tag vocabulary + asset web-path)
+    #
+
+    Pimcore\Cdn\CdnAssetTag: ~
+
+    Pimcore\Cdn\AssetWebPath: ~
+
+    #
     # CDN purge client infrastructure
     #
 

@@ -16,6 +16,8 @@ namespace Pimcore\Tests\Unit\CoreBundle\EventListener;
 
 use ArrayObject;
 use Pimcore\Bundle\CoreBundle\EventListener\CdnPurgeListener;
+use Pimcore\Cdn\AssetWebPath;
+use Pimcore\Cdn\CdnAssetTag;
 use Pimcore\Cdn\Message\PurgeCdnTagMessage;
 use Pimcore\Cdn\Message\PurgeCdnUrlMessage;
 use Pimcore\Event\Model\Asset\Image\Thumbnail\ConfigEvent as ImageThumbnailConfigEvent;
@@ -41,7 +43,7 @@ class CdnPurgeListenerTest extends TestCase
 
     private function makeListener(MessageBusInterface $bus, string $provider = 'fastly', string $cdnBaseUrl = ''): CdnPurgeListener
     {
-        return new CdnPurgeListener($bus, $provider, $cdnBaseUrl);
+        return new CdnPurgeListener($bus, new CdnAssetTag(), new AssetWebPath(), $provider, $cdnBaseUrl);
     }
 
     /**

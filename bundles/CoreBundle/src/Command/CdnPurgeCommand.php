@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Pimcore\Cdn\AssetWebPath;
+use Pimcore\Cdn\CdnAssetTag;
 use Pimcore\Cdn\PurgeClientInterface;
 use Pimcore\Model\Asset;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -28,8 +30,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class CdnPurgeCommand extends Command
 {
-    public function __construct(private readonly PurgeClientInterface $purgeClient)
-    {
+    public function __construct(
+        private readonly PurgeClientInterface $purgeClient,
+        private readonly CdnAssetTag $assetTag,
+        private readonly AssetWebPath $assetWebPath,
+    ) {
         parent::__construct();
     }
 
@@ -97,10 +102,10 @@ HELP
 
         foreach ($assetIds as $id) {
             $id = (int) $id;
-            $allTags[] = 'asset-' . $id;
+            $allTags[] = $this->assetTag->forAsset($id);
 
-            // Also purge the original asset CDN entry via path hash.
-            // Identical hashing to CdnSurrogateKeyListener / CdnPurgeListener: sha256 of '/var/assets' + full path, first 12 hex chars.
+            // Also purge the original asset CDN entry via its path-derived tag (CdnAssetTag::forPath
+            // owns the hash, shared with CdnSurrogateKeyListener / CdnPurgeListener).
             $asset = $this->loadAsset($id);
             if ($asset === null) {
                 $io->warning(sprintf('Asset with ID "%s" not found — only the asset-%s thumbnail tag will be purged, the original CDN entry cannot be resolved without a path.', $id, $id));
@@ -108,13 +113,11 @@ HELP
                 continue;
             }
 
-            $assetWebPath = '/var/assets' . $asset->getFullPath();
-            $pathHash = substr(hash('sha256', $assetWebPath), 0, 12);
-            $allTags[] = 'asset-path-' . $pathHash;
+            $allTags[] = $this->assetTag->forPath($this->assetWebPath->forFullPath($asset->getFullPath()));
         }
 
         foreach ($configs as $configName) {
-            $allTags[] = 'thumb-' . $configName;
+            $allTags[] = $this->assetTag->forThumbConfig($configName);
         }
 
         // Deduplicate: callers may pass the same --asset or --config twice (e.g. via shell

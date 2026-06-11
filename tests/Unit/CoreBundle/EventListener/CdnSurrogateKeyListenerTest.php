@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\CdnSurrogateKeyListener;
+use Pimcore\Cdn\CdnAssetTag;
 use Pimcore\Cdn\CdnCacheabilityResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -43,6 +44,7 @@ class CdnSurrogateKeyListenerTest extends TestCase
     {
         $listener = new CdnSurrogateKeyListener(
             new CdnCacheabilityResolver($cdnProvider, [], $this->createMock(PimcoreContextResolver::class)),
+            new CdnAssetTag(),
         );
         $listener->onKernelResponse($event);
 
@@ -334,6 +336,7 @@ class CdnSurrogateKeyListenerTest extends TestCase
     {
         $listener = new CdnSurrogateKeyListener(
             new CdnCacheabilityResolver('fastly', [], $this->createMock(PimcoreContextResolver::class)),
+            new CdnAssetTag(),
         );
         $event = $this->makeEvent('/var/assets/folder/x.jpg?sig=abc', 200);
 
@@ -347,6 +350,7 @@ class CdnSurrogateKeyListenerTest extends TestCase
     {
         $listener = new CdnSurrogateKeyListener(
             new CdnCacheabilityResolver('fastly', ['#^/var/assets/private/#'], $this->createMock(PimcoreContextResolver::class)),
+            new CdnAssetTag(),
         );
         $event = $this->makeEvent('/var/assets/private/secret.jpg', 200);
 
@@ -359,6 +363,7 @@ class CdnSurrogateKeyListenerTest extends TestCase
     {
         $listener = new CdnSurrogateKeyListener(
             new CdnCacheabilityResolver('fastly', [], $this->createMock(PimcoreContextResolver::class)),
+            new CdnAssetTag(),
         );
         $event = $this->makeEvent('/var/assets/folder/x.jpg', 200);
         $event->getResponse()->headers->set('Cache-Control', 'no-store');
