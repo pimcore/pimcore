@@ -58,12 +58,17 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($item) {
             if ($item['serialized']) {
-                $allowedClasses = array_merge([
-                    \Pimcore\Model\Asset\Image\Thumbnail\Config::class,
-                    \Pimcore\Model\Asset\Video\Thumbnail\Processor::class,
-                    \Pimcore\Model\Asset\Video\Thumbnail\Config::class,
-                    \Pimcore\Video\Adapter\Ffmpeg::class,
-                ], \Pimcore::getContainer()->getParameter('pimcore.tmp_store.unserialize_allowed_classes'));
+$extraAllowedClasses = [];
+if (\Pimcore::hasContainer()) {
+    $extraAllowedClasses = (array) \Pimcore::getContainer()->getParameter('pimcore.tmp_store.unserialize_allowed_classes');
+}
+
+$allowedClasses = array_merge([
+    \Pimcore\Model\Asset\Image\Thumbnail\Config::class,
+    \Pimcore\Model\Asset\Video\Thumbnail\Processor::class,
+    \Pimcore\Model\Asset\Video\Thumbnail\Config::class,
+    \Pimcore\Video\Adapter\Ffmpeg::class,
+], $extraAllowedClasses);
 
                 $deserialized = unserialize($item['data'], ['allowed_classes' => $allowedClasses]);
 
