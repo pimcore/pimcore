@@ -35,16 +35,17 @@ final class AssetWebPath
     }
 
     /**
-     * Percent-encode each path segment, preserving the leading slash and the slashes between
-     * segments. Asset filenames may contain spaces or non-ASCII characters; the CDN stores its
-     * cache key under the browser-encoded form, so purge URLs and rewritten `<img src>` URLs must
-     * match. rawurlencode() is idempotent on the safe character class, so already-clean segments
-     * (including the `var`/`assets` prefix segments) pass through unchanged.
+     * Percent-encode the path, preserving slashes. Asset filenames may contain spaces or
+     * non-ASCII characters; the CDN stores its cache key under the browser-encoded form, so
+     * purge URLs and rewritten `<img src>` URLs must match.
+     *
+     * Delegates to urlencode_ignore_slash() — the same encoder Pimcore uses to emit public
+     * asset URLs (Asset::getFrontendFullPath) — so the URLs this class builds can never
+     * diverge from the URLs the site actually serves (including its `@2x` retina-suffix
+     * exemption, which a plain per-segment rawurlencode would encode differently).
      */
     public function encode(string $webPath): string
     {
-        $segments = explode('/', ltrim($webPath, '/'));
-
-        return '/' . implode('/', array_map('rawurlencode', $segments));
+        return urlencode_ignore_slash($webPath);
     }
 }

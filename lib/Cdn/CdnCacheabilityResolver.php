@@ -33,6 +33,14 @@ class CdnCacheabilityResolver
     public const ORIGINAL_ASSET_PATTERN = '#^' . AssetWebPath::PREFIX . '/#';
 
     /**
+     * Request attribute under which the request-side eligibility verdict is memoized —
+     * both response listeners (surrogate keys at priority 0, cookie stripper at -200)
+     * consult this resolver on every main response, and the path/context checks only
+     * depend on the request.
+     */
+    private const ATTRIBUTE_REQUEST_ELIGIBLE = '_pimcore_cdn_request_eligible';
+
+    /**
      * @param string[] $excludedPaths Regular-expression patterns matched against the rawurldecoded request path info.
      */
     public function __construct(
@@ -69,31 +77,55 @@ class CdnCacheabilityResolver
         // cookie strip would turn them into uncacheable hit-for-pass traffic. Signed/gated
         // URLs opt out via `Cache-Control: no-store` or `excluded_paths` instead.
 
-        // 4. Not a backend/admin request — those (e.g. tree-preview thumbnails) are never public-CDN-cached.
-        if ($this->contextResolver->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
-            return false;
-        }
-
-        // 5. Response does not carry `no-store` (the only reliable opt-out; see hasRestrictiveCacheControl()).
+        // 4. Response does not carry `no-store` (the only reliable opt-out; see hasRestrictiveCacheControl()).
         if ($this->hasRestrictiveCacheControl($response)) {
             return false;
         }
 
+        // 5.-7. Request-side eligibility (path patterns, exclusions, admin context) — memoized
+        // per request since both response listeners evaluate it.
+        return $this->isRequestEligible($request);
+    }
+
+    private function isRequestEligible(Request $request): bool
+    {
+        if ($request->attributes->has(self::ATTRIBUTE_REQUEST_ELIGIBLE)) {
+            return (bool) $request->attributes->get(self::ATTRIBUTE_REQUEST_ELIGIBLE);
+        }
+
+        $eligible = $this->resolveRequestEligibility($request);
+        $request->attributes->set(self::ATTRIBUTE_REQUEST_ELIGIBLE, $eligible);
+
+        return $eligible;
+    }
+
+    private function resolveRequestEligibility(Request $request): bool
+    {
         // Symfony does not urldecode pathInfo, so a browser request for "/Car Images/ö.jpg"
         // arrives as "/Car%20Images/%C3%B6.jpg". Decode it so operator-written excluded_paths
         // (human-readable) match, and so callers hash/match the same form the purge side uses.
         $path = rawurldecode($request->getPathInfo());
 
-        // 6. Not an operator-excluded path (regex — kept after the cheap guards above).
+        // 5. Path is an asset/thumbnail path — anchored regexes, checked FIRST so the vast
+        // majority of requests (ordinary pages) bail out on two cheap pattern misses.
+        if (!preg_match(self::THUMBNAIL_PATTERN, $path)
+            && !preg_match(self::ORIGINAL_ASSET_PATTERN, $path)) {
+            return false;
+        }
+
+        // 6. Not an operator-excluded path.
         foreach ($this->excludedPaths as $pattern) {
             if (preg_match($pattern, $path)) {
                 return false;
             }
         }
 
-        // 7. Path is an asset/thumbnail path (regex, last).
-        return preg_match(self::THUMBNAIL_PATTERN, $path)
-            || preg_match(self::ORIGINAL_ASSET_PATTERN, $path);
+        // 7. Not a backend/admin request — those (e.g. tree-preview thumbnails) are never
+        // public-CDN-cached. Deliberately LAST: matchesPimcoreContext() may invoke the
+        // context guesser, which scans its route patterns and writes the resolved
+        // _pimcore_context attribute onto the request as a side effect — that work and
+        // mutation must only ever happen for actual asset responses.
+        return !$this->contextResolver->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN);
     }
 
     private function hasRestrictiveCacheControl(Response $response): bool

@@ -37,6 +37,18 @@ class AssetWebPathTest extends TestCase
         );
     }
 
+    public function testEncodeKeepsRetinaSuffixLiteral(): void
+    {
+        // encode() delegates to urlencode_ignore_slash(), the encoder behind the URLs
+        // Pimcore actually emits (Asset::getFrontendFullPath) — including its exemption
+        // that keeps `@2x.` retina suffixes literal instead of `%402x.`. Purge/IO URLs
+        // must match the emitted form, not a plain rawurlencode of it.
+        self::assertSame(
+            '/var/assets/products/photo@2x.jpg',
+            (new AssetWebPath())->encode('/var/assets/products/photo@2x.jpg'),
+        );
+    }
+
     public function testForFullPathThenEncodeComposes(): void
     {
         self::assertSame(

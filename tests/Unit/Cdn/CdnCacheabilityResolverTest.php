@@ -107,6 +107,34 @@ class CdnCacheabilityResolverTest extends TestCase
         self::assertTrue($r->isCdnCacheable($this->req('/var/assets/public/ok.jpg'), $this->res()));
     }
 
+    public function testContextResolverNotConsultedForNonAssetPaths(): void
+    {
+        // matchesPimcoreContext() may invoke the context guesser, which scans its route
+        // patterns and writes the _pimcore_context attribute onto the request as a side
+        // effect. Ordinary page responses (the vast majority) must bail out on the cheap
+        // path patterns before that ever happens.
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->expects(self::never())->method('matchesPimcoreContext');
+
+        $r = new CdnCacheabilityResolver('fastly', [], $contextResolver);
+
+        self::assertFalse($r->isCdnCacheable($this->req('/checkout'), $this->res()));
+    }
+
+    public function testRequestEligibilityIsMemoizedAcrossCalls(): void
+    {
+        // Both response listeners (surrogate keys, cookie stripper) consult the resolver
+        // on every main response — the request-side checks must only run once per request.
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->expects(self::once())->method('matchesPimcoreContext')->willReturn(false);
+
+        $r = new CdnCacheabilityResolver('fastly', [], $contextResolver);
+        $request = $this->req('/var/assets/folder/x.jpg');
+
+        self::assertTrue($r->isCdnCacheable($request, $this->res()));
+        self::assertTrue($r->isCdnCacheable($request, $this->res()));
+    }
+
     public function testExcludedPathWrittenHumanReadableMatchesEncodedRequest(): void
     {
         // Operators write exclusions for the human-readable path; the browser requests the
