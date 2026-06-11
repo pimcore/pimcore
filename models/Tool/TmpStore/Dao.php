@@ -61,7 +61,7 @@ class Dao extends Model\Dao\AbstractDao
                 $extraAllowedClasses = [];
                 if (\Pimcore::hasContainer()) {
                     $container = \Pimcore::getContainer();
-                    if ($container && $container->hasParameter('pimcore.tmp_store.unserialize_allowed_classes')) {
+                    if ($container->hasParameter('pimcore.tmp_store.unserialize_allowed_classes')) {
                         $extraAllowedClasses = (array) $container->getParameter('pimcore.tmp_store.unserialize_allowed_classes');
                     }
                 }
