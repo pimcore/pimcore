@@ -139,6 +139,19 @@ class CdnSurrogateKeyListenerTest extends TestCase
         $this->assertSame('asset-path-' . $expectedHash, $response->headers->get('Surrogate-Key'));
     }
 
+    public function testEncodedOriginalAssetUrlHashesDecodedPath(): void
+    {
+        // Browsers percent-encode the request ("/Car Images/Mötley.jpg" arrives as
+        // "/Car%20Images/M%C3%B6tley.jpg" and Symfony does not decode pathInfo), but the
+        // purge side hashes the decoded real path — the listener must hash the decoded
+        // form or the tags never match for filenames needing encoding.
+        $event = $this->makeEvent('/var/assets/Car%20Images/M%C3%B6tley.jpg');
+        $response = $this->dispatch('fastly', $event);
+
+        $expectedHash = substr(hash('sha256', '/var/assets/Car Images/Mötley.jpg'), 0, 12);
+        $this->assertSame('asset-path-' . $expectedHash, $response->headers->get('Surrogate-Key'));
+    }
+
     // -----------------------------------------------------------------------
     // Guards: CDN disabled, non-2xx, sub-request, non-matching path
     // -----------------------------------------------------------------------

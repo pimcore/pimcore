@@ -104,6 +104,16 @@ class CdnCacheabilityResolverTest extends TestCase
         self::assertTrue($r->isCdnCacheable($this->req('/var/assets/public/ok.jpg'), $this->res()));
     }
 
+    public function testExcludedPathWrittenHumanReadableMatchesEncodedRequest(): void
+    {
+        // Operators write exclusions for the human-readable path; the browser requests the
+        // percent-encoded form (Symfony does not decode pathInfo). The resolver must match
+        // against the decoded path or the exclusion silently fails and the asset is
+        // publicly cached at the CDN.
+        $r = $this->resolver(excluded: ['#^/var/assets/Privat Bilder/#']);
+        self::assertFalse($r->isCdnCacheable($this->req('/var/assets/Privat%20Bilder/secret.jpg'), $this->res()));
+    }
+
     public function testNoStoreResponseIsNotCacheable(): void
     {
         $r = $this->resolver();

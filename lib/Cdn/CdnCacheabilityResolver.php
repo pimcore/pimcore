@@ -33,7 +33,7 @@ class CdnCacheabilityResolver
     public const ORIGINAL_ASSET_PATTERN = '#^' . AssetWebPath::PREFIX . '/#';
 
     /**
-     * @param string[] $excludedPaths Regular-expression patterns matched against the request path info.
+     * @param string[] $excludedPaths Regular-expression patterns matched against the rawurldecoded request path info.
      */
     public function __construct(
         #[Autowire('%env(CDN_PROVIDER)%')]
@@ -78,7 +78,10 @@ class CdnCacheabilityResolver
             return false;
         }
 
-        $path = $request->getPathInfo();
+        // Symfony does not urldecode pathInfo, so a browser request for "/Car Images/ö.jpg"
+        // arrives as "/Car%20Images/%C3%B6.jpg". Decode it so operator-written excluded_paths
+        // (human-readable) match, and so callers hash/match the same form the purge side uses.
+        $path = rawurldecode($request->getPathInfo());
 
         // 7. Not an operator-excluded path (regex — kept after the cheap guards above).
         foreach ($this->excludedPaths as $pattern) {
