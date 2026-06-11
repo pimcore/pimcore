@@ -63,17 +63,18 @@ class CdnCacheabilityResolver
             return false;
         }
 
-        // 4. No query string — signed/dynamic URLs (auth, cache-busters) bypass the public cache.
-        if ($request->getQueryString() !== null) {
-            return false;
-        }
+        // NOTE: a query string is deliberately NOT a disqualifier. The CDN caches such
+        // responses regardless (its cache key includes the query), so refusing to tag them
+        // would only make the cached objects unreachable for tag purges, and skipping the
+        // cookie strip would turn them into uncacheable hit-for-pass traffic. Signed/gated
+        // URLs opt out via `Cache-Control: no-store` or `excluded_paths` instead.
 
-        // 5. Not a backend/admin request — those (e.g. tree-preview thumbnails) are never public-CDN-cached.
+        // 4. Not a backend/admin request — those (e.g. tree-preview thumbnails) are never public-CDN-cached.
         if ($this->contextResolver->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
             return false;
         }
 
-        // 6. Response does not carry `no-store` (the only reliable opt-out; see hasRestrictiveCacheControl()).
+        // 5. Response does not carry `no-store` (the only reliable opt-out; see hasRestrictiveCacheControl()).
         if ($this->hasRestrictiveCacheControl($response)) {
             return false;
         }
@@ -83,14 +84,14 @@ class CdnCacheabilityResolver
         // (human-readable) match, and so callers hash/match the same form the purge side uses.
         $path = rawurldecode($request->getPathInfo());
 
-        // 7. Not an operator-excluded path (regex — kept after the cheap guards above).
+        // 6. Not an operator-excluded path (regex — kept after the cheap guards above).
         foreach ($this->excludedPaths as $pattern) {
             if (preg_match($pattern, $path)) {
                 return false;
             }
         }
 
-        // 8. Path is an asset/thumbnail path (regex, last).
+        // 7. Path is an asset/thumbnail path (regex, last).
         return preg_match(self::THUMBNAIL_PATTERN, $path)
             || preg_match(self::ORIGINAL_ASSET_PATTERN, $path);
     }

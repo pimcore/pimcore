@@ -91,10 +91,13 @@ class CdnCacheabilityResolverTest extends TestCase
         self::assertFalse($r->isCdnCacheable($this->req('/var/assets/folder/x.jpg'), $this->res(302)));
     }
 
-    public function testQueryStringNotCacheable(): void
+    public function testQueryStringIsStillCacheable(): void
     {
+        // The CDN caches query-string variants regardless (its cache key includes the
+        // query) — refusing to tag them would only make those objects unpurgeable.
+        // Signed/gated URLs opt out via no-store or excluded_paths instead.
         $r = $this->resolver();
-        self::assertFalse($r->isCdnCacheable($this->req('/var/assets/folder/x.jpg?sig=abc'), $this->res()));
+        self::assertTrue($r->isCdnCacheable($this->req('/var/assets/folder/x.jpg?v=3'), $this->res()));
     }
 
     public function testExcludedPathNotCacheable(): void

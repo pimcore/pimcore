@@ -150,12 +150,15 @@ class CdnAssetCookieStripperListenerTest extends TestCase
         $this->assertLessThan(-115, $entry[1], 'Listener must run after TargetingListener (priority -115)');
     }
 
-    public function testDoesNotStripCookiesForQueryStringRequest(): void
+    public function testStripsCookiesForQueryStringRequest(): void
     {
-        $event = $this->makeEvent('/var/assets/Sample%20Content/foo.jpg?sig=abc');
+        // A surviving Set-Cookie makes the CDN treat the response as uncacheable
+        // (hit-for-pass) — query-string variants of asset URLs must be stripped like
+        // their bare-path equivalents; signed/gated URLs opt out via no-store/excluded_paths.
+        $event = $this->makeEvent('/var/assets/Sample%20Content/foo.jpg?v=7');
         $response = $this->dispatch('fastly', $event);
 
-        self::assertCount(2, $response->headers->getCookies(), 'cookies preserved for signed/query-string requests');
+        self::assertCount(0, $response->headers->getCookies(), 'cookies stripped on query-string asset requests');
     }
 
     public function testDoesNotStripCookiesWhenResponseHasNoStore(): void

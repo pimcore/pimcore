@@ -342,21 +342,23 @@ class CdnSurrogateKeyListenerTest extends TestCase
     }
 
     // -----------------------------------------------------------------------
-    // New guards: query string, excluded path, no-store
+    // New guards: excluded path, no-store; query-string variants stay tagged
     // -----------------------------------------------------------------------
 
-    public function testDoesNotEmitTagsForQueryStringRequest(): void
+    public function testEmitsSamePathTagsForQueryStringRequest(): void
     {
+        // The CDN caches ?v=3 variants under the full URL; tagging them with the same
+        // path-derived tags is what lets an asset purge reach every cached variant.
         $listener = new CdnSurrogateKeyListener(
             new CdnCacheabilityResolver('fastly', [], $this->createMock(PimcoreContextResolver::class)),
             new CdnAssetTag(),
         );
-        $event = $this->makeEvent('/var/assets/folder/x.jpg?sig=abc', 200);
+        $event = $this->makeEvent('/var/assets/folder/x.jpg?v=3', 200);
 
         $listener->onKernelResponse($event);
 
-        self::assertFalse($event->getResponse()->headers->has('Surrogate-Key'));
-        self::assertFalse($event->getResponse()->headers->has('Cache-Tag'));
+        $expectedHash = substr(hash('sha256', '/var/assets/folder/x.jpg'), 0, 12);
+        self::assertSame('asset-path-' . $expectedHash, $event->getResponse()->headers->get('Surrogate-Key'));
     }
 
     public function testDoesNotEmitTagsForExcludedPath(): void

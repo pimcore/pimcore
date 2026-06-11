@@ -315,8 +315,12 @@ The CDN listeners never emit cache tags (and never strip cookies) for a response
 
 - the response carries `Cache-Control: no-store` (set this on gated/access-controlled asset
   controllers to keep them off the CDN), or
-- the request path matches a pattern in `pimcore.cdn.excluded_paths`, or
-- the request carries a query string (signed URLs / cache-busters bypass the public cache).
+- the request path matches a pattern in `pimcore.cdn.excluded_paths`.
+
+Query-string variants of asset URLs (e.g. cache-busters like `?v=3`) are tagged and
+cookie-stripped like their bare-path equivalents: the CDN caches them under the full URL
+anyway, so the shared path-derived tags are what let a purge reach every cached variant.
+Signed/gated URLs should opt out via `no-store` or `excluded_paths`.
 
 > Note: only `no-store` is honored as an opt-out. `private` and `no-cache` are **not** treated as
 > opt-outs because Symfony emits a default `Cache-Control: no-cache, private` on responses that set
