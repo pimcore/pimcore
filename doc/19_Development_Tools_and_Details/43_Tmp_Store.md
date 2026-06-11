@@ -37,7 +37,7 @@ TmpStore::delete('my-key');
 | Method | Description |
 | ------ | ----------- |
 | `TmpStore::set(id, data, tag, lifetime)` | Create or update an entry. `lifetime` is in seconds (null = default lifetime, 7 days). |
-| `TmpStore::add(id, data, tag, lifetime)` | Alias for `set()`. |
+| `TmpStore::add(id, data, tag, lifetime)` | Create an entry if it does not exist yet (does not overwrite an existing entry). |
 | `TmpStore::get(id)` | Return the `TmpStore` model for the given ID, or `null` if not found / expired. |
 | `TmpStore::getIdsByTag(tag)` | Return all IDs associated with a tag. |
 | `TmpStore::delete(id)` | Delete a single entry by ID. |
