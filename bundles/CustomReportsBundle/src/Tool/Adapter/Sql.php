@@ -189,6 +189,7 @@ class Sql extends AbstractAdapter
             '/^\s*ALTER\b/i',
             '/^\s*CREATE\b/i',
             '/^\s*TRUNCATE\b/i',
+        ];
 
         foreach ($forbiddenPatterns as $pattern) {
             if (preg_match($pattern, $sqlForValidation)) {
