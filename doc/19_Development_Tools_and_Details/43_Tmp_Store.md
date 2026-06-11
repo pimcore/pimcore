@@ -34,13 +34,13 @@ TmpStore::delete('my-key');
 
 ### Method Reference
 
-| Method                                   | Description                                                                     |
-| ---------------------------------------- | ------------------------------------------------------------------------------- |
+| Method | Description |
+| ------ | ----------- |
 | `TmpStore::set(id, data, tag, lifetime)` | Create or update an entry. `lifetime` is in seconds (null = default lifetime, 7 days). |
-| `TmpStore::add(id, data, tag, lifetime)` | Alias for `set()`.                                                              |
-| `TmpStore::get(id)`                      | Return the `TmpStore` model for the given ID, or `null` if not found / expired. |
-| `TmpStore::getIdsByTag(tag)`             | Return all IDs associated with a tag.                                           |
-| `TmpStore::delete(id)`                   | Delete a single entry by ID.                                                    |
+| `TmpStore::add(id, data, tag, lifetime)` | Alias for `set()`. |
+| `TmpStore::get(id)` | Return the `TmpStore` model for the given ID, or `null` if not found / expired. |
+| `TmpStore::getIdsByTag(tag)` | Return all IDs associated with a tag. |
+| `TmpStore::delete(id)` | Delete a single entry by ID. |
 
 ## Extending Allowed Classes for Unserialization
 
