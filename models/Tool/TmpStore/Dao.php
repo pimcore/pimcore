@@ -73,7 +73,13 @@ class Dao extends Model\Dao\AbstractDao
                     \Pimcore\Video\Adapter\Ffmpeg::class,
                 ], $extraAllowedClasses);
 
-                $deserialized = \Pimcore\Tool\Serialize::unserialize($item['data'], $allowedClasses);
+                try {
+                    $deserialized = \Pimcore\Tool\Serialize::unserialize($item['data'], $allowedClasses);
+                } catch (\Throwable) {
+                    $this->delete($id);
+
+                    return false;
+                }
 
                 $seenObjectIds = [];
                 $seenReferenceIds = [];
