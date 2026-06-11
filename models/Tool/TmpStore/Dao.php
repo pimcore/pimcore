@@ -60,9 +60,10 @@ class Dao extends Model\Dao\AbstractDao
             if ($item['serialized']) {
                 $extraAllowedClasses = [];
                 if (\Pimcore::hasContainer()) {
-                    $container = \Pimcore::getContainer();
-                    if ($container->hasParameter('pimcore.tmp_store.unserialize_allowed_classes')) {
-                        $extraAllowedClasses = (array) $container->getParameter('pimcore.tmp_store.unserialize_allowed_classes');
+                    try {
+                        $extraAllowedClasses = (array) \Pimcore::getContainer()->getParameter('pimcore.tmp_store.unserialize_allowed_classes');
+                    } catch (\InvalidArgumentException) {
+                        // parameter not configured
                     }
                 }
                 $extraAllowedClasses = array_values(array_unique(array_filter($extraAllowedClasses, 'is_string')));
@@ -76,8 +77,6 @@ class Dao extends Model\Dao\AbstractDao
                 try {
                     $deserialized = \Pimcore\Tool\Serialize::unserialize($item['data'], $allowedClasses);
                 } catch (\Throwable) {
-                    $this->delete($id);
-
                     return false;
                 }
 
@@ -128,8 +127,6 @@ class Dao extends Model\Dao\AbstractDao
                 };
 
                 if (($deserialized === false && $item['data'] !== serialize(false)) || $containsIncomplete($deserialized)) {
-                    $this->delete($id);
-
                     return false;
                 }
 
