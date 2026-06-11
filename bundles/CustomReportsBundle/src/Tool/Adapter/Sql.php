@@ -182,14 +182,13 @@ class Sql extends AbstractAdapter
             '/#/',
             '/\/\*/',
             '/\*\//',
-            '/\bDROP\b/i',
-            '/\bDELETE\s+FROM\b/i',
-            '/\bUPDATE\s+\S+\s+SET\b/i',
-            '/\bINSERT\s+INTO\b/i',
-            '/\bALTER\b/i',
-            '/\bCREATE\b/i',
-            '/\bTRUNCATE\b/i',
-        ];
+            '/^\s*DROP\b/i',
+            '/^\s*DELETE\s+FROM\b/i',
+            '/^\s*UPDATE\s+\S+\s+SET\b/i',
+            '/^\s*INSERT\s+INTO\b/i',
+            '/^\s*ALTER\b/i',
+            '/^\s*CREATE\b/i',
+            '/^\s*TRUNCATE\b/i',
 
         foreach ($forbiddenPatterns as $pattern) {
             if (preg_match($pattern, $sqlForValidation)) {
