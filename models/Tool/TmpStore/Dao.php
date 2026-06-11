@@ -89,22 +89,22 @@ class Dao extends Model\Dao\AbstractDao
 
                         return false;
                     }
-    if (is_object($value)) {
-        foreach ((array) $value as $v) {
-            if ($containsIncomplete($v)) {
-                return true;
-            }
-        }
-    }
+                    if (is_object($value)) {
+                        foreach ((array) $value as $v) {
+                            if ($containsIncomplete($v)) {
+                                return true;
+                            }
+                        }
+                    }
 
-    return false;
-};
+                    return false;
+                };
 
-if (($deserialized === false && $item['data'] !== serialize(false)) || $containsIncomplete($deserialized)) {
-    $this->delete($id);
+                if (($deserialized === false && $item['data'] !== serialize(false)) || $containsIncomplete($deserialized)) {
+                    $this->delete($id);
 
-    return false;
-}
+                    return false;
+                }
 
                 $item['data'] = $deserialized;
             }
