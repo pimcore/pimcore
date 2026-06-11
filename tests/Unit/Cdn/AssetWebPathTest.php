@@ -37,6 +37,40 @@ class AssetWebPathTest extends TestCase
         );
     }
 
+    public function testForFullPathUsesConfiguredPrefix(): void
+    {
+        // The prefix follows assets.frontend_prefixes.source (via the
+        // pimcore.cdn.original_asset_prefix parameter) so purge URLs/tags always
+        // match the URLs Asset::getFrontendFullPath() actually emits.
+        self::assertSame('/media/folder/image.jpg', (new AssetWebPath('/media'))->forFullPath('/folder/image.jpg'));
+    }
+
+    public function testIsOriginalAssetPathMatchesConfiguredPrefixOnly(): void
+    {
+        $custom = new AssetWebPath('/media');
+
+        self::assertTrue($custom->isOriginalAssetPath('/media/folder/image.jpg'));
+        self::assertFalse($custom->isOriginalAssetPath('/var/assets/folder/image.jpg'));
+    }
+
+    public function testIsOriginalAssetPathDefaultsToVarAssets(): void
+    {
+        $default = new AssetWebPath();
+
+        self::assertTrue($default->isOriginalAssetPath('/var/assets/folder/image.jpg'));
+        self::assertFalse($default->isOriginalAssetPath('/some/page'));
+    }
+
+    public function testIsOriginalAssetPathRequiresFullPrefixSegment(): void
+    {
+        // The prefix must match as a complete path segment — a sibling path that merely
+        // shares the prefix characters must not be treated as an original asset.
+        $default = new AssetWebPath();
+
+        self::assertFalse($default->isOriginalAssetPath('/var/assets-archive/x.jpg'));
+        self::assertFalse($default->isOriginalAssetPath('/var/assets'));
+    }
+
     public function testEncodeKeepsRetinaSuffixLiteral(): void
     {
         // encode() delegates to urlencode_ignore_slash(), the encoder behind the URLs

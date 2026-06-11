@@ -13,17 +13,33 @@ declare(strict_types=1);
 
 namespace Pimcore\Cdn;
 
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+
 /**
  * @internal
  *
  * Single source of truth for the public web path under which Pimcore serves original assets. Owns
- * the `/var/assets` prefix and the per-segment percent-encoding rule so the surrogate-key listener,
- * the purge listener/command, and the image-optimizer adapter all build the same paths and tags.
+ * the URL prefix and the percent-encoding rule so the surrogate-key listener, the purge
+ * listener/command, and the image-optimizer adapter all build the same paths and tags.
+ *
+ * The prefix follows `pimcore.assets.frontend_prefixes.source` — the prefix
+ * Asset::getFrontendFullPath() prepends to every original-asset URL the system emits — and
+ * falls back to {@see self::DEFAULT_PREFIX} when that is not configured (the documented
+ * static-serving contract). Derived in PimcoreCoreExtension as `pimcore.cdn.original_asset_prefix`.
  */
 final class AssetWebPath
 {
-    /** Public path prefix under which nginx serves original assets directly off disk. */
-    public const PREFIX = '/var/assets';
+    /**
+     * Default public path prefix for originals, used when assets.frontend_prefixes.source
+     * is not configured: the web server serves /var/assets/* directly off disk.
+     */
+    public const string DEFAULT_PREFIX = '/var/assets';
+
+    public function __construct(
+        #[Autowire('%pimcore.cdn.original_asset_prefix%')]
+        private readonly string $prefix = self::DEFAULT_PREFIX,
+    ) {
+    }
 
     /**
      * Map an asset's full path (e.g. /folder/image.jpg) to its public web path
@@ -31,7 +47,17 @@ final class AssetWebPath
      */
     public function forFullPath(string $assetFullPath): string
     {
-        return self::PREFIX . $assetFullPath;
+        return $this->prefix . $assetFullPath;
+    }
+
+    /**
+     * Whether a request path addresses an original asset under the configured prefix.
+     * Response-side tagging and cacheability checks must use this so they stay in
+     * sync with the purge-side paths built by {@see self::forFullPath()}.
+     */
+    public function isOriginalAssetPath(string $path): bool
+    {
+        return str_starts_with($path, $this->prefix . '/');
     }
 
     /**

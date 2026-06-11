@@ -562,6 +562,33 @@ class CdnPurgeListenerTest extends TestCase
     // stored when the browser-encoded GET request hit the edge.
     // -----------------------------------------------------------------------
 
+    public function testUrlPurgeUsesConfiguredPrefix(): void
+    {
+        // With a custom source prefix the purge URL must target the prefixed public
+        // URL the CDN actually cached, not /var/assets.
+        $dispatched = new ArrayObject();
+        $bus = $this->createMock(MessageBusInterface::class);
+        $bus->method('dispatch')->willReturnCallback(function (object $message) use ($dispatched) {
+            $dispatched->append($message);
+
+            return new Envelope($message);
+        });
+
+        $asset = $this->makeAsset(42, '/products/photo.jpg');
+        $listener = new CdnPurgeListener($bus, new CdnAssetTag(), new AssetWebPath('/media'), 'fastly', 'https://cdn.example.com');
+        $listener->onAssetUpdate(new AssetEvent($asset));
+
+        $urls = array_map(
+            fn (PurgeCdnUrlMessage $m) => $m->url,
+            array_values(array_filter(
+                $dispatched->getArrayCopy(),
+                fn (object $m) => $m instanceof PurgeCdnUrlMessage
+            ))
+        );
+
+        $this->assertSame(['https://cdn.example.com/media/products/photo.jpg'], $urls);
+    }
+
     public function testOnAssetUpdateUrlPurgeEncodesPathSegmentsForOriginalAsset(): void
     {
         [$bus, $dispatched] = $this->captureBusDispatches();

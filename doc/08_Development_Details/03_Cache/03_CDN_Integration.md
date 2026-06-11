@@ -276,6 +276,37 @@ The CDN edge must be configured to:
 
 For original assets (`/var/assets/...`) there are two operation modes.
 
+### The URL prefix contract (read this first)
+
+The CDN integration must build the **same public URLs your templates emit** —
+otherwise purge URLs and `asset-path-{hash}` tags target paths the CDN never
+cached, and stale originals silently survive every purge.
+
+Pimcore emits original-asset URLs as `{frontend_prefixes.source}{asset path}`
+(see `Asset::getFrontendFullPath()`), and the CDN integration follows the same
+setting:
+
+- `pimcore.assets.frontend_prefixes.source` **set** (e.g. `/var/assets`): the
+  integration uses it for purge URLs, optimizer URLs, response matching, and
+  tag hashing. For an absolute-URL prefix only its path component is used for
+  matching/tagging — the host part must be your `CDN_BASE_URL` host.
+- **unset/empty** (Pimcore default): the integration assumes the `/var/assets`
+  contract described under Mode B. **Note that stock Pimcore web-server configs
+  serve originals at the prefix-less tree path via an internal rewrite** — under
+  that setup the CDN caches URLs the integration cannot purge. To use the CDN
+  integration for originals, set the prefix explicitly so emitted URLs and the
+  CDN contract agree:
+
+```yaml
+pimcore:
+    assets:
+        frontend_prefixes:
+            source: /var/assets
+```
+
+With that setting templates emit `/var/assets/...` URLs, the web server serves
+them statically off disk (Mode B), and purge URLs match the cached objects.
+
 ### Mode B: URL purge for originals (static serving) — default
 
 This is the default and recommended mode: keep `/var/assets` as static-file

@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\CdnSurrogateKeyListener;
+use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Cdn\CdnAssetTag;
 use Pimcore\Cdn\CdnCacheabilityResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -137,6 +138,25 @@ class CdnSurrogateKeyListenerTest extends TestCase
         $response = $this->dispatch('fastly', $event);
 
         $this->assertSame('asset-path-' . $expectedHash, $response->headers->get('Surrogate-Key'));
+    }
+
+    public function testConfiguredPrefixKeepsTagAndPurgeSidesConsistent(): void
+    {
+        // With a custom source prefix, the response side must tag the prefixed request
+        // path AND the purge side (AssetWebPath::forFullPath) must hash the identical
+        // string — otherwise purges silently miss. This pins the cross-side contract.
+        $webPath = new AssetWebPath('/media');
+        $listener = new CdnSurrogateKeyListener(
+            new CdnCacheabilityResolver('fastly', [], $this->createMock(PimcoreContextResolver::class), $webPath),
+            new CdnAssetTag(),
+            $webPath,
+        );
+        $event = $this->makeEvent('/media/brand/logo.png');
+
+        $listener->onKernelResponse($event);
+
+        $purgeSideTag = (new CdnAssetTag())->forPath($webPath->forFullPath('/brand/logo.png'));
+        $this->assertSame($purgeSideTag, $event->getResponse()->headers->get('Surrogate-Key'));
     }
 
     public function testEncodedOriginalAssetUrlHashesDecodedPath(): void

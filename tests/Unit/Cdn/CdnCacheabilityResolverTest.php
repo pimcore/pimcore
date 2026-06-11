@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Cdn;
 
+use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Cdn\CdnCacheabilityResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -105,6 +106,19 @@ class CdnCacheabilityResolverTest extends TestCase
         $r = $this->resolver(excluded: ['#^/var/assets/private/#']);
         self::assertFalse($r->isCdnCacheable($this->req('/var/assets/private/secret.jpg'), $this->res()));
         self::assertTrue($r->isCdnCacheable($this->req('/var/assets/public/ok.jpg'), $this->res()));
+    }
+
+    public function testOriginalAssetPathFollowsConfiguredPrefix(): void
+    {
+        // With assets.frontend_prefixes.source set (e.g. '/media'), emitted original
+        // URLs carry that prefix — the resolver must match those, not /var/assets.
+        $contextResolver = $this->createMock(PimcoreContextResolver::class);
+        $contextResolver->method('matchesPimcoreContext')->willReturn(false);
+
+        $r = new CdnCacheabilityResolver('fastly', [], $contextResolver, new AssetWebPath('/media'));
+
+        self::assertTrue($r->isCdnCacheable($this->req('/media/folder/x.jpg'), $this->res()));
+        self::assertFalse($r->isCdnCacheable($this->req('/var/assets/folder/x.jpg'), $this->res()));
     }
 
     public function testContextResolverNotConsultedForNonAssetPaths(): void

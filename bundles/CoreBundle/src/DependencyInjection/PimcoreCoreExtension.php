@@ -18,6 +18,7 @@ use Monolog\Level;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Bundle\InstallBundle\Installer;
+use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
@@ -127,13 +128,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('serializer.yaml');
         $loader->load('cdn.yaml');
 
-        $container->setParameter('pimcore.cdn.base_url', $config['cdn']['base_url']);
-        $container->setParameter('pimcore.cdn.excluded_paths', $config['cdn']['excluded_paths']);
-        $container->setParameter('pimcore.cdn.image_optimizer_source_formats', $config['cdn']['image_optimizer_source_formats']);
-        $container->setParameter('pimcore.cdn.fastly.api_token', $config['cdn']['fastly']['api_token']);
-        $container->setParameter('pimcore.cdn.fastly.service_id', $config['cdn']['fastly']['service_id']);
-        $container->setParameter('pimcore.cdn.fastly.api_base_url', $config['cdn']['fastly']['api_base_url']);
-
+        $this->configureCdn($container, $config);
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
         $this->configureClassResolvers($container, $config);
@@ -163,6 +158,27 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         );
 
         $this->checkProductRegistration($config, $container);
+    }
+
+    private function configureCdn(ContainerBuilder $container, array $config): void
+    {
+        $container->setParameter('pimcore.cdn.base_url', $config['cdn']['base_url']);
+        $container->setParameter('pimcore.cdn.excluded_paths', $config['cdn']['excluded_paths']);
+        $container->setParameter('pimcore.cdn.image_optimizer_source_formats', $config['cdn']['image_optimizer_source_formats']);
+        $container->setParameter('pimcore.cdn.fastly.api_token', $config['cdn']['fastly']['api_token']);
+        $container->setParameter('pimcore.cdn.fastly.service_id', $config['cdn']['fastly']['service_id']);
+        $container->setParameter('pimcore.cdn.fastly.api_base_url', $config['cdn']['fastly']['api_base_url']);
+
+        // Public URL prefix for original assets: follows assets.frontend_prefixes.source
+        // (what Asset::getFrontendFullPath() emits); path component only, '' falls back to
+        // the documented /var/assets static-serving contract. See AssetWebPath.
+        $sourcePrefix = (string) ($config['assets']['frontend_prefixes']['source'] ?? '');
+        $sourcePrefixPath = parse_url($sourcePrefix, PHP_URL_PATH);
+        $sourcePrefixPath = is_string($sourcePrefixPath) ? rtrim($sourcePrefixPath, '/') : '';
+        $container->setParameter(
+            'pimcore.cdn.original_asset_prefix',
+            $sourcePrefixPath !== '' ? $sourcePrefixPath : AssetWebPath::DEFAULT_PREFIX
+        );
     }
 
     private function configureModelFactory(ContainerBuilder $container, array $config): void

@@ -30,8 +30,6 @@ class CdnCacheabilityResolver
 {
     public const THUMBNAIL_PATTERN = '#(?:^|/)(image|video)-thumb__(\d+)__([a-zA-Z0-9_\-]+)/#';
 
-    public const ORIGINAL_ASSET_PATTERN = '#^' . AssetWebPath::PREFIX . '/#';
-
     /**
      * Request attribute under which the request-side eligibility verdict is memoized —
      * both response listeners (surrogate keys at priority 0, cookie stripper at -200)
@@ -49,6 +47,7 @@ class CdnCacheabilityResolver
         #[Autowire('%pimcore.cdn.excluded_paths%')]
         private readonly array $excludedPaths,
         private readonly PimcoreContextResolver $contextResolver,
+        private readonly AssetWebPath $assetWebPath = new AssetWebPath(),
     ) {
     }
 
@@ -106,10 +105,10 @@ class CdnCacheabilityResolver
         // (human-readable) match, and so callers hash/match the same form the purge side uses.
         $path = rawurldecode($request->getPathInfo());
 
-        // 5. Path is an asset/thumbnail path — anchored regexes, checked FIRST so the vast
-        // majority of requests (ordinary pages) bail out on two cheap pattern misses.
+        // 5. Path is an asset/thumbnail path — cheap checks FIRST so the vast majority
+        // of requests (ordinary pages) bail out here.
         if (!preg_match(self::THUMBNAIL_PATTERN, $path)
-            && !preg_match(self::ORIGINAL_ASSET_PATTERN, $path)) {
+            && !$this->assetWebPath->isOriginalAssetPath($path)) {
             return false;
         }
 

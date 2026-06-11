@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Cdn\CdnAssetTag;
 use Pimcore\Cdn\CdnCacheabilityResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -39,6 +40,7 @@ class CdnSurrogateKeyListener implements EventSubscriberInterface
     public function __construct(
         private readonly CdnCacheabilityResolver $cacheabilityResolver,
         private readonly CdnAssetTag $assetTag,
+        private readonly AssetWebPath $assetWebPath = new AssetWebPath(),
     ) {
     }
 
@@ -91,7 +93,7 @@ class CdnSurrogateKeyListener implements EventSubscriberInterface
             ];
         }
 
-        if (preg_match(CdnCacheabilityResolver::ORIGINAL_ASSET_PATTERN, $path)) {
+        if ($this->assetWebPath->isOriginalAssetPath($path)) {
             return [$this->assetTag->forPath($path)];
         }
 
