@@ -18,6 +18,7 @@ use ArrayObject;
 use Pimcore\Bundle\CoreBundle\EventListener\CdnPurgeListener;
 use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Cdn\CdnAssetTag;
+use Pimcore\Cdn\Message\PurgeCdnAssetTreeMessage;
 use Pimcore\Cdn\Message\PurgeCdnTagMessage;
 use Pimcore\Cdn\Message\PurgeCdnUrlMessage;
 use Pimcore\Event\Model\Asset\Image\Thumbnail\ConfigEvent as ImageThumbnailConfigEvent;
@@ -42,6 +43,16 @@ class CdnPurgeListenerTest extends TestCase
         $asset->expects($this->never())->method('getFullPath');
 
         return $asset;
+    }
+
+    private function makeFolder(int $id, string $fullPath): Asset\Folder
+    {
+        $folder = $this->createMock(Asset\Folder::class);
+        $folder->method('getId')->willReturn($id);
+        $folder->method('getRealFullPath')->willReturn($fullPath);
+        $folder->expects($this->never())->method('getFullPath');
+
+        return $folder;
     }
 
     private function makeListener(MessageBusInterface $bus, string $provider = 'fastly', string $cdnBaseUrl = ''): CdnPurgeListener
@@ -169,6 +180,62 @@ class CdnPurgeListenerTest extends TestCase
             ['asset-42', 'asset-path-' . $pathHash],
             $tags
         );
+    }
+
+    public function testFolderRenameDispatchesAssetTreePurgeMessage(): void
+    {
+        // Descendants are repathed via a single SQL UPDATE with no per-child events —
+        // a renamed/moved folder must additionally enqueue a subtree purge.
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $folder = $this->makeFolder(5, '/catalog');
+        $event = new AssetEvent($folder);
+        $event->setArgument('oldPath', '/products');
+
+        $this->makeListener($bus)->onAssetUpdate($event);
+
+        $treeMessages = array_values(array_filter(
+            $dispatched->getArrayCopy(),
+            fn (object $m) => $m instanceof PurgeCdnAssetTreeMessage
+        ));
+
+        $this->assertCount(1, $treeMessages);
+        $this->assertSame('/products', $treeMessages[0]->oldPath);
+        $this->assertSame('/catalog', $treeMessages[0]->newPath);
+    }
+
+    public function testNonFolderRenameDoesNotDispatchAssetTreePurge(): void
+    {
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $asset = $this->makeAsset(42, '/products/new-name.jpg');
+        $event = new AssetEvent($asset);
+        $event->setArgument('oldPath', '/products/old-name.jpg');
+
+        $this->makeListener($bus)->onAssetUpdate($event);
+
+        $treeMessages = array_filter(
+            $dispatched->getArrayCopy(),
+            fn (object $m) => $m instanceof PurgeCdnAssetTreeMessage
+        );
+
+        $this->assertCount(0, $treeMessages);
+    }
+
+    public function testFolderUpdateWithoutRenameDoesNotDispatchAssetTreePurge(): void
+    {
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $folder = $this->makeFolder(5, '/catalog');
+
+        $this->makeListener($bus)->onAssetUpdate(new AssetEvent($folder));
+
+        $treeMessages = array_filter(
+            $dispatched->getArrayCopy(),
+            fn (object $m) => $m instanceof PurgeCdnAssetTreeMessage
+        );
+
+        $this->assertCount(0, $treeMessages);
     }
 
     public function testVersionOnlySaveDoesNotDispatchAnyPurge(): void

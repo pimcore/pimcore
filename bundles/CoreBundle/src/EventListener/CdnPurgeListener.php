@@ -15,6 +15,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Cdn\CdnAssetTag;
+use Pimcore\Cdn\Message\PurgeCdnAssetTreeMessage;
 use Pimcore\Cdn\Message\PurgeCdnTagMessage;
 use Pimcore\Cdn\Message\PurgeCdnUrlMessage;
 use Pimcore\Event\AssetEvents;
@@ -23,6 +24,7 @@ use Pimcore\Event\Model\Asset\Image\Thumbnail\ConfigEvent as ImageThumbnailConfi
 use Pimcore\Event\Model\Asset\Video\Thumbnail\ConfigEvent as VideoThumbnailConfigEvent;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Event\VideoThumbnailConfigEvents;
+use Pimcore\Model\Asset;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -134,6 +136,13 @@ class CdnPurgeListener implements EventSubscriberInterface
             $this->bus->dispatch(new PurgeCdnTagMessage(
                 $this->assetTag->forPath($this->assetWebPath->forFullPath($oldPath))
             ));
+
+            // Renaming/moving a folder repaths all descendants via a single SQL UPDATE
+            // (Dao::updateChildPaths) with no per-child events — their CDN entries under
+            // the old paths must be purged by walking the subtree asynchronously.
+            if ($asset instanceof Asset\Folder) {
+                $this->bus->dispatch(new PurgeCdnAssetTreeMessage($oldPath, $fullPath));
+            }
         }
 
         // URL-based purges for original assets: nginx serves /var/assets/* directly off

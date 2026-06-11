@@ -72,6 +72,7 @@ framework:
             #'Pimcore\Messenger\ElementDependenciesMessage': pimcore_dependencies
             'Pimcore\Cdn\Message\PurgeCdnTagMessage': pimcore_cdn_purge
             'Pimcore\Cdn\Message\PurgeCdnUrlMessage': pimcore_cdn_purge
+            'Pimcore\Cdn\Message\PurgeCdnAssetTreeMessage': pimcore_cdn_purge
         default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:

@@ -26,6 +26,8 @@ services:
 
     Pimcore\Cdn\Message\Handler\PurgeCdnMessageHandler: ~
 
+    Pimcore\Cdn\Message\Handler\PurgeCdnAssetTreeMessageHandler: ~
+
     #
     # CDN event listeners
     #
