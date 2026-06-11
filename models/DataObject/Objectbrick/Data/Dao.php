@@ -337,7 +337,8 @@ class Dao extends Model\Dao\AbstractDao
             $classId = $this->model->getObject()->getClassId();
         }
 
-        $params = [$field, $id, $field, $id, $field, $id];
+        $ownername = $this->model->getFieldname();
+        $params = [$field, $id, $field, $id, $field, $ownername, $id];
 
         $dest = 'dest_id';
         $src = 'src_id';
@@ -350,6 +351,7 @@ class Dao extends Model\Dao\AbstractDao
             FROM objects o, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
+            AND r.ownername = ?
             AND r." . $src . ' = ?
             AND o.id = r.' . $dest . "
             AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
@@ -359,6 +361,7 @@ class Dao extends Model\Dao\AbstractDao
             FROM assets a, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
+            AND r.ownername = ?
             AND r." . $src . ' = ?
             AND a.id = r.' . $dest . "
             AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
@@ -368,6 +371,7 @@ class Dao extends Model\Dao\AbstractDao
             FROM documents d, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
+            AND r.ownername = ?
             AND r." . $src . ' = ?
             AND d.id = r.' . $dest . "
             AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
