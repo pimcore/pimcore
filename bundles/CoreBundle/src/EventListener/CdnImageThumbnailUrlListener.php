@@ -90,6 +90,14 @@ class CdnImageThumbnailUrlListener implements EventSubscriberInterface
             return;
         }
 
+        // Focal point lives on the asset, not the thumbnail config: Pimcore turns a `cover` crop
+        // into a focal-point crop whenever the asset has a focal point set (see Thumbnail\Processor).
+        // The resolver only sees the config and cannot know this, so guard it here where the asset
+        // is available — the CDN cover fit is center-only and would crop differently.
+        if ($transform->fit === 'cover' && $asset->getCustomSetting('focalPointX')) {
+            return;
+        }
+
         $originalPath = '/var/assets' . $asset->getRealFullPath();
         $url = $this->adapter->buildUrl($originalPath, $transform);
 

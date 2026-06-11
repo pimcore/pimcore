@@ -107,6 +107,62 @@ class ThumbnailTransformResolverTest extends TestCase
         self::assertSame(2, $t->dpr);
     }
 
+    public function testHighResolutionOneXSetsNoDpr(): void
+    {
+        // A 1x high-resolution factor is a no-op and must translate cleanly (dpr omitted).
+        $resolver = new ThumbnailTransformResolver();
+        $t = $resolver->resolve($this->config([
+            ['method' => 'resize', 'arguments' => ['width' => 400, 'height' => 300]],
+        ], 'jpeg', null, 1.0));
+
+        self::assertNotNull($t);
+        self::assertNull($t->dpr);
+    }
+
+    public function testHighResolutionThreeXReturnsNull(): void
+    {
+        // The transform only carries an integer 2x dpr; a 3x factor cannot be reproduced
+        // faithfully, so the config must fall back to Pimcore generation.
+        $resolver = new ThumbnailTransformResolver();
+
+        self::assertNull($resolver->resolve($this->config([
+            ['method' => 'resize', 'arguments' => ['width' => 400, 'height' => 300]],
+        ], 'jpeg', null, 3.0)));
+    }
+
+    public function testHighResolutionFractionalReturnsNull(): void
+    {
+        // A fractional factor (1.5x) would otherwise be silently dropped to 1x — bail instead.
+        $resolver = new ThumbnailTransformResolver();
+
+        self::assertNull($resolver->resolve($this->config([
+            ['method' => 'resize', 'arguments' => ['width' => 400, 'height' => 300]],
+        ], 'jpeg', null, 1.5)));
+    }
+
+    public function testCoverWithoutPositioningMapsToFitCover(): void
+    {
+        // No positioning argument means Pimcore's default (center), which maps cleanly to cover.
+        $resolver = new ThumbnailTransformResolver();
+        $t = $resolver->resolve($this->config([
+            ['method' => 'cover', 'arguments' => ['width' => 200, 'height' => 200]],
+        ]));
+
+        self::assertNotNull($t);
+        self::assertSame('cover', $t->fit);
+    }
+
+    public function testCoverWithNonCenterPositioningReturnsNull(): void
+    {
+        // Pimcore's cover crop honors `positioning` (topleft/topright/...); the CDN cover fit
+        // is center-only, so any non-center positioning must fall back to Pimcore.
+        $resolver = new ThumbnailTransformResolver();
+
+        self::assertNull($resolver->resolve($this->config([
+            ['method' => 'cover', 'arguments' => ['width' => 200, 'height' => 200, 'positioning' => 'topleft']],
+        ])));
+    }
+
     public function testUnsupportedTransformReturnsNull(): void
     {
         $resolver = new ThumbnailTransformResolver();

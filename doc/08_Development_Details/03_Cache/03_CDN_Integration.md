@@ -81,9 +81,17 @@ switches.
    be rewritten to a transform URL the edge cannot process (the original served untransformed, or a
    404), so the fallback is what keeps those thumbnails working.
 2. The thumbnail config uses only translatable transforms: `resize`, `scaleByWidth`,
-   `scaleByHeight`, `contain`, `cover`, `crop`, plus format/quality and 2x high-resolution. A config
-   using anything else (`frame`, `rotate`, `mirror`, `trim`, `roundCorners`, color adjustments,
-   focal-point cover, `cropPercent`) falls back to Pimcore generation.
+   `scaleByHeight`, `contain`, `cover`, `crop`, plus format/quality and 2x high-resolution. Note:
+   - `cover` is translatable **only with the default `center` positioning**. Any non-center
+     positioning (`topleft`, `topright`, …) falls back, as does any `cover` applied to an asset
+     that has a focal point set — Pimcore turns those into focal-point crops the edge cannot
+     reproduce.
+   - High-resolution is translatable **only at exactly 2x**. Other factors (1.5x, 3x, 4x, …) fall
+     back, since the transform carries only an integer 2x device-pixel-ratio.
+
+   A config using anything else (`frame`, `rotate`, `mirror`, `trim`, `roundCorners`, color
+   adjustments, non-center/focal-point `cover`, non-2x high-resolution, `cropPercent`) falls back to
+   Pimcore generation.
 
 The source-format allowlist is configurable — extend it only with formats your optimizer can
 actually ingest:

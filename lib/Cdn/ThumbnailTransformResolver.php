@@ -60,6 +60,15 @@ class ThumbnailTransformResolver
 
                     break;
                 case 'cover':
+                    // Pimcore's cover crop depends on `positioning` (topleft/topright/... or, when
+                    // the asset has a focal point, a focal-point crop). Only the default `center`
+                    // positioning maps cleanly to the CDN `cover` fit; anything else would crop
+                    // differently, so disqualify CDN rewriting and let Pimcore generate it.
+                    $positioning = $args['positioning'] ?? 'center';
+                    if (!is_string($positioning) || strtolower($positioning) !== 'center') {
+                        return null;
+                    }
+
                     $width = isset($args['width']) ? (int) $args['width'] : null;
                     $height = isset($args['height']) ? (int) $args['height'] : null;
                     $fit = 'cover';
@@ -89,8 +98,18 @@ class ThumbnailTransformResolver
         $configQuality = $config->getQuality();
         $quality = $configQuality > 0 ? $configQuality : null;
 
+        // The transform only carries an integer 2x device-pixel-ratio. A 1x (or unset) factor is a
+        // no-op (dpr omitted); exactly 2x maps to dpr=2. Any other factor (e.g. 1.5x, 3x, 4x) cannot
+        // be reproduced faithfully here, so disqualify CDN rewriting rather than emit a wrong size.
         $highRes = $config->getHighResolution();
-        $dpr = ($highRes !== null && $highRes >= 2.0) ? 2 : null;
+        $dpr = null;
+        if ($highRes !== null && $highRes > 1.0) {
+            if ($highRes === 2.0) {
+                $dpr = 2;
+            } else {
+                return null;
+            }
+        }
 
         return new ThumbnailTransform(
             $width,

@@ -27,15 +27,18 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
 {
     private const SOURCE_FORMATS = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
-    private function image(string $fullPath, bool $vector = false, string $mime = 'image/jpeg'): Image
+    private function image(string $fullPath, bool $vector = false, string $mime = 'image/jpeg', ?int $focalPointX = null): Image
     {
         $image = $this->getMockBuilder(Image::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getRealFullPath', 'isVectorGraphic', 'getMimeType'])
+            ->onlyMethods(['getRealFullPath', 'isVectorGraphic', 'getMimeType', 'getCustomSetting'])
             ->getMock();
         $image->method('getRealFullPath')->willReturn($fullPath);
         $image->method('isVectorGraphic')->willReturn($vector);
         $image->method('getMimeType')->willReturn($mime);
+        $image->method('getCustomSetting')->willReturnCallback(
+            static fn (string $key) => $key === 'focalPointX' ? $focalPointX : null,
+        );
 
         return $image;
     }
@@ -114,6 +117,46 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
         $listener->onThumbnailPath($event);
 
         self::assertSame('/var/tmp/thumbnails/image-thumb__1__cfg/x.jpg', $event->getArgument('frontendPath'));
+    }
+
+    public function testDoesNotRewriteCoverWithFocalPoint(): void
+    {
+        // Pimcore's cover crop honors the asset's focal point when one is set; the CDN cover
+        // transform cannot reproduce it, so the listener must fall back to Pimcore generation.
+        $resolver = $this->createMock(ThumbnailTransformResolver::class);
+        $resolver->method('resolve')->willReturn(new ThumbnailTransform(200, 200, 'cover'));
+
+        $adapter = $this->createMock(ImageTransformAdapterInterface::class);
+        $adapter->expects(self::never())->method('buildUrl');
+
+        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS);
+        $event = $this->event($this->image('/folder/photo.jpg', focalPointX: 50), new Config());
+
+        $listener->onThumbnailPath($event);
+
+        self::assertSame('/var/tmp/thumbnails/image-thumb__1__cfg/x.jpg', $event->getArgument('frontendPath'));
+    }
+
+    public function testRewritesCoverWithoutFocalPoint(): void
+    {
+        // A cover transform on an asset without a focal point maps cleanly and is rewritten.
+        $resolver = $this->createMock(ThumbnailTransformResolver::class);
+        $resolver->method('resolve')->willReturn(new ThumbnailTransform(200, 200, 'cover'));
+
+        $adapter = $this->createMock(ImageTransformAdapterInterface::class);
+        $adapter->expects(self::once())
+            ->method('buildUrl')
+            ->willReturn('https://cdn.example.com/var/assets/folder/photo.jpg?width=200&height=200&fit=cover');
+
+        $listener = new CdnImageThumbnailUrlListener($adapter, $resolver, 'fastly', self::SOURCE_FORMATS);
+        $event = $this->event($this->image('/folder/photo.jpg'), new Config());
+
+        $listener->onThumbnailPath($event);
+
+        self::assertSame(
+            'https://cdn.example.com/var/assets/folder/photo.jpg?width=200&height=200&fit=cover',
+            $event->getArgument('frontendPath'),
+        );
     }
 
     public function testDoesNotRewriteWhenConfigNotTranslatable(): void
