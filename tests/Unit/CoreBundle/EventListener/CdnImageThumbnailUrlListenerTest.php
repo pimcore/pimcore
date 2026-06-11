@@ -120,6 +120,25 @@ class CdnImageThumbnailUrlListenerTest extends TestCase
         self::assertSame('/var/tmp/thumbnails/image-thumb__1__cfg/x.jpg', $event->getArgument('frontendPath'));
     }
 
+    public function testIgnoresEventWithoutAssetAndConfigArguments(): void
+    {
+        // Asset\Image::getLowQualityPreviewPath() dispatches ASSET_IMAGE_THUMBNAIL with only
+        // storagePath/frontendPath arguments — the listener must skip it, not throw on
+        // GenericEvent::getArgument('asset').
+        $adapter = $this->createMock(ImageTransformAdapterInterface::class);
+        $adapter->expects(self::never())->method('buildUrl');
+
+        $event = new GenericEvent($this, [
+            'storagePath' => '/some/image/low-quality-preview.svg',
+            'frontendPath' => '/some/image/low-quality-preview.svg',
+        ]);
+
+        $listener = new CdnImageThumbnailUrlListener($adapter, $this->createMock(ThumbnailTransformResolver::class), 'fastly', self::SOURCE_FORMATS, new AssetWebPath());
+        $listener->onThumbnailPath($event);
+
+        self::assertSame('/some/image/low-quality-preview.svg', $event->getArgument('frontendPath'));
+    }
+
     public function testDoesNotRewriteCoverWithFocalPoint(): void
     {
         // Pimcore's cover crop honors the asset's focal point when one is set; the CDN cover

@@ -113,7 +113,9 @@ HELP
                 continue;
             }
 
-            $allTags[] = $this->assetTag->forPath($this->assetWebPath->forFullPath($asset->getFullPath()));
+            // getRealFullPath(): the raw tree path, matching what the purge listener and the
+            // response-side tagging hash (getFullPath() can return an encoded/prefixed variant).
+            $allTags[] = $this->assetTag->forPath($this->assetWebPath->forFullPath($asset->getRealFullPath()));
         }
 
         foreach ($configs as $configName) {

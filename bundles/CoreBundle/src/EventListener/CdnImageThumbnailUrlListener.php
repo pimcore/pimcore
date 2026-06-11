@@ -66,6 +66,13 @@ class CdnImageThumbnailUrlListener implements EventSubscriberInterface
             return;
         }
 
+        // Not every dispatch site provides the asset/config arguments — e.g.
+        // Asset\Image::getLowQualityPreviewPath() emits this event with only
+        // storagePath/frontendPath. Such variants cannot be rewritten.
+        if (!$event->hasArgument('asset') || !$event->hasArgument('config')) {
+            return;
+        }
+
         $asset = $event->getArgument('asset');
 
         // Media-type guard: only raster images are eligible. Vector graphics (SVG), and any

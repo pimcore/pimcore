@@ -74,9 +74,9 @@ class CdnPurgeCommandTest extends TestCase
     {
         $asset = $this->getMockBuilder(Asset::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getFullPath'])
+            ->onlyMethods(['getRealFullPath'])
             ->getMock();
-        $asset->method('getFullPath')->willReturn($fullPath);
+        $asset->method('getRealFullPath')->willReturn($fullPath);
 
         return $asset;
     }

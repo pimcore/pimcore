@@ -36,7 +36,10 @@ class CdnPurgeListenerTest extends TestCase
     {
         $asset = $this->createMock(Asset::class);
         $asset->method('getId')->willReturn($id);
-        $asset->method('getFullPath')->willReturn($fullPath);
+        // The listener must use getRealFullPath() (raw tree path); getFullPath() returns an
+        // encoded/prefixed variant during frontend requests and must not be called.
+        $asset->method('getRealFullPath')->willReturn($fullPath);
+        $asset->expects($this->never())->method('getFullPath');
 
         return $asset;
     }
@@ -166,6 +169,33 @@ class CdnPurgeListenerTest extends TestCase
             ['asset-42', 'asset-path-' . $pathHash],
             $tags
         );
+    }
+
+    public function testVersionOnlySaveDoesNotDispatchAnyPurge(): void
+    {
+        // Asset::saveVersion() (editor autosave / "save only new version") dispatches
+        // POST_UPDATE with saveVersionOnly=true while the published binary is unchanged —
+        // purging would evict valid CDN objects on every autosave.
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $asset = $this->makeAsset(42, '/products/image.jpg');
+        $event = new AssetEvent($asset, ['saveVersionOnly' => true]);
+
+        $this->makeListener($bus)->onAssetUpdate($event);
+
+        $this->assertCount(0, $dispatched);
+    }
+
+    public function testAutoSaveDoesNotDispatchAnyPurge(): void
+    {
+        [$bus, $dispatched] = $this->captureBusDispatches();
+
+        $asset = $this->makeAsset(42, '/products/image.jpg');
+        $event = new AssetEvent($asset, ['autoSave' => true]);
+
+        $this->makeListener($bus)->onAssetUpdate($event);
+
+        $this->assertCount(0, $dispatched);
     }
 
     public function testPostDeleteAlsoDispatchesTwoMessages(): void

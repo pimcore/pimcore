@@ -67,6 +67,12 @@ class CdnPurgeListener implements EventSubscriberInterface
             return;
         }
 
+        // Version-only saves (editor autosave, "save only new version") leave the published
+        // binary untouched — purging would evict valid CDN objects on every autosave.
+        if ($event->hasArgument('saveVersionOnly') || $event->hasArgument('autoSave')) {
+            return;
+        }
+
         // On rename/move, AssetEvent carries the previous path so we can purge its CDN entry too;
         // otherwise the stale asset-path-{hash} would linger until natural TTL.
         $oldPath = $event->hasArgument('oldPath') ? $event->getArgument('oldPath') : null;
@@ -105,16 +111,22 @@ class CdnPurgeListener implements EventSubscriberInterface
     {
         $asset = $event->getAsset();
 
+        // getRealFullPath() deliberately, not getFullPath(): during frontend requests
+        // (e.g. a UGC upload controller saving an asset) getFullPath() returns the
+        // urlencoded, frontend-prefixed path, which would hash to a tag the response
+        // side never emitted and double-encode the purge URL below.
+        $fullPath = $asset->getRealFullPath();
+
         // Purge all thumbnail variants for this asset.
         $this->bus->dispatch(new PurgeCdnTagMessage($this->assetTag->forAsset($asset->getId())));
 
         // Purge the original asset CDN entry using a path hash (no DB lookup needed — path
         // is available directly from the asset object, same string hashed on the response side).
         $this->bus->dispatch(new PurgeCdnTagMessage(
-            $this->assetTag->forPath($this->assetWebPath->forFullPath($asset->getFullPath()))
+            $this->assetTag->forPath($this->assetWebPath->forFullPath($fullPath))
         ));
 
-        $renamed = $oldPath !== null && $oldPath !== '' && $oldPath !== $asset->getFullPath();
+        $renamed = $oldPath !== null && $oldPath !== '' && $oldPath !== $fullPath;
 
         // If the asset was renamed/moved, also purge the previous path so its CDN-cached
         // response does not linger until natural TTL under the old URL.
@@ -130,7 +142,7 @@ class CdnPurgeListener implements EventSubscriberInterface
         // absolute-URL purge against the public CDN host.
         if ($this->cdnBaseUrl !== '') {
             $base = rtrim($this->cdnBaseUrl, '/');
-            $this->bus->dispatch(new PurgeCdnUrlMessage($base . $this->assetWebPath->encode($this->assetWebPath->forFullPath($asset->getFullPath()))));
+            $this->bus->dispatch(new PurgeCdnUrlMessage($base . $this->assetWebPath->encode($this->assetWebPath->forFullPath($fullPath))));
 
             if ($renamed) {
                 $this->bus->dispatch(new PurgeCdnUrlMessage($base . $this->assetWebPath->encode($this->assetWebPath->forFullPath($oldPath))));
