@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Cdn;
 
 use GuzzleHttp\ClientInterface;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -23,6 +24,12 @@ use Throwable;
 #[AutoconfigureTag('pimcore.cdn.purge_client', ['provider' => 'fastly'])]
 class FastlyPurgeClient implements PurgeClientInterface
 {
+    /**
+     * Fastly rejects batch purges with more than 256 surrogate keys per request;
+     * larger sets must be split across requests.
+     */
+    private const MAX_KEYS_PER_REQUEST = 256;
+
     public function __construct(
         private readonly ClientInterface $httpClient,
         private readonly LoggerInterface $logger,
@@ -49,9 +56,22 @@ class FastlyPurgeClient implements PurgeClientInterface
             return;
         }
 
-        $this->request('POST', sprintf('%s/service/%s/purge', $this->apiBaseUrl, $this->serviceId), [
-            'headers' => ['Surrogate-Key' => implode(' ', $tags)],
-        ]);
+        // Surrogate keys are space-separated in the header; a key containing whitespace
+        // would silently split into different keys and purge unrelated cache entries.
+        foreach ($tags as $tag) {
+            if (preg_match('/\s/', $tag)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Surrogate key "%s" must not contain whitespace.',
+                    $tag
+                ));
+            }
+        }
+
+        foreach (array_chunk($tags, self::MAX_KEYS_PER_REQUEST) as $chunk) {
+            $this->request('POST', sprintf('%s/service/%s/purge', $this->apiBaseUrl, $this->serviceId), [
+                'headers' => ['Surrogate-Key' => implode(' ', $chunk)],
+            ]);
+        }
     }
 
     public function purgeByUrl(string $url): void

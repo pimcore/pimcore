@@ -159,6 +159,30 @@ class CdnPurgeCommandTest extends TestCase
         $this->assertSame(Command::FAILURE, $tester->getStatusCode());
     }
 
+    public function testConfigNameWithSpaceReturnsFailureWithoutPurging(): void
+    {
+        // A whitespace-containing config name can never exist as a surrogate key (the
+        // response side only tags [a-zA-Z0-9_-] names) and would corrupt the space-
+        // separated batch purge header into unrelated keys.
+        $client = $this->createMock(PurgeClientInterface::class);
+        $client->expects($this->never())->method('purgeByTags');
+
+        $tester = $this->runCommand($client, ['--config' => ['hero banner']]);
+
+        $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+        $this->assertStringContainsString('Invalid thumbnail config name', $tester->getDisplay());
+    }
+
+    public function testInvalidConfigNameIsRejectedBeforeAnyValidNameIsPurged(): void
+    {
+        $client = $this->createMock(PurgeClientInterface::class);
+        $client->expects($this->never())->method('purgeByTags');
+
+        $tester = $this->runCommand($client, ['--config' => ['product-hero', 'bad name']]);
+
+        $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+    }
+
     public function testMultipleAssetsArePassedAsOneBatchCall(): void
     {
         [$client, $calls] = $this->makeClient();

@@ -98,6 +98,24 @@ HELP
             return Command::FAILURE;
         }
 
+        // Thumbnail config names are only ever tagged when they match the charset the
+        // response-side pattern extracts (CdnCacheabilityResolver::THUMBNAIL_PATTERN,
+        // [a-zA-Z0-9_-]) — any other name can never exist as a surrogate key, and a
+        // whitespace-containing name would even corrupt the space-separated batch purge
+        // header into unrelated keys. Fail fast on malformed input.
+        $invalidConfigs = array_filter(
+            $configs,
+            static fn (string $name): bool => preg_match('/^[a-zA-Z0-9_\-]+$/', $name) !== 1,
+        );
+        if ($invalidConfigs !== []) {
+            $io->error(sprintf(
+                'Invalid thumbnail config name(s): %s. Config names may only contain letters, digits, underscores and hyphens.',
+                implode(', ', $invalidConfigs),
+            ));
+
+            return Command::FAILURE;
+        }
+
         $allTags = [];
 
         foreach ($assetIds as $id) {
