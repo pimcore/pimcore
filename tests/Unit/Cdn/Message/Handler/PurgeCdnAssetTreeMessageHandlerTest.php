@@ -79,7 +79,7 @@ class PurgeCdnAssetTreeMessageHandlerTest extends TestCase
 
     private function pathHashTag(string $fullPath): string
     {
-        return 'asset-path-' . substr(hash('sha256', '/var/assets' . $fullPath), 0, 12);
+        return 'asset-path-' . hash('xxh3', '/var/assets' . $fullPath);
     }
 
     public function testPurgesIdAndOldPathTagsForEachDescendant(): void

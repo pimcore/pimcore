@@ -40,13 +40,13 @@ class CdnAssetTagTest extends TestCase
         // (CdnPurgeListener, CdnPurgeCommand) MUST produce this exact string for the same web
         // path, or a purge silently misses. Changing the hash here is a breaking change.
         self::assertSame(
-            'asset-path-c17ea8c4a328',
+            'asset-path-8837321b226f3e88',
             (new CdnAssetTag())->forPath('/var/assets/folder/image.jpg'),
         );
     }
 
     public function testForPathFormat(): void
     {
-        self::assertMatchesRegularExpression('/^asset-path-[0-9a-f]{12}$/', (new CdnAssetTag())->forPath('/var/assets/x.jpg'));
+        self::assertMatchesRegularExpression('/^asset-path-[0-9a-f]{16}$/', (new CdnAssetTag())->forPath('/var/assets/x.jpg'));
     }
 }

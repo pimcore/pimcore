@@ -56,9 +56,10 @@ that prefer the standard header):
 
 For original asset URLs (`/var/assets/...`) the same listener also computes:
 
-- `asset-path-{12-char-sha256-prefix}` — the path-hash for tag-purging the
-  original. The hash is the first 12 hex characters of
-  `sha256('/var/assets' + asset_full_path)`.
+- `asset-path-{16-char-xxh3-hash}` — the path-hash for tag-purging the
+  original. The hash is `xxh3('/var/assets' + asset_full_path)` (a fast
+  non-cryptographic 64-bit fingerprint; a collision merely over-purges,
+  which is harmless).
 
 …but this only reaches the cached object if `/var/assets/...` responses pass
 through PHP. See [Original Assets](#original-assets).

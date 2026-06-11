@@ -105,7 +105,7 @@ class CdnSurrogateKeyListenerTest extends TestCase
     public function testOriginalAssetUrlEmitsPathHashTag(): void
     {
         $path = '/var/assets/products/image.jpg';
-        $expectedHash = substr(hash('sha256', $path), 0, 12);
+        $expectedHash = hash('xxh3', $path);
 
         $event = $this->makeEvent($path);
         $response = $this->dispatch('fastly', $event);
@@ -114,24 +114,24 @@ class CdnSurrogateKeyListenerTest extends TestCase
         $this->assertSame('asset-path-' . $expectedHash, $response->headers->get('Cache-Tag'));
     }
 
-    public function testOriginalAssetHashIsTwelveHexChars(): void
+    public function testOriginalAssetHashIsSixteenHexChars(): void
     {
         $event = $this->makeEvent('/var/assets/some/file.pdf');
         $response = $this->dispatch('fastly', $event);
 
         $tag = $response->headers->get('Surrogate-Key');
-        $this->assertMatchesRegularExpression('/^asset-path-[0-9a-f]{12}$/', $tag);
+        $this->assertMatchesRegularExpression('/^asset-path-[0-9a-f]{16}$/', $tag);
     }
 
     public function testOriginalAssetHashMatchesPurgeListenerHash(): void
     {
-        // CdnPurgeListener computes: substr(hash('sha256', '/var/assets' . $asset->getFullPath()), 0, 12)
-        // CdnSurrogateKeyListener computes: substr(hash('sha256', $path), 0, 12)  where $path = /var/assets/...
+        // CdnPurgeListener computes: hash('xxh3', '/var/assets' . $asset->getRealFullPath())
+        // CdnSurrogateKeyListener computes: hash('xxh3', $path)  where $path = /var/assets/...
         // Both must produce the same hash for the same asset.
         $fullPath = '/brand/logo.svg';
         $requestPath = '/var/assets' . $fullPath;
 
-        $expectedHash = substr(hash('sha256', $requestPath), 0, 12);
+        $expectedHash = hash('xxh3', $requestPath);
 
         $event = $this->makeEvent($requestPath);
         $response = $this->dispatch('fastly', $event);
@@ -148,7 +148,7 @@ class CdnSurrogateKeyListenerTest extends TestCase
         $event = $this->makeEvent('/var/assets/Car%20Images/M%C3%B6tley.jpg');
         $response = $this->dispatch('fastly', $event);
 
-        $expectedHash = substr(hash('sha256', '/var/assets/Car Images/Mötley.jpg'), 0, 12);
+        $expectedHash = hash('xxh3', '/var/assets/Car Images/Mötley.jpg');
         $this->assertSame('asset-path-' . $expectedHash, $response->headers->get('Surrogate-Key'));
     }
 
@@ -357,7 +357,7 @@ class CdnSurrogateKeyListenerTest extends TestCase
 
         $listener->onKernelResponse($event);
 
-        $expectedHash = substr(hash('sha256', '/var/assets/folder/x.jpg'), 0, 12);
+        $expectedHash = hash('xxh3', '/var/assets/folder/x.jpg');
         self::assertSame('asset-path-' . $expectedHash, $event->getResponse()->headers->get('Surrogate-Key'));
     }
 

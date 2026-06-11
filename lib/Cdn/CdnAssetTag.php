@@ -46,6 +46,10 @@ final class CdnAssetTag
      * Tag for the original-asset CDN entry, derived from its public web path (see {@see AssetWebPath}).
      * The hash makes the tag a fixed length regardless of path depth; both sides hash the identical
      * web-path string, so the values match.
+     *
+     * xxh3 (full 64-bit digest, 16 hex chars) is deliberate: this is a content fingerprint, not a
+     * security boundary — a collision merely over-purges another asset's cache entry, which is
+     * harmless. Changing this algorithm orphans every already-tagged CDN object until TTL.
      */
     public function forPath(string $webPath): string
     {

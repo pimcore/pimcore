@@ -131,7 +131,7 @@ class CdnPurgeListenerTest extends TestCase
         $asset = $this->makeAsset(42, $fullPath);
         $this->makeListener($bus)->onAssetUpdate(new AssetEvent($asset));
 
-        $expectedHash = substr(hash('sha256', '/var/assets' . $fullPath), 0, 12);
+        $expectedHash = hash('xxh3', '/var/assets' . $fullPath);
         $tags = $this->allTags($dispatched);
         $this->assertContains('asset-path-' . $expectedHash, $tags);
     }
@@ -149,8 +149,8 @@ class CdnPurgeListenerTest extends TestCase
 
         $this->makeListener($bus)->onAssetUpdate($event);
 
-        $newPathHash = substr(hash('sha256', '/var/assets' . $newPath), 0, 12);
-        $oldPathHash = substr(hash('sha256', '/var/assets' . $oldPath), 0, 12);
+        $newPathHash = hash('xxh3', '/var/assets' . $newPath);
+        $oldPathHash = hash('xxh3', '/var/assets' . $oldPath);
 
         $tags = $this->allTags($dispatched);
         $this->assertEqualsCanonicalizing(
@@ -173,7 +173,7 @@ class CdnPurgeListenerTest extends TestCase
 
         $this->makeListener($bus)->onAssetUpdate($event);
 
-        $pathHash = substr(hash('sha256', '/var/assets' . $path), 0, 12);
+        $pathHash = hash('xxh3', '/var/assets' . $path);
 
         $tags = $this->allTags($dispatched);
         $this->assertEqualsCanonicalizing(
@@ -196,7 +196,7 @@ class CdnPurgeListenerTest extends TestCase
 
         $this->makeListener($bus)->onAssetUpdate($event);
 
-        $pathHash = substr(hash('sha256', '/var/assets' . $path), 0, 12);
+        $pathHash = hash('xxh3', '/var/assets' . $path);
 
         $tags = $this->allTags($dispatched);
         $this->assertEqualsCanonicalizing(
@@ -308,7 +308,7 @@ class CdnPurgeListenerTest extends TestCase
         $fullPath = '/some/nested/file.png';
         $requestPath = '/var/assets' . $fullPath;
 
-        $expectedHash = substr(hash('sha256', $requestPath), 0, 12);
+        $expectedHash = hash('xxh3', $requestPath);
 
         [$bus, $dispatched] = $this->captureBusDispatches();
         $asset = $this->makeAsset(1, $fullPath);
