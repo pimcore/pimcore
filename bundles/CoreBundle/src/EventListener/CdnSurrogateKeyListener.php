@@ -32,8 +32,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *   → ID and config name are extracted from the URL pattern without any DB lookup.
  *
  * Original asset tags: asset-path-{hash}
- *   → SHA-256 (first 12 hex chars) of the rawurldecoded request path. The CdnPurgeListener
- *     computes the identical hash from $asset->getRealFullPath() on the purge side.
+ *   → {@see CdnAssetTag::forPath()} over the rawurldecoded request path (xxh3, 16 hex chars).
+ *     The CdnPurgeListener derives the identical tag from $asset->getRealFullPath() via the
+ *     same helper on the purge side.
  */
 class CdnSurrogateKeyListener implements EventSubscriberInterface
 {
