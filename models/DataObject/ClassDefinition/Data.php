@@ -14,7 +14,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Closure;
 use Exception;
-use InvalidArgumentException;
 use JsonSerializable;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
@@ -167,13 +166,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public function setName(string $name): static
     {
-        // A field name is emitted verbatim into the generated PHP class files (as a property,
-        // getter/setter and constant) and into ALTER TABLE DDL, so it must be a valid identifier.
-        // The 63 character cap keeps the name within MySQL's 64 byte identifier limit.
-        if ($name !== '' && !preg_match('/^[a-zA-Z_][a-zA-Z0-9_]{0,62}$/', $name)) {
-            throw new InvalidArgumentException(sprintf('Invalid field name "%s"', $name));
-        }
-
         $this->name = $name;
 
         return $this;

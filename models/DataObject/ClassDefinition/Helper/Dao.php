@@ -39,31 +39,31 @@ trait Dao
                     // multicolumn field
                     foreach ($columnType as $fkey => $fvalue) {
                         $indexName = $field->getName().'__'.$fkey;
-                        $columnName = $this->db->quoteIdentifier($indexName);
+                        $columnName = '`' . $indexName . '`';
                         if ($unique) {
                             if ($isLocalized) {
-                                $columnName .= ',' . $this->db->quoteIdentifier('language');
+                                $columnName .= ',`language`';
                             } elseif ($isFieldcollection) {
-                                $columnName .= ',' . $this->db->quoteIdentifier('fieldname');
+                                $columnName .= ',`fieldname`';
                             }
                         }
                         if ($this->indexDoesNotExist($table, $prefix, $indexName)) {
-                            $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX ' . $this->db->quoteIdentifier($prefix . $indexName) . ' (' . $columnName . ');');
+                            $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName . '` (' . $columnName . ');');
                         }
                     }
                 } else {
                     // single -column field
                     $indexName = $field->getName();
-                    $columnName = $this->db->quoteIdentifier($indexName);
+                    $columnName = '`' . $indexName . '`';
                     if ($unique) {
                         if ($isLocalized) {
-                            $columnName .= ',' . $this->db->quoteIdentifier('language');
+                            $columnName .= ',`language`';
                         } elseif ($isFieldcollection) {
-                            $columnName .= ',' . $this->db->quoteIdentifier('fieldname');
+                            $columnName .= ',`fieldname`';
                         }
                     }
                     if ($this->indexDoesNotExist($table, $prefix, $indexName)) {
-                        $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX ' . $this->db->quoteIdentifier($prefix . $indexName) . ' (' . $columnName . ');');
+                        $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName . '` (' . $columnName . ');');
                     }
                 }
             } else {
@@ -72,14 +72,14 @@ trait Dao
                     foreach ($columnType as $fkey => $fvalue) {
                         $indexName = $field->getName().'__'.$fkey;
                         if ($this->indexExists($table, $prefix, $indexName)) {
-                            $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX ' . $this->db->quoteIdentifier($prefix . $indexName) . ';');
+                            $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $indexName . '`;');
                         }
                     }
                 } else {
                     // single -column field
                     $indexName = $field->getName();
                     if ($this->indexExists($table, $prefix, $indexName)) {
-                        $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX ' . $this->db->quoteIdentifier($prefix . $indexName) . ';');
+                        $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $indexName . '`;');
                     }
                 }
             }
@@ -98,11 +98,11 @@ trait Dao
             $existingColName = current($matchingExisting);
         }
         if ($existingColName === null) {
-            $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD COLUMN ' . $this->db->quoteIdentifier($colName) . ' ' . $type . $default . ' ' . $null . ';');
+            $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
             $this->resetValidTableColumnsCache($table);
         } else {
             if (!DataObject\ClassDefinition\Service::skipColumn($this->tableDefinitions, $table, $colName, $type, $default, $null)) {
-                $this->db->executeQuery('ALTER TABLE `' . $table . '` CHANGE COLUMN ' . $this->db->quoteIdentifier($existingColName) . ' ' . $this->db->quoteIdentifier($colName) . ' ' . $type . $default . ' ' . $null . ';');
+                $this->db->executeQuery('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
             }
         }
     }
