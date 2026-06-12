@@ -175,10 +175,9 @@ class Sql extends AbstractAdapter
             ["''", '""', '``'],
             $sql
         ) ?? $sql;
-        
+
         // Normalize whitespace/newlines for consistent boundary checking
-        $sqlForValidation = preg_replace('/[\s\n\r]+/s', ' ', $sqlForValidation);
-        
+        $sqlForValidation = preg_replace('/\s+/s', ' ', $sqlForValidation) ?? $sqlForValidation;
         $forbiddenPatterns = [
             '/;/',
             '/--\s/', // comment start (MySQL-style, requires whitespace after --)
