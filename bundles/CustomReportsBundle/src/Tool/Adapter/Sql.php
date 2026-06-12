@@ -49,7 +49,7 @@ class Sql extends AbstractAdapter
 
             $sql = $baseQuery['data'] . $order;
             if ($offset !== null && $limit) {
-                $sql .= " LIMIT " . (int) $offset . "," . (int) $limit;
+                $sql .= ' LIMIT ' . (int) $offset . ',' . (int) $limit;
             }
 
             $data = $db->fetchAllAssociative($sql);
