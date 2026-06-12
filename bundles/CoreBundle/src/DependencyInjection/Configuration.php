@@ -125,6 +125,7 @@ final class Configuration implements ConfigurationInterface
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
+        $this->addTmpStoreNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
@@ -861,6 +862,25 @@ final class Configuration implements ConfigurationInterface
 
         $this->addImplementationLoaderNode($classDefinitionsNode, 'data');
         $this->addImplementationLoaderNode($classDefinitionsNode, 'layout');
+    }
+
+    /**
+     * Add tmp_store specific extension config
+     */
+    private function addTmpStoreNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('tmp_store')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('unserialize_allowed_classes')
+                        ->info('Additional PHP classes to allow when unserializing data from the tmp_store table.')
+                        ->scalarPrototype()->end()
+                        ->defaultValue([])
+                    ->end()
+                ->end()
+            ->end();
     }
 
     /**
