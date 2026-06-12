@@ -115,7 +115,7 @@ class Authentication
             return null;
         }
 
-        if ($token instanceof TokenInterface && static::containsIncompleteClass($token)) {
+        if ($token instanceof TokenInterface && self::containsIncompleteClass($token)) {
             Logger::warning('Security token from session contains __PHP_Incomplete_Class — rejecting.', ['key' => 'pimcore_admin']);
 
             return null;
@@ -144,7 +144,7 @@ class Authentication
 
         $items = is_array($value) ? $value : (array) $value;
         foreach ($items as $item) {
-            if (static::containsIncompleteClass($item, $visited)) {
+            if (self::containsIncompleteClass($item, $visited)) {
                 return true;
             }
         }
