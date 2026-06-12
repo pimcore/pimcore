@@ -521,9 +521,10 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
             $height = 'calc(' . $height . ' - 1px)';
         }
 
-        $request = Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
-        if ($request !== null && $request->query->getBoolean('pimcore_studio')) {
-            $messageAttr = $message !== ''
+        if ($this->isStudioRequest()) {
+            // expose the message only to authenticated editmode requests or in debug mode,
+            // the query parameter alone could be set by anyone on a frontend request
+            $messageAttr = $message !== '' && ($this->getEditmode() || Pimcore::inDebugMode())
                 ? ' data-message="' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '"'
                 : '';
 
@@ -962,6 +963,17 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         return implode('', $durationParts);
     }
 
+    private function isStudioRequest(): bool
+    {
+        $request = Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
+
+        return $request !== null
+            && (
+                $request->query->getBoolean('pimcore_studio')
+                || $request->query->getBoolean('pimcore_studio_preview')
+            );
+    }
+
     private function getProgressCode(?string $thumbnail = null): string
     {
         $uid = $this->getUniqId();
@@ -969,11 +981,16 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         $width = $this->getWidthWithUnit();
         $height = $this->getHeightWithUnit();
 
-        $request = Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
-        if ($request !== null && $request->query->getBoolean('pimcore_studio')) {
+        if ($this->isStudioRequest()) {
+            // keep the poster image so the studio preview shows something meaningful,
+            // in editmode studio-ui-bundle renders its own loading UI on top of the marker
+            $poster = $thumbnail !== null && $thumbnail !== ''
+                ? '<img src="' . $thumbnail . '" style="width: ' . $width . '; height: ' . $height . ';">'
+                : '';
+
             return '
             <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
-                <div class="pimcore_editable_video_progress" style="width: ' . $width . '; height: ' . $height . ';"></div>
+                <div class="pimcore_editable_video_progress" style="width: ' . $width . '; height: ' . $height . ';">' . $poster . '</div>
             </div>';
         }
 
