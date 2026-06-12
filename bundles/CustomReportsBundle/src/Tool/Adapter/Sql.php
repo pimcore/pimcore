@@ -49,7 +49,7 @@ class Sql extends AbstractAdapter
 
             $sql = $baseQuery['data'] . $order;
             if ($offset !== null && $limit) {
-                $sql .= " LIMIT $offset,$limit";
+                $sql .= " LIMIT " . (int) $offset . "," . (int) $limit;
             }
 
             $data = $db->fetchAllAssociative($sql);
@@ -175,7 +175,10 @@ class Sql extends AbstractAdapter
             ["''", '""', '``'],
             $sql
         ) ?? $sql;
-
+        
+        // Normalize whitespace/newlines for consistent boundary checking
+        $sqlForValidation = preg_replace('/[\s\n\r]+/s', ' ', $sqlForValidation);
+        
         $forbiddenPatterns = [
             '/;/',
             '/--\s/', // comment start (MySQL-style, requires whitespace after --)
