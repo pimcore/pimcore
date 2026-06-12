@@ -169,7 +169,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     {
         // A field name is emitted verbatim into the generated PHP class files (as a property,
         // getter/setter and constant) and into ALTER TABLE DDL, so it must be a valid identifier.
-        // The 63 character cap keeps the name within MySQL's 64 byte identifier limit.
+        // The length is capped at 63 characters to bound it; note that generated index and
+        // multi-column identifiers add prefixes/suffixes and may still exceed the DB identifier limit.
         if ($name !== '' && !preg_match('/^[a-zA-Z_][a-zA-Z0-9_]{0,62}$/', $name)) {
             throw new InvalidArgumentException(sprintf('Invalid field name "%s"', $name));
         }
