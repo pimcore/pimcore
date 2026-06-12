@@ -135,10 +135,19 @@ final class Thumbnail implements ThumbnailInterface
         }
 
         if (empty($this->pathReference)) {
-            $this->pathReference = [
-                'type' => 'error',
-                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
-            ];
+            if ($this->useOriginalFile($this->asset->getFilename())) {
+                // SVG generation failed (e.g. rasterization not supported) — serve the original file
+                // rather than a generic error placeholder, since browsers can display SVGs natively.
+                $this->pathReference = [
+                    'type' => 'asset',
+                    'src' => $this->asset->getRealFullPath(),
+                ];
+            } else {
+                $this->pathReference = [
+                    'type' => 'error',
+                    'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+                ];
+            }
         }
 
         if ($this->hasListeners(AssetEvents::IMAGE_THUMBNAIL)) {
