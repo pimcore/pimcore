@@ -91,7 +91,8 @@ class Authentication
             \Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken::class,
             \Symfony\Component\Security\Core\Authentication\Token\RememberMeToken::class,
             \Symfony\Component\Security\Core\Authentication\Token\SwitchUserToken::class,
-
+            \Scheb\TwoFactorBundle\Security\Authentication\Token\TwoFactorToken::class,
+            
             // user classes contained within the token
             \Pimcore\Security\User\User::class,
             \Pimcore\Model\User::class,
