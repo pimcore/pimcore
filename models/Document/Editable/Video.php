@@ -501,7 +501,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     private function getErrorCode(string $message = ''): string
     {
-        $messageAttr = $message !== ''
+        // expose the message only in editmode or debug mode, this markup
+        // is also rendered on frontend requests
+        $messageAttr = $message !== '' && ($this->getEditmode() || Pimcore::inDebugMode())
             ? ' data-message="' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '"'
             : '';
 
@@ -929,9 +931,19 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     private function getProgressCode(?string $thumbnail = null): string
     {
+        $width = $this->getWidthWithUnit();
+        $height = $this->getHeightWithUnit();
+
+        // keep the poster image so frontend and preview requests show something
+        // meaningful, in editmode studio-ui-bundle renders its own loading UI on
+        // top of the marker
+        $poster = $thumbnail !== null && $thumbnail !== ''
+            ? '<img src="' . $thumbnail . '" style="width: ' . $width . '; height: ' . $height . ';">'
+            : '';
+
         $code = '
         <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
-            <div class="pimcore_editable_video_progress" style="width: ' . $this->getWidthWithUnit() . '; height: ' . $this->getHeightWithUnit() . ';"></div>
+            <div class="pimcore_editable_video_progress" style="width: ' . $width . '; height: ' . $height . ';">' . $poster . '</div>
         </div>';
 
         return $code;
