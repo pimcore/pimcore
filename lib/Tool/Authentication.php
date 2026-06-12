@@ -109,7 +109,47 @@ class Authentication
             ini_set('unserialize_callback_func', $prevUnserializeHandler);
         }
 
+        if ($token !== null && !($token instanceof TokenInterface)) {
+            Logger::warning('Security token from session is not a TokenInterface instance — rejecting.', ['key' => 'pimcore_admin', 'type' => get_debug_type($token)]);
+
+            return null;
+        }
+
+        if ($token instanceof TokenInterface && static::containsIncompleteClass($token)) {
+            Logger::warning('Security token from session contains __PHP_Incomplete_Class — rejecting.', ['key' => 'pimcore_admin']);
+
+            return null;
+        }
+
         return $token;
+    }
+
+    private static function containsIncompleteClass(mixed $value, array &$visited = []): bool
+    {
+        if (!is_object($value) && !is_array($value)) {
+            return false;
+        }
+
+        $id = is_object($value) ? spl_object_id($value) : null;
+        if ($id !== null) {
+            if (in_array($id, $visited, true)) {
+                return false;
+            }
+            $visited[] = $id;
+        }
+
+        if (is_object($value) && $value instanceof \__PHP_Incomplete_Class) {
+            return true;
+        }
+
+        $items = is_array($value) ? $value : (array) $value;
+        foreach ($items as $item) {
+            if (static::containsIncompleteClass($item, $visited)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
