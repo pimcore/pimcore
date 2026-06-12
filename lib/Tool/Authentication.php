@@ -124,27 +124,32 @@ class Authentication
         return $token;
     }
 
-    private static function containsIncompleteClass(mixed $value, array &$visited = []): bool
+    private static function containsIncompleteClass(mixed $value, array &$visited = [], int $depth = 0): bool
     {
         if (!is_object($value) && !is_array($value)) {
             return false;
         }
 
-        $id = is_object($value) ? spl_object_id($value) : null;
-        if ($id !== null) {
-            if (in_array($id, $visited, true)) {
-                return false;
-            }
-            $visited[] = $id;
+        // Protect against cyclic references / overly deep structures in crafted serialized payloads.
+        if ($depth > 64) {
+            return true;
         }
 
-        if (is_object($value) && $value instanceof \__PHP_Incomplete_Class) {
-            return true;
+        if (is_object($value)) {
+            $id = spl_object_id($value);
+            if (isset($visited[$id])) {
+                return false;
+            }
+            $visited[$id] = true;
+
+            if ($value instanceof \__PHP_Incomplete_Class) {
+                return true;
+            }
         }
 
         $items = is_array($value) ? $value : (array) $value;
         foreach ($items as $item) {
-            if (self::containsIncompleteClass($item, $visited)) {
+            if (self::containsIncompleteClass($item, $visited, $depth + 1)) {
                 return true;
             }
         }
