@@ -22,6 +22,7 @@ class ResolveMimeTypeEvent extends Event
         protected string $filename,
         protected string $mimeType,
         protected ?Asset $asset = null,
+        protected bool $isNewAsset = true,
     ) {
     }
 
@@ -43,5 +44,10 @@ class ResolveMimeTypeEvent extends Event
     public function getAsset(): ?Asset
     {
         return $this->asset;
+    }
+
+    public function isNewAsset(): bool
+    {
+        return $this->isNewAsset;
     }
 }

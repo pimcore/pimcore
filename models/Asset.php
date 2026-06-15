@@ -748,7 +748,7 @@ class Asset extends Element\AbstractElement
                     $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
                 }
 
-                $mimeTypeEvent = new ResolveMimeTypeEvent($this->getFilename(), $mimeType, $this);
+                $mimeTypeEvent = new ResolveMimeTypeEvent($this->getFilename(), $mimeType, $this, !($params['isUpdate'] ?? false));
                 $this->dispatchEvent($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
                 $mimeType = $mimeTypeEvent->getMimeType();
 
