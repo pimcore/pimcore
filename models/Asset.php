@@ -355,6 +355,7 @@ class Asset extends Element\AbstractElement
                 unset($data['sourcePath']);
             }
 
+            $mimeType ??= 'application/octet-stream';
             $mimeTypeEvent = new ResolveMimeTypeEvent($data['filename'], $mimeType);
             Pimcore::getEventDispatcher()->dispatch($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
             $mimeType = $mimeTypeEvent->getMimeType();

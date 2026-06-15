@@ -203,5 +203,5 @@ final class AssetEvents
      *
      * @var string
      */
-    const RESOLVE_MIME_TYPE = 'pimcore.asset.resolveMimeType';
+    const RESOLVE_MIME_TYPE = 'pimcore.asset.resolve-mime-type';
 }
