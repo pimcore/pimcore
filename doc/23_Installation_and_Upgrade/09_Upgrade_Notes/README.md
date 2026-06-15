@@ -1,5 +1,14 @@
 # Upgrade Notes
 
+## Pimcore 12.3.10
+
+### Deprecations
+
+#### [Document Editor]
+
+The `width` and `height` options of `Pimcore\Extension\Document\Areabrick\EditableDialogBoxConfiguration` are deprecated and will be removed in 2027.1. 
+Editable dialog boxes work differently in the new Studio UI, so these options no longer have any effect.
+
 ## Pimcore 12.3.6
 
 ### [Assets]
