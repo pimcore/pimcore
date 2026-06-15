@@ -64,11 +64,10 @@ class AuthenticationTest extends TestCase
      */
     public function testNestedGadgetInsideAllowedTokenIsNeutralised(): void
     {
-        $token = new UsernamePasswordToken(
-            $this->createSecurityUser('admin'),
-            'pimcore_admin',
-            ['gadget' => new AuthDeserializeCanary()]
-        );
+        $token = new UsernamePasswordToken($this->createSecurityUser('admin'), 'pimcore_admin');
+        // Token attributes are part of the serialized graph; roles must stay strings, so the
+        // gadget is nested via an attribute rather than the roles constructor argument.
+        $token->setAttribute('gadget', new AuthDeserializeCanary());
 
         $payload = serialize($token);
         AuthDeserializeCanary::$fired = false;
