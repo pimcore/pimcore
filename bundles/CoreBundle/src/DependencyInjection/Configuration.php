@@ -1252,6 +1252,11 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                        ->arrayNode('session_token_allowed_classes')
+                            ->info('Additional PHP classes allowed when unserializing the admin session security token (e.g. custom authenticator tokens). The built-in Symfony/Pimcore token and user classes are always allowed.')
+                            ->scalarPrototype()->end()
+                            ->defaultValue([])
+                        ->end()
                 ->end()
             ->end();
     }
