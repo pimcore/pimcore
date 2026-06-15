@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
+use __PHP_Incomplete_Class;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
 use Exception;
@@ -79,7 +80,7 @@ class Authentication
 
         // A tampered or foreign payload deserializes to false or an incomplete class; the
         // caller additionally requires an instanceof TokenInterface, so we just drop it here.
-        if ($token === false || $token instanceof \__PHP_Incomplete_Class) {
+        if ($token === false || $token instanceof __PHP_Incomplete_Class) {
             Logger::warning('Failed to safely unserialize the security token from the session.', ['key' => 'pimcore_admin']);
 
             return null;

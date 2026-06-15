@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Tool;
 
+use __PHP_Incomplete_Class;
 use Pimcore\Model\User as PimcoreUser;
 use Pimcore\Security\User\User as SecurityUser;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -90,7 +91,7 @@ class AuthenticationTest extends TestCase
         $result = $this->safelyUnserialize($payload);
 
         $this->assertInstanceOf(TokenInterface::class, $result);
-        $this->assertNotInstanceOf(\__PHP_Incomplete_Class::class, $result->getUser());
+        $this->assertNotInstanceOf(__PHP_Incomplete_Class::class, $result->getUser());
         $this->assertInstanceOf(SecurityUser::class, $result->getUser());
         $this->assertSame('admin', $result->getUser()->getUserIdentifier());
     }
