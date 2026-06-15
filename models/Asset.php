@@ -24,6 +24,7 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
+use Pimcore\Event\Model\Asset\ResolveMimeTypeEvent;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
 use Pimcore\Helper\MimeTypeHelper;
@@ -353,6 +354,10 @@ class Asset extends Element\AbstractElement
                 }
                 unset($data['sourcePath']);
             }
+
+            $mimeTypeEvent = new ResolveMimeTypeEvent($data['filename'], $mimeType);
+            Pimcore::getEventDispatcher()->dispatch($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
+            $mimeType = $mimeTypeEvent->getMimeType();
 
             $type = self::getTypeFromMimeMapping($mimeType, $data['filename']);
             // only check maxpixels if it is an image
@@ -741,6 +746,11 @@ class Asset extends Element\AbstractElement
                 if (!$mimeType || $mimeType === 'application/octet-stream') {
                     $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
                 }
+
+                $mimeTypeEvent = new ResolveMimeTypeEvent($this->getFilename(), $mimeType, $this);
+                $this->dispatchEvent($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
+                $mimeType = $mimeTypeEvent->getMimeType();
+
                 $this->setMimeType($mimeType);
                 $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
