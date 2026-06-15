@@ -65,6 +65,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $container->setParameter('pimcore.tmp_store.unserialize_allowed_classes', $config['tmp_store']['unserialize_allowed_classes']);
 
+        $container->setParameter('pimcore.security.session_token_allowed_classes', $config['security']['session_token_allowed_classes']);
+
         $container->setParameter('pimcore.translations.admin_translation_mapping', $config['translations']['admin_translation_mapping']);
 
         $container->setParameter('pimcore.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
