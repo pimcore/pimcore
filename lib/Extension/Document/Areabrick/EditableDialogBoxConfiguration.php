@@ -19,8 +19,14 @@ class EditableDialogBoxConfiguration implements JsonSerializable
 {
     protected ?string $id = null;
 
+    /**
+     * @deprecated since 12.3, will be removed in 2027.1. The option has no effect in the new Studio UI.
+     */
     protected ?int $width = 550;
 
+    /**
+     * @deprecated since 12.3, will be removed in 2027.1. The option has no effect in the new Studio UI.
+     */
     protected ?int $height = 370;
 
     protected array $items = [];
@@ -42,31 +48,57 @@ class EditableDialogBoxConfiguration implements JsonSerializable
         return $this;
     }
 
+    /**
+     * @deprecated since 12.3, will be removed in 2027.1. The option has no effect in the new Studio UI.
+     */
     public function getWidth(): ?int
     {
         return $this->width;
     }
 
     /**
+     * @deprecated since 12.3, will be removed in 2027.1. The option has no effect in the new Studio UI.
+     *
      * @return $this
      */
     public function setWidth(?int $width): static
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '12.3',
+            'Setting the "width" option of %s is deprecated and will be removed in 2027.1. '
+            . 'The option has no effect in the new Studio UI.',
+            self::class
+        );
+
         $this->width = $width;
 
         return $this;
     }
 
+    /**
+     * @deprecated since 12.3, will be removed in 2027.1. The option has no effect in the new Studio UI.
+     */
     public function getHeight(): ?int
     {
         return $this->height;
     }
 
     /**
+     * @deprecated since 12.3, will be removed in 2027.1. The option has no effect in the new Studio UI.
+     *
      * @return $this
      */
     public function setHeight(?int $height): static
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '12.3',
+            'Setting the "height" option of %s is deprecated and will be removed in 2027.1. '
+            . 'The option has no effect in the new Studio UI.',
+            self::class
+        );
+
         $this->height = $height;
 
         return $this;
