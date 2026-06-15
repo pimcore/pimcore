@@ -82,6 +82,7 @@ class ResolveMimeTypeEventTest extends ModelTestCase
 
     public function testEventFiredOnCreate(): void
     {
+        $fired = false;
         $this->addListener(function (ResolveMimeTypeEvent $event) use (&$fired): void {
             $fired = true;
         });
@@ -136,6 +137,7 @@ class ResolveMimeTypeEventTest extends ModelTestCase
     {
         $asset = TestHelper::createImageAsset();
 
+        $fired = false;
         $this->addListener(function (ResolveMimeTypeEvent $event) use (&$fired): void {
             $fired = true;
         });
