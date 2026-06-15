@@ -29,5 +29,4 @@ pimcore:
 ```
 
 The classes listed here are **merged** with Pimcore's built-in defaults, so you do not need to repeat the core
-classes. This mirrors the [`tmp_store.unserialize_allowed_classes`](../43_Tmp_Store.md#extending-allowed-classes-for-unserialization)
-mechanism used for the Tmp Store.
+classes. This mirrors the `tmp_store.unserialize_allowed_classes` mechanism used for the Tmp Store.
