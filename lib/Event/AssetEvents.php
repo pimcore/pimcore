@@ -195,10 +195,10 @@ final class AssetEvents
      * Allows listeners to override the determined MIME type.
      *
      * Arguments:
-     *  - filename | string | the asset filename
-     *  - mimeType | string | the guessed MIME type — modify via setMimeType()
-     *  - asset    | Pimcore\Model\Asset|null | the asset instance (null during create())
-     *
+     *  - filename   | string | the asset filename
+     *  - mimeType   | string | the guessed MIME type — modify via setMimeType()
+     *  - asset      | Pimcore\Model\Asset|null | the asset instance (null during create())
+     *  - isNewAsset | bool | whether the asset is new (true for create/save, false for updates)
      * @Event("Pimcore\Event\Model\Asset\ResolveMimeTypeEvent")
      *
      * @var string
