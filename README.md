@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://pimcore.com/"><img src="doc/img/logo-readme.svg" alt="Pimcore" width="350"></a>
+  <a href="https://pimcore.com/"><img src="doc/img/logo.svg" alt="Pimcore" width="350"></a>
 </p>
 
 <p align="center">
@@ -16,7 +16,7 @@
 <p align="center">
   <a href="https://pimcore.com/">Website</a> ·
   <a href="https://docs.pimcore.com/platform/">Documentation</a> ·
-  <a href="https://demo.pimcore.com/">Live Demo</a> ·
+  <a href="https://pimcore.com/en/demo-request">Live Demo</a> ·
   <a href="https://www.youtube.com/watch?v=JC8q_6Mu7g0&list=PLrlLr70ddFwLjIkVO8k4vk2rHZ82LwhvF">Pimcore Inside</a> ·
   <a href="https://github.com/orgs/pimcore/discussions">Discussions</a> ·
   <a href="https://github.com/pimcore/platform-version/issues">Report an issue</a>
@@ -116,7 +116,9 @@ version such as `2026.1`. Major Platform Versions ship once per year; the docume
 Versions. Starting with 2026.1, every module carries the same version number as the platform. New projects depend 
 on `pimcore/platform-version` by default.
 
-## Quick start
+## How to get started
+
+### Local installation
 
 Pimcore 2026.x uses Docker for local development. No local PHP or Composer installation is required.
 
@@ -130,17 +132,17 @@ installation steps.
 
 A hosted Enterprise Edition demo is available without any local setup:
 
-- URL: https://demo.pimcore.com/
-- Username: `superuser`
-- Password: `enterprisedemo`
+https://pimcore.com/en/demo-request
+
 
 ## Contributing
 
-Code lives in this and the other Pimcore repositories, and pull requests work as they always have.
+We apprechiate all sorts of contributions to the Pimcore Platform.
 
-- **Bug fixes** — open a pull request including step-by-step instructions to reproduce the problem.
+- **Bug fixes** — open a pull request including step-by-step instructions to reproduce the problem in the respective 
+  repository.
 - **New features** — open a discussion with the core team before you start developing.
-- **Security vulnerabilities** — see our [security policy](https://github.com/pimcore/pimcore/security/policy).
+- **Security vulnerabilities** — see our [security policy](https://github.com/pimcore/platform-version/security/policy).
 
 Read the [contributing guide](https://github.com/pimcore/pimcore/blob/2026.x/CONTRIBUTING.md) before submitting a pull
 request. Contributions require accepting the [CLA](https://github.com/pimcore/pimcore/blob/2026.x/CLA.md).
