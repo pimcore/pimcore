@@ -106,10 +106,16 @@ final class SecurityPolicy implements SecurityPolicyInterface
     public function checkMethodAllowed($obj, $method): void
     {
         foreach (self::BLOCKED_CLASSES as $blocked) {
+            if (!class_exists($blocked) && !interface_exists($blocked)) {
+                continue;
+            }
+
             if ($obj instanceof $blocked) {
+                $class = $obj::class;
+
                 throw new SecurityNotAllowedMethodError(
-                    sprintf('Calling method "%s" on "%s" is not allowed in templates.', $method, get_class($obj)),
-                    get_class($obj),
+                    sprintf('Calling method "%s" on "%s" is not allowed in templates.', $method, $class),
+                    $class,
                     $method,
                 );
             }
@@ -123,10 +129,16 @@ final class SecurityPolicy implements SecurityPolicyInterface
     public function checkPropertyAllowed($obj, $property): void
     {
         foreach (self::BLOCKED_CLASSES as $blocked) {
+            if (!class_exists($blocked) && !interface_exists($blocked)) {
+                continue;
+            }
+
             if ($obj instanceof $blocked) {
+                $class = $obj::class;
+
                 throw new SecurityNotAllowedPropertyError(
-                    sprintf('Accessing property "%s" on "%s" is not allowed in templates.', $property, get_class($obj)),
-                    get_class($obj),
+                    sprintf('Accessing property "%s" on "%s" is not allowed in templates.', $property, $class),
+                    $class,
                     $property,
                 );
             }
