@@ -106,7 +106,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
     public function checkMethodAllowed($obj, $method): void
     {
         foreach (self::BLOCKED_CLASSES as $blocked) {
-            if (!class_exists($blocked) && !interface_exists($blocked)) {
+            if (!class_exists($blocked, false) && !interface_exists($blocked, false)) {
                 continue;
             }
 
