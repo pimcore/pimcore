@@ -1,90 +1,172 @@
-![Pimcore - Own the digital World](./doc/img/logo-readme.svg)
+<p align="center">
+  <a href="https://pimcore.com/"><img src="doc/img/logo-readme.svg" alt="Pimcore" width="350"></a>
+</p>
 
-Pimcore Core Framework - Open Core Data & Experience Management Platform: PIM, MDM, CDP, DAM, DXP/CMS & Digital Commerce
+<p align="center">
+  <strong>Open Core Platform for Product Experience Management (PXM)</strong><br>
+  One platform. Any data. Any channel. Any process.
+</p>
 
-[![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
-[![Software License](https://img.shields.io/badge/license-POCL-brightgreen.svg?style=flat)](LICENSE.md)
+<p align="center">
+  <a href="https://packagist.org/packages/pimcore/pimcore"><img src="https://img.shields.io/packagist/v/pimcore/pimcore.svg" alt="Packagist Version"></a>
+  <a href="https://github.com/pimcore/pimcore/blob/2026.x/LICENSE.md"><img src="https://img.shields.io/badge/license-POCL-brightgreen.svg" alt="License: POCL"></a>
+  <a href="https://packagist.org/packages/pimcore/pimcore"><img src="https://img.shields.io/packagist/php-v/pimcore/pimcore.svg" alt="PHP Version"></a>
+</p>
 
-* 📢 **[We are hiring!](https://pimcore.com/en/careers?utm_source=github&utm_medium=readme-pimcore-pimcore&utm_campaign=careers)** - Join us on our mission!
-* 🌍 [Website](https://pimcore.com/) - Learn more about Pimcore
-* 📖 [Documentation](https://pimcore.com/docs/)
-* 🉐 **Help translate Pimcore!** Start with [Essentials](https://poeditor.com/join/project/VWmZyvFVMH), continue with [Extended](https://poeditor.com/join/project/XliCYYgILb)
-* 👍 Like us on [Facebook](https://www.facebook.com/pimcore), follow us on [LinkedIn](https://www.linkedin.com/company/3505853/) and [Twitter](https://twitter.com/pimcore)
-* 🐞 [Issue Tracker](https://github.com/pimcore/pimcore/issues) - Report bugs or suggest new features
-* 🗨  [Forums](https://github.com/pimcore/pimcore/discussions) - Community support and discussions  
+<p align="center">
+  <a href="https://pimcore.com/">Website</a> ·
+  <a href="https://docs.pimcore.com/platform/">Documentation</a> ·
+  <a href="https://demo.pimcore.com/">Live Demo</a> ·
+  <a href="https://www.youtube.com/watch?v=JC8q_6Mu7g0&list=PLrlLr70ddFwLjIkVO8k4vk2rHZ82LwhvF">Pimcore Inside</a> ·
+  <a href="https://github.com/orgs/pimcore/discussions">Discussions</a> ·
+  <a href="https://github.com/pimcore/platform-version/issues">Report an issue</a>
+</p>
 
-## Contribute  
-**Bug fixes:** please create a pull request including a step by step description to reproduce the problem  
-**Contribute features:** contact the core-team via issue before you start developing   
-**Security vulnerabilities:** please see our [security policy](https://github.com/pimcore/pimcore/security/policy)
-  
-For details, please have a look at our [contributing guide](CONTRIBUTING.md).
+---
 
-## Overview
-![Technology and Architecture](./doc/img/pimcore-technology-architecture.svg)
+## What is Pimcore
 
-## Key Benefits and Advantages
-### ⚒ Data Modelling and UI Design at the same Time 
-No matter if you're dealing with unstructured web documents or structured data for MDM/PIM, you define the 
-UI design (web documents by a template and structured data with an intuitive graphical editor), Pimcore knows 
-how to persist the data efficiently and optimized for fast access.
+Pimcore is an open core platform for Product Experience Management (PXM). It provides a solid, API-driven foundation for
+managing digital data and customer experience, combining a Core Framework with a modular set of Core Extensions covering
+PIM, MDM, DAM, CDP, DXP/CMS, and Digital Commerce — all licensed under the Pimcore Open Core License (POCL). Data is
+stored independently of the channel and delivered to any output: websites, commerce systems, mobile apps, print,
+digital signage, or headless consumers via REST and GraphQL. [Pimcore Studio](#pimcore-studio) provides the unified
+administration interface for the entire platform.
 
-### 🎛 Agnostic and Universal Framework for your Data
-Due to the framework approach, Pimcore is very flexible and adapts perfectly to your needs. Built on top of 
-the well-known Symfony Framework you have a solid and modern foundation for your project. 
+![pimcore-general.png](doc/img/pimcore-general.png)
 
-### 🚀 Extensible and huge Symfony Community
-Benefit from all existing Symfony Components and Bundles provided by the community or create your own 
-Bundles to extend your Projects with reusable components. 
+Pimcore ships with rich out-of-the-box functionality and is designed to be fully customizable and extensible. You define
+your own data models, build your own templates or consume the APIs, integrate with any IT infrastructure, and tailor
+the platform to exact project requirements — from a single standalone implementation to a complex multi-system
+architecture.
 
-### 💎 Your Digital World consolidated in one Platform
-No more API, import/export and synchronization hell between MDM/PIM, E-Commerce, DAM, and your Web-CMS. 
-All is working seamlessly together, natively ... this is what Pimcore is built for. 
+## Features
 
-### ✨️ Modern and Intuitive UI
-We love good-looking user interfaces, designed to be efficient for daily use and optimized for a great
-experience for editors. 
+All data in Pimcore is organized into three core element types that can be linked and related to each other:
 
-## Preview and Demo
-### Data Objects
-![Pimcore Admin Interface Screenshot PIM/MDM](./doc/img/pimcore-screenshot-3.png)
-Manage any structured data based on a predefined data model, either manually or automatically via the APIs. Define the structure and attributes of your objects by using the class editor. Manage any data – products (PIM/MDM), categories, customers (CDP), orders (digital commerce), blog articles (DXP/CMS). Data Objects provide the possibility to manage structured data for multiple output channels from a single source. By centralizing data in one place, Pimcore's data objects enable you to achieve better data completeness and data quality, allowing you to create and maintain a consistent, up-to-date customer experience across multiple touchpoints in less time.
-### Digital Assets
-![Pimcore Admin Interface Screenshot DAM](./doc/img/pimcore-screenshot-2.png)
-Assets are the DAM part of Pimcore. Store, manage and organize digital files such as images, videos, PDFs, Word/Excel documents in a folder structure. Preview 200+ file types directly in Pimcore, edit pictures, and enrich files with additional meta-data. Facial recognition for focal points in images is available. Editors only need to maintain one high-resolution version of a file in the system. Pimcore can automatically generate all required output formats for various channels such as commerce, apps, websites. Of course, including comprehensive user management and version control.
-### Documents
-![Pimcore Admin Interface Screenshot CMS](./doc/img/pimcore-screenshot-1.png)
-The DXP/CMS part of Pimcore for managing unstructured content such as the pages of a website and its navigation. Based on Twig templates, documents render physical HTML/CSS pages and provide the capabilities to manage the presentation of data, exactly how customers will experience it. They can be composed by administrators by arranging predefined layout elements. Pimcore documents provide multilingual and multi-site capabilities for websites, including emails and newsletters. Total frontend flexibility enables a perfect blend of content and commerce. You can also use them to create content for offline channels, such as printed catalogs (web-to-print).
+- **Data Objects** — manage any structured data based on a class-editor-defined model, either manually or via API.
+  Covers products (PIM/MDM), categories, customers (CDP), orders (Digital Commerce), and articles (DXP/CMS).
+  Delivers consistent data to multiple output channels from a single source.
+  ![pimcore-objects.png](doc/img/pimcore-objects.png)
 
-#### Demo (Community Edition)
-_Admin-URL_ (stable): [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  
-_Admin-URL_ (dev): [https://11.x-dev.pimcore.fun/admin/](https://11.x-dev.pimcore.fun/admin/)  
-_Username_: `admin`  
-_Password_: `demo`
+- **Assets (DAM)** — store and manage any file type. Preview 200+ formats directly in Pimcore, auto-generate
+  channel-specific output formats, and enrich files with metadata and versioning.
+  ![pimcore-assets.png](doc/img/pimcore-assets.png)
 
-## Getting Started
-_**Only 3 commands to start!**_ 😎
-```bash
-COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/skeleton ./my-project
-cd ./my-project
-./vendor/bin/pimcore-install
-```
+- **Documents (DXP/CMS)** — build pages with Twig templates and inline editables, with full multilingual and multi-site 
+  support, plus emails, newsletters, and web-to-print. 
+  ![pimcore-documents.png](doc/img/pimcore-documents.png)
 
-This will install an empty skeleton application, 
-but we're also offering a demo package for your convenience - of course also with 3 commands 💪
-[Click here for more installation options and a detailed guide](https://pimcore.com/docs/platform/Pimcore/Getting_Started/)
+### The Pimcore Platform
 
+Pimcore is modular. Its modules ship as separate Composer packages (Core Modules & Extensions), all licensed under POCL:
 
-## Supported Versions and LTS
+- **[Data Onboarding & Distribution](https://docs.pimcore.com/platform/Datahub/)** — Datahub (GraphQL/REST), 
+  Data Importer, File Export, Simple REST, Webhooks
+- **[Productivity](https://docs.pimcore.com/platform/Backend_Power_Tools/)** — Backend Power Tools, Direct Edit, 
+  Workflow Designer
+- **[Automation](https://docs.pimcore.com/platform/Copilot/)** — Copilot, Copilot Showcases, Workflow Automation
+- **[Portals & Dashboards](https://docs.pimcore.com/platform/Studio_Dashboards/)** — Studio Dashboards, Portal Engine, 
+  Statistics Explorer
+- **[Advanced Data Management](https://docs.pimcore.com/platform/Headless_Documents/)** — Headless Documents,
+  Asset Metadata Class Definitions, Data Quality Management, Web-to-Print, Customer Management Framework
+- **[Marketing & Personalization](https://docs.pimcore.com/platform/Targeting/)** — Personalization
+- **[Integrations](https://docs.pimcore.com/platform/OpenID_Connect/)** — OpenID Connect, Translation Provider
+  Interfaces, Datahub Productsup
+- **[E-Commerce Framework](https://docs.pimcore.com/platform/Ecommerce_Framework/)** — catalog, pricing, cart,
+  checkout, and order management
 
-Community support of a minor version of Pimcore packages ends with the release of the next minor version. After end of
-community support, long term supported is provided in combination with enterprise edition.
+See [Pimcore Modules](https://docs.pimcore.com/platform/Pimcore_Platform/Pimcore_Modules/) for the full list and 
+[Pimcore Editions](https://docs.pimcore.com/platform/Pimcore_Platform/Pimcore_Editions/) for module availability per 
+edition (Community, Professional, Enterprise, PaaS).
 
-LTS versions are based on our [Platform Version Releases](https://pimcore.com/docs/platform/Platform_Version/) which cover
-the Core Framework as well as extensions provided by Pimcore. For details on versions and their support state see our
-[documentation](https://pimcore.com/docs/platform/Platform_Version/Platform_Version_Releases/).
+## Architecture
 
+Pimcore follows a layered architecture where multiple interfaces — the Studio administration UI, 
+server-rendered websites, and headless API consumers — all operate on the same core data layer.
 
-## Copyright and License 
-Copyright: [Pimcore](https://www.pimcore.com) GmbH
-For licensing details please visit [LICENSE.md](LICENSE.md)
+**Technology stack:**
+
+- **Backend** — PHP 8.5+, Symfony (MVC, DI, Messenger, Routing, Security)
+- **Studio UI** — React, TypeScript, Ant Design, Redux, RTK Query, Mercure, Rsbuild
+- **Persistence** — MySQL/MariaDB via Doctrine DBAL for structured data; Flysystem for file storage
+  (local, S3, and other adapters)
+- **Search & indexing** — OpenSearch or Elasticsearch via the Generic Data Index
+- **Cache** — Redis or Symfony Cache
+- **Background processing** — Symfony Messenger with a configurable message queue backend
+- **Real-time** — Mercure for server-sent events
+
+**Two delivery patterns:**
+
+- **Server-rendered** — Symfony controllers with Twig templates and Pimcore editables for inline content editing; pages 
+  are built and rendered by the Pimcore application itself.
+- **Headless** — REST and GraphQL APIs via Datahub; Pimcore acts as a pure data and content backend for any frontend or
+  external system.
+
+Both patterns can be used alongside each other in the same project.
+
+See the [Architecture documentation](https://docs.pimcore.com/platform/Pimcore_Platform/Pimcore_Architecture/) for full 
+details including application layers and the data flow between them.
+
+### Platform Versions
+
+Each module has its own repository and is released independently. The [pimcore/platform-version](https://github.com/pimcore/platform-version) 
+package bundles a set of specific module versions that are tested and verified to work together, released as a single 
+version such as `2026.1`. Major Platform Versions ship once per year; the documentation and demos are based on Platform 
+Versions. Starting with 2026.1, every module carries the same version number as the platform. New projects depend 
+on `pimcore/platform-version` by default.
+
+## Quick start
+
+Pimcore 2026.x uses Docker for local development. No local PHP or Composer installation is required.
+
+**Prerequisites:** Docker and Docker Compose installed, and your user must be allowed to run Docker commands and change
+file permissions.
+
+See the full [Installation guide](https://docs.pimcore.com/platform/Getting_Started/Installation/) for necessary 
+installation steps.
+
+### Try the live demo
+
+A hosted Enterprise Edition demo is available without any local setup:
+
+- URL: https://demo.pimcore.com/
+- Username: `superuser`
+- Password: `enterprisedemo`
+
+## Contributing
+
+Code lives in this and the other Pimcore repositories, and pull requests work as they always have.
+
+- **Bug fixes** — open a pull request including step-by-step instructions to reproduce the problem.
+- **New features** — open a discussion with the core team before you start developing.
+- **Security vulnerabilities** — see our [security policy](https://github.com/pimcore/pimcore/security/policy).
+
+Read the [contributing guide](https://github.com/pimcore/pimcore/blob/2026.x/CONTRIBUTING.md) before submitting a pull
+request. Contributions require accepting the [CLA](https://github.com/pimcore/pimcore/blob/2026.x/CLA.md).
+
+### Reporting issues
+
+Issue reporting for all Pimcore repositories is centralized.
+
+- **Public issues** — open them in [pimcore/platform-version/issues](https://github.com/pimcore/platform-version/issues),
+  not in individual repositories. This gives the community and maintainers one place to track, prioritize, and resolve
+  them.
+- **Private / customer-specific issues** — Pimcore partners and customers can use the
+  [Enterprise Portal](https://get.support.pimcore.com) for non-public information.
+
+Both paths are handled with the same priority; only the visibility differs.
+
+## Community & support
+
+- [GitHub Discussions](https://github.com/orgs/pimcore/discussions) — questions, ideas, and announcements
+- [Documentation](https://docs.pimcore.com/platform/) — guides and API reference
+- [Pimcore Academy](https://pimcore.com/en/resources/learning-hub) — tutorials and certification
+- [Pimcore Inside](https://www.youtube.com/watch?v=JC8q_6Mu7g0&list=PLrlLr70ddFwLjIkVO8k4vk2rHZ82LwhvF) — weekly 5-9 min
+  episodes covering new features and product insights straight from the team
+
+## License
+
+Pimcore is licensed under the [Pimcore Open Core License (POCL)](https://github.com/pimcore/pimcore/blob/2026.x/LICENSE.md).
+
+Copyright Pimcore GmbH.
