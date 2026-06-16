@@ -8,7 +8,7 @@ We gladly accept community pull requests. This is the preferred way to contribut
 There are a few necessary steps before we can accept a pull request:
 
 * [Fork us!](https://help.github.com/articles/fork-a-repo/)
-* Select the right branch. `main`(`2026.x`) for features and improvements or latest maintenance branch for bug fixes (`12.3`)
+* Select the right branch. `main`(`2026.x`) for features and improvements or latest maintenance branch for bug fixes (`2026.1`)
 * Code! Follow the coding standards defined [here](https://github.com/pimcore/pimcore/blob/2026.x/.php-cs-fixer.dist.php) and [here](https://github.com/pimcore/pimcore/blob/2026.x/doc/19_Development_Tools_and_Details/29_Testing/02_Core_Tests.md#perform-phpstan-analysis)
 * [Send a pull request](https://help.github.com/articles/using-pull-requests/) from your fork’s branch to our repo branch.
 * [Sign the CLA](https://cla-assistant.io/pimcore/pimcore) - see also below.
@@ -20,8 +20,8 @@ If you've created a pull request, it's not necessary anymore to create an issue 
 
 * Only file an issue if you're not able to fix the bug and provide the patch as a pull request.
 * Please keep in mind that the Pimcore team will only work on system critical and security bugs. 
-* [Open an issue](https://github.com/pimcore/pimcore/issues) here on GitHub.
-* Report security issues only by using [this form](https://pimcorehq.wufoo.com/forms/pimcore-security-report/). 
+* [Open an issue](https://github.com/pimcore/platform-versionttps:/issues) here on GitHub.
+* Report security issues only by using [security advisories](https://github.com/pimcore/platform-version/security/advisories). 
 * Please be patient as not all items will be tested immediately - remember, pimcore is open core and free of charge. 
 * Occasionally we'll close issues if they appear stale or are too vague - please don't take this personally! 
 Please feel free to re-open issues we've closed if there's something we've missed and they still need to be addressed.
