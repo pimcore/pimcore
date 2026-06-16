@@ -29,9 +29,9 @@ use Twig\Sandbox\SecurityPolicyInterface;
 final class SecurityPolicy implements SecurityPolicyInterface
 {
     /**
-     * Classes whose instances must never be accessible from a Twig template.
-     * Method calls and property accesses on objects that are an instanceof one
-     * of these classes will throw, preventing templates from traversing into
+     * Classes whose instances must not be traversable from Twig templates.
+     * Method calls and property accesses on objects that are an instance of any of
+     * these classes will throw, preventing templates from traversing into
      * database or infrastructure layers (e.g. object.getDao().db.fetchOne(...)).
      */
     private const BLOCKED_CLASSES = [
