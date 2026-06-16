@@ -30,14 +30,13 @@ final class SecurityPolicy implements SecurityPolicyInterface
 {
     /**
      * Classes whose instances must not be traversable from Twig templates.
-     * Method calls and property accesses on objects that are an instance of any of
-     * these classes will throw, preventing templates from traversing into
+     * Method calls and property accesses on objects that are instances of any of these
+     * classes will throw, preventing templates from traversing into
      * database or infrastructure layers (e.g. object.getDao().db.fetchOne(...)).
      */
     private const BLOCKED_CLASSES = [
         \Pimcore\Model\Dao\AbstractDao::class,
         \Doctrine\DBAL\Connection::class,
-        \Doctrine\DBAL\Driver\Connection::class,
         \PDO::class,
         \PDOStatement::class,
         \Symfony\Component\DependencyInjection\ContainerInterface::class,
