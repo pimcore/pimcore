@@ -16,18 +16,34 @@ namespace Pimcore\Twig\Sandbox;
 
 use Twig\Sandbox\SecurityNotAllowedFilterError;
 use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Sandbox\SecurityNotAllowedMethodError;
+use Twig\Sandbox\SecurityNotAllowedPropertyError;
 use Twig\Sandbox\SecurityNotAllowedTagError;
 use Twig\Sandbox\SecurityPolicyInterface;
 
 /**
- * Note: Reused to disable checks on object methods and properties.
- *
  * Represents a security policy which need to be enforced when sandbox mode is enabled.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
 final class SecurityPolicy implements SecurityPolicyInterface
 {
+    /**
+     * Classes whose instances must never be accessible from a Twig template.
+     * Method calls and property accesses on objects that are an instanceof one
+     * of these classes will throw, preventing templates from traversing into
+     * database or infrastructure layers (e.g. object.getDao().db.fetchOne(...)).
+     */
+    private const BLOCKED_CLASSES = [
+        \Pimcore\Model\Dao\AbstractDao::class,
+        \Doctrine\DBAL\Connection::class,
+        \Doctrine\DBAL\Driver\Connection::class,
+        \PDO::class,
+        \PDOStatement::class,
+        \Symfony\Component\DependencyInjection\ContainerInterface::class,
+        \Symfony\Component\Process\Process::class,
+    ];
+
     private array $allowedTags;
 
     private array $allowedFilters;
@@ -76,7 +92,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
         }
 
         foreach ($functions as $function) {
-            //check if a function is allowed or a pimcore twig functions
+            //check if a function is allowed or a pimcore twig function
             if (!in_array($function, $this->allowedFunctions) && !str_starts_with($function, 'pimcore_')) {
                 throw new SecurityNotAllowedFunctionError(sprintf('Function "%s" is not allowed.', $function), $function);
             }
@@ -89,7 +105,15 @@ final class SecurityPolicy implements SecurityPolicyInterface
      */
     public function checkMethodAllowed($obj, $method): void
     {
-        //do not perform any checks
+        foreach (self::BLOCKED_CLASSES as $blocked) {
+            if ($obj instanceof $blocked) {
+                throw new SecurityNotAllowedMethodError(
+                    sprintf('Calling method "%s" on "%s" is not allowed in templates.', $method, get_class($obj)),
+                    get_class($obj),
+                    $method,
+                );
+            }
+        }
     }
 
     /**
@@ -98,6 +122,14 @@ final class SecurityPolicy implements SecurityPolicyInterface
      */
     public function checkPropertyAllowed($obj, $property): void
     {
-        //do not perform any checks
+        foreach (self::BLOCKED_CLASSES as $blocked) {
+            if ($obj instanceof $blocked) {
+                throw new SecurityNotAllowedPropertyError(
+                    sprintf('Accessing property "%s" on "%s" is not allowed in templates.', $property, get_class($obj)),
+                    get_class($obj),
+                    $property,
+                );
+            }
+        }
     }
 }
