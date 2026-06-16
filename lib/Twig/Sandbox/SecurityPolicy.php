@@ -22,7 +22,7 @@ use Twig\Sandbox\SecurityNotAllowedTagError;
 use Twig\Sandbox\SecurityPolicyInterface;
 
 /**
- * Represents a security policy which need to be enforced when sandbox mode is enabled.
+ * Represents a security policy which needs to be enforced when sandbox mode is enabled.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
