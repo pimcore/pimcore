@@ -92,7 +92,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
         }
 
         foreach ($functions as $function) {
-            //check if a function is allowed or a pimcore twig function
+            // check if a function is allowed or a Pimcore Twig function
             if (!in_array($function, $this->allowedFunctions) && !str_starts_with($function, 'pimcore_')) {
                 throw new SecurityNotAllowedFunctionError(sprintf('Function "%s" is not allowed.', $function), $function);
             }
