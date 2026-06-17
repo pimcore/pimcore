@@ -87,7 +87,7 @@ server-rendered websites, and headless API consumers — all operate on the same
 
 **Technology stack:**
 
-- **Backend** — PHP 8.5+, Symfony (MVC, DI, Messenger, Routing, Security)
+- **Backend** — PHP 8.4 / 8.5, Symfony (MVC, DI, Messenger, Routing, Security)
 - **Studio UI** — React, TypeScript, Ant Design, Redux, RTK Query, Mercure, Rsbuild
 - **Persistence** — MySQL/MariaDB via Doctrine DBAL for structured data; Flysystem for file storage
   (local, S3, and other adapters)
