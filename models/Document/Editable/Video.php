@@ -499,20 +499,49 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->getHtml5Code(['mp4' => (string) $this->id]);
     }
 
+    private function isStudioRequest(): bool
+    {
+        $request = Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
+
+        return $request !== null
+            && (
+                $request->query->getBoolean('pimcore_studio')
+                || $request->query->getBoolean('pimcore_studio_preview')
+            );
+    }
+
     private function getErrorCode(string $message = ''): string
     {
-        // expose the message only in editmode or debug mode, this markup
-        // is also rendered on frontend requests
-        $messageAttr = $message !== '' && ($this->getEditmode() || Pimcore::inDebugMode())
-            ? ' data-message="' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '"'
-            : '';
+        $name = $this->getName();
+        $width = $this->getWidthWithUnit();
+        $height = $this->getHeightWithUnit();
 
-        $code = '
-        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
-            <div class="pimcore_editable_video_error"' . $messageAttr . ' style="width: ' . $this->getWidthWithUnit() . '; height: ' . $this->getHeightWithUnit() . ';"></div>
+        if ($this->isStudioRequest()) {
+            // studio-ui-bundle renders the error UI on top of this marker.
+            // expose the message only in editmode or debug mode, the query
+            // parameter alone could be set by anyone on a frontend request
+            $messageAttr = $message !== '' && ($this->getEditmode() || Pimcore::inDebugMode())
+                ? ' data-message="' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '"'
+                : '';
+
+            return '
+            <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
+                <div class="pimcore_editable_video_error"' . $messageAttr . ' style="width: ' . $width . '; height: ' . $height . ';"></div>
+            </div>';
+        }
+
+        // frontend rendering: visible placeholder with the not-supported icon
+        // served from CoreBundle (no dependency on the classic admin bundle)
+        if (!Pimcore::inDebugMode()) {
+            $message = '';
+        }
+
+        return '
+        <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
+            <div class="pimcore_editable_video_error" style="box-sizing: border-box; text-align:center; width: ' . $width . '; height: ' . $height . '; border:1px solid #000; background: url(/bundles/pimcorecore/img/filetype-not-supported.svg) no-repeat center center #fff;">
+                ' . $message . '
+            </div>
         </div>';
-
-        return $code;
     }
 
     private function parseYoutubeId(): string
@@ -931,23 +960,54 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     private function getProgressCode(?string $thumbnail = null): string
     {
+        $name = $this->getName();
         $width = $this->getWidthWithUnit();
         $height = $this->getHeightWithUnit();
 
-        // keep the poster image so frontend and preview requests show something
-        // meaningful, in editmode studio-ui-bundle renders its own loading UI on
-        // top of the marker. the poster fills the parent marker, which already
-        // carries the configured size
-        $poster = $thumbnail !== null && $thumbnail !== ''
-            ? '<img src="' . $thumbnail . '" style="width: 100%; height: 100%;">'
-            : '';
+        if ($this->isStudioRequest()) {
+            // studio-ui-bundle renders its own loading UI on top of this marker.
+            // the poster fills the parent marker, which already carries the size
+            $poster = $thumbnail !== null && $thumbnail !== ''
+                ? '<img src="' . $thumbnail . '" style="width: 100%; height: 100%;">'
+                : '';
 
-        $code = '
-        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
-            <div class="pimcore_editable_video_progress" style="width: ' . $width . '; height: ' . $height . ';">' . $poster . '</div>
+            return '
+            <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
+                <div class="pimcore_editable_video_progress" style="width: ' . $width . '; height: ' . $height . ';">' . $poster . '</div>
+            </div>';
+        }
+
+        // frontend rendering: poster with a loading spinner served from CoreBundle
+        // (no dependency on the classic admin bundle)
+        $uid = $this->getUniqId();
+
+        return '
+        <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
+            <style type="text/css">
+                #' . $uid . ' {
+                    position: relative;
+                }
+                #' . $uid . ' .pimcore_editable_video_progress_status {
+                    box-sizing:content-box;
+                    background:#fff url(/bundles/pimcorecore/img/video-loading.gif) center center no-repeat;
+                    width:66px;
+                    height:66px;
+                    padding:20px;
+                    border:1px solid #555;
+                    box-shadow: 2px 2px 5px #333;
+                    border-radius:20px;
+                    margin: 0 20px 0 20px;
+                    top: calc(50% - 66px);
+                    left: calc(50% - 66px);
+                    position:absolute;
+                    opacity: 0.8;
+                }
+            </style>
+            <div class="pimcore_editable_video_progress" id="' . $uid . '" style="width: ' . $width . '; height: ' . $height . ';">
+                <img src="' . $thumbnail . '" style="width: 100%; height: 100%;">
+                <div class="pimcore_editable_video_progress_status"></div>
+            </div>
         </div>';
-
-        return $code;
     }
 
     private function getEmptyCode(): string
