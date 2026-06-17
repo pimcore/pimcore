@@ -33,7 +33,7 @@ stored independently of the channel and delivered to any output: websites, comme
 digital signage, or headless consumers via REST and GraphQL. Pimcore Studio provides the unified
 administration interface for the entire platform.
 
-![pimcore-general.png](doc/img/pimcore-general.png)
+![Pimcore platform overview](doc/img/pimcore-general.png)
 
 Pimcore ships with rich out-of-the-box functionality and is designed to be fully customizable and extensible. You define
 your own data models, build your own templates or consume the APIs, integrate with any IT infrastructure, and tailor
@@ -47,15 +47,15 @@ All data in Pimcore is organized into three core element types that can be linke
 - **Data Objects** — manage any structured data based on a class-editor-defined model, either manually or via API.
   Covers products (PIM/MDM), categories, customers (CDP), orders (Digital Commerce), and articles (DXP/CMS).
   Delivers consistent data to multiple output channels from a single source.
-  ![pimcore-objects.png](doc/img/pimcore-objects.png)
+  ![Data objects management screenshot](doc/img/pimcore-objects.png)
 
 - **Assets (DAM)** — store and manage any file type. Preview 200+ formats directly in Pimcore, auto-generate
   channel-specific output formats, and enrich files with metadata and versioning.
-  ![pimcore-assets.png](doc/img/pimcore-assets.png)
+  ![Digital asset management (DAM) screenshot](doc/img/pimcore-assets.png)
 
 - **Documents (DXP/CMS)** — build pages with Twig templates and inline editables, with full multilingual and multi-site 
   support, plus emails, newsletters, and web-to-print. 
-  ![pimcore-documents.png](doc/img/pimcore-documents.png)
+  ![Document and page management (DXP/CMS) screenshot](doc/img/pimcore-documents.png)
 
 ### The Pimcore Platform
 
@@ -137,7 +137,7 @@ https://pimcore.com/en/demo-request
 
 ## Contributing
 
-We apprechiate all sorts of contributions to the Pimcore Platform.
+We appreciate all sorts of contributions to the Pimcore Platform.
 
 - **Bug fixes** — open a pull request including step-by-step instructions to reproduce the problem in the respective 
   repository.
