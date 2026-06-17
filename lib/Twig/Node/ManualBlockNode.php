@@ -65,23 +65,23 @@ final class ManualBlockNode extends Node
 
     private function getPhpCode(string $splitChars): string
     {
-
         $optionsString = $this->options->toString();
+        $blockVar = 'block_' . str_replace('.', '_', $splitChars);
 
         return <<<PHP
         \$editableExtension = \$this->env->getExtension('Pimcore\Twig\Extension\DocumentEditableExtension');
-        \$block = \$editableExtension->renderEditable(\$context, 'block', '{$this->blockName}', $optionsString);
-        \$context['_block'] = \$block;
-\$block->start();
+        \${$blockVar} = \$editableExtension->renderEditable(\$context, 'block', '{$this->blockName}', $optionsString);
+        \$context['_block'] = \${$blockVar};
+\${$blockVar}->start();
 {$splitChars}
-        foreach(\$block->getIterator() as \$index) {
-            \$block->blockConstruct();
-            \$context['_block'] = \$block;
+        foreach(\${$blockVar}->getIterator() as \$index) {
+            \${$blockVar}->blockConstruct();
+            \$context['_block'] = \${$blockVar};
             {$splitChars}
-            \$block->blockDestruct();
+            \${$blockVar}->blockDestruct();
         }
 {$splitChars}
-\$block->end();
+\${$blockVar}->end();
 PHP;
 
     }

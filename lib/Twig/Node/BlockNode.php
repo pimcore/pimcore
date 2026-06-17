@@ -49,14 +49,15 @@ final class BlockNode extends Node
     private function getPhpCode(string $splitChars): string
     {
         $optionsString = $this->options->toString();
+        $blockVar = 'block_' . str_replace('.', '_', $splitChars);
 
         return <<<PHP
         \$editableExtension = \$this->env->getExtension('Pimcore\Twig\Extension\DocumentEditableExtension');
-        \$block = \$editableExtension->renderEditable(\$context, 'block', '{$this->blockName}', $optionsString);
-        foreach(\$block->getIterator() as \$key => \$index) {
-            \$block->setCurrent(\$key);
-            \$context['_block'] = \$block;
-            \$config = \$block->getConfig();
+        \${$blockVar} = \$editableExtension->renderEditable(\$context, 'block', '{$this->blockName}', $optionsString);
+        foreach(\${$blockVar}->getIterator() as \$key => \$index) {
+            \${$blockVar}->setCurrent(\$key);
+            \$context['_block'] = \${$blockVar};
+            \$config = \${$blockVar}->getConfig();
             {$splitChars}
         }
 PHP;
