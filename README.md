@@ -30,7 +30,7 @@ Pimcore is an open core platform for Product Experience Management (PXM). It pro
 managing digital data and customer experience, combining a Core Framework with a modular set of Core Extensions covering
 PIM, MDM, DAM, CDP, DXP/CMS, and Digital Commerce — all licensed under the Pimcore Open Core License (POCL). Data is
 stored independently of the channel and delivered to any output: websites, commerce systems, mobile apps, print,
-digital signage, or headless consumers via REST and GraphQL. [Pimcore Studio](#pimcore-studio) provides the unified
+digital signage, or headless consumers via REST and GraphQL. Pimcore Studio provides the unified
 administration interface for the entire platform.
 
 ![pimcore-general.png](doc/img/pimcore-general.png)
