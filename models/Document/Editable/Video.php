@@ -502,24 +502,8 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
     private function getErrorCode(string $message = ''): string
     {
         $name = $this->getName();
-        $width = $this->getWidth();
-        // If contains at least one digit (0-9), then assume it is a value that can be calculated,
-        // otherwise it is likely be `auto`,`inherit`,etc..
-        if (preg_match('/[\d]/', (string) $width)) {
-            // when is numeric, assume there are no length units nor %, and considering the value as pixels
-            if (is_numeric($width)) {
-                $width .= 'px';
-            }
-            $width = 'calc(' . $width . ' - 1px)';
-        }
-
-        $height = $this->getHeight();
-        if (preg_match('/[\d]/', (string) $height)) {
-            if (is_numeric($height)) {
-                $height .= 'px';
-            }
-            $height = 'calc(' . $height . ' - 1px)';
-        }
+        $width = $this->getWidthWithUnit();
+        $height = $this->getHeightWithUnit();
 
         if ($this->isStudioRequest()) {
             // expose the message only to authenticated editmode requests or in debug mode,
@@ -541,7 +525,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
 
         $code = '
         <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
-            <div class="pimcore_editable_video_error" style="text-align:center; width: ' . $width . '; height: ' . $height . '; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
+            <div class="pimcore_editable_video_error" style="box-sizing: border-box; text-align:center; width: ' . $width . '; height: ' . $height . '; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
                 ' . $message . '
             </div>
         </div>';
@@ -983,9 +967,10 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
 
         if ($this->isStudioRequest()) {
             // keep the poster image so the studio preview shows something meaningful,
-            // in editmode studio-ui-bundle renders its own loading UI on top of the marker
+            // in editmode studio-ui-bundle renders its own loading UI on top of the marker.
+            // the poster fills the parent marker, which already carries the configured size
             $poster = $thumbnail !== null && $thumbnail !== ''
-                ? '<img src="' . $thumbnail . '" style="width: ' . $width . '; height: ' . $height . ';">'
+                ? '<img src="' . $thumbnail . '" style="width: 100%; height: 100%;">'
                 : '';
 
             return '
