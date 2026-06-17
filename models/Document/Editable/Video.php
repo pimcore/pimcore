@@ -936,9 +936,10 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
 
         // keep the poster image so frontend and preview requests show something
         // meaningful, in editmode studio-ui-bundle renders its own loading UI on
-        // top of the marker
+        // top of the marker. the poster fills the parent marker, which already
+        // carries the configured size
         $poster = $thumbnail !== null && $thumbnail !== ''
-            ? '<img src="' . $thumbnail . '" style="width: ' . $width . '; height: ' . $height . ';">'
+            ? '<img src="' . $thumbnail . '" style="width: 100%; height: 100%;">'
             : '';
 
         $code = '
