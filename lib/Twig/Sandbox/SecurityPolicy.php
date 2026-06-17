@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Sandbox;
 
+use PDO;
+use PDOStatement;
 use Twig\Sandbox\SecurityNotAllowedFilterError;
 use Twig\Sandbox\SecurityNotAllowedFunctionError;
 use Twig\Sandbox\SecurityNotAllowedMethodError;
@@ -37,8 +39,8 @@ final class SecurityPolicy implements SecurityPolicyInterface
     private const BLOCKED_CLASSES = [
         \Pimcore\Model\Dao\AbstractDao::class,
         \Doctrine\DBAL\Connection::class,
-        \PDO::class,
-        \PDOStatement::class,
+        PDO::class,
+        PDOStatement::class,
         \Symfony\Component\DependencyInjection\ContainerInterface::class,
         \Symfony\Component\Process\Process::class,
     ];
