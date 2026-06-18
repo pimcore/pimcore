@@ -66,9 +66,10 @@ final class ManualBlockNode extends Node
     private function getPhpCode(string $splitChars): string
     {
         $optionsString = $this->options->toString();
-        $blockVar = 'block_' . str_replace('.', '_', $splitChars);
-        $prevBlockVar = 'prevBlock_' . str_replace('.', '_', $splitChars);
-        $hadPrevBlockVar = 'hadPrevBlock_' . str_replace('.', '_', $splitChars);
+        $varSuffix = substr(hash('sha256', $splitChars), 0, 12);
+        $blockVar = 'block_' . $varSuffix;
+        $prevBlockVar = 'prevBlock_' . $varSuffix;
+        $hadPrevBlockVar = 'hadPrevBlock_' . $varSuffix;
 
         return <<<PHP
         \$editableExtension = \$this->env->getExtension('Pimcore\Twig\Extension\DocumentEditableExtension');
@@ -87,11 +88,11 @@ final class ManualBlockNode extends Node
 {$splitChars}
 \${$blockVar}->end();
         if (\${$hadPrevBlockVar}) {
-            \$context['_block'] = \${$prevBlockVar};
+            $context['_block'] = \${$prevBlockVar};
         } else {
-            unset(\$context['_block']);
+            unset($context['_block']);
         }
-        unset(\${$prevBlockVar}, \${$hadPrevBlockVar});
+        unset(\${$blockVar}, \${$prevBlockVar}, \${$hadPrevBlockVar});
 PHP;
 
     }
