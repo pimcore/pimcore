@@ -179,7 +179,7 @@ with the following accessors:
 | `getFilename()` | `string` | The asset filename |
 | `getMimeType()` | `string` | The guessed MIME type |
 | `setMimeType(string $mimeType)` | `void` | Override the MIME type |
-| `getAsset()` | `?Asset` | The asset instance (`null` during `Asset::create()`) |
+| `getAsset()` | `?Pimcore\Model\Asset` | The asset instance (`null` during `Pimcore\Model\Asset::create()`) |
 | `isNewAsset()` | `bool` | `true` on create / first save, `false` on update |
 
 Example — force all `.csv` assets to `text/csv` regardless of what the guesser returns:
