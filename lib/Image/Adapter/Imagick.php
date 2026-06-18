@@ -89,10 +89,16 @@ class Imagick extends Adapter
 
                 if ($this->isVectorGraphic($imagePath)) {
                     // only for vector graphics
-                    // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
+                    // setBackgroundColor must be called BEFORE readImage so that the Inkscape/ImageMagick
+                    // delegate composites onto the correct (transparent) background, not black
                     $i->setBackgroundColor(new ImagickPixel('transparent'));
-                    //for certain edge-cases simply setting the background-color to transparent does not seem to work
-                    //workaround by using transparentPaintImage (somehow even works without setting a target. no clue why)
+                    $i->readImage($imagePath);
+                    // After reading, re-apply on the loaded image object — the Inkscape delegate
+                    // can override the background setting during rasterization (e.g. IM 7.1.0-48+)
+                    $i->setImageBackgroundColor(new ImagickPixel('transparent'));
+                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_ACTIVATE);
+                    // for certain edge-cases simply setting the background-color to transparent does not seem to work;
+                    // workaround by using transparentPaintImage (somehow even works without setting a target, no clue why)
                     $i->transparentPaintImage('', 1, 0, false);
                 }
 
