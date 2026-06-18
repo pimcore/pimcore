@@ -192,18 +192,9 @@ Install profiles can implement additional interfaces for advanced control:
 
 ### Doctrine `enum` Mapping Type Removed
 
-The installer-generated `config/packages/doctrine_mapping_types.yaml` no longer registers the `enum: string` mapping type. Only the `bit: boolean` mapping is still generated and required. The minimum `doctrine/dbal` requirement was raised to `^4.4`, where the explicit `enum` mapping is no longer needed.
+The `enum: string` Doctrine mapping type is no longer registered; only the `bit: boolean` mapping remains. The minimum `doctrine/dbal` requirement was raised to `^4.4`, where the explicit `enum` mapping is no longer needed.
 
-**Action required for existing installations:** This file is written only once during installation and is **not** migrated automatically on upgrade. Open your `config/packages/doctrine_mapping_types.yaml` and remove the `enum: string` line if it is present, so that the mapping section reads:
-
-```yaml
-doctrine:
-    dbal:
-        connections:
-            default:
-                mapping_types:
-                    bit: boolean
-```
+**Action required for existing installations:** Please check your Doctrine configuration for any registered mapping types and remove the `enum: string` mapping if it is present.
 
 ### [OpenSearch / Elasticsearch DSN Configuration]
 
