@@ -322,7 +322,7 @@ class NotificationService
         try {
             $notification = $this->find($id);
 
-            if ($recipientId && $recipientId === $notification->getRecipient()?->getId()) {
+            if ($recipientId !== null && $recipientId === $notification->getRecipient()?->getId()) {
                 $notification->delete();
             }
 
