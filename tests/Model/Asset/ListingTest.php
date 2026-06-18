@@ -119,7 +119,7 @@ class ListingTest extends ModelTestCase
         $this->assertEquals(2, $totalCount, 'expected 2 assets on totalCount of grouped query containing parameters');
         $list->load();
         $count = $list->getCount();
-        $this->assertEquals(2, $count, 'expected 4 assets on grouped query containing parameters');
+        $this->assertEquals(2, $count, 'expected 2 assets on grouped query containing parameters');
     }
 
     private function joinTags(QueryBuilder $queryBuilder, Tag ...$tags): void
