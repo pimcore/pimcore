@@ -68,10 +68,12 @@ final class ManualBlockNode extends Node
         $optionsString = $this->options->toString();
         $blockVar = 'block_' . str_replace('.', '_', $splitChars);
         $prevBlockVar = 'prevBlock_' . str_replace('.', '_', $splitChars);
+        $hadPrevBlockVar = 'hadPrevBlock_' . str_replace('.', '_', $splitChars);
 
         return <<<PHP
         \$editableExtension = \$this->env->getExtension('Pimcore\Twig\Extension\DocumentEditableExtension');
         \${$blockVar} = \$editableExtension->renderEditable(\$context, 'block', '{$this->blockName}', $optionsString);
+        \${$hadPrevBlockVar} = array_key_exists('_block', \$context);
         \${$prevBlockVar} = \$context['_block'] ?? null;
         \$context['_block'] = \${$blockVar};
 \${$blockVar}->start();
@@ -84,8 +86,12 @@ final class ManualBlockNode extends Node
         }
 {$splitChars}
 \${$blockVar}->end();
-        \$context['_block'] = \${$prevBlockVar};
-        unset(\${$prevBlockVar});
+        if (\${$hadPrevBlockVar}) {
+            \$context['_block'] = \${$prevBlockVar};
+        } else {
+            unset(\$context['_block']);
+        }
+        unset(\${$prevBlockVar}, \${$hadPrevBlockVar});
 PHP;
 
     }
