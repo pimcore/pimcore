@@ -66,7 +66,7 @@ final class ManualBlockNode extends Node
     private function getPhpCode(string $splitChars): string
     {
         $optionsString = $this->options->toString();
-        $varSuffix = substr(hash('sha256', $splitChars), 0, 12);
+        $varSuffix = hash('xxh3', $splitChars);
         $blockVar = 'block_' . $varSuffix;
         $prevBlockVar = 'prevBlock_' . $varSuffix;
         $hadPrevBlockVar = 'hadPrevBlock_' . $varSuffix;
