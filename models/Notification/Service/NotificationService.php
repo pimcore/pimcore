@@ -388,7 +388,7 @@ class NotificationService
 
         try {
             $connection->rollBack();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // PDO adapter throws exceptions if rollback fails
             \Pimcore\Logger::error((string) $e);
         }

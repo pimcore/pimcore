@@ -64,6 +64,11 @@ class NotificationServiceTest extends TestCase
         );
     }
 
+    protected function needsDb(): bool
+    {
+        return true;
+    }
+
     public function testSendToNoExistUserLeavesNoActiveTransaction(): void
     {
         try {
