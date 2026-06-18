@@ -20,6 +20,7 @@ use Pimcore\Model\Notification\Service\NotificationService;
 use Pimcore\Model\User;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use UnexpectedValueException;
 
 class NotificationServiceTest extends TestCase
@@ -72,6 +73,55 @@ class NotificationServiceTest extends TestCase
                 'Test title',
                 'Test message'
             );
+            $this->fail('Expected UnexpectedValueException was not thrown');
+        } catch (UnexpectedValueException) {
+            // expected
+        }
+
+        $this->assertFalse(Db::getConnection()->isTransactionActive());
+    }
+
+    public function testFindAndMarkAsReadWithInvalidIdLeavesNoActiveTransaction(): void
+    {
+        try {
+            $this->notificationService->findAndMarkAsRead(999999);
+            $this->fail('Expected UnexpectedValueException was not thrown');
+        } catch (UnexpectedValueException) {
+            // expected
+        }
+
+        $this->assertFalse(Db::getConnection()->isTransactionActive());
+    }
+
+    public function testFindAndMarkAsReadWithWrongRecipientLeavesNoActiveTransaction(): void
+    {
+        $user = new User();
+        $user->setName('notification-user')->save();
+
+        $this->notificationService->sendToUser(
+            $user->getId(),
+            0,
+            'Test title',
+            'Test message'
+        );
+
+        $notifications = $this->notificationService->findAll(['recipient' => $user->getId()]);
+        $notificationId = $notifications['data'][0]->getId();
+
+        try {
+            $this->notificationService->findAndMarkAsRead($notificationId, 999999);
+            $this->fail('Expected AccessDeniedHttpException was not thrown');
+        } catch (AccessDeniedHttpException) {
+            // expected
+        }
+
+        $this->assertFalse(Db::getConnection()->isTransactionActive());
+    }
+
+    public function testDeleteWithInvalidIdLeavesNoActiveTransaction(): void
+    {
+        try {
+            $this->notificationService->delete(999999);
             $this->fail('Expected UnexpectedValueException was not thrown');
         } catch (UnexpectedValueException) {
             // expected

@@ -218,12 +218,18 @@ class NotificationService
 
         $this->beginTransaction();
 
-        $result = [
-            'total' => $listing->count(),
-            'data' => $listing->getItems($offset, $limit),
-        ];
+        try {
+            $result = [
+                'total' => $listing->count(),
+                'data' => $listing->getItems($offset, $limit),
+            ];
 
-        $this->commit();
+            $this->commit();
+        } catch (\Throwable $t) {
+            $this->rollBack();
+
+            throw $t;
+        }
 
         return $result;
     }
