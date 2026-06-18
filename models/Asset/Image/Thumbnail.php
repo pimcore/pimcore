@@ -136,8 +136,8 @@ final class Thumbnail implements ThumbnailInterface
 
         if (empty($this->pathReference)) {
             if ($this->useOriginalFile($this->asset->getFilename())) {
-                // SVG generation failed (e.g. rasterization not supported) — serve the original file
-                // rather than a generic error placeholder, since browsers can display SVGs natively.
+                // SVG thumbnail generation failed — fall back to the original SVG file.
+                // This avoids a generic placeholder since browsers can display SVGs natively.
                 $this->pathReference = [
                     'type' => 'asset',
                     'src' => $this->asset->getRealFullPath(),
