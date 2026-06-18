@@ -135,7 +135,7 @@ final class Thumbnail implements ThumbnailInterface
         }
 
         if (empty($this->pathReference)) {
-            if ($this->useOriginalFile($this->asset->getFilename())) {
+            if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
                 // SVG thumbnail generation failed — fall back to the original SVG file.
                 // This avoids a generic placeholder since browsers can display SVGs natively.
                 $this->pathReference = [

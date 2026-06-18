@@ -247,7 +247,8 @@ class AssetTest extends ModelTestCase
         $this->testAsset->setFilename(uniqid() . '.svg');
         $this->testAsset->save();
 
-        @unlink($this->testAsset->getLocalFile());
+        Storage::get('asset')->delete($this->testAsset->getRealFullPath());
+        $this->assertFalse(Storage::get('asset')->fileExists($this->testAsset->getRealFullPath()));
 
         $config = TestHelper::createThumbnailConfigurationScaleByWidth();
         $config->setRasterizeSVG(false);
