@@ -367,23 +367,24 @@ class NotificationService
         Db::getConnection()->commit();
     }
 
-/**
- * Attempts to roll back the current transaction (or savepoint).
- *
- * Rollback itself can fail/throw (depending on the driver / transaction state), so we guard against
- * masking the original exception.
- */
-private function rollBack(): void
-{
-    $connection = Db::getConnection();
-    if ($connection->isTransactionActive() === false) {
-        return;
-    }
+    /**
+     * Attempts to roll back the current transaction (or savepoint).
+     *
+     * Rollback itself can fail/throw (depending on the driver / transaction state), so we guard against
+     * masking the original exception.
+     */
+    private function rollBack(): void
+    {
+        $connection = Db::getConnection();
+        if ($connection->isTransactionActive() === false) {
+            return;
+        }
 
-    try {
-        $connection->rollBack();
-    } catch (Exception $e) {
-        // PDO adapter throws exceptions if rollback fails
-        \Pimcore\Logger::error((string) $e);
+        try {
+            $connection->rollBack();
+        } catch (Exception $e) {
+            // PDO adapter throws exceptions if rollback fails
+            \Pimcore\Logger::error((string) $e);
+        }
     }
 }
