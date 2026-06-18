@@ -220,6 +220,12 @@ Install profiles can implement additional interfaces for advanced control:
 - `PostInstallHookInterface` — run custom PHP code near the end of phase 2, before finalization steps such as cache clearing and install marker cleanup
 - `DataSourceInterface` — import SQL dumps or other data during installation
 
+### Doctrine `enum` Mapping Type Removed
+
+The `enum: string` Doctrine mapping type is no longer registered; only the `bit: boolean` mapping remains. The minimum `doctrine/dbal` requirement was raised to `^4.4`, where the explicit `enum` mapping is no longer needed.
+
+**Action required for existing installations:** Please check your Doctrine configuration for any registered mapping types and remove the `enum: string` mapping if it is present.
+
 ### [OpenSearch / Elasticsearch DSN Configuration]
 
 Search engine configuration now uses DSN-based env vars instead of separate host/port/authentication parameters:
