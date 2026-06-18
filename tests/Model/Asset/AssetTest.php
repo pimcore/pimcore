@@ -247,6 +247,10 @@ class AssetTest extends ModelTestCase
         $this->testAsset->setFilename(uniqid() . '.svg');
         $this->testAsset->save();
 
+        // Reload to clear any cached stream left open by saveVersion(), which would allow
+        // thumbnail generation to succeed even after the asset file is deleted from storage.
+        $this->reloadAsset();
+
         Storage::get('asset')->delete($this->testAsset->getRealFullPath());
         $this->assertFalse(Storage::get('asset')->fileExists($this->testAsset->getRealFullPath()));
 
