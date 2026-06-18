@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Notification\Service;
 
 use Pimcore;
+use Pimcore\Db;
 use Pimcore\Model\Notification\Service\NotificationService;
 use Pimcore\Model\User;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -60,6 +61,23 @@ class NotificationServiceTest extends TestCase
             'Test title',
             'Test message'
         );
+    }
+
+    public function testSendToNoExistUserLeavesNoActiveTransaction(): void
+    {
+        try {
+            $this->notificationService->sendToUser(
+                100,
+                100,
+                'Test title',
+                'Test message'
+            );
+            $this->fail('Expected UnexpectedValueException was not thrown');
+        } catch (UnexpectedValueException) {
+            // expected
+        }
+
+        $this->assertFalse(Db::getConnection()->isTransactionActive());
     }
 
     public function testSendToNoExistGroup(): void
