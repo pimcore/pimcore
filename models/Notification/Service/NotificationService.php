@@ -158,7 +158,7 @@ class NotificationService
                 throw new AccessDeniedHttpException();
             }
 
-            if ($recipientId && $recipientId === $notification->getRecipient()?->getId()) {
+            if ($recipientId !== null && $recipientId === $notification->getRecipient()?->getId()) {
                 $notification->setRead(true);
                 $notification->save();
                 $this->commit();
