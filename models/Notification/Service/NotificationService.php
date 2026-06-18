@@ -158,12 +158,12 @@ class NotificationService
                 throw new AccessDeniedHttpException();
             }
 
-if ($recipientId && $recipientId === $notification->getRecipient()?->getId()) {
-    $notification->setRead(true);
-    $notification->save();
-    $this->commit();
-    $committed = true;
-}
+            if ($recipientId && $recipientId === $notification->getRecipient()?->getId()) {
+                $notification->setRead(true);
+                $notification->save();
+                $this->commit();
+                $committed = true;
+            }
 
             return $notification;
         } finally {
@@ -362,10 +362,10 @@ if ($recipientId && $recipientId === $notification->getRecipient()?->getId()) {
     /**
      * @throws Exception
      */
-private function commit(): void
-{
-    Db::getConnection()->commit();
-}
+    private function commit(): void
+    {
+        Db::getConnection()->commit();
+    }
 
     /**
      * @throws Exception
