@@ -63,6 +63,7 @@ final class BlockNode extends Node
             {$splitChars}
         }
         \$context['_block'] = \${$prevBlockVar};
+         unset(\${$prevBlockVar});
 PHP;
 
     }
