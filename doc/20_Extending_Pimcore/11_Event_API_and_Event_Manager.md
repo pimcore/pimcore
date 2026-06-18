@@ -162,3 +162,38 @@ into the /news/in-enim-justo_2/image_1 asset folder.
                 }
         });
 ```
+
+### Asset MIME Type Resolution
+
+Pimcore guesses the MIME type of an asset automatically when it is created or its binary data is updated.
+The [AssetEvents::RESOLVE_MIME_TYPE](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/AssetEvents.php) event
+fires after the automatic guess, before the value is applied to the asset.
+This lets you correct or override the MIME type for any file — useful when the guessed type is wrong
+(e.g. vendor-specific formats that share a common extension like `.xml` or `.csv`).
+
+The event object is a [`ResolveMimeTypeEvent`](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/Model/Asset/ResolveMimeTypeEvent.php)
+with the following accessors:
+
+| Method | Type | Description |
+|--------|------|-------------|
+| `getFilename()` | `string` | The asset filename |
+| `getMimeType()` | `string` | The guessed MIME type |
+| `setMimeType(string $mimeType)` | `void` | Override the MIME type |
+| `getAsset()` | `?Asset` | The asset instance (`null` during `Asset::create()`) |
+| `isNewAsset()` | `bool` | `true` on create / first save, `false` on update |
+
+Example — force all `.csv` assets to `text/csv` regardless of what the guesser returns:
+
+```php
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\Model\Asset\ResolveMimeTypeEvent;
+
+\Pimcore::getEventDispatcher()->addListener(
+    AssetEvents::RESOLVE_MIME_TYPE,
+    function (ResolveMimeTypeEvent $event): void {
+        if (str_ends_with(strtolower($event->getFilename()), '.csv')) {
+            $event->setMimeType('text/csv');
+        }
+    }
+);
+```
