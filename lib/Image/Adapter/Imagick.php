@@ -78,6 +78,12 @@ class Imagick extends Adapter
 
             $imagePathLoad = $imagePathLoad . '[0]';
 
+            // setBackgroundColor must be called BEFORE readImage so that the Inkscape/ImageMagick
+            // delegate composites onto the correct (transparent) background, not black
+            if (!$this->reinitializing && !$this->isPreserveColor() && $this->isVectorGraphic($imagePath)) {
+                $i->setBackgroundColor(new ImagickPixel('transparent'));
+            }
+
             if (!$i->readImage($imagePathLoad) || !@filesize($imagePath)) {
                 return false;
             }
@@ -88,11 +94,6 @@ class Imagick extends Adapter
                 $i->setColorspace(\Imagick::COLORSPACE_SRGB);
 
                 if ($this->isVectorGraphic($imagePath)) {
-                    // only for vector graphics
-                    // setBackgroundColor must be called BEFORE readImage so that the Inkscape/ImageMagick
-                    // delegate composites onto the correct (transparent) background, not black
-                    $i->setBackgroundColor(new ImagickPixel('transparent'));
-                    $i->readImage($imagePath);
                     // After reading, re-apply on the loaded image object — the Inkscape delegate
                     // can override the background setting during rasterization (e.g. IM 7.1.0-48+)
                     $i->setImageBackgroundColor(new ImagickPixel('transparent'));
