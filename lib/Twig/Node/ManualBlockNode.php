@@ -88,9 +88,9 @@ final class ManualBlockNode extends Node
 {$splitChars}
 \${$blockVar}->end();
         if (\${$hadPrevBlockVar}) {
-            $context['_block'] = \${$prevBlockVar};
+            \$context['_block'] = \${$prevBlockVar};
         } else {
-            unset($context['_block']);
+            unset(\$context['_block']);
         }
         unset(\${$blockVar}, \${$prevBlockVar}, \${$hadPrevBlockVar});
 PHP;
