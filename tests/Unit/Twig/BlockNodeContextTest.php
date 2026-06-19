@@ -59,7 +59,9 @@ final class BlockNodeContextTest extends TestCase
         return new class($iterations) implements BlockInterface, EditableInterface {
             private int $current = 0;
 
-            public function __construct(private readonly int $count) {}
+            public function __construct(private readonly int $count)
+            {
+            }
 
             // BlockInterface methods
             public function getIterator(): Generator
@@ -69,38 +71,87 @@ final class BlockNodeContextTest extends TestCase
                 }
             }
 
-            public function start(): void {}
+            public function start(): void
+            {
+            }
 
-            public function end(): void {}
+            public function end(): void
+            {
+            }
 
-            public function blockConstruct(): void {}
+            public function blockConstruct(): void
+            {
+            }
 
-            public function blockDestruct(): void {}
+            public function blockDestruct(): void
+            {
+            }
 
-            public function blockStart(): void {}
+            public function blockStart(): void
+            {
+            }
 
-            public function blockEnd(): void {}
+            public function blockEnd(): void
+            {
+            }
 
-            public function getCount(): int { return $this->count; }
+            public function getCount(): int
+            {
+                return $this->count;
+            }
 
-            public function getCurrent(): int { return $this->current; }
+            public function getCurrent(): int
+            {
+                return $this->current;
+            }
 
-            public function getCurrentIndex(): int { return $this->current; }
+            public function getCurrentIndex(): int
+            {
+                return $this->current;
+            }
 
-            public function isEmpty(): bool { return $this->count === 0; }
+            public function isEmpty(): bool
+            {
+                return $this->count === 0;
+            }
 
             // Required by compiled pimcoreblock template code (not in BlockInterface)
-            public function setCurrent(int $current): void { $this->current = $current; }
+            public function setCurrent(int $current): void
+            {
+                $this->current = $current;
+            }
 
             // Required by compiled pimcoreblock template code (not in BlockInterface)
-            public function getConfig(): array { return []; }
+            public function getConfig(): array
+            {
+                return [];
+            }
 
             // EditableInterface stubs — needed for return-type compatibility with EditableRenderer
-            public function render(): mixed { return ''; }
-            public function getData(): mixed { return null; }
-            public function getType(): string { return 'block'; }
-            public function setDataFromEditmode(mixed $data): static { return $this; }
-            public function setDataFromResource(mixed $data): static { return $this; }
+            public function render(): mixed
+            {
+                return '';
+            }
+
+            public function getData(): mixed
+            {
+                return null;
+            }
+
+            public function getType(): string
+            {
+                return 'block';
+            }
+
+            public function setDataFromEditmode(mixed $data): static
+            {
+                return $this;
+            }
+
+            public function setDataFromResource(mixed $data): static
+            {
+                return $this;
+            }
         };
     }
 
