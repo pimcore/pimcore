@@ -525,7 +525,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
             </div>';
         }
 
-        // frontend: placeholder served from CoreBundle (not admin-ui-classic-bundle)
+        // frontend: placeholder served from CoreBundle
         if (!Pimcore::inDebugMode()) {
             $message = '';
         }
@@ -966,7 +966,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
             </div>';
         }
 
-        // frontend: poster + spinner served from CoreBundle (not admin-ui-classic-bundle)
+        // frontend: poster + spinner served from CoreBundle
         $uid = $this->getUniqId();
 
         return '
