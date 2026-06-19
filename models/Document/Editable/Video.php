@@ -960,7 +960,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     private function getProgressCode(?string $thumbnail = null): string
     {
-        $uid = $this->getUniqId();
         $name = $this->getName();
         $width = $this->getWidthWithUnit();
         $height = $this->getHeightWithUnit();
@@ -974,6 +973,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
             </div>';
         }
 
+        $uid = $this->getUniqId();
         $code = '
         <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
             <style type="text/css">
