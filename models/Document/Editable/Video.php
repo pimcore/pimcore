@@ -501,10 +501,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     private function isStudioRequest(): bool
     {
-        // true only inside the Studio document editor (editmode) iframe, where
-        // studio-ui-bundle renders the loading / error UI on top of a bare marker.
-        // the preview tab (pimcore_studio_preview) has no such overlay, so it falls
-        // through to the regular frontend rendering instead.
+        // only the Studio editor (editmode) iframe; the preview tab and frontend render normally
         $request = Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
 
         return $request !== null && $request->query->getBoolean('pimcore_studio');
@@ -517,9 +514,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         $height = $this->getHeightWithUnit();
 
         if ($this->isStudioRequest()) {
-            // studio-ui-bundle renders the error UI on top of this marker.
-            // expose the message only in editmode or debug mode, the query
-            // parameter alone could be set by anyone on a frontend request
+            // message only in editmode/debug — the query param alone is spoofable
             $messageAttr = $message !== '' && ($this->getEditmode() || Pimcore::inDebugMode())
                 ? ' data-message="' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '"'
                 : '';
@@ -530,8 +525,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
             </div>';
         }
 
-        // frontend rendering: visible placeholder with the not-supported icon
-        // served from CoreBundle (no dependency on the classic admin bundle)
+        // frontend: placeholder served from CoreBundle (not admin-ui-classic-bundle)
         if (!Pimcore::inDebugMode()) {
             $message = '';
         }
@@ -965,16 +959,14 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         $height = $this->getHeightWithUnit();
 
         if ($this->isStudioRequest()) {
-            // bare marker — studio-ui-bundle renders its own (opaque) loading UI on
-            // top of it; a poster here would only peek through the overlay's rounded corners
+            // bare marker — studio-ui-bundle draws the loading UI on top
             return '
             <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
                 <div class="pimcore_editable_video_progress" style="width: ' . $width . '; height: ' . $height . ';"></div>
             </div>';
         }
 
-        // frontend rendering: poster with a loading spinner served from CoreBundle
-        // (no dependency on the classic admin bundle)
+        // frontend: poster + spinner served from CoreBundle (not admin-ui-classic-bundle)
         $uid = $this->getUniqId();
 
         return '
