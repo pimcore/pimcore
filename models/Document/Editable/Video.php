@@ -501,13 +501,13 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     private function isStudioRequest(): bool
     {
+        // true only inside the Studio document editor (editmode) iframe, where
+        // studio-ui-bundle renders the loading / error UI on top of a bare marker.
+        // the preview tab (pimcore_studio_preview) has no such overlay, so it falls
+        // through to the regular frontend rendering instead.
         $request = Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
 
-        return $request !== null
-            && (
-                $request->query->getBoolean('pimcore_studio')
-                || $request->query->getBoolean('pimcore_studio_preview')
-            );
+        return $request !== null && $request->query->getBoolean('pimcore_studio');
     }
 
     private function getErrorCode(string $message = ''): string
@@ -965,15 +965,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         $height = $this->getHeightWithUnit();
 
         if ($this->isStudioRequest()) {
-            // studio-ui-bundle renders its own loading UI on top of this marker.
-            // the poster fills the parent marker, which already carries the size
-            $poster = $thumbnail !== null && $thumbnail !== ''
-                ? '<img src="' . $thumbnail . '" style="width: 100%; height: 100%;">'
-                : '';
-
+            // bare marker — studio-ui-bundle renders its own (opaque) loading UI on
+            // top of it; a poster here would only peek through the overlay's rounded corners
             return '
             <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
-                <div class="pimcore_editable_video_progress" style="width: ' . $width . '; height: ' . $height . ';">' . $poster . '</div>
+                <div class="pimcore_editable_video_progress" style="width: ' . $width . '; height: ' . $height . ';"></div>
             </div>';
         }
 
