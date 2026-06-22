@@ -47,18 +47,20 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
     {
         PageSnippet::setGetInheritedValues(false);
 
-        if ($this->mainDocument?->getId()) {
-            $this->mainDocument->delete();
+        try {
+            $this->childDocument?->delete();
+        } catch (\Exception) {
         }
-        if ($this->childDocument?->getId()) {
-            $this->childDocument->delete();
+        try {
+            $this->mainDocument?->delete();
+        } catch (\Exception) {
         }
 
         parent::tearDown();
     }
 
     // -------------------------------------------------------------------------
-    // Helper
+    // Helpers
     // -------------------------------------------------------------------------
 
     private function makeInputEditable(string $name, string $value): Input
@@ -80,8 +82,29 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
         $this->childDocument = Page::getById($this->childDocument->getId(), ['force' => true]);
     }
 
+    /**
+     * Returns the child document's own editables as stored in the DB,
+     * bypassing content-main inheritance entirely.
+     *
+     * getEditable() always falls through to the content-main document lookup
+     * even when getGetInheritedValues() is false, so it cannot be used to
+     * distinguish "own" from "inherited" without this helper.
+     *
+     * @return array<string, \Pimcore\Model\Document\Editable>
+     */
+    private function getRawChildEditables(): array
+    {
+        PageSnippet::setGetInheritedValues(false);
+        $rawChild = Page::getById($this->childDocument->getId(), ['force' => true]);
+        // getEditables() without InheritedValues only populates from DAO (DB).
+        $ownEditables = $rawChild->getEditables();
+        PageSnippet::setGetInheritedValues(true);
+
+        return $ownEditables;
+    }
+
     // -------------------------------------------------------------------------
-    // Core regression test
+    // Tests
     // -------------------------------------------------------------------------
 
     /**
@@ -111,7 +134,7 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
         $this->reloadChild();
         $editable = $this->childDocument->getEditable('headline');
         $this->assertNotNull($editable, 'Editable should be inherited before second save');
-        $this->assertEquals('Hello from main', $editable->getValue(), 'Child should show main document value before second save');
+        $this->assertEquals('Hello from main', $editable->getData(), 'Child should show main document value before second save');
         $this->assertTrue($editable->getInherited(), 'Editable returned via getEditable() must be flagged as inherited');
 
         // 4. Save the child document a second time (this is what triggered the bug).
@@ -126,20 +149,20 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
         $this->assertNotNull($editableAfterSecondSave, 'Editable must still be visible after second save of child');
         $this->assertEquals(
             'Hello from main',
-            $editableAfterSecondSave->getValue(),
+            $editableAfterSecondSave->getData(),
             'Inherited value must survive a second save of the child document'
         );
 
         // 7. The child must NOT have its own persisted copy of the editable.
-        //    Temporarily disable inheritance to inspect the child's own record.
-        PageSnippet::setGetInheritedValues(false);
-        $reloadedChild = Page::getById($this->childDocument->getId(), ['force' => true]);
-        $ownEditable = $reloadedChild->getEditable('headline');
-        $this->assertNull(
-            $ownEditable,
+        //    Use getEditables() with inheritance disabled to inspect only the
+        //    child's own DB record (getEditable() always falls back to the
+        //    content-main document, so it cannot be used here).
+        $ownEditables = $this->getRawChildEditables();
+        $this->assertArrayNotHasKey(
+            'headline',
+            $ownEditables,
             'Child document must NOT own its own copy of the inherited editable after save'
         );
-        PageSnippet::setGetInheritedValues(true);
     }
 
     /**
@@ -188,19 +211,19 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
         $this->reloadChild();
         $editable = $this->childDocument->getEditable('headline');
         $this->assertNotNull($editable);
-        $this->assertEquals('Child override', $editable->getValue(), 'Child own value must take precedence over content-main');
+        $this->assertEquals('Child override', $editable->getData(), 'Child own value must take precedence over content-main');
         $this->assertFalse($editable->getInherited(), 'Child own editable must NOT be flagged as inherited');
 
         // Main document must be untouched.
         $this->reloadMain();
         $mainEditable = $this->mainDocument->getEditable('headline');
-        $this->assertEquals('Main value', $mainEditable->getValue(), 'Main document editable must remain unchanged');
+        $this->assertEquals('Main value', $mainEditable->getData(), 'Main document editable must remain unchanged');
     }
 
     /**
      * Verifies that updates to the main document are reflected in the child
      * after subsequent saves of the child — i.e. the fix does not prevent
-     * the live inheritance from working.
+     * live inheritance from working.
      */
     public function testUpdatedMainDocumentValueIsReflectedInChild(): void
     {
@@ -226,7 +249,7 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
         $this->assertNotNull($editable, 'Editable must still be visible after main document update');
         $this->assertEquals(
             'Updated teaser',
-            $editable->getValue(),
+            $editable->getData(),
             'Child must reflect updated value from main document after fix'
         );
     }
@@ -256,7 +279,7 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
 
         $titleEditable = $this->childDocument->getEditable('title');
         $this->assertNotNull($titleEditable);
-        $this->assertEquals('Page Title', $titleEditable->getValue());
+        $this->assertEquals('Page Title', $titleEditable->getData());
         $this->assertTrue($titleEditable->getInherited());
 
         $bodyEditable = $this->childDocument->getEditable('body');
@@ -264,12 +287,10 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
         $this->assertEquals('Page body text', $bodyEditable->getData());
         $this->assertTrue($bodyEditable->getInherited());
 
-        // Inspect child's own record: must own neither editable.
-        PageSnippet::setGetInheritedValues(false);
-        $rawChild = Page::getById($this->childDocument->getId(), ['force' => true]);
-        $this->assertNull($rawChild->getEditable('title'), 'title must not be persisted on child');
-        $this->assertNull($rawChild->getEditable('body'), 'body must not be persisted on child');
-        PageSnippet::setGetInheritedValues(true);
+        // Inspect child's own DB record: must own neither editable.
+        $ownEditables = $this->getRawChildEditables();
+        $this->assertArrayNotHasKey('title', $ownEditables, 'title must not be persisted on child');
+        $this->assertArrayNotHasKey('body', $ownEditables, 'body must not be persisted on child');
     }
 
     /**
@@ -291,11 +312,12 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
         $this->childDocument->setContentMainDocumentId($this->mainDocument->getId(), true);
         $this->childDocument->save();
 
-        // Trigger the merge via getEditables() on the child.
+        // Trigger the merge via getEditables() on a freshly loaded child.
         $this->reloadChild();
         $this->childDocument->getEditables();
 
-        // Re-check the main document editable: still must not be inherited.
+        // Re-check the main document's own editable: must still not be inherited.
+        // (If clone was missing, setInherited(true) would have mutated the main's object.)
         $mainEditableAfterChildLoad = $this->mainDocument->getEditable('intro');
         $this->assertFalse(
             $mainEditableAfterChildLoad->getInherited(),
@@ -304,9 +326,8 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
     }
 
     /**
-     * Verifies behaviour when the child document has NO content-main document
-     * set: getEditables() must return only the child's own editables and
-     * nothing more.
+     * Verifies behaviour when a document has NO content-main document set:
+     * getEditables() must return only its own editables, none flagged inherited.
      */
     public function testGetEditablesWithoutContentMainDocumentIsUnaffected(): void
     {
