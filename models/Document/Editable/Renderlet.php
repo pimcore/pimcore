@@ -145,7 +145,11 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
                 'subtype' => $this->subtype,
                 'pimcore_request_source' => 'renderlet',
             ];
-            $query = [];
+            $query = [
+                'id' => $this->id,
+                'type' => $this->type,
+                'subtype' => $this->subtype,
+            ];
 
             foreach ($this->config as $key => $value) {
                 if ('controller' !== $key && !array_key_exists($key, $attributes)) {
