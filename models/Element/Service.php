@@ -580,7 +580,7 @@ class Service extends Model\AbstractModel
 
         //check in case of recursion
         $found = false;
-        foreach ($listing->load() as $child) {
+        foreach ($listing->getData() as $child) {
             if ($child->getId() == $new->getId()) {
                 $found = true;
 
