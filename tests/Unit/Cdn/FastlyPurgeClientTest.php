@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Cdn;
 
 use GuzzleHttp\ClientInterface;
+use InvalidArgumentException;
 use Pimcore\Cdn\FastlyPurgeClient;
 use Pimcore\Tests\Support\Test\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -137,7 +138,7 @@ class FastlyPurgeClientTest extends TestCase
         // before any request is sent.
         $this->httpClient->expects($this->never())->method('request');
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->client->purgeByTags(['asset-1', 'thumb-hero banner']);
     }
