@@ -177,7 +177,7 @@ class Document extends Model\Asset
         }
 
         $scanStatus = $this->getScanStatus();
-        if ($scanStatus === Model\Asset\Enum\PdfScanStatus::SAFE || $scanStatus === Model\Asset\Enum\PdfScanStatus::UNSAFE) {
+        if ($scanStatus === Model\Asset\Enum\PdfScanStatus::SAFE) {
             return false;
         }
 
