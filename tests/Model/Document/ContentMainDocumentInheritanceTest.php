@@ -54,10 +54,7 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
             $this->childDocument?->delete();
         } catch (\Exception) {
         }
-        try {
-            $this->mainDocument?->delete();
-        } catch (\Exception) {
-        }
+        $this->mainDocument?->delete();
 
         parent::tearDown();
     }
