@@ -588,7 +588,14 @@ class Service extends Model\AbstractModel
             }
         }
         if (!$found) {
-            $newElement = Element\Service::getElementById($new->getType(), $new->getId());
+            $elementType = Element\Service::getElementType($new);
+            if ($elementType === null) {
+                return;
+            }
+            $newElement = Element\Service::getElementById($elementType, $new->getId());
+            if ($newElement === null) {
+                return;
+            }
             $listing->setData(array_merge($listing->getData(), [$newElement]));
             $target->setChildren($listing);
         }
