@@ -2123,7 +2123,7 @@ final class Configuration implements ConfigurationInterface
                             ->defaultValue('%env(CDN_BASE_URL)%')
                         ->end()
                         ->arrayNode('excluded_paths')
-                            ->info('Regular-expression patterns (matched against the request path info). Matching asset/thumbnail responses are never CDN-cached: no Surrogate-Key/Cache-Tag emitted and cookies preserved. Use for private/access-controlled assets.')
+                            ->info('Regular-expression patterns (matched against the rawurldecoded request path info). Matching asset/thumbnail responses are never CDN-cached: no Surrogate-Key/Cache-Tag emitted and cookies preserved. Use for private/access-controlled assets.')
                             ->scalarPrototype()->end()
                             ->defaultValue([])
                         ->end()
