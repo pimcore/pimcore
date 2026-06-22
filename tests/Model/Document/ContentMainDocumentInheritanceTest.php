@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Document;
 
+use Exception;
 use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Editable\Textarea;
 use Pimcore\Model\Document\Page;
@@ -52,7 +53,7 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
 
         try {
             $this->childDocument?->delete();
-        } catch (\Exception) {
+        } catch (Exception) {
         }
         $this->mainDocument?->delete();
 
@@ -99,6 +100,7 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
 
         try {
             $rawChild = Page::getById($this->childDocument->getId(), ['force' => true]);
+
             // getEditables() without InheritedValues only populates from DAO (DB).
             return $rawChild->getEditables();
         } finally {
