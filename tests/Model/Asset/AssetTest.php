@@ -241,6 +241,29 @@ class AssetTest extends ModelTestCase
         $this->assertFalse(is_resource($stream1));
     }
 
+    public function testSvgThumbnailFallbackUsesOriginalAssetPathOnGenerationFailure(): void
+    {
+        $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image1.jpg');
+        $this->testAsset->setFilename(uniqid() . '.svg');
+        $this->testAsset->save();
+
+        // Reload to clear any cached stream left open by saveVersion(), which would allow
+        // thumbnail generation to succeed even after the asset file is deleted from storage.
+        $this->reloadAsset();
+
+        Storage::get('asset')->delete($this->testAsset->getRealFullPath());
+        $this->assertFalse(Storage::get('asset')->fileExists($this->testAsset->getRealFullPath()));
+
+        $config = TestHelper::createThumbnailConfigurationScaleByWidth();
+        $config->setRasterizeSVG(false);
+        $thumbnail = $this->testAsset->getThumbnail($config->getName(), false);
+
+        $pathReference = $thumbnail->getPathReference(false);
+
+        $this->assertSame('asset', $pathReference['type']);
+        $this->assertSame($this->testAsset->getRealFullPath(), $pathReference['src']);
+    }
+
     public function reloadAsset(): void
     {
         $this->testAsset = Asset::getById($this->testAsset->getId(), ['force' => true]);
