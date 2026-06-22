@@ -501,23 +501,20 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     private function getErrorCode(string $message = ''): string
     {
-        $width = $this->getWidth();
-        // If contains at least one digit (0-9), then assume it is a value that can be calculated,
-        // otherwise it is likely be `auto`,`inherit`,etc..
-        if (preg_match('/[\d]/', (string) $width)) {
-            // when is numeric, assume there are no length units nor %, and considering the value as pixels
-            if (is_numeric($width)) {
-                $width .= 'px';
-            }
-            $width = 'calc(' . $width . ' - 1px)';
-        }
+        $name = $this->getName();
+        $width = $this->getWidthWithUnit();
+        $height = $this->getHeightWithUnit();
 
-        $height = $this->getHeight();
-        if (preg_match('/[\d]/', (string) $height)) {
-            if (is_numeric($height)) {
-                $height .= 'px';
-            }
-            $height = 'calc(' . $height . ' - 1px)';
+        if ($this->isStudioRequest()) {
+            // message only in editmode/debug — the query param alone is spoofable
+            $messageAttr = $message !== '' && ($this->getEditmode() || Pimcore::inDebugMode())
+                ? ' data-message="' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '"'
+                : '';
+
+            return '
+            <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
+                <div class="pimcore_editable_video_error"' . $messageAttr . ' style="width: ' . $width . '; height: ' . $height . ';"></div>
+            </div>';
         }
 
         // only display error message in debug mode
@@ -526,8 +523,8 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         }
 
         $code = '
-        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
-            <div class="pimcore_editable_video_error" style="text-align:center; width: ' . $width . '; height: ' . $height . '; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
+        <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
+            <div class="pimcore_editable_video_error" style="box-sizing: border-box; text-align:center; width: ' . $width . '; height: ' . $height . '; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
                 ' . $message . '
             </div>
         </div>';
@@ -949,11 +946,31 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         return implode('', $durationParts);
     }
 
+    private function isStudioRequest(): bool
+    {
+        // only the Studio editor (editmode) iframe; the preview tab and frontend render normally
+        $request = Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
+
+        return $request !== null && $request->query->getBoolean('pimcore_studio');
+    }
+
     private function getProgressCode(?string $thumbnail = null): string
     {
+        $name = $this->getName();
+        $width = $this->getWidthWithUnit();
+        $height = $this->getHeightWithUnit();
+
+        if ($this->isStudioRequest()) {
+            // bare marker — studio-ui-bundle draws the loading UI on top
+            return '
+            <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
+                <div class="pimcore_editable_video_progress" style="width: ' . $width . '; height: ' . $height . ';"></div>
+            </div>';
+        }
+
         $uid = $this->getUniqId();
         $code = '
-        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
+        <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
             <style type="text/css">
                 #' . $uid . ' .pimcore_editable_video_progress_status {
                     box-sizing:content-box;
@@ -972,7 +989,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
                 }
             </style>
             <div class="pimcore_editable_video_progress" id="' . $uid . '">
-                <img src="' . $thumbnail . '" style="width: ' . $this->getWidthWithUnit() . '; height: ' . $this->getHeightWithUnit() . ';">
+                <img src="' . $thumbnail . '" style="width: ' . $width . '; height: ' . $height . ';">
                 <div class="pimcore_editable_video_progress_status"></div>
             </div>
         </div>';
