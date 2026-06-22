@@ -92,6 +92,15 @@ class CdnCacheabilityResolverTest extends TestCase
         self::assertFalse($r->isCdnCacheable($this->req('/var/assets/folder/x.jpg'), $this->res(302)));
     }
 
+    public function testPartialContentNotCacheable(): void
+    {
+        // 206 Partial Content from a range request (possible when originals are served via PHP,
+        // i.e. Mode A) must not be tagged with a full-asset surrogate key or cookie-stripped —
+        // only a complete 200 OK body may be CDN-cached.
+        $r = $this->resolver();
+        self::assertFalse($r->isCdnCacheable($this->req('/var/assets/folder/x.jpg'), $this->res(206)));
+    }
+
     public function testQueryStringIsStillCacheable(): void
     {
         // The CDN caches query-string variants regardless (its cache key includes the

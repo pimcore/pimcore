@@ -65,8 +65,10 @@ class CdnCacheabilityResolver
             return false;
         }
 
-        // 3. 2xx only — error/redirect responses are never CDN-cached.
-        if (!$response->isSuccessful()) {
+        // 3. 200 OK only — not 206 Partial Content (a range request on a PHP-served original
+        //    in Mode A must never be tagged with a full-asset surrogate key), nor any other
+        //    2xx/3xx/error status.
+        if ($response->getStatusCode() !== Response::HTTP_OK) {
             return false;
         }
 
