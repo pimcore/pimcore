@@ -598,7 +598,15 @@ class Asset extends Element\AbstractElement
             // add to queue that saves dependencies
             $this->addToDependenciesQueue();
 
+            // check here for updateScanStatus
             if ($this->getDataChanged()) {
+                if ($this->getType() === 'document' && $this->getCustomSetting(self::CUSTOM_SETTING_PDF_SCAN_STATUS) !== null) {
+                    $this->setCustomSetting(
+                        self::CUSTOM_SETTING_PDF_SCAN_STATUS,
+                        null
+                    );
+                    $this->getDao()->updateCustomSettings();
+                }
                 if (in_array($this->getType(), ['image', 'video', 'document'])) {
                     $this->addToUpdateTaskQueue();
                 }
