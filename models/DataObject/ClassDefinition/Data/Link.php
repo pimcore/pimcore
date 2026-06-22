@@ -141,6 +141,10 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Link
     {
+        if (!is_array($data)) {
+            $data = [];
+        }
+
         $link = new DataObject\Data\Link();
         $link->setValues($data);
 
