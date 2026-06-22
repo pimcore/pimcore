@@ -99,6 +99,49 @@ class FastlyPurgeClientTest extends TestCase
         $this->client->purgeByTags([]);
     }
 
+    public function testPurgeByTagsChunksAtFastlyKeyLimit(): void
+    {
+        // Fastly rejects batch purges with more than 256 surrogate keys per request;
+        // a 600-tag set must be split into 256 + 256 + 88, all purged.
+        $tags = array_map(static fn (int $i): string => 'asset-' . $i, range(1, 600));
+
+        $chunkSizes = [];
+        $this->httpClient->expects($this->exactly(3))
+            ->method('request')
+            ->willReturnCallback(function (string $method, string $url, array $opts) use (&$chunkSizes) {
+                $chunkSizes[] = count(explode(' ', $opts['headers']['Surrogate-Key']));
+
+                return $this->mockResponse(200);
+            });
+
+        $this->client->purgeByTags($tags);
+
+        self::assertSame([256, 256, 88], $chunkSizes);
+    }
+
+    public function testPurgeByTagsWithExactlyLimitTagsSendsSingleRequest(): void
+    {
+        $tags = array_map(static fn (int $i): string => 'asset-' . $i, range(1, 256));
+
+        $this->httpClient->expects($this->once())
+            ->method('request')
+            ->willReturn($this->mockResponse(200));
+
+        $this->client->purgeByTags($tags);
+    }
+
+    public function testPurgeByTagsRejectsTagContainingWhitespace(): void
+    {
+        // A whitespace-containing key would split inside the space-separated
+        // Surrogate-Key header and purge unrelated cache entries — refuse loudly
+        // before any request is sent.
+        $this->httpClient->expects($this->never())->method('request');
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->client->purgeByTags(['asset-1', 'thumb-hero banner']);
+    }
+
     public function testPurgeByUrlSendsPurgeMethod(): void
     {
         $url = 'https://cdn.example.com/var/assets/image.jpg';

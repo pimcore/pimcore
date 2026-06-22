@@ -11,11 +11,15 @@ declare(strict_types=1);
  *  @license    Pimcore Open Core License (POCL)
  */
 
-namespace Pimcore\Cdn\Message;
+namespace Pimcore\Cdn;
 
-final readonly class PurgeCdnTagMessage
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+#[AutoconfigureTag('pimcore.cdn.image_transform_adapter', ['optimizer' => 'null'])]
+class NullImageTransformAdapter implements ImageTransformAdapterInterface
 {
-    public function __construct(public string $tag)
+    public function buildUrl(string $originalPath, ThumbnailTransform $transform): string
     {
+        return $originalPath;
     }
 }

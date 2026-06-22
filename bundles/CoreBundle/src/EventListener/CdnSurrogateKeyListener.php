@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Pimcore\Cdn\AssetWebPath;
+use Pimcore\Cdn\CdnAssetTag;
+use Pimcore\Cdn\CdnCacheabilityResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -30,18 +32,16 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *   → ID and config name are extracted from the URL pattern without any DB lookup.
  *
  * Original asset tags: asset-path-{hash}
- *   → SHA-256 (first 12 hex chars) of the request path. The CdnPurgeListener computes
- *     the identical hash from $asset->getFullPath() on the purge side.
+ *   → {@see CdnAssetTag::forPath()} over the rawurldecoded request path (xxh3, 16 hex chars).
+ *     The CdnPurgeListener derives the identical tag from $asset->getRealFullPath() via the
+ *     same helper on the purge side.
  */
 class CdnSurrogateKeyListener implements EventSubscriberInterface
 {
-    public const THUMBNAIL_PATTERN = '#(?:^|/)(image|video)-thumb__(\d+)__([a-zA-Z0-9_\-]+)/#';
-
-    public const ORIGINAL_ASSET_PATTERN = '#^/var/assets/#';
-
     public function __construct(
-        #[Autowire('%env(CDN_PROVIDER)%')]
-        private readonly string $cdnProvider,
+        private readonly CdnCacheabilityResolver $cacheabilityResolver,
+        private readonly CdnAssetTag $assetTag,
+        private readonly AssetWebPath $assetWebPath = new AssetWebPath(),
     ) {
     }
 
@@ -58,21 +58,14 @@ class CdnSurrogateKeyListener implements EventSubscriberInterface
             return;
         }
 
-        // CDN disabled — nothing to emit.
-        if ($this->cdnProvider === '') {
+        if (!$this->cacheabilityResolver->isCdnCacheable($event->getRequest(), $event->getResponse())) {
             return;
         }
 
-        $response = $event->getResponse();
-
-        // Never tag non-2xx responses — caching error responses at the CDN would serve
-        // stale errors to all users until TTL expiry.
-        if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
-            return;
-        }
-
-        $path = $event->getRequest()->getPathInfo();
-
+        // Symfony does not urldecode pathInfo; decode it so the asset-path-{hash} tag is
+        // computed over the same decoded path string CdnPurgeListener/CdnPurgeCommand hash
+        // (getRealFullPath()) — otherwise tags never match for filenames needing encoding.
+        $path = rawurldecode($event->getRequest()->getPathInfo());
         $tags = $this->resolveTagsForPath($path);
 
         if (empty($tags)) {
@@ -80,7 +73,7 @@ class CdnSurrogateKeyListener implements EventSubscriberInterface
         }
 
         $tagString = implode(' ', $tags);
-
+        $response = $event->getResponse();
         $response->headers->set('Surrogate-Key', $tagString);
         $response->headers->set('Cache-Tag', $tagString);
     }
@@ -90,20 +83,19 @@ class CdnSurrogateKeyListener implements EventSubscriberInterface
      */
     private function resolveTagsForPath(string $path): array
     {
-        if (preg_match(self::THUMBNAIL_PATTERN, $path, $matches)) {
+        if (preg_match(CdnCacheabilityResolver::THUMBNAIL_PATTERN, $path, $matches)) {
             [, , $assetId, $configName] = $matches;
+            $assetId = (int) $assetId;
 
             return [
-                'asset-' . $assetId,
-                'thumb-' . $configName,
-                'asset-' . $assetId . '-thumb-' . $configName,
+                $this->assetTag->forAsset($assetId),
+                $this->assetTag->forThumbConfig($configName),
+                $this->assetTag->forAssetThumb($assetId, $configName),
             ];
         }
 
-        if (preg_match(self::ORIGINAL_ASSET_PATTERN, $path)) {
-            $pathHash = substr(hash('sha256', $path), 0, 12);
-
-            return ['asset-path-' . $pathHash];
+        if ($this->assetWebPath->isOriginalAssetPath($path)) {
+            return [$this->assetTag->forPath($path)];
         }
 
         return [];

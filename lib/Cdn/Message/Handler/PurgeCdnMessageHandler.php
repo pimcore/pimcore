@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Cdn\Message\Handler;
 
-use Pimcore\Cdn\Message\PurgeCdnTagMessage;
+use Pimcore\Cdn\Message\PurgeCdnTagsMessage;
 use Pimcore\Cdn\Message\PurgeCdnUrlMessage;
 use Pimcore\Cdn\PurgeClientInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -28,10 +28,11 @@ class PurgeCdnMessageHandler
     {
     }
 
-    public function __invoke(PurgeCdnTagMessage|PurgeCdnUrlMessage $message): void
+    public function __invoke(PurgeCdnTagsMessage|PurgeCdnUrlMessage $message): void
     {
         match (true) {
-            $message instanceof PurgeCdnTagMessage => $this->purgeClient->purgeByTag($message->tag),
+            // purgeByTags() chunks to the provider's per-request key limit.
+            $message instanceof PurgeCdnTagsMessage => $this->purgeClient->purgeByTags($message->tags),
             $message instanceof PurgeCdnUrlMessage => $this->purgeClient->purgeByUrl($message->url),
         };
     }

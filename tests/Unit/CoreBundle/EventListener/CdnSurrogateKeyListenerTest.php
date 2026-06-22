@@ -15,6 +15,10 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\CdnSurrogateKeyListener;
+use Pimcore\Cdn\AssetWebPath;
+use Pimcore\Cdn\CdnAssetTag;
+use Pimcore\Cdn\CdnCacheabilityResolver;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,7 +43,10 @@ class CdnSurrogateKeyListenerTest extends TestCase
 
     private function dispatch(string $cdnProvider, ResponseEvent $event): Response
     {
-        $listener = new CdnSurrogateKeyListener($cdnProvider);
+        $listener = new CdnSurrogateKeyListener(
+            new CdnCacheabilityResolver($cdnProvider, [], $this->createMock(PimcoreContextResolver::class)),
+            new CdnAssetTag(),
+        );
         $listener->onKernelResponse($event);
 
         return $event->getResponse();
@@ -99,7 +106,7 @@ class CdnSurrogateKeyListenerTest extends TestCase
     public function testOriginalAssetUrlEmitsPathHashTag(): void
     {
         $path = '/var/assets/products/image.jpg';
-        $expectedHash = substr(hash('sha256', $path), 0, 12);
+        $expectedHash = hash('xxh3', $path);
 
         $event = $this->makeEvent($path);
         $response = $this->dispatch('fastly', $event);
@@ -108,28 +115,60 @@ class CdnSurrogateKeyListenerTest extends TestCase
         $this->assertSame('asset-path-' . $expectedHash, $response->headers->get('Cache-Tag'));
     }
 
-    public function testOriginalAssetHashIsTwelveHexChars(): void
+    public function testOriginalAssetHashIsSixteenHexChars(): void
     {
         $event = $this->makeEvent('/var/assets/some/file.pdf');
         $response = $this->dispatch('fastly', $event);
 
         $tag = $response->headers->get('Surrogate-Key');
-        $this->assertMatchesRegularExpression('/^asset-path-[0-9a-f]{12}$/', $tag);
+        $this->assertMatchesRegularExpression('/^asset-path-[0-9a-f]{16}$/', $tag);
     }
 
     public function testOriginalAssetHashMatchesPurgeListenerHash(): void
     {
-        // CdnPurgeListener computes: substr(hash('sha256', '/var/assets' . $asset->getFullPath()), 0, 12)
-        // CdnSurrogateKeyListener computes: substr(hash('sha256', $path), 0, 12)  where $path = /var/assets/...
+        // CdnPurgeListener computes: hash('xxh3', '/var/assets' . $asset->getRealFullPath())
+        // CdnSurrogateKeyListener computes: hash('xxh3', $path)  where $path = /var/assets/...
         // Both must produce the same hash for the same asset.
         $fullPath = '/brand/logo.svg';
         $requestPath = '/var/assets' . $fullPath;
 
-        $expectedHash = substr(hash('sha256', $requestPath), 0, 12);
+        $expectedHash = hash('xxh3', $requestPath);
 
         $event = $this->makeEvent($requestPath);
         $response = $this->dispatch('fastly', $event);
 
+        $this->assertSame('asset-path-' . $expectedHash, $response->headers->get('Surrogate-Key'));
+    }
+
+    public function testConfiguredPrefixKeepsTagAndPurgeSidesConsistent(): void
+    {
+        // With a custom source prefix, the response side must tag the prefixed request
+        // path AND the purge side (AssetWebPath::forFullPath) must hash the identical
+        // string — otherwise purges silently miss. This pins the cross-side contract.
+        $webPath = new AssetWebPath('/media');
+        $listener = new CdnSurrogateKeyListener(
+            new CdnCacheabilityResolver('fastly', [], $this->createMock(PimcoreContextResolver::class), $webPath),
+            new CdnAssetTag(),
+            $webPath,
+        );
+        $event = $this->makeEvent('/media/brand/logo.png');
+
+        $listener->onKernelResponse($event);
+
+        $purgeSideTag = (new CdnAssetTag())->forPath($webPath->forFullPath('/brand/logo.png'));
+        $this->assertSame($purgeSideTag, $event->getResponse()->headers->get('Surrogate-Key'));
+    }
+
+    public function testEncodedOriginalAssetUrlHashesDecodedPath(): void
+    {
+        // Browsers percent-encode the request ("/Car Images/Mötley.jpg" arrives as
+        // "/Car%20Images/M%C3%B6tley.jpg" and Symfony does not decode pathInfo), but the
+        // purge side hashes the decoded real path — the listener must hash the decoded
+        // form or the tags never match for filenames needing encoding.
+        $event = $this->makeEvent('/var/assets/Car%20Images/M%C3%B6tley.jpg');
+        $response = $this->dispatch('fastly', $event);
+
+        $expectedHash = hash('xxh3', '/var/assets/Car Images/Mötley.jpg');
         $this->assertSame('asset-path-' . $expectedHash, $response->headers->get('Surrogate-Key'));
     }
 
@@ -320,5 +359,52 @@ class CdnSurrogateKeyListenerTest extends TestCase
         $response = $this->dispatch('fastly', $event);
 
         $this->assertStringContainsString('thumb-MyConfig_v2-XL_99', $response->headers->get('Surrogate-Key'));
+    }
+
+    // -----------------------------------------------------------------------
+    // New guards: excluded path, no-store; query-string variants stay tagged
+    // -----------------------------------------------------------------------
+
+    public function testEmitsSamePathTagsForQueryStringRequest(): void
+    {
+        // The CDN caches ?v=3 variants under the full URL; tagging them with the same
+        // path-derived tags is what lets an asset purge reach every cached variant.
+        $listener = new CdnSurrogateKeyListener(
+            new CdnCacheabilityResolver('fastly', [], $this->createMock(PimcoreContextResolver::class)),
+            new CdnAssetTag(),
+        );
+        $event = $this->makeEvent('/var/assets/folder/x.jpg?v=3', 200);
+
+        $listener->onKernelResponse($event);
+
+        $expectedHash = hash('xxh3', '/var/assets/folder/x.jpg');
+        self::assertSame('asset-path-' . $expectedHash, $event->getResponse()->headers->get('Surrogate-Key'));
+    }
+
+    public function testDoesNotEmitTagsForExcludedPath(): void
+    {
+        $listener = new CdnSurrogateKeyListener(
+            new CdnCacheabilityResolver('fastly', ['#^/var/assets/private/#'], $this->createMock(PimcoreContextResolver::class)),
+            new CdnAssetTag(),
+        );
+        $event = $this->makeEvent('/var/assets/private/secret.jpg', 200);
+
+        $listener->onKernelResponse($event);
+
+        self::assertFalse($event->getResponse()->headers->has('Surrogate-Key'));
+    }
+
+    public function testDoesNotEmitTagsWhenResponseHasNoStore(): void
+    {
+        $listener = new CdnSurrogateKeyListener(
+            new CdnCacheabilityResolver('fastly', [], $this->createMock(PimcoreContextResolver::class)),
+            new CdnAssetTag(),
+        );
+        $event = $this->makeEvent('/var/assets/folder/x.jpg', 200);
+        $event->getResponse()->headers->set('Cache-Control', 'no-store');
+
+        $listener->onKernelResponse($event);
+
+        self::assertFalse($event->getResponse()->headers->has('Surrogate-Key'));
     }
 }

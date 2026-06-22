@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Pimcore\Cdn\CdnCacheabilityResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -54,8 +54,7 @@ class CdnAssetCookieStripperListener implements EventSubscriberInterface
     public const STRIPPED_COOKIES = ['_pc_tss', '_pc_tvs'];
 
     public function __construct(
-        #[Autowire('%env(CDN_PROVIDER)%')]
-        private readonly string $cdnProvider,
+        private readonly CdnCacheabilityResolver $cacheabilityResolver,
     ) {
     }
 
@@ -75,28 +74,11 @@ class CdnAssetCookieStripperListener implements EventSubscriberInterface
             return;
         }
 
-        // CDN disabled — leave cookie behavior untouched for non-CDN sites.
-        if ($this->cdnProvider === '') {
-            return;
-        }
-
-        $path = $event->getRequest()->getPathInfo();
-
-        // Match the same paths that CdnSurrogateKeyListener tags. If the path is not a CDN
-        // candidate, leave it alone — generic pages still need their personalization cookies.
-        if (!preg_match(CdnSurrogateKeyListener::THUMBNAIL_PATTERN, $path)
-            && !preg_match(CdnSurrogateKeyListener::ORIGINAL_ASSET_PATTERN, $path)) {
+        if (!$this->cacheabilityResolver->isCdnCacheable($event->getRequest(), $event->getResponse())) {
             return;
         }
 
         $response = $event->getResponse();
-
-        // Only 2xx responses are CDN-cached/tagged (see CdnSurrogateKeyListener). Never touch
-        // cookies on error or redirect responses — e.g. a 302 to login or a 403 on a gated
-        // asset path must keep its session cookie intact.
-        if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
-            return;
-        }
 
         // Symfony stores cookies in a queue accessed by getCookies()/clearCookie(). The
         // raw 'Set-Cookie' header is rebuilt from this queue at send time, so removing the

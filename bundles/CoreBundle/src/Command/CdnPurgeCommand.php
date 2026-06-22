@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Pimcore\Cdn\AssetWebPath;
+use Pimcore\Cdn\CdnAssetTag;
 use Pimcore\Cdn\PurgeClientInterface;
 use Pimcore\Model\Asset;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -28,8 +30,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class CdnPurgeCommand extends Command
 {
-    public function __construct(private readonly PurgeClientInterface $purgeClient)
-    {
+    public function __construct(
+        private readonly PurgeClientInterface $purgeClient,
+        private readonly CdnAssetTag $assetTag,
+        private readonly AssetWebPath $assetWebPath,
+    ) {
         parent::__construct();
     }
 
@@ -93,14 +98,32 @@ HELP
             return Command::FAILURE;
         }
 
+        // Thumbnail config names are only ever tagged when they match the charset the
+        // response-side pattern extracts (CdnCacheabilityResolver::THUMBNAIL_PATTERN,
+        // [a-zA-Z0-9_-]) — any other name can never exist as a surrogate key, and a
+        // whitespace-containing name would even corrupt the space-separated batch purge
+        // header into unrelated keys. Fail fast on malformed input.
+        $invalidConfigs = array_filter(
+            $configs,
+            static fn (string $name): bool => preg_match('/^[a-zA-Z0-9_\-]+$/', $name) !== 1,
+        );
+        if ($invalidConfigs !== []) {
+            $io->error(sprintf(
+                'Invalid thumbnail config name(s): %s. Config names may only contain letters, digits, underscores and hyphens.',
+                implode(', ', $invalidConfigs),
+            ));
+
+            return Command::FAILURE;
+        }
+
         $allTags = [];
 
         foreach ($assetIds as $id) {
             $id = (int) $id;
-            $allTags[] = 'asset-' . $id;
+            $allTags[] = $this->assetTag->forAsset($id);
 
-            // Also purge the original asset CDN entry via path hash.
-            // Identical hashing to CdnSurrogateKeyListener / CdnPurgeListener: sha256 of '/var/assets' + full path, first 12 hex chars.
+            // Also purge the original asset CDN entry via its path-derived tag (CdnAssetTag::forPath
+            // owns the hash, shared with CdnSurrogateKeyListener / CdnPurgeListener).
             $asset = $this->loadAsset($id);
             if ($asset === null) {
                 $io->warning(sprintf('Asset with ID "%s" not found — only the asset-%s thumbnail tag will be purged, the original CDN entry cannot be resolved without a path.', $id, $id));
@@ -108,13 +131,13 @@ HELP
                 continue;
             }
 
-            $assetWebPath = '/var/assets' . $asset->getFullPath();
-            $pathHash = substr(hash('sha256', $assetWebPath), 0, 12);
-            $allTags[] = 'asset-path-' . $pathHash;
+            // getRealFullPath(): the raw tree path, matching what the purge listener and the
+            // response-side tagging hash (getFullPath() can return an encoded/prefixed variant).
+            $allTags[] = $this->assetTag->forPath($this->assetWebPath->forFullPath($asset->getRealFullPath()));
         }
 
         foreach ($configs as $configName) {
-            $allTags[] = 'thumb-' . $configName;
+            $allTags[] = $this->assetTag->forThumbConfig($configName);
         }
 
         // Deduplicate: callers may pass the same --asset or --config twice (e.g. via shell

@@ -15,21 +15,21 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Cdn\Message\Handler;
 
 use Pimcore\Cdn\Message\Handler\PurgeCdnMessageHandler;
-use Pimcore\Cdn\Message\PurgeCdnTagMessage;
+use Pimcore\Cdn\Message\PurgeCdnTagsMessage;
 use Pimcore\Cdn\Message\PurgeCdnUrlMessage;
 use Pimcore\Cdn\PurgeClientInterface;
 use Pimcore\Tests\Support\Test\TestCase;
 
 class PurgeCdnMessageHandlerTest extends TestCase
 {
-    public function testTagMessageDispatchesPurgeByTag(): void
+    public function testTagsMessageDispatchesBatchPurgeByTags(): void
     {
         $purgeClient = $this->createMock(PurgeClientInterface::class);
-        $purgeClient->expects($this->once())->method('purgeByTag')->with('asset-42');
+        $purgeClient->expects($this->once())->method('purgeByTags')->with(['asset-42', 'asset-path-abc123def456']);
         $purgeClient->expects($this->never())->method('purgeByUrl');
 
         $handler = new PurgeCdnMessageHandler($purgeClient);
-        $handler(new PurgeCdnTagMessage('asset-42'));
+        $handler(new PurgeCdnTagsMessage(['asset-42', 'asset-path-abc123def456']));
     }
 
     public function testUrlMessageDispatchesPurgeByUrl(): void
@@ -38,7 +38,7 @@ class PurgeCdnMessageHandlerTest extends TestCase
 
         $purgeClient = $this->createMock(PurgeClientInterface::class);
         $purgeClient->expects($this->once())->method('purgeByUrl')->with($url);
-        $purgeClient->expects($this->never())->method('purgeByTag');
+        $purgeClient->expects($this->never())->method('purgeByTags');
 
         $handler = new PurgeCdnMessageHandler($purgeClient);
         $handler(new PurgeCdnUrlMessage($url));

@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\CdnAssetCookieStripperListener;
+use Pimcore\Cdn\CdnCacheabilityResolver;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,7 +49,9 @@ class CdnAssetCookieStripperListenerTest extends TestCase
 
     private function dispatch(string $cdnProvider, ResponseEvent $event): Response
     {
-        $listener = new CdnAssetCookieStripperListener($cdnProvider);
+        $listener = new CdnAssetCookieStripperListener(
+            new CdnCacheabilityResolver($cdnProvider, [], $this->createMock(PimcoreContextResolver::class)),
+        );
         $listener->onKernelResponse($event);
 
         return $event->getResponse();
@@ -115,7 +119,7 @@ class CdnAssetCookieStripperListenerTest extends TestCase
     {
         // Sub-requests (e.g. ESI fragments rendered server-side) should not have their
         // cookies touched — only the outermost main response is what reaches the CDN.
-        $event = $this->makeEvent('/Sample%20Content/foo/image-thumb__1__cfg/x.jpg', mainRequest: false);
+        $event = $this->makeEvent('/Sample%20Content/foo/image-thumb__1__cfg/x.jpg', false);
         $response = $this->dispatch('fastly', $event);
 
         $this->assertCount(2, $response->headers->getCookies(), 'Set-Cookie must not be touched on sub-requests');
@@ -144,5 +148,25 @@ class CdnAssetCookieStripperListenerTest extends TestCase
         $this->assertIsArray($entry);
         $this->assertSame('onKernelResponse', $entry[0]);
         $this->assertLessThan(-115, $entry[1], 'Listener must run after TargetingListener (priority -115)');
+    }
+
+    public function testStripsCookiesForQueryStringRequest(): void
+    {
+        // A surviving Set-Cookie makes the CDN treat the response as uncacheable
+        // (hit-for-pass) — query-string variants of asset URLs must be stripped like
+        // their bare-path equivalents; signed/gated URLs opt out via no-store/excluded_paths.
+        $event = $this->makeEvent('/var/assets/Sample%20Content/foo.jpg?v=7');
+        $response = $this->dispatch('fastly', $event);
+
+        self::assertCount(0, $response->headers->getCookies(), 'cookies stripped on query-string asset requests');
+    }
+
+    public function testDoesNotStripCookiesWhenResponseHasNoStore(): void
+    {
+        $event = $this->makeEvent('/var/assets/Sample%20Content/foo.jpg');
+        $event->getResponse()->headers->set('Cache-Control', 'no-store');
+        $response = $this->dispatch('fastly', $event);
+
+        self::assertCount(2, $response->headers->getCookies(), 'cookies preserved on no-store responses');
     }
 }

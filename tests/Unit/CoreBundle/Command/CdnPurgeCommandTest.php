@@ -16,6 +16,8 @@ namespace Pimcore\Tests\Unit\CoreBundle\Command;
 
 use ArrayObject;
 use Pimcore\Bundle\CoreBundle\Command\CdnPurgeCommand;
+use Pimcore\Cdn\AssetWebPath;
+use Pimcore\Cdn\CdnAssetTag;
 use Pimcore\Cdn\PurgeClientInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -58,7 +60,7 @@ class CdnPurgeCommandTest extends TestCase
             /** @param array<int, Asset> $assets */
             public function __construct(PurgeClientInterface $client, private readonly array $assets)
             {
-                parent::__construct($client);
+                parent::__construct($client, new CdnAssetTag(), new AssetWebPath());
             }
 
             protected function loadAsset(int $id): ?Asset
@@ -72,9 +74,9 @@ class CdnPurgeCommandTest extends TestCase
     {
         $asset = $this->getMockBuilder(Asset::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getFullPath'])
+            ->onlyMethods(['getRealFullPath'])
             ->getMock();
-        $asset->method('getFullPath')->willReturn($fullPath);
+        $asset->method('getRealFullPath')->willReturn($fullPath);
 
         return $asset;
     }
@@ -90,7 +92,7 @@ class CdnPurgeCommandTest extends TestCase
 
     private function expectedPathHashTag(string $fullPath): string
     {
-        return 'asset-path-' . substr(hash('sha256', '/var/assets' . $fullPath), 0, 12);
+        return 'asset-path-' . hash('xxh3', '/var/assets' . $fullPath);
     }
 
     public function testAssetOptionPurgesAssetIdAndPathHashTags(): void
@@ -157,6 +159,30 @@ class CdnPurgeCommandTest extends TestCase
         $this->assertSame(Command::FAILURE, $tester->getStatusCode());
     }
 
+    public function testConfigNameWithSpaceReturnsFailureWithoutPurging(): void
+    {
+        // A whitespace-containing config name can never exist as a surrogate key (the
+        // response side only tags [a-zA-Z0-9_-] names) and would corrupt the space-
+        // separated batch purge header into unrelated keys.
+        $client = $this->createMock(PurgeClientInterface::class);
+        $client->expects($this->never())->method('purgeByTags');
+
+        $tester = $this->runCommand($client, ['--config' => ['hero banner']]);
+
+        $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+        $this->assertStringContainsString('Invalid thumbnail config name', $tester->getDisplay());
+    }
+
+    public function testInvalidConfigNameIsRejectedBeforeAnyValidNameIsPurged(): void
+    {
+        $client = $this->createMock(PurgeClientInterface::class);
+        $client->expects($this->never())->method('purgeByTags');
+
+        $tester = $this->runCommand($client, ['--config' => ['product-hero', 'bad name']]);
+
+        $this->assertSame(Command::FAILURE, $tester->getStatusCode());
+    }
+
     public function testMultipleAssetsArePassedAsOneBatchCall(): void
     {
         [$client, $calls] = $this->makeClient();
@@ -207,14 +233,14 @@ class CdnPurgeCommandTest extends TestCase
 
     public function testHelpMentionsPurgeAllNotSupported(): void
     {
-        $command = new CdnPurgeCommand($this->createMock(PurgeClientInterface::class));
+        $command = new CdnPurgeCommand($this->createMock(PurgeClientInterface::class), new CdnAssetTag(), new AssetWebPath());
 
         $this->assertStringContainsString('Purge-all is not supported', $command->getHelp());
     }
 
     public function testHelpPositionsCommandAsRecoveryAndAutomationTool(): void
     {
-        $command = new CdnPurgeCommand($this->createMock(PurgeClientInterface::class));
+        $command = new CdnPurgeCommand($this->createMock(PurgeClientInterface::class), new CdnAssetTag(), new AssetWebPath());
 
         $help = $command->getHelp();
         $this->assertStringContainsString('recovery', strtolower($help));
