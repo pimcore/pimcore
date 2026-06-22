@@ -37,15 +37,18 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
 
     private ?Page $childDocument = null;
 
+    private bool $previousGetInheritedValues = false;
+
     protected function setUp(): void
     {
         parent::setUp();
+        $this->previousGetInheritedValues = PageSnippet::getGetInheritedValues();
         PageSnippet::setGetInheritedValues(true);
     }
 
     protected function tearDown(): void
     {
-        PageSnippet::setGetInheritedValues(false);
+        PageSnippet::setGetInheritedValues($this->previousGetInheritedValues);
 
         try {
             $this->childDocument?->delete();
@@ -94,13 +97,16 @@ class ContentMainDocumentInheritanceTest extends ModelTestCase
      */
     private function getRawChildEditables(): array
     {
+        $previous = PageSnippet::getGetInheritedValues();
         PageSnippet::setGetInheritedValues(false);
-        $rawChild = Page::getById($this->childDocument->getId(), ['force' => true]);
-        // getEditables() without InheritedValues only populates from DAO (DB).
-        $ownEditables = $rawChild->getEditables();
-        PageSnippet::setGetInheritedValues(true);
 
-        return $ownEditables;
+        try {
+            $rawChild = Page::getById($this->childDocument->getId(), ['force' => true]);
+            // getEditables() without InheritedValues only populates from DAO (DB).
+            return $rawChild->getEditables();
+        } finally {
+            PageSnippet::setGetInheritedValues($previous);
+        }
     }
 
     // -------------------------------------------------------------------------
