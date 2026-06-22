@@ -499,23 +499,15 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->getHtml5Code(['mp4' => (string) $this->id]);
     }
 
-    private function isStudioRequest(): bool
-    {
-        // only the Studio editor (editmode) iframe; the preview tab and frontend render normally
-        $request = Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
-
-        return $request !== null && $request->query->getBoolean('pimcore_studio');
-    }
-
     private function getErrorCode(string $message = ''): string
     {
         $name = $this->getName();
         $width = $this->getWidthWithUnit();
         $height = $this->getHeightWithUnit();
 
-        if ($this->isStudioRequest()) {
-            // message only in editmode/debug — the query param alone is spoofable
-            $messageAttr = $message !== '' && ($this->getEditmode() || Pimcore::inDebugMode())
+        if ($this->getEditmode()) {
+            // editmode: studio-ui-bundle renders the error UI on top
+            $messageAttr = $message !== ''
                 ? ' data-message="' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '"'
                 : '';
 
@@ -958,7 +950,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         $width = $this->getWidthWithUnit();
         $height = $this->getHeightWithUnit();
 
-        if ($this->isStudioRequest()) {
+        if ($this->getEditmode()) {
             // bare marker — studio-ui-bundle draws the loading UI on top
             return '
             <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">

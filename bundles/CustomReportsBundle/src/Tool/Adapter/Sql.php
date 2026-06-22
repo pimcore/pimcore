@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
 use Exception;
+use InvalidArgumentException;
 use Pimcore\Db;
 use stdClass;
 
@@ -48,7 +49,7 @@ class Sql extends AbstractAdapter
 
             $sql = $baseQuery['data'] . $order;
             if ($offset !== null && $limit) {
-                $sql .= " LIMIT $offset,$limit";
+                $sql .= ' LIMIT ' . (int) $offset . ',' . (int) $limit;
             }
 
             $data = $db->fetchAllAssociative($sql);
@@ -81,10 +82,29 @@ class Sql extends AbstractAdapter
         throw new Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
     }
 
-    protected function buildQueryString(stdClass $config, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): string
-    {
-        $config = (array)$config;
+    protected function buildQueryString(
+        stdClass $config,
+        bool $ignoreSelectAndGroupBy = false,
+        ?array $drillDownFilters = null,
+        ?string $selectField = null
+    ): string {
+        $config = (array) $config;
         $sql = '';
+
+        foreach (['sql', 'from', 'where', 'groupby'] as $key) {
+            if (!empty($config[$key])) {
+                if (!is_string($config[$key])) {
+                    throw new InvalidArgumentException(sprintf('Invalid "%s" SQL fragment; expected string.', $key));
+                }
+
+                try {
+                    $this->validateSqlFragment($config[$key]);
+                } catch (InvalidArgumentException $e) {
+                    throw new InvalidArgumentException(sprintf('Unsafe "%s" SQL fragment: %s', $key, $e->getMessage()), 0, $e);
+                }
+            }
+        }
+
         if (!empty($config['sql']) && !$ignoreSelectAndGroupBy) {
             if (!str_starts_with(strtoupper(trim($config['sql'])), 'SELECT')) {
                 $sql .= 'SELECT';
@@ -96,42 +116,88 @@ class Sql extends AbstractAdapter
         } else {
             $sql .= 'SELECT *';
         }
+
         if (!empty($config['from'])) {
             if (!str_starts_with(strtoupper(trim($config['from'])), 'FROM')) {
-                $sql .= "\n" . 'FROM ';
+                $sql .= "\nFROM ";
             }
             $sql .= "\n" . $config['from'];
         }
 
         if (!empty($config['where'])) {
             if (str_starts_with(strtoupper(trim($config['where'])), 'WHERE')) {
-                $config['where'] = preg_replace('/^\s*WHERE\s*/', '', $config['where']);
+                $config['where'] = preg_replace('/^\s*WHERE\s*/i', '', $config['where']);
             }
-            $sql .= "\n" . 'WHERE (' . $config['where'] . ')';
+
+            $sql .= "\nWHERE (" . $config['where'] . ')';
         }
 
         if (!empty($config['groupby']) && !$ignoreSelectAndGroupBy) {
             if (!str_starts_with(strtoupper(trim($config['groupby'])), 'GROUP BY')) {
-                $sql .= ' GROUP BY ';
+                $sql .= "\nGROUP BY ";
             }
+
             $sql .= "\n" . $config['groupby'];
         }
 
         if ($drillDownFilters) {
             $havingParts = [];
             $db = Db::get();
+
             foreach ($drillDownFilters as $field => $value) {
-                if ($value !== '' && $value !== null) {
-                    $havingParts[] = ($db->quoteIdentifier($field) .' = ' . $db->quote($value));
+                if ($value === '' || $value === null) {
+                    continue;
                 }
+
+                $havingParts[] =
+                    $db->quoteIdentifier($field)
+                    . ' = '
+                    . $db->quote($value);
             }
 
             if ($havingParts) {
-                $sql .= ' HAVING ' . implode(' AND ', $havingParts);
+                $sql .= "\nHAVING " . implode(' AND ', $havingParts);
             }
         }
 
         return $sql;
+    }
+
+    private function validateSqlFragment(string $sql): void
+    {
+        // Remove quoted strings/identifiers to avoid false positives (e.g. INSERT() function, literals containing "--", "#", ";", etc.)
+        $sqlForValidation = preg_replace(
+            [
+                "/'(?:''|\\\\'|[^'])*'/s",
+                '/"(?:""|\\\\"|[^"])*"/s',
+                '/`[^`]*`/s',
+            ],
+            ["''", '""', '``'],
+            $sql
+        ) ?? $sql;
+
+        // Normalize whitespace/newlines for consistent boundary checking
+        $sqlForValidation = preg_replace('/\s+/s', ' ', $sqlForValidation) ?? $sqlForValidation;
+        $forbiddenPatterns = [
+            '/;/',
+            '/--\s/', // comment start (MySQL-style, requires whitespace after --)
+            '/#/',
+            '/\/\*/',
+            '/\*\//',
+            '/^\s*DROP\b/i',
+            '/^\s*DELETE\s+FROM\b/i',
+            '/^\s*UPDATE\s+\S+\s+SET\b/i',
+            '/^\s*INSERT\s+INTO\b/i',
+            '/^\s*ALTER\b/i',
+            '/^\s*CREATE\b/i',
+            '/^\s*TRUNCATE\b/i',
+        ];
+
+        foreach ($forbiddenPatterns as $pattern) {
+            if (preg_match($pattern, $sqlForValidation)) {
+                throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, and DDL/DML are not allowed).');
+            }
+        }
     }
 
     protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): ?array
