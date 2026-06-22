@@ -147,7 +147,7 @@ response, including assets. Most CDNs refuse to cache responses that carry a
 `Set-Cookie` header. `CdnAssetCookieStripperListener` runs at priority `-200`
 (after the targeting listener at `-115`) and removes the personalization cookies (`_pc_tss`, `_pc_tvs`) from
 - Thumbnails: `(?:^|/)(image|video)-thumb__\d+__([a-zA-Z0-9_\-]+)/`
-- Originals: `^/var/assets/`
+- Originals: the configured original-asset prefix (defaults to `^/var/assets/`; see “The URL prefix contract”)
 
 When `CDN_PROVIDER` is empty, this listener is inert and cookies pass through
 unchanged.
