@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Cdn\Message\Handler;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Cdn\CdnAssetTag;
 use Pimcore\Cdn\Message\PurgeCdnAssetTreeMessage;
 use Pimcore\Cdn\PurgeClientInterface;
-use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -42,6 +42,7 @@ class PurgeCdnAssetTreeMessageHandler
         private readonly PurgeClientInterface $purgeClient,
         private readonly CdnAssetTag $assetTag,
         private readonly AssetWebPath $assetWebPath,
+        private readonly Connection $db,
         #[Autowire('%pimcore.cdn.base_url%')]
         private readonly string $cdnBaseUrl = '',
     ) {
@@ -81,13 +82,17 @@ class PurgeCdnAssetTreeMessageHandler
      * full Asset models for a potentially large subtree would be wasted work. Folders
      * are skipped — they have no cacheable binary of their own.
      *
+     * Streams via iterateAssociative() rather than fetchAllAssociative() so memory stays
+     * bounded even for large subtrees; the WHERE uses a prefix LIKE on `path` (the leading
+     * column of the `fullpath` index), so it is an index range scan, not a full scan.
+     *
      * Extracted as a seam so unit tests can stub the lookup without a database.
      *
      * @return iterable<array{id: int|string, fullPath: string}>
      */
     protected function loadDescendants(string $folderPath): iterable
     {
-        return Db::get()->fetchAllAssociative(
+        return $this->db->iterateAssociative(
             "SELECT id, CONCAT(`path`, filename) AS fullPath FROM assets WHERE `path` LIKE ? AND `type` != 'folder'",
             [Helper::escapeLike($folderPath) . '/%'],
         );

@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Cdn\Message\Handler;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Cdn\CdnAssetTag;
 use Pimcore\Cdn\Message\Handler\PurgeCdnAssetTreeMessageHandler;
@@ -56,7 +57,10 @@ class PurgeCdnAssetTreeMessageHandlerTest extends TestCase
      */
     private function handler(array $descendants, string $cdnBaseUrl = ''): PurgeCdnAssetTreeMessageHandler
     {
-        return new class($this->client, new CdnAssetTag(), new AssetWebPath(), $cdnBaseUrl, $descendants) extends PurgeCdnAssetTreeMessageHandler {
+        // loadDescendants() is overridden below, so the injected Connection is never touched.
+        $db = $this->createMock(Connection::class);
+
+        return new class($this->client, new CdnAssetTag(), new AssetWebPath(), $db, $cdnBaseUrl, $descendants) extends PurgeCdnAssetTreeMessageHandler {
             /**
              * @param array<int, array{id: int, fullPath: string}> $descendants
              */
@@ -64,10 +68,11 @@ class PurgeCdnAssetTreeMessageHandlerTest extends TestCase
                 PurgeClientInterface $purgeClient,
                 CdnAssetTag $assetTag,
                 AssetWebPath $assetWebPath,
+                Connection $db,
                 string $cdnBaseUrl,
                 private readonly array $descendants,
             ) {
-                parent::__construct($purgeClient, $assetTag, $assetWebPath, $cdnBaseUrl);
+                parent::__construct($purgeClient, $assetTag, $assetWebPath, $db, $cdnBaseUrl);
             }
 
             protected function loadDescendants(string $folderPath): iterable
