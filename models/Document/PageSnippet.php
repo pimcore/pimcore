@@ -473,9 +473,8 @@ abstract class PageSnippet extends Model\Document
                 // inheritance and causing the content-main content to disappear on
                 // subsequent page loads.
                 //
-                // The DAO already guards against saving inherited editables:
+                // PageSnippet::update() already guards against saving inherited editables:
                 //   if (!$editable->getInherited()) { $editable->save(); }
-                //
                 // getEditable() applies the same clone+setInherited pattern for the
                 // single-editable lookup path; this keeps getEditables() consistent.
                 $markedContentMainEditables = [];
