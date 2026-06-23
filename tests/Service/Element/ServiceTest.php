@@ -69,6 +69,37 @@ class ServiceTest extends TestCase
         );
     }
 
+    /**
+     * When the target folder's children listing is already loaded, copyAsChild() must append
+     * the new object to the in-memory listing so callers see the updated children without a
+     * further DB round-trip.
+     *
+     * @see \Pimcore\Model\Element\Service::updateChildren()
+     */
+    public function testCopyAsChildAppearsInPreloadedTargetChildren(): void
+    {
+        $folder = TestHelper::createObjectFolder('copy-target-preloaded-');
+        $source = TestHelper::createEmptyObject('copy-source-preloaded-');
+
+        // Force-load the listing so updateChildren() takes the append path.
+        $folder->getChildren()->load();
+        $this->assertTrue($folder->getChildren()->isLoaded());
+
+        $service = new DataObject\Service();
+        $copy = $service->copyAsChild($folder, $source);
+
+        $childIds = array_map(
+            static fn ($child) => $child->getId(),
+            $folder->getChildren()->getData()
+        );
+
+        $this->assertContains(
+            $copy->getId(),
+            $childIds,
+            'The copied object must appear in the already-loaded children listing'
+        );
+    }
+
     public function testCloneMe(): void
     {
         // create object with property

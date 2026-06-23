@@ -579,8 +579,9 @@ class Service extends Model\AbstractModel
         }
 
         //check in case of recursion
+        $children = $listing->getData();
         $found = false;
-        foreach ($listing->getData() as $child) {
+        foreach ($children as $child) {
             if ($child->getId() == $new->getId()) {
                 $found = true;
 
@@ -596,7 +597,7 @@ class Service extends Model\AbstractModel
             if ($newElement === null) {
                 return;
             }
-            $listing->setData(array_merge($listing->getData(), [$newElement]));
+            $listing->setData([...$children, $newElement]);
             $target->setChildren($listing);
         }
     }
