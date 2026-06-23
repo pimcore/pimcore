@@ -70,10 +70,14 @@ pimcore:
                         label:               close product
                         permissions:
                             -
-                                condition:           is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in role_names
-                                modify:
+                                condition: is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in role_names
+                                modify: true
+                            # for Pimcore roles use ROLE_<role name in uppercase>
+                            -   
+                                condition: is_fully_authenticated() and 'ROLE_PIMCORE_EDITOR' in role_names
+                                modify: true
                             -
-                                modify:
+                                modify: false
                                 objectLayout:        2
 
                 # Prototype

@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
@@ -98,7 +95,7 @@ class Dao extends Model\Dao\AbstractDao
         $data = [];
 
         foreach ($class as $key => $value) {
-            if (in_array($key, $this->getValidTableColumns('classes'))) {
+            if (in_array($key, $this->getValidTableColumns('classes'), true)) {
                 $data[$key] = $value;
             }
         }
@@ -110,45 +107,101 @@ class Dao extends Model\Dao\AbstractDao
         $objectTable = 'object_query_' . $this->model->getId();
         $objectDatastoreTable = 'object_store_' . $this->model->getId();
         $objectDatastoreTableRelation = 'object_relations_' . $this->model->getId();
-
         $objectView = 'object_' . $this->model->getId();
 
-        // create object table if not exists
+        $qObjectTable = $this->db->quoteIdentifier($objectTable);
+        $qObjectDatastoreTable = $this->db->quoteIdentifier($objectDatastoreTable);
+        $qObjectDatastoreTableRelation = $this->db->quoteIdentifier($objectDatastoreTableRelation);
+        $qObjectView = $this->db->quoteIdentifier($objectView);
+
+        $qObjectsTable = $this->db->quoteIdentifier('objects');
+        $qId = $this->db->quoteIdentifier('id');
+        $qOoId = $this->db->quoteIdentifier('oo_id');
+        $qOoClassId = $this->db->quoteIdentifier('oo_classId');
+        $qOoClassName = $this->db->quoteIdentifier('oo_className');
+
         $protectedColumns = ['oo_id', 'oo_classId', 'oo_className'];
         $protectedDatastoreColumns = ['oo_id'];
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $objectTable . "` (
-			  `oo_id` int(11) UNSIGNED NOT NULL default '0',
-			  `oo_classId` varchar(50) default '" . $this->model->getId() . "',
-			  `oo_className` varchar(255) default '" . $this->model->getName() . "',
-			  PRIMARY KEY  (`oo_id`),
-			  CONSTRAINT `".self::getForeignKeyName($objectTable, 'oo_id').'` FOREIGN KEY (`oo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-			) DEFAULT CHARSET=utf8mb4;');
+        $fk1 = $this->db->quoteIdentifier(
+            self::getForeignKeyName($objectTable, 'oo_id')
+        );
 
-        // update default value of classname columns
-        $this->db->executeQuery('ALTER TABLE `' . $objectTable . "` ALTER COLUMN `oo_className` SET DEFAULT '" . $this->model->getName() . "';");
+        $this->db->executeStatement(
+            "
+        CREATE TABLE IF NOT EXISTS {$qObjectTable} (
+            {$qOoId} int(11) UNSIGNED NOT NULL default '0',
+            {$qOoClassId} varchar(50) default ?,
+            {$qOoClassName} varchar(255) default ?,
+            PRIMARY KEY ({$qOoId}),
+            CONSTRAINT {$fk1}
+                FOREIGN KEY ({$qOoId})
+                REFERENCES {$qObjectsTable} ({$qId})
+                ON DELETE CASCADE
+        ) DEFAULT CHARSET=utf8mb4
+        ",
+            [
+                (string) $this->model->getId(),
+                $this->model->getName(),
+            ]
+        );
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTable . "` (
-			  `oo_id` int(11) UNSIGNED NOT NULL default '0',
-			  PRIMARY KEY  (`oo_id`),
-			  CONSTRAINT `".self::getForeignKeyName($objectDatastoreTable, 'oo_id').'` FOREIGN KEY (`oo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-			) DEFAULT CHARSET=utf8mb4;');
+        $this->db->executeStatement(
+            "
+        ALTER TABLE {$qObjectTable}
+        ALTER COLUMN {$qOoClassName}
+        SET DEFAULT ?
+        ",
+            [
+                $this->model->getName(),
+            ]
+        );
 
-        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTableRelation . "` (
-              `id` BIGINT(20) NOT NULL PRIMARY KEY  AUTO_INCREMENT,
-              `src_id` int(11) UNSIGNED NOT NULL DEFAULT '0',
-              `dest_id` int(11) UNSIGNED NOT NULL DEFAULT '0',
-              `type` enum('object', 'asset','document') NOT NULL,
-              `fieldname` varchar(70) NOT NULL DEFAULT '0',
-              `index` int(11) unsigned NOT NULL DEFAULT '0',
-              `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
-              `ownername` varchar(70) NOT NULL DEFAULT '',
-              `position` varchar(70) NOT NULL DEFAULT '0',
-              INDEX `forward_lookup` (`src_id`, `ownertype`, `ownername`, `position`),
-              INDEX `reverse_lookup` (`dest_id`, `type`),
-              INDEX `fieldname` (`fieldname`),
-			  CONSTRAINT `".self::getForeignKeyName($objectDatastoreTableRelation, 'src_id').'` FOREIGN KEY (`src_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-        ) DEFAULT CHARSET=utf8mb4;');
+        $fk2 = $this->db->quoteIdentifier(
+            self::getForeignKeyName($objectDatastoreTable, 'oo_id')
+        );
+
+        $this->db->executeStatement(
+            "
+        CREATE TABLE IF NOT EXISTS {$qObjectDatastoreTable} (
+            {$qOoId} int(11) UNSIGNED NOT NULL default '0',
+            PRIMARY KEY ({$qOoId}),
+            CONSTRAINT {$fk2}
+                FOREIGN KEY ({$qOoId})
+                REFERENCES {$qObjectsTable} ({$qId})
+                ON DELETE CASCADE
+        ) DEFAULT CHARSET=utf8mb4
+        "
+        );
+
+        $fk3 = $this->db->quoteIdentifier(
+            self::getForeignKeyName($objectDatastoreTableRelation, 'src_id')
+        );
+
+        $qSrcId = $this->db->quoteIdentifier('src_id');
+
+        $this->db->executeStatement(
+            "
+        CREATE TABLE IF NOT EXISTS {$qObjectDatastoreTableRelation} (
+            `id` BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+            `src_id` int(11) UNSIGNED NOT NULL DEFAULT '0',
+            `dest_id` int(11) UNSIGNED NOT NULL DEFAULT '0',
+            `type` enum('object', 'asset', 'document') NOT NULL,
+            `fieldname` varchar(70) NOT NULL DEFAULT '0',
+            `index` int(11) unsigned NOT NULL DEFAULT '0',
+            `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
+            `ownername` varchar(70) NOT NULL DEFAULT '',
+            `position` varchar(70) NOT NULL DEFAULT '0',
+            INDEX `forward_lookup` (`src_id`, `ownertype`, `ownername`, `position`),
+            INDEX `reverse_lookup` (`dest_id`, `type`),
+            INDEX `fieldname` (`fieldname`),
+            CONSTRAINT {$fk3}
+                FOREIGN KEY ({$qSrcId})
+                REFERENCES {$qObjectsTable} ({$qId})
+                ON DELETE CASCADE
+        ) DEFAULT CHARSET=utf8mb4
+        "
+        );
 
         $this->handleEncryption($this->model, [$objectTable, $objectDatastoreTable, $objectDatastoreTableRelation]);
 
@@ -162,8 +215,7 @@ class Dao extends Model\Dao\AbstractDao
 
         // add non existing columns in the table
         foreach ($this->model->getFieldDefinitions() as $key => $value) {
-            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
-                && $value instanceof DataObject\ClassDefinition\Data) {
+            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
                 // if a datafield requires more than one column in the datastore table => only for non-relation types
                 if (!$value->isRelationType()) {
                     if (is_array($value->getColumnType())) {
@@ -180,8 +232,7 @@ class Dao extends Model\Dao\AbstractDao
                 $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
             }
 
-            if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
-                && $value instanceof DataObject\ClassDefinition\Data) {
+            if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
                 // if a datafield requires more than one column in the query table
                 if (is_array($value->getQueryColumnType())) {
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
@@ -211,8 +262,15 @@ class Dao extends Model\Dao\AbstractDao
 
         // create view
         try {
-            //$this->db->executeQuery('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `objects` left JOIN `' . $objectTable . '` ON `objects`.`id` = `' . $objectTable . '`.`oo_id` WHERE `objects`.`classId` = ' . $this->model->getId() . ';');
-            $this->db->executeQuery('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`id` = `' . $objectTable . '`.`oo_id`;');
+            $this->db->executeStatement(
+                "
+            CREATE OR REPLACE VIEW {$qObjectView} AS
+            SELECT *
+            FROM {$qObjectTable}
+            JOIN {$qObjectsTable}
+                ON {$qObjectsTable}.{$qId} = {$qObjectTable}.{$qOoId}
+            "
+            );
         } catch (Exception $e) {
             Logger::debug((string) $e);
         }

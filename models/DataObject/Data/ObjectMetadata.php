@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\Data;
@@ -42,7 +39,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     /**
      * @param Concrete|null $object
      */
-    public function __construct(?string $fieldname, array $columns = [], DataObject\Concrete $object = null)
+    public function __construct(?string $fieldname, array $columns = [], ?DataObject\Concrete $object = null)
     {
         $this->fieldname = $fieldname;
         $this->columns = $columns;
@@ -202,8 +199,17 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         $this->objectId = $objectId;
     }
 
-    public function __wakeup(): void
+    public function __unserialize(array $data): void
     {
+        foreach (get_object_vars($this) as $property => $value) {
+            if ($property === 'objectId') {
+                $this->$property = (int) ($data["\0*\0".$property] ?? $value);
+
+                continue;
+            }
+            $this->$property = $data["\0*\0".$property] ?? $value;
+        }
+
         if ($this->object) {
             $this->objectId = $this->object->getId();
         }

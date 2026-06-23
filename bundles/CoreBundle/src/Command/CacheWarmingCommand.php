@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command;
@@ -101,6 +98,20 @@ class CacheWarmingCommand extends AbstractCommand
                 'Restrict object warming to these classes (only valid for objects!). Valid options: class names of your classes defined in Pimcore',
                 null
             )
+            ->addOption(
+                'perIteration',
+                'p',
+                InputOption::VALUE_OPTIONAL,
+                'Changes default value of variable $perIteration in class Warming.',
+                20
+            )
+            ->addOption(
+                'timoutBetweenIteration',
+                'i',
+                InputOption::VALUE_OPTIONAL,
+                'Changes default value of variable $timoutBetweenIteration in class Warming.',
+                2
+            )
         ;
     }
 
@@ -118,11 +129,16 @@ class CacheWarmingCommand extends AbstractCommand
             $assetTypes = $this->getArrayOption('assetTypes', 'validAssetTypes', 'asset type') ?? [];
             $objectTypes = $this->getArrayOption('objectTypes', 'validObjectTypes', 'object type') ?? [];
             $objectClasses = $this->input->getOption('classes') ?? [];
+            $perIteration = (int) $input->getOption('perIteration');
+            $timoutBetweenIteration = (int) $input->getOption('timoutBetweenIteration');
         } catch (InvalidArgumentException $e) {
             $this->writeError($e->getMessage());
 
             return 1;
         }
+
+        Warming::setPerIteration($perIteration);
+        Warming::setTimoutBetweenIteration($timoutBetweenIteration);
 
         if (in_array('document', $types)) {
             $this->writeWarmingMessage('document', $documentTypes);
@@ -146,7 +162,7 @@ class CacheWarmingCommand extends AbstractCommand
     protected function writeWarmingMessage(string $type, array $types, string $extra = ''): void
     {
         $output = sprintf('Warming <comment>%s</comment> cache', $type);
-        if (null !== $types && count($types) > 0) {
+        if ($types) {
             $output .= sprintf(' for types %s', $this->humanList($types, 'and', '<info>%s</info>'));
         } else {
             $output .= sprintf(' for <info>all</info> types');
@@ -165,7 +181,7 @@ class CacheWarmingCommand extends AbstractCommand
      *
      *
      */
-    protected function humanList(array $list, string $glue = 'or', string $template = null): string
+    protected function humanList(array $list, string $glue = 'or', ?string $template = null): string
     {
         if (null !== $template) {
             array_walk($list, function (&$item) use ($template) {

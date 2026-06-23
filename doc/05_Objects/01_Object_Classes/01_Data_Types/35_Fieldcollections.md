@@ -23,6 +23,13 @@ The user can then decide which and how many of the available field definitions s
 ![Fieldcollection Field](../../../img/classes-datatypes-fieldcollection3.png)
 
 
+> [!IMPORTANT]
+> Please note the limitations related to blocks and fieldcollections when creating the data model.
+> [More Information about Limitations](./999_Limitations.md) 
+
+
+
+
 ## Data Storage
 
 Field definition data is stored in a separate table for each field definition and object class. 

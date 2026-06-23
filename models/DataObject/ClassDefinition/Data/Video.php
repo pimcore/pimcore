@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -108,7 +105,7 @@ class Video extends Data implements
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof DataObject\Data\Video) {
             $data = clone $data;
@@ -135,7 +132,7 @@ class Video extends Data implements
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): ?DataObject\Data\Video
+    public function getDataFromResource(mixed $data, ?Concrete $object = null, array $params = []): ?DataObject\Data\Video
     {
         if ($data) {
             $raw = Serialize::unserialize($data);
@@ -177,7 +174,7 @@ class Video extends Data implements
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -188,7 +185,7 @@ class Video extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $data = clone $data;
@@ -210,7 +207,7 @@ class Video extends Data implements
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Video
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Video
     {
         $video = null;
 
@@ -246,7 +243,7 @@ class Video extends Data implements
      * @param null|DataObject\Concrete $object
      *
      */
-    public function getDataFromGridEditor(?array $data, Concrete $object = null, array $params = []): ?DataObject\Data\Video
+    public function getDataFromGridEditor(?array $data, ?Concrete $object = null, array $params = []): ?DataObject\Data\Video
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -255,7 +252,7 @@ class Video extends Data implements
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDataForGrid(?DataObject\Data\Video $data, Concrete $object = null, array $params = []): array
+    public function getDataForGrid(?DataObject\Data\Video $data, ?Concrete $object = null, array $params = []): array
     {
         $id = null;
         if ($data && $data->getData() instanceof Asset) {
@@ -275,7 +272,7 @@ class Video extends Data implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data && $data->getType() == 'asset' && $data->getData() instanceof Asset) {
             return '<img src="/admin/asset/get-video-thumbnail?id=' . $data->getData()->getId() . '&width=100&height=100&aspectratio=true" />';
@@ -374,7 +371,7 @@ class Video extends Data implements
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDiffVersionPreview(?DataObject\Data\Video $data, Concrete $object = null, array $params = []): array|string
+    public function getDiffVersionPreview(?DataObject\Data\Video $data, ?Concrete $object = null, array $params = []): array|string
     {
         $versionPreview = null;
 

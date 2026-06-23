@@ -3,6 +3,7 @@
 The settings store is a simple key value store and allows to persist any kind of settings into the
 Pimcore database via API. There is no user interface for the Settings Store available. Compared to the
 `TmpStore` the settings do not have an expiry date and will not be cleaned up.
+See [Tmp Store](./43_Tmp_Store.md) for documentation on the `TmpStore`.
 
 Sample use cases for settings store are:
 - Persist if a bundle is installed.

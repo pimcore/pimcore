@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset;
@@ -162,28 +159,6 @@ EOT;
     }
 
     /**
-     * Legacy method for backwards compatibility. Use getThumbnail($config)->getConfig() instead.
-     *
-     * @internal
-     *
-     * @deprecated Will be removed in Pimcore 12
-     */
-    public function getThumbnailConfig(array|string|Image\Thumbnail\Config|null $config): ?Image\Thumbnail\Config
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '11.1',
-            'Using "%s" is deprecated and will be removed in Pimcore 12, use "%s" instead.',
-            __METHOD__,
-            'getThumbnail($config)->getConfig()'
-        );
-
-        $thumbnail = $this->getThumbnail($config);
-
-        return $thumbnail->getConfig();
-    }
-
-    /**
      * Returns a path to a given thumbnail or a thumbnail configuration.
      */
     public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\ThumbnailInterface
@@ -228,7 +203,7 @@ EOT;
     /**
      * @throws Exception
      */
-    public function getDimensions(string $path = null, bool $force = false): ?array
+    public function getDimensions(?string $path = null, bool $force = false): ?array
     {
         if (!$force) {
             $width = $this->getCustomSetting('imageWidth');

@@ -22,6 +22,27 @@ The logs are visible and searchable within the Pimcore backend GUI ![Tools menu]
 
 ![Application logger preview](../img/applogger_backend_preview.png)
 
+## Configuration
+
+The application logger allows configuration of minimum, maximum or fixed log levels for the log entries.
+
+Example configuration for logging all messages with a level of *debug* or *info*.
+```yaml
+applicationlog:
+    loggers:
+        db:
+            min_level_or_list: ['debug', 'info']        
+```
+
+Example configuration for logging all messages with minimum level *info* and maximum level *emergency*.
+```yaml
+applicationlog:
+    loggers:
+        db:
+            min_level_or_list: 'info'
+            max_level: 'emergency'
+```
+
 ## How to create log entries
 
 The application logger is a PSR-3 compatible component and available on the service container as service `Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger`
@@ -275,7 +296,7 @@ Adds a console logger and sets the minimum logging level to *INFO* (overwrites l
 ```php
 $logger = \Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger::getInstance("SAP_exporter", true); 
 // returns a PSR-3 compatible logger, registers a custom app logger as `pimcore.app_logger.SAP_exporter` on the service container
-$logger->addWriter(new \Monolog\Handler\StreamHandler('php://output', \Monolog\Logger::INFO));
+$logger->addWriter(new \Monolog\Handler\StreamHandler('php://output'), \Monolog\Level::Info));
 ```
 
 ## Configuration

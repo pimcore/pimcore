@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model;
@@ -92,7 +89,7 @@ class Dependency extends AbstractModel
         return $this->sourceId;
     }
 
-    public function getRequires(int $offset = null, int $limit = null): array
+    public function getRequires(?int $offset = null, ?int $limit = null): array
     {
         if ($offset !== null) {
             return array_slice($this->requires, $offset, $limit);
@@ -101,30 +98,30 @@ class Dependency extends AbstractModel
         return $this->requires;
     }
 
-    public function getFilterRequiresByPath(int $offset = null, int $limit = null, string $value = null): array
+    public function getFilterRequiresByPath(?int $offset = null, ?int $limit = null, ?string $value = null): array
     {
 
         return $this->getDao()->getFilterRequiresByPath($offset, $limit, $value);
 
     }
 
-    public function getFilterRequiredByPath(int $offset = null, int $limit = null, string $value = null): array
+    public function getFilterRequiredByPath(?int $offset = null, ?int $limit = null, ?string $value = null): array
     {
 
         return $this->getDao()->getFilterRequiredByPath($offset, $limit, $value);
 
     }
 
-    public function getRequiredBy(int $offset = null, int $limit = null): array
+    public function getRequiredBy(?int $offset = null, ?int $limit = null): array
     {
         return $this->getDao()->getRequiredBy($offset, $limit);
     }
 
     public function getRequiredByWithPath(
-        int $offset = null,
-        int $limit = null,
-        string $orderBy = null,
-        string $orderDirection = null
+        ?int $offset = null,
+        ?int $limit = null,
+        ?string $orderBy = null,
+        ?string $orderDirection = null
     ): array {
         return $this->getDao()->getRequiredByWithPath($offset, $limit, $orderBy, $orderDirection);
     }

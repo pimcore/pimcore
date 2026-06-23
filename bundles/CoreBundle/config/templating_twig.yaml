@@ -3,6 +3,10 @@ services:
         autowire: true
         autoconfigure: true
 
+    Pimcore\Twig\TwigEnvironmentConfigurator:
+        decorates: 'twig.configurator.environment'
+        arguments: ['@.inner']
+
     Pimcore\Twig\Extension\HelpersExtension: ~
 
     Pimcore\Twig\Extension\DocumentEditableExtension: ~

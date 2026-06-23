@@ -38,7 +38,7 @@ pimcore_admin:
         additional_urls:
             script-src:
                 - 'https://oreo.cat/scripts/meow.js' 
-                - 'https://bagheera.cat/*'
+                - 'https://bagheera.cat'
             style-src:
                 - 'https://oreo.cat/scripts/meow.css'
 ```
@@ -65,7 +65,7 @@ This issue can be resolved either by using Pimcore [Headscript extension](../02_
 ### Handling Security Issues
 In the case of a security issue/vulnerability in the Pimcore core framework, we handle them with the following procedure: 
 - **Reporting Issue**: 
-Report issue via [Github security advisory mechanism]([https://pimcorehq.wufoo.com/forms/pimcore-security-report/](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability) of the corresponding repository, e.g. for [here for core framework](https://github.com/pimcore/pimcore/security). Not via public 
+Report issue via [Github security advisory mechanism](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability) of the corresponding repository, e.g. for [here for core framework](https://github.com/pimcore/pimcore/security). Not via public 
 issue tracker (according guidelines also available at public issue tracker)!
 
 - **Resolving Issue**: 

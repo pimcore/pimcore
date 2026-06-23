@@ -3,16 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\SeoBundle\Sitemap\Document;
@@ -72,7 +69,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         $options->setAllowedTypes('garbageCollectThreshold', 'int');
     }
 
-    public function populate(UrlContainerInterface $urlContainer, string $section = null): void
+    public function populate(UrlContainerInterface $urlContainer, ?string $section = null): void
     {
         if ($this->options['handleMainDomain'] && (null === $section || $section === 'default')) {
             $rootDocument = Document::getById($this->options['rootId']);
@@ -107,7 +104,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         }
     }
 
-    private function populateCollection(UrlContainerInterface $urlContainer, Document $rootDocument, string $section, Site $site = null): void
+    private function populateCollection(UrlContainerInterface $urlContainer, Document $rootDocument, string $section, ?Site $site = null): void
     {
         $context = new DocumentGeneratorContext($urlContainer, $section, $site);
         $visit = $this->visit($rootDocument, $context);

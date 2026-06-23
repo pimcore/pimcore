@@ -41,8 +41,8 @@ These methods are: `openItemSelector`, `showQuickSearch`, `hideQuickSearch` and 
 - The `getObjectRelationInlineSearchRoute` has to return the route to `DataObjectController::optionsAction`.
 
 For reference, you can check the implementation in the PimcoreSimpleBackendSearchBundle.
-See [service.js](https://github.com/pimcore/pimcore/blob/11.x/bundles/SimpleBackendSearchBundle/public/js/pimcore/element/service.js) 
-and [selector.js](https://github.com/pimcore/pimcore/blob/11.x/bundles/SimpleBackendSearchBundle/public/js/pimcore/element/selector/selector.js).
+See [service.js](https://github.com/pimcore/pimcore/blob/12.x/bundles/SimpleBackendSearchBundle/public/js/pimcore/element/service.js) 
+and [selector.js](https://github.com/pimcore/pimcore/blob/12.x/bundles/SimpleBackendSearchBundle/public/js/pimcore/element/selector/selector.js).
 
 ## Using Pimcore without the SimpleBackendSearchBundle
 

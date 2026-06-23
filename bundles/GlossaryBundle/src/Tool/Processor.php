@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\GlossaryBundle\Tool;
@@ -118,7 +115,6 @@ class Processor
         $data['count'] = array_fill(0, count($data['search']), 0);
 
         $es->each(function ($parentNode, $i) use ($options, $data) {
-            /** @var DomCrawler|null $parentNode */
             $text = $parentNode->html();
             if (
                 $parentNode instanceof DomCrawler &&
@@ -226,7 +222,7 @@ class Processor
                 $linkTarget = $d['link'];
 
                 if ((int)$d['link']) {
-                    if ($doc = Document::getById($d['link'])) {
+                    if ($doc = Document::getById((int)$d['link'])) {
                         $d['link'] = $doc->getFullPath();
 
                         $linkType = 'internal';

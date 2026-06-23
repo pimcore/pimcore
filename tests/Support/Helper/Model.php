@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tests\Support\Helper;
@@ -493,7 +490,6 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('numeric', 'number'));
 
             $passwordField = $this->createDataChild('password');
-            $passwordField->setAlgorithm(ClassDefinition\Data\Password::HASH_FUNCTION_PASSWORD_HASH);
             $panel->addChild($passwordField);
 
             $panel->addChild($this->createDataChild('rgbaColor', 'rgbaColor', false));
@@ -520,6 +516,16 @@ class Model extends AbstractDefinitionHelper
                 ['key' => 'Affe', 'value' => 'monkey'],
                 ['key' => 'Huhn', 'value' => 'chicken'],
             ]));
+
+            /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect $multiselectEnforced * */
+            $multiselectEnforced = $this->createDataChild('multiselect', 'multiselectenforced');
+            $multiselectEnforced->setOptions([
+                ['key' => 'Katze', 'value' => 'cat'],
+                ['key' => 'Kuh', 'value' => 'cow'],
+                ['key' => 'Tiger', 'value' => 'tiger'],
+            ]);
+            $multiselectEnforced->setEnforceValidation(true);
+            $panel->addChild($multiselectEnforced);
 
             $panel->addChild($this->createDataChild('language', 'languagex'));
             $panel->addChild($this->createDataChild('languagemultiselect', 'languages'));

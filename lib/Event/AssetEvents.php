@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Event;
@@ -192,4 +189,20 @@ final class AssetEvents
      * @var string
      */
     const RESOLVE_UPLOAD_TARGET = 'pimcore.asset.resolve-upload-target';
+
+    /**
+     * Fires after the MIME type has been guessed, before it is applied to the asset.
+     * Allows listeners to override the determined MIME type.
+     *
+     * Arguments:
+     *  - filename   | string | the asset filename
+     *  - mimeType   | string | the guessed MIME type — modify via setMimeType()
+     *  - asset      | Pimcore\Model\Asset|null | the asset instance (null during create())
+     *  - isNewAsset | bool | whether the asset is new (true for create/save, false for updates)
+     *
+     * @Event("Pimcore\Event\Model\Asset\ResolveMimeTypeEvent")
+     *
+     * @var string
+     */
+    const RESOLVE_MIME_TYPE = 'pimcore.asset.resolve-mime-type';
 }

@@ -64,7 +64,25 @@ In background, maintenance job takes care of generating static pages for documen
  
  also, you can filter the documents by parent path, which should processed for static generation:
  `php bin/console pimcore:documents:generate-static-pages -p /en/Magazine`
- 
+
+### Absolute URLs and HTTPS
+If you are generating absolute URLs via CLI command, please keep in mind that due to the nature of CLI not being executed in the HTTP context,
+you may need to set the `default_uri` or the request context parameters.
+```yaml
+    framework:
+        router:
+            default_uri: 'https://example.org/my/path/'
+```
+source: https://symfony.com/doc/6.4/routing.html#generating-urls-in-commands
+
+```yaml
+# config/services.yaml
+parameters:
+    router.request_context.scheme: 'https'
+    asset.request_context.secure: true
+```
+source: https://symfony.com/doc/6.4/routing.html#forcing-https-on-generated-urls
+
 ### SSI
 If you want to add NGINX SSI module for generating the static pages, you can add following config:
 ```yaml

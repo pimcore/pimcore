@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -52,7 +49,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): int|string|null
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): int|string|null
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -73,7 +70,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Carbon
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?Carbon
     {
         if ($data) {
             if ($this->getColumnType() == 'date') {
@@ -94,7 +91,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): int|null|string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): int|null|string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -105,7 +102,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?int
     {
         if ($data) {
             return $data->getTimestamp();
@@ -127,7 +124,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Carbon
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?Carbon
     {
         if (is_numeric($data)) {
             return $this->getDateFromTimestamp($data / 1000);
@@ -144,7 +141,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param Model\DataObject\Concrete|null $object
      *
      */
-    public function getDataFromGridEditor(float|string $data, Concrete $object = null, array $params = []): ?Carbon
+    public function getDataFromGridEditor(float|string $data, ?Concrete $object = null, array $params = []): ?Carbon
     {
         if ($data && is_float($data)) {
             $data = $data * 1000;
@@ -157,7 +154,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDataForGrid(?Carbon $data, Concrete $object = null, array $params = []): ?int
+    public function getDataForGrid(?Carbon $data, ?Concrete $object = null, array $params = []): ?int
     {
         if ($data) {
             return $data->getTimestamp();
@@ -172,7 +169,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DateTimeInterface) {
             return $this->applyTimezone($data)->format('Y-m-d');
@@ -241,7 +238,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return true;
     }
 
-    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): ?Carbon
+    public function getDiffDataFromEditmode(array $data, ?DataObject\Concrete $object = null, array $params = []): ?Carbon
     {
         $thedata = $data[0]['data'];
         if ($thedata) {
@@ -254,7 +251,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /** See parent class.
      *
      */
-    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $result = [];
 
@@ -294,15 +291,15 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
             $db = Db::get();
 
             if ($this->getColumnType() == 'date') {
-                $condition = $db->quoteIdentifier($params['name']) . ' = '. $db->quote($value);
+                $condition = $db->quoteIdentifier($params['name']) . ' = '. $db->quote((string) $value);
 
                 return $condition;
             } else {
                 $maxTime = $timestamp + (86400 - 1); //specifies the top point of the range used in the condition
-                $filterField = $params['name'] ? $params['name'] : $this->getName();
-                $condition = '`' . $filterField . '` BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxTime);
+                $filterField = $params['name'] ?: $this->getName();
 
-                return $condition;
+                return '`' . $filterField . '` BETWEEN ' .
+                    $db->quote((string) $value) . ' AND ' . $db->quote((string)$maxTime);
             }
         }
 

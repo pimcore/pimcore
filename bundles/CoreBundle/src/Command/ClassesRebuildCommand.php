@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CoreBundle\Command;
@@ -21,6 +18,7 @@ use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
+use Pimcore\Model\DataObject\Exception\DefinitionWriteException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -60,7 +58,14 @@ class ClassesRebuildCommand extends AbstractCommand
                 'f',
                 InputOption::VALUE_NONE,
                 'Force rebuild of all classes (ignoring the last modification date of the class definition files)'
+            )
+            ->addOption(
+                'db-only',
+                'o',
+                InputOption::VALUE_NONE,
+                'Applies only the changes to the database, but does not generate any PHP classes'
             );
+
     }
 
     #[Required]
@@ -69,8 +74,15 @@ class ClassesRebuildCommand extends AbstractCommand
         $this->classDefinitionManager = $classDefinitionManager;
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     * @throws DefinitionWriteException
+     * @throws Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $dumpPHPClasses = !$input->getOption('db-only');
+
         if ($input->getOption('delete-classes')) {
             $questionResult = true;
 
@@ -113,8 +125,13 @@ class ClassesRebuildCommand extends AbstractCommand
         } else {
             $list = new ClassDefinition\Listing();
             foreach ($list->getData() as $class) {
-                if ($class instanceof DataObject\ClassDefinitionInterface) {
-                    $classSaved = $this->classDefinitionManager->saveClass($class, false, $force);
+                if ($class instanceof DataObject\ClassDefinition) {
+                    $classSaved = $this->classDefinitionManager->dumpClass(
+                        $class,
+                        false,
+                        $dumpPHPClasses,
+                        $force
+                    );
                     if ($output->isVerbose()) {
                         $output->writeln(
                             sprintf(
@@ -141,7 +158,7 @@ class ClassesRebuildCommand extends AbstractCommand
             }
 
             try {
-                $brickDefinition->save(false);
+                $brickDefinition->dump(false, $dumpPHPClasses);
             } catch (Exception $e) {
                 $output->write((string)$e);
             }
@@ -158,20 +175,25 @@ class ClassesRebuildCommand extends AbstractCommand
                 $output->writeln(sprintf('%s saved', $fc->getKey()));
             }
 
-            $fc->save(false);
+            $fc->dump(false, $dumpPHPClasses);
         }
 
         if ($output->isVerbose()) {
             $output->writeln('---------------------');
             $output->writeln('Saving all select options');
         }
-        $selectOptionConfigurations = new DataObject\SelectOptions\Config\Listing();
-        foreach ($selectOptionConfigurations as $selectOptionConfiguration) {
-            if ($output->isVerbose()) {
-                $output->writeln(sprintf('%s saved', $selectOptionConfiguration->getId()));
-            }
 
-            $selectOptionConfiguration->generateEnumFiles();
+        if ($dumpPHPClasses) {
+            $selectOptionConfigurations = new DataObject\SelectOptions\Config\Listing();
+            foreach ($selectOptionConfigurations as $selectOptionConfiguration) {
+                if ($output->isVerbose()) {
+                    $output->writeln(sprintf('%s saved', $selectOptionConfiguration->getId()));
+                }
+
+                $selectOptionConfiguration->generateEnumFiles();
+            }
+        } else {
+            $output->writeln('<comment>Skipping select options generation, because --db-only option is set.</comment>');
         }
 
         return 0;

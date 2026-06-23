@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset\Thumbnail;
@@ -207,10 +204,13 @@ trait ImageThumbnailTrait
             $dimensions = [];
 
             if ($config) {
-                $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $this->getFilename());
-                if (isset($thumbnail['width'], $thumbnail['height'])) {
-                    $dimensions['width'] = $thumbnail['width'];
-                    $dimensions['height'] = $thumbnail['height'];
+                $statusCacheEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['status_cache'];
+                if ($statusCacheEnabled) {
+                    $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $this->getFilename());
+                    if (isset($thumbnail['width'], $thumbnail['height'])) {
+                        $dimensions['width'] = $thumbnail['width'];
+                        $dimensions['height'] = $thumbnail['height'];
+                    }
                 }
             }
 
@@ -388,9 +388,12 @@ trait ImageThumbnailTrait
 
     public function getFileSize(): ?int
     {
-        $thumbnail = $this->getAsset()->getDao()->getCachedThumbnail($this->getConfig()->getName(), $this->getFilename());
-        if ($thumbnail && $thumbnail['filesize']) {
-            return $thumbnail['filesize'];
+        $statusCacheEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['status_cache'];
+        if ($statusCacheEnabled) {
+            $thumbnail = $this->getAsset()->getDao()->getCachedThumbnail($this->getConfig()->getName(), $this->getFilename());
+            if ($thumbnail && $thumbnail['filesize']) {
+                return $thumbnail['filesize'];
+            }
         }
 
         $pathReference = $this->getPathReference(false);

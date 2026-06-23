@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -277,7 +274,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -294,7 +291,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         if (is_numeric($data)) {
             return $this->toNumeric($data);
@@ -309,7 +306,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): float|int|string|null
+    public function getDataForQueryResource(mixed $data, ?Concrete $object = null, array $params = []): float|int|string|null
     {
         //TODO same fallback as above
 
@@ -321,7 +318,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @see Data::getDataForEditmode
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -331,7 +328,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         return $this->getDataFromResource($data, $object, $params);
     }
@@ -341,7 +338,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @see Data::getVersionPreview
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return (string) $data;
     }

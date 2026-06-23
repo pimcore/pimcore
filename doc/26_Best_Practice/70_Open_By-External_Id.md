@@ -79,12 +79,11 @@ namespace App\Controller\Admin;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Attribute\Route;
 
 class BackendController
 {
-    /**
-     * @Route("/admin/find-by-external-id")
-     */
+    #[Route('/admin/find-by-external-id')]
     public function findByWordpressId(Request $request): JsonResponse
     {
         if ($id = $request->query->getInt('external-id')) {

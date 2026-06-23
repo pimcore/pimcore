@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset\MetaData;
@@ -56,36 +53,40 @@ trait EmbeddedMetaDataTrait
         $exiftool = Console::getExecutable('exiftool');
         $embeddedMetaData = [];
 
-        if (!$filePath) {
-            $filePath = $this->getLocalFile();
-        }
+        try {
+            if (!$filePath) {
+                $filePath = $this->getLocalFile();
+            }
 
-        if ($exiftool && $useExifTool) {
-            $process = new Process([$exiftool, '-j', $filePath]);
-            $process->run();
-            $output = $process->getOutput();
-            $outputArray = json_decode($output, true);
-            if ($outputArray) {
-                $embeddedMetaData = $this->flattenArray($outputArray[0]);
+            if ($exiftool && $useExifTool) {
+                $process = new Process([$exiftool, '-j', $filePath]);
+                $process->run();
+                $output = $process->getOutput();
+                $outputArray = json_decode($output, true);
+                if ($outputArray) {
+                    $embeddedMetaData = $this->flattenArray($outputArray[0]);
 
-                foreach (['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
-                    if (isset($embeddedMetaData[$removeKey])) {
-                        unset($embeddedMetaData[$removeKey]);
+                    foreach (['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
+                        if (isset($embeddedMetaData[$removeKey])) {
+                            unset($embeddedMetaData[$removeKey]);
+                        }
                     }
                 }
-            }
-        } else {
-            try {
-                $xmp = $this->flattenArray($this->getXMPData($filePath));
-            } catch (Exception $e) {
-                $xmp = [];
-                Logger::error('Problem reading XMP metadata of the image with ID ' . $this->getId() . ' Reason: '
-                    . $e->getMessage());
-            }
+            } else {
+                try {
+                    $xmp = $this->flattenArray($this->getXMPData($filePath));
+                } catch (Exception $e) {
+                    $xmp = [];
+                    Logger::error('Problem reading XMP metadata of the image with ID ' . $this->getId() . ' Reason: '
+                        . $e->getMessage());
+                }
 
-            $iptc = $this->flattenArray($this->getIPTCData($filePath));
-            $exif = $this->flattenArray($this->getEXIFData($filePath));
-            $embeddedMetaData = array_merge(array_merge($xmp, $exif), $iptc);
+                $iptc = $this->flattenArray($this->getIPTCData($filePath));
+                $exif = $this->flattenArray($this->getEXIFData($filePath));
+                $embeddedMetaData = array_merge(array_merge($xmp, $exif), $iptc);
+            }
+        } catch (Exception $e) {
+            Logger::error($e->getMessage());
         }
 
         $this->setCustomSetting('embeddedMetaData', $embeddedMetaData);

@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\SeoBundle\Controller\Document;
@@ -26,14 +23,13 @@ use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * @Route("/document")
- *
  * @internal
  */
+#[Route('/document')]
 class DocumentController extends UserAwareController
 {
     use JsonHelperTrait;
@@ -41,11 +37,7 @@ class DocumentController extends UserAwareController
 
     private const DOCUMENT_ROOT_ID = 1;
 
-    /**
-     * @Route("/seopanel-tree-root", name="pimcore_bundle_seo_document_document_seopaneltreeroot", methods={"GET"})
-     *
-     *
-     */
+    #[Route('/seopanel-tree-root', name: 'pimcore_bundle_seo_document_document_seopaneltreeroot', methods: ['GET'])]
     public function seopanelTreeRootAction(DocumentRouteHandler $documentRouteHandler): JsonResponse
     {
         $this->checkPermission('seo_document_editor');
@@ -64,11 +56,7 @@ class DocumentController extends UserAwareController
         throw $this->createAccessDeniedHttpException();
     }
 
-    /**
-     * @Route("/seopanel-tree", name="pimcore_bundle_seo_document_document_seopaneltree", methods={"GET"})
-     *
-     *
-     */
+    #[Route('/seopanel-tree', name: 'pimcore_bundle_seo_document_document_seopaneltree', methods: ['GET'])]
     public function seopanelTreeAction(
         Request $request,
         EventDispatcherInterface $eventDispatcher,

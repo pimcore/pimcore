@@ -2,21 +2,19 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tool;
 
 use Pimcore;
+use Pimcore\Serializer\Serializer;
 use Throwable;
 
 final class Serialize
@@ -28,13 +26,15 @@ final class Serialize
         return serialize($data);
     }
 
-    public static function unserialize(?string $data = null): mixed
+    public static function unserialize(?string $data = null, array|bool $allowedClasses = true): mixed
     {
-        if ($data) {
-            $data = unserialize($data);
+        if ($data === null || $data === '') {
+            return $data;
         }
 
-        return $data;
+        return unserialize($data, [
+            'allowed_classes' => $allowedClasses,
+        ]);
     }
 
     /**
@@ -46,6 +46,21 @@ final class Serialize
     public static function getAdminSerializer(): \Symfony\Component\Serializer\Serializer
     {
         return Pimcore::getContainer()->get('pimcore_admin.serializer');
+    }
+
+    public static function getSerializer(): Serializer
+    {
+        return Pimcore::getContainer()->get('pimcore.serializer');
+    }
+
+    public static function toJson(array $data, int $options = 0): string
+    {
+        return self::getSerializer()->encode($data, 'json', ['json_encode_options' => $options]);
+    }
+
+    public static function fromJson(string $json): array
+    {
+        return self::getSerializer()->decode($json, 'json');
     }
 
     /**

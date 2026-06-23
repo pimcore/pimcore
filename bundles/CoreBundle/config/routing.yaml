@@ -37,3 +37,9 @@ pimcore_webdav:
     defaults: { _controller: Pimcore\Bundle\CoreBundle\Controller\WebDavController::webdavAction }
     requirements:
         path: '.*'
+
+_pimcore_core_bundle:
+    resource: "@PimcoreCoreBundle/src/Controller/"
+    type: attribute
+    options:
+        expose: true

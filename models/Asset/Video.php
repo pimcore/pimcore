@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset;
@@ -138,17 +135,10 @@ class Video extends Model\Asset
         return $event->getArgument('frontendPath');
     }
 
-    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $timeOffset = null, Image $imageAsset = null): Video\ImageThumbnailInterface
+    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, ?int $timeOffset = null, ?Image $imageAsset = null): Video\ImageThumbnailInterface
     {
         if (!\Pimcore\Video::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of video " . $this->getRealFullPath() . ' no video adapter is available');
-
-            return new Video\ImageThumbnail(null); // returns error image
-        }
-
-        if (!$this->getCustomSetting('videoWidth') || !$this->getCustomSetting('videoHeight')) {
-            Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
-            $this->addToUpdateTaskQueue();
 
             return new Video\ImageThumbnail(null); // returns error image
         }
@@ -200,7 +190,7 @@ class Video extends Model\Asset
     public function getDuration(): float|int|null
     {
         $duration = $this->getCustomSetting('duration');
-        if (!$duration) {
+        if (!$duration && !$this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED)) {
             $duration = $this->getDurationFromBackend();
             if ($duration) {
                 $this->setCustomSetting('duration', $duration);
@@ -216,23 +206,27 @@ class Video extends Model\Asset
 
     public function getDimensions(): ?array
     {
+        $dimensions = null;
         $width = $this->getCustomSetting('videoWidth');
         $height = $this->getCustomSetting('videoHeight');
-        if (!$width || !$height) {
-            $dimensions = $this->getDimensionsFromBackend();
-            if ($dimensions) {
-                $this->setCustomSetting('videoWidth', (int) $dimensions['width']);
-                $this->setCustomSetting('videoHeight', (int) $dimensions['height']);
 
-                Model\Version::disable();
-                $this->save(); // auto save
-                Model\Version::enable();
-            }
-        } else {
+        if ($width && $height) {
             $dimensions = [
                 'width' => $width,
                 'height' => $height,
             ];
+        } elseif (!$this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED)) {
+            $dimensions = $this->getDimensionsFromBackend();
+            if ($dimensions) {
+                $this->setCustomSetting('videoWidth', (int) $dimensions['width']);
+                $this->setCustomSetting('videoHeight', (int) $dimensions['height']);
+            } else {
+                $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED, true);
+            }
+
+            Model\Version::disable();
+            $this->save(); // auto save
+            Model\Version::enable();
         }
 
         return $dimensions;

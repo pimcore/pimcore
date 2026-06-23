@@ -6,7 +6,7 @@ The installation of some of the tools is covered in this guide and should work a
 For other Linux distributions you might have to adopt some commands to your platform-specific environment, but we try to use as many statically linked software as possible, that can be used on any x64 Linux platform.  
 
 > It's important that all tools (incl. `composer`) are added to the `$PATH` env. variable, so that Pimcore is able to find the executables. 
-If you're not able to control the `$PATH` variable, you can also [manually configure the paths for each application](https://github.com/pimcore/skeleton/blob/11.x/config/services.yaml).
+If you're not able to control the `$PATH` variable, you can also [manually configure the paths for each application](https://github.com/pimcore/skeleton/blob/2025.x/config/services.yaml).
 
 
 ## Composer 
@@ -44,33 +44,6 @@ Make sure to add and install the required library via composer:
 ```bash
 composer require gotenberg/gotenberg-php ^2.0
 ```
-
-
-### Chromium (Chrome Headless) - deprecated
-
-> Chromium is used to generate previews of document pages. 
-> This functionality is now also provided by Gotenberg, therefore Chromium support has been deprecated in favour of Gotenberg. 
- 
-First of all, you need to add and install the required library via composer:
-```bash
-composer require chrome-php/chrome
-```
-
-You can then directly install and use the Chromium binary locally or use it in Docker Container, accessing it via WebSocket connection.
-
-#### Locally
-Please follow the steps on [https://www.chromium.org/getting-involved/download-chromium](https://www.chromium.org/getting-involved/download-chromium) for installing Chromium locally.
-
-
-#### Docker
-Add a new service as:
-```dockerfile
-    chrome:
-        image: browserless/chrome
-```
-and set accordingly:
-- config `pimcore.chromium.uri` value (e.g. `ws://chrome:3000/`)
-- web2print settings hostUrl as the Docker web server service (e.g. `http://nginx:80`)
 
 ## Image Optimizers
 

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Document\Adapter;
@@ -35,6 +32,8 @@ class Ghostscript extends Adapter
     use TemporaryFileHelperTrait;
 
     private ?string $version = null;
+
+    private bool $useCropBox = false;
 
     public function isAvailable(): bool
     {
@@ -176,7 +175,20 @@ class Ghostscript extends Adapter
     {
         try {
             $localFile = self::getLocalFileFromStream($this->getPdf());
-            $cmd = [self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dFirstPage=' . $page, '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r'. $resolution, '-o', $imageTargetPath, $localFile];
+            $cmd = [
+                static::getGhostscriptCli(),
+                '-sDEVICE=pngalpha',
+                '-dFirstPage=' . $page,
+                '-dLastPage=' . $page,
+                '-dTextAlphaBits=4',
+                '-dGraphicsAlphaBits=4',
+                ...($this->isUseCropBox() ? ['-dUseCropBox'] : []),
+                '-r' . $resolution,
+                '-o',
+                $imageTargetPath,
+                $localFile,
+            ];
+
             Console::addLowProcessPriority($cmd);
             $process = new Process($cmd);
             $process->setTimeout(240);
@@ -270,6 +282,16 @@ class Ghostscript extends Adapter
         unlink($textFile);
 
         return $text;
+    }
+
+    public function isUseCropBox(): bool
+    {
+        return $this->useCropBox;
+    }
+
+    public function setUseCropBox(bool $useCropBox): void
+    {
+        $this->useCropBox = $useCropBox;
     }
 
     protected function getTemporaryPdfStorageFilePath(Asset $asset): string

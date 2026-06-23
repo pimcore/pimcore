@@ -11,8 +11,6 @@ services:
         decorates: translator
         arguments:
             - '@Pimcore\Translation\Translator.inner'
-        calls:
-            - [setKernel, ['@kernel']]
 
     #
     # LOCALE

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -38,6 +35,26 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @var null|string[]
      */
+    public ?array $allowedAssetSubtypes = null;
+
+    /**
+     * @var null|string[]
+     */
+    public ?array $allowedDocumentSubtypes = null;
+
+    /**
+     * @var null|string[]
+     */
+    public ?array $allowedObjectSubtypes = null;
+
+    /**
+     * @var null|string[]
+     */
+    public ?array $allowedClasses = null;
+
+    /**
+     * @var null|string[]
+     */
     public ?array $allowedTargets = null;
 
     /**
@@ -50,7 +67,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof DataObject\Data\Link) {
             $data = clone $data;
@@ -81,7 +98,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Link
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Link
     {
         $link = Serialize::unserialize($data);
 
@@ -106,7 +123,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -117,7 +134,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (!$data instanceof DataObject\Data\Link) {
             return null;
@@ -132,7 +149,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null|DataObject\Concrete $object
      *
      */
-    public function getDataForGrid(?DataObject\Data\Link $data, Concrete $object = null, array $params = []): ?array
+    public function getDataForGrid(?DataObject\Data\Link $data, ?Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
@@ -142,7 +159,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Link
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Link
     {
         $link = new DataObject\Data\Link();
         $link->setValues($data);
@@ -158,7 +175,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null|DataObject\Concrete $object
      *
      */
-    public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?DataObject\Data\Link
+    public function getDataFromGridEditor(array $data, ?Concrete $object = null, array $params = []): ?DataObject\Data\Link
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -169,7 +186,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return (string) $data;
     }
@@ -287,7 +304,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDiffVersionPreview(?DataObject\Data\Link $data, Concrete $object = null, array $params = []): ?string
+    public function getDiffVersionPreview(?DataObject\Data\Link $data, ?Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof DataObject\Data\Link) {
             if ($data->getText()) {
@@ -414,6 +431,86 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function setAllowedTypes(?array $allowedTypes): static
     {
         $this->allowedTypes = $allowedTypes;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedAssetSubtypes(): ?array
+    {
+        return $this->allowedAssetSubtypes;
+    }
+
+    /**
+     * @param null|string[] $allowedAssetSubtypes
+     *
+     * @return $this
+     */
+    public function setAllowedAssetSubtypes(?array $allowedAssetSubtypes): static
+    {
+        $this->allowedAssetSubtypes = $allowedAssetSubtypes;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedDocumentSubtypes(): ?array
+    {
+        return $this->allowedDocumentSubtypes;
+    }
+
+    /**
+     * @param null|string[] $allowedDocumentSubtypes
+     *
+     * @return $this
+     */
+    public function setAllowedDocumentSubtypes(?array $allowedDocumentSubtypes): static
+    {
+        $this->allowedDocumentSubtypes = $allowedDocumentSubtypes;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedObjectSubtypes(): ?array
+    {
+        return $this->allowedObjectSubtypes;
+    }
+
+    /**
+     * @param null|string[] $allowedObjectSubtypes
+     *
+     * @return $this
+     */
+    public function setAllowedObjectSubtypes(?array $allowedObjectSubtypes): static
+    {
+        $this->allowedObjectSubtypes = $allowedObjectSubtypes;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedClasses(): ?array
+    {
+        return $this->allowedClasses;
+    }
+
+    /**
+     * @param null|string[] $allowedClasses
+     *
+     * @return $this
+     */
+    public function setAllowedClasses(?array $allowedClasses): static
+    {
+        $this->allowedClasses = $allowedClasses;
 
         return $this;
     }

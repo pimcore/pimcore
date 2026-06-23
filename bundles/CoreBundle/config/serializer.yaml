@@ -16,9 +16,11 @@ services:
 
     Pimcore\Serializer\Serializer:
         public: true
-        arguments: ['@?', '@?']
+        arguments: [ '@?', '@?' ]
 
-    pimcore.serializer: '@Pimcore\Serializer\Serializer'
+    pimcore.serializer:
+        alias: Pimcore\Serializer\Serializer
+        public: true
 
     pimcore.serializer.encoder.json:
         class: Symfony\Component\Serializer\Encoder\JsonEncoder

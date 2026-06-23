@@ -132,6 +132,46 @@ flysystem:
                 prefix: assets
 ```
 
+### Example: Handling source assets when your storage is not publicly accessible:
+ ```yaml
+pimcore:
+    assets:
+        frontend_prefixes:
+            # Prefix used for the original asset files
+            source: https://your.domain/asset-stream
+```    
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Pimcore\Model\Asset;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Routing\Attribute\Route;
+
+class AssetStreamController
+{
+    #[Route('/asset-stream{uri}', requirements: ['uri' => '.+'])]
+    public function stream(string $uri): Response
+    {
+        if (!empty($asset = Asset::getByPath($uri)) && $stream = $asset->getStream()) {
+            return new StreamedResponse(function () use ($stream) {
+                fpassthru($stream);
+            }, 200, [
+                'Content-Type' => $asset->getMimeType(),
+                'Access-Control-Allow-Origin', '*',
+            ]);
+        }
+
+        return new Response('', Response::HTTP_NOT_FOUND);
+    }
+}
+
+```
+
 ### Storage Migration
 If you are switching to different a storage type, it is often required to migrate contents from old storage to the newly configured one. Pimcore provides a command to solve the purpose of migrating contents from between storages, which in turn uses the flysystem `listcontents` API to read contents recursively from old (source) storage and copy contents to the new (target) storage. 
 

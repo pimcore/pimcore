@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -94,7 +91,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $editmodeData = [];
         $idx = -1;
@@ -144,7 +141,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Fieldcollection
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): DataObject\Fieldcollection
     {
         $values = [];
         $count = 0;
@@ -219,7 +216,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return $this->getDiffVersionPreview($data, $object, $params)['html'];
     }
@@ -443,7 +440,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $data;
     }
 
-    public function getDataForGrid(?DataObject\Fieldcollection $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForGrid(?DataObject\Fieldcollection $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (null === $data) {
             return null;
@@ -492,7 +489,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         // getter, no inheritance here, that's the only difference
         $key = $this->getName();
 
-        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+        if ($this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -545,7 +542,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDiffVersionPreview(?DataObject\Fieldcollection $data, Concrete $object = null, array $params = []): array
+    public function getDiffVersionPreview(?DataObject\Fieldcollection $data, ?Concrete $object = null, array $params = []): array
     {
         $html = '';
         if ($data instanceof DataObject\Fieldcollection) {
@@ -590,8 +587,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        if ($fd instanceof IdRewriterInterface
-                            && $fd instanceof DataObject\ClassDefinition\Data) {
+                        if ($fd instanceof IdRewriterInterface) {
                             $d = $fd->rewriteIds($item, $idMapping, $params);
                             $setter = 'set' . ucfirst($fd->getName());
                             $item->$setter($d);

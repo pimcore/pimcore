@@ -506,4 +506,4 @@ class Iframe extends AbstractTemplateAreabrick
 
 ## Examples
 
-You can find many examples in the [demo package](https://github.com/pimcore/demo/tree/11.x/src/Document/Areabrick).
+You can find many examples in the [demo package](https://github.com/pimcore/demo/tree/2025.x/src/Document/Areabrick).

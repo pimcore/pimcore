@@ -3,16 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Routing\Dynamic;
@@ -42,14 +39,13 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $this->requestHelper = $requestHelper;
     }
 
-    public function getRouteByName(string $name): ?DataObjectRoute
+    public function getRouteByName(string $name): DataObjectRoute
     {
         if (preg_match('/^data_object_(\d+)_(\d+)_(.*)$/', $name, $match)) {
             $slug = DataObject\Data\UrlSlug::resolveSlug($match[3], (int) $match[2]);
             if ($slug && $slug->getObjectId() == $match[1]) {
-                /** @var DataObject\Concrete $object * */
-                $object = DataObject::getById((int) $match[1]);
-                if ($object instanceof DataObject\Concrete && $object->isPublished()) {
+                $object = DataObject\Concrete::getById((int) $match[1]);
+                if ($object?->isPublished()) {
                     return $this->buildRouteForFromSlug($slug, $object);
                 }
             }

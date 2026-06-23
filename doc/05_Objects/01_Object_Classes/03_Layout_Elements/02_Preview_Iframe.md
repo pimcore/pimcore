@@ -16,13 +16,11 @@ namespace App\Controller;
 use Pimcore\Model\DataObject\Service;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class IFrameController extends \Pimcore\Controller\FrontendController
 {
-    /**
-     * @Route("/iframe/summary")
-     */
+    #[Route('/iframe/summary')]
     public function summaryAction(Request $request): Response
     {
         $context = json_decode($request->query->getString("context"), true);
