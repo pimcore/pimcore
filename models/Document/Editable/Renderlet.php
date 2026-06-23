@@ -132,8 +132,10 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
             //Personalization & Targeting Specific
             // apply best matching target group (if any)
             // @phpstan-ignore-next-line
-            if ($container->has(DocumentTargetingConfigurator::class)
-                && $this->o instanceof TargetingDocumentInterface) {
+            if (
+                $container->has(DocumentTargetingConfigurator::class)
+                && $this->o instanceof TargetingDocumentInterface
+            ) {
                 $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
                 $targetingConfigurator->configureTargetGroup($this->o);
             }
@@ -157,7 +159,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
                     $attributes[$key] = $value;
                 }
 
-                if (!isset(self::CONFIG_KEYS[$key])) {
+                if (!isset(self::CONFIG_KEYS[$key]) && !array_key_exists($key, $attributes)) {
                     $query[$key] = $value;
                 }
             }
@@ -282,7 +284,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
             $el = Element\Service::getElementById($this->type, $this->id);
             if (!$el instanceof Element\ElementInterface) {
                 $sane = false;
-                Logger::notice('Detected insane relation, removing reference to non existent '.$this->type.' with id ['.$this->id.']');
+                Logger::notice('Detected insane relation, removing reference to non existent ' . $this->type . ' with id [' . $this->id . ']');
                 $this->id = null;
                 $this->type = null;
                 $this->o = null;
