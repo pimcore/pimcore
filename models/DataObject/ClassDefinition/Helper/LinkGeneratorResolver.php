@@ -20,8 +20,12 @@ use Pimcore\Model\DataObject\ClassDefinition\LinkGeneratorInterface;
  */
 class LinkGeneratorResolver extends ClassResolver
 {
-    public static function resolveGenerator(string $generatorClass): ?object
+    public static function resolveGenerator(?string $generatorClass): ?LinkGeneratorInterface
     {
+        if ($generatorClass === null) {
+            return null;
+        }
+
         return self::resolve($generatorClass, static function ($generator) {
             return $generator instanceof LinkGeneratorInterface;
         });
