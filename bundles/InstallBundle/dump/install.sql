@@ -438,6 +438,7 @@ CREATE TABLE `users` (
   `email` varchar(255) DEFAULT NULL,
   `language` varchar(10) DEFAULT 'en',
   `datetimeLocale` varchar(10) DEFAULT '',
+  `theme` varchar(255) NOT NULL DEFAULT 'default',
   `contentLanguages` LONGTEXT NULL,
   `admin` tinyint(1) unsigned DEFAULT '0',
   `active` tinyint(1) unsigned DEFAULT '1',
