@@ -570,9 +570,18 @@ class Service extends Model\AbstractModel
      */
     protected function updateChildren(DataObject|Document|Asset\Folder $target, ElementInterface $new): void
     {
+        $listing = $target->getChildren();
+
+        // Only update the in-memory cache if it was already loaded.
+        // Loading all children from DB just to append one is prohibitively expensive for large folders.
+        if (!$listing->isLoaded()) {
+            return;
+        }
+
         //check in case of recursion
+        $children = $listing->getData();
         $found = false;
-        foreach ($target->getChildren()->load() as $child) {
+        foreach ($children as $child) {
             if ($child->getId() == $new->getId()) {
                 $found = true;
 
@@ -580,9 +589,15 @@ class Service extends Model\AbstractModel
             }
         }
         if (!$found) {
-            $newElement = Element\Service::getElementById($new->getType(), $new->getId());
-            $listing = $target->getChildren();
-            $listing->setData(array_merge($listing->getData(), [$newElement]));
+            $elementType = Element\Service::getElementType($new);
+            if ($elementType === null) {
+                return;
+            }
+            $newElement = Element\Service::getElementById($elementType, $new->getId());
+            if ($newElement === null) {
+                return;
+            }
+            $listing->setData([...$children, $newElement]);
             $target->setChildren($listing);
         }
     }

@@ -20,6 +20,86 @@ use Pimcore\Tests\Support\Util\TestHelper;
 
 class ServiceTest extends TestCase
 {
+    protected function needsDb(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Regression test: copying an object must not force-load the target folder's children listing.
+     * Loading all children is prohibitively expensive for large folders and causes OOM / timeouts.
+     *
+     * @see \Pimcore\Model\Element\Service::updateChildren()
+     */
+    public function testCopyAsChildDoesNotLoadTargetChildren(): void
+    {
+        $folder = TestHelper::createObjectFolder('copy-target-');
+        $source = TestHelper::createEmptyObject('copy-source-');
+
+        // Sanity-check: listing is not yet loaded before the copy.
+        $this->assertFalse($folder->getChildren()->isLoaded());
+
+        $service = new DataObject\Service();
+        $service->copyAsChild($folder, $source);
+
+        $this->assertFalse(
+            $folder->getChildren()->isLoaded(),
+            'copyAsChild() must not force-load the target children listing'
+        );
+    }
+
+    /**
+     * Regression test: recursive copy must not force-load the top-level target folder's children listing.
+     *
+     * @see \Pimcore\Model\Element\Service::updateChildren()
+     */
+    public function testCopyRecursiveDoesNotLoadTargetChildren(): void
+    {
+        $folder = TestHelper::createObjectFolder('copy-target-recursive-');
+        $source = TestHelper::createEmptyObject('copy-source-recursive-');
+
+        $this->assertFalse($folder->getChildren()->isLoaded());
+
+        $service = new DataObject\Service();
+        $service->copyRecursive($folder, $source);
+
+        $this->assertFalse(
+            $folder->getChildren()->isLoaded(),
+            'copyRecursive() must not force-load the target children listing'
+        );
+    }
+
+    /**
+     * When the target folder's children listing is already loaded, copyAsChild() must append
+     * the new object to the in-memory listing so callers see the updated children without a
+     * further DB round-trip.
+     *
+     * @see \Pimcore\Model\Element\Service::updateChildren()
+     */
+    public function testCopyAsChildAppearsInPreloadedTargetChildren(): void
+    {
+        $folder = TestHelper::createObjectFolder('copy-target-preloaded-');
+        $source = TestHelper::createEmptyObject('copy-source-preloaded-');
+
+        // Force-load the listing so updateChildren() takes the append path.
+        $folder->getChildren()->load();
+        $this->assertTrue($folder->getChildren()->isLoaded());
+
+        $service = new DataObject\Service();
+        $copy = $service->copyAsChild($folder, $source);
+
+        $childIds = array_map(
+            static fn ($child) => $child->getId(),
+            $folder->getChildren()->getData()
+        );
+
+        $this->assertContains(
+            $copy->getId(),
+            $childIds,
+            'The copied object must appear in the already-loaded children listing'
+        );
+    }
+
     public function testCloneMe(): void
     {
         // create object with property
