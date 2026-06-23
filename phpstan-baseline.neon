@@ -844,6 +844,12 @@ parameters:
 		-
 			message: '#^Class Pimcore\\Bundle\\PersonalizationBundle\\Targeting\\Document\\DocumentTargetingConfigurator not found\.$#'
 			identifier: class.notFound
+			count: 2
+			path: models/Document/Editable/Renderlet.php
+
+		-
+			message: '#^Left side of && is always false\.$#'
+			identifier: booleanAnd.leftAlwaysFalse
 			count: 1
 			path: models/Document/Editable/Renderlet.php
 
