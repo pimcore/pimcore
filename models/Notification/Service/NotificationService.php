@@ -16,7 +16,6 @@ namespace Pimcore\Model\Notification\Service;
 
 use Carbon\Carbon;
 use Doctrine\DBAL\Exception;
-use Pimcore\Db;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification;
 use Pimcore\Model\Notification\Listing;
