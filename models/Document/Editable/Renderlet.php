@@ -159,7 +159,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
                     $attributes[$key] = $value;
                 }
 
-                if (!isset(self::CONFIG_KEYS[$key]) && !array_key_exists($key, $attributes)) {
+                if (!isset(self::CONFIG_KEYS[$key]) && !array_key_exists($key, $query)) {
                     $query[$key] = $value;
                 }
             }
