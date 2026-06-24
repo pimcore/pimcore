@@ -15,9 +15,13 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 
 final class Version20260623090000 extends AbstractMigration
 {
+    const CACHEKEY = 'system_resource_columns_';
+
     public function getDescription(): string
     {
         return 'Add theme column to users table';
@@ -27,6 +31,7 @@ final class Version20260623090000 extends AbstractMigration
     {
         if (!$schema->getTable('users')->hasColumn('theme')) {
             $this->addSql("ALTER TABLE `users` ADD COLUMN `theme` varchar(255) NOT NULL DEFAULT 'default';");
+            $this->resetValidTableColumnsCache('users');
         }
     }
 
@@ -34,6 +39,16 @@ final class Version20260623090000 extends AbstractMigration
     {
         if ($schema->getTable('users')->hasColumn('theme')) {
             $this->addSql('ALTER TABLE `users` DROP COLUMN `theme`;');
+            $this->resetValidTableColumnsCache('users');
         }
+    }
+
+    public function resetValidTableColumnsCache(string $table): void
+    {
+        $cacheKey = self::CACHEKEY . $table;
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            RuntimeCache::getInstance()->offsetUnset($cacheKey);
+        }
+        Cache::clearTags(['system', 'resource']);
     }
 }
