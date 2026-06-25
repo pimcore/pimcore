@@ -49,11 +49,11 @@ guidelines' own — **must / should / must NOT**.
   Catching `Throwable` is acceptable at top-level boundaries (bootstrap,
   cleanup, cache/installer) where nothing may escape — don't flag those or demand
   rewriting existing ones. In new code, avoid empty catch blocks; if swallowing is intentional, add a short comment explaining why. *(must)*
-- **Control flow** — guard clauses over nested `if`s; typesafe boolean conditions;
+- **Control flow** — guard clauses over nested `if`s; type-safe boolean conditions;
   in new code avoid `empty()` where it introduces type-juggling ambiguity (treating
   `0`, `'0'`, `''`, `null`, `[]` alike) — prefer an explicit check there; don't flag
   idiomatic `empty()` that matches surrounding code. *(should)*
-- **Constants & enums** — group related constants into an `Enum`; constants `private` by
+- **Constants & enums** — group related constants into an `enum`; constants `private` by
   default; public constants only in interfaces. *(must)*
 - **Value objects** — final, immutable, self-validating; do **not** use VOs for scalar
   types in public/boundary signatures. *(must NOT)*
