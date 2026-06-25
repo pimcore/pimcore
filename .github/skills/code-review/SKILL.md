@@ -45,10 +45,10 @@ guidelines' own — **must / should / must NOT**.
 - **Immutability** — prefer `readonly`; no setters by default, set via constructor;
   mutation only where the use case needs it. *(must)*
 - **Exceptions** — throw a defined domain-specific exception and chain the original;
-  catch `Exception`, not `Throwable`, by default (Throwable also swallows type/syntax
-  errors). Catching `Throwable` is acceptable at top-level boundaries (bootstrap,
+  catch `Exception`, not `Throwable`, by default (`Throwable` also catches PHP `Error`s such as `TypeError`).
+  Catching `Throwable` is acceptable at top-level boundaries (bootstrap,
   cleanup, cache/installer) where nothing may escape — don't flag those or demand
-  rewriting existing ones. No empty catch blocks. *(must)*
+  rewriting existing ones. In new code, avoid empty catch blocks; if swallowing is intentional, add a short comment explaining why. *(must)*
 - **Control flow** — guard clauses over nested `if`s; typesafe boolean conditions;
   in new code avoid `empty()` where it introduces type-juggling ambiguity (treating
   `0`, `'0'`, `''`, `null`, `[]` alike) — prefer an explicit check there; don't flag
