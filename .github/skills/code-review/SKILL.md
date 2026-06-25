@@ -44,8 +44,8 @@ guidelines' own — **must / should / must NOT**.
   new classes `@internal` unless deliberately public API. *(must)*
 - **Immutability** — prefer `readonly`; no setters by default, set via constructor;
   mutation only where the use case needs it. *(must)*
-- **Exceptions** — throw a defined domain-specific exception and chain the original; catch
-  `Exception`, not `Throwable`; no empty catch blocks. *(must)*
+- **Exceptions** — throw a defined domain-specific exception and chain the original; prefer catching `Throwable` when you must handle both exceptions and errors;
+  avoid overly broad catch blocks unless rethrowing/wrapping; no empty catch blocks. *(must)*
 - **Control flow** — guard clauses over nested `if`s; typesafe boolean conditions; avoid
   `empty()`. *(should/must)*
 - **Constants & enums** — group related constants into an `Enum`; constants `private` by
