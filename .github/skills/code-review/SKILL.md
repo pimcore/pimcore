@@ -73,8 +73,7 @@ guidelines' own — **must / should / must NOT**.
 php-cs-fixer auto-fixes formatting and PHPStan/SonarCloud gate static analysis in CI.
 
 - Don't comment on formatting, line length, import order, or style — cs-fixer fixes it.
-- Skip pure static-analysis nits PHPStan already catches (unused vars, `self::` vs
-  `static::`).
+- Skip issues already gated by CI checks (php-cs-fixer, PHPStan, SonarCloud), e.g. unused imports (php-cs-fixer) or clear type/undefined-variable findings (PHPStan).
 - Still DO flag correctness, security, and design issues, even in typed code — a real
   null-deref or logic bug is worth a comment whether or not a tool might also catch it.
 
