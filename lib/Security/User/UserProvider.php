@@ -38,8 +38,12 @@ class UserProvider implements UserProviderInterface
             throw new UnsupportedUserException();
         }
 
-        /** @var PimcoreUser $refreshedPimcoreUser */
         $refreshedPimcoreUser = PimcoreUser::getById($user->getId());
+
+        if ($refreshedPimcoreUser === null) {
+            // the user no longer exists (e.g. was deleted) - invalidate the session gracefully
+            throw new UserNotFoundException(sprintf('User with ID %s was not found', $user->getId()));
+        }
 
         if ($user->getLastPasswordReset() !== $refreshedPimcoreUser->getLastPasswordReset()) {
             // password was changed since the session was created, so we invalidate the session
