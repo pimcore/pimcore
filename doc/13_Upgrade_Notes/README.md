@@ -9,6 +9,8 @@
     - Payload classes: `Pimcore\Event\Model\Asset\Image\Thumbnail\ConfigEvent` and `Pimcore\Event\Model\Asset\Video\Thumbnail\ConfigEvent` (both expose `getConfig(): Config`).
     - The events are dispatched from `Asset\Image\Thumbnail\Config\Dao::save()/delete()` and `Asset\Video\Thumbnail\Config\Dao::save()/delete()` after the underlying settings store and cache writes succeed. They fire on every save/delete path, including admin UI, API and programmatic changes (the magic `__call` delegation also routes through the Dao). Subscribers can use them to react to thumbnail-pipeline changes — Pimcore's bundled `CdnPurgeListener` uses them to dispatch `thumb-{configName}` CDN purges.
 
+- [Composer] Bumped minimum requirement of `friendsofsymfony/jsrouting-bundle` to `3.6.0`.
+
 ### [Maintenance Mode]
 - The legacy file-based maintenance mode backward-compatibility layer has been fully removed. The following deprecated static methods have been deleted from `Pimcore\Tool\Admin`:
     - `getMaintenanceModeFile()`
