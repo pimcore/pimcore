@@ -7,13 +7,13 @@ on:
         -   cron: '0 3 * * *'
     pull_request_target:
         branches:
-            - "12.*"
+            - "2026.*"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
     push:
         branches:
-            - "12.*"
+            - "2026.*"
             - "*_actions"
         paths-ignore:
             - 'doc/**'
@@ -39,10 +39,10 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - { php-version: "8.3", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.3", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
                     - { php-version: "8.4", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
                     - { php-version: "8.4", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.5", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.5", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
 
         steps:
             - name: Checkout PR head (only for pull_request_target)

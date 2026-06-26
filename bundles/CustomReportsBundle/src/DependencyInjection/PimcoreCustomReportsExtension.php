@@ -51,15 +51,6 @@ class PimcoreCustomReportsExtension extends ConfigurableExtension implements Pre
 
     public function prepend(ContainerBuilder $container): void
     {
-        if ($container->hasExtension('pimcore_admin')) {
-            $loader = new YamlFileLoader(
-                $container,
-                new FileLocator(__DIR__ . '/../../config')
-            );
-
-            $loader->load('admin-classic.yaml');
-        }
-
         LocationAwareConfigRepository::loadSymfonyConfigFiles($container, 'pimcore_custom_reports', 'custom_reports');
     }
 }

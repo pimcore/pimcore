@@ -65,6 +65,7 @@ services:
         public : true
         arguments:
             $serviceControllers: '%pimcore.service_controllers%'
+            $templateProviders: !tagged_iterator pimcore.template_provider
 
     #
     # HTTP/REST clients

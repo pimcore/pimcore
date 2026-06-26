@@ -54,7 +54,7 @@ class Dao extends Model\Dao\AbstractDao
           INDEX `index` (`index`),
           INDEX `fieldname` (`fieldname`),
           CONSTRAINT `".self::getForeignKeyName($table, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
-		) DEFAULT CHARSET=utf8mb4;');
+		) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
 
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;
@@ -71,6 +71,7 @@ class Dao extends Model\Dao\AbstractDao
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
                         $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
                         $protectedColums[] = $key . '__' . $fkey;
+                        $this->ensureForeignKeys($table, $key, $fkey, $value);
                     }
                 } else {
                     if ($value->getColumnType()) {

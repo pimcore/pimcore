@@ -45,10 +45,19 @@ class ControllerDataProvider
         '*.twig',
     ];
 
-    public function __construct(KernelInterface $kernel, array $serviceControllers)
+    /**
+     * @var iterable<TemplateProviderInterface>
+     */
+    private iterable $templateProviders;
+
+    /**
+     * @param iterable<TemplateProviderInterface> $templateProviders
+     */
+    public function __construct(KernelInterface $kernel, array $serviceControllers, iterable $templateProviders = [])
     {
         $this->kernel = $kernel;
         $this->serviceControllers = $serviceControllers;
+        $this->templateProviders = $templateProviders;
     }
 
     /**
@@ -133,8 +142,13 @@ class ControllerDataProvider
     }
 
     /**
-     * Builds a list of all available templates in bundles, in app/Resources/views, and Symfony locations
+     * Builds the list of selectable templates by scanning for `*.twig` files in the project's
+     * `templates/` directory and in the `templates/` (or `Resources/views/`) directory of every
+     * registered bundle, except bundles excluded by {@see self::isValidNamespace()} (Symfony,
+     * Doctrine, Pimcore, Sensio). Templates contributed by {@see TemplateProviderInterface}
+     * implementations are merged in as well; the resulting list is deduplicated.
      *
+     * @return string[]
      */
     public function getTemplates(): array
     {
@@ -154,7 +168,15 @@ class ControllerDataProvider
             }
         }
 
-        return $this->templates = array_merge(...$templates);
+        foreach ($this->templateProviders as $templateProvider) {
+            $templates[] = $templateProvider->getTemplates();
+        }
+
+        if ($templates === []) {
+            return $this->templates = [];
+        }
+
+        return $this->templates = array_values(array_unique(array_merge(...$templates)));
     }
 
     /**

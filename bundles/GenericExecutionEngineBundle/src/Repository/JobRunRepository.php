@@ -138,9 +138,10 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
     public function getJobRunById(
         int $id,
         bool $forceReload = false,
-        ?int $ownerId = null
+        ?int $ownerId = null,
+        array $criteria = []
     ): JobRun {
-        $params = ['id' => $id];
+        $params = array_merge($criteria, ['id' => $id]);
         $params = $this->setOwnerId($params, $ownerId);
 
         $jobRun = $this->pimcoreEntityManager->getRepository(JobRun::class)->findOneBy($params);
@@ -167,10 +168,10 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
         array $orderBy = [],
         int $limit = 100,
         int $offset = 0,
-        ?string $executionContext = null
+        ?string $executionContext = null,
+        array $criteria = []
     ): array {
-        $params = [];
-        $params = $this->setOwnerId($params, $ownerId);
+        $params = $this->setOwnerId($criteria, $ownerId);
         $params = $this->setExecutionContext($params, $executionContext);
 
         return $this->pimcoreEntityManager->getRepository(JobRun::class)->findBy(
@@ -181,29 +182,36 @@ final readonly class JobRunRepository implements JobRunRepositoryInterface
         );
     }
 
-    public function getTotalCount(): int
+    public function getTotalCount(?int $ownerId = null, ?string $executionContext = null, array $criteria = []): int
     {
-        return $this->pimcoreEntityManager->getRepository(JobRun::class)->count();
+        $params = $this->setOwnerId($criteria, $ownerId);
+        $params = $this->setExecutionContext($params, $executionContext);
+
+        return $this->pimcoreEntityManager
+            ->getRepository(JobRun::class)
+            ->count($params);
     }
 
     public function getRunningJobsByUserId(
         int $ownerId,
         array $orderBy = [],
         int $limit = 10,
-        ?string $executionContext = null
+        ?string $executionContext = null,
+        int $offset = 0,
+        array $criteria = []
     ): array {
-        $params = [];
-        $params = $this->setOwnerId($params, $ownerId);
+        $params = $this->setOwnerId($criteria, $ownerId);
         $params = $this->setExecutionContext($params, $executionContext);
         $params['state'] = JobRunStates::RUNNING;
 
-        return $this->pimcoreEntityManager
-            ->getRepository(JobRun::class)
-            ->findBy(
-                $params,
-                $orderBy,
-                $limit
-            );
+        return $this->getJobRunsByUserId(
+            ownerId: $ownerId,
+            orderBy: $orderBy,
+            limit: $limit,
+            executionContext: $executionContext,
+            offset: $offset,
+            criteria: $params
+        );
     }
 
     public function getLastJobRunByName(string $name): ?JobRun

@@ -6,15 +6,8 @@ The Pimcore project is licensed under the terms of the [GPLv3](LICENSE.md).
 However, Pimcore includes several third-party Open-Source libraries, 
 which are licensed under their own respective Open-Source licenses.
 
-The specific verions of a library are documented in
-[PIMCORE_MODIFICATIONS.md](bundles/AdminBundle/public/js/lib/PIMCORE_MODIFICATIONS.md).
 
 ## Libraries directly included in Pimcore
-
-### ExtJS by Sencha Inc.
-License: GPLv3  
-pimcore includes the GPLv3 version of the ExtJS JavaScript framework.  
-http://www.sencha.com/license/
 
 ### Leaflet 
 License: BSD  
