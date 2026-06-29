@@ -15,6 +15,8 @@ namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Exception;
 use Pimcore;
 use Pimcore\Config;
+use Pimcore\Event\ImageThumbnailConfigEvents;
+use Pimcore\Event\Model\Asset\Image\Thumbnail\ConfigEvent;
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
 
@@ -107,6 +109,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
 
         $this->clearDatabaseCache();
+
+        Pimcore::getEventDispatcher()->dispatch(
+            new ConfigEvent($this->model),
+            ImageThumbnailConfigEvents::POST_UPDATE,
+        );
     }
 
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
@@ -142,6 +149,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
 
         $this->clearDatabaseCache();
+
+        Pimcore::getEventDispatcher()->dispatch(
+            new ConfigEvent($this->model),
+            ImageThumbnailConfigEvents::POST_DELETE,
+        );
     }
 
     private function clearDatabaseCache(): void
