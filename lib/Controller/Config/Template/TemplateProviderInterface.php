@@ -12,7 +12,9 @@ declare(strict_types=1);
  *  @license    Pimcore Open Core License (POCL)
  */
 
-namespace Pimcore\Controller\Config;
+namespace Pimcore\Controller\Config\Template;
+
+use Pimcore\Controller\Config\ControllerDataProvider;
 
 /**
  * Extension point for contributing additional selectable templates to the

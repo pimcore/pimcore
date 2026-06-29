@@ -18,6 +18,8 @@ use Monolog\Level;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Bundle\InstallBundle\Installer;
+use Pimcore\Controller\Config\Template\BundleTemplateProvider;
+use Pimcore\Controller\Config\Template\ProjectTemplateProvider;
 use Pimcore\Cdn\AssetWebPath;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use Pimcore\Http\Context\PimcoreContextGuesser;
@@ -132,6 +134,10 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('serializer.yaml');
         $loader->load('cdn.yaml');
 
+        if (false === $config['documents']['auto_provide_templates']) {
+            $container->removeDefinition(ProjectTemplateProvider::class);
+            $container->removeDefinition(BundleTemplateProvider::class);
+        }
         $this->configureCdn($container, $config);
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);

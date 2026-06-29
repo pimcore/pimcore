@@ -80,6 +80,10 @@ services:
 Each name returned by `getTemplates()` must use the same notation as the scanned templates
 (a project-relative path or a `@Namespace/...` name) and is merged into the dropdown.
 
+The default document template detection can be disabled by setting 
+`pimcore.documents.auto_provide_templates` to `false`. In this case the developer needs to provide
+their own template provider services, otherwise the list is empty.
+
 ## Editables
 
 Editables are the bridge between templates and Pimcore Studio.
