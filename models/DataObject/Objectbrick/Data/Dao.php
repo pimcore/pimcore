@@ -337,8 +337,8 @@ class Dao extends Model\Dao\AbstractDao
             $classId = $this->model->getObject()->getClassId();
         }
 
-        $ownername = $this->model->getFieldname();
-        $params = [$field, $id, $field, $id, $field, $ownername, $id];
+        $ownerName = $this->model->getFieldname();
+        $params = [$field, $ownerName, $id, $field, $ownerName, $id, $field, $ownerName, $id];
 
         $dest = 'dest_id';
         $src = 'src_id';
