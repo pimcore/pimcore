@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
-use Pimcore\Controller\Config\Template\TemplateProviderInterface;
 use const PASSWORD_ARGON2I;
 use const PASSWORD_ARGON2ID;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Config\LocationAwareConfigRepository;
+use Pimcore\Controller\Config\Template\TemplateProviderInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
