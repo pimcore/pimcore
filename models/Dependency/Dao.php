@@ -24,6 +24,7 @@ use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\ValueObject\Element\DependencyTarget;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
+use Symfony\Component\Messenger\Exception\NoHandlerForMessageException;
 
 /**
  * @internal
@@ -320,6 +321,10 @@ class Dao extends Model\Dao\AbstractDao
             Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                 new DependencyTargetsChangedMessage($addedTargets, $removedTargets)
             );
+        } catch (NoHandlerForMessageException) {
+            // No handler is registered for this message, e.g. when the
+            // pimcore/generic-data-index-bundle is not enabled. This is a
+            // supported setup, so treat the missing handler as a no-op.
         } catch (Exception $e) {
             Logger::error('Failed to dispatch DependencyTargetsChangedMessage: ' . $e->getMessage());
         }
