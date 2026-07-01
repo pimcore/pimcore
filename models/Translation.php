@@ -40,6 +40,9 @@ final class Translation extends AbstractModel
 
     const DOMAIN_DEFAULT = 'messages';
 
+    /**
+     * @deprecated since 2026.2
+     */
     const DOMAIN_ADMIN = 'admin';
 
     protected ?string $key = null;

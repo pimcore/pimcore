@@ -54,7 +54,7 @@
     "doctrine/orm": "^3.0",
     "doctrine/persistence": "^3.0.3",
     "egulias/email-validator": "^3.0 || ^4.0",
-    "friendsofsymfony/jsrouting-bundle": "^3.2.1",
+    "friendsofsymfony/jsrouting-bundle": "^3.6.0",
     "gotenberg/gotenberg-php": "^2.4",
     "guzzlehttp/guzzle": "^7.8",
     "http-interop/http-factory-guzzle": "^1.0.0",

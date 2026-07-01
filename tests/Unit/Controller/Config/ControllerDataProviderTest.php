@@ -14,21 +14,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Controller\Config;
 
+use Pimcore\Controller\Config\Bundle\BundleProvider;
 use Pimcore\Controller\Config\ControllerDataProvider;
-use Pimcore\Controller\Config\TemplateProviderInterface;
+use Pimcore\Controller\Config\Template\TemplateProviderInterface;
 use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class ControllerDataProviderTest extends TestCase
 {
-    private function createKernel(): KernelInterface
+    private function createBundleProvider(): BundleProvider
     {
         $kernel = $this->createMock(KernelInterface::class);
-        // no project bundles -> getTemplates() only relies on the project
-        // templates scan plus the registered template providers
+        // no project bundles -> getTemplates() only relies on the registered template providers
         $kernel->method('getBundles')->willReturn([]);
 
-        return $kernel;
+        return new BundleProvider($kernel);
     }
 
     private function createTemplateProvider(array $templates): TemplateProviderInterface
@@ -48,7 +48,7 @@ class ControllerDataProviderTest extends TestCase
     public function testGetTemplatesIncludesTemplateProviderTemplates(): void
     {
         $provider = new ControllerDataProvider(
-            $this->createKernel(),
+            $this->createBundleProvider(),
             [],
             [$this->createTemplateProvider(['@Agent/generated/foo.html.twig'])]
         );
@@ -61,7 +61,7 @@ class ControllerDataProviderTest extends TestCase
     public function testGetTemplatesMergesMultipleTemplateProviders(): void
     {
         $provider = new ControllerDataProvider(
-            $this->createKernel(),
+            $this->createBundleProvider(),
             [],
             [
                 $this->createTemplateProvider(['content/one.html.twig']),
@@ -80,7 +80,7 @@ class ControllerDataProviderTest extends TestCase
         $duplicate = 'content/duplicate.html.twig';
 
         $provider = new ControllerDataProvider(
-            $this->createKernel(),
+            $this->createBundleProvider(),
             [],
             [
                 $this->createTemplateProvider([$duplicate, '@Agent/unique.html.twig']),
@@ -109,7 +109,7 @@ class ControllerDataProviderTest extends TestCase
             ->willReturn(['@Agent/memoised.html.twig']);
 
         $provider = new ControllerDataProvider(
-            $this->createKernel(),
+            $this->createBundleProvider(),
             [],
             [$templateProvider]
         );
@@ -119,13 +119,5 @@ class ControllerDataProviderTest extends TestCase
 
         $secondCallTemplates = $provider->getTemplates();
         $this->assertSame($firstCallTemplates, $secondCallTemplates);
-    }
-
-    public function testGetTemplatesWorksWithoutTemplateProviders(): void
-    {
-        $provider = new ControllerDataProvider($this->createKernel(), []);
-
-        // backward compatibility: the template providers argument is optional
-        $this->assertIsArray($provider->getTemplates());
     }
 }

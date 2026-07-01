@@ -1,8 +1,12 @@
 blank_issues_enabled: false
 contact_links:
-    - name: We are hiring!
-      url: https://pimcore.com/en/careers?utm_source=github&utm_medium=issue-template-pimcore-pimcore&utm_campaign=careers
-      about: Enjoy working with Pimcore? Join us on our mission!
-    - name: Community Support
-      url: https://github.com/pimcore/pimcore/discussions
-      about: Please ask and answer questions here.
+  - name: Platform Repository (Public Issues)
+    url: https://github.com/pimcore/platform-version/issues
+    about: Public place to report reproducible issues affecting the Pimcore platform. You may receive support from the community or other users. Please search for existing issues before creating a new one.
+  - name: Support Portal (Private Issues)
+    url: https://get.support.pimcore.com/
+    about: Private channel to report bugs. Issues and issue details are only shared between you and Pimcore and are not visible to other users. This does not include prioritization or additional support.
+  - name: Community Support (Discussions)
+    url: https://github.com/pimcore/pimcore/discussions
+    about: For questions, ideas, and general discussions. This is the preferred place for community-driven support and knowledge exchange.
+    
