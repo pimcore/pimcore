@@ -1,5 +1,37 @@
 # Upgrade Notes
 
+## Pimcore 2026.2.0
+
+### [General]
+- [Assets][Thumbnails][CDN] New core events for thumbnail-config lifecycle were introduced to support CDN purge integration:
+    - `Pimcore\Event\ImageThumbnailConfigEvents::POST_UPDATE` and `POST_DELETE`
+    - `Pimcore\Event\VideoThumbnailConfigEvents::POST_UPDATE` and `POST_DELETE`
+    - Payload classes: `Pimcore\Event\Model\Asset\Image\Thumbnail\ConfigEvent` and `Pimcore\Event\Model\Asset\Video\Thumbnail\ConfigEvent` (both expose `getConfig(): Config`).
+    - The events are dispatched from `Asset\Image\Thumbnail\Config\Dao::save()/delete()` and `Asset\Video\Thumbnail\Config\Dao::save()/delete()` after the underlying settings store and cache writes succeed. They fire on every save/delete path, including admin UI, API and programmatic changes (the magic `__call` delegation also routes through the Dao). Subscribers can use them to react to thumbnail-pipeline changes — Pimcore's bundled `CdnPurgeListener` uses them to dispatch `thumb-{configName}` CDN purges.
+
+- [Composer] Bumped minimum requirement of `friendsofsymfony/jsrouting-bundle` to `3.6.0`.
+
+### [Maintenance Mode]
+- The legacy file-based maintenance mode backward-compatibility layer has been fully removed. The following deprecated static methods have been deleted from `Pimcore\Tool\Admin`:
+    - `getMaintenanceModeFile()`
+    - `getMaintenanceModeScheduleLoginFile()`
+    - `activateMaintenanceMode()`
+    - `deactivateMaintenanceMode()`
+    - `isInMaintenanceMode()`
+    - `isMaintenanceModeScheduledForLogin()`
+    - `scheduleMaintenanceModeOnLogin()`
+    - `unscheduleMaintenanceModeOnLogin()`
+
+  If you are still using any of these methods, replace them with the `Pimcore\Maintenance\Mode\MaintenanceModeHelperInterface` service. Inject it via the service container and use `activate()`, `deactivate()`, and `isActive()` instead.
+
+- The BC fallback that read the legacy `maintenance.php` configuration file has also been removed from `MaintenanceModeCommand`, `MaintenancePageListener`, `Bootstrap`, and `Console\Application`. Any existing `var/config/maintenance.php` file will be ignored. Ensure maintenance mode is managed exclusively through `MaintenanceModeHelperInterface`.
+
+- `Admin::getMinimizedScriptPath()` has been removed from `Pimcore\Tool\Admin`.
+
+### [Translations]
+- `Translation::DOMAIN_ADMIN` constant is deprecated since 2026.2 and will be removed in a future release. Avoid referencing the `admin` translation domain directly.
+- `Translator::$adminPath` and `Translator::$adminTranslationMapping` properties are deprecated since 2026.2.
+
 ## Pimcore 2026.1.0
 
 ### Tasks to Do Prior the Update
@@ -189,6 +221,12 @@ Install profiles can implement additional interfaces for advanced control:
 - `InstallStepFilterInterface` — skip specific install steps (useful for PaaS environments)
 - `PostInstallHookInterface` — run custom PHP code near the end of phase 2, before finalization steps such as cache clearing and install marker cleanup
 - `DataSourceInterface` — import SQL dumps or other data during installation
+
+### Doctrine `enum` Mapping Type Removed
+
+The `enum: string` Doctrine mapping type is no longer registered; only the `bit: boolean` mapping remains. The minimum `doctrine/dbal` requirement was raised to `^4.4`, where the explicit `enum` mapping is no longer needed.
+
+**Action required for existing installations:** Please check your Doctrine configuration for any registered mapping types and remove the `enum: string` mapping if it is present.
 
 ### [OpenSearch / Elasticsearch DSN Configuration]
 

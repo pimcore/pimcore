@@ -82,19 +82,6 @@ class MaintenancePageListener implements EventSubscriberInterface
 
         if ($this->maintenanceModeHelper->isActive($requestSessionId)) {
             $maintenance = true;
-        } else {
-            $file = \Pimcore\Tool\Admin::getMaintenanceModeFile();
-
-            if (!is_file($file)) {
-                return;
-            }
-
-            $conf = include($file);
-            if (isset($conf['sessionId'])) {
-                $maintenance = $conf['sessionId'] !== $requestSessionId;
-            } else {
-                @unlink($file);
-            }
         }
 
         // do not activate the maintenance for the server itself

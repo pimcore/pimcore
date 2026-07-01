@@ -43,6 +43,8 @@ final class User extends User\UserRole implements UserInterface
 
     protected ?string $datetimeLocale = null;
 
+    protected string $theme = 'default';
+
     protected bool $admin = false;
 
     protected bool $active = true;
@@ -736,6 +738,18 @@ final class User extends User\UserRole implements UserInterface
     public function setDatetimeLocale(?string $datetimeLocale): static
     {
         $this->datetimeLocale = $datetimeLocale;
+
+        return $this;
+    }
+
+    public function getTheme(): string
+    {
+        return $this->theme;
+    }
+
+    public function setTheme(string $theme): static
+    {
+        $this->theme = $theme;
 
         return $this;
     }

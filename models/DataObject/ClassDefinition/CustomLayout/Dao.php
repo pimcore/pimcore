@@ -63,7 +63,13 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             }
 
             if ($data && is_string($data['layoutDefinitions'] ?? null)) {
-                $data['layoutDefinitions'] = unserialize($data['layoutDefinitions']);
+                //Legacy fallback, see save() nested json_decode json_encode
+                $layoutDefinitions = \Pimcore\Tool\Serialize::unserialize($data['layoutDefinitions'], false);
+                if (is_array($layoutDefinitions)) {
+                    $data['layoutDefinitions'] = Model\DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($layoutDefinitions, true);
+                } else {
+                    $data['layoutDefinitions'] = $layoutDefinitions;
+                }
             } elseif (is_array($data['layoutDefinitions'] ?? null)) {
                 $data['layoutDefinitions'] = Model\DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($data['layoutDefinitions'], true);
             }

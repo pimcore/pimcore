@@ -217,7 +217,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
-        $unserializedData = Serialize::unserialize((string) $data);
+        $unserializedData = Serialize::unserialize((string) $data, false);
 
         if ($data === null || empty($unserializedData)) {
             return [];
