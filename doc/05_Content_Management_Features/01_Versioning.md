@@ -157,10 +157,14 @@ $coauthorContext = \Pimcore::getContainer()->get(\Pimcore\Model\Version\Coauthor
 $coauthorContext->withCoauthor('automation', 'my-importer', fn () => $object->save());
 
 // or stamp everything until clear() is called
-$coauthorContext->set('automation', 'my-importer');
-$object->save();
-$anotherObject->save();
-$coauthorContext->clear();
+try {
+    $coauthorContext->set('automation', 'my-importer');
+    $object->save();
+    $anotherObject->save();
+    $coauthorContext->clear();
+} finally {
+    $context->clear();
+}
 ```
 
 In services, inject `CoauthorContextInterface` instead of accessing the container directly.
