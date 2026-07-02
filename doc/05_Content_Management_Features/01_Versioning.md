@@ -161,9 +161,8 @@ try {
     $coauthorContext->set('automation', 'my-importer');
     $object->save();
     $anotherObject->save();
-    $coauthorContext->clear();
 } finally {
-    $context->clear();
+    $coauthorContext->clear();
 }
 ```
 

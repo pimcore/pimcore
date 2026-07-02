@@ -20,7 +20,7 @@ use Pimcore\Cache\RuntimeCache;
 
 final class Version20260701100000 extends AbstractMigration
 {
-    const CACHEKEY = 'system_resource_columns_';
+    private const CACHEKEY = 'system_resource_columns_';
 
     public function getDescription(): string
     {
@@ -55,7 +55,7 @@ final class Version20260701100000 extends AbstractMigration
         $this->resetValidTableColumnsCache('versions');
     }
 
-    public function resetValidTableColumnsCache(string $table): void
+    private function resetValidTableColumnsCache(string $table): void
     {
         $cacheKey = self::CACHEKEY . $table;
         if (RuntimeCache::isRegistered($cacheKey)) {

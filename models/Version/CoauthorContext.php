@@ -29,19 +29,23 @@ final class CoauthorContext implements CoauthorContextInterface, ResetInterface
         $this->coauthor = $coauthor;
     }
 
-    public function withCoauthor(string $type, string $coauthor, callable $callback): mixed
-    {
-        $previousType = $this->type;
-        $previousCoauthor = $this->coauthor;
-        $this->set($type, $coauthor);
+public function withCoauthor(string $type, string $coauthor, callable $callback): mixed
+{
+    $previousType = $this->type;
+    $previousCoauthor = $this->coauthor;
+    $previousEnabled = $this->enabled;
 
-        try {
-            return $callback();
-        } finally {
-            $this->type = $previousType;
-            $this->coauthor = $previousCoauthor;
-        }
+    $this->enabled = true;
+    $this->set($type, $coauthor);
+
+    try {
+        return $callback();
+    } finally {
+        $this->type = $previousType;
+        $this->coauthor = $previousCoauthor;
+        $this->enabled = $previousEnabled;
     }
+}
 
     public function clear(): void
     {
