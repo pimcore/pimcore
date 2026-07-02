@@ -76,9 +76,9 @@ class AssetUpdateTasksHandler
         }
 
         if ($asset->isPageCountProcessingEnabled()) {
-            $pageCount = $asset->getCustomSetting('document_page_count');
+            $pageCount = $asset->getCustomSetting(Asset\Document::CUSTOM_SETTING_PAGE_COUNT);
             if (!$pageCount || $pageCount === 'failed') {
-                if (!$asset->processPageCount() || $asset->getCustomSetting('document_page_count') === 'failed') {
+                if (!$asset->processPageCount() || $asset->getCustomSetting(Asset\Document::CUSTOM_SETTING_PAGE_COUNT) === 'failed') {
                     $asset->setCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED, true);
                     $this->logger->warning(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
                 }
