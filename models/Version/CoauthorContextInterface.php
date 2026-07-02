@@ -23,9 +23,13 @@ interface CoauthorContextInterface
     public function set(string $type, string $coauthor): void;
 
     /**
-     * Runs $callback with the given coauthor active and restores the previous
-     * context values afterwards - the one-shot convenience for a single save:
+     * Runs $callback with the given coauthor set on the context and restores the
+     * previous coauthor afterwards - the one-shot convenience for a single save:
      * $context->withCoauthor('automation', 'my-importer', fn () => $object->save());
+     *
+     * This sets the coauthor identity only. It does not re-enable a context that
+     * was switched off via disable(), so a disabled context still suppresses
+     * stamping for the duration of the callback.
      *
      * @template T
      *
@@ -45,6 +49,11 @@ interface CoauthorContextInterface
 
     public function enable(): void;
 
+    /**
+     * Master switch to deactivate coauthor stamping for the current process.
+     * A disabled context never stamps regardless of the coauthor set on it
+     * (via set() or withCoauthor()); re-enable it explicitly with enable().
+     */
     public function disable(): void;
 
     public function isEnabled(): bool;

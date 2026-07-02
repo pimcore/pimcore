@@ -101,4 +101,19 @@ class CoauthorContextTest extends TestCase
         $this->assertNull($context->getCoauthor());
         $this->assertFalse($context->isActive());
     }
+
+    public function testWithCoauthorDoesNotReEnableDisabledContext(): void
+    {
+        $context = new CoauthorContext();
+        $context->disable();
+
+        $activeInsideCallback = $context->withCoauthor(
+            'agent',
+            'product-data-agent',
+            static fn () => $context->isActive()
+        );
+
+        $this->assertFalse($activeInsideCallback);
+        $this->assertFalse($context->isEnabled());
+    }
 }
