@@ -367,6 +367,40 @@ class VersionTest extends TestCase
         }
     }
 
+    // Stamping must be a no-op when versioning is disabled: no mutation of the coauthor fields.
+    public function testDisabledVersioningDoesNotStampCoauthor(): void
+    {
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+        $context = Pimcore::getContainer()->get(CoauthorContextInterface::class);
+
+        try {
+            $context->set('agent', 'product-data-agent');
+
+            $object = TestHelper::createEmptyObject();
+
+            $version = new Version();
+            $version->setCid($object->getId());
+            $version->setCtype('object');
+            $version->setDate(time());
+            $version->setUserId(1);
+            $version->setData($object);
+            $version->setVersionCount($object->getVersionCount() + 1);
+
+            Version::disable();
+
+            try {
+                $version->save();
+            } finally {
+                Version::enable();
+            }
+
+            $this->assertNull($version->getCoauthorType(), 'coauthorType must not be stamped while versioning is disabled');
+            $this->assertNull($version->getCoauthor(), 'coauthor must not be stamped while versioning is disabled');
+        } finally {
+            $context->clear();
+        }
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
