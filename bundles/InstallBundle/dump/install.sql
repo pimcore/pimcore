@@ -563,6 +563,8 @@ CREATE TABLE `versions` (
   `binaryFileId` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
   `autoSave` TINYINT(4) NOT NULL DEFAULT 0,
   `storageType` VARCHAR(5) NOT NULL,
+  `coauthorType` varchar(50) default NULL,
+  `coauthor` varchar(255) default NULL,
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
   KEY `ctype_cid` (`ctype`, `cid`),
