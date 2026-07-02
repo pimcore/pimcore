@@ -26,6 +26,14 @@ interface CoauthorContextInterface
      * Runs $callback with the given coauthor active and restores the previous
      * context values afterwards - the one-shot convenience for a single save:
      * $context->withCoauthor('automation', 'my-importer', fn () => $object->save());
+     *
+     * @template T
+     *
+     * @param-immediately-invoked-callable $callback
+     *
+     * @param (callable(): T) $callback
+     *
+     * @return T
      */
     public function withCoauthor(string $type, string $coauthor, callable $callback): mixed;
 
