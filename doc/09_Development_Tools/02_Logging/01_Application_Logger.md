@@ -106,6 +106,47 @@ The archive function automatically creates database tables (`application_logs_ar
 for log entry archival. In the example above, log entries move to archive tables after 30 days.
 Archive tables are automatically deleted after the `delete_archive_threshold` (default: 6 months).
 
+### File Object Storage
+
+While log entries themselves are stored in the database, attached file objects
+(see [Special Context Variables](#special-context-variables)) are stored on a
+[Flysystem](https://flysystem.thephpleague.com/docs/) storage named
+`pimcore.application_log.storage`. By default, this points to a local directory:
+
+```yaml
+flysystem:
+    storages:
+        pimcore.application_log.storage:
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: "%kernel.project_dir%/var/application-logger"
+```
+
+:::caution Cluster / multi-server setups
+
+When running Pimcore on multiple application servers (e.g. in a High Availability cluster),
+the default local storage does not work: each server writes file objects to its own local
+directory, so a server handling the request to view a log entry's file object cannot read
+files that were written by another server, resulting in errors in the log viewer.
+
+In such setups, configure `pimcore.application_log.storage` to use a storage location
+shared by all servers — either a shared/network filesystem mounted on every server or a
+remote Flysystem adapter such as S3:
+
+```yaml
+flysystem:
+    storages:
+        pimcore.application_log.storage:
+            adapter: 'aws'
+            visibility: private
+            options:
+                client: 'my_aws_s3_client_service'
+                bucket: 'application-log'
+```
+
+:::
+
 ## How to Create Log Entries
 
 The Application Logger is a PSR-3 compatible component available as service
