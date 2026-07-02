@@ -97,8 +97,13 @@ pimcore:
 ### Mail Notifications
 
 When `send_log_summary` is enabled, the defined receivers receive log entries by email
-during the regular Pimcore maintenance cycle. The `filter_priority` controls which log
-messages are included (e.g. only errors and above).
+during the regular Pimcore maintenance cycle (see [Maintenance Tasks](#maintenance-tasks)).
+The `filter_priority` controls which log messages are included (e.g. only errors and above).
+Entries are sent in batches of at most 100 entries per email.
+
+Note that every maintenance run flags all existing log entries as processed, regardless of
+whether mail notifications are enabled. When you enable `send_log_summary`, you therefore
+only receive entries logged from that point on — historical entries are never emailed.
 
 ### Log Archival
 
@@ -106,12 +111,39 @@ The archive function automatically creates database tables (`application_logs_ar
 for log entry archival. In the example above, log entries move to archive tables after 30 days.
 Archive tables are automatically deleted after the `delete_archive_threshold` (default: 6 months).
 
+:::caution
+
+When log entries are moved to the archive tables, their referenced file objects
+(see [File Object Storage](#file-object-storage)) are **deleted from storage** at the same
+time. The archived database rows keep the file object path, but the file itself no longer
+exists — file object attachments are therefore only available for `archive_treshold` days,
+not for the lifetime of the archive tables.
+
+:::
+
+### Maintenance Tasks
+
+Log archival, the deletion of old archive tables and file objects, and the mail
+notifications are all executed as
+[maintenance tasks](../../10_Extending_Pimcore/03_Custom_Extension_Guides/07_Maintenance_Tasks.md).
+None of these run unless the Pimcore maintenance command (`pimcore:maintenance`)
+is executed regularly, e.g. via cron job.
+
 ### File Object Storage
 
 While log entries themselves are stored in the database, attached file objects
 (see [Special Context Variables](#special-context-variables)) are stored on a
 [Flysystem](https://flysystem.thephpleague.com/docs/) storage named
-`pimcore.application_log.storage`. By default, this points to a local directory:
+`pimcore.application_log.storage`. Files are written to a date-based path within
+the storage (`Y/m/d/fileobject_<uniqueId>`), unless a custom filename is passed
+as second constructor argument to `FileObject`.
+
+If writing to the storage fails, the failure is silently ignored — only a warning
+is written to the system log, and the log entry is still created with a file object
+path that does not exist. A misconfigured storage therefore does not surface as an
+error when logging, but as file objects that cannot be opened in the log viewer.
+
+By default, the storage points to a local directory:
 
 ```yaml
 flysystem:
@@ -361,6 +393,16 @@ class TestController
         // ...
     }
 }
+```
+
+The `fileObject` context variable accepts either a `FileObject` instance (which writes
+the given data to the [file object storage](#file-object-storage)) or a string path
+pointing to an already existing file on that storage:
+
+```php
+$logger->error('my error message', [
+    'fileObject' => 'path/to/existing-file.txt', // path on the application log storage
+]);
 ```
 
 In the Application Logger grid, the new row appears as *my error message* with a related object.
