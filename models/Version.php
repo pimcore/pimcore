@@ -130,7 +130,8 @@ final class Version extends AbstractModel
 
     public function save(): void
     {
-        if ($this->id === null && $this->coauthorType === null && $this->coauthorContext->isActive()) {
+        if ($this->id === null && $this->coauthorType === null && $this->coauthor === null
+            && $this->coauthorContext->isActive()) {
             $this->coauthorType = $this->coauthorContext->getType();
             $this->coauthor = $this->coauthorContext->getCoauthor();
         }
