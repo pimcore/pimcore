@@ -29,12 +29,14 @@ class Document extends Model\Asset
 
     public const CUSTOM_SETTING_PDF_SCAN_STATUS = 'document_pdf_scan_status';
 
+    public const CUSTOM_SETTING_PAGE_COUNT = 'document_page_count';
+
     protected string $type = 'document';
 
     protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
-            foreach (['document_page_count', self::CUSTOM_SETTING_PDF_SCAN_STATUS, 'embeddedMetaData', 'embeddedMetaDataExtracted'] as $key) {
+            foreach ([self::CUSTOM_SETTING_PAGE_COUNT, self::CUSTOM_SETTING_PDF_SCAN_STATUS, 'embeddedMetaData', 'embeddedMetaDataExtracted'] as $key) {
                 $this->removeCustomSetting($key);
             }
         }
@@ -73,10 +75,10 @@ class Document extends Model\Asset
 
             // read from blob here, because in $this->update() $this->getFileSystemPath() contains the old data
             $pageCount = $converter->getPageCount();
-            $this->setCustomSetting('document_page_count', $pageCount);
+            $this->setCustomSetting(self::CUSTOM_SETTING_PAGE_COUNT, $pageCount);
         } catch (Exception $e) {
             Logger::error((string) $e);
-            $this->setCustomSetting('document_page_count', 'failed');
+            $this->setCustomSetting(self::CUSTOM_SETTING_PAGE_COUNT, 'failed');
 
             return false;
         }
@@ -90,12 +92,12 @@ class Document extends Model\Asset
      */
     public function getPageCount(): ?int
     {
-        $pageCount = $this->getCustomSetting('document_page_count');
+        $pageCount = $this->getCustomSetting(self::CUSTOM_SETTING_PAGE_COUNT);
         if ($pageCount === null || $pageCount === '') {
             return null;
         }
 
-        return (int) $this->getCustomSetting('document_page_count');
+        return (int) $pageCount;
     }
 
     /**
