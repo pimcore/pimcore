@@ -163,6 +163,12 @@ services:
         alias: Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter
 
     Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter: ~
+
+    Pimcore\Model\Version\CoauthorContextInterface:
+        public: true
+        alias: Pimcore\Model\Version\CoauthorContext
+
+    Pimcore\Model\Version\CoauthorContext: ~
     #
     # SECURITY
     #
