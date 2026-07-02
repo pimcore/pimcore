@@ -64,8 +64,8 @@ location ~ ^/cache-buster\-[\d]+/protected(.*) {
 }
 ```
 
-A full configuration example can be found on the
-[Nginx Configuration](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/02_Nginx_Configuration.md) page.
+A full configuration example can be found in the skeleton
+[nginx.conf](https://github.com/pimcore/skeleton/blob/2026.x/.docker/nginx.conf).
 
 
 Because of this rule, all assets located within `/protected` (including all their thumbnails)
@@ -116,8 +116,8 @@ location ~ ^/cache-buster\-[\d]+/protected(.*) {
 }
 ```
 
-A full configuration example can be found on the
-[Nginx Configuration](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/02_Nginx_Configuration.md) page.
+A full configuration example can be found in the skeleton
+[nginx.conf](https://github.com/pimcore/skeleton/blob/2026.x/.docker/nginx.conf).
 
 
 In the application, define a route in `config/routes.yaml` and a controller action that handles the request:
