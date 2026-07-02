@@ -87,6 +87,11 @@ class AssetUpdateTasksHandler
             }
         }
 
+        if (!$asset->getCustomSetting('embeddedMetaDataExtracted')) {
+            $asset->handleEmbeddedMetaData();
+            $save = true;
+        }
+
         if ($asset->isThumbnailsEnabled() && !$asset->getCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED)) {
             $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
         }

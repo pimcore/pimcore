@@ -25,6 +25,8 @@ use Pimcore\Model\Asset\Document\PdfScanner;
  */
 class Document extends Model\Asset
 {
+    use Model\Asset\MetaData\EmbeddedMetaDataTrait;
+
     public const CUSTOM_SETTING_PDF_SCAN_STATUS = 'document_pdf_scan_status';
 
     protected string $type = 'document';
@@ -32,8 +34,9 @@ class Document extends Model\Asset
     protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
-            $this->removeCustomSetting('document_page_count');
-            $this->removeCustomSetting(self::CUSTOM_SETTING_PDF_SCAN_STATUS);
+            foreach (['document_page_count', self::CUSTOM_SETTING_PDF_SCAN_STATUS, 'embeddedMetaData', 'embeddedMetaDataExtracted'] as $key) {
+                $this->removeCustomSetting($key);
+            }
         }
 
         parent::update($params);

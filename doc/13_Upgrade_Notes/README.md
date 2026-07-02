@@ -51,6 +51,7 @@
 ## Pimcore 2026.2.0
 
 ### [General]
+- [Assets] Document assets (e.g. PDFs) now support embedded metadata (XMP/EXIF/IPTC) extraction, analogous to image and video assets. The metadata is extracted asynchronously via the asset update tasks queue (preferably using `exiftool`, if available) and is available through `Asset\Document::getEmbeddedMetaData()` or the `embeddedMetaData` custom setting.
 - [Assets][Thumbnails][CDN] New core events for thumbnail-config lifecycle were introduced to support CDN purge integration:
     - `Pimcore\Event\ImageThumbnailConfigEvents::POST_UPDATE` and `POST_DELETE`
     - `Pimcore\Event\VideoThumbnailConfigEvents::POST_UPDATE` and `POST_DELETE`
