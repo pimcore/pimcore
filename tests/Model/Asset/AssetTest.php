@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Asset;
 
 use Exception;
+use Normalizer;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
@@ -239,6 +240,41 @@ class AssetTest extends ModelTestCase
         }
 
         $this->assertFalse(is_resource($stream1));
+    }
+
+    /**
+     * Regression test for PEES-1245: a thumbnail directory can end up on disk in a
+     * different Unicode normalization form than the path Asset::relocateThumbnails()
+     * computes from the DB (e.g. because the original folder name came from a macOS
+     * client, which reports accented characters in decomposed/NFD form, while the DB
+     * path is in precomposed/NFC form). Without the retry in moveThumbnailPath(), the
+     * move silently fails and the thumbnail is stranded at the old path.
+     *
+     * @see \Pimcore\Model\Asset::moveThumbnailPath()
+     */
+    public function testMoveThumbnailPathRecoversFromUnicodeNormalizationMismatch(): void
+    {
+        $storage = Storage::get('thumbnail');
+
+        $basePath = '/pimcore-test-' . uniqid() . '/café/123';
+        $nfcOldPath = Normalizer::normalize($basePath, Normalizer::FORM_C);
+        $nfdOldPath = Normalizer::normalize($basePath, Normalizer::FORM_D);
+        $this->assertNotSame($nfcOldPath, $nfdOldPath, 'Test fixture setup issue: NFC and NFD forms should differ in bytes.');
+
+        // the thumbnail physically exists under the NFD form of the path ...
+        $storage->write($nfdOldPath . '/dummy-thumb.jpg', 'thumbnail-content');
+
+        // ... while relocateThumbnails() computes the NFC form as the source to move from
+        $newPath = '/pimcore-test-' . uniqid() . '/moved/123';
+
+        $reflection = new \ReflectionMethod(Asset::class, 'moveThumbnailPath');
+        $reflection->setAccessible(true);
+        $reflection->invoke(new Asset\Image(), $storage, $nfcOldPath, $newPath);
+
+        $this->assertTrue($storage->fileExists($newPath . '/dummy-thumb.jpg'));
+        $this->assertFalse($storage->fileExists($nfdOldPath . '/dummy-thumb.jpg'));
+
+        $storage->deleteDirectory($newPath);
     }
 
     public function testSvgThumbnailFallbackUsesOriginalAssetPathOnGenerationFailure(): void
