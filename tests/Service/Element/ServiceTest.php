@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Service\Element;
 
+use Normalizer;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Service;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -98,6 +99,23 @@ class ServiceTest extends TestCase
             $childIds,
             'The copied object must appear in the already-loaded children listing'
         );
+    }
+
+    /**
+     * Regression test: macOS reports accented filenames in decomposed (NFD) Unicode form.
+     * If that form is stored verbatim, paths built elsewhere from the same characters in
+     * precomposed (NFC) form no longer match, which breaks operations relying on path
+     * comparisons (e.g. relocating thumbnails after a folder move).
+     *
+     * @see \Pimcore\Model\Element\Service::getValidKey()
+     */
+    public function testGetValidKeyNormalizesToNfc(): void
+    {
+        $nfd = Normalizer::normalize('café', Normalizer::FORM_D);
+        $nfc = Normalizer::normalize('café', Normalizer::FORM_C);
+
+        $this->assertNotSame($nfd, $nfc, 'Test fixture setup issue: NFD and NFC forms should differ in bytes.');
+        $this->assertSame($nfc, Service::getValidKey($nfd, 'asset'));
     }
 
     public function testCloneMe(): void
