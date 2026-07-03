@@ -18,6 +18,7 @@ use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
 use League\Flysystem\UnableToProvideChecksum;
+use Normalizer;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -1762,7 +1763,7 @@ class Asset extends Element\AbstractElement
                 $storage = Storage::get($storageName);
 
                 try {
-                    $storage->move($oldThumbnailsPath, $newThumbnailsPath);
+                    $this->moveThumbnailPath($storage, $oldThumbnailsPath, $newThumbnailsPath);
                 } catch (UnableToMoveFile $e) {
                     //update children, if unable to move parent
                     //if there is an error, we can ignore it
@@ -1770,6 +1771,38 @@ class Asset extends Element\AbstractElement
                 }
             }
         }
+    }
+
+    /**
+     * Moves a thumbnail directory/file, retrying with alternate Unicode normalization
+     * forms of the source path if the initial attempt fails to find it. This covers
+     * cases where the DB-stored path and the on-disk directory name ended up in
+     * different Unicode normalization forms - e.g. because the original folder/file
+     * name was created on a macOS client, which reports accented names in decomposed
+     * (NFD) form, while other parts of the stack normalize to precomposed (NFC).
+     *
+     * @throws UnableToMoveFile
+     */
+    private function moveThumbnailPath(FilesystemOperator $storage, string $oldPath, string $newPath): void
+    {
+        $candidates = array_unique(array_filter([
+            $oldPath,
+            Normalizer::normalize($oldPath, Normalizer::FORM_C) ?: null,
+            Normalizer::normalize($oldPath, Normalizer::FORM_D) ?: null,
+        ]));
+
+        $lastException = null;
+        foreach ($candidates as $candidate) {
+            try {
+                $storage->move($candidate, $newPath);
+
+                return;
+            } catch (UnableToMoveFile $e) {
+                $lastException = $e;
+            }
+        }
+
+        throw $lastException;
     }
 
     private function clearFolderThumbnails(Asset $asset): void
