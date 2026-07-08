@@ -10,7 +10,7 @@ There are a few necessary steps before we can accept a pull request:
 > **Note:** Before opening a PR, also see our [Pull Request Guidelines](https://github.com/orgs/pimcore/discussions/19239) for the automated checks your PR must pass.
 
 * [Fork us!](https://help.github.com/articles/fork-a-repo/)
-* Select the right branch. `main`(`2026.x`) for features and improvements or latest maintenance branch for bug fixes (`2026.1`)
+* Select the right branch. `main`(`2026.x`) for features and improvements or latest maintenance branch for bug fixes (`2026.2`)
 * Code! Follow the coding standards defined [here](https://github.com/pimcore/pimcore/blob/2026.x/.php-cs-fixer.dist.php) and [here](https://github.com/pimcore/pimcore/blob/2026.x/doc/19_Development_Tools_and_Details/29_Testing/02_Core_Tests.md#perform-phpstan-analysis)
 * [Send a pull request](https://help.github.com/articles/using-pull-requests/) from your fork’s branch to our repo branch.
 * [Sign the CLA](https://cla-assistant.io/pimcore/pimcore) - see also below.
