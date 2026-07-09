@@ -21,7 +21,7 @@ Pimcore admins are allowed to publish and delete the object but for all other us
    places:
       closed:
          permissions:
-           - condition: is_fully_authenticated() and is_granted('ROLE_PIMCORE_ADMIN')
+           - condition: is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in role_names
              publish: true
              delete: true
            - publish: false
@@ -36,7 +36,7 @@ and delete button will be hidden. `modify` is a short hand for save, publish, un
    places:
       closed:
          permissions:
-           - condition: is_fully_authenticated() and is_granted('ROLE_PIMCORE_ADMIN')
+           - condition: is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in role_names
              modify: true
            - modify: false
 ```
@@ -131,7 +131,7 @@ e.g. `ROLE_EDITOR` for a role named "Editor":
    places:
       closed:
          permissions:
-           - condition: is_fully_authenticated() and is_granted('ROLE_EDITOR')
+           - condition: is_fully_authenticated() and 'ROLE_EDITOR' in role_names
              modify: true
            - modify: false
 ```
