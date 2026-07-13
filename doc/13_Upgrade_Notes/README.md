@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.0
+
+### [Assets]
+- [Thumbnails] The cache lifetime used for the `Cache-Control` and `Expires` HTTP headers when a thumbnail is delivered on-the-fly through the thumbnail service is now configurable via `pimcore.assets.thumbnails.cache_lifetime` (in seconds). It defaults to `604800` (one week), which preserves the previous hard-coded behavior.
+
 ## Pimcore 2026.2.0
 
 ### [General]

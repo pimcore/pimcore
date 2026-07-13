@@ -312,6 +312,17 @@ This works only with predefined (named) thumbnail configurations, not with dynam
 > When requesting an image without providing a hash, the content cannot be browser-cached like
 > regular Nginx-served files, as the file without hash does not exist physically.
 
+When a thumbnail is delivered on-the-fly through this service, Pimcore sends `Cache-Control` and
+`Expires` HTTP headers with a default lifetime of one week (`604800` seconds). You can change this
+lifetime via the symfony configuration:
+
+```yaml
+pimcore:
+    assets:
+        thumbnails:
+            cache_lifetime: 604800 # in seconds
+```
+
 ## Deferred Rendering of Thumbnails
 
 For performance reasons, Pimcore does not generate the thumbnail image directly when calling
