@@ -173,19 +173,25 @@ public function setLinput(?string $linput): static
         $class = ClassDefinition::getByName('unittest');
         $this->assertInstanceOf(ClassDefinition::class, $class);
 
-        $classDefinition = json_decode(ClassDefinition\Service::generateClassDefinitionJson($class), true, 512, JSON_THROW_ON_ERROR);
+        $originalClassDefinition = ClassDefinition\Service::generateClassDefinitionJson($class);
+        $classDefinition = json_decode($originalClassDefinition, true, 512, JSON_THROW_ON_ERROR);
         $this->assertTrue($this->setInputDefaultValueAndUnique($classDefinition['layoutDefinitions'], 'input'));
 
-        ClassDefinition\Service::importClassDefinitionFromJson($class, json_encode($classDefinition, JSON_THROW_ON_ERROR), true);
-        $class->save();
+        try {
+            ClassDefinition\Service::importClassDefinitionFromJson($class, json_encode($classDefinition, JSON_THROW_ON_ERROR), true);
+            $class->save();
 
-        $reloadedClass = ClassDefinition::getById($class->getId(), true);
-        $this->assertInstanceOf(ClassDefinition::class, $reloadedClass);
+            $reloadedClass = ClassDefinition::getById($class->getId(), true);
+            $this->assertInstanceOf(ClassDefinition::class, $reloadedClass);
 
-        $inputField = $reloadedClass->getFieldDefinition('input');
-        $this->assertInstanceOf(Input::class, $inputField);
-        $this->assertTrue($inputField->getUnique());
-        $this->assertNull($inputField->getDefaultValue());
+            $inputField = $reloadedClass->getFieldDefinition('input');
+            $this->assertInstanceOf(Input::class, $inputField);
+            $this->assertTrue($inputField->getUnique());
+            $this->assertNull($inputField->getDefaultValue());
+        } finally {
+            ClassDefinition\Service::importClassDefinitionFromJson($class, $originalClassDefinition, true);
+            $class->save();
+        }
     }
 
     private function setInputDefaultValueAndUnique(array &$layoutDefinition, string $fieldName): bool
