@@ -197,12 +197,15 @@ public function setLinput(?string $linput): static
             return true;
         }
 
-        foreach ($layoutDefinition['children'] ?? [] as &$child) {
-            if (is_array($child) && $this->setInputDefaultValueAndUnique($child, $fieldName)) {
-                return true;
+        if (isset($layoutDefinition['children']) && is_array($layoutDefinition['children'])) {
+            foreach ($layoutDefinition['children'] as &$child) {
+                if (is_array($child) && $this->setInputDefaultValueAndUnique($child, $fieldName)) {
+                    return true;
+                }
             }
+            unset($child);
         }
-
+        
         return false;
     }
 }
