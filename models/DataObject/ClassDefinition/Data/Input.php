@@ -253,7 +253,6 @@ class Input extends Data implements
     public function setDefaultValue(string $defaultValue): static
     {
         $this->defaultValue = $defaultValue === '' ? null : $defaultValue;
-    
         return $this;
     }
 
