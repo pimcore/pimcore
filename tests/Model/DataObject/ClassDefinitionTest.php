@@ -178,8 +178,7 @@ public function setLinput(?string $linput): static
         $this->assertTrue($this->setInputDefaultValueAndUnique($classDefinition['layoutDefinitions'], 'input'));
 
         try {
-            ClassDefinition\Service::importClassDefinitionFromJson($class, json_encode($classDefinition, JSON_THROW_ON_ERROR), true);
-            $class->save();
+            $this->assertTrue(ClassDefinition\Service::importClassDefinitionFromJson($class, json_encode($classDefinition, JSON_THROW_ON_ERROR), true));
 
             $reloadedClass = ClassDefinition::getById($class->getId(), true);
             $this->assertInstanceOf(ClassDefinition::class, $reloadedClass);
@@ -190,7 +189,6 @@ public function setLinput(?string $linput): static
             $this->assertNull($inputField->getDefaultValue());
         } finally {
             ClassDefinition\Service::importClassDefinitionFromJson($class, $originalClassDefinition, true);
-            $class->save();
         }
     }
 
