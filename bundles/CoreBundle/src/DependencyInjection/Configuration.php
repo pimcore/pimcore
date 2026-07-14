@@ -430,6 +430,7 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                             ->integerNode('cache_lifetime')
                                 ->info('Lifetime in seconds for the HTTP caching headers (Cache-Control, Expires) sent when a thumbnail is delivered through the thumbnail service.')
+                                ->min(0)
                                 ->defaultValue(86400 * 7)
                             ->end()
                         ->end()
