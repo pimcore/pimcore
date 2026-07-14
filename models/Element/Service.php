@@ -206,9 +206,13 @@ class Service extends Model\AbstractModel
             $userId
         );
 
+        // Cache::save() silently drops falsy payloads on the default (deferred, non-forced)
+        // write path - CoreCacheHandler::addToSaveQueue() only queues data that passes a
+        // truthy check, so a legitimate count of 0 would never actually get persisted. Wrap
+        // the count in an array so it survives that check, and unwrap it on read.
         $cached = Cache::load($cacheKey);
-        if ($cached !== false) {
-            return (int) $cached;
+        if (is_array($cached) && array_key_exists('total', $cached)) {
+            return (int) $cached['total'];
         }
 
         $rawTotal = $d->getRequiredByTotalCount();
@@ -233,14 +237,22 @@ class Service extends Model\AbstractModel
             $scannedRows += count($rows);
         }
 
+        // If the scan cap was hit before the raw table was fully examined, $visibleTotal only
+        // reflects what was seen so far and may under-count - e.g. 6000 fully visible rows
+        // would report 5000 and strand the grid at page 200 of a true 240. Rather than expose
+        // a truncated (too-small) total, which hides real pages, fall back to the raw
+        // (never-too-small) total in that case; the common case where the raw set fits within
+        // the cap is unaffected and still gets the exact, immediate total.
+        $total = $rawOffset >= $rawTotal ? $visibleTotal : $rawTotal;
+
         Cache::save(
-            $visibleTotal,
+            ['total' => $total],
             $cacheKey,
             ['dependency_requiredby_' . $d->getSourceType() . '_' . $d->getSourceId()],
             self::REQUIRED_BY_VISIBLE_TOTAL_CACHE_LIFETIME
         );
 
-        return $visibleTotal;
+        return $total;
     }
 
     /**
