@@ -262,7 +262,14 @@ class Service extends Model\AbstractModel
         $scannedRows = 0;
 
         while ($rawOffset < $rawTotal && $scannedRows < self::REQUIRED_BY_VISIBLE_TOTAL_SCAN_CAP) {
-            $rows = $d->getRequiredBy($rawOffset, self::REQUIRED_BY_VISIBLE_TOTAL_SCAN_CHUNK);
+            // Clamp to the remaining budget so the cap is a strict upper bound on rows
+            // scanned - without this, a chunk fetched right before the cap (e.g.
+            // scannedRows=4900) could still pull a full chunk and overshoot it.
+            $chunkSize = min(
+                self::REQUIRED_BY_VISIBLE_TOTAL_SCAN_CHUNK,
+                self::REQUIRED_BY_VISIBLE_TOTAL_SCAN_CAP - $scannedRows
+            );
+            $rows = $d->getRequiredBy($rawOffset, $chunkSize);
             if (empty($rows)) {
                 break;
             }
