@@ -23,4 +23,7 @@ return [
     "Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\CustomReportsBundle\\PimcoreCustomReportsBundle" => [
+        "all" => TRUE
+    ],
 ];

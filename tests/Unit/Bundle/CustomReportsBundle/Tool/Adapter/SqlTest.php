@@ -114,4 +114,50 @@ class SqlTest extends TestCase
 
         $this->assertStringContainsString("'password'", $sql);
     }
+
+    public function testWildcardSqlFragmentIsRejected(): void
+    {
+        // "*" expands to every column of the queried table at execution time, which would silently
+        // include any denied column without it ever appearing in the "sql" fragment text.
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/wildcard/i');
+
+        $this->buildQueryString([
+            'sql' => '*',
+            'from' => 'orders',
+        ]);
+    }
+
+    public function testEmptySqlFragmentIsRejected(): void
+    {
+        // An omitted "sql" fragment falls back to an implicit "SELECT *" - same risk as an explicit "*".
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/wildcard/i');
+
+        $this->buildQueryString([
+            'from' => 'orders',
+        ]);
+    }
+
+    public function testTableQualifiedWildcardIsRejected(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/wildcard/i');
+
+        $this->buildQueryString([
+            'sql' => 'name, o.*',
+            'from' => 'orders o',
+        ]);
+    }
+
+    public function testCountWildcardIsNotFalselyRejected(): void
+    {
+        // COUNT(*) is a legitimate aggregate, not a column-list wildcard, and must not be rejected.
+        $sql = $this->buildQueryString([
+            'sql' => 'name, COUNT(*) as cnt',
+            'from' => 'orders',
+        ]);
+
+        $this->assertStringContainsString('COUNT(*)', $sql);
+    }
 }

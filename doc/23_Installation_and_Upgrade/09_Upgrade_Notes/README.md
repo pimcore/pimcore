@@ -8,9 +8,10 @@
 
 -   Hardened the SQL Custom Report data source (`Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\Sql`) with a configurable table/column deny-list, restricting which tables and columns a report's `sql`/`from`/`where`/`groupby` fragments may reference.
 -   By default, the `users` table and the `password`, `passwordRecoveryToken`, `twoFactorAuthentication`, `apiKey`, `secret` and `token` columns are denied.
+-   Whenever any columns are denied, an empty/omitted `sql` fragment or a wildcard column selection (`*` or `alias.*`) is also rejected, since it would otherwise return every column of the queried table(s) - including denied ones - without any of them being named in the report configuration. Aggregate functions like `COUNT(*)` are unaffected.
 
 **Action Required:**
-If you have existing SQL Custom Reports that legitimately reference the `users` table, or columns named `password`, `passwordRecoveryToken`, `twoFactorAuthentication`, `apiKey`, `secret` or `token` (on any table), they will now be rejected with an `InvalidArgumentException`. Adjust the deny-list to fit your schema via the standard `pimcore_custom_reports` bundle configuration:
+If you have existing SQL Custom Reports that legitimately reference the `users` table, columns named `password`, `passwordRecoveryToken`, `twoFactorAuthentication`, `apiKey`, `secret` or `token` (on any table), or that rely on an empty `sql` fragment/wildcard column selection, they will now be rejected with an `InvalidArgumentException`. Adjust the deny-list to fit your schema via the standard `pimcore_custom_reports` bundle configuration, and/or list the exact columns your report needs instead of relying on a wildcard:
 
 ```yaml
 pimcore_custom_reports:

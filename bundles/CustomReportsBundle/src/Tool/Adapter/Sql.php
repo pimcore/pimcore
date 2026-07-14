@@ -108,14 +108,20 @@ class Sql extends AbstractAdapter
         }
 
         if (!empty($config['sql']) && !$ignoreSelectAndGroupBy) {
+            $this->assertNoWildcardProjection($config['sql']);
+
             if (!str_starts_with(strtoupper(trim($config['sql'])), 'SELECT')) {
                 $sql .= 'SELECT';
             }
             $sql .= "\n" . $config['sql'];
         } elseif ($selectField) {
+            $this->validateAgainstDenyList($selectField);
+
             $db = Db::get();
             $sql .= 'SELECT ' . $db->quoteIdentifier($selectField);
         } else {
+            $this->assertNoWildcardProjection('*');
+
             $sql .= 'SELECT *';
         }
 
@@ -254,6 +260,28 @@ class Sql extends AbstractAdapter
         $normalized = preg_replace('/`([^`]*)`/', '$1', $normalized) ?? $normalized;
 
         return preg_replace('/\s+/s', ' ', $normalized) ?? $normalized;
+    }
+
+    /**
+     * A "sql" (column list) fragment that is empty or a bare/table-qualified wildcard (e.g. "*", "t.*")
+     * expands to every column of the queried table(s) at execution time, which would silently include
+     * any denied column without it ever appearing in the fragment text - bypassing validateAgainstDenyList()'s
+     * name matching entirely. Rejected outright whenever any columns are denied. "COUNT(*)" and similar
+     * function calls are untouched, since matching requires the "*" to be a full column-list entry
+     * (starts the fragment or immediately follows a comma), not nested inside parentheses.
+     */
+    private function assertNoWildcardProjection(string $sql): void
+    {
+        if (!$this->getDeniedColumns()) {
+            return;
+        }
+
+        $normalized = $this->normalizeForDenyListCheck($sql);
+        $normalized = preg_replace('/^\s*SELECT\s+/i', '', $normalized) ?? $normalized;
+
+        if (trim($normalized) === '' || preg_match('/(?:^|,)\s*(?:\w+\.)?\*\s*(?:,|$)/', $normalized)) {
+            throw new InvalidArgumentException('Wildcard column selection ("SELECT *", an empty "sql" fragment, or a table-qualified "alias.*") is not allowed while column deny-listing (pimcore_custom_reports.sql_adapter.denied_columns) is configured. List the exact columns your report needs.');
+        }
     }
 
     private function getDeniedTables(): array
