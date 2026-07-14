@@ -516,7 +516,7 @@ class Service extends Model\Element\Service
         }
         // set appropriate caching headers
         // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
-        $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
+        $lifetime = \Pimcore\Config::getSystemConfiguration('assets')['thumbnails']['cache_lifetime'];
 
         $headers = [
             'Cache-Control' => 'public, max-age=' . $lifetime,
@@ -569,7 +569,7 @@ class Service extends Model\Element\Service
         if (strlen($uri) > 10 && $storage->fileExists($storagePath)) {
             $stream = $storage->readStream($storagePath);
 
-            $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
+            $lifetime = \Pimcore\Config::getSystemConfiguration('assets')['thumbnails']['cache_lifetime'];
 
             return new StreamedResponse(function () use ($stream) {
                 fpassthru($stream);
