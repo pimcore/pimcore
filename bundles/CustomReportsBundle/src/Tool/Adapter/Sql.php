@@ -15,6 +15,7 @@ namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
 use Exception;
 use InvalidArgumentException;
+use Pimcore;
 use Pimcore\Db;
 use stdClass;
 
@@ -99,6 +100,7 @@ class Sql extends AbstractAdapter
 
                 try {
                     $this->validateSqlFragment($config[$key]);
+                    $this->validateAgainstDenyList($config[$key]);
                 } catch (InvalidArgumentException $e) {
                     throw new InvalidArgumentException(sprintf('Unsafe "%s" SQL fragment: %s', $key, $e->getMessage()), 0, $e);
                 }
@@ -198,6 +200,70 @@ class Sql extends AbstractAdapter
                 throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, and DDL/DML are not allowed).');
             }
         }
+    }
+
+    /**
+     * Defense-in-depth on top of validateSqlFragment(): restricts which tables/columns a report's
+     * sql/from/where/groupby fragments may reference (including references inside subqueries or
+     * behind backtick-quoting), independent of the SQL-syntax checks in validateSqlFragment().
+     *
+     * This is a name-based deny-list, not a schema-aware allow-list: it blocks references by literal
+     * table/column name regardless of context, which can also block legitimate reports if a non-sensitive
+     * table/column happens to share a denied name. Adjust pimcore_custom_reports.sql_adapter.denied_tables
+     * / denied_columns to fit your schema.
+     */
+    private function validateAgainstDenyList(string $sql): void
+    {
+        $sqlForValidation = $this->normalizeForDenyListCheck($sql);
+
+        foreach ($this->getDeniedTables() as $table) {
+            if ($table === '') {
+                continue;
+            }
+
+            if (preg_match('/\b' . preg_quote($table, '/') . '\b/i', $sqlForValidation)) {
+                throw new InvalidArgumentException(sprintf('Access to table "%s" is not permitted in Custom Report SQL.', $table));
+            }
+        }
+
+        foreach ($this->getDeniedColumns() as $column) {
+            if ($column === '') {
+                continue;
+            }
+
+            if (preg_match('/\b' . preg_quote($column, '/') . '\b/i', $sqlForValidation)) {
+                throw new InvalidArgumentException(sprintf('Access to column "%s" is not permitted in Custom Report SQL.', $column));
+            }
+        }
+    }
+
+    private function normalizeForDenyListCheck(string $sql): string
+    {
+        // Blank out string literals so denied names appearing only as data values don't trigger false positives.
+        $normalized = preg_replace(
+            [
+                "/'(?:''|\\\\'|[^'])*'/s",
+                '/"(?:""|\\\\"|[^"])*"/s',
+            ],
+            ["''", '""'],
+            $sql
+        ) ?? $sql;
+
+        // Unwrap backtick-quoted identifiers (rather than blanking them, like validateSqlFragment() does)
+        // so a denied name can't be hidden from detection behind identifier quoting, e.g. `users`.
+        $normalized = preg_replace('/`([^`]*)`/', '$1', $normalized) ?? $normalized;
+
+        return preg_replace('/\s+/s', ' ', $normalized) ?? $normalized;
+    }
+
+    private function getDeniedTables(): array
+    {
+        return Pimcore::getContainer()->getParameter('pimcore_custom_reports.sql_adapter.denied_tables') ?? [];
+    }
+
+    private function getDeniedColumns(): array
+    {
+        return Pimcore::getContainer()->getParameter('pimcore_custom_reports.sql_adapter.denied_columns') ?? [];
     }
 
     protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): ?array

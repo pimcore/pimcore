@@ -1,12 +1,40 @@
 # Upgrade Notes
 
+## Pimcore 12.3.12
+
+### Security
+
+#### [Custom Reports]
+
+-   Hardened the SQL Custom Report data source (`Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\Sql`) with a configurable table/column deny-list, restricting which tables and columns a report's `sql`/`from`/`where`/`groupby` fragments may reference.
+-   By default, the `users` table and the `password`, `passwordRecoveryToken`, `twoFactorAuthentication`, `apiKey`, `secret` and `token` columns are denied.
+
+**Action Required:**
+If you have existing SQL Custom Reports that legitimately reference the `users` table, or columns named `password`, `passwordRecoveryToken`, `twoFactorAuthentication`, `apiKey`, `secret` or `token` (on any table), they will now be rejected with an `InvalidArgumentException`. Adjust the deny-list to fit your schema via the standard `pimcore_custom_reports` bundle configuration:
+
+```yaml
+pimcore_custom_reports:
+    sql_adapter:
+        denied_tables:
+            - users
+        denied_columns:
+            - password
+            - passwordRecoveryToken
+            - twoFactorAuthentication
+            - apiKey
+            - secret
+            - token
+```
+
+**Note:** This is a name-based deny-list, not a schema-aware allow-list - it blocks references by literal table/column name regardless of context, so a legitimate, non-sensitive table/column that happens to share a denied name will also be blocked.
+
 ## Pimcore 12.3.10
 
 ### Deprecations
 
 #### [Document Editor]
 
-The `width` and `height` options of `Pimcore\Extension\Document\Areabrick\EditableDialogBoxConfiguration` are deprecated and will be removed in 2027.1. 
+The `width` and `height` options of `Pimcore\Extension\Document\Areabrick\EditableDialogBoxConfiguration` are deprecated and will be removed in 2027.1.
 Editable dialog boxes work differently in the new Studio UI, so these options no longer have any effect.
 
 ## Pimcore 12.3.6
@@ -23,14 +51,14 @@ Editable dialog boxes work differently in the new Studio UI, so these options no
 -   Added a new command `pimcore:classes:changes` to list all Class Definition that have been changed. This command helps in tracking modifications and can be useful for auditing and version control purposes.
 -   Added possibility to `pimcore:classificationstore:delete-store` to pass `--inactive-only` flag to only delete inactive (soft deleted from UI) classification stores Keys.
 -   Added a new command `pimcore:migrate:mail-logs-folder-structure` to migrate all mail log files to a new folder structure (YYYY/MM/DD/\<log filename\>).
--   Added a thumbnail setting option to use Crop Box (the visible area), instead of Media Box when converting documents via Ghostscript. 
+-   Added a thumbnail setting option to use Crop Box (the visible area), instead of Media Box when converting documents via Ghostscript.
 -   Added the Twig function `pimcore_count_block(blockname)` to get the count for `pimcoreblock` editable.
--   Refactored VersionCleanupTask for improved performance and reduced SQL query amounts. Added a new configuration option `disable_events` under each version’s configuration block. When enabled, PRE/POST delete events will be suppressed during the version cleanup process to reduce overhead and speed up execution. 
+-   Refactored VersionCleanupTask for improved performance and reduced SQL query amounts. Added a new configuration option `disable_events` under each version’s configuration block. When enabled, PRE/POST delete events will be suppressed during the version cleanup process to reduce overhead and speed up execution.
 -   Added a new configuration option for Select and MultiSelect object types to enforce validation when setting values via PHP API.
 
 ### Deprecations
 
-#### Deprecated and Discontinued 
+#### Deprecated and Discontinued
 The following bundles got deprecated and won't be migrated to Pimcore Studio
 - Glossary Bundle
 - Simple Backend Search Bundle
@@ -39,7 +67,7 @@ The following bundles got deprecated and won't be migrated to Pimcore Studio
 - WordExport Bundle
 - XliffBundle Export Bundle
 
-#### Deprecated because directly integrated into Studio 
+#### Deprecated because directly integrated into Studio
 - SimpleBackendSearch Bundle
 
 #### [Symfony 6.x Components Support]
@@ -51,7 +79,7 @@ This is part of the migration to Symfony 7, which requires updating all Symfony 
 Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 2026.1.
 
 **Note:**
-If you want to stay on Symfony 6.x after updating to this version, you can use the `pimcore/symfony-freeze` metapackage to prevent 
+If you want to stay on Symfony 6.x after updating to this version, you can use the `pimcore/symfony-freeze` metapackage to prevent
 automatic upgrades to Symfony 7.x:
 
 ```bash
@@ -200,7 +228,7 @@ additional perpetual license at a price of €1,480 at our store](https://store.
     `application_logger_log_level_5` = Warning,
     `application_logger_log_level_6` = Notice,
     `application_logger_log_level_7` = Info,
-    `application_logger_log_level_8` = Debug,  
+    `application_logger_log_level_8` = Debug,
     Please make sure to add translations for log levels.
 
 -   `filter_priority` configuration changed. LogLevels now start at 1 (emergency) - 8 (debug) instead of 0 (emergency) - 7 (debug). Please adjust your configuration accordingly.
@@ -325,7 +353,7 @@ ORDER BY TABLE_NAME;
 
 #### [Database]
 
--   Adding index to `users_workspaces_asset`, `users_workspaces_document` and `users_workspaces_object` tables on `userId`, `cpath` and `list` to improve permission checks.  
+-   Adding index to `users_workspaces_asset`, `users_workspaces_document` and `users_workspaces_object` tables on `userId`, `cpath` and `list` to improve permission checks.
     Make sure to run the migration `bin/console doctrine:migrations:execute Pimcore\\Bundle\\CoreBundle\\Migrations\\Version20241114142759`.
 -   Added an index on `versionCount` columns
 
@@ -518,7 +546,7 @@ pimcore:
     -   `Pimcore\ValueObject\Collection\ArrayOfPositiveIntegers`
     -   `Pimcore\ValueObject\Collection\ArrayOfStrings`
 
-> [!WARNING]  
+> [!WARNING]
 > For [environment variable consistency purposes](https://github.com/pimcore/pimcore/issues/16638) in boostrap, please fix `public/index.php` in project root by moving `Bootstrap::bootstrap();` just above `$kernel = Bootstrap::kernel()` line instead of outside the closure.
 > Alternatively can be fixed by appling this [patch](https://patch-diff.githubusercontent.com/raw/pimcore/skeleton/pull/183.patch)
 >
