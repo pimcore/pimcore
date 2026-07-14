@@ -314,7 +314,7 @@ This works only with predefined (named) thumbnail configurations, not with dynam
 
 When a thumbnail is delivered on-the-fly through this service, Pimcore sends `Cache-Control` and
 `Expires` HTTP headers with a default lifetime of one week (`604800` seconds). You can change this
-lifetime via the symfony configuration:
+lifetime via the Symfony configuration:
 
 ```yaml
 pimcore:
