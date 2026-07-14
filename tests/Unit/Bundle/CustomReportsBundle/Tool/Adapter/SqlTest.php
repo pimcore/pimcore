@@ -19,8 +19,9 @@ use Pimcore\Tests\Support\Test\TestCase;
 use ReflectionMethod;
 
 /**
- * Covers the table/column deny-list enforced on the sql/from/where/groupby fragments of a
- * Custom Report SQL data source.
+ * Covers the table/column deny-list enforced on the sql/from/where/groupby fragments of a Custom
+ * Report SQL data source (text-based, via buildQueryString()), and the resolved-column check that
+ * validates a query's actual result-set columns against the same deny-list.
  */
 class SqlTest extends TestCase
 {
@@ -115,49 +116,66 @@ class SqlTest extends TestCase
         $this->assertStringContainsString("'password'", $sql);
     }
 
-    public function testWildcardSqlFragmentIsRejected(): void
+    public function testBackslashEscapedQuoteCannotHideADeniedColumnReference(): void
     {
-        // "*" expands to every column of the queried table at execution time, which would silently
-        // include any denied column without it ever appearing in the "sql" fragment text.
+        // Two backslashes right before the closing quote is one *escaped backslash* in MySQL's own
+        // parsing, which closes the string literal immediately after - "password" here is a live,
+        // executing column reference, not string content. A quote-stripping regex that doesn't pair
+        // up backslashes the same way can misjudge where the literal actually closes and blank out
+        // (hide) the reference instead of flagging it.
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('/wildcard/i');
+        $this->expectExceptionMessageMatches('/column "password"/i');
 
         $this->buildQueryString([
-            'sql' => '*',
-            'from' => 'orders',
+            'sql' => 'name',
+            'from' => 'my_products',
+            'where' => "name = '\\\\' OR password = 'x'",
         ]);
     }
 
-    public function testEmptySqlFragmentIsRejected(): void
+    public function testEscapedQuoteInsideALiteralIsNotFalselyRejected(): void
     {
-        // An omitted "sql" fragment falls back to an implicit "SELECT *" - same risk as an explicit "*".
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('/wildcard/i');
-
-        $this->buildQueryString([
-            'from' => 'orders',
-        ]);
-    }
-
-    public function testTableQualifiedWildcardIsRejected(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('/wildcard/i');
-
-        $this->buildQueryString([
-            'sql' => 'name, o.*',
-            'from' => 'orders o',
-        ]);
-    }
-
-    public function testCountWildcardIsNotFalselyRejected(): void
-    {
-        // COUNT(*) is a legitimate aggregate, not a column-list wildcard, and must not be rejected.
+        // A backslash-escaped quote inside a literal must stay part of that (blanked-out) literal
+        // rather than being misread as closing the string early.
         $sql = $this->buildQueryString([
-            'sql' => 'name, COUNT(*) as cnt',
-            'from' => 'orders',
+            'sql' => 'name',
+            'from' => 'my_products',
+            'where' => "name = 'it\\'s a test'",
         ]);
 
-        $this->assertStringContainsString('COUNT(*)', $sql);
+        $this->assertStringContainsString("it\\'s a test", $sql);
+    }
+
+    private function assertResolvedColumnsAllowed(array $row): void
+    {
+        $adapter = new Sql((object) []);
+        $method = new ReflectionMethod(Sql::class, 'assertResolvedColumnsAllowed');
+        $method->setAccessible(true);
+        $method->invoke($adapter, $row);
+    }
+
+    public function testResolvedDeniedColumnIsRejected(): void
+    {
+        // This is what a wildcard/DISTINCT/UNION/subquery projection would actually resolve to at
+        // execution time - the deny-list is enforced against the real result-set columns rather than
+        // guessed from the query text, so it doesn't matter how the column ended up in the result.
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/column "password"/i');
+
+        $this->assertResolvedColumnsAllowed(['id' => 1, 'name' => 'x', 'password' => 'hash']);
+    }
+
+    public function testResolvedDeniedColumnIsRejectedCaseInsensitively(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/column "PASSWORD"/i');
+
+        $this->assertResolvedColumnsAllowed(['id' => 1, 'PASSWORD' => 'hash']);
+    }
+
+    public function testResolvedAllowedColumnsAreNotRejected(): void
+    {
+        $this->assertResolvedColumnsAllowed(['id' => 1, 'name' => 'x', 'email' => 'a@b.com']);
+        $this->addToAssertionCount(1);
     }
 }

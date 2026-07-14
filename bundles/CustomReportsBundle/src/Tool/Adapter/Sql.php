@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
+use Doctrine\DBAL\Connection;
 use Exception;
 use InvalidArgumentException;
 use Pimcore;
@@ -74,6 +75,8 @@ class Sql extends AbstractAdapter
             $db = Db::get();
             $res = $db->fetchAssociative($sql);
             if ($res) {
+                $this->assertResolvedColumnsAllowed($res);
+
                 return array_keys($res);
             }
 
@@ -108,8 +111,6 @@ class Sql extends AbstractAdapter
         }
 
         if (!empty($config['sql']) && !$ignoreSelectAndGroupBy) {
-            $this->assertNoWildcardProjection($config['sql']);
-
             if (!str_starts_with(strtoupper(trim($config['sql'])), 'SELECT')) {
                 $sql .= 'SELECT';
             }
@@ -120,8 +121,6 @@ class Sql extends AbstractAdapter
             $db = Db::get();
             $sql .= 'SELECT ' . $db->quoteIdentifier($selectField);
         } else {
-            $this->assertNoWildcardProjection('*');
-
             $sql .= 'SELECT *';
         }
 
@@ -174,10 +173,14 @@ class Sql extends AbstractAdapter
     private function validateSqlFragment(string $sql): void
     {
         // Remove quoted strings/identifiers to avoid false positives (e.g. INSERT() function, literals containing "--", "#", ";", etc.)
+        // Backslash is excluded from the catch-all and consumed together with the character it escapes
+        // (\\.) so runs of consecutive backslashes are paired up the same way MySQL parses them - a
+        // one-off "[^'] excludes only the quote" version mismatches on an even number of backslashes
+        // and can misjudge where the literal actually closes.
         $sqlForValidation = preg_replace(
             [
-                "/'(?:''|\\\\'|[^'])*'/s",
-                '/"(?:""|\\\\"|[^"])*"/s',
+                "/'(?:''|\\\\.|[^'\\\\])*'/s",
+                '/"(?:""|\\\\.|[^"\\\\])*"/s',
                 '/`[^`]*`/s',
             ],
             ["''", '""', '``'],
@@ -245,11 +248,13 @@ class Sql extends AbstractAdapter
 
     private function normalizeForDenyListCheck(string $sql): string
     {
-        // Blank out string literals so denied names appearing only as data values don't trigger false positives.
+        // Blank out string literals so denied names appearing only as data values don't trigger false
+        // positives. See validateSqlFragment() for why backslash must be excluded from the catch-all
+        // and consumed pairwise via \\. rather than treated as an ordinary character.
         $normalized = preg_replace(
             [
-                "/'(?:''|\\\\'|[^'])*'/s",
-                '/"(?:""|\\\\"|[^"])*"/s',
+                "/'(?:''|\\\\.|[^'\\\\])*'/s",
+                '/"(?:""|\\\\.|[^"\\\\])*"/s',
             ],
             ["''", '""'],
             $sql
@@ -263,24 +268,44 @@ class Sql extends AbstractAdapter
     }
 
     /**
-     * A "sql" (column list) fragment that is empty or a bare/table-qualified wildcard (e.g. "*", "t.*")
-     * expands to every column of the queried table(s) at execution time, which would silently include
-     * any denied column without it ever appearing in the fragment text - bypassing validateAgainstDenyList()'s
-     * name matching entirely. Rejected outright whenever any columns are denied. "COUNT(*)" and similar
-     * function calls are untouched, since matching requires the "*" to be a full column-list entry
-     * (starts the fragment or immediately follows a comma), not nested inside parentheses.
+     * A "sql" (column list) fragment is allowed to be an entire freeform SELECT statement (it's used
+     * as-is if it already starts with "SELECT"), so reliably detecting every way a wildcard projection
+     * could end up in the result set (DISTINCT, UNION, subqueries, aliases, ...) via text/regex matching
+     * on the fragment isn't tractable - there's always another syntactic variant that slips through.
+     *
+     * Instead of guessing from the query text, this checks what the query actually returns: it runs the
+     * already-built query with a cheap "LIMIT 0,1" and validates the real, resolved column names against
+     * the deny-list. This is exact-match, not name-matching-anywhere-in-text, since these are now genuine
+     * column identifiers rather than free text.
      */
-    private function assertNoWildcardProjection(string $sql): void
+    private function assertResolvedColumnsAllowed(array $row): void
+    {
+        $deniedColumns = $this->getDeniedColumns();
+        if (!$deniedColumns) {
+            return;
+        }
+
+        foreach (array_keys($row) as $column) {
+            foreach ($deniedColumns as $denied) {
+                if ($denied !== '' && strcasecmp((string) $column, $denied) === 0) {
+                    throw new InvalidArgumentException(sprintf('Access to column "%s" is not permitted in Custom Report SQL.', $column));
+                }
+            }
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function assertResolvedColumnsAllowedForQuery(string $sql, Connection $db): void
     {
         if (!$this->getDeniedColumns()) {
             return;
         }
 
-        $normalized = $this->normalizeForDenyListCheck($sql);
-        $normalized = preg_replace('/^\s*SELECT\s+/i', '', $normalized) ?? $normalized;
-
-        if (trim($normalized) === '' || preg_match('/(?:^|,)\s*(?:\w+\.)?\*\s*(?:,|$)/', $normalized)) {
-            throw new InvalidArgumentException('Wildcard column selection ("SELECT *", an empty "sql" fragment, or a table-qualified "alias.*") is not allowed while column deny-listing (pimcore_custom_reports.sql_adapter.denied_columns) is configured. List the exact columns your report needs.');
+        $sample = $db->fetchAssociative($sql . ' LIMIT 0,1');
+        if ($sample) {
+            $this->assertResolvedColumnsAllowed($sample);
         }
     }
 
@@ -355,6 +380,8 @@ class Sql extends AbstractAdapter
         if (
             !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped, $matches)
         ) {
+            $this->assertResolvedColumnsAllowedForQuery($sql, $db);
+
             $condition = implode(' AND ', $condition);
 
             $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
