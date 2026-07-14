@@ -286,12 +286,12 @@ class Sql extends AbstractAdapter
 
     private function getDeniedTables(): array
     {
-        return Pimcore::getContainer()->getParameter('pimcore_custom_reports.sql_adapter.denied_tables') ?? [];
+        return Pimcore::getContainer()->getParameter('pimcore_custom_reports.sql_adapter.denied_tables');
     }
 
     private function getDeniedColumns(): array
     {
-        return Pimcore::getContainer()->getParameter('pimcore_custom_reports.sql_adapter.denied_columns') ?? [];
+        return Pimcore::getContainer()->getParameter('pimcore_custom_reports.sql_adapter.denied_columns');
     }
 
     protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): ?array
