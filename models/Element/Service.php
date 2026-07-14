@@ -296,9 +296,16 @@ class Service extends Model\AbstractModel
         // a truncated (too-small) total, which hides real pages, fall back to the raw
         // (never-too-small) total in that case; the common case where the raw set fits within
         // the cap is unaffected and still gets the exact, immediate total.
+        $scanTruncated = $rawOffset < $rawTotal;
+
+        // A truncated scan means the unexamined tail is genuinely unknown - it may or may not
+        // contain hidden rows. Defaulting hasHidden to false there would be a false negative
+        // (silently hiding the warning even though hidden content could exist beyond the cap),
+        // which is worse than an occasional false positive, so treat "we didn't check" as "hidden
+        // dependencies might exist" rather than "there are none".
         $result = [
-            'total' => $rawOffset >= $rawTotal ? $visibleTotal : $rawTotal,
-            'hasHidden' => $hasHidden,
+            'total' => $scanTruncated ? $rawTotal : $visibleTotal,
+            'hasHidden' => $hasHidden || $scanTruncated,
         ];
 
         self::$requiredByVisibilityRequestCache[$cacheKey] = $result;
