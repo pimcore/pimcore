@@ -188,6 +188,17 @@ class Service extends Model\AbstractModel
     private const REQUIRED_BY_VISIBLE_TOTAL_CACHE_LIFETIME = 60;
 
     /**
+     * In-process memo of scanRequiredByVisibility() results, keyed by cache key - avoids
+     * re-scanning within a single request when both getRequiredByVisibleTotalCount() and
+     * getRequiredByHasHiddenDependencies() are called for the same element+user, since
+     * Cache::save() defers its actual write to shutdown and wouldn't be visible to a second
+     * call yet.
+     *
+     * @var array<string, array{total: int, hasHidden: bool}>
+     */
+    private static array $requiredByVisibilityRequestCache = [];
+
+    /**
      * Permission-filtered "Required By" count for the current admin user, i.e. how many of the
      * raw dependency rows the user actually has `list` permission to see. Unlike
      * `Dependency::getRequiredByTotalCount()` (a cheap raw `COUNT(*)`), this requires hydrating
@@ -198,6 +209,29 @@ class Service extends Model\AbstractModel
      */
     public static function getRequiredByVisibleTotalCount(Dependency $d): int
     {
+        return self::scanRequiredByVisibility($d)['total'];
+    }
+
+    /**
+     * Whether any "Required By" row was found (within the same scan/cache as
+     * getRequiredByVisibleTotalCount()) that the current admin user does not have `list`
+     * permission to see - i.e. whether the dependencies grid should show its hidden-items
+     * notice. Sourced from the same bounded scan as the total so it is stable across every
+     * page, rather than only reflecting whatever one page's own (much shorter) scan happened
+     * to encounter.
+     *
+     * @internal
+     */
+    public static function getRequiredByHasHiddenDependencies(Dependency $d): bool
+    {
+        return self::scanRequiredByVisibility($d)['hasHidden'];
+    }
+
+    /**
+     * @return array{total: int, hasHidden: bool}
+     */
+    private static function scanRequiredByVisibility(Dependency $d): array
+    {
         $userId = Admin::getCurrentUser()?->getId() ?? 0;
         $cacheKey = sprintf(
             'requiredby_visible_total_%s_%d_%d',
@@ -206,17 +240,24 @@ class Service extends Model\AbstractModel
             $userId
         );
 
+        if (isset(self::$requiredByVisibilityRequestCache[$cacheKey])) {
+            return self::$requiredByVisibilityRequestCache[$cacheKey];
+        }
+
         // Cache::save() silently drops falsy payloads on the default (deferred, non-forced)
         // write path - CoreCacheHandler::addToSaveQueue() only queues data that passes a
         // truthy check, so a legitimate count of 0 would never actually get persisted. Wrap
-        // the count in an array so it survives that check, and unwrap it on read.
+        // the result in an array (always truthy) so it survives that check.
         $cached = Cache::load($cacheKey);
-        if (is_array($cached) && array_key_exists('total', $cached)) {
-            return (int) $cached['total'];
+        if (is_array($cached) && array_key_exists('total', $cached) && array_key_exists('hasHidden', $cached)) {
+            self::$requiredByVisibilityRequestCache[$cacheKey] = $cached;
+
+            return $cached;
         }
 
         $rawTotal = $d->getRequiredByTotalCount();
         $visibleTotal = 0;
+        $hasHidden = false;
         $rawOffset = 0;
         $scannedRows = 0;
 
@@ -228,8 +269,13 @@ class Service extends Model\AbstractModel
 
             foreach ($rows as $row) {
                 $e = self::getDependedElement($row);
-                if ($e && $e->isAllowed('list')) {
+                if (!$e) {
+                    continue;
+                }
+                if ($e->isAllowed('list')) {
                     $visibleTotal++;
+                } else {
+                    $hasHidden = true;
                 }
             }
 
@@ -243,16 +289,21 @@ class Service extends Model\AbstractModel
         // a truncated (too-small) total, which hides real pages, fall back to the raw
         // (never-too-small) total in that case; the common case where the raw set fits within
         // the cap is unaffected and still gets the exact, immediate total.
-        $total = $rawOffset >= $rawTotal ? $visibleTotal : $rawTotal;
+        $result = [
+            'total' => $rawOffset >= $rawTotal ? $visibleTotal : $rawTotal,
+            'hasHidden' => $hasHidden,
+        ];
+
+        self::$requiredByVisibilityRequestCache[$cacheKey] = $result;
 
         Cache::save(
-            ['total' => $total],
+            $result,
             $cacheKey,
             ['dependency_requiredby_' . $d->getSourceType() . '_' . $d->getSourceId()],
             self::REQUIRED_BY_VISIBLE_TOTAL_CACHE_LIFETIME
         );
 
-        return $total;
+        return $result;
     }
 
     /**
