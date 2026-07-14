@@ -29,6 +29,7 @@ use Exception;
 use InvalidArgumentException;
 use League\Csv\EscapeFormula;
 use Pimcore;
+use Pimcore\Cache;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Logger;
@@ -48,6 +49,7 @@ use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\DeepCopy\UnmarshalMatcher;
 use Pimcore\Model\Paginator\PaginateListingInterface;
 use Pimcore\Model\Tool\TmpStore;
+use Pimcore\Tool\Admin;
 use Pimcore\Tool\Serialize;
 use ReflectionProperty;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -177,6 +179,68 @@ class Service extends Model\AbstractModel
         }
 
         return $dependencies;
+    }
+
+    private const REQUIRED_BY_VISIBLE_TOTAL_SCAN_CHUNK = 200;
+
+    private const REQUIRED_BY_VISIBLE_TOTAL_SCAN_CAP = 5000;
+
+    private const REQUIRED_BY_VISIBLE_TOTAL_CACHE_LIFETIME = 60;
+
+    /**
+     * Permission-filtered "Required By" count for the current admin user, i.e. how many of the
+     * raw dependency rows the user actually has `list` permission to see. Unlike
+     * `Dependency::getRequiredByTotalCount()` (a cheap raw `COUNT(*)`), this requires hydrating
+     * and permission-checking every row up to a safety cap, so the result is cached briefly per
+     * element+user to avoid repeating that scan on every paging request.
+     *
+     * @internal
+     */
+    public static function getRequiredByVisibleTotalCount(Dependency $d): int
+    {
+        $userId = Admin::getCurrentUser()?->getId() ?? 0;
+        $cacheKey = sprintf(
+            'requiredby_visible_total_%s_%d_%d',
+            $d->getSourceType(),
+            $d->getSourceId(),
+            $userId
+        );
+
+        $cached = Cache::load($cacheKey);
+        if ($cached !== false) {
+            return (int) $cached;
+        }
+
+        $rawTotal = $d->getRequiredByTotalCount();
+        $visibleTotal = 0;
+        $rawOffset = 0;
+        $scannedRows = 0;
+
+        while ($rawOffset < $rawTotal && $scannedRows < self::REQUIRED_BY_VISIBLE_TOTAL_SCAN_CAP) {
+            $rows = $d->getRequiredBy($rawOffset, self::REQUIRED_BY_VISIBLE_TOTAL_SCAN_CHUNK);
+            if (empty($rows)) {
+                break;
+            }
+
+            foreach ($rows as $row) {
+                $e = self::getDependedElement($row);
+                if ($e && $e->isAllowed('list')) {
+                    $visibleTotal++;
+                }
+            }
+
+            $rawOffset += count($rows);
+            $scannedRows += count($rows);
+        }
+
+        Cache::save(
+            $visibleTotal,
+            $cacheKey,
+            ['dependency_requiredby_' . $d->getSourceType() . '_' . $d->getSourceId()],
+            self::REQUIRED_BY_VISIBLE_TOTAL_CACHE_LIFETIME
+        );
+
+        return $visibleTotal;
     }
 
     /**
