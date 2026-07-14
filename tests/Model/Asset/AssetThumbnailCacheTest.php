@@ -14,11 +14,13 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Asset;
 
 use Pimcore\Bundle\CoreBundle\Controller\PublicServicesController;
+use Pimcore\Config;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AssetThumbnailCacheTest extends TestCase
 {
@@ -123,5 +125,80 @@ class AssetThumbnailCacheTest extends TestCase
         $thumbnailStorage->delete($pathReference['storagePath']);
         $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $thumbConfig->getFilename()));
         $this->assertFalse($thumbnailStorage->fileExists($pathReference['storagePath']));
+    }
+
+    public function testThumbnailCacheControlHeaders(): void
+    {
+        $customLifetime = 3600;
+
+        $assetsConfig = Config::getSystemConfiguration('assets');
+        $originalLifetime = $assetsConfig['thumbnails']['cache_lifetime'];
+        $assetsConfig['thumbnails']['cache_lifetime'] = $customLifetime;
+        Config::setSystemConfiguration($assetsConfig, 'assets');
+
+        try {
+            $asset = $this->testAsset;
+            $thumbnailName = $this->thumbnailName;
+
+            /** @var Asset\Image $asset */
+            $thumbConfig = $asset->getThumbnail($thumbnailName);
+            $asset->clearThumbnails(true);
+
+            $thumbnailStorage = Storage::get('thumbnail');
+
+            // Generate the thumbnail so it exists in storage
+            $thumbConfig->getPath(['deferredAllowed' => false]);
+            $pathReference = $thumbConfig->getPathReference(true);
+            $this->assertTrue($thumbnailStorage->fileExists($pathReference['storagePath']));
+
+            $controller = new PublicServicesController();
+
+            // Branch 1: existing file – the storage path is used as the request URI so
+            // getStreamedResponseForThumbnail() serves it directly without re-generating.
+            $storagePath = $pathReference['storagePath'];
+            $existingFileRequest = Request::create($storagePath);
+            $existingFileRequest->attributes->set('assetId', $asset->getId());
+            $existingFileRequest->attributes->set('thumbnailName', $thumbnailName);
+            $existingFileRequest->attributes->set('filename', $thumbConfig->getFilename());
+            $existingFileRequest->attributes->set('type', 'image');
+            $existingFileRequest->attributes->set('prefix', '');
+
+            $timeBefore = time();
+            $response = $controller->thumbnailAction($existingFileRequest);
+            $timeAfter = time();
+
+            $this->assertInstanceOf(StreamedResponse::class, $response);
+            $this->assertTrue($response->headers->hasCacheControlDirective('public'));
+            $this->assertSame($customLifetime, (int) $response->headers->getCacheControlDirective('max-age'));
+            $expiresTimestamp = strtotime($response->headers->get('Expires'));
+            $this->assertGreaterThanOrEqual($timeBefore + $customLifetime, $expiresTimestamp);
+            $this->assertLessThanOrEqual($timeAfter + $customLifetime, $expiresTimestamp);
+
+            // Branch 2: on-demand generation – delete the file so it must be re-generated.
+            $thumbnailStorage->delete($storagePath);
+            $this->assertFalse($thumbnailStorage->fileExists($storagePath));
+
+            $onDemandRequest = new Request(attributes: [
+                'assetId' => $asset->getId(),
+                'thumbnailName' => $thumbnailName,
+                'filename' => $thumbConfig->getFilename(),
+                'type' => 'image',
+                'prefix' => '',
+            ]);
+
+            $timeBefore2 = time();
+            $response2 = $controller->thumbnailAction($onDemandRequest);
+            $timeAfter2 = time();
+
+            $this->assertInstanceOf(StreamedResponse::class, $response2);
+            $this->assertTrue($response2->headers->hasCacheControlDirective('public'));
+            $this->assertSame($customLifetime, (int) $response2->headers->getCacheControlDirective('max-age'));
+            $expiresTimestamp2 = strtotime($response2->headers->get('Expires'));
+            $this->assertGreaterThanOrEqual($timeBefore2 + $customLifetime, $expiresTimestamp2);
+            $this->assertLessThanOrEqual($timeAfter2 + $customLifetime, $expiresTimestamp2);
+        } finally {
+            $assetsConfig['thumbnails']['cache_lifetime'] = $originalLifetime;
+            Config::setSystemConfiguration($assetsConfig, 'assets');
+        }
     }
 }
