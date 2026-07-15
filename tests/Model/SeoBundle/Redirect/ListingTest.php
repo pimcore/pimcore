@@ -17,7 +17,7 @@ use InvalidArgumentException;
 use Pimcore\Bundle\SeoBundle\Model\Redirect\Listing;
 use Pimcore\Tests\Support\Test\TestCase;
 
-class ListingTest extends TestCase
+final class ListingTest extends TestCase
 {
     /**
      * @dataProvider validOrderKeyProvider
@@ -28,7 +28,7 @@ class ListingTest extends TestCase
         $this->assertTrue($listing->isValidOrderKey($key));
     }
 
-    public function validOrderKeyProvider(): array
+    public static function validOrderKeyProvider(): array
     {
         return array_map(static fn (string $key) => [$key], [
             'id',
@@ -56,13 +56,12 @@ class ListingTest extends TestCase
         $this->assertFalse($listing->isValidOrderKey('some_unknown_column'));
     }
 
-    public function testOrderKeyWithInjectedSqlIsRejected(): void
+    public function testOrderKeyOutsideTheAllowlistIsRejected(): void
     {
         $listing = new Listing();
 
-        // Under MySQL's ANSI_QUOTES sql_mode, quoteIdentifier() wraps identifiers in
-        // double quotes instead of backticks, so an unvalidated order key containing
-        // a double quote could break out of the identifier and inject SQL.
+        // Not a real column: previously accepted unconditionally since
+        // isValidOrderKey() returned true for any input.
         $payload = 'id" ASC,(SELECT SLEEP(5))-- -';
 
         $this->assertFalse($listing->isValidOrderKey($payload));
