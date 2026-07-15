@@ -90,6 +90,7 @@ abstract class Kernel extends SymfonyKernel
      */
     protected function configureContainer(ContainerConfigurator $container, LoaderInterface $loader, ContainerBuilder $builder): void
     {
+        // @phpstan-ignore arguments.count (this is necessary to support Symfony pre and post v7.4.9)
         $this->microKernelConfigureContainer($container, $loader, $builder);
     }
 
