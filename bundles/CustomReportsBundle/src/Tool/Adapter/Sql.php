@@ -199,6 +199,14 @@ class Sql extends AbstractAdapter
             '/\bUNION\b/i',
             '/\bINTERSECT\b/i',
             '/\bEXCEPT\b/i',
+            // A derived table's (or CTE's) explicit column-alias list ("(SELECT * FROM t) AS r(a, b)",
+            // "WITH cte(a, b) AS (...)") positionally *renames* whatever the wildcard actually selected,
+            // so the denied column's real name never appears in the fragment text, and the
+            // resolved-column check only ever sees the harmless alias, not the source column it's
+            // secretly standing in for. Same "not worth trying to parse around" reasoning as UNION - CTEs
+            // are rejected outright, and a derived table needs a plain alias with no trailing column list.
+            '/\bWITH\b/i',
+            '/\)\s*(?:AS\s+)?[A-Za-z_][A-Za-z0-9_]*\s*\(/i',
         ];
 
         foreach ($forbiddenPatterns as $pattern) {

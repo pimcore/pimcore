@@ -194,6 +194,63 @@ class SqlTest extends TestCase
         ]);
     }
 
+    public function testIntersectIsRejected(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/intersect/i');
+
+        $this->buildQueryString([
+            'sql' => "'guess' AS safe INTERSECT SELECT * FROM credential_rows",
+        ]);
+    }
+
+    public function testExceptIsRejected(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/except/i');
+
+        $this->buildQueryString([
+            'sql' => "'guess' AS safe EXCEPT SELECT * FROM credential_rows",
+        ]);
+    }
+
+    public function testDerivedTableColumnAliasListIsRejected(): void
+    {
+        // MySQL's "(subquery) AS alias(col1, col2, ...)" syntax positionally renames whatever the
+        // wildcard actually selected - the denied column's real name never appears in the fragment
+        // text, and the resolved-column check would only ever see the harmless alias.
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/unsafe/i');
+
+        $this->buildQueryString([
+            'sql' => 'leaked',
+            'from' => '(SELECT * FROM credential_rows) AS r(id, leaked)',
+        ]);
+    }
+
+    public function testCommonTableExpressionIsRejected(): void
+    {
+        // A CTE's own explicit column-alias list has the same positional-renaming bypass as a derived
+        // table's - CTEs are rejected outright rather than trying to distinguish safe from unsafe uses.
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/unsafe/i');
+
+        $this->buildQueryString([
+            'sql' => 'WITH cte(id, leaked) AS (SELECT * FROM credential_rows) SELECT leaked FROM cte',
+        ]);
+    }
+
+    public function testPlainDerivedTableAliasIsNotFalselyRejected(): void
+    {
+        // A plain alias with no trailing column list must still work.
+        $sql = $this->buildQueryString([
+            'sql' => 'a, b',
+            'from' => '(SELECT a, b FROM my_products) AS sub',
+        ]);
+
+        $this->assertStringContainsString('AS sub', $sql);
+    }
+
     /**
      * @return array{0: string, 1: string[]}
      */
