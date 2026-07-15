@@ -27,8 +27,6 @@ use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Event\SystemEvents;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
-use ReflectionException;
-use ReflectionMethod;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -40,9 +38,11 @@ use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
 abstract class Kernel extends SymfonyKernel
@@ -50,8 +50,8 @@ abstract class Kernel extends SymfonyKernel
     use MicroKernelTrait {
         registerContainerConfiguration as microKernelRegisterContainerConfiguration;
         registerBundles as microKernelRegisterBundles;
-        configureContainer as protected;
-        configureRoutes as protected;
+        configureContainer as microKernelConfigureContainer;
+        configureRoutes as microKernelConfigureRoutes;
     }
 
     private BundleCollection $bundleCollection;
@@ -71,10 +71,44 @@ abstract class Kernel extends SymfonyKernel
         return PIMCORE_LOG_DIRECTORY;
     }
 
+    /**
+     * Configures the container.
+     *
+     * You can register extensions:
+     *
+     *     $container->extension('framework', [
+     *         'secret' => '%secret%'
+     *     ]);
+     *
+     * Or services:
+     *
+     *     $container->services()->set('halloween', 'FooBundle\HalloweenProvider');
+     *
+     * Or parameters:
+     *
+     *     $container->parameters()->set('halloween', 'lot of fun');
+     */
+    protected function configureContainer(ContainerConfigurator $container, LoaderInterface $loader, ContainerBuilder $builder): void
+    {
+        $this->microKernelConfigureContainer($container, $loader, $builder);
+    }
+
+    /**
+     * Adds or imports routes into your application.
+     *
+     *     $routes->import($this->getConfigDir().'/*.{yaml,php}');
+     *     $routes
+     *         ->add('admin_dashboard', '/admin')
+     *         ->controller('App\Controller\AdminController::dashboard')
+     *     ;
+     */
+    protected function configureRoutes(RoutingConfigurator $routes): void
+    {
+        $this->microKernelConfigureRoutes($routes);
+    }
+
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
-        $this->triggerKernelHookDeprecations();
-
         $bundleConfigLocator = new BundleConfigLocator($this);
         foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
             $loader->load($bundleConfig);
@@ -125,46 +159,6 @@ abstract class Kernel extends SymfonyKernel
                 }
             }
         });
-    }
-
-    /**
-     * Emits deprecation notices when subclasses override configureContainer() or
-     * configureRoutes(). These methods are exposed via the MicroKernelTrait `as protected`
-     * aliases on this class. They are private in MicroKernelTrait, are not part of
-     * Symfony's public extension API, and their signatures have changed between
-     * Symfony minor versions. Subclasses should override the public
-     * registerContainerConfiguration() (and use a routing loader for routes) instead.
-     */
-    private function triggerKernelHookDeprecations(): void
-    {
-        foreach (['configureContainer', 'configureRoutes'] as $method) {
-            try {
-                $declaringClass = (new ReflectionMethod($this, $method))->getDeclaringClass()->getName();
-            } catch (ReflectionException) {
-                continue;
-            }
-
-            // The method is declared either by this class (via the trait alias) or
-            // by MicroKernelTrait itself. In both cases no subclass is overriding it.
-            if ($declaringClass === self::class || $declaringClass === MicroKernelTrait::class) {
-                continue;
-            }
-
-            $replacement = $method === 'configureContainer'
-                ? 'Override the public registerContainerConfiguration(LoaderInterface $loader) method instead, or move the configuration to config/packages/*.yaml or a compiler pass.'
-                : 'Register a routing loader service tagged "routing.loader" instead, or add the routes to config/routes/*.yaml.';
-
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '2026.1',
-                'Overriding %s::%s() is deprecated since Pimcore 2026.1 and will be removed in 2027.1. ' .
-                'It relies on a private method of Symfony\\Bundle\\FrameworkBundle\\Kernel\\MicroKernelTrait '
-                . 'whose signature is not part of Symfony\'s public API. %s',
-                $declaringClass,
-                $method,
-                $replacement
-            );
-        }
     }
 
     public function boot(): void
