@@ -89,6 +89,8 @@ class Sql extends AbstractAdapter
         $config = (array) $config;
         $sql = '';
 
+        $this->assertCompatibleSqlMode();
+
         foreach (['sql', 'from', 'where', 'groupby'] as $key) {
             if (!empty($config[$key])) {
                 if (!is_string($config[$key])) {
@@ -169,7 +171,7 @@ class Sql extends AbstractAdapter
         // Remove quoted strings/identifiers to avoid false positives (e.g. INSERT() function, literals
         // containing "--", "#", ";", etc.) - see stripQuotedTokens() for why this must be one combined
         // pass rather than an independent pass per quote style.
-        $sqlForValidation = $this->stripQuotedTokens($sql, false);
+        $sqlForValidation = $this->stripQuotedTokens($sql);
 
         // Normalize whitespace/newlines for consistent boundary checking
         $sqlForValidation = preg_replace('/\s+/s', ' ', $sqlForValidation) ?? $sqlForValidation;
@@ -214,14 +216,16 @@ class Sql extends AbstractAdapter
      */
     private function validateAgainstDenyList(string $sql): void
     {
-        $sqlForValidation = $this->normalizeForDenyListCheck($sql);
+        [$sqlForValidation, $quotedIdentifiers] = $this->tokenizeForDenyListCheck($sql);
 
         foreach ($this->getDeniedTables() as $table) {
             if ($table === '') {
                 continue;
             }
 
-            if (preg_match($this->identifierBoundaryPattern($table), $sqlForValidation)) {
+            if ($this->identifierListContains($quotedIdentifiers, $table)
+                || preg_match($this->identifierBoundaryPattern($table), $sqlForValidation)
+            ) {
                 throw new InvalidArgumentException(sprintf('Access to table "%s" is not permitted in Custom Report SQL.', $table));
             }
         }
@@ -231,7 +235,9 @@ class Sql extends AbstractAdapter
                 continue;
             }
 
-            if (preg_match($this->identifierBoundaryPattern($column), $sqlForValidation)) {
+            if ($this->identifierListContains($quotedIdentifiers, $column)
+                || preg_match($this->identifierBoundaryPattern($column), $sqlForValidation)
+            ) {
                 throw new InvalidArgumentException(sprintf('Access to column "%s" is not permitted in Custom Report SQL.', $column));
             }
         }
@@ -244,56 +250,91 @@ class Sql extends AbstractAdapter
      * character, so no \w/non-\w transition ever occurs there. This defines "part of the same
      * identifier" more broadly (MySQL's own unquoted-identifier character set: letters, digits,
      * underscore, dollar sign, plus Unicode) so the boundary check works for identifiers like that too.
+     *
+     * This is only valid for *unquoted* SQL text - see tokenizeForDenyListCheck() for why backtick-quoted
+     * identifiers must never be scanned with this pattern.
      */
     private function identifierBoundaryPattern(string $name): string
     {
         return '/(?<![\p{L}\p{N}_$])' . preg_quote($name, '/') . '(?![\p{L}\p{N}_$])/iu';
     }
 
-    private function normalizeForDenyListCheck(string $sql): string
+    private function identifierListContains(array $identifiers, string $needle): bool
     {
-        // Blank out string literals (data values, not identifiers) but unwrap backtick-quoted
-        // identifiers rather than blanking them, like validateSqlFragment() does, so a denied name
-        // can't be hidden from detection behind identifier quoting, e.g. `users`.
-        $normalized = $this->stripQuotedTokens($sql, true);
+        foreach ($identifiers as $identifier) {
+            if (mb_strtolower($identifier, 'UTF-8') === mb_strtolower($needle, 'UTF-8')) {
+                return true;
+            }
+        }
 
-        return preg_replace('/\s+/s', ' ', $normalized) ?? $normalized;
+        return false;
     }
 
     /**
-     * Single left-to-right pass over every quoted span (single-quoted/double-quoted string literals
-     * and backtick-quoted identifiers) in one combined regex, rather than one independent preg_replace()
-     * pass per quote style. Scanning styles independently lets a quote character that only means
-     * something *inside* one style's literal - e.g. the apostrophe in a double-quoted "it's" - be
-     * misread by a later, unrelated pass as the start of its own literal, extending that match across
-     * live SQL and hiding it from validation (e.g. `name = "it's" OR password = 'x'` would have the
-     * single-quote pass matching from that apostrophe all the way to the real opening quote of 'x',
-     * swallowing " OR password = " along with it).
+     * Splits $sql into (a) text with every quoted span - string literals *and* backtick-quoted
+     * identifiers - replaced by an inert placeholder, safe to scan with identifierBoundaryPattern() for
+     * *unquoted* references, and (b) the list of backtick-quoted identifiers' actual decoded names, to
+     * be compared against the deny-list as a whole via identifierListContains() rather than re-scanned
+     * as free text.
      *
-     * Backslash-escaped characters are consumed as an atomic pair (\\.) regardless of how many
+     * This split matters because a backtick-quoted identifier can legally contain characters - e.g. the
+     * hyphen in `reset-password` - that aren't valid in an *unquoted* identifier and so aren't included
+     * in identifierBoundaryPattern()'s boundary class. Unwrapping such an identifier back into the
+     * general text and scanning it with that pattern loses track of where the identifier actually
+     * starts/ends, so "password" would incorrectly match inside the unrelated "reset-password" - a false
+     * positive that rejects a legitimate, differently-named column.
+     *
+     * A doubled backtick ("``") is decoded to one literal backtick when extracting an identifier's real
+     * name, matching MySQL's own escape rule for backtick-quoted identifiers. Backslash-escaped
+     * characters in string literals are consumed as an atomic pair (\\.) regardless of how many
      * backslashes precede a quote, matching how MySQL itself pairs them up (a single-off "exclude only
-     * the quote" version mismatches on an even number of backslashes). A doubled backtick ("``") is
-     * decoded to one literal backtick when unwrapping identifiers, matching MySQL's own escape rule for
-     * backtick-quoted identifiers.
+     * the quote" version mismatches on an even number of backslashes and can misjudge where a literal
+     * actually closes). Single-quoted, double-quoted, and backtick-quoted spans are scanned in one
+     * combined left-to-right pass rather than one independent pass per quote style, since scanning
+     * styles independently lets a quote character that only means something *inside* one style's
+     * literal - e.g. the apostrophe in a double-quoted "it's" - be misread by a later, unrelated pass as
+     * the start of its own literal, extending that match across live SQL and hiding it from validation.
+     *
+     * @return array{0: string, 1: string[]}
      */
-    private function stripQuotedTokens(string $sql, bool $unwrapBackticks): string
+    private function tokenizeForDenyListCheck(string $sql): array
     {
-        return preg_replace_callback(
+        $quotedIdentifiers = [];
+
+        $text = preg_replace_callback(
             '/\'(?:\'\'|\\\\.|[^\'\\\\])*\'|"(?:""|\\\\.|[^"\\\\])*"|`(?:``|[^`])*`/s',
-            static function (array $match) use ($unwrapBackticks): string {
+            static function (array $match) use (&$quotedIdentifiers): string {
                 $token = $match[0];
                 $quote = $token[0];
 
                 if ($quote === '`') {
-                    if (!$unwrapBackticks) {
-                        return '``';
-                    }
-
-                    return str_replace('``', '`', substr($token, 1, -1));
+                    $quotedIdentifiers[] = str_replace('``', '`', substr($token, 1, -1));
                 }
 
                 return $quote . $quote;
             },
+            $sql
+        ) ?? $sql;
+
+        $text = preg_replace('/\s+/s', ' ', $text) ?? $text;
+
+        return [$text, $quotedIdentifiers];
+    }
+
+    /**
+     * Single left-to-right pass blanking every quoted span (single-quoted/double-quoted string literals
+     * and backtick-quoted identifiers) in one combined regex, rather than one independent preg_replace()
+     * pass per quote style - see tokenizeForDenyListCheck() for why an independent-pass approach is
+     * unsafe. Used ahead of the syntax blacklist in validateSqlFragment(), where (unlike
+     * tokenizeForDenyListCheck()) identifier content never needs to be inspected, only kept from
+     * producing false hits against the blacklist (e.g. a backtick-quoted column legitimately named
+     * `a;b`).
+     */
+    private function stripQuotedTokens(string $sql): string
+    {
+        return preg_replace_callback(
+            '/\'(?:\'\'|\\\\.|[^\'\\\\])*\'|"(?:""|\\\\.|[^"\\\\])*"|`(?:``|[^`])*`/s',
+            static fn (array $match): string => $match[0][0] . $match[0][0],
             $sql
         ) ?? $sql;
     }
@@ -362,9 +403,15 @@ class Sql extends AbstractAdapter
      */
     private function getResolvedColumnNames(string $sql, Connection $db): array
     {
+        // The join condition is a constant "1 = 0" - provably false independent of $sql's actual rows -
+        // rather than "1 = 1". A derived table's column *names* come from its static SELECT-list
+        // structure, not from evaluating it, so this still yields exactly one anchor row with $sql's
+        // columns present (NULL-valued) either way; but a provably-unsatisfiable condition lets the
+        // optimizer skip materializing $sql at all, whereas "1 = 1" (every anchor row matches every
+        // $sql row) still requires producing $sql's actual result to pair against.
         $probe = 'SELECT resolved_columns_.*'
             . ' FROM (SELECT 1) AS resolved_columns_anchor_'
-            . ' LEFT JOIN (' . $sql . ') AS resolved_columns_ ON 1 = 1'
+            . ' LEFT JOIN (' . $sql . ') AS resolved_columns_ ON 1 = 0'
             . ' LIMIT 1';
 
         $row = $db->fetchAssociative($probe);
@@ -380,6 +427,36 @@ class Sql extends AbstractAdapter
     private function getDeniedColumns(): array
     {
         return Pimcore::getContainer()->getParameter('pimcore_custom_reports.sql_adapter.denied_columns');
+    }
+
+    /**
+     * The deny-list's guarantees rest on this class's tokenizer assuming MySQL's default sql_mode: that
+     * a double-quoted span is a string literal (not a quoted identifier, as it would be under
+     * ANSI_QUOTES) and that a backslash inside a string literal is an escape character (not literal, as
+     * it would be under NO_BACKSLASH_ESCAPES). If the connection's sql_mode doesn't match those
+     * assumptions, tokenizeForDenyListCheck()/validateSqlFragment() would tokenize the SQL differently
+     * than the server actually parses it, potentially missing a denied reference entirely. Fail closed
+     * (reject the report) rather than silently relying on assumptions that don't hold for this
+     * connection - this is only checked when a deny-list is actually configured.
+     *
+     * @throws Exception
+     */
+    private function assertCompatibleSqlMode(): void
+    {
+        if (!$this->getDeniedTables() && !$this->getDeniedColumns()) {
+            return;
+        }
+
+        $sqlMode = (string) Db::get()->fetchOne('SELECT @@SESSION.sql_mode');
+
+        foreach (['ANSI_QUOTES', 'NO_BACKSLASH_ESCAPES'] as $incompatibleMode) {
+            if (preg_match('/\b' . $incompatibleMode . '\b/i', $sqlMode)) {
+                throw new InvalidArgumentException(sprintf(
+                    'The database connection\'s sql_mode includes "%s", which is incompatible with the configured Custom Reports SQL deny-list (pimcore_custom_reports.sql_adapter.denied_tables/denied_columns).',
+                    $incompatibleMode
+                ));
+            }
+        }
     }
 
     protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, ?array $drillDownFilters = null, ?string $selectField = null): ?array

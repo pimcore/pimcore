@@ -73,6 +73,18 @@ class SqlTest extends TestCase
         ]);
     }
 
+    public function testHyphenatedColumnNameIsNotFalselyRejectedEndToEnd(): void
+    {
+        // End-to-end version of testHyphenatedBacktickIdentifierIsNotFalselyRejected(), through the
+        // actual deny-list check rather than the tokenizer alone.
+        $sql = $this->buildQueryString([
+            'sql' => '`reset-password`',
+            'from' => 'my_products',
+        ]);
+
+        $this->assertStringContainsString('reset-password', $sql);
+    }
+
     public function testDeniedNameHiddenInSubqueryIsRejected(): void
     {
         // The denied name is smuggled inside the "sql" (column list) fragment via a subquery,
@@ -182,23 +194,40 @@ class SqlTest extends TestCase
         ]);
     }
 
-    private function normalizeForDenyListCheck(string $sql): string
+    /**
+     * @return array{0: string, 1: string[]}
+     */
+    private function tokenizeForDenyListCheck(string $sql): array
     {
         $adapter = new Sql((object) []);
-        $method = new ReflectionMethod(Sql::class, 'normalizeForDenyListCheck');
+        $method = new ReflectionMethod(Sql::class, 'tokenizeForDenyListCheck');
         $method->setAccessible(true);
 
         return $method->invoke($adapter, $sql);
     }
 
-    public function testDoubledBacktickEscapeIsDecodedWhenUnwrapping(): void
+    public function testDoubledBacktickEscapeIsDecodedWhenExtractingAnIdentifier(): void
     {
         // MySQL escapes a literal backtick inside a backtick-quoted identifier by doubling it
-        // ("``"). Normalizing that to a single backtick (rather than dropping it) preserves the
+        // ("``"). Decoding that to a single backtick (rather than dropping it) preserves the
         // identifier's real name instead of silently corrupting it into a different, unrelated one.
-        $result = $this->normalizeForDenyListCheck('FROM `private``value`');
+        [, $identifiers] = $this->tokenizeForDenyListCheck('FROM `private``value`');
 
-        $this->assertStringContainsString('private`value', $result);
+        $this->assertSame(['private`value'], $identifiers);
+    }
+
+    public function testHyphenatedBacktickIdentifierIsNotFalselyRejected(): void
+    {
+        // A backtick-quoted identifier can legally contain characters (like a hyphen) that aren't
+        // valid in an unquoted identifier. Unwrapping it back into the general text and scanning with
+        // the unquoted-identifier boundary pattern would lose track of where it actually starts/ends,
+        // incorrectly matching "password" inside the unrelated "reset-password". Extracting it as a
+        // whole token and comparing it as a whole avoids that: neither "password" nor "users" should
+        // match this identifier.
+        [$text, $identifiers] = $this->tokenizeForDenyListCheck('FROM `reset-password`');
+
+        $this->assertSame(['reset-password'], $identifiers);
+        $this->assertStringNotContainsString('password', $text);
     }
 
     private function identifierBoundaryPattern(string $name): string
