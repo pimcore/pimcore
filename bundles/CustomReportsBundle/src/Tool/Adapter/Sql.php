@@ -71,16 +71,10 @@ class Sql extends AbstractAdapter
         if (
             !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped, $matches)
         ) {
-            $sql .= ' LIMIT 0,1';
-            $db = Db::get();
-            $res = $db->fetchAssociative($sql);
-            if ($res) {
-                $this->assertResolvedColumnsAllowed($res);
+            $columnNames = $this->getResolvedColumnNames($sql, Db::get());
+            $this->assertResolvedColumnsAllowed($columnNames);
 
-                return array_keys($res);
-            }
-
-            return [];
+            return $columnNames;
         }
 
         throw new Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
@@ -230,7 +224,7 @@ class Sql extends AbstractAdapter
                 continue;
             }
 
-            if (preg_match('/\b' . preg_quote($table, '/') . '\b/i', $sqlForValidation)) {
+            if (preg_match($this->identifierBoundaryPattern($table), $sqlForValidation)) {
                 throw new InvalidArgumentException(sprintf('Access to table "%s" is not permitted in Custom Report SQL.', $table));
             }
         }
@@ -240,10 +234,23 @@ class Sql extends AbstractAdapter
                 continue;
             }
 
-            if (preg_match('/\b' . preg_quote($column, '/') . '\b/i', $sqlForValidation)) {
+            if (preg_match($this->identifierBoundaryPattern($column), $sqlForValidation)) {
                 throw new InvalidArgumentException(sprintf('Access to column "%s" is not permitted in Custom Report SQL.', $column));
             }
         }
+    }
+
+    /**
+     * \b relies on \w (ASCII word characters), so it silently fails to anchor around configured names
+     * that start/end with characters outside that set - e.g. a denied name of "$private$" is never
+     * matched against "... FROM $private$" since neither the "$" nor the preceding space is a \w
+     * character, so no \w/non-\w transition ever occurs there. This defines "part of the same
+     * identifier" more broadly (MySQL's own unquoted-identifier character set: letters, digits,
+     * underscore, dollar sign, plus Unicode) so the boundary check works for identifiers like that too.
+     */
+    private function identifierBoundaryPattern(string $name): string
+    {
+        return '/(?<![\p{L}\p{N}_$])' . preg_quote($name, '/') . '(?![\p{L}\p{N}_$])/iu';
     }
 
     private function normalizeForDenyListCheck(string $sql): string
@@ -273,19 +280,20 @@ class Sql extends AbstractAdapter
      * could end up in the result set (DISTINCT, UNION, subqueries, aliases, ...) via text/regex matching
      * on the fragment isn't tractable - there's always another syntactic variant that slips through.
      *
-     * Instead of guessing from the query text, this checks what the query actually returns: it runs the
-     * already-built query with a cheap "LIMIT 0,1" and validates the real, resolved column names against
-     * the deny-list. This is exact-match, not name-matching-anywhere-in-text, since these are now genuine
-     * column identifiers rather than free text.
+     * Instead of guessing from the query text, this checks what the query's result columns actually
+     * are (see getResolvedColumnNames()) against the deny-list. This is exact-match, not
+     * name-matching-anywhere-in-text, since these are now genuine column identifiers rather than free text.
+     *
+     * @param string[] $columnNames
      */
-    private function assertResolvedColumnsAllowed(array $row): void
+    private function assertResolvedColumnsAllowed(array $columnNames): void
     {
         $deniedColumns = $this->getDeniedColumns();
         if (!$deniedColumns) {
             return;
         }
 
-        foreach (array_keys($row) as $column) {
+        foreach ($columnNames as $column) {
             foreach ($deniedColumns as $denied) {
                 if ($denied !== '' && strcasecmp((string) $column, $denied) === 0) {
                     throw new InvalidArgumentException(sprintf('Access to column "%s" is not permitted in Custom Report SQL.', $column));
@@ -303,10 +311,34 @@ class Sql extends AbstractAdapter
             return;
         }
 
-        $sample = $db->fetchAssociative($sql . ' LIMIT 0,1');
-        if ($sample) {
-            $this->assertResolvedColumnsAllowed($sample);
+        $this->assertResolvedColumnsAllowed($this->getResolvedColumnNames($sql, $db));
+    }
+
+    /**
+     * Determines a query's actual result columns via driver-level result metadata
+     * (Doctrine\DBAL\Result::columnCount()/getColumnName()) rather than by fetching a sample row.
+     * This matters for two reasons: it works even when zero rows match (a non-deterministic predicate
+     * or a concurrent data change could otherwise make a row-based sample empty while the real query
+     * returns rows later, silently skipping the deny-list check), and wrapping the query as a derived
+     * table with "LIMIT 0" - rather than appending "LIMIT 0,1" to $sql directly - keeps it valid even
+     * if $sql already ends in its own LIMIT clause, while letting the query planner typically avoid
+     * doing the real (potentially expensive) row-producing work "LIMIT 1" would require.
+     *
+     * @throws Exception
+     *
+     * @return string[]
+     */
+    private function getResolvedColumnNames(string $sql, Connection $db): array
+    {
+        $result = $db->executeQuery('SELECT * FROM (' . $sql . ') AS somerandxyz2 LIMIT 0');
+
+        $columnNames = [];
+        for ($i = 0, $count = $result->columnCount(); $i < $count; $i++) {
+            $columnNames[] = $result->getColumnName($i);
         }
+        $result->free();
+
+        return $columnNames;
     }
 
     private function getDeniedTables(): array

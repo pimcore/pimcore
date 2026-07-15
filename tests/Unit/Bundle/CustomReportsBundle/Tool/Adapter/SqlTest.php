@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Unit\Bundle\CustomReportsBundle\Tool\Adapter;
 
 use InvalidArgumentException;
 use Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\Sql;
+use Pimcore\Db;
 use Pimcore\Tests\Support\Test\TestCase;
 use ReflectionMethod;
 
@@ -25,6 +26,11 @@ use ReflectionMethod;
  */
 class SqlTest extends TestCase
 {
+    protected function needsDb(): bool
+    {
+        return true;
+    }
+
     private function buildQueryString(array $config): string
     {
         $adapter = new Sql((object) $config);
@@ -146,12 +152,41 @@ class SqlTest extends TestCase
         $this->assertStringContainsString("it\\'s a test", $sql);
     }
 
-    private function assertResolvedColumnsAllowed(array $row): void
+    private function identifierBoundaryPattern(string $name): string
+    {
+        $adapter = new Sql((object) []);
+        $method = new ReflectionMethod(Sql::class, 'identifierBoundaryPattern');
+        $method->setAccessible(true);
+
+        return $method->invoke($adapter, $name);
+    }
+
+    public function testIdentifierBoundaryPatternMatchesNamesWithNonWordEdgeCharacters(): void
+    {
+        // "\b" relies on \w (ASCII word chars) and silently fails to anchor around identifiers that
+        // start/end with characters outside that set - e.g. a denied name of "$private$" would never
+        // match "... FROM $private$" via \b, since neither "$" nor the preceding space is a \w char.
+        $pattern = $this->identifierBoundaryPattern('$private$');
+
+        $this->assertSame(1, preg_match($pattern, 'name FROM $private$'));
+        // Must not match a longer identifier that merely contains the denied name as a prefix.
+        $this->assertSame(0, preg_match($pattern, 'name FROM $private$table'));
+    }
+
+    public function testIdentifierBoundaryPatternMatchesUnicodeNames(): void
+    {
+        $pattern = $this->identifierBoundaryPattern('über');
+
+        $this->assertSame(1, preg_match($pattern, 'SELECT über FROM t'));
+        $this->assertSame(0, preg_match($pattern, 'SELECT übertragung FROM t'));
+    }
+
+    private function assertResolvedColumnsAllowed(array $columnNames): void
     {
         $adapter = new Sql((object) []);
         $method = new ReflectionMethod(Sql::class, 'assertResolvedColumnsAllowed');
         $method->setAccessible(true);
-        $method->invoke($adapter, $row);
+        $method->invoke($adapter, $columnNames);
     }
 
     public function testResolvedDeniedColumnIsRejected(): void
@@ -162,7 +197,7 @@ class SqlTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/column "password"/i');
 
-        $this->assertResolvedColumnsAllowed(['id' => 1, 'name' => 'x', 'password' => 'hash']);
+        $this->assertResolvedColumnsAllowed(['id', 'name', 'password']);
     }
 
     public function testResolvedDeniedColumnIsRejectedCaseInsensitively(): void
@@ -170,12 +205,58 @@ class SqlTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/column "PASSWORD"/i');
 
-        $this->assertResolvedColumnsAllowed(['id' => 1, 'PASSWORD' => 'hash']);
+        $this->assertResolvedColumnsAllowed(['id', 'PASSWORD']);
     }
 
     public function testResolvedAllowedColumnsAreNotRejected(): void
     {
-        $this->assertResolvedColumnsAllowed(['id' => 1, 'name' => 'x', 'email' => 'a@b.com']);
+        $this->assertResolvedColumnsAllowed(['id', 'name', 'email']);
         $this->addToAssertionCount(1);
+    }
+
+    public function testGetColumnsWorksWhenTheFragmentAlreadyEndsInLimit(): void
+    {
+        // The "sql" fragment may be an entire freeform statement, used as-is once it already starts
+        // with "SELECT" - sampling its result columns by appending another "LIMIT 0,1" directly would
+        // previously break with a SQL syntax error if it already ends in its own LIMIT clause.
+        $db = Db::get();
+        $db->executeStatement('CREATE TEMPORARY TABLE sql_adapter_test_limit (id INT, name VARCHAR(50))');
+
+        try {
+            $db->executeStatement("INSERT INTO sql_adapter_test_limit (id, name) VALUES (1, 'a'), (2, 'b')");
+
+            $adapter = new Sql((object) []);
+            $columns = $adapter->getColumns((object) [
+                'sql' => 'SELECT id, name FROM sql_adapter_test_limit LIMIT 1',
+            ]);
+
+            $this->assertSame(['id', 'name'], $columns);
+        } finally {
+            $db->executeStatement('DROP TEMPORARY TABLE IF EXISTS sql_adapter_test_limit');
+        }
+    }
+
+    public function testDeniedColumnViaWildcardIsDetectedEvenWhenNoRowsMatch(): void
+    {
+        // The deny-list check must not depend on the sample query actually matching rows - a
+        // non-deterministic predicate or a concurrent data change could otherwise make the sample
+        // empty while the real query returns rows (and the denied column) later. The table here has
+        // zero rows, and "password" never appears in the report configuration text (only "from" is
+        // set), so this can only be caught via the resolved result columns, not by fetching a sample
+        // row or by matching the configured fragment text.
+        $db = Db::get();
+        $db->executeStatement('CREATE TEMPORARY TABLE sql_adapter_test_empty (id INT, password VARCHAR(50))');
+
+        try {
+            $this->expectException(InvalidArgumentException::class);
+            $this->expectExceptionMessageMatches('/column "password"/i');
+
+            $adapter = new Sql((object) []);
+            $adapter->getColumns((object) [
+                'from' => 'sql_adapter_test_empty',
+            ]);
+        } finally {
+            $db->executeStatement('DROP TEMPORARY TABLE IF EXISTS sql_adapter_test_empty');
+        }
     }
 }
