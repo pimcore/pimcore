@@ -33,7 +33,7 @@ final class LogParser
     /**
      * ASCII record separator used to delimit individual log entries in the stored column.
      */
-    public const ENTRY_SEPARATOR = "\x1e";
+    private const ENTRY_SEPARATOR = "\x1e";
 
     /**
      * Timestamp as produced by DateTimeImmutable::format('c'), tolerating the numeric-offset
