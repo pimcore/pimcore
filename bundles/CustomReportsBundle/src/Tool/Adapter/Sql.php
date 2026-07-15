@@ -315,14 +315,17 @@ class Sql extends AbstractAdapter
     }
 
     /**
-     * Determines a query's actual result columns via driver-level result metadata
-     * (Doctrine\DBAL\Result::columnCount()/getColumnName()) rather than by fetching a sample row.
-     * This matters for two reasons: it works even when zero rows match (a non-deterministic predicate
-     * or a concurrent data change could otherwise make a row-based sample empty while the real query
-     * returns rows later, silently skipping the deny-list check), and wrapping the query as a derived
-     * table with "LIMIT 0" - rather than appending "LIMIT 0,1" to $sql directly - keeps it valid even
-     * if $sql already ends in its own LIMIT clause, while letting the query planner typically avoid
-     * doing the real (potentially expensive) row-producing work "LIMIT 1" would require.
+     * Determines a query's actual result columns without depending on whether the query itself
+     * matches any rows: a non-deterministic predicate or a concurrent data change could otherwise
+     * make a plain row-based sample come back empty while the real query returns rows (and a denied
+     * column) later, silently skipping the deny-list check. Left-joining $sql against a guaranteed
+     * single-row anchor - rather than fetching a row from it directly - always yields exactly one
+     * output row, with $sql's own columns present (NULL-valued if $sql itself matched nothing), so
+     * their real names can be read via array_keys() regardless of row existence. Wrapping $sql as a
+     * derived table also keeps this valid even if $sql already ends in its own LIMIT clause.
+     *
+     * (Doctrine\DBAL\Result::columnCount()/getColumnName() would be a more direct way to ask this,
+     * but aren't available on the floor of this project's supported dbal version range.)
      *
      * @throws Exception
      *
@@ -330,15 +333,14 @@ class Sql extends AbstractAdapter
      */
     private function getResolvedColumnNames(string $sql, Connection $db): array
     {
-        $result = $db->executeQuery('SELECT * FROM (' . $sql . ') AS somerandxyz2 LIMIT 0');
+        $probe = 'SELECT resolved_columns_.*'
+            . ' FROM (SELECT 1) AS resolved_columns_anchor_'
+            . ' LEFT JOIN (' . $sql . ') AS resolved_columns_ ON 1 = 1'
+            . ' LIMIT 1';
 
-        $columnNames = [];
-        for ($i = 0, $count = $result->columnCount(); $i < $count; $i++) {
-            $columnNames[] = $result->getColumnName($i);
-        }
-        $result->free();
+        $row = $db->fetchAssociative($probe);
 
-        return $columnNames;
+        return $row === false ? [] : array_keys($row);
     }
 
     private function getDeniedTables(): array
