@@ -188,18 +188,22 @@ class Sql extends AbstractAdapter
             '/^\s*ALTER\b/i',
             '/^\s*CREATE\b/i',
             '/^\s*TRUNCATE\b/i',
-            // UNION takes its result column *names* from the first SELECT only (MySQL, and SQL in
-            // general), regardless of what a later branch actually selects. A later branch's "SELECT *"
-            // against a sensitive table would smuggle its column values out under the first branch's
-            // (innocuous-looking) column names - invisible to both this text scan and the resolved-column
-            // check, since neither ever sees the later branch's true column identities. Not worth trying
-            // to parse around; UNION just isn't supported in Custom Report SQL fragments.
+            // UNION/INTERSECT/EXCEPT all take their result column *names* from the first query block
+            // only (MariaDB >= 10.3 and current MySQL support INTERSECT/EXCEPT, and Pimcore supports
+            // those versions), regardless of what a later branch actually selects. A later branch's
+            // "SELECT *" against a sensitive table would smuggle its column values out under the first
+            // branch's (innocuous-looking) column names - invisible to both this text scan and the
+            // resolved-column check, since neither ever sees the later branch's true column identities.
+            // Not worth trying to parse around; none of these set operators are supported in Custom
+            // Report SQL fragments.
             '/\bUNION\b/i',
+            '/\bINTERSECT\b/i',
+            '/\bEXCEPT\b/i',
         ];
 
         foreach ($forbiddenPatterns as $pattern) {
             if (preg_match($pattern, $sqlForValidation)) {
-                throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, UNION, and DDL/DML are not allowed).');
+                throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, UNION/INTERSECT/EXCEPT, and DDL/DML are not allowed).');
             }
         }
     }
@@ -248,15 +252,18 @@ class Sql extends AbstractAdapter
      * that start/end with characters outside that set - e.g. a denied name of "$private$" is never
      * matched against "... FROM $private$" since neither the "$" nor the preceding space is a \w
      * character, so no \w/non-\w transition ever occurs there. This defines "part of the same
-     * identifier" more broadly (MySQL's own unquoted-identifier character set: letters, digits,
-     * underscore, dollar sign, plus Unicode) so the boundary check works for identifiers like that too.
+     * identifier" using MariaDB/MySQL's own unquoted-identifier character set instead: ASCII
+     * letters/digits/underscore/dollar, plus *any* character in U+0080-U+FFFF - not just those in
+     * Unicode's "letter"/"number" categories (\p{L}/\p{N}), since MariaDB permits any extended
+     * character there, including e.g. symbols like "©" that \p{L}/\p{N} would wrongly treat as a
+     * boundary and reject an unrelated identifier over (e.g. "x©password" against denied "password").
      *
      * This is only valid for *unquoted* SQL text - see tokenizeForDenyListCheck() for why backtick-quoted
      * identifiers must never be scanned with this pattern.
      */
     private function identifierBoundaryPattern(string $name): string
     {
-        return '/(?<![\p{L}\p{N}_$])' . preg_quote($name, '/') . '(?![\p{L}\p{N}_$])/iu';
+        return '/(?<![A-Za-z0-9_$\x{0080}-\x{FFFF}])' . preg_quote($name, '/') . '(?![A-Za-z0-9_$\x{0080}-\x{FFFF}])/iu';
     }
 
     private function identifierListContains(array $identifiers, string $needle): bool

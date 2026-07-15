@@ -259,6 +259,74 @@ class SqlTest extends TestCase
         $this->assertSame(0, preg_match($pattern, 'SELECT übertragung FROM t'));
     }
 
+    public function testIdentifierBoundaryPatternAllowsNonLetterExtendedCharacters(): void
+    {
+        // MariaDB/MySQL permit *any* character above U+007F in an unquoted identifier, not just those
+        // in Unicode's "letter"/"number" categories - a boundary class restricted to \p{L}/\p{N} would
+        // treat e.g. "©" as a non-identifier boundary and falsely rejects "x©password" as containing
+        // the denied "password" substring.
+        $pattern = $this->identifierBoundaryPattern('password');
+
+        $this->assertSame(0, preg_match($pattern, 'SELECT x©password FROM t'));
+    }
+
+    private function withSessionSqlMode(string $additionalMode, callable $callback): void
+    {
+        $db = Db::get();
+        $originalMode = (string) $db->fetchOne('SELECT @@SESSION.sql_mode');
+        $combinedMode = $originalMode === '' ? $additionalMode : $originalMode . ',' . $additionalMode;
+
+        try {
+            $db->executeStatement("SET SESSION sql_mode = '" . $combinedMode . "'");
+            $callback();
+        } finally {
+            $db->executeStatement("SET SESSION sql_mode = '" . $originalMode . "'");
+        }
+    }
+
+    private function assertCompatibleSqlMode(): void
+    {
+        $adapter = new Sql((object) []);
+        $method = new ReflectionMethod(Sql::class, 'assertCompatibleSqlMode');
+        $method->setAccessible(true);
+        $method->invoke($adapter);
+    }
+
+    public function testAnsiQuotesSqlModeIsRejected(): void
+    {
+        // Under ANSI_QUOTES, a double-quoted span is a quoted *identifier*, not a string literal -
+        // this class's tokenizer assumes the opposite (MySQL's default mode), so a denied table
+        // referenced as "users" would be blanked as if it were a harmless string value instead of
+        // being scanned as the identifier it actually is.
+        $this->withSessionSqlMode('ANSI_QUOTES', function (): void {
+            $this->expectException(InvalidArgumentException::class);
+            $this->expectExceptionMessageMatches('/ANSI_QUOTES/i');
+
+            $this->assertCompatibleSqlMode();
+        });
+    }
+
+    public function testNoBackslashEscapesSqlModeIsRejected(): void
+    {
+        // Under NO_BACKSLASH_ESCAPES, a backslash inside a string literal is an ordinary character, not
+        // an escape - this class's tokenizer assumes the opposite, so it could misjudge where a literal
+        // actually closes and hide a live column reference from the deny-list scan.
+        $this->withSessionSqlMode('NO_BACKSLASH_ESCAPES', function (): void {
+            $this->expectException(InvalidArgumentException::class);
+            $this->expectExceptionMessageMatches('/NO_BACKSLASH_ESCAPES/i');
+
+            $this->assertCompatibleSqlMode();
+        });
+    }
+
+    public function testDefaultSqlModeIsNotRejected(): void
+    {
+        // The ordinary CI/test sql_mode (whatever it is, as long as neither incompatible flag is set)
+        // must not itself trip the fail-closed check under the default (non-empty) deny-list config.
+        $this->assertCompatibleSqlMode();
+        $this->addToAssertionCount(1);
+    }
+
     private function assertResolvedColumnsAllowed(array $columnNames): void
     {
         $adapter = new Sql((object) []);
