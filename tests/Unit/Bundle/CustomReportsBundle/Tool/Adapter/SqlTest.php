@@ -152,6 +152,55 @@ class SqlTest extends TestCase
         $this->assertStringContainsString("it\\'s a test", $sql);
     }
 
+    public function testApostropheInsideADoubleQuotedLiteralCannotHideADeniedColumnReference(): void
+    {
+        // Scanning quote styles independently (one preg_replace pass per style) lets the apostrophe
+        // inside a double-quoted "it's" be misread by the single-quote pass as opening its own
+        // literal, extending that (wrong) match all the way to the real 'x' literal and swallowing
+        // " OR password = " along with it - hiding a live column reference from the deny-list scan.
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/column "password"/i');
+
+        $this->buildQueryString([
+            'sql' => 'name',
+            'from' => 'my_products',
+            'where' => "name = \"it's\" OR password = 'x'",
+        ]);
+    }
+
+    public function testUnionIsRejected(): void
+    {
+        // UNION's result column *names* come from the first branch only, regardless of what a later
+        // branch actually selects - a later branch's wildcard could smuggle out a denied column's
+        // values under an innocuous name that neither the text scan nor the resolved-column check
+        // would ever see. Not supported at all, rather than trying to parse safely around it.
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/union/i');
+
+        $this->buildQueryString([
+            'sql' => 'name FROM products UNION SELECT * FROM credential_rows',
+        ]);
+    }
+
+    private function normalizeForDenyListCheck(string $sql): string
+    {
+        $adapter = new Sql((object) []);
+        $method = new ReflectionMethod(Sql::class, 'normalizeForDenyListCheck');
+        $method->setAccessible(true);
+
+        return $method->invoke($adapter, $sql);
+    }
+
+    public function testDoubledBacktickEscapeIsDecodedWhenUnwrapping(): void
+    {
+        // MySQL escapes a literal backtick inside a backtick-quoted identifier by doubling it
+        // ("``"). Normalizing that to a single backtick (rather than dropping it) preserves the
+        // identifier's real name instead of silently corrupting it into a different, unrelated one.
+        $result = $this->normalizeForDenyListCheck('FROM `private``value`');
+
+        $this->assertStringContainsString('private`value', $result);
+    }
+
     private function identifierBoundaryPattern(string $name): string
     {
         $adapter = new Sql((object) []);
@@ -191,9 +240,10 @@ class SqlTest extends TestCase
 
     public function testResolvedDeniedColumnIsRejected(): void
     {
-        // This is what a wildcard/DISTINCT/UNION/subquery projection would actually resolve to at
-        // execution time - the deny-list is enforced against the real result-set columns rather than
-        // guessed from the query text, so it doesn't matter how the column ended up in the result.
+        // This is what a wildcard/DISTINCT/subquery projection would actually resolve to at execution
+        // time - the deny-list is enforced against the real result-set columns rather than guessed
+        // from the query text, so it doesn't matter how the column ended up in the result. (UNION is
+        // rejected separately in validateSqlFragment(), before this check is ever reached.)
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/column "password"/i');
 

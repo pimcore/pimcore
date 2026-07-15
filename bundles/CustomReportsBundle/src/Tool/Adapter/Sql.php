@@ -166,20 +166,10 @@ class Sql extends AbstractAdapter
 
     private function validateSqlFragment(string $sql): void
     {
-        // Remove quoted strings/identifiers to avoid false positives (e.g. INSERT() function, literals containing "--", "#", ";", etc.)
-        // Backslash is excluded from the catch-all and consumed together with the character it escapes
-        // (\\.) so runs of consecutive backslashes are paired up the same way MySQL parses them - a
-        // one-off "[^'] excludes only the quote" version mismatches on an even number of backslashes
-        // and can misjudge where the literal actually closes.
-        $sqlForValidation = preg_replace(
-            [
-                "/'(?:''|\\\\.|[^'\\\\])*'/s",
-                '/"(?:""|\\\\.|[^"\\\\])*"/s',
-                '/`[^`]*`/s',
-            ],
-            ["''", '""', '``'],
-            $sql
-        ) ?? $sql;
+        // Remove quoted strings/identifiers to avoid false positives (e.g. INSERT() function, literals
+        // containing "--", "#", ";", etc.) - see stripQuotedTokens() for why this must be one combined
+        // pass rather than an independent pass per quote style.
+        $sqlForValidation = $this->stripQuotedTokens($sql, false);
 
         // Normalize whitespace/newlines for consistent boundary checking
         $sqlForValidation = preg_replace('/\s+/s', ' ', $sqlForValidation) ?? $sqlForValidation;
@@ -196,11 +186,18 @@ class Sql extends AbstractAdapter
             '/^\s*ALTER\b/i',
             '/^\s*CREATE\b/i',
             '/^\s*TRUNCATE\b/i',
+            // UNION takes its result column *names* from the first SELECT only (MySQL, and SQL in
+            // general), regardless of what a later branch actually selects. A later branch's "SELECT *"
+            // against a sensitive table would smuggle its column values out under the first branch's
+            // (innocuous-looking) column names - invisible to both this text scan and the resolved-column
+            // check, since neither ever sees the later branch's true column identities. Not worth trying
+            // to parse around; UNION just isn't supported in Custom Report SQL fragments.
+            '/\bUNION\b/i',
         ];
 
         foreach ($forbiddenPatterns as $pattern) {
             if (preg_match($pattern, $sqlForValidation)) {
-                throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, and DDL/DML are not allowed).');
+                throw new InvalidArgumentException('Unsafe SQL fragment detected (comments, multiple statements, UNION, and DDL/DML are not allowed).');
             }
         }
     }
@@ -255,34 +252,66 @@ class Sql extends AbstractAdapter
 
     private function normalizeForDenyListCheck(string $sql): string
     {
-        // Blank out string literals so denied names appearing only as data values don't trigger false
-        // positives. See validateSqlFragment() for why backslash must be excluded from the catch-all
-        // and consumed pairwise via \\. rather than treated as an ordinary character.
-        $normalized = preg_replace(
-            [
-                "/'(?:''|\\\\.|[^'\\\\])*'/s",
-                '/"(?:""|\\\\.|[^"\\\\])*"/s',
-            ],
-            ["''", '""'],
-            $sql
-        ) ?? $sql;
-
-        // Unwrap backtick-quoted identifiers (rather than blanking them, like validateSqlFragment() does)
-        // so a denied name can't be hidden from detection behind identifier quoting, e.g. `users`.
-        $normalized = preg_replace('/`([^`]*)`/', '$1', $normalized) ?? $normalized;
+        // Blank out string literals (data values, not identifiers) but unwrap backtick-quoted
+        // identifiers rather than blanking them, like validateSqlFragment() does, so a denied name
+        // can't be hidden from detection behind identifier quoting, e.g. `users`.
+        $normalized = $this->stripQuotedTokens($sql, true);
 
         return preg_replace('/\s+/s', ' ', $normalized) ?? $normalized;
     }
 
     /**
+     * Single left-to-right pass over every quoted span (single-quoted/double-quoted string literals
+     * and backtick-quoted identifiers) in one combined regex, rather than one independent preg_replace()
+     * pass per quote style. Scanning styles independently lets a quote character that only means
+     * something *inside* one style's literal - e.g. the apostrophe in a double-quoted "it's" - be
+     * misread by a later, unrelated pass as the start of its own literal, extending that match across
+     * live SQL and hiding it from validation (e.g. `name = "it's" OR password = 'x'` would have the
+     * single-quote pass matching from that apostrophe all the way to the real opening quote of 'x',
+     * swallowing " OR password = " along with it).
+     *
+     * Backslash-escaped characters are consumed as an atomic pair (\\.) regardless of how many
+     * backslashes precede a quote, matching how MySQL itself pairs them up (a single-off "exclude only
+     * the quote" version mismatches on an even number of backslashes). A doubled backtick ("``") is
+     * decoded to one literal backtick when unwrapping identifiers, matching MySQL's own escape rule for
+     * backtick-quoted identifiers.
+     */
+    private function stripQuotedTokens(string $sql, bool $unwrapBackticks): string
+    {
+        return preg_replace_callback(
+            '/\'(?:\'\'|\\\\.|[^\'\\\\])*\'|"(?:""|\\\\.|[^"\\\\])*"|`(?:``|[^`])*`/s',
+            static function (array $match) use ($unwrapBackticks): string {
+                $token = $match[0];
+                $quote = $token[0];
+
+                if ($quote === '`') {
+                    if (!$unwrapBackticks) {
+                        return '``';
+                    }
+
+                    return str_replace('``', '`', substr($token, 1, -1));
+                }
+
+                return $quote . $quote;
+            },
+            $sql
+        ) ?? $sql;
+    }
+
+    /**
      * A "sql" (column list) fragment is allowed to be an entire freeform SELECT statement (it's used
      * as-is if it already starts with "SELECT"), so reliably detecting every way a wildcard projection
-     * could end up in the result set (DISTINCT, UNION, subqueries, aliases, ...) via text/regex matching
-     * on the fragment isn't tractable - there's always another syntactic variant that slips through.
+     * could end up in the result set (DISTINCT, subqueries, aliases, ...) via text/regex matching on the
+     * fragment isn't tractable - there's always another syntactic variant that slips through. (UNION is
+     * rejected outright in validateSqlFragment() rather than handled here: its result columns take their
+     * *names* from the first branch only, so a later branch's wildcard could smuggle out a denied
+     * column's values under an innocuous name that neither this check nor the text scan ever sees.)
      *
      * Instead of guessing from the query text, this checks what the query's result columns actually
      * are (see getResolvedColumnNames()) against the deny-list. This is exact-match, not
-     * name-matching-anywhere-in-text, since these are now genuine column identifiers rather than free text.
+     * name-matching-anywhere-in-text, since these are now genuine column identifiers rather than free
+     * text - compared case-insensitively via mb_strtolower() rather than strcasecmp(), which is
+     * ASCII-only and would miss a match like "über" vs "ÜBER".
      *
      * @param string[] $columnNames
      */
@@ -295,7 +324,7 @@ class Sql extends AbstractAdapter
 
         foreach ($columnNames as $column) {
             foreach ($deniedColumns as $denied) {
-                if ($denied !== '' && strcasecmp((string) $column, $denied) === 0) {
+                if ($denied !== '' && mb_strtolower((string) $column, 'UTF-8') === mb_strtolower($denied, 'UTF-8')) {
                     throw new InvalidArgumentException(sprintf('Access to column "%s" is not permitted in Custom Report SQL.', $column));
                 }
             }
