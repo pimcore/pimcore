@@ -808,6 +808,14 @@ class Service extends Model\AbstractModel
             $path = rawurldecode($path);
         }
 
+        // normalize to NFC to match the form keys are stored in (see getValidKey()), otherwise a
+        // path built from a decomposed (NFD) source - e.g. macOS filesystems, or a browser's
+        // webkitdirectory/File System Access API on macOS - would fail to resolve an element whose
+        // key was stored precomposed, even right after that element was just created
+        if (Normalizer::isNormalized($path, Normalizer::FORM_C) === false) {
+            $path = Normalizer::normalize($path, Normalizer::FORM_C) ?: $path;
+        }
+
         return $path;
     }
 

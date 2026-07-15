@@ -118,6 +118,24 @@ class ServiceTest extends TestCase
         $this->assertSame($nfc, Service::getValidKey($nfd, 'asset'));
     }
 
+    /**
+     * Regression test: getValidKey() stores element keys precomposed (NFC), but correctPath()
+     * previously left the incoming path untouched. A path built from decomposed (NFD) input -
+     * e.g. a browser's webkitdirectory/File System Access API on macOS - would then fail to
+     * resolve an element right after it was created, because the DB lookup compares byte-exact
+     * against the NFC-stored key.
+     *
+     * @see \Pimcore\Model\Element\Service::correctPath()
+     */
+    public function testCorrectPathNormalizesToNfc(): void
+    {
+        $nfd = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_D);
+        $nfc = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_C);
+
+        $this->assertNotSame($nfd, $nfc, 'Test fixture setup issue: NFD and NFC forms should differ in bytes.');
+        $this->assertSame($nfc, Service::correctPath($nfd));
+    }
+
     public function testCloneMe(): void
     {
         // create object with property
