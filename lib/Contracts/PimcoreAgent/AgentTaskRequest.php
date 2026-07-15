@@ -25,8 +25,12 @@ final readonly class AgentTaskRequest
 {
     /**
      * @param list<array{type: string, id: int}>|null $elements
-     * @param array<string, mixed>|null               $outputSchema  JSON Schema
+     * @param array<string, mixed>|null               $outputSchema     JSON Schema
      * @param array<string, mixed>                    $initiatorContext
+     * @param ?string                                 $origin           Free-form provenance label stored on the created
+     *                                                                  session (e.g. `copilot-importProducts`); the
+     *                                                                  implementation normalizes it (trimmed, empty
+     *                                                                  string becomes null, truncated to 190 chars).
      */
     public function __construct(
         public string $agentName,
@@ -39,6 +43,7 @@ final readonly class AgentTaskRequest
         public ?int $deadlineMinutes = null,
         public ?int $maxAutoContinues = null,
         public array $initiatorContext = [],
+        public ?string $origin = null,
     ) {
     }
 }
