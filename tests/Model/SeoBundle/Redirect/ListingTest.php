@@ -66,7 +66,6 @@ final class ListingTest extends TestCase
 
         $this->assertFalse($listing->isValidOrderKey($payload));
 
-        
         $this->expectException(InvalidArgumentException::class);
         $listing->setOrderKey($payload);
     }
