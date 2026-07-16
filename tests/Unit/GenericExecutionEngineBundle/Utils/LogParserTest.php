@@ -54,6 +54,30 @@ class LogParserTest extends TestCase
         $this->assertSame('Second entry', $entries[1]->getLogLine());
     }
 
+    public function testMessageWithRecordSeparatorIsPreserved(): void
+    {
+        $createdAt = new DateTimeImmutable('2024-01-15T10:30:00+00:00');
+        $message = "before\x1eafter";
+
+        $formatted = $this->parser->formatEntry($createdAt, $message);
+        $entries = $this->parser->parse($formatted);
+
+        $this->assertCount(1, $entries);
+        $this->assertSame($message, $entries[0]->getLogLine());
+    }
+
+    public function testMessageWithPercentSignIsPreserved(): void
+    {
+        $createdAt = new DateTimeImmutable('2024-01-15T10:30:00+00:00');
+        $message = 'Progress: 50% done';
+
+        $formatted = $this->parser->formatEntry($createdAt, $message);
+        $entries = $this->parser->parse($formatted);
+
+        $this->assertCount(1, $entries);
+        $this->assertSame($message, $entries[0]->getLogLine());
+    }
+
     public function testLegacyToNewAppendTransition(): void
     {
         // Simulate a log that starts with legacy newline-delimited entries

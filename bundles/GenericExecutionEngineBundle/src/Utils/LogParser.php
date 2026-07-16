@@ -45,10 +45,13 @@ final class LogParser
      * Builds the stored representation of a single log entry, ready to be appended to the
      * log column. The record separator that prefixes every entry keeps the delimiter
      * unambiguous even when the message itself contains newlines.
+     *
+     * Any record-separator bytes that appear inside the message are percent-encoded so that
+     * the delimiter remains unambiguous and no payload bytes are lost.
      */
     public function formatEntry(DateTimeImmutable $createdAt, string $message): string
     {
-        $message = str_replace(self::ENTRY_SEPARATOR, '', trim($message));
+        $message = $this->escapeMessage(trim($message));
 
         return self::ENTRY_SEPARATOR . $createdAt->format('c') . ': ' . $message;
     }
@@ -88,7 +91,24 @@ final class LogParser
             return null;
         }
 
-        return new LogLine($matches[1], substr($segment, strlen($matches[0])));
+        return new LogLine($matches[1], $this->unescapeMessage(substr($segment, strlen($matches[0]))));
+    }
+
+    /**
+     * Percent-encodes `%` and the record-separator so that those bytes in caller-supplied
+     * messages survive a format/parse round trip without ambiguity.
+     */
+    private function escapeMessage(string $message): string
+    {
+        return str_replace(['%', self::ENTRY_SEPARATOR], ['%25', '%1E'], $message);
+    }
+
+    /**
+     * Reverses the encoding applied by {@see self::escapeMessage()}.
+     */
+    private function unescapeMessage(string $message): string
+    {
+        return str_replace(['%1E', '%25'], [self::ENTRY_SEPARATOR, '%'], $message);
     }
 
     /**
