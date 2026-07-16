@@ -370,9 +370,7 @@ $object = DataObject\Myclassname::getById(167, ['lock' => false]);
 $object = DataObject::getByPath("/path/to/object", ['lock' => false]);
 ```
 
-> **Note:** The lock only applies within database transactions. In regular reads without an active transaction, the
-> `FOR UPDATE` clause has no effect. Only disable locking when you are certain the loaded objects will not be modified
-> in the same transaction.
+> **Note:** `FOR UPDATE` takes effect in transactions. With autocommit enabled, it is held only for the duration of the statement, but it can still block if other transactions hold conflicting locks. Only disable locking when you are certain the loaded objects will not be modified in the same transaction.
 
 ### Filter Objects by attributes from Field Collections
 To filter objects by attributes from field collections, you can use following syntax
