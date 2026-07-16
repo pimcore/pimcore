@@ -16,6 +16,7 @@ namespace Pimcore\Model\Notification\Service;
 
 use Carbon\Carbon;
 use Exception;
+use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -177,6 +178,10 @@ class NotificationServiceFilterParser
     {
         $property = $item[self::KEY_PROPERTY];
 
-        return isset($this->properties[$property]) ? $this->properties[$property] : $property;
+        if (!isset($this->properties[$property])) {
+            throw new InvalidArgumentException('Unknown filter property: ' . $property);
+        }
+
+        return $this->properties[$property];
     }
 }
