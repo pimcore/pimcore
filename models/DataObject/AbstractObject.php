@@ -192,7 +192,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * Static helper to get an object by the passed ID
      *
-     * @param array{force?: bool, ...} $params
+     * @param array{force?: bool, lock?: bool, ...} $params
      */
     public static function getById(int $id, array $params = []): ?static
     {
@@ -202,7 +202,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         $cacheKey = self::getCacheKey($id);
 
-        $lock = $params['lock'] ?? true;
+        $lock = self::getLockParam($params);
         unset($params['lock']);
         $params = Model\Element\Service::prepareGetByIdParams($params);
 
@@ -230,16 +230,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $object = self::getModelFactory()->build($className);
                     RuntimeCache::set($cacheKey, $object);
 
+                    $wasLockingDisabled = self::isLockingDisabled();
                     if (!$lock) {
-                        $wasLockingDisabled = self::isLockingDisabled();
                         self::disableLocking();
                     }
                     try {
                         $object->getDao()->getById($id);
                     } finally {
-                        if (!$lock) {
-                            self::setDisableLocking($wasLockingDisabled);
-                        }
+                        self::setDisableLocking($wasLockingDisabled);
                     }
 
                     if ($object->getModificationDate() !== null) {
@@ -278,6 +276,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $object;
     }
 
+    /**
+     * @param array{force?: bool, lock?: bool, ...} $params
+     */
     public static function getByPath(string $path, array $params = []): static|null
     {
         if (!$path) {
@@ -290,7 +291,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $object = new static();
             $object->getDao()->getByPath($path);
 
-            $lock = $params['lock'] ?? true;
+            $lock = self::getLockParam($params);
             unset($params['lock']);
             $preparedParams = Model\Element\Service::prepareGetByIdParams($params);
             $preparedParams['lock'] = $lock;
@@ -974,6 +975,21 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public static function enableLocking(): void
     {
         self::setDisableLocking(false);
+    }
+
+    /**
+     * Extracts and validates the 'lock' option from the given params.
+     *
+     * @param array<string, mixed> $params
+     */
+    private static function getLockParam(array $params): bool
+    {
+        $lock = $params['lock'] ?? true;
+        if (!is_bool($lock)) {
+            throw new InvalidArgumentException('The "lock" parameter must be of type boolean');
+        }
+
+        return $lock;
     }
 
     /**
