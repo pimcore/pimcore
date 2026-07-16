@@ -291,12 +291,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         $path = Model\Element\Service::correctPath($path);
 
+        $lock = self::getLockParam($params);
+        unset($params['lock']);
+
         try {
             $object = new static();
             $object->getDao()->getByPath($path);
 
-            $lock = self::getLockParam($params);
-            unset($params['lock']);
             $preparedParams = Model\Element\Service::prepareGetByIdParams($params);
             $preparedParams['lock'] = $lock;
 
