@@ -31,6 +31,14 @@ final readonly class AgentTaskRequest
      *                                                                  session (e.g. `copilot-importProducts`); the
      *                                                                  implementation normalizes it (trimmed, empty
      *                                                                  string becomes null, truncated to 190 chars).
+     * @param list<string>|null                       $extraPimcoreMcpServers Pimcore MCP tool groups the initiator
+     *                                                                  needs available in the task session on top of
+     *                                                                  the agent's own configuration (e.g. collab
+     *                                                                  passes `['pimcore-collab-tasks']` so any agent
+     *                                                                  can post task comments). Deduplicated against
+     *                                                                  the agent's configured groups by the
+     *                                                                  implementation; unknown groups resolve to
+     *                                                                  empty tool servers and are harmless.
      */
     public function __construct(
         public string $agentName,
@@ -44,6 +52,7 @@ final readonly class AgentTaskRequest
         public ?int $maxAutoContinues = null,
         public array $initiatorContext = [],
         public ?string $origin = null,
+        public ?array $extraPimcoreMcpServers = null,
     ) {
     }
 }
