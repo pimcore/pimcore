@@ -22,19 +22,41 @@ use function strlen;
 /**
  * Encodes and decodes the job run log format that is persisted in a single text column.
  *
- * Entries are delimited by the ASCII record separator (0x1E) instead of a newline, so a
- * newline that is part of a single (multi-line) log message can no longer be mistaken for
- * an entry boundary. Logs written before this format was introduced used a newline as the
- * delimiter and are still read on a best-effort basis via {@see self::parseLegacySegment()}.
+ * Each entry is framed by a short, versioned delimiter ({@see self::ENTRY_DELIMITER}) instead
+ * of a bare newline, so a newline that is part of a single (multi-line) log message can no
+ * longer be mistaken for an entry boundary.
+ *
+ * The delimiter deliberately wraps a version token between two record-separator bytes rather
+ * than being a single 0x1E byte: logs written before this format existed were stored verbatim
+ * and may already contain a stray 0x1E, so a bare separator would split such legacy payloads
+ * and silently drop everything after the first stray byte. Framing the version token makes an
+ * accidental collision with real legacy content effectively impossible.
+ *
+ * Logs written before this format was introduced used a newline as the delimiter and are still
+ * read on a best-effort basis via {@see self::parseLegacySegment()}; because they never contain
+ * the framed delimiter, their entire content (including any raw 0x1E bytes) is treated as legacy.
  *
  * @internal
  */
 final class LogParser
 {
     /**
-     * ASCII record separator used to delimit individual log entries in the stored column.
+     * ASCII record separator (0x1E). Escaped inside message payloads so that a payload can never
+     * reproduce the entry delimiter, and used as the framing byte of {@see self::ENTRY_DELIMITER}.
      */
-    private const ENTRY_SEPARATOR = "\x1e";
+    private const RECORD_SEPARATOR = "\x1e";
+
+    /**
+     * Version token identifying this storage format. Bump it if the framing ever changes.
+     */
+    private const FORMAT_VERSION = 'GEEv1';
+
+    /**
+     * Versioned frame that delimits (and prefixes) every entry in the current format. Wrapping the
+     * version token in record separators keeps it identifiable and prevents arbitrary legacy bytes
+     * from being treated as an entry boundary.
+     */
+    private const ENTRY_DELIMITER = self::RECORD_SEPARATOR . self::FORMAT_VERSION . self::RECORD_SEPARATOR;
 
     /**
      * Timestamp as produced by DateTimeImmutable::format('c'), tolerating the numeric-offset
@@ -44,17 +66,17 @@ final class LogParser
 
     /**
      * Builds the stored representation of a single log entry, ready to be appended to the
-     * log column. The record separator that prefixes every entry keeps the delimiter
-     * unambiguous even when the message itself contains newlines.
+     * log column. The versioned delimiter that prefixes every entry keeps the boundary
+     * unambiguous even when the message itself contains newlines or a stray record separator.
      *
      * Any record-separator bytes that appear inside the message are percent-encoded so that
-     * the delimiter remains unambiguous and no payload bytes are lost.
+     * the payload can never reproduce the delimiter and no payload bytes are lost.
      */
     public function formatEntry(DateTimeImmutable $createdAt, string $message): string
     {
         $message = $this->escapeMessage(trim($message));
 
-        return self::ENTRY_SEPARATOR . $createdAt->format('c') . ': ' . $message;
+        return self::ENTRY_DELIMITER . $createdAt->format('c') . ': ' . $message;
     }
 
     /**
@@ -66,11 +88,12 @@ final class LogParser
             return [];
         }
 
-        $segments = explode(self::ENTRY_SEPARATOR, $log);
+        $segments = explode(self::ENTRY_DELIMITER, $log);
 
-        // The first segment holds any legacy, newline-joined entries that were written
-        // before the record separator was introduced; it is empty for logs that were
-        // written entirely in the current format.
+        // The first segment holds any legacy, newline-joined entries that were written before
+        // the framed delimiter was introduced; it is empty for logs written entirely in the
+        // current format. Because we split on the full versioned frame (never a bare 0x1E),
+        // a legacy payload containing a stray record separator stays intact in this segment.
         $legacySegment = array_shift($segments);
         $entries = $this->parseLegacySegment($legacySegment);
 
@@ -103,11 +126,11 @@ final class LogParser
 
     /**
      * Percent-encodes `%` and the record-separator so that those bytes in caller-supplied
-     * messages survive a format/parse round trip without ambiguity.
+     * messages survive a format/parse round trip and can never reproduce the entry delimiter.
      */
     private function escapeMessage(string $message): string
     {
-        return str_replace(['%', self::ENTRY_SEPARATOR], ['%25', '%1E'], $message);
+        return str_replace(['%', self::RECORD_SEPARATOR], ['%25', '%1E'], $message);
     }
 
     /**
@@ -115,7 +138,7 @@ final class LogParser
      */
     private function unescapeMessage(string $message): string
     {
-        return str_replace(['%1E', '%25'], [self::ENTRY_SEPARATOR, '%'], $message);
+        return str_replace(['%1E', '%25'], [self::RECORD_SEPARATOR, '%'], $message);
     }
 
     /**

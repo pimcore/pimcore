@@ -20,9 +20,16 @@ use Pimcore\Tests\Support\Test\TestCase;
 class LogParserTest extends TestCase
 {
     /**
-     * ASCII record separator (0x1E) that delimits entries in the stored column.
+     * Raw ASCII record separator byte (0x1E). Used to inject a stray separator into
+     * legacy payloads; it must be preserved, never treated as a delimiter.
      */
     private const RS = "\x1e";
+
+    /**
+     * The versioned frame that delimits entries in the current format. Must mirror
+     * LogParser::ENTRY_DELIMITER exactly.
+     */
+    private const DELIM = "\x1eGEEv1\x1e";
 
     private const FIXED_TIMESTAMP = '2024-01-15T10:30:00+00:00';
 
@@ -40,31 +47,33 @@ class LogParserTest extends TestCase
     // These assert the exact bytes produced by formatEntry() so the suite
     // is not only proving that parse(format($x)) === $x (which a pair of
     // compensating bugs could satisfy) but that the on-disk representation
-    // is actually the record-separator format we claim to write.
+    // is actually the versioned framed format we claim to write.
     // -----------------------------------------------------------------
 
-    public function testFormatEntryPrefixesRecordSeparatorAndTimestamp(): void
+    public function testFormatEntryPrefixesVersionedDelimiterAndTimestamp(): void
     {
         $formatted = $this->parser->formatEntry(
             new DateTimeImmutable(self::FIXED_TIMESTAMP),
             'hello world'
         );
 
-        $this->assertSame(self::RS . self::FIXED_TIMESTAMP . ': hello world', $formatted);
+        $this->assertSame(self::DELIM . self::FIXED_TIMESTAMP . ': hello world', $formatted);
     }
 
     public function testFormatEntryEscapesPayloadSoTheDelimiterStaysUnambiguous(): void
     {
-        // A message carrying both a record separator and a percent sign must
-        // be percent-encoded (RS -> %1E, % -> %25) so the only real delimiter
-        // in the result is the single leading one.
+        // A message carrying both a record separator and a percent sign must be
+        // percent-encoded (RS -> %1E, % -> %25) so the payload cannot reproduce the
+        // delimiter: exactly one framed delimiter, and no stray RS bytes, may remain.
         $formatted = $this->parser->formatEntry(
             new DateTimeImmutable(self::FIXED_TIMESTAMP),
             'a' . self::RS . 'b%c'
         );
 
-        $this->assertSame(self::RS . self::FIXED_TIMESTAMP . ': a%1Eb%25c', $formatted);
-        $this->assertSame(1, substr_count($formatted, self::RS));
+        $this->assertSame(self::DELIM . self::FIXED_TIMESTAMP . ': a%1Eb%25c', $formatted);
+        $this->assertSame(1, substr_count($formatted, self::DELIM));
+        // The only RS bytes are the two that frame the delimiter; none leak from the payload.
+        $this->assertSame(2, substr_count($formatted, self::RS));
     }
 
     public function testFormatEntryTrimsSurroundingWhitespace(): void
@@ -74,7 +83,7 @@ class LogParserTest extends TestCase
             "  padded message  \n"
         );
 
-        $this->assertSame(self::RS . self::FIXED_TIMESTAMP . ': padded message', $formatted);
+        $this->assertSame(self::DELIM . self::FIXED_TIMESTAMP . ': padded message', $formatted);
     }
 
     // -----------------------------------------------------------------
@@ -153,7 +162,7 @@ class LogParserTest extends TestCase
         // single corrupt segment can never swallow the rest of the log.
         $createdAt = new DateTimeImmutable(self::FIXED_TIMESTAMP);
         $log = $this->parser->formatEntry($createdAt, 'first')
-            . self::RS . 'corrupt segment without timestamp'
+            . self::DELIM . 'corrupt segment without timestamp'
             . $this->parser->formatEntry($createdAt, 'second');
 
         $entries = $this->parser->parse($log);
@@ -169,7 +178,7 @@ class LogParserTest extends TestCase
         // (Feb 31) must be dropped without aborting the surrounding, valid entries.
         $createdAt = new DateTimeImmutable(self::FIXED_TIMESTAMP);
         $log = $this->parser->formatEntry($createdAt, 'first')
-            . self::RS . '2024-02-31T10:30:00+00:00: overflowing entry'
+            . self::DELIM . '2024-02-31T10:30:00+00:00: overflowing entry'
             . $this->parser->formatEntry($createdAt, 'second');
 
         $entries = $this->parser->parse($log);
@@ -217,6 +226,38 @@ class LogParserTest extends TestCase
             "summary line\n  stack frame #0\n  stack frame #1",
             $entries[0]->getLogLine()
         );
+    }
+
+    public function testLegacyMessageContainingRawRecordSeparatorIsPreserved(): void
+    {
+        // Regression: legacy payloads were stored verbatim, so a pre-upgrade message may
+        // already contain a raw 0x1E byte. It must be kept as message content, never treated
+        // as an entry delimiter (which would drop everything after it). Only the full
+        // versioned frame delimits entries, and a legacy log never contains that frame.
+        $legacy = self::FIXED_TIMESTAMP . ': before' . self::RS . 'after';
+
+        $entries = $this->parser->parse($legacy);
+
+        $this->assertCount(1, $entries);
+        $this->assertSame('before' . self::RS . 'after', $entries[0]->getLogLine());
+    }
+
+    public function testLegacyRawRecordSeparatorSurvivesTransitionToNewFormat(): void
+    {
+        // A legacy row carrying a stray 0x1E, then a new framed entry appended after the
+        // upgrade: the legacy bytes (RS included) stay in the legacy entry, and the new
+        // entry is still parsed.
+        $legacy = self::FIXED_TIMESTAMP . ': raw' . self::RS . 'byte';
+        $appended = $this->parser->formatEntry(
+            new DateTimeImmutable('2024-01-15T10:31:00+00:00'),
+            'new entry'
+        );
+
+        $entries = $this->parser->parse($legacy . $appended);
+
+        $this->assertCount(2, $entries);
+        $this->assertSame('raw' . self::RS . 'byte', $entries[0]->getLogLine());
+        $this->assertSame('new entry', $entries[1]->getLogLine());
     }
 
     public function testLegacyCarriageReturnsAreStripped(): void
