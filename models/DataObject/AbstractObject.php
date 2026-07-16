@@ -70,7 +70,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      */
-    protected static bool $disableLocking = false;
+    private static bool $disableLocking = false;
 
     /**
      * @internal
@@ -950,7 +950,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @internal
+     * Returns whether the FOR UPDATE row lock during object hydration is currently disabled.
      */
     public static function isLockingDisabled(): bool
     {
@@ -958,7 +958,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @internal
+     * Enables or disables the FOR UPDATE row lock during object hydration.
      */
     public static function setDisableLocking(bool $disableLocking): void
     {
@@ -966,7 +966,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @internal
+     * Disables the FOR UPDATE row lock during object hydration, e.g. for read-only batch processing.
      */
     public static function disableLocking(): void
     {
@@ -974,7 +974,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @internal
+     * Re-enables the FOR UPDATE row lock during object hydration.
      */
     public static function enableLocking(): void
     {
@@ -988,12 +988,15 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     private static function getLockParam(array $params): bool
     {
-        $lock = $params['lock'] ?? true;
-        if (!is_bool($lock)) {
+        if (!array_key_exists('lock', $params)) {
+            return true;
+        }
+
+        if (!is_bool($params['lock'])) {
             throw new InvalidArgumentException('The "lock" parameter must be of type boolean');
         }
 
-        return $lock;
+        return $params['lock'];
     }
 
     /**
