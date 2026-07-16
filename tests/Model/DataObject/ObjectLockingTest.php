@@ -126,7 +126,7 @@ final class ObjectLockingTest extends ModelTestCase
         $capturedSql = [];
         $connection = $this->createMock(Connection::class);
         $connection->method('fetchAssociative')->willReturnCallback(
-            function (string $sql) use (&$capturedSql): bool {
+            function (string $sql, array $params = [], array $types = []) use (&$capturedSql): array|false {
                 $capturedSql[] = $sql;
 
                 return false;
