@@ -13,7 +13,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Doctrine\DBAL\Connection;
+use Exception;
 use InvalidArgumentException;
+use Pimcore\Cache\RuntimeCache;
+use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
@@ -27,7 +31,7 @@ use Pimcore\Tests\Support\Util\TestHelper;
  *
  * @group model.dataobject.object
  */
-class ObjectLockingTest extends ModelTestCase
+final class ObjectLockingTest extends ModelTestCase
 {
     protected function tearDown(): void
     {
@@ -103,5 +107,77 @@ class ObjectLockingTest extends ModelTestCase
 
         $this->expectException(InvalidArgumentException::class);
         DataObject::getByPath($object->getFullPath(), ['lock' => 1]);
+    }
+
+    public function testGetByIdRejectsNullLockParam(): void
+    {
+        $object = TestHelper::createEmptyObject();
+
+        $this->expectException(InvalidArgumentException::class);
+        Concrete::getById($object->getId(), ['force' => true, 'lock' => null]);
+    }
+
+    public function testGetDataAppendsForUpdateOnlyWhenLockingEnabled(): void
+    {
+        $object = TestHelper::createEmptyObject();
+        $dao = $object->getDao();
+        $originalDb = $dao->db;
+
+        $capturedSql = [];
+        $connection = $this->createMock(Connection::class);
+        $connection->method('fetchAssociative')->willReturnCallback(
+            function (string $sql) use (&$capturedSql): bool {
+                $capturedSql[] = $sql;
+
+                return false;
+            }
+        );
+
+        $dao->db = $connection;
+
+        try {
+            $dao->getData();
+            AbstractObject::disableLocking();
+            $dao->getData();
+        } finally {
+            $dao->db = $originalDb;
+            AbstractObject::enableLocking();
+        }
+
+        $this->assertCount(2, $capturedSql);
+        $this->assertStringContainsString('FOR UPDATE', $capturedSql[0], 'Hydration query must lock by default.');
+        $this->assertStringNotContainsString(
+            'FOR UPDATE',
+            $capturedSql[1],
+            'Hydration query must not lock while locking is disabled.'
+        );
+    }
+
+    public function testLockingStateIsRestoredWhenHydrationFails(): void
+    {
+        $object = TestHelper::createEmptyObject();
+        $id = $object->getId();
+        $originalClassId = $object->getClassId();
+        $db = Db::get();
+
+        // point the object to a non-existing class, so hydration fails while loading the object data
+        $db->executeStatement('UPDATE objects SET classId = ? WHERE id = ?', ['brokenLockingTest', $id]);
+
+        $hydrationFailed = false;
+
+        try {
+            Concrete::getById($id, ['force' => true, 'lock' => false]);
+        } catch (Exception) {
+            $hydrationFailed = true;
+        } finally {
+            $db->executeStatement('UPDATE objects SET classId = ? WHERE id = ?', [$originalClassId, $id]);
+            RuntimeCache::clear();
+        }
+
+        $this->assertTrue($hydrationFailed, 'Hydration was expected to fail with a broken class id.');
+        $this->assertFalse(
+            AbstractObject::isLockingDisabled(),
+            'Locking state must be restored when hydration fails.'
+        );
     }
 }
