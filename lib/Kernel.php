@@ -27,6 +27,7 @@ use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Event\SystemEvents;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
+use ReflectionMethod;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -36,13 +37,12 @@ use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
+use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
 abstract class Kernel extends SymfonyKernel
@@ -50,8 +50,7 @@ abstract class Kernel extends SymfonyKernel
     use MicroKernelTrait {
         registerContainerConfiguration as microKernelRegisterContainerConfiguration;
         registerBundles as microKernelRegisterBundles;
-        configureContainer as microKernelConfigureContainer;
-        configureRoutes as microKernelConfigureRoutes;
+        configureRoutes as protected;
     }
 
     private BundleCollection $bundleCollection;
@@ -71,48 +70,35 @@ abstract class Kernel extends SymfonyKernel
         return PIMCORE_LOG_DIRECTORY;
     }
 
-    /**
-     * Configures the container.
-     *
-     * You can register extensions:
-     *
-     *     $container->extension('framework', [
-     *         'secret' => '%secret%'
-     *     ]);
-     *
-     * Or services:
-     *
-     *     $container->services()->set('halloween', 'FooBundle\HalloweenProvider');
-     *
-     * Or parameters:
-     *
-     *     $container->parameters()->set('halloween', 'lot of fun');
-     */
-    protected function configureContainer(ContainerConfigurator $container, LoaderInterface $loader, ContainerBuilder $builder): void
-    {
-        // @phpstan-ignore arguments.count (this is necessary to support Symfony pre and post v7.4.9)
-        $this->microKernelConfigureContainer($container, $loader, $builder);
-    }
-
-    /**
-     * Adds or imports routes into your application.
-     *
-     *     $routes->import($this->getConfigDir().'/*.{yaml,php}');
-     *     $routes
-     *         ->add('admin_dashboard', '/admin')
-     *         ->controller('App\Controller\AdminController::dashboard')
-     *     ;
-     */
-    protected function configureRoutes(RoutingConfigurator $routes): void
-    {
-        $this->microKernelConfigureRoutes($routes);
-    }
-
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
+        if (!$loader instanceof Loader) {
+            throw new \InvalidArgumentException(sprintf('The loader must be an instance of %s.', Loader::class));
+        }
+
         $bundleConfigLocator = new BundleConfigLocator($this);
         foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
             $loader->load($bundleConfig);
+        }
+
+        /**
+         * Imports configuration files from Symfony's standard locations just as {@see MicroKernelTrait::configureRoutes}
+         * would do. We need to do this here, because users that implement `configureRoutes` inside their kernel have no
+         * possibility to call this method from the trait (and, sadly, neither have we, so we have to replicate it).
+         */
+        if (self::class !== new ReflectionMethod($this, 'configureContainer')->getDeclaringClass()->getName()) {
+            // makes the "config" base folder optional, otherwise `import` would throw if it does not exist
+            $configDir = preg_replace('{/config$}', '/{config}', $this->getConfigDir());
+            $loader->import($configDir.'/{packages}/*.{php,yaml}', 'glob');
+            $loader->import($configDir.'/{packages}/'.$this->getEnvironment().'/*.{php,yaml}', 'glob');
+
+            if (is_file($this->getConfigDir().'/services.yaml')) {
+                $loader->import($this->getConfigDir().'/services.yaml');
+                $loader->import($configDir.'/{services}_'.$this->getEnvironment().'.yaml', 'glob');
+            } else {
+                $loader->import($configDir.'/{services}.php', 'glob');
+                $loader->import($configDir.'/{services}_'.$this->getEnvironment().'.php', 'glob');
+            }
         }
 
         $this->microKernelRegisterContainerConfiguration($loader);
