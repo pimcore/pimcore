@@ -193,6 +193,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * Static helper to get an object by the passed ID
      *
      * @param array{force?: bool, lock?: bool, ...} $params
+     *
+     * @throws InvalidArgumentException when the lock option is not boolean
      */
     public static function getById(int $id, array $params = []): ?static
     {
