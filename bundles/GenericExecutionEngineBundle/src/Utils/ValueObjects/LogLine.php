@@ -27,6 +27,19 @@ use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\InvalidLogLineExceptio
  */
 final class LogLine
 {
+    /**
+     * Supported timestamp formats, each paired with an optional timezone to force.
+     * ATOM and the numeric-offset variant carry their own offset; the Zulu variant
+     * is anchored to UTC.
+     *
+     * @var list<array{string, string|null}>
+     */
+    private const SUPPORTED_FORMATS = [
+        [DateTimeInterface::ATOM, null],
+        ['Y-m-d\TH:i:sO', null],
+        ['Y-m-d\TH:i:s\Z', 'UTC'],
+    ];
+
     private readonly DateTimeImmutable $createdAt;
 
     private readonly string $logLine;
@@ -55,16 +68,27 @@ final class LogLine
      */
     private function parseDateTime(string $dateTime): DateTimeImmutable
     {
-        $parsed = DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $dateTime)
-            ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:sO', $dateTime)
-            ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s\Z', $dateTime, new DateTimeZone('UTC'));
+        // createFromFormat() overflows out-of-range fields (e.g. 2024-02-31 becomes a
+        // March date) and only records a *warning* while still returning a valid object.
+        // A candidate format is therefore accepted only when it both parses and reports
+        // no warnings or errors; otherwise the timestamp is treated as invalid so a
+        // corrupt value can never masquerade as an accurate creation time.
+        foreach (self::SUPPORTED_FORMATS as [$format, $timezone]) {
+            $parsed = $timezone === null
+                ? DateTimeImmutable::createFromFormat($format, $dateTime)
+                : DateTimeImmutable::createFromFormat($format, $dateTime, new DateTimeZone($timezone));
 
-        if ($parsed === false) {
-            throw new InvalidLogLineException(
-                sprintf('Invalid log line date time format given: "%s".', $dateTime)
-            );
+            $errors = DateTimeImmutable::getLastErrors();
+            $hasIssues = $errors !== false
+                && ($errors['warning_count'] > 0 || $errors['error_count'] > 0);
+
+            if ($parsed !== false && !$hasIssues) {
+                return $parsed;
+            }
         }
 
-        return $parsed;
+        throw new InvalidLogLineException(
+            sprintf('Invalid log line date time format given: "%s".', $dateTime)
+        );
     }
 }

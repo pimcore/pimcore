@@ -85,6 +85,33 @@ class LogLineTest extends TestCase
         ];
     }
 
+    /**
+     * @dataProvider outOfRangeTimestampProvider
+     */
+    public function testRejectsOutOfRangeTimestamps(string $timestamp): void
+    {
+        // createFromFormat() silently overflows these (e.g. Feb 31 -> March 2) with only
+        // a warning while still returning an object; the value object must reject them so
+        // a corrupt timestamp can never be exposed as an accurate creation time.
+        $this->expectException(InvalidLogLineException::class);
+
+        new LogLine($timestamp, 'msg');
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function outOfRangeTimestampProvider(): array
+    {
+        return [
+            'day overflow (Feb 31)' => ['2024-02-31T10:30:00+00:00'],
+            'month overflow (month 13)' => ['2024-13-01T10:30:00+00:00'],
+            'hour overflow (25)' => ['2024-01-15T25:30:00+00:00'],
+            'minute overflow (61)' => ['2024-01-15T10:61:00+00:00'],
+            'second overflow (61)' => ['2024-01-15T10:30:61+00:00'],
+        ];
+    }
+
     public function testMessageIsStoredVerbatimIncludingNewlines(): void
     {
         // The value object no longer parses or reformats the message; the

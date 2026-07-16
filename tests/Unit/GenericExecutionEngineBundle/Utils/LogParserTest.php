@@ -163,6 +163,22 @@ class LogParserTest extends TestCase
         $this->assertSame('second', $entries[1]->getLogLine());
     }
 
+    public function testParseSkipsSegmentWithOutOfRangeTimestampButKeepsSurroundingEntries(): void
+    {
+        // A segment whose timestamp is shaped like a real one but is out of range
+        // (Feb 31) must be dropped without aborting the surrounding, valid entries.
+        $createdAt = new DateTimeImmutable(self::FIXED_TIMESTAMP);
+        $log = $this->parser->formatEntry($createdAt, 'first')
+            . self::RS . '2024-02-31T10:30:00+00:00: overflowing entry'
+            . $this->parser->formatEntry($createdAt, 'second');
+
+        $entries = $this->parser->parse($log);
+
+        $this->assertCount(2, $entries);
+        $this->assertSame('first', $entries[0]->getLogLine());
+        $this->assertSame('second', $entries[1]->getLogLine());
+    }
+
     // -----------------------------------------------------------------
     // Backward compatibility: legacy newline-delimited logs
     //
@@ -253,6 +269,21 @@ class LogParserTest extends TestCase
             'numeric offset without colon' => ['2024-01-15T10:30:00+0000'],
             'Zulu / UTC designator' => ['2024-01-15T10:30:00Z'],
         ];
+    }
+
+    public function testLegacyOutOfRangeTimestampEntryIsSkipped(): void
+    {
+        // The same guarantee for the legacy newline format: a malformed entry in the
+        // middle is dropped, and the valid entries before and after it are kept.
+        $legacy = self::FIXED_TIMESTAMP . ": good one\n"
+            . "2024-02-31T10:30:00+00:00: overflowing entry\n"
+            . '2024-01-15T10:32:00+00:00: another good one';
+
+        $entries = $this->parser->parse($legacy);
+
+        $this->assertCount(2, $entries);
+        $this->assertSame('good one', $entries[0]->getLogLine());
+        $this->assertSame('another good one', $entries[1]->getLogLine());
     }
 
     public function testLegacyToNewAppendTransition(): void

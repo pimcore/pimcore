@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Utils;
 
 use DateTimeImmutable;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Exception\InvalidLogLineException;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\ValueObjects\LogLine;
 
 use function strlen;
@@ -91,7 +92,13 @@ final class LogParser
             return null;
         }
 
-        return new LogLine($matches[1], $this->unescapeMessage(substr($segment, strlen($matches[0]))));
+        try {
+            return new LogLine($matches[1], $this->unescapeMessage(substr($segment, strlen($matches[0]))));
+        } catch (InvalidLogLineException) {
+            // The timestamp is shaped like a valid one but is out of range (e.g. Feb 31).
+            // Skip this segment rather than aborting parsing of the remaining log.
+            return null;
+        }
     }
 
     /**
@@ -129,9 +136,7 @@ final class LogParser
             $line = rtrim($line, "\r");
 
             if (preg_match('/^(' . self::TIMESTAMP_PATTERN . '): /', $line, $matches) === 1) {
-                if ($timestamp !== null) {
-                    $entries[] = new LogLine($timestamp, $message);
-                }
+                $this->appendLegacyEntry($entries, $timestamp, $message);
 
                 $timestamp = $matches[1];
                 $message = substr($line, strlen($matches[0]));
@@ -146,10 +151,27 @@ final class LogParser
             }
         }
 
-        if ($timestamp !== null) {
-            $entries[] = new LogLine($timestamp, $message);
-        }
+        $this->appendLegacyEntry($entries, $timestamp, $message);
 
         return $entries;
+    }
+
+    /**
+     * Appends a reconstructed legacy entry, skipping it when the timestamp is absent or
+     * out of range so a single corrupt entry cannot abort parsing of the remaining log.
+     *
+     * @param LogLine[] $entries
+     */
+    private function appendLegacyEntry(array &$entries, ?string $timestamp, string $message): void
+    {
+        if ($timestamp === null) {
+            return;
+        }
+
+        try {
+            $entries[] = new LogLine($timestamp, $message);
+        } catch (InvalidLogLineException) {
+            // best-effort: drop the malformed legacy entry, keep parsing the rest
+        }
     }
 }
