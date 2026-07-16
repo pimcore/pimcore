@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataObject;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\LockWaitTimeoutException;
 use Exception;
 use InvalidArgumentException;
 use Pimcore\Cache\RuntimeCache;
@@ -109,6 +111,12 @@ final class ObjectLockingTest extends ModelTestCase
         DataObject::getByPath($object->getFullPath(), ['lock' => 1]);
     }
 
+    public function testGetByPathRejectsNonBooleanLockParamForMissingPath(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        DataObject::getByPath('/some/path/that/does/not/exist', ['lock' => 'false']);
+    }
+
     public function testGetByIdRejectsNullLockParam(): void
     {
         $object = TestHelper::createEmptyObject();
@@ -151,6 +159,48 @@ final class ObjectLockingTest extends ModelTestCase
             $capturedSql[1],
             'Hydration query must not lock while locking is disabled.'
         );
+    }
+
+    public function testLockParamSkipsRowLockEndToEnd(): void
+    {
+        $object = TestHelper::createEmptyObject();
+        $id = $object->getId();
+        $db = Db::get();
+
+        // hold an exclusive lock on the object's data row from a second connection
+        $blocker = DriverManager::getConnection($db->getParams());
+        $blocker->beginTransaction();
+        $blocker->executeQuery(
+            'SELECT oo_id FROM object_store_' . $object->getClassId() . ' WHERE oo_id = ? FOR UPDATE',
+            [$id]
+        );
+
+        $db->executeStatement('SET SESSION innodb_lock_wait_timeout = 1');
+
+        try {
+            // without the row lock, hydration is a plain read and succeeds despite the concurrent lock
+            $loaded = Concrete::getById($id, ['force' => true, 'lock' => false]);
+            $this->assertInstanceOf(Concrete::class, $loaded);
+
+            // with the default locking behavior, the same load has to wait for the lock and times out
+            $lockWaitDetected = false;
+
+            try {
+                Concrete::getById($id, ['force' => true]);
+            } catch (LockWaitTimeoutException) {
+                $lockWaitDetected = true;
+            }
+
+            $this->assertTrue(
+                $lockWaitDetected,
+                'Loading with default locking was expected to wait for the concurrently held row lock.'
+            );
+        } finally {
+            $db->executeStatement('SET SESSION innodb_lock_wait_timeout = DEFAULT');
+            $blocker->rollBack();
+            $blocker->close();
+            RuntimeCache::clear();
+        }
     }
 
     public function testLockingStateIsRestoredWhenHydrationFails(): void
