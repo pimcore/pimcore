@@ -176,10 +176,10 @@ class NotificationServiceFilterParser
 
     private function getDbProperty(array $item): string
     {
-        $property = $item[self::KEY_PROPERTY];
+        $property = $item[self::KEY_PROPERTY] ?? null;
 
-        if (!isset($this->properties[$property])) {
-            throw new InvalidArgumentException('Unknown filter property: ' . $property);
+        if (!is_string($property) || !isset($this->properties[$property])) {
+            throw new InvalidArgumentException('Unknown filter property: ' . (is_scalar($property) ? (string) $property : gettype($property)));
         }
 
         return $this->properties[$property];

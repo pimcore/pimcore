@@ -65,6 +65,19 @@ final class NotificationServiceFilterParserTest extends TestCase
         $parser->parse();
     }
 
+    public function testArrayValuedPropertyIsRejectedWithoutTypeError(): void
+    {
+        // A JSON filter can supply `property` as an array; must be rejected
+        // cleanly with InvalidArgumentException, not a raw TypeError from
+        // using an array as an array offset.
+        $parser = new NotificationServiceFilterParser($this->buildRequest([
+            ['type' => 'string', 'property' => ['title'], 'operator' => 'like', 'value' => ''],
+        ]));
+
+        $this->expectException(InvalidArgumentException::class);
+        $parser->parse();
+    }
+
     public function testUnknownDatePropertyIsRejected(): void
     {
         $payload = '(SELECT 1 FROM (SELECT SLEEP(5))t)-- -';
