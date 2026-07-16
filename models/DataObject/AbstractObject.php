@@ -278,6 +278,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param array{force?: bool, lock?: bool, ...} $params
+     *
+     * @throws InvalidArgumentException when the lock option is not boolean
      */
     public static function getByPath(string $path, array $params = []): static|null
     {
