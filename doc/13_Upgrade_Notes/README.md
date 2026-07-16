@@ -1,7 +1,13 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.0
+
 ### [GenericExecutionEngine]
 - [JobRun] Log entries stored in the `generic_execution_engine_job_run.log` column are now delimited by the ASCII record separator (`0x1E`) instead of a newline, so a newline that belongs to a single (multi-line) log message is no longer mistaken for an entry boundary. Logs written in the previous newline-delimited format are still read on a best-effort basis, so no migration is required. The parsing of the column has moved from `JobRun::getLogs()` into the new `@internal` `Pimcore\Bundle\GenericExecutionEngineBundle\Utils\LogParser`, and the `@internal` value object `LogLine` now takes the timestamp and message as separate constructor arguments and no longer exposes `appendLogLine()`.
+
+### [Assets]
+- [Thumbnails] The cache lifetime used for the `Cache-Control` and `Expires` HTTP headers when a thumbnail is delivered on-the-fly through the thumbnail service is now configurable via `pimcore.assets.thumbnails.cache_lifetime` (in seconds). It defaults to `604800` (one week), which preserves the previous hard-coded behavior.
+
 
 ## Pimcore 2026.2.0
 
