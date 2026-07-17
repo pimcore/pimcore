@@ -84,11 +84,40 @@ abstract class Dao extends Model\Dao\AbstractDao
         }
         $fullPath = $current->getPath() . $current->getKey();
 
-        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_' . $tableSuffix . ' WHERE LOCATE(cpath, ?)=1 AND
+        // A workspace applies to this element when its cpath is the element itself or one of its
+        // ancestors. Matching the exact set of ancestor paths (instead of LOCATE(cpath, fullPath),
+        // which matches on a raw substring and therefore also matched unrelated siblings sharing a
+        // path prefix, e.g. "/foo/Car" matching "/foo/Carpets/...") is both boundary-correct and
+        // index-usable on users_workspaces_*.cpath.
+        $paths = $this->getAncestorPaths($fullPath);
+        $placeholders = implode(',', array_fill(0, count($paths), '?'));
+
+        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_' . $tableSuffix . ' WHERE cpath IN (' . $placeholders . ') AND
         userId IN (' . implode(',', $userIds) . ')
         ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . end($userIds) . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
 
-        return (int)$this->db->fetchOne($sql, [$fullPath]);
+        return (int)$this->db->fetchOne($sql, $paths);
+    }
+
+    /**
+     * Returns the element's own full path and the full paths of all its ancestors, including the
+     * root path "/". Used for exact, boundary-correct workspace matching against cpath.
+     *
+     * @return string[]
+     */
+    protected function getAncestorPaths(string $fullPath): array
+    {
+        $paths = ['/'];
+        $current = '';
+        foreach (explode('/', trim($fullPath, '/')) as $segment) {
+            if ($segment === '') {
+                continue;
+            }
+            $current .= '/' . $segment;
+            $paths[] = $current;
+        }
+
+        return array_values(array_unique($paths));
     }
 
     /**
