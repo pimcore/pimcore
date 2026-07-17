@@ -894,15 +894,14 @@ class Service extends Model\AbstractModel
      *
      * getByPath() is a public API that accepts arbitrary caller-supplied strings, unconstrained
      * by ElementInterface::MAX_FULL_PATH_LENGTH (that limit is only enforced at save time, see
-     * AbstractElement::validatePathLength()). Without a bound here, an overlength path with many
-     * segments would turn one miss into a quadratic amount of candidate-building work and a DAO
-     * query per candidate (further capped at MAX_FALLBACK_CANDIDATES regardless, see
-     * getNfcFallbackPathCandidates()). The bound is checked against the *fully NFC-normalized*
-     * length, not the raw input length: NFC composition never lengthens a string (it can only
-     * combine a base character with a combining mark into one precomposed character), so the
-     * normalized form is the shortest any candidate can be - a decomposed (NFD) path can
-     * legitimately be much longer than MAX_FULL_PATH_LENGTH while still normalizing to a real,
-     * storable path, and checking the raw length would incorrectly reject that case.
+     * AbstractElement::validatePathLength()). The number of candidates - and therefore DAO
+     * queries and candidate-building work - a caller-controlled miss can trigger is bounded by
+     * MAX_FALLBACK_CANDIDATES alone (see getNfcFallbackPathCandidates()), regardless of the raw
+     * path's length. A length-based short-circuit was deliberately not used here: composition
+     * exclusions in Unicode (e.g. U+0344, which NFC always decomposes to U+0308 U+0301) mean NFC
+     * normalization does not strictly guarantee a shorter or equal-length string in every case,
+     * so a fully-normalized path's length is not a reliable lower bound for what a legitimate
+     * preserved-prefix candidate could be.
      *
      * @internal
      *
@@ -915,10 +914,6 @@ class Service extends Model\AbstractModel
 
             return;
         } catch (Model\Exception\NotFoundException $e) {
-            if (mb_strlen(self::normalizeToNfc($path)) > ElementInterface::MAX_FULL_PATH_LENGTH) {
-                throw $e;
-            }
-
             foreach (self::getNfcFallbackPathCandidates($path) as $candidate) {
                 try {
                     $attempt($candidate);
@@ -1134,11 +1129,21 @@ class Service extends Model\AbstractModel
         return self::getValidKey($key, $type) == $key;
     }
 
+    /**
+     * A segment that is not a valid key purely because it is still in decomposed (NFD) Unicode
+     * form is nonetheless accepted here - isValidKey()/getValidKey() always normalize to NFC
+     * (see getValidKey()), so a segment created before that normalization existed would
+     * otherwise never pass. This method's only callers are the *\Service::pathExists()
+     * existence checks (see getByPathWithNfcFallback()), where that must be consistent with
+     * getByPath() resolving the very same path; it is intentionally not applied to
+     * isValidKey() itself, which is also used to validate a *new* key at save time and must
+     * keep rejecting anything not already precomposed.
+     */
     public static function isValidPath(string $path, string $type): bool
     {
         $parts = explode('/', $path);
         foreach ($parts as $part) {
-            if (!self::isValidKey($part, $type)) {
+            if (!self::isValidKey($part, $type) && !self::isValidKey(self::normalizeToNfc($part), $type)) {
                 return false;
             }
         }

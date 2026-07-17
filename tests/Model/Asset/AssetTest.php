@@ -17,6 +17,7 @@ use Exception;
 use Normalizer;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Asset\Service as AssetService;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
@@ -542,5 +543,35 @@ class AssetTest extends ModelTestCase
 
         $this->assertInstanceOf(Asset::class, $found);
         $this->assertSame($leafFolder->getId(), $found->getId());
+    }
+
+    /**
+     * Regression test: Asset\Service::pathExists() must agree with Asset::getByPath() on
+     * whether a path resolves. Without routing pathExists() through the same NFC fallback,
+     * a caller could see pathExists() return false for the very same NFD lookup path that
+     * getByPath() successfully resolves, and incorrectly treat an existing asset as absent.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testPathExistsAgreesWithGetByPathForNfdLookupPath(): void
+    {
+        $nfcKey = Normalizer::normalize('nfc-café-' . uniqid(), Normalizer::FORM_C);
+
+        $folder = new Asset\Folder();
+        $folder->setParentId(1);
+        $folder->setFilename($nfcKey);
+        $folder->save();
+
+        $nfdLookupPath = Normalizer::normalize($folder->getFullPath(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $folder->getFullPath(),
+            $nfdLookupPath,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $this->assertTrue(
+            AssetService::pathExists($nfdLookupPath),
+            'pathExists() must return true for the same NFD path that getByPath() resolves.'
+        );
     }
 }

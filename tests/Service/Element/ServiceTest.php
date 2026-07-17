@@ -121,6 +121,29 @@ class ServiceTest extends TestCase
     }
 
     /**
+     * Regression test: isValidPath() must accept a segment that is in decomposed (NFD) Unicode
+     * form - e.g. created before keys were normalized to NFC on write (#19242) - since
+     * *\Service::pathExists() relies on it and must agree with getByPath(), which resolves the
+     * very same path via the NFC fallback. A segment with genuinely invalid characters (not
+     * just a different Unicode form) must still be rejected.
+     *
+     * @see \Pimcore\Model\Element\Service::isValidPath()
+     */
+    public function testIsValidPathAcceptsDecomposedUnicodeFormButRejectsInvalidCharacters(): void
+    {
+        $nfd = Normalizer::normalize('café', Normalizer::FORM_D);
+        $nfc = Normalizer::normalize('café', Normalizer::FORM_C);
+        $this->assertNotSame($nfd, $nfc, 'Test fixture setup issue: NFD and NFC forms should differ in bytes.');
+
+        $this->assertTrue(Service::isValidPath("/Upload Folder/$nfd", 'asset'));
+        $this->assertTrue(Service::isValidPath("/Upload Folder/$nfc", 'asset'));
+        $this->assertFalse(
+            Service::isValidPath('/Upload Folder/invalid<>name', 'asset'),
+            'A segment with genuinely invalid characters must still be rejected, not just a different Unicode form.'
+        );
+    }
+
+    /**
      * correctPath() must leave the Unicode form of the path untouched. Unconditionally
      * rewriting it to NFC here (as opposed to as a getByPath() lookup fallback, see
      * getByPathWithNfcFallback()) would break the exact-path lookup for elements whose
@@ -258,75 +281,35 @@ class ServiceTest extends TestCase
     }
 
     /**
-     * Regression test: getByPath() is a public API that accepts arbitrary caller-supplied
-     * strings, but ElementInterface::MAX_FULL_PATH_LENGTH is only enforced at save time - no
-     * real element can ever be stored with a longer path. Without a bound here, an overlength,
-     * heavily decomposed (NFD) path would still generate and attempt one fallback candidate per
-     * path segment. getByPathWithNfcFallback() must skip fallback entirely once even the
-     * shortest possible candidate - the fully NFC-normalized path - is already too long to
-     * belong to any real element, rather than doing that work only to miss every candidate
-     * anyway.
+     * Regression test: getByPathWithNfcFallback() must not skip fallback based on the raw input
+     * path's length, even when that length is far beyond ElementInterface::MAX_FULL_PATH_LENGTH.
+     * A length-based short-circuit was deliberately not used: composition exclusions in Unicode
+     * (e.g. U+0344, which NFC always decomposes to two code points) mean the fully-normalized
+     * form of a path is not a universally reliable lower bound on how short a legitimate
+     * candidate could be, so treating it as one can incorrectly skip a fallback that would
+     * otherwise have resolved. Candidate volume is instead bounded solely by
+     * MAX_FALLBACK_CANDIDATES (see the cap test below), independent of path length.
      *
      * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
      */
-    public function testGetByPathWithNfcFallbackSkipsFallbackForOverlengthPath(): void
+    public function testGetByPathWithNfcFallbackAttemptsFallbackRegardlessOfRawPathLength(): void
     {
-        // a run of the same precomposed accented character so that NFD-normalizing it doubles
-        // its length (base + combining mark each), while keeping the NFC form compact
         $nfcSegment = str_repeat(Normalizer::normalize('é', Normalizer::FORM_C), 260);
-        $nfdSegment = Normalizer::normalize($nfcSegment, Normalizer::FORM_D);
-        $this->assertNotSame($nfcSegment, $nfdSegment, 'Test fixture setup issue.');
-
-        $overlengthPath = "/$nfdSegment/$nfdSegment/$nfdSegment";
-        $fullyNormalizedLength = mb_strlen(Normalizer::normalize($overlengthPath, Normalizer::FORM_C));
-        $this->assertGreaterThan(
-            ElementInterface::MAX_FULL_PATH_LENGTH,
-            $fullyNormalizedLength,
-            'Test fixture setup issue: even the fully NFC-normalized form must exceed the maximum length no real element could have.'
-        );
-
-        $this->assertSame(
-            [$overlengthPath],
-            $this->recordAttemptedPaths($overlengthPath),
-            'No fallback candidates should be attempted when even the fully NFC-normalized path is longer than any real element could have.'
-        );
-    }
-
-    /**
-     * Regression test: NFD-decomposing a path can noticeably lengthen it (a single precomposed
-     * character can become a base character plus a combining mark), so a path whose fully
-     * NFC-normalized form fits within ElementInterface::MAX_FULL_PATH_LENGTH - and could
-     * therefore be a real, storable element - may still exceed that length in its raw,
-     * decomposed form. getByPathWithNfcFallback() must judge the length bound by the shortest
-     * possible candidate (the fully normalized path), not the raw input, or it would incorrectly
-     * refuse to even attempt a fallback that could otherwise resolve.
-     *
-     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
-     */
-    public function testGetByPathWithNfcFallbackStillAttemptsFallbackWhenOnlyDecomposedFormIsOverlength(): void
-    {
-        $nfcSegment = str_repeat(Normalizer::normalize('é', Normalizer::FORM_C), 250);
         $nfdSegment = Normalizer::normalize($nfcSegment, Normalizer::FORM_D);
         $this->assertNotSame($nfcSegment, $nfdSegment, 'Test fixture setup issue.');
 
         $lookupPath = "/$nfdSegment/$nfdSegment/$nfdSegment";
         $fullyNormalizedPath = Normalizer::normalize($lookupPath, Normalizer::FORM_C);
-
         $this->assertGreaterThan(
             ElementInterface::MAX_FULL_PATH_LENGTH,
             mb_strlen($lookupPath),
-            'Test fixture setup issue: the raw decomposed path must exceed the maximum length.'
-        );
-        $this->assertLessThanOrEqual(
-            ElementInterface::MAX_FULL_PATH_LENGTH,
-            mb_strlen($fullyNormalizedPath),
-            'Test fixture setup issue: the fully NFC-normalized form must still fit within the maximum length any real element could have.'
+            'Test fixture setup issue: the raw path must exceed the maximum length any real element could have.'
         );
 
         $this->assertContains(
             $fullyNormalizedPath,
             $this->recordAttemptedPaths($lookupPath),
-            'A path whose decomposed form exceeds the limit but whose NFC-normalized form does not must still be attempted as a fallback candidate.'
+            'A fallback candidate must still be attempted even for a path far longer than any real element could have.'
         );
     }
 
