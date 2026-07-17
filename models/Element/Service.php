@@ -876,6 +876,14 @@ class Service extends Model\AbstractModel
      * getNfcFallbackPathCandidates() if the exact path misses. Centralizes the retry policy so
      * Asset, Document and DataObject don't each reimplement it.
      *
+     * getByPath() is a public API that accepts arbitrary caller-supplied strings, unconstrained
+     * by AbstractElement::MAX_FULL_PATH_LENGTH (that limit is only enforced at save time, see
+     * validatePathLength()). Without a bound here, an overlength path with many segments would
+     * turn one miss into a quadratic amount of candidate-building work and a DAO query per
+     * candidate. No real element can ever be stored with a path over that length, so no
+     * candidate could possibly match one either - skip fallback entirely once the path is
+     * already too long to be real.
+     *
      * @internal
      *
      * @throws Model\Exception\NotFoundException
@@ -887,6 +895,10 @@ class Service extends Model\AbstractModel
 
             return;
         } catch (Model\Exception\NotFoundException $e) {
+            if (mb_strlen($path) > AbstractElement::MAX_FULL_PATH_LENGTH) {
+                throw $e;
+            }
+
             foreach (self::getNfcFallbackPathCandidates($path) as $candidate) {
                 try {
                     $attempt($candidate);
