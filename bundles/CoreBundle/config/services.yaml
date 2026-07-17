@@ -169,6 +169,13 @@ services:
         alias: Pimcore\Model\Version\CoauthorContext
 
     Pimcore\Model\Version\CoauthorContext: ~
+
+    # request-scoped memoization of element permission lookups (DAO result only), cleared per
+    # request and per messenger message via the kernel.reset tag
+    Pimcore\Model\Element\PermissionCache:
+        public: true
+        tags:
+            - { name: kernel.reset, method: reset }
     #
     # SECURITY
     #

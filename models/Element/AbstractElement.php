@@ -480,7 +480,27 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             return $permissions;
         }
 
-        $permissions = $this->getDao()->areAllowed($columns, $user);
+        // cache only the DAO result per request; the ELEMENT_PERMISSION_IS_ALLOWED event below
+        // stays outside the cache. All requested columns are resolved together (all-or-nothing),
+        // because the DAO derives the "list" permission from the full column set.
+        $permissionCache = Pimcore::getContainer()->get(PermissionCache::class);
+        $permissions = [];
+        foreach ($columns as $column) {
+            $cached = $permissionCache->get($user, $this, $column);
+            if (null === $cached) {
+                $permissions = [];
+
+                break;
+            }
+            $permissions[$column] = (int) $cached;
+        }
+
+        if ($permissions === []) {
+            $permissions = $this->getDao()->areAllowed($columns, $user);
+            foreach ($permissions as $column => $isAllowed) {
+                $permissionCache->set($user, $this, (string) $column, (bool) $isAllowed);
+            }
+        }
 
         foreach ($permissions as $type => $isAllowed) {
             $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
@@ -517,7 +537,15 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         if (!$user->isAllowed(Service::getElementType($this) . 's')) {
             return false;
         }
-        $isAllowed = $this->getDao()->isAllowed($type, $user);
+
+        // cache only the DAO result per request; the workflow-deny check and the
+        // ELEMENT_PERMISSION_IS_ALLOWED event below stay outside the cache
+        $permissionCache = Pimcore::getContainer()->get(PermissionCache::class);
+        $isAllowed = $permissionCache->get($user, $this, $type);
+        if (null === $isAllowed) {
+            $isAllowed = $this->getDao()->isAllowed($type, $user);
+            $permissionCache->set($user, $this, $type, $isAllowed);
+        }
 
         if ($isDeniedInWorkflow) {
             $isAllowed = false;
