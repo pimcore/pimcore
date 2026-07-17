@@ -12,6 +12,7 @@
 
 namespace Pimcore\Model\Element;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
@@ -90,13 +91,23 @@ abstract class Dao extends Model\Dao\AbstractDao
         // path prefix, e.g. "/foo/Car" matching "/foo/Carpets/...") is both boundary-correct and
         // index-usable on users_workspaces_*.cpath.
         $paths = $this->getAncestorPaths($fullPath);
-        $placeholders = implode(',', array_fill(0, count($paths), '?'));
 
-        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_' . $tableSuffix . ' WHERE cpath IN (' . $placeholders . ') AND
-        userId IN (' . implode(',', $userIds) . ')
-        ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . end($userIds) . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
+        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_' . $tableSuffix . ' WHERE cpath IN (:paths) AND
+        userId IN (:userIds)
+        ORDER BY LENGTH(cpath) DESC, FIELD(userId, :lastUserId) DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
 
-        return (int)$this->db->fetchOne($sql, $paths);
+        return (int)$this->db->fetchOne(
+            $sql,
+            [
+                'paths' => $paths,
+                'userIds' => $userIds,
+                'lastUserId' => end($userIds),
+            ],
+            [
+                'paths' => ArrayParameterType::STRING,
+                'userIds' => ArrayParameterType::INTEGER,
+            ]
+        );
     }
 
     /**
