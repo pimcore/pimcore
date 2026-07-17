@@ -358,7 +358,24 @@ class CoreCacheHandler implements LoggerAwareInterface
         });
 
         // remove overrun
-        array_splice($this->saveQueue, $this->maxWriteToCacheItems);
+        $droppedItems = array_splice($this->saveQueue, $this->maxWriteToCacheItems);
+
+        if (count($droppedItems) > 0) {
+            $droppedKeys = array_map(function (CacheQueueItem $item): string {
+                return $item->getKey();
+            }, $droppedItems);
+
+            $this->logger->warning(
+                'Dropped {droppedCount} item(s) from the cache save queue because the configured limit of '
+                . '{limit} items per request was exceeded. Raise pimcore.cache.max_write_items to cache more '
+                . 'items per request. Sample of dropped keys: {sampleKeys}',
+                [
+                    'droppedCount' => count($droppedItems),
+                    'limit' => $this->maxWriteToCacheItems,
+                    'sampleKeys' => implode(', ', array_slice($droppedKeys, 0, 10)),
+                ]
+            );
+        }
     }
 
     /**

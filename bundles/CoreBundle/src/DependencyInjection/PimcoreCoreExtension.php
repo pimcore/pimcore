@@ -79,6 +79,10 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
 
+        // object cache write handling (see Pimcore\Cache\Core\CoreCacheHandler)
+        $container->setParameter('pimcore.cache.max_write_items', $config['cache']['max_write_items']);
+        $container->setParameter('pimcore.cache.handle_cli', $config['cache']['handle_cli']);
+
         //twig security policy allowlist config
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.tags', $config['templating_engine']['twig']['sandbox_security_policy']['tags']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.filters', $config['templating_engine']['twig']['sandbox_security_policy']['filters']);

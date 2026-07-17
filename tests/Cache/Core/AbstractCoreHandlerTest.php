@@ -350,6 +350,62 @@ abstract class AbstractCoreHandlerTest extends Unit
         }
     }
 
+    public function testCleanupQueueLogsDroppedItems(): void
+    {
+        /** @var TestHandler $testHandler */
+        $testHandler = static::$logHandlers['test'];
+        $testHandler->clear();
+
+        $maxItems = 2;
+        $this->handler->setMaxWriteToCacheItems($maxItems);
+
+        // save more items than the configured limit allows, but stay below the
+        // auto-cleanup threshold (maxWriteToCacheItems * 3) so the explicit
+        // cleanupQueue() call below is what drops the overrun
+        $itemCount = $maxItems + 3;
+        for ($i = 1; $i <= $itemCount; $i++) {
+            $this->assertTrue($this->handler->save('item_' . $i, $i));
+        }
+
+        $this->handler->cleanupQueue();
+
+        // the queue is capped at the configured limit
+        $this->assertCount(
+            $maxItems,
+            $this->getHandlerPropertyValue('saveQueue')
+        );
+
+        // dropping items must be logged as a warning so it is no longer silent
+        $this->assertTrue(
+            $testHandler->hasWarningThatContains('cache save queue'),
+            'Expected a warning to be logged when items are dropped from the save queue'
+        );
+    }
+
+    public function testCleanupQueueDoesNotLogWhenNothingDropped(): void
+    {
+        /** @var TestHandler $testHandler */
+        $testHandler = static::$logHandlers['test'];
+        $testHandler->clear();
+
+        $this->handler->setMaxWriteToCacheItems(10);
+
+        $this->assertTrue($this->handler->save('item_1', 1));
+        $this->assertTrue($this->handler->save('item_2', 2));
+
+        $this->handler->cleanupQueue();
+
+        $this->assertCount(
+            2,
+            $this->getHandlerPropertyValue('saveQueue')
+        );
+
+        $this->assertFalse(
+            $testHandler->hasWarningThatContains('cache save queue'),
+            'No drop warning must be logged when the queue is within the configured limit'
+        );
+    }
+
     public function testWriteQueueRespectsPriority(): void
     {
         $maxItems = $this->getHandlerPropertyValue('maxWriteToCacheItems');
