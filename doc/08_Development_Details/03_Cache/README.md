@@ -62,6 +62,32 @@ save ""
 
 > With the default settings, the minimum supported Redis version is 3.0.
 
+### Object cache write behavior
+
+Two settings control how the object cache is written:
+
+```yaml
+# config/config.yaml
+pimcore:
+    cache:
+        # maximum number of items written to the object cache per request (default: 50)
+        max_write_items: 50
+        # allow the object cache to be written in CLI mode (default: false)
+        handle_cli: false
+```
+
+* **`max_write_items`** — During a request, cacheable items are collected in a save queue and
+  written to the cache pool on shutdown. To bound memory and shutdown time, only the
+  highest-priority `max_write_items` entries are written; any beyond the limit are dropped and a
+  warning is logged (including how many were dropped). Requests that legitimately load many
+  cacheable elements — large listings, exports, deep object graphs — may benefit from a higher
+  value. Must be `>= 1`.
+* **`handle_cli`** — By default the object cache is **not** written from CLI processes (console
+  commands, messenger workers), because long-running scripts are prone to race conditions that can
+  leave stale entries in a shared cache pool. Enable it only if your CLI workload is read-heavy and
+  benefits from a warm object cache, and you have considered the concurrency implications. This
+  does not affect reading from the cache in CLI, only writing to it.
+
 ## Element Cache Workflow (Asset, Document, Object)
 
 ![Element Cache Workflow](../../img/pimcore-cache.png)
