@@ -19,6 +19,7 @@ use Pimcore\Db;
 use Pimcore\Db\Helper as DbHelper;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -473,5 +474,36 @@ class ObjectTest extends ModelTestCase
 
         $this->assertInstanceOf(DataObject::class, $found);
         $this->assertSame($folder->getId(), $found->getId());
+    }
+
+    /**
+     * Regression test: DataObject\Service::pathExists() must agree with
+     * DataObject\AbstractObject::getByPath() on whether a path resolves. Without routing
+     * pathExists() through the same NFC fallback, a caller could see pathExists() return false
+     * for the very same NFD lookup path that getByPath() successfully resolves, and
+     * incorrectly treat an existing object as absent.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testPathExistsAgreesWithGetByPathForNfdLookupPath(): void
+    {
+        $nfcKey = Normalizer::normalize('nfc-café-' . uniqid(), Normalizer::FORM_C);
+
+        $folder = new DataObject\Folder();
+        $folder->setParentId(1);
+        $folder->setKey($nfcKey);
+        $folder->save();
+
+        $nfdLookupPath = Normalizer::normalize($folder->getFullPath(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $folder->getFullPath(),
+            $nfdLookupPath,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $this->assertTrue(
+            DataObjectService::pathExists($nfdLookupPath),
+            'pathExists() must return true for the same NFD path that getByPath() resolves.'
+        );
     }
 }

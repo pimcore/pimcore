@@ -150,10 +150,19 @@ class Document extends Element\AbstractElement
         try {
             $helperDoc = new Document();
 
-            Element\Service::getByPathWithNfcFallback(
-                fn (string $candidate) => $helperDoc->getDao()->getByPath($candidate),
-                $path
-            );
+            try {
+                Element\Service::getByPathWithNfcFallback(
+                    fn (string $candidate) => $helperDoc->getDao()->getByExactPath($candidate),
+                    $path
+                );
+            } catch (NotFoundException $e) {
+                // none of the exact-path candidates matched - fall back to a pretty URL match
+                // against the original requested path only, same as before this fallback
+                // existed. A pretty URL is a literal string a content editor configured, not
+                // something that should ever be matched against a synthetic, NFC-normalized
+                // candidate path, so this must run once, after the candidates, not per candidate.
+                $helperDoc->getDao()->getByPrettyUrl($path);
+            }
 
             $doc = static::getById($helperDoc->getId(), $params);
 
