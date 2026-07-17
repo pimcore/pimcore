@@ -848,6 +848,14 @@ class Service extends Model\AbstractModel
      * This is intentionally not applied unconditionally in correctPath(), since that would
      * break the exact-path lookup for elements whose key is still stored in NFD form.
      *
+     * Capped at MAX_FALLBACK_CANDIDATES: getByPath() is a public API that accepts arbitrary
+     * caller-supplied strings, and a path within the maximum real path length (see
+     * getByPathWithNfcFallback()) can still be split into many short segments, each one a
+     * distinct candidate and a DAO query. The cap bounds both the candidate-building work here
+     * and the number of queries the caller triggers to a small, fixed number, at the cost of
+     * only the narrowest (least likely to be needed) suffix candidates in a pathologically
+     * deep, all-legacy-until-the-last-few-levels hierarchy.
+     *
      * @return string[]
      */
     private static function getNfcFallbackPathCandidates(string $path): array
@@ -856,7 +864,7 @@ class Service extends Model\AbstractModel
         $segmentCount = count($segments);
 
         $candidates = [];
-        for ($suffixLength = $segmentCount; $suffixLength >= 1; $suffixLength--) {
+        for ($suffixLength = $segmentCount; $suffixLength >= 1 && count($candidates) < self::MAX_FALLBACK_CANDIDATES; $suffixLength--) {
             $candidateSegments = $segments;
             for ($i = $segmentCount - $suffixLength; $i < $segmentCount; $i++) {
                 $candidateSegments[$i] = self::normalizeToNfc($candidateSegments[$i]);
@@ -872,17 +880,29 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * The maximum number of fallback candidates getNfcFallbackPathCandidates() will build and
+     * getByPathWithNfcFallback() will query for. A realistic element hierarchy is rarely more
+     * than a handful of levels deep; this is generous headroom over that while still bounding
+     * the number of DAO queries one caller-controlled miss can trigger to a small, fixed number.
+     */
+    private const MAX_FALLBACK_CANDIDATES = 32;
+
+    /**
      * Runs a getByPath() DAO lookup, retrying with the Unicode-normalized path candidates from
      * getNfcFallbackPathCandidates() if the exact path misses. Centralizes the retry policy so
      * Asset, Document and DataObject don't each reimplement it.
      *
      * getByPath() is a public API that accepts arbitrary caller-supplied strings, unconstrained
-     * by AbstractElement::MAX_FULL_PATH_LENGTH (that limit is only enforced at save time, see
-     * validatePathLength()). Without a bound here, an overlength path with many segments would
-     * turn one miss into a quadratic amount of candidate-building work and a DAO query per
-     * candidate. No real element can ever be stored with a path over that length, so no
-     * candidate could possibly match one either - skip fallback entirely once the path is
-     * already too long to be real.
+     * by ElementInterface::MAX_FULL_PATH_LENGTH (that limit is only enforced at save time, see
+     * AbstractElement::validatePathLength()). Without a bound here, an overlength path with many
+     * segments would turn one miss into a quadratic amount of candidate-building work and a DAO
+     * query per candidate (further capped at MAX_FALLBACK_CANDIDATES regardless, see
+     * getNfcFallbackPathCandidates()). The bound is checked against the *fully NFC-normalized*
+     * length, not the raw input length: NFC composition never lengthens a string (it can only
+     * combine a base character with a combining mark into one precomposed character), so the
+     * normalized form is the shortest any candidate can be - a decomposed (NFD) path can
+     * legitimately be much longer than MAX_FULL_PATH_LENGTH while still normalizing to a real,
+     * storable path, and checking the raw length would incorrectly reject that case.
      *
      * @internal
      *
@@ -895,7 +915,7 @@ class Service extends Model\AbstractModel
 
             return;
         } catch (Model\Exception\NotFoundException $e) {
-            if (mb_strlen($path) > AbstractElement::MAX_FULL_PATH_LENGTH) {
+            if (mb_strlen(self::normalizeToNfc($path)) > ElementInterface::MAX_FULL_PATH_LENGTH) {
                 throw $e;
             }
 

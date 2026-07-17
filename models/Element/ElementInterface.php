@@ -22,6 +22,14 @@ use Pimcore\Model\Version;
 
 interface ElementInterface extends ModelInterface
 {
+    /**
+     * The maximum length, in characters, of an element's full path. No element can ever be
+     * saved with a longer path (see AbstractElement::validatePathLength()), so this also bounds
+     * how much work a getByPath() lookup needs to do for a path that cannot possibly match
+     * anything (see Service::getByPathWithNfcFallback()).
+     */
+    public const MAX_FULL_PATH_LENGTH = 765;
+
     public function getId(): ?int;
 
     public function getKey(): ?string;

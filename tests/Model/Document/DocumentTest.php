@@ -415,6 +415,47 @@ class DocumentTest extends ModelTestCase
     }
 
     /**
+     * Regression test: a document resolved via the NFC fallback must be cached (for the
+     * unforced RuntimeCache read path) under its own resolved real path, not under the raw
+     * (NFD) lookup path that was used to find it. Document invalidation (e.g. delete()) only
+     * clears the cache entry for the document's real path - caching an extra entry under the
+     * raw lookup path would create a stale alias that a later unforced lookup by that same
+     * path could return even after the document is deleted.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathDoesNotCacheStaleAliasForNfcFallbackLookupPath(): void
+    {
+        $nfcKey = Normalizer::normalize('nfc-café-' . uniqid(), Normalizer::FORM_C);
+
+        $folder = new Document\Folder();
+        $folder->setParentId(1);
+        $folder->setKey($nfcKey);
+        $folder->save();
+
+        $nfdLookupPath = Normalizer::normalize($folder->getFullPath(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $folder->getFullPath(),
+            $nfdLookupPath,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        // unforced, so this populates the RuntimeCache path-cache entry under whatever key
+        // getByPath() decides to use
+        $found = Document::getByPath($nfdLookupPath);
+        $this->assertInstanceOf(Document::class, $found);
+        $this->assertSame($folder->getId(), $found->getId());
+
+        $folder->delete();
+
+        $foundAfterDelete = Document::getByPath($nfdLookupPath);
+        $this->assertNull(
+            $foundAfterDelete,
+            'A deleted document must not still be resolvable through a stale cache entry keyed by the raw NFD lookup path.'
+        );
+    }
+
+    /**
      * Regression test: Document::getByPath() must still resolve a document whose key is
      * stored in decomposed (NFD) Unicode form - e.g. created before document keys were
      * normalized to NFC on write - via an exact-path lookup using that very same NFD path.
