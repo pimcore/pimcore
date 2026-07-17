@@ -544,9 +544,9 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     {
         if (is_array($value)) {
             $image = new DataObject\Data\Hotspotimage();
-            $image->setHotspots($value['hotspots']);
-            $image->setMarker($value['marker']);
-            $image->setCrop($value['crop']);
+            $image->setHotspots($this->rewrapMarkerHotspotItems($value['hotspots'] ?? null));
+            $image->setMarker($this->rewrapMarkerHotspotItems($value['marker'] ?? null));
+            $image->setCrop($value['crop'] ?? null);
             if ($value['image'] ?? false) {
                 $type = $value['image']['type'];
                 $id = $value['image']['id'];
@@ -560,6 +560,35 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         return null;
+    }
+
+    /**
+     * Re-wraps hotspot/marker metadata entries into MarkerHotspotItem instances after the
+     * value passed an array-only boundary (json_encode/decode of normalize() output) —
+     * the same backward-compatibility wrapping getDataFromResource() applies.
+     *
+     * @param array<int, mixed>|null $data
+     *
+     * @return array<int, mixed>|null
+     */
+    private function rewrapMarkerHotspotItems(?array $data): ?array
+    {
+        if ($data === null) {
+            return null;
+        }
+
+        foreach ($data as &$element) {
+            if (is_array($element) && array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
+                foreach ($element['data'] as &$metaData) {
+                    // this is for backward compatibility (Array vs. MarkerHotspotItem)
+                    if (is_array($metaData)) {
+                        $metaData = new Element\Data\MarkerHotspotItem($metaData);
+                    }
+                }
+            }
+        }
+
+        return $data;
     }
 
     /**

@@ -43,6 +43,11 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      */
     const STRICT_ENABLED = 1;
 
+    /**
+     * envelope key marking a normalize() value produced with ['preserveEncryption' => true]
+     */
+    public const ENCRYPTED_NORMALIZED_KEY = 'pimcore_encrypted_value';
+
     private static int $strictMode = self::STRICT_ENABLED;
 
     /**
@@ -391,6 +396,21 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
                 $plainValue = $this->delegate->normalize($plainValue, $params);
             }
 
+            // normalize() output is used as a storage/wire format (e.g.
+            // Classificationstore\Dao persists it) — persisting the decrypted value
+            // would silently defeat encryption at rest. Opt-in keeps the value
+            // encrypted; the default stays plain for consumers that NEED the data
+            // (e.g. GDPR data-subject export).
+            if ($params['preserveEncryption'] ?? false) {
+                return [
+                    self::ENCRYPTED_NORMALIZED_KEY => $this->encrypt(
+                        json_encode($plainValue, JSON_THROW_ON_ERROR),
+                        null,
+                        ['asString' => true] + $params
+                    ),
+                ];
+            }
+
             return $plainValue;
         }
 
@@ -399,6 +419,15 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
     public function denormalize(mixed $value, array $params = []): Model\DataObject\Data\EncryptedField
     {
+        // shape-detecting counterpart of normalize(['preserveEncryption' => true])
+        if (is_array($value) && array_key_exists(self::ENCRYPTED_NORMALIZED_KEY, $value)) {
+            $value = json_decode(
+                (string) $this->decrypt($value[self::ENCRYPTED_NORMALIZED_KEY], null, ['asString' => true] + $params),
+                true,
+                512,
+                JSON_THROW_ON_ERROR
+            );
+        }
         if ($this->delegate instanceof NormalizerInterface) {
             $value = $this->delegate->denormalize($value, $params);
         }
