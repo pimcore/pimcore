@@ -236,6 +236,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     if (!$lock) {
                         self::disableLocking();
                     }
+
                     try {
                         $object->getDao()->getById($id);
                     } finally {
