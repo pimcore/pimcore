@@ -205,7 +205,10 @@ class NormalizerTest extends ModelTestCase
     public function testExternalImage(): void
     {
         $originalValue = new DataObject\Data\ExternalImage('http://someurl.com');
-        $fd = new DataObject\ClassDefinition\Data\Email();
+        // was Data\Email() — the passthrough normalize returned the ExternalImage object
+        // unchanged, so the pre-JSON-boundary assertion compared the object to itself
+        // and the type was never actually tested
+        $fd = new DataObject\ClassDefinition\Data\ExternalImage();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
