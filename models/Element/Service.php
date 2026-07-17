@@ -811,24 +811,86 @@ class Service extends Model\AbstractModel
         return $path;
     }
 
-    /**
-     * Normalizes a path to precomposed (NFC) Unicode form, matching the form element keys are
-     * stored in (see getValidKey()). Used as a fallback by getByPath() lookups: a path built from
-     * a decomposed (NFD) source - e.g. macOS filesystems, or a browser's webkitdirectory/File
-     * System Access API on macOS - would otherwise fail to resolve an element whose key was
-     * stored precomposed. It is intentionally not applied unconditionally in correctPath(), since
-     * that would break the exact-path lookup for elements whose key is still stored in NFD form
-     * (created before keys were normalized to NFC on write).
-     *
-     * @internal
-     */
-    public static function normalizePathToNfc(string $path): string
+    private static function normalizeToNfc(string $value): string
     {
-        if (Normalizer::isNormalized($path, Normalizer::FORM_C)) {
-            return $path;
+        if (Normalizer::isNormalized($value, Normalizer::FORM_C)) {
+            return $value;
         }
 
-        return Normalizer::normalize($path, Normalizer::FORM_C) ?: $path;
+        return Normalizer::normalize($value, Normalizer::FORM_C) ?: $value;
+    }
+
+    /**
+     * Builds fallback path candidates for getByPath() lookups, tried in order once the exact
+     * path misses. Only newly created element keys are normalized to NFC on write (see
+     * getValidKey()), so an element's ancestors may still be stored in decomposed (NFD) form
+     * from before that normalization existed - the two forms of mismatch are independent and
+     * both need a candidate:
+     *
+     * - dirname unchanged, final key normalized to NFC: resolves a freshly created element
+     *   whose parent path is still stored in legacy NFD form.
+     * - the full path normalized to NFC: resolves a lookup path where every segment - parent
+     *   and key alike - was freshly created (and is thus NFC-stored) in the same operation,
+     *   but the incoming request path still arrives in decomposed (NFD) form, e.g. a browser's
+     *   webkitdirectory/File System Access API on macOS.
+     *
+     * It is intentionally not applied unconditionally in correctPath(), since that would break
+     * the exact-path lookup for elements whose key is still stored in NFD form.
+     *
+     * @internal
+     *
+     * @return string[]
+     */
+    public static function getNfcFallbackPathCandidates(string $path): array
+    {
+        $candidates = [];
+
+        $lastSlash = strrpos($path, '/');
+        if ($lastSlash !== false) {
+            $dirname = substr($path, 0, $lastSlash + 1);
+            $key = substr($path, $lastSlash + 1);
+            $candidate = $dirname . self::normalizeToNfc($key);
+            if ($candidate !== $path) {
+                $candidates[] = $candidate;
+            }
+        }
+
+        $fullyNormalized = self::normalizeToNfc($path);
+        if ($fullyNormalized !== $path && !in_array($fullyNormalized, $candidates, true)) {
+            $candidates[] = $fullyNormalized;
+        }
+
+        return $candidates;
+    }
+
+    /**
+     * Runs a getByPath() DAO lookup, retrying with the Unicode-normalized path candidates from
+     * getNfcFallbackPathCandidates() if the exact path misses. Centralizes the retry policy so
+     * Asset, Document and DataObject don't each reimplement it.
+     *
+     * @internal
+     *
+     * @throws Model\Exception\NotFoundException
+     */
+    public static function getByPathWithNfcFallback(callable $attempt, string $path): void
+    {
+        try {
+            $attempt($path);
+
+            return;
+        } catch (Model\Exception\NotFoundException $e) {
+            foreach (self::getNfcFallbackPathCandidates($path) as $candidate) {
+                try {
+                    $attempt($candidate);
+
+                    return;
+                } catch (Model\Exception\NotFoundException) {
+                    continue;
+                }
+            }
+
+            throw $e;
+        }
     }
 
     /**

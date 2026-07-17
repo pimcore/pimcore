@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Service\Element;
 use Normalizer;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -121,12 +122,12 @@ class ServiceTest extends TestCase
     /**
      * correctPath() must leave the Unicode form of the path untouched. Unconditionally
      * rewriting it to NFC here (as opposed to as a getByPath() lookup fallback, see
-     * normalizePathToNfc()) would break the exact-path lookup for elements whose key is
-     * still stored in decomposed (NFD) form, e.g. created before keys were normalized to
-     * NFC on write.
+     * getNfcFallbackPathCandidates()) would break the exact-path lookup for elements whose
+     * key is still stored in decomposed (NFD) form, e.g. created before keys were normalized
+     * to NFC on write.
      *
      * @see \Pimcore\Model\Element\Service::correctPath()
-     * @see \Pimcore\Model\Element\Service::normalizePathToNfc()
+     * @see \Pimcore\Model\Element\Service::getNfcFallbackPathCandidates()
      */
     public function testCorrectPathDoesNotChangeUnicodeForm(): void
     {
@@ -136,21 +137,99 @@ class ServiceTest extends TestCase
     }
 
     /**
-     * Regression test: getValidKey() stores element keys precomposed (NFC). normalizePathToNfc()
-     * is the fallback getByPath() callers use once an exact-path lookup misses, so a path built
-     * from decomposed (NFD) input - e.g. a browser's webkitdirectory/File System Access API on
-     * macOS - can still resolve an element right after it was created.
+     * Regression test: a freshly created child (NFC-stored key, see getValidKey()) under a
+     * legacy parent path still stored in decomposed (NFD) form must be resolvable from an
+     * NFD-form lookup path without also rewriting - and thereby breaking a match against -
+     * the still-NFD parent path. The "preserve dirname, normalize only the key" candidate
+     * must therefore be tried before the "normalize the whole path" candidate.
      *
-     * @see \Pimcore\Model\Element\Service::normalizePathToNfc()
+     * @see \Pimcore\Model\Element\Service::getNfcFallbackPathCandidates()
      */
-    public function testNormalizePathToNfc(): void
+    public function testGetNfcFallbackPathCandidatesPrefersPreservingDirname(): void
+    {
+        $nfdParent = Normalizer::normalize('/Legacy café Parent/', Normalizer::FORM_D);
+        $nfcChildKey = Normalizer::normalize('New café Child', Normalizer::FORM_C);
+        $nfdChildKey = Normalizer::normalize($nfcChildKey, Normalizer::FORM_D);
+        $this->assertNotSame(
+            $nfcChildKey,
+            $nfdChildKey,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $lookupPath = $nfdParent . $nfdChildKey;
+        $candidates = Service::getNfcFallbackPathCandidates($lookupPath);
+
+        $this->assertSame(
+            $nfdParent . $nfcChildKey,
+            $candidates[0],
+            'The first candidate must preserve the (legacy, still-NFD) dirname and only normalize the final key.'
+        );
+        $this->assertContains(
+            Normalizer::normalize($lookupPath, Normalizer::FORM_C),
+            $candidates,
+            'The fully NFC-normalized path must also be offered, for a hierarchy that is entirely freshly created.'
+        );
+    }
+
+    /**
+     * If the path is already fully NFC-normalized, no fallback candidates are produced -
+     * getByPathWithNfcFallback() must not retry with a path identical to the one that just
+     * missed.
+     *
+     * @see \Pimcore\Model\Element\Service::getNfcFallbackPathCandidates()
+     */
+    public function testGetNfcFallbackPathCandidatesEmptyWhenAlreadyNfc(): void
+    {
+        $nfc = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_C);
+
+        $this->assertSame([], Service::getNfcFallbackPathCandidates($nfc));
+    }
+
+    /**
+     * Regression test: getByPathWithNfcFallback() must fall through the candidates in order
+     * and succeed as soon as one of them resolves - this is what lets a freshly created
+     * element (NFC-stored) still be found from an NFD-form lookup path, e.g. a browser's
+     * webkitdirectory/File System Access API on macOS.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackTriesCandidatesInOrder(): void
     {
         $nfd = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_D);
         $nfc = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_C);
 
-        $this->assertNotSame($nfd, $nfc, 'Test fixture setup issue: NFD and NFC forms should differ in bytes.');
-        $this->assertSame($nfc, Service::normalizePathToNfc($nfd));
-        $this->assertSame($nfc, Service::normalizePathToNfc($nfc));
+        $attempted = [];
+        $attempt = function (string $candidate) use (&$attempted, $nfc): void {
+            $attempted[] = $candidate;
+            if ($candidate !== $nfc) {
+                throw new NotFoundException('not found: ' . $candidate);
+            }
+        };
+
+        Service::getByPathWithNfcFallback($attempt, $nfd);
+
+        $this->assertSame(
+            $nfc,
+            end($attempted),
+            'The lookup must eventually succeed with the fully NFC-normalized path.'
+        );
+    }
+
+    /**
+     * Regression test: if every candidate misses, getByPathWithNfcFallback() must rethrow the
+     * original exact-path NotFoundException rather than swallowing it.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackRethrowsWhenNoCandidateMatches(): void
+    {
+        $nfd = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_D);
+
+        $this->expectException(NotFoundException::class);
+
+        Service::getByPathWithNfcFallback(function (string $candidate): void {
+            throw new NotFoundException('not found: ' . $candidate);
+        }, $nfd);
     }
 
     public function testCloneMe(): void

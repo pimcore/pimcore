@@ -270,18 +270,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         try {
             $object = new static();
 
-            try {
-                $object->getDao()->getByPath($path);
-            } catch (Model\Exception\NotFoundException $e) {
-                // fall back to the NFC-normalized path so a decomposed (NFD) lookup path can
-                // still resolve an element whose key is stored precomposed, without breaking
-                // the exact-path lookup for legacy elements still stored in NFD form
-                $nfcPath = Model\Element\Service::normalizePathToNfc($path);
-                if ($nfcPath === $path) {
-                    throw $e;
-                }
-                $object->getDao()->getByPath($nfcPath);
-            }
+            Model\Element\Service::getByPathWithNfcFallback(
+                fn (string $candidate) => $object->getDao()->getByPath($candidate),
+                $path
+            );
 
             return static::getById($object->getId(), Model\Element\Service::prepareGetByIdParams($params));
         } catch (Model\Exception\NotFoundException $e) {
