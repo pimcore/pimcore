@@ -134,7 +134,11 @@ abstract class Concrete extends Model\DataObject\Listing
             throw new Exception('No fieldcollectiontype given');
         }
 
-        DataObject\Fieldcollection\Definition::getByKey($type);
+        $definition = DataObject\Fieldcollection\Definition::getByKey($type);
+        if (!$definition instanceof DataObject\Fieldcollection\Definition) {
+            throw new Exception('Unknown fieldcollection type: ' . $type);
+        }
+
         $this->fieldCollectionConfigs[] = ['type' => $type, 'fieldname' => $fieldname];
     }
 
