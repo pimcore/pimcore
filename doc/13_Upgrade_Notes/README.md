@@ -7,6 +7,7 @@
 
 ### [Assets]
 - [Thumbnails] The cache lifetime used for the `Cache-Control` and `Expires` HTTP headers when a thumbnail is delivered on-the-fly through the thumbnail service is now configurable via `pimcore.assets.thumbnails.cache_lifetime` (in seconds). It defaults to `604800` (one week), which preserves the previous hard-coded behavior.
+- [Thumbnails] `ImageThumbnailInterface::getAsset()` and the implementing `ImageThumbnailTrait::getAsset()` now declare a nullable return type (`?Asset` instead of `Asset`), matching the already-nullable `$asset` property. A thumbnail can be constructed without a backing asset (e.g. via a raw path reference), in which case `getAsset()` returned `null` and thus violated its own non-nullable return type with a `TypeError`. Callers must now handle a possible `null` return value.
 
 
 ## Pimcore 2026.2.0

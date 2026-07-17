@@ -250,7 +250,7 @@ trait ImageThumbnailTrait
         ];
     }
 
-    public function getAsset(): Asset
+    public function getAsset(): ?Asset
     {
         return $this->asset;
     }
