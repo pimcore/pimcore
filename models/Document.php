@@ -149,7 +149,20 @@ class Document extends Element\AbstractElement
 
         try {
             $helperDoc = new Document();
-            $helperDoc->getDao()->getByPath($path);
+
+            try {
+                $helperDoc->getDao()->getByPath($path);
+            } catch (NotFoundException $e) {
+                // fall back to the NFC-normalized path so a decomposed (NFD) lookup path can
+                // still resolve an element whose key is stored precomposed, without breaking
+                // the exact-path lookup for legacy elements still stored in NFD form
+                $nfcPath = Element\Service::normalizePathToNfc($path);
+                if ($nfcPath === $path) {
+                    throw $e;
+                }
+                $helperDoc->getDao()->getByPath($nfcPath);
+            }
+
             $doc = static::getById($helperDoc->getId(), $params);
             RuntimeCache::set($cacheKey, $doc);
         } catch (NotFoundException $e) {

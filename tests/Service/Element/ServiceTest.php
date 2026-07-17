@@ -119,21 +119,38 @@ class ServiceTest extends TestCase
     }
 
     /**
-     * Regression test: getValidKey() stores element keys precomposed (NFC), but correctPath()
-     * previously left the incoming path untouched. A path built from decomposed (NFD) input -
-     * e.g. a browser's webkitdirectory/File System Access API on macOS - would then fail to
-     * resolve an element right after it was created, because the DB lookup compares byte-exact
-     * against the NFC-stored key.
+     * correctPath() must leave the Unicode form of the path untouched. Unconditionally
+     * rewriting it to NFC here (as opposed to as a getByPath() lookup fallback, see
+     * normalizePathToNfc()) would break the exact-path lookup for elements whose key is
+     * still stored in decomposed (NFD) form, e.g. created before keys were normalized to
+     * NFC on write.
      *
      * @see \Pimcore\Model\Element\Service::correctPath()
+     * @see \Pimcore\Model\Element\Service::normalizePathToNfc()
      */
-    public function testCorrectPathNormalizesToNfc(): void
+    public function testCorrectPathDoesNotChangeUnicodeForm(): void
+    {
+        $nfd = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_D);
+
+        $this->assertSame($nfd, Service::correctPath($nfd));
+    }
+
+    /**
+     * Regression test: getValidKey() stores element keys precomposed (NFC). normalizePathToNfc()
+     * is the fallback getByPath() callers use once an exact-path lookup misses, so a path built
+     * from decomposed (NFD) input - e.g. a browser's webkitdirectory/File System Access API on
+     * macOS - can still resolve an element right after it was created.
+     *
+     * @see \Pimcore\Model\Element\Service::normalizePathToNfc()
+     */
+    public function testNormalizePathToNfc(): void
     {
         $nfd = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_D);
         $nfc = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_C);
 
         $this->assertNotSame($nfd, $nfc, 'Test fixture setup issue: NFD and NFC forms should differ in bytes.');
-        $this->assertSame($nfc, Service::correctPath($nfd));
+        $this->assertSame($nfc, Service::normalizePathToNfc($nfd));
+        $this->assertSame($nfc, Service::normalizePathToNfc($nfc));
     }
 
     public function testCloneMe(): void

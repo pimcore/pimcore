@@ -219,7 +219,19 @@ class Asset extends Element\AbstractElement
 
         try {
             $asset = new static();
-            $asset->getDao()->getByPath($path);
+
+            try {
+                $asset->getDao()->getByPath($path);
+            } catch (NotFoundException $e) {
+                // fall back to the NFC-normalized path so a decomposed (NFD) lookup path can
+                // still resolve an element whose key is stored precomposed, without breaking
+                // the exact-path lookup for legacy elements still stored in NFD form
+                $nfcPath = Element\Service::normalizePathToNfc($path);
+                if ($nfcPath === $path) {
+                    throw $e;
+                }
+                $asset->getDao()->getByPath($nfcPath);
+            }
 
             return static::getById(
                 $asset->getId(),
