@@ -421,4 +421,61 @@ class AssetTest extends ModelTestCase
 
         $this->assertEquals('image/jpeg', $asset->getMimeType());
     }
+
+    /**
+     * Regression test: getByPath() must still resolve an element whose key is stored in
+     * decomposed (NFD) Unicode form - e.g. created before element keys were normalized to NFC
+     * on write - via an exact-path lookup using that very same NFD path.
+     *
+     * @see \Pimcore\Model\Element\Service::correctPath()
+     */
+    public function testGetByPathResolvesLegacyNfdStoredKeyByExactMatch(): void
+    {
+        $nfdKey = Normalizer::normalize('nfd-café-' . uniqid(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $nfdKey,
+            Normalizer::normalize($nfdKey, Normalizer::FORM_C),
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $folder = new Asset\Folder();
+        $folder->setParentId(1);
+        $folder->setFilename($nfdKey);
+        $folder->save();
+
+        $found = Asset::getByPath($folder->getFullPath());
+
+        $this->assertInstanceOf(Asset::class, $found);
+        $this->assertSame($folder->getId(), $found->getId());
+    }
+
+    /**
+     * Regression test: getByPath() must resolve an element whose key is stored precomposed
+     * (NFC) when the caller supplies a decomposed (NFD) lookup path - e.g. a browser's
+     * webkitdirectory/File System Access API on macOS - by falling back to the NFC-normalized
+     * path once the exact-path lookup misses.
+     *
+     * @see \Pimcore\Model\Element\Service::normalizePathToNfc()
+     */
+    public function testGetByPathFallsBackToNfcForNfdLookupPath(): void
+    {
+        $nfcKey = Normalizer::normalize('nfc-café-' . uniqid(), Normalizer::FORM_C);
+
+        $folder = new Asset\Folder();
+        $folder->setParentId(1);
+        $folder->setFilename($nfcKey);
+        $folder->save();
+
+        $nfdLookupPath = Normalizer::normalize($folder->getFullPath(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $folder->getFullPath(),
+            $nfdLookupPath,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $found = Asset::getByPath($nfdLookupPath);
+
+        $this->assertInstanceOf(Asset::class, $found);
+        $this->assertSame($folder->getId(), $found->getId());
+    }
 }
