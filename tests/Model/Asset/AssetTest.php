@@ -490,4 +490,58 @@ class AssetTest extends ModelTestCase
         $this->assertInstanceOf(Asset::class, $found);
         $this->assertSame($folder->getId(), $found->getId());
     }
+
+    /**
+     * Regression test: a nested hierarchy where a legacy NFD-stored ancestor has one or more
+     * freshly created (NFC-stored) descendants below it must still resolve when every accented
+     * segment of the lookup path arrives in decomposed (NFD) form - the caller has no way to
+     * know which segments are legacy and which are freshly created. getByPath() must not stop
+     * at normalizing only the final segment; it needs to try normalizing progressively longer
+     * trailing suffixes of the path.
+     *
+     * @see \Pimcore\Model\Element\Service::getNfcFallbackPathCandidates()
+     */
+    public function testGetByPathResolvesNestedMixedHierarchy(): void
+    {
+        $legacyNfcKey = Normalizer::normalize('legacy-café-' . uniqid(), Normalizer::FORM_C);
+        $legacyNfdKey = Normalizer::normalize($legacyNfcKey, Normalizer::FORM_D);
+        $this->assertNotSame(
+            $legacyNfcKey,
+            $legacyNfdKey,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        // simulate a legacy pre-#19242 ancestor whose key is stored in decomposed (NFD) form
+        $legacyFolder = new Asset\Folder();
+        $legacyFolder->setParentId(1);
+        $legacyFolder->setFilename($legacyNfcKey);
+        $legacyFolder->save();
+        Db::get()->update('assets', ['filename' => $legacyNfdKey], ['id' => $legacyFolder->getId()]);
+
+        // freshly created descendants below the legacy ancestor - their keys are stored NFC,
+        // and their own 'path' column is derived from the parent's *current* (NFD) path
+        $middleFolder = new Asset\Folder();
+        $middleFolder->setParentId($legacyFolder->getId());
+        $middleFolder->setFilename(Normalizer::normalize('new café middle', Normalizer::FORM_C));
+        $middleFolder->save();
+
+        $leafFolder = new Asset\Folder();
+        $leafFolder->setParentId($middleFolder->getId());
+        $leafFolder->setFilename(Normalizer::normalize('new café leaf', Normalizer::FORM_C));
+        $leafFolder->save();
+
+        // what a browser submits: every accented segment in NFD, regardless of which segments
+        // are legacy and which are freshly created
+        $nfdLookupPath = Normalizer::normalize($leafFolder->getRealFullPath(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $leafFolder->getRealFullPath(),
+            $nfdLookupPath,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $found = Asset::getByPath($nfdLookupPath, ['force' => true]);
+
+        $this->assertInstanceOf(Asset::class, $found);
+        $this->assertSame($leafFolder->getId(), $found->getId());
+    }
 }

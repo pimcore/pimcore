@@ -823,19 +823,24 @@ class Service extends Model\AbstractModel
     /**
      * Builds fallback path candidates for getByPath() lookups, tried in order once the exact
      * path misses. Only newly created element keys are normalized to NFC on write (see
-     * getValidKey()), so an element's ancestors may still be stored in decomposed (NFD) form
-     * from before that normalization existed - the two forms of mismatch are independent and
-     * both need a candidate:
+     * getValidKey()), so an arbitrary number of trailing path segments may be freshly created
+     * (NFC-stored) while an arbitrary-depth ancestor prefix is still stored in legacy
+     * decomposed (NFD) form from before that normalization existed - and the caller (e.g. a
+     * browser's webkitdirectory/File System Access API on macOS) has no way to know where that
+     * boundary is, so every accented segment arrives in NFD form regardless.
      *
-     * - dirname unchanged, final key normalized to NFC: resolves a freshly created element
-     *   whose parent path is still stored in legacy NFD form.
-     * - the full path normalized to NFC: resolves a lookup path where every segment - parent
-     *   and key alike - was freshly created (and is thus NFC-stored) in the same operation,
-     *   but the incoming request path still arrives in decomposed (NFD) form, e.g. a browser's
-     *   webkitdirectory/File System Access API on macOS.
+     * Candidates therefore normalize progressively longer *trailing* suffixes of the path to
+     * NFC, from "just the final segment" up to "the entire path", leaving the remaining prefix
+     * byte-for-byte untouched in each candidate:
      *
-     * It is intentionally not applied unconditionally in correctPath(), since that would break
-     * the exact-path lookup for elements whose key is still stored in NFD form.
+     * - path `/Legacy café/New café/Child café` stored as NFD/NFC/NFC (the middle and last
+     *   segment freshly created under a legacy first segment) is resolved by the
+     *   "last 2 segments normalized" candidate, without touching the still-NFD first segment.
+     * - a lookup path where every segment was freshly created in the same operation is
+     *   resolved by the "entire path normalized" candidate (the last one tried).
+     *
+     * This is intentionally not applied unconditionally in correctPath(), since that would
+     * break the exact-path lookup for elements whose key is still stored in NFD form.
      *
      * @internal
      *
@@ -843,21 +848,20 @@ class Service extends Model\AbstractModel
      */
     public static function getNfcFallbackPathCandidates(string $path): array
     {
-        $candidates = [];
+        $segments = explode('/', $path);
+        $segmentCount = count($segments);
 
-        $lastSlash = strrpos($path, '/');
-        if ($lastSlash !== false) {
-            $dirname = substr($path, 0, $lastSlash + 1);
-            $key = substr($path, $lastSlash + 1);
-            $candidate = $dirname . self::normalizeToNfc($key);
-            if ($candidate !== $path) {
+        $candidates = [];
+        for ($suffixLength = 1; $suffixLength <= $segmentCount; $suffixLength++) {
+            $candidateSegments = $segments;
+            for ($i = $segmentCount - $suffixLength; $i < $segmentCount; $i++) {
+                $candidateSegments[$i] = self::normalizeToNfc($candidateSegments[$i]);
+            }
+
+            $candidate = implode('/', $candidateSegments);
+            if ($candidate !== $path && !in_array($candidate, $candidates, true)) {
                 $candidates[] = $candidate;
             }
-        }
-
-        $fullyNormalized = self::normalizeToNfc($path);
-        if ($fullyNormalized !== $path && !in_array($fullyNormalized, $candidates, true)) {
-            $candidates[] = $fullyNormalized;
         }
 
         return $candidates;
