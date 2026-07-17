@@ -39,7 +39,7 @@ Flag violations and cite the specific rule, not "style". Priority levels are the
 guidelines' own — **must / should / must NOT**.
 
 - **Strict types & coverage** — new PHP files must declare `declare(strict_types=1);`; new/changed signatures should be fully typed. *(must)*
-  (Legacy files may not yet use strict types; don’t require adding it unless the PR already touches the file header.)
+  (Legacy files may not yet use strict types; don't require adding it unless the PR already touches the file header.)
 - **Minimum visibility** — methods/properties `private` by default, opened selectively;
   new classes `@internal` unless deliberately public API. *(must)*
 - **Immutability** — prefer `readonly`; no setters by default, set via constructor;
