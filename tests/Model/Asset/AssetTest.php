@@ -467,7 +467,7 @@ class AssetTest extends ModelTestCase
      * webkitdirectory/File System Access API on macOS - by falling back to the NFC-normalized
      * path once the exact-path lookup misses.
      *
-     * @see \Pimcore\Model\Element\Service::normalizePathToNfc()
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
      */
     public function testGetByPathFallsBackToNfcForNfdLookupPath(): void
     {

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataObject;
 
 use Exception;
+use Normalizer;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
@@ -400,5 +401,75 @@ class ObjectTest extends ModelTestCase
 
         $targetObject->setInput($randomText);
         $targetObject->save();
+    }
+
+    /**
+     * Regression test: DataObject\AbstractObject::getByPath() must resolve an object whose key
+     * is stored precomposed (NFC) when the caller supplies a decomposed (NFD) lookup path -
+     * e.g. a browser's webkitdirectory/File System Access API on macOS - by falling back to
+     * the NFC-normalized path once the exact-path lookup misses. DataObject's getByPath() is
+     * an independently implemented call site of the shared Element\Service fallback, so it
+     * needs its own coverage rather than relying on the Asset regression tests alone.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathFallsBackToNfcForNfdLookupPath(): void
+    {
+        $nfcKey = Normalizer::normalize('nfc-café-' . uniqid(), Normalizer::FORM_C);
+
+        $folder = new DataObject\Folder();
+        $folder->setParentId(1);
+        $folder->setKey($nfcKey);
+        $folder->save();
+
+        $nfdLookupPath = Normalizer::normalize($folder->getFullPath(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $folder->getFullPath(),
+            $nfdLookupPath,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $found = DataObject::getByPath($nfdLookupPath, ['force' => true]);
+
+        $this->assertInstanceOf(DataObject::class, $found);
+        $this->assertSame($folder->getId(), $found->getId());
+    }
+
+    /**
+     * Regression test: DataObject\AbstractObject::getByPath() must still resolve an object
+     * whose key is stored in decomposed (NFD) Unicode form - e.g. created before object keys
+     * were normalized to NFC on write - via an exact-path lookup using that very same NFD
+     * path.
+     *
+     * The model API can no longer persist such a key directly: AbstractObject::save() rejects
+     * it via Service::isValidKey(), which always normalizes to NFC before comparing (#19242).
+     * So the legacy row is created via a valid NFC key first, then rewritten to NFD directly
+     * in the database - bypassing model validation - to simulate a pre-#19242 row.
+     *
+     * @see \Pimcore\Model\Element\Service::correctPath()
+     */
+    public function testGetByPathResolvesLegacyNfdStoredKeyByExactMatch(): void
+    {
+        $nfcKey = Normalizer::normalize('nfd-café-' . uniqid(), Normalizer::FORM_C);
+        $nfdKey = Normalizer::normalize($nfcKey, Normalizer::FORM_D);
+        $this->assertNotSame(
+            $nfcKey,
+            $nfdKey,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $folder = new DataObject\Folder();
+        $folder->setParentId(1);
+        $folder->setKey($nfcKey);
+        $folder->save();
+
+        $lookupPath = $folder->getRealPath() . $nfdKey;
+
+        Db::get()->update('objects', ['key' => $nfdKey], ['id' => $folder->getId()]);
+
+        $found = DataObject::getByPath($lookupPath, ['force' => true]);
+
+        $this->assertInstanceOf(DataObject::class, $found);
+        $this->assertSame($folder->getId(), $found->getId());
     }
 }
