@@ -156,7 +156,15 @@ class Document extends Element\AbstractElement
             );
 
             $doc = static::getById($helperDoc->getId(), $params);
-            RuntimeCache::set($cacheKey, $doc);
+
+            // cache under the resolved document's own real path, not the raw lookup path - an
+            // NFC fallback candidate may have matched instead of $path, and caching under an
+            // alias that move/delete never invalidates (they only clear
+            // getPathCacheKey($this->getRealFullPath()), see delete()) would keep returning a
+            // moved or deleted document to a later lookup by that same alias
+            if ($doc) {
+                RuntimeCache::set(self::getPathCacheKey($doc->getRealFullPath()), $doc);
+            }
         } catch (NotFoundException $e) {
             $doc = null;
         }

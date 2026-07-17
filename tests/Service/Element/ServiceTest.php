@@ -15,7 +15,7 @@ namespace Pimcore\Tests\Service\Element;
 
 use Normalizer;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -259,29 +259,104 @@ class ServiceTest extends TestCase
 
     /**
      * Regression test: getByPath() is a public API that accepts arbitrary caller-supplied
-     * strings, but AbstractElement::MAX_FULL_PATH_LENGTH is only enforced at save time - no
+     * strings, but ElementInterface::MAX_FULL_PATH_LENGTH is only enforced at save time - no
      * real element can ever be stored with a longer path. Without a bound here, an overlength,
      * heavily decomposed (NFD) path would still generate and attempt one fallback candidate per
-     * path segment. getByPathWithNfcFallback() must skip fallback entirely once the path is
-     * already too long to belong to any real element, rather than doing that work only to miss
-     * every candidate anyway.
+     * path segment. getByPathWithNfcFallback() must skip fallback entirely once even the
+     * shortest possible candidate - the fully NFC-normalized path - is already too long to
+     * belong to any real element, rather than doing that work only to miss every candidate
+     * anyway.
      *
      * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
      */
     public function testGetByPathWithNfcFallbackSkipsFallbackForOverlengthPath(): void
     {
-        $segment = Normalizer::normalize('café', Normalizer::FORM_D);
-        $overlengthPath = str_repeat('/' . $segment, (int) ceil((AbstractElement::MAX_FULL_PATH_LENGTH + 10) / (mb_strlen($segment) + 1)));
+        // a run of the same precomposed accented character so that NFD-normalizing it doubles
+        // its length (base + combining mark each), while keeping the NFC form compact
+        $nfcSegment = str_repeat(Normalizer::normalize('é', Normalizer::FORM_C), 260);
+        $nfdSegment = Normalizer::normalize($nfcSegment, Normalizer::FORM_D);
+        $this->assertNotSame($nfcSegment, $nfdSegment, 'Test fixture setup issue.');
+
+        $overlengthPath = "/$nfdSegment/$nfdSegment/$nfdSegment";
+        $fullyNormalizedLength = mb_strlen(Normalizer::normalize($overlengthPath, Normalizer::FORM_C));
         $this->assertGreaterThan(
-            AbstractElement::MAX_FULL_PATH_LENGTH,
-            mb_strlen($overlengthPath),
-            'Test fixture setup issue: the path must exceed the maximum length no real element can have.'
+            ElementInterface::MAX_FULL_PATH_LENGTH,
+            $fullyNormalizedLength,
+            'Test fixture setup issue: even the fully NFC-normalized form must exceed the maximum length no real element could have.'
         );
 
         $this->assertSame(
             [$overlengthPath],
             $this->recordAttemptedPaths($overlengthPath),
-            'No fallback candidates should be attempted for a path longer than any real element could have.'
+            'No fallback candidates should be attempted when even the fully NFC-normalized path is longer than any real element could have.'
+        );
+    }
+
+    /**
+     * Regression test: NFD-decomposing a path can noticeably lengthen it (a single precomposed
+     * character can become a base character plus a combining mark), so a path whose fully
+     * NFC-normalized form fits within ElementInterface::MAX_FULL_PATH_LENGTH - and could
+     * therefore be a real, storable element - may still exceed that length in its raw,
+     * decomposed form. getByPathWithNfcFallback() must judge the length bound by the shortest
+     * possible candidate (the fully normalized path), not the raw input, or it would incorrectly
+     * refuse to even attempt a fallback that could otherwise resolve.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackStillAttemptsFallbackWhenOnlyDecomposedFormIsOverlength(): void
+    {
+        $nfcSegment = str_repeat(Normalizer::normalize('é', Normalizer::FORM_C), 250);
+        $nfdSegment = Normalizer::normalize($nfcSegment, Normalizer::FORM_D);
+        $this->assertNotSame($nfcSegment, $nfdSegment, 'Test fixture setup issue.');
+
+        $lookupPath = "/$nfdSegment/$nfdSegment/$nfdSegment";
+        $fullyNormalizedPath = Normalizer::normalize($lookupPath, Normalizer::FORM_C);
+
+        $this->assertGreaterThan(
+            ElementInterface::MAX_FULL_PATH_LENGTH,
+            mb_strlen($lookupPath),
+            'Test fixture setup issue: the raw decomposed path must exceed the maximum length.'
+        );
+        $this->assertLessThanOrEqual(
+            ElementInterface::MAX_FULL_PATH_LENGTH,
+            mb_strlen($fullyNormalizedPath),
+            'Test fixture setup issue: the fully NFC-normalized form must still fit within the maximum length any real element could have.'
+        );
+
+        $this->assertContains(
+            $fullyNormalizedPath,
+            $this->recordAttemptedPaths($lookupPath),
+            'A path whose decomposed form exceeds the limit but whose NFC-normalized form does not must still be attempted as a fallback candidate.'
+        );
+    }
+
+    /**
+     * Regression test: a path within the maximum real path length can still be split into far
+     * more segments than any realistic element hierarchy would have (e.g. many short accented
+     * segments). Without a cap independent of total path length, a miss on such a path would
+     * generate and attempt one fallback candidate per segment. getByPathWithNfcFallback() must
+     * bound the number of candidates attempted to a small, fixed number regardless of segment
+     * count.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackCapsNumberOfCandidates(): void
+    {
+        $segment = Normalizer::normalize('é', Normalizer::FORM_D);
+        $segmentCount = 100;
+        $path = str_repeat('/' . $segment, $segmentCount);
+        $this->assertLessThanOrEqual(
+            ElementInterface::MAX_FULL_PATH_LENGTH,
+            mb_strlen(Normalizer::normalize($path, Normalizer::FORM_C)),
+            'Test fixture setup issue: the fully normalized path must still fit within the length limit.'
+        );
+
+        $attempted = $this->recordAttemptedPaths($path);
+
+        $this->assertLessThan(
+            $segmentCount,
+            count($attempted),
+            'The number of fallback candidates attempted must be bounded to a small fixed number, not one per path segment.'
         );
     }
 
