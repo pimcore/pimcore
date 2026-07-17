@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\Asset;
 
 use Exception;
 use Normalizer;
+use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
@@ -427,23 +428,34 @@ class AssetTest extends ModelTestCase
      * decomposed (NFD) Unicode form - e.g. created before element keys were normalized to NFC
      * on write - via an exact-path lookup using that very same NFD path.
      *
+     * The model API can no longer persist such a key directly: Asset::save() -> correctPath()
+     * rejects it via Service::isValidKey(), which itself always normalizes to NFC before
+     * comparing (see #19242). So the legacy row is created via a valid NFC key first, then
+     * rewritten to NFD directly in the database - bypassing model validation - to simulate a
+     * pre-#19242 row.
+     *
      * @see \Pimcore\Model\Element\Service::correctPath()
      */
     public function testGetByPathResolvesLegacyNfdStoredKeyByExactMatch(): void
     {
-        $nfdKey = Normalizer::normalize('nfd-café-' . uniqid(), Normalizer::FORM_D);
+        $nfcKey = Normalizer::normalize('nfd-café-' . uniqid(), Normalizer::FORM_C);
+        $nfdKey = Normalizer::normalize($nfcKey, Normalizer::FORM_D);
         $this->assertNotSame(
+            $nfcKey,
             $nfdKey,
-            Normalizer::normalize($nfdKey, Normalizer::FORM_C),
             'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
         );
 
         $folder = new Asset\Folder();
         $folder->setParentId(1);
-        $folder->setFilename($nfdKey);
+        $folder->setFilename($nfcKey);
         $folder->save();
 
-        $found = Asset::getByPath($folder->getFullPath());
+        $lookupPath = $folder->getRealPath() . $nfdKey;
+
+        Db::get()->update('assets', ['filename' => $nfdKey], ['id' => $folder->getId()]);
+
+        $found = Asset::getByPath($lookupPath, ['force' => true]);
 
         $this->assertInstanceOf(Asset::class, $found);
         $this->assertSame($folder->getId(), $found->getId());
