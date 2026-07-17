@@ -335,6 +335,11 @@ class CustomReportController extends UserAwareController
             throw new InvalidArgumentException($exportFileName . ' is not a valid csv file.');
         }
 
+        $currentUserId = $this->getPimcoreUser()?->getId();
+        if (!preg_match('/^report-export-(\d+)-/', $exportFileName, $matches) || (int) $matches[1] !== $currentUserId) {
+            throw new AccessDeniedHttpException('You are not allowed to access this export file.');
+        }
+
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $exportFileName;
     }
 
@@ -380,7 +385,7 @@ class CustomReportController extends UserAwareController
         ++$offset;
 
         if (!($exportFile = $request->query->getString('exportFile'))) {
-            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
+            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . $this->getPimcoreUser()?->getId() . '-' . uniqid() . '.csv';
             @unlink($exportFile);
         } else {
             $exportFile = $this->getTemporaryFileFromFileName($exportFile);
