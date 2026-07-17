@@ -172,6 +172,48 @@ class ServiceTest extends TestCase
     }
 
     /**
+     * Regression test: a lookup path may have any number of trailing segments freshly created
+     * (NFC-stored) below an ancestor still stored in legacy decomposed (NFD) form - the caller
+     * (e.g. a browser submitting every accented segment in NFD) has no way to know where that
+     * boundary is, so a mixed hierarchy more than one level deep must still resolve. The
+     * "normalize the last 2 segments, leave the legacy first segment untouched" candidate must
+     * be offered, and before the "normalize the entire path" candidate.
+     *
+     * @see \Pimcore\Model\Element\Service::getNfcFallbackPathCandidates()
+     */
+    public function testGetNfcFallbackPathCandidatesHandlesNestedMixedHierarchy(): void
+    {
+        $nfdLegacySegment = Normalizer::normalize('Legacy café', Normalizer::FORM_D);
+        $nfcMiddleSegment = Normalizer::normalize('New café', Normalizer::FORM_C);
+        $nfdMiddleSegment = Normalizer::normalize($nfcMiddleSegment, Normalizer::FORM_D);
+        $nfcLastSegment = Normalizer::normalize('Child café', Normalizer::FORM_C);
+        $nfdLastSegment = Normalizer::normalize($nfcLastSegment, Normalizer::FORM_D);
+
+        // the actual stored path: legacy first segment still NFD, the two freshly created
+        // segments below it NFC
+        $storedPath = "/$nfdLegacySegment/$nfcMiddleSegment/$nfcLastSegment";
+
+        // what a browser submits: every accented segment in NFD, since it cannot tell which
+        // segments are legacy and which are freshly created
+        $lookupPath = "/$nfdLegacySegment/$nfdMiddleSegment/$nfdLastSegment";
+        $this->assertNotSame($storedPath, $lookupPath, 'Test fixture setup issue.');
+
+        $candidates = Service::getNfcFallbackPathCandidates($lookupPath);
+        $fullyNormalized = Normalizer::normalize($lookupPath, Normalizer::FORM_C);
+
+        $this->assertContains(
+            $storedPath,
+            $candidates,
+            'Normalizing only the trailing 2 segments (leaving the legacy first segment as NFD) must be offered as a candidate.'
+        );
+        $this->assertLessThan(
+            array_search($fullyNormalized, $candidates, true),
+            array_search($storedPath, $candidates, true),
+            'The candidate preserving the legacy segment must be tried before the fully normalized path.'
+        );
+    }
+
+    /**
      * If the path is already fully NFC-normalized, no fallback candidates are produced -
      * getByPathWithNfcFallback() must not retry with a path identical to the one that just
      * missed.
