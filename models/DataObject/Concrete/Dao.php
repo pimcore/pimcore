@@ -129,12 +129,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function getData(): void
     {
-        $sql = 'SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?';
-        if (!DataObject\AbstractObject::isLockingDisabled()) {
-            $sql .= ' FOR UPDATE';
-        }
-
-        if (!$data = $this->db->fetchAssociative($sql, [$this->model->getId()])) {
+        if (!$data = $this->db->fetchAssociative('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ? FOR UPDATE', [$this->model->getId()])) {
             return;
         }
 
