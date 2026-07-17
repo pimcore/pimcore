@@ -20,17 +20,20 @@ use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Workspace permissions are matched against the element path. A workspace configured on
- * "/perm-test/Car" must NOT apply to the sibling subtree "/perm-test/Carpets", even though
- * the string "/perm-test/Car" is a raw prefix of "/perm-test/Carpets". This guards against a
- * regression where LOCATE()-based matching ignored the path boundary.
+ * "/perm-test/Car" and one configured on the string-prefix sibling "/perm-test/Carpets" must
+ * stay isolated from each other, even though "/perm-test/Car" is a raw prefix of
+ * "/perm-test/Carpets". This guards against a regression where LOCATE()-based matching ignored
+ * the path boundary in either direction.
  *
  * @group model.element.permission
  */
 class WorkspacePermissionPathBoundaryTest extends ModelTestCase
 {
-    private ?User $user = null;
+    /** @var User[] */
+    private array $createdUsers = [];
 
-    private ?User\Role $role = null;
+    /** @var User\Role[] */
+    private array $createdRoles = [];
 
     public function setUp(): void
     {
@@ -40,23 +43,29 @@ class WorkspacePermissionPathBoundaryTest extends ModelTestCase
 
     public function tearDown(): void
     {
-        $this->user?->delete();
-        $this->role?->delete();
+        foreach ($this->createdUsers as $user) {
+            $user->delete();
+        }
+        foreach ($this->createdRoles as $role) {
+            $role->delete();
+        }
+        $this->createdUsers = [];
+        $this->createdRoles = [];
         TestHelper::cleanUp();
         parent::tearDown();
     }
 
-    public function testWorkspaceDoesNotLeakToPrefixSiblingSubtree(): void
+    /**
+     * Ancestor direction (Element\Dao::InheritingPermission via isInheritingPermission):
+     * a workspace on "/perm-test/Car" must not inherit down onto the sibling "/perm-test/Carpets",
+     * whose path shares the "/perm-test/Car" prefix.
+     */
+    public function testAncestorMatchDoesNotLeakToPrefixSibling(): void
     {
-        $root = $this->createFolder('perm-test', 1);
-        $car = $this->createFolder('Car', $root->getId());          // workspace target
-        $carpets = $this->createFolder('Carpets', $root->getId());  // string-prefix sibling
-        $rug = $this->createFolder('rug', $carpets->getId());       // nested under the sibling
-
+        [$root, $car, $carpets, $rug] = $this->createTree();
         $user = $this->createUserWithObjectWorkspace($car);
         $userIds = array_map(intval(...), array_merge($user->getRoles(), [$user->getId()]));
 
-        // --- ancestor direction (Element\Dao::InheritingPermission via isInheritingPermission) ---
         $this->assertSame(
             1,
             $car->getDao()->isInheritingPermission('list', $userIds),
@@ -72,19 +81,39 @@ class WorkspacePermissionPathBoundaryTest extends ModelTestCase
             $rug->getDao()->isInheritingPermission('list', $userIds),
             'workspace on /perm-test/Car must NOT grant list on /perm-test/Carpets/rug'
         );
+    }
 
-        // --- traversal direction (AbstractObject\Dao::getChildAmount EXISTS subquery) ---
-        // As the workspace user, expanding /perm-test must list "Car" (own workspace) but NOT the
-        // sibling "Carpets" (no workspace at or below it).
-        $listableChildren = $root->getDao()->getChildAmount(
-            [DataObject::OBJECT_TYPE_FOLDER],
-            $user
-        );
+    /**
+     * Traversal / descendant direction (AbstractObject\Dao::getChildAmount EXISTS subquery):
+     * a workspace on the longer sibling "/perm-test/Carpets" must not make the shorter
+     * prefix-sibling "/perm-test/Car" appear as a listable child of "/perm-test". This is the
+     * reverse of the ancestor case: "/perm-test/Car" is a raw prefix of "/perm-test/Carpets".
+     */
+    public function testTraversalMatchDoesNotLeakToPrefixSibling(): void
+    {
+        [$root, $car, $carpets] = $this->createTree();
+        $user = $this->createUserWithObjectWorkspace($carpets);
+
+        $listableChildren = $root->getDao()->getChildAmount([DataObject::OBJECT_TYPE_FOLDER], $user);
+
         $this->assertSame(
             1,
             $listableChildren,
-            'tree expand must count only "Car", not the prefix-sibling "Carpets"'
+            'workspace on /perm-test/Carpets must count only "Carpets", not the prefix-sibling "Car"'
         );
+    }
+
+    /**
+     * @return array{0: DataObject\Folder, 1: DataObject\Folder, 2: DataObject\Folder, 3: DataObject\Folder}
+     */
+    private function createTree(): array
+    {
+        $root = $this->createFolder('perm-test', 1);
+        $car = $this->createFolder('Car', $root->getId());
+        $carpets = $this->createFolder('Carpets', $root->getId());
+        $rug = $this->createFolder('rug', $carpets->getId());
+
+        return [$root, $car, $carpets, $rug];
     }
 
     private function createFolder(string $key, int $parentId): DataObject\Folder
@@ -111,7 +140,7 @@ class WorkspacePermissionPathBoundaryTest extends ModelTestCase
         $workspace->setView(true);
         $role->setWorkspacesObject([$workspace]);
         $role->save();
-        $this->role = $role;
+        $this->createdRoles[] = $role;
 
         $user = new User();
         $user->setParentId(0);
@@ -121,7 +150,7 @@ class WorkspacePermissionPathBoundaryTest extends ModelTestCase
         $user->setPermissions(['objects']);
         $user->setRoles([$role->getId()]);
         $user->save();
-        $this->user = $user;
+        $this->createdUsers[] = $user;
 
         return $user;
     }
