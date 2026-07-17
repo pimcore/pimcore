@@ -499,7 +499,7 @@ class AssetTest extends ModelTestCase
      * at normalizing only the final segment; it needs to try normalizing progressively longer
      * trailing suffixes of the path.
      *
-     * @see \Pimcore\Model\Element\Service::getNfcFallbackPathCandidates()
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
      */
     public function testGetByPathResolvesNestedMixedHierarchy(): void
     {

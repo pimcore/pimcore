@@ -829,30 +829,34 @@ class Service extends Model\AbstractModel
      * browser's webkitdirectory/File System Access API on macOS) has no way to know where that
      * boundary is, so every accented segment arrives in NFD form regardless.
      *
-     * Candidates therefore normalize progressively longer *trailing* suffixes of the path to
-     * NFC, from "just the final segment" up to "the entire path", leaving the remaining prefix
-     * byte-for-byte untouched in each candidate:
+     * Candidates therefore normalize progressively shorter *trailing* suffixes of the path to
+     * NFC, from "the entire path" down to "just the final segment", leaving the remaining
+     * prefix byte-for-byte untouched in each candidate. The entire-path candidate is tried
+     * first because the common case - and the one motivating this fix - is an entire subtree
+     * freshly created in the same operation (e.g. a Studio folder upload), where every segment
+     * is NFC-stored; trying the narrowest candidates first would cost one DAO query per path
+     * depth for that common case before ever reaching the one that matches. A legacy ancestor
+     * mixed with freshly created descendants is the rarer case and can afford the extra
+     * queries down to the shorter suffixes:
      *
+     * - a lookup path where every segment was freshly created in the same operation is
+     *   resolved by the "entire path normalized" candidate (the first one tried).
      * - path `/Legacy café/New café/Child café` stored as NFD/NFC/NFC (the middle and last
      *   segment freshly created under a legacy first segment) is resolved by the
      *   "last 2 segments normalized" candidate, without touching the still-NFD first segment.
-     * - a lookup path where every segment was freshly created in the same operation is
-     *   resolved by the "entire path normalized" candidate (the last one tried).
      *
      * This is intentionally not applied unconditionally in correctPath(), since that would
      * break the exact-path lookup for elements whose key is still stored in NFD form.
      *
-     * @internal
-     *
      * @return string[]
      */
-    public static function getNfcFallbackPathCandidates(string $path): array
+    private static function getNfcFallbackPathCandidates(string $path): array
     {
         $segments = explode('/', $path);
         $segmentCount = count($segments);
 
         $candidates = [];
-        for ($suffixLength = 1; $suffixLength <= $segmentCount; $suffixLength++) {
+        for ($suffixLength = $segmentCount; $suffixLength >= 1; $suffixLength--) {
             $candidateSegments = $segments;
             for ($i = $segmentCount - $suffixLength; $i < $segmentCount; $i++) {
                 $candidateSegments[$i] = self::normalizeToNfc($candidateSegments[$i]);

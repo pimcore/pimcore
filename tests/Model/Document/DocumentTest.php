@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Model\Document;
 use Exception;
 use Normalizer;
 use Pimcore\Db;
+use Pimcore\Db\Helper as DbHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Email;
@@ -442,7 +443,8 @@ class DocumentTest extends ModelTestCase
 
         $lookupPath = $folder->getRealPath() . $nfdKey;
 
-        Db::get()->update('documents', ['key' => $nfdKey], ['id' => $folder->getId()]);
+        $db = Db::get();
+        $db->update('documents', DbHelper::quoteDataIdentifiers($db, ['key' => $nfdKey]), ['id' => $folder->getId()]);
 
         $found = Document::getByPath($lookupPath, ['force' => true]);
 

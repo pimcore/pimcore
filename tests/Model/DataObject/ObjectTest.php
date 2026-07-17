@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Model\DataObject;
 use Exception;
 use Normalizer;
 use Pimcore\Db;
+use Pimcore\Db\Helper as DbHelper;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\Element\Service;
@@ -465,7 +466,8 @@ class ObjectTest extends ModelTestCase
 
         $lookupPath = $folder->getRealPath() . $nfdKey;
 
-        Db::get()->update('objects', ['key' => $nfdKey], ['id' => $folder->getId()]);
+        $db = Db::get();
+        $db->update('objects', DbHelper::quoteDataIdentifiers($db, ['key' => $nfdKey]), ['id' => $folder->getId()]);
 
         $found = DataObject::getByPath($lookupPath, ['force' => true]);
 
