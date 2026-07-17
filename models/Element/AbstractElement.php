@@ -41,6 +41,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     use RecursionBlockingEventDispatchHelperTrait;
 
     /**
+     * The maximum length, in characters, of an element's full path. No element can ever be
+     * saved with a longer path (see validatePathLength()), so this also bounds how much work a
+     * getByPath() lookup needs to do for a path that cannot possibly match anything.
+     */
+    final public const MAX_FULL_PATH_LENGTH = 765;
+
+    /**
      * @internal
      */
     protected ?Model\Dependency $dependencies = null;
@@ -561,8 +568,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected function validatePathLength(): void
     {
-        if (mb_strlen($this->getRealFullPath()) > 765) {
-            throw new Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
+        if (mb_strlen($this->getRealFullPath()) > self::MAX_FULL_PATH_LENGTH) {
+            throw new Exception('Full path is limited to ' . self::MAX_FULL_PATH_LENGTH . " characters, reduce the length of your parent's path");
         }
     }
 

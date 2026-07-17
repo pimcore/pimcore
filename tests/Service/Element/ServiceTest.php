@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Service\Element;
 
 use Normalizer;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -253,6 +254,34 @@ class ServiceTest extends TestCase
             [$nfc],
             $this->recordAttemptedPaths($nfc),
             'No fallback candidates should be attempted when the path is already fully NFC.'
+        );
+    }
+
+    /**
+     * Regression test: getByPath() is a public API that accepts arbitrary caller-supplied
+     * strings, but AbstractElement::MAX_FULL_PATH_LENGTH is only enforced at save time - no
+     * real element can ever be stored with a longer path. Without a bound here, an overlength,
+     * heavily decomposed (NFD) path would still generate and attempt one fallback candidate per
+     * path segment. getByPathWithNfcFallback() must skip fallback entirely once the path is
+     * already too long to belong to any real element, rather than doing that work only to miss
+     * every candidate anyway.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackSkipsFallbackForOverlengthPath(): void
+    {
+        $segment = Normalizer::normalize('café', Normalizer::FORM_D);
+        $overlengthPath = str_repeat('/' . $segment, (int) ceil((AbstractElement::MAX_FULL_PATH_LENGTH + 10) / (mb_strlen($segment) + 1)));
+        $this->assertGreaterThan(
+            AbstractElement::MAX_FULL_PATH_LENGTH,
+            mb_strlen($overlengthPath),
+            'Test fixture setup issue: the path must exceed the maximum length no real element can have.'
+        );
+
+        $this->assertSame(
+            [$overlengthPath],
+            $this->recordAttemptedPaths($overlengthPath),
+            'No fallback candidates should be attempted for a path longer than any real element could have.'
         );
     }
 
