@@ -21,6 +21,7 @@ use Pimcore\Tool\Admin;
 use Pimcore\Tool\Serialize;
 use Sabre\DAV;
 use Sabre\DAV\Exception\Forbidden;
+use Sabre\DAV\Exception\NotFound;
 
 /**
  * @internal
@@ -61,6 +62,9 @@ class Tree extends DAV\Tree
                     // be used elsewhere in the project that users/collaborators given only WebDav access have
                     // no control nor access.
                     $sourceAsset = Asset::getByPath('/' . $sourcePath);
+                    if (!$sourceAsset) {
+                        throw new NotFound('Source asset not found');
+                    }
                     $asset->setData($sourceAsset->getData());
 
                 }
@@ -68,20 +72,31 @@ class Tree extends DAV\Tree
                 // see: Asset\WebDAV\File::delete() why this is necessary
                 $log = Asset\WebDAV\Service::getDeleteLog();
                 if (!$asset && array_key_exists('/' .$destinationPath, $log)) {
-                    $asset = Serialize::unserialize($log['/' . $destinationPath]['data'], false);
-                    if ($asset) {
+                    $unserializedAsset = Serialize::unserialize($log['/' . $destinationPath]['data'], true);
+                    if ($unserializedAsset instanceof Asset) {
                         $sourceAsset = Asset::getByPath('/' . $sourcePath);
-                        $asset->setData($sourceAsset->getData());
+                        if (!$sourceAsset) {
+                            throw new NotFound('Source asset not found');
+                        }
+                        $unserializedAsset->setData($sourceAsset->getData());
+                        $asset = $unserializedAsset;
                     }
                 }
 
                 if (!$asset) {
                     $asset = Asset::getByPath('/' . $sourcePath);
+                    if (!$asset) {
+                        throw new NotFound('Source asset not found');
+                    }
                 }
                 $asset->setFilename(basename($destinationPath));
             } else {
                 $asset = Asset::getByPath('/' . $sourcePath);
                 $parent = Asset::getByPath('/' . dirname($destinationPath));
+
+                if (!$asset || !$parent) {
+                    throw new NotFound('Source asset or destination folder not found');
+                }
 
                 $asset->setPath($parent->getRealFullPath() . '/');
                 $asset->setParentId($parent->getId());

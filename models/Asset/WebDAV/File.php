@@ -49,6 +49,9 @@ class File extends DAV\File
     {
         if ($this->asset->isAllowed('rename')) {
             $user = AdminTool::getCurrentUser();
+            if ($user === null) {
+                throw new DAV\Exception\Forbidden('No authenticated user available');
+            }
             $this->asset->setUserModification($user->getId());
 
             $this->asset->setFilename(Element\Service::getValidKey($name, 'asset'));
@@ -107,21 +110,32 @@ class File extends DAV\File
         if ($this->asset->isAllowed('publish')) {
             // read from resource -> default for SabreDAV
             $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-dav-tmp-file-' . uniqid();
-            file_put_contents($tmpFile, $data);
-            $file = fopen($tmpFile, 'r+', false, FileHelper::getContext());
+            $file = null;
 
-            $user = AdminTool::getCurrentUser();
-            $this->asset->setUserModification($user->getId());
+            try {
+                if (file_put_contents($tmpFile, $data) === false) {
+                    throw new DAV\Exception('Unable to write temporary file');
+                }
+                $file = fopen($tmpFile, 'r+', false, FileHelper::getContext());
 
-            $this->asset->setStream($file);
-            $this->asset->save();
+                $user = AdminTool::getCurrentUser();
+                if ($user === null) {
+                    throw new DAV\Exception\Forbidden('No authenticated user available');
+                }
+                $this->asset->setUserModification($user->getId());
 
-            if (is_resource($file)) {
-                fclose($file);
+                $this->asset->setStream($file);
+                $this->asset->save();
+
+                return null;
+            } finally {
+                if (is_resource($file)) {
+                    fclose($file);
+                }
+                if (file_exists($tmpFile)) {
+                    unlink($tmpFile);
+                }
             }
-            unlink($tmpFile);
-
-            return null;
         }
 
         throw new DAV\Exception\Forbidden();

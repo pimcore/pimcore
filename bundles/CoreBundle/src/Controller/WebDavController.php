@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * This source file is available under the terms of the
@@ -27,6 +28,12 @@ class WebDavController extends Controller
     {
         $homeDir = Asset::getById(1);
 
+        if (!$homeDir) {
+            Logger::error('WebDAV: home directory asset (ID 1) not found');
+
+            exit;
+        }
+
         try {
             $publicDir = new Asset\WebDAV\Folder($homeDir);
             $objectTree = new Asset\WebDAV\Tree($publicDir);
@@ -43,7 +50,9 @@ class WebDavController extends Controller
             $server->addPlugin($lockPlugin);
 
             // browser plugin
-            $server->addPlugin(new \Sabre\DAV\Browser\Plugin());
+            if (\Pimcore::inDebugMode()) {
+                $server->addPlugin(new \Sabre\DAV\Browser\Plugin());
+            }
 
             $server->start();
         } catch (Exception $e) {
