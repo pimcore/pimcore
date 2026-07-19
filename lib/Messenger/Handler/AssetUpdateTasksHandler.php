@@ -46,32 +46,42 @@ class AssetUpdateTasksHandler
 
         $asset->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
 
-        if ($asset instanceof Asset\Image) {
-            $this->processImage($asset);
-        } elseif ($asset instanceof Asset\Document) {
-            $this->processDocument($asset);
-        } elseif ($asset instanceof Asset\Video) {
-            $this->processVideo($asset);
+        try {
+            if ($asset instanceof Asset\Image) {
+                $this->processImage($asset);
+            } elseif ($asset instanceof Asset\Document) {
+                $this->processDocument($asset);
+            } elseif ($asset instanceof Asset\Video) {
+                $this->processVideo($asset);
+            }
+        } finally {
+            // release the queue lock and clean up temporary files even if processing failed
+            $this->longRunningHelper->deleteTemporaryFiles();
+            $this->lockFactory->createLock($asset->getUpdateQueueLockId())->release();
         }
-
-        $this->longRunningHelper->deleteTemporaryFiles();
-        $this->lockFactory->createLock($asset->getUpdateQueueLockId())->release();
     }
 
-    private function saveAsset(Asset $asset, array $saveParams = []): void
+    private function saveAsset(Asset $asset): void
     {
+        // Version::disable() flips a process-wide flag, so it must always be re-enabled -
+        // even if save() throws - otherwise versioning stays disabled for every subsequent
+        // asset handled by this (long-running) worker.
         Version::disable();
-        $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
-        $asset->save($saveParams);
-        Version::enable();
+        try {
+            $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
+            $asset->save();
+        } finally {
+            Version::enable();
+        }
     }
 
     private function processDocument(Asset\Document $asset): void
     {
-        $save = false;
-        if ($asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS()) {
-            $save = true;
-        }
+        // checkIfPdfContainsJS() records the scan status on the asset, so a save is
+        // required to persist it. The $save flag defers that save until after the
+        // (optional) page-count processing and thumbnail generation, so at most one
+        // save happens - and none at all when nothing changed.
+        $save = $asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS();
 
         if ($asset->isPageCountProcessingEnabled()) {
             $pageCount = $asset->getCustomSetting('document_page_count');
