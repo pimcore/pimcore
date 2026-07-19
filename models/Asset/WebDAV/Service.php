@@ -25,6 +25,9 @@ class Service
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/webdav-delete.dat';
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public static function getDeleteLog(): array
     {
         $log = [];

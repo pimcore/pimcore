@@ -107,13 +107,16 @@ class Tree extends DAV\Tree
 
                         // restore the deleted destination's own properties and metadata from the
                         // scalar snapshot, so they survive the delete + create + move round-trip
-                        $this->restoreProperties($asset, $logEntry['properties'] ?? []);
-                        if (!empty($logEntry['metadata'])) {
-                            // the raw assets_metadata.data column IS the internal metadata form:
-                            // element types (asset/document/object) only override getDataForResource(),
-                            // not getDataFromResource(), so references stay ids (scalars). Feeding the
-                            // stored rows back via setMetadataRaw() therefore round-trips on save().
-                            $asset->setMetadataRaw($logEntry['metadata']);
+                        $properties = $logEntry['properties'] ?? [];
+                        $this->restoreProperties($asset, is_array($properties) ? $properties : []);
+
+                        // the raw assets_metadata.data column IS the internal metadata form:
+                        // element types (asset/document/object) only override getDataForResource(),
+                        // not getDataFromResource(), so references stay ids (scalars). Feeding the
+                        // stored rows back via setMetadataRaw() therefore round-trips on save().
+                        $metadata = $logEntry['metadata'] ?? [];
+                        if (is_array($metadata) && $metadata !== []) {
+                            $asset->setMetadataRaw($metadata);
                         }
                     }
                 }
@@ -174,27 +177,31 @@ class Tree extends DAV\Tree
      * cid/cpath are intentionally not set here: Asset::update() assigns them from the target
      * asset when the properties are persisted on save().
      *
-     * @param array<int, array{name: string, type: string, data: mixed, inheritable: mixed}> $rows
+     * @param array<mixed> $rows raw `properties` rows (name, type, data, inheritable) from the delete log
      */
     private function restoreProperties(Asset $asset, array $rows): void
     {
-        if (!$rows) {
-            return;
-        }
-
         $properties = [];
         foreach ($rows as $row) {
-            $property = new Property();
-            $property->setType($row['type']);
-            $property->setName($row['name']);
-            $property->setCtype('asset');
-            $property->setDataFromResource($row['data']);
-            $property->setInherited(false);
-            $property->setInheritable((bool) $row['inheritable']);
+            if (!is_array($row)) {
+                continue;
+            }
 
-            $properties[$row['name']] = $property;
+            $name = (string) ($row['name'] ?? '');
+
+            $property = new Property();
+            $property->setType((string) ($row['type'] ?? ''));
+            $property->setName($name);
+            $property->setCtype('asset');
+            $property->setDataFromResource($row['data'] ?? null);
+            $property->setInherited(false);
+            $property->setInheritable((bool) ($row['inheritable'] ?? false));
+
+            $properties[$name] = $property;
         }
 
-        $asset->setProperties($properties);
+        if ($properties) {
+            $asset->setProperties($properties);
+        }
     }
 }
