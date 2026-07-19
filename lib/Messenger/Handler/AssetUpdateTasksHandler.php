@@ -69,10 +69,8 @@ class AssetUpdateTasksHandler
     private function processDocument(Asset\Document $asset): void
     {
         $save = false;
-        $saveParams = [];
         if ($asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS()) {
             $save = true;
-            $saveParams['versionNote'] = 'PDF scan result';
         }
 
         if ($asset->isPageCountProcessingEnabled()) {
@@ -92,7 +90,7 @@ class AssetUpdateTasksHandler
         }
 
         if ($save) {
-            $this->saveAsset($asset, $saveParams);
+            $this->saveAsset($asset);
         }
     }
 
