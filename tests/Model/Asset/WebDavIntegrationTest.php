@@ -20,11 +20,14 @@ use Pimcore\Model\Asset\WebDAV\Folder as WebDavFolder;
 use Pimcore\Model\Asset\WebDAV\Service;
 use Pimcore\Model\Asset\WebDAV\Tree;
 use Pimcore\Model\User;
+use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Security\User\User as SecurityUser;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use ReflectionProperty;
 use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\Exception\NotFound;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
@@ -75,12 +78,30 @@ class WebDavIntegrationTest extends ModelTestCase
         $this->user = $user;
 
         $token = new UsernamePasswordToken(new SecurityUser($user), 'pimcore_admin');
-        Pimcore::getContainer()->get('security.token_storage')->setToken($token);
+        $this->getTokenStorage()->setToken($token);
     }
 
     private function clearCurrentUser(): void
     {
-        Pimcore::getContainer()->get('security.token_storage')->setToken(null);
+        $this->getTokenStorage()->setToken(null);
+    }
+
+    /**
+     * security.token_storage is a private service, so reach the instance through the public
+     * TokenStorageUserResolver - the exact object Pimcore\Tool\Admin::getCurrentUser() reads from.
+     */
+    private function getTokenStorage(): TokenStorageInterface
+    {
+        $resolver = Pimcore::getContainer()->get(TokenStorageUserResolver::class);
+
+        $property = new ReflectionProperty($resolver, 'tokenStorage');
+        $tokenStorage = $property->getValue($resolver);
+
+        if (!$tokenStorage instanceof TokenStorageInterface) {
+            $this->fail('Unable to resolve the security token storage');
+        }
+
+        return $tokenStorage;
     }
 
     /**
