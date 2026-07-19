@@ -264,6 +264,36 @@ class WebDavIntegrationTest extends ModelTestCase
         $this->assertNull(Asset::getByPath($this->root->getRealFullPath() . '/restore-source.txt'));
     }
 
+    /**
+     * The delete-log restore must also bring back the deleted destination's own properties and
+     * metadata (captured as a scalar snapshot), not just its id.
+     */
+    public function testMoveRestoresDestinationMetadataAndProperties(): void
+    {
+        $dest = $this->createFileAssetIn($this->root, 'meta-target.txt', 'OLD');
+        $dest->setProperty('reviewed', 'text', 'yes');
+        $dest->addMetadata('copyright', 'input', 'ACME');
+        $dest->save();
+        $destId = $dest->getId();
+        $destPath = $dest->getRealFullPath();
+
+        (new WebDavFile($dest))->delete();
+
+        $source = $this->createFileAssetIn($this->root, 'meta-source.txt', 'NEW');
+
+        $this->newTree()->move(
+            $this->davPath($source),
+            ltrim($destPath, '/')
+        );
+
+        $restored = Asset::getById($destId, ['force' => true]);
+        $this->assertInstanceOf(Asset::class, $restored);
+        $this->assertSame($destPath, $restored->getRealFullPath());
+        $this->assertSame('NEW', $restored->getData());
+        $this->assertSame('yes', $restored->getProperty('reviewed'));
+        $this->assertSame('ACME', $restored->getMetadata('copyright'));
+    }
+
     public function testMoveWithMissingSourceThrowsNotFound(): void
     {
         $this->expectException(NotFound::class);

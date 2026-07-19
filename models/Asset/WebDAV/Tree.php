@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
+use Pimcore\Model\Property;
 use Pimcore\Tool\Admin;
 use Sabre\DAV;
 use Sabre\DAV\Exception\Forbidden;
@@ -80,7 +81,8 @@ class Tree extends DAV\Tree
                     // delete + create + move). Re-create it from the source content while reusing
                     // the deleted asset's id, so hardcoded references to that id stay valid.
                     // save() re-inserts the row via upsert; the source asset is removed below.
-                    $restoredId = $log['/' . $destinationPath]['id'] ?? null;
+                    $logEntry = $log['/' . $destinationPath];
+                    $restoredId = $logEntry['id'] ?? null;
                     if ($restoredId !== null) {
                         $asset = Asset::create($sourceAsset->getParentId(), [
                             'filename' => basename($destinationPath),
@@ -91,6 +93,13 @@ class Tree extends DAV\Tree
                         // destination lives in the same folder as the source; set the path now
                         // so the permission check below sees the correct workspace location
                         $asset->setPath((string) $sourceAsset->getRealPath());
+
+                        // restore the deleted destination's own properties and metadata from the
+                        // scalar snapshot, so they survive the delete + create + move round-trip
+                        $this->restoreProperties($asset, $logEntry['properties'] ?? []);
+                        if (!empty($logEntry['metadata'])) {
+                            $asset->setMetadataRaw($logEntry['metadata']);
+                        }
                     }
                 }
 
@@ -140,5 +149,34 @@ class Tree extends DAV\Tree
 
             throw $e;
         }
+    }
+
+    /**
+     * Rebuilds an asset's own properties from the scalar rows captured in the delete log
+     * (see Asset\WebDAV\File::delete()). Mirrors how Asset\Dao::getProperties() hydrates
+     * properties from the database, so setDataFromResource() receives the raw scalar value.
+     *
+     * @param array<int, array{name: string, type: string, data: mixed, inheritable: mixed}> $rows
+     */
+    private function restoreProperties(Asset $asset, array $rows): void
+    {
+        if (!$rows) {
+            return;
+        }
+
+        $properties = [];
+        foreach ($rows as $row) {
+            $property = new Property();
+            $property->setType($row['type']);
+            $property->setName($row['name']);
+            $property->setCtype('asset');
+            $property->setDataFromResource($row['data']);
+            $property->setInherited(false);
+            $property->setInheritable((bool) $row['inheritable']);
+
+            $properties[$row['name']] = $property;
+        }
+
+        $asset->setProperties($properties);
     }
 }

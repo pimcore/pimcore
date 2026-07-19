@@ -73,16 +73,31 @@ class File extends DAV\File
             $path = $this->asset->getRealFullPath();
             $id = $this->asset->getId();
 
+            // Snapshot the asset's own properties and metadata as plain scalar rows *before*
+            // deleting, so the destination can be restored on a delete + create + move (see
+            // Asset\WebDAV\Tree::move()). Only scalars are stored, so the delete log never
+            // needs to deserialize objects.
+            $db = \Pimcore\Db::get();
+            $properties = $db->fetchAllAssociative(
+                "SELECT `name`, `type`, `data`, `inheritable` FROM properties WHERE cid = ? AND ctype = 'asset'",
+                [$id]
+            );
+            $metadata = $db->fetchAllAssociative(
+                'SELECT `name`, `type`, `data`, `language` FROM assets_metadata WHERE cid = ?',
+                [$id]
+            );
+
             $this->asset->delete();
 
-            // record the deleted asset's id, this is used to work around programs like
-            // photoshop that replace a file via delete + create instead of an overwrite
-            // (=> move). Only the id is stored so the destination can keep it and thus
-            // preserve any hardcoded references. For details see Asset\WebDAV\Tree::move().
+            // record the deleted asset's id (plus the scalar property/metadata snapshot) so
+            // the destination can keep its id - and thus any hardcoded references - and its
+            // metadata across a delete + create + move. For details see Asset\WebDAV\Tree::move().
             $log = Asset\WebDAV\Service::getDeleteLog();
             $log[$path] = [
                 'id' => $id,
                 'timestamp' => time(),
+                'properties' => $properties,
+                'metadata' => $metadata,
             ];
 
             Asset\WebDAV\Service::saveDeleteLog($log);
