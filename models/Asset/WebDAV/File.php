@@ -70,21 +70,20 @@ class File extends DAV\File
     public function delete(): void
     {
         if ($this->asset->isAllowed('delete')) {
-            Asset\Service::loadAllFields($this->asset);
+            $path = $this->asset->getRealFullPath();
+            $id = $this->asset->getId();
+
             $this->asset->delete();
 
-            // add the asset to the delete history, this is used so come over problems with programs like photoshop (delete, create instead of replace => move)
-            // for details see Asset\WebDAV\Tree::move()
+            // record the deleted asset's id, this is used to work around programs like
+            // photoshop that replace a file via delete + create instead of an overwrite
+            // (=> move). Only the id is stored so the destination can keep it and thus
+            // preserve any hardcoded references. For details see Asset\WebDAV\Tree::move().
             $log = Asset\WebDAV\Service::getDeleteLog();
-
-            $this->asset->setInDumpState(true);
-            $log[$this->asset->getRealFullPath()] = [
-                'id' => $this->asset->getId(),
+            $log[$path] = [
+                'id' => $id,
                 'timestamp' => time(),
-                'data' => \Pimcore\Tool\Serialize::serialize($this->asset),
             ];
-
-            $this->asset->setInDumpState(false);
 
             Asset\WebDAV\Service::saveDeleteLog($log);
         } else {
@@ -117,6 +116,11 @@ class File extends DAV\File
                     throw new DAV\Exception('Unable to write temporary file');
                 }
                 $file = fopen($tmpFile, 'r+', false, FileHelper::getContext());
+                if (!is_resource($file)) {
+                    // Asset::setStream() silently ignores non-resource values, which would
+                    // let save() "succeed" without replacing the data -> fail loudly instead
+                    throw new DAV\Exception('Unable to open temporary file');
+                }
 
                 $user = AdminTool::getCurrentUser();
                 if ($user === null) {

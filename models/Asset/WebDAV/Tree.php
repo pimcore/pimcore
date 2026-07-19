@@ -18,7 +18,6 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin;
-use Pimcore\Tool\Serialize;
 use Sabre\DAV;
 use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\Exception\NotFound;
@@ -71,15 +70,27 @@ class Tree extends DAV\Tree
 
                 // see: Asset\WebDAV\File::delete() why this is necessary
                 $log = Asset\WebDAV\Service::getDeleteLog();
-                if (!$asset && array_key_exists('/' .$destinationPath, $log)) {
-                    $unserializedAsset = Serialize::unserialize($log['/' . $destinationPath]['data'], true);
-                    if ($unserializedAsset instanceof Asset) {
-                        $sourceAsset = Asset::getByPath('/' . $sourcePath);
-                        if (!$sourceAsset) {
-                            throw new NotFound('Source asset not found');
-                        }
-                        $unserializedAsset->setData($sourceAsset->getData());
-                        $asset = $unserializedAsset;
+                if (!$asset && array_key_exists('/' . $destinationPath, $log)) {
+                    $sourceAsset = Asset::getByPath('/' . $sourcePath);
+                    if (!$sourceAsset) {
+                        throw new NotFound('Source asset not found');
+                    }
+
+                    // The destination was already deleted (e.g. Photoshop replaces a file via
+                    // delete + create + move). Re-create it from the source content while reusing
+                    // the deleted asset's id, so hardcoded references to that id stay valid.
+                    // save() re-inserts the row via upsert; the source asset is removed below.
+                    $restoredId = $log['/' . $destinationPath]['id'] ?? null;
+                    if ($restoredId !== null) {
+                        $asset = Asset::create($sourceAsset->getParentId(), [
+                            'filename' => basename($destinationPath),
+                            'data' => $sourceAsset->getData(),
+                            'type' => $sourceAsset->getType(),
+                        ], false);
+                        $asset->setId((int) $restoredId);
+                        // destination lives in the same folder as the source; set the path now
+                        // so the permission check below sees the correct workspace location
+                        $asset->setPath((string) $sourceAsset->getRealPath());
                     }
                 }
 

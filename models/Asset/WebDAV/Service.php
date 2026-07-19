@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\WebDAV;
 
-use Pimcore\Model\Asset;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -32,7 +31,9 @@ class Service
         if (file_exists(self::getDeleteLogFile())) {
             $raw = file_get_contents(self::getDeleteLogFile());
             if (is_string($raw)) {
-                $log = unserialize($raw, ['allowed_classes' => [Asset::class]]);
+                // the delete log only holds scalar entries (path => [id, timestamp]),
+                // so no object instantiation is expected or allowed
+                $log = unserialize($raw, ['allowed_classes' => false]);
             }
 
             if (!is_array($log)) {
@@ -64,6 +65,6 @@ class Service
         }
 
         $filesystem = new Filesystem();
-        $filesystem->dumpFile(Asset\WebDAV\Service::getDeleteLogFile(), serialize($tmpLog));
+        $filesystem->dumpFile(self::getDeleteLogFile(), serialize($tmpLog));
     }
 }

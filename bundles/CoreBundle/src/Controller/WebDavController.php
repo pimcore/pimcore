@@ -18,6 +18,7 @@ use PDO;
 use Pimcore\Controller\Controller;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @internal
@@ -31,7 +32,8 @@ class WebDavController extends Controller
         if (!$homeDir) {
             Logger::error('WebDAV: home directory asset (ID 1) not found');
 
-            exit;
+            // let Symfony emit a proper 404 instead of exiting with an empty 200 response
+            throw new NotFoundHttpException('WebDAV root not found');
         }
 
         try {
