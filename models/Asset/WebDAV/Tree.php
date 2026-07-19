@@ -29,7 +29,18 @@ use Sabre\DAV\Exception\NotFound;
 class Tree extends DAV\Tree
 {
     /**
-     * Moves a file/directory
+     * Moves a file/directory.
+     *
+     * Within the same directory this handles three cases:
+     *  1. the destination still exists -> overwrite it in place (keeps its id/history);
+     *  2. the destination was just deleted and is still in the delete log -> re-create it from
+     *     the source content while reusing the deleted id (see Asset\WebDAV\File::delete());
+     *  3. neither -> a plain rename of the source.
+     * Across directories it is a plain move of the source into the destination folder.
+     *
+     * The delete-log branch exists to support clients (e.g. Photoshop) that replace a file via
+     * delete + create + move instead of an overwrite. That log is a best-effort, ~30s-lived
+     * workaround, which is why the entries are read defensively (missing keys are tolerated).
      *
      * @param string $sourcePath
      * @param string $destinationPath
@@ -98,6 +109,10 @@ class Tree extends DAV\Tree
                         // scalar snapshot, so they survive the delete + create + move round-trip
                         $this->restoreProperties($asset, $logEntry['properties'] ?? []);
                         if (!empty($logEntry['metadata'])) {
+                            // the raw assets_metadata.data column IS the internal metadata form:
+                            // element types (asset/document/object) only override getDataForResource(),
+                            // not getDataFromResource(), so references stay ids (scalars). Feeding the
+                            // stored rows back via setMetadataRaw() therefore round-trips on save().
                             $asset->setMetadataRaw($logEntry['metadata']);
                         }
                     }
@@ -155,6 +170,9 @@ class Tree extends DAV\Tree
      * Rebuilds an asset's own properties from the scalar rows captured in the delete log
      * (see Asset\WebDAV\File::delete()). Mirrors how Asset\Dao::getProperties() hydrates
      * properties from the database, so setDataFromResource() receives the raw scalar value.
+     *
+     * cid/cpath are intentionally not set here: Asset::update() assigns them from the target
+     * asset when the properties are persisted on save().
      *
      * @param array<int, array{name: string, type: string, data: mixed, inheritable: mixed}> $rows
      */
