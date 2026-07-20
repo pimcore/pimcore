@@ -178,4 +178,16 @@ class LinkTest extends ModelTestCase
 
         $this->assertEmpty($link->getHtml());
     }
+
+
+    
+    public function testGetHtmlKeepsZeroAsText(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://pimcore.com');
+        $link->setText('0');
+
+        // "0" is valid link text and must not be treated as empty / fall back to the href.
+        $this->assertEquals('<a href="https://pimcore.com" >0</a>', $link->getHtml());
+    }
 }
