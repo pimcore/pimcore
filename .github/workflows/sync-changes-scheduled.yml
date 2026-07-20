@@ -9,6 +9,10 @@ on:
       - '2026.2'
       - '12.3'
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   sync-branches:
     uses: pimcore/workflows-collection-public/.github/workflows/reusable-sync-changes.yaml@main
