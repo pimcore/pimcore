@@ -220,7 +220,7 @@ abstract class Dao extends Model\Dao\AbstractDao
             WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1
             AND NOT EXISTS( SELECT list FROM users_workspaces_'.$tableSuffix.' WHERE cid = uw.cid AND list = 0 AND userId ='.end($userIds).')
             LIMIT 1',
-            [Helper::escapeLike($path) . '%']);
+            [$this->escapeLikePrefix($path) . '%']);
 
         return (int)$permissionsChildren;
     }
@@ -262,7 +262,7 @@ abstract class Dao extends Model\Dao\AbstractDao
                )',
             [
                 'userIds' => $userIds,
-                'childPrefix' => Helper::escapeLike($childPrefix) . '%',
+                'childPrefix' => $this->escapeLikePrefix($childPrefix) . '%',
                 'currentUserId' => $currentUserId,
             ],
             ['userIds' => ArrayParameterType::INTEGER]
@@ -307,6 +307,8 @@ abstract class Dao extends Model\Dao\AbstractDao
     private function immediateChildSegments(string $childPrefix, array $cpaths): array
     {
         $prefixLength = strlen($childPrefix);
+        // the DB rows were matched with escapeLikePrefix() (backslash-safe), but the raw cpath
+        // values themselves are unescaped, so compare against the unescaped prefix here
         $segments = [];
         foreach ($cpaths as $cpath) {
             if (!str_starts_with($cpath, $childPrefix)) {
@@ -321,5 +323,17 @@ abstract class Dao extends Model\Dao\AbstractDao
         }
 
         return array_keys($segments);
+    }
+
+    /**
+     * Escapes a value for use as a literal prefix in a LIKE pattern. Unlike Helper::escapeLike(),
+     * this also escapes backslashes — they are valid in (object) element keys but are the default
+     * LIKE escape character in MySQL, so leaving them unescaped would corrupt the pattern and drop
+     * legitimate matches. Backslashes are escaped first so the escapes added for "_"/"%" are not
+     * themselves re-escaped.
+     */
+    private function escapeLikePrefix(string $value): string
+    {
+        return Helper::escapeLike(str_replace('\\', '\\\\', $value));
     }
 }

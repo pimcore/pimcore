@@ -205,6 +205,28 @@ class WorkspacePermissionPathBoundaryTest extends ModelTestCase
         );
     }
 
+    /**
+     * A backslash is valid in an object key but is MySQL's default LIKE escape character. Expanding
+     * a folder whose path contains a backslash must still find the allowed workspaces in its
+     * subtree (guards the escapeLikePrefix() handling in buildChildListPermissionCondition()).
+     */
+    public function testObjectChildAmountHandlesBackslashInFolderPath(): void
+    {
+        $root = $this->objectFolder('perm-bslash-' . uniqid(), 1);
+        $backslashFolder = $this->objectFolder('a\\b', $root->getId());
+        $leaf = $this->objectFolder('leaf', $backslashFolder->getId());
+
+        // the grant sits on the descendant "leaf"; listing the backslash folder's children relies
+        // on a LIKE over its backslash-containing path
+        $user = $this->objectUserWithGrants([[$leaf, true]]);
+
+        $this->assertSame(
+            1,
+            $backslashFolder->getDao()->getChildAmount([DataObject::OBJECT_TYPE_FOLDER], $user),
+            'the allowed descendant must be found despite the backslash in the folder path'
+        );
+    }
+
     // ------------------------------------------------------------------ fixtures
 
     /**
