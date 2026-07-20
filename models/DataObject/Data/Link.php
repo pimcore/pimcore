@@ -409,12 +409,15 @@ class Link implements OwnerAwareFieldInterface
             $attribs[] = $this->getAttributes();
         }
 
+        $href = $this->getHref();
         $text = $this->getText();
 
-        if (empty($text)) {
-            $text = $this->getHref();
+        // Fall back to the URL as visible text when no text is set.
+        // Use a strict check so a legitimate "0" text is not treated as empty.
+        if ($text === '') {
+            $text = $href;
 
-            if (empty($text)) {
+            if ($text === '') {
                 return '';
             }
         }
