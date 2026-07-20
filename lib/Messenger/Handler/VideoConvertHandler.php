@@ -31,7 +31,10 @@ class VideoConvertHandler
 
     public function __invoke(VideoConvertMessage $message): void
     {
-        Processor::execute($message->getProcessId());
-        $this->longRunningHelper->deleteTemporaryFiles();
+        try {
+            Processor::execute($message->getProcessId());
+        } finally {
+            $this->longRunningHelper->deleteTemporaryFiles();
+        }
     }
 }
