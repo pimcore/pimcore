@@ -24,7 +24,7 @@ class DataObjectController extends UserAwareController
     #[Route('/relation-objects-list', name: 'pimcore_bundle_search_dataobject_relation_objects_list', methods: ['GET', 'POST'])]
     public function optionsAction(Request $request): JsonResponse
     {
-        $fieldConfig = json_decode($request->request->getString('fieldConfig', $request->query->getString('fieldConfig')), true);
+        $fieldConfig = json_decode($this->getRequestParameter($request, 'fieldConfig'), true);
 
         $options = [];
         $classes = [];
@@ -70,12 +70,12 @@ class DataObjectController extends UserAwareController
         $searchRequest->request->set('class', implode(',', $classes));
         $searchRequest->request->set('fields', $visibleFields);
 
-        $searchRequest->attributes->set('unsavedChanges', $request->request->getString('unsavedChanges', $request->query->getString('unsavedChanges')));
+        $searchRequest->attributes->set('unsavedChanges', $this->getRequestParameter($request, 'unsavedChanges'));
         $res = $this->forward(SearchController::class.'::findAction', ['request' => $searchRequest]);
         $objects = json_decode($res->getContent(), true)['data'];
 
         if ($request->request->has('data') || $request->query->has('data')) {
-            $dataArray = json_decode($request->request->getString('data', $request->query->getString('data')), true);
+            $dataArray = json_decode($this->getRequestParameter($request, 'data'), true);
             if (is_array($dataArray)) {
                 foreach ($dataArray as $preSelectedElement) {
                     if (isset($preSelectedElement['id'], $preSelectedElement['type'])) {
@@ -128,5 +128,18 @@ class DataObjectController extends UserAwareController
         }
 
         return new JsonResponse($options);
+    }
+
+    /**
+     * Reads a request parameter preferring the POST body over the GET query string.
+     *
+     * The values sent to this action (fieldConfig, data, ...) can grow large enough
+     * to exceed the web server's URI length limit, resulting in an HTTP 414 error
+     * when transmitted via GET. Callers therefore send them via POST, while GET is
+     * kept as a fallback for backward compatibility.
+     */
+    protected function getRequestParameter(Request $request, string $key): string
+    {
+        return $request->request->getString($key, $request->query->getString($key));
     }
 }
