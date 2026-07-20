@@ -456,7 +456,7 @@ class Link implements OwnerAwareFieldInterface
      *
      * used for non-nullable properties stored with null (legacy data, see PEES-1217)
      *
-     * @TODO: Remove in Pimcore 13
+     * @TODO: Remove in Pimcore 2026
      */
     public function __unserialize(array $data): void
     {
