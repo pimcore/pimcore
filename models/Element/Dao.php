@@ -224,4 +224,102 @@ abstract class Dao extends Model\Dao\AbstractDao
 
         return (int)$permissionsChildren;
     }
+
+    /**
+     * Builds a boundary-correct, index-usable "listable child" WHERE fragment (against the `o`
+     * alias of the element table) for the children of the current folder, together with its bound
+     * parameters and types.
+     *
+     * A child is listable when the user has an allowed (list=1, not user-denied) workspace on the
+     * child itself or anywhere in its subtree, or when the folder inherits the list permission and
+     * the child is not explicitly denied. The subtree check is resolved with a single folder-scoped
+     * lookup (a constant cpath prefix, so the cpath index range applies) instead of a
+     * LOCATE(cpath) correlated subquery evaluated per child — turning an
+     * O(children * workspace-rows) scan into O(children + workspace-rows).
+     *
+     * @return array{0: string, 1: array<string, mixed>, 2: array<string, ArrayParameterType>}
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    protected function buildChildListPermissionCondition(User $user, string $tableSuffix, string $keyColumn): array
+    {
+        $userIds = $user->getRoles();
+        $userIds[] = $user->getId();
+        $currentUserId = $user->getId();
+        $table = 'users_workspaces_' . $tableSuffix;
+
+        $folderPath = $this->model->getRealFullPath();
+        $childPrefix = $folderPath === '/' ? '/' : $folderPath . '/';
+
+        // the user's allowed (list=1) workspace paths anywhere in this folder's subtree, excluding
+        // paths the current user is explicitly denied on — a single sargable range on cpath
+        $allowedPaths = $this->db->fetchFirstColumn(
+            'SELECT uw.cpath FROM ' . $table . ' uw
+             WHERE uw.userId IN (:userIds) AND uw.list = 1 AND uw.cpath LIKE :childPrefix
+               AND NOT EXISTS(
+                   SELECT 1 FROM ' . $table . ' denied
+                   WHERE denied.userId = :currentUserId AND denied.list = 0 AND denied.cpath = uw.cpath
+               )',
+            [
+                'userIds' => $userIds,
+                'childPrefix' => Helper::escapeLike($childPrefix) . '%',
+                'currentUserId' => $currentUserId,
+            ],
+            ['userIds' => ArrayParameterType::INTEGER]
+        );
+
+        $allowedChildKeys = $this->immediateChildSegments($childPrefix, $allowedPaths);
+
+        $conditions = [];
+        $params = [];
+        $types = [];
+
+        if ($allowedChildKeys !== []) {
+            $conditions[] = 'o.' . $this->db->quoteIdentifier($keyColumn) . ' IN (:allowedChildKeys)';
+            $params['allowedChildKeys'] = $allowedChildKeys;
+            $types['allowedChildKeys'] = ArrayParameterType::STRING;
+        }
+
+        // when the folder inherits list, a child is listable unless it is explicitly denied
+        if ($this->InheritingPermission('list', $userIds, $tableSuffix) !== 0) {
+            $conditions[] = 'NOT EXISTS(
+                SELECT 1 FROM ' . $table . ' deniedChild
+                WHERE deniedChild.userId IN (:deniedUserIds) AND deniedChild.cid = o.id AND deniedChild.list = 0
+            )';
+            $params['deniedUserIds'] = $userIds;
+            $types['deniedUserIds'] = ArrayParameterType::INTEGER;
+        }
+
+        // no allowed subtree and no inherited permission -> no child is listable
+        $condition = $conditions === [] ? '0' : '(' . implode(' OR ', $conditions) . ')';
+
+        return [$condition, $params, $types];
+    }
+
+    /**
+     * Extracts the distinct immediate child segment directly under $childPrefix from a set of
+     * descendant cpaths (e.g. "/a/b/" + "/a/b/c/d" -> "c").
+     *
+     * @param string[] $cpaths
+     *
+     * @return string[]
+     */
+    private function immediateChildSegments(string $childPrefix, array $cpaths): array
+    {
+        $prefixLength = strlen($childPrefix);
+        $segments = [];
+        foreach ($cpaths as $cpath) {
+            if (!str_starts_with($cpath, $childPrefix)) {
+                continue;
+            }
+            $rest = substr($cpath, $prefixLength);
+            $slash = strpos($rest, '/');
+            $segment = $slash === false ? $rest : substr($rest, 0, $slash);
+            if ($segment !== '') {
+                $segments[$segment] = true;
+            }
+        }
+
+        return array_keys($segments);
+    }
 }
