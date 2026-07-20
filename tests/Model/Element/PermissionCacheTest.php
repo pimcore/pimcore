@@ -253,6 +253,91 @@ class PermissionCacheTest extends ModelTestCase
         $root->delete();
     }
 
+    /**
+     * The listener is what keeps same-request authorization correct after a workspace is persisted:
+     * saving a user/role fires UserRoleEvents::POST_UPDATE, which must reset the shared cache.
+     */
+    public function testRoleWorkspaceChangeInvalidatesCacheViaListener(): void
+    {
+        $root = new DataObject\Folder();
+        $root->setParentId(1);
+        $root->setKey('permission-cache-role-inv-' . uniqid());
+        $root->save();
+
+        $role = $this->createObjectRole($root->getId(), $root->getRealFullPath(), true, true);
+        $user = $this->createNonAdminObjectUser([$role->getId()]);
+
+        $cache = \Pimcore::getContainer()->get(PermissionCache::class);
+        $cache->reset();
+
+        $this->assertTrue($root->isAllowed('view', $user));
+        $this->assertTrue(
+            $cache->get($user, $root, 'view', PermissionCacheScope::Single),
+            'precondition: the granted permission is cached'
+        );
+
+        // revoke view on the role's workspace and persist it: POST_UPDATE must reset the shared cache
+        $workspace = new User\Workspace\DataObject();
+        $workspace->setCid($root->getId());
+        $workspace->setCpath($root->getRealFullPath());
+        $workspace->setList(true);
+        $workspace->setView(false);
+        $role->setWorkspacesObject([$workspace]);
+        $role->save();
+
+        $this->assertNull(
+            $cache->get($user, $root, 'view', PermissionCacheScope::Single),
+            'saving a role/workspace must invalidate the cached permission through the listener'
+        );
+        $this->assertFalse(
+            $root->isAllowed('view', $user),
+            're-query after invalidation must reflect the revoked grant'
+        );
+    }
+
+    /**
+     * Moving an element rewrites its (and its children's) workspace cpaths, so the listener must
+     * also reset the shared cache on element POST_UPDATE.
+     */
+    public function testElementMoveInvalidatesCacheViaListener(): void
+    {
+        $source = new DataObject\Folder();
+        $source->setParentId(1);
+        $source->setKey('permission-cache-move-src-' . uniqid());
+        $source->save();
+
+        $destination = new DataObject\Folder();
+        $destination->setParentId(1);
+        $destination->setKey('permission-cache-move-dest-' . uniqid());
+        $destination->save();
+
+        $element = new DataObject\Folder();
+        $element->setParentId($source->getId());
+        $element->setKey('permission-cache-move-element-' . uniqid());
+        $element->save();
+
+        $role = $this->createObjectRole($element->getId(), $element->getRealFullPath(), true, true);
+        $user = $this->createNonAdminObjectUser([$role->getId()]);
+
+        $cache = \Pimcore::getContainer()->get(PermissionCache::class);
+        $cache->reset();
+
+        $this->assertTrue($element->isAllowed('view', $user));
+        $this->assertTrue(
+            $cache->get($user, $element, 'view', PermissionCacheScope::Single),
+            'precondition: the granted permission is cached'
+        );
+
+        // move the element: POST_UPDATE must reset the shared cache through the listener
+        $element->setParentId($destination->getId());
+        $element->save();
+
+        $this->assertNull(
+            $cache->get($user, $element, 'view', PermissionCacheScope::Single),
+            'moving an element must invalidate cached permissions through the listener'
+        );
+    }
+
     private function inMemoryUser(int $id): User
     {
         $user = new User();
@@ -271,11 +356,18 @@ class PermissionCacheTest extends ModelTestCase
 
     private function makeObjectUser(DataObject\AbstractObject $target): User
     {
+        $role = $this->createObjectRole($target->getId(), $target->getRealFullPath(), true, true);
+
+        return $this->createNonAdminObjectUser([$role->getId()]);
+    }
+
+    private function createObjectRole(int $cid, string $cpath, bool $view, bool $list): User\Role
+    {
         $workspace = new User\Workspace\DataObject();
-        $workspace->setCid($target->getId());
-        $workspace->setCpath($target->getRealFullPath());
-        $workspace->setList(true);
-        $workspace->setView(true);
+        $workspace->setCid($cid);
+        $workspace->setCpath($cpath);
+        $workspace->setList($list);
+        $workspace->setView($view);
 
         $role = new User\Role();
         $role->setParentId(0);
@@ -285,13 +377,21 @@ class PermissionCacheTest extends ModelTestCase
         $role->save();
         $this->createdRoles[] = $role;
 
+        return $role;
+    }
+
+    /**
+     * @param int[] $roleIds
+     */
+    private function createNonAdminObjectUser(array $roleIds): User
+    {
         $user = new User();
         $user->setParentId(0);
         $user->setName('permission_cache_user_' . uniqid());
         $user->setActive(true);
         $user->setAdmin(false);
         $user->setPermissions(['objects']);
-        $user->setRoles([$role->getId()]);
+        $user->setRoles($roleIds);
         $user->save();
         $this->createdUsers[] = $user;
 
