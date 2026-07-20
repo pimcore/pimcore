@@ -32,8 +32,7 @@ class AssetPreviewImageHandler implements BatchHandlerInterface
     public function __construct(
         protected LoggerInterface $logger,
         protected LongRunningHelper $longRunningHelper,
-    )
-    {
+    ) {
     }
 
     public function __invoke(AssetPreviewImageMessage $message, ?Acknowledger $ack = null): mixed
