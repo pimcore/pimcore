@@ -13,16 +13,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Element;
 
+use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\PermissionCache;
+use Pimcore\Model\Element\PermissionCacheScope;
 use Pimcore\Model\User;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
- * Unit coverage for the request-scoped element permission memoization service, plus an
- * integration assertion that AbstractElement::isAllowed() populates the cache.
+ * Unit coverage for the request-scoped element permission memoization service, plus an integration
+ * assertion that AbstractElement::isAllowed() is actually served from the cache without re-querying.
  *
  * @group model.element.permission
  */
@@ -60,7 +62,7 @@ class PermissionCacheTest extends ModelTestCase
         $user = $this->inMemoryUser(1);
         $element = $this->inMemoryObject(10);
 
-        $this->assertNull($cache->get($user, $element, 'view'));
+        $this->assertNull($cache->get($user, $element, 'view', PermissionCacheScope::Single));
     }
 
     public function testGetReturnsPreviouslySetValue(): void
@@ -69,11 +71,11 @@ class PermissionCacheTest extends ModelTestCase
         $user = $this->inMemoryUser(1);
         $element = $this->inMemoryObject(10);
 
-        $cache->set($user, $element, 'view', true);
-        $cache->set($user, $element, 'publish', false);
+        $cache->set($user, $element, 'view', PermissionCacheScope::Single, true);
+        $cache->set($user, $element, 'publish', PermissionCacheScope::Single, false);
 
-        $this->assertTrue($cache->get($user, $element, 'view'));
-        $this->assertFalse($cache->get($user, $element, 'publish'));
+        $this->assertTrue($cache->get($user, $element, 'view', PermissionCacheScope::Single));
+        $this->assertFalse($cache->get($user, $element, 'publish', PermissionCacheScope::Single));
     }
 
     public function testResetClearsAllEntries(): void
@@ -82,10 +84,10 @@ class PermissionCacheTest extends ModelTestCase
         $user = $this->inMemoryUser(1);
         $element = $this->inMemoryObject(10);
 
-        $cache->set($user, $element, 'view', true);
+        $cache->set($user, $element, 'view', PermissionCacheScope::Single, true);
         $cache->reset();
 
-        $this->assertNull($cache->get($user, $element, 'view'));
+        $this->assertNull($cache->get($user, $element, 'view', PermissionCacheScope::Single));
     }
 
     public function testKeyIsolationBetweenUsers(): void
@@ -95,10 +97,13 @@ class PermissionCacheTest extends ModelTestCase
         $userB = $this->inMemoryUser(2);
         $element = $this->inMemoryObject(10);
 
-        $cache->set($userA, $element, 'view', true);
+        $cache->set($userA, $element, 'view', PermissionCacheScope::Single, true);
 
-        $this->assertTrue($cache->get($userA, $element, 'view'));
-        $this->assertNull($cache->get($userB, $element, 'view'), 'a value cached for one user must not leak to another');
+        $this->assertTrue($cache->get($userA, $element, 'view', PermissionCacheScope::Single));
+        $this->assertNull(
+            $cache->get($userB, $element, 'view', PermissionCacheScope::Single),
+            'a value cached for one user must not leak to another'
+        );
     }
 
     public function testKeyIsolationBetweenPermissionTypes(): void
@@ -107,9 +112,12 @@ class PermissionCacheTest extends ModelTestCase
         $user = $this->inMemoryUser(1);
         $element = $this->inMemoryObject(10);
 
-        $cache->set($user, $element, 'view', true);
+        $cache->set($user, $element, 'view', PermissionCacheScope::Single, true);
 
-        $this->assertNull($cache->get($user, $element, 'publish'), 'permission types must be cached independently');
+        $this->assertNull(
+            $cache->get($user, $element, 'publish', PermissionCacheScope::Single),
+            'permission types must be cached independently'
+        );
     }
 
     public function testKeyIsolationBetweenElementIds(): void
@@ -119,9 +127,12 @@ class PermissionCacheTest extends ModelTestCase
         $elementA = $this->inMemoryObject(10);
         $elementB = $this->inMemoryObject(11);
 
-        $cache->set($user, $elementA, 'view', true);
+        $cache->set($user, $elementA, 'view', PermissionCacheScope::Single, true);
 
-        $this->assertNull($cache->get($user, $elementB, 'view'), 'different element ids must be cached independently');
+        $this->assertNull(
+            $cache->get($user, $elementB, 'view', PermissionCacheScope::Single),
+            'different element ids must be cached independently'
+        );
     }
 
     public function testKeyIsolationBetweenElementTypes(): void
@@ -132,16 +143,74 @@ class PermissionCacheTest extends ModelTestCase
         $asset = new Asset\Folder();
         $asset->setId(10);
 
-        $cache->set($user, $object, 'view', true);
+        $cache->set($user, $object, 'view', PermissionCacheScope::Single, true);
 
-        $this->assertNull($cache->get($user, $asset, 'view'), 'same id on different element types must not collide');
+        $this->assertNull(
+            $cache->get($user, $asset, 'view', PermissionCacheScope::Single),
+            'same id on different element types must not collide'
+        );
+    }
+
+    public function testKeyIsolationBetweenScopes(): void
+    {
+        $cache = new PermissionCache();
+        $user = $this->inMemoryUser(1);
+        $element = $this->inMemoryObject(10);
+
+        // the single- and batch-permission DAO paths compute "list" differently, so a value cached
+        // for one scope must never be served for the other
+        $cache->set($user, $element, 'list', PermissionCacheScope::Single, true);
+
+        $this->assertTrue($cache->get($user, $element, 'list', PermissionCacheScope::Single));
+        $this->assertNull(
+            $cache->get($user, $element, 'list', PermissionCacheScope::Batch),
+            'single and batch permission results must not share a cache entry'
+        );
+    }
+
+    public function testKeyIsolationBetweenRoleSets(): void
+    {
+        $cache = new PermissionCache();
+        $element = $this->inMemoryObject(10);
+
+        // same user id, different role set (e.g. changed in-memory before being persisted)
+        $userWithRoleA = $this->inMemoryUser(1);
+        $userWithRoleA->setRoles([5]);
+        $userWithRoleB = $this->inMemoryUser(1);
+        $userWithRoleB->setRoles([6]);
+
+        $cache->set($userWithRoleA, $element, 'view', PermissionCacheScope::Single, true);
+
+        $this->assertNull(
+            $cache->get($userWithRoleB, $element, 'view', PermissionCacheScope::Single),
+            'a different role set must not reuse a result cached for another role set'
+        );
+    }
+
+    public function testUnsavedElementsAreNotCached(): void
+    {
+        $cache = new PermissionCache();
+        $user = $this->inMemoryUser(1);
+
+        // an element without an id has no stable identity; caching it would collapse every unsaved
+        // element of the same type onto one key
+        $unsaved = new DataObject\Folder();
+
+        $cache->set($user, $unsaved, 'view', PermissionCacheScope::Single, true);
+
+        $this->assertNull(
+            $cache->get($user, $unsaved, 'view', PermissionCacheScope::Single),
+            'elements without an id must not be cached'
+        );
     }
 
     /**
-     * Integration: a permission check on a real element populates the shared cache instance, so a
-     * repeated check is served from memory instead of re-querying users_workspaces_*.
+     * Integration: a permission check on a real element is served from the shared cache on the
+     * second call, so it must not re-query users_workspaces_*. Proven by mutating the workspace row
+     * directly (which fires no Pimcore event and therefore does not invalidate the cache): the
+     * cached call keeps returning the pre-mutation result, and only a reset() picks up the change.
      */
-    public function testIsAllowedPopulatesCache(): void
+    public function testIsAllowedIsServedFromCacheWithoutRequerying(): void
     {
         $root = new DataObject\Folder();
         $root->setParentId(1);
@@ -153,14 +222,33 @@ class PermissionCacheTest extends ModelTestCase
         $cache = \Pimcore::getContainer()->get(PermissionCache::class);
         $cache->reset();
 
-        $this->assertNull($cache->get($user, $root, 'view'), 'precondition: nothing cached yet');
+        $this->assertNull(
+            $cache->get($user, $root, 'view', PermissionCacheScope::Single),
+            'precondition: nothing cached yet'
+        );
 
-        $first = $root->isAllowed('view', $user);
-        $this->assertNotNull($cache->get($user, $root, 'view'), 'isAllowed() must memoize the DAO result');
-        $this->assertSame($first, $cache->get($user, $root, 'view'));
+        // first call queries the DAO and memoizes the granted permission
+        $this->assertTrue($root->isAllowed('view', $user), 'workspace grants view on the first lookup');
+        $this->assertTrue(
+            $cache->get($user, $root, 'view', PermissionCacheScope::Single),
+            'isAllowed() must memoize the DAO result'
+        );
 
-        // repeated call returns the same result
-        $this->assertSame($first, $root->isAllowed('view', $user));
+        // remove the grant behind the cache's back (raw delete fires no event -> no invalidation)
+        Db::get()->delete('users_workspaces_object', ['cid' => $root->getId()]);
+
+        // if isAllowed() re-queried the DAO here it would now return false; the cache must shield it
+        $this->assertTrue(
+            $root->isAllowed('view', $user),
+            'the second call must be served from the cache without re-querying the workspace table'
+        );
+
+        // only after an explicit reset does the DAO run again and observe the removed grant
+        $cache->reset();
+        $this->assertFalse(
+            $root->isAllowed('view', $user),
+            'after reset the DAO is queried again and sees the removed workspace grant'
+        );
 
         $root->delete();
     }

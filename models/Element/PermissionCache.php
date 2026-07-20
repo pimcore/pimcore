@@ -22,9 +22,15 @@ use Symfony\Contracts\Service\ResetInterface;
  * element within a single request do not re-query the users_workspaces_* tables.
  *
  * The cache is cleared automatically at the request and messenger-message boundary via the
- * kernel.reset tag (ResetInterface). Workflow-deny handling and the ELEMENT_PERMISSION_IS_ALLOWED
- * event are intentionally kept outside this cache by the caller, because listeners may decide
- * dynamically on every call.
+ * kernel.reset tag (ResetInterface), and on any permission-affecting mutation (user/role or element
+ * add/update/move/delete) by {@see \Pimcore\Bundle\CoreBundle\EventListener\PermissionCacheInvalidationListener}.
+ * Workflow-deny handling and the ELEMENT_PERMISSION_IS_ALLOWED event are intentionally kept outside
+ * this cache by the caller, because listeners may decide dynamically on every call.
+ *
+ * The key is scoped by {@see PermissionCacheScope} because the single- and batch-permission DAO
+ * paths are not interchangeable, and includes the user's role set so a role change that is applied
+ * in-memory before it is persisted cannot serve a stale result. Elements without an id (not yet
+ * saved) are not cached, because they share no stable identity.
  *
  * @internal
  */
@@ -35,14 +41,22 @@ final class PermissionCache implements ResetInterface
      */
     private array $cache = [];
 
-    public function get(User $user, ElementInterface $element, string $type): ?bool
+    public function get(User $user, ElementInterface $element, string $type, PermissionCacheScope $scope): ?bool
     {
-        return $this->cache[$this->buildKey($user, $element, $type)] ?? null;
+        if (null === $element->getId()) {
+            return null;
+        }
+
+        return $this->cache[$this->buildKey($user, $element, $type, $scope)] ?? null;
     }
 
-    public function set(User $user, ElementInterface $element, string $type, bool $allowed): void
+    public function set(User $user, ElementInterface $element, string $type, PermissionCacheScope $scope, bool $allowed): void
     {
-        $this->cache[$this->buildKey($user, $element, $type)] = $allowed;
+        if (null === $element->getId()) {
+            return;
+        }
+
+        $this->cache[$this->buildKey($user, $element, $type, $scope)] = $allowed;
     }
 
     public function reset(): void
@@ -50,10 +64,15 @@ final class PermissionCache implements ResetInterface
         $this->cache = [];
     }
 
-    private function buildKey(User $user, ElementInterface $element, string $type): string
+    private function buildKey(User $user, ElementInterface $element, string $type, PermissionCacheScope $scope): string
     {
+        $roles = $user->getRoles();
+        sort($roles);
+
         return implode('-', [
+            $scope->value,
             $user->getId(),
+            implode(',', $roles),
             Service::getElementType($element),
             $element->getId(),
             $type,
