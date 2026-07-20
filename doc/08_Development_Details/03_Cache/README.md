@@ -85,8 +85,12 @@ pimcore:
 * **`handle_cli`** — By default the object cache is **not** written from CLI processes (console
   commands, messenger workers), because long-running scripts are prone to race conditions that can
   leave stale entries in a shared cache pool. Enable it only if your CLI workload is read-heavy and
-  benefits from a warm object cache, and you have considered the concurrency implications. This
-  does not affect reading from the cache in CLI, only writing to it.
+  benefits from a warm object cache, and you have considered the concurrency implications. Note that
+  this only governs the **deferred / non-forced** writes that make up the normal caching path — it
+  does **not** block every CLI cache write: forced writes still go through in CLI regardless of this
+  setting (`Cache::save(..., force: true)`, `setForceImmediateWrite(true)`, and internal forced
+  callers such as cache warming). It also does not affect reading from the cache in CLI, only
+  writing to it.
 
 ## Element Cache Workflow (Asset, Document, Object)
 

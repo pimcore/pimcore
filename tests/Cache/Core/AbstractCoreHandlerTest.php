@@ -350,7 +350,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         }
     }
 
-    public function testCleanupQueueLogsDroppedItems(): void
+    public function testWriteQueueLogsOneAggregatedWarningForDroppedItems(): void
     {
         /** @var TestHandler $testHandler */
         $testHandler = static::$logHandlers['test'];
@@ -359,30 +359,36 @@ abstract class AbstractCoreHandlerTest extends Unit
         $maxItems = 2;
         $this->handler->setMaxWriteToCacheItems($maxItems);
 
-        // save more items than the configured limit allows, but stay below the
-        // auto-cleanup threshold (maxWriteToCacheItems * 3) so the explicit
-        // cleanupQueue() call below is what drops the overrun
+        // save more items than the configured limit allows; equal (default) priority keeps
+        // insertion order, so item_1 / item_2 survive and item_3 / item_4 / item_5 are dropped
         $itemCount = $maxItems + 3;
         for ($i = 1; $i <= $itemCount; $i++) {
             $this->assertTrue($this->handler->save('item_' . $i, $i));
         }
 
-        $this->handler->cleanupQueue();
+        // drops are accumulated during the request and only logged when the queue is drained
+        $this->handler->writeSaveQueue();
 
-        // the queue is capped at the configured limit
+        $warnings = array_values(array_filter(
+            $testHandler->getRecords(),
+            static fn ($record): bool => str_contains((string) $record['message'], 'cache save queue')
+        ));
+
+        // exactly one aggregated summary, not one warning per trim
         $this->assertCount(
-            $maxItems,
-            $this->getHandlerPropertyValue('saveQueue')
+            1,
+            $warnings,
+            'Expected exactly one aggregated warning to be logged when items are dropped'
         );
 
-        // dropping items must be logged as a warning so it is no longer silent
-        $this->assertTrue(
-            $testHandler->hasWarningThatContains('cache save queue'),
-            'Expected a warning to be logged when items are dropped from the save queue'
-        );
+        // and it must carry the promised diagnostic context
+        $context = $warnings[0]['context'];
+        $this->assertSame(3, $context['droppedCount']);
+        $this->assertSame($maxItems, $context['limit']);
+        $this->assertSame('item_3, item_4, item_5', $context['sampleKeys']);
     }
 
-    public function testCleanupQueueDoesNotLogWhenNothingDropped(): void
+    public function testWriteQueueDoesNotLogWhenNothingDropped(): void
     {
         /** @var TestHandler $testHandler */
         $testHandler = static::$logHandlers['test'];
@@ -393,12 +399,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertTrue($this->handler->save('item_1', 1));
         $this->assertTrue($this->handler->save('item_2', 2));
 
-        $this->handler->cleanupQueue();
-
-        $this->assertCount(
-            2,
-            $this->getHandlerPropertyValue('saveQueue')
-        );
+        $this->handler->writeSaveQueue();
 
         $this->assertFalse(
             $testHandler->hasWarningThatContains('cache save queue'),

@@ -46,6 +46,11 @@ class CoreCacheHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
+    /**
+     * Maximum number of dropped-item keys collected for the aggregated drop warning.
+     */
+    private const DROPPED_KEYS_SAMPLE_SIZE = 10;
+
     protected EventDispatcherInterface $dispatcher;
 
     protected TagAwareAdapterInterface $pool;
@@ -120,6 +125,18 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      */
     protected int $maxWriteToCacheItems = 50;
+
+    /**
+     * Number of items dropped from the save queue since the last write, logged as one summary.
+     */
+    private int $droppedSaveQueueItemCount = 0;
+
+    /**
+     * A bounded sample of keys dropped from the save queue since the last write.
+     *
+     * @var string[]
+     */
+    private array $droppedSaveQueueSampleKeys = [];
 
     protected bool $writeInProgress = false;
 
@@ -360,21 +377,21 @@ class CoreCacheHandler implements LoggerAwareInterface
         // remove overrun
         $droppedItems = array_splice($this->saveQueue, $this->maxWriteToCacheItems);
 
-        if (count($droppedItems) > 0) {
-            $droppedKeys = array_map(function (CacheQueueItem $item): string {
-                return $item->getKey();
-            }, $droppedItems);
+        if (count($droppedItems) === 0) {
+            return;
+        }
 
-            $this->logger->warning(
-                'Dropped {droppedCount} item(s) from the cache save queue because the configured limit of '
-                . '{limit} items per request was exceeded. Raise pimcore.cache.max_write_items to cache more '
-                . 'items per request. Sample of dropped keys: {sampleKeys}',
-                [
-                    'droppedCount' => count($droppedItems),
-                    'limit' => $this->maxWriteToCacheItems,
-                    'sampleKeys' => implode(', ', array_slice($droppedKeys, 0, 10)),
-                ]
-            );
+        // Accumulate the dropped items instead of logging on every trim: cleanupQueue() runs each
+        // time the queue grows past maxWriteToCacheItems * 3, so a request that saves many items
+        // would otherwise emit a warning per trim (thousands for a large export). The aggregated
+        // total is logged once when the queue is drained, see logDroppedSaveQueueItems().
+        $this->droppedSaveQueueItemCount += count($droppedItems);
+
+        foreach ($droppedItems as $item) {
+            if (count($this->droppedSaveQueueSampleKeys) >= self::DROPPED_KEYS_SAMPLE_SIZE) {
+                break;
+            }
+            $this->droppedSaveQueueSampleKeys[] = $item->getKey();
         }
     }
 
@@ -855,7 +872,35 @@ class CoreCacheHandler implements LoggerAwareInterface
         // reset
         $this->saveQueue = [];
 
+        $this->logDroppedSaveQueueItems();
+
         return $totalResult;
+    }
+
+    /**
+     * Emits a single aggregated warning for the items dropped from the save queue since the last
+     * write and resets the counters. Kept out of cleanupQueue() so we log one summary per drain
+     * instead of one warning per trim (cleanupQueue() can run many times within a single request).
+     */
+    private function logDroppedSaveQueueItems(): void
+    {
+        if ($this->droppedSaveQueueItemCount === 0) {
+            return;
+        }
+
+        $this->logger->warning(
+            'Dropped {droppedCount} item(s) from the cache save queue because the configured limit of '
+            . '{limit} items per request was exceeded. Raise pimcore.cache.max_write_items to cache more '
+            . 'items per request. Sample of dropped keys: {sampleKeys}',
+            [
+                'droppedCount' => $this->droppedSaveQueueItemCount,
+                'limit' => $this->maxWriteToCacheItems,
+                'sampleKeys' => implode(', ', $this->droppedSaveQueueSampleKeys),
+            ]
+        );
+
+        $this->droppedSaveQueueItemCount = 0;
+        $this->droppedSaveQueueSampleKeys = [];
     }
 
     /**
