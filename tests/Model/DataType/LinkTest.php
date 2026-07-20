@@ -179,8 +179,6 @@ class LinkTest extends ModelTestCase
         $this->assertEmpty($link->getHtml());
     }
 
-
-    
     public function testGetHtmlKeepsZeroAsText(): void
     {
         $link = new Link();
