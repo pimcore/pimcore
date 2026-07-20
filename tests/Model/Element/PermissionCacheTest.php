@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Element;
 
+use Pimcore;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -219,7 +220,7 @@ class PermissionCacheTest extends ModelTestCase
 
         $user = $this->makeObjectUser($root);
 
-        $cache = \Pimcore::getContainer()->get(PermissionCache::class);
+        $cache = Pimcore::getContainer()->get(PermissionCache::class);
         $cache->reset();
 
         $this->assertNull(
@@ -267,7 +268,7 @@ class PermissionCacheTest extends ModelTestCase
         $role = $this->createObjectRole($root->getId(), $root->getRealFullPath(), true, true);
         $user = $this->createNonAdminObjectUser([$role->getId()]);
 
-        $cache = \Pimcore::getContainer()->get(PermissionCache::class);
+        $cache = Pimcore::getContainer()->get(PermissionCache::class);
         $cache->reset();
 
         $this->assertTrue($root->isAllowed('view', $user));
@@ -319,7 +320,7 @@ class PermissionCacheTest extends ModelTestCase
         $role = $this->createObjectRole($element->getId(), $element->getRealFullPath(), true, true);
         $user = $this->createNonAdminObjectUser([$role->getId()]);
 
-        $cache = \Pimcore::getContainer()->get(PermissionCache::class);
+        $cache = Pimcore::getContainer()->get(PermissionCache::class);
         $cache->reset();
 
         $this->assertTrue($element->isAllowed('view', $user));
