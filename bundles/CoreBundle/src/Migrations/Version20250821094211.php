@@ -18,8 +18,9 @@ use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Model\DataObject\ClassDefinition\Listing;
 
 /**
- * Sets sourceSite=0 (Main domain) for all redirects with sourceSite = NULL
- * before NULL and 0 were both treated as main domain and in fact sourceSite was not optional (although UI told so)
+ * Widens the "auto_id" column of the object_metadata_* tables from INT UNSIGNED to BIGINT UNSIGNED.
+ * Advanced many-to-many relations delete and re-insert their rows on every dirty save, which makes the
+ * AUTO_INCREMENT value grow quickly and can exhaust the INT UNSIGNED range (4294967295).
  */
 final class Version20250821094211 extends AbstractMigration
 {
@@ -34,7 +35,7 @@ final class Version20250821094211 extends AbstractMigration
         foreach($classes->getClasses() as $class) {
             if($schema->hasTable('object_metadata_' . $class->getId())) {
                 $this->addSql(
-                    'ALTER TABLE object_metadata_' . $class->getId() . ' CHANGE auto_id auto_id BIGINT(20) NOT NULL'
+                    'ALTER TABLE object_metadata_' . $class->getId() . ' CHANGE auto_id auto_id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT'
                 );
             }
         }
@@ -46,7 +47,7 @@ final class Version20250821094211 extends AbstractMigration
         foreach ($classes->getClasses() as $class) {
             if ($schema->hasTable('object_metadata_'.$class->getId())) {
                 $this->addSql(
-                    'ALTER TABLE object_metadata_'.$class->getId().' CHANGE auto_id auto_id INT(11) NOT NULL'
+                    'ALTER TABLE object_metadata_'.$class->getId().' CHANGE auto_id auto_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT'
                 );
             }
         }

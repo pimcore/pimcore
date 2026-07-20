@@ -55,6 +55,8 @@ class Helper
                 $critera[$key] = $data[$key] ?? throw new LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
             }
 
+            $connection->update($table, $data, $critera);
+
             return null;
         }
     }
