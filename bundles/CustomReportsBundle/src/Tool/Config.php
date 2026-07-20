@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CustomReportsBundle\Tool;
@@ -20,6 +17,8 @@ use Exception;
 use JsonSerializable;
 use Pimcore;
 use Pimcore\Model;
+use Pimcore\Model\User;
+use Pimcore\Security\User\User as UserProxy;
 use RuntimeException;
 use stdClass;
 
@@ -69,6 +68,8 @@ class Config extends Model\AbstractModel implements JsonSerializable
 
     protected bool $shareGlobally = true;
 
+    protected bool $pagination = true;
+
     /**
      * @var string[]
      */
@@ -99,7 +100,7 @@ class Config extends Model\AbstractModel implements JsonSerializable
         }
     }
 
-    public static function getReportsList(Model\User $user = null): array
+    public static function getReportsList(?Model\User $user = null): array
     {
         $reports = [];
 
@@ -127,7 +128,7 @@ class Config extends Model\AbstractModel implements JsonSerializable
      *
      * @deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
      */
-    public static function getAdapter(?stdClass $configuration, Config $fullConfig = null): Adapter\CustomReportAdapterInterface
+    public static function getAdapter(?stdClass $configuration, ?Config $fullConfig = null): Adapter\CustomReportAdapterInterface
     {
         if ($configuration === null) {
             $configuration = new stdClass();
@@ -337,6 +338,16 @@ class Config extends Model\AbstractModel implements JsonSerializable
         $this->shareGlobally = $shareGlobally;
     }
 
+    public function getPagination(): bool
+    {
+        return $this->pagination;
+    }
+
+    public function setPagination(bool $pagination): void
+    {
+        $this->pagination = $pagination;
+    }
+
     /**
      * @return int[]
      */
@@ -420,5 +431,29 @@ class Config extends Model\AbstractModel implements JsonSerializable
             $this->dao = clone $this->dao;
             $this->dao->setModel($this);
         }
+    }
+
+    public function isUserAllowed(User|UserProxy $user): bool
+    {
+        if ($user instanceof UserProxy) {
+            $user = $user->getUser();
+        }
+
+        if (!($user->isAdmin() || $this->getShareGlobally() || $user->isAllowed('reports_config'))) {
+            $sharedUserIds = $this->getSharedUserIds();
+            $sharedRoleIds = $this->getSharedRoleIds();
+
+            $hasUserAccess = $sharedUserIds &&
+                in_array($user->getId(), $sharedUserIds, true);
+
+            $hasRoleAccess = $sharedRoleIds &&
+                array_intersect($user->getRoles(), $sharedRoleIds);
+
+            if (!$hasUserAccess && !$hasRoleAccess) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

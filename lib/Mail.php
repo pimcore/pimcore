@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore;
@@ -67,7 +64,10 @@ class Mail extends Email
      * @var array<string, mixed>
      */
     private array $html2textOptions = [
-        'ignore_errors' => true,
+        'suppress_errors' => true,
+        'hard_break' => true,
+        'strip_tags' => true,
+        'remove_nodes' => 'head style',
     ];
 
     /**
@@ -124,7 +124,7 @@ class Mail extends Email
      * @param array|Headers|null $headers
      * @param AbstractPart|null $body
      */
-    public function __construct($headers = null, $body = null, string $contentType = null)
+    public function __construct($headers = null, $body = null, ?string $contentType = null)
     {
         if (is_array($headers)) {
             $options = $headers;
@@ -426,7 +426,7 @@ class Mail extends Email
      *
      * @return $this Provides fluent interface
      */
-    public function send(MailerInterface $mailer = null): static
+    public function send(?MailerInterface $mailer = null): static
     {
         $bodyHtmlRendered = $this->getBodyHtmlRendered();
         if ($bodyHtmlRendered) {
@@ -461,7 +461,7 @@ class Mail extends Email
      *
      * @throws Exception
      */
-    public function sendWithoutRendering(MailerInterface $mailer = null): static
+    public function sendWithoutRendering(?MailerInterface $mailer = null): static
     {
         // filter email addresses
 
@@ -472,7 +472,6 @@ class Mail extends Email
         $recipients = [];
 
         foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
-            $recipients[$key] = null;
             $getterName = 'get' . $key;
             $addresses = $this->$getterName();
 
@@ -499,9 +498,8 @@ class Mail extends Email
             }
         }
 
-        if (empty($this->getFrom()) && $hostname = Tool::getHostname()) {
-            // set default "from" address
-            $this->from('no-reply@' . $hostname);
+        if (empty($this->getFrom())) {
+            $sendingFailedException = new Exception('Missing mandatory mail parameter: From.');
         }
 
         $event = new MailEvent($this, [
@@ -566,9 +564,9 @@ class Mail extends Email
     }
 
     /**
-     * @param array<Address|string> $recipients
+     * @param array<string, array<Address|string>> $recipients
      *
-     * @return array<Address|string>
+     * @return array<string, array<Address|string>>
      */
     private function getDebugMailRecipients(array $recipients): array
     {
@@ -596,6 +594,7 @@ class Mail extends Email
 
     private function renderParams(string $string, string $context): string
     {
+        trigger_deprecation('pimcore/pimcore', '12.3', 'Retrieving "pimcore.templating.engine.delegating" from the container is deprecated and will be removed in 13.0. Inject Twig\Environment directly instead.');
         $templatingEngine = Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
         $defaultStrategy = null;
         $twig = null;

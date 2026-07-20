@@ -9,9 +9,9 @@ All Pimcore configurations are saved as YAML or PHP files on the file system. As
 [multi environment feature](03_Configuration_Environments.md) different configuration files for different deployment stages
 can be defined.
 
-* [https://github.com/pimcore/demo/tree/11.x/config](https://github.com/pimcore/demo/tree/11.x/config)
-* [https://github.com/pimcore/demo/tree/11.x/config/pimcore](https://github.com/pimcore/demo/tree/11.x/config/pimcore)
-* [https://github.com/pimcore/demo/tree/11.x/var/config](https://github.com/pimcore/demo/tree/11.x/var/config)
+* [https://github.com/pimcore/demo/tree/2025.x/config](https://github.com/pimcore/demo/tree/2025.x/config)
+* [https://github.com/pimcore/demo/tree/2025.x/config/pimcore](https://github.com/pimcore/demo/tree/2025.x/config/pimcore)
+* [https://github.com/pimcore/demo/tree/2025.x/var/config](https://github.com/pimcore/demo/tree/2025.x/var/config)
 
 
 ## Pimcore Class Definitions
@@ -41,6 +41,12 @@ After every code update you should use the `pimcore:deployment:classes-rebuild` 
 
 ```bash
 ./bin/console pimcore:deployment:classes-rebuild
+```
+
+If you need to update the database structure of your classes without dumping the classes to the file system, you can use the `--db-only` option.
+
+```bash
+./bin/console pimcore:deployment:classes-rebuild --db-only
 ```
 
 To create new classes from your configuration files in the database you can use the `create-classes` option. 
@@ -81,13 +87,13 @@ To get a list of all available commands use `./bin/console list`.
 | pimcore:search-backend-reindex            | Re-indexes the backend search of Pimcore (only available if you have installed the simpleBackendSearchBundle)                     |
 | pimcore:cache:clear                       | Clear Pimcore core caches                                                                                                         |
 | cache:clear                               | Clear Symfony caches                                                                                                              |
-| pimcore:cache:warming                     | Warm up caches                                                                                                                    |
+| pimcore:cache:warming                     | [Warm up caches](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/09_Performance_Guide.md#pimcore-caching-redis)        |
 | pimcore:classificationstore:delete-store  | Delete Classification Store                                                                                                       |
 | pimcore:definition:import:class           | Import Class definition from a JSON export                                                                                        |
 | pimcore:definition:import:customlayout    | Import Customlayout definition from a JSON export                                                                                 |
 | pimcore:definition:import:fieldcollection | Import FieldCollection definition from a JSON export                                                                              |
 | pimcore:definition:import:objectbrick     | Import ObjectBrick definition from a JSON export                                                                                  |
-| pimcore:definition:import:units            | Import Quantity value units definition from a JSON export                                                                         |
+| pimcore:definition:import:units           | Import Quantity value units definition from a JSON export                                                                         |
 | pimcore:deployment:classes-rebuild        | Rebuilds classes and db structure based on updated `var/classes/definition_*.php` files                                           |
 | pimcore:thumbnails:image                  | Generate image thumbnails, useful to pre-generate thumbnails in the background. Use `--processes` option for parallel processing. |
 | pimcore:thumbnails:optimize-images        | Optimize file size of all images in `public/var/tmp`                                                                                 |

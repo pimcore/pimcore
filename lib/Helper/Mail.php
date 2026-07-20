@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Helper;
@@ -143,7 +140,7 @@ CSS;
         return implode(', ', $formatedReceiversArray);
     }
 
-    public static function logEmail(MailClient $mail, array $recipients, string $error = null): Model\Tool\Email\Log
+    public static function logEmail(MailClient $mail, array $recipients, ?string $error = null): Model\Tool\Email\Log
     {
         $emailLog = new Model\Tool\Email\Log();
 
@@ -204,7 +201,7 @@ CSS;
      *
      * @throws Exception
      */
-    public static function setAbsolutePaths(string $string, ?Model\Document $document = null, string $hostUrl = null): string
+    public static function setAbsolutePaths(string $string, ?Model\Document $document = null, ?string $hostUrl = null): string
     {
         $replacePrefix = '';
 

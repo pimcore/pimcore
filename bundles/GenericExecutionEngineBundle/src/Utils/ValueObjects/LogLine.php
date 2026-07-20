@@ -2,22 +2,20 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\GenericExecutionEngineBundle\Utils\ValueObjects;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
 use InvalidArgumentException;
 
 /**
@@ -52,9 +50,18 @@ final class LogLine
     private function extract(string $logLine): void
     {
         $logLine = trim($logLine);
-        $dateTimeString = substr($logLine, 0, 25);
-        $log = substr($logLine, 27);
-        $dateTime = DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $dateTimeString);
+
+        $separatorPos = strpos($logLine, ': ');
+        if ($separatorPos === false) {
+            throw new InvalidArgumentException('Invalid Time Format given');
+        }
+
+        $dateTimeString = substr($logLine, 0, $separatorPos);
+        $log = substr($logLine, $separatorPos + 2);
+        $dateTime =
+            DateTimeImmutable::createFromFormat(DateTimeInterface::ATOM, $dateTimeString)
+            ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:sO', $dateTimeString)
+            ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s\Z', $dateTimeString, new DateTimeZone('UTC'));
 
         if ($dateTime === false) {
             throw new InvalidArgumentException('Invalid Time Format given');

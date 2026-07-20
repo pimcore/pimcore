@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset;
@@ -35,6 +32,7 @@ class Document extends Model\Asset
     {
         if ($this->getDataChanged()) {
             $this->removeCustomSetting('document_page_count');
+            $this->removeCustomSetting(self::CUSTOM_SETTING_PDF_SCAN_STATUS);
         }
 
         parent::update($params);
@@ -48,7 +46,7 @@ class Document extends Model\Asset
      *
      * @internal
      */
-    public function processPageCount(string $path = null): bool
+    public function processPageCount(?string $path = null): bool
     {
         if (!$this->isPageCountProcessingEnabled()) {
             return false;
@@ -57,7 +55,7 @@ class Document extends Model\Asset
         if (!\Pimcore\Document::isAvailable()) {
             Logger::error(
                 sprintf(
-                    "Couldn't create image-thumbnail of document %s as no document adapter is available",
+                    "Couldn't process page count of document %s as no document adapter is available",
                     $this->getRealFullPath()
                 )
             );
@@ -114,7 +112,7 @@ class Document extends Model\Asset
     /**
      * @throws Exception
      */
-    public function getText(int $page = null): ?string
+    public function getText(?int $page = null): ?string
     {
         if (!$this->isTextProcessingEnabled()) {
             return null;
@@ -134,9 +132,17 @@ class Document extends Model\Asset
         return (string) $text;
     }
 
+    /**
+     * Returns whether a scan was performed (not whether JS was found). Use getScanStatus() for the result.
+     */
     public function checkIfPdfContainsJS(): bool
     {
         if (!$this->isPdfScanningEnabled()) {
+            return false;
+        }
+
+        $scanStatus = $this->getScanStatus();
+        if ($scanStatus === Model\Asset\Enum\PdfScanStatus::SAFE) {
             return false;
         }
 
@@ -155,6 +161,8 @@ class Document extends Model\Asset
                 break;
             }
 
+            // NOTE: raw string matching produces false positives (see #16955) — /JS can appear
+            // in font names, operator sequences, or other non-JavaScript PDF structures.
             if (str_contains($chunk, '/JS') || str_contains($chunk, '/JavaScript')) {
                 $this->setCustomSetting(
                     self::CUSTOM_SETTING_PDF_SCAN_STATUS,

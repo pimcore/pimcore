@@ -64,7 +64,7 @@ for details.
 In addition to the Symfony events, Pimcore provides two additional events for global actions: 
 - `pimcore.workflow.preGlobalAction`
 - `pimcore.workflow.postGlobalAction`
-See [WorkflowEvents](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/WorkflowEvents.php) for details. 
+See [WorkflowEvents](https://github.com/pimcore/pimcore/blob/12.x/lib/Event/WorkflowEvents.php) for details. 
 
 ### Using Additional Data in Events
 

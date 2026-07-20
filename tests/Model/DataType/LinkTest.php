@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tests\Model\DataType;
@@ -156,5 +153,39 @@ class LinkTest extends ModelTestCase
         } catch (Throwable $e) {
             $this->assertInstanceOf(TypeError::class, $e);
         }
+    }
+
+    public function testGetHtmlWithText(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://pimcore.com');
+        $link->setText('Pimcore');
+
+        $this->assertEquals('<a href="https://pimcore.com" >Pimcore</a>', $link->getHtml());
+    }
+
+    public function testGetHtmlFallsBackToHrefWhenTextIsEmpty(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://pimcore.com');
+
+        $this->assertEquals('<a href="https://pimcore.com" >https://pimcore.com</a>', $link->getHtml());
+    }
+
+    public function testGetHtmlReturnsEmptyStringWhenNoTextAndNoHref(): void
+    {
+        $link = new Link();
+
+        $this->assertEmpty($link->getHtml());
+    }
+
+    public function testGetHtmlKeepsZeroAsText(): void
+    {
+        $link = new Link();
+        $link->setDirect('https://pimcore.com');
+        $link->setText('0');
+
+        // "0" is valid link text and must not be treated as empty / fall back to the href.
+        $this->assertEquals('<a href="https://pimcore.com" >0</a>', $link->getHtml());
     }
 }

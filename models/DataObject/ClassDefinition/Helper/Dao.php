@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
@@ -42,31 +39,31 @@ trait Dao
                     // multicolumn field
                     foreach ($columnType as $fkey => $fvalue) {
                         $indexName = $field->getName().'__'.$fkey;
-                        $columnName = '`' . $indexName . '`';
+                        $columnName = $this->db->quoteIdentifier($indexName);
                         if ($unique) {
                             if ($isLocalized) {
-                                $columnName .= ',`language`';
+                                $columnName .= ',' . $this->db->quoteIdentifier('language');
                             } elseif ($isFieldcollection) {
-                                $columnName .= ',`fieldname`';
+                                $columnName .= ',' . $this->db->quoteIdentifier('fieldname');
                             }
                         }
                         if ($this->indexDoesNotExist($table, $prefix, $indexName)) {
-                            $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName . '` (' . $columnName . ');');
+                            $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ADD ' . $uniqueStr . 'INDEX ' . $this->db->quoteIdentifier($prefix . $indexName) . ' (' . $columnName . ');');
                         }
                     }
                 } else {
                     // single -column field
                     $indexName = $field->getName();
-                    $columnName = '`' . $indexName . '`';
+                    $columnName = $this->db->quoteIdentifier($indexName);
                     if ($unique) {
                         if ($isLocalized) {
-                            $columnName .= ',`language`';
+                            $columnName .= ',' . $this->db->quoteIdentifier('language');
                         } elseif ($isFieldcollection) {
-                            $columnName .= ',`fieldname`';
+                            $columnName .= ',' . $this->db->quoteIdentifier('fieldname');
                         }
                     }
                     if ($this->indexDoesNotExist($table, $prefix, $indexName)) {
-                        $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName . '` (' . $columnName . ');');
+                        $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ADD ' . $uniqueStr . 'INDEX ' . $this->db->quoteIdentifier($prefix . $indexName) . ' (' . $columnName . ');');
                     }
                 }
             } else {
@@ -75,14 +72,14 @@ trait Dao
                     foreach ($columnType as $fkey => $fvalue) {
                         $indexName = $field->getName().'__'.$fkey;
                         if ($this->indexExists($table, $prefix, $indexName)) {
-                            $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $indexName . '`;');
+                            $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' DROP INDEX ' . $this->db->quoteIdentifier($prefix . $indexName) . ';');
                         }
                     }
                 } else {
                     // single -column field
                     $indexName = $field->getName();
                     if ($this->indexExists($table, $prefix, $indexName)) {
-                        $this->db->executeQuery('ALTER TABLE `' . $table . '` DROP INDEX `' . $prefix . $indexName . '`;');
+                        $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' DROP INDEX ' . $this->db->quoteIdentifier($prefix . $indexName) . ';');
                     }
                 }
             }
@@ -101,11 +98,11 @@ trait Dao
             $existingColName = current($matchingExisting);
         }
         if ($existingColName === null) {
-            $this->db->executeQuery('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ADD COLUMN ' . $this->db->quoteIdentifier($colName) . ' ' . $type . $default . ' ' . $null . ';');
             $this->resetValidTableColumnsCache($table);
         } else {
             if (!DataObject\ClassDefinition\Service::skipColumn($this->tableDefinitions, $table, $colName, $type, $default, $null)) {
-                $this->db->executeQuery('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+                $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' CHANGE COLUMN ' . $this->db->quoteIdentifier($existingColName) . ' ' . $this->db->quoteIdentifier($colName) . ' ' . $type . $default . ' ' . $null . ';');
             }
         }
     }

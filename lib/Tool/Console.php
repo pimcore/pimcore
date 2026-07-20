@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tool;
@@ -199,7 +196,7 @@ final class Console
     /**
      * @param string[] $arguments
      */
-    public static function runPhpScript(string $script, array $arguments = [], string $outputFile = null, float $timeout = 60): string
+    public static function runPhpScript(string $script, array $arguments = [], ?string $outputFile = null, float $timeout = 60): string
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         self::addLowProcessPriority($cmd);
@@ -225,7 +222,7 @@ final class Console
     /**
      * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
      */
-    public static function runPhpScriptInBackground(string $script, array $arguments = [], string $outputFile = null): int
+    public static function runPhpScriptInBackground(string $script, array $arguments = [], ?string $outputFile = null): int
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         $process = new Process($cmd);
@@ -234,7 +231,7 @@ final class Console
         return self::execInBackground($commandLine, $outputFile);
     }
 
-    public static function execInBackground(string $cmd, string $outputFile = null): int
+    public static function execInBackground(string $cmd, ?string $outputFile = null): int
     {
         // windows systems
         if (self::getSystemEnvironment() == 'windows') {

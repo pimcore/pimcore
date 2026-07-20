@@ -100,6 +100,15 @@ be downloaded.
 If you want to disable the possibility to clear the whole relation, you can uncheck the checkbox "Allow to clear all relations of this field"  
 in the classdefinition.
 
+## Inline search display mode
+You can also configure the display mode of a many-to-one relation as `Inline Search`, which leverages [Boolean Mode Full Text Search](https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html) to quickly locate related records across multiple fields
+
+![Many-To-One Object Inline Search](../../../img/classes-datatypes-relation7.png)
+
+For example
+
+![Many-To-One Object Inline Search example](../../../img/classes-datatypes-relation8.png)
+
 ## Advanced Many-To-One Object Relation 
 This data type is an extension to the Many-To-One Object data type. To each assigned object additional metadata can be saved. 
 The type of the metadata can be text, number, selection or a boolean value.

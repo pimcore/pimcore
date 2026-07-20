@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data\Listing;
@@ -36,7 +33,7 @@ class Dao extends AbstractDao
     public function load(): array
     {
         $entries = [];
-        $data = $this->db->fetchAllAssociative('SELECT * FROM search_backend_data' .  $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $data = $this->db->fetchAllAssociative('SELECT * FROM search_backend_data' .  $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         foreach ($data as $entryData) {
             if (!in_array($entryData['maintype'], ['document', 'asset', 'object'], true)) {
@@ -68,7 +65,7 @@ class Dao extends AbstractDao
 
     public function getTotalCount(): int
     {
-        return (int)$this->db->fetchOne('SELECT COUNT(*) FROM search_backend_data' . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
+        return (int)$this->db->fetchOne('SELECT COUNT(*) FROM search_backend_data' . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
     }
 
     public function getCount(): int|string
@@ -77,9 +74,7 @@ class Dao extends AbstractDao
             return count($this->model->getEntries());
         }
 
-        $amount = $this->db->fetchOne('SELECT COUNT(*) as amount FROM search_backend_data '  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-
-        return $amount;
+        return $this->db->fetchOne('SELECT COUNT(*) as amount FROM search_backend_data '  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
     }
 
     protected function getCondition(): string

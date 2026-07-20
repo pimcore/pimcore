@@ -6,6 +6,11 @@ Similar to a field collection, an unlimited number of block elements can be crea
 A block element can be placed into a localized field but can also contain a localized field itself. 
 Nesting is not possible.
 
+> [!IMPORTANT]
+> Please note the limitations related to blocks and fieldcollections when creating the data model.
+> [More Information about Limitations](./999_Limitations.md) 
+
+
 ![Block data type](../../../img/ObjectsBlocks_data_container.png)
 
 ![Block, edit peview](../../../img/ObjectsBlocks_edit_preview.png)

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject;
@@ -21,12 +18,15 @@ use Pimcore\Model\Paginator\PaginateListingInterface;
 
 /**
  * @method Model\DataObject[] load()
+ * @method Model\DataObject[] getData()
  * @method Model\DataObject|false current()
  * @method int getTotalCount()
  * @method int getCount()
  * @method int[] loadIdList()
  * @method \Pimcore\Model\DataObject\Listing\Dao getDao()
  * @method onCreateQueryBuilder(?callable $callback)
+ * @method void addQueryBuilderProcessor(callable $callback)
+ * @method void discardQueryBuilderProcessors()
  */
 class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {
@@ -34,11 +34,19 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     protected array $objectTypes = [Model\DataObject::OBJECT_TYPE_OBJECT, Model\DataObject::OBJECT_TYPE_VARIANT, Model\DataObject::OBJECT_TYPE_FOLDER];
 
+    /**
+     * @return Model\DataObject[]
+     */
     public function getObjects(): array
     {
         return $this->getData();
     }
 
+    /**
+     * @param Model\DataObject[] $objects
+     *
+     * @return $this
+     */
     public function setObjects(array $objects): static
     {
         return $this->setData($objects);
@@ -49,6 +57,9 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
         return $this->unpublished;
     }
 
+    /**
+     * @return $this
+     */
     public function setUnpublished(bool $unpublished): static
     {
         $this->setData(null);
@@ -58,6 +69,9 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setObjectTypes(array $objectTypes): static
     {
         $this->setData(null);

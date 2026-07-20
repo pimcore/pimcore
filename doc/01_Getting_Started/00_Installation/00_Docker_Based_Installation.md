@@ -37,7 +37,7 @@ docker run -u `id -u`:`id -g` --rm -v `pwd`:/var/www/html pimcore/pimcore:php8.2
 
 :::info
 
-If you choose to install backend search (which is installed by default), you must also adapt the [supervisor configuration](https://github.com/pimcore/skeleton/blob/11.x/.docker/supervisord.conf#LL5C39-L5C90) and add the `pimcore_search_backend_message` receiver to build up the search index. 
+If you choose to install backend search (which is installed by default), you must also adapt the [supervisor configuration](https://github.com/pimcore/skeleton/blob/2025.x/.docker/supervisord.conf#LL5C39-L5C90) and add the `pimcore_search_backend_message` receiver to build up the search index. 
 
 
 :::
@@ -57,4 +57,4 @@ If you would like to know more about the installation process or if you are havi
 
 ## Automating the Installation Process
 
-For more information about ways to automate the installation process, have a look on [Advanced Installation Topics](../02_Advanced_Installation_Topics/README.md).
+For more information about ways to automate the installation process, have a look on [Advanced Installation Topics](../03_Advanced_Installation_Topics/README.md).

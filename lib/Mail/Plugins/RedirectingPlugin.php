@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Mail\Plugins;
@@ -102,7 +99,7 @@ final class RedirectingPlugin
      */
     public function sendPerformed(Mail $message): void
     {
-        if ($message instanceof Mail && $message->doRedirectMailsToDebugMailAddresses()) {
+        if ($message->doRedirectMailsToDebugMailAddresses()) {
             $this->setSenderAndReceiversParams($message);
             $this->removeDebugInformation($message);
         }
@@ -113,7 +110,7 @@ final class RedirectingPlugin
      */
     private function appendDebugInformation(Mail $message): void
     {
-        if ($message->isPreventingDebugInformationAppending() != true) {
+        if (!$message->isPreventingDebugInformationAppending()) {
             $originalData = [];
 
             //adding the debug information to the html email

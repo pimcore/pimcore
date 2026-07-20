@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -84,11 +81,10 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return true;
     }
 
-    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
+    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
     {
-        $return = [];
-
-        if (is_array($data) && count($data) > 0) {
+        if (is_array($data)) {
+            $return = [];
             $counter = 1;
             foreach ($data as $object) {
                 if ($object instanceof DataObject\Concrete) {
@@ -103,16 +99,12 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             }
 
             return $return;
-        } elseif (is_array($data) && count($data) === 0) {
-            //give empty array if data was not null
-            return [];
-        } else {
-            //return null if data was null - this indicates data was not loaded
-            return null;
         }
+
+        return null;
     }
 
-    protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
+    protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
     {
         $objects = [
             'dirty' => false,
@@ -139,7 +131,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         //return null when data is not set
         if (!$data) {
@@ -167,7 +159,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $return = [];
 
@@ -193,7 +185,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         //if not set, return null
         if ($data === null || $data === false) {
@@ -220,14 +212,27 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?array
+    public function getDataFromGridEditor(array $data, ?Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    public function getDataForGrid(?array $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForGrid(?array $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
-        return $this->getDataForEditmode($data, $object, $params);
+        $gridData = $this->getDataForEditmode($data, $object, $params);
+
+        if ($this->getPathFormatterClass() && !empty($gridData)) {
+            $params['fd'] = $object->getClass()->getFieldDefinition($this->getName(), $params['context'] ?? []);
+            foreach ($gridData as &$relatedElementData) {
+                $nicePath = $this->getNicePath($relatedElementData, $object, $params);
+                if ($nicePath) {
+                    $relatedElementData['fullpath'] = $nicePath;
+                }
+            }
+            unset($relatedElementData);
+        }
+
+        return $gridData;
     }
 
     /**
@@ -236,7 +241,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if (is_array($data) && count($data) > 0) {
             $paths = [];
@@ -330,7 +335,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 $container->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($container);
             }
-        } elseif ($container instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             parent::loadLazyFieldcollectionField($container);
@@ -381,7 +386,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): array
+    public function getDiffVersionPreview(?array $data, ?Concrete $object = null, array $params = []): array
     {
         $value = [];
         $value['type'] = 'html';
@@ -556,7 +561,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @internal
      */
-    protected function processDiffDataForEditMode(mixed $originalData, mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    protected function processDiffDataForEditMode(mixed $originalData, mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data) {
             $data = $data[0];
@@ -609,7 +614,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $data;
     }
 
-    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $originalData = $data;
         $data = parent::getDiffDataForEditMode($data, $object, $params);
@@ -622,7 +627,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      *
      *
      */
-    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDiffDataFromEditmode(array $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $tabledata = $data[0]['data'];

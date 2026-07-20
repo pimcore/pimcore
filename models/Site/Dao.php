@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Site;
@@ -64,8 +61,8 @@ class Dao extends Model\Dao\AbstractDao
             $sitesRaw = $this->db->fetchAllAssociative('SELECT id,domains FROM sites');
             $wildcardDomains = [];
             foreach ($sitesRaw as $site) {
-                if (!empty($site['domains']) && strpos($site['domains'], '*')) {
-                    $siteDomains = unserialize($site['domains']);
+                if (!empty($site['domains']) && strpos($site['domains'], '*') !== false) {
+                    $siteDomains = unserialize($site['domains'], ['allowed_classes' => false]);
                     if (is_array($siteDomains) && count($siteDomains) > 0) {
                         foreach ($siteDomains as $siteDomain) {
                             if (str_contains($siteDomain, '*')) {

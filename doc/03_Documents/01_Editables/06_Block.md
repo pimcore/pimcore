@@ -58,6 +58,16 @@ And in the frontend of the application:
 
 ## Advanced Usage
 
+### Example for getting the count or check if is empty
+
+```twig
+{% if pimcore_count_block("contentblock") == 0 %}
+    block is empty
+{% else %}
+    block has {{pimcore_count_block("contentblock")}} items
+{% endif %}
+```
+
 ### Example for `getCurrent()`
 
 ```twig

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -36,7 +33,7 @@ class Geopolyline extends AbstractGeo implements
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return Serialize::serialize($data);
     }
@@ -46,7 +43,7 @@ class Geopolyline extends AbstractGeo implements
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         return Serialize::unserialize($data);
     }
@@ -56,7 +53,7 @@ class Geopolyline extends AbstractGeo implements
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -98,7 +95,7 @@ class Geopolyline extends AbstractGeo implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (!empty($data)) {
             if (is_array($data)) {
@@ -123,7 +120,7 @@ class Geopolyline extends AbstractGeo implements
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (is_array($data)) {
             $points = [];
@@ -143,7 +140,7 @@ class Geopolyline extends AbstractGeo implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return $this->getDiffVersionPreview($data, $object, $params);
     }
@@ -182,7 +179,7 @@ class Geopolyline extends AbstractGeo implements
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): string
+    public function getDiffVersionPreview(?array $data, ?Concrete $object = null, array $params = []): string
     {
         $line = [];
 

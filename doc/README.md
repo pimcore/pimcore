@@ -10,12 +10,6 @@ title: Core Framework
 
 Pimcore provides a fully flexible and extendable platform for managing and exploiting data of any type. The Core Framework is the foundation of the whole platform and provides a lot of basic functionalities.
 
-It gathers four major modules to answer a lot of use cases:
-- Product Information (PIM) and Master Data Management (MDM)
-- Digital Asset Management (DAM)
-- Enterprise Content Management (CMS/UX)
-- B2C and B2B E-commerce Framework
-
 The system is written in PHP, follows the Model-View-Controller (MVC) pattern and relies on the Symfony Framework.
 
 Pimcore provides the management of three types of elements that cover any kind of data: Documents, Assets and Objects. Following the principle of single-source publishing, each type is saved only once with a single ID that serves as a reference ID whenever it is reused somewhere.

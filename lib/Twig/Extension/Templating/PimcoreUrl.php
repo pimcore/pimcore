@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Twig\Extension\Templating;
@@ -35,7 +32,7 @@ class PimcoreUrl implements RuntimeExtensionInterface
         $this->requestHelper = $requestHelper;
     }
 
-    public function __invoke(array $urlOptions = [], string $name = null, bool $reset = false, bool $encode = true, bool $relative = false): string
+    public function __invoke(array $urlOptions = [], ?string $name = null, bool $reset = false, bool $encode = true, bool $relative = false): string
     {
         // merge all parameters from request to parameters
         if (!$reset && $this->requestHelper->hasMainRequest()) {
@@ -50,7 +47,7 @@ class PimcoreUrl implements RuntimeExtensionInterface
      *
      *
      */
-    protected function generateUrl(array|string $name = null, ?array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, bool $encode = true): string
+    protected function generateUrl(array|string|null $name = null, ?array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, bool $encode = true): string
     {
         if ($encode !== true) {
             // encoding is default anyway, so we only set it when really necessary, to minimize the risk of

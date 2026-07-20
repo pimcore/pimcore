@@ -2,68 +2,105 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Helper;
 
-use Exception;
-use Gotenberg\Gotenberg as GotenbergAPI;
-use Gotenberg\Stream;
+use Pimcore\Cache;
 use Pimcore\Config;
+use Throwable;
 
 /**
  * @internal
  */
 class GotenbergHelper
 {
-    private static bool $validPing = false;
+    private static ?bool $validPing = null;
 
-    /**
-     *
-     * @throws Exception
-     */
-    public static function isAvailable(): bool
+    private const CACHE_KEY = 'gotenberg_ping';
+
+    private const STATUS_AVAILABLE = 'available';
+
+    private const STATUS_UNAVAILABLE = 'unavailable';
+
+    private static function healthPing(): bool
     {
-        if (self::$validPing) {
-            return true;
-        }
-
-        if (!class_exists(GotenbergAPI::class, true)) {
-            return false;
-        }
-
-        $request = null;
-
-        /** @var GotenbergAPI|object $chrome */
-        $chrome = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url']);
-        if (method_exists($chrome, 'html')) {
-            // gotenberg/gotenberg-php API Client v1
-            $request = $chrome->html(Stream::string('dummy.html', '<body></body>'));
-        } elseif (method_exists($chrome, 'screenshot')) {
-            $request = $chrome->screenshot()->html(Stream::string('dummy.html', '<body></body>'));
-        }
-
-        if ($request) {
+        $gotenbergBaseUrl = Config::getSystemConfiguration('gotenberg')['base_url'];
+        if ($gotenbergBaseUrl) {
             try {
-                GotenbergAPI::send($request);
-                self::$validPing = true;
+                $ch = curl_init(rtrim($gotenbergBaseUrl, '/') . '/health');
 
-                return true;
-            } catch (Exception $e) {
-                // nothing to do
+                curl_setopt_array($ch, [
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_TIMEOUT => 2,
+                    CURLOPT_CONNECTTIMEOUT => 2,
+                ]);
+
+                $result = curl_exec($ch);
+
+                if ($result === false) {
+                    curl_close($ch);
+
+                    return false;
+                }
+                $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+
+                return $status === 200;
+            } catch (Throwable $e) {
+                return false;
             }
         }
 
         return false;
+    }
+
+    public static function isAvailable(): bool
+    {
+        if (self::$validPing !== null) {
+            return self::$validPing;
+        }
+
+        $cachedStatus = Cache::load(self::CACHE_KEY);
+
+        if ($cachedStatus === self::STATUS_AVAILABLE) {
+            self::$validPing = true;
+
+            return true;
+        }
+
+        if ($cachedStatus === self::STATUS_UNAVAILABLE) {
+            self::$validPing = false;
+
+            return false;
+        }
+
+        $ttl = Config::getSystemConfiguration('gotenberg')['ping_cache_ttl'];
+
+        if (self::healthPing()) {
+            self::$validPing = true;
+            Cache::save(self::STATUS_AVAILABLE, self::CACHE_KEY, [], $ttl);
+
+            return true;
+        }
+
+        // Short-lived retry counter to avoid caching transient failures.
+        // Only consecutive failures within a small window mark the service unavailable.
+        $retries = is_int($cachedStatus) ? $cachedStatus : 0;
+        $retries++;
+        if ($retries < 3) {
+            Cache::save($retries, self::CACHE_KEY, [], 15);
+        } else {
+            Cache::save(self::STATUS_UNAVAILABLE, self::CACHE_KEY, [], $ttl);
+        }
+
+        return self::$validPing = false;
     }
 }

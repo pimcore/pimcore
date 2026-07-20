@@ -2,24 +2,23 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Workflow\Notification;
 
 use Exception;
+use Pimcore\Logger;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification\Service\NotificationService;
-use Symfony\Component\Workflow\Workflow;
+use Pimcore\Workflow\Transition;
+use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PimcoreNotificationService extends AbstractNotificationService
@@ -38,8 +37,14 @@ class PimcoreNotificationService extends AbstractNotificationService
         $this->translator = $translator;
     }
 
-    public function sendPimcoreNotification(array $users, array $roles, Workflow $workflow, string $subjectType, ElementInterface $subject, string $action): void
-    {
+    public function sendPimcoreNotification(
+        array $users,
+        array $roles,
+        WorkflowInterface $workflow,
+        string $subjectType,
+        ElementInterface $subject,
+        Transition $transition
+    ): void {
         try {
             $recipients = $this->getNotificationUsersByName($users, $roles, true);
             if (!count($recipients)) {
@@ -47,13 +52,18 @@ class PimcoreNotificationService extends AbstractNotificationService
             }
 
             foreach ($recipients as $language => $recipientsPerLanguage) {
-                $title = $this->translator->trans('workflow_change_email_notification_subject', [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()], 'admin', $language);
+                $title = $this->translator->trans(
+                    'workflow_change_email_notification_subject',
+                    [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()],
+                    'admin',
+                    $language
+                );
                 $message = $this->translator->trans(
                     'workflow_change_email_notification_text',
                     [
                         $subjectType . ' ' . $subject->getFullPath(),
                         $subject->getId(),
-                        $this->translator->trans($action, [], 'admin', $language),
+                        $this->translator->trans($transition->getLabel(), [], 'admin', $language),
                         $this->translator->trans($workflow->getName(), [], 'admin', $language),
                     ],
                     'admin',
@@ -71,8 +81,8 @@ class PimcoreNotificationService extends AbstractNotificationService
                     $this->notificationService->sendToUser($recipient->getId(), 0, $title, $message, $subject);
                 }
             }
-        } catch (Exception $e) {
-            \Pimcore\Logger::error('Error sending Workflow change notification.');
+        } catch (Exception) {
+            Logger::error('Error sending Workflow change notification.');
         }
     }
 }

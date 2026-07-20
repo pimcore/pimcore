@@ -3,23 +3,19 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\InstallBundle;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\DriverManager;
 use Exception;
 use InvalidArgumentException;
@@ -37,7 +33,6 @@ use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Bundle\SimpleBackendSearchBundle\PimcoreSimpleBackendSearchBundle;
 use Pimcore\Bundle\StaticRoutesBundle\PimcoreStaticRoutesBundle;
-use Pimcore\Bundle\TinymceBundle\PimcoreTinymceBundle;
 use Pimcore\Bundle\UuidBundle\PimcoreUuidBundle;
 use Pimcore\Bundle\WordExportBundle\PimcoreWordExportBundle;
 use Pimcore\Bundle\XliffBundle\PimcoreXliffBundle;
@@ -65,6 +60,8 @@ use Throwable;
  */
 class Installer
 {
+    const NEEDS_INSTALL_MARKER = PIMCORE_PRIVATE_VAR . '/config/needs-install.lock';
+
     const RECOMMENDED_BUNDLES = ['PimcoreSimpleBackendSearchBundle'];
 
     public const INSTALLABLE_BUNDLES = [
@@ -74,7 +71,6 @@ class Installer
         'PimcoreSeoBundle' => PimcoreSeoBundle::class,
         'PimcoreSimpleBackendSearchBundle' => PimcoreSimpleBackendSearchBundle::class,
         'PimcoreStaticRoutesBundle' => PimcoreStaticRoutesBundle::class,
-        'PimcoreTinymceBundle' => PimcoreTinymceBundle::class,
         'PimcoreUuidBundle' => PimcoreUuidBundle::class,
         'PimcoreWordExportBundle' => PimcoreWordExportBundle::class,
         'PimcoreXliffBundle' => PimcoreXliffBundle::class,
@@ -119,6 +115,12 @@ class Installer
     private bool $skipDatabaseConfig = false;
 
     /**
+     * skip writing product-registration.yaml file
+     *
+     */
+    private bool $skipProductRegistrationConfig = false;
+
+    /**
      * Bundles that will be installed
      *
      */
@@ -144,6 +146,11 @@ class Installer
         $this->skipDatabaseConfig = $skipDatabaseConfig;
     }
 
+    public function setSkipProductRegistrationConfig(bool $skipProductRegistrationConfig): void
+    {
+        $this->skipProductRegistrationConfig = $skipProductRegistrationConfig;
+    }
+
     private array $stepEvents = [
         'validate_parameters' => 'Validating input parameters...',
         'check_prerequisites' => 'Checking prerequisites...',
@@ -160,6 +167,7 @@ class Installer
 
     private array $runInstallSteps = [
         'write_database_config',
+        'write_product_registration_config',
         'setup_database',
         'install_assets',
         'install_classes',
@@ -170,7 +178,7 @@ class Installer
 
     public function __construct(
         LoggerInterface $logger,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
     ) {
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
@@ -223,7 +231,7 @@ class Installer
         return $this->eventDispatcher->dispatch(new BundleSetupEvent(self::INSTALLABLE_BUNDLES, self::RECOMMENDED_BUNDLES), InstallEvents::EVENT_BUNDLE_SETUP);
     }
 
-    public function checkPrerequisites(Connection $db = null): array
+    public function checkPrerequisites(?Connection $db = null): array
     {
         $checks = array_merge(
             Requirements::checkFilesystem(),
@@ -265,7 +273,7 @@ class Installer
         return count($this->stepEvents);
     }
 
-    private function dispatchStepEvent(string $type, string $message = null): InstallerStepEvent
+    private function dispatchStepEvent(string $type, ?string $message = null): InstallerStepEvent
     {
         if (!isset($this->stepEvents[$type])) {
             throw new InvalidArgumentException(sprintf('Trying to dispatch unsupported event type "%s"', $type));
@@ -335,7 +343,10 @@ class Installer
                     'username' => $adminUser,
                     'password' => $adminPass,
                 ],
-                $db
+                $db,
+                $params['encryption_secret'],
+                $params['instance_identifier'],
+                $params['product_key'],
             );
         } catch (Throwable $e) {
             $this->logger->error((string) $e);
@@ -389,13 +400,27 @@ class Installer
         return $dbConfig;
     }
 
-    private function runInstall(array $dbConfig, array $userCredentials, Connection $db): array
-    {
+    private function runInstall(
+        array $dbConfig, array $userCredentials, Connection $db,
+        ?string $encryptionSecret, ?string $instanceIdentifier, string $productKey
+    ): array {
+        $writer = new ConfigWriter();
+
         $errors = [];
         $stepsToRun = $this->getRunInstallSteps();
 
-        if (in_array('write_database_config', $stepsToRun)) {
+        if (
+            in_array('write_product_registration_config', $stepsToRun) ||
+            in_array('write_database_config', $stepsToRun)
+        ) {
             $this->dispatchStepEvent('create_config_files');
+        }
+
+        if (in_array('write_product_registration_config', $stepsToRun) && !$this->skipProductRegistrationConfig) {
+            $writer->writeProductRegistrationConfig($productKey, $instanceIdentifier, $encryptionSecret);
+        }
+
+        if (in_array('write_database_config', $stepsToRun)) {
 
             unset($dbConfig['driver']);
             unset($dbConfig['wrapperClass']);
@@ -420,14 +445,16 @@ class Installer
                 ],
             ];
 
-            $this->createConfigFiles($doctrineConfig);
+            if (!$this->skipDatabaseConfig) {
+                $writer->writeDbConfig($doctrineConfig);
+            }
         }
 
         $this->dispatchStepEvent('boot_kernel');
 
         // resolve environment with default=dev here as we set debug mode to true and want to
         // load the kernel for the same environment as the app.php would do. the kernel booted here
-        // will always be in "dev" with the exception of an environment set via env vars
+        // will always be in "dev" except an environment is set via env vars
         $environment = Config::getEnvironment();
 
         $kernel = \App\Kernel::class;
@@ -454,14 +481,10 @@ class Installer
 
             if (!$this->skipDatabaseConfig && in_array('write_database_config', $stepsToRun)) {
                 // now we're able to write the server version to the database.yaml
-                if ($db instanceof Connection) {
-                    $connection = $db->getWrappedConnection();
-                    if ($connection instanceof ServerInfoAwareConnection) {
-                        $writer = new ConfigWriter();
-                        $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $connection->getServerVersion();
-                        $writer->writeDbConfig($doctrineConfig);
-                    }
-                }
+                $serverVersion = $db->getServerVersion();
+
+                $doctrineConfig['doctrine']['dbal']['connections']['default']['server_version'] = $serverVersion;
+                $writer->writeDbConfig($doctrineConfig);
             }
         }
 
@@ -488,6 +511,8 @@ class Installer
         if (in_array('clear_cache', $stepsToRun)) {
             $this->clearKernelCacheDir($kernel);
         }
+
+        $this->cleanupNeedsInstallMarker();
 
         $this->dispatchStepEvent('complete');
 
@@ -624,15 +649,6 @@ class Installer
             $stdErr->write($process->getErrorOutput());
             $stdErr->note('Installing assets failed. Please run the following command manually:');
             $stdErr->writeln('  ' . str_replace(["'", '\\'], ['', '\\\\'], $process->getCommandLine()));
-        }
-    }
-
-    private function createConfigFiles(array $config): void
-    {
-        $writer = new ConfigWriter();
-
-        if (!$this->skipDatabaseConfig) {
-            $writer->writeDbConfig($config);
         }
     }
 
@@ -914,5 +930,17 @@ class Installer
     public function setRunInstallSteps(array $runInstallSteps): void
     {
         $this->runInstallSteps = $runInstallSteps;
+    }
+
+    private function cleanupNeedsInstallMarker(): void
+    {
+        try {
+            $filesystem = new Filesystem();
+            if ($filesystem->exists(self::NEEDS_INSTALL_MARKER)) {
+                $filesystem->remove(self::NEEDS_INSTALL_MARKER);
+            }
+        } catch (IOException $e) {
+            $this->logger->error($e->getMessage());
+        }
     }
 }

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Element\Recyclebin;
@@ -58,7 +55,7 @@ class Item extends Model\AbstractModel
 
     protected string $deletedby;
 
-    public static function create(Element\ElementInterface $element, Model\User $user = null): void
+    public static function create(Element\ElementInterface $element, ?Model\User $user = null): void
     {
         $item = new self();
         $item->setElement($element);
@@ -80,7 +77,7 @@ class Item extends Model\AbstractModel
     /**
      * @throws Exception
      */
-    public function restore(Model\User $user = null): void
+    public function restore(?Model\User $user = null): void
     {
         $dummy = null;
         $raw = Storage::get('recycle_bin')->read($this->getStorageFile());
@@ -145,7 +142,7 @@ class Item extends Model\AbstractModel
         $this->delete();
     }
 
-    public function save(Model\User $user = null): void
+    public function save(?Model\User $user = null): void
     {
         $this->setType(Element\Service::getElementType($this->getElement()));
         $this->setSubtype($this->getElement()->getType());

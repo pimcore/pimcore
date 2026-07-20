@@ -2,27 +2,24 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Extension\Document\Areabrick;
 
+use Pimcore\Bundle\CoreBundle\DependencyInjection\ContainerAwareInterface;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\ContainerAwareTrait;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Pimcore\Model\Document\Editable;
 use Pimcore\Model\Document\Editable\Area\Info;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Templating\Renderer\EditableRenderer;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabrickInterface, ContainerAwareInterface
 {

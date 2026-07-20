@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -69,11 +66,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      */
     public bool $allowMultipleAssignments = false;
 
-    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
+    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
     {
-        $return = [];
 
-        if (is_array($data) && count($data) > 0) {
+        if (is_array($data)) {
+            $return = [];
             $counter = 1;
             foreach ($data as $metaObject) {
                 $element = $metaObject->getElement();
@@ -89,16 +86,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             }
 
             return $return;
-        } elseif (is_array($data) && count($data) === 0) {
-            //give empty array if data was not null
-            return [];
-        } else {
-            //return null if data was null - this indicates data was not loaded
-            return null;
         }
+
+        return null;
     }
 
-    protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
+    protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
     {
         $list = [
             'dirty' => false,
@@ -189,7 +182,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      *
      * @throws Exception
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         //return null when data is not set
         if (!$data) {
@@ -219,7 +212,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $return = [];
 
@@ -336,7 +329,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         //if not set, return null
         if ($data === null || $data === false) {
@@ -392,11 +385,22 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $multihrefMetadata;
     }
 
-    public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): ?array
+    public function getDataForGrid(?array $data, ?Concrete $object = null, array $params = []): ?array
     {
-        $ret = $this->getDataForEditmode($data, $object, $params);
+        $gridData = $this->getDataForEditmode($data, $object, $params);
 
-        return is_array($ret) ? $ret : null;
+        if ($this->getPathFormatterClass() && !empty($gridData)) {
+            $params['fd'] = $object->getClass()->getFieldDefinition($this->getName(), $params['context'] ?? []);
+            foreach ($gridData as &$relatedElementData) {
+                $nicePath = $this->getNicePath($relatedElementData, $object, $params);
+                if ($nicePath) {
+                    $relatedElementData['path'] = $nicePath;
+                }
+            }
+            unset($relatedElementData);
+        }
+
+        return $gridData;
     }
 
     /**
@@ -405,7 +409,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         $items = [];
         if (is_array($data) && count($data) > 0) {
@@ -562,7 +566,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                     $sql .= ' AND ' . Db\Helper::quoteInto($db, 'ownername = ?', $context['fieldname']);
                 }
 
-                if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
+                if (!DataObject::isDirtyDetectionDisabled()) {
                     if ($context['containerType']) {
                         if ($object instanceof Localizedfield) {
                             $context['containerType'] = 'localizedfield';
@@ -608,7 +612,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                 $container->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($container);
             }
-        } elseif ($container instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             parent::loadLazyFieldcollectionField($container);
@@ -659,7 +663,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                     $deleteCondition['ownername'] = $context['fieldname'];
                 }
 
-                if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
+                if (!DataObject::isDirtyDetectionDisabled()) {
                     if (!empty($context['containerType'])) {
                         $deleteCondition['ownertype'] = $context['containerType'];
                     }
@@ -827,7 +831,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return null;
     }
 
-    protected function processDiffDataForEditMode(?array $originalData, ?array $data, Concrete $object = null, array $params = []): ?array
+    protected function processDiffDataForEditMode(?array $originalData, ?array $data, ?Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $data = $data[0];
@@ -875,14 +879,14 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $data;
     }
 
-    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $data = parent::getDiffDataForEditMode($data, $object, $params);
 
         return $data;
     }
 
-    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDiffDataFromEditmode(array $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $tabledata = $data[0]['data'];

@@ -10,7 +10,7 @@ The asset **must** extend `Pimcore\Model\Asset`. Let´s create a class for InDes
 but it's best practice to put your assets into a `Model\Asset` sub-namespace):
 
 For examples have a look at the Pimcore core asset types at
-[github](https://github.com/pimcore/pimcore/tree/11.x/models/Asset).
+[github](https://github.com/pimcore/pimcore/tree/12.x/models/Asset).
 
 ```php
 <?php

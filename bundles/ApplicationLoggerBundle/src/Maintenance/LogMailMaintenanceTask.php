@@ -2,21 +2,20 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\ApplicationLoggerBundle\Maintenance;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
+use Pimcore\Bundle\ApplicationLoggerBundle\Enum\LogLevel;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
@@ -37,41 +36,25 @@ class LogMailMaintenanceTask implements TaskInterface
         $this->config = $config;
     }
 
+    /**
+     * @throws Exception
+     */
     public function execute(): void
     {
 
         if (!empty($this->config['applicationlog']['mail_notification']['send_log_summary'])) {
             $receivers = preg_split('/,|;/', $this->config['applicationlog']['mail_notification']['mail_receiver']);
 
-            array_walk($receivers, function (&$value) {
+            array_walk($receivers, static function (&$value) {
                 $value = trim($value);
             });
 
-            // getting the enums from priority
-            $priorityColumnDefinition = $this->db->fetchAllAssociative(
-                'SHOW COLUMNS FROM ' .ApplicationLoggerDb::TABLE_NAME. " LIKE 'priority'"
-            );
-
-            // type is the actual enum values
-            $columnType = reset($priorityColumnDefinition)['Type'];
-
-            // remove unnecessary noise
-            $enumValue = explode(',', str_replace(['enum(', ')'], '', $columnType));
-
-            $logLevel = (int)($this->config['applicationlog']['mail_notification']['filter_priority'] ?? null);
-
-            $logLevels = [];
-            for ($i = 0; $i < $logLevel + 1; $i++) {
-                $logLevels[] = $enumValue[$i];
-            }
+            $logLevel = ($this->config['applicationlog']['mail_notification']['filter_priority'] ?? null);
+            $logLevel = $logLevel === null ? LogLevel::Debug : LogLevel::getLogLevel($logLevel);
 
             $query = 'SELECT * FROM '
-                . ApplicationLoggerDb::TABLE_NAME
-                . ' WHERE maintenanceChecked IS NULL '
-                . 'AND priority IN('
-                . implode(',', $logLevels)
-                . ') '
-                . 'ORDER BY id DESC';
+                .ApplicationLoggerDb::TABLE_NAME
+                .' WHERE maintenanceChecked IS NULL AND priority <= ' . $logLevel->value . ' ORDER BY id DESC';
 
             $rows = $this->db->fetchAllAssociative($query);
             $limit = 100;

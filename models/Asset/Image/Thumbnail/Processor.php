@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
@@ -336,11 +333,20 @@ class Processor
                 }
 
                 $tmpFsPath = File::getLocalTempFilePath($fileExtension);
-                $image->save($tmpFsPath, $format, $config->getQuality());
-                $stream = fopen($tmpFsPath, 'rb');
-                $storage->writeStream($storagePath, $stream);
-                if (is_resource($stream)) {
-                    fclose($stream);
+
+                $fileHandle = null;
+
+                if ($format === 'original') {
+                    $fileHandle = fopen($asset->getLocalFile(), 'rb');
+                } else {
+                    $image->save($tmpFsPath, $format, $config->getQuality());
+                    $fileHandle = fopen($tmpFsPath, 'rb');
+                }
+
+                $storage->writeStream($storagePath, $fileHandle);
+
+                if (is_resource($fileHandle)) {
+                    fclose($fileHandle);
                 }
 
                 if ($statusCacheEnabled && $asset instanceof Asset\Image) {

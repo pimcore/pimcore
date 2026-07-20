@@ -102,7 +102,6 @@ The Auto Alt functionality will try to automatically fall back to any available 
 Ultimately, it would use the image `title` as `alt` value when nothing above is previously found.
 It is also possible to define an alternative metadata to be used as `alt`, `copyright`, `title` values (eg. by defining `pimcore.assets.metadata.alt` in the configuration) that would have used when the inline options are not passed.
 
-```yaml
 
 ## Usage Examples
 
@@ -349,6 +348,10 @@ If you need to scale an image more than that, you can use the `max_scaling_facto
       thumbnails:
         max_scaling_factor: 6.0
 ```
+
+You can define the maximum automatic DPI scaling factor used for image thumbnail srcset values 
+via the `pimcore.assets.image.thumbnails.max_srcset_dpi_factor` configuration option.
+By default, this value is set to 2, and the getSrcset() method will generate values in increments of 1.
 
 ### Use in the Thumbnail Configuration:
 

@@ -16,7 +16,7 @@ Following a list of ways to extend Pimcore. See detail pages for additional info
  
 * Use [**Overriding Models**](./03_Overriding_Models.md) to overwrite Pimcore default models. 
 
-* [**Configuration**](../01_Getting_Started/04_Configuration.md) regarding configuration (e.g. overwriting Pimcore constants
+* [**Configuration**](../01_Getting_Started/05_Configuration.md) regarding configuration (e.g. overwriting Pimcore constants
  like assets directory, temporary directory etc.) 
  
 * [**Parent Class for Objects**](./07_Parent_Class_for_Objects.md) to inject additional functionality

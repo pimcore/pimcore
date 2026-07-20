@@ -8,6 +8,15 @@ The 'Name' column is optional, unless the value can't be converted to a valid PH
 This applies to values starting with a number or certain symbols.
 A name may contain alphanumeric characters and underscores.
 
+## Access restrictions
+
+For non-admin users, access to the management interface can be enabled via
+[user / role permissions](../../../22_Administration_of_Pimcore/07_Users_and_Roles.md).
+
+Checking the 'Admin only' checkbox in the General Settings of a select options
+set prevents non-admin users from deleting or editing the configuration.
+This may be useful for system critical select options.
+
 ## Field configuration
 
 Set the options source to 'Select Options' and select one of the select options sets.

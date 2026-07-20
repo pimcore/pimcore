@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Translation;
@@ -45,7 +42,7 @@ class Dao extends Model\Dao\AbstractDao
      * @throws NotFoundResourceException
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getByKey(string $key, array $languages = null): void
+    public function getByKey(string $key, ?array $languages = null): void
     {
         if (is_array($languages)) {
             $sql = 'SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE `key` = :key
@@ -106,14 +103,14 @@ class Dao extends Model\Dao\AbstractDao
                 }
 
                 $data = [
-                'key' => $this->model->getKey(),
-                'type' => $this->model->getType(),
-                'language' => $language,
-                'text' => $text,
-                'modificationDate' => $this->model->getModificationDate(),
-                'creationDate' => $this->model->getCreationDate(),
-                'userOwner' => $this->model->getUserOwner(),
-                'userModification' => $this->model->getUserModification(),
+                    'key' => $this->model->getKey(),
+                    'type' => $this->model->getType(),
+                    'language' => $language,
+                    'text' => $text,
+                    'modificationDate' => $this->model->getModificationDate(),
+                    'creationDate' => $this->model->getCreationDate(),
+                    'userOwner' => $this->model->getUserOwner(),
+                    'userModification' => $this->model->getUserModification(),
                 ];
                 Helper::upsert($this->db, $this->getDatabaseTableName(), $data, $this->getPrimaryKey($this->getDatabaseTableName()));
             }

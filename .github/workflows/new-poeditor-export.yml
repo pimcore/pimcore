@@ -1,0 +1,21 @@
+name: "Trigger POEditor Translations Export (Reusable)"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "[0-9]+.x"
+      - "docs_actions"
+      - "main"
+    paths:
+      - "src/Resources/translations/admin.en.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  poeditor:
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-poeditor.yaml@main
+    secrets:
+      POEDITOR_ACTION_TRIGGER_TOKEN: ${{ secrets.POEDITOR_ACTION_TRIGGER_TOKEN }}
+

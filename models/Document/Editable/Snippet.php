@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Document\Editable;
@@ -222,10 +219,8 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
 
     public function setSnippet(Document\Snippet $snippet): void
     {
-        if ($snippet instanceof Document\Snippet) {
-            $this->id = $snippet->getId();
-            $this->snippet = $snippet;
-        }
+        $this->id = $snippet->getId();
+        $this->snippet = $snippet;
     }
 
     public function getSnippet(): ?Document\Snippet

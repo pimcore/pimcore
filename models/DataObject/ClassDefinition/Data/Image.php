@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -35,7 +32,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?int
     {
         if ($data instanceof Asset\Image) {
             return $data->getId();
@@ -49,7 +46,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Asset
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?Asset
     {
         if ((int)$data > 0) {
             return Asset\Image::getById($data);
@@ -63,7 +60,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?int
     {
         if ($data instanceof Asset\Image) {
             return $data->getId();
@@ -77,7 +74,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @see Data::getDataForEditmode
      */
-    public function getDataForEditmode(mixed $data, Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, ?Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof Asset\Image) {
             return $data->getObjectVars();
@@ -86,7 +83,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return null;
     }
 
-    public function getDataForGrid(?Asset\Image $data, Concrete $object = null, array $params = []): ?array
+    public function getDataForGrid(?Asset\Image $data, ?Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
@@ -96,7 +93,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Asset\Image
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?Asset\Image
     {
         if ($data && (int)$data['id'] > 0) {
             return Asset\Image::getById($data['id']);
@@ -123,7 +120,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param null|Model\DataObject\Concrete $object
      *
      */
-    public function getDataFromGridEditor(?array $data, Concrete $object = null, array $params = []): Asset\Image|null
+    public function getDataFromGridEditor(?array $data, ?Concrete $object = null, array $params = []): Asset\Image|null
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -134,7 +131,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof Asset\Image) {
             return '<img src="/admin/asset/get-image-thumbnail?id=' . $data->getId() . '&width=100&height=100&aspectratio=true" />';
@@ -194,7 +191,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param Model\DataObject\Concrete|null $object
      *
      */
-    public function getDiffVersionPreview(?Asset\Image $data, Concrete $object = null, array $params = []): array|string
+    public function getDiffVersionPreview(?Asset\Image $data, ?Concrete $object = null, array $params = []): array|string
     {
         $versionPreview = null;
         if ($data instanceof Asset\Image) {

@@ -29,8 +29,8 @@ class AppExtension extends Extension
         // create a YamlFileLoader - this could also be a XmlFileLoader if you want to load XML 
         $loader = new YamlFileLoader(
             $container,
-            // looks in src/MyBundle/Resources/config
-            new FileLocator(__DIR__ . '/../Resources/config')
+            // looks in "config" folder in the bundle root
+            new FileLocator(__DIR__ . '/../../config')
         );
 
         // load services.yaml

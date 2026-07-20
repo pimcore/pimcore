@@ -2,25 +2,19 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
-use Exception;
 use Pimcore;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
 
 /**
  * @internal
@@ -40,20 +34,12 @@ class Service
         self::$definitionsCache = [];
     }
 
-    /**
-     *
-     * @return EncryptedField|Data|null
-     *
-     * @throws Exception
-     */
-    public static function getFieldDefinitionFromKeyConfig(KeyConfig|KeyGroupRelation $keyConfig): DataObject\ClassDefinition\Data\EncryptedField|DataObject\ClassDefinition\Data|null
+    public static function getFieldDefinitionFromKeyConfig(KeyConfig|KeyGroupRelation $keyConfig): ?DataObject\ClassDefinition\Data
     {
         if ($keyConfig instanceof KeyConfig) {
             $cacheId = $keyConfig->getId();
-        } elseif ($keyConfig instanceof KeyGroupRelation) {
-            $cacheId = $keyConfig->getKeyId();
         } else {
-            throw new Exception('$keyConfig should be KeyConfig or KeyGroupRelation');
+            $cacheId = $keyConfig->getKeyId();
         }
 
         if (array_key_exists($cacheId, self::$definitionsCache)) {
@@ -69,7 +55,7 @@ class Service
         return $fd;
     }
 
-    public static function getFieldDefinitionFromJson(array $definition, string $type): DataObject\ClassDefinition\Data\EncryptedField|DataObject\ClassDefinition\Data|null
+    public static function getFieldDefinitionFromJson(array $definition, string $type): ?DataObject\ClassDefinition\Data
     {
         if (!$definition) {
             return null;
@@ -84,10 +70,22 @@ class Service
         /** @var DataObject\ClassDefinition\Data $dataDefinition */
         $dataDefinition = $loader->build($type);
 
+        // Classification store key names are labels referenced by keyId — they are never
+        // emitted into generated PHP classes or DDL, so they are exempt from the identifier
+        // validation in Data::setName() (existing stores contain names like "Voltage Type").
+        $name = $definition['name'] ?? null;
+        unset($definition['name']);
+
         $dataDefinition->setValues($definition);
         $className = get_class($dataDefinition);
 
-        $dataDefinition = $className::__set_state((array) $dataDefinition);
+        $state = (array) $dataDefinition;
+        unset($state['name']);
+        $dataDefinition = $className::__set_state($state);
+
+        if (is_string($name)) {
+            $dataDefinition->name = $name;
+        }
 
         if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             $delegateDefinitionRaw = $dataDefinition->getDelegate();
