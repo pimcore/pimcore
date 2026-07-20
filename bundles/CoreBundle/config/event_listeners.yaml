@@ -43,6 +43,9 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\GlobalTemplateVariablesListener: ~
 
+    # invalidates the request-scoped element permission cache on user/role/workspace changes
+    Pimcore\Bundle\CoreBundle\EventListener\PermissionCacheInvalidationListener: ~
+
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\HardlinkCanonicalListener:
         tags:
             - { name: kernel.event_subscriber }
