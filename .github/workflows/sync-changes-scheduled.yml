@@ -3,6 +3,15 @@ on:
   workflow_dispatch:
   schedule:
     - cron:  '30 21 * * *'
+  push:
+    branches:
+      - '2026.x'
+      - '2026.2'
+      - '12.3'
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 jobs:
   sync-branches:
