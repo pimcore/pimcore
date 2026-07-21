@@ -21,7 +21,6 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Element\Note\Dao getDao()
- * @method void delete()
  */
 final class Note extends Model\AbstractModel
 {
@@ -128,6 +127,16 @@ final class Note extends Model\AbstractModel
         if (!$isUpdate) {
             Pimcore::getEventDispatcher()->dispatch(new ModelEvent($this), NoteEvents::POST_ADD);
         }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function delete(): void
+    {
+        $this->getDao()->delete();
+
+        Pimcore::getEventDispatcher()->dispatch(new ModelEvent($this), NoteEvents::POST_DELETE);
     }
 
     public function setCid(int $cid): static
