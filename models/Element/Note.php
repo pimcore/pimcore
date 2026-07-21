@@ -17,6 +17,7 @@ use Exception;
 use Pimcore;
 use Pimcore\Event\Model\ModelEvent;
 use Pimcore\Event\NoteEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 
 /**
@@ -24,6 +25,8 @@ use Pimcore\Model;
  */
 final class Note extends Model\AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     /**
      * @internal
      */
@@ -136,7 +139,7 @@ final class Note extends Model\AbstractModel
     {
         $this->getDao()->delete();
 
-        Pimcore::getEventDispatcher()->dispatch(new ModelEvent($this), NoteEvents::POST_DELETE);
+        $this->dispatchEvent(new ModelEvent($this), NoteEvents::POST_DELETE);
     }
 
     public function setCid(int $cid): static

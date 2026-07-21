@@ -117,4 +117,24 @@ class NoteEventTest extends ModelTestCase
 
         $this->assertNull(Note::getById($id));
     }
+
+    public function testPostDeleteListenerReentrancyIsGuarded(): void
+    {
+        $note = $this->createNote();
+
+        $invocations = 0;
+        $this->addListener(NoteEvents::POST_DELETE, function (ModelEvent $event) use (&$invocations): void {
+            $invocations++;
+            $model = $event->getModel();
+            if ($model instanceof Note) {
+                // Re-enter delete() from within the listener: the recursion guard must
+                // suppress the nested POST_DELETE dispatch instead of recursing forever.
+                $model->delete();
+            }
+        });
+
+        $note->delete();
+
+        $this->assertSame(1, $invocations, 'POST_DELETE must dispatch once; the nested delete() is guarded');
+    }
 }
