@@ -326,7 +326,7 @@ class Dao extends Model\Dao\AbstractDao
                                 }
 
                                 // if the current value is empty and we have data from the parent, we just use it
-                                if ($isEmpty && $parentData) {
+                                if ($isEmpty && $parentData && $fd->supportsInheritance()) {
                                     foreach ($columnNames as $columnName) {
                                         if (array_key_exists($columnName, $parentData)) {
                                             $data[$columnName] = $parentData[$columnName];
@@ -339,7 +339,7 @@ class Dao extends Model\Dao\AbstractDao
                                     }
                                 }
 
-                                if ($inheritanceEnabled && !$fd instanceof CalculatedValue) {
+                                if ($inheritanceEnabled && $fd->supportsInheritance()) {
                                     //get changed fields for inheritance
                                     if ($fd->isRelationType()) {
                                         if (is_array($insertData)) {
