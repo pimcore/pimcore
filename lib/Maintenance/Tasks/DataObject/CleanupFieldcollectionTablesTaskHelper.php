@@ -82,7 +82,10 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
     {
         $fcDef = \Pimcore\Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
         if (!$fcDef) {
-            $this->logger->error("Fieldcollection '" . $fcType . "' not found. Please check table " . $tableName);
+            $this->logger->warning(
+                "Fieldcollection '" . $fcType . "' not found. Dropping orphaned table " . $tableName
+            );
+            $this->db->executeStatement('DROP TABLE IF EXISTS `' . $tableName . '`');
 
             return false;
         }
