@@ -74,7 +74,7 @@ class CleanupBrickTablesTaskHelper implements ConcreteTaskHelperInterface
             $this->logger->warning(
                 "Brick '" . $brickType . "' not found. Dropping orphaned table " . $tableName
             );
-            $this->db->executeStatement('DROP TABLE IF EXISTS `' . $tableName . '`');
+            $this->db->executeStatement('DROP TABLE IF EXISTS ' . $this->db->quoteIdentifier($tableName));
 
             return false;
         }

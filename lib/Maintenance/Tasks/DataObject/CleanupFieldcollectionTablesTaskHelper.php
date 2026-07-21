@@ -85,7 +85,7 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
             $this->logger->warning(
                 "Fieldcollection '" . $fcType . "' not found. Dropping orphaned table " . $tableName
             );
-            $this->db->executeStatement('DROP TABLE IF EXISTS `' . $tableName . '`');
+            $this->db->executeStatement('DROP TABLE IF EXISTS ' . $this->db->quoteIdentifier($tableName));
 
             return false;
         }
