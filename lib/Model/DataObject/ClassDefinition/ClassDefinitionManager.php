@@ -63,11 +63,33 @@ class ClassDefinitionManager
      * Updates all classes from PIMCORE_CLASS_DEFINITION_DIRECTORY
      *
      * @param bool $force whether to always update no matter if the model definition changed or not
+     *
+     * @return list<array{string, string, string}>
+     */
+    public function createOrUpdateClassDefinitions(bool $force = false): array
+    {
+        return $this->createOrUpdateClassDefinitionsInternal($force, true);
+    }
+
+    /**
+     * Updates all classes from PIMCORE_CLASS_DEFINITION_DIRECTORY with more control over the saving process.
+     * Added as a separate method to avoid compatibility issues.
+     * TODO: Should be refactored in Pimcore 13 to avoid duplication with createOrUpdateClassDefinitions.
+     *
+     * @param bool $force whether to always update no matter if the model definition changed or not
      * @param bool $dumpPHPClasses whether to write the PHP classes to the disk, if false, only the database will be updated
      *
      * @return list<array{string, string, string}>
      */
-    public function createOrUpdateClassDefinitions(bool $force = false, bool $dumpPHPClasses = true): array
+    public function dumpClassDefinitions(bool $force = false, bool $dumpPHPClasses = true): array
+    {
+        return $this->createOrUpdateClassDefinitionsInternal($force, $dumpPHPClasses);
+    }
+
+    /**
+     * @return list<array{string, string, string}>
+     */
+    private function createOrUpdateClassDefinitionsInternal(bool $force, bool $dumpPHPClasses): array
     {
         $objectClassesFolders = array_filter(array_unique(array_map('realpath', [
             PIMCORE_CLASS_DEFINITION_DIRECTORY,
@@ -126,7 +148,7 @@ class ClassDefinitionManager
      * @throws DefinitionWriteException
      */
     public function dumpClass(
-        ClassDefinition $class,
+        ClassDefinitionInterface $class,
         bool $saveDefinitionFile,
         bool $dumpPHPClasses,
         bool $force = false
