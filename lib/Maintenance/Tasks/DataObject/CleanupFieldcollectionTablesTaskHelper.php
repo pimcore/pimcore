@@ -20,9 +20,6 @@ use Doctrine\DBAL\Connection;
  */
 class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterface
 {
-    private const PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY =
-        PIMCORE_CLASS_DEFINITION_DIRECTORY . '/fieldcollections';
-
     public function __construct(
         private DataObjectTaskHelperInterface $helper,
         private Connection $db
@@ -31,16 +28,16 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
 
     public function cleanupCollectionTable(): void
     {
-        // If the definition directory itself is unavailable (e.g. a broken/incomplete deployment)
+        // If the class definition store itself is unavailable (e.g. a broken/incomplete deployment)
         // we must not treat any table as orphaned - otherwise live tables would be dropped.
-        if (!is_dir(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY)) {
+        if (!is_dir(PIMCORE_CLASS_DEFINITION_DIRECTORY)) {
             return;
         }
 
-        // May be empty when the last fieldcollection definition was removed - that is a valid state
-        // and we still scan, so the now-orphaned tables get cleaned up.
-        $collectionNames =
-            $this->helper->getCollectionNames(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY);
+        // Authoritative ownership list, loaded from all supported definition directories. May be
+        // empty when the last fieldcollection definition was removed - that is a valid state and we
+        // still scan, so the now-orphaned tables get cleaned up.
+        $collectionNames = $this->helper->getFieldcollectionCollectionNames();
 
         $prefix = 'object_collection_';
         $pattern = 'object\_collection\_%';

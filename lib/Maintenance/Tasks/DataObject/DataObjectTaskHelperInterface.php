@@ -18,7 +18,23 @@ namespace Pimcore\Maintenance\Tasks\DataObject;
  */
 interface DataObjectTaskHelperInterface
 {
-    public function getCollectionNames(string $dir): array;
+    /**
+     * Returns a map of lowercased => actual object-brick key for every brick definition known to
+     * Pimcore, loaded from all supported definition directories (the primary class definition
+     * directory and the custom configuration directory). Used as the authoritative ownership list
+     * before any table is considered orphaned.
+     *
+     * @return array<string, string>
+     */
+    public function getObjectBrickCollectionNames(): array;
+
+    /**
+     * Returns a map of lowercased => actual fieldcollection key for every fieldcollection definition
+     * known to Pimcore, loaded from all supported definition directories.
+     *
+     * @return array<string, string>
+     */
+    public function getFieldcollectionCollectionNames(): array;
 
     /**
      * Returns the actual (case-preserved) collection key from $collectionNames that owns the given

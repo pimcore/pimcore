@@ -20,7 +20,7 @@ use Doctrine\DBAL\Connection;
  */
 class CleanupBrickTablesTaskHelper implements ConcreteTaskHelperInterface
 {
-    private const PIMCORE_OBJECTBRICK_CLASS_DIRECTORY = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/objectbricks';
+    private const LOCALIZED_QUERY_PREFIX = 'object_brick_localized_query_';
 
     public function __construct(
         private DataObjectTaskHelperInterface $helper,
@@ -30,15 +30,16 @@ class CleanupBrickTablesTaskHelper implements ConcreteTaskHelperInterface
 
     public function cleanupCollectionTable(): void
     {
-        // If the definition directory itself is unavailable (e.g. a broken/incomplete deployment)
+        // If the class definition store itself is unavailable (e.g. a broken/incomplete deployment)
         // we must not treat any table as orphaned - otherwise live tables would be dropped.
-        if (!is_dir(self::PIMCORE_OBJECTBRICK_CLASS_DIRECTORY)) {
+        if (!is_dir(PIMCORE_CLASS_DEFINITION_DIRECTORY)) {
             return;
         }
 
-        // May be empty when the last brick definition was removed - that is a valid state and we
-        // still scan, so the now-orphaned tables get cleaned up.
-        $collectionNames = $this->helper->getCollectionNames(self::PIMCORE_OBJECTBRICK_CLASS_DIRECTORY);
+        // Authoritative ownership list, loaded from all supported definition directories. May be
+        // empty when the last brick definition was removed - that is a valid state and we still
+        // scan, so the now-orphaned tables get cleaned up.
+        $collectionNames = $this->helper->getObjectBrickCollectionNames();
 
         $tableTypes = ['store', 'query', 'localized'];
         foreach ($tableTypes as $tableType) {
@@ -50,7 +51,15 @@ class CleanupBrickTablesTaskHelper implements ConcreteTaskHelperInterface
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);
 
-                if (str_starts_with($tableName, 'object_brick_localized_query_')) {
+                if (str_starts_with($tableName, self::LOCALIZED_QUERY_PREFIX)) {
+                    // Localized query tables carry a trailing language suffix and are not cleaned
+                    // field-by-field here, but an orphaned one (its brick definition is gone) must
+                    // still be dropped instead of skipped.
+                    $localizedQueryDescriptor = substr($tableName, strlen(self::LOCALIZED_QUERY_PREFIX));
+                    if ($this->helper->matchCollectionKey($localizedQueryDescriptor, $collectionNames) === null) {
+                        $this->helper->dropOrphanedTable($tableName);
+                    }
+
                     continue;
                 }
 

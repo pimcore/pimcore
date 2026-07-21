@@ -15,6 +15,8 @@ namespace Pimcore\Maintenance\Tasks\DataObject;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\DataObject\Objectbrick;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -28,20 +30,29 @@ class DataObjectTaskHelper implements DataObjectTaskHelperInterface
     ) {
     }
 
-    public function getCollectionNames(string $dir): array
+    public function getObjectBrickCollectionNames(): array
     {
-        if (!is_dir($dir)) {
-            return [];
+        return $this->mapCollectionNames((new Objectbrick\Definition\Listing())->loadNames());
+    }
+
+    public function getFieldcollectionCollectionNames(): array
+    {
+        return $this->mapCollectionNames((new Fieldcollection\Definition\Listing())->loadNames());
+    }
+
+    /**
+     * @param string[] $names
+     *
+     * @return array<string, string>
+     */
+    private function mapCollectionNames(array $names): array
+    {
+        $mapLowerToActual = [];
+        foreach ($names as $name) {
+            $mapLowerToActual[strtolower($name)] = $name;
         }
 
-        $mapLowerToCamelCase = [];
-        $files = array_diff(scandir($dir), ['..', '.']);
-        foreach ($files as $file) {
-            $classname = str_replace('.php', '', $file);
-            $mapLowerToCamelCase[strtolower($classname)] = $classname;
-        }
-
-        return $mapLowerToCamelCase;
+        return $mapLowerToActual;
     }
 
     public function matchCollectionKey(string $tableIdentifier, array $collectionNames): ?string
