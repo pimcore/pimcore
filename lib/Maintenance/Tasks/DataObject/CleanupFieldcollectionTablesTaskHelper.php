@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Pimcore\Maintenance\Tasks\DataObject;
 
 use Doctrine\DBAL\Connection;
-use Psr\Log\LoggerInterface;
 
 /**
  * @internal
@@ -25,7 +24,6 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
         PIMCORE_CLASS_DEFINITION_DIRECTORY . '/fieldcollections';
 
     public function __construct(
-        private LoggerInterface $logger,
         private DataObjectTaskHelperInterface $helper,
         private Connection $db
     ) {
@@ -33,63 +31,44 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
 
     public function cleanupCollectionTable(): void
     {
-        $collectionNames =
-            $this->helper->getCollectionNames(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY);
-
-        if (empty($collectionNames)) {
+        // If the definition directory itself is unavailable (e.g. a broken/incomplete deployment)
+        // we must not treat any table as orphaned - otherwise live tables would be dropped.
+        if (!is_dir(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY)) {
             return;
         }
 
-        $tasks = [
-            [
-                'localized' => false,
-                'prefix' => 'object_collection_',
-                'pattern' => "object\_collection\_%",
-            ],
-        ];
-        foreach ($tasks as $task) {
-            $prefix = $task['prefix'];
-            $pattern = $task['pattern'];
-            $tableNames = $this->db->fetchAllAssociative("SHOW TABLES LIKE '" . $pattern . "'");
+        // May be empty when the last fieldcollection definition was removed - that is a valid state
+        // and we still scan, so the now-orphaned tables get cleaned up.
+        $collectionNames =
+            $this->helper->getCollectionNames(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY);
 
-            foreach ($tableNames as $tableName) {
-                $tableName = current($tableName);
+        $prefix = 'object_collection_';
+        $pattern = 'object\_collection\_%';
+        $tableNames = $this->db->fetchAllAssociative("SHOW TABLES LIKE '" . $pattern . "'");
 
-                $fieldDescriptor = substr($tableName, strlen($prefix));
-                $idx = strpos($fieldDescriptor, '_');
-                $fcType = substr($fieldDescriptor, 0, $idx);
-                $fcType = $collectionNames[strtolower($fcType)] ?? $fcType;
+        foreach ($tableNames as $tableName) {
+            $tableName = current($tableName);
 
-                if (!$this->checkIfFcExists($fcType, $tableName)) {
-                    continue;
-                }
+            $fieldDescriptor = substr($tableName, strlen($prefix));
+            $fcType = $this->helper->matchCollectionKey($fieldDescriptor, $collectionNames);
 
-                $classId = substr($fieldDescriptor, $idx + 1);
+            if ($fcType === null) {
+                // No existing fieldcollection definition owns this table -> orphan, drop it.
+                $this->helper->dropOrphanedTable($tableName);
 
-                $isLocalized = false;
-
-                if (str_starts_with($classId, 'localized_')) {
-                    $isLocalized = true;
-                    $classId = substr($classId, strlen('localized_'));
-                }
-
-                $this->helper->cleanupTable($tableName, $classId, $isLocalized);
+                continue;
             }
+
+            $classId = substr($fieldDescriptor, strlen($fcType) + 1);
+
+            $isLocalized = false;
+
+            if (str_starts_with($classId, 'localized_')) {
+                $isLocalized = true;
+                $classId = substr($classId, strlen('localized_'));
+            }
+
+            $this->helper->cleanupTable($tableName, $classId, $isLocalized);
         }
-    }
-
-    private function checkIfFcExists(string $fcType, string $tableName): bool
-    {
-        $fcDef = \Pimcore\Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
-        if (!$fcDef) {
-            $this->logger->warning(
-                "Fieldcollection '" . $fcType . "' not found. Dropping orphaned table " . $tableName
-            );
-            $this->db->executeStatement('DROP TABLE IF EXISTS ' . $this->db->quoteIdentifier($tableName));
-
-            return false;
-        }
-
-        return true;
     }
 }

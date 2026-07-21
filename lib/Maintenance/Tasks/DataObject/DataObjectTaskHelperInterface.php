@@ -20,6 +20,20 @@ interface DataObjectTaskHelperInterface
 {
     public function getCollectionNames(string $dir): array;
 
+    /**
+     * Returns the actual (case-preserved) collection key from $collectionNames that owns the given
+     * table identifier (the part of the table name following the type prefix), or null if none does.
+     * A table is only considered owned when a known key is a full, underscore-delimited prefix of the
+     * identifier - so keys containing underscores are matched correctly and live tables are never
+     * mistaken for orphans.
+     */
+    public function matchCollectionKey(string $tableIdentifier, array $collectionNames): ?string;
+
+    /**
+     * Drops a table that no longer belongs to any existing definition.
+     */
+    public function dropOrphanedTable(string $tableName): void;
+
     public function cleanupTable(
         string $tableName,
         string $classId,

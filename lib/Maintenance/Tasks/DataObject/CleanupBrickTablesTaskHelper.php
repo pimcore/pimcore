@@ -14,8 +14,6 @@ declare(strict_types=1);
 namespace Pimcore\Maintenance\Tasks\DataObject;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\Model\DataObject\Objectbrick\Definition;
-use Psr\Log\LoggerInterface;
 
 /**
  * @internal
@@ -25,7 +23,6 @@ class CleanupBrickTablesTaskHelper implements ConcreteTaskHelperInterface
     private const PIMCORE_OBJECTBRICK_CLASS_DIRECTORY = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/objectbricks';
 
     public function __construct(
-        private LoggerInterface $logger,
         private DataObjectTaskHelperInterface $helper,
         private Connection $db
     ) {
@@ -33,17 +30,22 @@ class CleanupBrickTablesTaskHelper implements ConcreteTaskHelperInterface
 
     public function cleanupCollectionTable(): void
     {
-        $collectionNames =
-            $this->helper->getCollectionNames(self::PIMCORE_OBJECTBRICK_CLASS_DIRECTORY);
-
-        if (empty($collectionNames)) {
+        // If the definition directory itself is unavailable (e.g. a broken/incomplete deployment)
+        // we must not treat any table as orphaned - otherwise live tables would be dropped.
+        if (!is_dir(self::PIMCORE_OBJECTBRICK_CLASS_DIRECTORY)) {
             return;
         }
+
+        // May be empty when the last brick definition was removed - that is a valid state and we
+        // still scan, so the now-orphaned tables get cleaned up.
+        $collectionNames = $this->helper->getCollectionNames(self::PIMCORE_OBJECTBRICK_CLASS_DIRECTORY);
 
         $tableTypes = ['store', 'query', 'localized'];
         foreach ($tableTypes as $tableType) {
             $prefix = 'object_brick_' . $tableType . '_';
-            $tableNames = $this->db->fetchAllAssociative("SHOW TABLES LIKE '" . $prefix . "%'");
+            // Escape the LIKE wildcards in the literal prefix so only the intended tables match.
+            $pattern = str_replace('_', '\_', $prefix) . '%';
+            $tableNames = $this->db->fetchAllAssociative("SHOW TABLES LIKE '" . $pattern . "'");
 
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);
@@ -53,32 +55,18 @@ class CleanupBrickTablesTaskHelper implements ConcreteTaskHelperInterface
                 }
 
                 $fieldDescriptor = substr($tableName, strlen($prefix));
-                $idx = strpos($fieldDescriptor, '_');
-                $brickType = substr($fieldDescriptor, 0, $idx);
-                $brickType = $collectionNames[strtolower($brickType)] ?? $brickType;
+                $brickType = $this->helper->matchCollectionKey($fieldDescriptor, $collectionNames);
 
-                if (!$this->checkIfBrickExists($brickType, $tableName)) {
+                if ($brickType === null) {
+                    // No existing brick definition owns this table -> orphan, drop it.
+                    $this->helper->dropOrphanedTable($tableName);
+
                     continue;
                 }
 
-                $classId = substr($fieldDescriptor, $idx + 1);
+                $classId = substr($fieldDescriptor, strlen($brickType) + 1);
                 $this->helper->cleanupTable($tableName, $classId);
             }
         }
-    }
-
-    private function checkIfBrickExists(string $brickType, string $tableName): bool
-    {
-        $brickDef = Definition::getByKey($brickType);
-        if (!$brickDef) {
-            $this->logger->warning(
-                "Brick '" . $brickType . "' not found. Dropping orphaned table " . $tableName
-            );
-            $this->db->executeStatement('DROP TABLE IF EXISTS ' . $this->db->quoteIdentifier($tableName));
-
-            return false;
-        }
-
-        return true;
     }
 }

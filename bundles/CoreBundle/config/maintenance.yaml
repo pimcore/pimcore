@@ -26,7 +26,6 @@ services:
 
     Pimcore\Maintenance\Tasks\DataObject\CleanupBrickTablesTaskHelper:
         arguments:
-            - '@logger'
             - '@Pimcore\Maintenance\Tasks\DataObject\DataObjectTaskHelper'
             - '@doctrine.dbal.default_connection'
 
@@ -45,7 +44,6 @@ services:
 
     Pimcore\Maintenance\Tasks\DataObject\CleanupFieldcollectionTablesTaskHelper:
         arguments:
-            - '@logger'
             - '@Pimcore\Maintenance\Tasks\DataObject\DataObjectTaskHelper'
             - '@doctrine.dbal.default_connection'
 

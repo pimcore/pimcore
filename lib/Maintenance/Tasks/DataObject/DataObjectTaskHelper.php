@@ -44,6 +44,28 @@ class DataObjectTaskHelper implements DataObjectTaskHelperInterface
         return $mapLowerToCamelCase;
     }
 
+    public function matchCollectionKey(string $tableIdentifier, array $collectionNames): ?string
+    {
+        $match = null;
+        foreach ($collectionNames as $key) {
+            // Case-insensitive, underscore-delimited prefix match. Prefer the longest matching key
+            // so that e.g. "Foo_Bar" wins over "Foo" when both definitions exist.
+            if (stripos($tableIdentifier, $key . '_') === 0
+                && ($match === null || strlen($key) > strlen($match))
+            ) {
+                $match = $key;
+            }
+        }
+
+        return $match;
+    }
+
+    public function dropOrphanedTable(string $tableName): void
+    {
+        $this->logger->warning('Dropping orphaned data object table ' . $tableName);
+        $this->db->executeStatement('DROP TABLE IF EXISTS ' . $this->db->quoteIdentifier($tableName));
+    }
+
     public function cleanupTable(
         string $tableName,
         string $classId,
