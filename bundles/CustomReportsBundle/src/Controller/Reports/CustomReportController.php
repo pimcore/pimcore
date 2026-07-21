@@ -43,6 +43,33 @@ class CustomReportController extends UserAwareController
 {
     use JsonHelperTrait;
 
+    /**
+     * Fields that may be written through updateAction(). Mirrors the writable set of the
+     * Studio API (CustomReportHydrator::dehydrateReportDetails()) and deliberately excludes
+     * identity and audit fields (name, creationDate, modificationDate) that must never be
+     * settable through the update payload.
+     */
+    private const ALLOWED_UPDATE_FIELDS = [
+        'sql',
+        'columnConfiguration',
+        'dataSourceConfig',
+        'niceName',
+        'group',
+        'groupIconClass',
+        'iconClass',
+        'menuShortcut',
+        'reportClass',
+        'chartType',
+        'pieColumn',
+        'pieLabelColumn',
+        'xAxis',
+        'yAxis',
+        'shareGlobally',
+        'sharedUserNames',
+        'sharedRoleNames',
+        'pagination',
+    ];
+
     #[Route('/tree', name: 'pimcore_bundle_customreports_customreport_tree', methods: ['GET', 'POST'])]
     public function treeAction(): JsonResponse
     {
@@ -186,16 +213,31 @@ class CustomReportController extends UserAwareController
         $pagination = $adapter->getPagination();
         $data['pagination'] = $pagination;
 
-        foreach ($data as $key => $value) {
-            $setter = 'set' . ucfirst($key);
-            if (method_exists($report, $setter)) {
-                $report->$setter($value);
-            }
-        }
+        $this->applyReportConfiguration($report, $data);
 
         $report->save();
 
         return $this->jsonResponse(['success' => true]);
+    }
+
+    /**
+     * Applies only whitelisted fields from the decoded update payload to the report,
+     * guarding against mass assignment of arbitrary Config setters.
+     *
+     * @param array<string, mixed> $data
+     */
+    protected function applyReportConfiguration(Tool\Config $report, array $data): void
+    {
+        foreach (self::ALLOWED_UPDATE_FIELDS as $field) {
+            if (!array_key_exists($field, $data)) {
+                continue;
+            }
+
+            $setter = 'set' . ucfirst($field);
+            if (method_exists($report, $setter)) {
+                $report->$setter($data[$field]);
+            }
+        }
     }
 
     #[Route('/column-config', name: 'pimcore_bundle_customreports_customreport_columnconfig', methods: ['POST'])]
