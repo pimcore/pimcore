@@ -31,13 +31,18 @@ jobs:
         with:
           php-version: "8.4"
 
-      - name: "Add authentication for private pimcore packages"
+      - name: "Configure private pimcore package repository"
         run: |
           composer config repositories.private-packagist '{"type": "composer", "url": "https://repo.pimcore.com/github-actions/", "canonical": true}'
-          composer config --global --auth http-basic.repo.pimcore.com github-actions ${{ secrets.COMPOSER_PIMCORE_REPO_PACKAGIST_TOKEN }}
 
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v3"
+        # Pass the private-Packagist token via a step-scoped env var instead of
+        # writing it to Composer's global auth.json. A global credential would
+        # persist on the runner filesystem and remain readable by the Copilot
+        # coding agent after setup; COMPOSER_AUTH lives only for this step.
+        env:
+          COMPOSER_AUTH: '{"http-basic":{"repo.pimcore.com":{"username":"github-actions","password":"${{ secrets.COMPOSER_PIMCORE_REPO_PACKAGIST_TOKEN }}"}}}'
         with:
           composer-options: "--no-scripts --ignore-platform-reqs"
 
