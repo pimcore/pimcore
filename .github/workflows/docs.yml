@@ -1,7 +1,7 @@
 name: "Documentation (Reusable)"
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - "[0-9]+.[0-9]+"
       - "[0-9]+.x"
@@ -28,5 +28,3 @@ jobs:
     uses: pimcore/workflows-collection-public/.github/workflows/reusable-docs.yaml@main
     with:
       docs_path: "doc"
-    secrets:
-      DOCS_GENERATOR_ACCESS_TOKEN: ${{ secrets.DOCS_GENERATOR_ACCESS_TOKEN }}
