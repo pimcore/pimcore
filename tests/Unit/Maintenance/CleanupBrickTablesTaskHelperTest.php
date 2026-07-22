@@ -42,10 +42,11 @@ class CleanupBrickTablesTaskHelperTest extends TestCase
     /**
      * @param array<string, string> $collectionNames lowercased => actual brick key
      * @param array<string, string[]> $tablesByType   table type (store|query|localized) => table names
+     * @param string[] $existingClassIds              class ids that resolve to a live class definition
      *
      * @return string[] the tables the task decided to drop
      */
-    private function runTask(array $collectionNames, array $tablesByType): array
+    private function runTask(array $collectionNames, array $tablesByType, array $existingClassIds = ['5']): array
     {
         $dropped = [];
 
@@ -60,6 +61,11 @@ class CleanupBrickTablesTaskHelperTest extends TestCase
         $helper->method('getObjectBrickCollectionNames')->willReturn($collectionNames);
         $helper->method('matchCollectionKey')->willReturnCallback(
             static fn (string $id, array $names): ?string => $matcher->matchCollectionKey($id, $names)
+        );
+        // Models the real cleanupTable(): it keeps the table (returns true) only when the parsed
+        // class id resolves to a live class definition, and reports it as unowned otherwise.
+        $helper->method('cleanupTable')->willReturnCallback(
+            static fn (string $table, string $classId): bool => in_array($classId, $existingClassIds, true)
         );
         $helper->method('dropOrphanedTable')->willReturnCallback(
             static function (string $table) use (&$dropped): void {
@@ -130,5 +136,29 @@ class CleanupBrickTablesTaskHelperTest extends TestCase
         ]);
 
         $this->assertSame(['object_brick_store_Ghost_5'], $dropped);
+    }
+
+    /**
+     * Regression: a removed underscore-containing key ("Foo_Bar") whose prefix ("Foo") still has a
+     * live definition. The matcher resolves "object_brick_store_Foo_Bar_5" to key "Foo" and a bogus
+     * class id "Bar_5"; because that class id does not resolve to a live class, the table must be
+     * dropped as an orphan instead of leaving it (and spamming the log) forever. The genuinely live
+     * "object_brick_store_Foo_5" (class id "5") must be kept.
+     */
+    public function testRemovedUnderscoreKeyPrefixedByLiveKeyIsDropped(): void
+    {
+        // "Foo_Bar" was removed; only "Foo" survives. Class id "5" exists, "Bar_5" does not.
+        $dropped = $this->runTask(
+            ['foo' => 'Foo'],
+            [
+                'store' => [
+                    'object_brick_store_Foo_5',     // live -> kept
+                    'object_brick_store_Foo_Bar_5', // orphan of removed "Foo_Bar" -> dropped
+                ],
+            ],
+            ['5']
+        );
+
+        $this->assertSame(['object_brick_store_Foo_Bar_5'], $dropped);
     }
 }

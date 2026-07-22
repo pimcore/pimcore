@@ -65,7 +65,12 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
                 $classId = substr($classId, strlen('localized_'));
             }
 
-            $this->helper->cleanupTable($tableName, $classId, $isLocalized);
+            // A matching key is not enough: the parsed class id must resolve to a live class,
+            // otherwise the table is an orphan (a removed underscore-containing key that a shorter
+            // key still prefixes, or a deleted owning class) and must be dropped.
+            if (!$this->helper->cleanupTable($tableName, $classId, $isLocalized)) {
+                $this->helper->dropOrphanedTable($tableName);
+            }
         }
     }
 }

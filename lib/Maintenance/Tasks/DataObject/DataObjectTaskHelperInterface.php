@@ -50,9 +50,18 @@ interface DataObjectTaskHelperInterface
      */
     public function dropOrphanedTable(string $tableName): void;
 
+    /**
+     * Cleans up stale field columns/rows of a brick/fieldcollection table that belongs to the class
+     * identified by $classId.
+     *
+     * Returns false when no class definition exists for $classId. Because both collection keys and
+     * class ids may contain underscores, a key match alone does not prove ownership: the class id
+     * parsed out of the table name must resolve to a live class. A false return therefore means the
+     * table is not owned by any live definition and the caller should treat it as an orphan.
+     */
     public function cleanupTable(
         string $tableName,
         string $classId,
         bool $isLocalized = true
-    ): void;
+    ): bool;
 }

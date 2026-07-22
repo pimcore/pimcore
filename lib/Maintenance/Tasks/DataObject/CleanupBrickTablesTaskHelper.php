@@ -74,7 +74,13 @@ class CleanupBrickTablesTaskHelper implements ConcreteTaskHelperInterface
                 }
 
                 $classId = substr($fieldDescriptor, strlen($brickType) + 1);
-                $this->helper->cleanupTable($tableName, $classId);
+
+                // A matching key is not enough: the parsed class id must resolve to a live class,
+                // otherwise the table is an orphan (a removed underscore-containing key that a
+                // shorter key still prefixes, or a deleted owning class) and must be dropped.
+                if (!$this->helper->cleanupTable($tableName, $classId)) {
+                    $this->helper->dropOrphanedTable($tableName);
+                }
             }
         }
     }

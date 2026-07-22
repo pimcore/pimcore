@@ -81,12 +81,16 @@ class DataObjectTaskHelper implements DataObjectTaskHelperInterface
         string $tableName,
         string $classId,
         bool $isLocalized = true
-    ): void {
+    ): bool {
         $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
         if (!$classDefinition) {
-            $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
-
-            return;
+            // The collection key matched a live definition, but the class id encoded in the table
+            // name does not resolve to any existing class. This is the ambiguous-underscore case
+            // (e.g. live "Foo", removed "Foo_Bar": the table "object_brick_store_Foo_Bar_5" resolves
+            // to key "Foo" and a bogus class id "Bar_5"), or the owning class itself was deleted.
+            // Either way no live definition owns the table - report it as unowned so the caller drops
+            // it instead of logging the same error on every maintenance run.
+            return false;
         }
 
         $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
@@ -109,5 +113,7 @@ class DataObjectTaskHelper implements DataObjectTaskHelperInterface
                 $this->db->delete($tableName, ['fieldname' => $fieldName]);
             }
         }
+
+        return true;
     }
 }
