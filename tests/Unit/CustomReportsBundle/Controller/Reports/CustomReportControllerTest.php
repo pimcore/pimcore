@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\CustomReportsBundle\Controller\Reports;
 
+use Exception;
 use Pimcore\Bundle\CustomReportsBundle\Controller\Reports\CustomReportController;
 use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 use Pimcore\Model\User;
@@ -54,6 +55,11 @@ final class CustomReportControllerTest extends TestCase
             public function applyConfiguration(Config $report, array $data): void
             {
                 $this->applyReportConfiguration($report, $data);
+            }
+
+            public function columnConfigurationErrorMessage(Exception $e): string
+            {
+                return $this->getColumnConfigurationErrorMessage($e);
             }
         };
     }
@@ -126,5 +132,20 @@ final class CustomReportControllerTest extends TestCase
         $this->assertSame(1000, $report->getCreationDate());
         $this->assertSame(1000, $report->getModificationDate());
         $this->assertSame('legit change', $report->getNiceName());
+    }
+
+    public function testColumnConfigurationErrorMessageDoesNotLeakExceptionDetails(): void
+    {
+        // Before this fix, columnConfigAction() returned the raw exception message to the
+        // client, leaking DB error output (schema name, table names, MySQL version, paths).
+        $controller = $this->controllerAsUser(1);
+        $sensitive = 'SQLSTATE[42S02]: Base table or view not found: 1146 '
+            . "Table 'pimcore.secret_probe_xyz' doesn't exist";
+
+        $message = $controller->columnConfigurationErrorMessage(new Exception($sensitive));
+
+        $this->assertSame('An error occurred while loading the column configuration.', $message);
+        $this->assertStringNotContainsString('SQLSTATE', $message);
+        $this->assertStringNotContainsString('pimcore.secret_probe_xyz', $message);
     }
 }

@@ -18,6 +18,7 @@ use Pimcore\Bundle\CustomReportsBundle\Tool;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Helper\ParameterBagHelper;
+use Pimcore\Logger;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
 use stdClass;
@@ -277,7 +278,7 @@ class CustomReportController extends UserAwareController
 
             $success = true;
         } catch (Exception $e) {
-            $errorMessage = $e->getMessage();
+            $errorMessage = $this->getColumnConfigurationErrorMessage($e);
         }
 
         return $this->jsonResponse([
@@ -285,6 +286,18 @@ class CustomReportController extends UserAwareController
             'columns' => $result,
             'errorMessage' => $errorMessage,
         ]);
+    }
+
+    /**
+     * Returns a client-safe message for a failed column-configuration lookup. The underlying
+     * exception is logged server-side; its raw message must never be returned to the client, as
+     * it can disclose database schema, table names and system paths.
+     */
+    protected function getColumnConfigurationErrorMessage(Exception $e): string
+    {
+        Logger::error('Custom report column configuration failed: ' . $e->getMessage(), ['exception' => $e]);
+
+        return 'An error occurred while loading the column configuration.';
     }
 
     #[Route('/get-report-config', name: 'pimcore_bundle_customreports_customreport_getreportconfig', methods: ['GET'])]
