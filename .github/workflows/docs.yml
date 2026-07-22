@@ -25,6 +25,5 @@ permissions:
 
 jobs:
   docs:
-    uses: pimcore/workflows-collection-public/.github/workflows/reusable-docs.yaml@main
-    with:
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-docs.yaml@chore/docs-public-generator-no-token
       docs_path: "doc"
