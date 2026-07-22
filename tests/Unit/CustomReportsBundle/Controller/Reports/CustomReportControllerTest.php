@@ -139,7 +139,7 @@ final class CustomReportControllerTest extends TestCase
         // Before this fix, columnConfigAction() returned the raw exception message to the
         // client, leaking DB error output (schema name, table names, MySQL version, paths).
         $controller = $this->controllerAsUser(1);
-        $sensitive = "SQLSTATE[42S02]: Base table or view not found: 1146 "
+        $sensitive = 'SQLSTATE[42S02]: Base table or view not found: 1146 '
             . "Table 'pimcore.secret_probe_xyz' doesn't exist";
 
         $message = $controller->columnConfigurationErrorMessage(new Exception($sensitive));
