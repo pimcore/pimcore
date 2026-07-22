@@ -288,7 +288,7 @@ class RgbaColor extends Data implements
 
     public function unmarshalAfterDecryption(mixed $value, ?Concrete $object = null, array $params = []): mixed
     {
-        return Serialize::unserialize($value);
+        return Serialize::unserialize($value, true);
     }
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool

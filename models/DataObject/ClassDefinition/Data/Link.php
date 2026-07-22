@@ -100,7 +100,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Link
     {
-        $link = Serialize::unserialize($data);
+        $link = Serialize::unserialize($data, true);
 
         if ($link instanceof DataObject\Data\Link) {
             if (isset($params['owner'])) {

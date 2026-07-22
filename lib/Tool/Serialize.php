@@ -26,7 +26,16 @@ final class Serialize
         return serialize($data);
     }
 
-    public static function unserialize(?string $data = null, array|bool $allowedClasses = true): mixed
+    /**
+     * Safe by default: object deserialization is disabled unless the caller opts in.
+     *
+     * Pass an array of class names to allow only those classes, or `true` to allow any class when a
+     * caller must reconstruct a trusted, non-attacker-writable stored object graph. Callers that only
+     * ever handle scalars/arrays should keep the default `false`.
+     *
+     * @param array<int, class-string>|bool $allowedClasses
+     */
+    public static function unserialize(?string $data = null, array|bool $allowedClasses = false): mixed
     {
         if ($data === null || $data === '') {
             return $data;
