@@ -78,9 +78,20 @@ final class Version20260721000000 extends AbstractMigration
      */
     private function getPerClassTables(): array
     {
-        return array_values(array_filter(array_merge(
+        $candidates = array_merge(
             $this->connection->fetchFirstColumn("SHOW TABLES LIKE 'object_relations_%'"),
             $this->connection->fetchFirstColumn("SHOW TABLES LIKE 'object_metadata_%'")
-        ), static fn (string $tableName): bool => preg_match('/^object_(?:relations|metadata)_[a-zA-Z0-9][a-zA-Z0-9_]*$/D', $tableName) === 1);
+        );
+
+        $tables = [];
+        foreach ($candidates as $tableName) {
+            if (is_string($tableName)
+                && preg_match('/^object_(?:relations|metadata)_[a-zA-Z0-9][a-zA-Z0-9_]*$/D', $tableName) === 1
+            ) {
+                $tables[] = $tableName;
+            }
+        }
+
+        return $tables;
     }
 }
