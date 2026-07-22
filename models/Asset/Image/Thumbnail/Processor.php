@@ -249,6 +249,7 @@ class Processor
                 try {
                     if (!$storage->fileExists($storagePath) && $storage->fileExists($compatStoragePath)) {
                         $storage->move($compatStoragePath, $storagePath);
+                        $asset->getDao()->moveThumbnailCache($config->getName(), $compatFilename, $filename);
                     }
                 } catch (FilesystemException $e) {
                     // ignore and fall through to regular (re)generation
