@@ -246,6 +246,7 @@ class Processor
             $compatFilename = $filenamePrefix . '.' . $config->getCropBoxCompatHash([$asset->getChecksum()]) . '.' . $fileExtension;
             if ($compatFilename !== $filename) {
                 $compatStoragePath = $thumbDir . '/' . $compatFilename;
+
                 try {
                     if (!$storage->fileExists($storagePath) && $storage->fileExists($compatStoragePath)) {
                         $storage->move($compatStoragePath, $storagePath);
