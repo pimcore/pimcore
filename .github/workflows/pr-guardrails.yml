@@ -1,0 +1,27 @@
+name: PR Guardrails
+
+# Thin, generic trigger. All guardrail logic lives in the central collection
+# pimcore/workflows-collection-public. This file names no guardrails and no
+# secrets (secrets: inherit), so it is identical across every repo and never
+# needs editing when a guardrail or token is added/removed there.
+
+on:
+  pull_request_target:
+    types: [opened, reopened, ready_for_review, converted_to_draft, edited, synchronize]
+  check_suite:
+    types: [completed]
+
+concurrency:
+  # One lock per PR. On pull_request_target → PR number. On check_suite there is
+  # no PR number, so use the PR from the check_suite payload (present for
+  # same-repo PRs) to share the same lock; fall back to the commit SHA for fork
+  # PRs, then to run_id so the key is never empty.
+  # A guardrail can convert the PR to draft, which fires converted_to_draft;
+  # give that its own group so it does not cancel the run still acting on the PR.
+  group: pr-guardrails-${{ github.event.action == 'converted_to_draft' && 'retract-' || '' }}${{ github.event.pull_request.number || github.event.check_suite.pull_requests[0].number || github.event.check_suite.head_sha || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  guardrails:
+    uses: pimcore/workflows-collection-public/.github/workflows/parent-pr-guardrails.yml@main
+    secrets: inherit
