@@ -24,4 +24,7 @@ concurrency:
 jobs:
   guardrails:
     uses: pimcore/workflows-collection-public/.github/workflows/parent-pr-guardrails.yml@main
-    secrets: inherit
+    secrets:
+      MEMBERSHIP_GUARD_TOKEN: ${{ secrets.MEMBERSHIP_GUARD_TOKEN }}
+      ISSUE_LINK_GUARD_TOKEN: ${{ secrets.ISSUE_LINK_GUARD_TOKEN }}
+      CI_GUARD_TOKEN: ${{ secrets.CI_GUARD_TOKEN }}
