@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\CustomReportsBundle\Controller\Reports;
 
 use Pimcore\Bundle\CustomReportsBundle\Controller\Reports\CustomReportController;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 use Pimcore\Model\User;
 use Pimcore\Security\User\User as UserProxy;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -46,6 +47,14 @@ final class CustomReportControllerTest extends TestCase
             {
                 return $this->getTemporaryFileFromFileName($exportFileName);
             }
+
+            /**
+             * @param array<string, mixed> $data
+             */
+            public function applyConfiguration(Config $report, array $data): void
+            {
+                $this->applyReportConfiguration($report, $data);
+            }
         };
     }
 
@@ -75,5 +84,47 @@ final class CustomReportControllerTest extends TestCase
 
         $this->expectException(AccessDeniedHttpException::class);
         $controller->resolveExportFile('not-an-export-file.csv');
+    }
+
+    public function testUpdateAppliesWhitelistedConfigurationFields(): void
+    {
+        $controller = $this->controllerAsUser(1);
+        $report = new Config();
+
+        $controller->applyConfiguration($report, [
+            'sql' => 'SELECT 1',
+            'niceName' => 'Quarterly figures',
+            'shareGlobally' => false,
+            'sharedUserNames' => ['alice'],
+        ]);
+
+        $this->assertSame('SELECT 1', $report->getSql());
+        $this->assertSame('Quarterly figures', $report->getNiceName());
+        $this->assertFalse($report->getShareGlobally());
+        $this->assertSame(['alice'], $report->getSharedUserNames());
+    }
+
+    public function testUpdateIgnoresFieldsOutsideTheWhitelist(): void
+    {
+        // Before this fix, updateAction() applied any setter whose name matched an
+        // attacker-supplied key, letting a reports_config user tamper with a report's
+        // identity (name) and audit timestamps by adding extra keys to the payload.
+        $controller = $this->controllerAsUser(1);
+        $report = new Config();
+        $report->setName('finance_report');
+        $report->setCreationDate(1000);
+        $report->setModificationDate(1000);
+
+        $controller->applyConfiguration($report, [
+            'name' => 'attacker_renamed',
+            'creationDate' => 0,
+            'modificationDate' => 0,
+            'niceName' => 'legit change',
+        ]);
+
+        $this->assertSame('finance_report', $report->getName());
+        $this->assertSame(1000, $report->getCreationDate());
+        $this->assertSame(1000, $report->getModificationDate());
+        $this->assertSame('legit change', $report->getNiceName());
     }
 }
