@@ -557,6 +557,29 @@ class Dao extends Model\Element\Dao
         return self::$thumbnailStatusCache[$assetId][$hash] ?? null;
     }
 
+    public function moveThumbnailCache(string $name, string $sourceFilename, string $targetFilename): void
+    {
+        if ($sourceFilename === $targetFilename) {
+            return;
+        }
+
+        $cachedThumbnail = $this->getCachedThumbnail($name, $sourceFilename);
+        if (!$cachedThumbnail) {
+            return;
+        }
+
+        $cachedThumbnail['filename'] = $targetFilename;
+        Helper::upsert($this->db, 'assets_image_thumbnail_cache', $cachedThumbnail, $this->getPrimaryKey('assets_image_thumbnail_cache'));
+
+        $this->db->delete('assets_image_thumbnail_cache', [
+            'cid' => $this->model->getId(),
+            'name' => $name,
+            'filename' => $sourceFilename,
+        ]);
+
+        unset(self::$thumbnailStatusCache[$this->model->getId()]);
+    }
+
     public function deleteFromThumbnailCache(?string $name = null, ?string $filename = null): void
     {
         $assetId = $this->model->getId();

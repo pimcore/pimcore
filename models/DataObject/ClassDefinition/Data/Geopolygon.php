@@ -71,6 +71,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
+        // Restrict to GeoCoordinates to prevent PHP Object Injection via the DB.
         return Serialize::unserialize($data, [DataObject\Data\GeoCoordinates::class]);
     }
 

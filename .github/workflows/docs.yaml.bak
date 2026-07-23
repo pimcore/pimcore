@@ -32,12 +32,12 @@
 #         if: ${{ github.repository == 'pimcore/pimcore' }}
 #         steps:
 #             - name: "Checkout code"
-#               uses: "actions/checkout@v4"
+#               uses: "actions/checkout@v5.0.1"
 #               with:
 #                 ref: ${{ github.event.pull_request.head.sha }}  
 # 
 #             - name: "Checkout Docs Generator"
-#               uses: "actions/checkout@v4"
+#               uses: "actions/checkout@v5.0.1"
 #               with:
 #                   repository: "pimcore/docs-generator"
 #                   ref: "main"
