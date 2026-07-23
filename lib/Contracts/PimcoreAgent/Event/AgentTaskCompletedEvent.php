@@ -14,12 +14,13 @@ declare(strict_types=1);
 namespace Pimcore\Contracts\PimcoreAgent\Event;
 
 use Pimcore\Contracts\PimcoreAgent\AgentTaskInfo;
+use Pimcore\Contracts\PimcoreAgent\AgentTaskStatus;
 
 /**
  * Dispatched inline by the agent-task implementation immediately after an agent task commits
  * into a terminal status. `$task` reflects the just-committed row; `$previousStatus` is the
- * string status the task held before the transition (for listeners that only care about a
- * specific prior state).
+ * status the task held before the transition (for listeners that only care about a specific
+ * prior state — e.g. "only react on failed → cancelled").
  *
  * Listeners MUST be idempotent — the dispatch is advisory fan-out, not a durable side
  * channel. A throwing listener MUST NOT block settlement; the dispatcher wraps the call in a
@@ -29,7 +30,7 @@ final readonly class AgentTaskCompletedEvent
 {
     public function __construct(
         public AgentTaskInfo $task,
-        public string $previousStatus,
+        public AgentTaskStatus $previousStatus,
     ) {
     }
 }

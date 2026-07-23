@@ -20,7 +20,8 @@ namespace Pimcore\Contracts\PimcoreAgent;
  *
  * `kind` is a short slug (e.g. `"dataObject.update"`, `"asset.create"`); the exact set
  * is defined by the producing implementation. `targetId` accepts `int|string` because
- * different Pimcore element types use different id shapes.
+ * different Pimcore element types use different id shapes, and `null` for proposals
+ * whose target does not yet exist (e.g. `"asset.create"` before the create is applied).
  */
 final readonly class ProposalSummary
 {
@@ -28,7 +29,7 @@ final readonly class ProposalSummary
         public string $id,
         public string $kind,
         public string $targetType,
-        public int|string $targetId,
+        public int|string|null $targetId,
         public string $label,
     ) {
     }
