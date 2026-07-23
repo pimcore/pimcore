@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Pimcore;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -113,6 +114,6 @@ class ClassDefinitionManagerTest extends ModelTestCase
 
     private function getClassDefinitionManager(): ClassDefinitionManager
     {
-        return \Pimcore::getContainer()->get(ClassDefinitionManager::class);
+        return Pimcore::getContainer()->get(ClassDefinitionManager::class);
     }
 }
