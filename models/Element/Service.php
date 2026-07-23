@@ -856,24 +856,41 @@ class Service extends Model\AbstractModel
      * only the narrowest (least likely to be needed) suffix candidates in a pathologically
      * deep, all-legacy-until-the-last-few-levels hierarchy.
      *
+     * Each segment is normalized at most once, and a candidate string is built at most
+     * MAX_FALLBACK_CANDIDATES times: only segments where normalization actually changes the
+     * value can produce a distinct candidate (normalizing an already-NFC segment is a no-op,
+     * so extending or narrowing the suffix across it never changes the resulting string), so
+     * those are the only positions the loop below needs to build a candidate for. This keeps
+     * the cost proportional to the path length even for a caller-supplied path with many
+     * segments that don't need normalization at all.
+     *
      * @return string[]
      */
     private static function getNfcFallbackPathCandidates(string $path): array
     {
         $segments = explode('/', $path);
-        $segmentCount = count($segments);
+
+        $normalizedSegments = $segments;
+        $changedIndexes = [];
+        foreach ($segments as $i => $segment) {
+            $normalized = self::normalizeToNfc($segment);
+            if ($normalized !== $segment) {
+                $normalizedSegments[$i] = $normalized;
+                $changedIndexes[] = $i;
+            }
+        }
 
         $candidates = [];
-        for ($suffixLength = $segmentCount; $suffixLength >= 1 && count($candidates) < self::MAX_FALLBACK_CANDIDATES; $suffixLength--) {
-            $candidateSegments = $segments;
-            for ($i = $segmentCount - $suffixLength; $i < $segmentCount; $i++) {
-                $candidateSegments[$i] = self::normalizeToNfc($candidateSegments[$i]);
+        $candidateSegments = $normalizedSegments;
+        foreach ($changedIndexes as $changedIndex) {
+            $candidates[] = implode('/', $candidateSegments);
+            if (count($candidates) >= self::MAX_FALLBACK_CANDIDATES) {
+                break;
             }
 
-            $candidate = implode('/', $candidateSegments);
-            if ($candidate !== $path && !in_array($candidate, $candidates, true)) {
-                $candidates[] = $candidate;
-            }
+            // Narrow the suffix: revert this changed segment back to its original (NFD) form
+            // before building the next candidate.
+            $candidateSegments[$changedIndex] = $segments[$changedIndex];
         }
 
         return $candidates;
