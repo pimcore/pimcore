@@ -58,4 +58,3 @@ class LinkTest extends TestCase
         );
     }
 }
-
