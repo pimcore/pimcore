@@ -13,15 +13,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Contracts\PimcoreAgent;
 
-use Throwable;
+use Pimcore\Contracts\PimcoreAgent\Exception\AgentTaskExceptionInterface;
+use Pimcore\Contracts\PimcoreAgent\Exception\InvalidTaskRequestException;
+use Pimcore\Contracts\PimcoreAgent\Exception\TaskDispatchException;
+use Pimcore\Contracts\PimcoreAgent\Exception\TaskWaitTimeoutException;
+use Pimcore\Contracts\PimcoreAgent\Exception\TooManyTasksException;
 
 /**
  * Consumer-facing facade for headless agent tasks. PHP modules (Copilot automation actions,
  * collab-bundle task delegation, any future consumer) delegate work to an agent through this
  * interface instead of driving the Studio chat UI.
  *
- * Concrete implementations may throw specific exception types (see the agent-bundle
- * implementation); at the contract level `@throws \Throwable` covers all failure modes.
+ * All documented failure modes are `AgentTaskExceptionInterface` — consumers catch that to
+ * react to any agent-task-related error, or the specific subclasses (below) for finer control.
  */
 interface AgentTaskServiceInterface
 {
@@ -29,9 +33,12 @@ interface AgentTaskServiceInterface
      * Create the task's session, persist the task row, and dispatch its first turn.
      * Blocks only for setup (milliseconds), not for the duration of the run.
      *
-     * @throws Throwable on setup failure (unknown agent, dispatch rejected, concurrency cap
-     *                   reached, invalid identity). Implementations SHOULD throw specific
-     *                   types.
+     * @throws InvalidTaskRequestException Unknown agent, invalid identity, or other fail-closed
+     *                                     validation of the request.
+     * @throws TooManyTasksException The implementation's concurrency cap for running tasks is
+     *                               already reached.
+     * @throws TaskDispatchException The dispatch step rejected the request or failed on transport;
+     *                               the task row was marked terminal before this is thrown.
      */
     public function start(AgentTaskRequest $request): AgentTaskInfo;
 
@@ -43,8 +50,10 @@ interface AgentTaskServiceInterface
      * @param array<string, mixed>|null $outputSchema JSON Schema for the continuation's
      *                                                finalize output; null to require none
      *
-     * @throws Throwable when the previous task is not yet terminal, the session already has
-     *                   another non-terminal task, or dispatch is rejected.
+     * @throws InvalidTaskRequestException The previous task is not yet terminal, or the session
+     *                                     already has another non-terminal task.
+     * @throws TooManyTasksException The implementation's concurrency cap is already reached.
+     * @throws TaskDispatchException The dispatch step rejected the request or failed on transport.
      */
     public function continueTask(
         string $previousTaskId,
@@ -55,9 +64,9 @@ interface AgentTaskServiceInterface
     ): AgentTaskInfo;
 
     /**
-     * Read the current state. Implementations throw when the task does not exist.
+     * Read the current state.
      *
-     * @throws Throwable
+     * @throws AgentTaskExceptionInterface when the task does not exist.
      */
     public function get(string $taskId): AgentTaskInfo;
 
@@ -67,7 +76,8 @@ interface AgentTaskServiceInterface
      *
      * On timeout, the task keeps running. Call `cancel()` explicitly to also kill the run.
      *
-     * @throws Throwable on timeout, or when the task does not exist.
+     * @throws TaskWaitTimeoutException The task did not reach a terminal state within `$timeoutSeconds`.
+     * @throws AgentTaskExceptionInterface when the task does not exist.
      */
     public function waitFor(string $taskId, int $timeoutSeconds): AgentTaskResult;
 
