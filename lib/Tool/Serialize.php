@@ -21,6 +21,13 @@ final class Serialize
 {
     protected static array $loopFilterProcessedObjects = [];
 
+    /**
+     * Ensures the "missing $allowedClasses argument" deprecation is emitted at most once per
+     * process, so callers that unserialize in a loop (e.g. a listing of many objects) cannot
+     * flood the logs with the identical notice.
+     */
+    private static bool $unserializeWithoutAllowedClassesDeprecationTriggered = false;
+
     public static function serialize(mixed $data): string
     {
         return serialize($data);
@@ -43,7 +50,8 @@ final class Serialize
             return $data;
         }
 
-        if (func_num_args() < 2) {
+        if (func_num_args() < 2 && !self::$unserializeWithoutAllowedClassesDeprecationTriggered) {
+            self::$unserializeWithoutAllowedClassesDeprecationTriggered = true;
             trigger_deprecation(
                 'pimcore/pimcore',
                 '12.3',

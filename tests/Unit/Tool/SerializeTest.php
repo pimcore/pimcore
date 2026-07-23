@@ -17,6 +17,7 @@ namespace Pimcore\Tests\Unit\Tool;
 use __PHP_Incomplete_Class;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool\Serialize;
+use ReflectionProperty;
 
 /**
  * Regression tests for the Serialize::unserialize() wrapper. Callers must be able to restrict
@@ -31,6 +32,11 @@ class SerializeTest extends TestCase
      */
     public function testOmittingAllowedClassesStaysPermissiveButIsDeprecated(): void
     {
+        // The deprecation is emitted at most once per process; reset the guard so this test
+        // observes it regardless of whether an earlier call already tripped it.
+        $guard = new ReflectionProperty(Serialize::class, 'unserializeWithoutAllowedClassesDeprecationTriggered');
+        $guard->setValue(null, false);
+
         $payload = serialize(new SerializeDeserializeCanary());
 
         $deprecations = [];
@@ -42,12 +48,16 @@ class SerializeTest extends TestCase
 
         try {
             $result = Serialize::unserialize($payload);
+            // A second omitting call must NOT emit another deprecation — guards against flooding
+            // the logs when unserializing in a loop (e.g. a listing of many objects).
+            Serialize::unserialize($payload);
+            Serialize::unserialize($payload);
         } finally {
             restore_error_handler();
         }
 
         $this->assertInstanceOf(SerializeDeserializeCanary::class, $result);
-        $this->assertCount(1, $deprecations);
+        $this->assertCount(1, $deprecations, 'The deprecation must be emitted at most once per process.');
         $this->assertStringContainsString('without the $allowedClasses argument is deprecated', $deprecations[0]);
         $this->assertStringContainsString('2027.1', $deprecations[0]);
     }
