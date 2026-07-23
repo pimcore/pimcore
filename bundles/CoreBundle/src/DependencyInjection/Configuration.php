@@ -125,6 +125,7 @@ final class Configuration implements ConfigurationInterface
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
+        $this->addTmpStoreNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
@@ -548,7 +549,7 @@ final class Configuration implements ConfigurationInterface
                                         ])
                                     ->end()
                                     ->booleanNode('status_cache')
-                                        ->info('Store image metadata such as filename and modification date in assets_image_thumbnail_cache, this is helpful when using remote object storage for thumbnails.')
+                                        ->info('Store image metadata such as filename, modification date, file size and dimensions in assets_image_thumbnail_cache, this is helpful when using remote object storage for thumbnails.')
                                         ->defaultTrue()
                                     ->end()
                                     ->booleanNode('auto_clear_temp_files')
@@ -860,6 +861,25 @@ final class Configuration implements ConfigurationInterface
 
         $this->addImplementationLoaderNode($classDefinitionsNode, 'data');
         $this->addImplementationLoaderNode($classDefinitionsNode, 'layout');
+    }
+
+    /**
+     * Add tmp_store specific extension config
+     */
+    private function addTmpStoreNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('tmp_store')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('unserialize_allowed_classes')
+                        ->info('Additional PHP classes to allow when unserializing data from the tmp_store table.')
+                        ->scalarPrototype()->end()
+                        ->defaultValue([])
+                    ->end()
+                ->end()
+            ->end();
     }
 
     /**
@@ -1232,6 +1252,11 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                        ->arrayNode('session_token_allowed_classes')
+                            ->info('Additional PHP classes allowed when unserializing the admin session security token (e.g. custom authenticator tokens). The built-in Symfony/Pimcore token and user classes are always allowed.')
+                            ->scalarPrototype()->end()
+                            ->defaultValue([])
+                        ->end()
                 ->end()
             ->end();
     }

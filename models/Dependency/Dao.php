@@ -18,10 +18,13 @@ use Exception;
 use Pimcore;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
+use Pimcore\Messenger\DependencyTargetsChangedMessage;
 use Pimcore\Messenger\SanityCheckMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element;
+use Pimcore\ValueObject\Element\DependencyTarget;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
+use Symfony\Component\Messenger\Exception\NoHandlerForMessageException;
 
 /**
  * @internal
@@ -287,6 +290,43 @@ class Dao extends Model\Dao\AbstractDao
                 } catch (UniqueConstraintViolationException $e) {
                 }
             }
+        }
+
+        $this->dispatchTargetsChangedMessage($newData, $existingDepencies);
+    }
+
+    /**
+     * @param array<array{id: int, type: string}> $newTargets
+     * @param array<string, array<int, int>> $removedTargetsByType targetType => [targetId => rowId]
+     */
+    private function dispatchTargetsChangedMessage(array $newTargets, array $removedTargetsByType): void
+    {
+        $addedTargets = [];
+        foreach ($newTargets as $target) {
+            $addedTargets[] = new DependencyTarget((int) $target['id'], (string) $target['type']);
+        }
+
+        $removedTargets = [];
+        foreach ($removedTargetsByType as $targetType => $targetIds) {
+            foreach (array_keys($targetIds) as $targetId) {
+                $removedTargets[] = new DependencyTarget((int) $targetId, $targetType);
+            }
+        }
+
+        if (empty($addedTargets) && empty($removedTargets)) {
+            return;
+        }
+
+        try {
+            Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                new DependencyTargetsChangedMessage($addedTargets, $removedTargets)
+            );
+        } catch (NoHandlerForMessageException) {
+            // No handler is registered for this message, e.g. when the
+            // pimcore/generic-data-index-bundle is not enabled. This is a
+            // supported setup, so treat the missing handler as a no-op.
+        } catch (Exception $e) {
+            Logger::error('Failed to dispatch DependencyTargetsChangedMessage: ' . $e->getMessage());
         }
     }
 

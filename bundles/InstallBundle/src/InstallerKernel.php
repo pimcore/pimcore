@@ -14,13 +14,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle;
 
+use Exception;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\MonologBundle\MonologBundle;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 /**
  * @internal
@@ -73,23 +74,34 @@ class InstallerKernel extends Kernel
         return $bundles;
     }
 
-    protected function configureContainer(ContainerConfigurator $configurator): void
+    /**
+     * @throws Exception
+     */
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
-        $configurator->parameters()->set('secret', uniqid('installer-', true));
-        $configurator->import('@PimcoreInstallBundle/config/config.yaml');
+        // Register the synthetic "kernel" service. This is normally done by
+        // MicroKernelTrait::registerContainerConfiguration() and is required so
+        // that other services may depend on the kernel via DI.
+        $loader->load(function (ContainerBuilder $container): void {
+            if (!$container->hasDefinition('kernel')) {
+                $container->register('kernel', static::class)
+                    ->addTag('controller.service_arguments')
+                    ->setAutoconfigured(true)
+                    ->setSynthetic(true)
+                    ->setPublic(true);
+            }
 
-        // load installer config files if available
+            $container->setParameter('secret', uniqid('installer-', true));
+        });
+
+        $loader->load('@PimcoreInstallBundle/config/config.yaml');
+
         foreach (['php', 'yaml', 'yml', 'xml'] as $extension) {
             $file = sprintf('%s/config/installer.%s', $this->getProjectDir(), $extension);
 
             if (file_exists($file)) {
-                $configurator->import($file);
+                $loader->load($file);
             }
         }
-    }
-
-    protected function configureRoutes(RoutingConfigurator $routes): void
-    {
-        // nothing to do
     }
 }

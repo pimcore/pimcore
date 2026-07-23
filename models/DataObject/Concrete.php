@@ -604,6 +604,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             }
 
             if (isset($listConfig['limit']) && $listConfig['limit'] == 1) {
+                /** @var Model\DataObject\Concrete[] $elements */
                 $elements = $list->getObjects();
 
                 return isset($elements[0]) ? $elements[0] : null;

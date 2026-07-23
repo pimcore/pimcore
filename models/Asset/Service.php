@@ -578,6 +578,7 @@ class Service extends Model\Element\Service
                 'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
                 'Content-Type' => $storage->mimeType($storagePath),
                 'Content-Length' => $storage->fileSize($storagePath),
+                AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER => true,
             ]);
         } else {
             $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);

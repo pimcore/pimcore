@@ -844,9 +844,15 @@ parameters:
 		-
 			message: '#^Class Pimcore\\Bundle\\PersonalizationBundle\\Targeting\\Document\\DocumentTargetingConfigurator not found\.$#'
 			identifier: class.notFound
-			count: 1
+			count: 2
 			path: models/Document/Editable/Renderlet.php
 
+		-
+			message: '#^Left side of && is always false\.$#'
+			identifier: booleanAnd.leftAlwaysFalse
+			count: 1
+			path: models/Document/Editable/Renderlet.php
+            
 		-
 			message: '#^Class Pimcore\\Bundle\\PersonalizationBundle\\Targeting\\Document\\DocumentTargetingConfigurator not found\.$#'
 			identifier: class.notFound
@@ -1199,3 +1205,33 @@ parameters:
 			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: lib/Tool/Text.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 1
+			path: lib/Tool/Admin.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: lib/Tool/Admin.php
+
+		-
+			message: '#^Ternary operator condition is always false\.$#'
+			identifier: ternary.alwaysFalse
+			count: 1
+			path: lib/Tool/Admin.php
+
+		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: lib/Tool/Admin.php
+
+		-
+			message: '#^Variable \$languages in empty\(\) always exists and is always falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: lib/Tool/Admin.php

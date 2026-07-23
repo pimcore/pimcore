@@ -207,5 +207,9 @@ pimcore.bundle.search.element.service = Class.create({
 
     getObjectRelationInlineSearchRoute: function () {
         return Routing.generate('pimcore_bundle_search_dataobject_relation_objects_list');
+    },
+
+    getObjectRelationInlineSearchRouteMethod: function () {
+        return 'POST';
     }
 });

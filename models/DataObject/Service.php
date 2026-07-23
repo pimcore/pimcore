@@ -985,7 +985,7 @@ class Service extends Model\Element\Service
     public static function getSuperLayoutDefinition(Concrete $object): mixed
     {
         $mainLayout = $object->getClass()->getLayoutDefinitions();
-        $superLayout = unserialize(serialize($mainLayout));
+        $superLayout = self::cloneDefinition($mainLayout);
 
         self::createSuperLayout($superLayout);
 
@@ -1709,6 +1709,9 @@ class Service extends Model\Element\Service
 
             $objects = $list->getObjects();
             foreach ($objects as $object) {
+                if (!$object instanceof Concrete) {
+                    continue;
+                }
                 if ($addTitles && empty($data)) {
                     $tmp = [];
                     $mapped = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $header, true, $context);
