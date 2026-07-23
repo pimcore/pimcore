@@ -43,9 +43,10 @@ allowlist mode wherever the set of objects passed into a sandboxed template
 commonly need it for filename/thumbnail access. But its content-returning methods
 (`getData`, `getStream`, `getLocalFile`, `getTemporaryFile`) would let a template
 read the raw bytes of any asset, bypassing that asset's workspace ACL. These
-methods - together with `User::getPassword` / `User::getPasswordRecoveryToken` -
-are hard-blocked unconditionally: unlike the denylist, this check is **not**
-bypassed by allowlist mode. Even a site that explicitly allowlists `Asset` or
+methods - together with `User::getPassword`, `User::getPasswordRecoveryToken` and
+`User::getTwoFactorAuthentication` (returns the MFA secret alongside the rest of the
+2FA config) - are hard-blocked unconditionally: unlike the denylist, this check is
+**not** bypassed by allowlist mode. Even a site that explicitly allowlists `Asset` or
 `User` cannot make these specific methods template-reachable again. This set is
 not configurable; it exists to keep a small number of secret/content-returning
 getters closed off no matter how the rest of the policy is configured.

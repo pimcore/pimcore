@@ -60,7 +60,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
      * file contents.
      */
     private const ALWAYS_BLOCKED_METHODS = [
-        \Pimcore\Model\User::class => ['getPassword', 'getPasswordRecoveryToken'],
+        \Pimcore\Model\User::class => ['getPassword', 'getPasswordRecoveryToken', 'getTwoFactorAuthentication'],
         \Pimcore\Model\Asset::class => ['getData', 'getStream', 'getLocalFile', 'getTemporaryFile'],
     ];
 

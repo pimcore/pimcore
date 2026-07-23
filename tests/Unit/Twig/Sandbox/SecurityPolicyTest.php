@@ -103,14 +103,28 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkMethodAllowed(new stdClass(), 'anything');
     }
 
-    public function testUserIsBlockedByDefault(): void
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function userSecretMethodsProvider(): iterable
     {
-        // GHSA-7gfm-v2fx-xrxm: User::getPassword()/getPasswordRecoveryToken() must not be
-        // template-reachable. The whole class is blocked by default (defense in depth).
+        yield 'getPassword' => ['getPassword'];
+        yield 'getPasswordRecoveryToken' => ['getPasswordRecoveryToken'];
+        yield 'getTwoFactorAuthentication' => ['getTwoFactorAuthentication'];
+    }
+
+    /**
+     * @dataProvider userSecretMethodsProvider
+     */
+    public function testUserIsBlockedByDefault(string $method): void
+    {
+        // GHSA-7gfm-v2fx-xrxm: User::getPassword()/getPasswordRecoveryToken() and
+        // getTwoFactorAuthentication() (returns the MFA secret, models/User.php:679) must
+        // not be template-reachable. The whole class is blocked by default (defense in depth).
         $policy = new SecurityPolicy();
 
         $this->expectException(SecurityNotAllowedMethodError::class);
-        $policy->checkMethodAllowed(new User(), 'getPassword');
+        $policy->checkMethodAllowed(new User(), $method);
     }
 
     public function testUserPropertyAccessIsBlockedByDefault(): void
@@ -155,14 +169,18 @@ final class SecurityPolicyTest extends TestCase
         $this->addToAssertionCount(2);
     }
 
-    public function testAlwaysBlockedMethodsSurviveAllowlistModeForUser(): void
+    /**
+     * @dataProvider userSecretMethodsProvider
+     */
+    public function testAlwaysBlockedMethodsSurviveAllowlistModeForUser(string $method): void
     {
         // Even if a site explicitly allowlists User (e.g. to expose getFirstname()), the
-        // secret-returning methods must remain unreachable.
+        // secret-returning methods - including getTwoFactorAuthentication(), which returns
+        // the MFA secret - must remain unreachable.
         $policy = new SecurityPolicy(allowedClasses: [User::class]);
 
         $this->expectException(SecurityNotAllowedMethodError::class);
-        $policy->checkMethodAllowed(new User(), 'getPasswordRecoveryToken');
+        $policy->checkMethodAllowed(new User(), $method);
     }
 
     public function testAlwaysBlockedMethodsSurviveAllowlistModeForAsset(): void
