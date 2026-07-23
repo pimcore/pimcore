@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Twig\Sandbox;
 
 use PDO;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Model\Asset;
 use Pimcore\Model\User;
@@ -35,7 +34,7 @@ final class SecurityPolicyTest extends TestCase
         $policy = new SecurityPolicy();
 
         $this->expectException(SecurityNotAllowedMethodError::class);
-        $policy->checkMethodAllowed(new PDO('sqlite::memory:'), 'query');
+        $policy->checkMethodAllowed($this->createStub(PDO::class), 'query');
     }
 
     public function testDenylistModeAllowsArbitraryObjectsNotOnTheList(): void
@@ -79,7 +78,7 @@ final class SecurityPolicyTest extends TestCase
         // blocked by the built-in denylist is allowed once it is itself allowlisted.
         $policy = new SecurityPolicy(allowedClasses: [PDO::class]);
 
-        $policy->checkMethodAllowed(new PDO('sqlite::memory:'), 'query');
+        $policy->checkMethodAllowed($this->createStub(PDO::class), 'query');
         $this->addToAssertionCount(1);
     }
 
@@ -88,7 +87,7 @@ final class SecurityPolicyTest extends TestCase
         $policy = new SecurityPolicy(allowedClasses: [stdClass::class]);
 
         $this->expectException(SecurityNotAllowedPropertyError::class);
-        $policy->checkPropertyAllowed(new PDO('sqlite::memory:'), 'secret');
+        $policy->checkPropertyAllowed($this->createStub(PDO::class), 'secret');
     }
 
     public function testSetAllowedClassesSwitchesModeAtRuntime(): void
@@ -133,7 +132,9 @@ final class SecurityPolicyTest extends TestCase
         yield 'getTemporaryFile' => ['getTemporaryFile'];
     }
 
-    #[DataProvider('assetContentMethodsProvider')]
+    /**
+     * @dataProvider assetContentMethodsProvider
+     */
     public function testAssetContentMethodsAreAlwaysBlockedByDefault(string $method): void
     {
         // GHSA-7gfm-v2fx-xrxm: Asset stays reachable (needed for filename/thumbnail access
@@ -198,7 +199,9 @@ final class SecurityPolicyTest extends TestCase
         yield 'pimcore_user' => ['pimcore_user'];
     }
 
-    #[DataProvider('idLookupPimcoreFunctionsProvider')]
+    /**
+     * @dataProvider idLookupPimcoreFunctionsProvider
+     */
     public function testIdLookupPimcoreFunctionsAreNotAutoAllowedByDefault(string $function): void
     {
         // GHSA-7gfm-v2fx-xrxm remediation #3: the pimcore_* auto-allow must not cover
