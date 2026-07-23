@@ -48,6 +48,20 @@ final class SecurityPolicy implements SecurityPolicyInterface
         PDOStatement::class,
         \Symfony\Component\DependencyInjection\ContainerInterface::class,
         \Symfony\Component\Process\Process::class,
+        \Pimcore\Model\User::class,
+    ];
+
+    /**
+     * Methods that must never be callable from a Twig template on an instance of the given
+     * class, no matter the blocklist/allowlist configuration - unlike BLOCKED_CLASSES/
+     * $blockedClasses/$allowedClasses, this check is not bypassed by allowlist mode. Used for
+     * classes that otherwise stay reachable (e.g. Asset is commonly used in templates for
+     * filename/thumbnail access) but expose a handful of methods that return raw secrets or
+     * file contents.
+     */
+    private const ALWAYS_BLOCKED_METHODS = [
+        \Pimcore\Model\User::class => ['getPassword', 'getPasswordRecoveryToken'],
+        \Pimcore\Model\Asset::class => ['getData', 'getStream', 'getLocalFile', 'getTemporaryFile'],
     ];
 
     private array $allowedTags;
@@ -152,6 +166,8 @@ final class SecurityPolicy implements SecurityPolicyInterface
      */
     public function checkMethodAllowed($obj, $method): void
     {
+        $this->assertNotAlwaysBlockedMethod($obj, $method);
+
         if ($this->isAllowlistMode()) {
             if (!$this->matchesAnyClass($obj, $this->allowedClasses)) {
                 $class = $obj::class;
@@ -205,6 +221,29 @@ final class SecurityPolicy implements SecurityPolicyInterface
                 $class,
                 $property,
             );
+        }
+    }
+
+    /**
+     * @param object $obj
+     * @param string $method
+     */
+    private function assertNotAlwaysBlockedMethod($obj, $method): void
+    {
+        foreach (self::ALWAYS_BLOCKED_METHODS as $class => $methods) {
+            if (!class_exists($class, false) && !interface_exists($class, false)) {
+                continue;
+            }
+
+            if ($obj instanceof $class && in_array($method, $methods, true)) {
+                $objClass = $obj::class;
+
+                throw new SecurityNotAllowedMethodError(
+                    sprintf('Calling method "%s" on "%s" is not allowed in templates.', $method, $objClass),
+                    $objClass,
+                    $method,
+                );
+            }
         }
     }
 

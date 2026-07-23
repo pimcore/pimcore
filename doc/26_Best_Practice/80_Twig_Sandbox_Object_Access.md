@@ -18,8 +18,9 @@ The policy supports two mutually exclusive modes:
 - **Blocklist mode (default)** - every object is reachable *except* instances of a
   denylist of classes. Pimcore ships a built-in denylist covering the database/
   infrastructure layer (`Pimcore\Model\Dao\AbstractDao`, `Doctrine\DBAL\Connection`,
-  `PDO`, `PDOStatement`, Symfony's `ContainerInterface`, `Process`). Use
-  `blocked_classes` to add more classes to this denylist.
+  `PDO`, `PDOStatement`, Symfony's `ContainerInterface`, `Process`) and
+  `Pimcore\Model\User` (whose getters expose the password hash and password
+  recovery token). Use `blocked_classes` to add more classes to this denylist.
 - **Allowlist mode** - as soon as `allowed_classes` contains at least one entry, the
   policy switches to allow only instances of the listed classes (and their
   subclasses). **The entire denylist (built-in + `blocked_classes`) is deactivated
@@ -34,6 +35,19 @@ rendering are reachable, so newly introduced classes are denied by default. Pref
 allowlist mode wherever the set of objects passed into a sandboxed template
 (`Mail::setParams()`, `Layout\Text` context) is small and known.
 
+## Always-blocked methods
+
+`Pimcore\Model\Asset` is deliberately **not** on the built-in denylist - templates
+commonly need it for filename/thumbnail access. But its content-returning methods
+(`getData`, `getStream`, `getLocalFile`, `getTemporaryFile`) would let a template
+read the raw bytes of any asset, bypassing that asset's workspace ACL. These
+methods - together with `User::getPassword` / `User::getPasswordRecoveryToken` -
+are hard-blocked unconditionally: unlike the denylist, this check is **not**
+bypassed by allowlist mode. Even a site that explicitly allowlists `Asset` or
+`User` cannot make these specific methods template-reachable again. This set is
+not configurable; it exists to keep a small number of secret/content-returning
+getters closed off no matter how the rest of the policy is configured.
+
 ## Configuration
 
 ```yaml
@@ -44,10 +58,9 @@ pimcore:
                 tags: ['set']
                 filters: ['escape', 'trans', 'default']
                 functions: ['path', 'asset']
-                # Extend the built-in denylist. Only consulted while allowed_classes is empty.
-                blocked_classes:
-                    - 'Pimcore\Model\User'
-                    - 'Pimcore\Model\Asset'
+                # Extend the built-in denylist (Dao/Connection/PDO/.../User). Only
+                # consulted while allowed_classes is empty.
+                blocked_classes: []
                 # Non-empty => allowlist mode. Deactivates the denylist entirely.
                 allowed_classes: []
 ```
@@ -80,9 +93,8 @@ property on it.
 
 If switching to a full allowlist is not feasible (e.g. many different DataObject
 classes are legitimately passed into templates), extend the denylist instead to
-explicitly deny classes whose getters return sensitive data, such as
-`Pimcore\Model\User` (password hash, password recovery token) or the
-content-returning methods on `Pimcore\Model\Asset`:
+explicitly deny further classes whose getters return sensitive data - e.g. a
+custom service locator or a DTO wrapping credentials:
 
 ```yaml
 pimcore:
@@ -90,8 +102,7 @@ pimcore:
         twig:
             sandbox_security_policy:
                 blocked_classes:
-                    - 'Pimcore\Model\User'
-                    - 'Pimcore\Model\Asset'
+                    - 'App\Service\SecretsProvider'
 ```
 
 ## Notes

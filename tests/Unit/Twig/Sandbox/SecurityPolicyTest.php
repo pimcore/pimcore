@@ -15,7 +15,10 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Twig\Sandbox;
 
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Pimcore\Model\Asset;
+use Pimcore\Model\User;
 use Pimcore\Twig\Sandbox\SecurityPolicy;
 use stdClass;
 use Twig\Sandbox\SecurityNotAllowedMethodError;
@@ -98,5 +101,78 @@ final class SecurityPolicyTest extends TestCase
 
         $this->expectException(SecurityNotAllowedMethodError::class);
         $policy->checkMethodAllowed(new stdClass(), 'anything');
+    }
+
+    public function testUserIsBlockedByDefault(): void
+    {
+        // GHSA-7gfm-v2fx-xrxm: User::getPassword()/getPasswordRecoveryToken() must not be
+        // template-reachable. The whole class is blocked by default (defense in depth).
+        $policy = new SecurityPolicy();
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new User(), 'getPassword');
+    }
+
+    public function testUserPropertyAccessIsBlockedByDefault(): void
+    {
+        $policy = new SecurityPolicy();
+
+        $this->expectException(SecurityNotAllowedPropertyError::class);
+        $policy->checkPropertyAllowed(new User(), 'password');
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function assetContentMethodsProvider(): iterable
+    {
+        yield 'getData' => ['getData'];
+        yield 'getStream' => ['getStream'];
+        yield 'getLocalFile' => ['getLocalFile'];
+        yield 'getTemporaryFile' => ['getTemporaryFile'];
+    }
+
+    #[DataProvider('assetContentMethodsProvider')]
+    public function testAssetContentMethodsAreAlwaysBlockedByDefault(string $method): void
+    {
+        // GHSA-7gfm-v2fx-xrxm: Asset stays reachable (needed for filename/thumbnail access
+        // in templates), but its content-returning methods must never be callable.
+        $policy = new SecurityPolicy();
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new Asset(), $method);
+    }
+
+    public function testAssetIsOtherwiseReachableByDefault(): void
+    {
+        $policy = new SecurityPolicy();
+
+        // no exception expected: only the content-returning methods are blocked
+        $policy->checkMethodAllowed(new Asset(), 'getId');
+        $policy->checkMethodAllowed(new Asset(), 'getFilename');
+        $this->addToAssertionCount(2);
+    }
+
+    public function testAlwaysBlockedMethodsSurviveAllowlistModeForUser(): void
+    {
+        // Even if a site explicitly allowlists User (e.g. to expose getFirstname()), the
+        // secret-returning methods must remain unreachable.
+        $policy = new SecurityPolicy(allowedClasses: [User::class]);
+
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new User(), 'getPasswordRecoveryToken');
+    }
+
+    public function testAlwaysBlockedMethodsSurviveAllowlistModeForAsset(): void
+    {
+        $policy = new SecurityPolicy(allowedClasses: [Asset::class]);
+
+        // getId remains reachable via the allowlist ...
+        $policy->checkMethodAllowed(new Asset(), 'getId');
+        $this->addToAssertionCount(1);
+
+        // ... but getData is hard-blocked regardless.
+        $this->expectException(SecurityNotAllowedMethodError::class);
+        $policy->checkMethodAllowed(new Asset(), 'getData');
     }
 }
