@@ -338,6 +338,8 @@ pimcore:
                 functions: ['path', 'asset']
                 blocked_classes: []
                 allowed_classes: []
+                blocked_functions: []
+                allowed_functions: []
 
     gotenberg:
         base_url: 'http://gotenberg:3000'

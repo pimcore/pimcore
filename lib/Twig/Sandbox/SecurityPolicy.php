@@ -64,10 +64,42 @@ final class SecurityPolicy implements SecurityPolicyInterface
         \Pimcore\Model\Asset::class => ['getData', 'getStream', 'getLocalFile', 'getTemporaryFile'],
     ];
 
+    /**
+     * Default `pimcore_*` functions excluded from the blanket prefix auto-allow, because
+     * they look up and return a live model instance by id/path whose getters can expose
+     * data outside the sandboxed template's intended scope (e.g. `pimcore_user(1)`,
+     * `pimcore_asset(id)`).
+     *
+     * This is the fallback denylist consulted while $allowedPimcoreFunctions is empty - use
+     * the `blocked_functions` config option to extend it, or `allowed_functions` to replace
+     * the prefix auto-allow with an explicit allowlist instead. Mirrors BLOCKED_CLASSES /
+     * `blocked_classes` / `allowed_classes` for object access.
+     */
+    private const BLOCKED_FUNCTIONS = [
+        'pimcore_asset',
+        'pimcore_asset_by_path',
+        'pimcore_document',
+        'pimcore_document_by_path',
+        'pimcore_document_wrap_hardlink',
+        'pimcore_object',
+        'pimcore_object_by_path',
+        'pimcore_object_classificationstore_group',
+        'pimcore_object_brick_definition_key',
+        'pimcore_site',
+        'pimcore_site_by_root_id',
+        'pimcore_site_by_domain',
+        'pimcore_site_current',
+        'pimcore_user',
+    ];
+
     private array $allowedTags;
 
     private array $allowedFilters;
 
+    /**
+     * Explicitly allowed functions - always allowed, regardless of blocked/allowed_functions
+     * mode, in addition to whatever the `pimcore_*` prefix rule permits.
+     */
     private array $allowedFunctions;
 
     /**
@@ -84,18 +116,37 @@ final class SecurityPolicy implements SecurityPolicyInterface
      */
     private array $allowedClasses;
 
+    /**
+     * Additional `pimcore_*` function names to exclude from the prefix auto-allow, on top
+     * of the built-in BLOCKED_FUNCTIONS. Ignored whenever $allowedPimcoreFunctions is
+     * non-empty (allowlist mode takes over entirely).
+     */
+    private array $blockedFunctions;
+
+    /**
+     * When non-empty, switches the `pimcore_*` prefix rule from denylist mode to allowlist
+     * mode: only the listed `pimcore_*` functions (plus whatever is in $allowedFunctions)
+     * are callable from a sandboxed template. Every other `pimcore_*` function is denied,
+     * and the denylist (BLOCKED_FUNCTIONS + $blockedFunctions) is no longer consulted.
+     */
+    private array $allowedPimcoreFunctions;
+
     public function __construct(
         array $allowedTags = [],
         array $allowedFilters = [],
         array $allowedFunctions = [],
         array $blockedClasses = [],
         array $allowedClasses = [],
+        array $blockedFunctions = [],
+        array $allowedPimcoreFunctions = [],
     ) {
         $this->allowedTags = $allowedTags;
         $this->allowedFilters = $allowedFilters;
         $this->allowedFunctions = $allowedFunctions;
         $this->blockedClasses = $blockedClasses;
         $this->allowedClasses = $allowedClasses;
+        $this->blockedFunctions = $blockedFunctions;
+        $this->allowedPimcoreFunctions = $allowedPimcoreFunctions;
     }
 
     public function setAllowedTags(array $tags): void
@@ -123,6 +174,16 @@ final class SecurityPolicy implements SecurityPolicyInterface
         $this->allowedClasses = $allowedClasses;
     }
 
+    public function setBlockedFunctions(array $blockedFunctions): void
+    {
+        $this->blockedFunctions = $blockedFunctions;
+    }
+
+    public function setAllowedPimcoreFunctions(array $allowedPimcoreFunctions): void
+    {
+        $this->allowedPimcoreFunctions = $allowedPimcoreFunctions;
+    }
+
     /**
      * True once at least one class has been configured in the allowlist. In that mode
      * the denylist (built-in + configured) is bypassed entirely: only allowlisted
@@ -131,6 +192,17 @@ final class SecurityPolicy implements SecurityPolicyInterface
     private function isAllowlistMode(): bool
     {
         return [] !== $this->allowedClasses;
+    }
+
+    /**
+     * True once at least one `pimcore_*` function has been configured in
+     * $allowedPimcoreFunctions. In that mode the `pimcore_*` prefix denylist (built-in +
+     * configured) is bypassed entirely: only allowlisted `pimcore_*` functions remain
+     * callable from sandboxed templates.
+     */
+    private function isPimcoreFunctionAllowlistMode(): bool
+    {
+        return [] !== $this->allowedPimcoreFunctions;
     }
 
     /**
@@ -153,8 +225,11 @@ final class SecurityPolicy implements SecurityPolicyInterface
         }
 
         foreach ($functions as $function) {
-            // check if a function is allowed or a Pimcore Twig function
-            if (!in_array($function, $this->allowedFunctions) && !str_starts_with($function, 'pimcore_')) {
+            if (in_array($function, $this->allowedFunctions, true)) {
+                continue;
+            }
+
+            if (!str_starts_with($function, 'pimcore_') || !$this->isPimcoreFunctionAllowed($function)) {
                 throw new SecurityNotAllowedFunctionError(sprintf('Function "%s" is not allowed.', $function), $function);
             }
         }
@@ -222,6 +297,18 @@ final class SecurityPolicy implements SecurityPolicyInterface
                 $property,
             );
         }
+    }
+
+    /**
+     * @param string $function a function name already known to start with `pimcore_`
+     */
+    private function isPimcoreFunctionAllowed(string $function): bool
+    {
+        if ($this->isPimcoreFunctionAllowlistMode()) {
+            return in_array($function, $this->allowedPimcoreFunctions, true);
+        }
+
+        return !in_array($function, [...self::BLOCKED_FUNCTIONS, ...$this->blockedFunctions], true);
     }
 
     /**

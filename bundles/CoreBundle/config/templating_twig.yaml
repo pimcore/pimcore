@@ -79,6 +79,8 @@ services:
             $allowedFunctions: '%pimcore.templating.twig.sandbox_security_policy.functions%'
             $blockedClasses: '%pimcore.templating.twig.sandbox_security_policy.blocked_classes%'
             $allowedClasses: '%pimcore.templating.twig.sandbox_security_policy.allowed_classes%'
+            $blockedFunctions: '%pimcore.templating.twig.sandbox_security_policy.blocked_functions%'
+            $allowedPimcoreFunctions: '%pimcore.templating.twig.sandbox_security_policy.allowed_functions%'
 
     Twig\Extension\SandboxExtension:
         arguments:

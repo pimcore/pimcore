@@ -21,6 +21,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\User;
 use Pimcore\Twig\Sandbox\SecurityPolicy;
 use stdClass;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
 use Twig\Sandbox\SecurityNotAllowedMethodError;
 use Twig\Sandbox\SecurityNotAllowedPropertyError;
 
@@ -174,5 +175,115 @@ final class SecurityPolicyTest extends TestCase
         // ... but getData is hard-blocked regardless.
         $this->expectException(SecurityNotAllowedMethodError::class);
         $policy->checkMethodAllowed(new Asset(), 'getData');
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function idLookupPimcoreFunctionsProvider(): iterable
+    {
+        yield 'pimcore_asset' => ['pimcore_asset'];
+        yield 'pimcore_asset_by_path' => ['pimcore_asset_by_path'];
+        yield 'pimcore_document' => ['pimcore_document'];
+        yield 'pimcore_document_by_path' => ['pimcore_document_by_path'];
+        yield 'pimcore_document_wrap_hardlink' => ['pimcore_document_wrap_hardlink'];
+        yield 'pimcore_object' => ['pimcore_object'];
+        yield 'pimcore_object_by_path' => ['pimcore_object_by_path'];
+        yield 'pimcore_object_classificationstore_group' => ['pimcore_object_classificationstore_group'];
+        yield 'pimcore_object_brick_definition_key' => ['pimcore_object_brick_definition_key'];
+        yield 'pimcore_site' => ['pimcore_site'];
+        yield 'pimcore_site_by_root_id' => ['pimcore_site_by_root_id'];
+        yield 'pimcore_site_by_domain' => ['pimcore_site_by_domain'];
+        yield 'pimcore_site_current' => ['pimcore_site_current'];
+        yield 'pimcore_user' => ['pimcore_user'];
+    }
+
+    #[DataProvider('idLookupPimcoreFunctionsProvider')]
+    public function testIdLookupPimcoreFunctionsAreNotAutoAllowedByDefault(string $function): void
+    {
+        // GHSA-7gfm-v2fx-xrxm remediation #3: the pimcore_* auto-allow must not cover
+        // functions that hand back a live model instance looked up by id/path.
+        $policy = new SecurityPolicy();
+
+        $this->expectException(SecurityNotAllowedFunctionError::class);
+        $policy->checkSecurity([], [], [$function]);
+    }
+
+    public function testIdLookupPimcoreFunctionCanBeExplicitlyAllowed(): void
+    {
+        $policy = new SecurityPolicy(allowedFunctions: ['pimcore_user']);
+
+        // no exception expected
+        $policy->checkSecurity([], [], ['pimcore_user']);
+        $this->addToAssertionCount(1);
+    }
+
+    public function testOtherPimcoreFunctionsRemainAutoAllowedByDefault(): void
+    {
+        $policy = new SecurityPolicy();
+
+        // a rendering/helper pimcore_* function not on the explicit-allow list
+        $policy->checkSecurity([], [], ['pimcore_dump']);
+        $this->addToAssertionCount(1);
+    }
+
+    public function testNonPimcoreFunctionsStillRequireExplicitAllow(): void
+    {
+        $policy = new SecurityPolicy();
+
+        $this->expectException(SecurityNotAllowedFunctionError::class);
+        $policy->checkSecurity([], [], ['file_get_contents']);
+    }
+
+    public function testBlockedFunctionsExtendsTheBuiltInDenylist(): void
+    {
+        $policy = new SecurityPolicy(blockedFunctions: ['pimcore_dump']);
+
+        $this->expectException(SecurityNotAllowedFunctionError::class);
+        $policy->checkSecurity([], [], ['pimcore_dump']);
+    }
+
+    public function testAllowedFunctionsSwitchesToAllowlistModeAndDeactivatesDenylist(): void
+    {
+        // A non-empty allow list must take over completely: a pimcore_* function normally
+        // blocked by the built-in denylist is allowed once it is itself allowlisted.
+        $policy = new SecurityPolicy(allowedPimcoreFunctions: ['pimcore_user']);
+
+        $policy->checkSecurity([], [], ['pimcore_user']);
+        $this->addToAssertionCount(1);
+    }
+
+    public function testAllowlistModeDeniesPimcoreFunctionsNotOnTheAllowlist(): void
+    {
+        // In allowlist mode the prefix auto-allow is fully deactivated: even a function
+        // that was previously auto-allowed (not on the built-in denylist) is now denied
+        // unless explicitly listed.
+        $policy = new SecurityPolicy(allowedPimcoreFunctions: ['pimcore_user']);
+
+        $this->expectException(SecurityNotAllowedFunctionError::class);
+        $policy->checkSecurity([], [], ['pimcore_dump']);
+    }
+
+    public function testAllowedFunctionsIsIndependentOfTheGeneralFunctionsAllowlist(): void
+    {
+        // $allowedFunctions (the pre-existing `functions` config) keeps working
+        // unconditionally, in either mode.
+        $policy = new SecurityPolicy(allowedFunctions: ['path'], allowedPimcoreFunctions: ['pimcore_user']);
+
+        $policy->checkSecurity([], [], ['path']);
+        $this->addToAssertionCount(1);
+    }
+
+    public function testSetBlockedFunctionsAndSetAllowedPimcoreFunctionsSwitchModeAtRuntime(): void
+    {
+        $policy = new SecurityPolicy();
+
+        // starts in denylist mode: a non-denylisted pimcore_* function is auto-allowed
+        $policy->checkSecurity([], [], ['pimcore_dump']);
+
+        $policy->setAllowedPimcoreFunctions(['pimcore_user']);
+
+        $this->expectException(SecurityNotAllowedFunctionError::class);
+        $policy->checkSecurity([], [], ['pimcore_dump']);
     }
 }

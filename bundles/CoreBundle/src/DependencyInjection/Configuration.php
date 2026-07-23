@@ -2091,6 +2091,20 @@ final class Configuration implements ConfigurationInterface
                                 classes listed here (and their subclasses) remain reachable.')
                                 ->scalarPrototype()->end()
                             ->end()
+                            ->arrayNode('blocked_functions')
+                                ->info('Additional `pimcore_*` function names that must not be covered by the
+                                blanket `pimcore_*` prefix auto-allow, on top of the built-in denylist. Ignored
+                                when `allowed_functions` is non-empty.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('allowed_functions')
+                                ->info('`pimcore_*` function names that remain callable from sandboxed twig
+                                templates. As soon as this list contains at least one entry, the `pimcore_*`
+                                prefix rule switches from denylist mode to allowlist mode: the built-in and
+                                configured `blocked_functions` denylist is deactivated, and only the `pimcore_*`
+                                functions listed here (plus whatever is in `functions`) remain callable.')
+                                ->scalarPrototype()->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
