@@ -31,10 +31,15 @@ use Twig\Sandbox\SecurityPolicyInterface;
 final class SecurityPolicy implements SecurityPolicyInterface
 {
     /**
-     * Classes whose instances must not be traversable from Twig templates.
+     * Default classes whose instances must not be traversable from Twig templates.
      * Method calls and property accesses on objects that are instances of any of these
      * classes will throw, preventing templates from traversing into
      * database or infrastructure layers (e.g. object.getDao().db.fetchOne(...)).
+     *
+     * This is the fallback denylist used when no allowed classes are configured. It stays
+     * as a private constant (rather than a configurable default) so that a site cannot
+     * accidentally weaken it via config merging - use the `blocked_classes` config option
+     * to extend it, or `allowed_classes` to replace this denylist model with an allowlist.
      */
     private const BLOCKED_CLASSES = [
         \Pimcore\Model\Dao\AbstractDao::class,
@@ -51,11 +56,32 @@ final class SecurityPolicy implements SecurityPolicyInterface
 
     private array $allowedFunctions;
 
-    public function __construct(array $allowedTags = [], array $allowedFilters = [], array $allowedFunctions = [])
-    {
+    /**
+     * Additional classes to deny, on top of the built-in BLOCKED_CLASSES. Ignored
+     * whenever $allowedClasses is non-empty (allowlist mode takes over entirely).
+     */
+    private array $blockedClasses;
+
+    /**
+     * When non-empty, switches from denylist mode to allowlist mode: only instances of
+     * these classes (and their subclasses) may have their methods/properties accessed
+     * from a sandboxed template. Every other object is denied, and the denylist
+     * (BLOCKED_CLASSES + $blockedClasses) is no longer consulted.
+     */
+    private array $allowedClasses;
+
+    public function __construct(
+        array $allowedTags = [],
+        array $allowedFilters = [],
+        array $allowedFunctions = [],
+        array $blockedClasses = [],
+        array $allowedClasses = [],
+    ) {
         $this->allowedTags = $allowedTags;
         $this->allowedFilters = $allowedFilters;
         $this->allowedFunctions = $allowedFunctions;
+        $this->blockedClasses = $blockedClasses;
+        $this->allowedClasses = $allowedClasses;
     }
 
     public function setAllowedTags(array $tags): void
@@ -71,6 +97,26 @@ final class SecurityPolicy implements SecurityPolicyInterface
     public function setAllowedFunctions(array $functions): void
     {
         $this->allowedFunctions = $functions;
+    }
+
+    public function setBlockedClasses(array $blockedClasses): void
+    {
+        $this->blockedClasses = $blockedClasses;
+    }
+
+    public function setAllowedClasses(array $allowedClasses): void
+    {
+        $this->allowedClasses = $allowedClasses;
+    }
+
+    /**
+     * True once at least one class has been configured in the allowlist. In that mode
+     * the denylist (built-in + configured) is bypassed entirely: only allowlisted
+     * classes are reachable from sandboxed templates.
+     */
+    private function isAllowlistMode(): bool
+    {
+        return [] !== $this->allowedClasses;
     }
 
     /**
@@ -106,12 +152,8 @@ final class SecurityPolicy implements SecurityPolicyInterface
      */
     public function checkMethodAllowed($obj, $method): void
     {
-        foreach (self::BLOCKED_CLASSES as $blocked) {
-            if (!class_exists($blocked, false) && !interface_exists($blocked, false)) {
-                continue;
-            }
-
-            if ($obj instanceof $blocked) {
+        if ($this->isAllowlistMode()) {
+            if (!$this->matchesAnyClass($obj, $this->allowedClasses)) {
                 $class = $obj::class;
 
                 throw new SecurityNotAllowedMethodError(
@@ -120,6 +162,18 @@ final class SecurityPolicy implements SecurityPolicyInterface
                     $method,
                 );
             }
+
+            return;
+        }
+
+        if ($this->matchesAnyClass($obj, [...self::BLOCKED_CLASSES, ...$this->blockedClasses])) {
+            $class = $obj::class;
+
+            throw new SecurityNotAllowedMethodError(
+                sprintf('Calling method "%s" on "%s" is not allowed in templates.', $method, $class),
+                $class,
+                $method,
+            );
         }
     }
 
@@ -129,12 +183,8 @@ final class SecurityPolicy implements SecurityPolicyInterface
      */
     public function checkPropertyAllowed($obj, $property): void
     {
-        foreach (self::BLOCKED_CLASSES as $blocked) {
-            if (!class_exists($blocked, false) && !interface_exists($blocked, false)) {
-                continue;
-            }
-
-            if ($obj instanceof $blocked) {
+        if ($this->isAllowlistMode()) {
+            if (!$this->matchesAnyClass($obj, $this->allowedClasses)) {
                 $class = $obj::class;
 
                 throw new SecurityNotAllowedPropertyError(
@@ -143,6 +193,37 @@ final class SecurityPolicy implements SecurityPolicyInterface
                     $property,
                 );
             }
+
+            return;
         }
+
+        if ($this->matchesAnyClass($obj, [...self::BLOCKED_CLASSES, ...$this->blockedClasses])) {
+            $class = $obj::class;
+
+            throw new SecurityNotAllowedPropertyError(
+                sprintf('Accessing property "%s" on "%s" is not allowed in templates.', $property, $class),
+                $class,
+                $property,
+            );
+        }
+    }
+
+    /**
+     * @param object $obj
+     * @param string[] $classes
+     */
+    private function matchesAnyClass($obj, array $classes): bool
+    {
+        foreach ($classes as $candidate) {
+            if (!class_exists($candidate, false) && !interface_exists($candidate, false)) {
+                continue;
+            }
+
+            if ($obj instanceof $candidate) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

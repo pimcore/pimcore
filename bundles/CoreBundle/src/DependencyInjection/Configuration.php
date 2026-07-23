@@ -2077,6 +2077,20 @@ final class Configuration implements ConfigurationInterface
                             ->arrayNode('functions')
                                 ->scalarPrototype()->end()
                             ->end()
+                            ->arrayNode('blocked_classes')
+                                ->info('Additional FQCNs that must not be traversable (method calls or property
+                                access) from sandboxed twig templates, on top of the built-in denylist. Ignored
+                                when `allowed_classes` is non-empty.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('allowed_classes')
+                                ->info('FQCNs that are traversable (method calls or property access) from
+                                sandboxed twig templates. As soon as this list contains at least one entry, the
+                                security policy switches from denylist mode to allowlist mode: the built-in and
+                                configured `blocked_classes` denylist is deactivated, and only instances of the
+                                classes listed here (and their subclasses) remain reachable.')
+                                ->scalarPrototype()->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()

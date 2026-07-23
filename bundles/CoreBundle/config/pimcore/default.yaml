@@ -336,6 +336,8 @@ pimcore:
                 tags: ['set']
                 filters: ['escape', 'trans', 'default']
                 functions: ['path', 'asset']
+                blocked_classes: []
+                allowed_classes: []
 
     gotenberg:
         base_url: 'http://gotenberg:3000'
