@@ -19,25 +19,37 @@ use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool\Serialize;
 
 /**
- * Regression tests for the Serialize::unserialize() wrapper: object deserialization must be
- * disabled by default, so a caller that omits the allowedClasses argument cannot be used to
- * instantiate arbitrary classes from serialized bytes.
+ * Regression tests for the Serialize::unserialize() wrapper. Callers must be able to restrict
+ * object deserialization via allowedClasses; omitting the argument stays permissive for backward
+ * compatibility (the default flips to false in Pimcore 2027.1) but must emit a deprecation.
  */
 class SerializeTest extends TestCase
 {
-    public function testDefaultDoesNotInstantiateObjects(): void
+    /**
+     * BC guarantee: omitting the argument still reconstructs objects under the current default,
+     * so existing callers are not broken — but the caller is warned to become explicit.
+     */
+    public function testOmittingAllowedClassesStaysPermissiveButIsDeprecated(): void
     {
         $payload = serialize(new SerializeDeserializeCanary());
-        SerializeDeserializeCanary::$fired = false;
 
-        $result = Serialize::unserialize($payload);
+        $deprecations = [];
+        set_error_handler(static function (int $errno, string $errstr) use (&$deprecations): bool {
+            $deprecations[] = $errstr;
 
-        $this->assertFalse(
-            SerializeDeserializeCanary::$fired,
-            'The default must not run a deserialized object\'s magic methods.'
-        );
-        $this->assertNotInstanceOf(SerializeDeserializeCanary::class, $result);
-        $this->assertInstanceOf(__PHP_Incomplete_Class::class, $result);
+            return true;
+        }, E_USER_DEPRECATED);
+
+        try {
+            $result = Serialize::unserialize($payload);
+        } finally {
+            restore_error_handler();
+        }
+
+        $this->assertInstanceOf(SerializeDeserializeCanary::class, $result);
+        $this->assertCount(1, $deprecations);
+        $this->assertStringContainsString('without the $allowedClasses argument is deprecated', $deprecations[0]);
+        $this->assertStringContainsString('2027.1', $deprecations[0]);
     }
 
     public function testExplicitFalseDoesNotInstantiateObjects(): void
@@ -69,14 +81,14 @@ class SerializeTest extends TestCase
         $this->assertInstanceOf(SerializeDeserializeCanary::class, $result);
     }
 
-    public function testScalarAndArrayDataRoundTripUnderTheSafeDefault(): void
+    public function testExplicitFalseAllowsScalarAndArrayRoundTrip(): void
     {
         $data = ['a' => 1, 'b' => ['c' => 'text'], 'd' => null];
 
-        $this->assertSame($data, Serialize::unserialize(serialize($data)));
-        $this->assertSame('plain', Serialize::unserialize(serialize('plain')));
-        $this->assertNull(Serialize::unserialize(null));
-        $this->assertSame('', Serialize::unserialize(''));
+        $this->assertSame($data, Serialize::unserialize(serialize($data), false));
+        $this->assertSame('plain', Serialize::unserialize(serialize('plain'), false));
+        $this->assertNull(Serialize::unserialize(null, false));
+        $this->assertSame('', Serialize::unserialize('', false));
     }
 }
 

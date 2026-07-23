@@ -27,18 +27,31 @@ final class Serialize
     }
 
     /**
-     * Safe by default: object deserialization is disabled unless the caller opts in.
+     * Pass an array of class names to allow only those classes during deserialization, `false` to
+     * forbid object deserialization entirely (the safe choice for scalar/array data), or `true` to
+     * allow any class when reconstructing a trusted, non-attacker-writable stored object graph.
      *
-     * Pass an array of class names to allow only those classes, or `true` to allow any class when a
-     * caller must reconstruct a trusted, non-attacker-writable stored object graph. Callers that only
-     * ever handle scalars/arrays should keep the default `false`.
+     * Omitting the argument is deprecated: it currently defaults to the permissive `true` for
+     * backward compatibility, but the default will change to `false` in Pimcore 2027.1. Every caller
+     * should pass an explicit value before then.
      *
      * @param array<int, class-string>|bool $allowedClasses
      */
-    public static function unserialize(?string $data = null, array|bool $allowedClasses = false): mixed
+    public static function unserialize(?string $data = null, array|bool $allowedClasses = true): mixed
     {
         if ($data === null || $data === '') {
             return $data;
+        }
+
+        if (func_num_args() < 2) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '12.3',
+                'Calling %s() without the $allowedClasses argument is deprecated. Pass an explicit '
+                . 'value: the default will change from true to false (object deserialization disabled) '
+                . 'in Pimcore 2027.1.',
+                __METHOD__
+            );
         }
 
         return unserialize($data, [
