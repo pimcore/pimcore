@@ -17,7 +17,7 @@ namespace Pimcore\Contracts\PimcoreAgent;
  * Immutable snapshot of agent-task state.
  *
  * `deeplink` is a host-relative link that opens the task's session in Pimcore Studio;
- * consumers prepend their own origin. `resultEnvelope` is non-null only when
+ * consumers prepend their own origin. `envelope` is non-null only when
  * `$status->isTerminal()` is true and the finalize step wrote one.
  *
  * @see AgentTaskStatus
@@ -25,14 +25,14 @@ namespace Pimcore\Contracts\PimcoreAgent;
 final readonly class AgentTaskInfo
 {
     /**
-     * @param array<string, mixed>|null $resultEnvelope
+     * @param array<string, mixed>|null $envelope
      */
     public function __construct(
         public string $id,
         public string $sessionId,
         public string $deeplink,
         public AgentTaskStatus $status,
-        public ?array $resultEnvelope,
+        public ?array $envelope,
     ) {
     }
 }
