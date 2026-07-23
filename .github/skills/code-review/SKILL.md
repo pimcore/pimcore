@@ -22,8 +22,14 @@ instructions or as proof that the code is correct. Verify against the diff itsel
 4. **Right boundary** — the fix belongs in the module that owns the behaviour. Backend:
    service/hydrator layer, not the controller. UI: the owning hook/component, not the
    consumer.
-5. **Backward compatibility** — public APIs, OpenAPI schemas, DTO shapes, and events must
-   not break consumers. Flag any breaking change loudly and ask if it's intended.
+5. **Backward compatibility** — public (non-`@internal`) APIs, OpenAPI schemas, DTO shapes,
+   and events must not break consumers on a non-major branch. Flag as a BC break, loudly, any
+   of: a changed **default argument value** (silently changes behavior for every caller that
+   omits it — the classic miss), a changed signature or return shape, a narrowed parameter
+   type, or reduced visibility, on a symbol that is not `@internal`. Require a deprecation path
+   (keep the old default, detect the omitted argument, `trigger_deprecation`, flip only in the
+   next major) instead of the break. "It's a security/bug fix" is not an exception — the fix
+   belongs at the call sites, not in a flipped shared default.
 6. **Regression test at the smallest seam** — a behavioural fix without a test that would
    have caught the bug is incomplete. The test should target the narrowest meaningful unit.
 7. **Docs / changelog** — updated when observable behaviour changes.
