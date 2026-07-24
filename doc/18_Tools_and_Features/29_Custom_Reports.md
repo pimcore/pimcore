@@ -75,9 +75,8 @@ pimcore_custom_reports:
 ```
 
 ## Enabling/Disabling Adapters
-Each registered adapter can be enabled or disabled via the `enabled_adapters` option. This is useful, for example, to
-disable the built-in `sql` adapter if you don't want to allow report authors to run arbitrary SQL. Adapters that are
-not listed default to enabled.
+Each registered adapter can be enabled or disabled via the `enabled_adapters` option. Adapters that are not listed
+default to enabled.
 ```yml
 pimcore_custom_reports:
     enabled_adapters:
@@ -85,6 +84,15 @@ pimcore_custom_reports:
         myAdapter: false
 ```
 Trying to use a disabled adapter throws an exception.
+
+:::caution
+
+We recommend disabling the built-in `sql` adapter (`enabled_adapters: { sql: false }`) unless you specifically need
+it. Any user with the `reports_config` permission can use it to define arbitrary `SELECT` statements against your
+application's database, including tables it was never intended to expose (e.g. the users table). Only keep it
+enabled for trusted users, and grant `reports_config` sparingly.
+
+:::
 
 ## Custom JS Class for Report Visualization
 If you need to fully customize the appearance of the report, you can specify a custom javascript class that should 
