@@ -17,6 +17,7 @@ use const PASSWORD_ARGON2I;
 use const PASSWORD_ARGON2ID;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Config\LocationAwareConfigRepository;
+use Pimcore\Controller\Config\Template\TemplateProviderInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
@@ -133,6 +134,7 @@ final class Configuration implements ConfigurationInterface
         $this->addGotenbergNode($rootNode);
         $this->addDependencyNode($rootNode);
         $this->addProductRegistrationNode($rootNode);
+        $this->addCdnNode($rootNode);
 
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
@@ -962,7 +964,15 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('default_controller')
                     ->defaultValue('App\\Controller\\DefaultController::defaultAction')
                 ->end()
+                ->booleanNode('auto_provide_templates')
+                    ->defaultTrue()
+                    ->info(sprintf(
+                        'Automatically provide the list of selectable templates for a document. If false, you must provide your own templates by creating a "%s" service and tagging it as "pimcore.template_provider".',
+                        TemplateProviderInterface::class,
+                    ))
+                ->end()
                 ->arrayNode('error_pages')
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('default')
                             ->defaultNull()
@@ -2128,6 +2138,50 @@ final class Configuration implements ConfigurationInterface
                     ->scalarNode('product_key')
                         ->info('Product registration key obtained during product registration. ' .
                                'It is based on `instance_identifier` and `pimcore.encryption.secret`.')
+                    ->end()
+                ->end()
+            ->end()
+        ;
+    }
+
+    private function addCdnNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('cdn')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('base_url')
+                            ->info('Public base URL of the CDN (scheme + host) used for URL-based purges of original assets that nginx serves directly off disk and that therefore never receive a Cache-Tag from PHP, e.g. https://cdn.example.com. Use env var CDN_BASE_URL.')
+                            ->defaultValue('%env(CDN_BASE_URL)%')
+                        ->end()
+                        ->arrayNode('excluded_paths')
+                            ->info('Regular-expression patterns (matched against the rawurldecoded request path info). Matching asset/thumbnail responses are never CDN-cached: no Surrogate-Key/Cache-Tag emitted and cookies preserved. Use for private/access-controlled assets.')
+                            ->scalarPrototype()->end()
+                            ->defaultValue([])
+                        ->end()
+                        ->arrayNode('image_optimizer_source_formats')
+                            ->info('Source image MIME types the CDN image optimizer can ingest. Thumbnails of assets whose MIME type is not listed fall back to Pimcore-generated thumbnails (e.g. TIFF, PSD, which Fastly Image Optimizer cannot transform).')
+                            ->scalarPrototype()->end()
+                            ->defaultValue(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+                        ->end()
+                        ->arrayNode('fastly')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->scalarNode('api_token')
+                                    ->info('Fastly API token with purge_select scope. Use env var FASTLY_API_TOKEN.')
+                                    ->defaultValue('%env(FASTLY_API_TOKEN)%')
+                                ->end()
+                                ->scalarNode('service_id')
+                                    ->info('Fastly service ID. Use env var FASTLY_API_SERVICE.')
+                                    ->defaultValue('%env(FASTLY_API_SERVICE)%')
+                                ->end()
+                                ->scalarNode('api_base_url')
+                                    ->info('Base URL for the Fastly API. Override for local testing against a mock. Use env var FASTLY_API_BASE_URL.')
+                                    ->defaultValue('%env(FASTLY_API_BASE_URL)%')
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end()

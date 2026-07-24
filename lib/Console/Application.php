@@ -19,7 +19,6 @@ use Pimcore\Event\System\ConsoleEvent;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Migrations\FilteredMigrationsRepository;
 use Pimcore\Migrations\FilteredTableMetadataStorage;
-use Pimcore\Tool\Admin;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Pimcore\Version;
 use RuntimeException;
@@ -65,10 +64,11 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
 
         $this->setDispatcher($dispatcher);
 
-        $maintenanceModeHelper = $kernel->getContainer()->get(MaintenanceModeHelperInterface::class);
-        $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) use ($kernel, $maintenanceModeHelper) {
+        $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) use ($kernel) {
+            $maintenanceModeHelper = $kernel->getContainer()->get(MaintenanceModeHelperInterface::class);
+
             // skip if maintenance mode is on and the flag is not set
-            if (($maintenanceModeHelper->isActive() || Admin::isInMaintenanceMode()) &&
+            if (($maintenanceModeHelper->isActive()) &&
                 (!$event->getInput()->hasOption('ignore-maintenance-mode') ||
                  !$event->getInput()->getOption('ignore-maintenance-mode'))
             ) {
@@ -108,14 +108,11 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
             }
         });
 
-        $dispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEvent $event) use ($maintenanceModeHelper) {
+        $dispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEvent $event) use ($kernel) {
             if ($event->getInput()->hasOption('maintenance-mode') &&
                 $event->getInput()->getOption('maintenance-mode')) {
                 $event->getOutput()->writeln('Deactivating maintenance mode...');
-                //BC Layer for Admin::activateMaintenanceMode, if the maintenance file already exists
-                if (Admin::isInMaintenanceMode()) {
-                    Admin::deactivateMaintenanceMode();
-                }
+                $maintenanceModeHelper = $kernel->getContainer()->get(MaintenanceModeHelperInterface::class);
                 $maintenanceModeHelper->deactivate();
             }
         });

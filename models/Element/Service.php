@@ -28,6 +28,7 @@ use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Exception;
 use InvalidArgumentException;
 use League\Csv\EscapeFormula;
+use Normalizer;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
@@ -973,6 +974,13 @@ class Service extends Model\AbstractModel
         ]);
         Pimcore::getEventDispatcher()->dispatch($event, SystemEvents::SERVICE_PRE_GET_VALID_KEY);
         $key = trim($event->getArgument('key'));
+
+        // normalize to NFC, otherwise keys created from a decomposed (NFD) source - e.g. filenames
+        // from macOS filesystems - would be stored differently than their precomposed form, causing
+        // path mismatches (e.g. broken thumbnails) when compared against paths built elsewhere
+        if (Normalizer::isNormalized($key, Normalizer::FORM_C) === false) {
+            $key = Normalizer::normalize($key, Normalizer::FORM_C) ?: $key;
+        }
 
         // replace all control/format/private/surrogate/unassigned and 4 byte unicode characters
         $key = preg_replace(['/\p{C}/u', '/[\x{10000}-\x{10FFFF}]/u'], ['', '-'], $key);

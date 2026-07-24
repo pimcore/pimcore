@@ -1,0 +1,86 @@
+---
+title: Select Options
+description: "Predefined sets of options for use with select and multiselect fields."
+---
+
+# Select Options
+
+Select options define predefined sets of options for (multi)select fields.
+
+<div class="image-as-lightbox"></div>
+
+![Select Option Configuration](../../../img/classes-datatypes-selectoptions-editor.png)
+
+The 'Name' column is optional, unless the value can't be converted to a valid PHP enum case.
+This applies to values starting with a number or certain symbols.
+A name may contain alphanumeric characters and underscores.
+
+## Access restrictions
+
+For non-admin users, access to the management interface can be enabled via
+[user / role permissions](https://github.com/pimcore/studio-ui-bundle/blob/1.x/doc/03_Configuration_and_Administration/02_Users_and_Roles/README.md).
+
+Checking the 'Admin only' checkbox in the General Settings of a select options
+set prevents non-admin users from deleting or editing the configuration.
+Use this for system-critical select options that should not be modified by non-admin users.
+
+## Field configuration
+
+Set the options source to 'Select Options' and select one of the select options sets.
+
+![Field Configuration](../../../img/classes-datatypes-selectoptions-selector.png)
+
+## Working with PHP API
+
+The configuration in the first screenshot generates the [backed enum](https://www.php.net/manual/en/language.enumerations.backed.php) below.
+
+```php
+<?php
+
+namespace Pimcore\Model\DataObject\SelectOptions;
+
+enum TestOptions: string implements \App\SelectOptions\DataInterface, \App\SelectOptions\NameInterface
+{
+    use \Pimcore\Model\DataObject\SelectOptions\Traits\EnumGetValuesTrait;
+    use \Pimcore\Model\DataObject\SelectOptions\Traits\EnumTryFromNullableTrait;
+    use \App\SelectOptions\DataTrait;
+    use \App\SelectOptions\NameTrait;
+
+    case Ten = 'ten';
+    case Twenty = '20';
+    case Check = '√';
+    case C = '©';
+    case Multiple_Word_Value = 'Multiple Word Value';
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::Ten => '10',
+            self::Twenty => 'Twenty',
+            self::Check => '√',
+            self::C => '©',
+            self::Multiple_Word_Value => 'Multiple Word Value',
+        };
+    }
+}
+```
+
+### Retrieve available option values
+
+Provided by the `EnumGetValuesTrait`.
+
+```php
+TestOptions::getValues();
+```
+
+### Map select value to enum
+
+Provided by the `EnumTryFromNullableTrait`.
+
+```php
+$value = $product->getSelectField();
+$testOption = TestOptions::tryFromNullable($value);
+if ($testOption !== null) {
+    $label = $testOption->getLabel();
+}
+```
