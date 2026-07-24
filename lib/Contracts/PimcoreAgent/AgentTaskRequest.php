@@ -17,9 +17,11 @@ namespace Pimcore\Contracts\PimcoreAgent;
  * Immutable request to create an agent task.
  *
  * `initiator` is an opaque identifier (e.g. `"studio"`, `"copilot"`, `"collab"`) that
- * routes the resulting session to an initiator-specific access resolver.
+ * routes the resulting session to an initiator-specific access resolver, and drives which
+ * MCP tool groups get attached via `InitiatorMcpServerResolverInterface`.
  * `initiatorContext` carries whatever payload that initiator wants a resolver (or an
- * MCP tool) to see later — e.g. collab passes `['threadId' => 42]`.
+ * MCP tool) to see later — e.g. collab passes `['threadId' => 42]`. Callers do NOT
+ * specify tool groups here: the initiator's resolver alone decides what a task gets.
  */
 final readonly class AgentTaskRequest
 {
@@ -31,14 +33,6 @@ final readonly class AgentTaskRequest
      *                                                                  session (e.g. `copilot-importProducts`); the
      *                                                                  implementation normalizes it (trimmed, empty
      *                                                                  string becomes null, truncated to 190 chars).
-     * @param list<string>|null                       $extraPimcoreMcpServers Pimcore MCP tool groups the initiator
-     *                                                                  needs available in the task session on top of
-     *                                                                  the agent's own configuration (e.g. collab
-     *                                                                  passes `['pimcore-collab-tasks']` so any agent
-     *                                                                  can post task comments). Deduplicated against
-     *                                                                  the agent's configured groups by the
-     *                                                                  implementation; unknown groups resolve to
-     *                                                                  empty tool servers and are harmless.
      */
     public function __construct(
         public string $agentName,
@@ -52,7 +46,6 @@ final readonly class AgentTaskRequest
         public ?int $maxAutoContinues = null,
         public array $initiatorContext = [],
         public ?string $origin = null,
-        public ?array $extraPimcoreMcpServers = null,
     ) {
     }
 }
