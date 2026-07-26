@@ -41,12 +41,14 @@ class QuantityValueRange implements MarshallerInterface
     public function unmarshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value) && ($value['value'] !== null || $value['value2'] !== null)) {
+            // The min/max range is stored as a plain array; disallow object instantiation
+            // to prevent PHP Object Injection via the DB.
             $minMaxValue = Serialize::unserialize($value['value'] ?? null, false);
 
             return [
                 'minimum' => $minMaxValue['minimum'] ?? null,
                 'maximum' => $minMaxValue['maximum'] ?? null,
-                'unitId' => $value['value2'],
+                'unitId' => $value['value2'] ?? null,
             ];
         }
 
