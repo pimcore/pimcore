@@ -26,7 +26,7 @@ class CalculatedValue implements OwnerAwareFieldInterface
 
     protected ?string $ownerName = null;
 
-    protected string|int|null $index;
+    protected string|int|null $index = null;
 
     protected ?string $position = null;
 

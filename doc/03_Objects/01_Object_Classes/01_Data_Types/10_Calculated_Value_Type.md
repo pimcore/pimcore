@@ -247,3 +247,13 @@ $object = DataObject::getByPath("/demoobject");
 $valueDe =  $object->getSum("de");   // => 38
 $valueEn =  $object->getSum("en");   // => 11
 ```
+
+## Versioning
+
+When a version of an object is created, the current values of calculated fields (object level and
+localized fields) are computed and stored as part of the version snapshot. Version previews and
+version comparisons therefore show the value as of the snapshot, not a freshly computed one.
+Objects restored from a version return these snapshot values from the calculated-field getters until
+they are saved again. For versions created before this feature existed — and for calculated fields
+inside field collections, object bricks or classification stores — the value is computed live as a
+fallback.

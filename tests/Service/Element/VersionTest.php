@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Service\Element;
 
 use Exception;
 use Pimcore;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Version;
@@ -144,6 +145,47 @@ class VersionTest extends TestCase
 
         $multihref = $sourceObjectFromDb->getMultihref();
         $this->assertCount(1, $multihref, 'expected 1 target element');
+    }
+
+    /**
+     * Test for https://github.com/pimcore/pimcore/issues/18533
+     */
+    public function testCalculatedValueSnapshot(): void
+    {
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+
+        /** @var Unittest $object */
+        $object = TestHelper::createEmptyObject();
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'first');
+        $object->setFirstname('John');
+        $object->save();
+        $firstVersion = $this->getNewestVersion($object->getId());
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'second');
+        $object->setFirstname('Jane');
+        $object->save();
+        $secondVersion = $this->getNewestVersion($object->getId());
+
+        /** @var Unittest $objectFromFirstVersion */
+        $objectFromFirstVersion = $firstVersion->loadData();
+        // loadData() collects garbage, so the "current" calculator input has to be restored
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'second');
+
+        $this->assertSame('first', $objectFromFirstVersion->getCalculatedValue(), 'class calculator must return the value as of the snapshot');
+        $this->assertSame('John some calc', $objectFromFirstVersion->getCalculatedValueExpression(), 'expression must return the value as of the snapshot');
+        $this->assertSame('first', $objectFromFirstVersion->getValueForFieldName('calculatedValue'), 'version preview accessor must return the snapshot value');
+
+        /** @var Unittest $objectFromSecondVersion */
+        $objectFromSecondVersion = $secondVersion->loadData();
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'second');
+
+        $this->assertSame('second', $objectFromSecondVersion->getCalculatedValue());
+        $this->assertSame('Jane some calc', $objectFromSecondVersion->getCalculatedValueExpression());
+
+        // versions created before snapshots were introduced have to fall back to live computation
+        $objectFromFirstVersion->setCalculatedValueSnapshot(null);
+        $this->assertSame('second', $objectFromFirstVersion->getCalculatedValue(), 'without a snapshot the value must be computed live');
     }
 
     // Save a new object and check if the storagetype is set to fs

@@ -31,6 +31,7 @@ use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Model\Version\CoauthorContextInterface;
 use Pimcore\Model\Version\SetDumpStateFilter;
+use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -227,7 +228,74 @@ final class Version extends AbstractModel
         $copier->addFilter(new SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
         $newData = $copier->copy($data);
 
+        if ($data instanceof Concrete && $newData instanceof Concrete && !$this->isAutoSave()) {
+            $this->captureCalculatedValueSnapshot($data, $newData);
+        }
+
         return $newData;
+    }
+
+    /**
+     * Computes the current values of all calculated fields (object level and localized fields)
+     * and stores them on the object copy that gets serialized into this version, so version
+     * views can show the values as of the snapshot instead of recomputing them later.
+     */
+    private function captureCalculatedValueSnapshot(Concrete $source, Concrete $target): void
+    {
+        // make sure values are computed freshly, even if $source itself was restored from a version
+        $source->setCalculatedValueSnapshot(null);
+
+        $snapshot = [];
+
+        foreach ($source->getClass()->getFieldDefinitions() as $fieldName => $fieldDefinition) {
+            if ($fieldDefinition instanceof Data\CalculatedValue) {
+                $context = new DataObject\Data\CalculatedValue($fieldName);
+                $context->setContextualData('object', null, null, null, null, null, $fieldDefinition);
+                $this->addCalculatedValueSnapshotEntry($snapshot, $source, $context);
+            } elseif ($fieldDefinition instanceof Data\Localizedfields) {
+                foreach ($fieldDefinition->getFieldDefinitions() as $localizedFieldName => $localizedFieldDefinition) {
+                    if ($localizedFieldDefinition instanceof Data\CalculatedValue) {
+                        foreach (Tool::getValidLanguages() as $language) {
+                            $context = new DataObject\Data\CalculatedValue($localizedFieldName);
+                            $context->setContextualData('localizedfield', 'localizedfields', null, $language, null, null, $localizedFieldDefinition);
+                            $this->addCalculatedValueSnapshotEntry($snapshot, $source, $context);
+                        }
+                    }
+                }
+            }
+        }
+
+        $target->setCalculatedValueSnapshot($snapshot !== [] ? $snapshot : null);
+    }
+
+    /**
+     * @param array<string, scalar|null> $snapshot
+     */
+    private function addCalculatedValueSnapshotEntry(array &$snapshot, Concrete $source, DataObject\Data\CalculatedValue $context): void
+    {
+        try {
+            $value = DataObject\Service::getCalculatedFieldValue($source, $context);
+        } catch (\Throwable $e) {
+            Logger::warning(sprintf(
+                'Could not capture calculated value of field "%s" for version of object %d: %s',
+                $context->getFieldname(),
+                $source->getId() ?? 0,
+                $e->getMessage()
+            ));
+
+            return;
+        }
+
+        if ($value !== null && !is_scalar($value)) {
+            if ($value instanceof \Stringable) {
+                $value = (string) $value;
+            } else {
+                // non-serializable-safe value, let version views fall back to live recomputation
+                return;
+            }
+        }
+
+        $snapshot[DataObject\Service::getCalculatedValueSnapshotKey($context)] = $value;
     }
 
     private function unmarshalData(ElementInterface $data): mixed

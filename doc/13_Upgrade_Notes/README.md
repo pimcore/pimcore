@@ -10,7 +10,7 @@
 
 ### [DataObject]
 - [Relations] The `ownername` column has been widened from `VARCHAR(70)` to `VARCHAR(190)` in the per-class relation tables (`object_relations_*`), the advanced-relation metadata tables (`object_metadata_*`) and `object_url_slugs`. The generated `ownername` for a localized field nested inside an object brick or field collection (e.g. `/objectbrick~<field>/<brickKey>/localizedfield~localizedfield`) can exceed 70 characters, which caused "Data too long for column 'ownername'" on save under strict SQL mode. Existing installations are updated automatically by the migration `Version20260721000000`; no code or configuration changes are required.
-
+- [Versioning] Values of calculated fields (object level and localized fields) are now computed when a version is created and stored as part of the version snapshot. Version previews/comparisons and objects restored from a version show the value as of the snapshot instead of recomputing it at view time. Versions created before the upgrade, as well as calculated fields inside field collections, object bricks and classification stores, fall back to the previous behavior (live computation). Calculators are now additionally invoked during version creation (except auto-save versions) — relevant if your calculator classes have side effects or are performance-sensitive.
 
 ## Pimcore 2026.2.0
 
