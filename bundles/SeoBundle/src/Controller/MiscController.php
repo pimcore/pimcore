@@ -87,7 +87,7 @@ class MiscController extends UserAwareController
 
         foreach ($data as $key => &$value) {
             if ($key === 'parametersGet') {
-                $value = unserialize($value);
+                $value = unserialize($value, ['allowed_classes' => false]);
             }
         }
 

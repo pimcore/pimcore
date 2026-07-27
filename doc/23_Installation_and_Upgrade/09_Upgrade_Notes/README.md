@@ -1,5 +1,16 @@
 # Upgrade Notes
 
+## Pimcore 12.3.12
+
+### Deprecations
+
+#### [Serialization]
+
+Calling `Pimcore\Tool\Serialize::unserialize()` without the `$allowedClasses` argument is deprecated.
+Pass an explicit value: `false` to forbid object deserialization (the safe choice for scalar/array data),
+or an array of allowed class names when a trusted stored object graph must be reconstructed.
+The default changes from `true` to `false` (object deserialization disabled) in Pimcore 2027.1.
+
 ## Pimcore 12.3.10
 
 ### Deprecations

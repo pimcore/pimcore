@@ -314,6 +314,11 @@ class Model extends AbstractDefinitionHelper
             $block->addChild($this->createDataChild('link', 'blocklink'));
             $block->addChild($this->createDataChild('hotspotimage', 'blockhotspotimage'));
 
+            $block->addChild($this->createDataChild('geopoint', 'blockgeopoint'));
+            $block->addChild($this->createDataChild('geobounds', 'blockgeobounds'));
+            $block->addChild($this->createDataChild('geopolygon', 'blockgeopolygon'));
+            $block->addChild($this->createDataChild('geopolyline', 'blockgeopolyline'));
+
             $block->addChild($this->createDataChild('advancedManyToManyRelation', 'blockadvancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])

@@ -274,7 +274,7 @@ final class Version extends AbstractModel
         }
 
         if ($this->getSerialized()) {
-            $data = Serialize::unserialize($data);
+            $data = Serialize::unserialize($data, true);
             //clear runtime cache to avoid dealing with marshalled data
             Pimcore::collectGarbage();
             if ($data instanceof __PHP_Incomplete_Class) {
