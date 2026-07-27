@@ -170,7 +170,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 }, $data);
             }
 
-            $unserializedData = Serialize::unserialize($data);
+            $unserializedData = Serialize::unserialize($data, false);
             $result = [];
 
             foreach ($unserializedData as $blockElements) {

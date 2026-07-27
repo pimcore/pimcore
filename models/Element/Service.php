@@ -1579,7 +1579,7 @@ class Service extends Model\AbstractModel
         if ($tmpStore) {
             $data = $tmpStore->getData();
             if ($data) {
-                $element = Serialize::unserialize($data);
+                $element = Serialize::unserialize($data, true);
 
                 $context = [
                     'source' => __METHOD__,
