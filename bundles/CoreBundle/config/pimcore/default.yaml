@@ -336,6 +336,40 @@ pimcore:
                 tags: ['set']
                 filters: ['escape', 'trans', 'default']
                 functions: ['path', 'asset']
+                blocked_classes:
+                    - Pimcore\Model\Dao\AbstractDao
+                    - Doctrine\DBAL\Connection
+                    - PDO
+                    - PDOStatement
+                    - Symfony\Component\DependencyInjection\ContainerInterface
+                    - Symfony\Component\Process\Process
+                    - Pimcore\Model\User
+                allowed_classes: []
+                blocked_functions:
+                    # - pimcore_asset
+                    # - pimcore_asset_by_path
+                    # - pimcore_document
+                    # - pimcore_document_by_path
+                    # - pimcore_document_wrap_hardlink
+                    # - pimcore_object
+                    # - pimcore_object_by_path
+                    # - pimcore_object_classificationstore_group
+                    # - pimcore_object_brick_definition_key
+                    # - pimcore_site
+                    # - pimcore_site_by_root_id
+                    # - pimcore_site_by_domain
+                    # - pimcore_site_current
+                    - pimcore_user
+                hard_blocked_methods:
+                    Pimcore\Model\User:
+                        - getPassword
+                        - getPasswordRecoveryToken
+                        - getTwoFactorAuthentication
+                    Pimcore\Model\Asset:
+                        - getData
+                        - getStream
+                        - getLocalFile
+                        - getTemporaryFile
 
     gotenberg:
         base_url: 'http://gotenberg:3000'

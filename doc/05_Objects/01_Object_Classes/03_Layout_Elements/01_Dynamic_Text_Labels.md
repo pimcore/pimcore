@@ -78,3 +78,7 @@ security policies for tags, filters & functions. Please use following configurat
                   filters: ['upper']
                   functions: ['include', 'path']
 ```
+
+The sandbox also restricts which objects a template may call methods or access properties
+on. See [Twig Sandbox Object Access](../../../26_Best_Practice/80_Twig_Sandbox_Object_Access.md)
+for the `blocked_classes` / `allowed_classes` options.
