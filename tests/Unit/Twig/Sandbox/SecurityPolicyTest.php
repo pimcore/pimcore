@@ -254,9 +254,16 @@ final class SecurityPolicyTest extends TestCase
     }
 
     /**
+     * All `pimcore_*` id/path lookup functions - each hands back a live model instance
+     * looked up by an arbitrary id/path (GHSA-7gfm-v2fx-xrxm remediation #3). Only
+     * `pimcore_user` ships blocked by default (see testPimcoreUserIsNotAutoAllowedByDefault());
+     * the rest are shipped commented out in default.yaml's `blocked_functions` and are
+     * covered here to confirm they still block correctly once a site re-adds them for a
+     * high-security setup (doc/26_Best_Practice/80_Twig_Sandbox_Object_Access.md).
+     *
      * @return iterable<string, array{string}>
      */
-    public static function idLookupPimcoreFunctionsProvider(): iterable
+    public static function allIdLookupPimcoreFunctionsProvider(): iterable
     {
         yield 'pimcore_asset' => ['pimcore_asset'];
         yield 'pimcore_asset_by_path' => ['pimcore_asset_by_path'];
@@ -275,13 +282,66 @@ final class SecurityPolicyTest extends TestCase
     }
 
     /**
-     * @dataProvider idLookupPimcoreFunctionsProvider
+     * Same list as allIdLookupPimcoreFunctionsProvider() minus pimcore_user, which is
+     * the only one still blocked by default.
+     *
+     * @return iterable<string, array{string}>
      */
-    public function testIdLookupPimcoreFunctionsAreNotAutoAllowedByDefault(string $function): void
+    public static function idLookupPimcoreFunctionsAutoAllowedByDefaultProvider(): iterable
     {
-        // GHSA-7gfm-v2fx-xrxm remediation #3: the pimcore_* auto-allow must not cover
-        // functions that hand back a live model instance looked up by id/path.
+        yield 'pimcore_asset' => ['pimcore_asset'];
+        yield 'pimcore_asset_by_path' => ['pimcore_asset_by_path'];
+        yield 'pimcore_document' => ['pimcore_document'];
+        yield 'pimcore_document_by_path' => ['pimcore_document_by_path'];
+        yield 'pimcore_document_wrap_hardlink' => ['pimcore_document_wrap_hardlink'];
+        yield 'pimcore_object' => ['pimcore_object'];
+        yield 'pimcore_object_by_path' => ['pimcore_object_by_path'];
+        yield 'pimcore_object_classificationstore_group' => ['pimcore_object_classificationstore_group'];
+        yield 'pimcore_object_brick_definition_key' => ['pimcore_object_brick_definition_key'];
+        yield 'pimcore_site' => ['pimcore_site'];
+        yield 'pimcore_site_by_root_id' => ['pimcore_site_by_root_id'];
+        yield 'pimcore_site_by_domain' => ['pimcore_site_by_domain'];
+        yield 'pimcore_site_current' => ['pimcore_site_current'];
+    }
+
+    public function testPimcoreUserIsNotAutoAllowedByDefault(): void
+    {
+        // GHSA-7gfm-v2fx-xrxm remediation #3: pimcore_user(1) hands back a live User
+        // instance looked up by id - this is the one id/path lookup function still
+        // blocked out of the box.
         $policy = new SecurityPolicy(blockedFunctions: self::defaultSandboxSecurityPolicyConfig()['blocked_functions']);
+
+        $this->expectException(SecurityNotAllowedFunctionError::class);
+        $policy->checkSecurity([], [], ['pimcore_user']);
+    }
+
+    /**
+     * @dataProvider idLookupPimcoreFunctionsAutoAllowedByDefaultProvider
+     */
+    public function testOtherIdLookupPimcoreFunctionsAreAutoAllowedByDefault(string $function): void
+    {
+        // These are shipped commented out in default.yaml's blocked_functions for a
+        // lower-friction default - a high-security setup should re-add them (see
+        // doc/26_Best_Practice/80_Twig_Sandbox_Object_Access.md).
+        $policy = new SecurityPolicy(blockedFunctions: self::defaultSandboxSecurityPolicyConfig()['blocked_functions']);
+
+        // no exception expected - not blocked by default
+        $policy->checkSecurity([], [], [$function]);
+        $this->addToAssertionCount(1);
+    }
+
+    /**
+     * @dataProvider allIdLookupPimcoreFunctionsProvider
+     */
+    public function testIdLookupPimcoreFunctionsCanBeBlockedForHighSecurity(string $function): void
+    {
+        // Confirms the high-security config recommended in
+        // doc/26_Best_Practice/80_Twig_Sandbox_Object_Access.md - re-adding every
+        // id/path lookup function to blocked_functions - still blocks correctly.
+        $policy = new SecurityPolicy(blockedFunctions: array_column(
+            iterator_to_array(self::allIdLookupPimcoreFunctionsProvider()),
+            0,
+        ));
 
         $this->expectException(SecurityNotAllowedFunctionError::class);
         $policy->checkSecurity([], [], [$function]);
