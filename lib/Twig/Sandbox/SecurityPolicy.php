@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Sandbox;
 
-use PDO;
-use PDOStatement;
 use Twig\Sandbox\SecurityNotAllowedFilterError;
 use Twig\Sandbox\SecurityNotAllowedFunctionError;
 use Twig\Sandbox\SecurityNotAllowedMethodError;
@@ -30,32 +28,67 @@ use Twig\Sandbox\SecurityPolicyInterface;
  */
 final class SecurityPolicy implements SecurityPolicyInterface
 {
-    /**
-     * Classes whose instances must not be traversable from Twig templates.
-     * Method calls and property accesses on objects that are instances of any of these
-     * classes will throw, preventing templates from traversing into
-     * database or infrastructure layers (e.g. object.getDao().db.fetchOne(...)).
-     */
-    private const BLOCKED_CLASSES = [
-        \Pimcore\Model\Dao\AbstractDao::class,
-        \Doctrine\DBAL\Connection::class,
-        PDO::class,
-        PDOStatement::class,
-        \Symfony\Component\DependencyInjection\ContainerInterface::class,
-        \Symfony\Component\Process\Process::class,
-    ];
-
     private array $allowedTags;
 
     private array $allowedFilters;
 
+    /**
+     * Explicitly allowed functions - always allowed, in addition to whatever the
+     * `pimcore_*` prefix rule permits.
+     */
     private array $allowedFunctions;
 
-    public function __construct(array $allowedTags = [], array $allowedFilters = [], array $allowedFunctions = [])
-    {
+    /**
+     * Classes to deny - includes Pimcore's built-in denylist (database/infrastructure
+     * layer, `Pimcore\Model\User`) via the `sandbox_security_policy.blocked_classes`
+     * default in default.yaml, plus whatever a site appends to that same option. Ignored
+     * whenever $allowedClasses is non-empty (allowlist mode takes over entirely).
+     */
+    private array $blockedClasses;
+
+    /**
+     * When non-empty, switches from denylist mode to allowlist mode: only instances of
+     * these classes (and their subclasses) may have their methods/properties accessed
+     * from a sandboxed template. Every other object is denied, and $blockedClasses is no
+     * longer consulted.
+     */
+    private array $allowedClasses;
+
+    /**
+     * `pimcore_*` function names to exclude from the prefix auto-allow - includes
+     * Pimcore's built-in denylist of id/path lookup functions via the
+     * `sandbox_security_policy.blocked_functions` default in default.yaml, plus whatever
+     * a site appends to that same option.
+     */
+    private array $blockedFunctions;
+
+    /**
+     * FQCN => method names map. Methods listed here can never be called on a matching
+     * instance from a sandboxed template, no matter the blocklist/allowlist
+     * configuration - unlike $blockedClasses/$allowedClasses, this check is not bypassed
+     * by allowlist mode. Populated via the `sandbox_security_policy.hard_blocked_methods`
+     * default in default.yaml (secret/content-returning getters such as
+     * `User::getPassword`, `Asset::getData`, ...), extendable by a site via that same
+     * option.
+     */
+    private array $hardBlockedMethods;
+
+    public function __construct(
+        array $allowedTags = [],
+        array $allowedFilters = [],
+        array $allowedFunctions = [],
+        array $blockedClasses = [],
+        array $allowedClasses = [],
+        array $blockedFunctions = [],
+        array $hardBlockedMethods = [],
+    ) {
         $this->allowedTags = $allowedTags;
         $this->allowedFilters = $allowedFilters;
         $this->allowedFunctions = $allowedFunctions;
+        $this->blockedClasses = $blockedClasses;
+        $this->allowedClasses = $allowedClasses;
+        $this->blockedFunctions = $blockedFunctions;
+        $this->hardBlockedMethods = $hardBlockedMethods;
     }
 
     public function setAllowedTags(array $tags): void
@@ -71,6 +104,36 @@ final class SecurityPolicy implements SecurityPolicyInterface
     public function setAllowedFunctions(array $functions): void
     {
         $this->allowedFunctions = $functions;
+    }
+
+    public function setBlockedClasses(array $blockedClasses): void
+    {
+        $this->blockedClasses = $blockedClasses;
+    }
+
+    public function setAllowedClasses(array $allowedClasses): void
+    {
+        $this->allowedClasses = $allowedClasses;
+    }
+
+    public function setBlockedFunctions(array $blockedFunctions): void
+    {
+        $this->blockedFunctions = $blockedFunctions;
+    }
+
+    public function setHardBlockedMethods(array $hardBlockedMethods): void
+    {
+        $this->hardBlockedMethods = $hardBlockedMethods;
+    }
+
+    /**
+     * True once at least one class has been configured in the allowlist. In that mode
+     * the denylist (built-in + configured) is bypassed entirely: only allowlisted
+     * classes are reachable from sandboxed templates.
+     */
+    private function isAllowlistMode(): bool
+    {
+        return [] !== $this->allowedClasses;
     }
 
     /**
@@ -93,8 +156,11 @@ final class SecurityPolicy implements SecurityPolicyInterface
         }
 
         foreach ($functions as $function) {
-            // check if a function is allowed or a Pimcore Twig function
-            if (!in_array($function, $this->allowedFunctions) && !str_starts_with($function, 'pimcore_')) {
+            if (in_array($function, $this->allowedFunctions, true)) {
+                continue;
+            }
+
+            if (!str_starts_with($function, 'pimcore_') || !$this->isPimcoreFunctionAllowed($function)) {
                 throw new SecurityNotAllowedFunctionError(sprintf('Function "%s" is not allowed.', $function), $function);
             }
         }
@@ -106,12 +172,10 @@ final class SecurityPolicy implements SecurityPolicyInterface
      */
     public function checkMethodAllowed($obj, $method): void
     {
-        foreach (self::BLOCKED_CLASSES as $blocked) {
-            if (!class_exists($blocked, false) && !interface_exists($blocked, false)) {
-                continue;
-            }
+        $this->assertNotHardBlockedMethod($obj, $method);
 
-            if ($obj instanceof $blocked) {
+        if ($this->isAllowlistMode()) {
+            if (!$this->matchesAnyClass($obj, $this->allowedClasses)) {
                 $class = $obj::class;
 
                 throw new SecurityNotAllowedMethodError(
@@ -120,6 +184,18 @@ final class SecurityPolicy implements SecurityPolicyInterface
                     $method,
                 );
             }
+
+            return;
+        }
+
+        if ($this->matchesAnyClass($obj, $this->blockedClasses)) {
+            $class = $obj::class;
+
+            throw new SecurityNotAllowedMethodError(
+                sprintf('Calling method "%s" on "%s" is not allowed in templates.', $method, $class),
+                $class,
+                $method,
+            );
         }
     }
 
@@ -129,12 +205,8 @@ final class SecurityPolicy implements SecurityPolicyInterface
      */
     public function checkPropertyAllowed($obj, $property): void
     {
-        foreach (self::BLOCKED_CLASSES as $blocked) {
-            if (!class_exists($blocked, false) && !interface_exists($blocked, false)) {
-                continue;
-            }
-
-            if ($obj instanceof $blocked) {
+        if ($this->isAllowlistMode()) {
+            if (!$this->matchesAnyClass($obj, $this->allowedClasses)) {
                 $class = $obj::class;
 
                 throw new SecurityNotAllowedPropertyError(
@@ -143,6 +215,68 @@ final class SecurityPolicy implements SecurityPolicyInterface
                     $property,
                 );
             }
+
+            return;
         }
+
+        if ($this->matchesAnyClass($obj, $this->blockedClasses)) {
+            $class = $obj::class;
+
+            throw new SecurityNotAllowedPropertyError(
+                sprintf('Accessing property "%s" on "%s" is not allowed in templates.', $property, $class),
+                $class,
+                $property,
+            );
+        }
+    }
+
+    /**
+     * @param string $function a function name already known to start with `pimcore_`
+     */
+    private function isPimcoreFunctionAllowed(string $function): bool
+    {
+        return !in_array($function, $this->blockedFunctions, true);
+    }
+
+    /**
+     * @param object $obj
+     * @param string $method
+     */
+    private function assertNotHardBlockedMethod($obj, $method): void
+    {
+        foreach ($this->hardBlockedMethods as $class => $methods) {
+            if (!class_exists($class, false) && !interface_exists($class, false)) {
+                continue;
+            }
+
+            if ($obj instanceof $class && in_array($method, $methods, true)) {
+                $objClass = $obj::class;
+
+                throw new SecurityNotAllowedMethodError(
+                    sprintf('Calling method "%s" on "%s" is not allowed in templates.', $method, $objClass),
+                    $objClass,
+                    $method,
+                );
+            }
+        }
+    }
+
+    /**
+     * @param object $obj
+     * @param string[] $classes
+     */
+    private function matchesAnyClass($obj, array $classes): bool
+    {
+        foreach ($classes as $candidate) {
+            if (!class_exists($candidate, false) && !interface_exists($candidate, false)) {
+                continue;
+            }
+
+            if ($obj instanceof $candidate) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
