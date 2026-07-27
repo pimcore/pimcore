@@ -9,9 +9,8 @@ and, independently, which **PHP objects** a template is allowed to call methods 
 read properties on, and which `pimcore_*` **functions** are callable.
 
 Both are enforced by `Pimcore\Twig\Sandbox\SecurityPolicy` and are configurable via
-`templating_engine.twig.sandbox_security_policy`. They follow the same blocklist/
-allowlist shape, described once below and then applied to objects and functions
-separately.
+`templating_engine.twig.sandbox_security_policy`. Object access supports both a
+denylist and an allowlist mode, described below; function access is denylist-only.
 
 ## Object access: two modes
 
@@ -51,36 +50,26 @@ methods - together with `User::getPassword`, `User::getPasswordRecoveryToken` an
 not configurable; it exists to keep a small number of secret/content-returning
 getters closed off no matter how the rest of the policy is configured.
 
-## Function access: two modes
+## Function access
 
 The `functions` option (see [Email Framework](../19_Development_Tools_and_Details/25_Email_Framework/README.md#sandbox-restrictions))
 is an explicit allowlist: a function must be listed there to be callable from a
-sandboxed template - this always applies, in either mode below, and is unaffected by
-them. Independently, any Twig function whose name starts with `pimcore_` is
-additionally auto-allowed, following the exact same two-mode shape as object access:
-
-- **Blocklist mode (default)** - every `pimcore_*` function is auto-allowed *except*
-  a denylist of functions. Pimcore ships a built-in denylist of functions that look
-  up and return a live model instance by id/path, whose getters can expose data
-  outside the sandboxed template's intended scope (e.g. `pimcore_user(1)`,
-  `pimcore_asset(id)` - see [Always-blocked methods](#always-blocked-methods) above
-  for why those two are additionally hard-blocked at the object layer): `pimcore_asset`,
-  `pimcore_asset_by_path`, `pimcore_document`, `pimcore_document_by_path`,
-  `pimcore_document_wrap_hardlink`, `pimcore_object`, `pimcore_object_by_path`,
-  `pimcore_object_classificationstore_group`, `pimcore_object_brick_definition_key`,
-  `pimcore_site`, `pimcore_site_by_root_id`, `pimcore_site_by_domain`,
-  `pimcore_site_current`, `pimcore_user`. Use `blocked_functions` to add more
-  functions to this denylist.
-- **Allowlist mode** - as soon as `allowed_functions` contains at least one entry,
-  the `pimcore_*` prefix rule switches to allow only the listed functions.
-  **The entire denylist (built-in + `blocked_functions`) is deactivated in this
-  mode** - every `pimcore_*` function not in `allowed_functions` (and not in the
-  general `functions` allowlist) is denied.
+sandboxed template. Independently, any Twig function whose name starts with
+`pimcore_` is additionally auto-allowed, except for a built-in denylist of functions
+that look up and return a live model instance by id/path, whose getters can expose
+data outside the sandboxed template's intended scope (e.g. `pimcore_user(1)`,
+`pimcore_asset(id)` - see [Always-blocked methods](#always-blocked-methods) above
+for why those two are additionally hard-blocked at the object layer): `pimcore_asset`,
+`pimcore_asset_by_path`, `pimcore_document`, `pimcore_document_by_path`,
+`pimcore_document_wrap_hardlink`, `pimcore_object`, `pimcore_object_by_path`,
+`pimcore_object_classificationstore_group`, `pimcore_object_brick_definition_key`,
+`pimcore_site`, `pimcore_site_by_root_id`, `pimcore_site_by_domain`,
+`pimcore_site_current`, `pimcore_user`. Use `blocked_functions` to add more
+functions to this denylist.
 
 All other `pimcore_*` functions (rendering/helper functions such as `pimcore_dump`,
-`pimcore_url`, `pimcore_head_link`, the editable functions, ...) remain auto-allowed
-in blocklist mode, so existing template rendering is unaffected unless a site
-switches to allowlist mode.
+`pimcore_url`, `pimcore_head_link`, the editable functions, ...) remain auto-allowed,
+so existing template rendering is unaffected.
 
 ## Configuration
 
@@ -97,11 +86,8 @@ pimcore:
                 blocked_classes: []
                 # Non-empty => object allowlist mode. Deactivates the class denylist entirely.
                 allowed_classes: []
-                # Extend the built-in pimcore_* function denylist. Only consulted
-                # while allowed_functions is empty.
+                # Extend the built-in pimcore_* function denylist.
                 blocked_functions: []
-                # Non-empty => pimcore_* function allowlist mode. Deactivates that denylist entirely.
-                allowed_functions: []
 ```
 
 ### Example: allowlist mode
@@ -144,26 +130,6 @@ pimcore:
                     - 'App\Service\SecretsProvider'
 ```
 
-### Example: pimcore_* function allowlist mode
-
-If a site's sandboxed templates only ever need one or two of the id/path-lookup
-functions, lock the `pimcore_*` prefix rule down to exactly those instead of relying
-on the (larger) built-in denylist:
-
-```yaml
-pimcore:
-    templating_engine:
-        twig:
-            sandbox_security_policy:
-                allowed_functions:
-                    - 'pimcore_user'
-```
-
-With this configuration, `blocked_functions` (and the built-in function denylist) is
-ignored - every `pimcore_*` function other than `pimcore_user` now raises
-`Twig\Sandbox\SecurityNotAllowedFunctionError`, including ones that were previously
-auto-allowed (e.g. `pimcore_dump`). Add them to `functions` if still needed.
-
 ### Example: extending the function denylist
 
 ```yaml
@@ -181,11 +147,10 @@ pimcore:
   name; matching uses `instanceof`, so subclasses/implementations are covered
   automatically, and a configured class that doesn't exist (e.g. an optional bundle
   that isn't installed) is skipped silently.
-- `blocked_functions`/`allowed_functions` accept exact Twig function names (as used
-  in a template, e.g. `pimcore_user`) and are matched by string comparison.
-- The object and function mechanisms are independent - switching one to allowlist
-  mode does not affect the other. Both are independent from the `tags` / `filters`
-  allowlists, which still apply as before.
+- `blocked_functions` accepts exact Twig function names (as used in a template,
+  e.g. `pimcore_user`) and is matched by string comparison.
+- The object and function mechanisms are independent of each other, and both are
+  independent from the `tags` / `filters` allowlists, which still apply as before.
 - Changing these settings requires clearing the Symfony container cache
   (`bin/console cache:clear`) since the security policy is wired as a container
   parameter.

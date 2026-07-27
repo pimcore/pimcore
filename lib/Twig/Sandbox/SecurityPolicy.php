@@ -70,10 +70,7 @@ final class SecurityPolicy implements SecurityPolicyInterface
      * data outside the sandboxed template's intended scope (e.g. `pimcore_user(1)`,
      * `pimcore_asset(id)`).
      *
-     * This is the fallback denylist consulted while $allowedPimcoreFunctions is empty - use
-     * the `blocked_functions` config option to extend it, or `allowed_functions` to replace
-     * the prefix auto-allow with an explicit allowlist instead. Mirrors BLOCKED_CLASSES /
-     * `blocked_classes` / `allowed_classes` for object access.
+     * Use the `blocked_functions` config option to extend this denylist.
      */
     private const BLOCKED_FUNCTIONS = [
         'pimcore_asset',
@@ -97,8 +94,8 @@ final class SecurityPolicy implements SecurityPolicyInterface
     private array $allowedFilters;
 
     /**
-     * Explicitly allowed functions - always allowed, regardless of blocked/allowed_functions
-     * mode, in addition to whatever the `pimcore_*` prefix rule permits.
+     * Explicitly allowed functions - always allowed, in addition to whatever the
+     * `pimcore_*` prefix rule permits.
      */
     private array $allowedFunctions;
 
@@ -118,18 +115,9 @@ final class SecurityPolicy implements SecurityPolicyInterface
 
     /**
      * Additional `pimcore_*` function names to exclude from the prefix auto-allow, on top
-     * of the built-in BLOCKED_FUNCTIONS. Ignored whenever $allowedPimcoreFunctions is
-     * non-empty (allowlist mode takes over entirely).
+     * of the built-in BLOCKED_FUNCTIONS.
      */
     private array $blockedFunctions;
-
-    /**
-     * When non-empty, switches the `pimcore_*` prefix rule from denylist mode to allowlist
-     * mode: only the listed `pimcore_*` functions (plus whatever is in $allowedFunctions)
-     * are callable from a sandboxed template. Every other `pimcore_*` function is denied,
-     * and the denylist (BLOCKED_FUNCTIONS + $blockedFunctions) is no longer consulted.
-     */
-    private array $allowedPimcoreFunctions;
 
     public function __construct(
         array $allowedTags = [],
@@ -138,7 +126,6 @@ final class SecurityPolicy implements SecurityPolicyInterface
         array $blockedClasses = [],
         array $allowedClasses = [],
         array $blockedFunctions = [],
-        array $allowedPimcoreFunctions = [],
     ) {
         $this->allowedTags = $allowedTags;
         $this->allowedFilters = $allowedFilters;
@@ -146,7 +133,6 @@ final class SecurityPolicy implements SecurityPolicyInterface
         $this->blockedClasses = $blockedClasses;
         $this->allowedClasses = $allowedClasses;
         $this->blockedFunctions = $blockedFunctions;
-        $this->allowedPimcoreFunctions = $allowedPimcoreFunctions;
     }
 
     public function setAllowedTags(array $tags): void
@@ -179,11 +165,6 @@ final class SecurityPolicy implements SecurityPolicyInterface
         $this->blockedFunctions = $blockedFunctions;
     }
 
-    public function setAllowedPimcoreFunctions(array $allowedPimcoreFunctions): void
-    {
-        $this->allowedPimcoreFunctions = $allowedPimcoreFunctions;
-    }
-
     /**
      * True once at least one class has been configured in the allowlist. In that mode
      * the denylist (built-in + configured) is bypassed entirely: only allowlisted
@@ -192,17 +173,6 @@ final class SecurityPolicy implements SecurityPolicyInterface
     private function isAllowlistMode(): bool
     {
         return [] !== $this->allowedClasses;
-    }
-
-    /**
-     * True once at least one `pimcore_*` function has been configured in
-     * $allowedPimcoreFunctions. In that mode the `pimcore_*` prefix denylist (built-in +
-     * configured) is bypassed entirely: only allowlisted `pimcore_*` functions remain
-     * callable from sandboxed templates.
-     */
-    private function isPimcoreFunctionAllowlistMode(): bool
-    {
-        return [] !== $this->allowedPimcoreFunctions;
     }
 
     /**
@@ -304,10 +274,6 @@ final class SecurityPolicy implements SecurityPolicyInterface
      */
     private function isPimcoreFunctionAllowed(string $function): bool
     {
-        if ($this->isPimcoreFunctionAllowlistMode()) {
-            return in_array($function, $this->allowedPimcoreFunctions, true);
-        }
-
         return !in_array($function, [...self::BLOCKED_FUNCTIONS, ...$this->blockedFunctions], true);
     }
 

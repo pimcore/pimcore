@@ -117,5 +117,4 @@ The same sandbox is also used to evaluate `Dynamic Text` layout components in Da
 classes. See [Twig Sandbox Object & Function Access](../../26_Best_Practice/80_Twig_Sandbox_Object_Access.md)
 for how to control which PHP objects a sandboxed template is allowed to reach (via a
 `blocked_classes` denylist or an `allowed_classes` allowlist), and which `pimcore_*`
-functions are auto-allowed (via a `blocked_functions` denylist or an `allowed_functions`
-allowlist).
+functions are auto-allowed (via a `blocked_functions` denylist).

@@ -263,48 +263,4 @@ final class SecurityPolicyTest extends TestCase
         $this->expectException(SecurityNotAllowedFunctionError::class);
         $policy->checkSecurity([], [], ['pimcore_dump']);
     }
-
-    public function testAllowedFunctionsSwitchesToAllowlistModeAndDeactivatesDenylist(): void
-    {
-        // A non-empty allow list must take over completely: a pimcore_* function normally
-        // blocked by the built-in denylist is allowed once it is itself allowlisted.
-        $policy = new SecurityPolicy(allowedPimcoreFunctions: ['pimcore_user']);
-
-        $policy->checkSecurity([], [], ['pimcore_user']);
-        $this->addToAssertionCount(1);
-    }
-
-    public function testAllowlistModeDeniesPimcoreFunctionsNotOnTheAllowlist(): void
-    {
-        // In allowlist mode the prefix auto-allow is fully deactivated: even a function
-        // that was previously auto-allowed (not on the built-in denylist) is now denied
-        // unless explicitly listed.
-        $policy = new SecurityPolicy(allowedPimcoreFunctions: ['pimcore_user']);
-
-        $this->expectException(SecurityNotAllowedFunctionError::class);
-        $policy->checkSecurity([], [], ['pimcore_dump']);
-    }
-
-    public function testAllowedFunctionsIsIndependentOfTheGeneralFunctionsAllowlist(): void
-    {
-        // $allowedFunctions (the pre-existing `functions` config) keeps working
-        // unconditionally, in either mode.
-        $policy = new SecurityPolicy(allowedFunctions: ['path'], allowedPimcoreFunctions: ['pimcore_user']);
-
-        $policy->checkSecurity([], [], ['path']);
-        $this->addToAssertionCount(1);
-    }
-
-    public function testSetBlockedFunctionsAndSetAllowedPimcoreFunctionsSwitchModeAtRuntime(): void
-    {
-        $policy = new SecurityPolicy();
-
-        // starts in denylist mode: a non-denylisted pimcore_* function is auto-allowed
-        $policy->checkSecurity([], [], ['pimcore_dump']);
-
-        $policy->setAllowedPimcoreFunctions(['pimcore_user']);
-
-        $this->expectException(SecurityNotAllowedFunctionError::class);
-        $policy->checkSecurity([], [], ['pimcore_dump']);
-    }
 }
