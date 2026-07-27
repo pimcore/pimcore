@@ -18,6 +18,7 @@ use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
 use League\Flysystem\UnableToProvideChecksum;
+use Normalizer;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -218,7 +219,11 @@ class Asset extends Element\AbstractElement
 
         try {
             $asset = new static();
-            $asset->getDao()->getByPath($path);
+
+            Element\Service::getByPathWithNfcFallback(
+                fn (string $candidate) => $asset->getDao()->getByPath($candidate),
+                $path
+            );
 
             return static::getById(
                 $asset->getId(),
@@ -1762,7 +1767,7 @@ class Asset extends Element\AbstractElement
                 $storage = Storage::get($storageName);
 
                 try {
-                    $storage->move($oldThumbnailsPath, $newThumbnailsPath);
+                    $this->moveThumbnailPath($storage, $oldThumbnailsPath, $newThumbnailsPath);
                 } catch (UnableToMoveFile $e) {
                     //update children, if unable to move parent
                     //if there is an error, we can ignore it
@@ -1770,6 +1775,45 @@ class Asset extends Element\AbstractElement
                 }
             }
         }
+    }
+
+    /**
+     * Moves a thumbnail directory, checking alternate Unicode normalization forms of the
+     * source path if the literal one doesn't exist. This covers cases where the DB-stored
+     * path and the on-disk directory name ended up in different Unicode normalization forms
+     * - e.g. because the original folder/file name was created on a macOS client, which
+     * reports accented names in decomposed (NFD) form, while other parts of the stack
+     * normalize to precomposed (NFC).
+     *
+     * The existing source is established via directoryExists() before moving, rather than
+     * moving each candidate in turn and reacting to UnableToMoveFile: that exception also
+     * covers destination, permission and backend failures, not just a missing source, so
+     * catching it to decide "try the next Unicode form" could otherwise move an unrelated,
+     * coincidentally-present legacy-form directory into $newPath on an unrelated failure.
+     *
+     * @throws UnableToMoveFile
+     */
+    private function moveThumbnailPath(FilesystemOperator $storage, string $oldPath, string $newPath): void
+    {
+        $candidates = array_unique(array_filter([
+            $oldPath,
+            Normalizer::normalize($oldPath, Normalizer::FORM_C) ?: null,
+            Normalizer::normalize($oldPath, Normalizer::FORM_D) ?: null,
+        ]));
+
+        $source = $oldPath;
+        foreach ($candidates as $candidate) {
+            if ($storage->directoryExists($candidate)) {
+                $source = $candidate;
+
+                break;
+            }
+        }
+
+        // None of the Unicode-form candidates exist (e.g. no thumbnails were ever
+        // generated) - move the literal requested path so the caller sees the normal
+        // "nothing to move" failure rather than one masked by this fallback.
+        $storage->move($source, $newPath);
     }
 
     private function clearFolderThumbnails(Asset $asset): void

@@ -14,7 +14,11 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Asset;
 
 use Exception;
+use League\Flysystem\UnableToMoveFile;
+use Normalizer;
+use Pimcore\Db;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Asset\Service as AssetService;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
@@ -241,6 +245,53 @@ class AssetTest extends ModelTestCase
         $this->assertFalse(is_resource($stream1));
     }
 
+    /**
+     * Regression test for PEES-1245: a thumbnail directory can end up on disk in a
+     * different Unicode normalization form than the path Asset::relocateThumbnails()
+     * computes from the DB (e.g. because the original folder name came from a macOS
+     * client, which reports accented characters in decomposed/NFD form, while the DB
+     * path is in precomposed/NFC form). Without the retry in moveThumbnailPath(), the
+     * move silently fails and the thumbnail is stranded at the old path.
+     *
+     * @see \Pimcore\Model\Asset::moveThumbnailPath()
+     */
+    public function testMoveThumbnailPathRecoversFromUnicodeNormalizationMismatch(): void
+    {
+        $storage = Storage::get('thumbnail');
+
+        $basePath = '/pimcore-test-' . uniqid() . '/café/123';
+        $nfcOldPath = Normalizer::normalize($basePath, Normalizer::FORM_C);
+        $nfdOldPath = Normalizer::normalize($basePath, Normalizer::FORM_D);
+        $this->assertNotSame($nfcOldPath, $nfdOldPath, 'Test fixture setup issue: NFC and NFD forms should differ in bytes.');
+
+        // the thumbnail physically exists under the NFD form of the path ...
+        $storage->write($nfdOldPath . '/dummy-thumb.jpg', 'thumbnail-content');
+
+        // ... while relocateThumbnails() computes the NFC form as the source to move from
+        $newPath = '/pimcore-test-' . uniqid() . '/moved/123';
+
+        $reflection = new \ReflectionMethod(Asset::class, 'moveThumbnailPath');
+        $reflection->setAccessible(true);
+
+        try {
+            $reflection->invoke(new Asset\Image(), $storage, $nfcOldPath, $newPath);
+        } catch (UnableToMoveFile $e) {
+            // Some storage adapters (e.g. S3-compatible object storage) can only move a single
+            // object per call and have no native "move a directory of files" operation, so
+            // relocating a thumbnail directory there fails independently of which Unicode form
+            // was selected as the source. Asset::relocateThumbnails() already tolerates this
+            // exact failure (see its catch block) - this test targets the Unicode-candidate
+            // selection in moveThumbnailPath(), not directory-move support, which is storage-
+            // adapter dependent.
+            $this->markTestSkipped('Storage adapter cannot move a directory of files: ' . $e->getMessage());
+        }
+
+        $this->assertTrue($storage->fileExists($newPath . '/dummy-thumb.jpg'));
+        $this->assertFalse($storage->fileExists($nfdOldPath . '/dummy-thumb.jpg'));
+
+        $storage->deleteDirectory($newPath);
+    }
+
     public function testSvgThumbnailFallbackUsesOriginalAssetPathOnGenerationFailure(): void
     {
         $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image1.jpg');
@@ -383,5 +434,157 @@ class AssetTest extends ModelTestCase
         $asset = Asset::create(1, $data);
 
         $this->assertEquals('image/jpeg', $asset->getMimeType());
+    }
+
+    /**
+     * Regression test: getByPath() must still resolve an element whose key is stored in
+     * decomposed (NFD) Unicode form - e.g. created before element keys were normalized to NFC
+     * on write - via an exact-path lookup using that very same NFD path.
+     *
+     * The model API can no longer persist such a key directly: Asset::save() -> correctPath()
+     * rejects it via Service::isValidKey(), which itself always normalizes to NFC before
+     * comparing (see #19242). So the legacy row is created via a valid NFC key first, then
+     * rewritten to NFD directly in the database - bypassing model validation - to simulate a
+     * pre-#19242 row.
+     *
+     * @see \Pimcore\Model\Element\Service::correctPath()
+     */
+    public function testGetByPathResolvesLegacyNfdStoredKeyByExactMatch(): void
+    {
+        $nfcKey = Normalizer::normalize('nfd-café-' . uniqid(), Normalizer::FORM_C);
+        $nfdKey = Normalizer::normalize($nfcKey, Normalizer::FORM_D);
+        $this->assertNotSame(
+            $nfcKey,
+            $nfdKey,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $folder = new Asset\Folder();
+        $folder->setParentId(1);
+        $folder->setFilename($nfcKey);
+        $folder->save();
+
+        $lookupPath = $folder->getRealPath() . $nfdKey;
+
+        Db::get()->update('assets', ['filename' => $nfdKey], ['id' => $folder->getId()]);
+
+        $found = Asset::getByPath($lookupPath, ['force' => true]);
+
+        $this->assertInstanceOf(Asset::class, $found);
+        $this->assertSame($folder->getId(), $found->getId());
+    }
+
+    /**
+     * Regression test: getByPath() must resolve an element whose key is stored precomposed
+     * (NFC) when the caller supplies a decomposed (NFD) lookup path - e.g. a browser's
+     * webkitdirectory/File System Access API on macOS - by falling back to the NFC-normalized
+     * path once the exact-path lookup misses.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathFallsBackToNfcForNfdLookupPath(): void
+    {
+        $nfcKey = Normalizer::normalize('nfc-café-' . uniqid(), Normalizer::FORM_C);
+
+        $folder = new Asset\Folder();
+        $folder->setParentId(1);
+        $folder->setFilename($nfcKey);
+        $folder->save();
+
+        $nfdLookupPath = Normalizer::normalize($folder->getFullPath(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $folder->getFullPath(),
+            $nfdLookupPath,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $found = Asset::getByPath($nfdLookupPath);
+
+        $this->assertInstanceOf(Asset::class, $found);
+        $this->assertSame($folder->getId(), $found->getId());
+    }
+
+    /**
+     * Regression test: a nested hierarchy where a legacy NFD-stored ancestor has one or more
+     * freshly created (NFC-stored) descendants below it must still resolve when every accented
+     * segment of the lookup path arrives in decomposed (NFD) form - the caller has no way to
+     * know which segments are legacy and which are freshly created. getByPath() must not stop
+     * at normalizing only the final segment; it needs to try normalizing progressively longer
+     * trailing suffixes of the path.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathResolvesNestedMixedHierarchy(): void
+    {
+        $legacyNfcKey = Normalizer::normalize('legacy-café-' . uniqid(), Normalizer::FORM_C);
+        $legacyNfdKey = Normalizer::normalize($legacyNfcKey, Normalizer::FORM_D);
+        $this->assertNotSame(
+            $legacyNfcKey,
+            $legacyNfdKey,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        // simulate a legacy pre-#19242 ancestor whose key is stored in decomposed (NFD) form
+        $legacyFolder = new Asset\Folder();
+        $legacyFolder->setParentId(1);
+        $legacyFolder->setFilename($legacyNfcKey);
+        $legacyFolder->save();
+        Db::get()->update('assets', ['filename' => $legacyNfdKey], ['id' => $legacyFolder->getId()]);
+
+        // freshly created descendants below the legacy ancestor - their keys are stored NFC,
+        // and their own 'path' column is derived from the parent's *current* (NFD) path
+        $middleFolder = new Asset\Folder();
+        $middleFolder->setParentId($legacyFolder->getId());
+        $middleFolder->setFilename(Normalizer::normalize('new café middle', Normalizer::FORM_C));
+        $middleFolder->save();
+
+        $leafFolder = new Asset\Folder();
+        $leafFolder->setParentId($middleFolder->getId());
+        $leafFolder->setFilename(Normalizer::normalize('new café leaf', Normalizer::FORM_C));
+        $leafFolder->save();
+
+        // what a browser submits: every accented segment in NFD, regardless of which segments
+        // are legacy and which are freshly created
+        $nfdLookupPath = Normalizer::normalize($leafFolder->getRealFullPath(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $leafFolder->getRealFullPath(),
+            $nfdLookupPath,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $found = Asset::getByPath($nfdLookupPath, ['force' => true]);
+
+        $this->assertInstanceOf(Asset::class, $found);
+        $this->assertSame($leafFolder->getId(), $found->getId());
+    }
+
+    /**
+     * Regression test: Asset\Service::pathExists() must agree with Asset::getByPath() on
+     * whether a path resolves. Without routing pathExists() through the same NFC fallback,
+     * a caller could see pathExists() return false for the very same NFD lookup path that
+     * getByPath() successfully resolves, and incorrectly treat an existing asset as absent.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testPathExistsAgreesWithGetByPathForNfdLookupPath(): void
+    {
+        $nfcKey = Normalizer::normalize('nfc-café-' . uniqid(), Normalizer::FORM_C);
+
+        $folder = new Asset\Folder();
+        $folder->setParentId(1);
+        $folder->setFilename($nfcKey);
+        $folder->save();
+
+        $nfdLookupPath = Normalizer::normalize($folder->getFullPath(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $folder->getFullPath(),
+            $nfdLookupPath,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $this->assertTrue(
+            AssetService::pathExists($nfdLookupPath),
+            'pathExists() must return true for the same NFD path that getByPath() resolves.'
+        );
     }
 }
