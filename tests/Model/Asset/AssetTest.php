@@ -22,6 +22,7 @@ use Pimcore\Model\Asset\Service as AssetService;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
+use ReflectionMethod;
 
 /**
  * Class AssetTest
@@ -270,7 +271,7 @@ class AssetTest extends ModelTestCase
         // ... while relocateThumbnails() computes the NFC form as the source to move from
         $newPath = '/pimcore-test-' . uniqid() . '/moved/123';
 
-        $reflection = new \ReflectionMethod(Asset::class, 'moveThumbnailPath');
+        $reflection = new ReflectionMethod(Asset::class, 'moveThumbnailPath');
         $reflection->setAccessible(true);
 
         try {
