@@ -2087,6 +2087,39 @@ final class Configuration implements ConfigurationInterface
                             ->arrayNode('functions')
                                 ->scalarPrototype()->end()
                             ->end()
+                            ->arrayNode('blocked_classes')
+                                ->info('FQCNs that must not be traversable (method calls or property access) from
+                                sandboxed twig templates. Defaults to Pimcore\'s built-in denylist (database/
+                                infrastructure layer, `Pimcore\Model\User`) - a site can append further FQCNs on
+                                top of that default. Ignored when `allowed_classes` is non-empty.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('allowed_classes')
+                                ->info('FQCNs that are traversable (method calls or property access) from
+                                sandboxed twig templates. As soon as this list contains at least one entry, the
+                                security policy switches from denylist mode to allowlist mode: the
+                                `blocked_classes` denylist is deactivated, and only instances of the classes
+                                listed here (and their subclasses) remain reachable.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('blocked_functions')
+                                ->info('`pimcore_*` function names that must not be covered by the blanket
+                                `pimcore_*` prefix auto-allow. Defaults to Pimcore\'s built-in denylist of
+                                functions that look up and return a live model instance by id/path - a site can
+                                append further function names on top of that default.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('hard_blocked_methods')
+                                ->info('FQCN => list-of-method-names map. Methods listed here can never be called
+                                on a matching instance from a sandboxed twig template, regardless of the
+                                blocked_classes/allowed_classes configuration. Defaults to a small set of
+                                secret/content-returning getters (e.g. `User::getPassword`, `Asset::getData`) -
+                                a site can extend the map with further classes/methods on top of that default.')
+                                ->useAttributeAsKey('class')
+                                ->arrayPrototype()
+                                    ->scalarPrototype()->end()
+                                ->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
