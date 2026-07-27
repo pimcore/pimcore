@@ -30,6 +30,7 @@ use InvalidArgumentException;
 use League\Csv\EscapeFormula;
 use Normalizer;
 use Pimcore;
+use Pimcore\Cache;
 use Pimcore\Db;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Logger;
@@ -49,6 +50,7 @@ use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\DeepCopy\UnmarshalMatcher;
 use Pimcore\Model\Paginator\PaginateListingInterface;
 use Pimcore\Model\Tool\TmpStore;
+use Pimcore\Tool\Admin;
 use Pimcore\Tool\Serialize;
 use ReflectionProperty;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -184,6 +186,145 @@ class Service extends Model\AbstractModel
         }
 
         return $dependencies;
+    }
+
+    private const REQUIRED_BY_VISIBLE_TOTAL_SCAN_CHUNK = 200;
+
+    private const REQUIRED_BY_VISIBLE_TOTAL_SCAN_CAP = 5000;
+
+    private const REQUIRED_BY_VISIBLE_TOTAL_CACHE_LIFETIME = 60;
+
+    /**
+     * In-process memo of scanRequiredByVisibility() results, keyed by cache key - avoids
+     * re-scanning within a single request when both getRequiredByVisibleTotalCount() and
+     * getRequiredByHasHiddenDependencies() are called for the same element+user, since
+     * Cache::save() defers its actual write to shutdown and wouldn't be visible to a second
+     * call yet.
+     *
+     * @var array<string, array{total: int, hasHidden: bool}>
+     */
+    private static array $requiredByVisibilityRequestCache = [];
+
+    /**
+     * Permission-filtered "Required By" count for the current admin user, i.e. how many of the
+     * raw dependency rows the user actually has `list` permission to see. Unlike
+     * `Dependency::getRequiredByTotalCount()` (a cheap raw `COUNT(*)`), this requires hydrating
+     * and permission-checking every row up to a safety cap, so the result is cached briefly per
+     * element+user to avoid repeating that scan on every paging request.
+     *
+     * @internal
+     */
+    public static function getRequiredByVisibleTotalCount(Dependency $d): int
+    {
+        return self::scanRequiredByVisibility($d)['total'];
+    }
+
+    /**
+     * Whether any "Required By" row was found (within the same scan/cache as
+     * getRequiredByVisibleTotalCount()) that the current admin user does not have `list`
+     * permission to see - i.e. whether the dependencies grid should show its hidden-items
+     * notice. Sourced from the same bounded scan as the total so it is stable across every
+     * page, rather than only reflecting whatever one page's own (much shorter) scan happened
+     * to encounter.
+     *
+     * @internal
+     */
+    public static function getRequiredByHasHiddenDependencies(Dependency $d): bool
+    {
+        return self::scanRequiredByVisibility($d)['hasHidden'];
+    }
+
+    /**
+     * @return array{total: int, hasHidden: bool}
+     */
+    private static function scanRequiredByVisibility(Dependency $d): array
+    {
+        $userId = Admin::getCurrentUser()?->getId() ?? 0;
+        $cacheKey = sprintf(
+            'requiredby_visible_total_%s_%d_%d',
+            $d->getSourceType(),
+            $d->getSourceId(),
+            $userId
+        );
+
+        if (isset(self::$requiredByVisibilityRequestCache[$cacheKey])) {
+            return self::$requiredByVisibilityRequestCache[$cacheKey];
+        }
+
+        // Cache::save() silently drops falsy payloads on the default (deferred, non-forced)
+        // write path - CoreCacheHandler::addToSaveQueue() only queues data that passes a
+        // truthy check, so a legitimate count of 0 would never actually get persisted. Wrap
+        // the result in an array (always truthy) so it survives that check.
+        $cached = Cache::load($cacheKey);
+        if (is_array($cached) && array_key_exists('total', $cached) && array_key_exists('hasHidden', $cached)) {
+            self::$requiredByVisibilityRequestCache[$cacheKey] = $cached;
+
+            return $cached;
+        }
+
+        $rawTotal = $d->getRequiredByTotalCount();
+        $visibleTotal = 0;
+        $hasHidden = false;
+        $rawOffset = 0;
+        $scannedRows = 0;
+
+        while ($rawOffset < $rawTotal && $scannedRows < self::REQUIRED_BY_VISIBLE_TOTAL_SCAN_CAP) {
+            // Clamp to the remaining budget so the cap is a strict upper bound on rows
+            // scanned - without this, a chunk fetched right before the cap (e.g.
+            // scannedRows=4900) could still pull a full chunk and overshoot it.
+            $chunkSize = min(
+                self::REQUIRED_BY_VISIBLE_TOTAL_SCAN_CHUNK,
+                self::REQUIRED_BY_VISIBLE_TOTAL_SCAN_CAP - $scannedRows
+            );
+            $rows = $d->getRequiredBy($rawOffset, $chunkSize);
+            if (empty($rows)) {
+                break;
+            }
+
+            foreach ($rows as $row) {
+                $e = self::getDependedElement($row);
+                if (!$e) {
+                    continue;
+                }
+                if ($e->isAllowed('list')) {
+                    $visibleTotal++;
+                } else {
+                    $hasHidden = true;
+                }
+            }
+
+            $rawOffset += count($rows);
+            $scannedRows += count($rows);
+        }
+
+        // If the scan cap was hit before the raw table was fully examined, $visibleTotal only
+        // reflects what was seen so far and may under-count - e.g. 6000 fully visible rows
+        // would report 5000 and strand the grid at page 200 of a true 240. Rather than expose
+        // a truncated (too-small) total, which hides real pages, fall back to the raw
+        // (never-too-small) total in that case; the common case where the raw set fits within
+        // the cap is unaffected and still gets the exact, immediate total.
+        $scanTruncated = $rawOffset < $rawTotal;
+
+        // A truncated scan means the unexamined tail is genuinely unknown - it may or may not
+        // contain hidden rows. Defaulting hasHidden to false there would be a false negative
+        // (silently hiding the warning even though hidden content could exist beyond the cap),
+        // which is worse than an occasional false positive, so treat "we didn't check" as "hidden
+        // dependencies might exist" rather than "there are none".
+        $result = [
+            'total' => $scanTruncated ? $rawTotal : $visibleTotal,
+            'hasHidden' => $hasHidden || $scanTruncated,
+        ];
+
+        self::$requiredByVisibilityRequestCache[$cacheKey] = $result;
+
+        Cache::save(
+            $result,
+            $cacheKey,
+            ['dependency_requiredby_' . $d->getSourceType() . '_' . $d->getSourceId()],
+            self::REQUIRED_BY_VISIBLE_TOTAL_CACHE_LIFETIME
+        );
+
+        return $result;
     }
 
     /**
