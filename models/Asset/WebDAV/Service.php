@@ -17,6 +17,23 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @internal
+ *
+ * The WebDAV delete log lets Tree::move() restore a destination that a client deleted and then
+ * re-created via a separate MOVE request (e.g. Photoshop). See Asset\WebDAV\File::delete() and
+ * Asset\WebDAV\Tree::move().
+ *
+ * KNOWN LIMITATION (multi-node): the log is stored on the local filesystem
+ * (PIMCORE_SYSTEM_TEMP_DIRECTORY), and the DELETE and the follow-up MOVE are separate HTTP
+ * requests. In a horizontally-scaled deployment (typical with blob/cloud asset storage) those two
+ * requests may land on different nodes, so the MOVE won't find the entry and the restore silently
+ * degrades to a plain rename (source keeps its own id; the deleted asset's id/metadata are not
+ * preserved).
+ *
+ * TODO (cluster-safe delete log): move this state into a shared backend so it works regardless of
+ * which node handles each request. The natural choice is a small DB table (mirroring how the Sabre
+ * lock plugin already uses the `webdav_locks` table) or the Pimcore cache/Redis. That would also
+ * make the read-modify-write genuinely atomic cluster-wide. Start in File::delete() (writer),
+ * Tree::move() (reader), and this class.
  */
 class Service
 {
