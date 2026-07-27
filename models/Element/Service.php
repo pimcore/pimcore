@@ -811,6 +811,140 @@ class Service extends Model\AbstractModel
         return $path;
     }
 
+    private static function normalizeToNfc(string $value): string
+    {
+        if (Normalizer::isNormalized($value, Normalizer::FORM_C)) {
+            return $value;
+        }
+
+        return Normalizer::normalize($value, Normalizer::FORM_C) ?: $value;
+    }
+
+    /**
+     * Builds fallback path candidates for getByPath() lookups, tried in order once the exact
+     * path misses. Only newly created element keys are normalized to NFC on write (see
+     * getValidKey()), so an arbitrary number of trailing path segments may be freshly created
+     * (NFC-stored) while an arbitrary-depth ancestor prefix is still stored in legacy
+     * decomposed (NFD) form from before that normalization existed - and the caller (e.g. a
+     * browser's webkitdirectory/File System Access API on macOS) has no way to know where that
+     * boundary is, so every accented segment arrives in NFD form regardless.
+     *
+     * Candidates therefore normalize progressively shorter *trailing* suffixes of the path to
+     * NFC, from "the entire path" down to "just the final segment", leaving the remaining
+     * prefix byte-for-byte untouched in each candidate. The entire-path candidate is tried
+     * first because the common case - and the one motivating this fix - is an entire subtree
+     * freshly created in the same operation (e.g. a Studio folder upload), where every segment
+     * is NFC-stored; trying the narrowest candidates first would cost one DAO query per path
+     * depth for that common case before ever reaching the one that matches. A legacy ancestor
+     * mixed with freshly created descendants is the rarer case and can afford the extra
+     * queries down to the shorter suffixes:
+     *
+     * - a lookup path where every segment was freshly created in the same operation is
+     *   resolved by the "entire path normalized" candidate (the first one tried).
+     * - path `/Legacy café/New café/Child café` stored as NFD/NFC/NFC (the middle and last
+     *   segment freshly created under a legacy first segment) is resolved by the
+     *   "last 2 segments normalized" candidate, without touching the still-NFD first segment.
+     *
+     * This is intentionally not applied unconditionally in correctPath(), since that would
+     * break the exact-path lookup for elements whose key is still stored in NFD form.
+     *
+     * Capped at MAX_FALLBACK_CANDIDATES: getByPath() is a public API that accepts arbitrary
+     * caller-supplied strings, and a path within the maximum real path length (see
+     * getByPathWithNfcFallback()) can still be split into many short segments, each one a
+     * distinct candidate and a DAO query. The cap bounds both the candidate-building work here
+     * and the number of queries the caller triggers to a small, fixed number, at the cost of
+     * only the narrowest (least likely to be needed) suffix candidates in a pathologically
+     * deep, all-legacy-until-the-last-few-levels hierarchy.
+     *
+     * Each segment is normalized at most once, and a candidate string is built at most
+     * MAX_FALLBACK_CANDIDATES times: only segments where normalization actually changes the
+     * value can produce a distinct candidate (normalizing an already-NFC segment is a no-op,
+     * so extending or narrowing the suffix across it never changes the resulting string), so
+     * those are the only positions the loop below needs to build a candidate for. This keeps
+     * the cost proportional to the path length even for a caller-supplied path with many
+     * segments that don't need normalization at all.
+     *
+     * @return string[]
+     */
+    private static function getNfcFallbackPathCandidates(string $path): array
+    {
+        $segments = explode('/', $path);
+
+        $normalizedSegments = $segments;
+        $changedIndexes = [];
+        foreach ($segments as $i => $segment) {
+            $normalized = self::normalizeToNfc($segment);
+            if ($normalized !== $segment) {
+                $normalizedSegments[$i] = $normalized;
+                $changedIndexes[] = $i;
+            }
+        }
+
+        $candidates = [];
+        $candidateSegments = $normalizedSegments;
+        foreach ($changedIndexes as $changedIndex) {
+            $candidates[] = implode('/', $candidateSegments);
+            if (count($candidates) >= self::MAX_FALLBACK_CANDIDATES) {
+                break;
+            }
+
+            // Narrow the suffix: revert this changed segment back to its original (NFD) form
+            // before building the next candidate.
+            $candidateSegments[$changedIndex] = $segments[$changedIndex];
+        }
+
+        return $candidates;
+    }
+
+    /**
+     * The maximum number of fallback candidates getNfcFallbackPathCandidates() will build and
+     * getByPathWithNfcFallback() will query for. A realistic element hierarchy is rarely more
+     * than a handful of levels deep; this is generous headroom over that while still bounding
+     * the number of DAO queries one caller-controlled miss can trigger to a small, fixed number.
+     */
+    private const MAX_FALLBACK_CANDIDATES = 32;
+
+    /**
+     * Runs a getByPath() DAO lookup, retrying with the Unicode-normalized path candidates from
+     * getNfcFallbackPathCandidates() if the exact path misses. Centralizes the retry policy so
+     * Asset, Document and DataObject don't each reimplement it.
+     *
+     * getByPath() is a public API that accepts arbitrary caller-supplied strings, unconstrained
+     * by ElementInterface::MAX_FULL_PATH_LENGTH (that limit is only enforced at save time, see
+     * AbstractElement::validatePathLength()). The number of candidates - and therefore DAO
+     * queries and candidate-building work - a caller-controlled miss can trigger is bounded by
+     * MAX_FALLBACK_CANDIDATES alone (see getNfcFallbackPathCandidates()), regardless of the raw
+     * path's length. A length-based short-circuit was deliberately not used here: composition
+     * exclusions in Unicode (e.g. U+0344, which NFC always decomposes to U+0308 U+0301) mean NFC
+     * normalization does not strictly guarantee a shorter or equal-length string in every case,
+     * so a fully-normalized path's length is not a reliable lower bound for what a legitimate
+     * preserved-prefix candidate could be.
+     *
+     * @internal
+     *
+     * @throws Model\Exception\NotFoundException
+     */
+    public static function getByPathWithNfcFallback(callable $attempt, string $path): void
+    {
+        try {
+            $attempt($path);
+
+            return;
+        } catch (Model\Exception\NotFoundException $e) {
+            foreach (self::getNfcFallbackPathCandidates($path) as $candidate) {
+                try {
+                    $attempt($candidate);
+
+                    return;
+                } catch (Model\Exception\NotFoundException) {
+                    continue;
+                }
+            }
+
+            throw $e;
+        }
+    }
+
     /**
      * @internal
      */
@@ -1012,11 +1146,21 @@ class Service extends Model\AbstractModel
         return self::getValidKey($key, $type) == $key;
     }
 
+    /**
+     * A segment that is not a valid key purely because it is still in decomposed (NFD) Unicode
+     * form is nonetheless accepted here - isValidKey()/getValidKey() always normalize to NFC
+     * (see getValidKey()), so a segment created before that normalization existed would
+     * otherwise never pass. This method's only callers are the *\Service::pathExists()
+     * existence checks (see getByPathWithNfcFallback()), where that must be consistent with
+     * getByPath() resolving the very same path; it is intentionally not applied to
+     * isValidKey() itself, which is also used to validate a *new* key at save time and must
+     * keep rejecting anything not already precomposed.
+     */
     public static function isValidPath(string $path, string $type): bool
     {
         $parts = explode('/', $path);
         foreach ($parts as $part) {
-            if (!self::isValidKey($part, $type)) {
+            if (!self::isValidKey($part, $type) && !self::isValidKey(self::normalizeToNfc($part), $type)) {
                 return false;
             }
         }

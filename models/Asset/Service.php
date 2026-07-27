@@ -209,7 +209,10 @@ class Service extends Model\Element\Service
             $asset = new Asset();
 
             if (self::isValidPath($path, 'asset')) {
-                $asset->getDao()->getByPath($path);
+                Element\Service::getByPathWithNfcFallback(
+                    fn (string $candidate) => $asset->getDao()->getByPath($candidate),
+                    $path
+                );
 
                 return true;
             }
