@@ -98,6 +98,19 @@ ORDER BY TABLE_NAME, COLUMN_NAME;
 - Dropped support for PHP `8.3` and Symfony `6`.
 - [QuantityValue] Introduced foreign key constraints on `__unit` columns in object store, query, localized, objectbrick and fieldcollection tables for `QuantityValue`, `InputQuantityValue` and `QuantityValueRange` fields. These constraints reference `quantityvalue_units(id)` with `ON DELETE SET NULL` and `ON UPDATE CASCADE`, ensuring referential integrity. The migration automatically cleans up orphaned unit references (setting them to `NULL`) and changes the `__unit` column type from `varchar(64)` to `varchar(50)` to match the referenced `quantityvalue_units.id` column. If you have custom unit IDs longer than 50 characters, they will be truncated.
 
+#### Composer Dependency Majors: `scheb/2fa` 8.x and `phpdocumentor/reflection-docblock` 6.x
+
+- [Composer] The constraint for `scheb/2fa-bundle` and `scheb/2fa-google-authenticator` has been raised from `^6.0 || ^7.5` to `^8.4`. Projects still on scheb/2fa 6.x/7.x are forced onto 8.x when upgrading. Pimcore's own integration (`Pimcore\Security\User\User`, the `scheb_two_factor.security.google_authenticator` service and the admin 2FA flow) is fully compatible — no action is needed for standard setups. Review the following if your project extends 2FA (see also the [official upgrade guide](https://github.com/scheb/2fa/blob/8.x/UPGRADE.md)):
+    - The priority of the two-factor authenticator has changed from `0` to `-100`. If you register custom security authenticators on a 2FA-protected firewall and rely on their order relative to the two-factor authenticator, re-check and adjust their priority.
+    - The `UserTotpCode` and `UserGoogleTotpCode` validator constraints no longer accept an associative options array; pass named constructor arguments instead (e.g. `new UserTotpCode(message: '...')`).
+    - `getGoogleAuthenticatorUsername()` and `getTotpAuthenticationUsername()` on the scheb model interfaces may now return `null`; code consuming these values should handle it.
+    - scheb/2fa 8.x requires PHP >= 8.4, which matches Pimcore's platform requirement, and pulls in `spomky-labs/otphp` 11.x transitively.
+- [Composer] The constraint for `phpdocumentor/reflection-docblock` has been widened from `^5.2` to `^5.6 || ^6.0`, so a `composer update` may resolve to 6.x. Pimcore does not use this library directly (it is a transitive dependency of the Symfony PropertyInfo/Serializer components, which support 6.x), so no action is needed unless your own code parses docblocks with it. In that case, note for 6.x (see the [upgrade guide](https://docs.phpdoc.org/components/reflection-docblock/guides/upgrade-to-v6.html)):
+    - The static `::create()` factory methods on tag classes (e.g. `Param::create()`, `Method::create()`) have been removed; create tags through `StandardTagFactory::createInstance()` instead. `StandardTagFactory` can no longer be instantiated directly with `new`.
+    - `Method::getArguments()` has been removed.
+    - `phpdocumentor/type-resolver` is bumped to 2.0, which replaces the legacy `Collection` type handling with real generics support (e.g. `Collection<MyClass>`).
+    - If your project is not ready for 6.x, you can keep the 5.x line by requiring `"phpdocumentor/reflection-docblock": "^5.6"` in your project's `composer.json`.
+
 #### Removed deprecated and discontinued bundles
 The following bundles have been removed:
 - GlossaryBundle
