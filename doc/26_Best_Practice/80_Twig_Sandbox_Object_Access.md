@@ -11,22 +11,28 @@ read properties on, and which `pimcore_*` **functions** are callable.
 Both are enforced by `Pimcore\Twig\Sandbox\SecurityPolicy` and are configurable via
 `templating_engine.twig.sandbox_security_policy`. Object access supports both a
 denylist and an allowlist mode, described below; function access is denylist-only.
+Every built-in denylist described in this document (`blocked_classes`,
+`blocked_functions`, `hard_blocked_methods`) is defined as the *default value* of
+its config option in `bundles/CoreBundle/config/pimcore/default.yaml`, not hardcoded
+in `SecurityPolicy` - a site's own config for the same option is merged with (appended
+to) that default, not substituted for it, so extending one of these options cannot
+accidentally drop the shipped defaults.
 
 ## Object access: two modes
 
 The policy supports two mutually exclusive modes:
 
 - **Blocklist mode (default)** - every object is reachable *except* instances of a
-  denylist of classes. Pimcore ships a built-in denylist covering the database/
+  denylist of classes. Pimcore's `blocked_classes` default covers the database/
   infrastructure layer (`Pimcore\Model\Dao\AbstractDao`, `Doctrine\DBAL\Connection`,
   `PDO`, `PDOStatement`, Symfony's `ContainerInterface`, `Process`) and
   `Pimcore\Model\User` (whose getters expose the password hash and password
-  recovery token). Use `blocked_classes` to add more classes to this denylist.
+  recovery token). Set `blocked_classes` to add more classes to this denylist.
 - **Allowlist mode** - as soon as `allowed_classes` contains at least one entry, the
   policy switches to allow only instances of the listed classes (and their
-  subclasses). **The entire denylist (built-in + `blocked_classes`) is deactivated
-  in this mode** - every object that is not an instance of an allowed class is
-  denied, regardless of what `blocked_classes` contains.
+  subclasses). **The entire `blocked_classes` denylist is deactivated in this
+  mode** - every object that is not an instance of an allowed class is denied,
+  regardless of what `blocked_classes` contains.
 
 A blocklist is inherently open-ended: it must enumerate every class whose data must
 stay out of templates, and any class added to the codebase later (or reachable via
@@ -36,18 +42,21 @@ rendering are reachable, so newly introduced classes are denied by default. Pref
 allowlist mode wherever the set of objects passed into a sandboxed template
 (`Mail::setParams()`, `Layout\Text` context) is small and known.
 
-## Always-blocked methods
+## Hard-blocked methods
 
-`Pimcore\Model\Asset` is deliberately **not** on the built-in denylist - templates
-commonly need it for filename/thumbnail access. But its content-returning methods
-(`getData`, `getStream`, `getLocalFile`, `getTemporaryFile`) would let a template
-read the raw bytes of any asset, bypassing that asset's workspace ACL. These
-methods - together with `User::getPassword`, `User::getPasswordRecoveryToken` and
-`User::getTwoFactorAuthentication` (returns the MFA secret alongside the rest of the
-2FA config) - are hard-blocked unconditionally: unlike the denylist, this check is
-**not** bypassed by allowlist mode. Even a site that explicitly allowlists `Asset` or
-`User` cannot make these specific methods template-reachable again. This set is
-not configurable; it exists to keep a small number of secret/content-returning
+`Pimcore\Model\Asset` is deliberately **not** on the `blocked_classes` denylist -
+templates commonly need it for filename/thumbnail access. But its content-returning
+methods (`getData`, `getStream`, `getLocalFile`, `getTemporaryFile`) would let a
+template read the raw bytes of any asset, bypassing that asset's workspace ACL.
+These methods - together with `User::getPassword`, `User::getPasswordRecoveryToken`
+and `User::getTwoFactorAuthentication` (returns the MFA secret alongside the rest of
+the 2FA config) - are hard-blocked via the `hard_blocked_methods` option: unlike
+`blocked_classes`, this check is **not** bypassed by allowlist mode. Even a site
+that explicitly allowlists `Asset` or `User` cannot make these specific methods
+template-reachable again. `hard_blocked_methods` can be extended (a site can add
+further FQCN => methods entries on top of the shipped default), but the shipped
+entries themselves stay in effect - since config for this option is merged with the
+default rather than replacing it - keeping a small number of secret/content-returning
 getters closed off no matter how the rest of the policy is configured.
 
 ## Function access
@@ -55,16 +64,17 @@ getters closed off no matter how the rest of the policy is configured.
 The `functions` option (see [Email Framework](../19_Development_Tools_and_Details/25_Email_Framework/README.md#sandbox-restrictions))
 is an explicit allowlist: a function must be listed there to be callable from a
 sandboxed template. Independently, any Twig function whose name starts with
-`pimcore_` is additionally auto-allowed, except for a built-in denylist of functions
-that look up and return a live model instance by id/path, whose getters can expose
-data outside the sandboxed template's intended scope (e.g. `pimcore_user(1)`,
-`pimcore_asset(id)` - see [Always-blocked methods](#always-blocked-methods) above
-for why those two are additionally hard-blocked at the object layer): `pimcore_asset`,
+`pimcore_` is additionally auto-allowed, except for the `blocked_functions` denylist,
+which by default covers functions that look up and return a live model instance by
+id/path, whose getters can expose data outside the sandboxed template's intended
+scope (e.g. `pimcore_user(1)`, `pimcore_asset(id)` - see
+[Hard-blocked methods](#hard-blocked-methods) above for why those two are
+additionally hard-blocked at the object layer): `pimcore_asset`,
 `pimcore_asset_by_path`, `pimcore_document`, `pimcore_document_by_path`,
 `pimcore_document_wrap_hardlink`, `pimcore_object`, `pimcore_object_by_path`,
 `pimcore_object_classificationstore_group`, `pimcore_object_brick_definition_key`,
 `pimcore_site`, `pimcore_site_by_root_id`, `pimcore_site_by_domain`,
-`pimcore_site_current`, `pimcore_user`. Use `blocked_functions` to add more
+`pimcore_site_current`, `pimcore_user`. Set `blocked_functions` to add more
 functions to this denylist.
 
 All other `pimcore_*` functions (rendering/helper functions such as `pimcore_dump`,
@@ -72,6 +82,11 @@ All other `pimcore_*` functions (rendering/helper functions such as `pimcore_dum
 so existing template rendering is unaffected.
 
 ## Configuration
+
+`blocked_classes`, `blocked_functions` and `hard_blocked_methods` already default to
+Pimcore's built-in denylists in `default.yaml` (shown below, abbreviated) - a site's
+own `config/packages/pimcore.yaml` only needs to list what it wants to *add* on top of
+those defaults:
 
 ```yaml
 pimcore:
@@ -81,13 +96,50 @@ pimcore:
                 tags: ['set']
                 filters: ['escape', 'trans', 'default']
                 functions: ['path', 'asset']
-                # Extend the built-in class denylist (Dao/Connection/PDO/.../User).
-                # Only consulted while allowed_classes is empty.
-                blocked_classes: []
+                # Defaults to the built-in class denylist (Dao/Connection/PDO/.../User) -
+                # a site's own config is appended to it. Only consulted while
+                # allowed_classes is empty.
+                blocked_classes:
+                    - Pimcore\Model\Dao\AbstractDao
+                    - Doctrine\DBAL\Connection
+                    - PDO
+                    - PDOStatement
+                    - Symfony\Component\DependencyInjection\ContainerInterface
+                    - Symfony\Component\Process\Process
+                    - Pimcore\Model\User
                 # Non-empty => object allowlist mode. Deactivates the class denylist entirely.
                 allowed_classes: []
-                # Extend the built-in pimcore_* function denylist.
-                blocked_functions: []
+                # Defaults to the built-in pimcore_* function denylist - a site's own
+                # config is appended to it.
+                blocked_functions:
+                    - pimcore_asset
+                    - pimcore_asset_by_path
+                    - pimcore_document
+                    - pimcore_document_by_path
+                    - pimcore_document_wrap_hardlink
+                    - pimcore_object
+                    - pimcore_object_by_path
+                    - pimcore_object_classificationstore_group
+                    - pimcore_object_brick_definition_key
+                    - pimcore_site
+                    - pimcore_site_by_root_id
+                    - pimcore_site_by_domain
+                    - pimcore_site_current
+                    - pimcore_user
+                # FQCN => method names that are never callable, regardless of
+                # blocked_classes/allowed_classes. Defaults to a small set of
+                # secret/content-returning getters - a site's own config is merged
+                # with (not substituted for) this default.
+                hard_blocked_methods:
+                    Pimcore\Model\User:
+                        - getPassword
+                        - getPasswordRecoveryToken
+                        - getTwoFactorAuthentication
+                    Pimcore\Model\Asset:
+                        - getData
+                        - getStream
+                        - getLocalFile
+                        - getTemporaryFile
 ```
 
 ### Example: allowlist mode
@@ -108,11 +160,10 @@ pimcore:
                     - 'App\Mail\OrderConfirmationData'
 ```
 
-With this configuration, `blocked_classes` (and the built-in denylist) is ignored -
-any object that is not a `Product` or `OrderConfirmationData` (or a subclass)
-raises `Twig\Sandbox\SecurityNotAllowedMethodError` /
-`SecurityNotAllowedPropertyError` when a template tries to call a method or read a
-property on it.
+With this configuration, `blocked_classes` is ignored entirely - any object that is
+not a `Product` or `OrderConfirmationData` (or a subclass) raises
+`Twig\Sandbox\SecurityNotAllowedMethodError` / `SecurityNotAllowedPropertyError` when
+a template tries to call a method or read a property on it.
 
 ### Example: extending the denylist
 
@@ -129,6 +180,10 @@ pimcore:
                 blocked_classes:
                     - 'App\Service\SecretsProvider'
 ```
+
+A site's own config for `blocked_classes` is merged with Pimcore's shipped default,
+not substituted for it, so this results in the built-in denylist *plus*
+`App\Service\SecretsProvider` - not just the single entry shown above.
 
 ### Example: extending the function denylist
 
@@ -149,6 +204,12 @@ pimcore:
   that isn't installed) is skipped silently.
 - `blocked_functions` accepts exact Twig function names (as used in a template,
   e.g. `pimcore_user`) and is matched by string comparison.
+- `hard_blocked_methods` keys are FQCNs, matched the same way as `blocked_classes`;
+  each value is a list of method names, matched by string comparison.
+- `blocked_classes`, `blocked_functions` and `hard_blocked_methods` are Symfony
+  config array nodes, so a site's own value for any of them is merged with (appended
+  to) Pimcore's default rather than replacing it - there is no config-only way to
+  remove an entry from the shipped defaults.
 - The object and function mechanisms are independent of each other, and both are
   independent from the `tags` / `filters` allowlists, which still apply as before.
 - Changing these settings requires clearing the Symfony container cache

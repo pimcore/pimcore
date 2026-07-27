@@ -20,6 +20,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\User;
 use Pimcore\Twig\Sandbox\SecurityPolicy;
 use stdClass;
+use Symfony\Component\Yaml\Yaml;
 use Twig\Sandbox\SecurityNotAllowedFunctionError;
 use Twig\Sandbox\SecurityNotAllowedMethodError;
 use Twig\Sandbox\SecurityNotAllowedPropertyError;
@@ -29,9 +30,56 @@ use Twig\Sandbox\SecurityNotAllowedPropertyError;
  */
 final class SecurityPolicyTest extends TestCase
 {
+    /**
+     * The built-in denylists (blocked_classes/blocked_functions/hard_blocked_methods)
+     * live entirely in bundles/CoreBundle/config/pimcore/default.yaml, not in
+     * SecurityPolicy itself - read them from there so the "*ByDefault" tests below
+     * exercise the actual shipped defaults instead of a duplicated PHP fixture.
+     *
+     * @return array{blocked_classes: string[], blocked_functions: string[], hard_blocked_methods: array<string, string[]>}
+     */
+    private static function defaultSandboxSecurityPolicyConfig(): array
+    {
+        static $config = null;
+
+        if (null !== $config) {
+            return $config;
+        }
+
+        $path = __DIR__ . '/../../../../bundles/CoreBundle/config/pimcore/default.yaml';
+        $lines = file($path);
+
+        // Isolate the `templating_engine` block by indentation rather than parsing the
+        // whole file - default.yaml also contains an `!php/const` mapping key elsewhere
+        // (Doctrine connection options) that Symfony\Yaml cannot parse as a plain value.
+        $start = null;
+        $end = count($lines);
+        foreach ($lines as $i => $line) {
+            if (null === $start && str_starts_with($line, '    templating_engine:')) {
+                $start = $i;
+
+                continue;
+            }
+            if (null !== $start && $i > $start && preg_match('/^ {4}\S/', $line)) {
+                $end = $i;
+
+                break;
+            }
+        }
+
+        $fragment = implode('', array_map(
+            static fn (string $line): string => str_starts_with($line, '    ') ? substr($line, 4) : $line,
+            array_slice($lines, $start, $end - $start),
+        ));
+
+        $config = Yaml::parse($fragment)['templating_engine']['twig']['sandbox_security_policy'];
+
+        return $config;
+    }
+
     public function testBuiltInDenylistBlocksInfrastructureClassesByDefault(): void
     {
-        $policy = new SecurityPolicy();
+        $policy = new SecurityPolicy(blockedClasses: self::defaultSandboxSecurityPolicyConfig()['blocked_classes']);
 
         $this->expectException(SecurityNotAllowedMethodError::class);
         $policy->checkMethodAllowed($this->createStub(PDO::class), 'query');
@@ -39,7 +87,7 @@ final class SecurityPolicyTest extends TestCase
 
     public function testDenylistModeAllowsArbitraryObjectsNotOnTheList(): void
     {
-        $policy = new SecurityPolicy();
+        $policy = new SecurityPolicy(blockedClasses: self::defaultSandboxSecurityPolicyConfig()['blocked_classes']);
 
         // no exception expected
         $policy->checkMethodAllowed(new stdClass(), 'anything');
@@ -49,7 +97,10 @@ final class SecurityPolicyTest extends TestCase
 
     public function testBlockedClassesExtendsTheBuiltInDenylist(): void
     {
-        $policy = new SecurityPolicy(blockedClasses: [stdClass::class]);
+        $policy = new SecurityPolicy(blockedClasses: [
+            ...self::defaultSandboxSecurityPolicyConfig()['blocked_classes'],
+            stdClass::class,
+        ]);
 
         $this->expectException(SecurityNotAllowedMethodError::class);
         $policy->checkMethodAllowed(new stdClass(), 'anything');
@@ -121,7 +172,7 @@ final class SecurityPolicyTest extends TestCase
         // GHSA-7gfm-v2fx-xrxm: User::getPassword()/getPasswordRecoveryToken() and
         // getTwoFactorAuthentication() (returns the MFA secret, models/User.php:679) must
         // not be template-reachable. The whole class is blocked by default (defense in depth).
-        $policy = new SecurityPolicy();
+        $policy = new SecurityPolicy(blockedClasses: self::defaultSandboxSecurityPolicyConfig()['blocked_classes']);
 
         $this->expectException(SecurityNotAllowedMethodError::class);
         $policy->checkMethodAllowed(new User(), $method);
@@ -129,7 +180,7 @@ final class SecurityPolicyTest extends TestCase
 
     public function testUserPropertyAccessIsBlockedByDefault(): void
     {
-        $policy = new SecurityPolicy();
+        $policy = new SecurityPolicy(blockedClasses: self::defaultSandboxSecurityPolicyConfig()['blocked_classes']);
 
         $this->expectException(SecurityNotAllowedPropertyError::class);
         $policy->checkPropertyAllowed(new User(), 'password');
@@ -149,11 +200,11 @@ final class SecurityPolicyTest extends TestCase
     /**
      * @dataProvider assetContentMethodsProvider
      */
-    public function testAssetContentMethodsAreAlwaysBlockedByDefault(string $method): void
+    public function testAssetContentMethodsAreHardBlockedByDefault(string $method): void
     {
         // GHSA-7gfm-v2fx-xrxm: Asset stays reachable (needed for filename/thumbnail access
         // in templates), but its content-returning methods must never be callable.
-        $policy = new SecurityPolicy();
+        $policy = new SecurityPolicy(hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods']);
 
         $this->expectException(SecurityNotAllowedMethodError::class);
         $policy->checkMethodAllowed(new Asset(), $method);
@@ -161,7 +212,7 @@ final class SecurityPolicyTest extends TestCase
 
     public function testAssetIsOtherwiseReachableByDefault(): void
     {
-        $policy = new SecurityPolicy();
+        $policy = new SecurityPolicy(hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods']);
 
         // no exception expected: only the content-returning methods are blocked
         $policy->checkMethodAllowed(new Asset(), 'getId');
@@ -172,20 +223,26 @@ final class SecurityPolicyTest extends TestCase
     /**
      * @dataProvider userSecretMethodsProvider
      */
-    public function testAlwaysBlockedMethodsSurviveAllowlistModeForUser(string $method): void
+    public function testHardBlockedMethodsSurviveAllowlistModeForUser(string $method): void
     {
         // Even if a site explicitly allowlists User (e.g. to expose getFirstname()), the
         // secret-returning methods - including getTwoFactorAuthentication(), which returns
         // the MFA secret - must remain unreachable.
-        $policy = new SecurityPolicy(allowedClasses: [User::class]);
+        $policy = new SecurityPolicy(
+            allowedClasses: [User::class],
+            hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
+        );
 
         $this->expectException(SecurityNotAllowedMethodError::class);
         $policy->checkMethodAllowed(new User(), $method);
     }
 
-    public function testAlwaysBlockedMethodsSurviveAllowlistModeForAsset(): void
+    public function testHardBlockedMethodsSurviveAllowlistModeForAsset(): void
     {
-        $policy = new SecurityPolicy(allowedClasses: [Asset::class]);
+        $policy = new SecurityPolicy(
+            allowedClasses: [Asset::class],
+            hardBlockedMethods: self::defaultSandboxSecurityPolicyConfig()['hard_blocked_methods'],
+        );
 
         // getId remains reachable via the allowlist ...
         $policy->checkMethodAllowed(new Asset(), 'getId');
@@ -224,7 +281,7 @@ final class SecurityPolicyTest extends TestCase
     {
         // GHSA-7gfm-v2fx-xrxm remediation #3: the pimcore_* auto-allow must not cover
         // functions that hand back a live model instance looked up by id/path.
-        $policy = new SecurityPolicy();
+        $policy = new SecurityPolicy(blockedFunctions: self::defaultSandboxSecurityPolicyConfig()['blocked_functions']);
 
         $this->expectException(SecurityNotAllowedFunctionError::class);
         $policy->checkSecurity([], [], [$function]);
@@ -241,7 +298,7 @@ final class SecurityPolicyTest extends TestCase
 
     public function testOtherPimcoreFunctionsRemainAutoAllowedByDefault(): void
     {
-        $policy = new SecurityPolicy();
+        $policy = new SecurityPolicy(blockedFunctions: self::defaultSandboxSecurityPolicyConfig()['blocked_functions']);
 
         // a rendering/helper pimcore_* function not on the explicit-allow list
         $policy->checkSecurity([], [], ['pimcore_dump']);
@@ -258,7 +315,10 @@ final class SecurityPolicyTest extends TestCase
 
     public function testBlockedFunctionsExtendsTheBuiltInDenylist(): void
     {
-        $policy = new SecurityPolicy(blockedFunctions: ['pimcore_dump']);
+        $policy = new SecurityPolicy(blockedFunctions: [
+            ...self::defaultSandboxSecurityPolicyConfig()['blocked_functions'],
+            'pimcore_dump',
+        ]);
 
         $this->expectException(SecurityNotAllowedFunctionError::class);
         $policy->checkSecurity([], [], ['pimcore_dump']);
