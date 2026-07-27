@@ -11,6 +11,11 @@
 
 - [Composer] Bumped minimum requirement of `friendsofsymfony/jsrouting-bundle` to `3.6.0`.
 
+- [Assets][WebDAV] The Sabre HTML browser plugin on `/asset/webdav` is now only registered when
+  Pimcore runs in debug mode. In production the endpoint keeps serving WebDAV clients as before,
+  but opening it in a regular web browser no longer shows the HTML directory listing (and its
+  POST-based file/folder creation form is no longer exposed). No action needed for WebDAV clients.
+
 ### [Maintenance Mode]
 - The legacy file-based maintenance mode backward-compatibility layer has been fully removed. The following deprecated static methods have been deleted from `Pimcore\Tool\Admin`:
     - `getMaintenanceModeFile()`
