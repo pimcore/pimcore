@@ -2,6 +2,9 @@
 
 ## Pimcore 2026.3.0
 
+### [General]
+- [Composer] Bumped minimum requirements of `scheb/2fa-bundle` and `scheb/2fa-google-authenticator` to `8.6.1` and of `phpdocumentor/reflection-docblock` to `5.6.7` (5.x line) / `6.0.3` (6.x line). These are floor raises within the majors already required since 2026.1.0 and carry no BC impact of their own (see the 2026.1.0 notes below for the major-version upgrade guidance).
+
 ### [GenericExecutionEngine]
 - [JobRun] Log entries stored in the `generic_execution_engine_job_run.log` column are now delimited by a short versioned frame (a version token wrapped in ASCII record separators, `0x1E`) instead of a newline, so a newline that belongs to a single (multi-line) log message is no longer mistaken for an entry boundary. The version token is framed rather than using a bare `0x1E` so that legacy payloads, which were stored verbatim and may already contain a stray `0x1E`, are never split on such a byte. Logs written in the previous newline-delimited format are still read on a best-effort basis, so no migration is required. The parsing of the column has moved from `JobRun::getLogs()` into the new `@internal` `Pimcore\Bundle\GenericExecutionEngineBundle\Utils\LogParser`, and the `@internal` value object `LogLine` now takes the timestamp and message as separate constructor arguments and no longer exposes `appendLogLine()`.
 
