@@ -8,7 +8,7 @@ on:
       - "docs_actions"
     paths:
       - "doc/**"
-      - ".github/workflows/new-docs.yml"
+      - ".github/workflows/docs.yml"
       - "README.md"
   push:
     branches:
@@ -17,7 +17,7 @@ on:
       - "docs_actions"
     paths:
       - "doc/**"
-      - ".github/workflows/new-docs.yml"
+      - ".github/workflows/docs.yml"
       - "README.md"
 
 permissions:
@@ -25,6 +25,6 @@ permissions:
 
 jobs:
   docs:
-    uses: pimcore/workflows-collection-public/.github/workflows/reusable-docs.yaml@chore/docs-public-generator-no-token
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-docs.yaml@main
     with:
       docs_path: "doc"
