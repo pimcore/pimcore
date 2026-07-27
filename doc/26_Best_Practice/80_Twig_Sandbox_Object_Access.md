@@ -64,22 +64,44 @@ getters closed off no matter how the rest of the policy is configured.
 The `functions` option (see [Email Framework](../19_Development_Tools_and_Details/25_Email_Framework/README.md#sandbox-restrictions))
 is an explicit allowlist: a function must be listed there to be callable from a
 sandboxed template. Independently, any Twig function whose name starts with
-`pimcore_` is additionally auto-allowed, except for the `blocked_functions` denylist,
-which by default covers functions that look up and return a live model instance by
-id/path, whose getters can expose data outside the sandboxed template's intended
-scope (e.g. `pimcore_user(1)`, `pimcore_asset(id)` - see
-[Hard-blocked methods](#hard-blocked-methods) above for why those two are
-additionally hard-blocked at the object layer): `pimcore_asset`,
-`pimcore_asset_by_path`, `pimcore_document`, `pimcore_document_by_path`,
-`pimcore_document_wrap_hardlink`, `pimcore_object`, `pimcore_object_by_path`,
-`pimcore_object_classificationstore_group`, `pimcore_object_brick_definition_key`,
-`pimcore_site`, `pimcore_site_by_root_id`, `pimcore_site_by_domain`,
-`pimcore_site_current`, `pimcore_user`. Set `blocked_functions` to add more
-functions to this denylist.
+`pimcore_` is additionally auto-allowed, except for the `blocked_functions` denylist.
+By default, that denylist only contains `pimcore_user` (see
+[Hard-blocked methods](#hard-blocked-methods) above for why `User` getters are
+additionally hard-blocked at the object layer regardless).
 
-All other `pimcore_*` functions (rendering/helper functions such as `pimcore_dump`,
-`pimcore_url`, `pimcore_head_link`, the editable functions, ...) remain auto-allowed,
-so existing template rendering is unaffected.
+All other `pimcore_*` functions - including the other id/path lookup functions,
+`pimcore_asset`, `pimcore_asset_by_path`, `pimcore_document`,
+`pimcore_document_by_path`, `pimcore_document_wrap_hardlink`, `pimcore_object`,
+`pimcore_object_by_path`, `pimcore_object_classificationstore_group`,
+`pimcore_object_brick_definition_key`, `pimcore_site`, `pimcore_site_by_root_id`,
+`pimcore_site_by_domain`, `pimcore_site_current` - are auto-allowed by default, so
+existing template rendering is unaffected. Each of these hands back a live model
+instance looked up by an arbitrary id/path, which a sandboxed template can then call
+further getters on to reach data outside its intended scope. **For a high-security
+setup, add these to `blocked_functions`** (they're listed, commented out, in
+`default.yaml` - uncomment or copy them into a site's own config) to restore the
+stricter posture:
+
+```yaml
+pimcore:
+    templating_engine:
+        twig:
+            sandbox_security_policy:
+                blocked_functions:
+                    - pimcore_asset
+                    - pimcore_asset_by_path
+                    - pimcore_document
+                    - pimcore_document_by_path
+                    - pimcore_document_wrap_hardlink
+                    - pimcore_object
+                    - pimcore_object_by_path
+                    - pimcore_object_classificationstore_group
+                    - pimcore_object_brick_definition_key
+                    - pimcore_site
+                    - pimcore_site_by_root_id
+                    - pimcore_site_by_domain
+                    - pimcore_site_current
+```
 
 ## Configuration
 
@@ -110,21 +132,24 @@ pimcore:
                 # Non-empty => object allowlist mode. Deactivates the class denylist entirely.
                 allowed_classes: []
                 # Defaults to the built-in pimcore_* function denylist - a site's own
-                # config is appended to it.
+                # config is appended to it. Only pimcore_user is blocked out of the
+                # box; the id/path lookup functions below are shipped commented out -
+                # uncomment them (or add the equivalent to a site's own config) for a
+                # high-security setup.
                 blocked_functions:
-                    - pimcore_asset
-                    - pimcore_asset_by_path
-                    - pimcore_document
-                    - pimcore_document_by_path
-                    - pimcore_document_wrap_hardlink
-                    - pimcore_object
-                    - pimcore_object_by_path
-                    - pimcore_object_classificationstore_group
-                    - pimcore_object_brick_definition_key
-                    - pimcore_site
-                    - pimcore_site_by_root_id
-                    - pimcore_site_by_domain
-                    - pimcore_site_current
+                    # - pimcore_asset
+                    # - pimcore_asset_by_path
+                    # - pimcore_document
+                    # - pimcore_document_by_path
+                    # - pimcore_document_wrap_hardlink
+                    # - pimcore_object
+                    # - pimcore_object_by_path
+                    # - pimcore_object_classificationstore_group
+                    # - pimcore_object_brick_definition_key
+                    # - pimcore_site
+                    # - pimcore_site_by_root_id
+                    # - pimcore_site_by_domain
+                    # - pimcore_site_current
                     - pimcore_user
                 # FQCN => method names that are never callable, regardless of
                 # blocked_classes/allowed_classes. Defaults to a small set of
