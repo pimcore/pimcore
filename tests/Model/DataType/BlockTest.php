@@ -18,6 +18,8 @@ use Pimcore\Cache;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\BlockElement;
+use Pimcore\Model\DataObject\Data\Geobounds;
+use Pimcore\Model\DataObject\Data\GeoCoordinates;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Service;
@@ -94,6 +96,66 @@ class BlockTest extends ModelTestCase
         $hotspots[] = $hotspot2;
 
         return new Hotspotimage($image, $hotspots);
+    }
+
+    /**
+     * Every geo datatype must round-trip inside a Block. The block resource blob is read back via
+     * Block::getDataFromResource() -> Serialize::unserialize($data, false); this guards that the
+     * safe `false` there does not neutralise geo values (they are stored normalized, then rebuilt
+     * by each sub-field's denormalize()).
+     *
+     * @throws Exception
+     */
+    public function testGeoDataTypesInsideBlock(): void
+    {
+        $point = new GeoCoordinates(48.208174, 16.373819);
+        $bounds = new Geobounds(new GeoCoordinates(48.3, 16.5), new GeoCoordinates(48.1, 16.2));
+        $polygon = [
+            new GeoCoordinates(48.1, 16.1),
+            new GeoCoordinates(48.2, 16.2),
+            new GeoCoordinates(48.3, 16.3),
+        ];
+        $polyline = [
+            new GeoCoordinates(47.0, 15.0),
+            new GeoCoordinates(47.5, 15.5),
+        ];
+
+        $object = $this->createBlockObject();
+        $object->setTestblock([
+            [
+                'blockgeopoint' => new BlockElement('blockgeopoint', 'geopoint', $point),
+                'blockgeobounds' => new BlockElement('blockgeobounds', 'geobounds', $bounds),
+                'blockgeopolygon' => new BlockElement('blockgeopolygon', 'geopolygon', $polygon),
+                'blockgeopolyline' => new BlockElement('blockgeopolyline', 'geopolyline', $polyline),
+            ],
+        ]);
+        $object->save();
+
+        // Force-reload from the database so the block goes through the resource unserialize path.
+        $reloaded = DataObject::getById($object->getId(), ['force' => true]);
+        $data = $reloaded->getTestblock()[0];
+
+        $loadedPoint = $data['blockgeopoint']->getData();
+        $this->assertInstanceOf(GeoCoordinates::class, $loadedPoint);
+        $this->assertEqualsWithDelta(48.208174, $loadedPoint->getLatitude(), 1e-6);
+        $this->assertEqualsWithDelta(16.373819, $loadedPoint->getLongitude(), 1e-6);
+
+        $loadedBounds = $data['blockgeobounds']->getData();
+        $this->assertInstanceOf(Geobounds::class, $loadedBounds);
+        $this->assertEqualsWithDelta(48.3, $loadedBounds->getNorthEast()->getLatitude(), 1e-6);
+        $this->assertEqualsWithDelta(16.2, $loadedBounds->getSouthWest()->getLongitude(), 1e-6);
+
+        $loadedPolygon = $data['blockgeopolygon']->getData();
+        $this->assertIsArray($loadedPolygon);
+        $this->assertCount(3, $loadedPolygon);
+        $this->assertContainsOnlyInstancesOf(GeoCoordinates::class, $loadedPolygon);
+        $this->assertEqualsWithDelta(48.3, $loadedPolygon[2]->getLatitude(), 1e-6);
+
+        $loadedPolyline = $data['blockgeopolyline']->getData();
+        $this->assertIsArray($loadedPolyline);
+        $this->assertCount(2, $loadedPolyline);
+        $this->assertContainsOnlyInstancesOf(GeoCoordinates::class, $loadedPolyline);
+        $this->assertEqualsWithDelta(15.5, $loadedPolyline[1]->getLongitude(), 1e-6);
     }
 
     /**
