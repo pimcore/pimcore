@@ -280,10 +280,13 @@ class VersionTest extends TestCase
         $object = TestHelper::createEmptyObject();
 
         RuntimeCache::set('modeltest.testCalculatedValue.value', 'autoSaveValue');
-        $object->saveVersion(true, true, null, true);
+        $autoSaveVersion = $object->saveVersion(true, true, null, true);
+
+        $this->assertNotNull($autoSaveVersion, 'expected an auto-save version to be created');
+        $this->assertTrue($autoSaveVersion->isAutoSave(), 'expected the created version to be an auto-save version');
 
         /** @var Unittest $objectFromVersion */
-        $objectFromVersion = $this->getNewestVersion($object->getId())->loadData();
+        $objectFromVersion = $autoSaveVersion->loadData();
         RuntimeCache::set('modeltest.testCalculatedValue.value', 'currentValue');
 
         $this->assertNull($objectFromVersion->getCalculatedValueSnapshot(), 'auto-save versions must not capture calculated values');

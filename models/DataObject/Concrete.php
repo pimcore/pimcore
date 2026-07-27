@@ -96,7 +96,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @internal
      *
-     * @var array<string, scalar|null>|null
+     * @var array<string, scalar|array|null>|null
      */
     protected ?array $calculatedValueSnapshot = null;
 
@@ -336,7 +336,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @return array<string, scalar|null>|null
+     * @return array<string, scalar|array|null>|null
      */
     public function getCalculatedValueSnapshot(): ?array
     {
@@ -346,7 +346,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @param array<string, scalar|null>|null $calculatedValueSnapshot
+     * @param array<string, scalar|array|null>|null $calculatedValueSnapshot
      *
      * @return $this
      */

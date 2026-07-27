@@ -242,40 +242,48 @@ final class Version extends AbstractModel
      */
     private function captureCalculatedValueSnapshot(Concrete $source, Concrete $target): void
     {
-        // make sure values are computed freshly, even if $source itself was restored from a version
-        $source->setCalculatedValueSnapshot(null);
-
+        /** @var array<string, scalar|array|null> $snapshot */
         $snapshot = [];
 
-        foreach ($source->getClass()->getFieldDefinitions() as $fieldName => $fieldDefinition) {
-            if ($fieldDefinition instanceof Data\CalculatedValue) {
-                $context = new DataObject\Data\CalculatedValue($fieldName);
-                $context->setContextualData('object', null, null, null, null, null, $fieldDefinition);
-                $this->addCalculatedValueSnapshotEntry($snapshot, $source, $context);
-            } elseif ($fieldDefinition instanceof Data\Localizedfields) {
-                foreach ($fieldDefinition->getFieldDefinitions() as $localizedFieldName => $localizedFieldDefinition) {
-                    if ($localizedFieldDefinition instanceof Data\CalculatedValue) {
-                        foreach (Tool::getValidLanguages() as $language) {
-                            $context = new DataObject\Data\CalculatedValue($localizedFieldName);
-                            $context->setContextualData('localizedfield', 'localizedfields', null, $language, null, null, $localizedFieldDefinition);
-                            $this->addCalculatedValueSnapshotEntry($snapshot, $source, $context);
+        // compute with the snapshot of $source temporarily disabled, so values are computed
+        // freshly even if $source itself was restored from a version; only the serialized
+        // $target receives the new snapshot, $source is left untouched
+        $originalSnapshot = $source->getCalculatedValueSnapshot();
+        $source->setCalculatedValueSnapshot(null);
+
+        try {
+            foreach ($source->getClass()->getFieldDefinitions() as $fieldName => $fieldDefinition) {
+                if ($fieldDefinition instanceof Data\CalculatedValue) {
+                    $context = new DataObject\Data\CalculatedValue($fieldName);
+                    $context->setContextualData('object', null, null, null, null, null, $fieldDefinition);
+                    $this->addCalculatedValueSnapshotEntry($snapshot, $source, $context);
+                } elseif ($fieldDefinition instanceof Data\Localizedfields) {
+                    foreach ($fieldDefinition->getFieldDefinitions() as $localizedFieldName => $localizedFieldDefinition) {
+                        if ($localizedFieldDefinition instanceof Data\CalculatedValue) {
+                            foreach (Tool::getValidLanguages() as $language) {
+                                $context = new DataObject\Data\CalculatedValue($localizedFieldName);
+                                $context->setContextualData('localizedfield', 'localizedfields', null, $language, null, null, $localizedFieldDefinition);
+                                $this->addCalculatedValueSnapshotEntry($snapshot, $source, $context);
+                            }
                         }
                     }
                 }
             }
+        } finally {
+            $source->setCalculatedValueSnapshot($originalSnapshot);
         }
 
         $target->setCalculatedValueSnapshot($snapshot !== [] ? $snapshot : null);
     }
 
     /**
-     * @param array<string, scalar|null> $snapshot
+     * @param array<string, scalar|array|null> $snapshot
      */
     private function addCalculatedValueSnapshotEntry(array &$snapshot, Concrete $source, DataObject\Data\CalculatedValue $context): void
     {
         try {
             $value = DataObject\Service::getCalculatedFieldValue($source, $context);
-        } catch (\Throwable $e) {
+        } catch (Exception $e) {
             Logger::warning(sprintf(
                 'Could not capture calculated value of field "%s" for version of object %d: %s',
                 $context->getFieldname(),
@@ -286,16 +294,39 @@ final class Version extends AbstractModel
             return;
         }
 
-        if ($value !== null && !is_scalar($value)) {
+        if (!$this->isSerializationSafeCalculatedValue($value)) {
             if ($value instanceof \Stringable) {
                 $value = (string) $value;
             } else {
-                // non-serializable-safe value, let version views fall back to live recomputation
+                // value cannot be stored safely in the serialized version data (e.g. objects,
+                // arrays containing objects), let version views fall back to live recomputation
                 return;
             }
         }
 
         $snapshot[DataObject\Service::getCalculatedValueSnapshotKey($context)] = $value;
+    }
+
+    /**
+     * @phpstan-assert-if-true scalar|array|null $value
+     */
+    private function isSerializationSafeCalculatedValue(mixed $value): bool
+    {
+        if ($value === null || is_scalar($value)) {
+            return true;
+        }
+
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                if (!$this->isSerializationSafeCalculatedValue($item)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     private function unmarshalData(ElementInterface $data): mixed
