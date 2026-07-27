@@ -1197,14 +1197,8 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        $snapshot = $object->getCalculatedValueSnapshot();
-        if ($snapshot !== null) {
-            $snapshotKey = self::getCalculatedValueSnapshotKey($data);
-            if (array_key_exists($snapshotKey, $snapshot)) {
-                return $snapshot[$snapshotKey] === null ? null : (string) $snapshot[$snapshotKey];
-            }
-        }
-
+        // no snapshot lookup here on purpose: the admin edit view always shows freshly computed values,
+        // version snapshots are only used by getCalculatedFieldValue() (version previews/comparisons, getters)
         return DataObject\Service::useInheritedValues(true, static function () use ($fd, $object, $data) {
             switch ($fd->getCalculatorType()) {
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:

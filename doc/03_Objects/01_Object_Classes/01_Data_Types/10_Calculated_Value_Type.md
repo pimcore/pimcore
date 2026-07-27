@@ -254,6 +254,7 @@ When a version of an object is created, the current values of calculated fields 
 localized fields) are computed and stored as part of the version snapshot. Version previews and
 version comparisons therefore show the value as of the snapshot, not a freshly computed one.
 Objects restored from a version return these snapshot values from the calculated-field getters until
-they are saved again. For versions created before this feature existed — and for calculated fields
-inside field collections, object bricks or classification stores — the value is computed live as a
-fallback.
+they are saved again. The admin edit view is not affected: it always shows freshly computed values,
+even when a draft version is loaded. For versions created before this feature existed — and for
+calculated fields inside field collections, object bricks or classification stores — the value is
+computed live as a fallback.
