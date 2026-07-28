@@ -479,7 +479,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function save(array $parameters = []): static
     {
         $isUpdate = false;
-        $isDirtyDetectionDisabled = null;
+        $isDirtyDetectionDisabled = false;
         $updatedChildren = [];
         $differentOldPath = '';
         $hideUnpublishedBackup = false;

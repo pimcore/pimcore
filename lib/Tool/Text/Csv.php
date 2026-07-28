@@ -95,22 +95,19 @@ class Csv
             }
         }
 
-        if (!$matches) {
+        if (empty($matches[2])) {
             return ['', null];
         } // couldn't guess quote or delim
 
         $quotes = array_count_values($matches[2]);
         arsort($quotes);
         $quotes = array_flip($quotes);
-        if ($quote = array_shift($quotes)) {
-            $delims = array_count_values($matches[1]);
-            arsort($delims);
-            $delims = array_flip($delims);
-            $delim = array_shift($delims);
-        } else {
-            $quote = '';
-            $delim = null;
-        }
+        $quote = array_shift($quotes);
+
+        $delims = array_count_values($matches[1]);
+        arsort($delims);
+        $delims = array_flip($delims);
+        $delim = array_shift($delims);
 
         return [$quote, $delim];
     }

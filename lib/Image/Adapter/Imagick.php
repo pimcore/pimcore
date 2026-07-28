@@ -124,9 +124,9 @@ class Imagick extends Adapter
             }
 
             if ($this->checkPreserveAnimation($i->getImageFormat(), $i, false)) {
-                if (!$this->resource->readImage($imagePath) || !filesize($imagePath)) {
-                    return false;
-                }
+                // \Imagick::readImage() throws on failure (it never returns false) and
+                // a non-empty file size was already ensured when the image was read above
+                $this->resource->readImage($imagePath);
                 $this->resource = $this->resource->coalesceImages();
             }
 
