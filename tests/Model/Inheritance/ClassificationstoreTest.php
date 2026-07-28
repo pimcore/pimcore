@@ -108,6 +108,19 @@ class ClassificationstoreTest extends ModelTestCase
             $keygroup2->setSorter(2);
             $keygroup2->save();
         }
+
+        $collection = Classificationstore\CollectionConfig::getByName('collection1', $store->getId());
+        if (!$collection) {
+            $collection = new Classificationstore\CollectionConfig();
+            $collection->setStoreId($store->getId());
+            $collection->setName('collection1');
+            $collection->save();
+        }
+
+        $collectionRelation = new Classificationstore\CollectionGroupRelation();
+        $collectionRelation->setColId($collection->getId());
+        $collectionRelation->setGroupId($group->getId());
+        $collectionRelation->save();
     }
 
     /**
@@ -160,6 +173,98 @@ class ClassificationstoreTest extends ModelTestCase
             //check inherited & overriden value from parent
             $this->assertEquals('oneinput1', $oneStore->getLocalizedKeyValue($group->getId(), $key1->getId()));
             $this->assertEquals('oneinput2', $oneStore->getLocalizedKeyValue($group->getId(), $key2->getId()));
+        });
+    }
+
+    /**
+     * An empty group added via a collection must keep its group-collection mapping after a
+     * save/reload round-trip, also when the object has an inheritable parent without an own mapping.
+     *
+     * @see https://pimcore.atlassian.net/browse/PEES-1225
+     */
+    public function testGroupCollectionMappingPersistsForEmptyGroups(): void
+    {
+        $group = Classificationstore\GroupConfig::getByName('group1');
+        $collection = Classificationstore\CollectionConfig::getByName('collection1');
+
+        $parent = new Inheritance();
+        $parent->setKey('mapping-parent');
+        $parent->setParentId(1);
+        $parent->setPublished(true);
+        $parent->save();
+
+        $child = new Inheritance();
+        $child->setKey('mapping-child');
+        $child->setParentId($parent->getId());
+        $child->setPublished(true);
+
+        /** @var Classificationstore $childStore */
+        $childStore = $child->getTeststore();
+        $childStore->setActiveGroups([$group->getId() => true]);
+        $childStore->setGroupCollectionMapping($group->getId(), $collection->getId());
+        $child->save();
+
+        /** @var Inheritance $reloadedChild */
+        $reloadedChild = Inheritance::getById($child->getId(), ['force' => true]);
+        /** @var Classificationstore $reloadedStore */
+        $reloadedStore = $reloadedChild->getTeststore();
+
+        $this->assertEquals([$group->getId() => true], $reloadedStore->getActiveGroups());
+        $this->assertEquals(
+            [$group->getId() => $collection->getId()],
+            $reloadedStore->getGroupCollectionMappings(),
+            'group-collection mapping of an empty group must survive a save/reload round-trip'
+        );
+    }
+
+    /**
+     * A mapping that matches the inheritable parent's mapping is not persisted on the child,
+     * but stays available through inheritance.
+     */
+    public function testInheritedGroupCollectionMappingIsNotPersistedOnChild(): void
+    {
+        $group = Classificationstore\GroupConfig::getByName('group1');
+        $collection = Classificationstore\CollectionConfig::getByName('collection1');
+
+        $parent = new Inheritance();
+        $parent->setKey('mapping-parent');
+        $parent->setParentId(1);
+        $parent->setPublished(true);
+
+        /** @var Classificationstore $parentStore */
+        $parentStore = $parent->getTeststore();
+        $parentStore->setActiveGroups([$group->getId() => true]);
+        $parentStore->setGroupCollectionMapping($group->getId(), $collection->getId());
+        $parent->save();
+
+        $child = new Inheritance();
+        $child->setKey('mapping-child');
+        $child->setParentId($parent->getId());
+        $child->setPublished(true);
+
+        /** @var Classificationstore $childStore */
+        $childStore = $child->getTeststore();
+        $childStore->setActiveGroups([$group->getId() => true]);
+        $childStore->setGroupCollectionMapping($group->getId(), $collection->getId());
+        $child->save();
+
+        /** @var Inheritance $reloadedChild */
+        $reloadedChild = Inheritance::getById($child->getId(), ['force' => true]);
+        /** @var Classificationstore $reloadedStore */
+        $reloadedStore = $reloadedChild->getTeststore();
+
+        $this->assertEquals(
+            [],
+            $reloadedStore->getGroupCollectionMappings(),
+            'mapping covered by the parent must not be persisted on the child'
+        );
+
+        DataObject\Service::useInheritedValues(true, function () use ($reloadedStore, $group, $collection) {
+            $this->assertEquals(
+                [$group->getId() => $collection->getId()],
+                $reloadedStore->getGroupCollectionMappings(),
+                'mapping covered by the parent must be available through inheritance'
+            );
         });
     }
 }
