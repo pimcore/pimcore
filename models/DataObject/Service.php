@@ -550,16 +550,11 @@ class Service extends Model\Element\Service
         try {
             $object = new DataObject();
 
-            $pathElements = explode('/', $path);
-            $keyIdx = count($pathElements) - 1;
-            $key = $pathElements[$keyIdx];
-            $validKey = Element\Service::getValidKey($key, 'object');
-
-            unset($pathElements[$keyIdx]);
-            $pathOnly = implode('/', $pathElements);
-
-            if ($validKey == $key && self::isValidPath($pathOnly, 'object')) {
-                $object->getDao()->getByPath($path);
+            if (self::isValidPath($path, 'object')) {
+                Element\Service::getByPathWithNfcFallback(
+                    fn (string $candidate) => $object->getDao()->getByPath($candidate),
+                    $path
+                );
 
                 return true;
             }

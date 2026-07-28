@@ -51,6 +51,29 @@ Pimcore ships with the following adapters:
 - **Statistics Explorer** (Enterprise) - aggregation and pivot-table reports via
   [Statistics Explorer Custom Report Integration](https://github.com/pimcore/statistics-explorer/blob/doc-refactoring/doc/04_Custom_Report_Integration/README.md)
 
+### Enabling/Disabling Adapters
+
+Each registered adapter can be enabled or disabled via the `enabled_adapters` option. Adapters that are not listed
+default to enabled.
+
+```yaml
+pimcore_custom_reports:
+    enabled_adapters:
+        sql: true
+        myAdapter: false
+```
+
+Trying to use a disabled adapter throws an exception.
+
+:::caution
+
+We recommend disabling the built-in `sql` adapter (`enabled_adapters: { sql: false }`) unless you specifically need
+it. Any user with the `reports_config` permission can use it to define arbitrary `SELECT` statements against your
+application's database, including tables it was never intended to expose (e.g. the users table). Only keep it
+enabled for trusted users, and grant `reports_config` sparingly.
+
+:::
+
 ## Custom Report Permissions
 
 Custom report permissions control report visibility:

@@ -2,6 +2,9 @@
 
 ## Pimcore 2026.3.0
 
+### [General]
+- [Composer] Bumped minimum requirements of `scheb/2fa-bundle` and `scheb/2fa-google-authenticator` to `8.6.1` and of `phpdocumentor/reflection-docblock` to `5.6.7` (5.x line) / `6.0.3` (6.x line). These are floor raises within the majors already required since 2026.1.0 and carry no BC impact of their own (see the 2026.1.0 notes below for the major-version upgrade guidance).
+
 ### [Maintenance]
 - [DataObjects] The `cleanupBrickTables` and `cleanupFieldcollectionTables` maintenance tasks now **drop orphaned `object_brick_*` / `object_collection_*` tables** (including their data) when no existing brick/fieldcollection definition owns them - previously such tables were only reported as an error on every maintenance run. This affects installations where definitions were removed on the filesystem (e.g. by deleting `var/classes/*.php` files during a deployment) instead of through the regular delete path. A table is only dropped when no candidate parse of its name resolves to a live definition, and the tasks do nothing when the class definition directory itself is unavailable; still, make sure the definitions in `var/classes/` are in sync with your database before running maintenance. See [Cleanup Data Storage](../11_Deployment_Recommendations/04_Cleanup_Data_Storage.md).
 - The `@internal` `Pimcore\Maintenance\Tasks\DataObject\DataObjectTaskHelperInterface` changed: `getCollectionNames(string $dir)` was replaced by `getObjectBrickCollectionNames()` / `getFieldcollectionCollectionNames()`, and `matchCollectionKeys()`, `dropOrphanedTable()` were added; `cleanupTable()` now returns `bool`.
@@ -11,6 +14,9 @@
 
 ### [Assets]
 - [Thumbnails] The cache lifetime used for the `Cache-Control` and `Expires` HTTP headers when a thumbnail is delivered on-the-fly through the thumbnail service is now configurable via `pimcore.assets.thumbnails.cache_lifetime` (in seconds). It defaults to `604800` (one week), which preserves the previous hard-coded behavior.
+
+### [DataObject]
+- [Relations] The `ownername` column has been widened from `VARCHAR(70)` to `VARCHAR(190)` in the per-class relation tables (`object_relations_*`), the advanced-relation metadata tables (`object_metadata_*`) and `object_url_slugs`. The generated `ownername` for a localized field nested inside an object brick or field collection (e.g. `/objectbrick~<field>/<brickKey>/localizedfield~localizedfield`) can exceed 70 characters, which caused "Data too long for column 'ownername'" on save under strict SQL mode. Existing installations are updated automatically by the migration `Version20260721000000`; no code or configuration changes are required.
 
 
 ## Pimcore 2026.2.0
@@ -98,6 +104,19 @@ ORDER BY TABLE_NAME, COLUMN_NAME;
 - Added support for PHP `8.5` and bumped minimum requirement of Symfony to `7.4`.
 - Dropped support for PHP `8.3` and Symfony `6`.
 - [QuantityValue] Introduced foreign key constraints on `__unit` columns in object store, query, localized, objectbrick and fieldcollection tables for `QuantityValue`, `InputQuantityValue` and `QuantityValueRange` fields. These constraints reference `quantityvalue_units(id)` with `ON DELETE SET NULL` and `ON UPDATE CASCADE`, ensuring referential integrity. The migration automatically cleans up orphaned unit references (setting them to `NULL`) and changes the `__unit` column type from `varchar(64)` to `varchar(50)` to match the referenced `quantityvalue_units.id` column. If you have custom unit IDs longer than 50 characters, they will be truncated.
+
+#### Composer Dependency Majors: `scheb/2fa` 8.x and `phpdocumentor/reflection-docblock` 6.x
+
+- [Composer] The constraint for `scheb/2fa-bundle` and `scheb/2fa-google-authenticator` has been raised from `^6.0 || ^7.5` to `^8.4`. Projects still on scheb/2fa 6.x/7.x are forced onto 8.x when upgrading. Pimcore's own integration (`Pimcore\Security\User\User`, the `scheb_two_factor.security.google_authenticator` service and the admin 2FA flow) is fully compatible — no action is needed for standard setups. Review the following if your project extends 2FA (see also the [official upgrade guide](https://github.com/scheb/2fa/blob/8.x/UPGRADE.md)):
+    - The priority of the two-factor authenticator has changed from `0` to `-100`. If you register custom security authenticators on a 2FA-protected firewall and rely on their order relative to the two-factor authenticator, re-check and adjust their priority.
+    - With Symfony 7.4, passing an associative options array to the `UserTotpCode` and `UserGoogleTotpCode` validator constraints is deprecated; Symfony 8 no longer accepts it. Pass named constructor arguments instead (e.g. `new UserTotpCode(message: '...')`).
+    - `getGoogleAuthenticatorUsername()` and `getTotpAuthenticationUsername()` on the scheb model interfaces may now return `null`; code consuming these values should handle it.
+    - scheb/2fa 8.x requires PHP >= 8.4, which matches Pimcore's platform requirement, and pulls in `spomky-labs/otphp` 11.x transitively.
+- [Composer] The constraint for `phpdocumentor/reflection-docblock` has been widened from `^5.2` to `^5.6 || ^6.0`, so a `composer update` may resolve to 6.x. Pimcore does not use this library directly (it is a transitive dependency of the Symfony PropertyInfo/Serializer components, which support 6.x), so no action is needed unless your own code parses docblocks with it. In that case, note for 6.x (see the [upgrade guide](https://docs.phpdoc.org/components/reflection-docblock/guides/upgrade-to-v6.html)):
+    - The static `::create()` factory methods on tag classes (e.g. `Param::create()`, `Method::create()`) have been removed; create tags through `StandardTagFactory::createInstance()` instead. `StandardTagFactory` can no longer be instantiated directly with `new`.
+    - `Method::getArguments()` has been removed.
+    - `phpdocumentor/type-resolver` is bumped to 2.0, which replaces the legacy `Collection` type handling with real generics support (e.g. `Collection<MyClass>`).
+    - If your project is not ready for 6.x, you can keep the 5.x line by requiring `"phpdocumentor/reflection-docblock": "^5.6"` in your project's `composer.json`.
 
 #### Removed deprecated and discontinued bundles
 The following bundles have been removed:

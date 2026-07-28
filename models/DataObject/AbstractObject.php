@@ -269,7 +269,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         try {
             $object = new static();
-            $object->getDao()->getByPath($path);
+
+            Model\Element\Service::getByPathWithNfcFallback(
+                fn (string $candidate) => $object->getDao()->getByPath($candidate),
+                $path
+            );
 
             return static::getById($object->getId(), Model\Element\Service::prepareGetByIdParams($params));
         } catch (Model\Exception\NotFoundException $e) {

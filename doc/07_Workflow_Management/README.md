@@ -81,7 +81,7 @@ and a complete YAML reference with all available options.
 ## Workflow Designer (Enterprise)
 
 The Workflow Designer provides a visual editor for creating and managing workflows in Pimcore Studio.
-See [Workflow Designer documentation](https://github.com/pimcore/workflow-designer/blob/2026.x/doc/01_Installation_and_Configuration.md)
+See [Workflow Designer documentation](https://github.com/pimcore/workflow-designer/blob/2026.x/doc/01_Installation_and_Configuration/README.md)
 for installation and configuration details.
 
 ## Working with the PHP API
