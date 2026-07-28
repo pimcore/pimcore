@@ -55,20 +55,28 @@ class DataObjectTaskHelper implements DataObjectTaskHelperInterface
         return $mapLowerToActual;
     }
 
-    public function matchCollectionKey(string $tableIdentifier, array $collectionNames): ?string
+    /**
+     * @param array<string, string> $collectionNames lowercased => actual collection key
+     *
+     * @return string[]
+     */
+    public function matchCollectionKeys(string $tableIdentifier, array $collectionNames): array
     {
-        $match = null;
+        $matches = [];
         foreach ($collectionNames as $key) {
-            // Case-insensitive, underscore-delimited prefix match. Prefer the longest matching key
-            // so that e.g. "Foo_Bar" wins over "Foo" when both definitions exist.
-            if (stripos($tableIdentifier, $key . '_') === 0
-                && ($match === null || strlen($key) > strlen($match))
-            ) {
-                $match = $key;
+            // Case-insensitive, underscore-delimited prefix match.
+            if (stripos($tableIdentifier, $key . '_') === 0) {
+                $matches[] = $key;
             }
         }
 
-        return $match;
+        // Because both collection keys and class ids may contain underscores, several keys can
+        // claim the same identifier (e.g. "Foo" and "Foo_Bar" both match "Foo_Bar_5"). Longest
+        // (most specific) key first: its class-id split is the most likely correct one, and the
+        // caller probes the candidates in order until one resolves to a live class.
+        usort($matches, static fn (string $a, string $b): int => strlen($b) <=> strlen($a));
+
+        return $matches;
     }
 
     public function dropOrphanedTable(string $tableName): void
@@ -84,12 +92,11 @@ class DataObjectTaskHelper implements DataObjectTaskHelperInterface
     ): bool {
         $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
         if (!$classDefinition) {
-            // The collection key matched a live definition, but the class id encoded in the table
-            // name does not resolve to any existing class. This is the ambiguous-underscore case
-            // (e.g. live "Foo", removed "Foo_Bar": the table "object_brick_store_Foo_Bar_5" resolves
-            // to key "Foo" and a bogus class id "Bar_5"), or the owning class itself was deleted.
-            // Either way no live definition owns the table - report it as unowned so the caller drops
-            // it instead of logging the same error on every maintenance run.
+            // The collection key matched a live definition, but the class id of this particular
+            // parse does not resolve to any existing class - either the split point was wrong
+            // (underscores make it ambiguous) or the owning class itself was deleted. Report the
+            // parse as not-owning so the caller can try the remaining candidate parses and only
+            // drop the table when none of them resolves to a live class.
             return false;
         }
 

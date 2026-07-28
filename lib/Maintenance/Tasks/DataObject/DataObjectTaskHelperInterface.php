@@ -37,13 +37,19 @@ interface DataObjectTaskHelperInterface
     public function getFieldcollectionCollectionNames(): array;
 
     /**
-     * Returns the actual (case-preserved) collection key from $collectionNames that owns the given
-     * table identifier (the part of the table name following the type prefix), or null if none does.
-     * A table is only considered owned when a known key is a full, underscore-delimited prefix of the
-     * identifier - so keys containing underscores are matched correctly and live tables are never
-     * mistaken for orphans.
+     * Returns every actual (case-preserved) collection key from $collectionNames that could own the
+     * given table identifier (the part of the table name following the type prefix), longest key
+     * first, or an empty array if none could. A key is a candidate owner only when it is a full,
+     * underscore-delimited prefix of the identifier. Because both keys and class ids may contain
+     * underscores, several keys can claim the same identifier - the caller must probe each candidate
+     * parse (via {@see cleanupTable()}) and may treat the table as orphaned only when no candidate
+     * resolves to a live class, so live tables are never mistaken for orphans.
+     *
+     * @param array<string, string> $collectionNames lowercased => actual collection key
+     *
+     * @return string[]
      */
-    public function matchCollectionKey(string $tableIdentifier, array $collectionNames): ?string;
+    public function matchCollectionKeys(string $tableIdentifier, array $collectionNames): array;
 
     /**
      * Drops a table that no longer belongs to any existing definition.
@@ -54,10 +60,10 @@ interface DataObjectTaskHelperInterface
      * Cleans up stale field columns/rows of a brick/fieldcollection table that belongs to the class
      * identified by $classId.
      *
-     * Returns false when no class definition exists for $classId. Because both collection keys and
-     * class ids may contain underscores, a key match alone does not prove ownership: the class id
-     * parsed out of the table name must resolve to a live class. A false return therefore means the
-     * table is not owned by any live definition and the caller should treat it as an orphan.
+     * Returns false when no class definition exists for $classId, i.e. this particular parse of the
+     * table name does not correspond to a live class. The caller should then try the remaining
+     * candidate parses from {@see matchCollectionKeys()} and treat the table as an orphan only when
+     * every parse fails to resolve.
      */
     public function cleanupTable(
         string $tableName,

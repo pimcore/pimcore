@@ -59,8 +59,8 @@ class CleanupBrickTablesTaskHelperTest extends TestCase
 
         $helper = $this->createMock(DataObjectTaskHelperInterface::class);
         $helper->method('getObjectBrickCollectionNames')->willReturn($collectionNames);
-        $helper->method('matchCollectionKey')->willReturnCallback(
-            static fn (string $id, array $names): ?string => $matcher->matchCollectionKey($id, $names)
+        $helper->method('matchCollectionKeys')->willReturnCallback(
+            static fn (string $id, array $names): array => $matcher->matchCollectionKeys($id, $names)
         );
         // Models the real cleanupTable(): it keeps the table (returns true) only when the parsed
         // class id resolves to a live class definition, and reports it as unowned otherwise.
@@ -160,5 +160,26 @@ class CleanupBrickTablesTaskHelperTest extends TestCase
         );
 
         $this->assertSame(['object_brick_store_Foo_Bar_5'], $dropped);
+    }
+
+    /**
+     * Regression: when "Foo" and "Foo_Bar" are both live, "object_brick_store_Foo_Bar_5" is
+     * ambiguous - it may belong to brick "Foo_Bar" on class "5" or to brick "Foo" on class "Bar_5".
+     * The table is owned as soon as ANY parse resolves to a live class; relying only on the longest
+     * key would drop the live table of brick "Foo" on class "Bar_5" whenever class "5" is missing.
+     */
+    public function testAmbiguousTableIsKeptWhenAnyParseResolvesToLiveClass(): void
+    {
+        $collectionNames = ['foo' => 'Foo', 'foo_bar' => 'Foo_Bar'];
+        $tables = ['store' => ['object_brick_store_Foo_Bar_5']];
+
+        // Class "5" does not exist, but "Bar_5" does: the table belongs to brick "Foo" -> kept.
+        $this->assertSame([], $this->runTask($collectionNames, $tables, ['Bar_5']));
+
+        // Class "5" exists: the table belongs to brick "Foo_Bar" -> kept.
+        $this->assertSame([], $this->runTask($collectionNames, $tables, ['5']));
+
+        // No parse resolves to a live class: only then is the table an orphan -> dropped.
+        $this->assertSame(['object_brick_store_Foo_Bar_5'], $this->runTask($collectionNames, $tables, []));
     }
 }

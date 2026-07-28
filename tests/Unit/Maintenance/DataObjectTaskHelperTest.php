@@ -24,14 +24,15 @@ use Psr\Log\LoggerInterface;
  *
  * The dangerous case is a definition key that contains an underscore (keys are validated as
  * /^[a-zA-Z]\w*$/): a naive "split at the first underscore" would resolve a live table to the wrong
- * key, fail the existence check, and drop a table that still holds data. matchCollectionKey() must
- * therefore only report a table as orphaned when no existing key owns it.
+ * key, fail the existence check, and drop a table that still holds data. matchCollectionKeys() must
+ * therefore return every key that could own a table - a table may only be treated as orphaned when
+ * no candidate parse resolves to a live class.
  */
 class DataObjectTaskHelperTest extends TestCase
 {
     private function createHelper(): DataObjectTaskHelper
     {
-        // matchCollectionKey() is pure logic and touches neither the logger nor the connection.
+        // matchCollectionKeys() is pure logic and touches neither the logger nor the connection.
         return new DataObjectTaskHelper(
             $this->createMock(LoggerInterface::class),
             $this->createMock(Connection::class)
@@ -46,8 +47,8 @@ class DataObjectTaskHelperTest extends TestCase
         $helper = $this->createHelper();
         $names = ['foo' => 'Foo'];
 
-        $this->assertSame('Foo', $helper->matchCollectionKey('Foo_5', $names));
-        $this->assertNull($helper->matchCollectionKey('Bar_5', $names));
+        $this->assertSame(['Foo'], $helper->matchCollectionKeys('Foo_5', $names));
+        $this->assertSame([], $helper->matchCollectionKeys('Bar_5', $names));
     }
 
     /**
@@ -59,22 +60,22 @@ class DataObjectTaskHelperTest extends TestCase
         $helper = $this->createHelper();
 
         $this->assertSame(
-            'Foo_Bar',
-            $helper->matchCollectionKey('Foo_Bar_5', ['foo_bar' => 'Foo_Bar'])
+            ['Foo_Bar'],
+            $helper->matchCollectionKeys('Foo_Bar_5', ['foo_bar' => 'Foo_Bar'])
         );
     }
 
     /**
-     * When several keys share a prefix, the longest (most specific) one wins so the class id is
-     * split off correctly.
+     * When several keys share a prefix, every one of them is a candidate owner, ordered longest
+     * (most specific) first so the caller probes the most likely class-id split before the others.
      */
-    public function testLongestKeyWins(): void
+    public function testAllCandidateKeysAreReturnedLongestFirst(): void
     {
         $helper = $this->createHelper();
         $names = ['foo' => 'Foo', 'foo_bar' => 'Foo_Bar'];
 
-        $this->assertSame('Foo_Bar', $helper->matchCollectionKey('Foo_Bar_5', $names));
-        $this->assertSame('Foo', $helper->matchCollectionKey('Foo_5', $names));
+        $this->assertSame(['Foo_Bar', 'Foo'], $helper->matchCollectionKeys('Foo_Bar_5', $names));
+        $this->assertSame(['Foo'], $helper->matchCollectionKeys('Foo_5', $names));
     }
 
     /**
@@ -86,9 +87,9 @@ class DataObjectTaskHelperTest extends TestCase
         $helper = $this->createHelper();
 
         // "Foo" was removed, "Foobar" survives: the "Foo_5" table is a genuine orphan.
-        $this->assertNull($helper->matchCollectionKey('Foo_5', ['foobar' => 'Foobar']));
+        $this->assertSame([], $helper->matchCollectionKeys('Foo_5', ['foobar' => 'Foobar']));
         // "Foo" was removed, "Foo_Bar" survives: "Foo_5" does not belong to "Foo_Bar".
-        $this->assertNull($helper->matchCollectionKey('Foo_5', ['foo_bar' => 'Foo_Bar']));
+        $this->assertSame([], $helper->matchCollectionKeys('Foo_5', ['foo_bar' => 'Foo_Bar']));
     }
 
     /**
@@ -98,7 +99,7 @@ class DataObjectTaskHelperTest extends TestCase
     {
         $helper = $this->createHelper();
 
-        $this->assertSame('Foo', $helper->matchCollectionKey('foo_5', ['foo' => 'Foo']));
+        $this->assertSame(['Foo'], $helper->matchCollectionKeys('foo_5', ['foo' => 'Foo']));
     }
 
     /**
@@ -108,7 +109,7 @@ class DataObjectTaskHelperTest extends TestCase
     {
         $helper = $this->createHelper();
 
-        $this->assertNull($helper->matchCollectionKey('Foo_5', []));
+        $this->assertSame([], $helper->matchCollectionKeys('Foo_5', []));
     }
 
     /**
@@ -119,10 +120,10 @@ class DataObjectTaskHelperTest extends TestCase
     {
         $helper = $this->createHelper();
 
-        $this->assertSame('Foo', $helper->matchCollectionKey('Foo_localized_5', ['foo' => 'Foo']));
+        $this->assertSame(['Foo'], $helper->matchCollectionKeys('Foo_localized_5', ['foo' => 'Foo']));
         $this->assertSame(
-            'Foo_Bar',
-            $helper->matchCollectionKey('Foo_Bar_localized_5', ['foo_bar' => 'Foo_Bar'])
+            ['Foo_Bar'],
+            $helper->matchCollectionKeys('Foo_Bar_localized_5', ['foo_bar' => 'Foo_Bar'])
         );
     }
 }

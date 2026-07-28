@@ -47,28 +47,29 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
             $tableName = current($tableName);
 
             $fieldDescriptor = substr($tableName, strlen($prefix));
-            $fcType = $this->helper->matchCollectionKey($fieldDescriptor, $collectionNames);
 
-            if ($fcType === null) {
-                // No existing fieldcollection definition owns this table -> orphan, drop it.
-                $this->helper->dropOrphanedTable($tableName);
+            // Underscores make the split between fieldcollection key and class id ambiguous, so
+            // several live keys can claim this table. It is owned as soon as any candidate parse
+            // resolves to a live class; only when no parse does is it an orphan to be dropped.
+            $owned = false;
+            foreach ($this->helper->matchCollectionKeys($fieldDescriptor, $collectionNames) as $fcType) {
+                $classId = substr($fieldDescriptor, strlen($fcType) + 1);
 
-                continue;
+                $isLocalized = false;
+
+                if (str_starts_with($classId, 'localized_')) {
+                    $isLocalized = true;
+                    $classId = substr($classId, strlen('localized_'));
+                }
+
+                if ($this->helper->cleanupTable($tableName, $classId, $isLocalized)) {
+                    $owned = true;
+
+                    break;
+                }
             }
 
-            $classId = substr($fieldDescriptor, strlen($fcType) + 1);
-
-            $isLocalized = false;
-
-            if (str_starts_with($classId, 'localized_')) {
-                $isLocalized = true;
-                $classId = substr($classId, strlen('localized_'));
-            }
-
-            // A matching key is not enough: the parsed class id must resolve to a live class,
-            // otherwise the table is an orphan (a removed underscore-containing key that a shorter
-            // key still prefixes, or a deleted owning class) and must be dropped.
-            if (!$this->helper->cleanupTable($tableName, $classId, $isLocalized)) {
+            if (!$owned) {
                 $this->helper->dropOrphanedTable($tableName);
             }
         }

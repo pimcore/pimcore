@@ -56,7 +56,7 @@ class CleanupBrickTablesTaskHelper implements ConcreteTaskHelperInterface
                     // field-by-field here, but an orphaned one (its brick definition is gone) must
                     // still be dropped instead of skipped.
                     $localizedQueryDescriptor = substr($tableName, strlen(self::LOCALIZED_QUERY_PREFIX));
-                    if ($this->helper->matchCollectionKey($localizedQueryDescriptor, $collectionNames) === null) {
+                    if ($this->helper->matchCollectionKeys($localizedQueryDescriptor, $collectionNames) === []) {
                         $this->helper->dropOrphanedTable($tableName);
                     }
 
@@ -64,21 +64,21 @@ class CleanupBrickTablesTaskHelper implements ConcreteTaskHelperInterface
                 }
 
                 $fieldDescriptor = substr($tableName, strlen($prefix));
-                $brickType = $this->helper->matchCollectionKey($fieldDescriptor, $collectionNames);
 
-                if ($brickType === null) {
-                    // No existing brick definition owns this table -> orphan, drop it.
-                    $this->helper->dropOrphanedTable($tableName);
+                // Underscores make the split between brick key and class id ambiguous, so several
+                // live keys can claim this table. It is owned as soon as any candidate parse
+                // resolves to a live class; only when no parse does is it an orphan to be dropped.
+                $owned = false;
+                foreach ($this->helper->matchCollectionKeys($fieldDescriptor, $collectionNames) as $brickType) {
+                    $classId = substr($fieldDescriptor, strlen($brickType) + 1);
+                    if ($this->helper->cleanupTable($tableName, $classId)) {
+                        $owned = true;
 
-                    continue;
+                        break;
+                    }
                 }
 
-                $classId = substr($fieldDescriptor, strlen($brickType) + 1);
-
-                // A matching key is not enough: the parsed class id must resolve to a live class,
-                // otherwise the table is an orphan (a removed underscore-containing key that a
-                // shorter key still prefixes, or a deleted owning class) and must be dropped.
-                if (!$this->helper->cleanupTable($tableName, $classId)) {
+                if (!$owned) {
                     $this->helper->dropOrphanedTable($tableName);
                 }
             }
