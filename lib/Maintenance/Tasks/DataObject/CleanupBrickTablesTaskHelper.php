@@ -54,9 +54,13 @@ class CleanupBrickTablesTaskHelper implements ConcreteTaskHelperInterface
                 if (str_starts_with($tableName, self::LOCALIZED_QUERY_PREFIX)) {
                     // Localized query tables carry a trailing language suffix and are not cleaned
                     // field-by-field here, but an orphaned one (its brick definition is gone) must
-                    // still be dropped instead of skipped.
+                    // still be dropped instead of skipped. The name may also be a plain localized
+                    // table of a brick whose key itself starts with "query_" - keep the table when
+                    // either reading finds a live key.
                     $localizedQueryDescriptor = substr($tableName, strlen(self::LOCALIZED_QUERY_PREFIX));
-                    if ($this->helper->matchCollectionKeys($localizedQueryDescriptor, $collectionNames) === []) {
+                    if ($this->helper->matchCollectionKeys($localizedQueryDescriptor, $collectionNames) === []
+                        && $this->helper->matchCollectionKeys('query_' . $localizedQueryDescriptor, $collectionNames) === []
+                    ) {
                         $this->helper->dropOrphanedTable($tableName);
                     }
 
@@ -66,21 +70,25 @@ class CleanupBrickTablesTaskHelper implements ConcreteTaskHelperInterface
                 $fieldDescriptor = substr($tableName, strlen($prefix));
 
                 // Underscores make the split between brick key and class id ambiguous, so several
-                // live keys can claim this table. It is owned as soon as any candidate parse
-                // resolves to a live class; only when no parse does is it an orphan to be dropped.
-                $owned = false;
+                // live keys can claim this table. Ownership is resolved without touching any data:
+                // a parse owns the table when its class id resolves to a live class.
+                $liveClassIds = [];
                 foreach ($this->helper->matchCollectionKeys($fieldDescriptor, $collectionNames) as $brickType) {
                     $classId = substr($fieldDescriptor, strlen($brickType) + 1);
-                    if ($this->helper->cleanupTable($tableName, $classId)) {
-                        $owned = true;
-
-                        break;
+                    if ($this->helper->classExists($classId)) {
+                        $liveClassIds[] = $classId;
                     }
                 }
 
-                if (!$owned) {
+                if ($liveClassIds === []) {
+                    // No parse resolves to a live class -> orphan, drop it.
                     $this->helper->dropOrphanedTable($tableName);
+                } elseif (count($liveClassIds) === 1) {
+                    $this->helper->cleanupTable($tableName, $liveClassIds[0]);
                 }
+                // Several live parses: the table name is genuinely ambiguous between multiple live
+                // owners. Keep the table and skip the row cleanup - cleaning against the wrong
+                // owner's field definitions would delete live rows.
             }
         }
     }

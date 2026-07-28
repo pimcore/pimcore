@@ -28,6 +28,9 @@ use Psr\Log\LoggerInterface;
  */
 class CleanupBrickTablesTaskHelperTest extends TestCase
 {
+    /** @var array<string, string> table => class id passed to the mutating cleanupTable() */
+    private array $cleaned = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -49,6 +52,8 @@ class CleanupBrickTablesTaskHelperTest extends TestCase
     private function runTask(array $collectionNames, array $tablesByType, array $existingClassIds = ['5']): array
     {
         $dropped = [];
+        $this->cleaned = [];
+        $cleaned = &$this->cleaned;
 
         // Real matcher so the ownership decision is exercised end to end (it uses neither the
         // logger nor the connection).
@@ -62,10 +67,18 @@ class CleanupBrickTablesTaskHelperTest extends TestCase
         $helper->method('matchCollectionKeys')->willReturnCallback(
             static fn (string $id, array $names): array => $matcher->matchCollectionKeys($id, $names)
         );
-        // Models the real cleanupTable(): it keeps the table (returns true) only when the parsed
-        // class id resolves to a live class definition, and reports it as unowned otherwise.
+        // Non-mutating ownership probe: a parse is live when its class id exists.
+        $helper->method('classExists')->willReturnCallback(
+            static fn (string $classId): bool => in_array($classId, $existingClassIds, true)
+        );
+        // The mutating row cleanup - recorded so tests can assert it only runs for the single
+        // unambiguous live parse.
         $helper->method('cleanupTable')->willReturnCallback(
-            static fn (string $table, string $classId): bool => in_array($classId, $existingClassIds, true)
+            static function (string $table, string $classId) use (&$cleaned): bool {
+                $cleaned[$table] = $classId;
+
+                return true;
+            }
         );
         $helper->method('dropOrphanedTable')->willReturnCallback(
             static function (string $table) use (&$dropped): void {
@@ -173,13 +186,51 @@ class CleanupBrickTablesTaskHelperTest extends TestCase
         $collectionNames = ['foo' => 'Foo', 'foo_bar' => 'Foo_Bar'];
         $tables = ['store' => ['object_brick_store_Foo_Bar_5']];
 
-        // Class "5" does not exist, but "Bar_5" does: the table belongs to brick "Foo" -> kept.
+        // Class "5" does not exist, but "Bar_5" does: the table belongs to brick "Foo" -> kept and
+        // cleaned against the only live owner.
         $this->assertSame([], $this->runTask($collectionNames, $tables, ['Bar_5']));
+        $this->assertSame(['object_brick_store_Foo_Bar_5' => 'Bar_5'], $this->cleaned);
 
         // Class "5" exists: the table belongs to brick "Foo_Bar" -> kept.
         $this->assertSame([], $this->runTask($collectionNames, $tables, ['5']));
+        $this->assertSame(['object_brick_store_Foo_Bar_5' => '5'], $this->cleaned);
 
         // No parse resolves to a live class: only then is the table an orphan -> dropped.
         $this->assertSame(['object_brick_store_Foo_Bar_5'], $this->runTask($collectionNames, $tables, []));
+        $this->assertSame([], $this->cleaned);
+    }
+
+    /**
+     * When SEVERAL parses resolve to live classes ("Foo_Bar" on class "5" and "Foo" on class
+     * "Bar_5" both exist), the true owner cannot be determined from the name alone. The table must
+     * be kept, and the mutating row cleanup must NOT run - cleaning against the wrong owner's
+     * field definitions would delete live rows.
+     */
+    public function testFullyAmbiguousTableIsKeptWithoutMutation(): void
+    {
+        $dropped = $this->runTask(
+            ['foo' => 'Foo', 'foo_bar' => 'Foo_Bar'],
+            ['store' => ['object_brick_store_Foo_Bar_5']],
+            ['5', 'Bar_5']
+        );
+
+        $this->assertSame([], $dropped);
+        $this->assertSame([], $this->cleaned);
+    }
+
+    /**
+     * A brick key may itself start with "query_": the localized table of brick "query_Foo" is named
+     * "object_brick_localized_query_Foo_5" and collides with the localized-query prefix. It must be
+     * recognised as owned via that second reading, never dropped.
+     */
+    public function testLocalizedTableOfQueryPrefixedBrickIsKept(): void
+    {
+        $dropped = $this->runTask(
+            ['query_foo' => 'query_Foo'],
+            ['localized' => ['object_brick_localized_query_Foo_5']],
+            ['5']
+        );
+
+        $this->assertSame([], $dropped);
     }
 }

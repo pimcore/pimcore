@@ -79,6 +79,11 @@ class DataObjectTaskHelper implements DataObjectTaskHelperInterface
         return $matches;
     }
 
+    public function classExists(string $classId): bool
+    {
+        return ClassDefinition::getByIdIgnoreCase($classId) !== null;
+    }
+
     public function dropOrphanedTable(string $tableName): void
     {
         $this->logger->warning('Dropping orphaned data object table ' . $tableName);
@@ -92,11 +97,9 @@ class DataObjectTaskHelper implements DataObjectTaskHelperInterface
     ): bool {
         $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
         if (!$classDefinition) {
-            // The collection key matched a live definition, but the class id of this particular
-            // parse does not resolve to any existing class - either the split point was wrong
-            // (underscores make it ambiguous) or the owning class itself was deleted. Report the
-            // parse as not-owning so the caller can try the remaining candidate parses and only
-            // drop the table when none of them resolves to a live class.
+            // Defensive: callers resolve ownership with classExists() before invoking this
+            // mutating cleanup, so a missing class here means the caller passed an unresolved
+            // parse - refuse to touch the table.
             return false;
         }
 

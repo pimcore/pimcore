@@ -28,6 +28,9 @@ use Psr\Log\LoggerInterface;
  */
 class CleanupFieldcollectionTablesTaskHelperTest extends TestCase
 {
+    /** @var array<string, array{classId: string, isLocalized: bool}> mutating cleanupTable() calls */
+    private array $cleaned = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -49,6 +52,8 @@ class CleanupFieldcollectionTablesTaskHelperTest extends TestCase
     private function runTask(array $collectionNames, array $tables, array $existingClassIds = ['5']): array
     {
         $dropped = [];
+        $this->cleaned = [];
+        $cleaned = &$this->cleaned;
 
         // Real matcher so the ownership decision is exercised end to end.
         $matcher = new DataObjectTaskHelper(
@@ -61,10 +66,18 @@ class CleanupFieldcollectionTablesTaskHelperTest extends TestCase
         $helper->method('matchCollectionKeys')->willReturnCallback(
             static fn (string $id, array $names): array => $matcher->matchCollectionKeys($id, $names)
         );
-        // Models the real cleanupTable(): it keeps the table (returns true) only when the parsed
-        // class id resolves to a live class definition, and reports it as unowned otherwise.
+        // Non-mutating ownership probe: a parse is live when its class id exists.
+        $helper->method('classExists')->willReturnCallback(
+            static fn (string $classId): bool => in_array($classId, $existingClassIds, true)
+        );
+        // The mutating row cleanup - recorded so tests can assert it only runs for the single
+        // unambiguous live parse (and with the right localized flag).
         $helper->method('cleanupTable')->willReturnCallback(
-            static fn (string $table, string $classId): bool => in_array($classId, $existingClassIds, true)
+            static function (string $table, string $classId, bool $isLocalized = true) use (&$cleaned): bool {
+                $cleaned[$table] = ['classId' => $classId, 'isLocalized' => $isLocalized];
+
+                return true;
+            }
         );
         $helper->method('dropOrphanedTable')->willReturnCallback(
             static function (string $table) use (&$dropped): void {
@@ -155,5 +168,56 @@ class CleanupFieldcollectionTablesTaskHelperTest extends TestCase
 
         // No parse resolves to a live class: only then is the table an orphan -> dropped.
         $this->assertSame(['object_collection_Foo_Bar_5'], $this->runTask($collectionNames, $tables, []));
+    }
+
+    /**
+     * When SEVERAL parses resolve to live classes ("Foo_Bar" on class "5" and "Foo" on class
+     * "Bar_5" both exist), the true owner cannot be determined from the name alone. The table must
+     * be kept, and the mutating row cleanup must NOT run - cleaning against the wrong owner's
+     * field definitions would delete live rows.
+     */
+    public function testFullyAmbiguousTableIsKeptWithoutMutation(): void
+    {
+        $dropped = $this->runTask(
+            ['foo' => 'Foo', 'foo_bar' => 'Foo_Bar'],
+            ['object_collection_Foo_Bar_5'],
+            ['5', 'Bar_5']
+        );
+
+        $this->assertSame([], $dropped);
+        $this->assertSame([], $this->cleaned);
+    }
+
+    /**
+     * Class ids may contain underscores, so "localized_5" is a legal class id and
+     * "object_collection_Foo_localized_5" has two competing readings: the localized table of "Foo"
+     * on class "5", or the plain table of "Foo" on class "localized_5". Whichever class actually
+     * exists decides; when both exist, the table is kept without any mutation.
+     */
+    public function testLocalizedMarkerVersusUnderscoreClassId(): void
+    {
+        $names = ['foo' => 'Foo'];
+        $tables = ['object_collection_Foo_localized_5'];
+
+        // Only class "5" exists -> it is the localized table of "Foo" on class "5".
+        $this->assertSame([], $this->runTask($names, $tables, ['5']));
+        $this->assertSame(
+            ['object_collection_Foo_localized_5' => ['classId' => '5', 'isLocalized' => true]],
+            $this->cleaned
+        );
+
+        // Only class "localized_5" exists -> it is the plain table of "Foo" on class "localized_5".
+        $this->assertSame([], $this->runTask($names, $tables, ['localized_5']));
+        $this->assertSame(
+            ['object_collection_Foo_localized_5' => ['classId' => 'localized_5', 'isLocalized' => false]],
+            $this->cleaned
+        );
+
+        // Both exist -> ambiguous: kept, no mutation.
+        $this->assertSame([], $this->runTask($names, $tables, ['5', 'localized_5']));
+        $this->assertSame([], $this->cleaned);
+
+        // Neither exists -> orphan, dropped.
+        $this->assertSame($tables, $this->runTask($names, $tables, []));
     }
 }

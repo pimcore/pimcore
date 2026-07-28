@@ -49,29 +49,35 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
             $fieldDescriptor = substr($tableName, strlen($prefix));
 
             // Underscores make the split between fieldcollection key and class id ambiguous, so
-            // several live keys can claim this table. It is owned as soon as any candidate parse
-            // resolves to a live class; only when no parse does is it an orphan to be dropped.
-            $owned = false;
+            // several live keys can claim this table. On top of that, a "localized_" remainder may
+            // be the localized-table marker or simply the start of a class id (class ids may
+            // contain underscores) - both readings compete. Ownership is resolved without touching
+            // any data: a parse owns the table when its class id resolves to a live class.
+            $liveParses = [];
             foreach ($this->helper->matchCollectionKeys($fieldDescriptor, $collectionNames) as $fcType) {
-                $classId = substr($fieldDescriptor, strlen($fcType) + 1);
+                $remainder = substr($fieldDescriptor, strlen($fcType) + 1);
 
-                $isLocalized = false;
-
-                if (str_starts_with($classId, 'localized_')) {
-                    $isLocalized = true;
-                    $classId = substr($classId, strlen('localized_'));
+                if ($this->helper->classExists($remainder)) {
+                    $liveParses[] = ['classId' => $remainder, 'isLocalized' => false];
                 }
 
-                if ($this->helper->cleanupTable($tableName, $classId, $isLocalized)) {
-                    $owned = true;
-
-                    break;
+                if (str_starts_with($remainder, 'localized_')) {
+                    $classId = substr($remainder, strlen('localized_'));
+                    if ($this->helper->classExists($classId)) {
+                        $liveParses[] = ['classId' => $classId, 'isLocalized' => true];
+                    }
                 }
             }
 
-            if (!$owned) {
+            if ($liveParses === []) {
+                // No parse resolves to a live class -> orphan, drop it.
                 $this->helper->dropOrphanedTable($tableName);
+            } elseif (count($liveParses) === 1) {
+                $this->helper->cleanupTable($tableName, $liveParses[0]['classId'], $liveParses[0]['isLocalized']);
             }
+            // Several live parses: the table name is genuinely ambiguous between multiple live
+            // owners. Keep the table and skip the row cleanup - cleaning against the wrong owner's
+            // field definitions would delete live rows.
         }
     }
 }

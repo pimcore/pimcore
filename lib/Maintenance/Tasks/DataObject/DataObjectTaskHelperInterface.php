@@ -42,8 +42,8 @@ interface DataObjectTaskHelperInterface
      * first, or an empty array if none could. A key is a candidate owner only when it is a full,
      * underscore-delimited prefix of the identifier. Because both keys and class ids may contain
      * underscores, several keys can claim the same identifier - the caller must probe each candidate
-     * parse (via {@see cleanupTable()}) and may treat the table as orphaned only when no candidate
-     * resolves to a live class, so live tables are never mistaken for orphans.
+     * parse (via the non-mutating {@see classExists()}) and may treat the table as orphaned only
+     * when no candidate resolves to a live class, so live tables are never mistaken for orphans.
      *
      * @param array<string, string> $collectionNames lowercased => actual collection key
      *
@@ -52,18 +52,24 @@ interface DataObjectTaskHelperInterface
     public function matchCollectionKeys(string $tableIdentifier, array $collectionNames): array;
 
     /**
+     * Non-mutating ownership probe: whether a class definition exists for the given class id
+     * (case-insensitive). Used to decide which candidate parse of a table name is live before any
+     * destructive or mutating operation is performed.
+     */
+    public function classExists(string $classId): bool;
+
+    /**
      * Drops a table that no longer belongs to any existing definition.
      */
     public function dropOrphanedTable(string $tableName): void;
 
     /**
-     * Cleans up stale field columns/rows of a brick/fieldcollection table that belongs to the class
-     * identified by $classId.
+     * Cleans up stale field rows of a brick/fieldcollection table that belongs to the class
+     * identified by $classId. This MUTATES the table (deletes rows whose fieldname no longer exists
+     * on the class), so callers must only invoke it once ownership is unambiguous: exactly one
+     * candidate parse of the table name resolves to a live class (see {@see classExists()}).
      *
-     * Returns false when no class definition exists for $classId, i.e. this particular parse of the
-     * table name does not correspond to a live class. The caller should then try the remaining
-     * candidate parses from {@see matchCollectionKeys()} and treat the table as an orphan only when
-     * every parse fails to resolve.
+     * Returns false (and touches nothing) when no class definition exists for $classId.
      */
     public function cleanupTable(
         string $tableName,
