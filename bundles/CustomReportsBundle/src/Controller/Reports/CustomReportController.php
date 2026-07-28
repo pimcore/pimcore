@@ -511,7 +511,7 @@ class CustomReportController extends UserAwareController
         }
         $filters = ($request->request->has('filter') ? json_decode($request->request->getString('filter'), true) : null);
         $drillDownFilters = $request->request->all('drillDownFilters');
-        if ($sort === null && $dir === null && property_exists($configuration, 'orderby') && $configuration->orderby !== '' && $configuration->orderbydir !== '') {
+        if ($sort === null && property_exists($configuration, 'orderby') && $configuration->orderby !== '' && $configuration->orderbydir !== '') {
             $sort = $configuration->orderby;
             $dir = $configuration->orderbydir;
         }

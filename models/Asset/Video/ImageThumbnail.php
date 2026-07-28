@@ -85,7 +85,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
         $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
 
-        if ($this->asset && empty($this->pathReference)) {
+        if ($this->asset instanceof Model\Asset\Video && empty($this->pathReference)) {
 
             if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
                 throw new ThumbnailFormatNotSupportedException();
