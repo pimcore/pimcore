@@ -129,6 +129,10 @@ final class ImageThumbnail implements ImageThumbnailInterface
      */
     private function getCacheFileStream()
     {
+        if (!$this->asset instanceof Model\Asset\Document) {
+            return null;
+        }
+
         $storage = Storage::get('asset_cache');
         $cacheFilePath = sprintf(
             '%s/%s/image-thumb__%s__document_original_image/page_%d%s.png',

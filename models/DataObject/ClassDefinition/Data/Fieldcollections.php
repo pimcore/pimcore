@@ -789,10 +789,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 $resultItems[] = $collection;
             }
 
-            $resultCollection = new DataObject\Fieldcollection();
-            $resultCollection->setItems($resultItems);
-
-            return $resultCollection;
+            return new DataObject\Fieldcollection($resultItems);
         }
 
         return null;
