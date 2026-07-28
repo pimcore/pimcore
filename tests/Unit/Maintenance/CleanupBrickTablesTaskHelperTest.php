@@ -219,6 +219,25 @@ class CleanupBrickTablesTaskHelperTest extends TestCase
     }
 
     /**
+     * Regression for pimcore/platform-version#141 (brick variant): a brick with an all-lowercase
+     * key works at runtime but the old cleanup resolved its ucfirst()-ed key via the case-sensitive
+     * getByKey(), logging a spurious "not found" and skipping cleanup on case-sensitive
+     * filesystems. The ownership map now comes from the definition files and is matched
+     * case-insensitively, so the live table is owned and cleaned, never dropped.
+     */
+    public function testLowercaseKeyTableIsOwnedAndCleaned(): void
+    {
+        $dropped = $this->runTask(
+            ['teaser' => 'teaser'],
+            ['store' => ['object_brick_store_teaser_AB12']],
+            ['AB12']
+        );
+
+        $this->assertSame([], $dropped);
+        $this->assertSame(['object_brick_store_teaser_AB12' => 'AB12'], $this->cleaned);
+    }
+
+    /**
      * A brick key may itself start with "query_": the localized table of brick "query_Foo" is named
      * "object_brick_localized_query_Foo_5" and collides with the localized-query prefix. It must be
      * recognised as owned via that second reading, never dropped.

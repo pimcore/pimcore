@@ -220,4 +220,28 @@ class CleanupFieldcollectionTablesTaskHelperTest extends TestCase
         // Neither exists -> orphan, dropped.
         $this->assertSame($tables, $this->runTask($names, $tables, []));
     }
+
+    /**
+     * Regression for pimcore/platform-version#141: a fieldcollection with an all-lowercase key
+     * ("video") stores its definition as fieldcollections/video.php while its generated data class
+     * is ucfirst()-ed. The old cleanup built its name map from the generated directory and resolved
+     * the ucfirst-ed key via the case-sensitive getByKey(), so on case-sensitive filesystems it
+     * logged a spurious "not found" on every run and skipped the row cleanup. The ownership map now
+     * comes from the definition files themselves and is matched case-insensitively: the live table
+     * is owned and cleaned - and, crucially, never mistaken for an orphan by the new drop logic.
+     */
+    public function testLowercaseKeyTableIsOwnedAndCleaned(): void
+    {
+        $dropped = $this->runTask(
+            ['video' => 'video'],
+            ['object_collection_video_AB12'],
+            ['AB12']
+        );
+
+        $this->assertSame([], $dropped);
+        $this->assertSame(
+            ['object_collection_video_AB12' => ['classId' => 'AB12', 'isLocalized' => false]],
+            $this->cleaned
+        );
+    }
 }
