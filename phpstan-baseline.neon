@@ -1048,3 +1048,153 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: lib/Tool/Admin.php
+
+		-
+			message: '#^Variable \$markingStoreDefinition in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: bundles/CoreBundle/src/DependencyInjection/Compiler/WorkflowPass.php
+
+		-
+			message: '#^Offset 0 on .+ in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: bundles/CoreBundle/src/EventListener/Frontend/DocumentFallbackListener.php
+
+		-
+			message: '#^Offset \d+ on .+ in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.offset
+			count: 1
+			path: bundles/GenericExecutionEngineBundle/src/Messenger/Handler/AbstractAutomationActionHandler.php
+
+		-
+			message: '#^Call to function is_string\(\) with non-falsy-string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: lib/Controller/UserAwareController.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: lib/Image/Adapter/Imagick.php
+
+		-
+			message: '#^Offset 1 on non-empty-list<string> in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: lib/Tool/Admin.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: models/Asset.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 5
+			path: models/Asset.php
+
+		-
+			message: '#^Left side of && is always false\.$#'
+			identifier: booleanAnd.leftAlwaysFalse
+			count: 1
+			path: models/Asset.php
+
+		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: models/Asset.php
+
+		-
+			message: '#^Parameter \#1 \$asset of method .+ expects Pimcore\\Model\\Asset\\Document, .+ given\.$#'
+			identifier: argument.type
+			count: 1
+			path: models/Asset/Document/ImageThumbnail.php
+
+		-
+			message: '#^Offset \d+ on .+ in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: models/Asset/Service.php
+
+		-
+			message: '#^Call to function array_key_exists\(\) with .+ will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: models/Asset/Service.php
+
+		-
+			message: '#^Call to an undefined method Pimcore\\Model\\Asset\:\:getDuration\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: models/Asset/Video/ImageThumbnail.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: models/DataObject/AbstractObject.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 5
+			path: models/DataObject/AbstractObject.php
+
+		-
+			message: '#^Left side of && is always false\.$#'
+			identifier: booleanAnd.leftAlwaysFalse
+			count: 1
+			path: models/DataObject/AbstractObject.php
+
+		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: models/DataObject/AbstractObject.php
+
+		-
+			message: '#^Parameter \#1 \$items of method .+ expects array, .+ given\.$#'
+			identifier: argument.type
+			count: 1
+			path: models/DataObject/ClassDefinition/Data/Fieldcollections.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: models/Document.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 5
+			path: models/Document.php
+
+		-
+			message: '#^Left side of && is always false\.$#'
+			identifier: booleanAnd.leftAlwaysFalse
+			count: 1
+			path: models/Document.php
+
+		-
+			message: '#^Strict comparison using !== between \*NEVER\* and string will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: models/Document.php
+
+		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: models/Document.php
+
+		-
+			message: '#^Call to function is_array\(\) with non-empty-array<string> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: models/User/UserRole.php
