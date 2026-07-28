@@ -238,12 +238,14 @@ class ClassificationstoreTest extends ModelTestCase
         /** @var Classificationstore $reloadedStore */
         $reloadedStore = $reloadedChild->getTeststore();
 
-        $this->assertEquals([$group->getId() => true], $reloadedStore->getActiveGroups());
-        $this->assertEquals(
-            [$group->getId() => $collection->getId()],
-            $reloadedStore->getGroupCollectionMappings(),
-            'group-collection mapping of an empty group must survive a save/reload round-trip'
-        );
+        DataObject\Service::useInheritedValues(false, function () use ($reloadedStore, $group, $collection) {
+            $this->assertEquals([$group->getId() => true], $reloadedStore->getActiveGroups());
+            $this->assertEquals(
+                [$group->getId() => $collection->getId()],
+                $reloadedStore->getGroupCollectionMappings(),
+                'group-collection mapping of an empty group must survive a save/reload round-trip'
+            );
+        });
     }
 
     /**
@@ -282,11 +284,13 @@ class ClassificationstoreTest extends ModelTestCase
         /** @var Classificationstore $reloadedStore */
         $reloadedStore = $reloadedChild->getTeststore();
 
-        $this->assertEquals(
-            [],
-            $reloadedStore->getGroupCollectionMappings(),
-            'mapping covered by the parent must not be persisted on the child'
-        );
+        DataObject\Service::useInheritedValues(false, function () use ($reloadedStore) {
+            $this->assertEquals(
+                [],
+                $reloadedStore->getGroupCollectionMappings(),
+                'mapping covered by the parent must not be persisted on the child'
+            );
+        });
 
         DataObject\Service::useInheritedValues(true, function () use ($reloadedStore, $group, $collection) {
             $this->assertEquals(
@@ -338,10 +342,12 @@ class ClassificationstoreTest extends ModelTestCase
         /** @var Classificationstore $reloadedStore */
         $reloadedStore = $reloadedChild->getTeststore();
 
-        $this->assertEquals(
-            [$group2->getId() => $collection->getId()],
-            $reloadedStore->getGroupCollectionMappings(),
-            'child mapping for a different group to the same collection must not be stripped'
-        );
+        DataObject\Service::useInheritedValues(false, function () use ($reloadedStore, $group2, $collection) {
+            $this->assertEquals(
+                [$group2->getId() => $collection->getId()],
+                $reloadedStore->getGroupCollectionMappings(),
+                'child mapping for a different group to the same collection must not be stripped'
+            );
+        });
     }
 }
