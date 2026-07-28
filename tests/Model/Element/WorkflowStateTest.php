@@ -18,16 +18,14 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
+ * Class WorkflowStateTest
+ *
+ * @package Pimcore\Tests\Model\Element
+ *
  * @group model.element.workflowstate
  */
 class WorkflowStateTest extends ModelTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-        TestHelper::cleanUp();
-    }
-
     /**
      * Deleting one WorkflowState row must not delete other rows that belong
      * to the same element under a different workflow.
