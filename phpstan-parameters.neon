@@ -1,6 +1,7 @@
 parameters:
     level: 6
     reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: false
     paths:
         - bundles
         - lib
@@ -58,6 +59,8 @@ parameters:
         noParameterWithNullableTypeDeclaration:
             enabled: false
         noParameterWithNullDefaultValue:
+            enabled: false
+        noPhpstanIgnore:
             enabled: false
         noReturnByReference:
             enabled: false
