@@ -48,6 +48,7 @@ class BlockTest extends ModelTestCase
     protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_Block();
+        $this->tester->setupPimcoreClass_RelationTest();
     }
 
     /**
@@ -242,5 +243,82 @@ class BlockTest extends ModelTestCase
             Cache::disable();
             Cache::getHandler()->setHandleCli(false);
         }
+    }
+
+    /**
+     * Verifies that relations inside a Block are rewritten by Service::rewriteIds
+     * (used by "Paste recursive, updating references")
+     *
+     * @throws Exception
+     */
+    public function testRewriteIdsInsideBlock(): void
+    {
+        $oldTarget = $this->createRelationTestObject('rewrite-old-target');
+        $newTarget = $this->createRelationTestObject('rewrite-new-target');
+
+        $object = $this->createBlockObject();
+        $data = [
+            'blockinput' => new BlockElement('blockinput', 'input', 'test-input'),
+            'blockadvancedRelations' => new BlockElement(
+                'blockadvancedRelations',
+                'advancedManyToManyRelation',
+                [new DataObject\Data\ElementMetadata('blockadvancedRelations', [], $oldTarget)]
+            ),
+        ];
+        $object->setTestblock([$data]);
+        $object->save();
+
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+        Service::rewriteIds($object, ['object' => [$oldTarget->getId() => $newTarget->getId()]]);
+
+        $rewritten = $object->getTestblock()[0]['blockadvancedRelations']->getData();
+        $this->assertEquals($newTarget->getId(), $rewritten[0]->getElement()->getId());
+
+        //rewritten reference should survive save & reload
+        $object->save();
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+
+        $reloaded = $object->getTestblock()[0]['blockadvancedRelations']->getData();
+        $this->assertEquals($newTarget->getId(), $reloaded[0]->getElement()->getId());
+    }
+
+    /**
+     * Verifies that relations inside a Block nested in Localizedfields are rewritten
+     * by Service::rewriteIds (used by "Paste recursive, updating references")
+     *
+     * @throws Exception
+     */
+    public function testRewriteIdsInsideLocalizedBlock(): void
+    {
+        $oldTarget = TestHelper::createEmptyObject();
+        $newTarget = TestHelper::createEmptyObject();
+
+        $object = $this->createBlockObject();
+        $data = [
+            'lblockadvancedRelations' => new BlockElement(
+                'lblockadvancedRelations',
+                'advancedManyToManyRelation',
+                [new DataObject\Data\ElementMetadata('lblockadvancedRelations', [], $oldTarget)]
+            ),
+        ];
+        $object->setLtestblock([$data], 'de');
+        $object->save();
+
+        $object = DataObject::getById($object->getId(), ['force' => true]);
+        Service::rewriteIds($object, ['object' => [$oldTarget->getId() => $newTarget->getId()]]);
+
+        $rewritten = $object->getLtestblock('de')[0]['lblockadvancedRelations']->getData();
+        $this->assertEquals($newTarget->getId(), $rewritten[0]->getElement()->getId());
+    }
+
+    protected function createRelationTestObject(string $key): DataObject\RelationTest
+    {
+        $object = new DataObject\RelationTest();
+        $object->setParent(Service::createFolderByPath('__test/relationobjects'));
+        $object->setKey($key);
+        $object->setPublished(true);
+        $object->save();
+
+        return $object;
     }
 }

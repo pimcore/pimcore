@@ -488,6 +488,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         continue;
                     }
 
+                    $blockElementData = $blockElement->getData();
+                    if ($blockElementData === null) {
+                        continue;
+                    }
+
                     $blockElement->setData(
                         $fieldDefinition->rewriteIds(
                             $container,
@@ -495,7 +500,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             [
                                 ...$params,
                                 // \Pimcore\Model\DataObject\ClassDefinition\Data::getDataFromObjectParam() reads 'injectedData'
-                                'injectedData' => $blockElement->getData(),
+                                'injectedData' => $blockElementData,
                             ],
                         ),
                     );
