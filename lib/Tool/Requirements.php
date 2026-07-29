@@ -355,12 +355,14 @@ final class Requirements
         $checks[] = new Check([
             'name' => 'PHP',
             'state' => $phpCliBin ? Check::STATE_OK : Check::STATE_ERROR,
+            'message' => 'PHP CLI binary. Required to run console commands, maintenance tasks and message queue workers.',
         ]);
 
         // Composer
         $checks[] = new Check([
             'name' => 'Composer',
             'state' => (bool) \Pimcore\Tool\Console::getExecutable('composer') ? Check::STATE_OK : Check::STATE_ERROR,
+            'message' => 'Dependency manager. Required to install and update Pimcore and its bundles.',
         ]);
 
         // FFMPEG BIN
@@ -373,6 +375,7 @@ final class Requirements
         $checks[] = new Check([
             'name' => 'FFMPEG',
             'state' => $ffmpegBin ? Check::STATE_OK : Check::STATE_WARNING,
+            'message' => 'Transcodes video assets to web formats, extracts their preview image, duration and dimensions. Without it, video assets cannot be converted or previewed.',
         ]);
 
         // Gotenberg
@@ -385,6 +388,7 @@ final class Requirements
         $checks[] = new Check([
             'name' => 'Gotenberg/Chromium',
             'state' => $htmlToImage ? Check::STATE_OK : Check::STATE_WARNING,
+            'message' => 'Renders an HTML page to a screenshot image (Pimcore\Image\HtmlToImage). There is no fallback for this feature.',
         ]);
 
         // ghostscript BIN
@@ -397,6 +401,7 @@ final class Requirements
         $checks[] = new Check([
             'name' => 'Ghostscript',
             'state' => $ghostscriptBin ? Check::STATE_OK : Check::STATE_WARNING,
+            'message' => 'Renders a page of a PDF to an image and counts its pages, which is what asset document thumbnails are built from. Also used as the fallback text extractor when pdftotext is missing.',
         ]);
 
         // LibreOffice BIN
@@ -412,19 +417,28 @@ final class Requirements
         $checks[] = new Check([
             'name' => 'Gotenberg / LibreOffice',
             'state' => $libreofficeGotenberg ? Check::STATE_OK : Check::STATE_WARNING,
+            'message' => 'Converts office documents (DOC(X), XLS(X), PPT(X), ODT, ...) to PDF, so that Ghostscript can render and index them. Only PDF assets are supported without it.',
         ]);
 
-        // image optimizer
-        foreach (['jpegoptim', 'pngquant', 'optipng', 'exiftool'] as $optimizerName) {
+        // image optimizers & metadata extraction
+        $externalTools = [
+            'jpegoptim' => 'Recompresses generated JPEG thumbnails to reduce their file size. Skipped if missing, thumbnails are then served unoptimized.',
+            'pngquant' => 'Recompresses generated PNG thumbnails to reduce their file size. Skipped if missing, thumbnails are then served unoptimized.',
+            'optipng' => 'Recompresses generated PNG thumbnails to reduce their file size. Skipped if missing, thumbnails are then served unoptimized.',
+            'exiftool' => 'Reads embedded metadata (EXIF, IPTC, XMP, ...) from uploaded assets. Without it, Pimcore falls back to the PHP built-in readers, which cover fewer tags.',
+        ];
+
+        foreach ($externalTools as $toolName => $toolMessage) {
             try {
-                $optimizerAvailable = \Pimcore\Tool\Console::getExecutable($optimizerName);
+                $toolAvailable = \Pimcore\Tool\Console::getExecutable($toolName);
             } catch (Exception $e) {
-                $optimizerAvailable = false;
+                $toolAvailable = false;
             }
 
             $checks[] = new Check([
-                'name' => $optimizerName,
-                'state' => $optimizerAvailable ? Check::STATE_OK : Check::STATE_WARNING,
+                'name' => $toolName,
+                'state' => $toolAvailable ? Check::STATE_OK : Check::STATE_WARNING,
+                'message' => $toolMessage,
             ]);
         }
 
@@ -438,6 +452,7 @@ final class Requirements
         $checks[] = new Check([
             'name' => 'timeout - (GNU coreutils)',
             'state' => $timeoutBin ? Check::STATE_OK : Check::STATE_WARNING,
+            'message' => 'Used to bound the runtime of external commands. Not invoked by the core framework itself, but relied on by bundles and deployment scripts.',
         ]);
 
         // pdftotext binary
@@ -450,6 +465,7 @@ final class Requirements
         $checks[] = new Check([
             'name' => 'pdftotext - (part of poppler-utils)',
             'state' => $pdftotextBin ? Check::STATE_OK : Check::STATE_WARNING,
+            'message' => 'Extracts plain text from PDF pages for search indexing (Asset\Document::getText()). It is not involved in generating PDFs or thumbnails. Without it, Ghostscript extracts the text instead, with less accurate results.',
         ]);
 
         try {
@@ -461,6 +477,7 @@ final class Requirements
         $checks[] = new Check([
             'name' => 'Graphviz',
             'state' => $graphvizAvailable ? Check::STATE_OK : Check::STATE_WARNING,
+            'message' => 'Renders workflow graphs from the DOT source generated by Pimcore (see the pimcore:workflow:dump command).',
         ]);
 
         return $checks;
