@@ -151,8 +151,11 @@ pimcore:
         ping_cache_ttl: 60
 ```
 
-Availability is determined by polling the service's `/health` endpoint; the result is cached for
-`ping_cache_ttl` seconds.
+Availability is determined by polling the service's `/health` endpoint. A successful check is
+cached as available for `ping_cache_ttl` seconds. A failure is not cached immediately: the ping is
+retried after 15 seconds, and only three consecutive failures mark the service unavailable for
+`ping_cache_ttl` seconds. This keeps a restarting Gotenberg container from disabling document
+conversion for the full TTL.
 
 **Without it:** document conversion falls back to local LibreOffice; HTML-to-image conversion is
 reported as unsupported.
@@ -295,8 +298,8 @@ Results are cached per request, so a newly installed binary is picked up on the 
 > requirements check finds on the command line may still be invisible to PHP-FPM. Use
 > `pimcore_executable_*` parameters when the two environments differ.
 
-Where they exist, `nice` and `nohup` are used to run these subprocesses at low priority; both are
-skipped silently if unavailable.
+Where it exists, `nice` is used to run these subprocesses at low priority; it is skipped silently
+if unavailable.
 
 > **Note**
 > The image optimizer binaries (`jpegoptim`, `pngquant`, `optipng`, `cwebp`) are located by the
