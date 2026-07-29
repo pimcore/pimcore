@@ -166,15 +166,16 @@ doctrine:
                 profiling: false
                 options:
                   # Disables MySQL strict mode (carried over from the legacy Zend_Db integration).
-                  # Confirmed load-bearing, not vestigial: with the MySQL 8 default sql_mode
-                  # (which includes ONLY_FULL_GROUP_BY), at least two core queries error outright —
-                  # Translation\Dao::getAvailableLanguages() ("SELECT * ... GROUP BY `language`")
-                  # and Element\Service::findForbiddenPaths() ("SELECT cpath, userid, max(list) ...
-                  # GROUP BY cpath", where userid is neither grouped nor aggregated). Beyond that,
-                  # Listing::setGroupBy() (lib/Model/Listing/AbstractListing.php) is public API used
-                  # by third-party/customer code, and CustomReportsBundle lets admins configure
-                  # arbitrary GROUP BY reports — so the blast radius extends well past this codebase.
-                  # Do not remove without a dedicated, broadly-tested initiative.
+                  # Confirmed load-bearing, not vestigial: two core queries used to error outright
+                  # under the MySQL 8 default sql_mode (ONLY_FULL_GROUP_BY) - Translation\Dao::
+                  # getAvailableLanguages() and Element\Service::findForbiddenPaths() - both since
+                  # fixed to be ONLY_FULL_GROUP_BY-safe regardless of this setting. The remaining,
+                  # still-current reason this can't simply be removed: Listing::setGroupBy()
+                  # (lib/Model/Listing/AbstractListing.php) is public API used by third-party/
+                  # customer code, and CustomReportsBundle lets admins configure arbitrary GROUP BY
+                  # reports - the blast radius of flipping this extends well past this codebase, and
+                  # third-party GROUP BY usage can't be audited or fixed the way the two core
+                  # queries above were. Do not remove without a dedicated, broadly-tested initiative.
                   !php/const PDO::MYSQL_ATTR_INIT_COMMAND: "SET sql_mode = '';"
                 default_table_options:
                     charset: UTF8MB4

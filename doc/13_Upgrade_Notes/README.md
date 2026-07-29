@@ -18,6 +18,9 @@
 ### [DataObject]
 - [Relations] The `ownername` column has been widened from `VARCHAR(70)` to `VARCHAR(190)` in the per-class relation tables (`object_relations_*`), the advanced-relation metadata tables (`object_metadata_*`) and `object_url_slugs`. The generated `ownername` for a localized field nested inside an object brick or field collection (e.g. `/objectbrick~<field>/<brickKey>/localizedfield~localizedfield`) can exceed 70 characters, which caused "Data too long for column 'ownername'" on save under strict SQL mode. Existing installations are updated automatically by the migration `Version20260721000000`; no code or configuration changes are required.
 
+### [Database]
+- Several columns using the deprecated, ambiguous `utf8`/`utf8_bin`/`utf8_general_ci` charset/collation names have been modernized in `install.sql`: `lock_keys`, `assets_image_thumbnail_cache.filename`, `search_backend_data.key`, `tags.name`, `properties.cpath` and `users_workspaces_asset/document/object.cpath` now use real `utf8mb4`. `assets.filename`/`path` and `documents.key`/`path` move to the explicit `utf8mb3` name instead (their composite `fullpath` index already uses the full 3072-byte InnoDB index-prefix budget at 3 bytes/char and would overflow it at 4 bytes/char) - note MySQL has deprecated `utf8mb3` itself too, so this remains a known limitation pending a future index/schema redesign, not a fully modernized state. Existing installations are updated automatically by the migration `Version20260729120000`; no code or configuration changes are required.
+
 
 ## Pimcore 2026.2.0
 

@@ -17,11 +17,15 @@ use Pimcore\Tests\Support\Test\TestCase;
 
 /**
  * Regression test for pimcore/internal-improvements#16 — install.sql used the deprecated,
- * ambiguous `utf8`/`utf8_bin`/`utf8_general_ci` names (aliases for utf8mb3, deprecated since
- * MySQL 8.0.28). Columns that are part of a composite index sized to the 3072-byte InnoDB
- * index-prefix limit (documented inline as "using the full key length of 3072 bytes") must
- * stay 3 bytes/char, so they use the explicit, non-deprecated `utf8mb3` name instead. All
- * other columns must use full `utf8mb4`.
+ * ambiguous `utf8`/`utf8_bin`/`utf8_general_ci` names. Most columns must use full `utf8mb4`.
+ * The only exception is `assets`.`filename`/`path`, `documents`.`key`/`path` and
+ * `objects`.`key`/`path` (3 tables x 2 columns = 6 declarations): their composite `fullpath`
+ * unique index (path+filename or path+key, 765+255 chars) already uses the full 3072-byte
+ * InnoDB index-prefix budget at 3 bytes/char and would overflow it at 4 bytes/char, so they
+ * use the explicit `utf8mb3` name instead of the ambiguous `utf8` alias. Note MySQL has
+ * deprecated `utf8mb3` itself too (not just `utf8`) — this is a documented stopgap pending an
+ * index/schema redesign, not a modern target state, so this test locks the exception down to
+ * exactly those 6 declarations rather than exempting `utf8mb3` wholesale.
  */
 class InstallSqlCharsetTest extends TestCase
 {
@@ -46,6 +50,30 @@ class InstallSqlCharsetTest extends TestCase
             $sql,
             'install.sql must not use the deprecated "utf8" table charset alias, use "utf8mb4" instead.'
         );
+    }
+
+    public function testUtf8mb3IsConfinedToTheKnownIndexWidthExceptions(): void
+    {
+        $sql = file_get_contents(PIMCORE_PROJECT_ROOT . '/bundles/InstallBundle/dump/install.sql');
+
+        preg_match_all('/^.*CHARACTER SET utf8mb3.*$/m', $sql, $matches);
+        $utf8mb3Lines = $matches[0];
+
+        $this->assertCount(
+            6,
+            $utf8mb3Lines,
+            'utf8mb3 must be confined to assets.filename/path, documents.key/path and objects.key/path (6 declarations) - '
+                . 'if this count changed, either a new exception was introduced (verify it truly cannot fit utf8mb4) or '
+                . 'one of the existing ones was fixed for real (update this test to lock in the new, smaller exception set).'
+        );
+
+        foreach ($utf8mb3Lines as $line) {
+            $this->assertMatchesRegularExpression(
+                '/`(filename|key|path)`/',
+                $line,
+                'unexpected utf8mb3 usage outside the known index-width-constrained columns: ' . $line
+            );
+        }
     }
 
     public function testLockKeysTableUsesUtf8mb4(): void

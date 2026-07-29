@@ -18,15 +18,23 @@ use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Modernizes the deprecated, ambiguous `utf8`/`utf8_bin`/`utf8_general_ci` charset/collation
- * names (aliases for utf8mb3, deprecated since MySQL 8.0.28) left over on databases that were
- * installed or upgraded before install.sql was updated (see internal-improvements#16).
+ * names left over on databases that were installed or upgraded before install.sql was updated
+ * (see internal-improvements#16).
  *
- * Columns that are part of a composite index already sized to the 3072-byte InnoDB
- * index-prefix limit (`fullpath`, `cpath_userId`, `getall`, ...) must stay 3 bytes/char, so
- * they move to the explicit, non-deprecated `utf8mb3` name instead of `utf8mb4` — widening
- * them to 4 bytes/char would overflow that limit. Columns with index headroom move to real
- * `utf8mb4`. `objects`.`key`/`path` are not touched here: Version20221003115124 already
- * moved them to utf8mb3 when renaming o_key/o_path.
+ * Most affected columns move to real `utf8mb4` (verified against a live MariaDB instance to
+ * fit within the 3072-byte InnoDB index-prefix limit for their indexes: `getall`
+ * (cpath+ctype+inheritable) and `cpath_userId` / `idx_users_workspaces_list_permission`
+ * (cpath+userId[+list]) all have headroom at 4 bytes/char).
+ *
+ * `assets`.`filename`/`path` and `documents`.`key`/`path` are the exception: their composite
+ * `fullpath` unique key (path+filename or path+key, 765+255 chars) already uses the full
+ * 3072-byte budget at 3 bytes/char (765*3 + 255*3 = 3060) and would overflow it at 4 bytes/char
+ * (4080 bytes). These move to the explicit `utf8mb3` name instead of the ambiguous `utf8` alias,
+ * but note MySQL has deprecated `utf8mb3` itself too (not just `utf8`) — this is a stopgap, not
+ * a modern target state. A real fix needs an index/schema redesign (e.g. a generated hash
+ * column) and is tracked separately as out of scope for this deprecation-warning cleanup.
+ * `objects`.`key`/`path` have the same constraint and are not touched here: Version20221003115124
+ * already moved them to utf8mb3 when renaming o_key/o_path.
  */
 final class Version20260729120000 extends AbstractMigration
 {
@@ -49,13 +57,13 @@ final class Version20260729120000 extends AbstractMigration
 
         $this->addSql('ALTER TABLE `lock_keys` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;');
 
-        $this->addSql('ALTER TABLE `properties` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL;');
+        $this->addSql('ALTER TABLE `properties` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL;');
 
         $this->addSql('ALTER TABLE `tags` MODIFY `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL;');
 
-        $this->addSql('ALTER TABLE `users_workspaces_asset` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL;');
-        $this->addSql('ALTER TABLE `users_workspaces_document` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL;');
-        $this->addSql('ALTER TABLE `users_workspaces_object` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL;');
+        $this->addSql('ALTER TABLE `users_workspaces_asset` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL;');
+        $this->addSql('ALTER TABLE `users_workspaces_document` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL;');
+        $this->addSql('ALTER TABLE `users_workspaces_object` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL;');
 
         if ($schema->hasTable('search_backend_data') && $schema->getTable('search_backend_data')->hasColumn('key')) {
             $this->addSql("ALTER TABLE `search_backend_data` MODIFY `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '';");

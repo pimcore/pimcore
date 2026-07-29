@@ -25,9 +25,11 @@ use Psr\Log\NullLogger;
 /**
  * Regression test for pimcore/internal-improvements#16 — verifies the migration that
  * upgrades already-installed databases still carrying the deprecated `utf8`/`utf8_bin`/
- * `utf8_general_ci` names (aliases for utf8mb3) to the modernized schema mirrored in
- * install.sql: `utf8mb3` for columns constrained by the 3072-byte InnoDB index-prefix
- * limit, `utf8mb4` everywhere else.
+ * `utf8_general_ci` names to the schema mirrored in install.sql: real `utf8mb4` for columns
+ * with index headroom (verified against a live MariaDB instance), and the explicit `utf8mb3`
+ * name only for `assets`.`filename`/`path` and `documents`.`key`/`path`, whose composite
+ * `fullpath` index is already at the 3072-byte InnoDB limit at 3 bytes/char — MySQL has
+ * deprecated `utf8mb3` too, so this is a documented stopgap, not a clean target state.
  */
 class Version20260729120000Test extends TestCase
 {
@@ -74,14 +76,21 @@ class Version20260729120000Test extends TestCase
         $this->assertStringContainsString('`documents` MODIFY `key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin', $sql);
         $this->assertStringContainsString('`documents` MODIFY `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin', $sql);
         $this->assertStringContainsString('`lock_keys` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci', $sql);
-        $this->assertStringContainsString('`properties` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci', $sql);
+        $this->assertStringContainsString('`properties` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci', $sql);
         $this->assertStringContainsString('`tags` MODIFY `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin', $sql);
-        $this->assertStringContainsString('`users_workspaces_asset` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin', $sql);
-        $this->assertStringContainsString('`users_workspaces_document` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin', $sql);
-        $this->assertStringContainsString('`users_workspaces_object` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin', $sql);
+        $this->assertStringContainsString('`users_workspaces_asset` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin', $sql);
+        $this->assertStringContainsString('`users_workspaces_document` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin', $sql);
+        $this->assertStringContainsString('`users_workspaces_object` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin', $sql);
 
         // no deprecated bare utf8/utf8_bin/utf8_general_ci should remain in the up() path
         $this->assertDoesNotMatchRegularExpression('/utf8(?!mb[34])/i', $sql);
+
+        // utf8mb3 must stay confined to the two index-width-constrained tables, not creep elsewhere
+        $utf8mb3Statements = array_values(array_filter($this->planSql($migration), fn (string $s) => str_contains($s, 'utf8mb3')));
+        $this->assertCount(4, $utf8mb3Statements);
+        foreach ($utf8mb3Statements as $statement) {
+            $this->assertMatchesRegularExpression('/`(assets|documents)` MODIFY `(filename|key|path)`/', $statement);
+        }
     }
 
     public function testUpModernizesOptionalTablesWhenPresent(): void
