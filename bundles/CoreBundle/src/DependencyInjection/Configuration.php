@@ -125,6 +125,7 @@ final class Configuration implements ConfigurationInterface
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
+        $this->addTmpStoreNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
@@ -548,7 +549,7 @@ final class Configuration implements ConfigurationInterface
                                         ])
                                     ->end()
                                     ->booleanNode('status_cache')
-                                        ->info('Store image metadata such as filename and modification date in assets_image_thumbnail_cache, this is helpful when using remote object storage for thumbnails.')
+                                        ->info('Store image metadata such as filename, modification date, file size and dimensions in assets_image_thumbnail_cache, this is helpful when using remote object storage for thumbnails.')
                                         ->defaultTrue()
                                     ->end()
                                     ->booleanNode('auto_clear_temp_files')
@@ -860,6 +861,25 @@ final class Configuration implements ConfigurationInterface
 
         $this->addImplementationLoaderNode($classDefinitionsNode, 'data');
         $this->addImplementationLoaderNode($classDefinitionsNode, 'layout');
+    }
+
+    /**
+     * Add tmp_store specific extension config
+     */
+    private function addTmpStoreNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('tmp_store')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('unserialize_allowed_classes')
+                        ->info('Additional PHP classes to allow when unserializing data from the tmp_store table.')
+                        ->scalarPrototype()->end()
+                        ->defaultValue([])
+                    ->end()
+                ->end()
+            ->end();
     }
 
     /**
@@ -1232,6 +1252,11 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                        ->arrayNode('session_token_allowed_classes')
+                            ->info('Additional PHP classes allowed when unserializing the admin session security token (e.g. custom authenticator tokens). The built-in Symfony/Pimcore token and user classes are always allowed.')
+                            ->scalarPrototype()->end()
+                            ->defaultValue([])
+                        ->end()
                 ->end()
             ->end();
     }
@@ -2051,6 +2076,39 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                             ->arrayNode('functions')
                                 ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('blocked_classes')
+                                ->info('FQCNs that must not be traversable (method calls or property access) from
+                                sandboxed twig templates. Defaults to Pimcore\'s built-in denylist (database/
+                                infrastructure layer, `Pimcore\Model\User`) - a site can append further FQCNs on
+                                top of that default. Ignored when `allowed_classes` is non-empty.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('allowed_classes')
+                                ->info('FQCNs that are traversable (method calls or property access) from
+                                sandboxed twig templates. As soon as this list contains at least one entry, the
+                                security policy switches from denylist mode to allowlist mode: the
+                                `blocked_classes` denylist is deactivated, and only instances of the classes
+                                listed here (and their subclasses) remain reachable.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('blocked_functions')
+                                ->info('`pimcore_*` function names that must not be covered by the blanket
+                                `pimcore_*` prefix auto-allow. Defaults to Pimcore\'s built-in denylist of
+                                functions that look up and return a live model instance by id/path - a site can
+                                append further function names on top of that default.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('hard_blocked_methods')
+                                ->info('FQCN => list-of-method-names map. Methods listed here can never be called
+                                on a matching instance from a sandboxed twig template, regardless of the
+                                blocked_classes/allowed_classes configuration. Defaults to a small set of
+                                secret/content-returning getters (e.g. `User::getPassword`, `Asset::getData`) -
+                                a site can extend the map with further classes/methods on top of that default.')
+                                ->useAttributeAsKey('class')
+                                ->arrayPrototype()
+                                    ->scalarPrototype()->end()
+                                ->end()
                             ->end()
                         ->end()
                     ->end()

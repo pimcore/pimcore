@@ -834,16 +834,11 @@ class Service extends Model\Element\Service
         try {
             $object = new DataObject();
 
-            $pathElements = explode('/', $path);
-            $keyIdx = count($pathElements) - 1;
-            $key = $pathElements[$keyIdx];
-            $validKey = Element\Service::getValidKey($key, 'object');
-
-            unset($pathElements[$keyIdx]);
-            $pathOnly = implode('/', $pathElements);
-
-            if ($validKey == $key && self::isValidPath($pathOnly, 'object')) {
-                $object->getDao()->getByPath($path);
+            if (self::isValidPath($path, 'object')) {
+                Element\Service::getByPathWithNfcFallback(
+                    fn (string $candidate) => $object->getDao()->getByPath($candidate),
+                    $path
+                );
 
                 return true;
             }
@@ -985,7 +980,7 @@ class Service extends Model\Element\Service
     public static function getSuperLayoutDefinition(Concrete $object): mixed
     {
         $mainLayout = $object->getClass()->getLayoutDefinitions();
-        $superLayout = unserialize(serialize($mainLayout));
+        $superLayout = self::cloneDefinition($mainLayout);
 
         self::createSuperLayout($superLayout);
 
@@ -1709,6 +1704,9 @@ class Service extends Model\Element\Service
 
             $objects = $list->getObjects();
             foreach ($objects as $object) {
+                if (!$object instanceof Concrete) {
+                    continue;
+                }
                 if ($addTitles && empty($data)) {
                     $tmp = [];
                     $mapped = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $header, true, $context);

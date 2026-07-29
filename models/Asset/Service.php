@@ -209,7 +209,10 @@ class Service extends Model\Element\Service
             $asset = new Asset();
 
             if (self::isValidPath($path, 'asset')) {
-                $asset->getDao()->getByPath($path);
+                Element\Service::getByPathWithNfcFallback(
+                    fn (string $candidate) => $asset->getDao()->getByPath($candidate),
+                    $path
+                );
 
                 return true;
             }
@@ -578,6 +581,7 @@ class Service extends Model\Element\Service
                 'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
                 'Content-Type' => $storage->mimeType($storagePath),
                 'Content-Length' => $storage->fileSize($storagePath),
+                AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER => true,
             ]);
         } else {
             $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
