@@ -314,7 +314,7 @@ class VersionTest extends TestCase
                                   `metaData` longblob DEFAULT NULL,
                                   `binaryData` longblob DEFAULT NULL,
                                   PRIMARY KEY (`id`)
-                                )");
+                                ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci");
     }
 
     protected function getNewestVersion(int $id): Version

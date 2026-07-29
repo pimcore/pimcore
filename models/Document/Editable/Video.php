@@ -505,9 +505,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         $width = $this->getWidthWithUnit();
         $height = $this->getHeightWithUnit();
 
-        if ($this->isStudioRequest()) {
-            // message only in editmode/debug — the query param alone is spoofable
-            $messageAttr = $message !== '' && ($this->getEditmode() || Pimcore::inDebugMode())
+        if ($this->getEditmode()) {
+            // editmode: studio-ui-bundle renders the error UI on top
+            $messageAttr = $message !== ''
                 ? ' data-message="' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '"'
                 : '';
 
@@ -517,19 +517,17 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
             </div>';
         }
 
-        // only display error message in debug mode
+        // frontend: placeholder served from CoreBundle
         if (!Pimcore::inDebugMode()) {
             $message = '';
         }
 
-        $code = '
+        return '
         <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
-            <div class="pimcore_editable_video_error" style="box-sizing: border-box; text-align:center; width: ' . $width . '; height: ' . $height . '; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
+            <div class="pimcore_editable_video_error" style="box-sizing: border-box; text-align:center; width: ' . $width . '; height: ' . $height . '; border:1px solid #000; background: url(/bundles/pimcorecore/img/filetype-not-supported.svg) no-repeat center center #fff;">
                 ' . $message . '
             </div>
         </div>';
-
-        return $code;
     }
 
     private function parseYoutubeId(): string
@@ -946,21 +944,13 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         return implode('', $durationParts);
     }
 
-    private function isStudioRequest(): bool
-    {
-        // only the Studio editor (editmode) iframe; the preview tab and frontend render normally
-        $request = Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
-
-        return $request !== null && $request->query->getBoolean('pimcore_studio');
-    }
-
     private function getProgressCode(?string $thumbnail = null): string
     {
         $name = $this->getName();
         $width = $this->getWidthWithUnit();
         $height = $this->getHeightWithUnit();
 
-        if ($this->isStudioRequest()) {
+        if ($this->getEditmode()) {
             // bare marker — studio-ui-bundle draws the loading UI on top
             return '
             <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
@@ -968,13 +958,18 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
             </div>';
         }
 
+        // frontend: poster + spinner served from CoreBundle
         $uid = $this->getUniqId();
-        $code = '
+
+        return '
         <div id="pimcore_video_' . $name . '" class="pimcore_editable_video">
             <style type="text/css">
+                #' . $uid . ' {
+                    position: relative;
+                }
                 #' . $uid . ' .pimcore_editable_video_progress_status {
                     box-sizing:content-box;
-                    background:#fff url(/bundles/pimcoreadmin/img/video-loading.gif) center center no-repeat;
+                    background:#fff url(/bundles/pimcorecore/img/video-loading.gif) center center no-repeat;
                     width:66px;
                     height:66px;
                     padding:20px;
@@ -988,13 +983,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
                     opacity: 0.8;
                 }
             </style>
-            <div class="pimcore_editable_video_progress" id="' . $uid . '">
-                <img src="' . $thumbnail . '" style="width: ' . $width . '; height: ' . $height . ';">
+            <div class="pimcore_editable_video_progress" id="' . $uid . '" style="width: ' . $width . '; height: ' . $height . ';">
+                <img src="' . htmlspecialchars((string) $thumbnail, ENT_QUOTES, 'UTF-8') . '" style="width: 100%; height: 100%;">
                 <div class="pimcore_editable_video_progress_status"></div>
             </div>
         </div>';
-
-        return $code;
     }
 
     private function getEmptyCode(): string

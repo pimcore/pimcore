@@ -138,7 +138,7 @@ class Dao extends Model\Dao\AbstractDao
                 FOREIGN KEY ({$qOoId})
                 REFERENCES {$qObjectsTable} ({$qId})
                 ON DELETE CASCADE
-        ) DEFAULT CHARSET=utf8mb4
+        ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
         ",
             [
                 (string) $this->model->getId(),
@@ -170,7 +170,7 @@ class Dao extends Model\Dao\AbstractDao
                 FOREIGN KEY ({$qOoId})
                 REFERENCES {$qObjectsTable} ({$qId})
                 ON DELETE CASCADE
-        ) DEFAULT CHARSET=utf8mb4
+        ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
         "
         );
 
@@ -199,7 +199,7 @@ class Dao extends Model\Dao\AbstractDao
                 FOREIGN KEY ({$qSrcId})
                 REFERENCES {$qObjectsTable} ({$qId})
                 ON DELETE CASCADE
-        ) DEFAULT CHARSET=utf8mb4
+        ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
         "
         );
 
@@ -222,6 +222,7 @@ class Dao extends Model\Dao\AbstractDao
                         foreach ($value->getColumnType() as $fkey => $fvalue) {
                             $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
                             $protectedDatastoreColumns[] = $key . '__' . $fkey;
+                            $this->ensureForeignKeys($objectDatastoreTable, $key, $fkey, $value);
                         }
                     } elseif ($value->getColumnType()) {
                         $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
@@ -238,6 +239,7 @@ class Dao extends Model\Dao\AbstractDao
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
                         $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
                         $protectedColumns[] = $key . '__' . $fkey;
+                        $this->ensureForeignKeys($objectTable, $key, $fkey, $value);
                     }
                 } elseif ($value->getQueryColumnType()) {
                     $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');

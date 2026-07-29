@@ -91,7 +91,7 @@ class InstallerKernel extends Kernel
                     ->setPublic(true);
             }
 
-            $container->setParameter('secret', uniqid('installer-', true));
+            $container->setParameter('secret', bin2hex(random_bytes(16)));
         });
 
         $loader->load('@PimcoreInstallBundle/config/config.yaml');

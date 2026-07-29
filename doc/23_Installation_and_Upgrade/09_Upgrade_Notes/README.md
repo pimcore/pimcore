@@ -647,7 +647,7 @@ The tokens for password reset are now stored in the DB and are one time use only
 
 #### [Installer] :
 
--   Removed `--ignore-existing-config` option from the `pimcore:install` command. The `system.yaml` file is not used anymore and therefore this flag became obsolete. See [preparing guide](../07_Updating_Pimcore/12_V10_to_V11.md)
+-   Removed `--ignore-existing-config` option from the `pimcore:install` command. The `system.yaml` file is not used anymore and therefore this flag became obsolete.
 -   Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
 -   Adding `BundleSetupEvent` Event. Bundles that are available for installation can be customized in the installing process via an Eventlistener or EventSubscriber.
 -   Bundles can be added and removed. You can set a flag if you want to recommend the bundle.
@@ -722,7 +722,7 @@ The tokens for password reset are now stored in the DB and are one time use only
 -   Enabled Content Security Policy by default.
 -   Implemented Symfony HTML sanitizer for WYSIWYG editors. Please make sure to sanitize your persisted data with help of this [script](https://gist.github.com/dvesh3/0e585a16dfbf546bc17a9eef1c5640b3).
     Also, when using API to set WYSIWYG data, please pass encoded characters for html entities `<`,`>`, `&` etc.
-    The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API. For configuration details see also [WYSIWYG config](../../03_Documents/01_Editables/40_WYSIWYG.md#extending-symfony-html-sanitizer-configuration)
+    The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API. For configuration details see also [WYSIWYG config](../../01_Documents/02_Templates/03_Editables/40_WYSIWYG.md#extending-symfony-html-sanitizer-configuration)
 
 ---
 
@@ -788,7 +788,7 @@ The tokens for password reset are now stored in the DB and are one time use only
             ```
             -   Removed deprecated methods `getTranslator()`, `getBundleManager()` and `getTokenResolver()` from the `Pimcore\Bundle\AdminBundle\Controller\AdminController`
     -   [System Info & Tools] Php Info and Opcache Status has been moved into `pimcore/system-info-bundle` package.
-    -   [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
+    -   [File Explorer] System File explorer has been moved to `pimcore/file-explorer-bundle` package.
     -   [Web2Print] has been moved to `pimcore/web-to-print-bundle` package.
         -   Config `pimcore:documents:web_to_print` has been removed, please use `pimcore_web_to_print` in the PimcoreWebToPrintBundle instead.
         -   Print related Events have been moved into PimcoreWebToPrintBundle. Please check and adapt the Events' namespaces.
@@ -827,11 +827,11 @@ The tokens for password reset are now stored in the DB and are one time use only
     $web2printConfig = $web2printConfig['chromiumSettings'];
     ```
 -   Removed legacy callback from LocationAwareConfigRepository. Therefore, configurations in the old php file format are not supported anymore.
--   Removed setting write targets and storage directory in the environment file. Instead, use the [symfony config](../07_Updating_Pimcore/12_V10_to_V11.md)
+-   Removed setting write targets and storage directory in the environment file. Instead, use the symfony config.
 -   Renamed default directories from `image-thumbnails` and `video-thumbnails` to `image_thumbnails` and `video_thumbnails`.
 -   Removed deprecated services/aliases: `Pimcore\Templating\Renderer\TagRenderer`, `pimcore.cache.adapter.pdo`, `pimcore.cache.adapter.pdo_tag_aware`
 -   Rename config files from `*.yml` to `*.yaml`. Note that we now use `system_settings.yaml` as config file and not `system.yml`
--   System Settings are now implementing the LocationAwareConfigRepository. See [preparing guide](../07_Updating_Pimcore/11_Preparing_for_V11.md)
+-   System Settings are now implementing the LocationAwareConfigRepository.
 -   The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
 -   The deprecated config node `pimcore.error_handling` and the related parameter `pimcore.response_exception_listener.render_error_document` was removed.
 -   Moved `hide_edit_image` & `disable_tree_preview` configs from `pimcore` to `pimcore_admin` section.
@@ -1044,7 +1044,7 @@ pimcore:
 -   Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
 -   Removed `pimcore:document:types` from config. The types will be represented by the keys of the `type_definitions:map`
 -   Removed deprecated `Pimcore\Routing\Dynamic\DocumentRouteHandler::addDirectRouteDocumentType()` method, please use the `pimcore.documents.type_definitions.map.%document_type%.direct_route` config instead.
--   Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../03_Documents/README.md#cleanup-documents-types)
+-   Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../01_Documents/14_Working_with_Documents_via_PHP_API.md#cleanup-document-types)
 -   Removed the `attributes` field from the link editable.
 -   Deprecated WkHtmlToImage has been removed.
 -   Added a second boolean parameter `$validate` to the setContentMainDocumentId() method. This will restrict the option to set pages as content main documents to each other. For details, please see [#12891](https://github.com/pimcore/pimcore/issues/12891)
