@@ -165,6 +165,10 @@ doctrine:
                 logging: false
                 profiling: false
                 options:
+                  # Disables MySQL strict mode for backwards compatibility with data/queries predating
+                  # strict mode being the server default (carried over from the legacy Zend_Db integration).
+                  # Do not remove without a dedicated, broadly-tested initiative: many core date/type
+                  # handling code paths still rely on the permissive behavior this provides.
                   !php/const PDO::MYSQL_ATTR_INIT_COMMAND: "SET sql_mode = '';"
                 default_table_options:
                     charset: UTF8MB4
