@@ -34,7 +34,7 @@ tools menu. Results use three states:
 | State | Meaning |
 |-------|---------|
 | OK | Detected and usable. |
-| Warning | Recommended, but not required. Pimcore runs without it; the feature it backs does not. |
+| Warning | Recommended, but not required. Pimcore runs without it. Depending on the tool, the feature it backs is either unavailable or falls back to a lower-quality alternative — see the sections below. |
 | Error | Required. Pimcore will not work correctly without it. |
 
 Everything in the *CLI Tools & Applications* section is reported as a warning, except `php` and
@@ -51,7 +51,7 @@ the feature described below.
 | Gotenberg (Chromium) | Rendering HTML to a screenshot image | HTML-to-image conversion unavailable |
 | `ffmpeg` | Video transcoding, poster frames, duration/dimensions | Video assets are not transcoded or previewed |
 | `exiftool` | Reading embedded asset metadata | Falls back to PHP's EXIF/IPTC/XMP readers (less complete) |
-| `jpegoptim`, `pngquant`, `optipng`, `cwebp` | Recompressing generated thumbnails | Thumbnails are served unoptimized (larger files) |
+| `jpegoptim`, `pngquant`, `optipng`, `cwebp` | Recompressing generated thumbnails | That step is skipped, the rest of the chain still runs; thumbnails get larger |
 | `dot` (Graphviz) | Rendering workflow graphs from DOT source | Pimcore still emits DOT source; nothing renders it |
 | Imagick (PHP extension) | Image processing backend | Falls back to GD: fewer formats, lower quality |
 | Redis | Cache and Messenger transport backend | Doctrine/database cache and transports are used instead |
@@ -91,8 +91,10 @@ extend the Ghostscript adapter and are considered unavailable if Ghostscript is 
 they only produce an intermediate PDF that Ghostscript still has to render.
 
 **Without it:** `Pimcore\Document::getDefaultAdapter()` finds no usable adapter. Document
-thumbnails resolve to an empty thumbnail and page count processing logs an error and records the
-page count as `failed`. Nothing crashes — the feature is simply not available.
+thumbnails resolve to an empty thumbnail, and page count processing logs an error and stops before
+it runs, so the page count stays unset. (The `failed` marker on `document_page_count` is only
+recorded when an adapter *is* available but the conversion itself throws.) Nothing crashes — the
+feature is simply not available.
 
 ### `pdftotext` — poppler-utils
 
@@ -109,7 +111,8 @@ back to Ghostscript's `txtwrite` device. Poppler is preferred because it produce
 results.
 
 **Without it:** text extraction still works via Ghostscript, at lower fidelity. If Ghostscript is
-missing as well, `getText()` logs an error and returns nothing.
+missing as well, no document adapter is available and `Asset\Document::getText()` returns `null`
+without attempting extraction.
 
 Text extraction can be turned off entirely, in which case neither tool is used for it:
 
@@ -172,9 +175,9 @@ lower quality. Two related checks appear in the requirements list:
 - **WebP / AVIF support** — reported per active adapter; it determines whether Pimcore can generate
   those thumbnail variants at all.
 
-WebP encoding through ImageMagick goes through a delegate that calls `cwebp`. If the delegate
-definition omits the `-q` flag, the quality configured on the thumbnail is ignored and `cwebp`'s
-own default is used. See
+Depending on how it was built, ImageMagick either encodes WebP natively or delegates to the
+`cwebp` binary. If you configure a `cwebp` delegate and its definition omits the `-q` flag, the
+quality configured on the thumbnail is ignored and `cwebp`'s own default is used. See
 [Advanced Image Thumbnails](../02_Assets/01_Working_with_Thumbnails/04_Advanced_Image_Thumbnails.md)
 for the delegate example.
 
@@ -190,8 +193,10 @@ Generated thumbnails are recompressed asynchronously by
 | `optipng` | PNG |
 | `cwebp` | WebP |
 
-Every step is best-effort: a missing binary means that step is skipped, and the smallest result
-produced by any step is the one written back to thumbnail storage. Optimization is triggered
+The chain runs sequentially and yields a single output, so a missing binary only means that one
+step is skipped — the remaining ones still run. `Pimcore\Image\Optimizer` then keeps the smallest
+result across all registered optimizer *services*; out of the box there is only one such service,
+so the chain's output is what gets written back to thumbnail storage. Optimization is triggered
 through the `pimcore_image_optimize` queue and can be run manually:
 
 ```bash
@@ -291,7 +296,9 @@ These are configured rather than detected, and are covered in their own chapters
 
 3. **The `PATH` of the process**, via Symfony's `ExecutableFinder`.
 
-Results are cached per request, so a newly installed binary is picked up on the next request.
+Lookups are cached statically for the lifetime of the PHP process. A newly installed binary is
+therefore picked up by the next web request, but long-running Messenger workers keep the previous
+result — including a previous "not found" — until they are restarted.
 
 > **Important**
 > The web server process and the CLI process often have different `PATH` values. A tool that the
@@ -304,4 +311,6 @@ if unavailable.
 > **Note**
 > The image optimizer binaries (`jpegoptim`, `pngquant`, `optipng`, `cwebp`) are located by the
 > `spatie/image-optimizer` library, not by `Console::getExecutable()`. They must be on the `PATH` of
-> the worker process; `pimcore_executable_*` parameters have no effect on them.
+> the worker process; `pimcore_executable_*` parameters have no effect on them. Note that the
+> requirements check *does* resolve them through `Console::getExecutable()`, so an override can make
+> the check report OK while the worker still cannot find the binary.

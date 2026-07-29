@@ -63,7 +63,7 @@ class RequirementsCheckCommand extends AbstractCommand
                 break;
         }
 
-        $allChecks = Requirements::checkAll(Db::get());
+        $allChecks = $this->loadChecks();
 
         $this->display($allChecks['checksPHP'], 'PHP');
         $this->display($allChecks['checksMySQL'], 'MySQL');
@@ -71,6 +71,14 @@ class RequirementsCheckCommand extends AbstractCommand
         $this->display($allChecks['checksApps'], 'CLI Tools & Applications');
 
         return 0;
+    }
+
+    /**
+     * @return array<string, Requirements\Check[]>
+     */
+    protected function loadChecks(): array
+    {
+        return Requirements::checkAll(Db::get());
     }
 
     /**

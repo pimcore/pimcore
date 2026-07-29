@@ -417,14 +417,15 @@ final class Requirements
         $checks[] = new Check([
             'name' => 'Gotenberg / LibreOffice',
             'state' => $libreofficeGotenberg ? Check::STATE_OK : Check::STATE_WARNING,
-            'message' => 'Converts office documents (DOC(X), XLS(X), PPT(X), ODT, ...) to PDF, so that Ghostscript can render and index them. Only PDF assets are supported without it.',
+            'message' => 'Converts office documents (DOC(X), XLS(X), PPT(X), ODT, ...) to PDF, so that Ghostscript can render and index them. Without it, those assets can still be stored and downloaded, but get no thumbnail, page count or extracted text.',
         ]);
 
         // image optimizers & metadata extraction
         $externalTools = [
-            'jpegoptim' => 'Recompresses generated JPEG thumbnails to reduce their file size. Skipped if missing, thumbnails are then served unoptimized.',
-            'pngquant' => 'Recompresses generated PNG thumbnails to reduce their file size. Skipped if missing, thumbnails are then served unoptimized.',
-            'optipng' => 'Recompresses generated PNG thumbnails to reduce their file size. Skipped if missing, thumbnails are then served unoptimized.',
+            'jpegoptim' => 'Recompresses generated JPEG thumbnails to reduce their file size. Only this step of the optimizer chain is skipped when it is missing.',
+            'pngquant' => 'Recompresses generated PNG thumbnails (lossy). Only this step of the optimizer chain is skipped when it is missing, optipng still runs.',
+            'optipng' => 'Recompresses generated PNG thumbnails (lossless). Only this step of the optimizer chain is skipped when it is missing, pngquant still runs.',
+            'cwebp' => 'Recompresses generated WebP thumbnails, and encodes WebP for ImageMagick if it is configured with a cwebp delegate.',
             'exiftool' => 'Reads embedded metadata (EXIF, IPTC, XMP, ...) from uploaded assets. Without it, Pimcore falls back to the PHP built-in readers, which cover fewer tags.',
         ];
 
