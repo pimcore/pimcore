@@ -36,11 +36,15 @@ class RequirementsTest extends TestCase
 
         $connection->method('fetchAssociative')->willReturnCallback(
             function (string $query) {
-                if (str_contains($query, 'character_set_database')) {
+                // Requirements.php uses SQL LIKE escape sequences ("character\_set\_database"),
+                // so match against the un-escaped query text instead of the raw string.
+                $normalizedQuery = str_replace('\\_', '_', $query);
+
+                if (str_contains($normalizedQuery, 'character_set_database')) {
                     return ['Value' => 'utf8mb4'];
                 }
 
-                if (str_contains($query, 'innodb_file_per_table')) {
+                if (str_contains($normalizedQuery, 'innodb_file_per_table')) {
                     return ['Value' => 'ON'];
                 }
 
