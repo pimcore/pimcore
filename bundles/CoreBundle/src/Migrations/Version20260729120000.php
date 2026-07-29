@@ -26,15 +26,23 @@ use Doctrine\Migrations\AbstractMigration;
  * (cpath+ctype+inheritable) and `cpath_userId` / `idx_users_workspaces_list_permission`
  * (cpath+userId[+list]) all have headroom at 4 bytes/char).
  *
- * `assets`.`filename`/`path` and `documents`.`key`/`path` are the exception: their composite
- * `fullpath` unique key (path+filename or path+key, 765+255 chars) already uses the full
- * 3072-byte budget at 3 bytes/char (765*3 + 255*3 = 3060) and would overflow it at 4 bytes/char
- * (4080 bytes). These move to the explicit `utf8mb3` name instead of the ambiguous `utf8` alias,
- * but note MySQL has deprecated `utf8mb3` itself too (not just `utf8`) — this is a stopgap, not
- * a modern target state. A real fix needs an index/schema redesign (e.g. a generated hash
- * column) and is tracked separately as out of scope for this deprecation-warning cleanup.
- * `objects`.`key`/`path` have the same constraint and are not touched here: Version20221003115124
- * already moved them to utf8mb3 when renaming o_key/o_path.
+ * `assets`.`filename`/`path`, `documents`.`key`/`path` and `objects`.`key`/`path` are the
+ * exception: their composite `fullpath` unique key (path+filename or path+key, 765+255 chars)
+ * already uses the full 3072-byte budget at 3 bytes/char (765*3 + 255*3 = 3060) and would
+ * overflow it at 4 bytes/char (4080 bytes). These move to the explicit `utf8mb3` name instead
+ * of the ambiguous `utf8` alias, but note MySQL has deprecated `utf8mb3` itself too (not just
+ * `utf8`) — this is a stopgap, not a modern target state. A real fix needs an index/schema
+ * redesign (e.g. a generated hash column) and is tracked separately as out of scope for this
+ * deprecation-warning cleanup.
+ *
+ * `objects`.`key`/`path` are included here even though Version20221003115124 (2022) already
+ * renamed o_key/o_path to key/path with utf8mb3 explicitly: a fresh install's `install.sql`
+ * still declared them as bare `utf8` until this PR, and the installer marks every migration as
+ * already executed (`doctrine:migrations:version --all --add`, see
+ * InstallBundle\Console\ConsoleCommandRunner::markMigrationsAsDone()) without ever running its
+ * SQL. Any install created between that migration's release and this PR therefore never ran
+ * the 2022 rename's charset change and still has bare `utf8` here - this ALTER is a no-op for
+ * databases that already went through the real upgrade path.
  */
 final class Version20260729120000 extends AbstractMigration
 {
@@ -54,6 +62,9 @@ final class Version20260729120000 extends AbstractMigration
 
         $this->addSql("ALTER TABLE `documents` MODIFY `key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '';");
         $this->addSql('ALTER TABLE `documents` MODIFY `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL;');
+
+        $this->addSql("ALTER TABLE `objects` MODIFY `key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '';");
+        $this->addSql('ALTER TABLE `objects` MODIFY `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL;');
 
         $this->addSql('ALTER TABLE `lock_keys` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;');
 
@@ -81,6 +92,9 @@ final class Version20260729120000 extends AbstractMigration
 
         $this->addSql("ALTER TABLE `documents` MODIFY `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '';");
         $this->addSql('ALTER TABLE `documents` MODIFY `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL;');
+
+        $this->addSql("ALTER TABLE `objects` MODIFY `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '';");
+        $this->addSql('ALTER TABLE `objects` MODIFY `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL;');
 
         $this->addSql('ALTER TABLE `lock_keys` CONVERT TO CHARACTER SET utf8;');
 

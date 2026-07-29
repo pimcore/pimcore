@@ -56,24 +56,41 @@ class InstallSqlCharsetTest extends TestCase
     {
         $sql = file_get_contents(PIMCORE_PROJECT_ROOT . '/bundles/InstallBundle/dump/install.sql');
 
-        preg_match_all('/^.*CHARACTER SET utf8mb3.*$/m', $sql, $matches);
-        $utf8mb3Lines = $matches[0];
+        $allowedTablesAndColumns = [
+            'assets' => ['filename', 'path'],
+            'documents' => ['key', 'path'],
+            'objects' => ['key', 'path'],
+        ];
 
-        $this->assertCount(
-            6,
-            $utf8mb3Lines,
-            'utf8mb3 must be confined to assets.filename/path, documents.key/path and objects.key/path (6 declarations) - '
-                . 'if this count changed, either a new exception was introduced (verify it truly cannot fit utf8mb4) or '
+        preg_match_all('/CREATE TABLE `(\w+)`.*?;/s', $sql, $tableMatches, PREG_SET_ORDER);
+
+        $seen = [];
+        foreach ($tableMatches as $tableMatch) {
+            [$statement, $tableName] = $tableMatch;
+
+            preg_match_all('/`(\w+)`[^,]*CHARACTER SET utf8mb3/', $statement, $columnMatches);
+            foreach ($columnMatches[1] as $columnName) {
+                $this->assertArrayHasKey(
+                    $tableName,
+                    $allowedTablesAndColumns,
+                    "unexpected utf8mb3 usage on `{$tableName}`.`{$columnName}` - outside the known index-width-constrained tables"
+                );
+                $this->assertContains(
+                    $columnName,
+                    $allowedTablesAndColumns[$tableName],
+                    "unexpected utf8mb3 usage on `{$tableName}`.`{$columnName}` - outside the known index-width-constrained columns"
+                );
+                $seen[$tableName][] = $columnName;
+            }
+        }
+
+        $this->assertSame(
+            $allowedTablesAndColumns,
+            $seen,
+            'utf8mb3 must be used on exactly assets.filename/path, documents.key/path and objects.key/path - '
+                . 'if this differs, either a new exception was introduced (verify it truly cannot fit utf8mb4) or '
                 . 'one of the existing ones was fixed for real (update this test to lock in the new, smaller exception set).'
         );
-
-        foreach ($utf8mb3Lines as $line) {
-            $this->assertMatchesRegularExpression(
-                '/`(filename|key|path)`/',
-                $line,
-                'unexpected utf8mb3 usage outside the known index-width-constrained columns: ' . $line
-            );
-        }
     }
 
     public function testLockKeysTableUsesUtf8mb4(): void
