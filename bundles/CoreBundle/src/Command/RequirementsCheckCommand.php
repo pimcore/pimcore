@@ -85,7 +85,7 @@ class RequirementsCheckCommand extends AbstractCommand
             if (in_array($check->getState(), $this->levelsToDisplay)) {
                 $row = [$check->getName(), $this->displayState($check->getState())];
                 if ($showDescription) {
-                    $row[] = $check->hasMessage() ? $check->getMessage() : '';
+                    $row[] = $check->message ?? '';
                 }
                 $checksTab[] = $row;
             }

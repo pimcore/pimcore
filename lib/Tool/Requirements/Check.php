@@ -71,11 +71,6 @@ final class Check implements ArrayAccess
         $this->state = $state;
     }
 
-    public function hasMessage(): bool
-    {
-        return !empty($this->message);
-    }
-
     public function getMessage(): string
     {
         if (empty($this->message)) {

@@ -508,12 +508,19 @@ final class Requirements
             }
         }
 
-        $checks[] = new Check([
+        $memoryLimitCheck = [
             'name' => 'memory_limit (in php.ini)',
             'link' => 'https://www.php.net/manual/en/ini.core.php#ini.memory-limit',
             'state' => $memoryLimitState,
-            'message' => $memoryLimitMessage,
-        ]);
+        ];
+
+        // only set the message if there is something to report, an empty message makes
+        // Check::getMessage() fall back to its "... is required." default
+        if ($memoryLimitMessage !== '') {
+            $memoryLimitCheck['message'] = $memoryLimitMessage;
+        }
+
+        $checks[] = new Check($memoryLimitCheck);
 
         // pdo_mysql
         $checks[] = new Check([
