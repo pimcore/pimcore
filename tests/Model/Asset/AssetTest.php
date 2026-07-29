@@ -316,6 +316,64 @@ class AssetTest extends ModelTestCase
         $this->assertSame($this->testAsset->getRealFullPath(), $pathReference['src']);
     }
 
+    public function testAnimatedGifToWebpPreservesFrames(): void
+    {
+        if (!extension_loaded('imagick')) {
+            $this->markTestSkipped('Imagick extension is not available');
+        }
+
+        // Build a minimal 2-frame animated GIF in memory
+        $gif = new \Imagick();
+        foreach (['red', 'blue'] as $color) {
+            $frame = new \Imagick();
+            $frame->newImage(8, 8, new \ImagickPixel($color));
+            $frame->setImageFormat('gif');
+            $frame->setImageDelay(10);
+            $gif->addImage($frame);
+            $frame->destroy();
+        }
+
+        $tmpGif = sys_get_temp_dir() . '/pimcore_test_anim_' . uniqid() . '.gif';
+        $gif->writeImages($tmpGif, true);
+        $gif->destroy();
+
+        $asset = new Asset\Image();
+        $asset->setParentId(1);
+        $asset->setUserOwner(1);
+        $asset->setUserModification(1);
+        $asset->setCreationDate(time());
+        $asset->setData(file_get_contents($tmpGif));
+        $asset->setFilename('test_animated_' . uniqid() . '.gif');
+        $asset->save();
+        unlink($tmpGif);
+
+        $configName = 'assettest_animated_webp_' . uniqid();
+        $config = new Asset\Image\Thumbnail\Config();
+        $config->setName($configName);
+        $config->setFormat('webp');
+        $config->setPreserveAnimation(true);
+        $config->save(true);
+        TestHelper::$thumbnail_configs[] = $configName;
+
+        try {
+            $thumbnail = $asset->getThumbnail($configName, false);
+            $localFile = $thumbnail->getLocalFile();
+
+            $this->assertNotNull($localFile, 'Thumbnail local file must not be null');
+            $this->assertStringEndsWith('.webp', $localFile, 'Thumbnail output must be a WebP file');
+
+            $result = new \Imagick($localFile);
+            $this->assertGreaterThan(
+                1,
+                $result->getNumberImages(),
+                'Animated GIF→WebP thumbnail must preserve multiple frames'
+            );
+            $result->destroy();
+        } finally {
+            $asset->delete();
+        }
+    }
+
     public function reloadAsset(): void
     {
         $this->testAsset = Asset::getById($this->testAsset->getId(), ['force' => true]);
