@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Asset;
 
 use Exception;
+use Imagick;
+use ImagickPixel;
 use League\Flysystem\UnableToMoveFile;
 use Normalizer;
 use Pimcore\Db;
@@ -323,10 +325,10 @@ class AssetTest extends ModelTestCase
         }
 
         // Build a minimal 2-frame animated GIF in memory
-        $gif = new \Imagick();
+        $gif = new Imagick();
         foreach (['red', 'blue'] as $color) {
-            $frame = new \Imagick();
-            $frame->newImage(8, 8, new \ImagickPixel($color));
+            $frame = new Imagick();
+            $frame->newImage(8, 8, new ImagickPixel($color));
             $frame->setImageFormat('gif');
             $frame->setImageDelay(10);
             $gif->addImage($frame);
@@ -362,7 +364,7 @@ class AssetTest extends ModelTestCase
             $this->assertNotNull($localFile, 'Thumbnail local file must not be null');
             $this->assertStringEndsWith('.webp', $localFile, 'Thumbnail output must be a WebP file');
 
-            $result = new \Imagick($localFile);
+            $result = new Imagick($localFile);
             $this->assertGreaterThan(
                 1,
                 $result->getNumberImages(),
