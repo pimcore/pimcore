@@ -91,10 +91,11 @@ class ServiceEnrichLayoutDefinitionTest extends TestCase
     }
 
     /**
-     * Without an object, permission enrichment still cannot run (workspace permissions are
-     * resolved per-object) - this behaviour is unchanged by the fix.
+     * With no permission subject at all - neither the $object argument nor context['object'] -
+     * enrichment still cannot run (workspace permissions are resolved per-object). This is
+     * unchanged by the fix.
      */
-    public function testNoObjectMeansNoEnrichmentRegardlessOfPurpose(): void
+    public function testNoPermissionSubjectMeansNoEnrichmentRegardlessOfPurpose(): void
     {
         $user = new User();
         $user->setAdmin(false);
@@ -105,5 +106,32 @@ class ServiceEnrichLayoutDefinitionTest extends TestCase
 
         self::assertNull($layout->getPermissionView());
         self::assertNull($layout->getPermissionEdit());
+    }
+
+    /**
+     * Grid column configuration cannot always supply a Concrete $object (field-level enrichers
+     * require that), but can still hand the real permission subject through context['object'].
+     * enrichLayoutDefinition() must fall back to that instead of silently dropping it - this is
+     * the shape callers like the classic GridView column config controller actually use: $object
+     * is null, and the object lives in context['object'].
+     */
+    public function testNullObjectWithContextObjectStillEnforcesLanguagePermissions(): void
+    {
+        $object = $this->buildObjectWithLanguagePermissions(['en', 'de'], ['en']);
+
+        $user = new User();
+        $user->setAdmin(false);
+
+        $layout = new Localizedfields();
+
+        Service::enrichLayoutDefinition(
+            $layout,
+            null,
+            ['purpose' => 'gridconfig', 'object' => $object],
+            $user
+        );
+
+        self::assertSame(['en', 'de'], $layout->getPermissionView());
+        self::assertSame(['en'], $layout->getPermissionEdit());
     }
 }
