@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Pimcore\Helper;
 
 use Exception;
-use GuzzleHttp\RequestOptions;
 use Net_URL2;
 use Pimcore\Http\SsrfProtection;
 use Pimcore\Mail as MailClient;
@@ -301,7 +300,7 @@ CSS;
                     // pin the connection to the validated address to defeat DNS rebinding.
                     $safeIps = SsrfProtection::resolvePublicIps($path);
                     if ($safeIps !== []) {
-                        $options = self::getSsrfSafeRequestOptions($path, $safeIps);
+                        $options = SsrfProtection::getRequestOptions($path, $safeIps);
                         $fileContent = \Pimcore\Tool::getHttpData($path, [], [], $options);
                         $fileInfo = [
                             'fileUrlNormalized' => $path,
@@ -325,40 +324,6 @@ CSS;
         $string = $cssToInlineStyles->convert($string, $css);
 
         return $string;
-    }
-
-    /**
-     * Builds the Guzzle request options used to fetch a remote CSS <link> without exposing an
-     * SSRF vector: redirects are disabled and, where cURL is available, the connection is pinned
-     * to the already-validated IP addresses so a rebinding DNS response cannot swap in a private
-     * target between validation and the actual request.
-     *
-     * @param list<string> $safeIps
-     *
-     * @return array<string, mixed>
-     */
-    private static function getSsrfSafeRequestOptions(string $url, array $safeIps): array
-    {
-        $options = [
-            RequestOptions::ALLOW_REDIRECTS => false,
-        ];
-
-        if (extension_loaded('curl')) {
-            $host = trim((string) parse_url($url, PHP_URL_HOST), '[]');
-            $port = parse_url($url, PHP_URL_PORT);
-            if (!is_int($port)) {
-                $port = strtolower((string) parse_url($url, PHP_URL_SCHEME)) === 'https' ? 443 : 80;
-            }
-
-            $options['curl'] = [
-                CURLOPT_RESOLVE => array_map(
-                    static fn (string $ip): string => sprintf('%s:%d:%s', $host, $port, $ip),
-                    $safeIps
-                ),
-            ];
-        }
-
-        return $options;
     }
 
     /**

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Http;
 
+use GuzzleHttp\RequestOptions;
+
 /**
  * Guards server-side HTTP requests against SSRF: a URL is only considered safe
  * to fetch when it uses an http(s) scheme and its host resolves exclusively to
@@ -25,6 +27,8 @@ namespace Pimcore\Http;
 final class SsrfProtection
 {
     private const ALLOWED_SCHEMES = ['http', 'https'];
+
+    private const DEFAULT_PORTS = ['http' => 80, 'https' => 443];
 
     /**
      * Resolves the host of the given URL and returns the list of public IP
@@ -44,13 +48,10 @@ final class SsrfProtection
             return [];
         }
 
-        $host = parse_url($url, PHP_URL_HOST);
-        if (!is_string($host) || $host === '') {
+        $host = self::getHost($url);
+        if ($host === null) {
             return [];
         }
-
-        // strip the brackets of an IPv6 literal, e.g. http://[::1]/
-        $host = trim($host, '[]');
 
         $ips = self::resolveHost($host);
         if ($ips === []) {
@@ -72,6 +73,79 @@ final class SsrfProtection
     public static function isUrlSafe(string $url): bool
     {
         return self::resolvePublicIps($url) !== [];
+    }
+
+    /**
+     * Builds the Guzzle request options for fetching a URL that {@see self::resolvePublicIps()}
+     * has cleared, without re-opening the SSRF vector:
+     *
+     * - redirects are disabled, a public URL must not be able to hand the request to an internal
+     *   host after the fact;
+     * - where cURL is available the connection is pinned to the already validated addresses, so a
+     *   rebinding DNS response cannot swap in a private target between the validation and the
+     *   actual request.
+     *
+     * Note that the pinning cannot apply when the request runs through a proxy (configured via
+     * `httpclient.adapter` or the HTTP(S)_PROXY environment variables): the proxy resolves the
+     * host itself, so the validated addresses never come into play there.
+     *
+     * @param list<string> $publicIps the addresses returned by {@see self::resolvePublicIps()}
+     *
+     * @return array<string, mixed>
+     */
+    public static function getRequestOptions(string $url, array $publicIps): array
+    {
+        $options = [
+            RequestOptions::ALLOW_REDIRECTS => false,
+        ];
+
+        $host = self::getHost($url);
+        if ($publicIps === [] || $host === null || !extension_loaded('curl')) {
+            return $options;
+        }
+
+        // an IP literal is never resolved, so there is nothing to pin - and passing one as the
+        // host of an entry would make cURL reject the entry (an IPv6 address' colons collide
+        // with the HOST:PORT:ADDRESS format) and abort the whole transfer
+        if (filter_var($host, FILTER_VALIDATE_IP) !== false) {
+            return $options;
+        }
+
+        $options['curl'] = [
+            // every address has to go into one entry: cURL discards the addresses it already
+            // holds as soon as a second entry for the same host and port is registered
+            CURLOPT_RESOLVE => [sprintf('%s:%d:%s', $host, self::getPort($url), implode(',', $publicIps))],
+        ];
+
+        return $options;
+    }
+
+    /**
+     * Returns the URL's host without the brackets of an IPv6 literal (e.g. http://[::1]/), or
+     * null when the URL carries no host at all.
+     */
+    private static function getHost(string $url): ?string
+    {
+        $host = parse_url($url, PHP_URL_HOST);
+        if (!is_string($host)) {
+            return null;
+        }
+
+        $host = trim($host, '[]');
+
+        return $host === '' ? null : $host;
+    }
+
+    private static function getPort(string $url): int
+    {
+        $port = parse_url($url, PHP_URL_PORT);
+        if (is_int($port)) {
+            return $port;
+        }
+
+        $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+
+        return self::DEFAULT_PORTS[$scheme] ?? self::DEFAULT_PORTS['http'];
     }
 
     /**
