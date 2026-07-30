@@ -721,9 +721,13 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function getPhpdocInputType(): ?string
     {
         $types = array_map(
-            static fn ($type) => '\Pimcore\Model\DataObject\Fieldcollection\Data\\' . $type,
+            static fn ($type) => '\Pimcore\Model\DataObject\Fieldcollection\Data\\' . ucfirst($type),
             $this->getAllowedTypes(),
         );
+
+        if ([] === $types) {
+            return '\\' . DataObject\Fieldcollection::class . '|null';
+        }
 
         return '\\' . DataObject\Fieldcollection::class . '<' . implode('|', $types) . '>|null';
     }
@@ -731,9 +735,13 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function getPhpdocReturnType(): ?string
     {
         $types = array_map(
-            static fn ($type) => '\Pimcore\Model\DataObject\Fieldcollection\Data\\' . $type,
+            static fn ($type) => '\Pimcore\Model\DataObject\Fieldcollection\Data\\' . ucfirst($type),
             $this->getAllowedTypes(),
         );
+
+        if ([] === $types) {
+            return '\\' . DataObject\Fieldcollection::class . '|null';
+        }
 
         return '\\' . DataObject\Fieldcollection::class . '<' . implode('|', $types) . '>|null';
     }
