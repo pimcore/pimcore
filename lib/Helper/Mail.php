@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace Pimcore\Helper;
 
 use Exception;
+use GuzzleHttp\RequestOptions;
 use Net_URL2;
+use Pimcore\Http\SsrfProtection;
 use Pimcore\Mail as MailClient;
 use Pimcore\Model;
 use Pimcore\Tool;
@@ -293,10 +295,18 @@ CSS;
                         $fileContent = file_get_contents($fileInfo['filePathNormalized']);
                     }
                 } elseif (str_starts_with($path, 'http')) {
-                    $fileContent = \Pimcore\Tool::getHttpData($path);
-                    $fileInfo = [
-                        'fileUrlNormalized' => $path,
-                    ];
+                    // The href comes from (potentially user-supplied) mail content, so guard the
+                    // server-side fetch against SSRF: only fetch http(s) URLs that resolve to a
+                    // public host, never redirect (a redirect could target an internal host) and
+                    // pin the connection to the validated address to defeat DNS rebinding.
+                    $safeIps = SsrfProtection::resolvePublicIps($path);
+                    if ($safeIps !== []) {
+                        $options = self::getSsrfSafeRequestOptions($path, $safeIps);
+                        $fileContent = \Pimcore\Tool::getHttpData($path, [], [], $options);
+                        $fileInfo = [
+                            'fileUrlNormalized' => $path,
+                        ];
+                    }
                 }
 
                 if ($fileContent) {
@@ -315,6 +325,40 @@ CSS;
         $string = $cssToInlineStyles->convert($string, $css);
 
         return $string;
+    }
+
+    /**
+     * Builds the Guzzle request options used to fetch a remote CSS <link> without exposing an
+     * SSRF vector: redirects are disabled and, where cURL is available, the connection is pinned
+     * to the already-validated IP addresses so a rebinding DNS response cannot swap in a private
+     * target between validation and the actual request.
+     *
+     * @param list<string> $safeIps
+     *
+     * @return array<string, mixed>
+     */
+    private static function getSsrfSafeRequestOptions(string $url, array $safeIps): array
+    {
+        $options = [
+            RequestOptions::ALLOW_REDIRECTS => false,
+        ];
+
+        if (extension_loaded('curl')) {
+            $host = trim((string) parse_url($url, PHP_URL_HOST), '[]');
+            $port = parse_url($url, PHP_URL_PORT);
+            if (!is_int($port)) {
+                $port = strtolower((string) parse_url($url, PHP_URL_SCHEME)) === 'https' ? 443 : 80;
+            }
+
+            $options['curl'] = [
+                CURLOPT_RESOLVE => array_map(
+                    static fn (string $ip): string => sprintf('%s:%d:%s', $host, $port, $ip),
+                    $safeIps
+                ),
+            ];
+        }
+
+        return $options;
     }
 
     /**
