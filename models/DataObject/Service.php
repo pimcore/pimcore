@@ -1049,6 +1049,12 @@ class Service extends Model\Element\Service
             return;
         }
 
+        // Some callers (e.g. grid column configuration) cannot supply a Concrete $object - field
+        // enrichment requires that - but can still provide a permission subject via context['object']
+        // (a Folder or Concrete). Capture it before it gets overwritten below.
+        $contextObject = $context['object'] ?? null;
+        $permissionSubject = $object ?? ($contextObject instanceof AbstractObject ? $contextObject : null);
+
         $context['object'] = $object;
 
         if ($layout instanceof LayoutDefinitionEnrichmentInterface) {
@@ -1057,9 +1063,9 @@ class Service extends Model\Element\Service
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
             $user = self::getUser($user);
-            if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig' && $object) {
-                $allowedView = self::getLanguagePermissions($object, $user, 'lView');
-                $allowedEdit = self::getLanguagePermissions($object, $user, 'lEdit');
+            if (!$user->isAdmin() && $permissionSubject) {
+                $allowedView = self::getLanguagePermissions($permissionSubject, $user, 'lView');
+                $allowedEdit = self::getLanguagePermissions($permissionSubject, $user, 'lEdit');
                 self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit, $user);
             }
 
