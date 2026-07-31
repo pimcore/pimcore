@@ -380,6 +380,7 @@ pimcore:
                     # - pimcore_site_by_domain
                     # - pimcore_site_current
                     - pimcore_user
+                    - pimcore_file_exists
                 hard_blocked_methods:
                     Pimcore\Model\User:
                         - getPassword
