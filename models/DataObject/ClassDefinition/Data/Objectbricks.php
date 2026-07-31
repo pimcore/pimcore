@@ -468,6 +468,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
 
+        $code .= $this->getPreGetValueHookCode($key);
+
         $code .= "\t" . '$data = $this->' . $key . ";\n";
         $code .= "\t" . 'if (!$data) {' . "\n";
 
@@ -478,8 +480,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         $code .= "\t\t\t" . 'return null;' . "\n";
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}' . "\n";
-
-        $code .= $this->getPreGetValueHookCode($key);
 
         if ($this instanceof PreGetDataInterface) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
