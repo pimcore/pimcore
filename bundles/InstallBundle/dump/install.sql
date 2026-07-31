@@ -5,8 +5,8 @@ CREATE TABLE `assets` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` varchar(20) DEFAULT NULL,
-  `filename` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '',
-  `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `filename` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '',
+  `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL, /* utf8mb3 is also deprecated by MySQL, but the composite `fullpath` unique key (path+filename) already uses the full 3072-byte InnoDB index-prefix budget at 3 bytes/char; widening to utf8mb4 (4 bytes/char) would overflow it. Needs an index/schema redesign, tracked separately - not a target state. */
   `mimetype` varchar(190) DEFAULT NULL,
   `creationDate` INT(11) UNSIGNED NOT NULL DEFAULT '0',
   `modificationDate` INT(11) UNSIGNED NOT NULL DEFAULT '0',
@@ -40,7 +40,7 @@ DROP TABLE IF EXISTS `assets_image_thumbnail_cache`;
 CREATE TABLE `assets_image_thumbnail_cache` (
     `cid` int(11) unsigned NOT NULL,
     `name` varchar(190) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
-    `filename` varchar(190) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `filename` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
     `modificationDate` INT(11) UNSIGNED NOT NULL DEFAULT '0',
     `filesize` INT(11) UNSIGNED DEFAULT NULL,
     `width` SMALLINT UNSIGNED DEFAULT NULL,
@@ -77,8 +77,8 @@ CREATE TABLE `documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` enum('page','link','snippet','folder','hardlink','email') DEFAULT NULL,
-  `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '',
-  `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '',
+  `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL, /* utf8mb3 is also deprecated by MySQL, but the composite `fullpath` unique key (path+key) already uses the full 3072-byte InnoDB index-prefix budget at 3 bytes/char; widening to utf8mb4 (4 bytes/char) would overflow it. Needs an index/schema redesign, tracked separately - not a target state. */
   `index` int(11) unsigned DEFAULT '0',
   `published` tinyint(1) unsigned DEFAULT '1',
   `creationDate` INT(11) UNSIGNED NOT NULL DEFAULT '0',
@@ -234,7 +234,7 @@ CREATE TABLE `lock_keys` (
   `key_token` varchar(44) NOT NULL,
   `key_expiration` int(10) unsigned NOT NULL,
   PRIMARY KEY (`key_id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `migration_versions`; /* table is created using doctrine:migrations:sync-metadata-storage command */
 
@@ -271,8 +271,8 @@ CREATE TABLE `objects` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` enum('object','folder','variant') DEFAULT NULL,
-  `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin default '',
-  `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin default '',
+  `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL, /* utf8mb3 is also deprecated by MySQL, but the composite `fullpath` unique key (path+key) already uses the full 3072-byte InnoDB index-prefix budget at 3 bytes/char; widening to utf8mb4 (4 bytes/char) would overflow it. Needs an index/schema redesign, tracked separately - not a target state. */
   `index` int(11) unsigned DEFAULT '0',
   `published` tinyint(1) unsigned DEFAULT '1',
   `creationDate` INT(11) UNSIGNED NOT NULL DEFAULT '0',
@@ -300,7 +300,7 @@ DROP TABLE IF EXISTS `properties`;
 CREATE TABLE `properties` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `ctype` enum('document','asset','object') NOT NULL DEFAULT 'document',
-  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL, /* verified to fit within the 3072-byte InnoDB index-prefix limit for `getall` (cpath+ctype+inheritable) at 4 bytes/char */
   `name` varchar(190) NOT NULL DEFAULT '',
   `type` enum('text','document','asset','object','bool','select') DEFAULT NULL,
   `data` text,
@@ -360,7 +360,7 @@ CREATE TABLE `tags` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(10) unsigned DEFAULT NULL,
   `idPath` varchar(190) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL COLLATE utf8_bin,
+  `name` varchar(255) DEFAULT NULL COLLATE utf8mb4_bin,
   PRIMARY KEY (`id`),
   KEY `idpath` (`idPath`),
   KEY `parentid` (`parentId`),
@@ -477,7 +477,7 @@ CREATE TABLE `users_permission_definitions` (
 DROP TABLE IF EXISTS `users_workspaces_asset`;
 CREATE TABLE `users_workspaces_asset` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL, /* verified to fit within the 3072-byte InnoDB index-prefix limit for `cpath_userId` / `idx_users_workspaces_list_permission` at 4 bytes/char */
   `userId` int(11) unsigned NOT NULL DEFAULT '0',
   `list` tinyint(1) DEFAULT '0',
   `view` tinyint(1) DEFAULT '0',
@@ -499,7 +499,7 @@ CREATE TABLE `users_workspaces_asset` (
 DROP TABLE IF EXISTS `users_workspaces_document`;
 CREATE TABLE `users_workspaces_document` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL, /* verified to fit within the 3072-byte InnoDB index-prefix limit for `cpath_userId` / `idx_users_workspaces_list_permission` at 4 bytes/char */
   `userId` int(11) unsigned NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -523,7 +523,7 @@ CREATE TABLE `users_workspaces_document` (
 DROP TABLE IF EXISTS `users_workspaces_object`;
 CREATE TABLE `users_workspaces_object` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL, /* verified to fit within the 3072-byte InnoDB index-prefix limit for `cpath_userId` / `idx_users_workspaces_list_permission` at 4 bytes/char */
   `userId` int(11) unsigned NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
