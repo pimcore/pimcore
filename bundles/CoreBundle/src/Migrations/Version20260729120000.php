@@ -16,6 +16,8 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
+use function sprintf;
+
 /**
  * Modernizes the deprecated, ambiguous `utf8`/`utf8_bin`/`utf8_general_ci` charset/collation
  * names left over on databases that were installed or upgraded before install.sql was updated
@@ -43,6 +45,14 @@ use Doctrine\Migrations\AbstractMigration;
  * SQL. Any install created between that migration's release and this PR therefore never ran
  * the 2022 rename's charset change and still has bare `utf8` here - this ALTER is a no-op for
  * databases that already went through the real upgrade path.
+ *
+ * Each column is only touched when its current collation and length still match the stock
+ * legacy definition below; a project that already widened or otherwise customized one of these
+ * columns is left untouched (with a log line) instead of being silently reset. This matters
+ * because this application intentionally runs with `sql_mode=''` (see default.yaml): under that
+ * setting a `MODIFY`/`CONVERT TO CHARACTER SET` that narrows a column truncates or replaces
+ * incompatible data with `?` instead of raising an error, so a blind ALTER against a customized
+ * column would corrupt data silently.
  */
 final class Version20260729120000 extends AbstractMigration
 {
@@ -53,61 +63,121 @@ final class Version20260729120000 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql("ALTER TABLE `assets` MODIFY `filename` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '';");
-        $this->addSql('ALTER TABLE `assets` MODIFY `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL;');
+        $this->modifyColumnIfStockLegacy($schema, 'assets', 'filename', 'utf8_bin', 255, "ALTER TABLE `assets` MODIFY `filename` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '';");
+        $this->modifyColumnIfStockLegacy($schema, 'assets', 'path', 'utf8_bin', 765, 'ALTER TABLE `assets` MODIFY `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL;');
 
         if ($schema->hasTable('assets_image_thumbnail_cache')) {
-            $this->addSql('ALTER TABLE `assets_image_thumbnail_cache` MODIFY `filename` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL;');
+            $this->modifyColumnIfStockLegacy($schema, 'assets_image_thumbnail_cache', 'filename', 'utf8_bin', 190, 'ALTER TABLE `assets_image_thumbnail_cache` MODIFY `filename` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL;');
         }
 
-        $this->addSql("ALTER TABLE `documents` MODIFY `key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '';");
-        $this->addSql('ALTER TABLE `documents` MODIFY `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL;');
+        $this->modifyColumnIfStockLegacy($schema, 'documents', 'key', 'utf8_bin', 255, "ALTER TABLE `documents` MODIFY `key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '';");
+        $this->modifyColumnIfStockLegacy($schema, 'documents', 'path', 'utf8_bin', 765, 'ALTER TABLE `documents` MODIFY `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL;');
 
-        $this->addSql("ALTER TABLE `objects` MODIFY `key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '';");
-        $this->addSql('ALTER TABLE `objects` MODIFY `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL;');
+        $this->modifyColumnIfStockLegacy($schema, 'objects', 'key', 'utf8_bin', 255, "ALTER TABLE `objects` MODIFY `key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '';");
+        $this->modifyColumnIfStockLegacy($schema, 'objects', 'path', 'utf8_bin', 765, 'ALTER TABLE `objects` MODIFY `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL;');
 
-        $this->addSql('ALTER TABLE `lock_keys` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;');
+        $this->convertLockKeysCharsetIfStockLegacy($schema);
 
-        $this->addSql('ALTER TABLE `properties` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL;');
+        $this->modifyColumnIfStockLegacy($schema, 'properties', 'cpath', 'utf8_general_ci', 765, 'ALTER TABLE `properties` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL;');
 
-        $this->addSql('ALTER TABLE `tags` MODIFY `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL;');
+        $this->modifyColumnIfStockLegacy($schema, 'tags', 'name', 'utf8_bin', 255, 'ALTER TABLE `tags` MODIFY `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL;');
 
-        $this->addSql('ALTER TABLE `users_workspaces_asset` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL;');
-        $this->addSql('ALTER TABLE `users_workspaces_document` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL;');
-        $this->addSql('ALTER TABLE `users_workspaces_object` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL;');
+        $this->modifyColumnIfStockLegacy($schema, 'users_workspaces_asset', 'cpath', 'utf8_bin', 765, 'ALTER TABLE `users_workspaces_asset` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL;');
+        $this->modifyColumnIfStockLegacy($schema, 'users_workspaces_document', 'cpath', 'utf8_bin', 765, 'ALTER TABLE `users_workspaces_document` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL;');
+        $this->modifyColumnIfStockLegacy($schema, 'users_workspaces_object', 'cpath', 'utf8_bin', 765, 'ALTER TABLE `users_workspaces_object` MODIFY `cpath` varchar(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL;');
 
         if ($schema->hasTable('search_backend_data') && $schema->getTable('search_backend_data')->hasColumn('key')) {
-            $this->addSql("ALTER TABLE `search_backend_data` MODIFY `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '';");
+            $this->modifyColumnIfStockLegacy($schema, 'search_backend_data', 'key', 'utf8_bin', 255, "ALTER TABLE `search_backend_data` MODIFY `key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT '';");
         }
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql("ALTER TABLE `assets` MODIFY `filename` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '';");
-        $this->addSql('ALTER TABLE `assets` MODIFY `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL;');
+        $this->throwIrreversibleMigrationException(
+            'This migration cannot be safely reverted: converting `utf8mb4` columns (e.g. `tags`.`name`, the `cpath` '
+            . 'columns) back to `utf8`/`utf8mb3` can silently replace stored 4-byte characters (e.g. emoji) with "?" '
+            . "instead of raising an error, because this application intentionally runs with sql_mode='' (see "
+            . 'default.yaml). Restore the affected columns from a backup if you need to go back.',
+        );
+    }
 
-        if ($schema->hasTable('assets_image_thumbnail_cache')) {
-            $this->addSql('ALTER TABLE `assets_image_thumbnail_cache` MODIFY `filename` varchar(190) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL;');
+    /**
+     * Only runs the ALTER when the column's current collation and length still match the stock
+     * legacy definition; otherwise the column looks customized (e.g. a project intentionally
+     * widened it) and is left untouched, with a log line, rather than silently truncated.
+     */
+    private function modifyColumnIfStockLegacy(
+        Schema $schema,
+        string $table,
+        string $column,
+        string $expectedLegacyCollation,
+        int $expectedLegacyLength,
+        string $alterSql,
+    ): void {
+        if (!$schema->hasTable($table)) {
+            return;
         }
 
-        $this->addSql("ALTER TABLE `documents` MODIFY `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '';");
-        $this->addSql('ALTER TABLE `documents` MODIFY `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL;');
+        $tableSchema = $schema->getTable($table);
 
-        $this->addSql("ALTER TABLE `objects` MODIFY `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '';");
-        $this->addSql('ALTER TABLE `objects` MODIFY `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL;');
-
-        $this->addSql('ALTER TABLE `lock_keys` CONVERT TO CHARACTER SET utf8;');
-
-        $this->addSql('ALTER TABLE `properties` MODIFY `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL;');
-
-        $this->addSql('ALTER TABLE `tags` MODIFY `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL;');
-
-        $this->addSql('ALTER TABLE `users_workspaces_asset` MODIFY `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL;');
-        $this->addSql('ALTER TABLE `users_workspaces_document` MODIFY `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL;');
-        $this->addSql('ALTER TABLE `users_workspaces_object` MODIFY `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL;');
-
-        if ($schema->hasTable('search_backend_data') && $schema->getTable('search_backend_data')->hasColumn('key')) {
-            $this->addSql("ALTER TABLE `search_backend_data` MODIFY `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '';");
+        if (!$tableSchema->hasColumn($column)) {
+            return;
         }
+
+        $currentColumn = $tableSchema->getColumn($column);
+
+        if ($currentColumn->getCollation() !== $expectedLegacyCollation || $currentColumn->getLength() !== $expectedLegacyLength) {
+            $this->write(sprintf(
+                'Skipping charset modernization of `%s`.`%s`: current definition (collation=%s, length=%s) no longer '
+                . 'matches the stock legacy definition (collation=%s, length=%d), so it looks customized. Leaving it '
+                . 'untouched - modernize it manually if desired.',
+                $table,
+                $column,
+                $currentColumn->getCollation() ?? 'null',
+                $currentColumn->getLength() ?? 'null',
+                $expectedLegacyCollation,
+                $expectedLegacyLength,
+            ));
+
+            return;
+        }
+
+        $this->addSql($alterSql);
+    }
+
+    /**
+     * `lock_keys` is converted as a whole table rather than column by column, so both of its
+     * varchar columns must still match their stock legacy definition before the CONVERT runs.
+     */
+    private function convertLockKeysCharsetIfStockLegacy(Schema $schema): void
+    {
+        if (!$schema->hasTable('lock_keys')) {
+            return;
+        }
+
+        $table = $schema->getTable('lock_keys');
+
+        foreach (['key_id' => 64, 'key_token' => 44] as $column => $expectedLegacyLength) {
+            if (!$table->hasColumn($column)) {
+                return;
+            }
+
+            $currentColumn = $table->getColumn($column);
+
+            if ($currentColumn->getCollation() !== 'utf8_general_ci' || $currentColumn->getLength() !== $expectedLegacyLength) {
+                $this->write(sprintf(
+                    'Skipping charset modernization of `lock_keys`: `%s` (collation=%s, length=%s) no longer matches '
+                    . 'its stock legacy definition, so the table looks customized. Leaving it untouched - modernize '
+                    . 'it manually if desired.',
+                    $column,
+                    $currentColumn->getCollation() ?? 'null',
+                    $currentColumn->getLength() ?? 'null',
+                ));
+
+                return;
+            }
+        }
+
+        $this->addSql('ALTER TABLE `lock_keys` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;');
     }
 }

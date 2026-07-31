@@ -16,10 +16,13 @@ namespace Pimcore\Tests\Unit\CoreBundle\Migrations;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
+use Doctrine\Migrations\Exception\IrreversibleMigration;
 use Pimcore\Bundle\CoreBundle\Migrations\Version20260729120000;
 use Pimcore\Tests\Support\Test\TestCase;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
@@ -33,10 +36,32 @@ use Psr\Log\NullLogger;
  * `objects` is included even though a 2022 migration already renamed o_key/o_path to utf8mb3,
  * because fresh installs mark migrations as done without running them, so any install created
  * before this PR fixed install.sql never actually got that charset change.
+ *
+ * Also covers the two safety nets requested in code review: `up()` only touches a column when
+ * its current collation/length still match the stock legacy definition (skipping, with a log
+ * line, anything that looks customized), and `down()` refuses to run instead of silently
+ * corrupting 4-byte characters on the way back to utf8/utf8mb3.
  */
 class Version20260729120000Test extends TestCase
 {
-    private function createMigration(): Version20260729120000
+    /** Stock legacy (pre-migration) collation/length per table/column, as declared in install.sql. */
+    private const STOCK_LEGACY_COLUMNS = [
+        'assets' => ['filename' => ['utf8_bin', 255], 'path' => ['utf8_bin', 765]],
+        'assets_image_thumbnail_cache' => ['filename' => ['utf8_bin', 190]],
+        'documents' => ['key' => ['utf8_bin', 255], 'path' => ['utf8_bin', 765]],
+        'objects' => ['key' => ['utf8_bin', 255], 'path' => ['utf8_bin', 765]],
+        'lock_keys' => ['key_id' => ['utf8_general_ci', 64], 'key_token' => ['utf8_general_ci', 44]],
+        'properties' => ['cpath' => ['utf8_general_ci', 765]],
+        'tags' => ['name' => ['utf8_bin', 255]],
+        'users_workspaces_asset' => ['cpath' => ['utf8_bin', 765]],
+        'users_workspaces_document' => ['cpath' => ['utf8_bin', 765]],
+        'users_workspaces_object' => ['cpath' => ['utf8_bin', 765]],
+        'search_backend_data' => ['key' => ['utf8_bin', 255]],
+    ];
+
+    private const OPTIONAL_TABLES = ['assets_image_thumbnail_cache', 'search_backend_data'];
+
+    private function createMigration(?LoggerInterface $logger = null): Version20260729120000
     {
         $platform = $this->createStub(AbstractPlatform::class);
         $schemaManager = $this->createStub(AbstractSchemaManager::class);
@@ -45,7 +70,7 @@ class Version20260729120000Test extends TestCase
         $connection->method('getDatabasePlatform')->willReturn($platform);
         $connection->method('createSchemaManager')->willReturn($schemaManager);
 
-        return new Version20260729120000($connection, new NullLogger());
+        return new Version20260729120000($connection, $logger ?? new NullLogger());
     }
 
     private function planSql(Version20260729120000 $migration): array
@@ -53,24 +78,47 @@ class Version20260729120000Test extends TestCase
         return array_map(fn ($query) => $query->getStatement(), $migration->getSql());
     }
 
-    private function schemaWithOptionalTables(bool $hasOptionalTables): Schema
+    /**
+     * Builds a schema double reporting the given collation/length for every table/column
+     * (defaulting to the stock legacy values), so tests can override a single column to
+     * simulate a customized installation.
+     */
+    private function schemaFromColumns(array $columnsByTable, bool $hasOptionalTables): Schema
     {
         $schema = $this->createMock(Schema::class);
-        $schema->method('hasTable')->willReturn($hasOptionalTables);
+        $schema->method('hasTable')->willReturnCallback(
+            fn (string $table) => !in_array($table, self::OPTIONAL_TABLES, true) || $hasOptionalTables
+        );
+        $schema->method('getTable')->willReturnCallback(function (string $table) use ($columnsByTable) {
+            $columns = $columnsByTable[$table] ?? [];
 
-        if ($hasOptionalTables) {
-            $table = $this->createMock(Table::class);
-            $table->method('hasColumn')->willReturn(true);
-            $schema->method('getTable')->willReturn($table);
-        }
+            $tableMock = $this->createMock(Table::class);
+            $tableMock->method('hasColumn')->willReturnCallback(fn (string $column) => isset($columns[$column]));
+            $tableMock->method('getColumn')->willReturnCallback(function (string $column) use ($columns) {
+                [$collation, $length] = $columns[$column];
+
+                $columnStub = $this->createStub(Column::class);
+                $columnStub->method('getCollation')->willReturn($collation);
+                $columnStub->method('getLength')->willReturn($length);
+
+                return $columnStub;
+            });
+
+            return $tableMock;
+        });
 
         return $schema;
+    }
+
+    private function stockSchema(bool $hasOptionalTables): Schema
+    {
+        return $this->schemaFromColumns(self::STOCK_LEGACY_COLUMNS, $hasOptionalTables);
     }
 
     public function testUpModernizesRequiredColumns(): void
     {
         $migration = $this->createMigration();
-        $migration->up($this->schemaWithOptionalTables(true));
+        $migration->up($this->stockSchema(true));
 
         $sql = implode("\n", $this->planSql($migration));
 
@@ -101,7 +149,7 @@ class Version20260729120000Test extends TestCase
     public function testUpModernizesOptionalTablesWhenPresent(): void
     {
         $migration = $this->createMigration();
-        $migration->up($this->schemaWithOptionalTables(true));
+        $migration->up($this->stockSchema(true));
 
         $sql = implode("\n", $this->planSql($migration));
 
@@ -112,7 +160,7 @@ class Version20260729120000Test extends TestCase
     public function testUpSkipsOptionalTablesWhenAbsent(): void
     {
         $migration = $this->createMigration();
-        $migration->up($this->schemaWithOptionalTables(false));
+        $migration->up($this->stockSchema(false));
 
         $sql = implode("\n", $this->planSql($migration));
 
@@ -120,16 +168,66 @@ class Version20260729120000Test extends TestCase
         $this->assertStringNotContainsString('search_backend_data', $sql);
     }
 
-    public function testDownRevertsToOriginalDeprecatedNames(): void
+    public function testUpSkipsColumnWidenedByAProject(): void
     {
-        $migration = $this->createMigration();
-        $migration->down($this->schemaWithOptionalTables(true));
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->atLeastOnce())
+            ->method('notice')
+            ->with($this->stringContains('`tags`.`name`'));
+
+        $columns = self::STOCK_LEGACY_COLUMNS;
+        $columns['tags']['name'] = ['utf8_bin', 500]; // project widened it beyond the stock varchar(255)
+
+        $migration = $this->createMigration($logger);
+        $migration->up($this->schemaFromColumns($columns, true));
 
         $sql = implode("\n", $this->planSql($migration));
 
-        $this->assertStringContainsString('`assets` MODIFY `filename` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin', $sql);
-        $this->assertStringContainsString('`objects` MODIFY `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin', $sql);
-        $this->assertStringContainsString('`lock_keys` CONVERT TO CHARACTER SET utf8', $sql);
-        $this->assertStringContainsString('`tags` MODIFY `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin', $sql);
+        $this->assertStringNotContainsString('`tags` MODIFY `name`', $sql);
+    }
+
+    public function testUpSkipsColumnWithCustomCollation(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->atLeastOnce())
+            ->method('notice')
+            ->with($this->stringContains('`properties`.`cpath`'));
+
+        $columns = self::STOCK_LEGACY_COLUMNS;
+        $columns['properties']['cpath'] = ['utf8mb4_unicode_ci', 765]; // already modernized differently
+
+        $migration = $this->createMigration($logger);
+        $migration->up($this->schemaFromColumns($columns, true));
+
+        $sql = implode("\n", $this->planSql($migration));
+
+        $this->assertStringNotContainsString('`properties` MODIFY `cpath`', $sql);
+    }
+
+    public function testUpSkipsLockKeysWhenCustomized(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->atLeastOnce())
+            ->method('notice')
+            ->with($this->stringContains('`lock_keys`'));
+
+        $columns = self::STOCK_LEGACY_COLUMNS;
+        $columns['lock_keys']['key_id'] = ['utf8_general_ci', 128]; // project widened key_id
+
+        $migration = $this->createMigration($logger);
+        $migration->up($this->schemaFromColumns($columns, true));
+
+        $sql = implode("\n", $this->planSql($migration));
+
+        $this->assertStringNotContainsString('`lock_keys` CONVERT', $sql);
+    }
+
+    public function testDownIsIrreversible(): void
+    {
+        $migration = $this->createMigration();
+
+        $this->expectException(IrreversibleMigration::class);
+
+        $migration->down($this->stockSchema(true));
     }
 }

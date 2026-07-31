@@ -20,6 +20,9 @@
 
 ### [Database]
 - Several columns using the deprecated, ambiguous `utf8`/`utf8_bin`/`utf8_general_ci` charset/collation names have been modernized in `install.sql`: `lock_keys`, `assets_image_thumbnail_cache.filename`, `search_backend_data.key`, `tags.name`, `properties.cpath` and `users_workspaces_asset/document/object.cpath` now use real `utf8mb4`. `assets.filename`/`path` and `documents.key`/`path` move to the explicit `utf8mb3` name instead (their composite `fullpath` index already uses the full 3072-byte InnoDB index-prefix budget at 3 bytes/char and would overflow it at 4 bytes/char) - note MySQL has deprecated `utf8mb3` itself too, so this remains a known limitation pending a future index/schema redesign, not a fully modernized state. Existing installations are updated automatically by the migration `Version20260729120000`; no code or configuration changes are required.
+  - This migration only touches a column when its current collation and length still match the stock legacy definition; a column a project has already widened or otherwise customized is left untouched (a notice is logged) instead of being silently reset.
+  - The migration is **irreversible** (`down()` throws) — reverting `utf8mb4` columns back to `utf8`/`utf8mb3` could silently replace stored 4-byte characters (e.g. emoji) with `?` given this application's intentionally permissive `sql_mode=''`. Restore from a backup if you need to roll back.
+  - The `ALTER TABLE`/`CONVERT TO CHARACTER SET` statements rewrite the affected columns' storage and typically run as full table rebuilds, which can take time and hold locks on `assets`, `documents`, `objects` and `properties` on large installations — plan to run this migration during a maintenance window on such installs.
 
 
 ## Pimcore 2026.2.0
