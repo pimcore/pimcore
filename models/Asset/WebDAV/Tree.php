@@ -78,6 +78,11 @@ class Tree extends DAV\Tree
                 if (!$asset) {
                     $asset = Asset::getByPath('/' . $sourcePath);
                 }
+
+                if (!$asset->isAllowed('rename', $user)) {
+                    throw new Forbidden('Missing "rename" permission');
+                }
+
                 $asset->setFilename(basename($destinationPath));
             } else {
                 $asset = Asset::getByPath('/' . $sourcePath);
