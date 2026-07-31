@@ -168,6 +168,31 @@ class Version20260729120000Test extends TestCase
         $this->assertStringNotContainsString('search_backend_data', $sql);
     }
 
+    public function testUpModernizesColumnsReportedInMariaDbNaming(): void
+    {
+        // MariaDB normalizes the deprecated `utf8` alias to `utf8mb3` in its own catalogs, so a
+        // column declared `utf8_bin` in install.sql is introspected there as `utf8mb3_bin` even
+        // though it was never touched. Regression test for a bug where this made every column
+        // look "customized" and silently no-op the whole migration on MariaDB.
+        $columns = array_map(
+            fn (array $cols) => array_map(
+                fn (array $c) => [str_replace('utf8_', 'utf8mb3_', $c[0]), $c[1]],
+                $cols
+            ),
+            self::STOCK_LEGACY_COLUMNS
+        );
+
+        $migration = $this->createMigration();
+        $migration->up($this->schemaFromColumns($columns, true));
+
+        $sql = implode("\n", $this->planSql($migration));
+
+        $this->assertStringContainsString('`tags` MODIFY `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin', $sql);
+        $this->assertStringContainsString('`lock_keys` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci', $sql);
+        $this->assertStringContainsString('`assets` MODIFY `filename` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin', $sql);
+        $this->assertCount(14, $this->planSql($migration));
+    }
+
     public function testUpSkipsColumnWidenedByAProject(): void
     {
         $logger = $this->createMock(LoggerInterface::class);

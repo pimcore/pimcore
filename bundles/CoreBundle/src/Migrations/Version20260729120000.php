@@ -52,7 +52,10 @@ use function sprintf;
  * because this application intentionally runs with `sql_mode=''` (see default.yaml): under that
  * setting a `MODIFY`/`CONVERT TO CHARACTER SET` that narrows a column truncates or replaces
  * incompatible data with `?` instead of raising an error, so a blind ALTER against a customized
- * column would corrupt data silently.
+ * column would corrupt data silently. The legacy-collation check accepts both the literal
+ * `utf8_*` spelling (MySQL) and its `utf8mb3_*` equivalent (MariaDB normalizes the deprecated
+ * `utf8` alias to `utf8mb3` in its catalogs, so an untouched column is introspected under that
+ * name there) - see `matchesLegacyCollation()`.
  */
 final class Version20260729120000 extends AbstractMigration
 {
@@ -126,7 +129,7 @@ final class Version20260729120000 extends AbstractMigration
 
         $currentColumn = $tableSchema->getColumn($column);
 
-        if ($currentColumn->getCollation() !== $expectedLegacyCollation || $currentColumn->getLength() !== $expectedLegacyLength) {
+        if (!$this->matchesLegacyCollation($currentColumn->getCollation(), $expectedLegacyCollation) || $currentColumn->getLength() !== $expectedLegacyLength) {
             $this->write(sprintf(
                 'Skipping charset modernization of `%s`.`%s`: current definition (collation=%s, length=%s) no longer '
                 . 'matches the stock legacy definition (collation=%s, length=%d), so it looks customized. Leaving it '
@@ -164,7 +167,7 @@ final class Version20260729120000 extends AbstractMigration
 
             $currentColumn = $table->getColumn($column);
 
-            if ($currentColumn->getCollation() !== 'utf8_general_ci' || $currentColumn->getLength() !== $expectedLegacyLength) {
+            if (!$this->matchesLegacyCollation($currentColumn->getCollation(), 'utf8_general_ci') || $currentColumn->getLength() !== $expectedLegacyLength) {
                 $this->write(sprintf(
                     'Skipping charset modernization of `lock_keys`: `%s` (collation=%s, length=%s) no longer matches '
                     . 'its stock legacy definition, so the table looks customized. Leaving it untouched - modernize '
@@ -179,5 +182,17 @@ final class Version20260729120000 extends AbstractMigration
         }
 
         $this->addSql('ALTER TABLE `lock_keys` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;');
+    }
+
+    /**
+     * MariaDB normalizes the deprecated `utf8` alias to `utf8mb3` in its catalogs, so a column
+     * declared as e.g. `utf8_bin` in install.sql is introspected as `utf8mb3_bin` on MariaDB even
+     * though it was never touched - only MySQL reports the legacy `utf8_*` spelling verbatim.
+     * Accept either spelling as "still the stock legacy definition".
+     */
+    private function matchesLegacyCollation(?string $currentCollation, string $expectedLegacyCollation): bool
+    {
+        return $currentCollation === $expectedLegacyCollation
+            || $currentCollation === str_replace('utf8_', 'utf8mb3_', $expectedLegacyCollation);
     }
 }
