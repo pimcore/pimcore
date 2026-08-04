@@ -184,17 +184,13 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $searchMetaData = [];
         /** @var DataObject\Data\ElementMetadata[] $data */
         $data = $this->getDataFromObjectParam($object, $params);
-        if (is_array($data)) {
-            foreach ($data as $metaObject) {
-                foreach($metaObject->getData() as $value) {
-                    $searchMetaData[] = $value;
-                }
+        foreach ($data as $metaObject) {
+            foreach($metaObject->getData() as $value) {
+                $searchMetaData[] = $value;
             }
-
-            return $searchData.' '.implode(',', $searchMetaData);
         }
 
-        return '';
+        return $searchData.' '.implode(',', $searchMetaData);
     }
 
     /**
