@@ -177,7 +177,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $list;
     }
 
-    public function getDataForSearchIndex($object, $params = []): string
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $searchData = parent::getDataForSearchIndex($object, $params);
 
