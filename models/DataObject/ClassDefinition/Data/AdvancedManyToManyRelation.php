@@ -177,6 +177,26 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $list;
     }
 
+    public function getDataForSearchIndex($object, $params = []): string
+    {
+        $searchData = parent::getDataForSearchIndex($object, $params);
+
+        $searchMetaData = [];
+        /** @var DataObject\Data\ElementMetadata[] $data */
+        $data = $this->getDataFromObjectParam($object, $params);
+        if (is_array($data)) {
+            foreach ($data as $metaObject) {
+                foreach($metaObject->getData() as $value) {
+                    $searchMetaData[] = $value;
+                }
+            }
+
+            return $searchData.' '.implode(',', $searchMetaData);
+        }
+
+        return '';
+    }
+
     /**
      *
      *
