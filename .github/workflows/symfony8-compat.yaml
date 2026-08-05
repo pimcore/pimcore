@@ -1,0 +1,10 @@
+name: "Symfony 8 compatibility"
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+  workflow_dispatch:
+
+jobs:
+  symfony8-compat:
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-symfony8-compat.yaml@main
