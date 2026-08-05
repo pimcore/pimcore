@@ -25,15 +25,13 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
  * @internal
- *
- * @TODO: Make class readonly and remove readonly from properties when PHP 8.1 support is dropped
  */
-class PostStateChange
+readonly class PostStateChange
 {
     public function __construct(
-        private readonly CacheClearer $cacheClearer,
-        private readonly AssetsInstaller $assetsInstaller,
-        private readonly EventDispatcherInterface $eventDispatcher
+        private CacheClearer $cacheClearer,
+        private AssetsInstaller $assetsInstaller,
+        private EventDispatcherInterface $eventDispatcher
     ) {
     }
 
