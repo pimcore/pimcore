@@ -312,17 +312,17 @@ class Composer
 
         $manipulator = new JsonManipulator($contents);
         $manipulator->removeMainKey('name');
-        $newContents = $manipulator->getContents();
+        $jsonString = $manipulator->getContents();
 
-        if ($newContents === $contents) {
+        if ($jsonString === $contents) {
             return;
         }
 
-        if (file_put_contents($composerJson, $newContents) === false) {
+        if (file_put_contents($composerJson, $jsonString) === false) {
             throw new RuntimeException(sprintf('Failed to write composer.json at "%s".', $composerJson));
         }
 
-        self::updateComposerLock($rootPath, $newContents);
+        self::updateComposerLock($rootPath, $jsonString);
     }
 
     private static function updateComposerLock(string $rootPath, string $composerJsonContents): void
