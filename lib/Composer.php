@@ -15,6 +15,7 @@ namespace Pimcore;
 
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Installer\PackageEvent;
+use Composer\Json\JsonManipulator;
 use Composer\Package\Locker;
 use Composer\Script\Event;
 use RuntimeException;
@@ -309,17 +310,19 @@ class Composer
             throw new RuntimeException(sprintf('Failed to read composer.json at "%s".', $composerJson));
         }
 
-        $json = json_decode($contents, true);
+        $manipulator = new JsonManipulator($contents);
+        $manipulator->removeMainKey('name');
+        $newContents = $manipulator->getContents();
 
-        unset($json['name']);
+        if ($newContents === $contents) {
+            return;
+        }
 
-        $jsonString = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
-
-        if (file_put_contents($composerJson, $jsonString) === false) {
+        if (file_put_contents($composerJson, $newContents) === false) {
             throw new RuntimeException(sprintf('Failed to write composer.json at "%s".', $composerJson));
         }
 
-        self::updateComposerLock($rootPath, $jsonString);
+        self::updateComposerLock($rootPath, $newContents);
     }
 
     private static function updateComposerLock(string $rootPath, string $composerJsonContents): void
