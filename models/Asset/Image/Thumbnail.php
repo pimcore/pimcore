@@ -80,6 +80,8 @@ final class Thumbnail implements ThumbnailInterface
             $event = new GenericEvent($this, [
                 'pathReference' => $pathReference,
                 'frontendPath' => $path,
+                'asset' => $this->getAsset(),
+                'config' => $this->getConfig(),
             ]);
             Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
             $path = $event->getArgument('frontendPath');
@@ -133,10 +135,19 @@ final class Thumbnail implements ThumbnailInterface
         }
 
         if (empty($this->pathReference)) {
-            $this->pathReference = [
-                'type' => 'error',
-                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
-            ];
+            if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
+                // SVG thumbnail generation failed — fall back to the original SVG file.
+                // This avoids a generic placeholder since browsers can display SVGs natively.
+                $this->pathReference = [
+                    'type' => 'asset',
+                    'src' => $this->asset->getRealFullPath(),
+                ];
+            } else {
+                $this->pathReference = [
+                    'type' => 'error',
+                    'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+                ];
+            }
         }
 
         if ($this->hasListeners(AssetEvents::IMAGE_THUMBNAIL)) {
@@ -158,10 +169,13 @@ final class Thumbnail implements ThumbnailInterface
 
     private function addCacheBuster(string $path, array $options, Asset $asset): string
     {
-        if (isset($options['cacheBuster']) && $options['cacheBuster']) {
-            if (!str_starts_with($path, 'http')) {
-                $path = '/cache-buster-' . $asset->getVersionCount() . $path;
-            }
+        if (
+            isset($options['cacheBuster']) &&
+            $options['cacheBuster'] &&
+            !str_starts_with($path, 'http') &&
+            !str_starts_with($path, '/cache-buster-')
+        ) {
+            $path = '/cache-buster-' . $asset->getVersionCount() . $path;
         }
 
         return $path;
@@ -449,7 +463,8 @@ final class Thumbnail implements ThumbnailInterface
     private function getSrcset(Config $thumbConfig, Image $image, array $options, ?string $mediaQuery = null): string
     {
         $srcSetValues = [];
-        foreach ([1, 2] as $highRes) {
+        $maxDpiFactor = $thumbConfig::getMaxDpiFactor();
+        for ($highRes=1; $highRes <= $maxDpiFactor; $highRes++) {
             $thumbConfigRes = clone $thumbConfig;
             if ($mediaQuery) {
                 $thumbConfigRes->selectMedia($mediaQuery);

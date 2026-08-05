@@ -22,6 +22,8 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
+    private bool $force = false;
+
     /**
      * @return Model\DataObject\ClassDefinition[]
      */
@@ -38,5 +40,17 @@ class Listing extends Model\Listing\AbstractListing
     public function setClasses(?array $classes): static
     {
         return $this->setData($classes);
+    }
+
+    public function setForce(bool $force): Listing
+    {
+        $this->force = $force;
+
+        return $this;
+    }
+
+    public function getForce(): bool
+    {
+        return $this->force;
     }
 }

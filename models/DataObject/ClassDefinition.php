@@ -210,41 +210,24 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     public static function getById(string $id, bool $force = false): ?ClassDefinition
     {
         $cacheKey = 'class_' . $id;
+        $class = null;
 
-        try {
-            if ($force) {
-                throw new Exception('Forced load');
-            }
+        if (!$force &&
+            RuntimeCache::isRegistered($cacheKey)
+        ) {
             $class = RuntimeCache::get($cacheKey);
-            if (!$class) {
-                throw new Exception('Class in registry is null');
-            }
-        } catch (Exception $e) {
-            try {
-                $class = new self();
-                $name = $class->getDao()->getNameById($id);
-                if (!$name) {
-                    throw new Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
-                }
-
-                $definitionFile = $class->getDefinitionFile($name);
-                $class = @include $definitionFile;
-
-                if (!$class instanceof self) {
-                    throw new Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
-                }
-
-                $class->setId($id);
-
-                RuntimeCache::set($cacheKey, $class);
-            } catch (Exception $e) {
-                Logger::info($e->getMessage());
-
-                return null;
-            }
         }
 
-        return $class;
+        if ($class !== null) {
+            return $class;
+        }
+
+        $class = (new ClassDefinition\Listing())
+            ->setForce(true)
+            ->setCondition('id = ?', [$id])
+            ->current();
+
+        return $class ?: null;
     }
 
     /**
@@ -252,14 +235,11 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      */
     public static function getByName(string $name): ?ClassDefinition
     {
-        try {
-            $class = new self();
-            $id = $class->getDao()->getIdByName($name);
+        $class = (new ClassDefinition\Listing())
+            ->setCondition('name = ?', [$name])
+            ->current();
 
-            return self::getById($id);
-        } catch (Model\Exception\NotFoundException $e) {
-            return null;
-        }
+        return $class ? $class : null;
     }
 
     public static function create(array $values = []): ClassDefinition
@@ -1015,8 +995,10 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     {
         $class = $this->getFieldDefinitions([]);
         foreach ($compositeIndices as $indexInd => $compositeIndex) {
+            $this->getDao()->assertValidIdentifier($compositeIndex['index_key'] ?? '');
             foreach ($compositeIndex['index_columns'] as $fieldInd => $fieldName) {
                 if (isset($class[$fieldName]) && $class[$fieldName] instanceof ManyToOneRelation) {
+                    $this->getDao()->assertValidIdentifier($fieldName);
                     $compositeIndices[$indexInd]['index_columns'][$fieldInd] = $fieldName . '__id';
                     $compositeIndices[$indexInd]['index_columns'][] = $fieldName . '__type';
                     $compositeIndices[$indexInd]['index_columns'] = array_unique($compositeIndices[$indexInd]['index_columns']);
@@ -1164,12 +1146,19 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             $this->setId((string) $maxId);
         }
 
-        if (!preg_match('/[a-zA-Z]\w+/', $this->getName())) {
-            throw new Exception(sprintf('Invalid name for class definition: %s', $this->getName()));
+        if (!preg_match('/^[a-zA-Z]\w+$/', $this->getName())) {
+            throw new Exception(sprintf(
+                'Invalid name for class definition: %s',
+                $this->getName()
+            ));
         }
 
-        if (!preg_match('/[a-zA-Z0-9]([a-zA-Z0-9_]+)?/', $this->getId())) {
-            throw new Exception(sprintf('Invalid ID `%s` for class definition %s', $this->getId(), $this->getName()));
+        if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_]*$/', $this->getId())) {
+            throw new Exception(sprintf(
+                'Invalid ID `%s` for class definition %s',
+                $this->getId(),
+                $this->getName()
+            ));
         }
 
         foreach (['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {

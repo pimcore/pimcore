@@ -387,9 +387,20 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
     public function getDataForGrid(?array $data, ?Concrete $object = null, array $params = []): ?array
     {
-        $ret = $this->getDataForEditmode($data, $object, $params);
+        $gridData = $this->getDataForEditmode($data, $object, $params);
 
-        return is_array($ret) ? $ret : null;
+        if ($this->getPathFormatterClass() && !empty($gridData)) {
+            $params['fd'] = $object->getClass()->getFieldDefinition($this->getName(), $params['context'] ?? []);
+            foreach ($gridData as &$relatedElementData) {
+                $nicePath = $this->getNicePath($relatedElementData, $object, $params);
+                if ($nicePath) {
+                    $relatedElementData['path'] = $nicePath;
+                }
+            }
+            unset($relatedElementData);
+        }
+
+        return $gridData;
     }
 
     /**
@@ -601,7 +612,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                 $container->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($container);
             }
-        } elseif ($container instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             parent::loadLazyFieldcollectionField($container);

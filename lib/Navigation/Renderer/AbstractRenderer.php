@@ -43,6 +43,9 @@ use Symfony\Component\Templating\EngineInterface;
 
 abstract class AbstractRenderer implements RendererInterface
 {
+    /**
+     * @deprecated since 12.3, will be removed in 13.0. Use Twig\Environment instead.
+     */
     protected EngineInterface $templatingEngine;
 
     /**

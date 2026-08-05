@@ -463,13 +463,14 @@ class TestHelper
         $testDataHelper->fillTime($object, 'time', $seed);
         $testDataHelper->fillSelect($object, 'select', $seed);
         $testDataHelper->fillMultiSelect($object, 'multiselect', $seed);
+        $testDataHelper->fillMultiSelectEnforced($object, 'multiselectenforced', $seed);
         $testDataHelper->fillUser($object, 'user', $seed);
         $testDataHelper->fillCheckbox($object, 'checkbox', $seed);
         $testDataHelper->fillBooleanSelect($object, 'booleanSelect', $seed);
         $testDataHelper->fillWysiwyg($object, 'wysiwyg', $seed);
         $testDataHelper->fillPassword($object, 'password', $seed);
-        $testDataHelper->fillMultiSelect($object, 'countries', $seed);
-        $testDataHelper->fillMultiSelect($object, 'languages', $seed);
+        $testDataHelper->fillCountryMultiSelect($object, 'countries', $seed);
+        $testDataHelper->fillLanguageMultiSelect($object, 'languages', $seed);
         $testDataHelper->fillGeoCoordinates($object, 'point', $seed);
         $testDataHelper->fillGeobounds($object, 'bounds', $seed);
         $testDataHelper->fillGeopolygon($object, 'poly', $seed);

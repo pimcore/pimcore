@@ -159,20 +159,20 @@ class QuantityValue extends AbstractQuantityValue
         if ($this->getInteger()) {
             return [
                 'value' => 'bigint(20)',
-                'unit' => 'varchar(64)',
+                'unit' => 'varchar(50)',
             ];
         }
 
         if ($this->isDecimalType()) {
             return [
                 'value' => $this->buildDecimalColumnType(),
-                'unit' => 'varchar(64)',
+                'unit' => 'varchar(50)',
             ];
         }
 
         return [
             'value' => 'double',
-            'unit' => 'varchar(64)',
+            'unit' => 'varchar(50)',
         ];
     }
 
@@ -394,5 +394,21 @@ class QuantityValue extends AbstractQuantityValue
     public function getFieldType(): string
     {
         return 'quantityValue';
+    }
+
+    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
+    {
+        $db = \Pimcore\Db::get();
+        $name = $params['name'] ?: $this->name;
+        $key = $db->quoteIdentifier($name);
+
+        if (!empty($params['brickPrefix'])) {
+            $key = $params['brickPrefix'].$key;
+        }
+        if (str_starts_with($name, 'cskey_')) {
+            return $key .'.'. $db->quoteIdentifier('value') . ' ' . $operator . ' ' . $value[0][0].' ';
+        }
+
+        return $key . ' ' . $operator . ' ' . (is_string($value) ? $db->quote($value) : $value) . ' ';
     }
 }

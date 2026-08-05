@@ -19,7 +19,8 @@
   "documents": {
     "versions": {
       "days": null,
-      "steps": 10
+      "steps": 10,
+      "disable_events": false
     },
     "error_pages": {
       "default": "/error"
@@ -28,13 +29,15 @@
   "objects": {
     "versions": {
       "days": null,
-      "steps": 10
+      "steps": 10,
+      "disable_events": false
     }
   },
   "assets": {
     "versions": {
       "days": null,
-      "steps": 10
+      "steps": 10,
+      "disable_events": false
     }
   }
 }

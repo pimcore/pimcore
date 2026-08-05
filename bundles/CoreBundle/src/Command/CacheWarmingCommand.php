@@ -98,6 +98,20 @@ class CacheWarmingCommand extends AbstractCommand
                 'Restrict object warming to these classes (only valid for objects!). Valid options: class names of your classes defined in Pimcore',
                 null
             )
+            ->addOption(
+                'perIteration',
+                'p',
+                InputOption::VALUE_OPTIONAL,
+                'Changes default value of variable $perIteration in class Warming.',
+                20
+            )
+            ->addOption(
+                'timoutBetweenIteration',
+                'i',
+                InputOption::VALUE_OPTIONAL,
+                'Changes default value of variable $timoutBetweenIteration in class Warming.',
+                2
+            )
         ;
     }
 
@@ -115,11 +129,16 @@ class CacheWarmingCommand extends AbstractCommand
             $assetTypes = $this->getArrayOption('assetTypes', 'validAssetTypes', 'asset type') ?? [];
             $objectTypes = $this->getArrayOption('objectTypes', 'validObjectTypes', 'object type') ?? [];
             $objectClasses = $this->input->getOption('classes') ?? [];
+            $perIteration = (int) $input->getOption('perIteration');
+            $timoutBetweenIteration = (int) $input->getOption('timoutBetweenIteration');
         } catch (InvalidArgumentException $e) {
             $this->writeError($e->getMessage());
 
             return 1;
         }
+
+        Warming::setPerIteration($perIteration);
+        Warming::setTimoutBetweenIteration($timoutBetweenIteration);
 
         if (in_array('document', $types)) {
             $this->writeWarmingMessage('document', $documentTypes);

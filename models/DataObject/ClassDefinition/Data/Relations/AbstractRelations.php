@@ -391,6 +391,21 @@ abstract class AbstractRelations extends Data implements
         return '';
     }
 
+    public function getNicePath(array $gridData, ?Concrete $object = null, array $params = []): ?string
+    {
+        if (!empty($gridData) && $object) {
+            $pathFormatter = DataObject\ClassDefinition\Helper\PathFormatterResolver::resolvePathFormatter(
+                $this->getPathFormatterClass()
+            );
+
+            if ($pathFormatter instanceof DataObject\ClassDefinition\PathFormatterInterface) {
+                return $pathFormatter->formatPath([], $object, [$gridData], $params)[0];
+            }
+        }
+
+        return null;
+    }
+
     public function appendData(?array $existingData, array $additionalData): ?array
     {
         $newData = [];

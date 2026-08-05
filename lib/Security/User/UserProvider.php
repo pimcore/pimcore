@@ -41,6 +41,11 @@ class UserProvider implements UserProviderInterface
         /** @var PimcoreUser $refreshedPimcoreUser */
         $refreshedPimcoreUser = PimcoreUser::getById($user->getId());
 
+        if ($user->getLastPasswordReset() !== $refreshedPimcoreUser->getLastPasswordReset()) {
+            // password was changed since the session was created, so we invalidate the session
+            throw new UnsupportedUserException('User is valid but password was changed');
+        }
+
         return $this->buildUser($refreshedPimcoreUser);
     }
 

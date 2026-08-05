@@ -273,7 +273,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
         $db = \Pimcore\Db::get();
-        $value = $db->quote($value);
+        $value = $db->quote((string) $value);
         $key = $db->quoteIdentifier($this->name);
 
         $brickPrefix = $params['brickPrefix'] ? $db->quoteIdentifier($params['brickPrefix']) . '.' : '';

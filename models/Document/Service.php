@@ -307,7 +307,16 @@ class Service extends Model\Element\Service
             $document = new Document();
             // validate path
             if (self::isValidPath($path, 'document')) {
-                $document->getDao()->getByPath($path);
+                try {
+                    Element\Service::getByPathWithNfcFallback(
+                        fn (string $candidate) => $document->getDao()->getByExactPath($candidate),
+                        $path
+                    );
+                } catch (Model\Exception\NotFoundException) {
+                    // none of the exact-path candidates matched - fall back to a pretty URL
+                    // match against the original requested path only, same as getByPath()
+                    $document->getDao()->getByPrettyUrl($path);
+                }
 
                 return true;
             }
@@ -549,7 +558,11 @@ class Service extends Model\Element\Service
 
         if (HtmlToImage::convert($url, $tmpFile)) {
             $im = \Pimcore\Image::getInstance();
-            $im->load($tmpFile);
+            if (!$im->load($tmpFile)) {
+                unlink($tmpFile);
+
+                return false;
+            }
             $im->scaleByWidth(800);
             $im->save($file, 'jpeg', 85);
 

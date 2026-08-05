@@ -14,6 +14,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Closure;
 use Exception;
+use InvalidArgumentException;
 use JsonSerializable;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
@@ -166,6 +167,14 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public function setName(string $name): static
     {
+        // A field name is emitted verbatim into the generated PHP class files (as a property,
+        // getter/setter and constant) and into ALTER TABLE DDL, so it must be a valid identifier.
+        // The length is capped at 63 characters to bound it; note that generated index and
+        // multi-column identifiers add prefixes/suffixes and may still exceed the DB identifier limit.
+        if ($name !== '' && !preg_match('/^[a-zA-Z_][a-zA-Z0-9_]{0,62}$/', $name)) {
+            throw new InvalidArgumentException(sprintf('Invalid field name "%s"', $name));
+        }
+
         $this->name = $name;
 
         return $this;
@@ -433,7 +442,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                 if ($operator === 'LIKE') {
                     $value = $db->quote('%' . $value . '%');
                 } else {
-                    $value = $db->quote($value);
+                    $value = $db->quote((string) $value);
                 }
             }
         }
@@ -525,14 +534,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
-        if ($class instanceof DataObject\Objectbrick\Definition) {
-            $classname = 'Objectbrick\\Data\\' . ucfirst($class->getKey());
-        } elseif ($class instanceof DataObject\Fieldcollection\Definition) {
-            $classname = 'Fieldcollection\\Data\\' . ucfirst($class->getKey());
-        } else {
-            $classname = $class->getName();
-        }
-
         $key = $this->getName();
 
         if ($this->getParameterTypeDeclaration()) {
@@ -888,13 +889,10 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     {
         $key = $this->getName();
         if ($class instanceof DataObject\Objectbrick\Definition) {
-            $classname = 'Objectbrick\\Data\\' . ucfirst($class->getKey());
             $containerGetter = 'getDefinition';
         } elseif ($class instanceof DataObject\Fieldcollection\Definition) {
-            $classname = 'Fieldcollection\\Data\\' . ucfirst($class->getKey());
             $containerGetter = 'getDefinition';
         } else {
-            $classname = $class->getName();
             $containerGetter = 'getClass';
         }
 

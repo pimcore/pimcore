@@ -14,12 +14,9 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Support\Helper;
 
 use Exception;
-use Pimcore\Bundle\SeoBundle\Installer;
-use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
-use Pimcore\Tests\Support\Util\Autoloader;
 
 class Model extends AbstractDefinitionHelper
 {
@@ -27,7 +24,6 @@ class Model extends AbstractDefinitionHelper
     {
         DataObject::setHideUnpublished(false);
         parent::_beforeSuite($settings);
-        $this->installSeoBundle();
     }
 
     /**
@@ -318,6 +314,11 @@ class Model extends AbstractDefinitionHelper
             $block->addChild($this->createDataChild('link', 'blocklink'));
             $block->addChild($this->createDataChild('hotspotimage', 'blockhotspotimage'));
 
+            $block->addChild($this->createDataChild('geopoint', 'blockgeopoint'));
+            $block->addChild($this->createDataChild('geobounds', 'blockgeobounds'));
+            $block->addChild($this->createDataChild('geopolygon', 'blockgeopolygon'));
+            $block->addChild($this->createDataChild('geopolyline', 'blockgeopolyline'));
+
             $block->addChild($this->createDataChild('advancedManyToManyRelation', 'blockadvancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
@@ -520,6 +521,16 @@ class Model extends AbstractDefinitionHelper
                 ['key' => 'Affe', 'value' => 'monkey'],
                 ['key' => 'Huhn', 'value' => 'chicken'],
             ]));
+
+            /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect $multiselectEnforced * */
+            $multiselectEnforced = $this->createDataChild('multiselect', 'multiselectenforced');
+            $multiselectEnforced->setOptions([
+                ['key' => 'Katze', 'value' => 'cat'],
+                ['key' => 'Kuh', 'value' => 'cow'],
+                ['key' => 'Tiger', 'value' => 'tiger'],
+            ]);
+            $multiselectEnforced->setEnforceValidation(true);
+            $panel->addChild($multiselectEnforced);
 
             $panel->addChild($this->createDataChild('language', 'languagex'));
             $panel->addChild($this->createDataChild('languagemultiselect', 'languages'));
@@ -1035,20 +1046,5 @@ class Model extends AbstractDefinitionHelper
         $this->setupUnit('dm');
         $this->setupUnit('m');
         $this->setupUnit('km');
-    }
-
-    private function installSeoBundle(): void
-    {
-        /** @var Pimcore $pimcoreModule */
-        $pimcoreModule = $this->getModule('\\'.Pimcore::class);
-
-        $this->debug('[PimcoreSeoBundle] Running SeoBundle installer');
-
-        // install ecommerce framework
-        $installer = $pimcoreModule->getContainer()->get(Installer::class);
-        $installer->install();
-
-        //explicitly load installed classes so that the new ones are used during tests
-        Autoloader::load(Redirect::class);
     }
 }

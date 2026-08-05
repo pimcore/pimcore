@@ -32,8 +32,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     protected array $initializedCatalogues = [];
 
+    /**
+     * @deprecated since 2026.2
+     */
     protected string $adminPath = '';
 
+    /**
+     * @deprecated since 2026.2
+     */
     protected array $adminTranslationMapping = [];
 
     /**
@@ -375,8 +381,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @return string[]
      */
-    public function warmUp(string $cacheDir): array
+    public function warmUp(string $cacheDir, ?string $buildDir = null): array
     {
-        return $this->translator->warmUp($cacheDir);
+        if ($this->translator instanceof WarmableInterface) {
+            return $this->translator->warmUp($cacheDir, $buildDir);
+        }
+
+        return [];
     }
 }

@@ -13,6 +13,7 @@
 namespace Pimcore\Model\Version\Listing;
 
 use Exception;
+use Pimcore;
 use Pimcore\Model;
 
 /**
@@ -43,11 +44,24 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load(): array
     {
+        $versionsData = $this->db->fetchAllAssociative(
+            'SELECT * FROM versions' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(),
+            $this->model->getConditionVariables(),
+            $this->model->getConditionVariableTypes()
+        );
         $versions = [];
-        $data = $this->loadIdList();
+        $modelFactory = Pimcore::getContainer()->get('pimcore.model.factory');
 
-        foreach ($data as $id) {
-            $versions[] = Model\Version::getById($id);
+        foreach ($versionsData as $versionData) {
+            $versionData['public'] = (bool)$versionData['public'];
+            $versionData['serialized'] = (bool)$versionData['serialized'];
+            $versionData['autoSave'] = (bool)$versionData['autoSave'];
+
+            /** @var Model\Version $version */
+            $version = $modelFactory->build(Model\Version::class);
+            $version->getDao()->assignVariablesToModel($versionData);
+
+            $versions[] = $version;
         }
 
         $this->model->setVersions($versions);
@@ -60,7 +74,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList(): array
     {
-        $versionIds = $this->db->fetchFirstColumn('SELECT id FROM versions' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $versionIds = $this->db->fetchFirstColumn('SELECT id FROM versions' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $versionIds);
     }
@@ -68,7 +82,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount(): int
     {
         try {
-            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM versions ' . $this->getCondition(), $this->model->getConditionVariables());
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM versions ' . $this->getCondition(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
         } catch (Exception $e) {
             return 0;
         }

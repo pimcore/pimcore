@@ -29,6 +29,7 @@ use Pimcore\Model\Document;
 use Pimcore\Tool\HtmlUtils;
 use Pimcore\Tool\Serialize;
 use RuntimeException;
+use Stringable;
 use Throwable;
 
 /**
@@ -36,7 +37,7 @@ use Throwable;
  * @method void save()
  * @method void delete()
  */
-abstract class Editable extends Model\AbstractModel implements Model\Document\Editable\EditableInterface
+abstract class Editable extends Model\AbstractModel implements Model\Document\Editable\EditableInterface, Stringable
 {
     /**
      * Contains some configurations for the editmode, or the thumbnail name, ...
@@ -721,7 +722,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             return $data;
         }
         if (is_string($data)) {
-            $unserializedData = Serialize::unserialize($data);
+            $unserializedData = Serialize::unserialize($data, false);
             if (!is_array($unserializedData) && !is_null($unserializedData)) {
                 throw new InvalidArgumentException('Unserialized data must be an array or null.');
             }

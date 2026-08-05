@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Messenger\Handler;
 
+use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Messenger\VideoConvertMessage;
 use Pimcore\Model\Asset\Video\Thumbnail\Processor;
 
@@ -21,8 +22,16 @@ use Pimcore\Model\Asset\Video\Thumbnail\Processor;
  */
 class VideoConvertHandler
 {
+    public function __construct(protected LongRunningHelper $longRunningHelper)
+    {
+    }
+
     public function __invoke(VideoConvertMessage $message): void
     {
-        Processor::execute($message->getProcessId());
+        try {
+            Processor::execute($message->getProcessId(), $message->getAssetId());
+        } finally {
+            $this->longRunningHelper->deleteTemporaryFiles();
+        }
     }
 }

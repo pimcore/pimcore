@@ -13,9 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper;
 
-/**
- * Keep in sync with bundles/AdminBundle/public/js/pimcore/object/helpers/reservedWords.js
- */
 class ReservedWordsHelper
 {
     public const PHP_KEYWORDS = [

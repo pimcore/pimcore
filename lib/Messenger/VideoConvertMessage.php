@@ -18,12 +18,17 @@ namespace Pimcore\Messenger;
  */
 class VideoConvertMessage
 {
-    public function __construct(protected string $processId)
+    public function __construct(protected string $processId, private ?int $assetId = null)
     {
     }
 
     public function getProcessId(): string
     {
         return $this->processId;
+    }
+
+    public function getAssetId(): ?int
+    {
+        return $this->assetId;
     }
 }

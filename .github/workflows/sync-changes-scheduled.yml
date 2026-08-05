@@ -3,6 +3,14 @@ on:
   workflow_dispatch:
   schedule:
     - cron:  '30 21 * * *'
+  push:
+    branches:
+      - '2026.x'
+      - '2026.2'
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 jobs:
   sync-branches:
@@ -11,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ref: [{'base': '12.x', 'destination': '12.x'}, {'base': '12.1', 'destination': '12.1'}, {'base': '12.0', 'destination': '12.0'}, {'base': '11.5', 'destination': '11.5'}]
+        ref: [{'base': '2026.x', 'destination': '2026.x'}, {'base': '2026.2', 'destination': '2026.2'}]
     with:
       base_ref: ${{ matrix.ref.base }}
       ref_name: ${{ matrix.ref.destination }}

@@ -49,7 +49,7 @@ class CleanupClassificationstoreTablesTask implements TaskInterface
                     continue;
                 }
 
-                $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
+                $fieldsQuery = 'SELECT DISTINCT fieldname FROM ' . $tableName;
                 $fieldNames = $db->fetchFirstColumn($fieldsQuery);
 
                 foreach ($fieldNames as $fieldName) {

@@ -40,6 +40,9 @@ final class Translation extends AbstractModel
 
     const DOMAIN_DEFAULT = 'messages';
 
+    /**
+     * @deprecated since 2026.2
+     */
     const DOMAIN_ADMIN = 'admin';
 
     protected ?string $key = null;
@@ -201,10 +204,6 @@ final class Translation extends AbstractModel
      */
     public static function getValidLanguages(string $domain = self::DOMAIN_DEFAULT): array
     {
-        if ($domain == self::DOMAIN_ADMIN) {
-            return \Pimcore\Tool\Admin::getLanguages();
-        }
-
         return Tool::getValidLanguages();
     }
 
@@ -239,7 +238,7 @@ final class Translation extends AbstractModel
     public static function getByKey(string $id, string $domain = self::DOMAIN_DEFAULT, bool $create = false, bool $returnIdIfEmpty = false, ?array $languages = null): ?static
     {
         $cacheKey = 'translation_' . $id . '_' . $domain;
-        if (is_array($languages)) {
+        if ($domain !== self::DOMAIN_ADMIN && is_array($languages)) {
             $cacheKey .= '_' . implode('-', $languages);
         }
 
@@ -253,7 +252,8 @@ final class Translation extends AbstractModel
         $languages = $languages ? array_intersect(static::getValidLanguages($domain), $languages) : static::getValidLanguages($domain);
 
         try {
-            $translation->getDao()->getByKey($id, $languages);
+            $daoLanguages = $domain === self::DOMAIN_ADMIN ? null : $languages;
+            $translation->getDao()->getByKey($id, $daoLanguages);
         } catch (Exception $e) {
             if (!$create && !$returnIdIfEmpty) {
                 return null;
@@ -346,13 +346,15 @@ final class Translation extends AbstractModel
         return $translation->getDao()->isAValidDomain($domain);
     }
 
-    public function save(): void
+    public function save(array $parameters = []): void
     {
-        $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
+        $preTranslationEvent = new TranslationEvent($this, $parameters);
+        $this->dispatchEvent($preTranslationEvent, TranslationEvents::PRE_SAVE);
+        $parameters = $preTranslationEvent->getArguments();
 
         $this->getDao()->save();
 
-        $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::POST_SAVE);
+        $this->dispatchEvent(new TranslationEvent($this, $parameters), TranslationEvents::POST_SAVE);
 
         self::clearDependentCache();
     }

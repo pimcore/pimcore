@@ -19,7 +19,7 @@ use Pimcore\Model\Asset;
 /**
  * @internal
  */
-abstract class Adapter
+abstract class Adapter implements AdapterInterface
 {
     protected ?Asset\Document $asset = null;
 
@@ -41,6 +41,8 @@ abstract class Adapter
     {
         $this->removeTmpFiles();
     }
+
+    abstract public function isAvailable(): bool;
 
     abstract public function load(Asset\Document $asset): static;
 

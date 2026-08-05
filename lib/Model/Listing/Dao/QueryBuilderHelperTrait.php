@@ -21,12 +21,35 @@ trait QueryBuilderHelperTrait
 {
     /**
      * @var callable|null
+     *
+     * @deprecated Since 12.2.0, use $queryBuilderProcessors instead, add processors via addQueryBuilderProcessor()
+     *
+     * @todo Remove in Pimcore 13
      */
     protected $onCreateQueryBuilderCallback;
+
+    /**
+     * @var callable[]
+     */
+    private array $queryBuilderProcessors = [];
 
     public function onCreateQueryBuilder(?callable $callback): void
     {
         $this->onCreateQueryBuilderCallback = $callback;
+        $this->discardQueryBuilderProcessors();
+        if (is_callable($callback)) {
+            $this->addQueryBuilderProcessor($callback);
+        }
+    }
+
+    public function addQueryBuilderProcessor(callable $callback): void
+    {
+        $this->queryBuilderProcessors[] = $callback;
+    }
+
+    public function discardQueryBuilderProcessors(): void
+    {
+        $this->queryBuilderProcessors = [];
     }
 
     protected function applyListingParametersToQueryBuilder(QueryBuilder $queryBuilder): void
@@ -36,9 +59,8 @@ trait QueryBuilderHelperTrait
         $this->applyOrderByToQueryBuilder($queryBuilder);
         $this->applyLimitToQueryBuilder($queryBuilder);
 
-        $callback = $this->onCreateQueryBuilderCallback;
-        if (is_callable($callback)) {
-            $callback($queryBuilder);
+        foreach ($this->queryBuilderProcessors as $processor) {
+            $processor($queryBuilder);
         }
     }
 

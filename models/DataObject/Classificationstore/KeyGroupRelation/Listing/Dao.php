@@ -38,7 +38,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         $sql .= $this->getFrom() . $this->getWhere() . $this->getOrder() . $this->getOffsetLimit();
-        $data = $this->db->fetchAllAssociative($sql, $this->model->getConditionVariables());
+        $data = $this->db->fetchAllAssociative($sql, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         $configData = [];
         foreach ($data as $dataItem) {
@@ -63,12 +63,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function getDataArray(): array
     {
-        return $this->db->fetchAllAssociative('SELECT *' . $this->getFrom() . $this->getWhere() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        return $this->db->fetchAllAssociative('SELECT *' . $this->getFrom() . $this->getWhere() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
     }
 
     public function getTotalCount(): int
     {
-        return (int) $this->db->fetchOne('SELECT COUNT(*)' . $this->getFrom() . $this->getWhere(), $this->model->getConditionVariables());
+        return (int) $this->db->fetchOne('SELECT COUNT(*)' . $this->getFrom() . $this->getWhere(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
     }
 
     private function getWhere(): string

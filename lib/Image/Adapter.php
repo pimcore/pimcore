@@ -12,6 +12,7 @@
 
 namespace Pimcore\Image;
 
+use Exception;
 use Pimcore\Logger;
 
 abstract class Adapter implements AdapterInterface
@@ -349,7 +350,9 @@ abstract class Adapter implements AdapterInterface
         $this->reinitializing = true;
         $this->save($tmpFile, $format);
         $this->destroy();
-        $this->load($tmpFile);
+        if (!$this->load($tmpFile)) {
+            throw new Exception('Failed to reinitialize image from temporary file');
+        }
         $this->reinitializing = false;
 
         $this->modified = false;

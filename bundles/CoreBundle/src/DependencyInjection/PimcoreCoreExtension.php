@@ -18,6 +18,9 @@ use Monolog\Level;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Bundle\InstallBundle\Installer;
+use Pimcore\Cdn\AssetWebPath;
+use Pimcore\Controller\Config\Template\BundleTemplateProvider;
+use Pimcore\Controller\Config\Template\ProjectTemplateProvider;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
@@ -63,6 +66,10 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
         }
 
+        $container->setParameter('pimcore.tmp_store.unserialize_allowed_classes', $config['tmp_store']['unserialize_allowed_classes']);
+
+        $container->setParameter('pimcore.security.session_token_allowed_classes', $config['security']['session_token_allowed_classes']);
+
         $container->setParameter('pimcore.translations.admin_translation_mapping', $config['translations']['admin_translation_mapping']);
 
         $container->setParameter('pimcore.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
@@ -72,10 +79,18 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
 
+        // object cache write handling (see Pimcore\Cache\Core\CoreCacheHandler)
+        $container->setParameter('pimcore.cache.max_write_items', $config['cache']['max_write_items']);
+        $container->setParameter('pimcore.cache.handle_cli', $config['cache']['handle_cli']);
+
         //twig security policy allowlist config
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.tags', $config['templating_engine']['twig']['sandbox_security_policy']['tags']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.filters', $config['templating_engine']['twig']['sandbox_security_policy']['filters']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.functions', $config['templating_engine']['twig']['sandbox_security_policy']['functions']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.blocked_classes', $config['templating_engine']['twig']['sandbox_security_policy']['blocked_classes']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.allowed_classes', $config['templating_engine']['twig']['sandbox_security_policy']['allowed_classes']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.blocked_functions', $config['templating_engine']['twig']['sandbox_security_policy']['blocked_functions']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.hard_blocked_methods', $config['templating_engine']['twig']['sandbox_security_policy']['hard_blocked_methods']);
 
         // register pimcore config on container
         // TODO is this bad practice?
@@ -125,7 +140,13 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('message_handler.yaml');
         $loader->load('class_builder.yaml');
         $loader->load('serializer.yaml');
+        $loader->load('cdn.yaml');
 
+        if (false === $config['documents']['auto_provide_templates']) {
+            $container->removeDefinition(ProjectTemplateProvider::class);
+            $container->removeDefinition(BundleTemplateProvider::class);
+        }
+        $this->configureCdn($container, $config);
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
         $this->configureClassResolvers($container, $config);
@@ -155,6 +176,27 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         );
 
         $this->checkProductRegistration($config, $container);
+    }
+
+    private function configureCdn(ContainerBuilder $container, array $config): void
+    {
+        $container->setParameter('pimcore.cdn.base_url', $config['cdn']['base_url']);
+        $container->setParameter('pimcore.cdn.excluded_paths', $config['cdn']['excluded_paths']);
+        $container->setParameter('pimcore.cdn.image_optimizer_source_formats', $config['cdn']['image_optimizer_source_formats']);
+        $container->setParameter('pimcore.cdn.fastly.api_token', $config['cdn']['fastly']['api_token']);
+        $container->setParameter('pimcore.cdn.fastly.service_id', $config['cdn']['fastly']['service_id']);
+        $container->setParameter('pimcore.cdn.fastly.api_base_url', $config['cdn']['fastly']['api_base_url']);
+
+        // Public URL prefix for original assets: follows assets.frontend_prefixes.source
+        // (what Asset::getFrontendFullPath() emits); path component only, '' falls back to
+        // the documented /var/assets static-serving contract. See AssetWebPath.
+        $sourcePrefix = (string) ($config['assets']['frontend_prefixes']['source'] ?? '');
+        $sourcePrefixPath = parse_url($sourcePrefix, PHP_URL_PATH);
+        $sourcePrefixPath = is_string($sourcePrefixPath) ? rtrim($sourcePrefixPath, '/') : '';
+        $container->setParameter(
+            'pimcore.cdn.original_asset_prefix',
+            $sourcePrefixPath !== '' ? $sourcePrefixPath : AssetWebPath::DEFAULT_PREFIX
+        );
     }
 
     private function configureModelFactory(ContainerBuilder $container, array $config): void
@@ -308,19 +350,20 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
     private function checkProductRegistration(array $config, ContainerBuilder $container): void
     {
-        //replace env placeholders in encryption secret to make sure we use the actual secret
+        $productIdentifier = $config['product_registration']['instance_identifier'] ?? null;
+        $container->setParameter('pimcore.product_registration.instance_identifier', $productIdentifier);
+
+        // Pimcore not installed — env vars are empty (fallback defaults), so skip
+        // the product registration check when the install marker exists.
+        if (file_exists(Installer::NEEDS_INSTALL_MARKER)) {
+            return;
+        }
+
+        // Replace env placeholders in encryption secret to make sure we use the actual secret
         $encryptionSecret = $container->resolveEnvPlaceholders(
             $container->getParameter('pimcore.encryption.secret'),
             true
         );
-
-        $productIdentifier = $config['product_registration']['instance_identifier'] ?? null;
-        $container->setParameter('pimcore.product_registration.instance_identifier', $productIdentifier);
-
-        //Pimcore not installed, skipping check
-        if (empty($encryptionSecret) && file_exists(Installer::NEEDS_INSTALL_MARKER)) {
-            return;
-        }
 
         if (empty($encryptionSecret)) {
             throw new InvalidArgumentException(
@@ -330,7 +373,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             );
         }
 
-        //replace env placeholders in product identifier and product key
+        // Replace env placeholders in product identifier and product key
         $productIdentifier = $container->resolveEnvPlaceholders($productIdentifier, true);
         $productKey = $container->resolveEnvPlaceholders(
             $config['product_registration']['product_key'] ?? null,

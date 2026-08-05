@@ -131,14 +131,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getAvailableLanguages(): array
     {
-        $l = $this->db->fetchAllAssociative('SELECT * FROM ' . $this->getDatabaseTableName()  . '  GROUP BY `language`;');
-        $languages = [];
-
-        foreach ($l as $values) {
-            $languages[] = $values['language'];
-        }
-
-        return $languages;
+        return $this->db->fetchFirstColumn('SELECT DISTINCT `language` FROM ' . $this->getDatabaseTableName() . ';');
     }
 
     /**
@@ -200,7 +193,7 @@ class Dao extends Model\Dao\AbstractDao
                           `userModification` int(11) unsigned DEFAULT NULL,
                           PRIMARY KEY (`key`,`language`),
                           KEY `language` (`language`)
-                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;");
     }
 
     protected function updateModificationInfos(): void

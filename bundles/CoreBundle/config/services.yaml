@@ -65,6 +65,17 @@ services:
         public : true
         arguments:
             $serviceControllers: '%pimcore.service_controllers%'
+            $templateProviders: !tagged_iterator pimcore.template_provider
+
+    Pimcore\Controller\Config\Template\ProjectTemplateProvider:
+        tags: [ 'pimcore.template_provider' ]
+
+    Pimcore\Controller\Config\Template\BundleTemplateProvider:
+        tags: [ 'pimcore.template_provider' ]
+
+    Pimcore\Controller\Config\Template\TemplateFinder: ~
+
+    Pimcore\Controller\Config\Bundle\BundleProvider: ~
 
     #
     # HTTP/REST clients
@@ -152,6 +163,22 @@ services:
         alias: Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter
 
     Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter: ~
+
+    Pimcore\Model\Version\CoauthorContextInterface:
+        public: true
+        alias: Pimcore\Model\Version\CoauthorContext
+
+    Pimcore\Model\Version\CoauthorContext: ~
+
+    # request-scoped memoization of element permission lookups (DAO result only), cleared per
+    # request and per messenger message via the kernel.reset tag.
+    # public, because it is consumed from the AbstractElement model via the container — like the
+    # workflow Manager and the event dispatcher already are — and models are not container-managed
+    # so they cannot receive it through constructor injection.
+    Pimcore\Model\Element\PermissionCache:
+        public: true
+        tags:
+            - { name: kernel.reset, method: reset }
     #
     # SECURITY
     #
@@ -207,3 +234,9 @@ services:
             $commandContextHolder: '@Pimcore\Console\CommandContextHolder'
         tags:
             - { name: doctrine.dbal.schema_filter, connection: default }
+
+    pimcore.calculated_value.expression_language:
+        class: Pimcore\Helper\SymfonyExpression\CalculatedFieldExpressionLanguage
+        public: true
+        arguments:
+            - !tagged_iterator pimcore.calculated_value.expression_language_provider

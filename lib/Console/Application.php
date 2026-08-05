@@ -19,7 +19,6 @@ use Pimcore\Event\System\ConsoleEvent;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Migrations\FilteredMigrationsRepository;
 use Pimcore\Migrations\FilteredTableMetadataStorage;
-use Pimcore\Tool\Admin;
 use Pimcore\Tool\MaintenanceModeHelperInterface;
 use Pimcore\Version;
 use RuntimeException;
@@ -65,18 +64,32 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
 
         $this->setDispatcher($dispatcher);
 
-        $maintenanceModeHelper = $kernel->getContainer()->get(MaintenanceModeHelperInterface::class);
-        $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) use ($kernel, $maintenanceModeHelper) {
+        $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) use ($kernel) {
+            $maintenanceModeHelper = $kernel->getContainer()->get(MaintenanceModeHelperInterface::class);
+
             // skip if maintenance mode is on and the flag is not set
-            if (($maintenanceModeHelper->isActive() || Admin::isInMaintenanceMode()) &&
-                !$event->getInput()->getOption('ignore-maintenance-mode')
+            if (($maintenanceModeHelper->isActive()) &&
+                (!$event->getInput()->hasOption('ignore-maintenance-mode') ||
+                 !$event->getInput()->getOption('ignore-maintenance-mode'))
             ) {
                 throw new RuntimeException(
                     'In maintenance mode - set the flag --ignore-maintenance-mode to force execution!'
                 );
             }
 
-            if ($event->getInput()->getOption('maintenance-mode')) {
+            if ($event->getInput()->hasOption('time-limit')) {
+                // this is to set the database wait_timeout according to the --time-limit option provided by messenger:consume
+                // to ensure the worker has a working database connection over the entire lifetime of the process
+                $timeLimit = (int) $event->getInput()->getOption('time-limit');
+                $db = Pimcore\Db::get();
+                $result = $db->fetchAssociative("SHOW VARIABLES LIKE 'wait_timeout'");
+                if ($result['Value'] < $timeLimit) {
+                    $db->executeQuery('SET SESSION wait_timeout = ' . $timeLimit);
+                }
+            }
+
+            if ($event->getInput()->hasOption('maintenance-mode') &&
+                $event->getInput()->getOption('maintenance-mode')) {
                 // enable maintenance mode if requested
                 $maintenanceModeId = 'cache-warming-dummy-session-id';
 
@@ -95,13 +108,11 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
             }
         });
 
-        $dispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEvent $event) use ($maintenanceModeHelper) {
-            if ($event->getInput()->getOption('maintenance-mode')) {
+        $dispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEvent $event) use ($kernel) {
+            if ($event->getInput()->hasOption('maintenance-mode') &&
+                $event->getInput()->getOption('maintenance-mode')) {
                 $event->getOutput()->writeln('Deactivating maintenance mode...');
-                //BC Layer for Admin::activateMaintenanceMode, if the maintenance file already exists
-                if (Admin::isInMaintenanceMode()) {
-                    Admin::deactivateMaintenanceMode();
-                }
+                $maintenanceModeHelper = $kernel->getContainer()->get(MaintenanceModeHelperInterface::class);
                 $maintenanceModeHelper->deactivate();
             }
         });
@@ -126,7 +137,7 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
             $command = $command->getCommand();
         }
 
-        if ($command instanceof DoctrineCommand) {
+        if (str_starts_with($command->getName(), 'doctrine:') || $command instanceof DoctrineCommand) {
             $definition = $command->getDefinition();
 
             // add filter option

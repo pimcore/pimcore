@@ -65,22 +65,34 @@ final class ManualBlockNode extends Node
 
     private function getPhpCode(string $splitChars): string
     {
-
         $optionsString = $this->options->toString();
+        $varSuffix = hash('xxh3', $splitChars);
+        $blockVar = 'block_' . $varSuffix;
+        $prevBlockVar = 'prevBlock_' . $varSuffix;
+        $hadPrevBlockVar = 'hadPrevBlock_' . $varSuffix;
 
         return <<<PHP
         \$editableExtension = \$this->env->getExtension('Pimcore\Twig\Extension\DocumentEditableExtension');
-        \$block = \$editableExtension->renderEditable(\$context, 'block', '{$this->blockName}', $optionsString);
-\$block->start();
+        \${$blockVar} = \$editableExtension->renderEditable(\$context, 'block', '{$this->blockName}', $optionsString);
+        \${$hadPrevBlockVar} = array_key_exists('_block', \$context);
+        \${$prevBlockVar} = \$context['_block'] ?? null;
+        \$context['_block'] = \${$blockVar};
+\${$blockVar}->start();
 {$splitChars}
-        foreach(\$block->getIterator() as \$index) {
-            \$block->blockConstruct();
-            \$context['_block'] = \$block;
+        foreach(\${$blockVar}->getIterator() as \$index) {
+            \${$blockVar}->blockConstruct();
+            \$context['_block'] = \${$blockVar};
             {$splitChars}
-            \$block->blockDestruct();
+            \${$blockVar}->blockDestruct();
         }
 {$splitChars}
-\$block->end();
+\${$blockVar}->end();
+        if (\${$hadPrevBlockVar}) {
+            \$context['_block'] = \${$prevBlockVar};
+        } else {
+            unset(\$context['_block']);
+        }
+        unset(\${$blockVar}, \${$prevBlockVar}, \${$hadPrevBlockVar});
 PHP;
 
     }
