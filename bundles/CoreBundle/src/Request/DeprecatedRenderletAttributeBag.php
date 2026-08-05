@@ -29,7 +29,7 @@ final class DeprecatedRenderletAttributeBag extends ParameterBag
     public function all(?string $key = null): array
     {
         if (null !== $key && in_array($key, $this->deprecated, true)) {
-            trigger_deprecation('pimcore/pimcore', '2026.2', 'Fetching the custom "%s" renderlet parameter from "attributes" is deprecated and will be removed in Pimcore 2027.0. Fetch it from "query" instead.', $key);
+            trigger_deprecation('pimcore/pimcore', '2026.3', 'Fetching the custom "%s" renderlet parameter from "attributes" is deprecated and will be removed in Pimcore 2027.0. Fetch it from "query" instead.', $key);
         }
 
         return parent::all($key);
@@ -39,7 +39,7 @@ final class DeprecatedRenderletAttributeBag extends ParameterBag
     public function get(string $key, mixed $default = null): mixed
     {
         if (in_array($key, $this->deprecated, true)) {
-            trigger_deprecation('pimcore/pimcore', '2026.2', 'Fetching the custom "%s" renderlet parameter from "attributes" is deprecated and will be removed in Pimcore 2027.0. Fetch it from "query" instead.', $key);
+            trigger_deprecation('pimcore/pimcore', '2026.3', 'Fetching the custom "%s" renderlet parameter from "attributes" is deprecated and will be removed in Pimcore 2027.0. Fetch it from "query" instead.', $key);
         }
 
         return parent::get($key, $default);
@@ -49,7 +49,7 @@ final class DeprecatedRenderletAttributeBag extends ParameterBag
     public function has(string $key): bool
     {
         if (in_array($key, $this->deprecated, true)) {
-            trigger_deprecation('pimcore/pimcore', '2026.2', 'Fetching the custom "%s" renderlet parameter from "attributes" is deprecated and will be removed in Pimcore 2027.0. Fetch it from "query" instead.', $key);
+            trigger_deprecation('pimcore/pimcore', '2026.3', 'Fetching the custom "%s" renderlet parameter from "attributes" is deprecated and will be removed in Pimcore 2027.0. Fetch it from "query" instead.', $key);
         }
 
         return parent::has($key);
