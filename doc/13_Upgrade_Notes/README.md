@@ -7,7 +7,7 @@
 
 ### [Console]
 - [Commands] `pimcore:bundle:install` and `pimcore:bundle:uninstall` now provide shell completion for the `bundle` argument, suggesting the names of all registered Pimcore bundles. Completion requires a one-time setup for your shell — see [Console Completion](../08_Development_Details/09_CLI_and_Pimcore_Console.md#console-completion).
-- [Commands] The `pimcore:bundle:*` commands were refactored to the `#[AsCommand]` attribute. The `@internal` `AbstractBundleCommand` changed accordingly: `buildName()` was removed and `configureDescriptionAndHelp()` was replaced by `configureBundleHelp()`, which derives the help text from the attribute description; `completeBundleArgument()` was added. The `@internal` helper `Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange` is now a `readonly` class and can no longer be extended or doubled.
+- [Commands] The `pimcore:bundle:*` commands were refactored to the `#[AsCommand]` attribute. The `@internal` `AbstractBundleCommand` changed accordingly: `buildName()` was removed and `configureDescriptionAndHelp()` was replaced by `configureBundleHelp()`, which derives the help text from the attribute description; `completeBundleArgument()` was added. The `@internal` helper `Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange` is now a `readonly` class; a subclass must itself be declared `readonly`.
 - [Commands] The table output of `pimcore:bundle:list` uses the narrow `I?` / `UI?` column headers (with an explaining legend) again instead of `Installable` / `Uninstallable`. The `--json` output is unchanged and keeps the full key names.
 
 ### [Maintenance]

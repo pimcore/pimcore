@@ -18,13 +18,10 @@ use PHPUnit\Framework\TestCase;
 use Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange;
 use Pimcore\Bundle\CoreBundle\Command\Bundle\InstallCommand;
 use Pimcore\Bundle\CoreBundle\Command\Bundle\UninstallCommand;
-use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
-use Pimcore\Tool\AssetsInstaller;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandCompletionTester;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
@@ -54,14 +51,7 @@ final class BundleCommandCompletionTest extends TestCase
 
     private function makePostStateChangeHelper(): PostStateChange
     {
-        // PostStateChange is a readonly class and cannot be doubled - build a
-        // real instance from mocked dependencies instead. It is never invoked
-        // during completion.
-        return new PostStateChange(
-            $this->createStub(CacheClearer::class),
-            $this->createStub(AssetsInstaller::class),
-            $this->createStub(EventDispatcherInterface::class)
-        );
+        return $this->createStub(PostStateChange::class);
     }
 
     /**
