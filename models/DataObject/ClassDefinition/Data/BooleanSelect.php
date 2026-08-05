@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -43,7 +40,7 @@ class BooleanSelect extends Data implements
     /** storage value for empty */
     const EMPTY_VALUE = null;
 
-    /** edit mode valze for empty */
+    /** edit mode value for empty */
     const EMPTY_VALUE_EDITMODE = 0;
 
     /**
@@ -111,7 +108,7 @@ class BooleanSelect extends Data implements
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?bool
+    public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?bool
     {
         if (is_numeric($data)) {
             $data = (int) $data;
@@ -131,7 +128,7 @@ class BooleanSelect extends Data implements
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?int
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -142,7 +139,7 @@ class BooleanSelect extends Data implements
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
+    public function getDataForResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?int
     {
         if (is_numeric($data)) {
             $data = (bool) $data;
@@ -162,7 +159,7 @@ class BooleanSelect extends Data implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data === true) {
             return $this->getYesLabel();
@@ -182,7 +179,7 @@ class BooleanSelect extends Data implements
     /** See parent class.
      *
      */
-    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         $result = [];
 
@@ -296,7 +293,7 @@ class BooleanSelect extends Data implements
      * @param null|Model\DataObject\Concrete $object
      *
      */
-    public function getDataForGrid(?bool $data, Concrete $object = null, array $params = []): int
+    public function getDataForGrid(?bool $data, ?Concrete $object = null, array $params = []): int
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
@@ -307,7 +304,7 @@ class BooleanSelect extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): int
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): int
     {
         if ($data === true) {
             return self::YES_VALUE;
@@ -323,7 +320,7 @@ class BooleanSelect extends Data implements
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDataFromGridEditor(mixed $data, Concrete $object = null, array $params = []): ?bool
+    public function getDataFromGridEditor(mixed $data, ?Concrete $object = null, array $params = []): ?bool
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -334,7 +331,7 @@ class BooleanSelect extends Data implements
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?bool
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?bool
     {
         if ((int)$data === 1) {
             return true;

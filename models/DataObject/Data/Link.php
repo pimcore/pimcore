@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\Data;
@@ -412,10 +409,17 @@ class Link implements OwnerAwareFieldInterface
             $attribs[] = $this->getAttributes();
         }
 
+        $href = $this->getHref();
         $text = $this->getText();
 
-        if (empty($text)) {
-            return '';
+        // Fall back to the URL as visible text when no text is set.
+        // Use a strict check so a legitimate "0" text is not treated as empty.
+        if ($text === '') {
+            $text = $href;
+
+            if ($text === '') {
+                return '';
+            }
         }
 
         return '<a href="' . $this->getHref() . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($text) . '</a>';
@@ -457,16 +461,14 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @internal
      *
-     * https://github.com/pimcore/pimcore/pull/15926
-     * used for non-nullable properties stored with null
+     * used for non-nullable properties stored with null (legacy data, see PEES-1217)
      *
-     * @TODO: Remove in Pimcore 12
-     *
+     * @TODO: Remove in Pimcore 2026
      */
     public function __unserialize(array $data): void
     {
         foreach (get_object_vars($this) as $property => $value) {
-            $this->$property = $data["\0*\0".$property] ?? $value;
+            $this->$property = $data["\0*\0" . $property] ?? $value;
         }
     }
 }

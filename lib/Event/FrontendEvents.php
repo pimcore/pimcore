@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Event;
@@ -105,23 +102,6 @@ final class FrontendEvents
      * @var string
      */
     const DOCUMENT_PATH = 'pimcore.frontend.path.document';
-
-    /**
-     * Allows to rewrite the frontend path of a static route
-     * Overwrite the argument "frontendPath" to do so
-     *
-     * Subject: 	Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute
-     * Arguments:
-     *  - frontendPath | string | Web-path, relative
-     *  - params | array
-     *  - reset | bool
-     *  - encode | bool
-     *
-     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
-     *
-     * @var string
-     */
-    const STATICROUTE_PATH = 'pimcore.frontend.path.staticroute';
 
     /**
      * Subject: 	\Pimcore\Twig\Extension\Templating\HeadLink

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore;
@@ -30,6 +27,8 @@ use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Event\SystemEvents;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
+use ReflectionException;
+use ReflectionMethod;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -41,7 +40,6 @@ use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
@@ -75,6 +73,8 @@ abstract class Kernel extends SymfonyKernel
 
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
+        $this->triggerKernelHookDeprecations();
+
         $bundleConfigLocator = new BundleConfigLocator($this);
         foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
             $loader->load($bundleConfig);
@@ -127,6 +127,46 @@ abstract class Kernel extends SymfonyKernel
         });
     }
 
+    /**
+     * Emits deprecation notices when subclasses override configureContainer() or
+     * configureRoutes(). These methods are exposed via the MicroKernelTrait `as protected`
+     * aliases on this class. They are private in MicroKernelTrait, are not part of
+     * Symfony's public extension API, and their signatures have changed between
+     * Symfony minor versions. Subclasses should override the public
+     * registerContainerConfiguration() (and use a routing loader for routes) instead.
+     */
+    private function triggerKernelHookDeprecations(): void
+    {
+        foreach (['configureContainer', 'configureRoutes'] as $method) {
+            try {
+                $declaringClass = (new ReflectionMethod($this, $method))->getDeclaringClass()->getName();
+            } catch (ReflectionException) {
+                continue;
+            }
+
+            // The method is declared either by this class (via the trait alias) or
+            // by MicroKernelTrait itself. In both cases no subclass is overriding it.
+            if ($declaringClass === self::class || $declaringClass === MicroKernelTrait::class) {
+                continue;
+            }
+
+            $replacement = $method === 'configureContainer'
+                ? 'Override the public registerContainerConfiguration(LoaderInterface $loader) method instead, or move the configuration to config/packages/*.yaml or a compiler pass.'
+                : 'Register a routing loader service tagged "routing.loader" instead, or add the routes to config/routes/*.yaml.';
+
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '2026.1',
+                'Overriding %s::%s() is deprecated since Pimcore 2026.1 and will be removed in 2027.1. ' .
+                'It relies on a private method of Symfony\\Bundle\\FrameworkBundle\\Kernel\\MicroKernelTrait '
+                . 'whose signature is not part of Symfony\'s public API. %s',
+                $declaringClass,
+                $method,
+                $replacement
+            );
+        }
+    }
+
     public function boot(): void
     {
         if (true === $this->booted) {
@@ -170,7 +210,7 @@ abstract class Kernel extends SymfonyKernel
             } catch (LogicException) {
                 // Container is cleared. Allow tests to finish.
             }
-            if (isset($container) && $container instanceof ContainerInterface) {
+            if (isset($container)) {
                 $container->get('event_dispatcher')->dispatch(new GenericEvent(), SystemEvents::SHUTDOWN);
             }
             Pimcore::shutdown();

@@ -25,7 +25,7 @@ _pimcore_service_thumbnail:
         filename: '.*'
 
 _fos_js_routing:
-    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing-sf4.xml"
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.php"
 
 # auto loads routes from all bundles in config/pimcore/routing.yaml
 _pimcore_bundle_auto:
@@ -37,3 +37,9 @@ pimcore_webdav:
     defaults: { _controller: Pimcore\Bundle\CoreBundle\Controller\WebDavController::webdavAction }
     requirements:
         path: '.*'
+
+_pimcore_core_bundle:
+    resource: "@PimcoreCoreBundle/src/Controller/"
+    type: attribute
+    options:
+        expose: true

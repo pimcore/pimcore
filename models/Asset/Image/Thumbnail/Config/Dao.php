@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
@@ -18,6 +15,8 @@ namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Exception;
 use Pimcore;
 use Pimcore\Config;
+use Pimcore\Event\ImageThumbnailConfigEvents;
+use Pimcore\Event\Model\Asset\Image\Thumbnail\ConfigEvent;
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
 
@@ -47,7 +46,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws Exception
      */
-    public function getByName(string $id = null): void
+    public function getByName(?string $id = null): void
     {
         if ($id != null) {
             $this->model->setName($id);
@@ -92,7 +91,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $data = [];
         $allowedProperties = ['name', 'description', 'group', 'items', 'medias', 'format',
             'quality', 'highResolution', 'creationDate', 'modificationDate', 'preserveColor', 'forceProcessICCProfiles',
-            'preserveMetaData', 'rasterizeSVG', 'downloadable', 'preserveAnimation', ];
+            'preserveMetaData', 'rasterizeSVG', 'useCropBox', 'downloadable', 'preserveAnimation', ];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {
@@ -110,6 +109,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
 
         $this->clearDatabaseCache();
+
+        Pimcore::getEventDispatcher()->dispatch(
+            new ConfigEvent($this->model),
+            ImageThumbnailConfigEvents::POST_UPDATE,
+        );
     }
 
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
@@ -145,6 +149,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
 
         $this->clearDatabaseCache();
+
+        Pimcore::getEventDispatcher()->dispatch(
+            new ConfigEvent($this->model),
+            ImageThumbnailConfigEvents::POST_DELETE,
+        );
     }
 
     private function clearDatabaseCache(): void

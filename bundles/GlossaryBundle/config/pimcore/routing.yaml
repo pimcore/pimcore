@@ -1,6 +1,0 @@
-_pimcore_bundle_glossary_backend:
-    resource: "../../src/Controller/"
-    type:     annotation
-    prefix:   /admin/bundle/glossary
-    options:
-        expose: true

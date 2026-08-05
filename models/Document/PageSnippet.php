@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Document;
@@ -162,7 +159,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @throws Exception
      */
-    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, string $versionNote = null, bool $isAutoSave = false): ?Model\Version
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, bool $isAutoSave = false): ?Model\Version
     {
         try {
             // hook should be also called if "save only new version" is selected
@@ -405,7 +402,7 @@ abstract class PageSnippet extends Model\Document
 
         // Don't set the content main document if the document is already part of the main document chain
         if ($contentMainDocumentId) {
-            if ($currentContentMainDocument = Document\PageSnippet::getById($contentMainDocumentId)) {
+            if ($currentContentMainDocument = Document\PageSnippet::getById((int) $contentMainDocumentId)) {
                 $maxDepth = 20;
                 do {
                     if ($currentContentMainDocument->getId() === $this->getId()) {
@@ -467,7 +464,27 @@ abstract class PageSnippet extends Model\Document
 
             if (self::getGetInheritedValues() && $this->supportsContentMain() && $this->getContentMainDocument()) {
                 $contentMainEditables = $this->getContentMainDocument()->getEditables();
-                $documentEditables = array_merge($contentMainEditables, $documentEditables);
+
+                // Clone and mark every editable coming from the content-main document
+                // as inherited so that the DAO's update() loop skips persisting them
+                // onto this child document. Without this, any editable present in the
+                // merged map (e.g. an areablock and all its children) gets written to
+                // the child on the first Save & Publish, permanently shadowing the
+                // inheritance and causing the content-main content to disappear on
+                // subsequent page loads.
+                //
+                // PageSnippet::update() already guards against saving inherited editables:
+                //   if (!$editable->getInherited()) { $editable->save(); }
+                // getEditable() applies the same clone+setInherited pattern for the
+                // single-editable lookup path; this keeps getEditables() consistent.
+                $markedContentMainEditables = [];
+                foreach ($contentMainEditables as $key => $contentMainEditable) {
+                    $cloned = clone $contentMainEditable;
+                    $cloned->setInherited(true);
+                    $markedContentMainEditables[$key] = $cloned;
+                }
+
+                $documentEditables = array_merge($markedContentMainEditables, $documentEditables);
                 $this->inheritedEditables = $documentEditables;
             }
 
@@ -539,7 +556,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @throws Exception
      */
-    public function getUrl(string $hostname = null, string $scheme = null): string
+    public function getUrl(?string $hostname = null, ?string $scheme = null): string
     {
         if (!$scheme) {
             $scheme = 'http://';
@@ -552,27 +569,34 @@ abstract class PageSnippet extends Model\Document
         }
 
         if (!$hostname) {
-            $hostname = \Pimcore\Config::getSystemConfiguration('general')['domain'];
-            if (empty($hostname)) {
-                if (!$hostname = \Pimcore\Tool::getHostname()) {
-                    throw new Exception('No hostname available');
-                }
-            }
+            $hostname = $this->getHostname();
         }
 
         $url = $scheme . $hostname;
         if ($this instanceof Page && $this->getPrettyUrl()) {
             $url .= $this->getPrettyUrl();
         } else {
-            $url .= $this->getFullPath();
-        }
-
-        $site = \Pimcore\Tool\Frontend::getSiteForDocument($this);
-        if ($site instanceof Model\Site && $site->getMainDomain()) {
-            $url = $scheme . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $this->getRealFullPath());
+            $site = \Pimcore\Tool\Frontend::getSiteForDocument($this);
+            if ($site instanceof Model\Site) {
+                $url .= preg_replace('@^'.$site->getRootPath().'/?@', '/', $this->getRealFullPath());
+            } else {
+                $url .= $this->getFullPath();
+            }
         }
 
         return $url;
+    }
+
+    private function getHostname(): string
+    {
+        $site = \Pimcore\Tool\Frontend::getSiteForDocument($this);
+        if ($site instanceof Model\Site && $site->getMainDomain()) {
+            return $site->getMainDomain();
+        }
+
+        return \Pimcore\Config::getSystemConfiguration('general')['domain']
+            ?: \Pimcore\Tool::getHostname()
+            ?: throw new Exception('No hostname available');
     }
 
     /**

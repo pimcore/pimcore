@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset\Video;
@@ -49,7 +46,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
      */
     protected ?Image $imageAsset = null;
 
-    public function __construct(?Model\Asset\Video $asset, array|string|Image\Thumbnail\Config $config = null, int $timeOffset = null, Image $imageAsset = null, bool $deferred = true)
+    public function __construct(?Model\Asset\Video $asset, array|string|Image\Thumbnail\Config|null $config = null, ?int $timeOffset = null, ?Image $imageAsset = null, bool $deferred = true)
     {
         $this->asset = $asset;
         $this->timeOffset = $timeOffset;
@@ -88,7 +85,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
         $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
 
-        if ($this->asset && empty($this->pathReference)) {
+        if ($this->asset instanceof Model\Asset\Video && empty($this->pathReference)) {
 
             if (!$this->checkAllowedFormats($this->config->getFormat(), $this->asset)) {
                 throw new ThumbnailFormatNotSupportedException();
@@ -117,7 +114,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
                 }
 
                 // fallback
-                if (!is_numeric($timeOffset) && $this->asset instanceof Model\Asset\Video) {
+                if (!is_numeric($timeOffset)) {
                     $timeOffset = ceil($this->asset->getDuration() / 3);
                 }
 
@@ -137,16 +134,21 @@ final class ImageThumbnail implements ImageThumbnailInterface
                     // after we got the lock, check again if the image exists in the meantime - if not - generate it
                     if (!$storage->fileExists($cacheFilePath)) {
                         $tempFile = File::getLocalTempFilePath('png');
-                        $converter = Video::getInstance();
+                        $converter = Video::newInstance();
+                        if ($converter === null) {
+                            Logger::error('No video adapter available to create image thumbnail for video ' . $this->asset->getRealFullPath() . '.');
+
+                            return;
+                        }
                         $converter->load($this->asset->getLocalFile());
                         if (false === $converter->saveImage($tempFile, (int) $timeOffset)) {
-                            Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
+                            Logger::info('Creation of image thumbnail for video ' . $this->asset->getRealFullPath() . ' failed.');
 
                             return;
                         }
                         $tempFileContent = file_get_contents($tempFile);
                         if (false === $tempFileContent) {
-                            Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is failed.');
+                            Logger::info('Could not read temporary image thumbnail file for video ' . $this->asset->getRealFullPath() . '.');
 
                             return;
                         }

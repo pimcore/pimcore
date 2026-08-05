@@ -2,21 +2,19 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
 /**
@@ -168,5 +166,50 @@ public function setLinput(?string $linput): static
 
 ';
         $this->testSetterCode('linput', $expectedSetterCode, true);
+    }
+
+    public function testInputEmptyDefaultValueIsNormalizedToNullAfterImportAndReload(): void
+    {
+        $class = ClassDefinition::getByName('unittest');
+        $this->assertInstanceOf(ClassDefinition::class, $class);
+
+        $originalClassDefinition = ClassDefinition\Service::generateClassDefinitionJson($class);
+        $classDefinition = json_decode($originalClassDefinition, true, 512, JSON_THROW_ON_ERROR);
+        $this->assertTrue($this->setInputDefaultValueAndUnique($classDefinition['layoutDefinitions'], 'input'));
+
+        try {
+            $this->assertTrue(ClassDefinition\Service::importClassDefinitionFromJson($class, json_encode($classDefinition, JSON_THROW_ON_ERROR), true));
+
+            $reloadedClass = ClassDefinition::getById($class->getId(), true);
+            $this->assertInstanceOf(ClassDefinition::class, $reloadedClass);
+
+            $inputField = $reloadedClass->getFieldDefinition('input');
+            $this->assertInstanceOf(Input::class, $inputField);
+            $this->assertTrue($inputField->getUnique());
+            $this->assertNull($inputField->getDefaultValue());
+        } finally {
+            ClassDefinition\Service::importClassDefinitionFromJson($class, $originalClassDefinition, true);
+        }
+    }
+
+    private function setInputDefaultValueAndUnique(array &$layoutDefinition, string $fieldName): bool
+    {
+        if (($layoutDefinition['name'] ?? null) === $fieldName && ($layoutDefinition['fieldtype'] ?? null) === 'input') {
+            $layoutDefinition['unique'] = true;
+            $layoutDefinition['defaultValue'] = '';
+
+            return true;
+        }
+
+        if (isset($layoutDefinition['children']) && is_array($layoutDefinition['children'])) {
+            foreach ($layoutDefinition['children'] as &$child) {
+                if (is_array($child) && $this->setInputDefaultValueAndUnique($child, $fieldName)) {
+                    return true;
+                }
+            }
+            unset($child);
+        }
+
+        return false;
     }
 }

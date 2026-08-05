@@ -1,36 +1,34 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model;
 
-use Doctrine\DBAL\Exception\DeadlockException;
 use Exception;
 use InvalidArgumentException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
 use League\Flysystem\UnableToProvideChecksum;
-use League\Flysystem\UnableToRetrieveMetadata;
+use Normalizer;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
+use Pimcore\Event\Model\Asset\ResolveMimeTypeEvent;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
+use Pimcore\Helper\MimeTypeHelper;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Localization\LocaleServiceInterface;
@@ -58,7 +56,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
-use Symfony\Component\Mime\MimeTypes;
+use Throwable;
 
 /**
  * @method Dao getDao()
@@ -221,7 +219,11 @@ class Asset extends Element\AbstractElement
 
         try {
             $asset = new static();
-            $asset->getDao()->getByPath($path);
+
+            Element\Service::getByPathWithNfcFallback(
+                fn (string $candidate) => $asset->getDao()->getByPath($candidate),
+                $path
+            );
 
             return static::getById(
                 $asset->getId(),
@@ -249,16 +251,11 @@ class Asset extends Element\AbstractElement
         return true;
     }
 
-    public static function getById(int|string $id, array $params = []): ?static
+    /**
+     * @param array{force?: bool, ...} $params
+     */
+    public static function getById(int $id, array $params = []): ?static
     {
-        if (is_string($id)) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '11.0',
-                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
-            );
-            $id = is_numeric($id) ? (int) $id : 0;
-        }
         if ($id < 1) {
             return null;
         }
@@ -330,6 +327,7 @@ class Asset extends Element\AbstractElement
                 array_key_exists('stream', $data)
             )
         ) {
+            $mimeTypeHelper = new MimeTypeHelper();
             $mimeType = 'directory';
             $mimeTypeGuessData = null;
             if (array_key_exists('data', $data) || array_key_exists('stream', $data)) {
@@ -344,36 +342,28 @@ class Asset extends Element\AbstractElement
                     $filesystem = new Filesystem();
                     $filesystem->dumpFile($tmpFile, $data['data']);
                 } else {
-                    $streamMeta = stream_get_meta_data($data['stream']);
-                    if (file_exists($streamMeta['uri'])) {
-                        // stream is a local file, so we don't have to write a tmp file
-                        $mimeTypeGuessData = $streamMeta['uri'];
-                    } else {
-                        // write a tmp file because the stream isn't a pointer to the local filesystem
-                        $isRewindable = @rewind($data['stream']);
-                        $dest = fopen($tmpFile, 'w+', false, File::getContext());
-                        stream_copy_to_stream($data['stream'], $dest);
-                        $mimeTypeGuessData = $tmpFile;
-
-                        if (!$isRewindable) {
-                            $data['stream'] = $dest;
-                        } else {
-                            fclose($dest);
-                            unlink($tmpFile);
-                        }
-                    }
+                    // guess mime type from stream directly
+                    $mimeTypeGuessData = $data['stream'];
                 }
-                $mimeType = MimeTypes::getDefault()->guessMimeType($mimeTypeGuessData);
+
+                $mimeType = $mimeTypeHelper->guessMimeType(
+                    $mimeTypeGuessData
+                );
             } else {
                 if (!is_dir($data['sourcePath'])) {
                     $mimeTypeGuessData = $data['sourcePath'];
                     if (is_file($data['sourcePath'])) {
                         $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
                     }
-                    $mimeType = MimeTypes::getDefault()->guessMimeType($mimeTypeGuessData);
+                    $mimeType = $mimeTypeHelper->guessMimeType($mimeTypeGuessData);
                 }
                 unset($data['sourcePath']);
             }
+
+            $mimeType ??= 'application/octet-stream';
+            $mimeTypeEvent = new ResolveMimeTypeEvent($data['filename'], $mimeType);
+            Pimcore::getEventDispatcher()->dispatch($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
+            $mimeType = $mimeTypeEvent->getMimeType();
 
             $type = self::getTypeFromMimeMapping($mimeType, $data['filename']);
             // only check maxpixels if it is an image
@@ -409,24 +399,39 @@ class Asset extends Element\AbstractElement
         return $asset;
     }
 
-    private static function checkMaxPixels(string $localPath, array $data): void
+    private static function getImageSizeFromStream(mixed $stream): array
+    {
+        if (!is_resource($stream)) {
+            return [];
+        }
+        $size = getimagesizefromstring(
+            @stream_get_contents($stream)
+        );
+
+        return $size === false ? [] : $size;
+    }
+
+    private static function checkMaxPixels(mixed $localPathOrStream, array $data): void
     {
         // this check is intentionally done in Asset::create() because in Asset::update() it would result
         // in an additional download from remote storage if configured, so in terms of performance
         // this is the more efficient way
         $maxPixels = (int)Config::getSystemConfiguration('assets')['image']['max_pixels'];
-        if ($maxPixels && $size = @getimagesize($localPath)) {
-            $imagePixels = (int)($size[0] * $size[1]);
+        if (is_string($localPathOrStream)) {
+            $size = @getimagesize($localPathOrStream);
+        } else {
+            $size = self::getImageSizeFromStream($localPathOrStream);
+        }
+        if ($maxPixels && $size) {
+            $imagePixels = ($size[0] * $size[1]);
             if ($imagePixels > $maxPixels) {
-                Logger::error("Image to be created {$localPath} (temp. path) exceeds max pixel size of {$maxPixels}, you can change the value in config pimcore.assets.image.max_pixels");
+                Logger::error("Image to be created {$localPathOrStream} (temp. path) exceeds max pixel size of {$maxPixels}, you can change the value in config pimcore.assets.image.max_pixels");
 
                 $diff = sqrt(1 + $imagePixels / $maxPixels);
                 $suggestion_0 = (int)round($size[0] / $diff, -2, PHP_ROUND_HALF_DOWN);
                 $suggestion_1 = (int)round($size[1] / $diff, -2, PHP_ROUND_HALF_DOWN);
 
                 $mp = $maxPixels / 1_000_000;
-                // unlink file before throwing exception
-                unlink($localPath);
 
                 throw new ValidationException("<p>Image dimensions of <em>{$data['filename']}</em> are too large.</p>
 <p>Max size: <code>{$mp}</code> <abbr title='Million pixels'>Megapixels</abbr></p>
@@ -491,104 +496,76 @@ class Asset extends Element\AbstractElement
     {
         $isUpdate = false;
         $differentOldPath = null;
+        $updatedChildren = [];
 
-        try {
-            $preEvent = new AssetEvent($this, $parameters);
+        $this->retryableFunction(
+            beforeRetryables: function () use (&$parameters, &$isUpdate) {
+                $preEvent = new AssetEvent($this, $parameters);
 
-            if ($this->getId()) {
-                $isUpdate = true;
-                $this->dispatchEvent($preEvent, AssetEvents::PRE_UPDATE);
-            } else {
-                $this->dispatchEvent($preEvent, AssetEvents::PRE_ADD);
-            }
+                if ($this->getId()) {
+                    $isUpdate = true;
+                    $this->dispatchEvent($preEvent, AssetEvents::PRE_UPDATE);
+                } else {
+                    $this->dispatchEvent($preEvent, AssetEvents::PRE_ADD);
+                }
 
-            $parameters = $preEvent->getArguments();
+                $parameters = $preEvent->getArguments();
 
-            $this->correctPath();
+                $this->correctPath();
 
-            $parameters['isUpdate'] = $isUpdate; // need for $this->update() for certain types (image, video, document)
+                // need for $this->update() for certain types (image, video, document)
+                $parameters['isUpdate'] = $isUpdate;
+            },
+            retryableFunc: function () use (&$parameters, &$isUpdate, &$differentOldPath, &$updatedChildren) {
+                if (!$isUpdate) {
+                    $this->getDao()->create();
+                }
 
-            // we wrap the save actions in a loop here, to restart the database transactions in the case it fails
-            // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
-            // especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
-            $maxRetries = 5;
-            for ($retries = 0; $retries < $maxRetries; $retries++) {
-                $this->beginTransaction();
+                // get the old path from the database before the update is done
+                $oldPath = null;
+                if ($isUpdate) {
+                    $oldPath = $this->getDao()->getCurrentFullPath();
+                }
 
-                try {
-                    if (!$isUpdate) {
-                        $this->getDao()->create();
-                    }
+                $this->update($parameters);
 
-                    // get the old path from the database before the update is done
-                    $oldPath = null;
-                    if ($isUpdate) {
-                        $oldPath = $this->getDao()->getCurrentFullPath();
-                    }
+                $storage = Storage::get('asset');
+                // if the old path is different from the new path, update all children
+                $updatedChildren = [];
+                if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                    $differentOldPath = $oldPath;
 
-                    $this->update($parameters);
+                    // First make DB updates:
+                    $this->getDao()->updateWorkspaces();
+                    $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
 
-                    $storage = Storage::get('asset');
-                    // if the old path is different from the new path, update all children
-                    $updatedChildren = [];
-                    if ($oldPath && $oldPath != $this->getRealFullPath()) {
-                        $differentOldPath = $oldPath;
+                    // then update thumbnails
+                    // TODO: determine if failure on moving thumbnails should be ignored
+                    $this->relocateThumbnails($oldPath);
 
-                        // First make DB updates:
-                        $this->getDao()->updateWorkspaces();
-                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
-
-                        // then update thumbnails
-                        // TODO: determine if failure on moving thumbnails should be ignored
-                        $this->relocateThumbnails($oldPath);
-
-                        // finally move the actual assets themselves
-                        // We do this last so that any prior errors don't require a rollback
-                        // on potentially a remote service.
-                        try {
-                            $storage->move($oldPath, $this->getRealFullPath());
-                        } catch (UnableToMoveFile $e) {
-                            //update children, if unable to move parent
-                            $this->updateChildPaths($storage, $oldPath);
-                        }
-                    }
-
-                    // lastly create a new version if necessary
-                    // this has to be after the registry update and the DB update, otherwise this would cause problem in the
-                    // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
-                    if ($this->getType() != 'folder') {
-                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
-                    }
-
-                    $this->commit();
-
-                    break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-                } catch (Exception $e) {
+                    // finally move the actual assets themselves
+                    // We do this last so that any prior errors don't require a rollback
+                    // on potentially a remote service.
                     try {
-                        $this->rollBack();
-                    } catch (Exception $er) {
-                        // PDO adapter throws exceptions if rollback fails
-                        Logger::error((string) $er);
-                    }
-
-                    // we try to start the transaction $maxRetries times again (deadlocks, ...)
-                    if ($e instanceof DeadlockException && $retries < ($maxRetries - 1)) {
-                        $run = $retries + 1;
-                        $waitTime = rand(1, 5) * 100000; // microseconds
-                        Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
-
-                        usleep($waitTime); // wait specified time until we restart the transaction
-                    } else {
-                        Logger::error('Unable to save Asset: ' . (string) $e);
-
-                        // if the transaction still fail after $maxRetries retries, we throw out the exception
-                        throw $e;
+                        $storage->move($oldPath, $this->getRealFullPath());
+                    } catch (UnableToMoveFile $e) {
+                        //update children, if unable to move parent
+                        $this->updateChildPaths($storage, $oldPath);
                     }
                 }
-            }
 
-            $additionalTags = [];
-            if (isset($updatedChildren)) {
+                // lastly create a new version if necessary
+                // this has to be after the registry update and the DB update, otherwise this would cause problem in the
+                // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
+                if ($this->getType() != 'folder') {
+                    $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
+                    $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
+                }
+            },
+            onCommit: function () use (&$parameters, &$isUpdate, &$differentOldPath, &$updatedChildren) {
+
+                $additionalTags = [];
+
                 foreach ($updatedChildren as $assetId) {
                     $tag = 'asset_' . $assetId;
                     $additionalTags[] = $tag;
@@ -596,49 +573,49 @@ class Asset extends Element\AbstractElement
                     // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
                     RuntimeCache::set($tag, null);
                 }
-            }
-            $this->clearDependentCache($additionalTags);
 
-            if ($differentOldPath) {
-                $this->renewInheritedProperties();
-            }
+                $this->clearDependentCache($additionalTags);
 
-            // add to queue that saves dependencies
-            $this->addToDependenciesQueue();
-
-            if ($this->getDataChanged()) {
-                $this->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
-                if (in_array($this->getType(), ['image', 'video', 'document'])) {
-                    $this->addToUpdateTaskQueue();
-                }
-            }
-
-            $this->setDataChanged(false);
-
-            $postEvent = new AssetEvent($this, $parameters);
-            if ($isUpdate) {
                 if ($differentOldPath) {
-                    $postEvent->setArgument('oldPath', $differentOldPath);
+                    $this->renewInheritedProperties();
                 }
-                $this->dispatchEvent($postEvent, AssetEvents::POST_UPDATE);
-            } else {
-                $this->dispatchEvent($postEvent, AssetEvents::POST_ADD);
-            }
 
-            return $this;
-        } catch (Exception $e) {
-            // TODO: we should rollback any files that were moved here,
-            // assuming a prior revert has not been done.
-            $failureEvent = new AssetEvent($this, $parameters);
-            $failureEvent->setArgument('exception', $e);
-            if ($isUpdate) {
-                $this->dispatchEvent($failureEvent, AssetEvents::POST_UPDATE_FAILURE);
-            } else {
-                $this->dispatchEvent($failureEvent, AssetEvents::POST_ADD_FAILURE);
-            }
+                // add to queue that saves dependencies
+                $this->addToDependenciesQueue();
 
-            throw $e;
-        }
+                if ($this->getDataChanged()) {
+                    $this->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
+                    if (in_array($this->getType(), ['image', 'video', 'document'])) {
+                        $this->addToUpdateTaskQueue();
+                    }
+                }
+
+                $this->setDataChanged(false);
+
+                $postEvent = new AssetEvent($this, $parameters);
+                if ($isUpdate) {
+                    if ($differentOldPath) {
+                        $postEvent->setArgument('oldPath', $differentOldPath);
+                    }
+                    $this->dispatchEvent($postEvent, AssetEvents::POST_UPDATE);
+                } else {
+                    $this->dispatchEvent($postEvent, AssetEvents::POST_ADD);
+                }
+            },
+            onFailure: function ($e) use (&$parameters, &$isUpdate) {
+                // TODO: we should rollback any files that were moved here,
+                // assuming a prior revert has not been done.
+                $failureEvent = new AssetEvent($this, $parameters);
+                $failureEvent->setArgument('exception', $e);
+                if ($isUpdate) {
+                    $this->dispatchEvent($failureEvent, AssetEvents::POST_UPDATE_FAILURE);
+                } else {
+                    $this->dispatchEvent($failureEvent, AssetEvents::POST_ADD_FAILURE);
+                }
+            }
+        );
+
+        return $this;
     }
 
     /**
@@ -726,15 +703,20 @@ class Asset extends Element\AbstractElement
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
 
-                if (!$storage->fileExists($path) || !stream_is_local($storage->readStream($path))) {
+                $existingStream = $storage->fileExists($path) ? $storage->readStream($path) : null;
+                if (!$existingStream || !stream_is_local($existingStream)) {
                     // write stream directly if target file doesn't exist or if target is a remote storage
                     // this is because we don't have hardlinks there, so we don't need to consider them (see below)
+                    if (is_resource($existingStream)) {
+                        fclose($existingStream);
+                    }
                     $storage->writeStream($path, $src);
                 } else {
                     // We don't open a stream on existing files, because they could be possibly used by versions
                     // using hardlinks, so it's safer to write them to a temp file first, so the inode and therefore
                     // also the versioning information persists. Using the stream on the existing file would overwrite the
                     // contents of the inode and therefore leads to wrong version data
+                    fclose($existingStream);
                     $pathInfo = pathinfo($this->getFilename());
                     $tempFilePath = $this->getRealPath() . uniqid('temp_');
                     if ($pathInfo['extension'] ?? false) {
@@ -751,18 +733,32 @@ class Asset extends Element\AbstractElement
 
                 // delete old legacy file if exists
                 $dbPath = $this->getDao()->getCurrentFullPath();
-                if ($dbPath !== $path && $storage->fileExists($dbPath)) {
+                if ($dbPath && $dbPath !== $path && $storage->fileExists($dbPath)) {
                     $storage->delete($dbPath);
                 }
 
-                $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
+                if (!is_resource($src)) {
+                    $src = $this->getStream();
+                }
+
+                $mimeType = null;
 
                 try {
                     $mimeType = $storage->mimeType($path);
-                } catch (UnableToRetrieveMetadata $e) {
-                    $mimeType = 'application/octet-stream';
+                } catch (FilesystemException $e) {
+                    // ignore, fallback
                 }
+
+                if (!$mimeType || $mimeType === 'application/octet-stream') {
+                    $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
+                }
+
+                $mimeTypeEvent = new ResolveMimeTypeEvent($this->getFilename(), $mimeType, $this, !($params['isUpdate'] ?? false));
+                $this->dispatchEvent($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
+                $mimeType = $mimeTypeEvent->getMimeType();
+
                 $this->setMimeType($mimeType);
+                $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
                 // set type
                 $type = self::getTypeFromMimeMapping($mimeType, $this->getFilename());
@@ -832,7 +828,7 @@ class Asset extends Element\AbstractElement
      *
      * @throws Exception
      */
-    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, string $versionNote = null): ?Version
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null): ?Version
     {
         try {
             // hook should be also called if "save only new version" is selected
@@ -987,77 +983,67 @@ class Asset extends Element\AbstractElement
             throw new Exception('root-node cannot be deleted');
         }
 
-        $this->dispatchEvent(new AssetEvent($this), AssetEvents::PRE_DELETE);
+        $this->retryableFunction(
+            beforeRetryables: function () {
+                $this->dispatchEvent(new AssetEvent($this), AssetEvents::PRE_DELETE);
+            },
+            retryableFunc: function () {
+                $this->closeStream();
 
-        $this->beginTransaction();
-
-        try {
-            $this->closeStream();
-
-            // remove children
-            if ($this->hasChildren()) {
-                foreach ($this->getChildren() as $child) {
-                    $child->delete(true);
-                }
-            }
-
-            // Dispatch Symfony Message Bus to delete versions
-            Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                new VersionDeleteMessage(Service::getElementType($this), $this->getId())
-            );
-
-            // remove all properties
-            $this->getDao()->deleteAllProperties();
-
-            // remove all tasks
-            $this->getDao()->deleteAllTasks();
-
-            // remove dependencies
-            $d = $this->getDependencies();
-            $d->cleanAllForElement($this);
-
-            // remove from resource
-            $this->getDao()->delete();
-
-            $this->commit();
-
-            // remove file on filesystem
-            if (!$isNested) {
-                $fullPath = $this->getRealFullPath();
-                if ($fullPath != '/..' && !strpos($fullPath,
-                    '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {
-                    $this->deletePhysicalFile();
+                // remove children
+                if ($this->hasChildren()) {
+                    foreach ($this->getChildren() as $child) {
+                        $child->delete(true);
+                    }
                 }
 
-                //remove target parent folder preview thumbnails
-                $this->clearFolderThumbnails($this);
+                // Dispatch Symfony Message Bus to delete versions
+                Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                    new VersionDeleteMessage(Service::getElementType($this), $this->getId())
+                );
+
+                // remove all properties
+                $this->getDao()->deleteAllProperties();
+
+                // remove all tasks
+                $this->getDao()->deleteAllTasks();
+
+                // remove dependencies
+                $d = $this->getDependencies();
+                $d->cleanAllForElement($this);
+
+                // remove from resource
+                $this->getDao()->delete();
+
+            },
+            onCommit: function () use ($isNested) {
+                // remove file on filesystem
+                if (!$isNested) {
+                    $fullPath = $this->getRealFullPath();
+                    if ($fullPath != '/..' && !strpos($fullPath,
+                        '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {
+                        $this->deletePhysicalFile();
+                    }
+
+                    //remove target parent folder preview thumbnails
+                    $this->clearFolderThumbnails($this);
+                }
+                $this->clearThumbnails(true);
+
+                // empty asset cache
+                $this->clearDependentCache();
+
+                // clear asset from registry
+                RuntimeCache::set(self::getCacheKey($this->getId()), null);
+
+                $this->dispatchEvent(new AssetEvent($this), AssetEvents::POST_DELETE);
+            },
+            onFailure: function ($e) {
+                $failureEvent = new AssetEvent($this);
+                $failureEvent->setArgument('exception', $e);
+                $this->dispatchEvent($failureEvent, AssetEvents::POST_DELETE_FAILURE);
             }
-
-            $this->clearThumbnails(true);
-
-        } catch (Exception $e) {
-            try {
-                $this->rollBack();
-            } catch (Exception $er) {
-                // PDO adapter throws exceptions if rollback fails
-                Logger::info((string) $er);
-            }
-
-            $failureEvent = new AssetEvent($this);
-            $failureEvent->setArgument('exception', $e);
-            $this->dispatchEvent($failureEvent, AssetEvents::POST_DELETE_FAILURE);
-            Logger::crit((string) $e);
-
-            throw $e;
-        }
-
-        // empty asset cache
-        $this->clearDependentCache();
-
-        // clear asset from registry
-        RuntimeCache::set(self::getCacheKey($this->getId()), null);
-
-        $this->dispatchEvent(new AssetEvent($this), AssetEvents::POST_DELETE);
+        );
     }
 
     public function clearDependentCache(array $additionalTags = []): void
@@ -1328,12 +1314,14 @@ class Asset extends Element\AbstractElement
      */
     public function setCustomSettings(mixed $customSettings): static
     {
-        if (is_string($customSettings)) {
+        if (
+            is_string($customSettings) &&
+            $customSettings !== ''
+        ) {
             if (strlen($customSettings) > 10e6) {
                 $this->customSettingsCanBeCached = false;
             }
-
-            $customSettings = Serialize::unserialize($customSettings);
+            $customSettings = Serialize::fromJson($customSettings);
         }
 
         if ($customSettings instanceof stdClass) {
@@ -1421,7 +1409,7 @@ class Asset extends Element\AbstractElement
      *
      * @return $this
      */
-    public function addMetadata(string $name, string $type, mixed $data = null, string $language = null): static
+    public function addMetadata(string $name, string $type, mixed $data = null, ?string $language = null): static
     {
         if ($name && $type) {
             $tmp = [];
@@ -1703,20 +1691,42 @@ class Asset extends Element\AbstractElement
         try {
             $movedFiles = [];
             $children = $storage->listContents($oldPath, true);
+            $totalFiles = 0;
+
+            /** @var \League\Flysystem\StorageAttributes $child */
             foreach ($children as $child) {
-                if ($child['type'] === 'file') {
+                if ($child instanceof \League\Flysystem\FileAttributes) {
+                    ++$totalFiles;
                     $src  = $child['path'];
-                    $dest = str_replace($oldPath, $newPath, '/' . $src);
+                    $dest = $newPath . substr('/' . $src, strlen($oldPath));
+
                     $storage->move($src, $dest);
                     $movedFiles[$dest] = $src;
                 }
             }
 
-            $storage->deleteDirectory($oldPath);
-        } catch (UnableToMoveFile $e) {
+            if ($totalFiles > 0) {
+                $movedCount = count($movedFiles);
+
+                if ($movedCount === $totalFiles) {
+                    $storage->deleteDirectory($oldPath);
+                } else {
+                    \Pimcore\Logger::info(
+                        sprintf(
+                            'Moved %d/%d files from %s to %s. No exception was thrown for %d files,
+                            so the source directory was not deleted.',
+                            $movedCount, $totalFiles, $oldPath, $newPath, $totalFiles - $movedCount
+                        )
+                    );
+                }
+            }
+        } catch (Throwable $e) {
+            Logger::error(sprintf('Asset Move to %s failed: %s', $newPath, $e->getMessage()));
+
             if ($skipError) {
                 return;
             }
+
             // rollback moved files
             foreach ($movedFiles as $src => $dest) {
                 $storage->move($src, $dest);
@@ -1757,7 +1767,7 @@ class Asset extends Element\AbstractElement
                 $storage = Storage::get($storageName);
 
                 try {
-                    $storage->move($oldThumbnailsPath, $newThumbnailsPath);
+                    $this->moveThumbnailPath($storage, $oldThumbnailsPath, $newThumbnailsPath);
                 } catch (UnableToMoveFile $e) {
                     //update children, if unable to move parent
                     //if there is an error, we can ignore it
@@ -1765,6 +1775,45 @@ class Asset extends Element\AbstractElement
                 }
             }
         }
+    }
+
+    /**
+     * Moves a thumbnail directory, checking alternate Unicode normalization forms of the
+     * source path if the literal one doesn't exist. This covers cases where the DB-stored
+     * path and the on-disk directory name ended up in different Unicode normalization forms
+     * - e.g. because the original folder/file name was created on a macOS client, which
+     * reports accented names in decomposed (NFD) form, while other parts of the stack
+     * normalize to precomposed (NFC).
+     *
+     * The existing source is established via directoryExists() before moving, rather than
+     * moving each candidate in turn and reacting to UnableToMoveFile: that exception also
+     * covers destination, permission and backend failures, not just a missing source, so
+     * catching it to decide "try the next Unicode form" could otherwise move an unrelated,
+     * coincidentally-present legacy-form directory into $newPath on an unrelated failure.
+     *
+     * @throws UnableToMoveFile
+     */
+    private function moveThumbnailPath(FilesystemOperator $storage, string $oldPath, string $newPath): void
+    {
+        $candidates = array_unique(array_filter([
+            $oldPath,
+            Normalizer::normalize($oldPath, Normalizer::FORM_C) ?: null,
+            Normalizer::normalize($oldPath, Normalizer::FORM_D) ?: null,
+        ]));
+
+        $source = $oldPath;
+        foreach ($candidates as $candidate) {
+            if ($storage->directoryExists($candidate)) {
+                $source = $candidate;
+
+                break;
+            }
+        }
+
+        // None of the Unicode-form candidates exist (e.g. no thumbnails were ever
+        // generated) - move the literal requested path so the caller sees the normal
+        // "nothing to move" failure rather than one masked by this fallback.
+        $storage->move($source, $newPath);
     }
 
     private function clearFolderThumbnails(Asset $asset): void

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -138,7 +135,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data !== null) {
             return (string) $data;
@@ -152,7 +149,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @see Data::getDataForEditmode
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof Model\DataObject\Data\CalculatedValue) {
             return Model\DataObject\Service::getCalculatedFieldValueForEditMode($object, $params, $data);
@@ -168,7 +165,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): mixed
     {
         return null;
     }
@@ -179,7 +176,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         return (string)$this->getDataForEditmode($data, $object, $params);
     }
@@ -348,7 +345,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return '';
     }
 
-    public function getDataForGrid(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
+    public function getDataForGrid(mixed $data, ?DataObject\Concrete $object = null, array $params = []): mixed
     {
         return $data;
     }

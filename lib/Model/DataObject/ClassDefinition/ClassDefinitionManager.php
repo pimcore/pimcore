@@ -2,22 +2,21 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
+use Doctrine\DBAL\Exception;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinitionInterface;
+use Pimcore\Model\DataObject\Exception\DefinitionWriteException;
 
 class ClassDefinitionManager
 {
@@ -69,6 +68,29 @@ class ClassDefinitionManager
      */
     public function createOrUpdateClassDefinitions(bool $force = false): array
     {
+        return $this->createOrUpdateClassDefinitionsInternal($force, true);
+    }
+
+    /**
+     * Updates all classes from PIMCORE_CLASS_DEFINITION_DIRECTORY with more control over the saving process.
+     * Added as a separate method to avoid compatibility issues.
+     * TODO: Should be refactored in Pimcore 13 to avoid duplication with createOrUpdateClassDefinitions.
+     *
+     * @param bool $force whether to always update no matter if the model definition changed or not
+     * @param bool $dumpPHPClasses whether to write the PHP classes to the disk, if false, only the database will be updated
+     *
+     * @return list<array{string, string, string}>
+     */
+    public function dumpClassDefinitions(bool $force = false, bool $dumpPHPClasses = true): array
+    {
+        return $this->createOrUpdateClassDefinitionsInternal($force, $dumpPHPClasses);
+    }
+
+    /**
+     * @return list<array{string, string, string}>
+     */
+    private function createOrUpdateClassDefinitionsInternal(bool $force, bool $dumpPHPClasses): array
+    {
         $objectClassesFolders = array_filter(array_unique(array_map('realpath', [
             PIMCORE_CLASS_DEFINITION_DIRECTORY,
             PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY,
@@ -93,11 +115,11 @@ class ClassDefinitionManager
                     $existingClass = ClassDefinition::getByName($class->getName());
 
                     if ($existingClass instanceof ClassDefinitionInterface) {
-                        $classSaved = $this->saveClass($existingClass, false, $force);
+                        $classSaved = $this->dumpClass($existingClass, false, $dumpPHPClasses, $force);
                         $changes[] = [$existingClass->getName(), $existingClass->getId(), $classSaved ? self::SAVED : self::SKIPPED];
                     } else {
                         //when creating, it should always save like as forced
-                        $classSaved = $this->saveClass($class, false, true);
+                        $classSaved = $this->dumpClass($class, false, $dumpPHPClasses, true);
                         $changes[] = [$class->getName(), $class->getId(), $classSaved ? self::CREATED : self::SKIPPED];
                     }
                 }
@@ -109,27 +131,65 @@ class ClassDefinitionManager
 
     /**
      * @return bool whether the class was saved or not
+     *
+     * @throws DefinitionWriteException     *
+     * @throws Exception
      */
     public function saveClass(ClassDefinitionInterface $class, bool $saveDefinitionFile, bool $force = false): bool
     {
+        return $this->saveClassDefinition($class, $saveDefinitionFile, true, $force);
+    }
+
+    /**
+     * Additional method that gives more control over the saving process. Added as a separate method to avoid compatibility issues.
+     * TODO: Should be refactored in Pimcore 13 to avoid duplication with saveClass.
+     *
+     * @throws Exception
+     * @throws DefinitionWriteException
+     */
+    public function dumpClass(
+        ClassDefinitionInterface $class,
+        bool $saveDefinitionFile,
+        bool $dumpPHPClasses,
+        bool $force = false
+    ): bool {
+        return $this->saveClassDefinition($class, $saveDefinitionFile, $dumpPHPClasses, $force);
+    }
+
+    public function hasChanges(ClassDefinitionInterface $class): bool
+    {
+        $db = \Pimcore\Db::get();
+        $definitionModificationDate = null;
+
+        if ($classId = $class->getId()) {
+            $definitionModificationDate = $db->fetchOne('SELECT definitionModificationDate FROM classes WHERE id = ?;', [$classId]);
+        }
+
+        return !$definitionModificationDate || $definitionModificationDate !== $class->getModificationDate();
+    }
+
+    /**
+     * @throws Exception
+     * @throws DefinitionWriteException
+     */
+    private function saveClassDefinition(
+        ClassDefinitionInterface|ClassDefinition $class,
+        bool $saveDefinitionFile,
+        bool $dumpPHPClasses = true,
+        bool $force = false
+    ): bool {
         $shouldSave = $force;
 
-        if (!$force) {
-            $db = \Pimcore\Db::get();
-
-            $definitionModificationDate = null;
-
-            if ($classId = $class->getId()) {
-                $definitionModificationDate = $db->fetchOne('SELECT definitionModificationDate FROM classes WHERE id = ?;', [$classId]);
-            }
-
-            if (!$definitionModificationDate || $definitionModificationDate !== $class->getModificationDate()) {
-                $shouldSave = true;
-            }
+        if (!$force && $this->hasChanges($class)) {
+            $shouldSave = true;
         }
 
         if ($shouldSave) {
-            $class->save($saveDefinitionFile);
+            if ($class instanceof ClassDefinition) {
+                $class->dumpClass($saveDefinitionFile, $dumpPHPClasses);
+            } else {
+                $class->save($saveDefinitionFile);
+            }
         }
 
         return $shouldSave;

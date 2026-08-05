@@ -3,16 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\User;
@@ -53,12 +50,12 @@ interface AbstractUserInterface extends ModelInterface
      *
      * @throws Exception
      */
-    public function save(): static;
+    public function save(array $parameters = []): static;
 
     /**
      * @throws Exception
      */
-    public function delete(): void;
+    public function delete(array $parameters = []): void;
 
     /**
      * @return $this

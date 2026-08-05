@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Document;
@@ -60,7 +57,7 @@ class Service extends Model\Element\Service
      */
     protected array $nearestPathCache;
 
-    public function __construct(Model\User $user = null)
+    public function __construct(?Model\User $user = null)
     {
         $this->_user = $user;
     }
@@ -298,7 +295,7 @@ class Service extends Model\Element\Service
         return $doc;
     }
 
-    public static function pathExists(string $path, string $type = null): bool
+    public static function pathExists(string $path, ?string $type = null): bool
     {
         if (!$path) {
             return false;
@@ -310,7 +307,16 @@ class Service extends Model\Element\Service
             $document = new Document();
             // validate path
             if (self::isValidPath($path, 'document')) {
-                $document->getDao()->getByPath($path);
+                try {
+                    Element\Service::getByPathWithNfcFallback(
+                        fn (string $candidate) => $document->getDao()->getByExactPath($candidate),
+                        $path
+                    );
+                } catch (Model\Exception\NotFoundException) {
+                    // none of the exact-path candidates matched - fall back to a pretty URL
+                    // match against the original requested path only, same as getByPath()
+                    $document->getDao()->getByPrettyUrl($path);
+                }
 
                 return true;
             }
@@ -530,7 +536,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function generatePagePreview(int $id, Request $request = null, string $hostUrl = null): bool
+    public static function generatePagePreview(int $id, ?Request $request = null, ?string $hostUrl = null): bool
     {
         $filesystem = new Filesystem();
         $doc = Document\Page::getById($id);
@@ -552,7 +558,11 @@ class Service extends Model\Element\Service
 
         if (HtmlToImage::convert($url, $tmpFile)) {
             $im = \Pimcore\Image::getInstance();
-            $im->load($tmpFile);
+            if (!$im->load($tmpFile)) {
+                unlink($tmpFile);
+
+                return false;
+            }
             $im->scaleByWidth(800);
             $im->save($file, 'jpeg', 85);
 

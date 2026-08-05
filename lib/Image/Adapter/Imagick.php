@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Image\Adapter;
@@ -62,7 +59,6 @@ class Imagick extends Adapter
         }
 
         if ($this->resource) {
-            unset($this->resource);
             $this->resource = null;
         }
 
@@ -82,6 +78,12 @@ class Imagick extends Adapter
 
             $imagePathLoad = $imagePathLoad . '[0]';
 
+            // setBackgroundColor must be called BEFORE readImage so that the Inkscape/ImageMagick
+            // delegate composites onto the correct (transparent) background, not black
+            if (!$this->reinitializing && !$this->isPreserveColor() && $this->isVectorGraphic($imagePath)) {
+                $i->setBackgroundColor(new ImagickPixel('transparent'));
+            }
+
             if (!$i->readImage($imagePathLoad) || !@filesize($imagePath)) {
                 return false;
             }
@@ -92,11 +94,12 @@ class Imagick extends Adapter
                 $i->setColorspace(\Imagick::COLORSPACE_SRGB);
 
                 if ($this->isVectorGraphic($imagePath)) {
-                    // only for vector graphics
-                    // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
-                    $i->setBackgroundColor(new ImagickPixel('transparent'));
-                    //for certain edge-cases simply setting the background-color to transparent does not seem to work
-                    //workaround by using transparentPaintImage (somehow even works without setting a target. no clue why)
+                    // After reading, re-apply on the loaded image object — the Inkscape delegate
+                    // can override the background setting during rasterization (e.g. IM 7.1.0-48+)
+                    $i->setImageBackgroundColor(new ImagickPixel('transparent'));
+                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_ACTIVATE);
+                    // for certain edge-cases simply setting the background-color to transparent does not seem to work;
+                    // workaround by using transparentPaintImage (somehow even works without setting a target, no clue why)
                     $i->transparentPaintImage('', 1, 0, false);
                 }
 
@@ -121,9 +124,9 @@ class Imagick extends Adapter
             }
 
             if ($this->checkPreserveAnimation($i->getImageFormat(), $i, false)) {
-                if (!$this->resource->readImage($imagePath) || !filesize($imagePath)) {
-                    return false;
-                }
+                // \Imagick::readImage() throws on failure (it never returns false) and
+                // a non-empty file size was already ensured when the image was read above
+                $this->resource->readImage($imagePath);
                 $this->resource = $this->resource->coalesceImages();
             }
 
@@ -181,7 +184,7 @@ class Imagick extends Adapter
         return $format;
     }
 
-    public function save(string $path, string $format = null, int $quality = null): static
+    public function save(string $path, ?string $format = null, ?int $quality = null): static
     {
         if (!$format) {
             $format = 'png32';
@@ -199,14 +202,13 @@ class Imagick extends Adapter
             $format = 'png32';
         }
 
-        $originalFilename = null;
         $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
 
         if (in_array($format, ['jpeg', 'pjpeg', 'jpg']) && $this->isAlphaPossible) {
             // set white background for transparent pixels
             $i->setImageBackgroundColor('#ffffff');
 
-            if ($i->getImageAlphaChannel() !== 0) { // Note: returns (int) 0 if there's no AlphaChannel, PHP Docs are wrong. See: https://www.imagemagick.org/api/channel.php
+            if ($i->getImageAlphaChannel()) {
                 // Imagick version compatibility
                 $alphaChannel = 11; // This works at least as far back as version 3.1.0~rc1-1
                 if (defined('Imagick::ALPHACHANNEL_REMOVE')) {
@@ -282,7 +284,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    private function checkPreserveAnimation(string $format = '', \Imagick $i = null, bool $checkNumberOfImages = true): bool
+    private function checkPreserveAnimation(string $format = '', ?\Imagick $i = null, bool $checkNumberOfImages = true): bool
     {
         if (!$this->isPreserveAnimation()) {
             return false;
@@ -473,6 +475,12 @@ class Imagick extends Adapter
 
     public function resize(int $width, int $height): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot resize image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
 
         // this is the check for vector formats because they need to have a resolution set
@@ -504,7 +512,7 @@ class Imagick extends Adapter
             }
 
             $this->resource->setResolution($res['x'], $res['y']);
-            $this->resource->readImage($this->imagePath);
+            $this->resource->readImage($this->imagePath . '[0]');
 
             if (!$this->isPreserveColor()) {
                 $this->setColorspaceToRGB();
@@ -523,7 +531,7 @@ class Imagick extends Adapter
             $this->setHeight($height);
         }
 
-        if ($this->resource->getNumberImages() > 1) {
+        if ($this->isVectorGraphic() && $this->resource->getNumberImages() > 1) {
             $this->resource->removeImage();
         }
 
@@ -534,6 +542,12 @@ class Imagick extends Adapter
 
     public function crop(int $x, int $y, int $width, int $height): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot crop image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
 
         if ($this->checkPreserveAnimation()) {
@@ -578,6 +592,12 @@ class Imagick extends Adapter
 
     public function trim(int $tolerance): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot trim image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
 
         $this->resource->trimimage($tolerance);
@@ -620,7 +640,7 @@ class Imagick extends Adapter
     {
         $newImage = null;
         if ($this->checkPreserveAnimation()) {
-            foreach ($this->resource as $i => $frame) {
+            foreach ($this->resource as $frame) {
                 $imageFrame = $this->createImage($width, $height, $color);
                 $imageFrame->compositeImage($frame, $composite, $x, $y);
                 if (!$newImage) {
@@ -639,6 +659,12 @@ class Imagick extends Adapter
 
     public function rotate(int $angle): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot rotate image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
 
         $this->resource->rotateImage(new ImagickPixel('none'), $angle);
@@ -654,6 +680,12 @@ class Imagick extends Adapter
 
     public function roundCorners(int $width, int $height): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot round corners of image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
 
         $this->internalRoundCorners($width, $height);
@@ -684,7 +716,7 @@ class Imagick extends Adapter
         $this->resource->compositeImage($mask, \Imagick::COMPOSITE_DSTIN, 0, 0);
     }
 
-    public function setBackgroundImage(string $image, string $mode = null): static
+    public function setBackgroundImage(string $image, ?string $mode = null): static
     {
         $this->preModify();
 
@@ -827,6 +859,12 @@ class Imagick extends Adapter
 
     public function grayscale(): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot apply grayscale to image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
         $this->resource->setImageType(\Imagick::IMGTYPE_GRAYSCALEMATTE);
         $this->postModify();
@@ -836,6 +874,12 @@ class Imagick extends Adapter
 
     public function sepia(): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot apply sepia to image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
         $this->resource->sepiatoneimage(85);
         $this->postModify();
@@ -845,6 +889,12 @@ class Imagick extends Adapter
 
     public function sharpen(float $radius = 0, float $sigma = 1.0, float $amount = 1.0, float $threshold = 0.05): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot sharpen image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
         $this->resource->normalizeImage();
         $this->resource->unsharpMaskImage($radius, $sigma, $amount, $threshold);
@@ -855,6 +905,12 @@ class Imagick extends Adapter
 
     public function gaussianBlur(int $radius = 0, float $sigma = 1.0): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot apply gaussian blur to image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
         $this->resource->gaussianBlurImage($radius, $sigma);
         $this->postModify();
@@ -864,6 +920,12 @@ class Imagick extends Adapter
 
     public function brightnessSaturation(int $brightness = 100, int $saturation = 100, int $hue = 100): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot adjust brightness/saturation of image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
         $this->resource->modulateImage($brightness, $saturation, $hue);
         $this->postModify();
@@ -873,6 +935,12 @@ class Imagick extends Adapter
 
     public function mirror(string $mode): static
     {
+        if ($this->resource === null) {
+            Logger::error('Cannot mirror image: resource is null');
+
+            return $this;
+        }
+
         $this->preModify();
 
         if ($mode == 'vertical') {

@@ -3,28 +3,22 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Extension\Bundle;
 
 use InvalidArgumentException;
-use Pimcore\Event\BundleManager\PathsEvent;
-use Pimcore\Event\BundleManagerEvents;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\HttpKernel\BundleCollection\ItemInterface;
 use Pimcore\Kernel;
-use Pimcore\Routing\RouteReferenceInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
@@ -398,109 +392,5 @@ class PimcoreBundleManager
         }
 
         return $installer->needsReloadAfterInstall();
-    }
-
-    /**
-     * Resolves all admin javascripts to load
-     *
-     * @return string[]
-     */
-    public function getJsPaths(): array
-    {
-        $paths = $this->resolvePaths('js');
-
-        return $this->resolveEventPaths($paths, BundleManagerEvents::JS_PATHS);
-    }
-
-    /**
-     * Resolves all admin stylesheets to load
-     *
-     * @return string[]
-     */
-    public function getCssPaths(): array
-    {
-        $paths = $this->resolvePaths('css');
-
-        return $this->resolveEventPaths($paths, BundleManagerEvents::CSS_PATHS);
-    }
-
-    /**
-     * Resolves all editmode javascripts to load
-     *
-     * @return string[]
-     */
-    public function getEditmodeJsPaths(): array
-    {
-        $paths = $this->resolvePaths('js', 'editmode');
-
-        return $this->resolveEventPaths($paths, BundleManagerEvents::EDITMODE_JS_PATHS);
-    }
-
-    /**
-     * Resolves all editmode stylesheets to load
-     *
-     * @return string[]
-     */
-    public function getEditmodeCssPaths(): array
-    {
-        $paths = $this->resolvePaths('css', 'editmode');
-
-        return $this->resolveEventPaths($paths, BundleManagerEvents::EDITMODE_CSS_PATHS);
-    }
-
-    /**
-     * Iterates installed bundles and fetches asset paths
-     *
-     *
-     * @return string[]
-     */
-    protected function resolvePaths(string $type, string $mode = null): array
-    {
-        $type = ucfirst($type);
-
-        if (null !== $mode) {
-            $mode = ucfirst($mode);
-        } else {
-            $mode = '';
-        }
-
-        // getJsPaths, getEditmodeJsPaths
-        $getter = sprintf('get%s%sPaths', $mode, $type);
-
-        $result = [];
-        foreach ($this->getActiveBundles() as $bundle) {
-            if ($bundle instanceof PimcoreBundleAdminClassicInterface) {
-                $paths = $bundle->$getter();
-
-                foreach ($paths as $path) {
-                    if ($path instanceof RouteReferenceInterface) {
-                        $result[] = $this->router->generate(
-                            $path->getRoute(),
-                            $path->getParameters(),
-                            $path->getType()
-                        );
-                    } else {
-                        $result[] = $path;
-                    }
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Emits given path event
-     *
-     * @param string[] $paths
-     *
-     * @return string[]
-     */
-    protected function resolveEventPaths(array $paths, string $eventName): array
-    {
-        $event = new PathsEvent($paths);
-        $this->dispatcher->dispatch($event, $eventName);
-
-        return $event->getPaths();
     }
 }

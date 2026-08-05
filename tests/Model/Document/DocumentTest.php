@@ -2,21 +2,22 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tests\Model\Document;
 
 use Exception;
+use Normalizer;
+use Pimcore\Db;
+use Pimcore\Db\Helper as DbHelper;
+use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Link;
@@ -129,7 +130,7 @@ class DocumentTest extends ModelTestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('ParentID not found.');
         $savedObject = TestHelper::createEmptyDocumentPage('', false);
-        $this->assertTrue($savedObject->getId() == 0);
+        $this->assertEquals(null, $savedObject->getId());
 
         $savedObject->setParentId(999999);
         $savedObject->save();
@@ -379,5 +380,214 @@ class DocumentTest extends ModelTestCase
         $loadedDocument = Service::getElementFromSession('document', $document->getId(), $session->getId());
 
         $this->assertEquals(count($document->getEditables()), count($loadedDocument->getEditables()));
+    }
+
+    /**
+     * Regression test: Document::getByPath() must resolve a document whose key is stored
+     * precomposed (NFC) when the caller supplies a decomposed (NFD) lookup path - e.g. a
+     * browser's webkitdirectory/File System Access API on macOS - by falling back to the
+     * NFC-normalized path once the exact-path lookup misses. Document's getByPath() has its
+     * own pretty-URL and runtime-cache handling on top of the shared Element\Service fallback,
+     * so it needs its own coverage rather than relying on the Asset regression tests alone.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathFallsBackToNfcForNfdLookupPath(): void
+    {
+        $nfcKey = Normalizer::normalize('nfc-café-' . uniqid(), Normalizer::FORM_C);
+
+        $folder = new Document\Folder();
+        $folder->setParentId(1);
+        $folder->setKey($nfcKey);
+        $folder->save();
+
+        $nfdLookupPath = Normalizer::normalize($folder->getFullPath(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $folder->getFullPath(),
+            $nfdLookupPath,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $found = Document::getByPath($nfdLookupPath, ['force' => true]);
+
+        $this->assertInstanceOf(Document::class, $found);
+        $this->assertSame($folder->getId(), $found->getId());
+    }
+
+    /**
+     * Regression test: a document resolved via the NFC fallback must be cached (for the
+     * unforced RuntimeCache read path) under its own resolved real path, not under the raw
+     * (NFD) lookup path that was used to find it. Document invalidation (e.g. delete()) only
+     * clears the cache entry for the document's real path - caching an extra entry under the
+     * raw lookup path would create a stale alias that a later unforced lookup by that same
+     * path could return even after the document is deleted.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathDoesNotCacheStaleAliasForNfcFallbackLookupPath(): void
+    {
+        $nfcKey = Normalizer::normalize('nfc-café-' . uniqid(), Normalizer::FORM_C);
+
+        $folder = new Document\Folder();
+        $folder->setParentId(1);
+        $folder->setKey($nfcKey);
+        $folder->save();
+
+        $nfdLookupPath = Normalizer::normalize($folder->getFullPath(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $folder->getFullPath(),
+            $nfdLookupPath,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        // unforced, so this populates the RuntimeCache path-cache entry under whatever key
+        // getByPath() decides to use
+        $found = Document::getByPath($nfdLookupPath);
+        $this->assertInstanceOf(Document::class, $found);
+        $this->assertSame($folder->getId(), $found->getId());
+
+        $folder->delete();
+
+        $foundAfterDelete = Document::getByPath($nfdLookupPath);
+        $this->assertNull(
+            $foundAfterDelete,
+            'A deleted document must not still be resolvable through a stale cache entry keyed by the raw NFD lookup path.'
+        );
+    }
+
+    /**
+     * Regression test: for a mixed hierarchy (legacy NFD-stored ancestor, freshly created
+     * NFC-stored descendant), the fully-normalized candidate tried first does not match the
+     * real path (it incorrectly also rewrites the still-NFD ancestor segment) - but
+     * Document\Dao::getByPath() would additionally treat a miss as a potential pretty URL, so
+     * if an unrelated page's pretty URL happens to equal that non-matching candidate string,
+     * the fallback must not resolve to that unrelated page instead of continuing to the later
+     * candidate that actually identifies the requested document.
+     *
+     * @see \Pimcore\Model\Document\Dao::getByExactPath()
+     */
+    public function testGetByPathDoesNotResolveToUnrelatedPageViaCandidatePrettyUrlCollision(): void
+    {
+        $legacyNfcKey = Normalizer::normalize('legacy-café-' . uniqid(), Normalizer::FORM_C);
+        $legacyNfdKey = Normalizer::normalize($legacyNfcKey, Normalizer::FORM_D);
+        $this->assertNotSame(
+            $legacyNfcKey,
+            $legacyNfdKey,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        // simulate a legacy pre-#19242 ancestor whose key is stored in decomposed (NFD) form
+        $legacyFolder = new Document\Folder();
+        $legacyFolder->setParentId(1);
+        $legacyFolder->setKey($legacyNfcKey);
+        $legacyFolder->save();
+        $db = Db::get();
+        $db->update('documents', DbHelper::quoteDataIdentifiers($db, ['key' => $legacyNfdKey]), ['id' => $legacyFolder->getId()]);
+
+        // the freshly created target document, stored NFC, below the legacy ancestor
+        $targetDoc = new Page();
+        $targetDoc->setParentId($legacyFolder->getId());
+        $targetDoc->setKey(Normalizer::normalize('target-café-' . uniqid(), Normalizer::FORM_C));
+        $targetDoc->setUserOwner(1);
+        $targetDoc->setUserModification(1);
+        $targetDoc->setCreationDate(time());
+        $targetDoc->save();
+
+        // what a browser submits: every accented segment in NFD, regardless of which segments
+        // are legacy and which are freshly created
+        $nfdLookupPath = Normalizer::normalize($targetDoc->getRealFullPath(), Normalizer::FORM_D);
+        $fullyNormalizedCandidate = Normalizer::normalize($nfdLookupPath, Normalizer::FORM_C);
+        $this->assertNotSame(
+            $targetDoc->getRealFullPath(),
+            $fullyNormalizedCandidate,
+            'Test fixture setup issue: the fully normalized candidate must differ from the real stored path (it must also rewrite the legacy segment).'
+        );
+
+        // an unrelated page whose pretty URL happens to collide with that non-matching candidate
+        $decoyDoc = new Page();
+        $decoyDoc->setParentId(1);
+        $decoyDoc->setKey('decoy-' . uniqid());
+        $decoyDoc->setUserOwner(1);
+        $decoyDoc->setUserModification(1);
+        $decoyDoc->setCreationDate(time());
+        $decoyDoc->setPrettyUrl($fullyNormalizedCandidate);
+        $decoyDoc->save();
+
+        $found = Document::getByPath($nfdLookupPath, ['force' => true]);
+
+        $this->assertInstanceOf(Document::class, $found);
+        $this->assertSame(
+            $targetDoc->getId(),
+            $found->getId(),
+            'The requested document must be resolved via the exact-path candidate, not an unrelated page whose pretty URL coincidentally matches a non-matching candidate.'
+        );
+    }
+
+    /**
+     * Regression test: Document::getByPath() must still resolve a document whose key is
+     * stored in decomposed (NFD) Unicode form - e.g. created before document keys were
+     * normalized to NFC on write - via an exact-path lookup using that very same NFD path.
+     *
+     * The model API can no longer persist such a key directly: Document::save() rejects it
+     * via Service::isValidKey(), which always normalizes to NFC before comparing (#19242).
+     * So the legacy row is created via a valid NFC key first, then rewritten to NFD directly
+     * in the database - bypassing model validation - to simulate a pre-#19242 row.
+     *
+     * @see \Pimcore\Model\Element\Service::correctPath()
+     */
+    public function testGetByPathResolvesLegacyNfdStoredKeyByExactMatch(): void
+    {
+        $nfcKey = Normalizer::normalize('nfd-café-' . uniqid(), Normalizer::FORM_C);
+        $nfdKey = Normalizer::normalize($nfcKey, Normalizer::FORM_D);
+        $this->assertNotSame(
+            $nfcKey,
+            $nfdKey,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $folder = new Document\Folder();
+        $folder->setParentId(1);
+        $folder->setKey($nfcKey);
+        $folder->save();
+
+        $lookupPath = $folder->getRealPath() . $nfdKey;
+
+        $db = Db::get();
+        $db->update('documents', DbHelper::quoteDataIdentifiers($db, ['key' => $nfdKey]), ['id' => $folder->getId()]);
+
+        $found = Document::getByPath($lookupPath, ['force' => true]);
+
+        $this->assertInstanceOf(Document::class, $found);
+        $this->assertSame($folder->getId(), $found->getId());
+    }
+
+    /**
+     * Regression test: Document\Service::pathExists() must agree with Document::getByPath() on
+     * whether a path resolves. Without routing pathExists() through the same NFC fallback,
+     * a caller could see pathExists() return false for the very same NFD lookup path that
+     * getByPath() successfully resolves, and incorrectly treat an existing document as absent.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testPathExistsAgreesWithGetByPathForNfdLookupPath(): void
+    {
+        $nfcKey = Normalizer::normalize('nfc-café-' . uniqid(), Normalizer::FORM_C);
+
+        $folder = new Document\Folder();
+        $folder->setParentId(1);
+        $folder->setKey($nfcKey);
+        $folder->save();
+
+        $nfdLookupPath = Normalizer::normalize($folder->getFullPath(), Normalizer::FORM_D);
+        $this->assertNotSame(
+            $folder->getFullPath(),
+            $nfdLookupPath,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $this->assertTrue(
+            Service::pathExists($nfdLookupPath),
+            'pathExists() must return true for the same NFD path that getByPath() resolves.'
+        );
     }
 }

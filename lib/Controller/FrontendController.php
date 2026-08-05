@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Controller;
@@ -82,7 +79,7 @@ abstract class FrontendController extends Controller
      * We don't have a response object at this point, but we can add headers here which will be
      * set by the ResponseHeaderListener which reads and adds this headers in the kernel.response event.
      */
-    protected function addResponseHeader(string $key, array|string $values, bool $replace = false, Request $request = null): void
+    protected function addResponseHeader(string $key, array|string $values, bool $replace = false, ?Request $request = null): void
     {
         if (null === $request) {
             $request = $this->container->get('request_stack')->getCurrentRequest();
@@ -98,7 +95,7 @@ abstract class FrontendController extends Controller
      *
      * @throws Exception
      */
-    public function getDocumentEditable(string $type, string $inputName, array $options = [], Document\PageSnippet $document = null): Document\Editable\EditableInterface
+    public function getDocumentEditable(string $type, string $inputName, array $options = [], ?Document\PageSnippet $document = null): Document\Editable\EditableInterface
     {
         if (null === $document) {
             $document = $this->document;
@@ -110,7 +107,7 @@ abstract class FrontendController extends Controller
         return $this->container->get(EditableRenderer::class)->getEditable($document, $type, $inputName, $options);
     }
 
-    protected function renderTemplate(string $view, array $parameters = [], Response $response = null): Response
+    protected function renderTemplate(string $view, array $parameters = [], ?Response $response = null): Response
     {
         return $this->render($view, $parameters, $response);
     }

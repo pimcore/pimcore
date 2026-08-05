@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tests\Support\Helper;
@@ -23,7 +20,7 @@ use Codeception\TestInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Exception;
-use Pimcore\Bundle\InstallBundle\Installer;
+use Pimcore\Bundle\InstallBundle\Database\DatabaseSetup;
 use Pimcore\Cache;
 use Pimcore\Event\TestEvents;
 use Pimcore\Model\DataObject;
@@ -31,6 +28,7 @@ use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Pimcore\Model\Document;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Pimcore\Tool\Authentication;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -205,16 +203,19 @@ class Pimcore extends Module\Symfony
 
         $this->connectDb($connection);
 
-        $installer = new Installer($this->getContainer()->get('monolog.logger.pimcore'), $this->getContainer()->get('event_dispatcher'));
-        $installer->setImportDatabaseDataDump(false);
-        $errors = $installer->setupDatabase($connection, [
-            'username' => 'admin',
-            'password' => microtime(),
-        ]);
+        $databaseSetup = new DatabaseSetup();
+        $databaseSetup->createSchema($connection);
+        $databaseSetup->insertSeedData($connection);
 
-        if ($errors) {
-            throw new Exception('Setup Database failed: ' . implode("\n", $errors));
-        }
+        $connection->insert('users', [
+            'parentId' => 0,
+            'name' => 'admin',
+            'password' => Authentication::getPasswordHash('admin', microtime()),
+            'active' => 1,
+            'admin' => 1,
+            'type' => 'user',
+            'language' => 'en',
+        ]);
 
         $this->debug(sprintf('[DB] Initialized the test DB %s', $dbName));
 

@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\Data\AbstractMetadata;
@@ -76,7 +73,7 @@ class Dao extends Model\Dao\AbstractDao
               INDEX `index` (`index`),
               CONSTRAINT `".self::getForeignKeyName($table, 'id').'` FOREIGN KEY (`id`)
               REFERENCES objects (`id`) ON DELETE CASCADE
-		) DEFAULT CHARSET=utf8mb4;');
+		) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
 
         $this->handleEncryption($class, [$table]);
     }

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Maintenance\Tasks;
@@ -42,11 +39,13 @@ class HousekeepingTask implements TaskInterface
         foreach (['dev'] as $environment) {
             $profilerDir = sprintf('%s/%s/profiler', PIMCORE_SYMFONY_CACHE_DIRECTORY, $environment);
 
-            $this->deleteFilesInFolderOlderThanSeconds($profilerDir, $this->profilerTime);
+            $this->deleteFilesInFolderOlderThanSeconds($profilerDir, $this->profilerTime, true);
         }
+
+        $this->deleteFilesInFolderOlderThanSeconds(PIMCORE_SYSTEM_TEMP_DIRECTORY, $this->tmpFileTime, false);
     }
 
-    private function deleteFilesInFolderOlderThanSeconds(string $folder, int $seconds): void
+    private function deleteFilesInFolderOlderThanSeconds(string $folder, int $seconds, bool $clearFolder): void
     {
         if (!is_dir($folder)) {
             return;
@@ -80,7 +79,7 @@ class HousekeepingTask implements TaskInterface
                 @unlink($file->getPathname());
             }
 
-            if (is_dir_empty($file->getPath())) {
+            if (is_dir_empty($file->getPath()) && $clearFolder) {
                 @rmdir($file->getPath());
             }
         }

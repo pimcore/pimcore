@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Video\Adapter;
@@ -19,14 +16,31 @@ namespace Pimcore\Video\Adapter;
 use Exception;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
-use Pimcore\Video\Adapter;
+use Pimcore\Video\AdapterInterface;
 use Symfony\Component\Process\Process;
 
 /**
  * @internal
  */
-class Ffmpeg extends Adapter
+class Ffmpeg implements AdapterInterface
 {
+    public int $videoBitrate;
+
+    public int $audioBitrate;
+
+    public string $format;
+
+    public array $medias;
+
+    public string $destinationFile;
+
+    public string $storageFile;
+
+    /**
+     * length in seconds
+     */
+    public int $length;
+
     public string $file;
 
     protected string $processId;
@@ -37,10 +51,12 @@ class Ffmpeg extends Adapter
 
     protected ?float $inputSeeking = null;
 
+    private ?string $cachedVideoInfo = null;
+
     public function isAvailable(): bool
     {
         try {
-            $ffmpeg = self::getFfmpegCli();
+            $ffmpeg = static::getFfmpegCli();
             $phpCli = Console::getPhpCli();
             if ($ffmpeg && $phpCli) {
                 return true;
@@ -58,13 +74,17 @@ class Ffmpeg extends Adapter
      */
     public static function getFfmpegCli(): false|string
     {
-        return \Pimcore\Tool\Console::getExecutable('ffmpeg', true);
+        return Console::getExecutable('ffmpeg', true);
     }
 
     public function load(string $file, array $options = []): static
     {
         $this->file = $file;
         $this->setProcessId(uniqid());
+        $this->cachedVideoInfo = null;
+        $this->arguments = [];
+        $this->videoFilter = [];
+        $this->inputSeeking = null;
 
         return $this;
     }
@@ -103,7 +123,7 @@ class Ffmpeg extends Adapter
             } elseif ($this->getFormat() == 'webm') {
                 // check for vp9 support
                 $webmCodec = 'libvpx';
-                $process = new Process([self::getFfmpegCli(), '-codecs']);
+                $process = new Process([static::getFfmpegCli(), '-codecs']);
                 $process->run();
                 $codecs = $process->getOutput();
                 if (stripos($codecs, 'vp9')) {
@@ -169,7 +189,7 @@ class Ffmpeg extends Adapter
                 }
                 array_unshift($command, '-ss', $this->inputSeeking);
             }
-            array_unshift($command, self::getFfmpegCli());
+            array_unshift($command, static::getFfmpegCli());
 
             Console::addLowProcessPriority($command);
             $process = new Process($command);
@@ -208,13 +228,13 @@ class Ffmpeg extends Adapter
         return $success;
     }
 
-    public function saveImage(string $file, int $timeOffset = null): bool
+    public function saveImage(string $file, ?int $timeOffset = null): bool
     {
         $timeOffset = (string) ($timeOffset ?? 5);
 
         try {
             $cmd = [
-                self::getFfmpegCli(),
+                static::getFfmpegCli(),
                 '-ss', $timeOffset, '-i', realpath($this->file),
                 '-vcodec', 'png', '-vframes', '1', '-vf', 'scale=iw*sar:ih',
                 str_replace('/', DIRECTORY_SEPARATOR, $file),
@@ -237,14 +257,21 @@ class Ffmpeg extends Adapter
      */
     protected function getVideoInfo(): string
     {
+        if ($this->cachedVideoInfo !== null) {
+            return $this->cachedVideoInfo;
+        }
+
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-info-' . uniqid() . '.out';
 
-        $cmd = [self::getFfmpegCli(), '-i', realpath($this->file)];
+        $cmd = [static::getFfmpegCli(), '-i', realpath($this->file)];
         Console::addLowProcessPriority($cmd);
         $process = new Process($cmd);
         $process->start();
 
         $tmpHandle = fopen($tmpFile, 'a');
+        if ($tmpHandle === false) {
+            throw new Exception('Failed to open temporary file for video info: ' . $tmpFile);
+        }
         $process->wait(function ($type, $buffer) use ($tmpHandle) {
             fwrite($tmpHandle, $buffer);
         });
@@ -253,7 +280,13 @@ class Ffmpeg extends Adapter
         $contents = file_get_contents($tmpFile);
         unlink($tmpFile);
 
-        return $contents;
+        if ($contents === false) {
+            throw new Exception('Failed to read video info from temporary file: ' . $tmpFile);
+        }
+
+        $this->cachedVideoInfo = $contents;
+
+        return $this->cachedVideoInfo;
     }
 
     public function getDuration(): ?float
@@ -348,11 +381,29 @@ class Ffmpeg extends Adapter
         return $this->arguments;
     }
 
+    public function setAudioBitrate(int $audioBitrate): static
+    {
+        $audioBitrate = (int) ceil($audioBitrate / 2) * 2;
+
+        $this->audioBitrate = $audioBitrate;
+
+        if ($audioBitrate) {
+            $this->addArgument('-ab', $audioBitrate . 'k');
+        }
+
+        return $this;
+    }
+
+    public function getAudioBitrate(): int
+    {
+        return $this->audioBitrate;
+    }
+
     public function setVideoBitrate(int $videoBitrate): static
     {
         $videoBitrate = (int) ceil($videoBitrate / 2) * 2;
 
-        parent::setVideoBitrate($videoBitrate);
+        $this->videoBitrate = $videoBitrate;
 
         if ($videoBitrate) {
             $this->addArgument('-vb', $videoBitrate . 'k');
@@ -361,17 +412,65 @@ class Ffmpeg extends Adapter
         return $this;
     }
 
-    public function setAudioBitrate(int $audioBitrate): static
+    public function getVideoBitrate(): int
     {
-        $audioBitrate = (int) ceil($audioBitrate / 2) * 2;
+        return $this->videoBitrate;
+    }
 
-        parent::setAudioBitrate($audioBitrate);
+    public function getMedias(): ?array
+    {
+        return $this->medias;
+    }
 
-        if ($audioBitrate) {
-            $this->addArgument('-ab', $audioBitrate . 'k');
-        }
+    public function setMedias(?array $medias): void
+    {
+        $this->medias = $medias ?? [];
+    }
+
+    public function setFormat(string $format): static
+    {
+        $this->format = $format;
 
         return $this;
+    }
+
+    public function getFormat(): string
+    {
+        return $this->format;
+    }
+
+    public function setDestinationFile(string $destinationFile): static
+    {
+        $this->destinationFile = $destinationFile;
+
+        return $this;
+    }
+
+    public function getDestinationFile(): string
+    {
+        return $this->destinationFile;
+    }
+
+    public function setLength(int $length): static
+    {
+        $this->length = $length;
+
+        return $this;
+    }
+
+    public function getLength(): int
+    {
+        return $this->length;
+    }
+
+    public function getStorageFile(): string
+    {
+        return $this->storageFile;
+    }
+
+    public function setStorageFile(string $storageFile): void
+    {
+        $this->storageFile = $storageFile;
     }
 
     public function resize(int $width, int $height): void

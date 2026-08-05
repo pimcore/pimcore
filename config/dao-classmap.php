@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 return [
@@ -118,8 +115,6 @@ return [
     'Pimcore\\Model\\Element\\Tag\\Listing' => 'Pimcore\\Model\\Element\\Tag\\Listing\\Dao',
     'Pimcore\\Model\\Element\\WorkflowState' => 'Pimcore\\Model\\Element\\WorkflowState\\Dao',
     'Pimcore\\Model\\Element\\WorkflowState\\Listing' => 'Pimcore\\Model\\Element\\WorkflowState\\Listing\\Dao',
-    'Pimcore\\Model\\Glossary' => 'Pimcore\\Model\\Glossary\\Dao',
-    'Pimcore\\Model\\Glossary\\Listing' => 'Pimcore\\Model\\Glossary\\Listing\\Dao',
     'Pimcore\\Model\\Metadata\\Predefined' => 'Pimcore\\Model\\Metadata\\Predefined\\Dao',
     'Pimcore\\Model\\Metadata\\Predefined\\Listing' => 'Pimcore\\Model\\Metadata\\Predefined\\Listing\\Dao',
     'Pimcore\\Model\\Notification' => 'Pimcore\\Model\\Notification\\Dao',
@@ -131,12 +126,8 @@ return [
     'Pimcore\\Model\\Redirect\\Listing' => 'Pimcore\\Model\\Redirect\\Listing\\Dao',
     'Pimcore\\Model\\Schedule\\Task' => 'Pimcore\\Model\\Schedule\\Task\\Dao',
     'Pimcore\\Model\\Schedule\\Task\\Listing' => 'Pimcore\\Model\\Schedule\\Task\\Listing\\Dao',
-    'Pimcore\\Model\\Search\\Backend\\Data' => 'Pimcore\\Model\\Search\\Backend\\Data\\Dao',
-    'Pimcore\\Model\\Search\\Backend\\Data\\Listing' => 'Pimcore\\Model\\Search\\Backend\\Data\\Listing\\Dao',
     'Pimcore\\Model\\Site' => 'Pimcore\\Model\\Site\\Dao',
     'Pimcore\\Model\\Site\\Listing' => 'Pimcore\\Model\\Site\\Listing\\Dao',
-    'Pimcore\\Model\\Staticroute' => 'Pimcore\\Model\\Staticroute\\Dao',
-    'Pimcore\\Model\\Staticroute\\Listing' => 'Pimcore\\Model\\Staticroute\\Listing\\Dao',
     'Pimcore\\Model\\Tool\\CustomReport\\Config' => 'Pimcore\\Model\\Tool\\CustomReport\\Config\\Dao',
     'Pimcore\\Model\\Tool\\CustomReport\\Config\\Listing' => 'Pimcore\\Model\\Tool\\CustomReport\\Config\\Listing\\Dao',
     'Pimcore\\Model\\Tool\\Email\\Blocklist' => 'Pimcore\\Model\\Tool\\Email\\Blocklist\\Dao',

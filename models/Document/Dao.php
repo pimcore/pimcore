@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Document;
@@ -57,22 +54,56 @@ class Dao extends Model\Element\Dao
      */
     public function getByPath(string $path): void
     {
+        try {
+            $this->getByExactPath($path);
+        } catch (Model\Exception\NotFoundException $e) {
+            try {
+                $this->getByPrettyUrl($path);
+            } catch (Model\Exception\NotFoundException) {
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * Fetch a row by an exact path/key match only, without falling back to a pretty URL match.
+     * Used for the Unicode-normalization fallback candidates in
+     * Element\Service::getByPathWithNfcFallback(): a candidate is a synthetic, NFC-normalized
+     * variant of the caller's path, not a literal pretty URL a content editor configured, so
+     * matching it against documents_page.prettyUrl could return an unrelated page instead of
+     * correctly falling through to the next candidate.
+     *
+     * @internal
+     *
+     * @throws Model\Exception\NotFoundException
+     */
+    public function getByExactPath(string $path): void
+    {
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchAssociative('SELECT id FROM documents WHERE `path` = BINARY :path AND `key` = BINARY :key', $params);
 
         if ($data) {
             $this->assignVariablesToModel($data);
         } else {
-            // try to find a page with a pretty URL (use the original $path)
-            $data = $this->db->fetchAssociative('SELECT id FROM documents_page WHERE prettyUrl = :prettyUrl', [
-                'prettyUrl' => $path,
-            ]);
+            throw new Model\Exception\NotFoundException("document with path $path doesn't exist");
+        }
+    }
 
-            if ($data) {
-                $this->assignVariablesToModel($data);
-            } else {
-                throw new Model\Exception\NotFoundException("document with path $path doesn't exist");
-            }
+    /**
+     * @internal
+     *
+     * @throws Model\Exception\NotFoundException
+     */
+    public function getByPrettyUrl(string $path): void
+    {
+        $data = $this->db->fetchAssociative('SELECT id FROM documents_page WHERE prettyUrl = :prettyUrl', [
+            'prettyUrl' => $path,
+        ]);
+
+        if ($data) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new Model\Exception\NotFoundException("document with path $path doesn't exist");
         }
     }
 
@@ -338,7 +369,7 @@ class Dao extends Model\Element\Dao
 
             $inheritedPermission = $this->isInheritingPermission('list', $userIds);
 
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(d.path,d.`key`),cpath)=1 AND
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND (cpath=CONCAT(d.path,d.`key`) OR LOCATE(CONCAT(d.path,d.`key`,\'/\'),cpath)=1) AND
                 NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
             $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 
@@ -375,7 +406,7 @@ class Dao extends Model\Element\Dao
 
             $inheritedPermission = $this->isInheritingPermission('list', $userIds);
 
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(d.path,d.`key`),cpath)=1 AND
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND (cpath=CONCAT(d.path,d.`key`) OR LOCATE(CONCAT(d.path,d.`key`,\'/\'),cpath)=1) AND
                 NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
             $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 
@@ -506,7 +537,7 @@ class Dao extends Model\Element\Dao
             }
 
             // exception for list permission
-            if (empty($permissionsParent) && $type == 'list') {
+            if ($type == 'list') {
                 // check for children with permissions
                 $path = $this->model->getRealFullPath() . '/';
                 if ($this->model->getId() == 1) {

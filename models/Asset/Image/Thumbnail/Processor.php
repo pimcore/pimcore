@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
@@ -167,6 +164,7 @@ class Processor
             $fileExtension = 'jpg';
         }
 
+        $filenamePrefix = $filename;
         $filename .= '.' . $config->getHash([$asset->getChecksum()]) . '.'. $fileExtension;
 
         $storagePath = $thumbDir . '/' . $filename;
@@ -236,6 +234,29 @@ class Processor
         $image->setPreserveAnimation($config->getPreserveAnimation());
 
         $fileExists = false;
+
+        // Backward-compat fallback for #18317: Pimcore 12.3.0-12.3.11 stored
+        // thumbnails of configs that do not use the crop box under a hash that
+        // still included the (false) crop box flag. getHash() no longer does, so
+        // if the current file is missing but a file under the old hash exists,
+        // move it to the current name and reuse it instead of regenerating.
+        // (Kept in the non-deferred path so the status_cache hot path stays free
+        // of filesystem I/O; deferred requests are re-processed here on fetch.)
+        if (!$config->isUseCropBox()) {
+            $compatFilename = $filenamePrefix . '.' . $config->getCropBoxCompatHash([$asset->getChecksum()]) . '.' . $fileExtension;
+            if ($compatFilename !== $filename) {
+                $compatStoragePath = $thumbDir . '/' . $compatFilename;
+
+                try {
+                    if (!$storage->fileExists($storagePath) && $storage->fileExists($compatStoragePath)) {
+                        $storage->move($compatStoragePath, $storagePath);
+                        $asset->getDao()->moveThumbnailCache($config->getName(), $compatFilename, $filename);
+                    }
+                } catch (FilesystemException $e) {
+                    // ignore and fall through to regular (re)generation
+                }
+            }
+        }
 
         try {
             // check if file is already on the file-system and if it is still valid
@@ -336,11 +357,20 @@ class Processor
                 }
 
                 $tmpFsPath = File::getLocalTempFilePath($fileExtension);
-                $image->save($tmpFsPath, $format, $config->getQuality());
-                $stream = fopen($tmpFsPath, 'rb');
-                $storage->writeStream($storagePath, $stream);
-                if (is_resource($stream)) {
-                    fclose($stream);
+
+                $fileHandle = null;
+
+                if ($format === 'original') {
+                    $fileHandle = fopen($asset->getLocalFile(), 'rb');
+                } else {
+                    $image->save($tmpFsPath, $format, $config->getQuality());
+                    $fileHandle = fopen($tmpFsPath, 'rb');
+                }
+
+                $storage->writeStream($storagePath, $fileHandle);
+
+                if (is_resource($fileHandle)) {
+                    fclose($fileHandle);
                 }
 
                 if ($statusCacheEnabled && $asset instanceof Asset\Image) {

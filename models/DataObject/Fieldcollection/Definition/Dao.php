@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Definition;
@@ -57,7 +54,7 @@ class Dao extends Model\Dao\AbstractDao
           INDEX `index` (`index`),
           INDEX `fieldname` (`fieldname`),
           CONSTRAINT `".self::getForeignKeyName($table, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
-		) DEFAULT CHARSET=utf8mb4;');
+		) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
 
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;
@@ -68,13 +65,13 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();
 
-            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
-                && $value instanceof DataObject\ClassDefinition\Data) {
+            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
                 if (is_array($value->getColumnType())) {
                     // if a datafield requires more than one field
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
                         $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
                         $protectedColums[] = $key . '__' . $fkey;
+                        $this->ensureForeignKeys($table, $key, $fkey, $value);
                     }
                 } else {
                     if ($value->getColumnType()) {

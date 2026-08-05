@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset\Video\Thumbnail;
@@ -24,7 +21,7 @@ use Pimcore\Messenger\VideoConvertMessage;
 use Pimcore\Model;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
-use Pimcore\Video\Adapter;
+use Pimcore\Video\AdapterInterface;
 use Symfony\Component\Lock\LockFactory;
 
 /**
@@ -43,7 +40,7 @@ class Processor
     ];
 
     /**
-     * @var \Pimcore\Video\Adapter[]
+     * @var \Pimcore\Video\AdapterInterface[]
      */
     protected array $queue = [];
 
@@ -116,7 +113,7 @@ class Processor
             $storagePath = $thumbDir . '/' . $filename;
             $tmpPath = File::getLocalTempFilePath($format);
 
-            if ($converter = \Pimcore\Video::getInstance()) {
+            if ($converter = \Pimcore\Video::newInstance()) {
                 $converter->setAudioBitrate($config->getAudioBitrate());
                 $converter->setVideoBitrate($config->getVideoBitrate());
                 $converter->setFormat($format);
@@ -128,7 +125,7 @@ class Processor
                     $medias = $config->getMedias();
                     foreach ($medias as $media => $transformations) {
                         //used just to generate arguments for medias
-                        if ($subConverter = \Pimcore\Video::getInstance()) {
+                        if ($subConverter = \Pimcore\Video::newInstance()) {
                             self::applyTransformations($subConverter, $transformations);
                             $medias[$media]['converter'] = $subConverter;
                         }
@@ -159,13 +156,13 @@ class Processor
         $instance->save();
 
         Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-            new VideoConvertMessage($instance->getProcessId())
+            new VideoConvertMessage($instance->getProcessId(), $asset->getId())
         );
 
         return $instance;
     }
 
-    private static function applyTransformations(Adapter $converter, array $transformations): void
+    private static function applyTransformations(AdapterInterface $converter, array $transformations): void
     {
         foreach ($transformations as $transformation) {
             if (!empty($transformation)) {
@@ -192,12 +189,32 @@ class Processor
         }
     }
 
-    public static function execute(string $processId): void
+    public static function execute(string $processId, ?int $assetId = null): void
     {
         $instance = new self();
         $instance->setProcessId($processId);
 
         $instanceItem = TmpStore::get($instance->getJobStoreId($processId));
+
+        if (!$instanceItem) {
+            Logger::error('Video conversion job with processId "' . $processId . '" not found in TmpStore.');
+            if ($assetId) {
+                $asset = Model\Asset::getById($assetId);
+                $customSetting = $asset->getCustomSetting('thumbnails');
+                $customSetting = is_array($customSetting) ? $customSetting : [];
+                if (array_key_exists($instance->getConfig()->getName(), $customSetting)) {
+                    $customSetting[$instance->getConfig()->getName()]['status'] = 'error';
+                    $asset->setCustomSetting('thumbnails', $customSetting);
+
+                    Model\Version::disable();
+                    $asset->save();
+                    Model\Version::enable();
+                }
+            }
+
+            return;
+        }
+
         /**
          * @var self $instance
          */
@@ -303,7 +320,7 @@ class Processor
         return true;
     }
 
-    protected function getJobStoreId(string $processId = null): string
+    protected function getJobStoreId(?string $processId = null): string
     {
         if (!$processId) {
             $processId = $this->getProcessId();

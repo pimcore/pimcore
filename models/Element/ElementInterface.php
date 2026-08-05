@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Element;
@@ -25,6 +22,14 @@ use Pimcore\Model\Version;
 
 interface ElementInterface extends ModelInterface
 {
+    /**
+     * The maximum length, in characters, of an element's full path. No element can ever be
+     * saved with a longer path (see AbstractElement::validatePathLength()). This is a save-time
+     * constraint only - getByPath() lookups are not bounded by it (see
+     * Service::getByPathWithNfcFallback()).
+     */
+    public const MAX_FULL_PATH_LENGTH = 765;
+
     public function getId(): ?int;
 
     public function getKey(): ?string;
@@ -73,17 +78,16 @@ interface ElementInterface extends ModelInterface
     /**
      * @return $this
      */
-    public function setUserOwner(int $userOwner): static;
+    public function setUserOwner(?int $userOwner): static;
 
     public function getUserModification(): ?int;
 
     /**
      * @return $this
      */
-    public function setUserModification(int $userModification): static;
+    public function setUserModification(?int $userModification): static;
 
-    //TODO add $params parameter in Pimcore 12
-    public static function getById(int $id /*, array $params = [] */): ?static;
+    public static function getById(int $id, array $params = []): ?static;
 
     /**
      * get possible types

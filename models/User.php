@@ -2,21 +2,17 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model;
 
-use Pimcore\Bundle\AdminBundle\Perspective\Config;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\User\Role;
@@ -35,6 +31,8 @@ final class User extends User\UserRole implements UserInterface
 
     protected ?string $passwordRecoveryToken = null;
 
+    private ?int $lastPasswordReset = null;
+
     protected ?string $firstname = null;
 
     protected ?string $lastname = null;
@@ -44,6 +42,8 @@ final class User extends User\UserRole implements UserInterface
     protected string $language = 'en';
 
     protected ?string $datetimeLocale = null;
+
+    protected string $theme = 'default';
 
     protected bool $admin = false;
 
@@ -536,11 +536,6 @@ final class User extends User\UserRole implements UserInterface
                 $this->mergedPerspectives = array_merge($this->mergedPerspectives, $userRole->getPerspectives());
             }
             $this->mergedPerspectives = array_values($this->mergedPerspectives);
-            if (!$this->mergedPerspectives) {
-                // $perspectives = \Pimcore\Config::getAvailablePerspectives($this);
-                $allPerspectives = Config::get();
-                $this->mergedPerspectives = array_keys($allPerspectives);
-            }
         }
 
         return $this->mergedPerspectives;
@@ -554,14 +549,8 @@ final class User extends User\UserRole implements UserInterface
     public function getFirstAllowedPerspective(): string
     {
         $perspectives = $this->getMergedPerspectives();
-        if (!empty($perspectives)) {
-            return $perspectives[0];
-        } else {
-            // all perspectives are allowed
-            $perspectives = Config::getAvailablePerspectives($this);
 
-            return $perspectives[0]['name'];
-        }
+        return $perspectives[0] ?? 'default';
     }
 
     /**
@@ -590,9 +579,9 @@ final class User extends User\UserRole implements UserInterface
      *
      * @internal
      *
-     * @return string[]|null
+     * @return string[]
      */
-    public function getAllowedLanguagesForEditingWebsiteTranslations(): ?array
+    public function getAllowedLanguagesForEditingWebsiteTranslations(): array
     {
         $mergedWebsiteTranslationLanguagesEdit = $this->getMergedWebsiteTranslationLanguagesEdit();
         if (
@@ -631,9 +620,9 @@ final class User extends User\UserRole implements UserInterface
      *
      * @internal
      *
-     * @return string[]|null
+     * @return string[]
      */
-    public function getAllowedLanguagesForViewingWebsiteTranslations(): ?array
+    public function getAllowedLanguagesForViewingWebsiteTranslations(): array
     {
         $mergedWebsiteTranslationLanguagesView = $this->getMergedWebsiteTranslationLanguagesView();
         if (empty($mergedWebsiteTranslationLanguagesView) || $this->isAdmin()) {
@@ -658,6 +647,16 @@ final class User extends User\UserRole implements UserInterface
         return $this;
     }
 
+    /**
+     * @return $this
+     */
+    public function setLastPasswordReset(int $lastPasswordReset): static
+    {
+        $this->lastPasswordReset = $lastPasswordReset;
+
+        return $this;
+    }
+
     public function getKeyBindings(): ?string
     {
         return $this->keyBindings;
@@ -668,7 +667,7 @@ final class User extends User\UserRole implements UserInterface
         $this->keyBindings = $keyBindings;
     }
 
-    public function getTwoFactorAuthentication(string $key = null): mixed
+    public function getTwoFactorAuthentication(?string $key = null): mixed
     {
         if ($this->twoFactorAuthentication === null) {
             // set defaults if no data is present
@@ -741,5 +740,22 @@ final class User extends User\UserRole implements UserInterface
         $this->datetimeLocale = $datetimeLocale;
 
         return $this;
+    }
+
+    public function getTheme(): string
+    {
+        return $this->theme;
+    }
+
+    public function setTheme(string $theme): static
+    {
+        $this->theme = $theme;
+
+        return $this;
+    }
+
+    public function getLastPasswordReset(): ?int
+    {
+        return $this->lastPasswordReset;
     }
 }

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
@@ -170,7 +167,9 @@ final class WorkflowPass implements CompilerPassInterface
                 foreach ($workflowConfig['marking_store']['arguments'] ?? [] as $argument) {
                     $markingStoreDefinition->addArgument($argument);
                 }
-            } elseif (!is_null($markingStoreService)) {
+            } else {
+                // $markingStoreType being null implies a non-null $markingStoreService,
+                // because $markingStoreType is defaulted to 'state_table' when both are null
                 $markingStoreDefinition = new Reference($markingStoreService);
             }
 
@@ -178,9 +177,7 @@ final class WorkflowPass implements CompilerPassInterface
             $workflowId = sprintf('%s.%s', $type, $workflowName);
             $workflowDefinition = new ChildDefinition(sprintf('%s.abstract', $type));
             $workflowDefinition->replaceArgument(0, new Reference(sprintf('%s.definition', $workflowId)));
-            if (isset($markingStoreDefinition)) {
-                $workflowDefinition->replaceArgument(1, $markingStoreDefinition);
-            }
+            $workflowDefinition->replaceArgument(1, $markingStoreDefinition);
             $workflowDefinition->setPublic(true);
             $workflowDefinition->replaceArgument(3, $workflowName);
             $workflowDefinition->replaceArgument(4, $workflowConfig['events_to_dispatch'] ?? null);

@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 // this is a port / excerpt of: CSV Reader By Luke Visinoni which isn't maintained anymore
@@ -98,22 +95,19 @@ class Csv
             }
         }
 
-        if (!$matches) {
+        if (empty($matches[2])) {
             return ['', null];
         } // couldn't guess quote or delim
 
         $quotes = array_count_values($matches[2]);
         arsort($quotes);
         $quotes = array_flip($quotes);
-        if ($quote = array_shift($quotes)) {
-            $delims = array_count_values($matches[1]);
-            arsort($delims);
-            $delims = array_flip($delims);
-            $delim = array_shift($delims);
-        } else {
-            $quote = '';
-            $delim = null;
-        }
+        $quote = array_shift($quotes);
+
+        $delims = array_count_values($matches[1]);
+        arsort($delims);
+        $delims = array_flip($delims);
+        $delim = array_shift($delims);
 
         return [$quote, $delim];
     }

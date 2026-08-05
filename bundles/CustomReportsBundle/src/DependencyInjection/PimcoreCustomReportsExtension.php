@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CustomReportsBundle\DependencyInjection;
@@ -26,12 +23,16 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 class PimcoreCustomReportsExtension extends ConfigurableExtension implements PrependExtensionInterface
 {
-    private function configureAdapterFactories(ContainerBuilder $container, array $factories, string $serviceLocatorId): void
+    private function configureAdapterFactories(ContainerBuilder $container, array $factories, array $enabledAdapters, string $serviceLocatorId): void
     {
         $serviceLocator = $container->getDefinition($serviceLocatorId);
         $arguments = [];
 
         foreach ($factories as $key => $serviceId) {
+            if (($enabledAdapters[$key] ?? true) === false) {
+                continue;
+            }
+
             $arguments[$key] = new Reference($serviceId);
         }
 
@@ -47,22 +48,13 @@ class PimcoreCustomReportsExtension extends ConfigurableExtension implements Pre
 
         $loader->load('services.yaml');
 
-        $this->configureAdapterFactories($container, $config['adapters'], 'pimcore.custom_report.adapter.factories');
+        $this->configureAdapterFactories($container, $config['adapters'], $config['enabled_adapters'] ?? [], 'pimcore.custom_report.adapter.factories');
         $container->setParameter('pimcore_custom_reports.definitions', $config['definitions'] ?? []);
         $container->setParameter('pimcore_custom_reports.config_location', $config['config_location'] ?? []);
     }
 
     public function prepend(ContainerBuilder $container): void
     {
-        if ($container->hasExtension('pimcore_admin')) {
-            $loader = new YamlFileLoader(
-                $container,
-                new FileLocator(__DIR__ . '/../../config')
-            );
-
-            $loader->load('admin-classic.yaml');
-        }
-
         LocationAwareConfigRepository::loadSymfonyConfigFiles($container, 'pimcore_custom_reports', 'custom_reports');
     }
 }

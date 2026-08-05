@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\Objectbrick\Definition;
@@ -69,7 +66,7 @@ class Dao extends Model\Dao\AbstractDao
           INDEX `id` (`id`),
           INDEX `fieldname` (`fieldname`),
           CONSTRAINT `".self::getForeignKeyName($tableStore, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
-		) DEFAULT CHARSET=utf8mb4;');
+		) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
 
         $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $tableQuery . "` (
 		  `id` int(11) UNSIGNED NOT NULL default '0',
@@ -78,7 +75,7 @@ class Dao extends Model\Dao\AbstractDao
           INDEX `id` (`id`),
           INDEX `fieldname` (`fieldname`),
           CONSTRAINT `".self::getForeignKeyName($tableQuery, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
-		) DEFAULT CHARSET=utf8mb4;');
+		) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
 
         $existingColumnsStore = $this->getValidTableColumns($tableStore, false); // no caching of table definition
         $columnsToRemoveStore = $existingColumnsStore;
@@ -96,14 +93,14 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();
 
-            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
-                && $value instanceof DataObject\ClassDefinition\Data) {
+            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
                 // if a datafield requires more than one column in the datastore table => only for non-relation types
                 if (!$value->isRelationType()) {
                     if (is_array($value->getColumnType())) {
                         foreach ($value->getColumnType() as $fkey => $fvalue) {
                             $this->addModifyColumn($tableStore, $key . '__' . $fkey, $fvalue, '', 'NULL');
                             $protectedColumnsStore[] = $key . '__' . $fkey;
+                            $this->ensureForeignKeys($tableStore, $key, $fkey, $value);
                         }
                     } elseif ($value->getColumnType()) {
                         $this->addModifyColumn($tableStore, $key, $value->getColumnType(), '', 'NULL');
@@ -114,13 +111,13 @@ class Dao extends Model\Dao\AbstractDao
                 $this->addIndexToField($value, $tableStore, 'getColumnType', true);
             }
 
-            if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
-                && $value instanceof DataObject\ClassDefinition\Data) {
+            if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
                 // if a datafield requires more than one column in the query table
                 if (is_array($value->getQueryColumnType())) {
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
                         $this->addModifyColumn($tableQuery, $key . '__' . $fkey, $fvalue, '', 'NULL');
                         $protectedColumnsQuery[] = $key . '__' . $fkey;
+                        $this->ensureForeignKeys($tableQuery, $key, $fkey, $value);
                     }
                 } elseif ($value->getQueryColumnType()) {
                     $this->addModifyColumn($tableQuery, $key, $value->getQueryColumnType(), '', 'NULL');

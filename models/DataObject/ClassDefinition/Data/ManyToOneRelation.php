@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -165,7 +162,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this;
     }
 
-    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
+    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
     {
         if ($data instanceof Element\ElementInterface) {
             $type = Element\Service::getElementType($data);
@@ -181,7 +178,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return null;
     }
 
-    protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed
+    protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object = null, array $params = []): mixed
     {
         // data from relation table
         $data = current($data);
@@ -208,14 +205,14 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForQueryResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): array
     {
         $idIndex = $this->getName() . '__id';
         $typeIndex = $this->getName() . '__type';
 
         $return = [$idIndex => null, $typeIndex => null];
 
-        if ($data != null) {
+        if ($data !== null) {
             $rData = $this->prepareDataForPersistence($data, $object, $params);
 
             $return = [
@@ -233,7 +230,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof Element\ElementInterface) {
             $r = [
@@ -255,7 +252,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Asset|Document|DataObject\AbstractObject|null
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): Asset|Document|DataObject\AbstractObject|null
     {
         if (!empty($data['id']) && !empty($data['type'])) {
             return Element\Service::getElementById($data['type'], $data['id']);
@@ -268,7 +265,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param null|DataObject\Concrete $object
      *
      */
-    public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): Asset|Document|DataObject\AbstractObject|null
+    public function getDataFromGridEditor(array $data, ?Concrete $object = null, array $params = []): Asset|Document|DataObject\AbstractObject|null
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -277,9 +274,20 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param DataObject\Concrete|null $object
      *
      */
-    public function getDataForGrid(?Element\ElementInterface $data, Concrete $object = null, array $params = []): ?array
+    public function getDataForGrid(?Element\ElementInterface $data, ?Concrete $object = null, array $params = []): ?array
     {
-        return $this->getDataForEditmode($data, $object, $params);
+        $gridData = $this->getDataForEditmode($data, $object, $params);
+
+        if ($this->getPathFormatterClass() && !empty($gridData)) {
+            $params['fd'] = $object->getClass()->getFieldDefinition($this->getName(), $params['context'] ?? []);
+            $nicePath = $this->getNicePath($gridData, $object, $params);
+            if ($nicePath) {
+                $gridData['path']  = $nicePath;
+            }
+
+        }
+
+        return $gridData;
     }
 
     /**
@@ -288,7 +296,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof Element\ElementInterface) {
             return Element\Service::getElementType($data).' '.$data->getRealFullPath();
@@ -358,7 +366,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
                 $container->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($container);
             }
-        } elseif ($container instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             parent::loadLazyFieldcollectionField($container);

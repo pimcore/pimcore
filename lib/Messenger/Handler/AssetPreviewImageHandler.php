@@ -2,20 +2,18 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Messenger\Handler;
 
+use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Messenger\AssetPreviewImageMessage;
 use Pimcore\Model\Asset;
 use Psr\Log\LoggerInterface;
@@ -31,11 +29,13 @@ class AssetPreviewImageHandler implements BatchHandlerInterface
 {
     use BatchHandlerTrait;
 
-    public function __construct(protected LoggerInterface $logger)
-    {
+    public function __construct(
+        protected LoggerInterface $logger,
+        protected LongRunningHelper $longRunningHelper,
+    ) {
     }
 
-    public function __invoke(AssetPreviewImageMessage $message, Acknowledger $ack = null): mixed
+    public function __invoke(AssetPreviewImageMessage $message, ?Acknowledger $ack = null): mixed
     {
         return $this->handle($message, $ack);
     }
@@ -61,6 +61,8 @@ class AssetPreviewImageHandler implements BatchHandlerInterface
             } catch (Throwable $e) {
                 $ack->nack($e);
             }
+
+            $this->longRunningHelper->deleteTemporaryFiles();
         }
     }
 

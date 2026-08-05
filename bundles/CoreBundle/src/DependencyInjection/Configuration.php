@@ -2,16 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
@@ -20,6 +17,7 @@ use const PASSWORD_ARGON2I;
 use const PASSWORD_ARGON2ID;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Config\LocationAwareConfigRepository;
+use Pimcore\Controller\Config\Template\TemplateProviderInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
@@ -128,13 +126,16 @@ final class Configuration implements ConfigurationInterface
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
+        $this->addTmpStoreNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
         $this->addDependencyNode($rootNode);
-        $this->addChromiumNode($rootNode);
+        $this->addProductRegistrationNode($rootNode);
+        $this->addCdnNode($rootNode);
+
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
             'video_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/video_thumbnails',
@@ -178,7 +179,7 @@ final class Configuration implements ConfigurationInterface
                 ->children()
                     ->integerNode('cleanup_tmp_files_atime_older_than')
                         ->info('Integer value in seconds.')
-                        ->defaultValue(7_776_000) // 90 days
+                        ->defaultValue(86400) // 1 day
                     ->end()
                     ->integerNode('cleanup_profiler_files_atime_older_than')
                         ->info('Integer value in seconds.')
@@ -320,6 +321,21 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('applicationlog')
                 ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('loggers')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('db')
+                                    ->children()
+                                        ->variableNode('min_level_or_list')
+                                            ->defaultValue('debug')
+                                        ->end()
+                                        ->scalarNode('max_level')
+                                            ->defaultValue('emergency')
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
                         ->arrayNode('mail_notification')
                             ->children()
                                 ->booleanNode('send_log_summary')
@@ -333,7 +349,18 @@ final class Configuration implements ConfigurationInterface
                                     ->defaultFalse()
                                 ->end()
                                 ->scalarNode('filter_priority')
-                                    ->info('Filter threshold for email summary, choose one of: 7 (debug), 6 (info), 5 (notice), 4 (warning), 3 (error), 2 (critical), 1 (alert) ,0 (emerg)')
+                                    ->info(
+                                        'Filter threshold for email summary, choose one of: '
+                                        . '8 (debug),'
+                                        . '7 (info),'
+                                        . '6 (notice),'
+                                        . '5 (warning),'
+                                        . '4 (error),'
+                                        . '3 (critical),'
+                                        . '2 (alert),'
+                                        . '1 (emerg).'
+                                        .' You can use the integer or the string representation.'
+                                    )
                                     ->defaultNull()
                                 ->end()
                                 ->scalarNode('mail_receiver')
@@ -346,8 +373,17 @@ final class Configuration implements ConfigurationInterface
                             ->defaultValue(30)
                         ->end()
                         ->scalarNode('archive_alternative_database')
-                            ->info('Archive database name (optional). Tables will get archived to a different database, recommended when huge amounts of logs will be generated')
+                            ->info(
+                                'Archive database name (optional). Tables will get archived to a different database,
+                                 recommended when huge amounts of logs will be generated'
+                            )
                             ->defaultValue('')
+                        ->end()
+                        ->scalarNode('archive_db_table_storage_engine')
+                            ->info(
+                                'DB storage engine to be used for archive tables (e.g. ARCHIVE, InnoDB, Aria, ...)'
+                            )
+                            ->defaultValue('archive')
                         ->end()
                         ->scalarNode('delete_archive_threshold')
                             ->info('Threshold for deleting application log archive tables (in months)')
@@ -446,6 +482,7 @@ final class Configuration implements ConfigurationInterface
                                                 ->booleanNode('preserveColor')->end()
                                                 ->booleanNode('preserveMetaData')->end()
                                                 ->booleanNode('rasterizeSVG')->end()
+                                                ->booleanNode('useCropBox')->end()
                                                 ->booleanNode('downloadable')->end()
                                                 ->booleanNode('forceProcessICCProfiles')->end()
                                                 ->integerNode('modificationDate')->end()
@@ -487,6 +524,10 @@ final class Configuration implements ConfigurationInterface
                                         ->end()
                                         ->defaultTrue()
                                     ->end()
+                                    ->integerNode('max_srcset_dpi_factor')
+                                        ->info('Maximum generated srcset DPI factor for web images.')
+                                        ->defaultValue(2)
+                                    ->end()
                                     ->arrayNode('image_optimizers')
                                         ->addDefaultsIfNotSet()
                                         ->canBeDisabled()
@@ -510,7 +551,7 @@ final class Configuration implements ConfigurationInterface
                                         ])
                                     ->end()
                                     ->booleanNode('status_cache')
-                                        ->info('Store image metadata such as filename and modification date in assets_image_thumbnail_cache, this is helpful when using remote object storage for thumbnails.')
+                                        ->info('Store image metadata such as filename, modification date, file size and dimensions in assets_image_thumbnail_cache, this is helpful when using remote object storage for thumbnails.')
                                         ->defaultTrue()
                                     ->end()
                                     ->booleanNode('auto_clear_temp_files')
@@ -620,6 +661,7 @@ final class Configuration implements ConfigurationInterface
                             ->scalarNode('steps')
                                 ->defaultNull()
                             ->end()
+                            ->booleanNode('disable_events')->defaultFalse()->end()
                             ->booleanNode('use_hardlinks')
                                 ->beforeNormalization()
                                     ->ifString()
@@ -746,6 +788,7 @@ final class Configuration implements ConfigurationInterface
                             ->children()
                                 ->scalarNode('days')->defaultNull()->end()
                                 ->scalarNode('steps')->defaultNull()->end()
+                                ->booleanNode('disable_events')->defaultFalse()->end()
                                 ->booleanNode('disable_stack_trace')
                                     ->beforeNormalization()
                                     ->ifString()
@@ -793,6 +836,9 @@ final class Configuration implements ConfigurationInterface
                                         ->children()
                                             ->scalarNode('id')->end()
                                             ->scalarNode('group')->end()
+                                            ->booleanNode('adminOnly')
+                                                ->defaultFalse()
+                                            ->end()
                                             ->scalarNode('useTraits')->end()
                                             ->scalarNode('implementsInterfaces')->end()
                                             ->arrayNode('selectOptions')
@@ -817,6 +863,25 @@ final class Configuration implements ConfigurationInterface
 
         $this->addImplementationLoaderNode($classDefinitionsNode, 'data');
         $this->addImplementationLoaderNode($classDefinitionsNode, 'layout');
+    }
+
+    /**
+     * Add tmp_store specific extension config
+     */
+    private function addTmpStoreNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('tmp_store')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('unserialize_allowed_classes')
+                        ->info('Additional PHP classes to allow when unserializing data from the tmp_store table.')
+                        ->scalarPrototype()->end()
+                        ->defaultValue([])
+                    ->end()
+                ->end()
+            ->end();
     }
 
     /**
@@ -884,6 +949,7 @@ final class Configuration implements ConfigurationInterface
                         ->scalarNode('steps')
                             ->defaultNull()
                         ->end()
+                        ->booleanNode('disable_events')->defaultFalse()->end()
                         ->booleanNode('disable_stack_trace')
                             ->beforeNormalization()
                             ->ifString()
@@ -898,7 +964,15 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('default_controller')
                     ->defaultValue('App\\Controller\\DefaultController::defaultAction')
                 ->end()
+                ->booleanNode('auto_provide_templates')
+                    ->defaultTrue()
+                    ->info(sprintf(
+                        'Automatically provide the list of selectable templates for a document. If false, you must provide your own templates by creating a "%s" service and tagging it as "pimcore.template_provider".',
+                        TemplateProviderInterface::class,
+                    ))
+                ->end()
                 ->arrayNode('error_pages')
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('default')
                             ->defaultNull()
@@ -1188,6 +1262,11 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                        ->arrayNode('session_token_allowed_classes')
+                            ->info('Additional PHP classes allowed when unserializing the admin session security token (e.g. custom authenticator tokens). The built-in Symfony/Pimcore token and user classes are always allowed.')
+                            ->scalarPrototype()->end()
+                            ->defaultValue([])
+                        ->end()
                 ->end()
             ->end();
     }
@@ -2008,6 +2087,39 @@ final class Configuration implements ConfigurationInterface
                             ->arrayNode('functions')
                                 ->scalarPrototype()->end()
                             ->end()
+                            ->arrayNode('blocked_classes')
+                                ->info('FQCNs that must not be traversable (method calls or property access) from
+                                sandboxed twig templates. Defaults to Pimcore\'s built-in denylist (database/
+                                infrastructure layer, `Pimcore\Model\User`) - a site can append further FQCNs on
+                                top of that default. Ignored when `allowed_classes` is non-empty.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('allowed_classes')
+                                ->info('FQCNs that are traversable (method calls or property access) from
+                                sandboxed twig templates. As soon as this list contains at least one entry, the
+                                security policy switches from denylist mode to allowlist mode: the
+                                `blocked_classes` denylist is deactivated, and only instances of the classes
+                                listed here (and their subclasses) remain reachable.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('blocked_functions')
+                                ->info('`pimcore_*` function names that must not be covered by the blanket
+                                `pimcore_*` prefix auto-allow. Defaults to Pimcore\'s built-in denylist of
+                                functions that look up and return a live model instance by id/path - a site can
+                                append further function names on top of that default.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('hard_blocked_methods')
+                                ->info('FQCN => list-of-method-names map. Methods listed here can never be called
+                                on a matching instance from a sandboxed twig template, regardless of the
+                                blocked_classes/allowed_classes configuration. Defaults to a small set of
+                                secret/content-returning getters (e.g. `User::getPassword`, `Asset::getData`) -
+                                a site can extend the map with further classes/methods on top of that default.')
+                                ->useAttributeAsKey('class')
+                                ->arrayPrototype()
+                                    ->scalarPrototype()->end()
+                                ->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
@@ -2024,6 +2136,9 @@ final class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('base_url')
                             ->defaultValue('http://gotenberg:3000')
+                        ->end()
+                        ->scalarNode('ping_cache_ttl')
+                            ->defaultValue(60)
                         ->end()
                     ->end()
                 ->end()
@@ -2045,22 +2160,64 @@ final class Configuration implements ConfigurationInterface
         ->end();
     }
 
-    /**
-     * @deprecated
-     */
-    private function addChromiumNode(ArrayNodeDefinition $rootNode): void
+    private function addProductRegistrationNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode->children()
+            ->arrayNode('product_registration')
+                ->children()
+                    ->scalarNode('instance_identifier')
+                        ->info('Unique identifier of that Pimcore instance. Will be generated during install.')
+                    ->end()
+                    ->scalarNode('product_key')
+                        ->info('Product registration key obtained during product registration. ' .
+                               'It is based on `instance_identifier` and `pimcore.encryption.secret`.')
+                    ->end()
+                ->end()
+            ->end()
+        ;
+    }
+
+    private function addCdnNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
-                ->arrayNode('chromium')
-                    ->setDeprecated('pimcore/pimcore', '11.2', 'Chromium service is deprecated and will be removed in Pimcore 12. Use Gotenberg instead.')
+                ->arrayNode('cdn')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('uri')
-                            ->defaultNull()
+                        ->scalarNode('base_url')
+                            ->info('Public base URL of the CDN (scheme + host) used for URL-based purges of original assets that nginx serves directly off disk and that therefore never receive a Cache-Tag from PHP, e.g. https://cdn.example.com. Use env var CDN_BASE_URL.')
+                            ->defaultValue('%env(CDN_BASE_URL)%')
+                        ->end()
+                        ->arrayNode('excluded_paths')
+                            ->info('Regular-expression patterns (matched against the rawurldecoded request path info). Matching asset/thumbnail responses are never CDN-cached: no Surrogate-Key/Cache-Tag emitted and cookies preserved. Use for private/access-controlled assets.')
+                            ->scalarPrototype()->end()
+                            ->defaultValue([])
+                        ->end()
+                        ->arrayNode('image_optimizer_source_formats')
+                            ->info('Source image MIME types the CDN image optimizer can ingest. Thumbnails of assets whose MIME type is not listed fall back to Pimcore-generated thumbnails (e.g. TIFF, PSD, which Fastly Image Optimizer cannot transform).')
+                            ->scalarPrototype()->end()
+                            ->defaultValue(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+                        ->end()
+                        ->arrayNode('fastly')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->scalarNode('api_token')
+                                    ->info('Fastly API token with purge_select scope. Use env var FASTLY_API_TOKEN.')
+                                    ->defaultValue('%env(FASTLY_API_TOKEN)%')
+                                ->end()
+                                ->scalarNode('service_id')
+                                    ->info('Fastly service ID. Use env var FASTLY_API_SERVICE.')
+                                    ->defaultValue('%env(FASTLY_API_SERVICE)%')
+                                ->end()
+                                ->scalarNode('api_base_url')
+                                    ->info('Base URL for the Fastly API. Override for local testing against a mock. Use env var FASTLY_API_BASE_URL.')
+                                    ->defaultValue('%env(FASTLY_API_BASE_URL)%')
+                                ->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
-            ->end();
+            ->end()
+        ;
     }
 }

@@ -1,22 +1,21 @@
 <?php
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Model\Asset\Video\Thumbnail\Config;
 
 use Exception;
 use Pimcore;
+use Pimcore\Event\Model\Asset\Video\Thumbnail\ConfigEvent;
+use Pimcore\Event\VideoThumbnailConfigEvents;
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
 
@@ -46,7 +45,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws Exception
      */
-    public function getByName(string $id = null): void
+    public function getByName(?string $id = null): void
     {
         if ($id != null) {
             $this->model->setName($id);
@@ -93,6 +92,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
         $this->saveData($this->model->getName(), $data);
         $this->autoClearTempFiles();
+
+        Pimcore::getEventDispatcher()->dispatch(
+            new ConfigEvent($this->model),
+            VideoThumbnailConfigEvents::POST_UPDATE,
+        );
     }
 
     /**
@@ -102,6 +106,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $this->deleteData($this->model->getName());
         $this->autoClearTempFiles();
+
+        Pimcore::getEventDispatcher()->dispatch(
+            new ConfigEvent($this->model),
+            VideoThumbnailConfigEvents::POST_DELETE,
+        );
     }
 
     protected function autoClearTempFiles(): void
