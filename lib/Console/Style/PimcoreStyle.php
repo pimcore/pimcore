@@ -15,9 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Console\Style;
 
 use Symfony\Component\Console\Helper\Helper;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -46,15 +44,6 @@ final class PimcoreStyle extends SymfonyStyle
     public function getOutput(): OutputInterface
     {
         return $this->output;
-    }
-
-    public function createTable(): Table
-    {
-        $output = $this->output instanceof ConsoleOutputInterface ? $this->output->section() : $this->output;
-        $style = clone Table::getStyleDefinition('default');
-        $style->setCellHeaderFormat('<info>%s</info>');
-
-        return (new Table($output))->setStyle($style);
     }
 
     /**

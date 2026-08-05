@@ -148,8 +148,15 @@ class ListCommand extends AbstractBundleCommand
             $rows
         );
 
-        $this->io->table($headers, $rows);
+        // scoped to this command: boxed 'default' style instead of the
+        // 'symfony-style-guide' style SymfonyStyle::table() would use
+        $this->io->createTable()
+            ->setStyle('default')
+            ->setHeaders($headers)
+            ->setRows($rows)
+            ->render();
 
+        $this->io->newLine();
         $this->io->writeln(implode(' ', [
             'Legend:',
             '<comment>I?</comment>: Can be installed?',
