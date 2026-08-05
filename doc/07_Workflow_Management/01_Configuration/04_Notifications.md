@@ -46,7 +46,7 @@ Multiple notification settings with conditions allow sophisticated notifications
 - **Override the default template** at `@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig`
   or configure a custom template path in settings.
   Default parameters available in the template: `subjectType`, `subject`, `action`, `workflow`,
-  `workflowName`, `deeplink`, `note_description`, `translator`, `lang`.
+  `workflowName`, `deeplink`, `note_description`, `translator`, `lang`, `recipients`.
   For additional parameters, override the service `Pimcore\Workflow\Notification\NotificationEmailService`.
 
 - **Use a Pimcore Mail Document** for full access to Pimcore Mail Document features
