@@ -308,7 +308,11 @@ class Processor
             Model\Version::enable();
         }
 
-        @unlink($workerSourceFile);
+        // getLocalFile() returns the real storage path when the asset storage is local,
+        // only delete the worker source file if it is a temporary copy
+        if (str_starts_with($workerSourceFile, PIMCORE_SYSTEM_TEMP_DIRECTORY)) {
+            @unlink($workerSourceFile);
+        }
 
         TmpStore::delete($instance->getJobStoreId());
     }
