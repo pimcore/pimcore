@@ -34,7 +34,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class UninstallCommand extends AbstractBundleCommand
 {
     public function __construct(
-        protected PimcoreBundleManager $bundleManager,
+        PimcoreBundleManager $bundleManager,
         private readonly PostStateChange $postStateChangeHelper
     ) {
         parent::__construct($bundleManager);
@@ -46,7 +46,8 @@ class UninstallCommand extends AbstractBundleCommand
             'bundle',
             InputArgument::REQUIRED,
             'The bundle to uninstall'
-        )->configureFailWithoutErrorOption();
+        )->configureBundleHelp()
+            ->configureFailWithoutErrorOption();
 
         PostStateChange::configureStateChangeCommandOptions($this);
     }

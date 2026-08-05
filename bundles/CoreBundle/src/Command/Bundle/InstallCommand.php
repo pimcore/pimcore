@@ -35,7 +35,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class InstallCommand extends AbstractBundleCommand
 {
     public function __construct(
-        protected PimcoreBundleManager $bundleManager,
+        PimcoreBundleManager $bundleManager,
         private readonly PostStateChange $postStateChangeHelper
     ) {
         parent::__construct($bundleManager);
@@ -47,7 +47,8 @@ class InstallCommand extends AbstractBundleCommand
             'bundle',
             InputArgument::REQUIRED,
             'The bundle to install'
-        )->configureFailWithoutErrorOption();
+        )->configureBundleHelp()
+            ->configureFailWithoutErrorOption();
 
         PostStateChange::configureStateChangeCommandOptions($this);
     }

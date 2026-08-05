@@ -39,15 +39,12 @@ abstract class AbstractBundleCommand extends AbstractCommand
     /**
      * @return $this
      */
-    protected function configureDescriptionAndHelp(string $description, ?string $help = null): static
+    protected function configureBundleHelp(): static
     {
-        if (null === $help) {
-            $help = 'Bundle can be passed as fully qualified class name or as bundle short name (e.g. <comment>PimcoreEcommerceFrameworkBundle</comment>).';
-        }
-
-        $this
-            ->setDescription($description)
-            ->setHelp(sprintf('%s. %s', $description, $help));
+        $this->setHelp(sprintf(
+            '%s. Bundle can be passed as fully qualified class name or as bundle short name (e.g. <comment>PimcoreEcommerceFrameworkBundle</comment>).',
+            $this->getDescription()
+        ));
 
         return $this;
     }
@@ -71,14 +68,9 @@ abstract class AbstractBundleCommand extends AbstractCommand
     {
         if ($input->mustSuggestArgumentValuesFor('bundle') === true) {
             $suggestions->suggestValues(
-                array_reduce(
-                    $this->bundleManager->getActiveBundles(false),
-                    static function (array $result, BundleInterface $bundle) {
-                        $result[] = $bundle->getName();
-
-                        return $result;
-                    },
-                    []
+                array_map(
+                    static fn (BundleInterface $bundle): string => $bundle->getName(),
+                    array_values($this->bundleManager->getActiveBundles(false))
                 )
             );
         }
