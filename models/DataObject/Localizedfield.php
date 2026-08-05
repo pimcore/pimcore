@@ -306,6 +306,11 @@ final class Localizedfield extends Model\AbstractModel implements
         } elseif (isset($context['containerType']) && $context['containerType'] === 'block') {
             $containerKey = $context['containerKey'];
             $object = $this->getObject();
+            if (!$object) {
+                // no object reference (e.g. while building cache tags for a block that contains
+                // localizedfields) - the block definition cannot be resolved without it
+                return null;
+            }
             $blockDefinition = $object->getClass()->getFieldDefinition($containerKey);
             $container = $blockDefinition;
         } else {
@@ -344,6 +349,11 @@ final class Localizedfield extends Model\AbstractModel implements
         } elseif (isset($context['containerType']) && $context['containerType'] === 'block') {
             $containerKey = $context['containerKey'];
             $object = $this->getObject();
+            if (!$object) {
+                // no object reference (e.g. while building cache tags for a block that contains
+                // localizedfields) - the block definition cannot be resolved without it
+                return [];
+            }
             /** @var Model\DataObject\ClassDefinition\Data\Block $block */
             $block = $object->getClass()->getFieldDefinition($containerKey);
             /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $container */

@@ -722,7 +722,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             return $data;
         }
         if (is_string($data)) {
-            $unserializedData = Serialize::unserialize($data);
+            $unserializedData = Serialize::unserialize($data, false);
             if (!is_array($unserializedData) && !is_null($unserializedData)) {
                 throw new InvalidArgumentException('Unserialized data must be an array or null.');
             }

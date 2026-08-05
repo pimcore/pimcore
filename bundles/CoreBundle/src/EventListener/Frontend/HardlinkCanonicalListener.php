@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
@@ -56,10 +55,6 @@ class HardlinkCanonicalListener implements EventSubscriberInterface
         }
 
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
-            return;
-        }
-
-        if (class_exists(Staticroute::class) && null !== Staticroute::getCurrentRoute()) {
             return;
         }
 
