@@ -64,8 +64,8 @@ class ListCommand extends AbstractBundleCommand
             'Bundle',
             'Enabled',
             'Installed',
-            'Installable',
-            'Uninstallable',
+            $input->getOption('json') ? 'Installable' : 'I?',
+            $input->getOption('json') ? 'Uninstallable' : 'UI?',
             'Priority',
         ];
         $rows = [];
@@ -87,7 +87,7 @@ class ListCommand extends AbstractBundleCommand
                 if ($details) {
                     array_push(
                         $row,
-                        s($bundle->getDescription())->truncate(30, '...'),
+                        (string) s($bundle->getDescription())->truncate(30, '...'),
                         $bundle->getVersion(),
                     );
                 }
@@ -124,7 +124,7 @@ class ListCommand extends AbstractBundleCommand
             return Command::SUCCESS;
         }
 
-        $rows  = array_map(
+        $rows = array_map(
             static fn (array $row) => array_map(
                 static function (bool|string|int $column) use ($output) {
                     if (is_bool($column)) {
@@ -149,6 +149,12 @@ class ListCommand extends AbstractBundleCommand
         );
 
         $this->io->table($headers, $rows);
+
+        $this->io->writeln(implode(' ', [
+            'Legend:',
+            '<comment>I?</comment>: Can be installed?',
+            '<comment>UI?</comment>: Can be uninstalled?',
+        ]));
 
         return Command::SUCCESS;
     }
