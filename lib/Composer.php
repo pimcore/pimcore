@@ -15,6 +15,7 @@ namespace Pimcore;
 
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Installer\PackageEvent;
+use Composer\Package\Locker;
 use Composer\Script\Event;
 use RuntimeException;
 use Symfony\Component\Process\PhpExecutableFinder;
@@ -290,7 +291,8 @@ class Composer
     }
 
     /**
-     * Removes the "name" field from the project composer.json file.
+     * Removes the "name" field from the project composer.json file
+     * and updates the content-hash in composer.lock to keep them in sync.
      *
      * @throws RuntimeException If the composer.json file cannot be read or written
      */
@@ -311,8 +313,35 @@ class Composer
 
         unset($json['name']);
 
-        if(file_put_contents($composerJson, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) === false) {
+        $jsonString = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
+
+        if (file_put_contents($composerJson, $jsonString) === false) {
             throw new RuntimeException(sprintf('Failed to write composer.json at "%s".', $composerJson));
         }
+
+        self::updateComposerLock($rootPath, $jsonString);
+    }
+
+    private static function updateComposerLock(string $rootPath, string $composerJsonContents): void
+    {
+        $lockFile = $rootPath . '/composer.lock';
+
+        if (!file_exists($lockFile)) {
+            return;
+        }
+
+        $lockContents = file_get_contents($lockFile);
+        if ($lockContents === false) {
+            return;
+        }
+
+        $lock = json_decode($lockContents, true);
+        if (!is_array($lock)) {
+            return;
+        }
+
+        $lock['content-hash'] = Locker::getContentHash($composerJsonContents);
+
+        file_put_contents($lockFile, json_encode($lock, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n");
     }
 }
