@@ -375,7 +375,12 @@ class Processor
 
                 if ($statusCacheEnabled && $asset instanceof Asset\Image) {
                     //update thumbnail dimensions to cache
-                    $asset->addThumbnailFileToCache($tmpFsPath, $filename, $config);
+                    // for the 'original' format $tmpFsPath is never written, use the source file instead
+                    $asset->addThumbnailFileToCache(
+                        $format === 'original' ? $asset->getLocalFile() : $tmpFsPath,
+                        $filename,
+                        $config
+                    );
                 }
 
                 if (!Config::exists($config->getName())) {
