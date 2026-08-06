@@ -14,6 +14,7 @@ namespace Pimcore\Model\Translation;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Exception;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -31,6 +32,8 @@ class Dao extends Model\Dao\AbstractDao
      * @var string
      */
     const TABLE_PREFIX = 'translations_';
+
+    private const VALID_DOMAIN_CACHE_KEY_PREFIX = 'translation_valid_domain_';
 
     public function getDatabaseTableName(): string
     {
@@ -163,22 +166,33 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Returns boolean, if the domain table exists & domain registered in config
      *
-     *
+     * The result is memoized per domain via the RuntimeCache for the remainder of the
+     * request, since the underlying query is a "does this table exist" probe that is
+     * otherwise repeated on every translation lookup for domains without a table
+     * (e.g. the deprecated "admin" domain), see PEES-1281 / pimcore/service-operations#937.
      */
     public function isAValidDomain(string $domain): bool
     {
+        $cacheKey = self::VALID_DOMAIN_CACHE_KEY_PREFIX . $domain;
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            return RuntimeCache::get($cacheKey);
+        }
+
+        $isValid = false;
+
         try {
             $translationDomains = $this->model->getRegisteredDomains();
-            if (!in_array($domain, $translationDomains)) {
-                return false;
+            if (in_array($domain, $translationDomains)) {
+                $this->db->fetchOne(sprintf('SELECT * FROM translations_%s LIMIT 1;', $domain));
+                $isValid = true;
             }
-
-            $this->db->fetchOne(sprintf('SELECT * FROM translations_%s LIMIT 1;', $domain));
-
-            return true;
         } catch (Exception $e) {
-            return false;
+            $isValid = false;
         }
+
+        RuntimeCache::set($cacheKey, $isValid);
+
+        return $isValid;
     }
 
     public function createOrUpdateTable(): void
@@ -201,6 +215,20 @@ class Dao extends Model\Dao\AbstractDao
                           PRIMARY KEY (`key`,`language`),
                           KEY `language` (`language`)
                         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;");
+
+        $this->resetValidDomainCache();
+    }
+
+    /**
+     * Clears the memoized isAValidDomain() result for this Dao's domain, so a domain
+     * that just had its table created is recognized as valid within the same request.
+     */
+    private function resetValidDomainCache(): void
+    {
+        $cacheKey = self::VALID_DOMAIN_CACHE_KEY_PREFIX . $this->model->getDomain();
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            RuntimeCache::getInstance()->offsetUnset($cacheKey);
+        }
     }
 
     protected function updateModificationInfos(): void
