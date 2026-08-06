@@ -835,6 +835,7 @@ class Asset extends Element\AbstractElement
      */
     public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null /* , array $parameters = [] */): ?Version
     {
+        // TODO: promote $parameters to a regular signature parameter in the next major version (2027.1)
         $parameters = 4 <= func_num_args() ? func_get_arg(3) : [];
         if (!is_array($parameters)) {
             throw new TypeError(sprintf('%s(): Argument #4 ($parameters) must be of type array, %s given', __METHOD__, get_debug_type($parameters)));
