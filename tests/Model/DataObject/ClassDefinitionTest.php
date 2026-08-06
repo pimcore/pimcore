@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
@@ -95,7 +96,7 @@ public function setInput(?string $input): static
         $expectedSetterCode =
             '/**
 * Set fieldcollection - fieldcollection
-* @param \Pimcore\Model\DataObject\Fieldcollection|null $fieldcollection
+* @param \Pimcore\Model\DataObject\Fieldcollection<\Pimcore\Model\DataObject\Fieldcollection\Data\Unittestfieldcollection>|null $fieldcollection
 * @return $this
 */
 public function setFieldcollection(?\Pimcore\Model\DataObject\Fieldcollection $fieldcollection): static
@@ -108,6 +109,20 @@ public function setFieldcollection(?\Pimcore\Model\DataObject\Fieldcollection $f
 
 ';
         $this->testSetterCode('fieldcollection', $expectedSetterCode);
+    }
+
+    public function testFieldCollectionPhpdocTypeWithoutAllowedTypes(): void
+    {
+        $fieldDefinition = new Fieldcollections();
+
+        $this->assertSame(
+            '\Pimcore\Model\DataObject\Fieldcollection|null',
+            $fieldDefinition->getPhpdocInputType()
+        );
+        $this->assertSame(
+            '\Pimcore\Model\DataObject\Fieldcollection|null',
+            $fieldDefinition->getPhpdocReturnType()
+        );
     }
 
     /**
