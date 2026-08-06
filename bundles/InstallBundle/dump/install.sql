@@ -402,6 +402,21 @@ CREATE TABLE `settings_store` (
   KEY `scope` (`scope`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
+DROP TABLE IF EXISTS `telemetry_spool`;
+CREATE TABLE `telemetry_spool` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `event_uid` varchar(36) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `payload` longtext NOT NULL,
+  `claimed_at` datetime NULL DEFAULT NULL,
+  `claim_nonce` varchar(32) NULL DEFAULT NULL,
+  `attempts` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_telemetry_spool_event_uid` (`event_uid`),
+  KEY `idx_telemetry_spool_claim_nonce` (`claim_nonce`),
+  KEY `idx_telemetry_spool_created_at` (`created_at`)
+) DEFAULT CHARSET=utf8mb4;
+
 DROP TABLE IF EXISTS `translations_messages`;
 CREATE TABLE `translations_messages` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',

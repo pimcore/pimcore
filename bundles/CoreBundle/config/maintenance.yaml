@@ -19,6 +19,23 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: cleanuplogfiles }
 
+    Pimcore\Maintenance\Tasks\TelemetrySnapshotTask:
+        arguments:
+            $instanceIdentifier: '%pimcore.product_registration.instance_identifier%'
+            $intervalSeconds: '%pimcore.telemetry.snapshot_interval_seconds%'
+        tags:
+            - { name: pimcore.maintenance.task, type: telemetry }
+
+    # primary drainer: forward spooled batches to the relay (ack only on confirmed success)
+    Pimcore\Maintenance\Tasks\TelemetrySpoolDrainTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: telemetry_spool_drain }
+
+    # keeps the telemetry outbox bounded (reclaim expired leases + delete events past TTL)
+    Pimcore\Maintenance\Tasks\TelemetrySpoolGcTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: telemetry_spool_gc }
+
     Pimcore\Maintenance\Tasks\DataObject\DataObjectTaskHelper:
         arguments:
             - '@logger'
