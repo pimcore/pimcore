@@ -17,8 +17,8 @@ namespace Pimcore\Tests\Unit\Telemetry;
 use Pimcore\Telemetry\Crypto\EnvelopeCipher;
 use Pimcore\Telemetry\Spool\EncryptedBatch;
 use Pimcore\Telemetry\Spool\SpooledBatch;
-use Pimcore\Telemetry\Spool\TelemetrySpoolReaderInterface;
 use Pimcore\Telemetry\Spool\TelemetryOutboxService;
+use Pimcore\Telemetry\Spool\TelemetrySpoolReaderInterface;
 use Pimcore\Tests\Support\Test\TestCase;
 
 class TelemetryOutboxServiceTest extends TestCase
@@ -27,9 +27,6 @@ class TelemetryOutboxServiceTest extends TestCase
 
     private const INSTANCE = 'inst-xyz';
 
-    /**
-     * @param list<array<string, mixed>> $events
-     */
     private function reader(?SpooledBatch $batch, array &$acked = [], array &$released = []): TelemetrySpoolReaderInterface
     {
         return new class($batch, $acked, $released) implements TelemetrySpoolReaderInterface {

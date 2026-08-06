@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Spool;
 
-use Exception;
 use Doctrine\DBAL\Connection;
+use Exception;
 use Psr\Log\LoggerInterface;
 use function bin2hex;
 use function count;
@@ -272,5 +272,4 @@ final class TelemetrySpool implements TelemetrySpoolWriterInterface, TelemetrySp
     {
         return bin2hex(random_bytes(16));
     }
-
 }

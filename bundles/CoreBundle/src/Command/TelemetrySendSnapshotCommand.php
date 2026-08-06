@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use const JSON_PRETTY_PRINT;
+use const JSON_THROW_ON_ERROR;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Telemetry\Snapshot\SnapshotBuilder;
 use Pimcore\Telemetry\TelemetryInterface;
@@ -20,8 +22,6 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use const JSON_PRETTY_PRINT;
-use const JSON_THROW_ON_ERROR;
 use function json_encode;
 
 /**

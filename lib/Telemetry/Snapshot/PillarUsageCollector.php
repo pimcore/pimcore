@@ -100,7 +100,6 @@ final readonly class PillarUsageCollector implements SnapshotCollectorInterface
         ];
     }
 
-
     /**
      * Low-cardinality COUNT(*) for tables that are not part of the element index (classes, sites);
      * these are tiny, so a direct count is fine. Time-boxed; degrades to 0 on failure.

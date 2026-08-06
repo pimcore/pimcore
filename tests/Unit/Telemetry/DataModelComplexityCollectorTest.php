@@ -56,6 +56,7 @@ class DataModelComplexityCollectorTest extends TestCase
                 foreach ($value as $leaf) {
                     $this->assertIsScalar($leaf, "map metric '$key' must contain only scalars");
                 }
+
                 continue;
             }
             $this->assertIsScalar($value, "metric '$key' must be scalar");

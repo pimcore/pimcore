@@ -13,6 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Crypto;
 
+use const JSON_THROW_ON_ERROR;
+use const JSON_UNESCAPED_SLASHES;
+use const JSON_UNESCAPED_UNICODE;
+use const OPENSSL_RAW_DATA;
 use JsonException;
 use Throwable;
 use function base64_decode;
@@ -28,10 +32,6 @@ use function openssl_encrypt;
 use function random_bytes;
 use function strlen;
 use function substr;
-use const JSON_THROW_ON_ERROR;
-use const JSON_UNESCAPED_SLASHES;
-use const JSON_UNESCAPED_UNICODE;
-use const OPENSSL_RAW_DATA;
 
 /**
  * Authenticated, product-key-based encryption for a telemetry envelope.

@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Snapshot;
 
-use Exception;
 use Doctrine\DBAL\Connection;
+use Exception;
 use function is_numeric;
 use function max;
 
