@@ -33,7 +33,13 @@ class Dao extends Model\Dao\AbstractDao
      */
     const TABLE_PREFIX = 'translations_';
 
-    private const VALID_DOMAIN_CACHE_KEY_PREFIX = 'translation_valid_domain_';
+    /**
+     * A single, fixed RuntimeCache key holding a [domain => bool] map. Using one key for
+     * all domains - rather than concatenating the domain into the key - avoids colliding
+     * with Translation::getByKey()'s 'translation_<id>_<domain>' cache keys, which share
+     * the same global RuntimeCache namespace and can contain arbitrary translation keys.
+     */
+    private const VALID_DOMAINS_CACHE_KEY = self::class . '::validDomains';
 
     public function getDatabaseTableName(): string
     {
@@ -173,9 +179,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function isAValidDomain(string $domain): bool
     {
-        $cacheKey = self::VALID_DOMAIN_CACHE_KEY_PREFIX . $domain;
-        if (RuntimeCache::isRegistered($cacheKey)) {
-            return RuntimeCache::get($cacheKey);
+        $validDomains = $this->getValidDomainsCache();
+
+        if (array_key_exists($domain, $validDomains)) {
+            return $validDomains[$domain];
         }
 
         $isValid = false;
@@ -190,9 +197,22 @@ class Dao extends Model\Dao\AbstractDao
             $isValid = false;
         }
 
-        RuntimeCache::set($cacheKey, $isValid);
+        $validDomains[$domain] = $isValid;
+        RuntimeCache::set(self::VALID_DOMAINS_CACHE_KEY, $validDomains);
 
         return $isValid;
+    }
+
+    /**
+     * @return array<string, bool>
+     */
+    private function getValidDomainsCache(): array
+    {
+        if (RuntimeCache::isRegistered(self::VALID_DOMAINS_CACHE_KEY)) {
+            return RuntimeCache::get(self::VALID_DOMAINS_CACHE_KEY);
+        }
+
+        return [];
     }
 
     public function createOrUpdateTable(): void
@@ -230,9 +250,12 @@ class Dao extends Model\Dao\AbstractDao
      */
     private function resetValidDomainCache(): void
     {
-        $cacheKey = self::VALID_DOMAIN_CACHE_KEY_PREFIX . $this->model->getDomain();
-        if (RuntimeCache::isRegistered($cacheKey) && RuntimeCache::get($cacheKey) === false) {
-            RuntimeCache::getInstance()->offsetUnset($cacheKey);
+        $domain = $this->model->getDomain();
+        $validDomains = $this->getValidDomainsCache();
+
+        if (($validDomains[$domain] ?? null) === false) {
+            unset($validDomains[$domain]);
+            RuntimeCache::set(self::VALID_DOMAINS_CACHE_KEY, $validDomains);
         }
     }
 
