@@ -356,16 +356,16 @@ class Processor
                     $format = $image->getContentOptimizedFormat();
                 }
 
-                $tmpFsPath = File::getLocalTempFilePath($fileExtension);
-
-                $fileHandle = null;
-
                 if ($format === 'original') {
-                    $fileHandle = fopen($asset->getLocalFile(), 'rb');
+                    // the source file is streamed to the storage as-is, so it is also
+                    // the file the status cache entry below has to be built from
+                    $tmpFsPath = $asset->getLocalFile();
                 } else {
+                    $tmpFsPath = File::getLocalTempFilePath($fileExtension);
                     $image->save($tmpFsPath, $format, $config->getQuality());
-                    $fileHandle = fopen($tmpFsPath, 'rb');
                 }
+
+                $fileHandle = fopen($tmpFsPath, 'rb');
 
                 $storage->writeStream($storagePath, $fileHandle);
 
@@ -375,12 +375,7 @@ class Processor
 
                 if ($statusCacheEnabled && $asset instanceof Asset\Image) {
                     //update thumbnail dimensions to cache
-                    // for the 'original' format $tmpFsPath is never written, use the source file instead
-                    $asset->addThumbnailFileToCache(
-                        $format === 'original' ? $asset->getLocalFile() : $tmpFsPath,
-                        $filename,
-                        $config
-                    );
+                    $asset->addThumbnailFileToCache($tmpFsPath, $filename, $config);
                 }
 
                 if (!Config::exists($config->getName())) {
