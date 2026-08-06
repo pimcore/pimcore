@@ -46,11 +46,14 @@ class FileSystemVersionStorageAdapterTest extends TestCase
 
                 return false;
             });
-        // recursiveDeleteEmptyDirs runs after the storage file is "deleted"
-        // (race won). Returning a non-empty listing stops the recursion at the
-        // first directory without exercising deleteDirectory().
+        // Even though the delete raced, the empty-directory sweep must still
+        // run for the version's storage directory. Returning a non-empty
+        // listing stops the recursion at the first directory without
+        // exercising deleteDirectory().
         $storage
+            ->expects($this->once())
             ->method('listContents')
+            ->with('object/g10000/12345')
             ->willReturn(new DirectoryListing(new ArrayIterator([
                 new FileAttributes('other-version'),
             ])));
@@ -74,6 +77,10 @@ class FileSystemVersionStorageAdapterTest extends TestCase
             ->expects($this->once())
             ->method('fileExists')
             ->willReturn(true);
+        // The failed delete is rethrown, so no directory cleanup may happen.
+        $storage
+            ->expects($this->never())
+            ->method('listContents');
 
         $adapter = $this->createAdapterWithStorage($storage);
 

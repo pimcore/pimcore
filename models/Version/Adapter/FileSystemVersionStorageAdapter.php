@@ -115,21 +115,18 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
         $storageFileName = $this->getStorageFilename($version->getId(), $version->getCid(), $version->getCtype());
 
         $storagePath = dirname($storageFileName);
-        if ($this->deleteFileIfExists($storageFileName)) {
-            File::recursiveDeleteEmptyDirs($this->storage, $storagePath);
-        }
+        $this->deleteFileIfExists($storageFileName);
+        File::recursiveDeleteEmptyDirs($this->storage, $storagePath);
 
         if (!$isBinaryHashInUse) {
             $this->deleteFileIfExists($binaryStoragePath);
         }
     }
 
-    private function deleteFileIfExists(string $path): bool
+    private function deleteFileIfExists(string $path): void
     {
         try {
             $this->storage->delete($path);
-
-            return true;
         } catch (UnableToDeleteFile $e) {
             // Tolerate races where the file was deleted concurrently between
             // our intent to delete it and the actual unlink. If it is gone
@@ -138,8 +135,6 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
             if ($this->storage->fileExists($path)) {
                 throw $e;
             }
-
-            return true;
         }
     }
 
