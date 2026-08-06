@@ -28,6 +28,7 @@ use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
 use Pimcore\Model\Factory;
+use Pimcore\Telemetry\TelemetrySettings;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -96,6 +97,17 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?
         $container->setParameter('pimcore.config', $config);
+
+        // telemetry - deliberately not configurable (see TelemetrySettings): the relay is a
+        // first-party service at a known address, and cadence/outbox bounds must behave identically
+        // everywhere. Published as parameters so each service keeps one seam tests can drive.
+        // Reporting is gated by the instance identifier + product key, not by a setting.
+        $container->setParameter('pimcore.telemetry.relay_endpoint', TelemetrySettings::RELAY_ENDPOINT);
+        $container->setParameter('pimcore.telemetry.snapshot_interval_seconds', TelemetrySettings::SNAPSHOT_INTERVAL_SECONDS);
+        $container->setParameter('pimcore.telemetry.snapshot_query_timeout_seconds', TelemetrySettings::SNAPSHOT_QUERY_TIMEOUT_SECONDS);
+        $container->setParameter('pimcore.telemetry.spool.cap', TelemetrySettings::SPOOL_CAP);
+        $container->setParameter('pimcore.telemetry.spool.ttl_days', TelemetrySettings::SPOOL_TTL_DAYS);
+        $container->setParameter('pimcore.telemetry.spool.lease_seconds', TelemetrySettings::SPOOL_LEASE_SECONDS);
 
         // set default domain for router to main domain if configured
         // this will be overridden from the request in web context but is handy for CLI scripts
@@ -352,6 +364,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     {
         $productIdentifier = $config['product_registration']['instance_identifier'] ?? null;
         $container->setParameter('pimcore.product_registration.instance_identifier', $productIdentifier);
+        // Expose the product key as a parameter too: telemetry uses it as the symmetric secret to
+        // encrypt batches for the relay (which looks the same key up by the instance identifier).
+        $container->setParameter('pimcore.product_registration.product_key', $config['product_registration']['product_key'] ?? '');
 
         // Pimcore not installed — env vars are empty (fallback defaults), so skip
         // the product registration check when the install marker exists.

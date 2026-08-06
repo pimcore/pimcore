@@ -4,6 +4,16 @@ services:
         autoconfigure: true
 
     #
+    # TELEMETRY (behavioral seam example - autoconfigured as event subscriber)
+    #
+
+    # flushes events buffered during a web request, after the response is sent
+    Pimcore\Bundle\CoreBundle\EventListener\Telemetry\TelemetryFlushSubscriber: ~
+
+    # flushes events buffered during a console command (CLI has no kernel.terminate)
+    Pimcore\Bundle\CoreBundle\EventListener\Telemetry\ConsoleTelemetryFlushSubscriber: ~
+
+    #
     # REQUEST + ROUTING
     #
 
