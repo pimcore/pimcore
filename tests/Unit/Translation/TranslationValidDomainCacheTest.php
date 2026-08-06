@@ -24,8 +24,13 @@ use Pimcore\Tests\Support\Test\TestCase;
  * which is executed repeatedly (once per translation lookup) for domains without a table, most
  * notably the deprecated "admin" domain that stays registered but never gets a table anymore.
  */
-class TranslationValidDomainCacheTest extends TestCase
+final class TranslationValidDomainCacheTest extends TestCase
 {
+    protected function needsDb(): bool
+    {
+        return true;
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
