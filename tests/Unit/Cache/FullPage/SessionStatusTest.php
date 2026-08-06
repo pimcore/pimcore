@@ -30,7 +30,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  * always saw an empty $_SESSION and served the anonymous cached page to a
  * logged-in visitor, even though a session cookie with real data was present.
  */
-class SessionStatusTest extends TestCase
+final class SessionStatusTest extends TestCase
 {
     protected function tearDown(): void
     {
