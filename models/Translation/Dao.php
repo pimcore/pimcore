@@ -222,11 +222,16 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Clears the memoized isAValidDomain() result for this Dao's domain, so a domain
      * that just had its table created is recognized as valid within the same request.
+     *
+     * Only a cached `false` can become stale here (a table is never dropped by
+     * createOrUpdateTable(), only created), so a cached `true` is left untouched -
+     * otherwise every save() to an already-valid domain would force a redundant
+     * re-query on the next isAValidDomain() call.
      */
     private function resetValidDomainCache(): void
     {
         $cacheKey = self::VALID_DOMAIN_CACHE_KEY_PREFIX . $this->model->getDomain();
-        if (RuntimeCache::isRegistered($cacheKey)) {
+        if (RuntimeCache::isRegistered($cacheKey) && RuntimeCache::get($cacheKey) === false) {
             RuntimeCache::getInstance()->offsetUnset($cacheKey);
         }
     }

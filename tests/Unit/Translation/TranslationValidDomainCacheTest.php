@@ -95,4 +95,24 @@ final class TranslationValidDomainCacheTest extends TestCase
             .'stick around for the rest of the request.'
         );
     }
+
+    public function testIsAValidDomainCacheSurvivesASubsequentSaveToTheSameDomain(): void
+    {
+        $this->saveAdminDomainTranslation('pees_1281_survives_save_key_1');
+
+        self::assertTrue(Translation::isAValidDomain(Translation::DOMAIN_ADMIN));
+
+        // A further save() to an already-valid domain calls createOrUpdateTable() again.
+        // The domain was already valid and stays valid (a table is never dropped by
+        // createOrUpdateTable()), so this must not evict the memoized "true" result.
+        $this->saveAdminDomainTranslation('pees_1281_survives_save_key_2');
+
+        $this->dropAdminDomainTable();
+
+        self::assertTrue(
+            Translation::isAValidDomain(Translation::DOMAIN_ADMIN),
+            'A save() to an already-valid domain must not evict the memoized "true" result - '
+            .'otherwise the next lookup would redundantly re-query the database.'
+        );
+    }
 }
