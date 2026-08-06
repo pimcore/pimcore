@@ -13,12 +13,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Asset;
 
+use Exception;
 use Pimcore;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use TypeError;
 
 /**
  * @group model.asset.asset
@@ -110,6 +112,42 @@ class SaveVersionParametersTest extends ModelTestCase
         $this->assertSame('listenerValue', $postUpdateArguments['addedByListener']);
         $this->assertSame('customValue', $postUpdateArguments['customParameter']);
         $this->assertTrue($postUpdateArguments['saveVersionOnly']);
+    }
+
+    public function testCustomParametersAreForwardedToPostUpdateFailureEvent(): void
+    {
+        $capturedArguments = [];
+        $this->addListener(AssetEvents::POST_UPDATE_FAILURE, function (AssetEvent $event) use (&$capturedArguments): void {
+            if ($event->getAsset() === $this->testAsset) {
+                $capturedArguments = $event->getArguments();
+            }
+        });
+
+        $listenerException = new Exception('listener failure');
+        $this->addListener(AssetEvents::PRE_UPDATE, function (AssetEvent $event) use ($listenerException): void {
+            if ($event->getAsset() === $this->testAsset) {
+                throw $listenerException;
+            }
+        });
+
+        try {
+            $this->testAsset->saveVersion(true, true, null, ['customParameter' => 'customValue', 'saveVersionOnly' => false]);
+            $this->fail('Expected the exception thrown in the PRE_UPDATE listener to be rethrown');
+        } catch (Exception $exception) {
+            $this->assertSame($listenerException, $exception);
+        }
+
+        $this->assertSame('customValue', $capturedArguments['customParameter']);
+        $this->assertTrue($capturedArguments['saveVersionOnly']);
+        $this->assertSame($listenerException, $capturedArguments['exception']);
+    }
+
+    public function testSaveVersionRejectsNonArrayParameters(): void
+    {
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage('Argument #4 ($parameters) must be of type array, string given');
+
+        $this->testAsset->saveVersion(true, true, null, 'not-an-array');
     }
 
     public function testSaveVersionWithoutParametersKeepsPreviousBehavior(): void

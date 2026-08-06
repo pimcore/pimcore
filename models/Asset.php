@@ -57,6 +57,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Throwable;
+use TypeError;
 
 /**
  * @method Dao getDao()
@@ -834,7 +835,10 @@ class Asset extends Element\AbstractElement
      */
     public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null /* , array $parameters = [] */): ?Version
     {
-        $parameters = 4 <= func_num_args() ? (array) func_get_arg(3) : [];
+        $parameters = 4 <= func_num_args() ? func_get_arg(3) : [];
+        if (!is_array($parameters)) {
+            throw new TypeError(sprintf('%s(): Argument #4 ($parameters) must be of type array, %s given', __METHOD__, get_debug_type($parameters)));
+        }
         $coreParameters = ['saveVersionOnly' => true];
         $eventParameters = array_merge($parameters, $coreParameters);
 
