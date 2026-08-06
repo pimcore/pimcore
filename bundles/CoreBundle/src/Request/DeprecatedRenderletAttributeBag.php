@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Request;
 
+use Override;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -25,7 +26,7 @@ final class DeprecatedRenderletAttributeBag extends ParameterBag
         parent::__construct($parameters);
     }
 
-    #[\Override]
+    #[Override]
     public function all(?string $key = null): array
     {
         if (null !== $key && in_array($key, $this->deprecated, true)) {
@@ -35,7 +36,7 @@ final class DeprecatedRenderletAttributeBag extends ParameterBag
         return parent::all($key);
     }
 
-    #[\Override]
+    #[Override]
     public function get(string $key, mixed $default = null): mixed
     {
         if (in_array($key, $this->deprecated, true)) {
@@ -45,7 +46,7 @@ final class DeprecatedRenderletAttributeBag extends ParameterBag
         return parent::get($key, $default);
     }
 
-    #[\Override]
+    #[Override]
     public function has(string $key): bool
     {
         if (in_array($key, $this->deprecated, true)) {
