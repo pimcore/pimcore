@@ -38,6 +38,19 @@ class ClassDefinitionTest extends ModelTestCase
         $this->assertEquals($expectedSetterCode, $setterCode);
     }
 
+    private function testGetterCode(string $fieldName, string $expectedGetterCode, bool $localizedField = false): void
+    {
+        $class = ClassDefinition::getByName('unittest');
+        if ($localizedField) {
+            $fd = $class->getFieldDefinition('localizedfields')->getFieldDefinition($fieldName);
+            $getterCode = $fd->getGetterCodeLocalizedfields($class);
+        } else {
+            $fd = $class->getFieldDefinition($fieldName);
+            $getterCode = $fd->getGetterCode($class);
+        }
+        $this->assertEquals($expectedGetterCode, $getterCode);
+    }
+
     /**
      * Verifies that the class definition gets renamed properly
      */
@@ -166,6 +179,105 @@ public function setLinput(?string $linput): static
 
 ';
         $this->testSetterCode('linput', $expectedSetterCode, true);
+    }
+
+    /**
+     * Verifies that the getter code gets created properly and that the
+     * PreGetValueHook is called before actually getting the data
+     */
+    public function testLocalizedFieldGetterCode(): void
+    {
+        $expectedGetterCode =
+            '/**
+* Get linput - linput
+* @return string|null
+*/
+public function getLinput(?string $language = null): ?string
+{
+	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
+		$preValue = $this->preGetValue("linput");
+		if ($preValue !== null) {
+			return $preValue;
+		}
+	}
+
+	$data = $this->getLocalizedfields()->getLocalizedValue("linput", $language);
+	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
+		return $data->getPlain();
+	}
+
+	return $data;
+}
+
+';
+        $this->testGetterCode('linput', $expectedGetterCode, true);
+    }
+
+    /**
+     * Verifies that the getter code gets created properly and that the
+     * PreGetValueHook is called before actually getting the data
+     */
+    public function testLocalizedTableGetterCode(): void
+    {
+        $expectedGetterCode =
+            '/**
+* Get ltable - ltable
+* @return array
+*/
+public function getLtable (?string $language = null): array
+{
+	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
+		$preValue = $this->preGetValue("ltable");
+		if ($preValue !== null) {
+			return $preValue;
+		}
+	}
+
+	$data = $this->getLocalizedfields()->getLocalizedValue("ltable", $language);
+	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
+		return $data->getPlain() ?? [];
+	}
+	return $data ?? [];
+}
+
+';
+        $this->testGetterCode('ltable', $expectedGetterCode, true);
+    }
+
+    /**
+     * Verifies that the getter code gets created properly and that the
+     * PreGetValueHook is called before actually getting the data
+     * (i.e. before the object brick container is lazily initialized)
+     */
+    public function testBricksGetterCode(): void
+    {
+        $expectedGetterCode =
+            '/**
+* @return \Pimcore\Model\DataObject\Unittest\Mybricks
+*/
+public function getMybricks(): ?\Pimcore\Model\DataObject\Objectbrick
+{
+	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
+		$preValue = $this->preGetValue("mybricks");
+		if ($preValue !== null) {
+			return $preValue;
+		}
+	}
+
+	$data = $this->mybricks;
+	if (!$data) {
+		if (\Pimcore\Tool::classExists("\\\\Pimcore\\\\Model\\\\DataObject\\\\Unittest\\\\Mybricks")) {
+			$data = new \Pimcore\Model\DataObject\Unittest\Mybricks($this, "mybricks");
+			$this->mybricks = $data;
+		} else {
+			return null;
+		}
+	}
+	return $data;
+}
+
+';
+        $this->testGetterCode('mybricks', $expectedGetterCode);
     }
 
     public function testInputEmptyDefaultValueIsNormalizedToNullAfterImportAndReload(): void
