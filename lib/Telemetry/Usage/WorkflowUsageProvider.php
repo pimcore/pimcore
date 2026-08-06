@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Usage;
 
+use Exception;
 use Pimcore\Workflow\Manager;
-use Throwable;
 
 /**
  * Reference {@see BundleUsageProviderInterface} for a core capability: workflows are "used" when at
@@ -40,7 +40,7 @@ final readonly class WorkflowUsageProvider implements BundleUsageProviderInterfa
     {
         try {
             return $this->workflowManager->getAllWorkflows() !== [];
-        } catch (Throwable) {
+        } catch (Exception) {
             return false;
         }
     }

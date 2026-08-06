@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Relay;
 
+use Exception;
 use GuzzleHttp\ClientInterface;
 use Psr\Log\LoggerInterface;
-use Throwable;
 use function is_array;
 use function json_decode;
 
@@ -75,7 +75,7 @@ final class RelayClient implements RelayClientInterface
             // Success is a confirmed acceptance, not merely a 2xx - so a proxy 200 without the relay
             // body never causes us to drop an undelivered batch.
             return is_array($body) && ($body['status'] ?? null) === 'ok';
-        } catch (Throwable $exception) {
+        } catch (Exception $exception) {
             $this->logger->error('Unable to send telemetry batch to the relay', [
                 'endpoint' => $this->endpoint,
                 'exception' => $exception,

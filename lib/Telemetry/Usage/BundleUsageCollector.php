@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Usage;
 
+use Exception;
 use Pimcore\Telemetry\Snapshot\SnapshotCollectorInterface;
-use Throwable;
 
 /**
  * Aggregates every tagged {@see BundleUsageProviderInterface} into the `usage.*` snapshot namespace -
@@ -51,7 +51,7 @@ final readonly class BundleUsageCollector implements SnapshotCollectorInterface
 
             try {
                 $usage[$key] = $provider->isUsed();
-            } catch (Throwable) {
+            } catch (Exception) {
                 // A provider must never break the snapshot; treat a failure as "not used".
                 $usage[$key] = false;
             }

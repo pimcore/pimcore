@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Snapshot\Statistics;
 
+use Exception;
 use Pimcore\Telemetry\Snapshot\ElementTypeCounts;
 use Pimcore\Telemetry\Snapshot\SnapshotQueryRunner;
-use Throwable;
 use function is_array;
 use function is_numeric;
 use function round;
@@ -42,7 +42,7 @@ final readonly class SqlElementStatisticsProvider implements ElementStatisticsPr
                 'SELECT ' . $this->quote('type') . ', COUNT(*) FROM ' . $this->quote($kind->table())
                 . ' GROUP BY ' . $this->quote('type')
             );
-        } catch (Throwable) {
+        } catch (Exception) {
             return new ElementTypeCounts();
         }
 
@@ -64,7 +64,7 @@ final readonly class SqlElementStatisticsProvider implements ElementStatisticsPr
                 'SELECT MAX(d) AS max_d, AVG(d) AS avg_d FROM (SELECT ' . $depth . ' AS d FROM '
                 . $this->quote($kind->table()) . ') t'
             );
-        } catch (Throwable) {
+        } catch (Exception) {
             $row = false;
         }
 
@@ -109,7 +109,7 @@ final readonly class SqlElementStatisticsProvider implements ElementStatisticsPr
             $value = $this->queryRunner->fetchOne($sql);
 
             return is_numeric($value) ? (int) $value : 0;
-        } catch (Throwable) {
+        } catch (Exception) {
             return 0;
         }
     }

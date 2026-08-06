@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Snapshot;
 
+use Exception;
 use Pimcore\Telemetry\Snapshot\Statistics\ElementKind;
 use Pimcore\Telemetry\Snapshot\Statistics\ElementStatisticsProviderInterface;
-use Throwable;
 use function is_numeric;
 
 /**
@@ -113,7 +113,7 @@ final readonly class PillarUsageCollector implements SnapshotCollectorInterface
             );
 
             return is_numeric($count) ? (int)$count : 0;
-        } catch (Throwable) {
+        } catch (Exception) {
             return 0;
         }
     }

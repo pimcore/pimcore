@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Spool;
 
+use Exception;
 use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
-use Throwable;
 use function bin2hex;
 use function count;
 use function is_array;
@@ -263,7 +263,7 @@ final class TelemetrySpool implements TelemetrySpoolWriterInterface, TelemetrySp
             );
 
             return true;
-        } catch (Throwable) {
+        } catch (Exception) {
             return false;
         }
     }

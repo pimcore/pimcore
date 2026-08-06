@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Snapshot;
 
+use Exception;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Objectbrick;
-use Throwable;
 use function count;
 use function is_numeric;
 use function max;
@@ -112,14 +112,14 @@ final readonly class DataModelComplexityCollector implements SnapshotCollectorIn
 
         try {
             $classes = (new ClassDefinition\Listing())->getClasses();
-        } catch (Throwable) {
+        } catch (Exception) {
             $classes = [];
         }
 
         foreach ($classes as $class) {
             try {
                 $fields = $class->getFieldDefinitions(['suppressEnrichment' => true]);
-            } catch (Throwable) {
+            } catch (Exception) {
                 continue;
             }
 
@@ -152,28 +152,28 @@ final readonly class DataModelComplexityCollector implements SnapshotCollectorIn
 
         try {
             $fieldCollections = (new Fieldcollection\Definition\Listing())->load();
-        } catch (Throwable) {
+        } catch (Exception) {
             $fieldCollections = [];
         }
 
         foreach ($fieldCollections as $definition) {
             try {
                 $sets[] = $definition->getFieldDefinitions(['suppressEnrichment' => true]);
-            } catch (Throwable) {
+            } catch (Exception) {
                 continue;
             }
         }
 
         try {
             $objectBricks = (new Objectbrick\Definition\Listing())->load();
-        } catch (Throwable) {
+        } catch (Exception) {
             $objectBricks = [];
         }
 
         foreach ($objectBricks as $definition) {
             try {
                 $sets[] = $definition->getFieldDefinitions(['suppressEnrichment' => true]);
-            } catch (Throwable) {
+            } catch (Exception) {
                 continue;
             }
         }
@@ -185,7 +185,7 @@ final readonly class DataModelComplexityCollector implements SnapshotCollectorIn
     {
         try {
             return count((new Fieldcollection\Definition\Listing())->loadNames());
-        } catch (Throwable) {
+        } catch (Exception) {
             return 0;
         }
     }
@@ -194,7 +194,7 @@ final readonly class DataModelComplexityCollector implements SnapshotCollectorIn
     {
         try {
             return count((new Objectbrick\Definition\Listing())->loadNames());
-        } catch (Throwable) {
+        } catch (Exception) {
             return 0;
         }
     }
@@ -203,7 +203,7 @@ final readonly class DataModelComplexityCollector implements SnapshotCollectorIn
     {
         try {
             return count((new ClassDefinition\CustomLayout\Listing())->getLayoutDefinitions());
-        } catch (Throwable) {
+        } catch (Exception) {
             return 0;
         }
     }
@@ -221,7 +221,7 @@ final readonly class DataModelComplexityCollector implements SnapshotCollectorIn
             );
 
             return is_numeric($count) ? (int)$count : 0;
-        } catch (Throwable) {
+        } catch (Exception) {
             return 0;
         }
     }

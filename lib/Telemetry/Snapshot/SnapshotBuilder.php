@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Snapshot;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use Throwable;
 use function microtime;
 use function round;
 
@@ -36,6 +39,7 @@ final readonly class SnapshotBuilder
     public function __construct(
         private iterable $collectors,
         private ?StatementCounter $statementCounter = null,
+        private LoggerInterface $logger = new NullLogger(),
     ) {
     }
 
@@ -49,8 +53,24 @@ final readonly class SnapshotBuilder
 
         $snapshot = [];
         foreach ($this->collectors as $collector) {
-            $namespace = $collector->getNamespace();
-            foreach ($collector->collect() as $key => $value) {
+            // This is the fault-isolation boundary for collectors, which are a public extension
+            // point: a bundle's collector must not be able to take down the snapshot - nor, since
+            // Maintenance\Executor only catches Exception, the whole maintenance run. Everything
+            // inside a collector therefore narrows to Exception and any real defect surfaces here,
+            // logged with its namespace, while the remaining collectors still report.
+            try {
+                $namespace = $collector->getNamespace();
+                $metrics = $collector->collect();
+            } catch (Throwable $exception) {
+                $this->logger->error('Telemetry snapshot collector failed', [
+                    'collector' => $collector::class,
+                    'exception' => $exception,
+                ]);
+
+                continue;
+            }
+
+            foreach ($metrics as $key => $value) {
                 $snapshot[$namespace . '.' . $key] = $value;
             }
         }

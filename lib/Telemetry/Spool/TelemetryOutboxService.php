@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Spool;
 
+use Exception;
 use Pimcore\Telemetry\Crypto\EnvelopeCipher;
 use Pimcore\Telemetry\Crypto\EnvelopeCipherException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Throwable;
 use function time;
 
 /**
@@ -61,7 +61,7 @@ final class TelemetryOutboxService implements TelemetryOutboxInterface
     {
         try {
             $claimed = $this->spool->claim();
-        } catch (Throwable $exception) {
+        } catch (Exception $exception) {
             // The outbox is best-effort and is read from an HTTP endpoint (the Studio drain) as well
             // as from maintenance. A storage-level problem - most plausibly the table not existing
             // yet because the code was deployed before migrations ran - must read as "nothing to
@@ -97,7 +97,7 @@ final class TelemetryOutboxService implements TelemetryOutboxInterface
     {
         try {
             return $this->spool->ack($nonce);
-        } catch (Throwable $exception) {
+        } catch (Exception $exception) {
             $this->logger->error('Telemetry outbox ack failed', ['exception' => $exception]);
 
             return 0;
@@ -108,7 +108,7 @@ final class TelemetryOutboxService implements TelemetryOutboxInterface
     {
         try {
             return $this->spool->release($nonce);
-        } catch (Throwable $exception) {
+        } catch (Exception $exception) {
             $this->logger->error('Telemetry outbox release failed', ['exception' => $exception]);
 
             return 0;

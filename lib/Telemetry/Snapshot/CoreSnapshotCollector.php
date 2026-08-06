@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Snapshot;
 
+use Exception;
 use Pimcore\Tool;
 use Pimcore\Version;
-use Throwable;
 use function count;
 use function is_numeric;
 use function is_string;
@@ -101,7 +101,7 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
             $version = $this->queryRunner->fetchOne('SELECT VERSION()');
 
             return is_string($version) ? $version : 'unknown';
-        } catch (Throwable) {
+        } catch (Exception) {
             return 'unknown';
         }
     }
@@ -128,7 +128,7 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
             );
 
             return is_numeric($rows) ? (int)$rows : 0;
-        } catch (Throwable) {
+        } catch (Exception) {
             return 0;
         }
     }
@@ -141,7 +141,7 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
             );
 
             return is_numeric($count) ? (int)$count : 0;
-        } catch (Throwable) {
+        } catch (Exception) {
             return 0;
         }
     }

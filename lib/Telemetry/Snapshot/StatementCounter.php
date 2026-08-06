@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Snapshot;
 
+use Exception;
 use Doctrine\DBAL\Connection;
-use Throwable;
 use function is_numeric;
 use function max;
 
@@ -48,7 +48,7 @@ final readonly class StatementCounter
     {
         try {
             $row = $this->connection->fetchAssociative("SHOW SESSION STATUS LIKE 'Questions'");
-        } catch (Throwable) {
+        } catch (Exception) {
             return null;
         }
 

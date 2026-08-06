@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Snapshot;
 
+use Exception;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\MariaDBPlatform;
-use Throwable;
 use function ltrim;
 use function preg_replace;
 use function sprintf;
@@ -115,7 +115,7 @@ final readonly class SnapshotQueryRunner
     {
         try {
             return $this->connection->getDatabasePlatform() instanceof MariaDBPlatform;
-        } catch (Throwable) {
+        } catch (Exception) {
             // Unknown platform: fall back to the MySQL hint form (a bare SELECT if it is neither).
             return false;
         }

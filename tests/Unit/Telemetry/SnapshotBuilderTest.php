@@ -19,6 +19,7 @@ use Pimcore\Telemetry\Snapshot\SnapshotBuilder;
 use Pimcore\Telemetry\Snapshot\SnapshotCollectorInterface;
 use Pimcore\Telemetry\Snapshot\StatementCounter;
 use Pimcore\Tests\Support\Test\TestCase;
+use TypeError;
 
 class SnapshotBuilderTest extends TestCase
 {
@@ -74,6 +75,36 @@ class SnapshotBuilderTest extends TestCase
         $snapshot = (new SnapshotBuilder([], new StatementCounter($connection)))->build();
 
         $this->assertSame(10, $snapshot['meta.db_statements']);
+    }
+
+    /**
+     * Collectors are a public extension point, and Maintenance\Executor only catches Exception - so
+     * an Error escaping a collector would abort the whole maintenance run, not just telemetry. The
+     * builder is the isolation boundary: a broken collector is logged and skipped, the healthy ones
+     * still report.
+     */
+    public function testOneFailingCollectorDoesNotLoseTheOthers(): void
+    {
+        $exploding = new class implements SnapshotCollectorInterface {
+            public function getNamespace(): string
+            {
+                return 'boom';
+            }
+
+            public function collect(): array
+            {
+                throw new TypeError('a defect inside a third-party collector');
+            }
+        };
+
+        $snapshot = (new SnapshotBuilder([
+            $exploding,
+            $this->collector('core', ['php_version' => '8.4.0']),
+        ]))->build();
+
+        $this->assertSame('8.4.0', $snapshot['core.php_version'], 'healthy collectors must still report');
+        $this->assertArrayNotHasKey('boom.anything', $snapshot);
+        $this->assertArrayHasKey('meta.duration_ms', $snapshot, 'the snapshot itself must still complete');
     }
 
     public function testDbStatementsIsOmittedWhenTheCounterIsUnavailable(): void
