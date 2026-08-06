@@ -824,14 +824,20 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Accepts an additional optional argument `array $parameters = []` (read via func_get_arg())
+     * with custom arguments that are passed on to the versioning events. It will become a regular
+     * method parameter in the next major version.
+     *
      * @param string|null $versionNote version note
      *
      * @throws Exception
      */
-    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null, array $parameters = []): ?Version
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null /* , array $parameters = [] */): ?Version
     {
+        $parameters = 4 <= func_num_args() ? (array) func_get_arg(3) : [];
         $coreParameters = ['saveVersionOnly' => true];
         $eventParameters = array_merge($parameters, $coreParameters);
+
         try {
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {

@@ -19,6 +19,7 @@
 
 ### [Assets]
 - [Thumbnails] The cache lifetime used for the `Cache-Control` and `Expires` HTTP headers when a thumbnail is delivered on-the-fly through the thumbnail service is now configurable via `pimcore.assets.thumbnails.cache_lifetime` (in seconds). It defaults to `604800` (one week), which preserves the previous hard-coded behavior.
+- Added a new optional `$parameters` argument to `Asset::saveVersion()` to allow passing custom arguments to the `PRE_UPDATE` / `POST_UPDATE` / `POST_UPDATE_FAILURE` versioning events, analogous to `Concrete::saveVersion()`. To stay backwards-compatible for classes overriding `saveVersion()`, the argument is documented in the docblock but not yet part of the method signature (it is read via `func_get_arg()`); it will become a regular signature parameter in the next major version.
 
 ### [DataObject]
 - [Relations] The `ownername` column has been widened from `VARCHAR(70)` to `VARCHAR(190)` in the per-class relation tables (`object_relations_*`), the advanced-relation metadata tables (`object_metadata_*`) and `object_url_slugs`. The generated `ownername` for a localized field nested inside an object brick or field collection (e.g. `/objectbrick~<field>/<brickKey>/localizedfield~localizedfield`) can exceed 70 characters, which caused "Data too long for column 'ownername'" on save under strict SQL mode. Existing installations are updated automatically by the migration `Version20260721000000`; no code or configuration changes are required.
