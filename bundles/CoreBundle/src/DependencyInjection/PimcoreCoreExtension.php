@@ -28,7 +28,9 @@ use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
 use Pimcore\Model\Factory;
+use Pimcore\Telemetry\Snapshot\SnapshotCollectorInterface;
 use Pimcore\Telemetry\TelemetrySettings;
+use Pimcore\Telemetry\Usage\BundleUsageProviderInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -108,6 +110,15 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.telemetry.spool.cap', TelemetrySettings::SPOOL_CAP);
         $container->setParameter('pimcore.telemetry.spool.ttl_days', TelemetrySettings::SPOOL_TTL_DAYS);
         $container->setParameter('pimcore.telemetry.spool.lease_seconds', TelemetrySettings::SPOOL_LEASE_SECONDS);
+
+        // Registered here rather than via `_instanceof` in services.yaml: `_instanceof` only applies
+        // to services defined in that same file, so a collector or usage provider shipped by another
+        // bundle would never be tagged. These are the telemetry extension points, so they have to be
+        // autoconfigured container-wide.
+        $container->registerForAutoconfiguration(SnapshotCollectorInterface::class)
+            ->addTag('pimcore.telemetry.snapshot_collector');
+        $container->registerForAutoconfiguration(BundleUsageProviderInterface::class)
+            ->addTag('pimcore.telemetry.bundle_usage_provider');
 
         // set default domain for router to main domain if configured
         // this will be overridden from the request in web context but is handy for CLI scripts

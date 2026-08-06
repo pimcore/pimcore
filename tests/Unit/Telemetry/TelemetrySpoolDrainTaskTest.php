@@ -49,8 +49,9 @@ class TelemetrySpoolDrainTaskTest extends TestCase
     public function testNoOpWhenOutboxNotReadyOrRelayNotConfigured(): void
     {
         $notReady = $this->outbox([$this->batch('n1', 'c1')], ready: false);
-        (new TelemetrySpoolDrainTask($notReady, $this->relay()))->execute();
-        $this->assertCount(0, $this->relay()->sent);
+        $relay = $this->relay();
+        (new TelemetrySpoolDrainTask($notReady, $relay))->execute();
+        $this->assertCount(0, $relay->sent, 'a not-ready outbox must not send anything');
         $this->assertSame([], $notReady->acked);
 
         $outbox = $this->outbox([$this->batch('n1', 'c1')]);

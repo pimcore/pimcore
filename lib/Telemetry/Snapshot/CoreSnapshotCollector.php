@@ -55,7 +55,8 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
 
     public function collect(): array
     {
-        $bundles = $this->activeBundles->names();
+        // Only first-party bundles are named; customer/agency bundles are counted (see ActiveBundles).
+        $bundles = $this->activeBundles->firstPartyNames();
 
         return [
             'pimcore_version' => Version::getVersion(),
@@ -65,8 +66,9 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
             'mysql_version' => $this->getMysqlVersion(),
             'mode' => $this->mode(),
             'language_count' => count(Tool::getValidLanguages()),
-            'active_bundle_count' => count($bundles),
+            'active_bundle_count' => $this->activeBundles->count(),
             'bundles' => $bundles,
+            'third_party_bundle_count' => $this->activeBundles->thirdPartyCount(),
             'dataobject_class_count_bucket' => $this->bucketizer->bucket($this->countTable('classes')),
             'object_count_bucket' => $this->bucketizer->bucket($this->countTable('objects')),
             'asset_count_bucket' => $this->bucketizer->bucket($this->countTable('assets')),

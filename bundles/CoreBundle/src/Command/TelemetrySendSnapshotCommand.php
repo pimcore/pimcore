@@ -29,7 +29,7 @@ use function json_encode;
  */
 #[AsCommand(
     name: 'pimcore:telemetry:send-snapshot',
-    description: 'Build the anonymized telemetry snapshot and send it to PostHog (server-side)',
+    description: 'Build the deployment snapshot and enqueue it for delivery to the telemetry relay',
 )]
 class TelemetrySendSnapshotCommand extends AbstractCommand
 {
@@ -67,7 +67,10 @@ class TelemetrySendSnapshotCommand extends AbstractCommand
         }
 
         if (!$this->telemetry->isEnabled()) {
-            $this->io->warning('Telemetry is disabled (opt-out or missing endpoint). Nothing was sent.');
+            $this->io->warning(
+                'Telemetry is inactive: this instance needs both an instance identifier '
+                . '(PIMCORE_INSTANCE_IDENTIFIER) and a product key (PIMCORE_PRODUCT_KEY). Nothing was enqueued.'
+            );
 
             return self::SUCCESS;
         }

@@ -19,9 +19,10 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Create the `telemetry_spool` durable outbox table used by server-side product telemetry.
  *
- * The table is also created lazily at runtime (CREATE TABLE IF NOT EXISTS) so telemetry works before
- * this migration runs; the statements here are idempotent (IF NOT EXISTS) and simply make the schema
- * an explicit, versioned artifact for clean installs.
+ * The table is never created at runtime: new installs get it from the installer dump
+ * (`bundles/InstallBundle/dump/install.sql`) and existing installs from this migration, so telemetry
+ * is inert until one of those has run. The statements are idempotent, and the guarded ALTER covers
+ * instances created before the `attempts` column existed.
  */
 final class Version20260720120000 extends AbstractMigration
 {

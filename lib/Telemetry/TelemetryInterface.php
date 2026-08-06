@@ -48,8 +48,9 @@ interface TelemetryInterface
     public function groupIdentify(string $type, string $key, array $properties): void;
 
     /**
-     * Send the buffered events to the relay as a single batch. Call this before the
-     * process exits (CLI/maintenance).
+     * Persist the buffered events to the durable outbox. This does NOT contact the relay - a
+     * drainer (the maintenance job or the Studio UI) delivers them later. Call it before the
+     * process exits (CLI/maintenance) so nothing buffered in memory is lost.
      */
     public function flush(): void;
 }

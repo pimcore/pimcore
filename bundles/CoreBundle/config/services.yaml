@@ -3,13 +3,9 @@ services:
         autowire: true
         autoconfigure: true
 
-    # any service implementing the contributor interface is auto-tagged, so other
-    # bundles only need to register their contributor - no CoreBundle changes required
-    _instanceof:
-        Pimcore\Telemetry\Snapshot\SnapshotCollectorInterface:
-            tags: ['pimcore.telemetry.snapshot_collector']
-        Pimcore\Telemetry\Usage\BundleUsageProviderInterface:
-            tags: ['pimcore.telemetry.bundle_usage_provider']
+    # NOTE: the telemetry contributor interfaces are autoconfigured container-wide in
+    # PimcoreCoreExtension, not with `_instanceof` here - `_instanceof` would only tag services
+    # defined in this file, leaving collectors shipped by other bundles undiscovered.
 
     #
     # SECURITY
