@@ -117,10 +117,6 @@ final readonly class DataModelComplexityCollector implements SnapshotCollectorIn
         }
 
         foreach ($classes as $class) {
-            if (!$class instanceof ClassDefinition) {
-                continue;
-            }
-
             try {
                 $fields = $class->getFieldDefinitions(['suppressEnrichment' => true]);
             } catch (Throwable) {
