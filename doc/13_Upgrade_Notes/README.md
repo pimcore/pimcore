@@ -19,6 +19,7 @@
 
 ### [Assets]
 - [Thumbnails] The cache lifetime used for the `Cache-Control` and `Expires` HTTP headers when a thumbnail is delivered on-the-fly through the thumbnail service is now configurable via `pimcore.assets.thumbnails.cache_lifetime` (in seconds). It defaults to `604800` (one week), which preserves the previous hard-coded behavior.
+- Added a new optional `$parameters` argument to `Asset::saveVersion()` to allow passing custom arguments to the `PRE_UPDATE` / `POST_UPDATE` / `POST_UPDATE_FAILURE` versioning events, analogous to `Concrete::saveVersion()`. To stay backwards-compatible for classes overriding `saveVersion()`, the argument is documented in the docblock but not yet part of the method signature (it is read via `func_get_arg()`); it will become a regular signature parameter in the next major version.
 
 ### [Documents]
 - [Renderlets] Custom renderlet configuration parameters are now passed to renderlet controllers as query parameters. Accessing these custom parameters via request attributes is deprecated and will be removed in Pimcore 2027. Update custom renderlet controllers from `$request->attributes->get('myParam')` to `$request->query->get('myParam')`.
