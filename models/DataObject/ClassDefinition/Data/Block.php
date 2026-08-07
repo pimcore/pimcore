@@ -170,7 +170,18 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 }, $data);
             }
 
-            $unserializedData = Serialize::unserialize($data, false);
+            // A block's resource blob legitimately contains PHP objects, so object deserialization
+            // must stay enabled here. Child values are written by getDataForResource() through the
+            // per-fieldtype block marshallers, several of which rebuild a value object before
+            // serializing (externalImage, consent, date/datetime, structuredTable), while types
+            // without a marshaller store their raw normalize() output, which can keep objects too
+            // (hotspotimage/imageGallery -> MarkerHotspotItem, dateRange -> Carbon). The set is not
+            // enumerable: bundles may register further block marshallers and field definitions.
+            // Restricting this to `false` silently dropped those values to null and corrupted
+            // hotspot metadata - see pimcore/platform-version#262.
+            // Tightening this is tracked in pimcore/internal-improvements#24 and needs the write
+            // side to stop storing live objects first.
+            $unserializedData = Serialize::unserialize($data, true);
             $result = [];
 
             foreach ($unserializedData as $blockElements) {
