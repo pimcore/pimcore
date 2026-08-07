@@ -38,6 +38,7 @@ use Pimcore\Model\Document\Editable\Video;
 use Pimcore\Model\Document\Editable\Wysiwyg;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
+use Pimcore\Model\Element\Data\MarkerHotspotItem;
 use Pimcore\Tests\Support\Helper\AbstractTestDataHelper;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -114,6 +115,25 @@ class TestDataHelper extends AbstractTestDataHelper
 
         $expectedImage = $params['asset'];
         $this->assertEquals($expectedImage->getId(), $value->getId());
+
+        // Regression guard for pimcore/platform-version#298: hotspot/marker metadata is persisted
+        // as MarkerHotspotItem objects inside the editable's serialized data. A restricted
+        // unserialize() turned them into __PHP_Incomplete_Class, which then made
+        // Image::getCacheTags() fatal on `$metaData['value']`.
+        foreach (['hotspots' => $editable->getHotspots(), 'marker' => $editable->getMarker()] as $what => $entries) {
+            $this->assertNotEmpty($entries, sprintf('expected %s to be persisted', $what));
+            $metaData = $entries[0]['data'][0];
+            $this->assertInstanceOf(
+                MarkerHotspotItem::class,
+                $metaData,
+                sprintf('%s metadata must survive the editable resource unserialize()', $what)
+            );
+            $this->assertSame($what . 'MetaName' . $seed, $metaData['name']);
+            $this->assertSame($what . 'MetaValue' . $seed, $metaData['value']);
+        }
+
+        // Exercises the frame that actually crashed in #298.
+        $editable->getCacheTags($pagesnippet, []);
     }
 
     public function assertInput(PageSnippet $pagesnippet, string $field, int $seed = 1): void
@@ -409,7 +429,29 @@ class TestDataHelper extends AbstractTestDataHelper
         $asset = TestHelper::createImageAsset();
         $editable = new Image();
         $editable->setName($field);
-        $editable->setDataFromEditmode(['id' => $asset->getId()]);
+        // Hotspot and marker metadata is what makes this editable store PHP objects
+        // (MarkerHotspotItem) in its resource blob - see assertImage().
+        $editable->setDataFromEditmode([
+            'id' => $asset->getId(),
+            'hotspots' => [
+                [
+                    'name' => 'hotspot' . $seed,
+                    'top' => 10, 'left' => 20, 'width' => 30, 'height' => 40,
+                    'data' => [
+                        ['name' => 'hotspotsMetaName' . $seed, 'type' => 'text', 'value' => 'hotspotsMetaValue' . $seed],
+                    ],
+                ],
+            ],
+            'marker' => [
+                [
+                    'name' => 'marker' . $seed,
+                    'top' => 50, 'left' => 60,
+                    'data' => [
+                        ['name' => 'markerMetaName' . $seed, 'type' => 'text', 'value' => 'markerMetaValue' . $seed],
+                    ],
+                ],
+            ],
+        ]);
         $returnData = [
             'asset' => $asset,
         ];
