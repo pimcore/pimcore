@@ -1,5 +1,71 @@
 # Upgrade Notes
 
+## Pimcore 2026.3.0
+
+### [General]
+- [Composer] Bumped minimum requirements of `scheb/2fa-bundle` and `scheb/2fa-google-authenticator` to `8.6.1` and of `phpdocumentor/reflection-docblock` to `5.6.7` (5.x line) / `6.0.3` (6.x line). These are floor raises within the majors already required since 2026.1.0 and carry no BC impact of their own (see the 2026.1.0 notes below for the major-version upgrade guidance).
+
+### [Console]
+- [Commands] `pimcore:bundle:install` and `pimcore:bundle:uninstall` now provide shell completion for the `bundle` argument, suggesting the names of the active Pimcore bundles (bundles loaded by the kernel; registered-but-disabled bundles are not included). Completion requires a one-time setup for your shell — see [Console Completion](../08_Development_Details/09_CLI_and_Pimcore_Console.md#console-completion).
+- [Commands] The `pimcore:bundle:*` commands were refactored to the `#[AsCommand]` attribute. The `@internal` `AbstractBundleCommand` changed accordingly: `buildName()` was removed and `configureDescriptionAndHelp()` was replaced by `configureBundleHelp()`, which derives the help text from the attribute description; `completeBundleArgument()` was added. The `@internal` helper `Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange` is now a `readonly` class; a subclass must itself be declared `readonly`.
+- [Commands] The table output of `pimcore:bundle:list` uses the narrow `I?` / `UI?` column headers (with an explaining legend) again instead of `Installable` / `Uninstallable`. The `--json` output is unchanged and keeps the full key names.
+
+### [Maintenance]
+- [DataObjects] The `cleanupBrickTables` and `cleanupFieldcollectionTables` maintenance tasks now **drop orphaned `object_brick_*` / `object_collection_*` tables** (including their data) when no existing brick/fieldcollection definition owns them - previously such tables were only reported as an error on every maintenance run. This affects installations where definitions were removed on the filesystem (e.g. by deleting `var/classes/*.php` files during a deployment) instead of through the regular delete path. A table is only dropped when no candidate parse of its name resolves to a live definition, and the tasks do nothing when the class definition directory itself is unavailable; still, make sure the definitions in `var/classes/` are in sync with your database before running maintenance. See [Cleanup Data Storage](../11_Deployment_Recommendations/04_Cleanup_Data_Storage.md).
+- The `@internal` `Pimcore\Maintenance\Tasks\DataObject\DataObjectTaskHelperInterface` changed: `getCollectionNames(string $dir)` was replaced by `getObjectBrickCollectionNames()` / `getFieldcollectionCollectionNames()`, and `matchCollectionKeys()`, `dropOrphanedTable()` were added; `cleanupTable()` now returns `bool`.
+
+### [GenericExecutionEngine]
+- [JobRun] Log entries stored in the `generic_execution_engine_job_run.log` column are now delimited by a short versioned frame (a version token wrapped in ASCII record separators, `0x1E`) instead of a newline, so a newline that belongs to a single (multi-line) log message is no longer mistaken for an entry boundary. The version token is framed rather than using a bare `0x1E` so that legacy payloads, which were stored verbatim and may already contain a stray `0x1E`, are never split on such a byte. Logs written in the previous newline-delimited format are still read on a best-effort basis, so no migration is required. The parsing of the column has moved from `JobRun::getLogs()` into the new `@internal` `Pimcore\Bundle\GenericExecutionEngineBundle\Utils\LogParser`, and the `@internal` value object `LogLine` now takes the timestamp and message as separate constructor arguments and no longer exposes `appendLogLine()`.
+
+### [Assets]
+- [Thumbnails] The cache lifetime used for the `Cache-Control` and `Expires` HTTP headers when a thumbnail is delivered on-the-fly through the thumbnail service is now configurable via `pimcore.assets.thumbnails.cache_lifetime` (in seconds). It defaults to `604800` (one week), which preserves the previous hard-coded behavior.
+- Added a new optional `$parameters` argument to `Asset::saveVersion()` to allow passing custom arguments to the `PRE_UPDATE` / `POST_UPDATE` / `POST_UPDATE_FAILURE` versioning events, analogous to `Concrete::saveVersion()`. To stay backwards-compatible for classes overriding `saveVersion()`, the argument is documented in the docblock but not yet part of the method signature (it is read via `func_get_arg()`); it will become a regular signature parameter in the next major version.
+
+### [Documents]
+- [Renderlets] Custom renderlet configuration parameters are now passed to renderlet controllers as query parameters. Accessing these custom parameters via request attributes is deprecated and will be removed in Pimcore 2027. Update custom renderlet controllers from `$request->attributes->get('myParam')` to `$request->query->get('myParam')`.
+
+### [DataObject]
+- [Relations] The `ownername` column has been widened from `VARCHAR(70)` to `VARCHAR(190)` in the per-class relation tables (`object_relations_*`), the advanced-relation metadata tables (`object_metadata_*`) and `object_url_slugs`. The generated `ownername` for a localized field nested inside an object brick or field collection (e.g. `/objectbrick~<field>/<brickKey>/localizedfield~localizedfield`) can exceed 70 characters, which caused "Data too long for column 'ownername'" on save under strict SQL mode. Existing installations are updated automatically by the migration `Version20260721000000`; no code or configuration changes are required.
+
+### [Database]
+- Several columns using the deprecated, ambiguous `utf8`/`utf8_bin`/`utf8_general_ci` charset/collation names have been modernized in `install.sql`: `lock_keys`, `assets_image_thumbnail_cache.filename`, `search_backend_data.key`, `tags.name`, `properties.cpath` and `users_workspaces_asset/document/object.cpath` now use real `utf8mb4`. `assets.filename`/`path` and `documents.key`/`path` move to the explicit `utf8mb3` name instead (their composite `fullpath` index already uses the full 3072-byte InnoDB index-prefix budget at 3 bytes/char and would overflow it at 4 bytes/char) - note MySQL has deprecated `utf8mb3` itself too, so this remains a known limitation pending a future index/schema redesign, not a fully modernized state. Existing installations are updated automatically by the migration `Version20260729120000`; no code or configuration changes are required.
+  - This migration only touches a column when its current collation and length still match the stock legacy definition; a column a project has already widened or otherwise customized is left untouched (a notice is logged) instead of being silently reset.
+  - The migration is **irreversible** (`down()` throws) — reverting `utf8mb4` columns back to `utf8`/`utf8mb3` could silently replace stored 4-byte characters (e.g. emoji) with `?` given this application's intentionally permissive `sql_mode=''`. Restore from a backup if you need to roll back.
+  - The `ALTER TABLE`/`CONVERT TO CHARACTER SET` statements rewrite the affected columns' storage and typically run as full table rebuilds, which can take time and hold locks on `assets`, `documents`, `objects` and `properties` on large installations — plan to run this migration during a maintenance window on such installs.
+
+
+## Pimcore 2026.2.0
+
+### [General]
+- [Assets][Thumbnails][CDN] New core events for thumbnail-config lifecycle were introduced to support CDN purge integration:
+    - `Pimcore\Event\ImageThumbnailConfigEvents::POST_UPDATE` and `POST_DELETE`
+    - `Pimcore\Event\VideoThumbnailConfigEvents::POST_UPDATE` and `POST_DELETE`
+    - Payload classes: `Pimcore\Event\Model\Asset\Image\Thumbnail\ConfigEvent` and `Pimcore\Event\Model\Asset\Video\Thumbnail\ConfigEvent` (both expose `getConfig(): Config`).
+    - The events are dispatched from `Asset\Image\Thumbnail\Config\Dao::save()/delete()` and `Asset\Video\Thumbnail\Config\Dao::save()/delete()` after the underlying settings store and cache writes succeed. They fire on every save/delete path, including admin UI, API and programmatic changes (the magic `__call` delegation also routes through the Dao). Subscribers can use them to react to thumbnail-pipeline changes — Pimcore's bundled `CdnPurgeListener` uses them to dispatch `thumb-{configName}` CDN purges.
+
+- [Composer] Bumped minimum requirement of `friendsofsymfony/jsrouting-bundle` to `3.6.0`.
+
+### [Maintenance Mode]
+- The legacy file-based maintenance mode backward-compatibility layer has been fully removed. The following deprecated static methods have been deleted from `Pimcore\Tool\Admin`:
+    - `getMaintenanceModeFile()`
+    - `getMaintenanceModeScheduleLoginFile()`
+    - `activateMaintenanceMode()`
+    - `deactivateMaintenanceMode()`
+    - `isInMaintenanceMode()`
+    - `isMaintenanceModeScheduledForLogin()`
+    - `scheduleMaintenanceModeOnLogin()`
+    - `unscheduleMaintenanceModeOnLogin()`
+
+  If you are still using any of these methods, replace them with the `Pimcore\Maintenance\Mode\MaintenanceModeHelperInterface` service. Inject it via the service container and use `activate()`, `deactivate()`, and `isActive()` instead.
+
+- The BC fallback that read the legacy `maintenance.php` configuration file has also been removed from `MaintenanceModeCommand`, `MaintenancePageListener`, `Bootstrap`, and `Console\Application`. Any existing `var/config/maintenance.php` file will be ignored. Ensure maintenance mode is managed exclusively through `MaintenanceModeHelperInterface`.
+
+- `Admin::getMinimizedScriptPath()` has been removed from `Pimcore\Tool\Admin`.
+
+### [Translations]
+- `Translation::DOMAIN_ADMIN` constant is deprecated since 2026.2 and will be removed in a future release. Avoid referencing the `admin` translation domain directly.
+- `Translator::$adminPath` and `Translator::$adminTranslationMapping` properties are deprecated since 2026.2.
+
 ## Pimcore 2026.1.0
 
 ### Tasks to Do Prior the Update
@@ -53,6 +119,19 @@ ORDER BY TABLE_NAME, COLUMN_NAME;
 - Added support for PHP `8.5` and bumped minimum requirement of Symfony to `7.4`.
 - Dropped support for PHP `8.3` and Symfony `6`.
 - [QuantityValue] Introduced foreign key constraints on `__unit` columns in object store, query, localized, objectbrick and fieldcollection tables for `QuantityValue`, `InputQuantityValue` and `QuantityValueRange` fields. These constraints reference `quantityvalue_units(id)` with `ON DELETE SET NULL` and `ON UPDATE CASCADE`, ensuring referential integrity. The migration automatically cleans up orphaned unit references (setting them to `NULL`) and changes the `__unit` column type from `varchar(64)` to `varchar(50)` to match the referenced `quantityvalue_units.id` column. If you have custom unit IDs longer than 50 characters, they will be truncated.
+
+#### Composer Dependency Majors: `scheb/2fa` 8.x and `phpdocumentor/reflection-docblock` 6.x
+
+- [Composer] The constraint for `scheb/2fa-bundle` and `scheb/2fa-google-authenticator` has been raised from `^6.0 || ^7.5` to `^8.4`. Projects still on scheb/2fa 6.x/7.x are forced onto 8.x when upgrading. Pimcore's own integration (`Pimcore\Security\User\User`, the `scheb_two_factor.security.google_authenticator` service and the admin 2FA flow) is fully compatible — no action is needed for standard setups. Review the following if your project extends 2FA (see also the [official upgrade guide](https://github.com/scheb/2fa/blob/8.x/UPGRADE.md)):
+    - The priority of the two-factor authenticator has changed from `0` to `-100`. If you register custom security authenticators on a 2FA-protected firewall and rely on their order relative to the two-factor authenticator, re-check and adjust their priority.
+    - With Symfony 7.4, passing an associative options array to the `UserTotpCode` and `UserGoogleTotpCode` validator constraints is deprecated; Symfony 8 no longer accepts it. Pass named constructor arguments instead (e.g. `new UserTotpCode(message: '...')`).
+    - `getGoogleAuthenticatorUsername()` and `getTotpAuthenticationUsername()` on the scheb model interfaces may now return `null`; code consuming these values should handle it.
+    - scheb/2fa 8.x requires PHP >= 8.4, which matches Pimcore's platform requirement, and pulls in `spomky-labs/otphp` 11.x transitively.
+- [Composer] The constraint for `phpdocumentor/reflection-docblock` has been widened from `^5.2` to `^5.6 || ^6.0`, so a `composer update` may resolve to 6.x. Pimcore does not use this library directly (it is a transitive dependency of the Symfony PropertyInfo/Serializer components, which support 6.x), so no action is needed unless your own code parses docblocks with it. In that case, note for 6.x (see the [upgrade guide](https://docs.phpdoc.org/components/reflection-docblock/guides/upgrade-to-v6.html)):
+    - The static `::create()` factory methods on tag classes (e.g. `Param::create()`, `Method::create()`) have been removed; create tags through `StandardTagFactory::createInstance()` instead. `StandardTagFactory` can no longer be instantiated directly with `new`.
+    - `Method::getArguments()` has been removed.
+    - `phpdocumentor/type-resolver` is bumped to 2.0, which replaces the legacy `Collection` type handling with real generics support (e.g. `Collection<MyClass>`).
+    - If your project is not ready for 6.x, you can keep the 5.x line by requiring `"phpdocumentor/reflection-docblock": "^5.6"` in your project's `composer.json`.
 
 #### Removed deprecated and discontinued bundles
 The following bundles have been removed:
@@ -189,6 +268,12 @@ Install profiles can implement additional interfaces for advanced control:
 - `InstallStepFilterInterface` — skip specific install steps (useful for PaaS environments)
 - `PostInstallHookInterface` — run custom PHP code near the end of phase 2, before finalization steps such as cache clearing and install marker cleanup
 - `DataSourceInterface` — import SQL dumps or other data during installation
+
+### Doctrine `enum` Mapping Type Removed
+
+The `enum: string` Doctrine mapping type is no longer registered; only the `bit: boolean` mapping remains. The minimum `doctrine/dbal` requirement was raised to `^4.4`, where the explicit `enum` mapping is no longer needed.
+
+**Action required for existing installations:** Please check your Doctrine configuration for any registered mapping types and remove the `enum: string` mapping if it is present.
 
 ### [OpenSearch / Elasticsearch DSN Configuration]
 

@@ -20,6 +20,8 @@ use Pimcore\Model\DataObject;
 /**
  * @method DataObject\Listing\Concrete\Dao getDao()
  * @method DataObject\Concrete[] load()
+ * @method DataObject\Concrete[] getData()
+ * @method DataObject\Concrete[] getObjects()
  * @method DataObject\Concrete|false current()
  */
 abstract class Concrete extends Model\DataObject\Listing
@@ -132,7 +134,11 @@ abstract class Concrete extends Model\DataObject\Listing
             throw new Exception('No fieldcollectiontype given');
         }
 
-        DataObject\Fieldcollection\Definition::getByKey($type);
+        $definition = DataObject\Fieldcollection\Definition::getByKey($type);
+        if (!$definition instanceof DataObject\Fieldcollection\Definition) {
+            throw new Exception('Unknown fieldcollection type: ' . $type);
+        }
+
         $this->fieldCollectionConfigs[] = ['type' => $type, 'fieldname' => $fieldname];
     }
 

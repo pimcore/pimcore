@@ -323,26 +323,20 @@ class Dao extends Model\Element\Dao
             return false;
         }
 
-        $query = 'SELECT `a`.`id` FROM `assets` a  WHERE parentId = ? ';
+        $query = 'SELECT o.id FROM assets o WHERE parentId = :parentId';
+        $params = ['parentId' => $this->model->getId()];
+        $types = [];
 
         if ($user && !$user->isAdmin()) {
-            $userIds = $user->getRoles();
-            $currentUserId = $user->getId();
-            $userIds[] = $currentUserId;
-
-            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
-
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(`path`,filename),cpath)=1 AND
-                NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
-
-            $query .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+            [$condition, $permissionParams, $permissionTypes] = $this->buildChildListPermissionCondition($user, 'asset', 'filename');
+            $query .= ' AND ' . $condition;
+            $params += $permissionParams;
+            $types += $permissionTypes;
         }
 
-        $query .= ' LIMIT 1;';
-        $c = $this->db->fetchOne($query, [$this->model->getId()]);
+        $query .= ' LIMIT 1';
 
-        return (bool)$c;
+        return (bool) $this->db->fetchOne($query, $params, $types);
     }
 
     /**
@@ -378,23 +372,18 @@ class Dao extends Model\Element\Dao
             return 0;
         }
 
-        $query = 'SELECT COUNT(*) AS count FROM assets WHERE parentId = ?';
+        $query = 'SELECT COUNT(*) AS count FROM assets o WHERE parentId = :parentId';
+        $params = ['parentId' => $this->model->getId()];
+        $types = [];
 
         if ($user && !$user->isAdmin()) {
-            $userIds = $user->getRoles();
-            $currentUserId = $user->getId();
-            $userIds[] = $currentUserId;
-
-            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
-
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(`path`,filename),cpath)=1 AND
-                NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
-
-            $query .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+            [$condition, $permissionParams, $permissionTypes] = $this->buildChildListPermissionCondition($user, 'asset', 'filename');
+            $query .= ' AND ' . $condition;
+            $params += $permissionParams;
+            $types += $permissionTypes;
         }
 
-        return (int) $this->db->fetchOne($query, [$this->model->getId()]);
+        return (int) $this->db->fetchOne($query, $params, $types);
     }
 
     public function isLocked(): bool
@@ -555,6 +544,29 @@ class Dao extends Model\Element\Dao
         $hash = $name . $filename;
 
         return self::$thumbnailStatusCache[$assetId][$hash] ?? null;
+    }
+
+    public function moveThumbnailCache(string $name, string $sourceFilename, string $targetFilename): void
+    {
+        if ($sourceFilename === $targetFilename) {
+            return;
+        }
+
+        $cachedThumbnail = $this->getCachedThumbnail($name, $sourceFilename);
+        if (!$cachedThumbnail) {
+            return;
+        }
+
+        $cachedThumbnail['filename'] = $targetFilename;
+        Helper::upsert($this->db, 'assets_image_thumbnail_cache', $cachedThumbnail, $this->getPrimaryKey('assets_image_thumbnail_cache'));
+
+        $this->db->delete('assets_image_thumbnail_cache', [
+            'cid' => $this->model->getId(),
+            'name' => $name,
+            'filename' => $sourceFilename,
+        ]);
+
+        unset(self::$thumbnailStatusCache[$this->model->getId()]);
     }
 
     public function deleteFromThumbnailCache(?string $name = null, ?string $filename = null): void

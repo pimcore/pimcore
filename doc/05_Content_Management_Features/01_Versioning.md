@@ -130,6 +130,55 @@ For bulk operations like imports or third-party synchronizations, disable versio
 
 This only affects the current PHP process. The setting is not persisted and does not affect other requests.
 
+## Coauthor Information
+
+In addition to the user, every version can carry an optional coauthor: a second, machine-readable attribution
+for saves that a system performed together with the user, for example an AI agent acting on the user's behalf.
+
+A coauthor consists of two fields, both stored on the version:
+
+| Field | Meaning | Example |
+|---|---|---|
+| `coauthorType` | Short machine string categorizing the coauthor | `agent` |
+| `coauthor` | Free-form identifier of the coauthor | `product-data-agent` |
+
+Versions without a coauthor store `null` in both fields. The Versions tab in Pimcore Studio shows a
+"Co-authored by" tag on stamped versions.
+
+### Setting a Coauthor
+
+The coauthor context is a container service (`Pimcore\Model\Version\CoauthorContextInterface`). While the
+context is active, every newly created version is stamped automatically:
+
+```php
+$coauthorContext = \Pimcore::getContainer()->get(\Pimcore\Model\Version\CoauthorContextInterface::class);
+
+// stamp a single save
+$coauthorContext->withCoauthor('automation', 'my-importer', fn () => $object->save());
+
+// or stamp everything until clear() is called
+try {
+    $coauthorContext->set('automation', 'my-importer');
+    $object->save();
+    $anotherObject->save();
+} finally {
+    $coauthorContext->clear();
+}
+```
+
+In services, inject `CoauthorContextInterface` instead of accessing the container directly.
+
+Setting the coauthor explicitly via `$version->setCoauthorType()` / `$version->setCoauthor()` always wins over
+the context. Only newly created versions are stamped; re-saving an existing version never changes its coauthor.
+
+### Disable Coauthor Stamping for the Current Process
+
+```php
+$coauthorContext->disable(); // suppress stamping, the context values are kept
+$coauthorContext->enable();  // resume stamping
+```
+
+This only affects the current PHP process, analogous to `Version::disable()` above.
 
 ## Working with the PHP API
 

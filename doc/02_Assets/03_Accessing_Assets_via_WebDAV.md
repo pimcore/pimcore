@@ -13,7 +13,7 @@ Use any Pimcore user as credentials. Permissions for asset access are based on t
 ## Nginx Configuration
 
 Make sure to have the following changes in your project
-[Nginx configuration](https://github.com/pimcore/platform-version/blob/2026.x/doc/03_Getting_Started/01_Installation/02_System_Setup_and_Hosting/02_Nginx_Configuration.md):
+[Nginx configuration](https://github.com/pimcore/skeleton/blob/2026.x/.docker/nginx.conf):
 
 ```nginx
 location ~* ^(?!/admin|/asset/webdav)(.+?)\.(?:css|js|jpg|jpeg|gif|png|svg|ico|woff|woff2|xml)$ {

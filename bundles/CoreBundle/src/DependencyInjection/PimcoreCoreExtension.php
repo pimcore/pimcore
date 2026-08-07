@@ -18,6 +18,9 @@ use Monolog\Level;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Bundle\InstallBundle\Installer;
+use Pimcore\Cdn\AssetWebPath;
+use Pimcore\Controller\Config\Template\BundleTemplateProvider;
+use Pimcore\Controller\Config\Template\ProjectTemplateProvider;
 use Pimcore\Extension\Document\Areabrick\Attribute\AsAreabrick;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
@@ -25,6 +28,9 @@ use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
 use Pimcore\Model\Factory;
+use Pimcore\Telemetry\Snapshot\SnapshotCollectorInterface;
+use Pimcore\Telemetry\TelemetrySettings;
+use Pimcore\Telemetry\Usage\BundleUsageProviderInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -63,6 +69,10 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
         }
 
+        $container->setParameter('pimcore.tmp_store.unserialize_allowed_classes', $config['tmp_store']['unserialize_allowed_classes']);
+
+        $container->setParameter('pimcore.security.session_token_allowed_classes', $config['security']['session_token_allowed_classes']);
+
         $container->setParameter('pimcore.translations.admin_translation_mapping', $config['translations']['admin_translation_mapping']);
 
         $container->setParameter('pimcore.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
@@ -72,15 +82,43 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
 
+        // object cache write handling (see Pimcore\Cache\Core\CoreCacheHandler)
+        $container->setParameter('pimcore.cache.max_write_items', $config['cache']['max_write_items']);
+        $container->setParameter('pimcore.cache.handle_cli', $config['cache']['handle_cli']);
+
         //twig security policy allowlist config
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.tags', $config['templating_engine']['twig']['sandbox_security_policy']['tags']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.filters', $config['templating_engine']['twig']['sandbox_security_policy']['filters']);
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.functions', $config['templating_engine']['twig']['sandbox_security_policy']['functions']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.blocked_classes', $config['templating_engine']['twig']['sandbox_security_policy']['blocked_classes']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.allowed_classes', $config['templating_engine']['twig']['sandbox_security_policy']['allowed_classes']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.blocked_functions', $config['templating_engine']['twig']['sandbox_security_policy']['blocked_functions']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.hard_blocked_methods', $config['templating_engine']['twig']['sandbox_security_policy']['hard_blocked_methods']);
 
         // register pimcore config on container
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?
         $container->setParameter('pimcore.config', $config);
+
+        // telemetry - deliberately not configurable (see TelemetrySettings): the relay is a
+        // first-party service at a known address, and cadence/outbox bounds must behave identically
+        // everywhere. Published as parameters so each service keeps one seam tests can drive.
+        // Reporting is gated by the instance identifier + product key, not by a setting.
+        $container->setParameter('pimcore.telemetry.relay_endpoint', TelemetrySettings::RELAY_ENDPOINT);
+        $container->setParameter('pimcore.telemetry.snapshot_interval_seconds', TelemetrySettings::SNAPSHOT_INTERVAL_SECONDS);
+        $container->setParameter('pimcore.telemetry.snapshot_query_timeout_seconds', TelemetrySettings::SNAPSHOT_QUERY_TIMEOUT_SECONDS);
+        $container->setParameter('pimcore.telemetry.spool.cap', TelemetrySettings::SPOOL_CAP);
+        $container->setParameter('pimcore.telemetry.spool.ttl_days', TelemetrySettings::SPOOL_TTL_DAYS);
+        $container->setParameter('pimcore.telemetry.spool.lease_seconds', TelemetrySettings::SPOOL_LEASE_SECONDS);
+
+        // Registered here rather than via `_instanceof` in services.yaml: `_instanceof` only applies
+        // to services defined in that same file, so a collector or usage provider shipped by another
+        // bundle would never be tagged. These are the telemetry extension points, so they have to be
+        // autoconfigured container-wide.
+        $container->registerForAutoconfiguration(SnapshotCollectorInterface::class)
+            ->addTag('pimcore.telemetry.snapshot_collector');
+        $container->registerForAutoconfiguration(BundleUsageProviderInterface::class)
+            ->addTag('pimcore.telemetry.bundle_usage_provider');
 
         // set default domain for router to main domain if configured
         // this will be overridden from the request in web context but is handy for CLI scripts
@@ -125,7 +163,13 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('message_handler.yaml');
         $loader->load('class_builder.yaml');
         $loader->load('serializer.yaml');
+        $loader->load('cdn.yaml');
 
+        if (false === $config['documents']['auto_provide_templates']) {
+            $container->removeDefinition(ProjectTemplateProvider::class);
+            $container->removeDefinition(BundleTemplateProvider::class);
+        }
+        $this->configureCdn($container, $config);
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
         $this->configureClassResolvers($container, $config);
@@ -155,6 +199,27 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         );
 
         $this->checkProductRegistration($config, $container);
+    }
+
+    private function configureCdn(ContainerBuilder $container, array $config): void
+    {
+        $container->setParameter('pimcore.cdn.base_url', $config['cdn']['base_url']);
+        $container->setParameter('pimcore.cdn.excluded_paths', $config['cdn']['excluded_paths']);
+        $container->setParameter('pimcore.cdn.image_optimizer_source_formats', $config['cdn']['image_optimizer_source_formats']);
+        $container->setParameter('pimcore.cdn.fastly.api_token', $config['cdn']['fastly']['api_token']);
+        $container->setParameter('pimcore.cdn.fastly.service_id', $config['cdn']['fastly']['service_id']);
+        $container->setParameter('pimcore.cdn.fastly.api_base_url', $config['cdn']['fastly']['api_base_url']);
+
+        // Public URL prefix for original assets: follows assets.frontend_prefixes.source
+        // (what Asset::getFrontendFullPath() emits); path component only, '' falls back to
+        // the documented /var/assets static-serving contract. See AssetWebPath.
+        $sourcePrefix = (string) ($config['assets']['frontend_prefixes']['source'] ?? '');
+        $sourcePrefixPath = parse_url($sourcePrefix, PHP_URL_PATH);
+        $sourcePrefixPath = is_string($sourcePrefixPath) ? rtrim($sourcePrefixPath, '/') : '';
+        $container->setParameter(
+            'pimcore.cdn.original_asset_prefix',
+            $sourcePrefixPath !== '' ? $sourcePrefixPath : AssetWebPath::DEFAULT_PREFIX
+        );
     }
 
     private function configureModelFactory(ContainerBuilder $container, array $config): void
@@ -310,6 +375,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     {
         $productIdentifier = $config['product_registration']['instance_identifier'] ?? null;
         $container->setParameter('pimcore.product_registration.instance_identifier', $productIdentifier);
+        // Expose the product key as a parameter too: telemetry uses it as the symmetric secret to
+        // encrypt batches for the relay (which looks the same key up by the instance identifier).
+        $container->setParameter('pimcore.product_registration.product_key', $config['product_registration']['product_key'] ?? '');
 
         // Pimcore not installed — env vars are empty (fallback defaults), so skip
         // the product registration check when the install marker exists.

@@ -4,6 +4,16 @@ services:
         autoconfigure: true
 
     #
+    # TELEMETRY (behavioral seam example - autoconfigured as event subscriber)
+    #
+
+    # flushes events buffered during a web request, after the response is sent
+    Pimcore\Bundle\CoreBundle\EventListener\Telemetry\TelemetryFlushSubscriber: ~
+
+    # flushes events buffered during a console command (CLI has no kernel.terminate)
+    Pimcore\Bundle\CoreBundle\EventListener\Telemetry\ConsoleTelemetryFlushSubscriber: ~
+
+    #
     # REQUEST + ROUTING
     #
 
@@ -42,6 +52,9 @@ services:
             - { name: monolog.logger, channel: init }
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\GlobalTemplateVariablesListener: ~
+
+    # invalidates the request-scoped element permission cache on user/role/workspace changes
+    Pimcore\Bundle\CoreBundle\EventListener\PermissionCacheInvalidationListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\HardlinkCanonicalListener:
         tags:
@@ -130,3 +143,9 @@ services:
             $debugToolbarListener: '@?web_profiler.debug_toolbar'
 
     Pimcore\Bundle\CoreBundle\EventListener\MessengerClearRuntimeCacheListener: ~
+
+    #
+    # DEPRECATIONS
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\DeprecatedRenderletAttributesListener: ~

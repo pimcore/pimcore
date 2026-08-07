@@ -7,6 +7,24 @@ description: Configuration management, class definitions, and console commands f
 
 Pimcore provides the following tools to support deployment processes.
 
+:::tip Deployment hint
+
+For deployments without database access (e.g. CI pipelines), Doctrine ORM cache warm-up
+fails because it tries to detect the database version. Configure the server version
+explicitly in the default DBAL connection:
+
+```yaml
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                ...
+                server_version: mariadb-10.11.0
+```
+
+:::
+
 ## Pimcore Configurations
 
 Pimcore has two categories of configuration:
