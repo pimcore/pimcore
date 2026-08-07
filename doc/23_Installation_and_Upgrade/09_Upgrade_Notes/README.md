@@ -1,6 +1,6 @@
 # Upgrade Notes
 
-## Pimcore 2026.2.7
+## Pimcore 12.3.12.1
 
 ### Possible data loss on 11.5.21, 12.3.12, 12.3.13, 2026.2.5 and 2026.2.6
 
