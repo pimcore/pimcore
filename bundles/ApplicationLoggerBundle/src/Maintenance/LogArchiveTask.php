@@ -21,6 +21,8 @@ use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
+use League\Flysystem\UnableToDeleteDirectory;
+use League\Flysystem\UnableToDeleteFile;
 use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;
 use function in_arrayi;
@@ -100,8 +102,15 @@ class LogArchiveTask implements TaskInterface
             foreach ($fileObjectPaths as $objectPath) {
                 $filePath = $objectPath['fileobject'];
                 if ($filePath !== null) {
-                    if ($storage->fileExists($filePath)) {
+                    try {
                         $storage->delete($filePath);
+                    } catch (UnableToDeleteFile $e) {
+                        if ($storage->fileExists($filePath)) {
+                            $this->logger->warning('Unable to delete log file object: ' . $e->getMessage());
+
+                            throw $e;
+                        }
+                        // File was already deleted (race condition) — safe to ignore
                     }
                 }
             }
@@ -127,8 +136,15 @@ class LogArchiveTask implements TaskInterface
 
                     $folderName = $deleteArchiveLogDate->format('Y/m');
 
-                    if ($storage->directoryExists($folderName)) {
+                    try {
                         $storage->deleteDirectory($folderName);
+                    } catch (UnableToDeleteDirectory $e) {
+                        if ($storage->directoryExists($folderName)) {
+                            $this->logger->warning('Unable to delete log archive directory: ' . $e->getMessage());
+
+                            throw $e;
+                        }
+                        // Directory was already deleted (race condition) — safe to ignore
                     }
                 }
             }
