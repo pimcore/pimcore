@@ -722,7 +722,15 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             return $data;
         }
         if (is_string($data)) {
-            $unserializedData = Serialize::unserialize($data, false);
+            // An editable's resource blob legitimately contains PHP objects, so object
+            // deserialization must stay enabled here: Image::getDataForResource() persists its
+            // hotspot/marker metadata as Element\Data\MarkerHotspotItem instances, and bundle
+            // editables may store value objects of their own. Restricting this to `false` left
+            // __PHP_Incomplete_Class instances in the metadata, which made
+            // Image::getCacheTags() fatal - see pimcore/platform-version#298.
+            // Tightening this is tracked in pimcore/internal-improvements#24 and needs the write
+            // side to stop storing live objects first.
+            $unserializedData = Serialize::unserialize($data, true);
             if (!is_array($unserializedData) && !is_null($unserializedData)) {
                 throw new InvalidArgumentException('Unserialized data must be an array or null.');
             }
