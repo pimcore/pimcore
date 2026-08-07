@@ -223,11 +223,18 @@ class Manager
     ): Marking {
         $this->notesSubscriber->setAdditionalData($additionalData);
 
+        // Only snapshot when we are going to save: rolling back is the sole
+        // consumer, and reading the marking can hit the database (e.g. the
+        // state_table store).
         $markingStore = $workflow->getMarkingStore();
-        $previousMarking = $markingStore->getMarking($subject);
-        $previousPublishedState = ($subject instanceof Concrete || $subject instanceof PageSnippet)
-            ? $subject->isPublished()
-            : null;
+        $previousMarking = null;
+        $previousPublishedState = null;
+        if ($saveSubject) {
+            $previousMarking = $markingStore->getMarking($subject);
+            if ($subject instanceof Concrete || $subject instanceof PageSnippet) {
+                $previousPublishedState = $subject->isPublished();
+            }
+        }
 
         try {
             $marking = $workflow->apply($subject, $transition, $additionalData);
@@ -251,10 +258,10 @@ class Manager
                 // validation error on a force_published transition). Otherwise
                 // marking stores that persist immediately (such as the
                 // state_table store) leave the subject in an inconsistent state.
-                $markingStore->setMarking($subject, $previousMarking);
-                if ($previousPublishedState !== null
-                    && ($subject instanceof Concrete || $subject instanceof PageSnippet)
-                ) {
+                if ($previousMarking !== null) {
+                    $markingStore->setMarking($subject, $previousMarking);
+                }
+                if ($previousPublishedState !== null) {
                     $subject->setPublished($previousPublishedState);
                 }
 
@@ -291,7 +298,11 @@ class Manager
         $this->eventDispatcher->dispatch($event, WorkflowEvents::PRE_GLOBAL_ACTION);
 
         $markingStore = $workflow->getMarkingStore();
-        $previousMarking = $markingStore->getMarking($subject);
+        // Only snapshot when the save below can actually run and fail, so that
+        // read-only global actions do not pay for an extra marking-store read.
+        $previousMarking = ($saveSubject && $subject instanceof ElementInterface)
+            ? $markingStore->getMarking($subject)
+            : null;
 
         if (!empty($globalActionObj->getTos())) {
             $places = [];
@@ -312,7 +323,9 @@ class Manager
                 // Roll back the workflow place if the save fails so marking
                 // stores that persist immediately do not leave the subject in
                 // an inconsistent state (see pimcore/pimcore#18178).
-                $markingStore->setMarking($subject, $previousMarking);
+                if ($previousMarking !== null) {
+                    $markingStore->setMarking($subject, $previousMarking);
+                }
 
                 throw $e;
             }

@@ -1,18 +1,14 @@
 <?php
-
 declare(strict_types=1);
 
 /**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
  */
 
 namespace Pimcore\Tests\Unit\Workflow;
@@ -35,6 +31,8 @@ use Symfony\Component\Workflow\StateMachine;
 
 class ManagerTest extends TestCase
 {
+    private const WORKFLOW_NAME = 'test_wf';
+
     /**
      * Regression test for https://github.com/pimcore/pimcore/issues/18178
      *
@@ -48,30 +46,10 @@ class ManagerTest extends TestCase
      */
     public function testRollsBackMarkingAndPublishedStateWhenSaveFails(): void
     {
-        // Marking store that persists immediately, like StateTableMarkingStore.
-        $store = new class() implements MarkingStoreInterface {
-            public array $persisted = ['start' => 1];
-
-            public function getMarking(object $subject): Marking
-            {
-                return new Marking($this->persisted);
-            }
-
-            public function setMarking(object $subject, Marking $marking, array $context = []): void
-            {
-                $this->persisted = $marking->getPlaces();
-            }
-        };
-
-        $transition = new PimcoreTransition('go', 'start', 'end', [
-            'changePublishedState' => ChangePublishedStateSubscriber::FORCE_PUBLISHED,
-        ]);
-        $definition = new Definition(['start', 'end'], [$transition]);
-
-        $workflowEventDispatcher = new EventDispatcher();
-        $workflowEventDispatcher->addSubscriber(new ChangePublishedStateSubscriber());
-
-        $workflow = new StateMachine($definition, $store, $workflowEventDispatcher, 'test_wf');
+        $store = $this->createImmediateMarkingStore();
+        $transition = $this->createForcePublishedTransition();
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $transition, $eventDispatcher);
 
         $subject = $this->createMock(Concrete::class);
         $subject->method('isPublished')->willReturn(false);
@@ -86,11 +64,12 @@ class ManagerTest extends TestCase
         );
         $subject->method('save')->willThrowException(new ValidationException('mandatory field missing'));
 
-        $manager = $this->buildManager($workflowEventDispatcher, $transition);
+        $manager = $this->buildManager($eventDispatcher, $transition);
 
         $this->assertSame(['start' => 1], $store->persisted);
 
         $thrown = null;
+
         try {
             $manager->applyWithAdditionalData($workflow, $subject, 'go', [], true);
         } catch (ValidationException $e) {
@@ -112,7 +91,79 @@ class ManagerTest extends TestCase
 
     public function testHappyPathPersistsMarkingAndDoesNotRollBack(): void
     {
-        $store = new class() implements MarkingStoreInterface {
+        $store = $this->createImmediateMarkingStore();
+        $transition = $this->createForcePublishedTransition();
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $transition, $eventDispatcher);
+
+        $subject = $this->createMock(Concrete::class);
+        $subject->method('isPublished')->willReturn(false);
+        $subject->expects($this->once())->method('save');
+
+        $manager = $this->buildManager($eventDispatcher, $transition);
+
+        $manager->applyWithAdditionalData($workflow, $subject, 'go', [], true);
+
+        $this->assertSame(['end' => 1], $store->persisted);
+    }
+
+    /**
+     * A global action can move the subject to a new place directly, so it is
+     * exposed to the same inconsistency as a transition when the subsequent
+     * save() fails.
+     */
+    public function testGlobalActionRollsBackMarkingWhenSaveFails(): void
+    {
+        $store = $this->createImmediateMarkingStore();
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $this->createForcePublishedTransition(), $eventDispatcher);
+
+        $subject = $this->createMock(Concrete::class);
+        $subject->method('save')->willThrowException(new ValidationException('mandatory field missing'));
+
+        $manager = $this->buildManager($eventDispatcher);
+        $manager->addGlobalAction(self::WORKFLOW_NAME, 'finish', ['to' => ['end']]);
+
+        $thrown = null;
+
+        try {
+            $manager->applyGlobalAction($workflow, $subject, 'finish', [], true);
+        } catch (ValidationException $e) {
+            $thrown = $e;
+        }
+
+        $this->assertInstanceOf(ValidationException::class, $thrown);
+        $this->assertSame(
+            ['start' => 1],
+            $store->persisted,
+            'Marking should be rolled back when the save after a global action fails.'
+        );
+    }
+
+    public function testGlobalActionHappyPathPersistsMarking(): void
+    {
+        $store = $this->createImmediateMarkingStore();
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $this->createForcePublishedTransition(), $eventDispatcher);
+
+        $subject = $this->createMock(Concrete::class);
+        $subject->expects($this->once())->method('save');
+
+        $manager = $this->buildManager($eventDispatcher);
+        $manager->addGlobalAction(self::WORKFLOW_NAME, 'finish', ['to' => ['end']]);
+
+        $marking = $manager->applyGlobalAction($workflow, $subject, 'finish', [], true);
+
+        $this->assertSame(['end' => 1], $store->persisted);
+        $this->assertSame(['end' => 1], $marking->getPlaces());
+    }
+
+    /**
+     * Marking store that persists immediately, like StateTableMarkingStore.
+     */
+    private function createImmediateMarkingStore(): MarkingStoreInterface
+    {
+        return new class() implements MarkingStoreInterface {
             public array $persisted = ['start' => 1];
 
             public function getMarking(object $subject): Marking
@@ -125,30 +176,40 @@ class ManagerTest extends TestCase
                 $this->persisted = $marking->getPlaces();
             }
         };
-
-        $transition = new PimcoreTransition('go', 'start', 'end', [
-            'changePublishedState' => ChangePublishedStateSubscriber::FORCE_PUBLISHED,
-        ]);
-        $definition = new Definition(['start', 'end'], [$transition]);
-
-        $workflowEventDispatcher = new EventDispatcher();
-        $workflowEventDispatcher->addSubscriber(new ChangePublishedStateSubscriber());
-
-        $workflow = new StateMachine($definition, $store, $workflowEventDispatcher, 'test_wf');
-
-        $subject = $this->createMock(Concrete::class);
-        $subject->method('isPublished')->willReturn(false);
-        $subject->expects($this->once())->method('save');
-
-        $manager = $this->buildManager($workflowEventDispatcher, $transition);
-
-        $manager->applyWithAdditionalData($workflow, $subject, 'go', [], true);
-
-        $this->assertSame(['end' => 1], $store->persisted);
     }
 
-    private function buildManager(EventDispatcher $eventDispatcher, PimcoreTransition $transition): Manager&MockObject
+    private function createForcePublishedTransition(): PimcoreTransition
     {
+        return new PimcoreTransition('go', 'start', 'end', [
+            'changePublishedState' => ChangePublishedStateSubscriber::FORCE_PUBLISHED,
+        ]);
+    }
+
+    private function createEventDispatcher(): EventDispatcher
+    {
+        $eventDispatcher = new EventDispatcher();
+        $eventDispatcher->addSubscriber(new ChangePublishedStateSubscriber());
+
+        return $eventDispatcher;
+    }
+
+    private function createWorkflow(
+        MarkingStoreInterface $store,
+        PimcoreTransition $transition,
+        EventDispatcher $eventDispatcher
+    ): StateMachine {
+        return new StateMachine(
+            new Definition(['start', 'end'], [$transition]),
+            $store,
+            $eventDispatcher,
+            self::WORKFLOW_NAME
+        );
+    }
+
+    private function buildManager(
+        EventDispatcher $eventDispatcher,
+        ?PimcoreTransition $transition = null
+    ): Manager&MockObject {
         $notesSubscriber = $this->createMock(NotesSubscriber::class);
         $expressionService = $this->createMock(ExpressionService::class);
         $registry = new Registry();
