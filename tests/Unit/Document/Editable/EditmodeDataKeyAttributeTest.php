@@ -69,7 +69,24 @@ class EditmodeDataKeyAttributeTest extends TestCase
      */
     private const RENUMBERED_SEQUENCE = ['1', '2', '3', '4', '5', '6'];
 
-    private ?AreabrickManagerInterface $originalAreabrickManager = null;
+    private const BRICK_TYPES = [
+        'row',
+        'spacer',
+        'category-carousel',
+        'brand-carousel',
+        'product-carousel',
+        'mega-slider',
+    ];
+
+    /**
+     * @var array<string, AreabrickInterface>|null
+     */
+    private ?array $originalBricks = null;
+
+    /**
+     * @var array<string, string>|null
+     */
+    private ?array $originalBrickServiceIds = null;
 
     protected function needsDb(): bool
     {
@@ -80,15 +97,12 @@ class EditmodeDataKeyAttributeTest extends TestCase
     {
         parent::setUp();
 
-        $this->stubAreabrickManager();
+        $this->installTestAreabricks();
     }
 
     protected function tearDown(): void
     {
-        if ($this->originalAreabrickManager !== null) {
-            Pimcore::getContainer()->set(AreabrickManagerInterface::class, $this->originalAreabrickManager);
-            $this->originalAreabrickManager = null;
-        }
+        $this->restoreAreabricks();
 
         parent::tearDown();
     }
@@ -316,23 +330,50 @@ class EditmodeDataKeyAttributeTest extends TestCase
     }
 
     /**
-     * Areablock::blockStart() resolves the brick for the current entry through the container.
+     * Areablock::blockStart() resolves the brick for the current entry through the shared
+     * AreabrickManager. That manager lives for the whole run — the test kernel is deliberately
+     * booted once and reused across suites — and it has no unregister operation, so bricks
+     * registered here would leak into every later test.
      *
-     * The real manager is a shared service that lives for the whole test run and exposes no
-     * unregister operation, so registering test bricks on it would leak into every later test and
-     * make a future register() of the same ids order-dependent. Swap in a stub for the duration of
-     * the test and put the original service back in tearDown() instead.
+     * Replacing the service in the container is not available for this id: the public
+     * AreabrickManagerInterface alias points at a private service, so the dumped container
+     * materialises it in its method map rather than in its alias map, and Container::set() refuses
+     * to replace an id that is already initialised. Snapshot the manager's own brick maps instead,
+     * install the stubs the tests need, and restore the snapshot in tearDown().
      */
-    private function stubAreabrickManager(): void
+    private function installTestAreabricks(): void
     {
-        $container = Pimcore::getContainer();
-        $this->originalAreabrickManager = $container->get(AreabrickManagerInterface::class);
+        $areabrickManager = Pimcore::getContainer()->get(AreabrickManagerInterface::class);
 
-        $areabrickManager = $this->createMock(AreabrickManagerInterface::class);
-        $areabrickManager
-            ->method('getBrick')
-            ->willReturn($this->createMock(AreabrickInterface::class));
+        $bricks = new ReflectionProperty($areabrickManager, 'bricks');
+        $this->originalBricks = $bricks->getValue($areabrickManager);
+        // getBrick() moves lazily loaded bricks out of this map, so it has to be restored too
+        $this->originalBrickServiceIds = (new ReflectionProperty($areabrickManager, 'brickServiceIds'))
+            ->getValue($areabrickManager);
 
-        $container->set(AreabrickManagerInterface::class, $areabrickManager);
+        $testBricks = $this->originalBricks;
+
+        foreach (self::BRICK_TYPES as $brickType) {
+            $testBricks[$brickType] = $this->createMock(AreabrickInterface::class);
+        }
+
+        $bricks->setValue($areabrickManager, $testBricks);
+    }
+
+    private function restoreAreabricks(): void
+    {
+        if ($this->originalBricks === null) {
+            return;
+        }
+
+        $areabrickManager = Pimcore::getContainer()->get(AreabrickManagerInterface::class);
+
+        (new ReflectionProperty($areabrickManager, 'bricks'))
+            ->setValue($areabrickManager, $this->originalBricks);
+        (new ReflectionProperty($areabrickManager, 'brickServiceIds'))
+            ->setValue($areabrickManager, $this->originalBrickServiceIds);
+
+        $this->originalBricks = null;
+        $this->originalBrickServiceIds = null;
     }
 }
