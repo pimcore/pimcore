@@ -21,6 +21,15 @@ stored value intact.
 If you ran any of those versions, check the affected fields after upgrading. Versioning was not
 affected, so earlier values can be recovered from the element's version history.
 
+### WebDAV move failed on 12.3.7 and later
+
+Independently of the above, and over a wider range of releases (**12.3.7** and later, **2026.1.3**
+and later), replacing an asset over WebDAV failed when the client deleted the file and then moved
+the new one into place — the pattern used by several desktop applications, Photoshop among them.
+The move aborted with `The script tried to call a method on an incomplete object`.
+
+No data was lost in this case; the operation simply did not complete.
+
 ## Pimcore 12.3.12
 
 ### Deprecations
