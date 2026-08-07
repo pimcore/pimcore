@@ -13,18 +13,26 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType;
 
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
+use Carbon\CarbonPeriod;
+use DatePeriod;
 use Exception;
 use Pimcore\Cache;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\BlockElement;
+use Pimcore\Model\DataObject\Data\Consent;
+use Pimcore\Model\DataObject\Data\ExternalImage;
 use Pimcore\Model\DataObject\Data\Geobounds;
 use Pimcore\Model\DataObject\Data\GeoCoordinates;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Model\DataObject\Data\Link;
+use Pimcore\Model\DataObject\Data\StructuredTable;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\unittestBlock;
 use Pimcore\Model\Document\Page;
+use Pimcore\Model\Element\Data\MarkerHotspotItem;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -99,10 +107,9 @@ class BlockTest extends ModelTestCase
     }
 
     /**
-     * Every geo datatype must round-trip inside a Block. The block resource blob is read back via
-     * Block::getDataFromResource() -> Serialize::unserialize($data, false); this guards that the
-     * safe `false` there does not neutralise geo values (they are stored normalized, then rebuilt
-     * by each sub-field's denormalize()).
+     * Every geo datatype must round-trip inside a Block. Geo values are stored fully normalized
+     * (plain arrays / JSON) and rebuilt by each sub-field's denormalize(), so they are the subset
+     * of block child types that survives even a restricted unserialize().
      *
      * @throws Exception
      */
@@ -156,6 +163,195 @@ class BlockTest extends ModelTestCase
         $this->assertCount(2, $loadedPolyline);
         $this->assertContainsOnlyInstancesOf(GeoCoordinates::class, $loadedPolyline);
         $this->assertEqualsWithDelta(15.5, $loadedPolyline[1]->getLongitude(), 1e-6);
+    }
+
+    /**
+     * Regression test for pimcore/platform-version#262.
+     *
+     * Unlike geo values, several block child types are stored as *live PHP objects* inside the
+     * block's serialized resource blob: their block marshaller rebuilds a value object before
+     * Serialize::serialize() (externalImage, consent, date, datetime, structuredTable), or their
+     * normalize() keeps one (dateRange -> Carbon, via CarbonPeriod::toArray()).
+     *
+     * Block::getDataFromResource() must therefore allow object deserialization. Restricting it
+     * silently dropped every value below to null, and the next save persisted that loss.
+     *
+     * @throws Exception
+     */
+    public function testObjectValueTypesInsideBlock(): void
+    {
+        $externalImage = new ExternalImage('https://example.com/image.png');
+        $consent = new Consent(true, null);
+        $date = new Carbon('2026-03-04 00:00:00');
+        $dateTime = new Carbon('2026-05-06 07:08:09');
+
+        $structuredTable = new StructuredTable();
+        $structuredTable->setData([
+            'row1' => ['col1' => 42, 'col2' => 'first'],
+            'row2' => ['col1' => 43, 'col2' => 'second'],
+        ]);
+
+        $object = $this->createBlockObject();
+        $object->setTestblock([
+            [
+                'blockexternalImage' => new BlockElement('blockexternalImage', 'externalImage', $externalImage),
+                'blockconsent' => new BlockElement('blockconsent', 'consent', $consent),
+                'blockdate' => new BlockElement('blockdate', 'date', $date),
+                'blockdatetime' => new BlockElement('blockdatetime', 'datetime', $dateTime),
+                'blockstructuredTable' => new BlockElement('blockstructuredTable', 'structuredTable', $structuredTable),
+            ],
+        ]);
+        $object->save();
+
+        // Force-reload from the database so the block goes through the resource unserialize path.
+        $reloaded = DataObject::getById($object->getId(), ['force' => true]);
+        $data = $reloaded->getTestblock()[0];
+
+        $loadedExternalImage = $data['blockexternalImage']->getData();
+        $this->assertInstanceOf(ExternalImage::class, $loadedExternalImage);
+        $this->assertSame('https://example.com/image.png', $loadedExternalImage->getUrl());
+
+        $loadedConsent = $data['blockconsent']->getData();
+        $this->assertInstanceOf(Consent::class, $loadedConsent);
+        $this->assertTrue($loadedConsent->getConsent());
+
+        $loadedDate = $data['blockdate']->getData();
+        $this->assertInstanceOf(CarbonInterface::class, $loadedDate);
+        $this->assertSame($date->getTimestamp(), $loadedDate->getTimestamp());
+
+        $loadedDateTime = $data['blockdatetime']->getData();
+        $this->assertInstanceOf(CarbonInterface::class, $loadedDateTime);
+        $this->assertSame($dateTime->getTimestamp(), $loadedDateTime->getTimestamp());
+
+        $loadedStructuredTable = $data['blockstructuredTable']->getData();
+        $this->assertInstanceOf(StructuredTable::class, $loadedStructuredTable);
+        $this->assertSame('first', $loadedStructuredTable->getData()['row1']['col2']);
+    }
+
+    /**
+     * Regression test for pimcore/platform-version#262, kept separate because a dateRange fails
+     * louder than the rest: DateRange::normalize() returns CarbonPeriod::toArray(), i.e. an array
+     * of Carbon objects, and denormalize() feeds them straight back into CarbonPeriod::create().
+     * With object deserialization restricted, that threw InvalidPeriodParameterException during
+     * save instead of merely losing the value.
+     *
+     * @throws Exception
+     */
+    public function testDateRangeInsideBlock(): void
+    {
+        $dateRange = CarbonPeriod::create('2026-01-01', '2026-01-05');
+
+        $object = $this->createBlockObject();
+        $object->setTestblock([
+            [
+                'blockdateRange' => new BlockElement('blockdateRange', 'dateRange', $dateRange),
+            ],
+        ]);
+        $object->save();
+
+        $reloaded = DataObject::getById($object->getId(), ['force' => true]);
+        $loaded = $reloaded->getTestblock()[0]['blockdateRange']->getData();
+
+        // DatePeriod, not CarbonPeriod: the deep copy on the load path runs myclabs/deep-copy's
+        // DatePeriodFilter, which rebuilds any DatePeriod subclass as a plain DatePeriod. That
+        // downgrade is pre-existing and unrelated to the unserialize behaviour asserted here.
+        $this->assertInstanceOf(DatePeriod::class, $loaded);
+        $this->assertSame($dateRange->getStartDate()->getTimestamp(), $loaded->getStartDate()->getTimestamp());
+        $this->assertSame($dateRange->getEndDate()->getTimestamp(), $loaded->getEndDate()->getTimestamp());
+    }
+
+    /**
+     * Regression test for pimcore/platform-version#262, one nesting level deeper: a block inside
+     * localizedfields routes its children through BlockDataMarshaller\Localizedfields, which
+     * delegates to the same per-type block marshallers and therefore stores the same objects.
+     *
+     * @throws Exception
+     */
+    public function testObjectValueTypesInsideLocalizedBlock(): void
+    {
+        $externalImage = new ExternalImage('https://example.com/localized.png');
+        $date = new Carbon('2026-07-08 00:00:00');
+
+        $object = $this->createBlockObject();
+        $object->setLtestblock([
+            [
+                'lblockexternalImage' => new BlockElement('lblockexternalImage', 'externalImage', $externalImage),
+                'lblockdate' => new BlockElement('lblockdate', 'date', $date),
+            ],
+        ], 'en');
+        $object->save();
+
+        $reloaded = DataObject::getById($object->getId(), ['force' => true]);
+        $data = $reloaded->getLtestblock('en')[0];
+
+        $loadedExternalImage = $data['lblockexternalImage']->getData();
+        $this->assertInstanceOf(ExternalImage::class, $loadedExternalImage);
+        $this->assertSame('https://example.com/localized.png', $loadedExternalImage->getUrl());
+
+        $loadedDate = $data['lblockdate']->getData();
+        $this->assertInstanceOf(CarbonInterface::class, $loadedDate);
+        $this->assertSame($date->getTimestamp(), $loadedDate->getTimestamp());
+    }
+
+    /**
+     * Regression test for pimcore/platform-version#262 / #298.
+     *
+     * A hotspotimage has no block marshaller, so Block stores the raw normalize() output — which
+     * keeps the MarkerHotspotItem objects of its hotspot/marker metadata. Restricting the block
+     * unserialize left __PHP_Incomplete_Class instances buried inside the reconstructed value:
+     * denormalize() still returned a Hotspotimage, so the corruption stayed invisible until
+     * something accessed the metadata (see Document\Editable\Image::getCacheTags()).
+     *
+     * @throws Exception
+     */
+    public function testHotspotImageMetaDataInsideBlock(): void
+    {
+        $image = TestHelper::createImageAsset();
+
+        // Build it the way the editmode does: getDataFromEditmode() wraps each metadata entry in a
+        // MarkerHotspotItem, and those objects are what end up in the block's serialized blob.
+        $fieldDefinition = new DataObject\ClassDefinition\Data\Hotspotimage();
+        $fieldDefinition->setName('blockhotspotimage');
+        $hotspotImage = $fieldDefinition->getDataFromEditmode([
+            'id' => $image->getId(),
+            'hotspots' => [
+                [
+                    'name' => 'hotspot1',
+                    'width' => 10,
+                    'height' => 20,
+                    'top' => 30,
+                    'left' => 40,
+                    'data' => [
+                        ['name' => 'metaName', 'type' => 'text', 'value' => 'metaValue'],
+                    ],
+                ],
+            ],
+        ]);
+        $this->assertInstanceOf(Hotspotimage::class, $hotspotImage);
+        $this->assertInstanceOf(MarkerHotspotItem::class, $hotspotImage->getHotspots()[0]['data'][0]);
+
+        $object = $this->createBlockObject();
+        $object->setTestblock([
+            [
+                'blockhotspotimage' => new BlockElement('blockhotspotimage', 'hotspotimage', $hotspotImage),
+            ],
+        ]);
+        $object->save();
+
+        $reloaded = DataObject::getById($object->getId(), ['force' => true]);
+        $loaded = $reloaded->getTestblock()[0]['blockhotspotimage']->getData();
+
+        $this->assertInstanceOf(Hotspotimage::class, $loaded);
+
+        $metaData = $loaded->getHotspots()[0]['data'][0];
+        $this->assertNotInstanceOf(
+            '__PHP_Incomplete_Class',
+            $metaData,
+            'hotspot metadata must not be neutralised by the block resource unserialize()'
+        );
+        // MarkerHotspotItem is ArrayAccess; array access is exactly what broke on the stripped object.
+        $this->assertSame('metaName', $metaData['name']);
+        $this->assertSame('metaValue', $metaData['value']);
     }
 
     /**
