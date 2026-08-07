@@ -1,5 +1,26 @@
 # Upgrade Notes
 
+## Pimcore 2026.2.7
+
+### Possible data loss on 11.5.21, 12.3.12, 12.3.13, 2026.2.5 and 2026.2.6
+
+Those releases restricted object deserialization for two stores that legitimately contain PHP
+objects, so affected values were read back empty:
+
+- **`block` fields** — the child types `externalImage`, `consent`, `date`, `datetime`,
+  `structuredTable`, `hotspotimage`, `imageGallery` and `dateRange`, including inside a block
+  nested in `localizedfields`. A `dateRange` child raised
+  `Carbon\Exceptions\InvalidPeriodParameterException` on save.
+- **Document `image` editables** — hotspot and marker metadata, which made rendering a page with
+  such an editable fail with `Cannot use object of type __PHP_Incomplete_Class as array`.
+
+Reading was affected, so **saving an object or document while running one of those versions
+persisted the empty value**. A field marked mandatory blocked the save instead, which left the
+stored value intact.
+
+If you ran any of those versions, check the affected fields after upgrading. Versioning was not
+affected, so earlier values can be recovered from the element's version history.
+
 ## Pimcore 12.3.12
 
 ### Deprecations
