@@ -69,14 +69,7 @@ class EditmodeDataKeyAttributeTest extends TestCase
      */
     private const RENUMBERED_SEQUENCE = ['1', '2', '3', '4', '5', '6'];
 
-    private const BRICK_TYPES = [
-        'row',
-        'spacer',
-        'category-carousel',
-        'brand-carousel',
-        'product-carousel',
-        'mega-slider',
-    ];
+    private ?AreabrickManagerInterface $originalAreabrickManager = null;
 
     protected function needsDb(): bool
     {
@@ -87,7 +80,17 @@ class EditmodeDataKeyAttributeTest extends TestCase
     {
         parent::setUp();
 
-        $this->registerTestAreabricks();
+        $this->stubAreabrickManager();
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->originalAreabrickManager !== null) {
+            Pimcore::getContainer()->set(AreabrickManagerInterface::class, $this->originalAreabrickManager);
+            $this->originalAreabrickManager = null;
+        }
+
+        parent::tearDown();
     }
 
     /**
@@ -313,20 +316,23 @@ class EditmodeDataKeyAttributeTest extends TestCase
     }
 
     /**
-     * Areablock::blockStart() resolves the brick for the current entry, so the item types used
-     * here have to be known to the manager. The manager is a shared service, hence the guard.
+     * Areablock::blockStart() resolves the brick for the current entry through the container.
+     *
+     * The real manager is a shared service that lives for the whole test run and exposes no
+     * unregister operation, so registering test bricks on it would leak into every later test and
+     * make a future register() of the same ids order-dependent. Swap in a stub for the duration of
+     * the test and put the original service back in tearDown() instead.
      */
-    private function registerTestAreabricks(): void
+    private function stubAreabrickManager(): void
     {
-        $areabrickManager = Pimcore::getContainer()->get(AreabrickManagerInterface::class);
-        $registered = $areabrickManager->getBrickIds();
+        $container = Pimcore::getContainer();
+        $this->originalAreabrickManager = $container->get(AreabrickManagerInterface::class);
 
-        foreach (self::BRICK_TYPES as $brickType) {
-            if (in_array($brickType, $registered, true)) {
-                continue;
-            }
+        $areabrickManager = $this->createMock(AreabrickManagerInterface::class);
+        $areabrickManager
+            ->method('getBrick')
+            ->willReturn($this->createMock(AreabrickInterface::class));
 
-            $areabrickManager->register($brickType, $this->createMock(AreabrickInterface::class));
-        }
+        $container->set(AreabrickManagerInterface::class, $areabrickManager);
     }
 }
