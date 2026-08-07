@@ -45,7 +45,7 @@ use ReflectionProperty;
  * `data-key` next to `key`, and that both hold the *stored* identifier rather than the entry's
  * position.
  */
-class EditmodeDataKeyAttributeTest extends TestCase
+final class EditmodeDataKeyAttributeTest extends TestCase
 {
     protected bool $cleanupDbInSetup = false;
 
