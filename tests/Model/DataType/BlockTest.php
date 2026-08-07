@@ -253,10 +253,15 @@ class BlockTest extends ModelTestCase
         $reloaded = DataObject::getById($object->getId(), ['force' => true]);
         $loaded = $reloaded->getTestblock()[0]['blockdateRange']->getData();
 
-        // DatePeriod, not CarbonPeriod: the deep copy on the load path runs myclabs/deep-copy's
-        // DatePeriodFilter, which rebuilds any DatePeriod subclass as a plain DatePeriod. That
-        // downgrade is pre-existing and unrelated to the unserialize behaviour asserted here.
-        $this->assertInstanceOf(DatePeriod::class, $loaded);
+        // The concrete class depends on the Carbon major, which is not pinned (^2.72 || ^3.10):
+        // Carbon 3's CarbonPeriod extends DatePeriod, so the deep copy on the load path runs
+        // myclabs/deep-copy's DatePeriodFilter and rebuilds it as a plain DatePeriod; Carbon 2's
+        // CarbonPeriod does not, so it stays a CarbonPeriod. Both are fine and neither is what this
+        // test is about - assert the period survived with its bounds instead.
+        $this->assertTrue(
+            $loaded instanceof DatePeriod || $loaded instanceof CarbonPeriod,
+            'expected a date period, got ' . get_debug_type($loaded)
+        );
         $this->assertSame($dateRange->getStartDate()->getTimestamp(), $loaded->getStartDate()->getTimestamp());
         $this->assertSame($dateRange->getEndDate()->getTimestamp(), $loaded->getEndDate()->getTimestamp());
     }
