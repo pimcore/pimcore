@@ -140,6 +140,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
             }
 
             $attributes = [
+                'document' => $this->getDocument(),
                 'template' => $this->config['template'] ?? null,
                 'id' => $this->id,
                 'type' => $this->type,
@@ -147,6 +148,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
                 'pimcore_request_source' => 'renderlet',
             ];
             $query = [
+                'document' => $this->getDocument(),
                 'id' => $this->id,
                 'type' => $this->type,
                 'subtype' => $this->subtype,

@@ -376,7 +376,7 @@ abstract class UserRole extends AbstractUser implements UserRoleInterface
             $array = explode(',', $array);
         }
 
-        if (empty($array) || !is_array($array)) {
+        if (!is_array($array)) {
             $array = [];
         }
 

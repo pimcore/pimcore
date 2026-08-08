@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Messenger\Handler;
 
+use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Image\ImageOptimizerInterface;
 use Pimcore\Messenger\OptimizeImageMessage;
 use Pimcore\Tool\Storage;
@@ -29,8 +30,11 @@ class OptimizeImageHandler implements BatchHandlerInterface
 {
     use BatchHandlerTrait;
 
-    public function __construct(protected ImageOptimizerInterface $optimizer, protected LoggerInterface $logger)
-    {
+    public function __construct(
+        protected ImageOptimizerInterface $optimizer,
+        protected LoggerInterface $logger,
+        protected LongRunningHelper $longRunningHelper
+    ) {
     }
 
     public function __invoke(OptimizeImageMessage $message, ?Acknowledger $ack = null): mixed
@@ -61,6 +65,8 @@ class OptimizeImageHandler implements BatchHandlerInterface
                 $ack->nack($e);
             }
         }
+
+        $this->longRunningHelper->deleteTemporaryFiles();
     }
 
     // @phpstan-ignore-next-line

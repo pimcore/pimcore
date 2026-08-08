@@ -18,6 +18,7 @@ use Pimcore\Bundle\CustomReportsBundle\Tool;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Helper\ParameterBagHelper;
+use Pimcore\Logger;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
 use stdClass;
@@ -41,6 +42,33 @@ use function strlen;
 class CustomReportController extends UserAwareController
 {
     use JsonHelperTrait;
+
+    /**
+     * Fields that may be written through updateAction(). Mirrors the writable set of the
+     * Studio API (CustomReportHydrator::dehydrateReportDetails()) and deliberately excludes
+     * identity and audit fields (name, creationDate, modificationDate) that must never be
+     * settable through the update payload.
+     */
+    private const ALLOWED_UPDATE_FIELDS = [
+        'sql',
+        'columnConfiguration',
+        'dataSourceConfig',
+        'niceName',
+        'group',
+        'groupIconClass',
+        'iconClass',
+        'menuShortcut',
+        'reportClass',
+        'chartType',
+        'pieColumn',
+        'pieLabelColumn',
+        'xAxis',
+        'yAxis',
+        'shareGlobally',
+        'sharedUserNames',
+        'sharedRoleNames',
+        'pagination',
+    ];
 
     #[Route('/tree', name: 'pimcore_bundle_customreports_customreport_tree', methods: ['GET', 'POST'])]
     public function treeAction(): JsonResponse
@@ -185,16 +213,31 @@ class CustomReportController extends UserAwareController
         $pagination = $adapter->getPagination();
         $data['pagination'] = $pagination;
 
-        foreach ($data as $key => $value) {
-            $setter = 'set' . ucfirst($key);
-            if (method_exists($report, $setter)) {
-                $report->$setter($value);
-            }
-        }
+        $this->applyReportConfiguration($report, $data);
 
         $report->save();
 
         return $this->jsonResponse(['success' => true]);
+    }
+
+    /**
+     * Applies only whitelisted fields from the decoded update payload to the report,
+     * guarding against mass assignment of arbitrary Config setters.
+     *
+     * @param array<string, mixed> $data
+     */
+    protected function applyReportConfiguration(Tool\Config $report, array $data): void
+    {
+        foreach (self::ALLOWED_UPDATE_FIELDS as $field) {
+            if (!array_key_exists($field, $data)) {
+                continue;
+            }
+
+            $setter = 'set' . ucfirst($field);
+            if (method_exists($report, $setter)) {
+                $report->$setter($data[$field]);
+            }
+        }
     }
 
     #[Route('/column-config', name: 'pimcore_bundle_customreports_customreport_columnconfig', methods: ['POST'])]
@@ -235,7 +278,7 @@ class CustomReportController extends UserAwareController
 
             $success = true;
         } catch (Exception $e) {
-            $errorMessage = $e->getMessage();
+            $errorMessage = $this->getColumnConfigurationErrorMessage($e);
         }
 
         return $this->jsonResponse([
@@ -243,6 +286,18 @@ class CustomReportController extends UserAwareController
             'columns' => $result,
             'errorMessage' => $errorMessage,
         ]);
+    }
+
+    /**
+     * Returns a client-safe message for a failed column-configuration lookup. The underlying
+     * exception is logged server-side; its raw message must never be returned to the client, as
+     * it can disclose database schema, table names and system paths.
+     */
+    protected function getColumnConfigurationErrorMessage(Exception $e): string
+    {
+        Logger::error('Custom report column configuration failed: ' . $e->getMessage(), ['exception' => $e]);
+
+        return 'An error occurred while loading the column configuration.';
     }
 
     #[Route('/get-report-config', name: 'pimcore_bundle_customreports_customreport_getreportconfig', methods: ['GET'])]
@@ -335,6 +390,11 @@ class CustomReportController extends UserAwareController
             throw new InvalidArgumentException($exportFileName . ' is not a valid csv file.');
         }
 
+        $currentUserId = $this->getPimcoreUser()?->getId();
+        if (!preg_match('/^report-export-(\d+)-/', $exportFileName, $matches) || (int) $matches[1] !== $currentUserId) {
+            throw new AccessDeniedHttpException('You are not allowed to access this export file.');
+        }
+
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $exportFileName;
     }
 
@@ -380,7 +440,7 @@ class CustomReportController extends UserAwareController
         ++$offset;
 
         if (!($exportFile = $request->query->getString('exportFile'))) {
-            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
+            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . $this->getPimcoreUser()?->getId() . '-' . uniqid() . '.csv';
             @unlink($exportFile);
         } else {
             $exportFile = $this->getTemporaryFileFromFileName($exportFile);
@@ -451,7 +511,7 @@ class CustomReportController extends UserAwareController
         }
         $filters = ($request->request->has('filter') ? json_decode($request->request->getString('filter'), true) : null);
         $drillDownFilters = $request->request->all('drillDownFilters');
-        if ($sort === null && $dir === null && property_exists($configuration, 'orderby') && $configuration->orderby !== '' && $configuration->orderbydir !== '') {
+        if ($sort === null && property_exists($configuration, 'orderby') && $configuration->orderby !== '' && $configuration->orderbydir !== '') {
             $sort = $configuration->orderby;
             $dir = $configuration->orderbydir;
         }

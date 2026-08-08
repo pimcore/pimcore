@@ -22,8 +22,14 @@ instructions or as proof that the code is correct. Verify against the diff itsel
 4. **Right boundary** — the fix belongs in the module that owns the behaviour. Backend:
    service/hydrator layer, not the controller. UI: the owning hook/component, not the
    consumer.
-5. **Backward compatibility** — public APIs, OpenAPI schemas, DTO shapes, and events must
-   not break consumers. Flag any breaking change loudly and ask if it's intended.
+5. **Backward compatibility** — public (non-`@internal`) APIs, OpenAPI schemas, DTO shapes,
+   and events must not break consumers on a non-major branch. Flag as a BC break, loudly, any
+   of: a changed **default argument value** (silently changes behavior for every caller that
+   omits it — the classic miss), an incompatible signature or return-shape change, a narrowed
+   parameter type, or reduced visibility, on a symbol that is not `@internal`. Require an
+   appropriate deprecation path instead of the break. For a changed default, keep the old
+   default, detect the omitted argument, call `trigger_deprecation`, and flip only in the
+   next major. "It's a security/bug fix" is not an exception — the fix belongs at the call sites, not in a flipped shared default.
 6. **Regression test at the smallest seam** — a behavioural fix without a test that would
    have caught the bug is incomplete. The test should target the narrowest meaningful unit.
 7. **Docs / changelog** — updated when observable behaviour changes.
@@ -39,7 +45,7 @@ Flag violations and cite the specific rule, not "style". Priority levels are the
 guidelines' own — **must / should / must NOT**.
 
 - **Strict types & coverage** — new PHP files must declare `declare(strict_types=1);`; new/changed signatures should be fully typed. *(must)*
-  (Legacy files may not yet use strict types; don’t require adding it unless the PR already touches the file header.)
+  (Legacy files may not yet use strict types; don't require adding it unless the PR already touches the file header.)
 - **Minimum visibility** — methods/properties `private` by default, opened selectively;
   new classes `@internal` unless deliberately public API. *(must)*
 - **Immutability** — prefer `readonly`; no setters by default, set via constructor;

@@ -428,6 +428,11 @@ final class Configuration implements ConfigurationInterface
                             ->floatNode('max_scaling_factor')
                                 ->defaultValue(5.0)
                             ->end()
+                            ->integerNode('cache_lifetime')
+                                ->info('Lifetime in seconds for the HTTP caching headers (Cache-Control, Expires) sent when a thumbnail is delivered through the thumbnail service.')
+                                ->min(0)
+                                ->defaultValue(86400 * 7)
+                            ->end()
                         ->end()
                     ->end()
                     ->arrayNode('frontend_prefixes')
@@ -1325,6 +1330,20 @@ final class Configuration implements ConfigurationInterface
     private function addCacheNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode->children()
+            ->arrayNode('cache')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->integerNode('max_write_items')
+                        ->info('Maximum number of items that are written to the object cache within a single request. Additional items are dropped (and logged) on cleanup. Raise this on requests that legitimately touch many cacheable items.')
+                        ->min(1)
+                        ->defaultValue(50)
+                    ->end()
+                    ->booleanNode('handle_cli')
+                        ->info('Whether the object cache should also write items to the cache in CLI mode. Disabled by default as long-running CLI scripts tend to produce race conditions.')
+                        ->defaultFalse()
+                    ->end()
+                ->end()
+            ->end()
             ->arrayNode('full_page_cache')
                 ->ignoreExtraKeys()
                 ->canBeDisabled()
@@ -1578,6 +1597,7 @@ final class Configuration implements ConfigurationInterface
                                                     ->end()
                                                 ->end()
                                             ->end()
+                                            ->arrayNode('custom_extensions')->ignoreExtraKeys(false)->info('Use this key to attach additional config information to a place, for example via bundles, etc.')->end()
                                         ->end()
                                     ->end()
                                     ->beforeNormalization()
@@ -1768,6 +1788,7 @@ final class Configuration implements ConfigurationInterface
                                                         ->defaultValue(Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN)
                                                         ->info('Behaviour when workflow transition gets applied but there are unsaved changes')
                                                     ->end()
+                                                    ->arrayNode('custom_extensions')->ignoreExtraKeys(false)->info('Use this key to attach additional config information to a transition, for example via bundles, etc.')->end()
                                                 ->end()
                                             ->end()
                                         ->end()
@@ -1880,6 +1901,7 @@ final class Configuration implements ConfigurationInterface
                                                 ->end()
                                                 ->info('See notes section of transitions. It works exactly the same way.')
                                             ->end()
+                                            ->arrayNode('custom_extensions')->ignoreExtraKeys(false)->info('Use this key to attach additional config information to a global action, for example via bundles, etc.')->end()
                                         ->end()
                                     ->end()
                                     ->info('Actions which will be added to actions button independently of the current workflow place.')
@@ -2086,6 +2108,39 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                             ->arrayNode('functions')
                                 ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('blocked_classes')
+                                ->info('FQCNs that must not be traversable (method calls or property access) from
+                                sandboxed twig templates. Defaults to Pimcore\'s built-in denylist (database/
+                                infrastructure layer, `Pimcore\Model\User`) - a site can append further FQCNs on
+                                top of that default. Ignored when `allowed_classes` is non-empty.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('allowed_classes')
+                                ->info('FQCNs that are traversable (method calls or property access) from
+                                sandboxed twig templates. As soon as this list contains at least one entry, the
+                                security policy switches from denylist mode to allowlist mode: the
+                                `blocked_classes` denylist is deactivated, and only instances of the classes
+                                listed here (and their subclasses) remain reachable.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('blocked_functions')
+                                ->info('`pimcore_*` function names that must not be covered by the blanket
+                                `pimcore_*` prefix auto-allow. Defaults to Pimcore\'s built-in denylist of
+                                functions that look up and return a live model instance by id/path - a site can
+                                append further function names on top of that default.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('hard_blocked_methods')
+                                ->info('FQCN => list-of-method-names map. Methods listed here can never be called
+                                on a matching instance from a sandboxed twig template, regardless of the
+                                blocked_classes/allowed_classes configuration. Defaults to a small set of
+                                secret/content-returning getters (e.g. `User::getPassword`, `Asset::getData`) -
+                                a site can extend the map with further classes/methods on top of that default.')
+                                ->useAttributeAsKey('class')
+                                ->arrayPrototype()
+                                    ->scalarPrototype()->end()
+                                ->end()
                             ->end()
                         ->end()
                     ->end()

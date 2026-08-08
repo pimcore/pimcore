@@ -124,9 +124,9 @@ class Imagick extends Adapter
             }
 
             if ($this->checkPreserveAnimation($i->getImageFormat(), $i, false)) {
-                if (!$this->resource->readImage($imagePath) || !filesize($imagePath)) {
-                    return false;
-                }
+                // \Imagick::readImage() throws on failure (it never returns false) and
+                // a non-empty file size was already ensured when the image was read above
+                $this->resource->readImage($imagePath);
                 $this->resource = $this->resource->coalesceImages();
             }
 
@@ -267,7 +267,7 @@ class Imagick extends Adapter
             $success = file_exists($path);
         } else {
             if ($this->checkPreserveAnimation($format, $i)) {
-                $success = $i->writeImages('GIF:' . $path, true);
+                $success = $i->writeImages($format . ':' . $path, true);
             } else {
                 $success = $i->writeImage($format . ':' . $path);
             }
@@ -298,7 +298,7 @@ class Imagick extends Adapter
             return false;
         }
 
-        if ($format && !in_array(strtolower($format), ['gif', 'original', 'auto'])) {
+        if ($format && !in_array(strtolower($format), ['gif', 'original', 'auto', 'webp'])) {
             return false;
         }
 
