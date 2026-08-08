@@ -568,10 +568,16 @@ class Service extends Model\Element\Service
 
         // Attempt to stream the cached thumbnail directly. On remote storage adapters (e.g. S3),
         // this avoids the extra HEAD request that a preceding fileExists() check would issue.
-        try {
-            $stream = $storage->readStream($storagePath);
-        } catch (UnableToReadFile) {
-            $stream = null;
+        // Paths without a filename component are skipped: unlike fileExists(), the local adapter's
+        // readStream() opens directories successfully, so the storage root would be streamed
+        // instead of falling back to thumbnail generation.
+        $stream = null;
+        if ($storagePath !== '' && !str_ends_with($storagePath, '/')) {
+            try {
+                $stream = $storage->readStream($storagePath);
+            } catch (UnableToReadFile) {
+                $stream = null;
+            }
         }
 
         if ($stream !== null) {
