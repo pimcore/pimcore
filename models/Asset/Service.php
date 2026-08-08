@@ -20,6 +20,7 @@ use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image\Thumbnail\Config as ThumbnailConfig;
@@ -575,7 +576,10 @@ class Service extends Model\Element\Service
         if ($storagePath !== '' && !str_ends_with($storagePath, '/')) {
             try {
                 $stream = $storage->readStream($storagePath);
-            } catch (UnableToReadFile) {
+            } catch (UnableToReadFile $e) {
+                // Logged at debug level because a cache miss - the common case on first delivery -
+                // is reported the same way as an actual storage failure.
+                Logger::debug('Could not stream cached thumbnail ' . $storagePath . ': ' . $e->getMessage());
                 $stream = null;
             }
         }
