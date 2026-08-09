@@ -258,9 +258,7 @@ class Manager
                 // validation error on a force_published transition). Otherwise
                 // marking stores that persist immediately (such as the
                 // state_table store) leave the subject in an inconsistent state.
-                if ($previousMarking !== null) {
-                    $markingStore->setMarking($subject, $previousMarking);
-                }
+                $markingStore->setMarking($subject, $previousMarking);
                 if ($previousPublishedState !== null) {
                     $subject->setPublished($previousPublishedState);
                 }
