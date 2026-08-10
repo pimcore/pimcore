@@ -32,6 +32,7 @@ class Document extends Model\Asset
     {
         if ($this->getDataChanged()) {
             $this->removeCustomSetting('document_page_count');
+            $this->removeCustomSetting(self::CUSTOM_SETTING_PDF_SCAN_STATUS);
         }
 
         parent::update($params);
@@ -131,9 +132,17 @@ class Document extends Model\Asset
         return (string) $text;
     }
 
+    /**
+     * Returns whether a scan was performed (not whether JS was found). Use getScanStatus() for the result.
+     */
     public function checkIfPdfContainsJS(): bool
     {
         if (!$this->isPdfScanningEnabled()) {
+            return false;
+        }
+
+        $scanStatus = $this->getScanStatus();
+        if ($scanStatus === Model\Asset\Enum\PdfScanStatus::SAFE) {
             return false;
         }
 
@@ -152,6 +161,8 @@ class Document extends Model\Asset
                 break;
             }
 
+            // NOTE: raw string matching produces false positives (see #16955) — /JS can appear
+            // in font names, operator sequences, or other non-JavaScript PDF structures.
             if (str_contains($chunk, '/JS') || str_contains($chunk, '/JavaScript')) {
                 $this->setCustomSetting(
                     self::CUSTOM_SETTING_PDF_SCAN_STATUS,

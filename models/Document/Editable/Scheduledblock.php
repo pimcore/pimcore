@@ -182,6 +182,8 @@ class Scheduledblock extends Block implements BlockInterface
 
         $outerAttributes = [
             'key' => $this->indices[$this->current]['key'],
+            // see Areablock::blockStart(): `data-key` is the robust mirror of `key`
+            'data-key' => $this->indices[$this->current]['key'],
             'date' => $this->indices[$this->current]['date'],
         ];
 

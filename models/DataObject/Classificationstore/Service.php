@@ -70,10 +70,22 @@ class Service
         /** @var DataObject\ClassDefinition\Data $dataDefinition */
         $dataDefinition = $loader->build($type);
 
+        // Classification store key names are labels referenced by keyId — they are never
+        // emitted into generated PHP classes or DDL, so they are exempt from the identifier
+        // validation in Data::setName() (existing stores contain names like "Voltage Type").
+        $name = $definition['name'] ?? null;
+        unset($definition['name']);
+
         $dataDefinition->setValues($definition);
         $className = get_class($dataDefinition);
 
-        $dataDefinition = $className::__set_state((array) $dataDefinition);
+        $state = (array) $dataDefinition;
+        unset($state['name']);
+        $dataDefinition = $className::__set_state($state);
+
+        if (is_string($name)) {
+            $dataDefinition->name = $name;
+        }
 
         if ($dataDefinition instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             $delegateDefinitionRaw = $dataDefinition->getDelegate();

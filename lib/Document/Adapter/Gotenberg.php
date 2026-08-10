@@ -16,6 +16,7 @@ namespace Pimcore\Document\Adapter;
 use Exception;
 use Gotenberg\Gotenberg as GotenbergAPI;
 use Gotenberg\Stream;
+use GuzzleHttp\Psr7\LazyOpenStream;
 use Pimcore\Config;
 use Pimcore\Helper\GotenbergHelper;
 use Pimcore\Logger;
@@ -112,11 +113,13 @@ class Gotenberg extends Ghostscript
         if (!$storage->fileExists($storagePath)) {
             $localAssetTmpPath = $asset->getLocalFile();
 
+            $psrStream = null;
+
             try {
+                $psrStream = new LazyOpenStream($localAssetTmpPath, 'rb');
+
                 $request = GotenbergAPI::libreOffice(Config::getSystemConfiguration('gotenberg')['base_url'])
-                    ->convert(
-                        Stream::path($localAssetTmpPath)
-                    );
+                    ->convert(new Stream($asset->getFilename(), $psrStream));
 
                 $response = GotenbergAPI::send($request);
                 $fileContent = $response->getBody()->getContents();
@@ -127,6 +130,10 @@ class Gotenberg extends Ghostscript
                 Logger::error($message. $e->getMessage());
 
                 throw $e;
+            } finally {
+                if ($psrStream instanceof \Psr\Http\Message\StreamInterface) {
+                    $psrStream->close();
+                }
             }
         }
 

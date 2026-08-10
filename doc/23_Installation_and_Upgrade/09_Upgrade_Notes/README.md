@@ -1,5 +1,62 @@
 # Upgrade Notes
 
+## Pimcore 2026.2.7
+
+### Possible data loss on 11.5.21, 12.3.12, 12.3.13, 2026.2.5 and 2026.2.6
+
+Those releases restricted object deserialization for two stores that legitimately contain PHP
+objects, so affected values were read back empty:
+
+- **`block` fields** — the child types `externalImage`, `consent`, `date`, `datetime`,
+  `structuredTable`, `hotspotimage`, `imageGallery` and `dateRange`, including inside a block
+  nested in `localizedfields`. A `dateRange` child raised
+  `Carbon\Exceptions\InvalidPeriodParameterException` on save.
+- **Document `image` editables** — hotspot and marker metadata, which made rendering a page with
+  such an editable fail with `Cannot use object of type __PHP_Incomplete_Class as array`.
+
+Reading was affected, so **saving an object or document while running one of those versions
+persisted the empty value**. A field marked mandatory blocked the save instead, which left the
+stored value intact.
+
+If you ran any of those versions, check the affected fields after upgrading. Versioning was not
+affected, so earlier values can be recovered from the element's version history.
+
+### WebDAV move failed on 12.3.7 and later
+
+Independently of the above, and over a wider range of releases (**12.3.7** and later, **2026.1.3**
+and later), replacing an asset over WebDAV failed when the client deleted the file and then moved
+the new one into place — the pattern used by several desktop applications, Photoshop among them.
+The move aborted with `The script tried to call a method on an incomplete object`.
+
+No data was lost in this case; the operation simply did not complete.
+
+## Pimcore 12.3.12
+
+### Deprecations
+
+#### [Serialization]
+
+Calling `Pimcore\Tool\Serialize::unserialize()` without the `$allowedClasses` argument is deprecated.
+Pass an explicit value: `false` to forbid object deserialization (the safe choice for scalar/array data),
+or an array of allowed class names when a trusted stored object graph must be reconstructed.
+The default changes from `true` to `false` (object deserialization disabled) in Pimcore 2027.1.
+
+## Pimcore 12.3.10
+
+### Deprecations
+
+#### [Document Editor]
+
+The `width` and `height` options of `Pimcore\Extension\Document\Areabrick\EditableDialogBoxConfiguration` are deprecated and will be removed in 2027.1. 
+Editable dialog boxes work differently in the new Studio UI, so these options no longer have any effect.
+
+## Pimcore 12.3.6
+
+### [Assets]
+
+-   The MIME type is now read from the storage adapter after the file is written, with a fallback to stream sniffing and finally `application/octet-stream`. Existing assets (e.g. `.doc`/`.xls`/`.ppt` files previously misdetected as `application/octet-stream`) need to be re-uploaded or have their MIME type rewritten to pick up the corrected MIME type.
+-   Added a new command `pimcore:assets:rewrite-mime-type` to rewrite the MIME type of existing assets without re-uploading them.
+
 ## Pimcore 12.3.0
 
 ### [General]
@@ -32,7 +89,7 @@ Support for all Symfony 6.x components will be removed in next major version.
 This is part of the migration to Symfony 7, which requires updating all Symfony dependencies to version 7.3 or higher.
 
 **Action Required:**
-Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 13.0.
+Update all Symfony components to version 7.3 or higher before upgrading to Pimcore 2026.1.
 
 **Note:**
 If you want to stay on Symfony 6.x after updating to this version, you can use the `pimcore/symfony-freeze` metapackage to prevent 
@@ -50,7 +107,7 @@ To ensure all core Symfony components are on version 7.x minimum (recommended fo
 composer require pimcore/symfony-freeze:^7.0
 ```
 
-**Note:** The `pimcore/symfony-freeze` package is only intended for Pimcore 12.3 and 12.x development versions. It will not be needed for Pimcore 13, as Symfony 6 support will be removed entirely.
+**Note:** The `pimcore/symfony-freeze` package is only intended for Pimcore 12.3 and 12.x development versions. It will not be needed for Pimcore 2026, as Symfony 6 support will be removed entirely.
 
 
 #### [Doctrine Annotations]
@@ -63,7 +120,7 @@ No action required for most users. If your custom code relies on `doctrine/annot
 
 #### [Symfony Templating Component]
 
-The `Symfony\Component\Templating\EngineInterface` and related templating services are deprecated and will be removed in version 13.0.
+The `Symfony\Component\Templating\EngineInterface` and related templating services are deprecated and will be removed in version 2026.1.
 This is part of the migration to Symfony 7, which no longer includes the `symfony/templating` component.
 
 **What's Deprecated:**
@@ -90,7 +147,7 @@ All functionality remains the same, but the interface changes from the Symfony t
 
 #### Folder structure for email logs
 
-The command `pimcore:migrate:mail-logs-folder-structure` and supporting the old structure are deprecated and will be removed in version 13.0.
+The command `pimcore:migrate:mail-logs-folder-structure` and supporting the old structure are deprecated and will be removed in version 2026.1.
 
 **Action Required:**
 Execute the command `pimcore:migrate:mail-logs-folder-structure` or move the files manually to YYYY/MM/DD/\<log filename\>.
@@ -620,7 +677,7 @@ The tokens for password reset are now stored in the DB and are one time use only
 
 #### [Installer] :
 
--   Removed `--ignore-existing-config` option from the `pimcore:install` command. The `system.yaml` file is not used anymore and therefore this flag became obsolete. See [preparing guide](../07_Updating_Pimcore/12_V10_to_V11.md)
+-   Removed `--ignore-existing-config` option from the `pimcore:install` command. The `system.yaml` file is not used anymore and therefore this flag became obsolete.
 -   Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
 -   Adding `BundleSetupEvent` Event. Bundles that are available for installation can be customized in the installing process via an Eventlistener or EventSubscriber.
 -   Bundles can be added and removed. You can set a flag if you want to recommend the bundle.
@@ -695,7 +752,7 @@ The tokens for password reset are now stored in the DB and are one time use only
 -   Enabled Content Security Policy by default.
 -   Implemented Symfony HTML sanitizer for WYSIWYG editors. Please make sure to sanitize your persisted data with help of this [script](https://gist.github.com/dvesh3/0e585a16dfbf546bc17a9eef1c5640b3).
     Also, when using API to set WYSIWYG data, please pass encoded characters for html entities `<`,`>`, `&` etc.
-    The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API. For configuration details see also [WYSIWYG config](../../03_Documents/01_Editables/40_WYSIWYG.md#extending-symfony-html-sanitizer-configuration)
+    The data is encoded by the sanitizer before persisting into db and the same encoded data will be returned by the API. For configuration details see also [WYSIWYG config](../../01_Documents/02_Templates/03_Editables/40_WYSIWYG.md#extending-symfony-html-sanitizer-configuration)
 
 ---
 
@@ -761,7 +818,7 @@ The tokens for password reset are now stored in the DB and are one time use only
             ```
             -   Removed deprecated methods `getTranslator()`, `getBundleManager()` and `getTokenResolver()` from the `Pimcore\Bundle\AdminBundle\Controller\AdminController`
     -   [System Info & Tools] Php Info and Opcache Status has been moved into `pimcore/system-info-bundle` package.
-    -   [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
+    -   [File Explorer] System File explorer has been moved to `pimcore/file-explorer-bundle` package.
     -   [Web2Print] has been moved to `pimcore/web-to-print-bundle` package.
         -   Config `pimcore:documents:web_to_print` has been removed, please use `pimcore_web_to_print` in the PimcoreWebToPrintBundle instead.
         -   Print related Events have been moved into PimcoreWebToPrintBundle. Please check and adapt the Events' namespaces.
@@ -800,11 +857,11 @@ The tokens for password reset are now stored in the DB and are one time use only
     $web2printConfig = $web2printConfig['chromiumSettings'];
     ```
 -   Removed legacy callback from LocationAwareConfigRepository. Therefore, configurations in the old php file format are not supported anymore.
--   Removed setting write targets and storage directory in the environment file. Instead, use the [symfony config](../07_Updating_Pimcore/12_V10_to_V11.md)
+-   Removed setting write targets and storage directory in the environment file. Instead, use the symfony config.
 -   Renamed default directories from `image-thumbnails` and `video-thumbnails` to `image_thumbnails` and `video_thumbnails`.
 -   Removed deprecated services/aliases: `Pimcore\Templating\Renderer\TagRenderer`, `pimcore.cache.adapter.pdo`, `pimcore.cache.adapter.pdo_tag_aware`
 -   Rename config files from `*.yml` to `*.yaml`. Note that we now use `system_settings.yaml` as config file and not `system.yml`
--   System Settings are now implementing the LocationAwareConfigRepository. See [preparing guide](../07_Updating_Pimcore/11_Preparing_for_V11.md)
+-   System Settings are now implementing the LocationAwareConfigRepository.
 -   The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
 -   The deprecated config node `pimcore.error_handling` and the related parameter `pimcore.response_exception_listener.render_error_document` was removed.
 -   Moved `hide_edit_image` & `disable_tree_preview` configs from `pimcore` to `pimcore_admin` section.
@@ -1017,7 +1074,7 @@ pimcore:
 -   Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
 -   Removed `pimcore:document:types` from config. The types will be represented by the keys of the `type_definitions:map`
 -   Removed deprecated `Pimcore\Routing\Dynamic\DocumentRouteHandler::addDirectRouteDocumentType()` method, please use the `pimcore.documents.type_definitions.map.%document_type%.direct_route` config instead.
--   Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../03_Documents/README.md#cleanup-documents-types)
+-   Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation, see [Documents](../../01_Documents/14_Working_with_Documents_via_PHP_API.md#cleanup-document-types)
 -   Removed the `attributes` field from the link editable.
 -   Deprecated WkHtmlToImage has been removed.
 -   Added a second boolean parameter `$validate` to the setContentMainDocumentId() method. This will restrict the option to set pages as content main documents to each other. For details, please see [#12891](https://github.com/pimcore/pimcore/issues/12891)
