@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Exception;
+use InvalidArgumentException;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -554,6 +555,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this->layout;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function setName(string $name): static
     {
         parent::setName($name);
