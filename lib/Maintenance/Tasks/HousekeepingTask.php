@@ -75,37 +75,20 @@ class HousekeepingTask implements TaskInterface
             return true;
         });
 
-        $iterator = new RecursiveIteratorIterator($filter);
+        $mode = $clearFolder ? RecursiveIteratorIterator::CHILD_FIRST : RecursiveIteratorIterator::LEAVES_ONLY;
+        $iterator = new RecursiveIteratorIterator($filter, $mode);
 
-        foreach ($iterator as $file) {
-            /** @var SplFileInfo $file */
-            if ($file->isFile()) {
-                @unlink($file->getPathname());
-            }
-        }
-
-        if ($clearFolder) {
-            $dirIterator = new RecursiveDirectoryIterator($folder, \FilesystemIterator::SKIP_DOTS);
-            $dirWalker = new RecursiveIteratorIterator($dirIterator, RecursiveIteratorIterator::CHILD_FIRST);
-
-            foreach ($dirWalker as $entry) {
-                if (!$entry->isDir()) {
-                    continue;
-                }
-
-                $dirPath = $entry->getPathname();
-
-                if ($dirPath === $folder) {
-                    continue;
-                }
-
-                $stat = @stat($dirPath);
+        foreach ($iterator as $entry) {
+            if ($entry->isFile()) {
+                @unlink($entry->getPathname());
+            } elseif ($clearFolder) {
+                $stat = @stat($entry->getPathname());
                 $dirTime = $stat ? ($stat['mtime'] ?: $stat['ctime']) : false;
 
                 if ($dirTime && $dirTime < $cutoff) {
                     // rmdir() is atomic: the kernel checks emptiness and removes in one
                     // operation, avoiding the TOCTOU race of a separate is_dir_empty() call.
-                    @rmdir($dirPath);
+                    @rmdir($entry->getPathname());
                 }
             }
         }
