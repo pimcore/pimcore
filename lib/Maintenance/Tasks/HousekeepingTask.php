@@ -102,7 +102,9 @@ class HousekeepingTask implements TaskInterface
                 $stat = @stat($dirPath);
                 $dirTime = $stat ? ($stat['mtime'] ?: $stat['ctime']) : false;
 
-                if ($dirTime && $dirTime < $cutoff && is_dir_empty($dirPath)) {
+                if ($dirTime && $dirTime < $cutoff) {
+                    // rmdir() is atomic: the kernel checks emptiness and removes in one
+                    // operation, avoiding the TOCTOU race of a separate is_dir_empty() call.
                     @rmdir($dirPath);
                 }
             }
