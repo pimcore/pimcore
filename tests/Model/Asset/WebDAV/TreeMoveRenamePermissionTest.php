@@ -19,11 +19,11 @@ use Pimcore\Model\Asset\WebDAV\Folder;
 use Pimcore\Model\Asset\WebDAV\Tree;
 use Pimcore\Model\User;
 use Pimcore\Model\User\Workspace\Asset as AssetWorkspace;
+use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Security\User\User as SecurityUser;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Sabre\DAV\Exception\Forbidden;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
@@ -39,17 +39,19 @@ class TreeMoveRenamePermissionTest extends ModelTestCase
 
     private ?User\Role $createdRole = null;
 
-    private ?TokenInterface $originalToken = null;
+    private ?TokenStorageUserResolver $originalUserResolver = null;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->originalToken = $this->tokenStorage()->getToken();
+        $this->originalUserResolver = Pimcore::getContainer()->get(TokenStorageUserResolver::class);
     }
 
     protected function tearDown(): void
     {
-        $this->tokenStorage()->setToken($this->originalToken);
+        if ($this->originalUserResolver !== null) {
+            Pimcore::getContainer()->set(TokenStorageUserResolver::class, $this->originalUserResolver);
+        }
 
         $this->createdUser?->delete();
         $this->createdRole?->delete();
@@ -141,11 +143,16 @@ class TreeMoveRenamePermissionTest extends ModelTestCase
 
     private function loginAs(User $user): void
     {
-        $this->tokenStorage()->setToken(new UsernamePasswordToken(new SecurityUser($user), 'pimcore_admin'));
-    }
+        // security.token_storage is inlined out of the compiled container and cannot be fetched
+        // directly. Tree::move() resolves the current user via Admin::getCurrentUser(), which reads
+        // the public TokenStorageUserResolver service, so we swap in a resolver backed by a token
+        // storage we control (mirroring how other model tests override public services).
+        $tokenStorage = new TokenStorage();
+        $tokenStorage->setToken(new UsernamePasswordToken(new SecurityUser($user), 'pimcore_admin'));
 
-    private function tokenStorage(): TokenStorageInterface
-    {
-        return Pimcore::getContainer()->get('security.token_storage');
+        Pimcore::getContainer()->set(
+            TokenStorageUserResolver::class,
+            new TokenStorageUserResolver($tokenStorage)
+        );
     }
 }
