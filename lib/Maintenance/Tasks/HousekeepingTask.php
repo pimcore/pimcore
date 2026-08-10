@@ -88,7 +88,13 @@ class HousekeepingTask implements TaskInterface
         });
 
         $mode = $clearFolder ? RecursiveIteratorIterator::CHILD_FIRST : RecursiveIteratorIterator::LEAVES_ONLY;
-        $iterator = new RecursiveIteratorIterator($filter, $mode);
+        // CATCH_GET_CHILD: a directory can vanish between the parent's readdir and the
+        // attempt to descend into it - either because this run just removed it, or
+        // because another node did. On NFS the parent's cached listing makes that
+        // routine. Without this flag the UnexpectedValueException aborts the whole
+        // walk and the job dies partway; with it, the subtree is skipped and picked
+        // up on the next run.
+        $iterator = new RecursiveIteratorIterator($filter, $mode, RecursiveIteratorIterator::CATCH_GET_CHILD);
 
         foreach ($iterator as $entry) {
             $path = $entry->getPathname();
