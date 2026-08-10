@@ -17,9 +17,6 @@ namespace Pimcore\Tests\Unit\Document\Editable;
 use Pimcore\Model\Document\Editable\Textarea;
 use Pimcore\Tests\Support\Test\TestCase;
 
-/**
- * @covers Textarea
- */
 class TextareaTest extends TestCase
 {
     public function testEmptyTextareaFrontendWithDefaultConfig(): void
@@ -32,8 +29,18 @@ class TextareaTest extends TestCase
     public function testEmptyTextareaFrontendWithNl2br(): void
     {
         $textarea = new Textarea();
-        $textarea->setConfig(['nl2br' => true]);
+        // htmlspecialchars must be disabled, otherwise it already converts the null text
+        // to a string before it reaches nl2br()
+        $textarea->setConfig(['htmlspecialchars' => false, 'nl2br' => true]);
 
         $this->assertSame('', $textarea->frontend());
+    }
+
+    public function testSetDataFromEditmodeWithNull(): void
+    {
+        $textarea = new Textarea();
+        $textarea->setDataFromEditmode(null);
+
+        $this->assertSame('', $textarea->getText());
     }
 }
