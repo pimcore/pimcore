@@ -315,6 +315,17 @@ final class SecurityPolicyTest extends TestCase
         $policy->checkSecurity([], [], ['pimcore_user']);
     }
 
+    public function testPimcoreFileExistsIsNotAutoAllowedByDefault(): void
+    {
+        // GHSA-7m33-xgw9-j3g7: pimcore_file_exists() calls PHP's is_file() directly on
+        // its argument, letting a sandboxed template use the boolean result as a
+        // filesystem-existence oracle for any path reachable by the PHP process.
+        $policy = new SecurityPolicy(blockedFunctions: self::defaultSandboxSecurityPolicyConfig()['blocked_functions']);
+
+        $this->expectException(SecurityNotAllowedFunctionError::class);
+        $policy->checkSecurity([], [], ['pimcore_file_exists']);
+    }
+
     /**
      * @dataProvider idLookupPimcoreFunctionsAutoAllowedByDefaultProvider
      */

@@ -2127,7 +2127,8 @@ final class Configuration implements ConfigurationInterface
                             ->arrayNode('blocked_functions')
                                 ->info('`pimcore_*` function names that must not be covered by the blanket
                                 `pimcore_*` prefix auto-allow. Defaults to Pimcore\'s built-in denylist of
-                                functions that look up and return a live model instance by id/path - a site can
+                                functions that look up and return a live model instance by id/path, or that
+                                expose a filesystem/state oracle (e.g. `pimcore_file_exists`) - a site can
                                 append further function names on top of that default.')
                                 ->scalarPrototype()->end()
                             ->end()
