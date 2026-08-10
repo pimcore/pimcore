@@ -42,12 +42,31 @@ final class Telemetry implements TelemetryInterface
      */
     private array $buffer = [];
 
+    /**
+     * Truncation for the domain HMAC. 16 hex characters (64 bits) is far more than the handful of
+     * deployments per installation needs, and a collision would only ever merge two of them.
+     */
+    private const DOMAIN_HASH_LENGTH = 16;
+
+    /**
+     * Stands in for the domain hash when `pimcore.general.domain` is not configured, which is the
+     * default and therefore the common case.
+     *
+     * Purely so the key is self-describing: a trailing empty segment reads as a truncation bug to
+     * anyone looking at it in analytics, whereas this says plainly that the deployment could not be
+     * identified beyond its mode. It buys no extra resolution - every unconfigured deployment of one
+     * installation in one mode still shares this segment, which is exactly what an empty one did.
+     */
+    private const DOMAIN_UNKNOWN = 'unknown';
+
     public function __construct(
         private readonly string $instanceIdentifier,
         private readonly string $productKey,
         private readonly TelemetrySpoolWriterInterface $spool,
         private readonly LoggerInterface $logger,
         private readonly EventSanitizer $sanitizer,
+        private readonly string $environment = '',
+        private readonly string $mainDomain = '',
     ) {
     }
 
@@ -72,7 +91,7 @@ final class Telemetry implements TelemetryInterface
             'type' => 'capture',
             'event' => $event,
             'properties' => $this->sanitizer->sanitizeProperties($properties, $event),
-            'groups' => [self::INSTANCE_GROUP_TYPE => $this->instanceIdentifier] + $groups,
+            'groups' => [self::INSTANCE_GROUP_TYPE => $this->instanceGroupKey()] + $groups,
         ];
     }
 
@@ -85,9 +104,50 @@ final class Telemetry implements TelemetryInterface
         $this->buffer[] = [
             'type' => 'group_identify',
             'groupType' => $type,
-            'groupKey' => $key,
+            // The instance group belongs to this class: `capture()` has always injected it with
+            // precedence over anything a caller passes, and the profile has to land on exactly the
+            // group the events are attributed to or the two would describe different things.
+            'groupKey' => $type === self::INSTANCE_GROUP_TYPE ? $this->instanceGroupKey() : $key,
             'properties' => $this->sanitizer->sanitizeProperties($properties, 'group:' . $type),
         ];
+    }
+
+    /**
+     * Identifies the **deployment**, not the installation.
+     *
+     * One product key is routinely installed more than once: staging is usually a restore of
+     * production, so it carries the same instance identifier, product key and encryption secret - and
+     * because the key is bound to (identifier, encryption secret) by `validateProductKey()`, a clone
+     * that boots at all is identical in every registration-derived value. Keyed on the identifier
+     * alone those deployments share one group, and since a group profile is last-write-wins their
+     * snapshots overwrite each other: a staging box with forty test objects would flip production's
+     * counts every other day.
+     *
+     * The domain is what actually separates them, and it is HMAC'd rather than sent: analytics only
+     * ever sees an opaque token, so the dataset stays pseudonymous instead of being attributable to a
+     * named company. Keying the HMAC with the product key means the same domain under a different
+     * installation hashes differently - no cross-instance correlation, and no dictionary attack for
+     * anyone without the key.
+     *
+     * `pimcore.general.domain` is optional config, so an unconfigured domain is normal: the segment
+     * falls back to {@see self::DOMAIN_UNKNOWN} and the key still separates environments, it just
+     * cannot separate two deployments running the same one.
+     *
+     * The environment is the raw kernel value, matching `core.environment_name` in the snapshot and
+     * `environment_name` in {@see \Pimcore\Tool\StatisticsManager} so all three line up. Two things
+     * follow from putting a free-text value in an identity: the key inherits whatever `APP_ENV`
+     * contains, and its cardinality is unbounded - renaming an environment, or a stray character in
+     * it, produces a different group rather than a changed one.
+     */
+    private function instanceGroupKey(): string
+    {
+        $domainHash = $this->mainDomain === ''
+            ? self::DOMAIN_UNKNOWN
+            : substr(hash_hmac('sha256', $this->mainDomain, $this->productKey), 0, self::DOMAIN_HASH_LENGTH);
+
+        return $this->instanceIdentifier
+            . ':' . $this->environment
+            . ':' . $domainHash;
     }
 
     public function flush(): void

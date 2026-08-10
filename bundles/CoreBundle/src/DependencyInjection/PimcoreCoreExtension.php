@@ -111,6 +111,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.telemetry.spool.ttl_days', TelemetrySettings::SPOOL_TTL_DAYS);
         $container->setParameter('pimcore.telemetry.spool.lease_seconds', TelemetrySettings::SPOOL_LEASE_SECONDS);
 
+        $container->setParameter('pimcore.telemetry.main_domain', (string) ($config['general']['domain'] ?? ''));
+        $container->setParameter('pimcore.telemetry.timezone', (string) ($config['general']['timezone'] ?? ''));
+
         // Registered here rather than via `_instanceof` in services.yaml: `_instanceof` only applies
         // to services defined in that same file, so a collector or usage provider shipped by another
         // bundle would never be tagged. These are the telemetry extension points, so they have to be

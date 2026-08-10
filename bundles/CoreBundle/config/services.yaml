@@ -239,6 +239,9 @@ services:
             $instanceIdentifier: '%pimcore.product_registration.instance_identifier%'
             $productKey: '%pimcore.product_registration.product_key%'
             $spool: '@Pimcore\Telemetry\Spool\TelemetrySpool'
+            # deployment discriminators for the group key; the domain is HMAC'd, never sent
+            $environment: '%kernel.environment%'
+            $mainDomain: '%pimcore.telemetry.main_domain%'
 
     # authenticated encryption of the batch envelope, keyed by the product key (mirrored on the relay)
     Pimcore\Telemetry\Crypto\EnvelopeCipher: ~
@@ -283,6 +286,8 @@ services:
     Pimcore\Telemetry\Snapshot\CoreSnapshotCollector:
         arguments:
             $environment: '%kernel.environment%'
+            $debugMode: '%kernel.debug%'
+            $timezone: '%pimcore.telemetry.timezone%'
 
     # evidence for EM question #1 - which pillars (DAM/PIM/MDM/DXP/Commerce) are actually used
     Pimcore\Telemetry\Snapshot\PillarUsageCollector: ~
