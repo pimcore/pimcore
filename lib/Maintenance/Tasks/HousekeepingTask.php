@@ -55,8 +55,7 @@ class HousekeepingTask implements TaskInterface
 
         $directory = new RecursiveDirectoryIterator($folder, \FilesystemIterator::SKIP_DOTS);
         $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($cutoff) {
-            if (strpos($current->getFilename(), '-low-quality-preview.svg') !== false) {
-                // do not delete low quality image previews
+            if (str_contains($current->getFilename(), '-low-quality-preview.svg') && $current->isFile()) {
                 return false;
             }
 
