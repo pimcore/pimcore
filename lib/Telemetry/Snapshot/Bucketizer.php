@@ -18,19 +18,6 @@ namespace Pimcore\Telemetry\Snapshot;
  * model cannot be used to re-identify them. Shared by all snapshot collectors so every
  * count is bucketed identically.
  *
- * The scale is one order of magnitude per bucket, which is the resolution the fleet questions actually
- * need - "is this a small install or an enterprise catalog" - while staying coarse enough that no
- * bucket can single an instance out. It runs to 1M+ because real enterprise catalogs reach millions of
- * elements; a scale that saturated earlier would report the largest and the merely-large installations
- * as the same size.
- *
- * The 101-1000 decade is the one exception, split at 500: a large share of installs sit in that range,
- * where a full order of magnitude is too blunt to tell a small project from a mid-sized one.
- *
- * Ordering matters. The arms below are evaluated top-down, so they must stay ascending - moving the
- * 1000 arm above the 500 one would not fail anything loudly, it would simply make `101-500`
- * unreachable and silently re-label every instance in that range.
- *
  * @internal
  */
 final readonly class Bucketizer
