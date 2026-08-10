@@ -51,7 +51,7 @@ class HousekeepingTask implements TaskInterface
             return;
         }
 
-        $directory = new RecursiveDirectoryIterator($folder);
+        $directory = new RecursiveDirectoryIterator($folder, \FilesystemIterator::SKIP_DOTS);
         $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($seconds) {
             if (strpos($current->getFilename(), '-low-quality-preview.svg') !== false) {
                 // do not delete low quality image previews
@@ -61,8 +61,9 @@ class HousekeepingTask implements TaskInterface
             if ($current->isFile()) {
                 $aTime = $current->getATime();
                 $mTime = $current->getMTime();
+                $timeToCheck = $aTime ?: $mTime;
 
-                if (($aTime && $aTime < (time() - $seconds)) || ($mTime && $mTime < (time() - $seconds))) {
+                if ($timeToCheck && $timeToCheck < (time() - $seconds)) {
                     return true;
                 }
                 return false;
@@ -73,18 +74,32 @@ class HousekeepingTask implements TaskInterface
 
         $iterator = new RecursiveIteratorIterator($filter);
 
+        $dirTimes = [];
+
         foreach ($iterator as $file) {
             /**
              * @var SplFileInfo $file
              */
             if ($file->isFile()) {
+                if ($clearFolder) {
+                    $dirPath = $file->getPath();
+                    if (!array_key_exists($dirPath, $dirTimes)) {
+                        $stat = @stat($dirPath);
+                        $dirTimes[$dirPath] = $stat ? ($stat['mtime'] ?: $stat['ctime']) : false;
+                    }
+                }
+
                 @unlink($file->getPathname());
             }
+        }
 
-            if ($clearFolder) {
-                $dirPath = $file->getPath();
-                $dirTime = @filemtime($dirPath) ?: @filectime($dirPath);
+        if ($clearFolder && $dirTimes !== []) {
+            $dirPaths = array_keys($dirTimes);
+            // Remove deepest directories first so parents aren't deleted while they still contain children.
+            usort($dirPaths, static fn (string $a, string $b): int => strlen($b) <=> strlen($a));
 
+            foreach ($dirPaths as $dirPath) {
+                $dirTime = $dirTimes[$dirPath];
                 if ($dirTime && $dirTime < (time() - $seconds) && is_dir_empty($dirPath)) {
                     @rmdir($dirPath);
                 }
