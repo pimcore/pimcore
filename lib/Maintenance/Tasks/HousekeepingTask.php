@@ -51,8 +51,10 @@ class HousekeepingTask implements TaskInterface
             return;
         }
 
+        $cutoff = time() - $seconds;
+
         $directory = new RecursiveDirectoryIterator($folder, \FilesystemIterator::SKIP_DOTS);
-        $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($seconds) {
+        $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($cutoff) {
             if (strpos($current->getFilename(), '-low-quality-preview.svg') !== false) {
                 // do not delete low quality image previews
                 return false;
@@ -63,9 +65,10 @@ class HousekeepingTask implements TaskInterface
                 $mTime = $current->getMTime();
                 $timeToCheck = $aTime ?: $mTime;
 
-                if ($timeToCheck && $timeToCheck < (time() - $seconds)) {
+                if ($timeToCheck && $timeToCheck < $cutoff) {
                     return true;
                 }
+
                 return false;
             }
 
@@ -74,33 +77,32 @@ class HousekeepingTask implements TaskInterface
 
         $iterator = new RecursiveIteratorIterator($filter);
 
-        $dirTimes = [];
-
         foreach ($iterator as $file) {
-            /**
-             * @var SplFileInfo $file
-             */
+            /** @var SplFileInfo $file */
             if ($file->isFile()) {
-                if ($clearFolder) {
-                    $dirPath = $file->getPath();
-                    if (!array_key_exists($dirPath, $dirTimes)) {
-                        $stat = @stat($dirPath);
-                        $dirTimes[$dirPath] = $stat ? ($stat['mtime'] ?: $stat['ctime']) : false;
-                    }
-                }
-
                 @unlink($file->getPathname());
             }
         }
 
-        if ($clearFolder && $dirTimes !== []) {
-            $dirPaths = array_keys($dirTimes);
-            // Remove deepest directories first so parents aren't deleted while they still contain children.
-            usort($dirPaths, static fn (string $a, string $b): int => strlen($b) <=> strlen($a));
+        if ($clearFolder) {
+            $dirIterator = new RecursiveDirectoryIterator($folder, \FilesystemIterator::SKIP_DOTS);
+            $dirWalker = new RecursiveIteratorIterator($dirIterator, RecursiveIteratorIterator::CHILD_FIRST);
 
-            foreach ($dirPaths as $dirPath) {
-                $dirTime = $dirTimes[$dirPath];
-                if ($dirTime && $dirTime < (time() - $seconds) && is_dir_empty($dirPath)) {
+            foreach ($dirWalker as $entry) {
+                if (!$entry->isDir()) {
+                    continue;
+                }
+
+                $dirPath = $entry->getPathname();
+
+                if ($dirPath === $folder) {
+                    continue;
+                }
+
+                $stat = @stat($dirPath);
+                $dirTime = $stat ? ($stat['mtime'] ?: $stat['ctime']) : false;
+
+                if ($dirTime && $dirTime < $cutoff && is_dir_empty($dirPath)) {
                     @rmdir($dirPath);
                 }
             }
