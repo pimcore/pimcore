@@ -52,9 +52,10 @@ class HousekeepingTask implements TaskInterface
         }
 
         $cutoff = time() - $seconds;
+        $dirTimes = [];
 
         $directory = new RecursiveDirectoryIterator($folder, \FilesystemIterator::SKIP_DOTS);
-        $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($cutoff) {
+        $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($cutoff, $clearFolder, &$dirTimes) {
             if (str_contains($current->getFilename(), '-low-quality-preview.svg') && $current->isFile()) {
                 return false;
             }
@@ -71,6 +72,18 @@ class HousekeepingTask implements TaskInterface
                 return false;
             }
 
+            if ($clearFolder) {
+                $path = $current->getPathname();
+                // Capture the mtime before this directory's contents are deleted, so a
+                // directory that was already stale can be removed in the same run. The
+                // filter may run more than once per entry; keep the first (pre-deletion)
+                // value. stat() is served from the cache warmed by isFile() above.
+                if (!array_key_exists($path, $dirTimes)) {
+                    $stat = @stat($path);
+                    $dirTimes[$path] = $stat ? ($stat['mtime'] ?: $stat['ctime']) : false;
+                }
+            }
+
             return true;
         });
 
@@ -78,17 +91,16 @@ class HousekeepingTask implements TaskInterface
         $iterator = new RecursiveIteratorIterator($filter, $mode);
 
         foreach ($iterator as $entry) {
-            if ($entry->isFile()) {
-                @unlink($entry->getPathname());
-            } elseif ($clearFolder) {
-                $stat = @stat($entry->getPathname());
-                $dirTime = $stat ? ($stat['mtime'] ?: $stat['ctime']) : false;
+            $path = $entry->getPathname();
 
-                if ($dirTime && $dirTime < $cutoff) {
+            if (isset($dirTimes[$path])) {
+                if ($dirTimes[$path] && $dirTimes[$path] < $cutoff) {
                     // rmdir() is atomic: the kernel checks emptiness and removes in one
                     // operation, avoiding the TOCTOU race of a separate is_dir_empty() call.
-                    @rmdir($entry->getPathname());
+                    @rmdir($path);
                 }
+            } else {
+                @unlink($path);
             }
         }
     }
