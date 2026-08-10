@@ -53,20 +53,22 @@ class HousekeepingTask implements TaskInterface
 
         $directory = new RecursiveDirectoryIterator($folder);
         $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($seconds) {
-            if (strpos($current->getFilename(), '-low-quality-preview.svg')) {
+            if (strpos($current->getFilename(), '-low-quality-preview.svg') !== false) {
                 // do not delete low quality image previews
                 return false;
             }
 
             if ($current->isFile()) {
-                if ($current->getATime() && $current->getATime() < (time() - $seconds)) {
+                $aTime = $current->getATime();
+                $mTime = $current->getMTime();
+
+                if (($aTime && $aTime < (time() - $seconds)) || ($mTime && $mTime < (time() - $seconds))) {
                     return true;
                 }
-            } else {
-                return true;
+                return false;
             }
 
-            return false;
+            return true;
         });
 
         $iterator = new RecursiveIteratorIterator($filter);
@@ -79,8 +81,13 @@ class HousekeepingTask implements TaskInterface
                 @unlink($file->getPathname());
             }
 
-            if (is_dir_empty($file->getPath()) && $clearFolder) {
-                @rmdir($file->getPath());
+            if ($clearFolder) {
+                $dirPath = $file->getPath();
+                $dirTime = @filemtime($dirPath) ?: @filectime($dirPath);
+
+                if ($dirTime && $dirTime < (time() - $seconds) && is_dir_empty($dirPath)) {
+                    @rmdir($dirPath);
+                }
             }
         }
     }
