@@ -43,16 +43,26 @@ class HousekeepingTask implements TaskInterface
             $this->deleteFilesInFolderOlderThanSeconds($profilerDir, $this->profilerTime, true);
         }
 
-        $this->deleteFilesInFolderOlderThanSeconds(PIMCORE_SYSTEM_TEMP_DIRECTORY, $this->tmpFileTime, false);
+        // Prune empty directories too: without $clearFolder the system temp tree only ever
+        // grows, because rmdir() is never reached. Directories are held for at least a week
+        // so that a still-in-use working directory is not pulled out from under a request.
+        $this->deleteFilesInFolderOlderThanSeconds(
+            PIMCORE_SYSTEM_TEMP_DIRECTORY,
+            $this->tmpFileTime,
+            true,
+            max($this->tmpFileTime, 7 * 86400)
+        );
     }
 
-    private function deleteFilesInFolderOlderThanSeconds(string $folder, int $seconds, bool $clearFolder): void
+    private function deleteFilesInFolderOlderThanSeconds(string $folder, int $seconds, bool $clearFolder, ?int $dirSeconds = null): void
     {
         if (!is_dir($folder)) {
             return;
         }
 
-        $cutoff = time() - $seconds;
+        $now = time();
+        $cutoff = $now - $seconds;
+        $dirCutoff = $now - ($dirSeconds ?? $seconds);
         $dirTimes = [];
 
         $directory = new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS);
@@ -75,13 +85,18 @@ class HousekeepingTask implements TaskInterface
 
             if ($clearFolder) {
                 $path = $current->getPathname();
-                // Capture the mtime before this directory's contents are deleted, so a
+                // Capture the directory time before its contents are deleted, so a
                 // directory that was already stale can be removed in the same run. The
                 // filter may run more than once per entry; keep the first (pre-deletion)
                 // value. stat() is served from the cache warmed by isFile() above.
+                //
+                // max(mtime, ctime) is deliberate: mtime moves when an entry is added or
+                // removed, ctime when the inode changes (rename, chmod, link count). atime
+                // is not used, because on some stacks a plain readdir() bumps it and every
+                // directory this task walks would become immortal.
                 if (!array_key_exists($path, $dirTimes)) {
                     $stat = @stat($path);
-                    $dirTimes[$path] = $stat ? ($stat['mtime'] ?: $stat['ctime']) : false;
+                    $dirTimes[$path] = $stat ? max($stat['mtime'], $stat['ctime']) : false;
                 }
             }
 
@@ -100,8 +115,15 @@ class HousekeepingTask implements TaskInterface
         foreach ($iterator as $entry) {
             $path = $entry->getPathname();
 
-            if (isset($dirTimes[$path])) {
-                if ($dirTimes[$path] && $dirTimes[$path] < $cutoff) {
+            if (array_key_exists($path, $dirTimes)) {
+                $dirTime = $dirTimes[$path];
+                // Drop the entry as soon as it is consumed. CHILD_FIRST only yields a
+                // directory once its whole subtree has been walked, so the live set stays
+                // proportional to the tree depth instead of the tree size (~25MB at 95k
+                // directories).
+                unset($dirTimes[$path]);
+
+                if ($dirTime && $dirTime < $dirCutoff) {
                     // rmdir() is atomic: the kernel checks emptiness and removes in one
                     // operation, avoiding the TOCTOU race of a separate is_dir_empty() call.
                     @rmdir($path);
