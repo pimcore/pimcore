@@ -100,6 +100,28 @@ final class HousekeepingTaskTest extends TestCase
         $this->assertDirectoryExists($this->root . '/mixed', 'rmdir() must fail on a non-empty directory');
     }
 
+    public function testDirectoryRetentionIsIndependentOfFileRetention(): void
+    {
+        // The regression this guards: the temp tree passes a longer directory retention than
+        // its file retention, so a directory a request may still be writing into is not pulled
+        // out from under it just because the files it already wrote have aged out.
+        //
+        // The directory has to straddle the two cutoffs for this to prove anything: it is
+        // older than the file cutoff (0 seconds) but younger than the directory cutoff, so it
+        // survives only because the two retentions are tracked separately.
+        $this->makeDir('working');
+        $this->makeFile('working/old.tmp', age: 7200);
+        $this->age();
+
+        $this->runHousekeeping(seconds: 0, clearFolder: true, dirSeconds: 86400);
+
+        $this->assertFileDoesNotExist($this->root . '/working/old.tmp', 'the stale file should still be deleted');
+        $this->assertDirectoryExists(
+            $this->root . '/working',
+            'the directory is younger than the directory cutoff and must be kept'
+        );
+    }
+
     public function testKeepsDirectoriesWhenClearFolderIsDisabled(): void
     {
         $this->makeDir('temp_like/nested');
@@ -131,12 +153,12 @@ final class HousekeepingTaskTest extends TestCase
         $this->assertFileDoesNotExist($this->root . '/regular.tmp');
     }
 
-    private function runHousekeeping(int $seconds, bool $clearFolder): void
+    private function runHousekeeping(int $seconds, bool $clearFolder, ?int $dirSeconds = null): void
     {
         $task = new HousekeepingTask(86400, 1800);
 
         $method = new ReflectionMethod($task, 'deleteFilesInFolderOlderThanSeconds');
-        $method->invoke($task, $this->root, $seconds, $clearFolder);
+        $method->invoke($task, $this->root, $seconds, $clearFolder, $dirSeconds);
     }
 
     private function makeDir(string $relativePath): string
