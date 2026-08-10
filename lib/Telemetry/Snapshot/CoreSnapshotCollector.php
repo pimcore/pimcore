@@ -14,17 +14,17 @@ declare(strict_types=1);
 namespace Pimcore\Telemetry\Snapshot;
 
 use Exception;
+use Pimcore;
 use Pimcore\Tool;
 use Pimcore\Version;
+use Throwable;
 use function count;
 use function is_numeric;
 use function is_string;
-use function strtolower;
-use function trim;
 
 /**
- * Core snapshot collector: versions, environment, bucketed catalog/model sizes, and the
- * set of active bundle names. Behavior- and structure-only - no names, domains, or content.
+ * Core snapshot collector: versions, environment, bucketed catalog/model sizes, and the set of active
+ * bundle names. Structural only - no element names, field names, paths or values.
  *
  * Serves as the reference implementation other bundles copy to add their own metrics.
  *
@@ -33,18 +33,19 @@ use function trim;
 final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
 {
     /**
-     * Above this the optimizer's row estimate already lands in the top ("1000+") bucket, so we trust
-     * it and skip a full `COUNT(*)` on a potentially huge table. At or below it an exact count is
-     * cheap (small table) and keeps the bucket precise where precision actually matters. InnoDB
-     * estimates are never off by the >80% it would take to misclassify across this margin.
+     * How wrong an `information_schema.TABLES.TABLE_ROWS` estimate is assumed to be able to be, as a
+     * factor in either direction. InnoDB derives it from sampled index pages, so it is an
+     * approximation rather than a bounded error; 2x is a deliberately pessimistic working assumption.
      */
-    private const ESTIMATE_TRUST_THRESHOLD = 5000;
+    private const ESTIMATE_ERROR_FACTOR = 2;
 
     public function __construct(
         private ActiveBundles $activeBundles,
         private SnapshotQueryRunner $queryRunner,
         private Bucketizer $bucketizer,
         private string $environment,
+        private bool $debugMode = false,
+        private string $timezone = '',
     ) {
     }
 
@@ -62,9 +63,14 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
             'pimcore_version' => Version::getVersion(),
             'pimcore_major_version' => Version::getMajorVersion(),
             'pimcore_platform_version' => Version::getPlatformVersion(),
+            'pimcore_git_hash' => $this->getGitHash(),
             'php_version' => PHP_VERSION,
             'mysql_version' => $this->getMysqlVersion(),
-            'mode' => $this->mode(),
+            'environment_name' => $this->environment,
+            'timezone' => $this->timezone !== '' ? $this->timezone : date_default_timezone_get(),
+            'kernel_debug' => $this->debugMode,
+            'dev_mode' => Pimcore::inDevMode(),
+            'system_languages' => Tool::getValidLanguages(),
             'language_count' => count(Tool::getValidLanguages()),
             'active_bundle_count' => $this->activeBundles->count(),
             'bundles' => $bundles,
@@ -78,21 +84,20 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
     }
 
     /**
-     * The Symfony environment, reduced to a fixed vocabulary.
+     * Empty when the install has no VCS reference to report.
      *
-     * `APP_ENV` is customer-authored free text (agency deployments legitimately use values like
-     * `prod_<clientname>`), so the raw value is never emitted - that would be the only free-form
-     * string in the snapshot and would break the content-never contract. Anything outside the known
-     * set collapses to `other`, which is a useful signal in itself.
+     * {@see Version::getRevision()} declares `string` but returns `InstalledVersions::getReference()`,
+     * which is nullable - an install without a reference makes it raise a TypeError rather than return
+     * null. That is an Error, not an Exception, and it would be caught only by the snapshot builder's
+     * outer boundary, costing the entire `core.*` namespace over a missing git hash.
      */
-    private function mode(): string
+    private function getGitHash(): string
     {
-        return match (strtolower(trim($this->environment))) {
-            'prod' => 'prod',
-            'dev' => 'dev',
-            'test' => 'test',
-            default => 'other',
-        };
+        try {
+            return Version::getRevision();
+        } catch (Throwable) {
+            return '';
+        }
     }
 
     private function getMysqlVersion(): string
@@ -107,15 +112,42 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
     }
 
     /**
-     * Element-table size for bucketing. Uses the optimizer's cached row estimate (O(1), no scan) so
-     * a multi-million-row table costs nothing; only small/unknown tables fall back to an exact
-     * COUNT(*), where the scan is cheap and the bucket precision is worth it.
+     * Element-table size for bucketing. Prefers the optimizer's cached row estimate (O(1), no scan)
+     * so a multi-million-row table costs nothing, and falls back to an exact COUNT(*) when the
+     * estimate is not good enough to bucket confidently.
+     *
+     * "Good enough" is derived from the bucket scale rather than hardcoded: an InnoDB row estimate can
+     * be off by a wide margin, so it is only trusted when scaling it by {@see self::ESTIMATE_ERROR_FACTOR}
+     * in either direction still lands in the same bucket. That keeps the optimisation correct whatever
+     * the buckets are - the previous fixed threshold silently became wrong the moment the scale was
+     * widened, because it was chosen for a top bucket that no longer starts there. Very large tables,
+     * the ones this exists for, fall in the open-ended top bucket and are always trusted.
      */
     private function countTable(string $table): int
     {
         $estimate = $this->estimateRows($table);
 
-        return $estimate >= self::ESTIMATE_TRUST_THRESHOLD ? $estimate : $this->exactCount($table);
+        if ($estimate > 0 && $this->bucketIsUnambiguous($estimate)) {
+            return $estimate;
+        }
+
+        // An estimate straddling a bucket boundary is counted exactly - and that count can now land on
+        // a large table (anything within the error margin of a boundary), so it can hit the statement
+        // timeout. Falling back to 0 there would report a million-element catalog as empty, so a failed
+        // count yields to the estimate: coarse, but the right order of magnitude. A real empty table
+        // still returns an honest 0, because only a failure produces null.
+        return $this->exactCount($table) ?? $estimate;
+    }
+
+    /**
+     * Whether an estimate lands in the same bucket even when it is wrong by the assumed margin.
+     */
+    private function bucketIsUnambiguous(int $estimate): bool
+    {
+        $low = (int) ($estimate / self::ESTIMATE_ERROR_FACTOR);
+        $high = $estimate * self::ESTIMATE_ERROR_FACTOR;
+
+        return $this->bucketizer->bucket($low) === $this->bucketizer->bucket($high);
     }
 
     private function estimateRows(string $table): int
@@ -133,16 +165,20 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
         }
     }
 
-    private function exactCount(string $table): int
+    /**
+     * @return int|null null when the count could not be obtained (timeout, driver error) - distinct
+     *                  from a table that genuinely holds 0 rows
+     */
+    private function exactCount(string $table): ?int
     {
         try {
             $count = $this->queryRunner->fetchOne(
                 'SELECT COUNT(*) FROM ' . $this->queryRunner->quoteIdentifier($table)
             );
 
-            return is_numeric($count) ? (int)$count : 0;
+            return is_numeric($count) ? (int)$count : null;
         } catch (Exception) {
-            return 0;
+            return null;
         }
     }
 }

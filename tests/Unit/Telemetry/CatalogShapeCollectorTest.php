@@ -37,7 +37,7 @@ class CatalogShapeCollectorTest extends TestCase
         $this->assertSame(5, $metrics['object_tree_avg_depth']);
         $this->assertSame(4, $metrics['asset_tree_max_depth']);
         $this->assertSame(5, $metrics['document_tree_max_depth']);
-        $this->assertSame('11-50', $metrics['products_with_variants_bucket']); // bucket(12)
+        $this->assertSame('11-100', $metrics['products_with_variants_bucket']); // bucket(12)
         $this->assertSame(7, $metrics['max_variants_per_product']);
         $this->assertSame(43, $metrics['max_folder_fanout']);
 

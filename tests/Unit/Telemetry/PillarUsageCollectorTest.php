@@ -46,22 +46,22 @@ class PillarUsageCollectorTest extends TestCase
         $metrics = $this->collector([])->collect();
 
         // assets: total 42 (30+5+4+0+3); each per-type count comes from the provider's type counts.
-        $this->assertSame('11-50', $metrics['asset_count_bucket']);          // bucket(42)
-        $this->assertSame('11-50', $metrics['asset_image_count_bucket']);    // bucket(30)
+        $this->assertSame('11-100', $metrics['asset_count_bucket']);         // bucket(42)
+        $this->assertSame('11-100', $metrics['asset_image_count_bucket']);   // bucket(30)
         $this->assertSame('1-10', $metrics['asset_video_count_bucket']);     // bucket(5)
         $this->assertSame('1-10', $metrics['asset_document_count_bucket']);  // bucket(4)
         $this->assertSame('0', $metrics['asset_audio_count_bucket']);        // bucket(0)
         $this->assertSame(5, $metrics['asset_type_variety']);                // distinct types incl. folder
 
-        $this->assertSame('11-50', $metrics['object_count_bucket']);         // bucket(40)
+        $this->assertSame('11-100', $metrics['object_count_bucket']);        // bucket(40)
         $this->assertSame('0', $metrics['object_variant_count_bucket']);     // bucket(0)
-        $this->assertSame('51-200', $metrics['document_page_count_bucket']); // bucket(60)
+        $this->assertSame('11-100', $metrics['document_page_count_bucket']); // bucket(60)
         $this->assertSame('1-10', $metrics['document_email_count_bucket']);  // bucket(5)
         $this->assertSame('1-10', $metrics['document_link_count_bucket']);   // bucket(5)
 
         // Low-cardinality facts (classes/sites) still come from a direct count.
         $this->assertSame(1, $metrics['schema_version']);
-        $this->assertSame('11-50', $metrics['class_count_bucket']);          // bucket(20)
+        $this->assertSame('11-100', $metrics['class_count_bucket']);         // bucket(20)
         $this->assertSame(1, $metrics['site_count']);
 
         foreach ($metrics as $key => $value) {
