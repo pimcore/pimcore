@@ -295,7 +295,7 @@ class Composer
      * Removes the "name" field from the project composer.json file
      * and updates the content-hash in composer.lock to keep them in sync.
      *
-     * @throws RuntimeException If the composer.json file cannot be read or written
+     * @throws RuntimeException If the composer.json or composer.lock file cannot be written
      */
     private static function removeComposerName(string $rootPath): void
     {
@@ -325,6 +325,9 @@ class Composer
         self::updateComposerLock($rootPath, $jsonString);
     }
 
+    /**
+     * @throws RuntimeException If the composer.lock file cannot be written
+     */
     private static function updateComposerLock(string $rootPath, string $composerJsonContents): void
     {
         $lockFile = $rootPath . '/composer.lock';
@@ -338,13 +341,18 @@ class Composer
             return;
         }
 
-        $lock = json_decode($lockContents, true);
-        if (!is_array($lock)) {
+        $manipulator = new JsonManipulator($lockContents);
+        if (!$manipulator->addMainKey('content-hash', Locker::getContentHash($composerJsonContents))) {
             return;
         }
 
-        $lock['content-hash'] = Locker::getContentHash($composerJsonContents);
+        $newContents = $manipulator->getContents();
+        if ($newContents === $lockContents) {
+            return;
+        }
 
-        file_put_contents($lockFile, json_encode($lock, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n");
+        if (file_put_contents($lockFile, $newContents) === false) {
+            throw new RuntimeException(sprintf('Failed to write composer.lock at "%s".', $lockFile));
+        }
     }
 }
