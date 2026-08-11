@@ -362,6 +362,7 @@ class Asset extends Element\AbstractElement
             }
 
             $mimeType ??= 'application/octet-stream';
+            $mimeType = self::resolveMimeTypeFromMapping($mimeType, $data['filename']);
             $mimeTypeEvent = new ResolveMimeTypeEvent($data['filename'], $mimeType);
             Pimcore::getEventDispatcher()->dispatch($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
             $mimeType = $mimeTypeEvent->getMimeType();
@@ -455,6 +456,30 @@ class Asset extends Element\AbstractElement
         $list->setValues($config);
 
         return $list;
+    }
+
+    /**
+     *
+     *
+     * @internal
+     */
+    public static function resolveMimeTypeFromMapping(string $detectedMimeType, string $filename): string
+    {
+        if ($detectedMimeType === 'directory') {
+            return $detectedMimeType;
+        }
+
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        if ($extension === '') {
+            return $detectedMimeType;
+        }
+
+        $mappings = Config::getSystemConfiguration('assets')['mime_mappings'] ?? [];
+        if (isset($mappings[$extension])) {
+            return (string)$mappings[$extension];
+        }
+
+        return $detectedMimeType;
     }
 
     /**
@@ -754,6 +779,7 @@ class Asset extends Element\AbstractElement
                     $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
                 }
 
+                $mimeType = self::resolveMimeTypeFromMapping($mimeType, $this->getFilename());
                 $mimeTypeEvent = new ResolveMimeTypeEvent($this->getFilename(), $mimeType, $this, !($params['isUpdate'] ?? false));
                 $this->dispatchEvent($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
                 $mimeType = $mimeTypeEvent->getMimeType();
