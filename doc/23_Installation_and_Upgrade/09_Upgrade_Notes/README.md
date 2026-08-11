@@ -1,5 +1,12 @@
 # Upgrade Notes
 
+## Pimcore 2026.2.8
+
+### [Maintenance]
+
+-   The housekeeping maintenance task no longer removes an empty directory as soon as it finds one. A directory is now removed only once it is also older than the configured retention (`pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than` for the profiler directory, 30 minutes by default). Removing empty directories on sight could delete one that another process had just created and was about to write into, which made the write fail. Expect empty directories to linger for up to the retention period before being cleaned up.
+-   Files whose name *begins* with `-low-quality-preview.svg` are now excluded from deletion as intended. The previous check treated a match at position 0 as "no match", so those files were deleted despite the exclusion.
+
 ## Pimcore 2026.2.7
 
 ### Possible data loss on 11.5.21, 12.3.12, 12.3.13, 2026.2.5 and 2026.2.6
