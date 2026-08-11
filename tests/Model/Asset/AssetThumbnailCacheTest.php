@@ -22,7 +22,7 @@ use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
 use Psr\Container\ContainerInterface;
-use RuntimeException;
+use ReflectionProperty;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -380,41 +380,37 @@ class AssetThumbnailCacheTest extends TestCase
      */
     private function withThumbnailStorage(FilesystemOperator $storage, callable $callback): mixed
     {
-        $container = Pimcore::getContainer();
-        $original = $container->get(Storage::class);
+        $storageService = Pimcore::getContainer()->get(Storage::class);
 
-        $locator = new class($storage, $original) implements ContainerInterface {
+        // the container refuses to replace an already initialized service, and Storage is
+        // initialized long before a test runs, so swap the locator it resolves each storage from
+        $property = new ReflectionProperty(Storage::class, 'locator');
+        $originalLocator = $property->getValue($storageService);
+
+        $property->setValue($storageService, new class($storage, $originalLocator) implements ContainerInterface {
             public function __construct(
                 private FilesystemOperator $thumbnailStorage,
-                private Storage $original,
+                private ContainerInterface $original,
             ) {
             }
 
             public function has(string $id): bool
             {
-                return (bool) preg_match('/^pimcore\.(.+)\.storage$/', $id);
+                return $id === 'pimcore.thumbnail.storage' || $this->original->has($id);
             }
 
             public function get(string $id): mixed
             {
-                if ($id === 'pimcore.thumbnail.storage') {
-                    return $this->thumbnailStorage;
-                }
-
-                if (preg_match('/^pimcore\.(.+)\.storage$/', $id, $matches) === 1) {
-                    return $this->original->getStorage($matches[1]);
-                }
-
-                throw new RuntimeException('Unexpected storage service requested: ' . $id);
+                return $id === 'pimcore.thumbnail.storage'
+                    ? $this->thumbnailStorage
+                    : $this->original->get($id);
             }
-        };
-
-        $container->set(Storage::class, new Storage($locator));
+        });
 
         try {
             return $callback();
         } finally {
-            $container->set(Storage::class, $original);
+            $property->setValue($storageService, $originalLocator);
         }
     }
 }
