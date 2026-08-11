@@ -32,6 +32,7 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Throwable;
 
 class Manager
 {
@@ -252,7 +253,7 @@ class Manager
                 } else {
                     $subject->save();
                 }
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 // Roll back the workflow place and published state when the
                 // post-transition save fails (e.g. due to a mandatory field
                 // validation error on a force_published transition). Otherwise
@@ -317,7 +318,7 @@ class Manager
         if ($saveSubject && $subject instanceof ElementInterface) {
             try {
                 $subject->save();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 // Roll back the workflow place if the save fails so marking
                 // stores that persist immediately do not leave the subject in
                 // an inconsistent state (see pimcore/pimcore#18178).
