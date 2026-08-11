@@ -17,6 +17,7 @@ jobs:
             matrix:
                 include:
                     - { php-version: 8.5, branch: 2026.x }
+                    - { php-version: 8.5, branch: 2026.2 }
                     - { php-version: 8.4, branch: 12.3 }
         with:
             php-version: ${{ matrix.php-version }}
