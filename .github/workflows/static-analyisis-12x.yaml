@@ -47,7 +47,7 @@ jobs:
               with:
                 ref: "refs/pull/${{ github.event.pull_request.number }}/merge"
 
-            - name: Checkout 11.5 branch for scheduled runs
+            - name: Checkout 12.3 branch for scheduled runs
               if: github.event_name == 'schedule'
               uses: "actions/checkout@v5.0.1"
               with:
