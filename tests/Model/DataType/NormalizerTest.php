@@ -186,6 +186,22 @@ class NormalizerTest extends ModelTestCase
         $this->assertStringNotContainsString('top secret value', json_encode($normalizedValue, JSON_THROW_ON_ERROR));
         $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
+
+        // an undecodable envelope keeps the documented soft failure when strict mode is
+        // off: decrypt() returns null, and denormalize() must not raise instead
+        $strictMode = DataObject\ClassDefinition\Data\EncryptedField::isStrictMode();
+        DataObject\ClassDefinition\Data\EncryptedField::setStrictMode(
+            DataObject\ClassDefinition\Data\EncryptedField::STRICT_DISABLED
+        );
+
+        try {
+            $denormalizedValue = $fd->denormalize([
+                DataObject\ClassDefinition\Data\EncryptedField::ENCRYPTED_NORMALIZED_KEY => 'not a ciphertext',
+            ]);
+            $this->assertNull($denormalizedValue->getPlain());
+        } finally {
+            DataObject\ClassDefinition\Data\EncryptedField::setStrictMode($strictMode);
+        }
     }
 
     public function testDateRange(): void
