@@ -44,7 +44,7 @@ final class HousekeepingTaskTest extends TestCase
         $this->makeDir('stale/a/b');
         $this->age();
 
-        $this->run(seconds: 0, clearFolder: true);
+        $this->runHousekeeping(seconds: 0, clearFolder: true);
 
         $this->assertDirectoryDoesNotExist($this->root . '/stale', 'a stale empty tree should be pruned');
         $this->assertDirectoryExists($this->root, 'the folder being cleaned must never be removed');
@@ -56,7 +56,7 @@ final class HousekeepingTaskTest extends TestCase
         $this->age();
         $this->makeDir('fresh');
 
-        $this->run(seconds: 0, clearFolder: true);
+        $this->runHousekeeping(seconds: 0, clearFolder: true);
 
         $this->assertDirectoryDoesNotExist($this->root . '/stale');
         $this->assertDirectoryExists($this->root . '/fresh', 'a directory created after the cutoff must survive');
@@ -69,7 +69,7 @@ final class HousekeepingTaskTest extends TestCase
         $this->makeFile('emptied/older.tmp');
         $this->age();
 
-        $this->run(seconds: 0, clearFolder: true);
+        $this->runHousekeeping(seconds: 0, clearFolder: true);
 
         // Deleting the files bumps the directory's mtime/ctime to "now". The directory time
         // is captured in the filter callback before that happens, so the directory is still
@@ -93,7 +93,7 @@ final class HousekeepingTaskTest extends TestCase
         $this->age();
         $this->makeFile('mixed/keep.tmp', age: -3600);
 
-        $this->run(seconds: 0, clearFolder: true);
+        $this->runHousekeeping(seconds: 0, clearFolder: true);
 
         $this->assertFileDoesNotExist($this->root . '/mixed/old.tmp');
         $this->assertFileExists($this->root . '/mixed/keep.tmp');
@@ -106,7 +106,7 @@ final class HousekeepingTaskTest extends TestCase
         $this->makeFile('temp_like/nested/old.tmp');
         $this->age();
 
-        $this->run(seconds: 0, clearFolder: false);
+        $this->runHousekeeping(seconds: 0, clearFolder: false);
 
         $this->assertFileDoesNotExist($this->root . '/temp_like/nested/old.tmp');
         $this->assertDirectoryExists(
@@ -122,7 +122,7 @@ final class HousekeepingTaskTest extends TestCase
         $this->makeFile('regular.tmp');
         $this->age();
 
-        $this->run(seconds: 0, clearFolder: true);
+        $this->runHousekeeping(seconds: 0, clearFolder: true);
 
         $this->assertFileExists($this->root . '/image-low-quality-preview.svg');
         // Guards the substring check: a name *starting* with the marker sits at offset 0,
@@ -131,7 +131,7 @@ final class HousekeepingTaskTest extends TestCase
         $this->assertFileDoesNotExist($this->root . '/regular.tmp');
     }
 
-    private function run(int $seconds, bool $clearFolder): void
+    private function runHousekeeping(int $seconds, bool $clearFolder): void
     {
         $task = new HousekeepingTask(86400, 1800);
 
