@@ -1,5 +1,14 @@
 # Upgrade Notes
 
+## Pimcore 2026.2.9
+
+### Deprecations
+
+#### [Document Editor]
+
+The `height` option of the `multiselect` document editable is deprecated and no longer has any effect.
+The Studio UI does not interpret it — the field is sized via `width` only.
+
 ## Pimcore 2026.2.7
 
 ### Possible data loss on 11.5.21, 12.3.12, 12.3.13, 2026.2.5 and 2026.2.6
