@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Maintenance\Tasks;
 
+use FilesystemIterator;
 use Pimcore\Maintenance\TaskInterface;
 use RecursiveCallbackFilterIterator;
 use RecursiveDirectoryIterator;
@@ -54,7 +55,7 @@ class HousekeepingTask implements TaskInterface
         $cutoff = time() - $seconds;
         $dirTimes = [];
 
-        $directory = new RecursiveDirectoryIterator($folder, \FilesystemIterator::SKIP_DOTS);
+        $directory = new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS);
         $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($cutoff, $clearFolder, &$dirTimes) {
             if (str_contains($current->getFilename(), '-low-quality-preview.svg') && $current->isFile()) {
                 return false;
