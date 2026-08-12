@@ -22,6 +22,9 @@ use Pimcore\Workflow\Manager;
  * count) - it self-resets to false if all workflows are removed, so the bundle/capability owns the
  * definition of "used". Bundles (Data Hub, Portal Engine, …) add their own provider the same way.
  *
+ * Also the reference for the null case: if the workflow manager cannot be consulted we do not know
+ * whether workflows are in use, and saying `false` there would be a fabricated adoption gap.
+ *
  * @internal
  */
 final readonly class WorkflowUsageProvider implements BundleUsageProviderInterface
@@ -36,12 +39,12 @@ final readonly class WorkflowUsageProvider implements BundleUsageProviderInterfa
         return 'workflow';
     }
 
-    public function isUsed(): bool
+    public function isUsed(): ?bool
     {
         try {
             return $this->workflowManager->getAllWorkflows() !== [];
         } catch (Exception) {
-            return false;
+            return null;
         }
     }
 }

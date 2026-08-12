@@ -79,7 +79,6 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
             'object_count_bucket' => $this->bucketizer->bucket($this->countTable('objects')),
             'asset_count_bucket' => $this->bucketizer->bucket($this->countTable('assets')),
             'document_count_bucket' => $this->bucketizer->bucket($this->countTable('documents')),
-            'datahub_enabled' => $this->activeBundles->has('DataHub'),
         ];
     }
 

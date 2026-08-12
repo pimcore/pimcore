@@ -109,6 +109,17 @@ class CoreSnapshotCollectorTest extends TestCase
     }
 
     /**
+     * `datahub_enabled` was a bundle-active flag that `core.bundles` and `pillars.datahub_bundle_active`
+     * already carried, and Data Hub now reports real adoption through `usage.*` and `datahub.*`. It was
+     * removed because a third copy of the same L2 boolean invited the reading that "enabled" said
+     * something about use - so reintroducing it would be a regression, not an addition.
+     */
+    public function testTheRemovedDatahubEnabledFlagStaysRemoved(): void
+    {
+        $this->assertArrayNotHasKey('datahub_enabled', $this->collector()->collect());
+    }
+
+    /**
      * Debug and dev mode are misconfiguration signals, not usage: either one left on in a production
      * deployment costs performance and exposes internals. Both are plain booleans about our own
      * runtime, so they carry nothing about the customer.
