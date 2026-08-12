@@ -79,7 +79,10 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
             'object_count_bucket' => $this->bucketizer->bucket($this->countTable('objects')),
             'asset_count_bucket' => $this->bucketizer->bucket($this->countTable('assets')),
             'document_count_bucket' => $this->bucketizer->bucket($this->countTable('documents')),
-            'datahub_enabled' => $this->activeBundles->has('DataHub'),
+            // No `datahub_enabled` here: it was a bundle-active flag, which `core.bundles` and
+            // `pillars.datahub_bundle_active` already carry, and Data Hub now reports real adoption
+            // through `usage.datahub` and the `datahub.*` namespace. Three copies of the same L2
+            // boolean invite exactly the wrong reading - that "enabled" says something about use.
         ];
     }
 

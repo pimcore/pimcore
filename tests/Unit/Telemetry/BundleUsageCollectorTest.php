@@ -23,11 +23,13 @@ use Throwable;
 
 class BundleUsageCollectorTest extends TestCase
 {
-    private function provider(string $key, bool|Throwable $used): BundleUsageProviderInterface
+    private function provider(string $key, bool|Throwable|null $used): BundleUsageProviderInterface
     {
         return new class($key, $used) implements BundleUsageProviderInterface {
-            public function __construct(private readonly string $key, private readonly bool|Throwable $used)
-            {
+            public function __construct(
+                private readonly string $key,
+                private readonly bool|Throwable|null $used,
+            ) {
             }
 
             public function getBundleKey(): string
@@ -35,7 +37,7 @@ class BundleUsageCollectorTest extends TestCase
                 return $this->key;
             }
 
-            public function isUsed(): bool
+            public function isUsed(): ?bool
             {
                 if ($this->used instanceof Throwable) {
                     throw $this->used;
@@ -64,14 +66,37 @@ class BundleUsageCollectorTest extends TestCase
         $this->assertSame(['datahub' => true, 'portal_engine' => false], $collector->collect());
     }
 
-    public function testThrowingProviderDegradesToFalse(): void
+    /**
+     * A provider that blew up knows nothing about adoption. Reporting `false` would be
+     * indistinguishable from a genuine "installed but not used" - the one signal this namespace
+     * exists to produce - so the key is omitted and stays unknown.
+     */
+    public function testAThrowingProviderIsOmittedRatherThanReportedUnused(): void
     {
         $collector = new BundleUsageCollector([
             $this->provider('ok', true),
             $this->provider('boom', new RuntimeException('kaboom')),
         ]);
 
-        $this->assertSame(['ok' => true, 'boom' => false], $collector->collect());
+        $this->assertSame(['ok' => true], $collector->collect());
+    }
+
+    /**
+     * The case the null return exists for: several bundles keep their configuration in a
+     * deployment-configurable location, so a provider that cannot reach its own repository must say
+     * "cannot tell" rather than invent an adoption gap on every customer using the other target.
+     */
+    public function testANullAnsweringProviderIsOmittedRatherThanReportedUnused(): void
+    {
+        $collector = new BundleUsageCollector([
+            $this->provider('resolvable', false),
+            $this->provider('unresolvable', null),
+        ]);
+
+        $collected = $collector->collect();
+
+        $this->assertSame(['resolvable' => false], $collected);
+        $this->assertArrayNotHasKey('unresolvable', $collected, 'unknown must not become false');
     }
 
     public function testNoProvidersYieldsEmptyMap(): void

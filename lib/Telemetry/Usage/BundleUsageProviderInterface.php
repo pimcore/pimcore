@@ -34,8 +34,16 @@ interface BundleUsageProviderInterface
     public function getBundleKey(): string;
 
     /**
-     * Whether this bundle/capability is actually used on this instance. Should be cheap (runs on the
-     * periodic snapshot) and must not throw - a failure is treated as "not used".
+     * Whether this bundle/capability is actually used on this instance. Should be cheap - it runs on
+     * the periodic snapshot.
+     *
+     * Return **null for "cannot tell"**, and the key is omitted from the snapshot rather than reported
+     * as unused. That distinction matters more than it looks: several bundles keep their configuration
+     * in a deployment-configurable location (Data Hub and Data Importer can write either to the
+     * settings store or to Symfony config files), so a provider that answers `false` when it simply
+     * could not reach its own repository would invent an adoption gap on every customer using the
+     * other target. Absent already means "unknown" for bundles with no provider at all; null keeps
+     * that one meaning rather than adding a second, wrong one.
      */
-    public function isUsed(): bool;
+    public function isUsed(): ?bool;
 }

@@ -21,9 +21,11 @@ use Pimcore\Telemetry\Snapshot\SnapshotCollectorInterface;
  * one `usage.<bundleKey>` boolean per provider. Cross-referenced with `core.bundles` (installed) in
  * PostHog, `installed && usage=false` is the "installed but not used" signal (stakeholder Q12).
  *
- * A provider that throws is recorded as `false` rather than breaking the snapshot - telemetry is
- * best-effort. Bundles without a provider are simply absent (unknown), which is intended: usage
- * reporting is opt-in per bundle.
+ * Absence means unknown, and there are three ways to be absent: no provider at all (usage reporting is
+ * opt-in per bundle), a provider that answers null because it could not reach its own configuration,
+ * and a provider that throws. All three are treated alike on purpose - reporting any of them as
+ * `false` would be indistinguishable from a genuine "installed but not used", which is the one signal
+ * this namespace exists to produce.
  *
  * @internal
  */
@@ -47,14 +49,19 @@ final readonly class BundleUsageCollector implements SnapshotCollectorInterface
         $usage = [];
 
         foreach ($this->providers as $provider) {
-            $key = $provider->getBundleKey();
-
             try {
-                $usage[$key] = $provider->isUsed();
+                $used = $provider->isUsed();
             } catch (Exception) {
-                // A provider must never break the snapshot; treat a failure as "not used".
-                $usage[$key] = false;
+                // A provider must never break the snapshot, and a broken provider knows nothing about
+                // adoption - so this is "unknown", not "unused".
+                continue;
             }
+
+            if ($used === null) {
+                continue;
+            }
+
+            $usage[$provider->getBundleKey()] = $used;
         }
 
         return $usage;
