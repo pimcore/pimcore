@@ -130,7 +130,7 @@ class ClassDefinitionManager
     }
 
     /**
-     * @return bool whether the class was saved or not
+     * @return bool whether the class was saved (or its PHP class files were regenerated) or not
      *
      * @throws DefinitionWriteException     *
      * @throws Exception
@@ -169,6 +169,35 @@ class ClassDefinitionManager
     }
 
     /**
+     * Checks whether the generated PHP class files of a class definition are missing or outdated
+     * on the local filesystem. This can be the case even if the database is already up-to-date,
+     * e.g. when another node sharing the same database has performed a rebuild, while this
+     * node's filesystem was never updated.
+     */
+    public function hasStalePhpClassFiles(ClassDefinitionInterface $class): bool
+    {
+        $definitionModificationTime = (int) $class->getModificationDate();
+
+        $definitionFile = $class->getDefinitionFile();
+        if (is_file($definitionFile) && ($definitionFileModificationTime = filemtime($definitionFile)) !== false) {
+            $definitionModificationTime = max($definitionModificationTime, $definitionFileModificationTime);
+        }
+
+        foreach ([$class->getPhpClassFile(), $class->getPhpListingClassFile()] as $phpClassFile) {
+            if (!is_file($phpClassFile)) {
+                return true;
+            }
+
+            $phpClassFileModificationTime = filemtime($phpClassFile);
+            if ($phpClassFileModificationTime === false || $phpClassFileModificationTime < $definitionModificationTime) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @throws Exception
      * @throws DefinitionWriteException
      */
@@ -190,8 +219,19 @@ class ClassDefinitionManager
             } else {
                 $class->save($saveDefinitionFile);
             }
+
+            return true;
         }
 
-        return $shouldSave;
+        // the shared database may already be up-to-date (e.g. another node performed the rebuild first),
+        // while the PHP class files on this node are still missing or outdated - regenerate them
+        // locally without touching the database
+        if ($dumpPHPClasses && $this->hasStalePhpClassFiles($class)) {
+            $class->generateClassFiles(false);
+
+            return true;
+        }
+
+        return false;
     }
 }
