@@ -209,10 +209,10 @@ EOT;
             $width = $this->getCustomSetting('imageWidth');
             $height = $this->getCustomSetting('imageHeight');
 
-            if ($width && $height) {
+            if ($width && $height && is_numeric($width) && is_numeric($height)) {
                 return [
-                    'width' => $width,
-                    'height' => $height,
+                    'width' => (int) $width,
+                    'height' => (int) $height,
                 ];
             }
         }
@@ -286,7 +286,7 @@ EOT;
         $dimensions = $this->getDimensions();
 
         if ($dimensions) {
-            return $dimensions['width'];
+            return (int) $dimensions['width'];
         }
 
         return 0;
@@ -297,7 +297,7 @@ EOT;
         $dimensions = $this->getDimensions();
 
         if ($dimensions) {
-            return $dimensions['height'];
+            return (int) $dimensions['height'];
         }
 
         return 0;

@@ -1,0 +1,58 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # CDN shared helpers (tag vocabulary + asset web-path)
+    #
+
+    Pimcore\Cdn\CdnAssetTag: ~
+
+    Pimcore\Cdn\AssetWebPath: ~
+
+    #
+    # CDN purge client infrastructure
+    #
+
+    Pimcore\Cdn\NullPurgeClient: ~
+
+    Pimcore\Cdn\FastlyPurgeClient: ~
+
+    Pimcore\Cdn\CdnPurgeClientRegistry: ~
+
+    Pimcore\Cdn\PurgeClientInterface:
+        alias: Pimcore\Cdn\CdnPurgeClientRegistry
+
+    Pimcore\Cdn\Message\Handler\PurgeCdnMessageHandler: ~
+
+    Pimcore\Cdn\Message\Handler\PurgeCdnAssetTreeMessageHandler: ~
+
+    #
+    # CDN event listeners
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\CdnPurgeListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\CdnSurrogateKeyListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\CdnAssetCookieStripperListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\CdnImageThumbnailUrlListener: ~
+
+    #
+    # CDN image optimizer infrastructure
+    #
+
+    Pimcore\Cdn\NullImageTransformAdapter: ~
+
+    Pimcore\Cdn\FastlyImageOptimizerAdapter: ~
+
+    Pimcore\Cdn\CdnImageTransformAdapterRegistry: ~
+
+    Pimcore\Cdn\ImageTransformAdapterInterface:
+        alias: Pimcore\Cdn\CdnImageTransformAdapterRegistry
+
+    Pimcore\Cdn\ThumbnailTransformResolver: ~
+
+    Pimcore\Cdn\CdnCacheabilityResolver: ~

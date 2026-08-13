@@ -297,7 +297,7 @@ class Dao extends Model\Element\Dao
 
             // $anyAllowedRowOrChildren checks for nested elements that are `list`=1. This is to allow the folders in between from current parent to any nested elements and due the "additive" permission on the element itself, we can simply ignore list=0 children
             // unless for the same rule found is list=0 on user specific level, in that case it nullifies that entry.
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $permissionIds) . ') AND list=1 AND LOCATE(CONCAT(o.path,o.key),cpath)=1 AND
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $permissionIds) . ') AND list=1 AND (cpath=CONCAT(o.path,o.key) OR LOCATE(CONCAT(o.path,o.key,\'/\'),cpath)=1) AND
             NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwo.cpath))';
 
             // $allowedCurrentRow checks if the current row is blocked, if found a match it "removes/ignores" the entry from object table, doesn't need to check if is list=1 on user level, since it is done in $anyAllowedRowOrChildren (NB: equal or longer cpath) so we are safe to deduce that there are no valid list=1 rules
@@ -394,7 +394,7 @@ class Dao extends Model\Element\Dao
 
             $inheritedPermission = $this->isInheritingPermission('list', $permissionIds);
 
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $permissionIds) . ') AND list=1 AND LOCATE(CONCAT(o.path,o.key),cpath)=1 AND
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $permissionIds) . ') AND list=1 AND (cpath=CONCAT(o.path,o.key) OR LOCATE(CONCAT(o.path,o.key,\'/\'),cpath)=1) AND
             NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId ='.$currentUserId.'  AND list=0 AND cpath = uwo.cpath))';
             $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object uworow WHERE userId IN (' . implode(',', $permissionIds) . ')  AND cid = id AND list=0)';
 
@@ -451,13 +451,27 @@ class Dao extends Model\Element\Dao
     public function getClasses(): array
     {
         $path = $this->model->getRealFullPath();
-        if (!$this->model->getId() || $this->model->getId() == 1) {
-            $path = '';
+        $pathCondition = '';
+        $params = [];
+
+        if ($path && (int) $this->model->getId() > 1) {
+            $pathCondition = ' AND path LIKE ?';
+            $params[] = Helper::escapeLike($path) . '/%';
         }
 
         $classIds = $this->db->fetchFirstColumn(
-            "SELECT DISTINCT classId FROM objects WHERE `path` like ? AND `type` = 'object'",
-            [Helper::escapeLike($path) . '/%']
+            sprintf(
+                '
+                    SELECT DISTINCT `classId`
+                    FROM objects
+                    WHERE `type` = \'object\'
+                      AND `classId` IS NOT NULL
+                      AND `classId` != \'\'
+                      %s
+                ',
+                $pathCondition
+            ),
+            $params
         );
 
         $classes = [];

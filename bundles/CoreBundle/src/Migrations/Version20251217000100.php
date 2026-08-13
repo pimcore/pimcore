@@ -25,6 +25,10 @@ final class Version20251217000100 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        if (!$schema->hasTable('http_error_log')) {
+            return;
+        }
+
         $this->addSql('
             ALTER TABLE `http_error_log`
                 DROP COLUMN `parametersPost`,

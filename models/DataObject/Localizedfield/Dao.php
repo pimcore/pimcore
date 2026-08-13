@@ -810,7 +810,7 @@ QUERY;
               INDEX `fieldname` (`fieldname`),
               INDEX `language` (`language`),
               CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-            ) DEFAULT CHARSET=utf8mb4;'
+            ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;'
             );
         } else {
             $this->db->executeQuery(
@@ -820,7 +820,7 @@ QUERY;
               PRIMARY KEY (`ooo_id`,`language`),
               INDEX `language` (`language`),
               CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-            ) DEFAULT CHARSET=utf8mb4;'
+            ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;'
             );
         }
 
@@ -856,6 +856,7 @@ QUERY;
                             foreach ($value->getColumnType() as $fkey => $fvalue) {
                                 $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
                                 $protectedColumns[] = $key . '__' . $fkey;
+                                $this->ensureForeignKeys($table, $key, $fkey, $value);
                             }
                         } else {
                             $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
@@ -885,7 +886,7 @@ QUERY;
                       PRIMARY KEY (`ooo_id`,`language`),
                       INDEX `language` (`language`),
                       CONSTRAINT `".self::getForeignKeyName($queryTable, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-                    ) DEFAULT CHARSET=utf8mb4;'
+                    ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;'
                 );
 
                 $this->handleEncryption($this->model->getClass(), [$queryTable]);
@@ -925,6 +926,7 @@ QUERY;
                             foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
                                 $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
                                 $protectedColumns[] = $key.'__'.$fkey;
+                                $this->ensureForeignKeys($queryTable, $key, $fkey, $value);
                             }
                         } elseif ($value->getQueryColumnType()) {
                             $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL');

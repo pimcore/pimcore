@@ -14,6 +14,8 @@ namespace Pimcore\Model\Asset\Video\Thumbnail\Config;
 
 use Exception;
 use Pimcore;
+use Pimcore\Event\Model\Asset\Video\Thumbnail\ConfigEvent;
+use Pimcore\Event\VideoThumbnailConfigEvents;
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
 
@@ -90,6 +92,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
         $this->saveData($this->model->getName(), $data);
         $this->autoClearTempFiles();
+
+        Pimcore::getEventDispatcher()->dispatch(
+            new ConfigEvent($this->model),
+            VideoThumbnailConfigEvents::POST_UPDATE,
+        );
     }
 
     /**
@@ -99,6 +106,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $this->deleteData($this->model->getName());
         $this->autoClearTempFiles();
+
+        Pimcore::getEventDispatcher()->dispatch(
+            new ConfigEvent($this->model),
+            VideoThumbnailConfigEvents::POST_DELETE,
+        );
     }
 
     protected function autoClearTempFiles(): void

@@ -12,6 +12,7 @@
 
 namespace Pimcore\Model\Element;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Exception;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
@@ -84,11 +85,50 @@ abstract class Dao extends Model\Dao\AbstractDao
         }
         $fullPath = $current->getPath() . $current->getKey();
 
-        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_' . $tableSuffix . ' WHERE LOCATE(cpath, ?)=1 AND
-        userId IN (' . implode(',', $userIds) . ')
-        ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . end($userIds) . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
+        // A workspace applies to this element when its cpath is the element itself or one of its
+        // ancestors. Matching the exact set of ancestor paths (instead of LOCATE(cpath, fullPath),
+        // which matches on a raw substring and therefore also matched unrelated siblings sharing a
+        // path prefix, e.g. "/foo/Car" matching "/foo/Carpets/...") is both boundary-correct and
+        // index-usable on users_workspaces_*.cpath.
+        $paths = $this->getAncestorPaths($fullPath);
 
-        return (int)$this->db->fetchOne($sql, [$fullPath]);
+        $sql = 'SELECT ' . $this->db->quoteIdentifier($type) . ' FROM users_workspaces_' . $tableSuffix . ' WHERE cpath IN (:paths) AND
+        userId IN (:userIds)
+        ORDER BY LENGTH(cpath) DESC, FIELD(userId, :lastUserId) DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
+
+        return (int)$this->db->fetchOne(
+            $sql,
+            [
+                'paths' => $paths,
+                'userIds' => $userIds,
+                'lastUserId' => end($userIds),
+            ],
+            [
+                'paths' => ArrayParameterType::STRING,
+                'userIds' => ArrayParameterType::INTEGER,
+            ]
+        );
+    }
+
+    /**
+     * Returns the element's own full path and the full paths of all its ancestors, including the
+     * root path "/". Used for exact, boundary-correct workspace matching against cpath.
+     *
+     * @return string[]
+     */
+    protected function getAncestorPaths(string $fullPath): array
+    {
+        $paths = ['/'];
+        $current = '';
+        foreach (explode('/', trim($fullPath, '/')) as $segment) {
+            if ($segment === '') {
+                continue;
+            }
+            $current .= '/' . $segment;
+            $paths[] = $current;
+        }
+
+        return array_values(array_unique($paths));
     }
 
     /**

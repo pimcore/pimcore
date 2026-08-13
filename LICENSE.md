@@ -75,7 +75,7 @@ Pimcore reserves the right to audit, verify and enforce compliance with these te
 1.9 Licensor reserves all rights not expressly granted to Licensee in this Agreement. Except for the limited rights and licenses expressly granted under this Agreement, nothing in this Agreement grants, by implication, waiver, estoppel, or otherwise, to Licensee or any third party any intellectual property rights or other right, title, or interest in or to the Software.
 
 ### 2. CONTRIBUTIONS OF DERIVATIVES
-2.1 If the Customer wishes to contribute to the Software or to distribute a Derivative, both must be made in accordance with the Pimcore Contributors License Agreement (“PCLA”), available at <https://github.com/pimcore/pimcore/blob/12.x/CLA.md>. The PCLA stipulates the terms under which intellectual contributions are managed, ensuring that all parties' rights are protected. Acceptance of the PCLA is mandatory for all contributors and can be reviewed on the source-code repository. Contributions without adherence to the PCLA will not be accepted.
+2.1 If the Customer wishes to contribute to the Software or to distribute a Derivative, both must be made in accordance with the Pimcore Contributors License Agreement (“PCLA”), available at <https://github.com/pimcore/pimcore/blob/2026.x/CLA.md>. The PCLA stipulates the terms under which intellectual contributions are managed, ensuring that all parties' rights are protected. Acceptance of the PCLA is mandatory for all contributors and can be reviewed on the source-code repository. Contributions without adherence to the PCLA will not be accepted.
 
 2.2 Any contribution to the Software by a Derivative must be clearly documented, in order to maintain transparency and integrity of the source code.
     

@@ -78,6 +78,12 @@ class Imagick extends Adapter
 
             $imagePathLoad = $imagePathLoad . '[0]';
 
+            // setBackgroundColor must be called BEFORE readImage so that the Inkscape/ImageMagick
+            // delegate composites onto the correct (transparent) background, not black
+            if (!$this->reinitializing && !$this->isPreserveColor() && $this->isVectorGraphic($imagePath)) {
+                $i->setBackgroundColor(new ImagickPixel('transparent'));
+            }
+
             if (!$i->readImage($imagePathLoad) || !@filesize($imagePath)) {
                 return false;
             }
@@ -88,11 +94,12 @@ class Imagick extends Adapter
                 $i->setColorspace(\Imagick::COLORSPACE_SRGB);
 
                 if ($this->isVectorGraphic($imagePath)) {
-                    // only for vector graphics
-                    // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
-                    $i->setBackgroundColor(new ImagickPixel('transparent'));
-                    //for certain edge-cases simply setting the background-color to transparent does not seem to work
-                    //workaround by using transparentPaintImage (somehow even works without setting a target. no clue why)
+                    // After reading, re-apply on the loaded image object — the Inkscape delegate
+                    // can override the background setting during rasterization (e.g. IM 7.1.0-48+)
+                    $i->setImageBackgroundColor(new ImagickPixel('transparent'));
+                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_ACTIVATE);
+                    // for certain edge-cases simply setting the background-color to transparent does not seem to work;
+                    // workaround by using transparentPaintImage (somehow even works without setting a target, no clue why)
                     $i->transparentPaintImage('', 1, 0, false);
                 }
 
@@ -117,9 +124,9 @@ class Imagick extends Adapter
             }
 
             if ($this->checkPreserveAnimation($i->getImageFormat(), $i, false)) {
-                if (!$this->resource->readImage($imagePath) || !filesize($imagePath)) {
-                    return false;
-                }
+                // \Imagick::readImage() throws on failure (it never returns false) and
+                // a non-empty file size was already ensured when the image was read above
+                $this->resource->readImage($imagePath);
                 $this->resource = $this->resource->coalesceImages();
             }
 
@@ -260,7 +267,7 @@ class Imagick extends Adapter
             $success = file_exists($path);
         } else {
             if ($this->checkPreserveAnimation($format, $i)) {
-                $success = $i->writeImages('GIF:' . $path, true);
+                $success = $i->writeImages($format . ':' . $path, true);
             } else {
                 $success = $i->writeImage($format . ':' . $path);
             }
@@ -291,7 +298,7 @@ class Imagick extends Adapter
             return false;
         }
 
-        if ($format && !in_array(strtolower($format), ['gif', 'original', 'auto'])) {
+        if ($format && !in_array(strtolower($format), ['gif', 'original', 'auto', 'webp'])) {
             return false;
         }
 
@@ -505,7 +512,7 @@ class Imagick extends Adapter
             }
 
             $this->resource->setResolution($res['x'], $res['y']);
-            $this->resource->readImage($this->imagePath);
+            $this->resource->readImage($this->imagePath . '[0]');
 
             if (!$this->isPreserveColor()) {
                 $this->setColorspaceToRGB();
