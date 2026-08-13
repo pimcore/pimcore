@@ -21,6 +21,7 @@ use Pimcore\Model\Version;
 use Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
+use Pimcore\Model\Version\CoauthorContextInterface;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -278,6 +279,128 @@ class VersionTest extends TestCase
         $this->assertNotEmpty($id, 'id must not be empty');
     }
 
+    // An active coauthor context must stamp a brand-new version with its type/coauthor values.
+    public function testCoauthorContextStampsNewVersionOnSave(): void
+    {
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+        $context = Pimcore::getContainer()->get(CoauthorContextInterface::class);
+
+        try {
+            $context->set('agent', 'product-data-agent');
+
+            $object = TestHelper::createEmptyObject();
+            $version = $this->getNewestVersion($object->getId());
+
+            $reloadedVersion = Version::getById($version->getId());
+
+            $this->assertSame('agent', $reloadedVersion->getCoauthorType(), 'coauthorType must be stamped from context');
+            $this->assertSame(
+                'product-data-agent',
+                $reloadedVersion->getCoauthor(),
+                'coauthor must be stamped from context'
+            );
+        } finally {
+            $context->clear();
+        }
+    }
+
+    // An explicitly set coauthorType/coauthor on the version must win over an active context.
+    public function testExplicitCoauthorSetOnVersionWinsOverContext(): void
+    {
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+        $context = Pimcore::getContainer()->get(CoauthorContextInterface::class);
+
+        try {
+            $context->set('agent', 'product-data-agent');
+
+            $object = TestHelper::createEmptyObject();
+
+            $version = new Version();
+            $version->setCid($object->getId());
+            $version->setCtype('object');
+            $version->setDate(time());
+            $version->setUserId(1);
+            $version->setData($object);
+            $version->setVersionCount($object->getVersionCount() + 1);
+            $version->setCoauthorType('human');
+            $version->setCoauthor('jane.doe');
+            $version->save();
+
+            $reloadedVersion = Version::getById($version->getId());
+
+            $this->assertSame('human', $reloadedVersion->getCoauthorType(), 'explicit coauthorType must win');
+            $this->assertSame('jane.doe', $reloadedVersion->getCoauthor(), 'explicit coauthor must win');
+        } finally {
+            $context->clear();
+        }
+    }
+
+    // Re-saving an already persisted version must not stamp coauthor fields, even with an active context.
+    public function testResavingExistingVersionDoesNotStampCoauthor(): void
+    {
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+        $context = Pimcore::getContainer()->get(CoauthorContextInterface::class);
+
+        try {
+            // save without an active context first: no-context default is null coauthor fields
+            $object = TestHelper::createEmptyObject();
+            $version = $this->getNewestVersion($object->getId());
+
+            $this->assertNull($version->getCoauthorType(), 'coauthorType must be null without an active context');
+            $this->assertNull($version->getCoauthor(), 'coauthor must be null without an active context');
+
+            // activate the context only after the version already exists, then re-save it
+            $context->set('agent', 'product-data-agent');
+
+            $loadedVersion = Version::getById($version->getId());
+            $loadedVersion->loadData();
+            $loadedVersion->setNote('updated note');
+            $loadedVersion->save();
+
+            $reloadedVersion = Version::getById($version->getId());
+
+            $this->assertNull($reloadedVersion->getCoauthorType(), 'existing version must not be stamped on re-save');
+            $this->assertNull($reloadedVersion->getCoauthor(), 'existing version must not be stamped on re-save');
+            $this->assertSame('updated note', $reloadedVersion->getNote(), 'note update must still be persisted');
+        } finally {
+            $context->clear();
+        }
+    }
+
+    // Stamping must be a no-op when versioning is disabled: no mutation of the coauthor fields.
+    public function testDisabledVersioningDoesNotStampCoauthor(): void
+    {
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+        $context = Pimcore::getContainer()->get(CoauthorContextInterface::class);
+
+        try {
+            $context->set('agent', 'product-data-agent');
+
+            $object = TestHelper::createEmptyObject();
+
+            $version = new Version();
+            $version->setCid($object->getId());
+            $version->setCtype('object');
+            $version->setDate(time());
+            $version->setUserId(1);
+            $version->setData($object);
+            $version->setVersionCount($object->getVersionCount() + 1);
+
+            Version::disable();
+
+            try {
+                $version->save();
+            } finally {
+                Version::enable();
+            }
+
+            $this->assertNull($version->getCoauthorType(), 'coauthorType must not be stamped while versioning is disabled');
+            $this->assertNull($version->getCoauthor(), 'coauthor must not be stamped while versioning is disabled');
+        } finally {
+            $context->clear();
+        }
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -314,7 +437,7 @@ class VersionTest extends TestCase
                                   `metaData` longblob DEFAULT NULL,
                                   `binaryData` longblob DEFAULT NULL,
                                   PRIMARY KEY (`id`)
-                                )");
+                                ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci");
     }
 
     protected function getNewestVersion(int $id): Version

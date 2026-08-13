@@ -1,8 +1,0 @@
-pimcore_admin:
-  user:
-    default_key_bindings:
-      glossary:
-        key: 'G'
-        action: glossary
-        alt: true
-        shift: true

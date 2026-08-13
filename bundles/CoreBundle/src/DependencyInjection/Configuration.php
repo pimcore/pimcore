@@ -17,6 +17,7 @@ use const PASSWORD_ARGON2I;
 use const PASSWORD_ARGON2ID;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Config\LocationAwareConfigRepository;
+use Pimcore\Controller\Config\Template\TemplateProviderInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
@@ -125,6 +126,7 @@ final class Configuration implements ConfigurationInterface
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
+        $this->addTmpStoreNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
@@ -132,6 +134,7 @@ final class Configuration implements ConfigurationInterface
         $this->addGotenbergNode($rootNode);
         $this->addDependencyNode($rootNode);
         $this->addProductRegistrationNode($rootNode);
+        $this->addCdnNode($rootNode);
 
         $storageNode = ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails' => PIMCORE_CONFIGURATION_DIRECTORY . '/image_thumbnails',
@@ -425,6 +428,11 @@ final class Configuration implements ConfigurationInterface
                             ->floatNode('max_scaling_factor')
                                 ->defaultValue(5.0)
                             ->end()
+                            ->integerNode('cache_lifetime')
+                                ->info('Lifetime in seconds for the HTTP caching headers (Cache-Control, Expires) sent when a thumbnail is delivered through the thumbnail service.')
+                                ->min(0)
+                                ->defaultValue(86400 * 7)
+                            ->end()
                         ->end()
                     ->end()
                     ->arrayNode('frontend_prefixes')
@@ -548,7 +556,7 @@ final class Configuration implements ConfigurationInterface
                                         ])
                                     ->end()
                                     ->booleanNode('status_cache')
-                                        ->info('Store image metadata such as filename and modification date in assets_image_thumbnail_cache, this is helpful when using remote object storage for thumbnails.')
+                                        ->info('Store image metadata such as filename, modification date, file size and dimensions in assets_image_thumbnail_cache, this is helpful when using remote object storage for thumbnails.')
                                         ->defaultTrue()
                                     ->end()
                                     ->booleanNode('auto_clear_temp_files')
@@ -753,6 +761,28 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end();
         $this->addImplementationNodeFromArrayDefinition($assetsNode, 'type_definitions');
+
+        $assetsNode
+            ->children()
+                ->arrayNode('mime_mappings')
+                    ->info('Override MIME type detection by file extension. Map of lowercase file extensions (without leading dot) to MIME type, e.g. `indd: application/x-indesign`.')
+                    ->useAttributeAsKey('name')
+                    ->normalizeKeys(false)
+                    ->beforeNormalization()
+                        ->ifArray()
+                        ->then(function (array $v) {
+                            $result = [];
+                            foreach ($v as $extension => $mimeType) {
+                                $extension = ltrim((string)$extension, '.');
+                                $result[strtolower($extension)] = $mimeType;
+                            }
+
+                            return $result;
+                        })
+                    ->end()
+                    ->scalarPrototype()->end()
+                ->end()
+            ->end();
     }
 
     /**
@@ -863,6 +893,25 @@ final class Configuration implements ConfigurationInterface
     }
 
     /**
+     * Add tmp_store specific extension config
+     */
+    private function addTmpStoreNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('tmp_store')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('unserialize_allowed_classes')
+                        ->info('Additional PHP classes to allow when unserializing data from the tmp_store table.')
+                        ->scalarPrototype()->end()
+                        ->defaultValue([])
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
      * Add encryption specific extension config
      */
     private function addEncryptionNode(ArrayNodeDefinition $rootNode): void
@@ -942,7 +991,15 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('default_controller')
                     ->defaultValue('App\\Controller\\DefaultController::defaultAction')
                 ->end()
+                ->booleanNode('auto_provide_templates')
+                    ->defaultTrue()
+                    ->info(sprintf(
+                        'Automatically provide the list of selectable templates for a document. If false, you must provide your own templates by creating a "%s" service and tagging it as "pimcore.template_provider".',
+                        TemplateProviderInterface::class,
+                    ))
+                ->end()
                 ->arrayNode('error_pages')
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('default')
                             ->defaultNull()
@@ -1232,6 +1289,11 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                        ->arrayNode('session_token_allowed_classes')
+                            ->info('Additional PHP classes allowed when unserializing the admin session security token (e.g. custom authenticator tokens). The built-in Symfony/Pimcore token and user classes are always allowed.')
+                            ->scalarPrototype()->end()
+                            ->defaultValue([])
+                        ->end()
                 ->end()
             ->end();
     }
@@ -1290,6 +1352,20 @@ final class Configuration implements ConfigurationInterface
     private function addCacheNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode->children()
+            ->arrayNode('cache')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->integerNode('max_write_items')
+                        ->info('Maximum number of items that are written to the object cache within a single request. Additional items are dropped (and logged) on cleanup. Raise this on requests that legitimately touch many cacheable items.')
+                        ->min(1)
+                        ->defaultValue(50)
+                    ->end()
+                    ->booleanNode('handle_cli')
+                        ->info('Whether the object cache should also write items to the cache in CLI mode. Disabled by default as long-running CLI scripts tend to produce race conditions.')
+                        ->defaultFalse()
+                    ->end()
+                ->end()
+            ->end()
             ->arrayNode('full_page_cache')
                 ->ignoreExtraKeys()
                 ->canBeDisabled()
@@ -1543,6 +1619,7 @@ final class Configuration implements ConfigurationInterface
                                                     ->end()
                                                 ->end()
                                             ->end()
+                                            ->arrayNode('custom_extensions')->ignoreExtraKeys(false)->info('Use this key to attach additional config information to a place, for example via bundles, etc.')->end()
                                         ->end()
                                     ->end()
                                     ->beforeNormalization()
@@ -1733,6 +1810,7 @@ final class Configuration implements ConfigurationInterface
                                                         ->defaultValue(Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN)
                                                         ->info('Behaviour when workflow transition gets applied but there are unsaved changes')
                                                     ->end()
+                                                    ->arrayNode('custom_extensions')->ignoreExtraKeys(false)->info('Use this key to attach additional config information to a transition, for example via bundles, etc.')->end()
                                                 ->end()
                                             ->end()
                                         ->end()
@@ -1845,6 +1923,7 @@ final class Configuration implements ConfigurationInterface
                                                 ->end()
                                                 ->info('See notes section of transitions. It works exactly the same way.')
                                             ->end()
+                                            ->arrayNode('custom_extensions')->ignoreExtraKeys(false)->info('Use this key to attach additional config information to a global action, for example via bundles, etc.')->end()
                                         ->end()
                                     ->end()
                                     ->info('Actions which will be added to actions button independently of the current workflow place.')
@@ -2052,6 +2131,40 @@ final class Configuration implements ConfigurationInterface
                             ->arrayNode('functions')
                                 ->scalarPrototype()->end()
                             ->end()
+                            ->arrayNode('blocked_classes')
+                                ->info('FQCNs that must not be traversable (method calls or property access) from
+                                sandboxed twig templates. Defaults to Pimcore\'s built-in denylist (database/
+                                infrastructure layer, `Pimcore\Model\User`) - a site can append further FQCNs on
+                                top of that default. Ignored when `allowed_classes` is non-empty.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('allowed_classes')
+                                ->info('FQCNs that are traversable (method calls or property access) from
+                                sandboxed twig templates. As soon as this list contains at least one entry, the
+                                security policy switches from denylist mode to allowlist mode: the
+                                `blocked_classes` denylist is deactivated, and only instances of the classes
+                                listed here (and their subclasses) remain reachable.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('blocked_functions')
+                                ->info('`pimcore_*` function names that must not be covered by the blanket
+                                `pimcore_*` prefix auto-allow. Defaults to Pimcore\'s built-in denylist of
+                                functions that look up and return a live model instance by id/path, or that
+                                expose a filesystem/state oracle (e.g. `pimcore_file_exists`) - a site can
+                                append further function names on top of that default.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('hard_blocked_methods')
+                                ->info('FQCN => list-of-method-names map. Methods listed here can never be called
+                                on a matching instance from a sandboxed twig template, regardless of the
+                                blocked_classes/allowed_classes configuration. Defaults to a small set of
+                                secret/content-returning getters (e.g. `User::getPassword`, `Asset::getData`) -
+                                a site can extend the map with further classes/methods on top of that default.')
+                                ->useAttributeAsKey('class')
+                                ->arrayPrototype()
+                                    ->scalarPrototype()->end()
+                                ->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
@@ -2103,6 +2216,50 @@ final class Configuration implements ConfigurationInterface
                     ->scalarNode('product_key')
                         ->info('Product registration key obtained during product registration. ' .
                                'It is based on `instance_identifier` and `pimcore.encryption.secret`.')
+                    ->end()
+                ->end()
+            ->end()
+        ;
+    }
+
+    private function addCdnNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('cdn')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('base_url')
+                            ->info('Public base URL of the CDN (scheme + host) used for URL-based purges of original assets that nginx serves directly off disk and that therefore never receive a Cache-Tag from PHP, e.g. https://cdn.example.com. Use env var CDN_BASE_URL.')
+                            ->defaultValue('%env(CDN_BASE_URL)%')
+                        ->end()
+                        ->arrayNode('excluded_paths')
+                            ->info('Regular-expression patterns (matched against the rawurldecoded request path info). Matching asset/thumbnail responses are never CDN-cached: no Surrogate-Key/Cache-Tag emitted and cookies preserved. Use for private/access-controlled assets.')
+                            ->scalarPrototype()->end()
+                            ->defaultValue([])
+                        ->end()
+                        ->arrayNode('image_optimizer_source_formats')
+                            ->info('Source image MIME types the CDN image optimizer can ingest. Thumbnails of assets whose MIME type is not listed fall back to Pimcore-generated thumbnails (e.g. TIFF, PSD, which Fastly Image Optimizer cannot transform).')
+                            ->scalarPrototype()->end()
+                            ->defaultValue(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+                        ->end()
+                        ->arrayNode('fastly')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->scalarNode('api_token')
+                                    ->info('Fastly API token with purge_select scope. Use env var FASTLY_API_TOKEN.')
+                                    ->defaultValue('%env(FASTLY_API_TOKEN)%')
+                                ->end()
+                                ->scalarNode('service_id')
+                                    ->info('Fastly service ID. Use env var FASTLY_API_SERVICE.')
+                                    ->defaultValue('%env(FASTLY_API_SERVICE)%')
+                                ->end()
+                                ->scalarNode('api_base_url')
+                                    ->info('Base URL for the Fastly API. Override for local testing against a mock. Use env var FASTLY_API_BASE_URL.')
+                                    ->defaultValue('%env(FASTLY_API_BASE_URL)%')
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end()

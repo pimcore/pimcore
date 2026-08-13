@@ -56,8 +56,7 @@ class Geopoint extends AbstractGeo implements
     public function getDataFromResource(mixed $data, ?Concrete $object = null, array $params = []): ?DataObject\Data\GeoCoordinates
     {
         if (is_array($data) &&
-            $data[$this->getName() . '__longitude'] &&
-            $data[$this->getName() . '__latitude']
+            isset($data[$this->getName() . '__longitude'], $data[$this->getName() . '__latitude'])
         ) {
             $geopoint = new DataObject\Data\GeoCoordinates($data[$this->getName() . '__latitude'], $data[$this->getName() . '__longitude']);
 
@@ -108,8 +107,8 @@ class Geopoint extends AbstractGeo implements
      */
     public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\GeoCoordinates
     {
-        if (is_array($data) && ($data['longitude'] || $data['latitude'])) {
-            return new DataObject\Data\GeoCoordinates($data['latitude'], $data['longitude']);
+        if (is_array($data) && (isset($data['longitude']) || isset($data['latitude']))) {
+            return new DataObject\Data\GeoCoordinates($data['latitude'] ?? null, $data['longitude'] ?? null);
         }
 
         return null;

@@ -1,4 +1,4 @@
-name: "Codeception Tests centralised"
+name: "Codeception Tests centralised 11.x"
 
 on:
     workflow_dispatch:

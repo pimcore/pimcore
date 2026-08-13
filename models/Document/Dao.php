@@ -54,22 +54,56 @@ class Dao extends Model\Element\Dao
      */
     public function getByPath(string $path): void
     {
+        try {
+            $this->getByExactPath($path);
+        } catch (Model\Exception\NotFoundException $e) {
+            try {
+                $this->getByPrettyUrl($path);
+            } catch (Model\Exception\NotFoundException) {
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * Fetch a row by an exact path/key match only, without falling back to a pretty URL match.
+     * Used for the Unicode-normalization fallback candidates in
+     * Element\Service::getByPathWithNfcFallback(): a candidate is a synthetic, NFC-normalized
+     * variant of the caller's path, not a literal pretty URL a content editor configured, so
+     * matching it against documents_page.prettyUrl could return an unrelated page instead of
+     * correctly falling through to the next candidate.
+     *
+     * @internal
+     *
+     * @throws Model\Exception\NotFoundException
+     */
+    public function getByExactPath(string $path): void
+    {
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchAssociative('SELECT id FROM documents WHERE `path` = BINARY :path AND `key` = BINARY :key', $params);
 
         if ($data) {
             $this->assignVariablesToModel($data);
         } else {
-            // try to find a page with a pretty URL (use the original $path)
-            $data = $this->db->fetchAssociative('SELECT id FROM documents_page WHERE prettyUrl = :prettyUrl', [
-                'prettyUrl' => $path,
-            ]);
+            throw new Model\Exception\NotFoundException("document with path $path doesn't exist");
+        }
+    }
 
-            if ($data) {
-                $this->assignVariablesToModel($data);
-            } else {
-                throw new Model\Exception\NotFoundException("document with path $path doesn't exist");
-            }
+    /**
+     * @internal
+     *
+     * @throws Model\Exception\NotFoundException
+     */
+    public function getByPrettyUrl(string $path): void
+    {
+        $data = $this->db->fetchAssociative('SELECT id FROM documents_page WHERE prettyUrl = :prettyUrl', [
+            'prettyUrl' => $path,
+        ]);
+
+        if ($data) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new Model\Exception\NotFoundException("document with path $path doesn't exist");
         }
     }
 
@@ -326,20 +360,15 @@ class Dao extends Model\Element\Dao
             return false;
         }
 
-        $sql = 'SELECT id FROM documents d WHERE parentId = ? ';
+        $sql = 'SELECT o.id FROM documents o WHERE parentId = :parentId';
+        $params = ['parentId' => $this->model->getId()];
+        $types = [];
 
         if ($user && !$user->isAdmin()) {
-            $userIds = $user->getRoles();
-            $currentUserId = $user->getId();
-            $userIds[] = $currentUserId;
-
-            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
-
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(d.path,d.`key`),cpath)=1 AND
-                NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
-
-            $sql .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+            [$condition, $permissionParams, $permissionTypes] = $this->buildChildListPermissionCondition($user, 'document', 'key');
+            $sql .= ' AND ' . $condition;
+            $params += $permissionParams;
+            $types += $permissionTypes;
         }
 
         $includingUnpublished ??= !Model\Document::doHideUnpublished();
@@ -349,9 +378,7 @@ class Dao extends Model\Element\Dao
 
         $sql .= ' LIMIT 1';
 
-        $c = $this->db->fetchOne($sql, [$this->model->getId()]);
-
-        return (bool)$c;
+        return (bool) $this->db->fetchOne($sql, $params, $types);
     }
 
     /**
@@ -364,22 +391,18 @@ class Dao extends Model\Element\Dao
         if (!$this->model->getId()) {
             return 0;
         }
-        $sql = 'SELECT count(*) FROM documents d WHERE parentId = ? ';
+        $sql = 'SELECT COUNT(*) FROM documents o WHERE parentId = :parentId';
+        $params = ['parentId' => $this->model->getId()];
+        $types = [];
+
         if ($user && !$user->isAdmin()) {
-            $userIds = $user->getRoles();
-            $currentUserId = $user->getId();
-            $userIds[] = $currentUserId;
-
-            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
-
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(d.path,d.`key`),cpath)=1 AND
-                NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
-
-            $sql .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+            [$condition, $permissionParams, $permissionTypes] = $this->buildChildListPermissionCondition($user, 'document', 'key');
+            $sql .= ' AND ' . $condition;
+            $params += $permissionParams;
+            $types += $permissionTypes;
         }
 
-        return (int) $this->db->fetchOne($sql, [$this->model->getId()]);
+        return (int) $this->db->fetchOne($sql, $params, $types);
     }
 
     /**
