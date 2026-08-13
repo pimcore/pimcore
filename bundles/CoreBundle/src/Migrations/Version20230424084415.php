@@ -33,7 +33,7 @@ class Version20230424084415 extends AbstractMigration
             $editables = $db->fetchAllAssociative('SELECT * FROM documents_editables WHERE type = ?', ['link']);
 
             foreach ($editables as $editable) {
-                $unserialized = unserialize($editable['data']);
+                $unserialized = unserialize($editable['data'], ['allowed_classes' => false]);
                 if (is_array($unserialized) && array_key_exists('attributes', $unserialized)) {
                     unset($unserialized['attributes']);
 

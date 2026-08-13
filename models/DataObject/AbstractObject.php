@@ -269,7 +269,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         try {
             $object = new static();
-            $object->getDao()->getByPath($path);
+
+            Model\Element\Service::getByPathWithNfcFallback(
+                fn (string $candidate) => $object->getDao()->getByPath($candidate),
+                $path
+            );
 
             return static::getById($object->getId(), Model\Element\Service::prepareGetByIdParams($params));
         } catch (Model\Exception\NotFoundException $e) {
@@ -475,7 +479,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function save(array $parameters = []): static
     {
         $isUpdate = false;
-        $isDirtyDetectionDisabled = null;
+        $isDirtyDetectionDisabled = false;
         $updatedChildren = [];
         $differentOldPath = '';
         $hideUnpublishedBackup = false;
@@ -678,6 +682,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $property->save();
                 }
             }
+        }
+
+        // force loading of relation data
+        if ($this instanceof Concrete) {
+            $this->__getRawRelationData();
         }
 
         // set object to registry

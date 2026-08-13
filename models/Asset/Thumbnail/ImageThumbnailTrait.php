@@ -204,10 +204,13 @@ trait ImageThumbnailTrait
             $dimensions = [];
 
             if ($config) {
-                $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $this->getFilename());
-                if (isset($thumbnail['width'], $thumbnail['height'])) {
-                    $dimensions['width'] = $thumbnail['width'];
-                    $dimensions['height'] = $thumbnail['height'];
+                $statusCacheEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['status_cache'];
+                if ($statusCacheEnabled) {
+                    $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $this->getFilename());
+                    if (isset($thumbnail['width'], $thumbnail['height'])) {
+                        $dimensions['width'] = $thumbnail['width'];
+                        $dimensions['height'] = $thumbnail['height'];
+                    }
                 }
             }
 
@@ -385,9 +388,12 @@ trait ImageThumbnailTrait
 
     public function getFileSize(): ?int
     {
-        $thumbnail = $this->getAsset()->getDao()->getCachedThumbnail($this->getConfig()->getName(), $this->getFilename());
-        if ($thumbnail && $thumbnail['filesize']) {
-            return $thumbnail['filesize'];
+        $statusCacheEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['status_cache'];
+        if ($statusCacheEnabled) {
+            $thumbnail = $this->getAsset()->getDao()->getCachedThumbnail($this->getConfig()->getName(), $this->getFilename());
+            if ($thumbnail && $thumbnail['filesize']) {
+                return $thumbnail['filesize'];
+            }
         }
 
         $pathReference = $this->getPathReference(false);
