@@ -211,6 +211,29 @@ final class InstallCommand extends Command
             $this->io->error('Configuration failed with the following errors:');
             $this->io->listing($phase1Errors);
 
+            if (isset($config['choices'])) {
+                $value = $this->io->choice(
+                    $question,
+                    $config['choices'],
+                    $value
+                );
+            } else {
+                $validator = function ($answer) use ($name) {
+                    // MySQL password can be null
+                    if ($name === 'mysql-password') {
+                        return $answer;
+                    }
+                    
+                    if (empty($answer)) {
+                        throw new RuntimeException(sprintf('%s cannot be empty', $name));
+                    }
+
+                    return $answer;
+                };
+
+                if (isset($config['validator'])) {
+                    $validator = $config['validator'];
+                }
             return Command::FAILURE;
         }
 
