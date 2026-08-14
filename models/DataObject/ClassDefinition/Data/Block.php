@@ -30,7 +30,7 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface, FieldDefinitionEnrichmentModelInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface, FieldDefinitionEnrichmentModelInterface
 {
     use DataObject\Traits\ClassSavedTrait;
     use DataObject\Traits\FieldDefinitionEnrichmentDataTrait;
@@ -170,7 +170,18 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 }, $data);
             }
 
-            $unserializedData = Serialize::unserialize($data);
+            // A block's resource blob legitimately contains PHP objects, so object deserialization
+            // must stay enabled here. Child values are written by getDataForResource() through the
+            // per-fieldtype block marshallers, several of which rebuild a value object before
+            // serializing (externalImage, consent, date/datetime, structuredTable), while types
+            // without a marshaller store their raw normalize() output, which can keep objects too
+            // (hotspotimage/imageGallery -> MarkerHotspotItem, dateRange -> Carbon). The set is not
+            // enumerable: bundles may register further block marshallers and field definitions.
+            // Restricting this to `false` silently dropped those values to null and corrupted
+            // hotspot metadata - see pimcore/platform-version#262.
+            // Tightening this is tracked in pimcore/internal-improvements#24 and needs the write
+            // side to stop storing live objects first.
+            $unserializedData = Serialize::unserialize($data, true);
             $result = [];
 
             foreach ($unserializedData as $blockElements) {
@@ -466,6 +477,49 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $value['type'] = 'html';
 
         return $value;
+    }
+
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
+    {
+        $data = $this->getDataFromObjectParam($container, $params);
+
+        if (is_array($data)) {
+            foreach ($data as $item) {
+                if (!is_array($item)) {
+                    continue;
+                }
+
+                foreach ($this->getFieldDefinitions() as $fieldDefinition) {
+                    if (!$fieldDefinition instanceof IdRewriterInterface) {
+                        continue;
+                    }
+
+                    $blockElement = $item[$fieldDefinition->getName()] ?? null;
+                    if (!$blockElement instanceof DataObject\Data\BlockElement) {
+                        continue;
+                    }
+
+                    $blockElementData = $blockElement->getData();
+                    if ($blockElementData === null) {
+                        continue;
+                    }
+
+                    $blockElement->setData(
+                        $fieldDefinition->rewriteIds(
+                            $container,
+                            $idMapping,
+                            [
+                                ...$params,
+                                // \Pimcore\Model\DataObject\ClassDefinition\Data::getDataFromObjectParam() reads 'injectedData'
+                                'injectedData' => $blockElementData,
+                            ],
+                        ),
+                    );
+                }
+            }
+        }
+
+        return $data;
     }
 
     /**

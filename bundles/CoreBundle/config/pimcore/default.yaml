@@ -165,6 +165,17 @@ doctrine:
                 logging: false
                 profiling: false
                 options:
+                  # Disables MySQL strict mode (carried over from the legacy Zend_Db integration).
+                  # Confirmed load-bearing, not vestigial: two core queries used to error outright
+                  # under the MySQL 8 default sql_mode (ONLY_FULL_GROUP_BY) - Translation\Dao::
+                  # getAvailableLanguages() and Element\Service::findForbiddenPaths() - both since
+                  # fixed to be ONLY_FULL_GROUP_BY-safe regardless of this setting. The remaining,
+                  # still-current reason this can't simply be removed: Listing::setGroupBy()
+                  # (lib/Model/Listing/AbstractListing.php) is public API used by third-party/
+                  # customer code, and CustomReportsBundle lets admins configure arbitrary GROUP BY
+                  # reports - the blast radius of flipping this extends well past this codebase, and
+                  # third-party GROUP BY usage can't be audited or fixed the way the two core
+                  # queries above were. Do not remove without a dedicated, broadly-tested initiative.
                   !php/const PDO::MYSQL_ATTR_INIT_COMMAND: "SET sql_mode = '';"
                 default_table_options:
                     charset: UTF8MB4
@@ -356,6 +367,41 @@ pimcore:
                 tags: ['set']
                 filters: ['escape', 'trans', 'default']
                 functions: ['path', 'asset']
+                blocked_classes:
+                    - Pimcore\Model\Dao\AbstractDao
+                    - Doctrine\DBAL\Connection
+                    - PDO
+                    - PDOStatement
+                    - Symfony\Component\DependencyInjection\ContainerInterface
+                    - Symfony\Component\Process\Process
+                    - Pimcore\Model\User
+                allowed_classes: []
+                blocked_functions:
+                    # - pimcore_asset
+                    # - pimcore_asset_by_path
+                    # - pimcore_document
+                    # - pimcore_document_by_path
+                    # - pimcore_document_wrap_hardlink
+                    # - pimcore_object
+                    # - pimcore_object_by_path
+                    # - pimcore_object_classificationstore_group
+                    # - pimcore_object_brick_definition_key
+                    # - pimcore_site
+                    # - pimcore_site_by_root_id
+                    # - pimcore_site_by_domain
+                    # - pimcore_site_current
+                    - pimcore_user
+                    - pimcore_file_exists
+                hard_blocked_methods:
+                    Pimcore\Model\User:
+                        - getPassword
+                        - getPasswordRecoveryToken
+                        - getTwoFactorAuthentication
+                    Pimcore\Model\Asset:
+                        - getData
+                        - getStream
+                        - getLocalFile
+                        - getTemporaryFile
 
     gotenberg:
         base_url: 'http://gotenberg:3000'

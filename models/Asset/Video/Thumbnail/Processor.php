@@ -228,7 +228,7 @@ class Processor
         $lock->acquire(true);
 
         $asset = Model\Asset::getById($instance->getAssetId());
-        $workerSourceFile = $asset->getTemporaryFile();
+        $workerSourceFile = $asset->getLocalFile();
 
         // start converting
         foreach ($instance->queue as $converter) {
@@ -307,8 +307,6 @@ class Processor
             $asset->save();
             Model\Version::enable();
         }
-
-        @unlink($workerSourceFile);
 
         TmpStore::delete($instance->getJobStoreId());
     }

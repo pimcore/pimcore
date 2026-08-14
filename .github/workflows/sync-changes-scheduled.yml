@@ -7,7 +7,6 @@ on:
     branches:
       - '2026.x'
       - '2026.2'
-      - '12.3'
 
 concurrency:
   group: ${{ github.workflow }}
@@ -20,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ref: [{'base': '2026.x', 'destination': '2026.x'}, {'base': '2026.2', 'destination': '2026.2'}, {'base': '12.3', 'destination': '12.3'}]
+        ref: [{'base': '2026.x', 'destination': '2026.x'}, {'base': '2026.2', 'destination': '2026.2'}]
     with:
       base_ref: ${{ matrix.ref.base }}
       ref_name: ${{ matrix.ref.destination }}

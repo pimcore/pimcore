@@ -209,7 +209,10 @@ class Service extends Model\Element\Service
             $asset = new Asset();
 
             if (self::isValidPath($path, 'asset')) {
-                $asset->getDao()->getByPath($path);
+                Element\Service::getByPathWithNfcFallback(
+                    fn (string $candidate) => $asset->getDao()->getByPath($candidate),
+                    $path
+                );
 
                 return true;
             }
@@ -446,13 +449,11 @@ class Service extends Model\Element\Service
 
                 //check if high res image is called
 
-                preg_match("@([^\@]+)(\@[0-9.]+x)?\.?([^\.]+)?\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
-
-                if (empty($matches) || !isset($matches[1])) {
+                if (!preg_match("@([^\@]+)(\@[0-9.]+x)?\.?([^\.]+)?\.([a-zA-Z]{2,5})@", $config['filename'], $matches)) {
                     return null;
                 }
 
-                if (array_key_exists(2, $matches) && $matches[2]) {
+                if ($matches[2]) {
                     $highResFactor = (float)str_replace(['@', 'x'], '', $matches[2]);
                     $thumbnailConfig->setHighResolution($highResFactor);
                 }
