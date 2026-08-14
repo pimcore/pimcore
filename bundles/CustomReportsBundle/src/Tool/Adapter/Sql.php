@@ -220,6 +220,8 @@ class Sql extends AbstractAdapter
                 $value = strtotime($value);
             }
 
+            $value = (string) $value;
+
             switch ($operator) {
                 case 'like':
                     $fields[] = $filter['property'];

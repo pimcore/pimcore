@@ -209,7 +209,10 @@ class Service extends Model\Element\Service
             $asset = new Asset();
 
             if (self::isValidPath($path, 'asset')) {
-                $asset->getDao()->getByPath($path);
+                Element\Service::getByPathWithNfcFallback(
+                    fn (string $candidate) => $asset->getDao()->getByPath($candidate),
+                    $path
+                );
 
                 return true;
             }
@@ -446,13 +449,11 @@ class Service extends Model\Element\Service
 
                 //check if high res image is called
 
-                preg_match("@([^\@]+)(\@[0-9.]+x)?\.?([^\.]+)?\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
-
-                if (empty($matches) || !isset($matches[1])) {
+                if (!preg_match("@([^\@]+)(\@[0-9.]+x)?\.?([^\.]+)?\.([a-zA-Z]{2,5})@", $config['filename'], $matches)) {
                     return null;
                 }
 
-                if (array_key_exists(2, $matches) && $matches[2]) {
+                if ($matches[2]) {
                     $highResFactor = (float)str_replace(['@', 'x'], '', $matches[2]);
                     $thumbnailConfig->setHighResolution($highResFactor);
                 }
@@ -516,7 +517,7 @@ class Service extends Model\Element\Service
         }
         // set appropriate caching headers
         // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
-        $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
+        $lifetime = \Pimcore\Config::getSystemConfiguration('assets')['thumbnails']['cache_lifetime'];
 
         $headers = [
             'Cache-Control' => 'public, max-age=' . $lifetime,
@@ -569,7 +570,7 @@ class Service extends Model\Element\Service
         if (strlen($uri) > 10 && $storage->fileExists($storagePath)) {
             $stream = $storage->readStream($storagePath);
 
-            $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
+            $lifetime = \Pimcore\Config::getSystemConfiguration('assets')['thumbnails']['cache_lifetime'];
 
             return new StreamedResponse(function () use ($stream) {
                 fpassthru($stream);

@@ -65,7 +65,7 @@ class Admin
 
                 $languageCode = $parts[0];
 
-                if ($parts[0] === 'admin' && isset($parts[1])) {
+                if ($parts[0] === 'admin') {
                     $languageCode = $parts[1];
                 }
 

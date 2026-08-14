@@ -315,6 +315,43 @@ class WebDavIntegrationTest extends ModelTestCase
         $this->assertSame('ACME', $restored->getMetadata('copyright'));
     }
 
+    /**
+     * A node still running the previous release writes the legacy entry shape - id, timestamp and
+     * a serialized Asset under 'data'. During a rolling deploy such an entry can be read by a node
+     * already running this code, so it must restore from the scalar id and ignore the payload
+     * entirely: no object is ever reconstructed from the log. Replaces the round-trip coverage of
+     * the object payload that WebDavDeleteLogTest held before the format change.
+     */
+    public function testMoveIgnoresLegacySerializedPayloadInDeleteLog(): void
+    {
+        $dest = $this->createFileAssetIn($this->root, 'legacy-target.txt', 'OLD');
+        $destId = $dest->getId();
+        $destPath = $dest->getRealFullPath();
+
+        $dest->delete();
+
+        // exactly what the previous release persisted, payload included
+        Service::saveDeleteLog([
+            $destPath => [
+                'id' => $destId,
+                'timestamp' => time(),
+                'data' => 'O:24:"Pimcore\\Model\\Asset\\Text":0:{}',
+            ],
+        ]);
+
+        $source = $this->createFileAssetIn($this->root, 'legacy-source.txt', 'NEW');
+
+        $this->newTree()->move(
+            $this->davPath($source),
+            ltrim($destPath, '/')
+        );
+
+        $restored = Asset::getByPath($destPath);
+        $this->assertInstanceOf(Asset::class, $restored);
+        $this->assertSame($destId, $restored->getId(), 'a legacy entry must still restore the destination id');
+        $this->assertSame('NEW', $restored->getData());
+    }
+
     public function testMoveWithMissingSourceThrowsNotFound(): void
     {
         $this->expectException(NotFound::class);

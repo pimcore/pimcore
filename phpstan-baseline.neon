@@ -1042,3 +1042,86 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: lib/Tool/Admin.php
+
+		# The following entries for models/Asset.php, models/DataObject/AbstractObject.php and
+		# models/Document.php are false positives introduced with PHPStan 2.2.x (2.1.x is clean):
+		# variables captured by reference in the closures passed to retryableFunction() are no
+		# longer invalidated, so PHPStan assumes they keep their initial value. Remove them once
+		# this is fixed upstream.
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: models/Asset.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 5
+			path: models/Asset.php
+
+		-
+			message: '#^Left side of && is always false\.$#'
+			identifier: booleanAnd.leftAlwaysFalse
+			count: 1
+			path: models/Asset.php
+
+		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: models/Asset.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: models/DataObject/AbstractObject.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 5
+			path: models/DataObject/AbstractObject.php
+
+		-
+			message: '#^Left side of && is always false\.$#'
+			identifier: booleanAnd.leftAlwaysFalse
+			count: 1
+			path: models/DataObject/AbstractObject.php
+
+		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: models/DataObject/AbstractObject.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: models/Document.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 5
+			path: models/Document.php
+
+		-
+			message: '#^Left side of && is always false\.$#'
+			identifier: booleanAnd.leftAlwaysFalse
+			count: 1
+			path: models/Document.php
+
+		-
+			message: '#^Strict comparison using !== between \*NEVER\* and string will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: models/Document.php
+
+		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: models/Document.php

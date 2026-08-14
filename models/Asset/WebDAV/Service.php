@@ -51,8 +51,9 @@ class Service
         if (file_exists(self::getDeleteLogFile())) {
             $raw = file_get_contents(self::getDeleteLogFile());
             if (is_string($raw)) {
-                // the delete log only holds scalar entries (path => [id, timestamp]),
-                // so no object instantiation is expected or allowed
+                // the delete log only holds scalar entries (path => [id, timestamp, properties,
+                // metadata]), so no object instantiation is expected or allowed anywhere in this
+                // path - see the class docblock and Tree::move()
                 $log = unserialize($raw, ['allowed_classes' => false]);
             }
 
