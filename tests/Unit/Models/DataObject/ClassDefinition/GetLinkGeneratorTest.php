@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\LinkGeneratorInterface;
 
-class GetLinkGeneratorTest extends TestCase
+final class GetLinkGeneratorTest extends TestCase
 {
     public function testNullLinkGeneratorReferenceReturnsNull(): void
     {
@@ -35,7 +35,7 @@ class GetLinkGeneratorTest extends TestCase
     }
 }
 
-class TestLinkGenerator implements LinkGeneratorInterface
+final class TestLinkGenerator implements LinkGeneratorInterface
 {
     public function generate(object $object, array $params = []): string
     {
