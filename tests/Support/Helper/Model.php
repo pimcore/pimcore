@@ -588,6 +588,9 @@ class Model extends AbstractDefinitionHelper
             $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
             $lFields->setName('localizedfields');
             $lFields->addChild($this->createDataChild('input', 'linput'));
+            $lcalculatedValue = $this->createDataChild('calculatedValue', 'lcalculatedValue');
+            $lcalculatedValue->setCalculatorClass('@test.calculatorservice');
+            $lFields->addChild($lcalculatedValue);
             $lFields->addChild($this->createDataChild('textarea', 'ltextarea'));
             $lFields->addChild($this->createDataChild('wysiwyg', 'lwysiwyg'));
             $lFields->addChild($this->createDataChild('numeric', 'lnumber'));

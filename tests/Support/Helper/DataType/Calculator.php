@@ -32,5 +32,6 @@ class Calculator implements CalculatorClassInterface
 
     public function getCalculatedValueForEditMode(Concrete $object, CalculatedValue $context): string
     {
+        return $this->compute($object, $context);
     }
 }

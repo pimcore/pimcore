@@ -1198,6 +1198,8 @@ class Service extends Model\Element\Service
             return null;
         }
 
+        // no snapshot lookup here on purpose: the admin edit view always shows freshly computed values,
+        // version snapshots are only used by getCalculatedFieldValue() (version previews/comparisons, getters)
         return DataObject\Service::useInheritedValues(true, static function () use ($fd, $object, $data) {
             switch ($fd->getCalculatorType()) {
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
@@ -1255,6 +1257,16 @@ class Service extends Model\Element\Service
             $object = $object->getObject();
         }
 
+        if ($object instanceof Concrete) {
+            $snapshot = $object->getCalculatedValueSnapshot();
+            if ($snapshot !== null) {
+                $snapshotKey = self::getCalculatedValueSnapshotKey($data);
+                if (array_key_exists($snapshotKey, $snapshot)) {
+                    return $snapshot[$snapshotKey];
+                }
+            }
+        }
+
         return DataObject\Service::useInheritedValues(true, static function () use ($object, $fd, $data) {
             switch ($fd->getCalculatorType()) {
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
@@ -1280,6 +1292,23 @@ class Service extends Model\Element\Service
                     return null;
             }
         });
+    }
+
+    /**
+     * Builds the key under which the value of a calculated field is stored in the
+     * calculated value snapshot of a version (see Concrete::getCalculatedValueSnapshot()).
+     *
+     * @internal
+     */
+    public static function getCalculatedValueSnapshotKey(Data\CalculatedValue $data): string
+    {
+        return implode('~', [
+            $data->getOwnerType(),
+            (string) $data->getOwnerName(),
+            (string) $data->getIndex(),
+            (string) $data->getPosition(),
+            $data->getFieldname(),
+        ]);
     }
 
     public static function getSystemFields(): array
