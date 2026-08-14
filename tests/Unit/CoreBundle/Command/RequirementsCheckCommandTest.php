@@ -34,9 +34,12 @@ class RequirementsCheckCommandTest extends TestCase
      */
     private function makeCommand(): RequirementsCheckCommand
     {
-        return new class() extends RequirementsCheckCommand {
-            public function __construct()
-            {
+        return new class(self::DESCRIBED_CHECK, self::DESCRIPTION, self::UNDESCRIBED_CHECK) extends RequirementsCheckCommand {
+            public function __construct(
+                private readonly string $describedCheck,
+                private readonly string $description,
+                private readonly string $undescribedCheck,
+            ) {
                 parent::__construct('pimcore:system:requirements:check');
             }
 
@@ -48,12 +51,12 @@ class RequirementsCheckCommandTest extends TestCase
                     'checksFS' => [],
                     'checksApps' => [
                         new Check([
-                            'name' => RequirementsCheckCommandTest::DESCRIBED_CHECK,
+                            'name' => $this->describedCheck,
                             'state' => Check::STATE_WARNING,
-                            'message' => RequirementsCheckCommandTest::DESCRIPTION,
+                            'message' => $this->description,
                         ]),
                         new Check([
-                            'name' => RequirementsCheckCommandTest::UNDESCRIBED_CHECK,
+                            'name' => $this->undescribedCheck,
                             'state' => Check::STATE_WARNING,
                         ]),
                     ],
