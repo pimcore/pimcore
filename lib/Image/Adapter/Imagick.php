@@ -629,8 +629,30 @@ class Imagick extends Adapter
         $newImage = new \Imagick();
         $newImage->newimage($width, $height, $color);
         $newImage->setImageFormat($this->resource->getImageFormat());
+        $this->inheritColorspace($newImage);
 
         return $newImage;
+    }
+
+    /**
+     * A canvas created by \Imagick::newImage() is always sRGB. Compositing a source image with a
+     * different colorspace (eg. CMYK) onto it copies the raw channel data without any conversion,
+     * which results in an sRGB image containing CMYK data - the colors appear inverted.
+     * Transferring the colorspace and the embedded ICC profile of the source image to the canvas
+     * keeps both images in the same color space. For images that were already converted to sRGB
+     * during loading (preserveColor = false) this is a no-op.
+     */
+    private function inheritColorspace(\Imagick $newImage): void
+    {
+        $colorspace = $this->resource->getImageColorspace();
+        if ($colorspace !== \Imagick::COLORSPACE_UNDEFINED && $colorspace !== $newImage->getImageColorspace()) {
+            $newImage->setImageColorspace($colorspace);
+        }
+
+        $profiles = $this->resource->getImageProfiles('icc', true);
+        if (isset($profiles['icc'])) {
+            $newImage->setImageProfile('icc', $profiles['icc']);
+        }
     }
 
     /**
