@@ -33,6 +33,16 @@
   - The migration is **irreversible** (`down()` throws) — reverting `utf8mb4` columns back to `utf8`/`utf8mb3` could silently replace stored 4-byte characters (e.g. emoji) with `?` given this application's intentionally permissive `sql_mode=''`. Restore from a backup if you need to roll back.
   - The `ALTER TABLE`/`CONVERT TO CHARACTER SET` statements rewrite the affected columns' storage and typically run as full table rebuilds, which can take time and hold locks on `assets`, `documents`, `objects` and `properties` on large installations — plan to run this migration during a maintenance window on such installs.
 
+## Pimcore 2026.2.5
+
+### [Custom Reports]
+- Added a `pimcore_custom_reports.enabled_adapters` config option to enable/disable individual Custom Report data-source adapters (e.g. the built-in `sql` adapter) per project. Adapters not listed default to enabled; a disabled adapter is removed from the shared `pimcore.custom_report.adapter.factories` service locator, so it becomes unavailable to every consumer (the classic admin controller and the Studio backend bundle alike).
+    ```yaml
+    pimcore_custom_reports:
+        enabled_adapters:
+            sql: false
+    ```
+  We recommend disabling the built-in `sql` adapter unless specifically needed: any user with the `reports_config` permission can otherwise define arbitrary `SELECT` statements against the application's database, including tables never intended to be exposed. See [Custom Reports](../06_Reporting/01_Custom_Reports.md)  for details.
 
 ## Pimcore 2026.2.0
 
@@ -152,13 +162,13 @@ The following bundles have been removed:
 
 
 ### [Database]
-- All `utf8mb4` tables now use `utf8mb4_unicode_520_ci` as their default collation to match Doctrine's `default_table_options` 
-  configuration. Columns inherit this collation unless a different one is explicitly defined (for example `utf8mb4_bin` 
-  for case-sensitive keys). Previously, `install.sql` and Dao `CREATE TABLE` statements specified `DEFAULT CHARSET=utf8mb4` 
-  without an explicit `COLLATE` clause, which caused MySQL/MariaDB to assign the charset's built-in default collation 
-  (`utf8mb4_general_ci`) instead of the intended `utf8mb4_unicode_520_ci`. 
-  Existing installations need to update the collation of their tables and columns manually, details see 
-  'Tasks to Do Prior the Update' chapter above. 
+- All `utf8mb4` tables now use `utf8mb4_unicode_520_ci` as their default collation to match Doctrine's `default_table_options`
+  configuration. Columns inherit this collation unless a different one is explicitly defined (for example `utf8mb4_bin`
+  for case-sensitive keys). Previously, `install.sql` and Dao `CREATE TABLE` statements specified `DEFAULT CHARSET=utf8mb4`
+  without an explicit `COLLATE` clause, which caused MySQL/MariaDB to assign the charset's built-in default collation
+  (`utf8mb4_general_ci`) instead of the intended `utf8mb4_unicode_520_ci`.
+  Existing installations need to update the collation of their tables and columns manually, details see
+  'Tasks to Do Prior the Update' chapter above.
 
 ### [Models]
 - Added a new optional `$parameters` argument to `AbstractUser::save()` and `AbstractUser::delete()`, as well as their interface methods, to allow passing of arguments to `UserRoleEvent`.
