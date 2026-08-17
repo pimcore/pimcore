@@ -28,7 +28,7 @@ use Pimcore\Tool\Storage;
  *
  * @group model.asset.video-image-thumbnail
  */
-class VideoImageThumbnailTest extends ModelTestCase
+final class VideoImageThumbnailTest extends ModelTestCase
 {
     private const PLACEHOLDER = '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
 
