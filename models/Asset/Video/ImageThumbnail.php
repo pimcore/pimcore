@@ -195,6 +195,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
         string $cacheFilePath,
         int $timeOffset
     ): bool {
+        $tempFile = File::getLocalTempFilePath('png');
         $converter = Video::newInstance();
         if ($converter === null) {
             Logger::error('No video adapter available to create image thumbnail for video ' . $asset->getRealFullPath() . '.');
@@ -202,7 +203,6 @@ final class ImageThumbnail implements ImageThumbnailInterface
             return false;
         }
 
-        $tempFile = File::getLocalTempFilePath('png');
         $converter->load($asset->getLocalFile());
         if (false === $converter->saveImage($tempFile, $timeOffset)) {
             Logger::info('Creation of image thumbnail for video ' . $asset->getRealFullPath() . ' failed.');
