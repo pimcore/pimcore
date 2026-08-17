@@ -154,13 +154,15 @@ final class ImageThumbnail implements ImageThumbnailInterface
                 // if the original image could not be extracted from the video (e.g. no video adapter available or a
                 // broken/missing video file), don't bail out here, so that the error path reference below is used
                 if ($imageAvailable && $this->getConfig()) {
+                    $cacheFileStream = $storage->readStream($cacheFilePath);
+
                     $this->getConfig()->setFilenameSuffix('time-' . $timeOffset);
 
                     try {
                         $this->pathReference = Image\Thumbnail\Processor::process(
                             $this->asset,
                             $this->getConfig(),
-                            $storage->readStream($cacheFilePath),
+                            $cacheFileStream,
                             $deferred,
                             $generated
                         );
