@@ -1,5 +1,16 @@
 # Upgrade Notes
 
+## Pimcore 2026.2.5
+
+### [Custom Reports]
+- Added a `pimcore_custom_reports.enabled_adapters` config option to enable/disable individual Custom Report data-source adapters (e.g. the built-in `sql` adapter) per project. Adapters not listed default to enabled; a disabled adapter is removed from the shared `pimcore.custom_report.adapter.factories` service locator, so it becomes unavailable to every consumer (the classic admin controller and the Studio backend bundle alike).
+    ```yaml
+    pimcore_custom_reports:
+        enabled_adapters:
+            sql: false
+    ```
+  We recommend disabling the built-in `sql` adapter unless specifically needed: any user with the `reports_config` permission can otherwise define arbitrary `SELECT` statements against the application's database, including tables never intended to be exposed. See `doc/06_Reporting/01_Custom_Reports.md` for details.
+
 ## Pimcore 2026.2.0
 
 ### [General]
@@ -31,15 +42,6 @@
 ### [Translations]
 - `Translation::DOMAIN_ADMIN` constant is deprecated since 2026.2 and will be removed in a future release. Avoid referencing the `admin` translation domain directly.
 - `Translator::$adminPath` and `Translator::$adminTranslationMapping` properties are deprecated since 2026.2.
-
-### [Custom Reports]
-- Added a `pimcore_custom_reports.enabled_adapters` config option to enable/disable individual Custom Report data-source adapters (e.g. the built-in `sql` adapter) per project. Adapters not listed default to enabled; a disabled adapter is removed from the shared `pimcore.custom_report.adapter.factories` service locator, so it becomes unavailable to every consumer (the classic admin controller and the Studio backend bundle alike).
-    ```yaml
-    pimcore_custom_reports:
-        enabled_adapters:
-            sql: false
-    ```
-  We recommend disabling the built-in `sql` adapter unless specifically needed: any user with the `reports_config` permission can otherwise define arbitrary `SELECT` statements against the application's database, including tables never intended to be exposed. See `doc/06_Reporting/01_Custom_Reports.md` for details.
 
 ## Pimcore 2026.1.0
 
