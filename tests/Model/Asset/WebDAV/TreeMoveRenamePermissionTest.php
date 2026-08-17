@@ -33,6 +33,9 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
  * the "rename" workspace permission, not just "publish". A user granted publish-but-not-rename on
  * an asset must not be able to rename it by issuing a same-directory MOVE.
  *
+ * A same-directory MOVE onto an existing destination is an overwrite, not a rename (safe-save flow
+ * of third party software like Photoshop), and must keep working without the "rename" permission.
+ *
  * @group model.asset.webdav
  */
 class TreeMoveRenamePermissionTest extends ModelTestCase
@@ -94,18 +97,57 @@ class TreeMoveRenamePermissionTest extends ModelTestCase
         );
     }
 
-    private function createAsset(string $filename): Asset
+    public function testSameDirectoryOverwriteMoveSucceedsWithoutRenamePermission(): void
+    {
+        $destination = $this->createAsset('overwrite-target.txt', 'destination content');
+        $destinationId = $destination->getId();
+        $source = $this->createAsset('overwrite-source.txt', 'source content');
+        $sourceId = $source->getId();
+
+        // the workspace is granted on the parent folder because the overwrite touches both assets:
+        // publish on the destination and delete on the source, but never rename.
+        $this->loginAs($this->createUserWithWorkspace(
+            Asset::getByPath('/'),
+            publish: true,
+            rename: false,
+            delete: true
+        ));
+
+        $this->createTree()->move($source->getFilename(), $destination->getFilename());
+
+        $reloaded = Asset::getById($destinationId, ['force' => true]);
+        $this->assertNotNull(
+            $reloaded,
+            'an overwriting MOVE must keep the destination asset and its id, not replace it'
+        );
+        $this->assertSame(
+            'overwrite-target.txt',
+            $reloaded->getFilename(),
+            'an overwriting MOVE does not rename anything and must not require the "rename" permission'
+        );
+        $this->assertSame(
+            'source content',
+            $reloaded->getData(),
+            'the destination asset must carry the source data after the overwrite'
+        );
+        $this->assertNull(
+            Asset::getById($sourceId, ['force' => true]),
+            'the source asset must be removed after the overwrite'
+        );
+    }
+
+    private function createAsset(string $filename, string $data = 'some content'): Asset
     {
         $asset = new Asset();
         $asset->setParent(Asset::getByPath('/'));
         $asset->setFilename($filename);
-        $asset->setData('some content');
+        $asset->setData($data);
         $asset->save();
 
         return $asset;
     }
 
-    private function createUserWithWorkspace(Asset $asset, bool $publish, bool $rename): User
+    private function createUserWithWorkspace(Asset $asset, bool $publish, bool $rename, bool $delete = false): User
     {
         $workspace = new AssetWorkspace();
         $workspace->setCid($asset->getId());
@@ -114,6 +156,7 @@ class TreeMoveRenamePermissionTest extends ModelTestCase
         $workspace->setView(true);
         $workspace->setPublish($publish);
         $workspace->setRename($rename);
+        $workspace->setDelete($delete);
 
         $role = new User\Role();
         $role->setParentId(0);
