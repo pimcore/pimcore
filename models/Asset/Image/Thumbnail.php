@@ -143,10 +143,7 @@ final class Thumbnail implements ThumbnailInterface
                     'src' => $this->asset->getRealFullPath(),
                 ];
             } else {
-                $this->pathReference = [
-                    'type' => 'error',
-                    'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
-                ];
+                $this->pathReference = $this->getErrorPathReference();
             }
         }
 
