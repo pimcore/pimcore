@@ -13,12 +13,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Asset;
 
+use League\Flysystem\FilesystemOperator;
+use Pimcore;
 use Pimcore\Bundle\CoreBundle\Controller\PublicServicesController;
 use Pimcore\Config;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
+use Psr\Container\ContainerInterface;
+use ReflectionProperty;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -261,5 +265,152 @@ class AssetThumbnailCacheTest extends TestCase
             $compatModificationDate,
             $asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $filename),
         );
+    }
+
+    /**
+     * A cached thumbnail is streamed straight from storage. The existence check that used to
+     * precede readStream() is gone, so remote adapters no longer pay for an extra HEAD request
+     * on every delivery.
+     */
+    public function testDeliveringACachedThumbnailDoesNotCheckFileExistence(): void
+    {
+        $asset = $this->testAsset;
+        $thumbnailName = $this->thumbnailName;
+
+        /** @var Asset\Image $asset */
+        $thumbConfig = $asset->getThumbnail($thumbnailName);
+        $asset->clearThumbnails(true);
+
+        // generate the thumbnail so the delivery below is a cache hit
+        $thumbConfig->getPath(['deferredAllowed' => false]);
+        $pathReference = $thumbConfig->getPathReference(true);
+        $storagePath = $pathReference['storagePath'];
+
+        $contents = 'cached-thumbnail-contents';
+        $stream = fopen('php://memory', 'r+');
+        fwrite($stream, $contents);
+        rewind($stream);
+
+        $storage = $this->createMock(FilesystemOperator::class);
+        $storage->expects($this->never())->method('fileExists');
+        $storage->method('readStream')->willReturn($stream);
+        $storage->method('mimeType')->willReturn('image/jpeg');
+        $storage->method('fileSize')->willReturn(strlen($contents));
+
+        $response = $this->withThumbnailStorage(
+            $storage,
+            fn () => Asset\Service::getStreamedResponseForThumbnail(
+                $this->buildThumbnailConfig($asset, $thumbConfig->getFilename()),
+                $storagePath,
+            ),
+        );
+
+        $this->assertInstanceOf(StreamedResponse::class, $response);
+        $this->assertSame('image/jpeg', $response->headers->get('Content-Type'));
+        $this->assertSame((string) strlen($contents), $response->headers->get('Content-Length'));
+    }
+
+    /**
+     * A request URI that denotes a directory rather than a file must fall back to thumbnail
+     * generation. readStream() cannot be used to rule this out: the local adapter opens
+     * directories successfully, so without an explicit guard the storage root would be streamed
+     * and the subsequent mimeType() call would throw.
+     */
+    public function testDirectoryShapedUriFallsBackToThumbnailGeneration(): void
+    {
+        $asset = $this->testAsset;
+        $thumbnailName = $this->thumbnailName;
+
+        /** @var Asset\Image $asset */
+        $thumbConfig = $asset->getThumbnail($thumbnailName);
+        $asset->clearThumbnails(true);
+
+        $thumbnailStorage = Storage::get('thumbnail');
+        $pathReference = $thumbConfig->getPathReference(true);
+        $storagePath = $pathReference['storagePath'];
+        $config = $this->buildThumbnailConfig($asset, $thumbConfig->getFilename());
+
+        // '/' is what PublicServicesController passes when the request carries no REQUEST_URI,
+        // and it normalizes to the root of the thumbnail storage
+        foreach (['/', '/directory-shaped-path/'] as $uri) {
+            if ($thumbnailStorage->fileExists($storagePath)) {
+                $thumbnailStorage->delete($storagePath);
+            }
+
+            $response = Asset\Service::getStreamedResponseForThumbnail($config, $uri);
+
+            $this->assertInstanceOf(
+                StreamedResponse::class,
+                $response,
+                sprintf('URI "%s" should fall back to thumbnail generation.', $uri),
+            );
+
+            ob_start();
+            $response->sendContent();
+            ob_end_clean();
+
+            $this->assertTrue(
+                $thumbnailStorage->fileExists($storagePath),
+                sprintf('URI "%s" should have re-generated the thumbnail.', $uri),
+            );
+        }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildThumbnailConfig(Asset $asset, string $filename): array
+    {
+        return [
+            'prefix' => '',
+            'type' => 'image',
+            'asset_id' => $asset->getId(),
+            'thumbnail_name' => $this->thumbnailName,
+            'filename' => $filename,
+            'file_extension' => strtolower(pathinfo($filename, PATHINFO_EXTENSION)),
+        ];
+    }
+
+    /**
+     * Runs $callback with the thumbnail storage replaced by $storage.
+     *
+     * Pimcore\Tool\Storage resolves each storage from a tagged service locator, so the whole
+     * service is swapped for one backed by a locator that returns $storage for the thumbnail
+     * storage and delegates everything else to the original.
+     */
+    private function withThumbnailStorage(FilesystemOperator $storage, callable $callback): mixed
+    {
+        $storageService = Pimcore::getContainer()->get(Storage::class);
+
+        // the container refuses to replace an already initialized service, and Storage is
+        // initialized long before a test runs, so swap the locator it resolves each storage from
+        $property = new ReflectionProperty(Storage::class, 'locator');
+        $originalLocator = $property->getValue($storageService);
+
+        $property->setValue($storageService, new class($storage, $originalLocator) implements ContainerInterface {
+            public function __construct(
+                private FilesystemOperator $thumbnailStorage,
+                private ContainerInterface $original,
+            ) {
+            }
+
+            public function has(string $id): bool
+            {
+                return $id === 'pimcore.thumbnail.storage' || $this->original->has($id);
+            }
+
+            public function get(string $id): mixed
+            {
+                return $id === 'pimcore.thumbnail.storage'
+                    ? $this->thumbnailStorage
+                    : $this->original->get($id);
+            }
+        });
+
+        try {
+            return $callback();
+        } finally {
+            $property->setValue($storageService, $originalLocator);
+        }
     }
 }
