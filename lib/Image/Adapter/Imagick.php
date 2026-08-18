@@ -629,8 +629,40 @@ class Imagick extends Adapter
         $newImage = new \Imagick();
         $newImage->newimage($width, $height, $color);
         $newImage->setImageFormat($this->resource->getImageFormat());
+        $this->inheritColorspace($newImage);
 
         return $newImage;
+    }
+
+    /**
+     * A canvas created by \Imagick::newImage() is always sRGB. Compositing a source image with a
+     * different colorspace (eg. CMYK) onto it copies the raw channel data without any conversion,
+     * which results in an sRGB image containing CMYK data - the colors appear inverted.
+     * Converting the canvas to the colorspace of the source image and transferring its embedded
+     * ICC profile keeps both images in the same color space. For images that were already
+     * converted to sRGB while loading (preserveColor = false) this is a no-op.
+     */
+    private function inheritColorspace(\Imagick $newImage): void
+    {
+        $colorspace = $this->resource->getImageColorspace();
+        if ($colorspace === \Imagick::COLORSPACE_UNDEFINED || $colorspace === $newImage->getImageColorspace()) {
+            return;
+        }
+
+        if ($newImage->getImageAlphaChannel()) {
+            // A canvas that is (partly) transparent has to be flattened onto the background color
+            // when the thumbnail is written, and save() does that with \Imagick::ALPHACHANNEL_REMOVE,
+            // which applies the background color as raw channel data. That only yields the intended
+            // result in an RGB colorspace, so such a canvas is left untouched.
+            return;
+        }
+
+        $newImage->transformImageColorspace($colorspace);
+
+        $profiles = $this->resource->getImageProfiles('icc', true);
+        if (isset($profiles['icc'])) {
+            $newImage->setImageProfile('icc', $profiles['icc']);
+        }
     }
 
     /**
