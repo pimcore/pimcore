@@ -13,7 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType;
 
+use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
+use Pimcore\Model;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Tests\Support\Helper\Pimcore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -104,6 +107,48 @@ class LocalizedFieldQueryTableTest extends ModelTestCase
             $this->grabQueryTableReads(),
             'saving an object of a class with inheritance still has to read the localized query tables'
         );
+    }
+
+    /**
+     * The skipped read used to be the first statement touching the per-language query table and
+     * therefore triggered the deferred creation of a missing language table. With inheritance
+     * disabled that role is taken over by the upsert, so a language table that does not exist yet
+     * still has to be created and the save has to be retried.
+     */
+    public function testMissingLanguageQueryTableIsRecreatedWhenInheritanceIsDisabled(): void
+    {
+        $object = TestHelper::createEmptyObject();
+        $this->assertFalse($object->getClass()->getAllowInherit(), 'precondition: test class must not allow inheritance');
+        $object->save();
+
+        $languages = Tool::getValidLanguages();
+        $language = (string)end($languages);
+        $queryTable = 'object_localized_query_'.$object->getClassId().'_'.$language;
+
+        $db = Db::get();
+        $db->executeStatement('DROP TABLE '.$queryTable);
+
+        // a language table that was never written to also has no cached column information, so drop it
+        // here as well to end up in the same state as after adding a language to the system settings
+        RuntimeCache::getInstance()->offsetUnset(Model\Dao\AbstractDao::CACHEKEY.$queryTable);
+        Cache::clearTags(['system', 'resource']);
+
+        $this->assertFalse($this->tableExists($queryTable), 'precondition: the language query table has to be gone');
+
+        $object->setLinput('recreated-'.$language, $language);
+        $object->save();
+
+        $this->assertTrue($this->tableExists($queryTable), 'the missing language query table has to be created again');
+        $this->assertSame(
+            'recreated-'.$language,
+            $db->fetchOne('SELECT `linput` FROM '.$queryTable.' WHERE ooo_id = ?', [$object->getId()]),
+            'the retried save has to persist the value into the recreated table'
+        );
+    }
+
+    private function tableExists(string $table): bool
+    {
+        return (bool)Db::get()->fetchOne('SHOW TABLES LIKE '.Db::get()->quote($table));
     }
 
     /**
