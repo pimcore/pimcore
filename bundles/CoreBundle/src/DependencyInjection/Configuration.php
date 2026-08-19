@@ -428,6 +428,11 @@ final class Configuration implements ConfigurationInterface
                             ->floatNode('max_scaling_factor')
                                 ->defaultValue(5.0)
                             ->end()
+                            ->integerNode('cache_lifetime')
+                                ->info('Lifetime in seconds for the HTTP caching headers (Cache-Control, Expires) sent when a thumbnail is delivered through the thumbnail service.')
+                                ->min(0)
+                                ->defaultValue(86400 * 7)
+                            ->end()
                         ->end()
                     ->end()
                     ->arrayNode('frontend_prefixes')
@@ -756,6 +761,28 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end();
         $this->addImplementationNodeFromArrayDefinition($assetsNode, 'type_definitions');
+
+        $assetsNode
+            ->children()
+                ->arrayNode('mime_mappings')
+                    ->info('Override MIME type detection by file extension. Map of lowercase file extensions (without leading dot) to MIME type, e.g. `indd: application/x-indesign`.')
+                    ->useAttributeAsKey('name')
+                    ->normalizeKeys(false)
+                    ->beforeNormalization()
+                        ->ifArray()
+                        ->then(function (array $v) {
+                            $result = [];
+                            foreach ($v as $extension => $mimeType) {
+                                $extension = ltrim((string)$extension, '.');
+                                $result[strtolower($extension)] = $mimeType;
+                            }
+
+                            return $result;
+                        })
+                    ->end()
+                    ->scalarPrototype()->end()
+                ->end()
+            ->end();
     }
 
     /**
@@ -1325,6 +1352,20 @@ final class Configuration implements ConfigurationInterface
     private function addCacheNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode->children()
+            ->arrayNode('cache')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->integerNode('max_write_items')
+                        ->info('Maximum number of items that are written to the object cache within a single request. Additional items are dropped (and logged) on cleanup. Raise this on requests that legitimately touch many cacheable items.')
+                        ->min(1)
+                        ->defaultValue(50)
+                    ->end()
+                    ->booleanNode('handle_cli')
+                        ->info('Whether the object cache should also write items to the cache in CLI mode. Disabled by default as long-running CLI scripts tend to produce race conditions.')
+                        ->defaultFalse()
+                    ->end()
+                ->end()
+            ->end()
             ->arrayNode('full_page_cache')
                 ->ignoreExtraKeys()
                 ->canBeDisabled()
@@ -1578,6 +1619,7 @@ final class Configuration implements ConfigurationInterface
                                                     ->end()
                                                 ->end()
                                             ->end()
+                                            ->arrayNode('custom_extensions')->ignoreExtraKeys(false)->info('Use this key to attach additional config information to a place, for example via bundles, etc.')->end()
                                         ->end()
                                     ->end()
                                     ->beforeNormalization()
@@ -1768,6 +1810,7 @@ final class Configuration implements ConfigurationInterface
                                                         ->defaultValue(Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN)
                                                         ->info('Behaviour when workflow transition gets applied but there are unsaved changes')
                                                     ->end()
+                                                    ->arrayNode('custom_extensions')->ignoreExtraKeys(false)->info('Use this key to attach additional config information to a transition, for example via bundles, etc.')->end()
                                                 ->end()
                                             ->end()
                                         ->end()
@@ -1880,6 +1923,7 @@ final class Configuration implements ConfigurationInterface
                                                 ->end()
                                                 ->info('See notes section of transitions. It works exactly the same way.')
                                             ->end()
+                                            ->arrayNode('custom_extensions')->ignoreExtraKeys(false)->info('Use this key to attach additional config information to a global action, for example via bundles, etc.')->end()
                                         ->end()
                                     ->end()
                                     ->info('Actions which will be added to actions button independently of the current workflow place.')

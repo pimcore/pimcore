@@ -804,7 +804,7 @@ class Service extends Model\AbstractModel
         }
 
         if ($userRoleIds = $user->getRoles()) {
-            $roleWorkspacesSql = 'SELECT cpath, userid, max(list) as list FROM users_workspaces_' . $type . ' WHERE userId IN (' . implode(',', $userRoleIds) . ')';
+            $roleWorkspacesSql = 'SELECT cpath, max(list) as list FROM users_workspaces_' . $type . ' WHERE userId IN (' . implode(',', $userRoleIds) . ')';
             if ($workspaceCids) {
                 $roleWorkspacesSql .= ' AND cid NOT IN (' . implode(',', $workspaceCids) . ')';
             }

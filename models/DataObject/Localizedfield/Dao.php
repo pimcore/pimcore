@@ -168,6 +168,8 @@ class Dao extends Model\Dao\AbstractDao
             DataObject\Localizedfield::setGetFallbackValues(true);
         }
 
+        $inheritanceEnabled = $object->getClass()->getAllowInherit();
+
         foreach ($validLanguages as $language) {
             if (empty($params['newParent'])
                 && !empty($params['isUpdate'])
@@ -259,17 +261,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
                 } catch (TableNotFoundException $e) {
                     // if the table doesn't exist -> create it! deferred creation for object bricks ...
-                    try {
-                        $this->db->rollBack();
-                    } catch (Exception $er) {
-                        // PDO adapter throws exceptions if rollback fails
-                        Logger::info((string) $er);
-                    }
-
-                    $this->createUpdateTable();
-
-                    // throw exception which gets caught in AbstractObject::save() -> retry saving
-                    throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
+                    $this->createMissingTableAndRetry();
                 }
 
                 if ($container instanceof DataObject\ClassDefinition || $container instanceof DataObject\Objectbrick\Definition) {
@@ -285,43 +277,31 @@ class Dao extends Model\Dao\AbstractDao
                         $queryTable
                     );
                     $this->inheritanceHelper->resetFieldsToCheck();
-                    $sql = 'SELECT * FROM '.$queryTable.' WHERE ooo_id = '.$object->getId(
-                    )." AND language = '".$language."'";
-
-                    $oldData = [];
-
-                    try {
-                        $oldData = $this->db->fetchAssociative($sql);
-                    } catch (TableNotFoundException $e) {
-                        // if the table doesn't exist -> create it!
-
-                        // the following is to ensure consistent data and atomic transactions, while having the flexibility
-                        // to add new languages on the fly without saving all classes having localized fields
-
-                        // first we need to roll back all modifications, because otherwise they would be implicitly committed
-                        // by the following DDL
-                        try {
-                            $this->db->rollBack();
-                        } catch (Exception $er) {
-                            // PDO adapter throws exceptions if rollback fails
-                            Logger::info((string) $er);
-                        }
-
-                        // this creates the missing table
-                        $this->createUpdateTable();
-
-                        // at this point we throw an exception so that the transaction gets repeated in DataObject::save()
-                        throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
-                    }
 
                     // get fields which shouldn't be updated
                     $untouchable = [];
 
                     // @TODO: currently we do not support lazyloading in localized fields
 
-                    $inheritanceEnabled = $object->getClass()->getAllowInherit();
+                    $oldData = [];
                     $parentData = null;
+
+                    // both the currently stored data and the data of the parent object are only needed to
+                    // determine which fields have to be propagated to the child objects, so there is no point
+                    // in reading the query table at all if inheritance is disabled. this saves one SELECT per
+                    // language and object on every save.
                     if ($inheritanceEnabled) {
+                        $sql = 'SELECT * FROM '.$queryTable.' WHERE ooo_id = '.$object->getId(
+                        )." AND language = '".$language."'";
+
+                        try {
+                            $oldData = $this->db->fetchAssociative($sql);
+                        } catch (TableNotFoundException $e) {
+                            // if the table doesn't exist -> create it! this gives us the flexibility to add new
+                            // languages on the fly without saving all classes having localized fields
+                            $this->createMissingTableAndRetry();
+                        }
+
                         // get the next suitable parent for inheritance
                         $parentForInheritance = $object->getNextParentForInheritance();
                         if ($parentForInheritance) {
@@ -437,7 +417,14 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     $queryTable = $this->getQueryTableName().'_'.$language;
-                    Helper::upsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
+                    try {
+                        Helper::upsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
+                    } catch (TableNotFoundException $e) {
+                        // with inheritance disabled this is the first statement touching the query table,
+                        // so the deferred creation of a missing language table has to be handled here as well
+                        $this->createMissingTableAndRetry();
+                    }
+
                     if ($inheritanceEnabled) {
                         $context = isset($params['context']) ? $params['context'] : [];
                         if ($context['containerType'] === 'objectbrick') {
@@ -468,6 +455,29 @@ class Dao extends Model\Dao\AbstractDao
         }
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(false);
         DataObject\Concrete\Dao\InheritanceHelper::clearRuntimeCache();
+    }
+
+    /**
+     * Creates a query/store table that does not exist yet (deferred creation, e.g. when a new language
+     * was added or for object bricks) and signals DataObject::save() to retry the whole save.
+     *
+     * The current transaction has to be rolled back first, otherwise the modifications made so far would
+     * be committed implicitly by the following DDL.
+     *
+     * @throws LanguageTableDoesNotExistException
+     */
+    private function createMissingTableAndRetry(): never
+    {
+        try {
+            $this->db->rollBack();
+        } catch (Exception $er) {
+            // PDO adapter throws exceptions if rollback fails
+            Logger::info((string) $er);
+        }
+
+        $this->createUpdateTable();
+
+        throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
     }
 
     /**
@@ -533,17 +543,7 @@ class Dao extends Model\Dao\AbstractDao
             Logger::error((string) $e);
 
             if ($isUpdate && $e instanceof TableNotFoundException) {
-                try {
-                    $this->db->rollBack();
-                } catch (Exception $er) {
-                    // PDO adapter throws exceptions if rollback fails
-                    Logger::info((string) $er);
-                }
-
-                $this->createUpdateTable();
-
-                // throw exception which gets caught in AbstractObject::save() -> retry saving
-                throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
+                $this->createMissingTableAndRetry();
             }
         }
 

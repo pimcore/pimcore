@@ -360,20 +360,15 @@ class Dao extends Model\Element\Dao
             return false;
         }
 
-        $sql = 'SELECT id FROM documents d WHERE parentId = ? ';
+        $sql = 'SELECT o.id FROM documents o WHERE parentId = :parentId';
+        $params = ['parentId' => $this->model->getId()];
+        $types = [];
 
         if ($user && !$user->isAdmin()) {
-            $userIds = $user->getRoles();
-            $currentUserId = $user->getId();
-            $userIds[] = $currentUserId;
-
-            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
-
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND (cpath=CONCAT(d.path,d.`key`) OR LOCATE(CONCAT(d.path,d.`key`,\'/\'),cpath)=1) AND
-                NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
-
-            $sql .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+            [$condition, $permissionParams, $permissionTypes] = $this->buildChildListPermissionCondition($user, 'document', 'key');
+            $sql .= ' AND ' . $condition;
+            $params += $permissionParams;
+            $types += $permissionTypes;
         }
 
         $includingUnpublished ??= !Model\Document::doHideUnpublished();
@@ -383,9 +378,7 @@ class Dao extends Model\Element\Dao
 
         $sql .= ' LIMIT 1';
 
-        $c = $this->db->fetchOne($sql, [$this->model->getId()]);
-
-        return (bool)$c;
+        return (bool) $this->db->fetchOne($sql, $params, $types);
     }
 
     /**
@@ -398,22 +391,18 @@ class Dao extends Model\Element\Dao
         if (!$this->model->getId()) {
             return 0;
         }
-        $sql = 'SELECT count(*) FROM documents d WHERE parentId = ? ';
+        $sql = 'SELECT COUNT(*) FROM documents o WHERE parentId = :parentId';
+        $params = ['parentId' => $this->model->getId()];
+        $types = [];
+
         if ($user && !$user->isAdmin()) {
-            $userIds = $user->getRoles();
-            $currentUserId = $user->getId();
-            $userIds[] = $currentUserId;
-
-            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
-
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND (cpath=CONCAT(d.path,d.`key`) OR LOCATE(CONCAT(d.path,d.`key`,\'/\'),cpath)=1) AND
-                NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
-
-            $sql .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+            [$condition, $permissionParams, $permissionTypes] = $this->buildChildListPermissionCondition($user, 'document', 'key');
+            $sql .= ' AND ' . $condition;
+            $params += $permissionParams;
+            $types += $permissionTypes;
         }
 
-        return (int) $this->db->fetchOne($sql, [$this->model->getId()]);
+        return (int) $this->db->fetchOne($sql, $params, $types);
     }
 
     /**

@@ -17,10 +17,12 @@ use Exception;
 use Pimcore;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Unittest;
+use Pimcore\Model\User;
 use Pimcore\Model\Version;
 use Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
+use Pimcore\Model\Version\CoauthorContextInterface;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -143,6 +145,81 @@ class VersionTest extends TestCase
 
         $multihref = $sourceObjectFromDb->getMultihref();
         $this->assertCount(1, $multihref, 'expected 1 target element');
+    }
+
+    /**
+     * getLatestVersion() must only report versions that are newer than the element itself, and the
+     * returned version must be hydrated exactly like a directly loaded one.
+     */
+    public function testGetLatestVersion(): void
+    {
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+        $object = TestHelper::createEmptyObject();
+
+        // the version written by save() represents the published state, so it is only reported
+        // when $includingPublished is set
+        $this->assertNull($object->getLatestVersion(), 'expected no version newer than the object itself');
+
+        $publishedVersion = $object->getLatestVersion(null, true);
+        $this->assertNotNull($publishedVersion, 'expected the published version to be returned');
+        $this->assertSame($object->getId(), $publishedVersion->getCid(), 'version belongs to another element');
+        $this->assertSame('object', $publishedVersion->getCtype(), 'unexpected element type');
+        $this->assertSame($object->getVersionCount(), $publishedVersion->getVersionCount(), 'unexpected version count');
+        $this->assertFalse($publishedVersion->isAutoSave(), 'the published version must not be an auto-save one');
+
+        $directlyLoadedVersion = Version::getById((int) $publishedVersion->getId());
+        $this->assertNotNull($directlyLoadedVersion, 'the returned version must exist in the database');
+        $this->assertSame($directlyLoadedVersion->getDate(), $publishedVersion->getDate(), 'date not hydrated');
+        $this->assertSame($directlyLoadedVersion->getVersionCount(), $publishedVersion->getVersionCount(), 'versionCount not hydrated');
+        $this->assertSame($directlyLoadedVersion->isAutoSave(), $publishedVersion->isAutoSave(), 'autoSave not hydrated');
+        $this->assertSame($directlyLoadedVersion->getSerialized(), $publishedVersion->getSerialized(), 'serialized not hydrated');
+
+        // a version newer than the element wins, regardless of $includingPublished
+        $newerVersion = $object->saveVersion();
+        $this->assertNotNull($newerVersion, 'expected a new version to be saved');
+        $latestVersion = $object->getLatestVersion();
+        $this->assertNotNull($latestVersion, 'expected the newly saved version to be returned');
+        $this->assertSame($newerVersion->getId(), $latestVersion->getId(), 'expected the newest version');
+        $this->assertGreaterThan($object->getVersionCount(), $latestVersion->getVersionCount(), 'expected a newer version count');
+    }
+
+    /**
+     * Auto-save versions are private to their author: getLatestVersion() must return the caller's
+     * own auto-save version, and must never leak somebody else's.
+     */
+    public function testGetLatestVersionOnlyReturnsOwnAutoSaveVersion(): void
+    {
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+
+        $author = $this->createUser('test-version-author');
+        $otherUser = $this->createUser('test-version-other-user');
+
+        $object = TestHelper::createEmptyObject();
+        $object->setUserModification($author->getId());
+        $autoSaveVersion = $object->saveVersion(true, true, null, true);
+        $this->assertNotNull($autoSaveVersion, 'expected an auto-save version to be saved');
+        $this->assertTrue($autoSaveVersion->isAutoSave(), 'expected an auto-save version');
+
+        $latestVersion = $object->getLatestVersion($author->getId());
+        $this->assertNotNull($latestVersion, 'the author must see their own auto-save version');
+        $this->assertSame($autoSaveVersion->getId(), $latestVersion->getId(), 'expected the auto-save version');
+        $this->assertSame($author->getId(), $latestVersion->getUserId(), 'unexpected auto-save author');
+        $this->assertTrue($latestVersion->isAutoSave(), 'autoSave not hydrated');
+
+        $this->assertNull(
+            $object->getLatestVersion($otherUser->getId()),
+            'an auto-save version must not be visible to another user'
+        );
+    }
+
+    protected function createUser(string $name): User
+    {
+        if (!$user = User::getByName($name)) {
+            $user = new User();
+            $user->setName($name)->save();
+        }
+
+        return $user;
     }
 
     // Save a new object and check if the storagetype is set to fs
@@ -276,6 +353,128 @@ class VersionTest extends TestCase
         $this->assertEquals('fs', $storageType, 'expected storagetype fs, but ' . $result['storageType'] . ' was set.');
         $this->assertNotEmpty($binaryFileHash, 'binaryFileHash must not be empty');
         $this->assertNotEmpty($id, 'id must not be empty');
+    }
+
+    // An active coauthor context must stamp a brand-new version with its type/coauthor values.
+    public function testCoauthorContextStampsNewVersionOnSave(): void
+    {
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+        $context = Pimcore::getContainer()->get(CoauthorContextInterface::class);
+
+        try {
+            $context->set('agent', 'product-data-agent');
+
+            $object = TestHelper::createEmptyObject();
+            $version = $this->getNewestVersion($object->getId());
+
+            $reloadedVersion = Version::getById($version->getId());
+
+            $this->assertSame('agent', $reloadedVersion->getCoauthorType(), 'coauthorType must be stamped from context');
+            $this->assertSame(
+                'product-data-agent',
+                $reloadedVersion->getCoauthor(),
+                'coauthor must be stamped from context'
+            );
+        } finally {
+            $context->clear();
+        }
+    }
+
+    // An explicitly set coauthorType/coauthor on the version must win over an active context.
+    public function testExplicitCoauthorSetOnVersionWinsOverContext(): void
+    {
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+        $context = Pimcore::getContainer()->get(CoauthorContextInterface::class);
+
+        try {
+            $context->set('agent', 'product-data-agent');
+
+            $object = TestHelper::createEmptyObject();
+
+            $version = new Version();
+            $version->setCid($object->getId());
+            $version->setCtype('object');
+            $version->setDate(time());
+            $version->setUserId(1);
+            $version->setData($object);
+            $version->setVersionCount($object->getVersionCount() + 1);
+            $version->setCoauthorType('human');
+            $version->setCoauthor('jane.doe');
+            $version->save();
+
+            $reloadedVersion = Version::getById($version->getId());
+
+            $this->assertSame('human', $reloadedVersion->getCoauthorType(), 'explicit coauthorType must win');
+            $this->assertSame('jane.doe', $reloadedVersion->getCoauthor(), 'explicit coauthor must win');
+        } finally {
+            $context->clear();
+        }
+    }
+
+    // Re-saving an already persisted version must not stamp coauthor fields, even with an active context.
+    public function testResavingExistingVersionDoesNotStampCoauthor(): void
+    {
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+        $context = Pimcore::getContainer()->get(CoauthorContextInterface::class);
+
+        try {
+            // save without an active context first: no-context default is null coauthor fields
+            $object = TestHelper::createEmptyObject();
+            $version = $this->getNewestVersion($object->getId());
+
+            $this->assertNull($version->getCoauthorType(), 'coauthorType must be null without an active context');
+            $this->assertNull($version->getCoauthor(), 'coauthor must be null without an active context');
+
+            // activate the context only after the version already exists, then re-save it
+            $context->set('agent', 'product-data-agent');
+
+            $loadedVersion = Version::getById($version->getId());
+            $loadedVersion->loadData();
+            $loadedVersion->setNote('updated note');
+            $loadedVersion->save();
+
+            $reloadedVersion = Version::getById($version->getId());
+
+            $this->assertNull($reloadedVersion->getCoauthorType(), 'existing version must not be stamped on re-save');
+            $this->assertNull($reloadedVersion->getCoauthor(), 'existing version must not be stamped on re-save');
+            $this->assertSame('updated note', $reloadedVersion->getNote(), 'note update must still be persisted');
+        } finally {
+            $context->clear();
+        }
+    }
+
+    // Stamping must be a no-op when versioning is disabled: no mutation of the coauthor fields.
+    public function testDisabledVersioningDoesNotStampCoauthor(): void
+    {
+        $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
+        $context = Pimcore::getContainer()->get(CoauthorContextInterface::class);
+
+        try {
+            $context->set('agent', 'product-data-agent');
+
+            $object = TestHelper::createEmptyObject();
+
+            $version = new Version();
+            $version->setCid($object->getId());
+            $version->setCtype('object');
+            $version->setDate(time());
+            $version->setUserId(1);
+            $version->setData($object);
+            $version->setVersionCount($object->getVersionCount() + 1);
+
+            Version::disable();
+
+            try {
+                $version->save();
+            } finally {
+                Version::enable();
+            }
+
+            $this->assertNull($version->getCoauthorType(), 'coauthorType must not be stamped while versioning is disabled');
+            $this->assertNull($version->getCoauthor(), 'coauthor must not be stamped while versioning is disabled');
+        } finally {
+            $context->clear();
+        }
     }
 
     protected function setUp(): void
