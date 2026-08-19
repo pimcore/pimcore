@@ -82,6 +82,17 @@ class LocateFileTraitTest extends TestCase
         );
     }
 
+    public function testLocateFileFollowsSymlinkInCustomDirectory(): void
+    {
+        $this->filesystem->mkdir(PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY);
+        $symlink = $this->symlinkInto(PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY, 'fieldcollections', 'SymlinkedCustomClass');
+
+        $this->assertSame(
+            $symlink,
+            $this->createLocator()->file('SymlinkedCustomClass', 'fieldcollections/%s.php')
+        );
+    }
+
     /**
      * @dataProvider invalidKeyProvider
      */
@@ -107,7 +118,10 @@ class LocateFileTraitTest extends TestCase
         $directory = $baseDirectory . '/' . $subDirectory;
         $this->filesystem->mkdir($directory);
 
-        $symlink = $directory . '/' . $key . '.php';
+        // Mirror the trait's own realpath(base) resolution: the constant may contain
+        // unresolved ".." segments (e.g. PIMCORE_PROJECT_ROOT . '/tests/..') that the trait
+        // canonicalizes away before appending $key, so the assertion must do the same.
+        $symlink = realpath($directory) . '/' . $key . '.php';
         $this->filesystem->remove($symlink);
         $this->filesystem->symlink($this->externalTarget, $symlink);
         $this->createdSymlinks[] = $symlink;
