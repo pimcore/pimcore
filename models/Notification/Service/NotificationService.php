@@ -217,7 +217,8 @@ class NotificationService
             'recipient = ? AND `read` = 0 AND `isStudio` = 0 AND creationDate >= ?',
             [
                 $user,
-                date('Y-m-d H:i:s', $lastUpdate),
+                // creationDate is stored in UTC, so the bound must be rendered in UTC too
+                gmdate('Y-m-d H:i:s', $lastUpdate),
             ]
         );
         $listing->setOrderKey('creationDate');
