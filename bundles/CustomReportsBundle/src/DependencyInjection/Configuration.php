@@ -69,6 +69,11 @@ class Configuration implements ConfigurationInterface
                             ->prototype('scalar')
                         ->end()
                     ->end()
+                    ->arrayNode('enabled_adapters')
+                        ->useAttributeAsKey('name')
+                            ->prototype('boolean')
+                        ->end()
+                    ->end()
                 ->end()
             ->end();
 
