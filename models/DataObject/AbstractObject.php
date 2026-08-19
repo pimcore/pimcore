@@ -632,6 +632,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
             // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
             // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
+            $currentFullPath = $this->getDao()->getCurrentFullPath();
+            $parentFullPath = $parent->getCurrentFullPath();
+            if ($currentFullPath !== null && $parentFullPath !== null && str_starts_with($parentFullPath, $currentFullPath . '/')) {
+                throw new Exception('Cannot set parent, because the new parent is one of its own children, which would create a circular reference in the tree.');
+            }
+
             $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath().'/'));
 
             if (strlen($this->getKey()) < 1) {
