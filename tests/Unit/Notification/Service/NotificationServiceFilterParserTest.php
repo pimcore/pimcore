@@ -51,6 +51,32 @@ final class NotificationServiceFilterParserTest extends TestCase
         $this->assertSame('creationDate > :creationDate_gt', $result['creationDate_gt']['condition']);
     }
 
+    /**
+     * creationDate is stored in UTC; a filter entered as a local-timezone day has to be
+     * converted, otherwise the day window is shifted by the zone offset.
+     */
+    public function testDateFilterValueIsConvertedToUtc(): void
+    {
+        $originalTimezone = date_default_timezone_get();
+        date_default_timezone_set('Europe/Berlin');
+
+        try {
+            $parser = new NotificationServiceFilterParser($this->buildRequest([
+                ['type' => 'date', 'property' => 'timestamp', 'operator' => 'gt', 'value' => '2026-07-01'],
+            ]));
+
+            $result = $parser->parse();
+
+            // 2026-07-01 00:00 Europe/Berlin (CEST, UTC+2) is 2026-06-30 22:00 UTC
+            $this->assertSame(
+                '2026-06-30 22:00:00',
+                $result['creationDate_gt']['conditionVariables']['creationDate_gt']
+            );
+        } finally {
+            date_default_timezone_set($originalTimezone);
+        }
+    }
+
     public function testUnknownStringPropertyIsRejected(): void
     {
         // Not a whitelisted property: previously fell through to being used

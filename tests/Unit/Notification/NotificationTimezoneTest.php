@@ -115,6 +115,27 @@ class NotificationTimezoneTest extends TestCase
         $this->assertLessThanOrEqual($after, $formatted['timestamp']);
     }
 
+    /**
+     * The Classic UI polls findLastUnread() with a unix epoch to show live popups.
+     * The bound derived from that epoch has to be rendered in UTC like the stored
+     * values - a local-time bound sits ahead of every fresh row by the zone offset,
+     * silently suppressing the popups.
+     */
+    public function testFindLastUnreadFindsAFreshNotification(): void
+    {
+        $notification = $this->createNotification();
+        $recipientId = (int) $notification->getRecipient()->getId();
+
+        $service = Pimcore::getContainer()->get(NotificationService::class);
+
+        $result = $service->findLastUnread($recipientId, time() - 60);
+        $this->assertSame(1, $result['total'], 'fresh notification not found by the unread poller');
+
+        // Negative control: a bound in the future must not match.
+        $result = $service->findLastUnread($recipientId, time() + 3600);
+        $this->assertSame(0, $result['total']);
+    }
+
     public function testStoredDateIsNotLocalWallClockTime(): void
     {
         $notification = $this->createNotification();

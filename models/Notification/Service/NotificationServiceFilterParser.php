@@ -132,7 +132,9 @@ class NotificationServiceFilterParser
     {
         $result = null;
         $property = $this->getDbProperty($item);
-        $value = new Carbon($item[self::KEY_VALUE]);
+        // The filter value is a wall-clock date in the application timezone, but
+        // creationDate is stored in UTC - convert so the day window lines up.
+        $value = (new Carbon($item[self::KEY_VALUE]))->setTimezone('UTC');
 
         switch ($item[self::KEY_OPERATOR]) {
             case self::OPERATOR_EQ:

@@ -32,6 +32,11 @@ WHERE id > <last id created before the upgrade>;
 Take a backup first, and note that a single named-zone conversion is only exact if all the rows
 you convert fall on the same side of a DST boundary.
 
+Directly after the upgrade, unread notifications created shortly before it may be re-announced by
+the Classic UI popup for up to the zone-offset duration - their local-time `creationDate` sits
+"in the future" relative to the corrected UTC polling bound. This resolves itself once that
+offset has elapsed (or once the rows are converted / marked as read).
+
 ## Pimcore 2026.2.9
 
 ### Deprecations
