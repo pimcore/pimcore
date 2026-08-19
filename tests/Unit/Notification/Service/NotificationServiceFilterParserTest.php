@@ -51,6 +51,63 @@ final class NotificationServiceFilterParserTest extends TestCase
         $this->assertSame('creationDate > :creationDate_gt', $result['creationDate_gt']['condition']);
     }
 
+    /**
+     * creationDate is stored in UTC; a filter entered as a local-timezone day has to be
+     * converted, otherwise the day window is shifted by the zone offset.
+     */
+    public function testDateFilterValueIsConvertedToUtc(): void
+    {
+        $originalTimezone = date_default_timezone_get();
+        date_default_timezone_set('Europe/Berlin');
+
+        try {
+            $parser = new NotificationServiceFilterParser($this->buildRequest([
+                ['type' => 'date', 'property' => 'timestamp', 'operator' => 'gt', 'value' => '2026-07-01'],
+            ]));
+
+            $result = $parser->parse();
+
+            // 2026-07-01 00:00 Europe/Berlin (CEST, UTC+2) is 2026-06-30 22:00 UTC
+            $this->assertSame(
+                '2026-06-30 22:00:00',
+                $result['creationDate_gt']['conditionVariables']['creationDate_gt']
+            );
+        } finally {
+            date_default_timezone_set($originalTimezone);
+        }
+    }
+
+    /**
+     * The day window must cover exactly the local calendar day even across DST
+     * transitions, where a local day is 23 or 25 hours long. Boundaries are derived in
+     * the application timezone and only converted to UTC when binding - converting
+     * first and adding 24h would bleed an hour into the neighbouring day.
+     */
+    public function testDateFilterKeepsLocalDayLengthAcrossDstTransition(): void
+    {
+        $originalTimezone = date_default_timezone_get();
+        date_default_timezone_set('Europe/Berlin');
+
+        try {
+            // 2026-03-29 is a 23-hour day in Europe/Berlin (CET +01:00 -> CEST +02:00)
+            $parser = new NotificationServiceFilterParser($this->buildRequest([
+                ['type' => 'date', 'property' => 'timestamp', 'operator' => 'eq', 'value' => '2026-03-29'],
+            ]));
+
+            $result = $parser->parse();
+
+            $this->assertSame(
+                [
+                    'creationDate_eq_start' => '2026-03-28 23:00:00',
+                    'creationDate_eq_end' => '2026-03-29 21:59:59',
+                ],
+                $result['creationDate_eq']['conditionVariables']
+            );
+        } finally {
+            date_default_timezone_set($originalTimezone);
+        }
+    }
+
     public function testUnknownStringPropertyIsRejected(): void
     {
         // Not a whitelisted property: previously fell through to being used
