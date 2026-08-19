@@ -132,9 +132,7 @@ class NotificationServiceFilterParser
     {
         $result = null;
         $property = $this->getDbProperty($item);
-        // The filter value is a wall-clock date in the application timezone, but
-        // creationDate is stored in UTC - convert so the day window lines up.
-        $value = (new Carbon($item[self::KEY_VALUE]))->setTimezone('UTC');
+        $value = new Carbon($item[self::KEY_VALUE]);
 
         switch ($item[self::KEY_OPERATOR]) {
             case self::OPERATOR_EQ:
@@ -143,8 +141,8 @@ class NotificationServiceFilterParser
                     $key,
                     "{$property} BETWEEN :{$key}_start AND :{$key}_end",
                     [
-                        $key . '_start' => $value->toDateTimeString(),
-                        $key . '_end' => $value->addDay()->subSecond()->toDateTimeString(),
+                        $key . '_start' => $this->toUtcBound($value),
+                        $key . '_end' => $this->toUtcBound($value->copy()->addDay()->subSecond()),
                     ],
                 ];
 
@@ -154,7 +152,7 @@ class NotificationServiceFilterParser
                 $result = [
                     $key,
                     "{$property} > :{$key}",
-                    [$key => $value->toDateTimeString()],
+                    [$key => $this->toUtcBound($value)],
                 ];
 
                 break;
@@ -163,7 +161,7 @@ class NotificationServiceFilterParser
                 $result = [
                     $key,
                     "{$property} < :{$key}",
-                    [$key => $value->addDay()->subSecond()->toDateTimeString()],
+                    [$key => $this->toUtcBound($value->copy()->addDay()->subSecond())],
                 ];
 
                 break;
@@ -174,6 +172,17 @@ class NotificationServiceFilterParser
         }
 
         return $result;
+    }
+
+    /**
+     * creationDate is stored in UTC while the filter value is a wall-clock date in the
+     * application timezone. Day boundaries are derived in the application timezone -
+     * so DST-length local days (23h/25h) stay intact - and each finished boundary is
+     * converted to UTC only when binding.
+     */
+    private function toUtcBound(Carbon $value): string
+    {
+        return $value->copy()->setTimezone('UTC')->toDateTimeString();
     }
 
     private function getDbProperty(array $item): string

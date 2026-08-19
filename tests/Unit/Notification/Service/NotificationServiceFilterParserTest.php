@@ -77,6 +77,37 @@ final class NotificationServiceFilterParserTest extends TestCase
         }
     }
 
+    /**
+     * The day window must cover exactly the local calendar day even across DST
+     * transitions, where a local day is 23 or 25 hours long. Boundaries are derived in
+     * the application timezone and only converted to UTC when binding - converting
+     * first and adding 24h would bleed an hour into the neighbouring day.
+     */
+    public function testDateFilterKeepsLocalDayLengthAcrossDstTransition(): void
+    {
+        $originalTimezone = date_default_timezone_get();
+        date_default_timezone_set('Europe/Berlin');
+
+        try {
+            // 2026-03-29 is a 23-hour day in Europe/Berlin (CET +01:00 -> CEST +02:00)
+            $parser = new NotificationServiceFilterParser($this->buildRequest([
+                ['type' => 'date', 'property' => 'timestamp', 'operator' => 'eq', 'value' => '2026-03-29'],
+            ]));
+
+            $result = $parser->parse();
+
+            $this->assertSame(
+                [
+                    'creationDate_eq_start' => '2026-03-28 23:00:00',
+                    'creationDate_eq_end' => '2026-03-29 21:59:59',
+                ],
+                $result['creationDate_eq']['conditionVariables']
+            );
+        } finally {
+            date_default_timezone_set($originalTimezone);
+        }
+    }
+
     public function testUnknownStringPropertyIsRejected(): void
     {
         // Not a whitelisted property: previously fell through to being used
