@@ -140,6 +140,22 @@ final class ImagickTest extends TestCase
         $this->assertPixelColor(self::SOURCE_RGB, $result, 2, 2, self::DELTA);
     }
 
+    /**
+     * When the clipping itself fails - e.g. because the clipping path cannot be resolved or the
+     * ImageMagick installation cannot render it - the image has to be delivered unclipped, which
+     * includes the transparency it already had before the clipping was attempted.
+     */
+    public function testFailingClippingKeepsTheUnclippedImage(): void
+    {
+        $adapter = $this->adapter($this->createImageWithUnresolvableClippingPath(), false);
+
+        $result = $this->saveAndReload($adapter, 'png32', 'png');
+
+        $this->assertPixelOpaque($result, 20, 20);
+        $this->assertPixelColor(self::SOURCE_RGB, $result, 20, 20, self::DELTA);
+        $this->assertPixelTransparent($result, 2, 2);
+    }
+
     private function adapter(string $path, bool $preserveColor): Imagick
     {
         $adapter = new Imagick();
@@ -234,6 +250,54 @@ final class ImagickTest extends TestCase
         return '8BIM' . pack('n', 2000) . $name . pack('N', strlen($data)) . $data;
     }
 
+    /**
+     * Creates a partly transparent image that carries the 'Name of clipping path' resource
+     * (8BIM 2999) without any path information, so that \Imagick::clipImage() fails with
+     * 'no clip path defined'.
+     */
+    private function createImageWithUnresolvableClippingPath(): string
+    {
+        $square = new \Imagick();
+        $square->newImage(
+            (int) (self::FIXTURE_SIZE / 2),
+            (int) (self::FIXTURE_SIZE / 2),
+            new ImagickPixel(sprintf('rgb(%d,%d,%d)', ...self::SOURCE_RGB))
+        );
+
+        $image = new \Imagick();
+        $image->newImage(self::FIXTURE_SIZE, self::FIXTURE_SIZE, new ImagickPixel('transparent'));
+        $image->setImageFormat('tiff');
+        // leaves a transparent border around the opaque center of the image
+        $image->compositeImage($square, \Imagick::COMPOSITE_OVER, (int) (self::FIXTURE_SIZE / 4), (int) (self::FIXTURE_SIZE / 4));
+        $image->profileImage('8bim', $this->clippingPathNameImageResource());
+
+        $path = $this->tmpFile('tif');
+        $image->writeImage($path);
+
+        $fixture = new \Imagick($path);
+        $this->assertTrue(
+            (bool) $fixture->getImageAlphaChannel(),
+            'The test fixture was created without an alpha channel.'
+        );
+        $this->assertFalse(
+            $fixture->getImageProperty('8BIM:1999,2998:#1'),
+            'The test fixture was created with a resolvable clipping path.'
+        );
+
+        return $path;
+    }
+
+    /**
+     * Builds an 8BIM image resource block naming the clipping path of the image, holding the
+     * name of the path as a pascal string followed by the flatness as an 8.24 fixed point number.
+     */
+    private function clippingPathNameImageResource(): string
+    {
+        $data = "\x06" . 'Path 1' . pack('N', 1 << 24);
+
+        return '8BIM' . pack('n', 2999) . "\x00\x00" . pack('N', strlen($data)) . $data;
+    }
+
     private function saveAndReload(Imagick $adapter, string $format = 'jpeg', string $extension = 'jpg'): \Imagick
     {
         $path = $this->tmpFile($extension);
@@ -250,6 +314,16 @@ final class ImagickTest extends TestCase
             $image->getImagePixelColor($x, $y)->getColor(1)['a'],
             0.001,
             sprintf('The pixel at %d,%d is not opaque.', $x, $y)
+        );
+    }
+
+    private function assertPixelTransparent(\Imagick $image, int $x, int $y): void
+    {
+        $this->assertEqualsWithDelta(
+            0.0,
+            $image->getImagePixelColor($x, $y)->getColor(1)['a'],
+            0.001,
+            sprintf('The pixel at %d,%d is not transparent.', $x, $y)
         );
     }
 

@@ -138,14 +138,26 @@ class Imagick extends Adapter
                 //$identifyRaw = $i->identifyImage(true)['rawOutput'];
                 //if (strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
                 // if there's a clipping path embedded, apply the first one
+                // clipping overwrites the alpha channel of the image, so keep a copy of the unclipped image
+                // around: it is the only way to still deliver the image when the clipping fails
+                $unclipped = clone $i;
+
                 try {
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
                     $i->clipImage();
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
+                    $unclipped->clear();
                 } catch (Exception $e) {
-                    // the alpha channel was already set to transparent above, so it has to be reset here -
-                    // otherwise the image would be entirely transparent instead of just being left unclipped
-                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
+                    // the image is entirely transparent at this point, so restore the copy instead of
+                    // just resetting the alpha channel, which would drop any pre-existing transparency
+                    if ($this->resource === $i) {
+                        $this->resource = $unclipped;
+                    } else {
+                        // the animation handling above replaced the resource with a different image,
+                        // which was never clipped in the first place
+                        $unclipped->clear();
+                    }
+
                     Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
                 }
                 //}
