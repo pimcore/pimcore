@@ -138,11 +138,26 @@ class Imagick extends Adapter
                 //$identifyRaw = $i->identifyImage(true)['rawOutput'];
                 //if (strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
                 // if there's a clipping path embedded, apply the first one
+                // clipping overwrites the alpha channel of the image, so keep a copy of the unclipped image
+                // around: it is the only way to still deliver the image when the clipping fails
+                $unclipped = clone $i;
+
                 try {
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
                     $i->clipImage();
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
+                    $unclipped->clear();
                 } catch (Exception $e) {
+                    // the image is entirely transparent at this point, so restore the copy instead of
+                    // just resetting the alpha channel, which would drop any pre-existing transparency
+                    if ($this->resource === $i) {
+                        $this->resource = $unclipped;
+                    } else {
+                        // the animation handling above replaced the resource with a different image,
+                        // which was never clipped in the first place
+                        $unclipped->clear();
+                    }
+
                     Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
                 }
                 //}
@@ -165,13 +180,12 @@ class Imagick extends Adapter
         fclose($handle);
 
         // according to 8BIM format: https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577409_pgfId-1037504
-        // we're looking for the resource id 'Name of clipping path' which is 8BIM 2999 (decimal) or 0x0BB7 in hex
-        // and the first path information which is 8BIM 2000 (decimal) or 0x07D0 in hex
-        if (preg_match('/8BIM\x0b\xb7/', $chunk) || preg_match('/8BIM\x07\xd0/', $chunk)) {
-            return true;
-        }
-
-        return false;
+        // we're looking for the resource id 'Name of clipping path' which is 8BIM 2999 (decimal) or 0x0BB7 in hex.
+        // The path information resources (8BIM 2000 - 2998 / 0x07D0 - 0x0BB6) must not be taken into account here:
+        // they hold every path saved with the image, no matter whether it was designated as the clipping path or
+        // not. Clipping an image by an arbitrary Photoshop path (e.g. a guide or an unrelated shape) removes the
+        // entire image content, which resulted in empty thumbnails.
+        return (bool) preg_match('/8BIM\x0b\xb7/', $chunk);
     }
 
     public function getContentOptimizedFormat(): string
