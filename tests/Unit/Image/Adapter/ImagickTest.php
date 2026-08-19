@@ -18,12 +18,15 @@ use Pimcore\Image\Adapter\Imagick;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
- * Regression tests for the Imagick adapter (#14543).
+ * Regression tests for the Imagick adapter.
  *
- * setBackgroundColor() composites the image onto a freshly created canvas, and
- * \Imagick::newImage() always produces an sRGB canvas. With preserveColor = true
+ * #14543: setBackgroundColor() composites the image onto a freshly created canvas,
+ * and \Imagick::newImage() always produces an sRGB canvas. With preserveColor = true
  * the CMYK channel data of the source was therefore written into an sRGB image,
  * which made the thumbnail come out with inverted colors.
+ *
+ * #184 (platform-version): images carrying a plain Photoshop path were clipped as
+ * if that path was a clipping path, which left the thumbnails empty.
  */
 final class ImagickTest extends TestCase
 {
@@ -118,6 +121,41 @@ final class ImagickTest extends TestCase
         $this->assertPixelColor(self::WHITE_RGB, $result, 5, 5, self::DELTA);
     }
 
+    /**
+     * Photoshop keeps every saved path in an image resource of its own (8BIM 2000 - 2998),
+     * no matter whether the path was designated as the clipping path (8BIM 2999) or not.
+     * Clipping the image by such an arbitrary path removes all of its content, so an image
+     * that has no clipping path must be loaded as it is.
+     */
+    public function testImageWithSavedPathButWithoutClippingPathIsNotClipped(): void
+    {
+        $adapter = $this->adapter($this->createImageWithPhotoshopPath(), false);
+
+        $result = $this->saveAndReload($adapter, 'png32', 'png');
+
+        // the whole image has to be left intact, both inside and outside of the saved path
+        $this->assertPixelOpaque($result, 20, 20);
+        $this->assertPixelOpaque($result, 2, 2);
+        $this->assertPixelColor(self::SOURCE_RGB, $result, 20, 20, self::DELTA);
+        $this->assertPixelColor(self::SOURCE_RGB, $result, 2, 2, self::DELTA);
+    }
+
+    /**
+     * When the clipping itself fails - e.g. because the clipping path cannot be resolved or the
+     * ImageMagick installation cannot render it - the image has to be delivered unclipped, which
+     * includes the transparency it already had before the clipping was attempted.
+     */
+    public function testFailingClippingKeepsTheUnclippedImage(): void
+    {
+        $adapter = $this->adapter($this->createImageWithUnresolvableClippingPath(), false);
+
+        $result = $this->saveAndReload($adapter, 'png32', 'png');
+
+        $this->assertPixelOpaque($result, 20, 20);
+        $this->assertPixelColor(self::SOURCE_RGB, $result, 20, 20, self::DELTA);
+        $this->assertPixelTransparent($result, 2, 2);
+    }
+
     private function adapter(string $path, bool $preserveColor): Imagick
     {
         $adapter = new Imagick();
@@ -161,12 +199,132 @@ final class ImagickTest extends TestCase
         return $path;
     }
 
-    private function saveAndReload(Imagick $adapter): \Imagick
+    /**
+     * Creates an image with a single saved Photoshop path (8BIM 2000) covering the center of
+     * the image, but without the 'Name of clipping path' resource (8BIM 2999) - the same
+     * metadata Photoshop writes for an image that has a path, but no clipping path.
+     */
+    private function createImageWithPhotoshopPath(): string
     {
-        $path = $this->tmpFile('jpg');
-        $adapter->save($path, 'jpeg');
+        $image = new \Imagick();
+        $image->newImage(
+            self::FIXTURE_SIZE,
+            self::FIXTURE_SIZE,
+            new ImagickPixel(sprintf('rgb(%d,%d,%d)', ...self::SOURCE_RGB))
+        );
+        $image->setImageFormat('tiff');
+        $image->profileImage('8bim', $this->pathImageResource());
+
+        $path = $this->tmpFile('tif');
+        $image->writeImage($path);
+
+        $fixture = new \Imagick($path);
+        $this->assertNotEmpty(
+            $fixture->getImageProperty('8BIM:1999,2998:#1'),
+            'The test fixture was created without a Photoshop path.'
+        );
+
+        return $path;
+    }
+
+    /**
+     * Builds an 8BIM image resource block holding one closed path, see
+     * https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577409_pgfId-1037504
+     */
+    private function pathImageResource(): string
+    {
+        // 'Closed subpath length record': selector 0, followed by the number of knots
+        $data = pack('nn', 0, 4) . str_repeat("\x00", 22);
+
+        // one 'Closed subpath Bezier knot' record per corner of a centered square, each holding
+        // the preceding control point, the anchor point and the leaving control point as pairs of
+        // 8.24 fixed point numbers relative to the image dimensions (vertical before horizontal)
+        foreach ([[0.25, 0.25], [0.25, 0.75], [0.75, 0.75], [0.75, 0.25]] as [$vertical, $horizontal]) {
+            $point = pack('NN', (int) ($vertical * (1 << 24)), (int) ($horizontal * (1 << 24)));
+            $data .= pack('n', 2) . str_repeat($point, 3);
+        }
+
+        // the resource name is a pascal string padded to an even length
+        $name = "\x06" . 'Path 1' . "\x00";
+
+        return '8BIM' . pack('n', 2000) . $name . pack('N', strlen($data)) . $data;
+    }
+
+    /**
+     * Creates a partly transparent image that carries the 'Name of clipping path' resource
+     * (8BIM 2999) without any path information, so that \Imagick::clipImage() fails with
+     * 'no clip path defined'.
+     */
+    private function createImageWithUnresolvableClippingPath(): string
+    {
+        $square = new \Imagick();
+        $square->newImage(
+            (int) (self::FIXTURE_SIZE / 2),
+            (int) (self::FIXTURE_SIZE / 2),
+            new ImagickPixel(sprintf('rgb(%d,%d,%d)', ...self::SOURCE_RGB))
+        );
+
+        $image = new \Imagick();
+        $image->newImage(self::FIXTURE_SIZE, self::FIXTURE_SIZE, new ImagickPixel('transparent'));
+        $image->setImageFormat('tiff');
+        // leaves a transparent border around the opaque center of the image
+        $image->compositeImage($square, \Imagick::COMPOSITE_OVER, (int) (self::FIXTURE_SIZE / 4), (int) (self::FIXTURE_SIZE / 4));
+        $image->profileImage('8bim', $this->clippingPathNameImageResource());
+
+        $path = $this->tmpFile('tif');
+        $image->writeImage($path);
+
+        $fixture = new \Imagick($path);
+        $this->assertTrue(
+            (bool) $fixture->getImageAlphaChannel(),
+            'The test fixture was created without an alpha channel.'
+        );
+        $this->assertFalse(
+            $fixture->getImageProperty('8BIM:1999,2998:#1'),
+            'The test fixture was created with a resolvable clipping path.'
+        );
+
+        return $path;
+    }
+
+    /**
+     * Builds an 8BIM image resource block naming the clipping path of the image, holding the
+     * name of the path as a pascal string followed by the flatness as an 8.24 fixed point number.
+     */
+    private function clippingPathNameImageResource(): string
+    {
+        $data = "\x06" . 'Path 1' . pack('N', 1 << 24);
+
+        return '8BIM' . pack('n', 2999) . "\x00\x00" . pack('N', strlen($data)) . $data;
+    }
+
+    private function saveAndReload(Imagick $adapter, string $format = 'jpeg', string $extension = 'jpg'): \Imagick
+    {
+        $path = $this->tmpFile($extension);
+        $adapter->save($path, $format);
 
         return new \Imagick($path);
+    }
+
+    private function assertPixelOpaque(\Imagick $image, int $x, int $y): void
+    {
+        // 1 = normalized color values, so a fully opaque pixel has an alpha value of 1.0
+        $this->assertEqualsWithDelta(
+            1.0,
+            $image->getImagePixelColor($x, $y)->getColor(1)['a'],
+            0.001,
+            sprintf('The pixel at %d,%d is not opaque.', $x, $y)
+        );
+    }
+
+    private function assertPixelTransparent(\Imagick $image, int $x, int $y): void
+    {
+        $this->assertEqualsWithDelta(
+            0.0,
+            $image->getImagePixelColor($x, $y)->getColor(1)['a'],
+            0.001,
+            sprintf('The pixel at %d,%d is not transparent.', $x, $y)
+        );
     }
 
     /**

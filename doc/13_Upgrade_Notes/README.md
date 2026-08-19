@@ -11,6 +11,9 @@
     ```
   We recommend disabling the built-in `sql` adapter unless specifically needed: any user with the `reports_config` permission can otherwise define arbitrary `SELECT` statements against the application's database, including tables never intended to be exposed. See [Custom Reports](../06_Reporting/01_Custom_Reports.md)  for details.
 
+### [Assets]
+- [Thumbnails] Automatic clipping (`pimcore.assets.image.thumbnails.clip_auto_support`) is only applied again when the image actually carries a clipping path, i.e. the Photoshop image resource `8BIM 2999` ('Name of clipping path'). Images that only contain saved Photoshop paths (`8BIM 2000` - `2998`) are no longer clipped, since clipping them by an arbitrary path removed their whole content and resulted in empty thumbnails. Existing thumbnails of such images have to be cleared to be re-generated.
+
 ## Pimcore 2026.2.0
 
 ### [General]
