@@ -143,6 +143,9 @@ class Imagick extends Adapter
                     $i->clipImage();
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
                 } catch (Exception $e) {
+                    // the alpha channel was already set to transparent above, so it has to be reset here -
+                    // otherwise the image would be entirely transparent instead of just being left unclipped
+                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
                     Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
                 }
                 //}
@@ -165,13 +168,12 @@ class Imagick extends Adapter
         fclose($handle);
 
         // according to 8BIM format: https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577409_pgfId-1037504
-        // we're looking for the resource id 'Name of clipping path' which is 8BIM 2999 (decimal) or 0x0BB7 in hex
-        // and the first path information which is 8BIM 2000 (decimal) or 0x07D0 in hex
-        if (preg_match('/8BIM\x0b\xb7/', $chunk) || preg_match('/8BIM\x07\xd0/', $chunk)) {
-            return true;
-        }
-
-        return false;
+        // we're looking for the resource id 'Name of clipping path' which is 8BIM 2999 (decimal) or 0x0BB7 in hex.
+        // The path information resources (8BIM 2000 - 2998 / 0x07D0 - 0x0BB6) must not be taken into account here:
+        // they hold every path saved with the image, no matter whether it was designated as the clipping path or
+        // not. Clipping an image by an arbitrary Photoshop path (e.g. a guide or an unrelated shape) removes the
+        // entire image content, which resulted in empty thumbnails.
+        return (bool) preg_match('/8BIM\x0b\xb7/', $chunk);
     }
 
     public function getContentOptimizedFormat(): string
