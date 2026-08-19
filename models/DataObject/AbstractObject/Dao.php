@@ -193,6 +193,21 @@ class Dao extends Model\Element\Dao
         return null;
     }
 
+    /**
+     * Same as getCurrentFullPath(), but locks the row so that a concurrent transaction
+     * changing this object's path or parent has to wait until the current transaction finishes.
+     *
+     * @return string|null retrieves the current full object path from DB
+     */
+    public function getCurrentFullPathForUpdate(): ?string
+    {
+        if ($path = $this->db->fetchOne('SELECT CONCAT(`path`,`key`) as `path` FROM objects WHERE id = ? FOR UPDATE', [$this->model->getId()])) {
+            return $path;
+        }
+
+        return null;
+    }
+
     public function getVersionCountForUpdate(): int
     {
         if (!$this->model->getId()) {

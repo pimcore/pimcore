@@ -88,6 +88,17 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
+     * Verifies that the locking variant of getCurrentFullPath() used to re-check for
+     * circular parent references inside the save transaction returns the same path.
+     */
+    public function testGetCurrentFullPathForUpdateMatchesGetCurrentFullPath(): void
+    {
+        $object = TestHelper::createEmptyObject();
+
+        $this->assertSame($object->getDao()->getCurrentFullPath(), $object->getDao()->getCurrentFullPathForUpdate());
+    }
+
+    /**
      * Verifies that object PHP API version note is saved
      */
     public function testSavingVersionNotes(): void
