@@ -150,6 +150,9 @@ services:
         arguments:
             - '@doctrine.dbal.default_connection'
 
+    Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface:
+        alias: Pimcore\Asset\StorageQueue\StorageOperationQueueRepository
+
     Pimcore\Image\Adapter\Imagick:
         shared: false
         public: true

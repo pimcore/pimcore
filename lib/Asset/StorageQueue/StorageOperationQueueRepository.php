@@ -26,7 +26,7 @@ use Pimcore\Cache\RuntimeCache;
  *
  * @internal
  */
-final class StorageOperationQueueRepository
+final class StorageOperationQueueRepository implements StorageOperationQueueRepositoryInterface
 {
     private const TABLE = 'asset_storage_operation_queue';
 
