@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Service\Asset\StorageQueue;
 
 use DateTimeImmutable;
+use Pimcore\Asset\StorageQueue\FrontendPathResolver;
 use Pimcore\Asset\StorageQueue\StorageOperation;
 use Pimcore\Asset\StorageQueue\StorageOperationQueueRepository;
 use Pimcore\Asset\StorageQueue\StorageOperationType;
@@ -246,5 +247,24 @@ class StorageOperationQueueRepositoryTest extends TestCase
         } finally {
             date_default_timezone_set($originalTz);
         }
+    }
+
+    public function testFrontendPathResolverIsWiredAndResolvesThroughRealRepository(): void
+    {
+        $resolver = \Pimcore::getContainer()->get(FrontendPathResolver::class);
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Move, 'WiredSource', 'WiredTarget', new DateTimeImmutable()
+        ));
+
+        $resolved = $resolver->resolvePhysicalPath('/WiredTarget/a.jpg');
+
+        // the container-built resolver carries enabled=false (test kernel default),
+        // so it must return identity - this pins BOTH the wiring and the zero-cost
+        // disabled guard against the real container
+        $this->assertSame('/WiredTarget/a.jpg', $resolved);
+
+        // and the mapping itself against the REAL repository (bypassing the bool):
+        $enabledResolver = new FrontendPathResolver($this->repository, true);
+        $this->assertSame('/WiredSource/a.jpg', $enabledResolver->resolvePhysicalPath('/WiredTarget/a.jpg'));
     }
 }

@@ -104,10 +104,22 @@ Between the moment an operation is queued and the moment it is processed:
   once the processing command runs.
 - For deletes, the content is only physically removed from storage at processing time.
   It is unreadable through Pimcore immediately (the queue row makes it disappear from
-  reads), but it still exists physically in the storage backend until processed. **If a
-  deletion is compliance-driven (e.g. a data-subject deletion request), run
+  reads), but it still exists physically in the storage backend until processed. On
+  local storage, the webserver serves asset originals directly from disk, so deleted
+  originals also remain reachable at their direct URLs until the next processing run.
+  **If a deletion is compliance-driven (e.g. a data-subject deletion request), run
   `pimcore:assets:storage-queue:process` immediately rather than waiting for the next
   scheduled run.**
+
+## Frontend URLs
+
+With `pimcore.assets.frontend_prefixes.source` configured, frontend URLs point straight
+at the storage (e.g. a CDN or bucket) rather than being served through Pimcore. For an
+asset under a pending move, such a URL is built from the still-valid physical (pre-move)
+path instead of the logical (post-move) path, so it keeps resolving correctly for the
+duration of the pending window, and automatically switches back to the logical path once
+the move is processed. Without a configured prefix, frontend URLs are unaffected by this
+feature.
 
 ## Caveats
 
