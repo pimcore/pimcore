@@ -83,6 +83,41 @@ class ServiceTest extends ModelTestCase
         );
     }
 
+    /**
+     * Regression test: two published pages share the same pretty URL and neither belongs to a
+     * site. The global pretty URL lookup has to pick the same document on every request
+     * instead of whichever row the storage engine happens to return first.
+     *
+     * @see \Pimcore\Model\Document\Dao::getByPrettyUrl()
+     */
+    public function testPrettyUrlWithoutSiteResolvesDeterministically(): void
+    {
+        $prettyUrl = '/imprint-' . uniqid();
+
+        $firstPage = $this->createPage('imprint-a-' . uniqid(), 1, $prettyUrl);
+        $secondPage = $this->createPage('imprint-b-' . uniqid(), 1, $prettyUrl);
+
+        $this->assertLessThan(
+            $secondPage->getId(),
+            $firstPage->getId(),
+            'The document created first is expected to carry the lower id.'
+        );
+
+        foreach ([1, 2] as $attempt) {
+            $document = new Document();
+            $document->getDao()->getByPrettyUrl($prettyUrl);
+
+            $this->assertSame(
+                $firstPage->getId(),
+                $document->getId(),
+                sprintf(
+                    'A pretty URL shared by several documents must always resolve to the same document (attempt %d).',
+                    $attempt
+                )
+            );
+        }
+    }
+
     private function createPage(string $key, int $parentId, ?string $prettyUrl = null): Page
     {
         $page = new Page();
