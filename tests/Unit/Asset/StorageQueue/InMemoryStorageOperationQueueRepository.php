@@ -33,7 +33,7 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
     public function add(StorageOperation $operation): void
     {
         if ($operation->getType() === StorageOperationType::Move) {
-            $this->repoint($operation->getStorage(), $operation->getSourcePrefix(), (string) $operation->getTargetPrefix());
+            $this->repointMoves($operation->getStorage(), $operation->getSourcePrefix(), (string) $operation->getTargetPrefix());
         } else {
             $this->convert($operation->getStorage(), $operation->getSourcePrefix());
         }
@@ -98,6 +98,11 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
         $this->operations = array_values(
             array_filter($this->operations, static fn (StorageOperation $op) => $op->getId() !== $id)
         );
+    }
+
+    public function repointMoves(string $storage, string $movedPrefix, string $newPrefix): void
+    {
+        $this->repoint($storage, $movedPrefix, $newPrefix);
     }
 
     private function repoint(string $storage, string $movedPrefix, string $newPrefix): void

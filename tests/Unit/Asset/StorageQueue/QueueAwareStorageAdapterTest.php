@@ -25,6 +25,7 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\UnableToGeneratePublicUrl;
 use League\Flysystem\UnableToGenerateTemporaryUrl;
 use League\Flysystem\UnableToMoveFile;
+use League\Flysystem\UnableToReadFile;
 use LogicException;
 use Pimcore\Asset\StorageQueue\QueueAwareStorageAdapter;
 use Pimcore\Asset\StorageQueue\StorageOperation;
@@ -475,7 +476,36 @@ class QueueAwareStorageAdapterTest extends Unit
             $this->repository->all()
         );
         sort($pairs);
-        $this->assertSame(['A->C', 'B->C'], $pairs);
+        $this->assertSame(['A->C'], $pairs, 'native rename must not insert a vacuous B->C row');
+    }
+
+    public function testNativeReMoveDoesNotShadowRecreatedSourceFolder(): void
+    {
+        // A -> B pending; B has literal content so the rename is native; after B is renamed to
+        // C, B is re-created from scratch. A vacuous B->C row would wrongly serve B's fresh
+        // content through C.
+        $adapter = $this->adapter(); // local, renaming
+        $adapter->write('A/img.jpg', 'from-a', new Config());
+        $this->addMove('A', 'B');
+        $adapter->write('B/fresh.jpg', 'from-b', new Config()); // gives B a literal presence
+
+        $adapter->move('B', 'C', new Config());
+
+        // B is re-created after the move - must not leak through a vacuous B->C row
+        $adapter->write('B/new-era.jpg', 'new', new Config());
+
+        try {
+            $adapter->read('C/new-era.jpg');
+            $this->fail('expected UnableToReadFile: no vacuous row should shadow the re-created folder');
+        } catch (UnableToReadFile) {
+        }
+        $this->assertFalse($adapter->fileExists('C/new-era.jpg'));
+
+        $pairs = array_map(
+            static fn ($op) => $op->getSourcePrefix() . '->' . ($op->getTargetPrefix() ?? ''),
+            $this->repository->all()
+        );
+        $this->assertSame(['A->C'], $pairs);
     }
 
     public function testDeleteDirectoryQueuesATombstone(): void
@@ -549,5 +579,37 @@ class QueueAwareStorageAdapterTest extends Unit
             }
         }
         $this->assertSame(['Archive/Campaigns/sub/deep.jpg'], $paths);
+    }
+
+    public function testDeleteRemovesLiteralAndStaleMappedCandidate(): void
+    {
+        // A -> B pending with legacy content still at A; a fresh literal lands at B and shadows
+        // it. Deleting the literal must also remove the stale mapped candidate at A, otherwise
+        // the logical path resurrects the legacy object once the literal is gone.
+        $adapter = $this->adapter();
+        $adapter->write('A/x.jpg', 'legacy', new Config());
+        $this->addMove('A', 'B');
+        $adapter->write('B/x.jpg', 'new-bytes', new Config());
+
+        $adapter->delete('B/x.jpg');
+
+        $this->assertFalse($adapter->fileExists('B/x.jpg'), 'must not resurrect the stale legacy object');
+        $this->assertFalse($this->adapter()->fileExists('A/x.jpg'), 'stale legacy object must be physically gone');
+    }
+
+    public function testSingleFileMoveOfShadowingLiteralCleansStaleCandidate(): void
+    {
+        // Same setup as above, but the logical path is vacated by a single-file move rather than
+        // a delete: the stale candidate at A must not resurrect once B/x.jpg is gone.
+        $adapter = $this->adapter();
+        $adapter->write('A/x.jpg', 'legacy', new Config());
+        $this->addMove('A', 'B');
+        $adapter->write('B/x.jpg', 'new-bytes', new Config());
+
+        $adapter->move('B/x.jpg', 'Elsewhere/x.jpg', new Config());
+
+        $this->assertSame('new-bytes', $adapter->read('Elsewhere/x.jpg'), 'the literal wins the move');
+        $this->assertFalse($adapter->fileExists('B/x.jpg'));
+        $this->assertFalse($this->adapter()->fileExists('A/x.jpg'), 'stale legacy object must be physically gone');
     }
 }

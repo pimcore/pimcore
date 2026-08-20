@@ -78,7 +78,23 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
 
     public function delete(string $path): void
     {
-        $this->inner->delete($this->resolveFilePath($path));
+        if (!$this->repository->hasOperations($this->storageName)) {
+            $this->inner->delete($path);
+
+            return;
+        }
+
+        if ($this->inner->fileExists($path)) {
+            $this->inner->delete($path);
+        }
+
+        // A stale mapped candidate left in place would resurrect once the literal is gone.
+        foreach ($this->repository->findCovering($this->storageName, $path) as $operation) {
+            $candidate = $this->mapToSource($path, $operation);
+            if ($this->inner->fileExists($candidate)) {
+                $this->inner->delete($candidate);
+            }
+        }
     }
 
     public function deleteDirectory(string $path): void
@@ -172,6 +188,7 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
         if ($this->inner->fileExists($resolvedSource)) {
             // single file: normal move, source possibly at its legacy location
             $this->inner->move($resolvedSource, $destination, $config);
+            $this->cleanupOtherCandidates($source, $resolvedSource);
 
             return;
         }
@@ -179,8 +196,15 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
         // prefix (directory) move
         $hasOperations = $this->repository->hasOperations($this->storageName);
         $literalDirectoryExists = $this->inner->directoryExists($source);
+        // Only resolve via the queue when the literal doesn't already exist; resolveDirectoryPath
+        // returns the input unchanged when nothing covers it, so a change in value is itself
+        // proof that a covering candidate physically exists - no second directoryExists() needed.
+        $resolvedDirectorySource = $literalDirectoryExists || !$hasOperations
+            ? $source
+            : $this->resolveDirectoryPath($source);
+        $directoryExists = $literalDirectoryExists || $resolvedDirectorySource !== $source;
 
-        if (!$literalDirectoryExists && !($hasOperations && $this->inner->directoryExists($this->resolveDirectoryPath($source)))) {
+        if (!$directoryExists) {
             throw UnableToMoveFile::fromLocationTo($source, $destination);
         }
 
@@ -194,13 +218,18 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             }
         }
 
-        if ($movedNatively && !$hasOperations) {
-            return; // clean native rename, nothing pending to repoint
+        if ($movedNatively) {
+            if ($hasOperations) {
+                // Legacy rows still pointing at this prefix must follow along so lookups stay
+                // flat; a genuinely empty destination would drop to a self-mapping and vanish.
+                $this->repository->repointMoves($this->storageName, $source, $destination);
+            }
+
+            return; // native rename moved everything physically - never insert a row
         }
 
-        // Queue the operation. When the native rename succeeded but rows were pending, the
-        // inserted row's source prefix is already physically empty - the processor removes it -
-        // while add()'s repoint keeps legacy rows pointing at the new destination.
+        // Queue the operation: the backend could not (or did not attempt to) move the prefix
+        // physically, so reads/writes must be translated until the processor catches up.
         $this->repository->add(new StorageOperation(
             null,
             $this->storageName,
@@ -209,6 +238,29 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             $destination,
             new DateTimeImmutable(),
         ));
+    }
+
+    /**
+     * After a single-file move has vacated $logicalPath, remove any other physical objects that
+     * would still resolve to it (a shadowed literal, or another covering move's candidate) so the
+     * vacated logical path doesn't resurrect stale content.
+     */
+    private function cleanupOtherCandidates(string $logicalPath, string $resolvedPath): void
+    {
+        if (!$this->repository->hasOperations($this->storageName)) {
+            return;
+        }
+
+        if ($resolvedPath !== $logicalPath && $this->inner->fileExists($logicalPath)) {
+            $this->inner->delete($logicalPath);
+        }
+
+        foreach ($this->repository->findCovering($this->storageName, $logicalPath) as $operation) {
+            $candidate = $this->mapToSource($logicalPath, $operation);
+            if ($candidate !== $resolvedPath && $this->inner->fileExists($candidate)) {
+                $this->inner->delete($candidate);
+            }
+        }
     }
 
     public function copy(string $source, string $destination, Config $config): void

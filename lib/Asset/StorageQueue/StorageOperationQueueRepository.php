@@ -39,7 +39,7 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
     public function add(StorageOperation $operation): void
     {
         if ($operation->getType() === StorageOperationType::Move) {
-            $this->repointRowsUnder($operation->getStorage(), $operation->getSourcePrefix(), $operation->getTargetPrefix());
+            $this->repointMoves($operation->getStorage(), $operation->getSourcePrefix(), $operation->getTargetPrefix());
         } else {
             $this->convertCoveredMovesToDeletes($operation->getStorage(), $operation->getSourcePrefix());
         }
@@ -139,7 +139,7 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
      * the new target so lookups stay flat (single-hop candidates, never chains). Rows that
      * become self-mappings (moved back to their source) are dropped.
      */
-    private function repointRowsUnder(string $storage, string $movedPrefix, string $newPrefix): void
+    public function repointMoves(string $storage, string $movedPrefix, string $newPrefix): void
     {
         $this->db->executeStatement(
             'UPDATE ' . self::TABLE . "
@@ -162,6 +162,10 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
              WHERE `storage` = :storage AND `operation` = 'move' AND `source_prefix` = `target_prefix`",
             ['storage' => $storage]
         );
+
+        // a self-mapping drop can empty the queue, so the cache needs invalidating even when
+        // this is called outside of add() (e.g. after a native rename that queued nothing)
+        $this->invalidateHasOperationsCache($storage);
     }
 
     /**

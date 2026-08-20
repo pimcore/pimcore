@@ -158,6 +158,28 @@ class StorageOperationQueueRepositoryTest extends TestCase
         $this->assertSame(['AxB'], array_map(static fn ($op) => $op->getTargetPrefix(), $covering));
     }
 
+    public function testRepointMovesWithoutInsert(): void
+    {
+        $this->repository->add($this->move('asset', 'A', 'B'));
+
+        $this->repository->repointMoves('asset', 'B', 'C');
+
+        $all = $this->repository->all();
+        $this->assertCount(1, $all);
+        $this->assertSame('A', $all[0]->getSourcePrefix());
+        $this->assertSame('C', $all[0]->getTargetPrefix());
+    }
+
+    public function testRepointMovesDropsSelfMappingAndInvalidatesHasOperationsCache(): void
+    {
+        $this->repository->add($this->move('asset', 'A', 'B'));
+
+        $this->repository->repointMoves('asset', 'B', 'A');
+
+        $this->assertSame([], $this->repository->all());
+        $this->assertFalse($this->repository->hasOperations('asset'));
+    }
+
     public function testRepointHandlesMultibytePrefixes(): void
     {
         // umlauts are multi-byte in UTF-8; splice math must be character-based

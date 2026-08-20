@@ -22,6 +22,12 @@ interface StorageOperationQueueRepositoryInterface
     public function add(StorageOperation $operation): void;
 
     /**
+     * Repoints pending move rows whose target equals or lies under the moved prefix, dropping
+     * resulting self-mappings; invalidates the has-operations cache (rows may be dropped).
+     */
+    public function repointMoves(string $storage, string $movedPrefix, string $newPrefix): void;
+
+    /**
      * Move operations whose target prefix covers the logical path, most specific target first.
      *
      * @return StorageOperation[]
