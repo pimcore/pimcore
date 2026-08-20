@@ -300,10 +300,10 @@ class EstimatedDimensionsTest extends ImageThumbnailDimensionTestCase
                 ['width' => 200, 'height' => 100],
             ],
             'fractional high resolution' => [
-                ['method' => 'scaleByWidth', 'arguments' => ['width' => 202]],
+                ['method' => 'scaleByHeight', 'arguments' => ['height' => 151]],
                 1.5,
-                ['width' => 202, 'height' => 152],
-                ['width' => 303, 'height' => 228],
+                ['width' => 200, 'height' => 150],
+                ['width' => 301, 'height' => 226],
             ],
         ];
 
@@ -392,18 +392,18 @@ class EstimatedDimensionsTest extends ImageThumbnailDimensionTestCase
         }
     }
 
-    public function testFractionalPassThroughHighResolutionPreservesNominalPixels(): void
+    public function testFractionalPassThroughHighResolutionMatchesLegacyTruncation(): void
     {
         foreach ([
             'scale by width' => [
-                ['method' => 'scaleByWidth', 'arguments' => ['width' => 202]],
-                ['width' => 202, 'height' => 152],
-                ['width' => 303, 'height' => 228],
+                ['method' => 'scaleByWidth', 'arguments' => ['width' => 201]],
+                ['width' => 200, 'height' => 150],
+                ['width' => 301, 'height' => 226],
             ],
             'scale by height' => [
                 ['method' => 'scaleByHeight', 'arguments' => ['height' => 151]],
-                ['width' => 201, 'height' => 151],
-                ['width' => 302, 'height' => 227],
+                ['width' => 200, 'height' => 150],
+                ['width' => 301, 'height' => 226],
             ],
         ] as $name => [$transformation, $displayDimensions, $realDimensions]) {
             $asset = $this->image(400, 300, 'source.svg');

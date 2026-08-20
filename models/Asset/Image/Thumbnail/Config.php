@@ -775,9 +775,10 @@ final class Config extends Model\AbstractModel
 
         $highResolution = $this->getHighResolution();
         if ($usesSourceAssetOutput && $highResolution > 1) {
-            // Pass-through output uses the source bytes, but dimensions retain the legacy logical contract: transform at nominal size first, then expose the configured high-resolution real dimensions.
-            $estimatedWidth = (int) ceil($estimatedWidth * $highResolution);
-            $estimatedHeight = (int) ceil($estimatedHeight * $highResolution);
+            // Pass-through output uses the source bytes, but dimensions retain the legacy logical contract.
+            // The trait truncates real dimensions before deriving the displayed size, including fractional high-resolution products.
+            $estimatedWidth = (int) ($estimatedWidth * $highResolution);
+            $estimatedHeight = (int) ($estimatedHeight * $highResolution);
         }
 
         return [
