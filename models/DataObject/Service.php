@@ -821,7 +821,7 @@ class Service extends Model\Element\Service
                 // layouts - same as in getValidLayouts(). The grid must not be reduced to the
                 // intersection of the remaining custom layouts then.
                 if (isset($allowedLayoutIds[0])) {
-                    return null;
+                    continue;
                 }
 
                 foreach ($allowedLayoutIds as $allowedLayoutId) {
