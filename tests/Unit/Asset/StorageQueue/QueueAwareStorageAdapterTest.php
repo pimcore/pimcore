@@ -26,6 +26,8 @@ use League\Flysystem\UnableToGeneratePublicUrl;
 use League\Flysystem\UnableToGenerateTemporaryUrl;
 use LogicException;
 use Pimcore\Asset\StorageQueue\QueueAwareStorageAdapter;
+use Pimcore\Asset\StorageQueue\StorageOperation;
+use Pimcore\Asset\StorageQueue\StorageOperationType;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -324,5 +326,83 @@ class QueueAwareStorageAdapterTest extends Unit
 
         $this->assertSame('sentinel-checksum', $adapter->checksum('folder/file.txt', new Config()));
         $this->assertSame('folder/file.txt', $inner->getReceivedPath());
+    }
+
+    private function addMove(string $source, string $target): void
+    {
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Move, $source, $target, new DateTimeImmutable()
+        ));
+    }
+
+    public function testReadsResolveThroughPendingMove(): void
+    {
+        $adapter = $this->adapter();
+        // physical file still at legacy location, logical path already moved
+        $adapter->write('Campaigns/img.jpg', 'legacy-bytes', new Config());
+        $this->addMove('Campaigns', 'Archive/Campaigns');
+
+        $this->assertTrue($adapter->fileExists('Archive/Campaigns/img.jpg'));
+        $this->assertSame('legacy-bytes', $adapter->read('Archive/Campaigns/img.jpg'));
+        $this->assertTrue($adapter->directoryExists('Archive/Campaigns'));
+        $this->assertSame('legacy-bytes', stream_get_contents($adapter->readStream('Archive/Campaigns/img.jpg')));
+    }
+
+    public function testLiteralWinsOverMappedCandidate(): void
+    {
+        $adapter = $this->adapter();
+        $adapter->write('Campaigns/img.jpg', 'legacy-bytes', new Config());
+        $this->addMove('Campaigns', 'Archive/Campaigns');
+        // a fresh upload after the move lands literally and shadows the legacy object
+        $adapter->write('Archive/Campaigns/img.jpg', 'new-bytes', new Config());
+
+        $this->assertSame('new-bytes', $adapter->read('Archive/Campaigns/img.jpg'));
+    }
+
+    public function testDeleteRemovesTheMappedObject(): void
+    {
+        $adapter = $this->adapter();
+        $adapter->write('Campaigns/img.jpg', 'legacy-bytes', new Config());
+        $this->addMove('Campaigns', 'Archive/Campaigns');
+
+        $adapter->delete('Archive/Campaigns/img.jpg');
+
+        $this->assertFalse($adapter->fileExists('Archive/Campaigns/img.jpg'));
+        $this->assertFalse($this->adapter()->fileExists('Campaigns/img.jpg'), 'legacy object gone');
+    }
+
+    public function testSingleFileMoveOutOfPendingSubtreeUsesMappedSource(): void
+    {
+        $adapter = $this->adapter();
+        $adapter->write('Campaigns/img.jpg', 'legacy-bytes', new Config());
+        $this->addMove('Campaigns', 'Archive/Campaigns');
+
+        $adapter->move('Archive/Campaigns/img.jpg', 'Elsewhere/img.jpg', new Config());
+
+        $this->assertSame('legacy-bytes', $adapter->read('Elsewhere/img.jpg'));
+        $this->assertFalse($adapter->fileExists('Archive/Campaigns/img.jpg'));
+        $this->assertCount(1, $this->repository->all(), 'no additional row for a single-file move');
+    }
+
+    public function testMultibytePrefixResolution(): void
+    {
+        $adapter = $this->adapter();
+        $adapter->write('Küchengeräte/Öfen/ü.jpg', 'bytes', new Config());
+        $this->addMove('Küchengeräte', 'Archiv/Küchengeräte');
+
+        $this->assertSame('bytes', $adapter->read('Archiv/Küchengeräte/Öfen/ü.jpg'));
+    }
+
+    public function testReMoveResolvesThroughFlatCandidates(): void
+    {
+        $adapter = $this->adapter();
+        $adapter->write('A/img.jpg', 'from-a', new Config());
+        $this->addMove('A', 'B');
+        // file uploaded while A->B pending, lands literally under B
+        $adapter->write('B/fresh.jpg', 'from-b', new Config());
+        $this->addMove('B', 'C'); // fake repoints A->C, adds B->C
+
+        $this->assertSame('from-a', $adapter->read('C/img.jpg'));
+        $this->assertSame('from-b', $adapter->read('C/fresh.jpg'));
     }
 }

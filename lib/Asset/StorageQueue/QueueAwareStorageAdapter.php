@@ -161,13 +161,24 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
     }
 
     /**
-     * Task 2 version: identity — translation lands in Task 3. The fast path is already final:
-     * with no pending operations for this storage, every access is a pure 1:1 delegation.
+     * Resolves a logical file path to its current physical location: the literal path wins if it
+     * physically exists (a fresh write always shadows a stale legacy object), otherwise the
+     * pending move operations covering this path are tried, most specific target first, mapping
+     * back to the operation's source prefix.
      */
     private function resolveFilePath(string $path): string
     {
         if (!$this->repository->hasOperations($this->storageName)) {
             return $path;
+        }
+        if ($this->inner->fileExists($path)) {
+            return $path;
+        }
+        foreach ($this->repository->findCovering($this->storageName, $path) as $operation) {
+            $candidate = $this->mapToSource($path, $operation);
+            if ($this->inner->fileExists($candidate)) {
+                return $candidate;
+            }
         }
 
         return $path;
@@ -178,7 +189,21 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
         if (!$this->repository->hasOperations($this->storageName)) {
             return $path;
         }
+        if ($this->inner->directoryExists($path)) {
+            return $path;
+        }
+        foreach ($this->repository->findCovering($this->storageName, $path) as $operation) {
+            $candidate = $this->mapToSource($path, $operation);
+            if ($this->inner->directoryExists($candidate)) {
+                return $candidate;
+            }
+        }
 
         return $path;
+    }
+
+    private function mapToSource(string $logicalPath, StorageOperation $operation): string
+    {
+        return $operation->getSourcePrefix() . mb_substr($logicalPath, mb_strlen((string) $operation->getTargetPrefix()));
     }
 }
