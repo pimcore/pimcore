@@ -27,6 +27,11 @@ final class Version20210505093841 extends AbstractMigration
         return 'WebDAV locks with database backend instead of file-based';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql(

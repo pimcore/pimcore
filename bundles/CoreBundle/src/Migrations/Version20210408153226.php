@@ -22,6 +22,11 @@ use Doctrine\Migrations\AbstractMigration;
  */
 class Version20210408153226 extends AbstractMigration
 {
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $versionsTable = $schema->getTable('versions');

@@ -24,6 +24,11 @@ final class Version20220317125711 extends AbstractMigration
         return '';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->hasTable('assets_image_thumbnail_cache')) {

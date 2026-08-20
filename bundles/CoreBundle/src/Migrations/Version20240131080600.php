@@ -24,6 +24,11 @@ final class Version20240131080600 extends AbstractMigration
         return 'Increase passwordRecoveryToken column length on users table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if ($schema->getTable('users')->hasColumn('passwordRecoveryToken')) {

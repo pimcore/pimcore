@@ -24,6 +24,11 @@ final class Version20220119082511 extends AbstractMigration
         return 'Use foreign key for delete cascade on gridconfig_favourites & gridconfig_shares';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         //disable foreign key checks
