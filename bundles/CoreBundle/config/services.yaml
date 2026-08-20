@@ -146,6 +146,10 @@ services:
         arguments:
             $locator: !tagged_locator { tag: flysystem.storage }
 
+    Pimcore\Asset\StorageQueue\StorageOperationQueueRepository:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+
     Pimcore\Image\Adapter\Imagick:
         shared: false
         public: true
