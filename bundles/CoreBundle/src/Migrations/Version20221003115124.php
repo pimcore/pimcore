@@ -24,6 +24,11 @@ final class Version20221003115124 extends AbstractMigration
         return 'Rename o_id columns to id.';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE objects CHANGE o_id id int(11) unsigned auto_increment NOT NULL;');

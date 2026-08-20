@@ -24,6 +24,11 @@ final class Version20240813085200 extends AbstractMigration
         return 'Extending notifications with payload and isStudio columns';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $tableName = Dao::DB_TABLE_NAME;

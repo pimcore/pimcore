@@ -27,6 +27,11 @@ final class Version20241114142759 extends AbstractMigration
         return 'Introducing an index for user workspaces table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->createIndex($schema, 'users_workspaces_asset');
