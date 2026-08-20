@@ -232,7 +232,9 @@ class NotesSubscriber implements EventSubscriberInterface
             'workflow.completed' => ['onWorkflowCompleted', 1],
             'workflow.enter' => 'onWorkflowEnter',
             WorkflowEvents::PRE_GLOBAL_ACTION => 'onPreGlobalAction',
-            WorkflowEvents::POST_GLOBAL_ACTION => 'onPostGlobalAction',
+            // same priority as `workflow.completed`, so that the note is created before the
+            // notification subscriber reads it
+            WorkflowEvents::POST_GLOBAL_ACTION => ['onPostGlobalAction', 1],
         ];
     }
 }

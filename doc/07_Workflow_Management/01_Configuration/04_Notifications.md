@@ -41,6 +41,22 @@ Roles send a notification to every user assigned that role.
 
 Multiple notification settings with conditions allow sophisticated notifications per transition.
 
+Global actions support `notificationSettings` too. Since global actions have no `options` sub-key,
+the settings are configured directly on the global action:
+
+```yaml
+...
+    globalActions:
+        myGlobalAction:
+            notificationSettings:
+                -
+                  notifyUsers: ['admin']
+                  notifyRoles: ['projectmanagers']
+                  channelType:
+                     - pimcore_notification
+...
+```
+
 ## Customizing the Email Template
 
 - **Override the default template** at `@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig`

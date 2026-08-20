@@ -281,7 +281,13 @@ class Manager
         $this->notesSubscriber->setAdditionalData([]);
 
         if ($saveSubject && $subject instanceof ElementInterface) {
-            $subject->save();
+            if ($globalActionObj->getChangePublishedState() === ChangePublishedStateSubscriber::SAVE_VERSION
+                && ($subject instanceof Concrete || $subject instanceof PageSnippet)
+            ) {
+                $subject->saveVersion();
+            } else {
+                $subject->save();
+            }
         }
 
         return $markingStore->getMarking($subject);

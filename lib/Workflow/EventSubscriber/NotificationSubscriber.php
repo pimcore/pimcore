@@ -13,11 +13,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow\EventSubscriber;
 
+use Pimcore\Event\Workflow\GlobalActionEvent;
+use Pimcore\Event\WorkflowEvents;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Workflow;
 use Pimcore\Workflow\ExpressionService;
+use Pimcore\Workflow\GlobalAction;
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\Notification\NotificationEmailService;
 use Pimcore\Workflow\Notification\PimcoreNotificationService;
@@ -85,6 +88,25 @@ class NotificationSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $this->handleNotifications($transition, $workflow, $subject);
+    }
+
+    public function onPostGlobalAction(GlobalActionEvent $event): void
+    {
+        $subject = $event->getSubject();
+
+        if (!$this->isEnabled() || !$subject instanceof ElementInterface) {
+            return;
+        }
+
+        $this->handleNotifications($event->getGlobalAction(), $event->getWorkflow(), $subject);
+    }
+
+    private function handleNotifications(
+        Transition|GlobalAction $transition,
+        WorkflowInterface $workflow,
+        ElementInterface $subject
+    ): void {
         $notificationSettings = $transition->getNotificationSettings();
         foreach ($notificationSettings as $notificationSetting) {
             $condition = $notificationSetting['condition'] ?? null;
@@ -122,7 +144,7 @@ class NotificationSubscriber implements EventSubscriberInterface
     }
 
     private function handleNotifyPostWorkflowEmail(
-        Transition $transition,
+        Transition|GlobalAction $transition,
         WorkflowInterface $workflow,
         ElementInterface $subject,
         string $mailType,
@@ -146,7 +168,7 @@ class NotificationSubscriber implements EventSubscriberInterface
     }
 
     private function handleNotifyPostWorkflowPimcoreNotification(
-        Transition $transition,
+        Transition|GlobalAction $transition,
         WorkflowInterface $workflow,
         ElementInterface $subject,
         array $notifyUsers,
@@ -187,6 +209,7 @@ class NotificationSubscriber implements EventSubscriberInterface
     {
         return [
             'workflow.completed' => ['onWorkflowCompleted', 0],
+            WorkflowEvents::POST_GLOBAL_ACTION => ['onPostGlobalAction', 0],
         ];
     }
 }

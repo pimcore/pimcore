@@ -23,6 +23,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
+use Pimcore\Workflow\GlobalAction;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
@@ -60,7 +61,7 @@ class NotificationEmailService extends AbstractNotificationService
         WorkflowInterface $workflow,
         string $subjectType,
         ElementInterface $subject,
-        Transition $transition,
+        Transition|GlobalAction $transition,
         string $mailType,
         string $mailPath
     ): void {

@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Logger;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification\Service\NotificationService;
+use Pimcore\Workflow\GlobalAction;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -43,7 +44,7 @@ class PimcoreNotificationService extends AbstractNotificationService
         WorkflowInterface $workflow,
         string $subjectType,
         ElementInterface $subject,
-        Transition $transition
+        Transition|GlobalAction $transition
     ): void {
         try {
             $recipients = $this->getNotificationUsersByName($users, $roles, true);
