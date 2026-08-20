@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Service\Asset\StorageQueue;
 
 use DateTimeImmutable;
+use Pimcore;
 use Pimcore\Asset\StorageQueue\FrontendPathResolver;
 use Pimcore\Asset\StorageQueue\StorageOperation;
 use Pimcore\Asset\StorageQueue\StorageOperationQueueRepository;
@@ -251,7 +252,7 @@ class StorageOperationQueueRepositoryTest extends TestCase
 
     public function testFrontendPathResolverIsWiredAndResolvesThroughRealRepository(): void
     {
-        $resolver = \Pimcore::getContainer()->get(FrontendPathResolver::class);
+        $resolver = Pimcore::getContainer()->get(FrontendPathResolver::class);
         $this->repository->add(new StorageOperation(
             null, 'asset', StorageOperationType::Move, 'WiredSource', 'WiredTarget', new DateTimeImmutable()
         ));
