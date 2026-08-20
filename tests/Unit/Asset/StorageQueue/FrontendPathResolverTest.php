@@ -108,4 +108,47 @@ class FrontendPathResolverTest extends Unit
 
         $this->assertSame('/', $resolver->resolvePhysicalPath('/'));
     }
+
+    public function testAssetModifiedAfterRowCreationKeepsLogicalPath(): void
+    {
+        // the asset was written (upload/replace) during the pending window, after the covering
+        // row was created - writes always target literal keys, so the logical path is correct
+        // and must NOT be translated to the pre-move physical location
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Move, 'Campaigns', 'Archive/Campaigns',
+            new DateTimeImmutable('-1 hour')
+        ));
+        $resolver = new FrontendPathResolver($this->repository, true);
+
+        $this->assertSame(
+            '/Archive/Campaigns/x.jpg',
+            $resolver->resolvePhysicalPath('/Archive/Campaigns/x.jpg', time())
+        );
+    }
+
+    public function testAssetModifiedBeforeRowCreationStillMaps(): void
+    {
+        // the asset predates the covering row's creation - normal case, must still map to the
+        // pre-move physical location
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Move, 'Campaigns', 'Archive/Campaigns',
+            new DateTimeImmutable('+5 seconds')
+        ));
+        $resolver = new FrontendPathResolver($this->repository, true);
+
+        $this->assertSame(
+            '/Campaigns/x.jpg',
+            $resolver->resolvePhysicalPath('/Archive/Campaigns/x.jpg', time() - 3600)
+        );
+    }
+
+    public function testNullModificationTimestampStillMaps(): void
+    {
+        // existing behavior preserved: an unknown modification timestamp must not suppress the
+        // mapping
+        $this->addMove('Campaigns', 'Archive/Campaigns');
+        $resolver = new FrontendPathResolver($this->repository, true);
+
+        $this->assertSame('/Campaigns/x.jpg', $resolver->resolvePhysicalPath('/Archive/Campaigns/x.jpg'));
+    }
 }

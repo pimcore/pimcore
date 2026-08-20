@@ -907,7 +907,7 @@ class Asset extends Element\AbstractElement
         if ($prefix !== '' && $prefix !== null) {
             // prefix-based URLs point straight at the storage (CDN/bucket); while a queued
             // folder move is pending the bytes still live under the pre-move prefix
-            $path = Pimcore::getContainer()->get(FrontendPathResolver::class)->resolvePhysicalPath($path);
+            $path = Pimcore::getContainer()->get(FrontendPathResolver::class)->resolvePhysicalPath($path, $this->getModificationDate());
         }
 
         $path = urlencode_ignore_slash($path);

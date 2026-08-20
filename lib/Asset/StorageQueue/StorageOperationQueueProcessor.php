@@ -17,6 +17,7 @@ namespace Pimcore\Asset\StorageQueue;
 use Exception;
 use League\Flysystem\Config;
 use League\Flysystem\FilesystemAdapter;
+use Pimcore\Cache;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -55,6 +56,7 @@ final class StorageOperationQueueProcessor
         $failed = 0;
         $timedOut = false;
         $errors = [];
+        $clearedAssetMove = false;
 
         $operations = $onlyId !== null
             ? array_filter([$this->repository->findById($onlyId)])
@@ -70,6 +72,9 @@ final class StorageOperationQueueProcessor
             try {
                 if ($this->processOperation($operation, $deadline)) {
                     $processed++;
+                    if ($operation->getType() === StorageOperationType::Move && $operation->getStorage() === 'asset') {
+                        $clearedAssetMove = true;
+                    }
                 }
                 // incomplete rows (deadline hit, undated entries, contested rows) stay queued
                 // for the next run - processOperation removes its own row on completion
@@ -88,6 +93,10 @@ final class StorageOperationQueueProcessor
                     'exception' => $e,
                 ]);
             }
+        }
+
+        if ($clearedAssetMove) {
+            Cache::clearTag('output'); // window-era physical URLs may sit in full-page cache
         }
 
         return new StorageQueueProcessingResult(

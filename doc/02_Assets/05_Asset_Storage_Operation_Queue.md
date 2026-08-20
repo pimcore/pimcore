@@ -113,13 +113,30 @@ Between the moment an operation is queued and the moment it is processed:
 
 ## Frontend URLs
 
-With `pimcore.assets.frontend_prefixes.source` configured, frontend URLs point straight
-at the storage (e.g. a CDN or bucket) rather than being served through Pimcore. For an
-asset under a pending move, such a URL is built from the still-valid physical (pre-move)
-path instead of the logical (post-move) path, so it keeps resolving correctly for the
-duration of the pending window, and automatically switches back to the logical path once
-the move is processed. Without a configured prefix, frontend URLs are unaffected by this
-feature.
+With `pimcore.assets.frontend_prefixes.source` configured, frontend URLs for original
+asset files — `Asset::getFrontendFullPath()`, and thumbnails that pass through the
+original file unmodified (for example an SVG thumbnail falling back to the source file)
+— point straight at the storage (e.g. a CDN or bucket) rather than being served through
+Pimcore. For such a URL under a pending move, the path is built from the still-valid
+physical (pre-move) path instead of the logical (post-move) path, so it keeps resolving
+correctly for the duration of the pending window, and automatically switches back to the
+logical path once the move is processed.
+
+`pimcore.assets.frontend_prefixes.thumbnail` URLs (generated thumbnail renditions) are
+**not** queue-aware in this version — a thumbnail requested for an asset under a pending
+move can 404 until the move is processed. If this matters for a given folder, regenerate
+its thumbnails after processing, or keep the pending window short.
+
+An asset uploaded or replaced inside a moved folder during the pending window resolves to
+its logical (post-move) URL right away, because writes always target the literal,
+post-move key. A metadata-only edit to an asset that was already in the moved folder can
+still 404 until the queue is processed — the same as it would without this feature.
+
+While a processing run is under way, folders whose move has already completed briefly
+keep resolving to their old physical URL until the whole operation finishes — schedule
+processing during low-traffic windows to minimize the impact.
+
+Without a configured prefix, frontend URLs are unaffected by this feature.
 
 ## Caveats
 
@@ -138,6 +155,10 @@ feature.
 - **Thumbnail temp-file cleanup:** `Asset\Thumbnail` temporary-file cleanup may list
   physical (pre-move) paths while operations on that subtree are pending. This
   converges once the queue is processed; no manual action is needed.
+- **Persisted or exported URLs:** a URL exported or persisted during a pending window
+  (for example a CSV export embedding image URLs) may capture a physical (pre-move)
+  path that stops resolving once the queue is processed. Re-export any long-lived
+  artifact after the queue has fully drained if it needs to keep working.
 - **Never disable the flag with pending rows:** do not disable
   `pimcore.assets.storage_operation_queue.enabled` while
   `pimcore:assets:storage-queue:status` still shows pending rows. Moved content becomes

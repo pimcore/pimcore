@@ -34,8 +34,12 @@ final class FrontendPathResolver
 
     /**
      * @param string $logicalPath full logical asset path including the leading slash
+     * @param int|null $modificationTimestamp the asset's modificationDate; when it is later than
+     *                                        the covering row's creation the asset was written
+     *                                        during the pending window - writes always target
+     *                                        literal keys, so the logical path is the valid one
      */
-    public function resolvePhysicalPath(string $logicalPath): string
+    public function resolvePhysicalPath(string $logicalPath, ?int $modificationTimestamp = null): string
     {
         if (!$this->enabled) {
             return $logicalPath;
@@ -52,6 +56,10 @@ final class FrontendPathResolver
         }
 
         $row = $covering[0];
+        if ($modificationTimestamp !== null && $modificationTimestamp > $row->getCreatedAt()->getTimestamp()) {
+            return $logicalPath; // written during the window - lives at its literal key
+        }
+
         $target = $row->getTargetPrefix();
         if ($storagePath === $target) {
             return '/' . $row->getSourcePrefix();
