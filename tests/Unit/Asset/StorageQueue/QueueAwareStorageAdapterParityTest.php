@@ -45,12 +45,15 @@ class QueueAwareStorageAdapterParityTest extends Unit
 
     private QueueAwareStorageAdapter $wrapped;
 
+    private InMemoryStorageOperationQueueRepository $repository;
+
     protected function _before(): void
     {
         $this->bare = new InMemoryFilesystemAdapter();
+        $this->repository = new InMemoryStorageOperationQueueRepository();
         $this->wrapped = new QueueAwareStorageAdapter(
             new InMemoryFilesystemAdapter(),
-            new InMemoryStorageOperationQueueRepository(),
+            $this->repository,
             'asset',
         );
     }
@@ -137,6 +140,10 @@ class QueueAwareStorageAdapterParityTest extends Unit
         // and already covered by QueueAwareStorageAdapterTest::testDeleteDirectoryQueuesATombstone.
         $this->bothCall(fn (FilesystemAdapter $a) => $a->deleteDirectory('does-not-exist'));
         $this->assertParity(fn (FilesystemAdapter $a) => $a->directoryExists('does-not-exist'));
+
+        // The cheap guard this whole test exists to make: none of the 17 operations above should
+        // have left a row behind in an otherwise-empty queue.
+        $this->assertSame([], $this->repository->all(), 'no queue rows leaked from parity operations');
     }
 
     private function bothCall(callable $operation): void
