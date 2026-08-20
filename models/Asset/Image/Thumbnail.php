@@ -53,7 +53,7 @@ final class Thumbnail implements ThumbnailInterface
         $frontend = $args['frontend'] ?? \Pimcore\Tool::isFrontend();
 
         $pathReference = null;
-        if ($this->getConfig()?->usesOriginalSvgOutput($this->asset)) {
+        if ($this->asset instanceof Image && $this->getConfig()?->usesOriginalSvgOutput($this->asset)) {
             // Dimension resolution uses the same source-output predicate and falls back to the source bytes when dimensions are unavailable.
             // Use getRealFullPath() here to avoid double encoding because getFullPath() already returns an encoded path.
             $pathReference = [
@@ -126,7 +126,7 @@ final class Thumbnail implements ThumbnailInterface
         }
 
         if (empty($this->pathReference)) {
-            if ($this->getConfig()->usesOriginalSvgOutput($this->asset)) {
+            if ($this->asset instanceof Image && $this->getConfig()->usesOriginalSvgOutput($this->asset)) {
                 // SVG thumbnail generation failed — fall back to the original SVG file.
                 // This avoids a generic placeholder since browsers can display SVGs natively.
                 $this->pathReference = [
@@ -464,7 +464,7 @@ final class Thumbnail implements ThumbnailInterface
             // encode comma in thumbnail path as srcset is a comma separated list
             $srcSetValues[] = str_replace(',', '%2C', $this->addCacheBuster($thumb . ' ' . $descriptor, $options, $image));
 
-            if ($this->getConfig()?->usesOriginalSvgOutput($this->asset)) {
+            if ($this->asset instanceof Image && $this->getConfig()?->usesOriginalSvgOutput($this->asset)) {
                 break;
             }
         }
