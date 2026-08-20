@@ -137,7 +137,33 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
 
     public function listContents(string $path, bool $deep): iterable
     {
-        return $this->inner->listContents($path, $deep);
+        if (!$this->repository->hasOperations($this->storageName)) {
+            yield from $this->inner->listContents($path, $deep);
+
+            return;
+        }
+
+        $seenLogicalPaths = [];
+        foreach ($this->inner->listContents($path, $deep) as $item) {
+            $seenLogicalPaths[$item->path()] = true;
+            yield $item;
+        }
+
+        foreach ($this->repository->findCovering($this->storageName, $path) as $operation) {
+            $physicalPrefix = $this->mapToSource($path, $operation);
+            if (!$this->inner->directoryExists($physicalPrefix)) {
+                continue;
+            }
+            foreach ($this->inner->listContents($physicalPrefix, $deep) as $item) {
+                $logicalPath = (string) $operation->getTargetPrefix()
+                    . mb_substr($item->path(), mb_strlen($operation->getSourcePrefix()));
+                if (isset($seenLogicalPaths[$logicalPath])) {
+                    continue; // literal wins
+                }
+                $seenLogicalPaths[$logicalPath] = true;
+                yield $item->withPath($logicalPath);
+            }
+        }
     }
 
     public function move(string $source, string $destination, Config $config): void

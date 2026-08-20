@@ -514,4 +514,40 @@ class QueueAwareStorageAdapterTest extends Unit
         sort($types);
         $this->assertSame(['delete:A', 'delete:B'], $types);
     }
+
+    public function testListContentsMergesLiteralAndMappedEntries(): void
+    {
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('Campaigns/legacy.jpg', 'a', new Config());
+        $adapter->write('Campaigns/shadowed.jpg', 'legacy-version', new Config());
+        $this->addMove('Campaigns', 'Archive/Campaigns');
+        $adapter->write('Archive/Campaigns/fresh.jpg', 'b', new Config());
+        $adapter->write('Archive/Campaigns/shadowed.jpg', 'new-version', new Config());
+
+        $paths = [];
+        foreach ($adapter->listContents('Archive/Campaigns', false) as $item) {
+            $paths[] = $item->path();
+        }
+        sort($paths);
+        $this->assertSame(
+            ['Archive/Campaigns/fresh.jpg', 'Archive/Campaigns/legacy.jpg', 'Archive/Campaigns/shadowed.jpg'],
+            $paths,
+            'merged, translated to logical paths, de-duplicated (literal wins)'
+        );
+    }
+
+    public function testDeepListContentsTranslatesMappedPaths(): void
+    {
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('Campaigns/sub/deep.jpg', 'x', new Config());
+        $this->addMove('Campaigns', 'Archive/Campaigns');
+
+        $paths = [];
+        foreach ($adapter->listContents('Archive/Campaigns', true) as $item) {
+            if ($item->isFile()) {
+                $paths[] = $item->path();
+            }
+        }
+        $this->assertSame(['Archive/Campaigns/sub/deep.jpg'], $paths);
+    }
 }
