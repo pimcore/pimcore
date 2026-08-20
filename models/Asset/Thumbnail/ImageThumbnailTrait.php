@@ -15,10 +15,12 @@ namespace Pimcore\Model\Asset\Thumbnail;
 
 use Exception;
 use Pimcore\Config as PimcoreConfig;
+use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
+use Pimcore\Model\Asset\Image\Thumbnail\Processor;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Mime\MimeTypes;
@@ -104,6 +106,15 @@ trait ImageThumbnailTrait
             $this->pathReference = [];
         }
 
+        if (empty($this->pathReference)
+            && $this->asset instanceof Image
+            && $this->config?->usesOriginalSvgOutput($this->asset)) {
+            $this->pathReference = [
+                'src' => $this->asset->getRealFullPath(),
+                'type' => 'asset',
+            ];
+        }
+
         if (empty($this->pathReference)) {
             $this->generate($deferredAllowed);
         }
@@ -171,8 +182,29 @@ trait ImageThumbnailTrait
         if (in_array($pathReference['type'], ['thumbnail', 'asset'])) {
             try {
                 $localFile = $this->getLocalFile();
-                if (null !== $localFile && isset($pathReference['storagePath']) && $config = $this->getConfig()) {
-                    $asset = $this->getAsset();
+                $asset = $this->getAsset();
+                if (null !== $localFile && $pathReference['type'] === 'asset' && $asset instanceof Image) {
+                    $dimensions = $asset->getDimensionsFromFile($localFile) ?? [];
+
+                    // Pass-through output still exposes the configuration's logical dimensions.
+                    // Reapply the zero-I/O plan to the dimensions discovered by this single physical read.
+                    $config = $this->getConfig();
+                    if (isset($dimensions['width'], $dimensions['height'])
+                        && $config
+                        && ($config->usesOriginalSvgOutput($asset)
+                            || Processor::usesOriginalAssetOutput($asset, $config))) {
+                        $estimatedDimensions = $config->getEstimatedDimensionsForSource(
+                            $asset,
+                            $dimensions['width'],
+                            $dimensions['height']
+                        );
+                        if (isset($estimatedDimensions['width'], $estimatedDimensions['height'])
+                            && $estimatedDimensions['width'] > 0
+                            && $estimatedDimensions['height'] > 0) {
+                            $dimensions = $estimatedDimensions;
+                        }
+                    }
+                } elseif (null !== $localFile && isset($pathReference['storagePath']) && $config = $this->getConfig()) {
                     $filename = basename($pathReference['storagePath']);
                     $asset->addThumbnailFileToCache(
                         $localFile,
@@ -214,13 +246,14 @@ trait ImageThumbnailTrait
                 }
             }
 
-            if (empty($dimensions) && $this->exists()) {
-                $dimensions = $this->readDimensionsFromFile();
-            }
-
             // try to calculate the final dimensions based on the thumbnail configuration
             if (empty($dimensions) && $config && $asset instanceof Image) {
-                $dimensions = $config->getEstimatedDimensions($asset);
+                $estimatedDimensions = $config->getEstimatedDimensions($asset);
+                if (isset($estimatedDimensions['width'], $estimatedDimensions['height'])
+                    && $estimatedDimensions['width'] > 0
+                    && $estimatedDimensions['height'] > 0) {
+                    $dimensions = $estimatedDimensions;
+                }
             }
 
             if (empty($dimensions)) {
@@ -359,8 +392,40 @@ trait ImageThumbnailTrait
             return null;
         }
 
+        if (is_resource($stream)) {
+            $pathReference = $this->getPathReference();
+            $sourcePath = (string) ($pathReference['storagePath'] ?? $pathReference['src'] ?? '');
+            $sourcePath = (string) (parse_url($sourcePath, PHP_URL_PATH) ?: $sourcePath);
+            $fileExtension = pathinfo($sourcePath, PATHINFO_EXTENSION);
+            if ($fileExtension === '' && $this->getAsset() instanceof Image) {
+                $fileExtension = pathinfo($this->getAsset()->getFilename(), PATHINFO_EXTENSION);
+            }
+
+            $localFile = File::getLocalTempFilePath($fileExtension ?: null);
+            $destination = fopen($localFile, 'wb', false, File::getContext());
+            if ($destination === false) {
+                fclose($stream);
+
+                throw new Exception(sprintf('Unable to create temporary file in %s', $localFile));
+            }
+
+            try {
+                $metadata = stream_get_meta_data($stream);
+                if ($metadata['seekable'] && !rewind($stream)) {
+                    throw new Exception('Unable to rewind thumbnail stream before copying');
+                }
+                if (stream_copy_to_stream($stream, $destination) === false) {
+                    throw new Exception(sprintf('Unable to copy thumbnail stream to %s', $localFile));
+                }
+            } finally {
+                fclose($destination);
+                fclose($stream);
+            }
+
+            return $localFile;
+        }
+
         $localFile = self::getLocalFileFromStream($stream);
-        @fclose($stream);
 
         return $localFile;
     }
