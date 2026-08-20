@@ -16,6 +16,7 @@ namespace Pimcore\Asset\StorageQueue;
 
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
+use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 
 /**
@@ -68,9 +69,9 @@ final class StorageOperationQueueRepository
             'SELECT * FROM ' . self::TABLE . "
              WHERE `storage` = :storage
                AND `operation` = 'move'
-               AND (`target_prefix` = :path OR :path LIKE CONCAT(`target_prefix`, '/%'))
+               AND (`target_prefix` = :path OR LEFT(:path2, CHAR_LENGTH(`target_prefix`) + 1) = CONCAT(`target_prefix`, '/'))
              ORDER BY LENGTH(`target_prefix`) DESC, `id` DESC",
-            ['storage' => $storage, 'path' => $logicalPath]
+            ['storage' => $storage, 'path' => $logicalPath, 'path2' => $logicalPath]
         );
 
         return array_map($this->hydrate(...), $rows);
@@ -83,11 +84,22 @@ final class StorageOperationQueueRepository
             return (bool) RuntimeCache::get($cacheKey);
         }
 
+        $cached = Cache::load($cacheKey);
+        if ($cached !== false) {
+            $has = (bool) $cached;
+            RuntimeCache::set($cacheKey, $has);
+
+            return $has;
+        }
+
         $has = (bool) $this->db->fetchOne(
             'SELECT 1 FROM ' . self::TABLE . ' WHERE `storage` = :storage LIMIT 1',
             ['storage' => $storage]
         );
         RuntimeCache::set($cacheKey, $has);
+        // stored as int: Cache::load() also returns false on a cache miss, so a stored "false"
+        // (no pending operations) would otherwise be indistinguishable from a miss
+        Cache::save((int) $has, $cacheKey, [], null, 0, true);
 
         return $has;
     }
@@ -131,16 +143,17 @@ final class StorageOperationQueueRepository
     {
         $this->db->executeStatement(
             'UPDATE ' . self::TABLE . "
-             SET `target_prefix` = CONCAT(:newPrefix, SUBSTRING(`target_prefix`, :cutLength))
+             SET `target_prefix` = CONCAT(:newPrefix, SUBSTRING(`target_prefix`, CHAR_LENGTH(:movedPrefixD) + 1))
              WHERE `storage` = :storage
                AND `operation` = 'move'
-               AND (`target_prefix` = :movedPrefix OR `target_prefix` LIKE CONCAT(:movedPrefixParam, '/%'))",
+               AND (`target_prefix` = :movedPrefix OR LEFT(`target_prefix`, CHAR_LENGTH(:movedPrefixB) + 1) = CONCAT(:movedPrefixC, '/'))",
             [
                 'newPrefix' => $newPrefix,
-                'cutLength' => strlen($movedPrefix) + 1,
                 'storage' => $storage,
                 'movedPrefix' => $movedPrefix,
-                'movedPrefixParam' => $movedPrefix,
+                'movedPrefixB' => $movedPrefix,
+                'movedPrefixC' => $movedPrefix,
+                'movedPrefixD' => $movedPrefix,
             ]
         );
 
@@ -162,12 +175,13 @@ final class StorageOperationQueueRepository
              SET `operation` = 'delete', `target_prefix` = NULL, `created_at` = :now
              WHERE `storage` = :storage
                AND `operation` = 'move'
-               AND (`target_prefix` = :deletedPrefix OR `target_prefix` LIKE CONCAT(:deletedPrefixParam, '/%'))",
+               AND (`target_prefix` = :deletedPrefix OR LEFT(`target_prefix`, CHAR_LENGTH(:deletedPrefixB) + 1) = CONCAT(:deletedPrefixC, '/'))",
             [
                 'now' => (new DateTimeImmutable())->format('Y-m-d H:i:s'),
                 'storage' => $storage,
                 'deletedPrefix' => $deletedPrefix,
-                'deletedPrefixParam' => $deletedPrefix,
+                'deletedPrefixB' => $deletedPrefix,
+                'deletedPrefixC' => $deletedPrefix,
             ]
         );
     }
@@ -193,5 +207,6 @@ final class StorageOperationQueueRepository
         if (RuntimeCache::isRegistered($cacheKey)) {
             RuntimeCache::getInstance()->offsetUnset($cacheKey);
         }
+        Cache::remove($cacheKey);
     }
 }

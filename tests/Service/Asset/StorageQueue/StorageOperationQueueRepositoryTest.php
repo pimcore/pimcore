@@ -136,4 +136,44 @@ class StorageOperationQueueRepositoryTest extends TestCase
         $this->assertFalse($this->repository->hasOperations('asset'));
         $this->assertNull($this->repository->findById($id));
     }
+
+    public function testUnderscoreInPrefixDoesNotOverMatch(): void
+    {
+        // '_' is a legal asset-key character and a LIKE metacharacter - it must match literally
+        $this->repository->add($this->move('asset', 'AxB-old', 'AxB'));
+        $this->repository->add($this->delete('asset', 'A_B'));
+
+        $all = $this->repository->all();
+        $byType = [];
+        foreach ($all as $op) {
+            $byType[$op->getType()->value][] = $op->getSourcePrefix();
+        }
+        // the AxB move row must NOT have been converted by deleting A_B
+        $this->assertSame(['AxB-old'], $byType['move'] ?? []);
+        $this->assertSame(['A_B'], $byType['delete'] ?? []);
+
+        // and a stored target 'A_B' must not cover 'AxB/...' paths
+        $this->repository->add($this->move('asset', 'A_B-old', 'A_B'));
+        $covering = $this->repository->findCovering('asset', 'AxB/img.jpg');
+        $this->assertSame(['AxB'], array_map(static fn ($op) => $op->getTargetPrefix(), $covering));
+    }
+
+    public function testRepointHandlesMultibytePrefixes(): void
+    {
+        // umlauts are multi-byte in UTF-8; splice math must be character-based
+        $this->repository->add($this->move('asset', 'Küchengeräte-old', 'Küchengeräte'));
+        $this->repository->add($this->move('asset', 'Küchengeräte-old/Öfen-legacy', 'Küchengeräte/Öfen'));
+        $this->repository->add($this->move('asset', 'Küchengeräte', 'Archiv/Küchengeräte'));
+
+        $pairs = array_map(
+            static fn ($op) => $op->getSourcePrefix() . '->' . $op->getTargetPrefix(),
+            $this->repository->all()
+        );
+        sort($pairs);
+        $this->assertSame([
+            'Küchengeräte->Archiv/Küchengeräte',
+            'Küchengeräte-old->Archiv/Küchengeräte',
+            'Küchengeräte-old/Öfen-legacy->Archiv/Küchengeräte/Öfen',
+        ], $pairs);
+    }
 }
