@@ -56,7 +56,7 @@ of the event's purpose and the event object it dispatches.
 - [TagEvents](https://github.com/pimcore/pimcore/blob/2026.x/lib/Event/TagEvents.php) -
   tag assignment and management
 - [NoteEvents](https://github.com/pimcore/pimcore/blob/2026.x/lib/Event/NoteEvents.php) -
-  note create, update, and delete
+  note create and delete
 - [NotificationEvents](https://github.com/pimcore/pimcore/blob/2026.x/lib/Event/NotificationEvents.php) -
   notification lifecycle events
 - [UserRoleEvents](https://github.com/pimcore/pimcore/blob/2026.x/lib/Event/UserRoleEvents.php) -
