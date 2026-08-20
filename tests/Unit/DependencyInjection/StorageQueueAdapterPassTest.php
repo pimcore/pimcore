@@ -16,6 +16,7 @@ namespace Pimcore\Tests\Unit\DependencyInjection;
 
 use Codeception\Test\Unit;
 use Pimcore\Asset\StorageQueue\QueueAwareStorageAdapter;
+use Pimcore\Asset\StorageQueue\StorageOperationQueueProcessor;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\StorageQueueAdapterPass;
 use stdClass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -66,5 +67,21 @@ class StorageQueueAdapterPassTest extends Unit
 
         $this->assertTrue($container->hasDefinition('pimcore.asset.storage_queue.adapter.asset'));
         $this->assertFalse($container->hasDefinition('pimcore.asset.storage_queue.adapter.thumbnail'));
+    }
+
+    public function testEnabledFlagRegistersTheProcessor(): void
+    {
+        $container = $this->buildContainer(true);
+
+        $this->assertTrue($container->hasDefinition('pimcore.asset.storage_queue.processor'));
+        $definition = $container->getDefinition('pimcore.asset.storage_queue.processor');
+        $this->assertSame(StorageOperationQueueProcessor::class, $definition->getClass());
+    }
+
+    public function testDisabledFlagRegistersNoProcessor(): void
+    {
+        $container = $this->buildContainer(false);
+
+        $this->assertFalse($container->hasDefinition('pimcore.asset.storage_queue.processor'));
     }
 }

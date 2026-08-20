@@ -15,8 +15,10 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
 use Pimcore\Asset\StorageQueue\QueueAwareStorageAdapter;
+use Pimcore\Asset\StorageQueue\StorageOperationQueueProcessor;
 use Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
@@ -58,5 +60,24 @@ final class StorageQueueAdapterPass implements CompilerPassInterface
             ]);
             $container->setDefinition($decoratorId, $definition);
         }
+
+        $innerReferences = [];
+        foreach (self::STORAGES as $storageName => $adapterId) {
+            if ($container->hasDefinition('pimcore.asset.storage_queue.adapter.' . $storageName)) {
+                $innerReferences[$storageName] = new Reference('pimcore.asset.storage_queue.adapter.' . $storageName . '.inner');
+            }
+        }
+
+        if ($innerReferences === []) {
+            return;
+        }
+
+        $processor = new Definition(StorageOperationQueueProcessor::class);
+        $processor->setArguments([
+            ServiceLocatorTagPass::register($container, $innerReferences),
+            new Reference(StorageOperationQueueRepositoryInterface::class),
+            new Reference('logger'),
+        ]);
+        $container->setDefinition('pimcore.asset.storage_queue.processor', $processor);
     }
 }
