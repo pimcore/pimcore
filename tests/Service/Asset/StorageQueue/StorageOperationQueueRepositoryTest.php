@@ -198,4 +198,29 @@ class StorageOperationQueueRepositoryTest extends TestCase
             'Küchengeräte-old/Öfen-legacy->Archiv/Küchengeräte/Öfen',
         ], $pairs);
     }
+
+    public function testCreatedAtRoundTripsAcrossTimezones(): void
+    {
+        $originalTz = date_default_timezone_get();
+
+        try {
+            date_default_timezone_set('Pacific/Kiritimati'); // UTC+14
+            $written = new DateTimeImmutable('now');
+            $this->repository->add(new StorageOperation(
+                null, 'asset', StorageOperationType::Move, 'TzSource', 'TzTarget', $written
+            ));
+
+            date_default_timezone_set('Etc/GMT+12'); // UTC-12 - 26h apart from the writer
+            $read = $this->repository->all()[0]->getCreatedAt();
+
+            $this->assertEqualsWithDelta(
+                $written->getTimestamp(),
+                $read->getTimestamp(),
+                2,
+                'created_at must represent the same instant regardless of PHP default timezone'
+            );
+        } finally {
+            date_default_timezone_set($originalTz);
+        }
+    }
 }

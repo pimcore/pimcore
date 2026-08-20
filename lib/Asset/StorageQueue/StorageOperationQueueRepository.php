@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Asset\StorageQueue;
 
 use DateTimeImmutable;
+use DateTimeZone;
 use Doctrine\DBAL\Connection;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -49,7 +50,7 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
             'operation' => $operation->getType()->value,
             'source_prefix' => $operation->getSourcePrefix(),
             'target_prefix' => $operation->getTargetPrefix(),
-            'created_at' => $operation->getCreatedAt()->format('Y-m-d H:i:s'),
+            'created_at' => $operation->getCreatedAt()->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s'),
         ]);
 
         $this->invalidateHasOperationsCache($operation->getStorage());
@@ -181,7 +182,7 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
                AND `operation` = 'move'
                AND (`target_prefix` = :deletedPrefix OR LEFT(`target_prefix`, CHAR_LENGTH(:deletedPrefixB) + 1) = CONCAT(:deletedPrefixC, '/'))",
             [
-                'now' => (new DateTimeImmutable())->format('Y-m-d H:i:s'),
+                'now' => (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Y-m-d H:i:s'),
                 'storage' => $storage,
                 'deletedPrefix' => $deletedPrefix,
                 'deletedPrefixB' => $deletedPrefix,
@@ -201,7 +202,7 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
             StorageOperationType::from((string) $row['operation']),
             (string) $row['source_prefix'],
             $row['target_prefix'] === null ? null : (string) $row['target_prefix'],
-            new DateTimeImmutable((string) $row['created_at']),
+            new DateTimeImmutable((string) $row['created_at'], new DateTimeZone('UTC')),
         );
     }
 
