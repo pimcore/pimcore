@@ -24,6 +24,7 @@ use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\UnableToGeneratePublicUrl;
 use League\Flysystem\UnableToGenerateTemporaryUrl;
+use League\Flysystem\UnableToMoveFile;
 use LogicException;
 use Pimcore\Asset\StorageQueue\QueueAwareStorageAdapter;
 use Pimcore\Asset\StorageQueue\StorageOperation;
@@ -404,5 +405,113 @@ class QueueAwareStorageAdapterTest extends Unit
 
         $this->assertSame('from-a', $adapter->read('C/img.jpg'));
         $this->assertSame('from-b', $adapter->read('C/fresh.jpg'));
+    }
+
+    private function nonRenamingAdapter(): QueueAwareStorageAdapter
+    {
+        return new QueueAwareStorageAdapter(
+            new NonRenamingAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir)),
+            $this->repository,
+            'asset',
+        );
+    }
+
+    public function testPrefixMoveOnRenamingBackendStaysNative(): void
+    {
+        $adapter = $this->adapter(); // local: native directory rename works
+        $adapter->write('Campaigns/img.jpg', 'bytes', new Config());
+
+        $adapter->move('Campaigns', 'Archive', new Config());
+
+        $this->assertTrue($adapter->fileExists('Archive/img.jpg'));
+        $this->assertFalse($adapter->directoryExists('Campaigns'));
+        $this->assertSame([], $this->repository->all(), 'native rename produced no queue row');
+    }
+
+    public function testPrefixMoveOnNonRenamingBackendQueuesARow(): void
+    {
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('Campaigns/img.jpg', 'bytes', new Config());
+
+        $adapter->move('Campaigns', 'Archive/Campaigns', new Config());
+
+        $this->assertTrue($adapter->fileExists('Campaigns/img.jpg'), 'physical object untouched');
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations);
+        $this->assertSame('move', $operations[0]->getType()->value);
+        $this->assertSame('Campaigns', $operations[0]->getSourcePrefix());
+        $this->assertSame('Archive/Campaigns', $operations[0]->getTargetPrefix());
+        // and the logical view is already correct:
+        $this->assertSame('bytes', $adapter->read('Archive/Campaigns/img.jpg'));
+    }
+
+    public function testMovingAnEmptyFolderThrowsAndQueuesNothing(): void
+    {
+        $adapter = $this->nonRenamingAdapter();
+
+        try {
+            $adapter->move('DoesNotExist', 'Elsewhere', new Config());
+            $this->fail('expected UnableToMoveFile');
+        } catch (UnableToMoveFile) {
+        }
+        $this->assertSame([], $this->repository->all());
+    }
+
+    public function testReMoveWithNativeRenameStillRepointsPendingRows(): void
+    {
+        // A -> B pending (objects at A); fresh literal upload under B; then B -> C where the
+        // backend CAN rename: literal B must be renamed AND the pending row must be repointed.
+        $adapter = $this->adapter(); // local, renaming
+        $adapter->write('A/img.jpg', 'from-a', new Config());
+        $this->addMove('A', 'B');
+        $adapter->write('B/fresh.jpg', 'from-b', new Config());
+
+        $adapter->move('B', 'C', new Config());
+
+        $this->assertSame('from-b', $adapter->read('C/fresh.jpg'), 'literal content renamed natively');
+        $this->assertSame('from-a', $adapter->read('C/img.jpg'), 'legacy content reachable via repointed row');
+        $pairs = array_map(
+            static fn ($op) => $op->getSourcePrefix() . '->' . ($op->getTargetPrefix() ?? ''),
+            $this->repository->all()
+        );
+        sort($pairs);
+        $this->assertSame(['A->C', 'B->C'], $pairs);
+    }
+
+    public function testDeleteDirectoryQueuesATombstone(): void
+    {
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('Campaigns/img.jpg', 'bytes', new Config());
+
+        $adapter->deleteDirectory('Campaigns');
+
+        $this->assertTrue($adapter->fileExists('Campaigns/img.jpg'), 'physical delete deferred');
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations);
+        $this->assertSame('delete', $operations[0]->getType()->value);
+        $this->assertSame('Campaigns', $operations[0]->getSourcePrefix());
+        $this->assertNull($operations[0]->getTargetPrefix());
+    }
+
+    public function testDeleteDirectoryOfNothingDelegates(): void
+    {
+        $adapter = $this->nonRenamingAdapter();
+
+        $adapter->deleteDirectory('DoesNotExist'); // Flysystem contract: no-op success
+
+        $this->assertSame([], $this->repository->all());
+    }
+
+    public function testDeleteDirectoryOfPendingMoveTargetTombstonesTheLegacyPrefix(): void
+    {
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('A/img.jpg', 'bytes', new Config());
+        $this->addMove('A', 'B');
+
+        $adapter->deleteDirectory('B');
+
+        $types = array_map(static fn ($op) => $op->getType()->value . ':' . $op->getSourcePrefix(), $this->repository->all());
+        sort($types);
+        $this->assertSame(['delete:A', 'delete:B'], $types);
     }
 }

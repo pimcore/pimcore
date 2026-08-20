@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Asset\StorageQueue;
 
+use DateTimeImmutable;
 use DateTimeInterface;
 use League\Flysystem\CalculateChecksumFromStream;
 use League\Flysystem\ChecksumProvider;
@@ -22,6 +23,7 @@ use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\UnableToGeneratePublicUrl;
 use League\Flysystem\UnableToGenerateTemporaryUrl;
+use League\Flysystem\UnableToMoveFile;
 use League\Flysystem\UrlGeneration\PublicUrlGenerator;
 use League\Flysystem\UrlGeneration\TemporaryUrlGenerator;
 
@@ -81,7 +83,26 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
 
     public function deleteDirectory(string $path): void
     {
-        $this->inner->deleteDirectory($path);
+        $hasContent = $this->inner->directoryExists($path)
+            || ($this->repository->hasOperations($this->storageName)
+                && $this->inner->directoryExists($this->resolveDirectoryPath($path)));
+
+        if (!$hasContent) {
+            $this->inner->deleteDirectory($path); // contract-preserving no-op
+
+            return;
+        }
+
+        // Always deferred when the feature is enabled - there is no "native failed" signal
+        // for deletes, and deferring a local delete until the processor run is harmless.
+        $this->repository->add(new StorageOperation(
+            null,
+            $this->storageName,
+            StorageOperationType::Delete,
+            $path,
+            null,
+            new DateTimeImmutable(),
+        ));
     }
 
     public function createDirectory(string $path, Config $config): void
@@ -121,7 +142,47 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
 
     public function move(string $source, string $destination, Config $config): void
     {
-        $this->inner->move($this->resolveFilePath($source), $destination, $config);
+        $resolvedSource = $this->resolveFilePath($source);
+        if ($this->inner->fileExists($resolvedSource)) {
+            // single file: normal move, source possibly at its legacy location
+            $this->inner->move($resolvedSource, $destination, $config);
+
+            return;
+        }
+
+        // prefix (directory) move
+        $hasOperations = $this->repository->hasOperations($this->storageName);
+        $literalDirectoryExists = $this->inner->directoryExists($source);
+
+        if (!$literalDirectoryExists && !($hasOperations && $this->inner->directoryExists($this->resolveDirectoryPath($source)))) {
+            throw UnableToMoveFile::fromLocationTo($source, $destination);
+        }
+
+        $movedNatively = false;
+        if ($literalDirectoryExists) {
+            try {
+                $this->inner->move($source, $destination, $config);
+                $movedNatively = true;
+            } catch (UnableToMoveFile) {
+                // backend cannot rename directories - fall through to queueing
+            }
+        }
+
+        if ($movedNatively && !$hasOperations) {
+            return; // clean native rename, nothing pending to repoint
+        }
+
+        // Queue the operation. When the native rename succeeded but rows were pending, the
+        // inserted row's source prefix is already physically empty - the processor removes it -
+        // while add()'s repoint keeps legacy rows pointing at the new destination.
+        $this->repository->add(new StorageOperation(
+            null,
+            $this->storageName,
+            StorageOperationType::Move,
+            $source,
+            $destination,
+            new DateTimeImmutable(),
+        ));
     }
 
     public function copy(string $source, string $destination, Config $config): void
