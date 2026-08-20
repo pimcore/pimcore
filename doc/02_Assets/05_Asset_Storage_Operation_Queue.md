@@ -32,9 +32,12 @@ first and then the mapped (pre-move) candidate paths. Writes always go to the li
 (post-move) path.
 
 Enable it when asset folders on an object storage backend are moved or deleted often
-enough, or are large enough, that the synchronous per-object cost is a problem. If all
-your asset storages are local filesystem or SFTP, the feature has no effect beyond the
-adapter decoration, since those backends always succeed at a native rename.
+enough, or are large enough, that the synchronous per-object cost is a problem. Folder
+*moves* on a local filesystem or SFTP backend are unaffected — those backends always
+succeed at a native rename, so no move row is ever created. Folder *deletes*, however,
+are always deferred via a tombstone row on every backend, including local filesystem
+and SFTP — enabling the flag means the processing command's cron obligation (see below)
+applies even to local/SFTP-only installs.
 
 ## Enabling
 
@@ -72,6 +75,12 @@ command exits with code `1` if any individual row fails to process. Rows are app
 oldest first, and each apply is timestamp-guarded: if a folder name was re-used and new
 content was written into it after the original operation was queued, that new content
 is never touched, and an existing target file or folder is never overwritten.
+
+**The lock uses Symfony's default lock store, which is machine-local.** If the cron
+could run on more than one host (e.g. multiple web/worker nodes behind a load
+balancer), either schedule it on a single, fixed host, or configure a shared
+`framework.lock` store (e.g. a database or Redis/Valkey store) so the lock is honored
+across hosts.
 
 To monitor whether the queue is being processed, use:
 
@@ -127,8 +136,9 @@ Between the moment an operation is queued and the moment it is processed:
 
 ## Extension Point
 
-Processing applies each queued operation using the affected storage adapter's own copy
-and delete operations. Projects that need backend-optimized bulk data movement (for
-example a cloud provider's native server-side batch copy/move API instead of per-object
-Flysystem calls) can replace the `pimcore.asset.storage_queue.processor` service with a
-custom implementation.
+Processing intentionally uses each affected storage adapter's own copy and delete
+operations rather than a backend-optimized bulk API. The processor service is internal
+and not currently replaceable — there is no public customization surface in this
+version. Backend-optimized movers (for example a cloud provider's native server-side
+batch copy/move API instead of per-object Flysystem calls) are a possible future
+extension.

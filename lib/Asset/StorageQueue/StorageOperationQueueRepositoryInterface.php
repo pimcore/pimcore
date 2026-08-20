@@ -46,4 +46,13 @@ interface StorageOperationQueueRepositoryInterface
     public function findById(int $id): ?StorageOperation;
 
     public function remove(int $id): void;
+
+    /**
+     * Compare-and-delete: removes the row only if it still matches every given column (id,
+     * storage, operation type, source prefix, target prefix) at the moment of the delete.
+     * Guards against removing a row that live traffic mutated (repoint on re-move, conversion
+     * to a delete on a covering delete) after the processor read it into memory but before it
+     * finished applying it - the caller must reconcile and retry when this returns false.
+     */
+    public function removeIfUnchanged(StorageOperation $operation): bool;
 }

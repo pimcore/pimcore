@@ -135,6 +135,30 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
         }
     }
 
+    public function removeIfUnchanged(StorageOperation $operation): bool
+    {
+        $affected = $this->db->executeStatement(
+            'DELETE FROM ' . self::TABLE
+            . ' WHERE `id` = :id AND `storage` = :storage AND `operation` = :operation'
+            . ' AND `source_prefix` = :sourcePrefix AND (`target_prefix` <=> :targetPrefix)',
+            [
+                'id' => (int) $operation->getId(),
+                'storage' => $operation->getStorage(),
+                'operation' => $operation->getType()->value,
+                'sourcePrefix' => $operation->getSourcePrefix(),
+                'targetPrefix' => $operation->getTargetPrefix(),
+            ]
+        );
+
+        if ($affected > 0) {
+            $this->invalidateHasOperationsCache($operation->getStorage());
+
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * A prefix that was itself the target of pending moves is moving on: repoint those rows to
      * the new target so lookups stay flat (single-hop candidates, never chains). Rows that

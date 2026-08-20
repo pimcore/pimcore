@@ -77,6 +77,9 @@ final class StorageQueueProcessCommand extends AbstractCommand
                 $result->getPendingRows(),
                 $result->isTimedOut() ? ' (stopped at max-runtime)' : ''
             ));
+            if ($id !== null && $result->getProcessedRows() === 0 && $result->getFailedRows() === 0) {
+                $output->writeln(sprintf('<comment>No queue row found with id %d.</comment>', $id));
+            }
             foreach ($result->getErrors() as $error) {
                 $this->writeError($error);
             }

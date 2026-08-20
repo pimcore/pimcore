@@ -100,6 +100,25 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
         );
     }
 
+    public function removeIfUnchanged(StorageOperation $operation): bool
+    {
+        foreach ($this->operations as $i => $op) {
+            if ($op->getId() === $operation->getId()
+                && $op->getStorage() === $operation->getStorage()
+                && $op->getType() === $operation->getType()
+                && $op->getSourcePrefix() === $operation->getSourcePrefix()
+                && $op->getTargetPrefix() === $operation->getTargetPrefix()
+            ) {
+                unset($this->operations[$i]);
+                $this->operations = array_values($this->operations);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function repointMoves(string $storage, string $movedPrefix, string $newPrefix): void
     {
         $this->repoint($storage, $movedPrefix, $newPrefix);

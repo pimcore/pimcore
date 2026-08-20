@@ -104,6 +104,18 @@ class StorageQueueCommandsTest extends Unit
         $this->assertTrue($this->adapter->fileExists('Moved/One/a.jpg'));
     }
 
+    public function testProcessWarnsWhenIdOptionMatchesNoRow(): void
+    {
+        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $this->realProcessor());
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute(['--id' => '999999']);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('0 processed', $tester->getDisplay());
+        $this->assertStringContainsString('No queue row found with id 999999', $tester->getDisplay());
+    }
+
     public function testProcessExitsFailureWhenARowFails(): void
     {
         // storage 'asset' resolves, but source dir listing fails? Simpler: unknown storage via a strict locator

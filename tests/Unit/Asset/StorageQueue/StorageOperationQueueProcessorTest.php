@@ -14,10 +14,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Asset\StorageQueue;
 
+use Closure;
 use Codeception\Test\Unit;
 use DateTimeImmutable;
 use FilesystemIterator;
 use League\Flysystem\Config;
+use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Pimcore\Asset\StorageQueue\StorageOperation;
@@ -178,7 +180,7 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame([], $this->repository->all());
     }
 
-    public function testRowsAreProcessedInFifoOrderAndOnlyIdFilters(): void
+    public function testOnlyIdFilters(): void
     {
         $this->write('One/a.jpg', '1');
         $this->write('Two/b.jpg', '2');
@@ -192,6 +194,23 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame(1, $result->getPendingRows(), 'row One untouched by --id run');
         $this->assertTrue($this->adapter->fileExists('Moved/Two/b.jpg'));
         $this->assertTrue($this->adapter->fileExists('One/a.jpg'));
+    }
+
+    public function testRowsAreProcessedInFifoOrder(): void
+    {
+        // both rows drain into the same target key with different content - FIFO + literal-wins
+        // means row1 (added first) must win and row2's colliding file must be superseded-deleted
+        $this->writeWithMtime('A/same.jpg', 'from-A', time() - 7200);
+        $this->writeWithMtime('B/same.jpg', 'from-B', time() - 7200);
+        $this->addRow(StorageOperationType::Move, 'A', 'T', new DateTimeImmutable('-1 hour'));
+        $this->addRow(StorageOperationType::Move, 'B', 'T', new DateTimeImmutable('-1 hour'));
+
+        $result = $this->processor()->process();
+
+        $this->assertSame(2, $result->getProcessedRows());
+        $this->assertSame('from-A', $this->adapter->read('T/same.jpg'), 'row1 (FIFO first) copy wins; row2 file is superseded-deleted');
+        $this->assertFalse($this->adapter->fileExists('A/same.jpg'));
+        $this->assertFalse($this->adapter->fileExists('B/same.jpg'));
     }
 
     public function testFailureIsolationContinuesWithNextRow(): void
@@ -238,6 +257,110 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame('same-bytes', $this->adapter->read('Archive/Campaigns/a.jpg'));
         $this->assertFalse($this->adapter->fileExists('Campaigns/a.jpg'));
     }
+
+    /**
+     * C1 regression: live traffic re-moves the row's target (B -> C) while the processor is
+     * mid-drain, holding a stale A -> B snapshot. Without reconciliation, files copied to B
+     * before the repoint strand there permanently once row #1 is removed (its DB row now
+     * points at C, but the bytes physically sit at B with nothing left to move them again).
+     */
+    public function testMidDrainRepointReconcilesCopiesToNewTarget(): void
+    {
+        for ($i = 1; $i <= 8; $i++) {
+            $this->writeWithMtime("A/file{$i}.jpg", "content-{$i}", time() - 7200);
+        }
+        $this->addRow(StorageOperationType::Move, 'A', 'B', new DateTimeImmutable('+5 seconds'));
+
+        $mutatingAdapter = new StorageOperationQueueProcessorTestMutatingAdapter(
+            $this->adapter,
+            4,
+            function (): void {
+                // simulates a live QueueAwareStorageAdapter::move() re-moving B -> C: repoints
+                // the pending A -> B row to A -> C and inserts the B -> C row
+                $this->repository->add(new StorageOperation(
+                    null, 'asset', StorageOperationType::Move, 'B', 'C', new DateTimeImmutable()
+                ));
+            }
+        );
+        $locator = new StorageOperationQueueProcessorTestAdapterLocator($mutatingAdapter);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger(), 3);
+
+        $result = $processor->process();
+
+        $this->assertSame(1, $result->getProcessedRows(), 'row #1 (moved-then-repointed) completed');
+        for ($i = 1; $i <= 8; $i++) {
+            $this->assertSame(
+                "content-{$i}",
+                $this->adapter->read("C/file{$i}.jpg"),
+                "file{$i} must land at the final target C, not strand at the stale mid-drain target B"
+            );
+            $this->assertFalse($this->adapter->fileExists("B/file{$i}.jpg"), "file{$i} must not remain at the stale target B");
+        }
+
+        // row #2 (B -> C, inserted by the callback) is still queued - a second run finishes it
+        $result = $processor->process();
+
+        $this->assertSame([], $this->repository->all(), 'queue empty once the follow-up row is processed');
+        $this->assertFalse($this->adapter->directoryExists('B'), 'stale target cleaned up once drained');
+        for ($i = 1; $i <= 8; $i++) {
+            $this->assertSame("content-{$i}", $this->adapter->read("C/file{$i}.jpg"));
+        }
+    }
+
+    /**
+     * C1 regression: live traffic deletes the row's target (B) while the processor is mid-drain,
+     * converting the pending A -> B move into a Delete-A tombstone. Without reconciliation, the
+     * processor - still holding the stale Move snapshot - keeps copying A's remaining content
+     * into B after the user already deleted it (deleted-content resurrection).
+     */
+    public function testMidDrainConversionToDeleteRemovesTrackedCopies(): void
+    {
+        for ($i = 1; $i <= 8; $i++) {
+            $this->writeWithMtime("A/file{$i}.jpg", "content-{$i}", time() - 7200);
+        }
+        $this->addRow(StorageOperationType::Move, 'A', 'B', new DateTimeImmutable('+5 seconds'));
+
+        $mutatingAdapter = new StorageOperationQueueProcessorTestMutatingAdapter(
+            $this->adapter,
+            4,
+            function (): void {
+                // simulates a live QueueAwareStorageAdapter::deleteDirectory('B'): converts the
+                // pending A -> B move row into a Delete-A tombstone and adds a Delete-B tombstone
+                $this->repository->add(new StorageOperation(
+                    null, 'asset', StorageOperationType::Delete, 'B', null, new DateTimeImmutable()
+                ));
+            }
+        );
+        $locator = new StorageOperationQueueProcessorTestAdapterLocator($mutatingAdapter);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger(), 3);
+
+        $result = $processor->process();
+
+        $this->assertSame(0, $result->getProcessedRows(), 'the converted row is aborted mid-drain, not completed');
+        for ($i = 1; $i <= 8; $i++) {
+            $this->assertFalse(
+                $this->adapter->fileExists("B/file{$i}.jpg"),
+                "file{$i}: tracked copy at the stale target B must be removed, not resurrect deleted content"
+            );
+        }
+        $remaining = $this->repository->all();
+        $this->assertCount(2, $remaining, 'the converted Delete-A row and the new Delete-B row both remain queued');
+        $sources = array_map(static fn (StorageOperation $op) => $op->getSourcePrefix(), $remaining);
+        sort($sources);
+        $this->assertSame(['A', 'B'], $sources);
+        foreach ($remaining as $op) {
+            $this->assertSame(StorageOperationType::Delete, $op->getType());
+        }
+
+        $result = $processor->process();
+
+        $this->assertSame([], $this->repository->all(), 'queue empty once both delete rows complete');
+        $this->assertFalse($this->adapter->directoryExists('A'));
+        for ($i = 1; $i <= 8; $i++) {
+            $this->assertFalse($this->adapter->fileExists("A/file{$i}.jpg"));
+            $this->assertFalse($this->adapter->fileExists("B/file{$i}.jpg"));
+        }
+    }
 }
 
 /**
@@ -268,4 +391,112 @@ final class StorageOperationQueueProcessorTestAdapterLocator implements Containe
 
 final class StorageOperationQueueProcessorTestAdapterNotFoundException extends RuntimeException implements NotFoundExceptionInterface
 {
+}
+
+/**
+ * Test-only Flysystem adapter decorator: wraps another adapter and invokes a callback exactly
+ * once, right after the Nth copy() call completes, to simulate live traffic mutating the row
+ * the processor is currently draining (a re-move or a covering delete) against the fake
+ * repository, exactly as QueueAwareStorageAdapter::move()/deleteDirectory() would. Delegates
+ * every other call unchanged.
+ */
+final class StorageOperationQueueProcessorTestMutatingAdapter implements FilesystemAdapter
+{
+    private int $copyCount = 0;
+
+    public function __construct(
+        private readonly FilesystemAdapter $inner,
+        private readonly int $afterNthCopy,
+        private readonly Closure $callback,
+    ) {
+    }
+
+    public function copy(string $source, string $destination, Config $config): void
+    {
+        $this->inner->copy($source, $destination, $config);
+        $this->copyCount++;
+        if ($this->copyCount === $this->afterNthCopy) {
+            ($this->callback)();
+        }
+    }
+
+    public function fileExists(string $path): bool
+    {
+        return $this->inner->fileExists($path);
+    }
+
+    public function directoryExists(string $path): bool
+    {
+        return $this->inner->directoryExists($path);
+    }
+
+    public function write(string $path, string $contents, Config $config): void
+    {
+        $this->inner->write($path, $contents, $config);
+    }
+
+    public function writeStream(string $path, $contents, Config $config): void
+    {
+        $this->inner->writeStream($path, $contents, $config);
+    }
+
+    public function read(string $path): string
+    {
+        return $this->inner->read($path);
+    }
+
+    public function readStream(string $path)
+    {
+        return $this->inner->readStream($path);
+    }
+
+    public function delete(string $path): void
+    {
+        $this->inner->delete($path);
+    }
+
+    public function deleteDirectory(string $path): void
+    {
+        $this->inner->deleteDirectory($path);
+    }
+
+    public function createDirectory(string $path, Config $config): void
+    {
+        $this->inner->createDirectory($path, $config);
+    }
+
+    public function setVisibility(string $path, string $visibility): void
+    {
+        $this->inner->setVisibility($path, $visibility);
+    }
+
+    public function visibility(string $path): FileAttributes
+    {
+        return $this->inner->visibility($path);
+    }
+
+    public function mimeType(string $path): FileAttributes
+    {
+        return $this->inner->mimeType($path);
+    }
+
+    public function lastModified(string $path): FileAttributes
+    {
+        return $this->inner->lastModified($path);
+    }
+
+    public function fileSize(string $path): FileAttributes
+    {
+        return $this->inner->fileSize($path);
+    }
+
+    public function listContents(string $path, bool $deep): iterable
+    {
+        return $this->inner->listContents($path, $deep);
+    }
+
+    public function move(string $source, string $destination, Config $config): void
+    {
+        $this->inner->move($source, $destination, $config);
+    }
 }

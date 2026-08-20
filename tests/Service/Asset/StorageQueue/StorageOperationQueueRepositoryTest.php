@@ -199,6 +199,30 @@ class StorageOperationQueueRepositoryTest extends TestCase
         ], $pairs);
     }
 
+    public function testRemoveIfUnchangedMatchesAllColumns(): void
+    {
+        $this->repository->add($this->move('asset', 'A', 'B'));
+        $stored = $this->repository->all()[0];
+
+        // target differs from what's stored - must not remove, row stays queued
+        $stale = new StorageOperation(
+            $stored->getId(), 'asset', StorageOperationType::Move, 'A', 'Elsewhere', $stored->getCreatedAt()
+        );
+        $this->assertFalse($this->repository->removeIfUnchanged($stale));
+        $this->assertNotNull($this->repository->findById((int) $stored->getId()));
+        $this->assertTrue($this->repository->hasOperations('asset'));
+
+        // full match (including a delete row's NULL target, via the null-safe comparison) - removes
+        $this->assertTrue($this->repository->removeIfUnchanged($stored));
+        $this->assertNull($this->repository->findById((int) $stored->getId()));
+        $this->assertFalse($this->repository->hasOperations('asset'), 'cache invalidated on success');
+
+        $this->repository->add($this->delete('asset', 'Trash'));
+        $deleteRow = $this->repository->all()[0];
+        $this->assertTrue($this->repository->removeIfUnchanged($deleteRow), 'null target_prefix matches via null-safe comparison');
+        $this->assertFalse($this->repository->hasOperations('asset'));
+    }
+
     public function testCreatedAtRoundTripsAcrossTimezones(): void
     {
         $originalTz = date_default_timezone_get();

@@ -66,6 +66,11 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
         $this->inner->writeStream($path, $contents, $config);
     }
 
+    // M3: resolveFilePath() picks a candidate path (literal or mapped) that exists at the time
+    // of the check, but the processor run can drain that exact candidate between this check and
+    // the read/readStream call below - an accepted, transient TOCTOU. It is never destructive
+    // (the processor only removes a source once its copy at the target is verified) and a
+    // retried read succeeds via the literal target once the row is fully applied.
     public function read(string $path): string
     {
         return $this->inner->read($this->resolveFilePath($path));
