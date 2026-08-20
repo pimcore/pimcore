@@ -17,6 +17,7 @@ use League\Flysystem\FilesystemOperator;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\Controller\PublicServicesController;
 use Pimcore\Config;
+use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
@@ -204,6 +205,42 @@ class AssetThumbnailCacheTest extends TestCase
             $assetsConfig['thumbnails']['cache_lifetime'] = $originalLifetime;
             Config::setSystemConfiguration($assetsConfig, 'assets');
         }
+    }
+
+    /**
+     * Regression test for the ORIGINAL format: the processor streams the source
+     * file to the storage without writing the local temp path, but used to pass
+     * that never-written temp path to addThumbnailFileToCache(), so the status
+     * cache row was never created and every generation logged an error.
+     */
+    public function testOriginalFormatThumbnailWritesStatusCache(): void
+    {
+        /** @var Asset\Image $asset */
+        $asset = $this->testAsset;
+
+        $thumbConfig = TestHelper::createThumbnailConfigurationOriginalFormat();
+        $thumbnailName = $thumbConfig->getName();
+
+        $thumb = $asset->getThumbnail($thumbnailName);
+        $asset->clearThumbnails(true);
+        $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $thumb->getFilename()));
+
+        //create thumbnail
+        $thumb->getPath(['deferredAllowed' => false]);
+
+        $this->assertTrue(Storage::get('thumbnail')->fileExists($thumb->getPathReference(true)['storagePath']));
+        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $thumb->getFilename()));
+
+        //ORIGINAL is a passthrough of the source file, so the cached dimensions
+        //and file size must be those of the source
+        $cacheRow = Db::get()->fetchAssociative(
+            'SELECT filesize, width, height FROM assets_image_thumbnail_cache WHERE cid = ? AND name = ? AND filename = ?',
+            [$asset->getId(), $thumbnailName, $thumb->getFilename()]
+        );
+        $this->assertNotFalse($cacheRow);
+        $this->assertSame($asset->getFileSize(), (int) $cacheRow['filesize']);
+        $this->assertSame($asset->getWidth(), (int) $cacheRow['width']);
+        $this->assertSame($asset->getHeight(), (int) $cacheRow['height']);
     }
 
     /**
