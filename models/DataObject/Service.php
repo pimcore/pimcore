@@ -817,6 +817,13 @@ class Service extends Model\Element\Service
         foreach ($permissionList as $permissionSet) {
             $allowedLayoutIds = self::getLayoutPermissions($classId, $permissionSet);
             if (is_array($allowedLayoutIds)) {
+                // layout id 0 is the class' main layout, i.e. the user is not restricted to custom
+                // layouts - same as in getValidLayouts(). The grid must not be reduced to the
+                // intersection of the remaining custom layouts then.
+                if (isset($allowedLayoutIds[0])) {
+                    continue;
+                }
+
                 foreach ($allowedLayoutIds as $allowedLayoutId) {
                     if ($allowedLayoutId) {
                         if (!isset($layoutDefinitions[$allowedLayoutId])) {

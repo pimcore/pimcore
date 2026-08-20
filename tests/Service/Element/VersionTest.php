@@ -250,6 +250,55 @@ class VersionTest extends TestCase
         $this->assertEmpty($result['binaryData'], 'binaryData must be empty.');
     }
 
+    /**
+     * Regression test for https://github.com/pimcore/pimcore/issues/18522
+     *
+     * fetchOne() yields false when no versionsData row matches. That false has to be
+     * normalized to null, otherwise the ?string return type of loadMetaData() and the
+     * string argument type of getStream() raise a TypeError under strict_types.
+     */
+    public function testDbStorageAdapterReturnsNullWhenNoDataRowExists(): void
+    {
+        $adapter = new DatabaseVersionStorageAdapter(Db::get());
+
+        // a version that never had a corresponding versionsData row
+        $version = new Version();
+        $version->setId(999999999);
+        $version->setCid(999999999);
+        $version->setCtype('object');
+
+        $this->assertNull($adapter->loadMetaData($version), 'loadMetaData must return null when no data row exists.');
+        $this->assertNull($adapter->getFileStream($version), 'getFileStream must return null when no data row exists.');
+        $this->assertNull($adapter->loadBinaryData($version), 'loadBinaryData must return null when no data row exists.');
+        $this->assertNull($adapter->getBinaryFileStream($version), 'getBinaryFileStream must return null when no data row exists.');
+    }
+
+    /**
+     * Regression test for https://github.com/pimcore/pimcore/issues/18522
+     *
+     * Same missing-row path as above, but reached the way it happens in practice: the
+     * versions row outlives its versionsData row.
+     */
+    public function testDbStorageAdapterReturnsNullAfterDataRowRemoved(): void
+    {
+        $this->setStorageAdapter($this->mockDbStorageAdapter());
+        $object = TestHelper::createEmptyObject();
+        $version = $this->getNewestVersion($object->getId());
+
+        $adapter = new DatabaseVersionStorageAdapter(Db::get());
+        $this->assertNotNull($adapter->loadMetaData($version), 'metaData must be readable before the data row is removed.');
+
+        Db::get()->delete(DatabaseVersionStorageAdapter::versionsTableName, [
+            'id' => $version->getId(),
+            'cid' => $version->getCid(),
+            'ctype' => $version->getCtype(),
+        ]);
+
+        $this->assertNull($adapter->loadMetaData($version), 'loadMetaData must return null once the data row is gone.');
+        $this->assertNull($adapter->getFileStream($version), 'getFileStream must return null once the data row is gone.');
+        $this->assertNull($adapter->loadBinaryData($version), 'loadBinaryData must return null once the data row is gone.');
+    }
+
     // Size of metadata exceeds "byteThreshold". Therefore, the fallback adapter (fs) should be used.
     public function testStorageAdapterDelegate(): void
     {
