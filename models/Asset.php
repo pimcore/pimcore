@@ -97,10 +97,7 @@ class Asset extends Element\AbstractElement
      */
     protected $stream;
 
-    /**
-     * @internal
-     */
-    protected bool $streamIsPlaceholder = false;
+    private bool $streamIsPlaceholder = false;
 
     /**
      * @internal
