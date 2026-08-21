@@ -435,6 +435,8 @@ trait ImageThumbnailTrait
 
             return $localFile;
         }
+
+        return null;
     }
 
     public function exists(): bool
