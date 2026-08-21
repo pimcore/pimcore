@@ -758,4 +758,64 @@ class QueueAwareStorageAdapterTest extends Unit
         $this->assertFalse($adapter->fileExists('B/x.jpg'));
         $this->assertFalse($this->adapter()->fileExists('A/x.jpg'), 'stale legacy object must be physically gone');
     }
+
+    public function testMappedOnlyReMoveRepointsWithoutInsertingRow(): void
+    {
+        // A -> B pending, content only reachable under A (nothing literal under B - B is a
+        // not-yet-drained mapped subtree). Re-moving B -> C must repoint the pending row to
+        // A -> C directly and must NOT insert a vacuous B -> C row, since nothing literal
+        // exists under B to move.
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('A/img.jpg', 'from-a', new Config());
+        $this->addMove('A', 'B');
+
+        $adapter->move('B', 'C', new Config());
+
+        $pairs = array_map(
+            static fn ($op) => $op->getSourcePrefix() . '->' . ($op->getTargetPrefix() ?? ''),
+            $this->repository->all()
+        );
+        sort($pairs);
+        $this->assertSame(['A->C'], $pairs, 'no vacuous B->C row for a mapped-only re-move');
+        $this->assertSame('from-a', $adapter->read('C/img.jpg'), 'content still reachable via the repointed row');
+    }
+
+    public function testMappedOnlyReMoveDoesNotShadowRecreatedSource(): void
+    {
+        // Same setup as above, then B is re-created from scratch with fresh literal content. A
+        // vacuous B->C row would wrongly serve B's fresh content through C.
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('A/img.jpg', 'from-a', new Config());
+        $this->addMove('A', 'B');
+
+        $adapter->move('B', 'C', new Config());
+
+        $adapter->write('B/new-era.jpg', 'new', new Config());
+
+        try {
+            $adapter->read('C/new-era.jpg');
+            $this->fail('expected UnableToReadFile: no vacuous row should shadow the re-created source');
+        } catch (UnableToReadFile) {
+        }
+        $this->assertFalse($adapter->fileExists('C/new-era.jpg'));
+    }
+
+    public function testLiteralContentReMoveStillInsertsRow(): void
+    {
+        // Pin the complementary case: when literal content DOES exist under the re-moved
+        // source (on a non-renaming backend), the Move row must still be inserted.
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('B/fresh.jpg', 'from-b', new Config());
+        $this->addMove('A', 'B'); // A -> B pending, no literal content under A
+
+        $adapter->move('B', 'C', new Config());
+
+        $pairs = array_map(
+            static fn ($op) => $op->getSourcePrefix() . '->' . ($op->getTargetPrefix() ?? ''),
+            $this->repository->all()
+        );
+        sort($pairs);
+        $this->assertSame(['A->C', 'B->C'], $pairs, 'literal content under the source still needs its own row');
+        $this->assertSame('from-b', $adapter->read('C/fresh.jpg'));
+    }
 }

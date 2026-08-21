@@ -75,7 +75,12 @@ final class StorageQueueProcessCommand extends AbstractCommand
         try {
             $maxRuntime = $input->getOption('max-runtime') !== null ? (int) $input->getOption('max-runtime') : null;
 
-            $result = $this->processor->process($id, $maxRuntime);
+            // Refreshes the lock (resetting its 86400s TTL) at interval ticks during long runs.
+            // If the lock was lost, refresh() throws LockConflictedException - the processor
+            // catches and logs it, letting the run finish rather than aborting mid-drain
+            // (single-host semantics: a second concurrent run is prevented by the acquire() above,
+            // not by this heartbeat).
+            $result = $this->processor->process($id, $maxRuntime, static fn () => $lock->refresh());
 
             $output->writeln(sprintf(
                 '%d processed, %d failed, %d pending%s',

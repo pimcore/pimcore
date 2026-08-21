@@ -282,8 +282,22 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             return;
         }
 
-        // Queue the operation: the backend could not (or did not attempt to) move the prefix
-        // physically, so reads/writes must be translated until the processor catches up.
+        if (!$literalDirectoryExists) {
+            // The source exists purely through pending mappings (a re-move of a not-yet-drained
+            // subtree) - nothing literal sits under $source to move physically. repointMoves()
+            // redirects the existing rows covering $source onto the new target directly; a Move
+            // row for $source itself would be vacuous and would wrongly shadow whatever gets
+            // (re-)created at $source afterwards.
+            if ($hasOperations) {
+                $this->repository->repointMoves($this->storageName, $source, $destination);
+            }
+
+            return;
+        }
+
+        // Queue the operation: literal content exists under the source but the backend could not
+        // (or did not attempt to) move it physically, so reads/writes must be translated until
+        // the processor catches up.
         $this->repository->add(new StorageOperation(
             null,
             $this->storageName,

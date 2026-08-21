@@ -30,6 +30,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\NullLogger;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use ReflectionMethod;
 use RuntimeException;
 
 class StorageOperationQueueProcessorTest extends Unit
@@ -251,8 +252,11 @@ class StorageOperationQueueProcessorTest extends Unit
 
     public function testRowsAreProcessedInFifoOrder(): void
     {
-        // both rows drain into the same target key with different content - FIFO + literal-wins
-        // means row1 (added first) must win and row2's colliding file must be superseded-deleted
+        // Both rows drain into the same target key with different content. G2 (Copilot review
+        // round 2): Move rows sharing an identical target_prefix are drained newest-first, so
+        // row2 (added second) must win and row1's colliding file is superseded-deleted - this
+        // is the same newest-first tie-break exercised by testReplacedAssetSurvivesFlattenedReMoveDrain,
+        // here for two independently-queued rows that happen to share a target.
         $this->writeWithMtime('A/same.jpg', 'from-A', time() - 7200);
         $this->writeWithMtime('B/same.jpg', 'from-B', time() - 7200);
         $this->addRow(StorageOperationType::Move, 'A', 'T', new DateTimeImmutable('-1 hour'));
@@ -261,7 +265,7 @@ class StorageOperationQueueProcessorTest extends Unit
         $result = $this->processor()->process();
 
         $this->assertSame(2, $result->getProcessedRows());
-        $this->assertSame('from-A', $this->adapter->read('T/same.jpg'), 'row1 (FIFO first) copy wins; row2 file is superseded-deleted');
+        $this->assertSame('from-B', $this->adapter->read('T/same.jpg'), 'row2 (newest, same target) copy wins; row1 file is superseded-deleted');
         $this->assertFalse($this->adapter->fileExists('A/same.jpg'));
         $this->assertFalse($this->adapter->fileExists('B/same.jpg'));
     }
@@ -413,6 +417,135 @@ class StorageOperationQueueProcessorTest extends Unit
             $this->assertFalse($this->adapter->fileExists("A/file{$i}.jpg"));
             $this->assertFalse($this->adapter->fileExists("B/file{$i}.jpg"));
         }
+    }
+
+    /**
+     * G2 regression (Copilot review round 2): pending A -> B; the user replaces the asset
+     * (fresh bytes land literally at B/x); the user then moves B -> C, which repoints the
+     * pending row (A -> C, older) and adds a new row (B -> C, newer) - both now sharing the
+     * SAME target. Strict FIFO drains the older A -> C row first, landing the STALE bytes at
+     * C/x; the newer B -> C row then sees the target already occupied and deletes the FRESH
+     * B/x - permanent data loss. Draining same-target Move rows newest-first fixes this.
+     */
+    public function testReplacedAssetSurvivesFlattenedReMoveDrain(): void
+    {
+        $t1 = time() - 7200; // row1 (A -> B, later repointed to A -> C) cutoff
+        $t2 = time() - 3600; // row2 (B -> C) cutoff
+
+        $this->writeWithMtime('A/x.jpg', 'stale-bytes', $t1 - 3600); // pre-cutoff for row1
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Move, 'A', 'B', (new DateTimeImmutable())->setTimestamp($t1)
+        ));
+        // fresh replacement, written between row1's and row2's cutoffs
+        $this->writeWithMtime('B/x.jpg', 'fresh-bytes', $t1 + 1800);
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Move, 'B', 'C', (new DateTimeImmutable())->setTimestamp($t2)
+        ));
+
+        $result = $this->processor()->process();
+
+        $this->assertSame(
+            'fresh-bytes',
+            $this->adapter->read('C/x.jpg'),
+            'the fresh replacement must survive the flattened re-move drain'
+        );
+        $this->assertFalse($this->adapter->fileExists('A/x.jpg'));
+        $this->assertFalse($this->adapter->fileExists('B/x.jpg'));
+        $this->assertFalse($this->adapter->directoryExists('A'), 'source A fully drained');
+        $this->assertFalse($this->adapter->directoryExists('B'), 'source B fully drained');
+        $this->assertSame(2, $result->getProcessedRows());
+        $this->assertSame([], $this->repository->all(), 'queue empty - both rows complete');
+    }
+
+    /**
+     * G3 regression (Copilot review round 2): a Move-row entry whose mtime lands EXACTLY on the
+     * row's cutoff second was, on BASE, skipped entirely by the drain (same treatment as a
+     * strictly-post-cutoff namespace-reuse file) - yet the completion re-list already spares
+     * equality from blocking completion, so the row completed and stranded the file: gone from
+     * the (deleted) source directory tree conceptually reachable only at the source, never
+     * copied to the target. The fix copies equality files to the target (without deleting the
+     * source) so they stay reachable at BOTH ends.
+     */
+    public function testSameSecondFileOnMoveRowStaysReadableAtBothEnds(): void
+    {
+        $ts = time() - 3600;
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Move, 'Campaigns', 'Archive/Campaigns', (new DateTimeImmutable())->setTimestamp($ts)
+        ));
+        $this->writeWithMtime('Campaigns/pre-cutoff.jpg', 'pre', $ts - 10);
+        $this->writeWithMtime('Campaigns/equal.jpg', 'equal', $ts);
+
+        $result = $this->processor()->process();
+
+        $this->assertSame(1, $result->getProcessedRows(), 'the row completes');
+        $this->assertSame([], $this->repository->all());
+        $this->assertSame('equal', $this->adapter->read('Archive/Campaigns/equal.jpg'), 'equal-cutoff file must be reachable at the target');
+        $this->assertSame('equal', $this->adapter->read('Campaigns/equal.jpg'), 'equal-cutoff file must still be present at the source (duplicate accepted)');
+        $this->assertSame('pre', $this->adapter->read('Archive/Campaigns/pre-cutoff.jpg'), 'strictly pre-cutoff sibling is moved normally');
+        $this->assertFalse($this->adapter->fileExists('Campaigns/pre-cutoff.jpg'), 'strictly pre-cutoff sibling is removed from the source');
+    }
+
+    /**
+     * G4 (Copilot review round 2): the processor invokes the optional heartbeat closure at
+     * interval ticks during a drain, so a caller (the command) can refresh a held lock on long
+     * runs.
+     */
+    public function testHeartbeatIsInvokedDuringProcessing(): void
+    {
+        for ($i = 1; $i <= 5; $i++) {
+            $this->write("Campaigns/file{$i}.jpg", "content-{$i}");
+        }
+        $this->addRow(StorageOperationType::Move, 'Campaigns', 'Archive/Campaigns');
+        $locator = new StorageOperationQueueProcessorTestAdapterLocator($this->adapter);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger(), 2);
+
+        $calls = 0;
+        $result = $processor->process(null, null, function () use (&$calls): void {
+            $calls++;
+        });
+
+        $this->assertSame(1, $result->getProcessedRows());
+        $this->assertGreaterThanOrEqual(1, $calls, 'heartbeat must fire at least once across the interval ticks');
+    }
+
+    public function testThrowingHeartbeatDoesNotFailProcessing(): void
+    {
+        $this->write('Campaigns/a.jpg', 'a');
+        $this->addRow(StorageOperationType::Move, 'Campaigns', 'Archive/Campaigns');
+        $locator = new StorageOperationQueueProcessorTestAdapterLocator($this->adapter);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger(), 1);
+
+        $result = $processor->process(null, null, static function (): void {
+            throw new RuntimeException('lock lost');
+        });
+
+        $this->assertSame(1, $result->getProcessedRows(), 'a failing heartbeat must not fail the run');
+        $this->assertSame(0, $result->getFailedRows());
+        $this->assertTrue($this->adapter->fileExists('Archive/Campaigns/a.jpg'));
+    }
+
+    public function testOrderForProcessingKeepsFifoOtherwise(): void
+    {
+        $ops = [
+            new StorageOperation(1, 'asset', StorageOperationType::Delete, 'D', null, new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Move, 'M1', 'X', new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'M2', 'Y', new DateTimeImmutable()),
+            new StorageOperation(4, 'asset', StorageOperationType::Move, 'M3', 'Z', new DateTimeImmutable()),
+            new StorageOperation(5, 'asset', StorageOperationType::Move, 'M4', 'Z', new DateTimeImmutable()),
+        ];
+
+        $processor = $this->processor();
+        $method = new ReflectionMethod($processor, 'orderForProcessing');
+        $method->setAccessible(true);
+
+        /** @var StorageOperation[] $ordered */
+        $ordered = $method->invoke($processor, $ops);
+
+        $this->assertSame(
+            [1, 2, 3, 5, 4],
+            array_map(static fn (StorageOperation $op) => $op->getId(), $ordered),
+            'only the equal-target Move cluster (ids 4 and 5) is reversed, in place; everything else stays FIFO'
+        );
     }
 }
 

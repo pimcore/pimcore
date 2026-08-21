@@ -104,6 +104,34 @@ class StorageQueueCommandsTest extends Unit
         $this->assertTrue($this->adapter->fileExists('Moved/One/a.jpg'));
     }
 
+    /**
+     * G4 (Copilot review round 2): the command wires a lock-refresh heartbeat into
+     * process(). A small checkInterval forces several interval ticks (and refresh() calls)
+     * across the drain of a single row - the run must still complete cleanly against a real
+     * LockFactory-held lock.
+     */
+    public function testProcessCompletesWithLockHeartbeatOverMultipleIntervalTicks(): void
+    {
+        for ($i = 1; $i <= 5; $i++) {
+            $this->adapter->write("Many/file{$i}.jpg", (string) $i, new Config());
+        }
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Move, 'Many', 'Moved/Many', new DateTimeImmutable('+5 seconds')
+        ));
+        $locator = new StorageQueueCommandsTestAdapterLocator($this->adapter);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger(), 2);
+        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $processor);
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute([]);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('1 processed', $tester->getDisplay());
+        for ($i = 1; $i <= 5; $i++) {
+            $this->assertTrue($this->adapter->fileExists("Moved/Many/file{$i}.jpg"));
+        }
+    }
+
     public function testProcessWarnsWhenIdOptionMatchesNoRow(): void
     {
         // new flow: the row is resolved BEFORE the lock is acquired/processed - a nonexistent id

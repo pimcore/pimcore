@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Asset\StorageQueue;
 
+use Closure;
 use Exception;
 use League\Flysystem\Config;
 use League\Flysystem\FilesystemAdapter;
@@ -49,7 +50,7 @@ final class StorageOperationQueueProcessor
     ) {
     }
 
-    public function process(?int $onlyId = null, ?int $maxRuntimeSeconds = null): StorageQueueProcessingResult
+    public function process(?int $onlyId = null, ?int $maxRuntimeSeconds = null, ?Closure $heartbeat = null): StorageQueueProcessingResult
     {
         $deadline = $maxRuntimeSeconds !== null ? time() + $maxRuntimeSeconds : null;
         $processed = 0;
@@ -60,7 +61,7 @@ final class StorageOperationQueueProcessor
 
         $operations = $onlyId !== null
             ? array_filter([$this->repository->findById($onlyId)])
-            : $this->repository->all();
+            : $this->orderForProcessing($this->repository->all());
 
         foreach ($operations as $operation) {
             if ($deadline !== null && time() >= $deadline) {
@@ -69,8 +70,10 @@ final class StorageOperationQueueProcessor
                 break;
             }
 
+            $this->invokeHeartbeat($heartbeat); // row boundary
+
             try {
-                if ($this->processOperation($operation, $deadline)) {
+                if ($this->processOperation($operation, $deadline, $heartbeat)) {
                     $processed++;
                     if ($operation->getType() === StorageOperationType::Move && $operation->getStorage() === 'asset') {
                         $clearedAssetMove = true;
@@ -111,14 +114,91 @@ final class StorageOperationQueueProcessor
     /**
      * @return bool true when the operation is fully applied and its row has been removed
      */
-    private function processOperation(StorageOperation $operation, ?int $deadline): bool
+    private function processOperation(StorageOperation $operation, ?int $deadline, ?Closure $heartbeat): bool
     {
         /** @var FilesystemAdapter $adapter */
         $adapter = $this->innerAdapters->get($operation->getStorage());
 
         return $operation->getType() === StorageOperationType::Move
-            ? $this->processMove($adapter, $operation, $deadline)
-            : $this->processDelete($adapter, $operation, $deadline);
+            ? $this->processMove($adapter, $operation, $deadline, $heartbeat)
+            : $this->processDelete($adapter, $operation, $deadline, $heartbeat);
+    }
+
+    /**
+     * Invokes the optional heartbeat closure (typically a lock refresh) at interval ticks and
+     * row boundaries during processing. Exceptions are swallowed: a heartbeat failure (e.g. the
+     * lock was lost) is worse handled by aborting a run than by finishing it - single-host
+     * semantics are assumed and documented at the call site (the command).
+     */
+    private function invokeHeartbeat(?Closure $heartbeat): void
+    {
+        if ($heartbeat === null) {
+            return;
+        }
+
+        try {
+            $heartbeat();
+        } catch (Exception $e) {
+            $this->logger->debug('Storage queue heartbeat failed', ['exception' => $e]);
+        }
+    }
+
+    /**
+     * Reorders operations for processing: global id-ASC (FIFO) is preserved, except that Move
+     * rows sharing an IDENTICAL target_prefix are drained newest-first within their cluster, at
+     * the position of the cluster's first (oldest) member. Delete rows and Move rows with
+     * distinct targets are untouched and keep strict FIFO.
+     *
+     * Rationale: a re-move can flatten several rows onto the same final target (e.g. a pending
+     * A -> B move gets repointed to A -> C when B -> C is queued). If the source content was
+     * replaced with fresher bytes while pending, strict FIFO would drain the OLDER row first,
+     * landing stale bytes at the shared target; the newer row would then see the target already
+     * occupied and delete its own (fresher) source content - permanent data loss. Draining the
+     * newest row in the cluster first lands the freshest bytes at the target before any older,
+     * superseded row gets a chance to claim that key.
+     *
+     * Pure and side-effect-free so it can be unit-tested directly.
+     *
+     * @param StorageOperation[] $operations
+     *
+     * @return StorageOperation[]
+     */
+    private function orderForProcessing(array $operations): array
+    {
+        $moveClusters = [];
+        foreach ($operations as $operation) {
+            if ($operation->getType() === StorageOperationType::Move) {
+                $moveClusters[(string) $operation->getTargetPrefix()][] = $operation;
+            }
+        }
+
+        $emittedClusters = [];
+        $ordered = [];
+        foreach ($operations as $operation) {
+            if ($operation->getType() !== StorageOperationType::Move) {
+                $ordered[] = $operation;
+
+                continue;
+            }
+
+            $targetPrefix = (string) $operation->getTargetPrefix();
+            $cluster = $moveClusters[$targetPrefix];
+            if (count($cluster) < 2) {
+                $ordered[] = $operation;
+
+                continue;
+            }
+
+            if (isset($emittedClusters[$targetPrefix])) {
+                continue; // already emitted (reversed) at the position of its first member
+            }
+            $emittedClusters[$targetPrefix] = true;
+            foreach (array_reverse($cluster) as $clusterMember) {
+                $ordered[] = $clusterMember;
+            }
+        }
+
+        return $ordered;
     }
 
     /**
@@ -126,7 +206,7 @@ final class StorageOperationQueueProcessor
      * traffic), so no reconciliation is needed here - just the deadline-honoring re-listing
      * on completion (M5) and self-removal on completion.
      */
-    private function processDelete(FilesystemAdapter $adapter, StorageOperation $operation, ?int $deadline): bool
+    private function processDelete(FilesystemAdapter $adapter, StorageOperation $operation, ?int $deadline, ?Closure $heartbeat): bool
     {
         $cutoff = $operation->getCreatedAt()->getTimestamp();
         $source = $operation->getSourcePrefix();
@@ -141,6 +221,7 @@ final class StorageOperationQueueProcessor
         foreach ($adapter->listContents($source, true) as $item) {
             if ($deadline !== null && ++$entriesSinceCheck >= self::DEADLINE_CHECK_INTERVAL) {
                 $entriesSinceCheck = 0;
+                $this->invokeHeartbeat($heartbeat);
                 if (time() >= $deadline) {
                     return false;
                 }
@@ -164,6 +245,7 @@ final class StorageOperationQueueProcessor
         foreach ($adapter->listContents($source, true) as $item) {
             if ($deadline !== null && ++$entriesSinceCheck >= self::DEADLINE_CHECK_INTERVAL) {
                 $entriesSinceCheck = 0;
+                $this->invokeHeartbeat($heartbeat);
                 if (time() >= $deadline) {
                     return false;
                 }
@@ -194,7 +276,7 @@ final class StorageOperationQueueProcessor
      * so far against its current state, so the drain never strands files at a target the row no
      * longer points to, or resurrects content the user just deleted.
      */
-    private function processMove(FilesystemAdapter $adapter, StorageOperation $operation, ?int $deadline): bool
+    private function processMove(FilesystemAdapter $adapter, StorageOperation $operation, ?int $deadline, ?Closure $heartbeat): bool
     {
         $current = $operation;
         $cutoff = $current->getCreatedAt()->getTimestamp(); // anchored to the ORIGINAL creation - repoint does not change it
@@ -206,6 +288,7 @@ final class StorageOperationQueueProcessor
             foreach ($adapter->listContents($source, true) as $item) {
                 if (++$entriesSinceCheck >= $this->checkInterval) {
                     $entriesSinceCheck = 0;
+                    $this->invokeHeartbeat($heartbeat);
                     if ($deadline !== null && time() >= $deadline) {
                         return false;
                     }
@@ -219,11 +302,30 @@ final class StorageOperationQueueProcessor
                 }
                 $path = $item->path();
                 $lastModified = $item->lastModified() ?? $adapter->lastModified($path)->lastModified();
-                if ($lastModified === null || $lastModified >= $cutoff) {
-                    continue; // undated (never destructive), same-second write, or namespace-reuse content
+                if ($lastModified === null) {
+                    continue; // undated - never destructive
                 }
                 $suffix = mb_substr($path, mb_strlen($source));
                 $target = $this->targetPrefixOf($current) . $suffix;
+
+                if ($lastModified > $cutoff) {
+                    continue; // namespace-reuse content, strictly post-cutoff - never touched
+                }
+
+                if ($lastModified === $cutoff) {
+                    // Exact boundary: a same-second write cannot be told apart from content that
+                    // legitimately predates the row. Copy it to the target so it is reachable
+                    // there too, but never delete the source and never track it in $copied - it
+                    // must not be swept, re-targeted on a repoint, or block completion (the
+                    // completion re-list already treats equality as non-blocking).
+                    if (!$adapter->fileExists($target)) {
+                        $adapter->copy($path, $target, new Config());
+                    }
+
+                    continue;
+                }
+
+                // $lastModified < $cutoff: unambiguously pre-cutoff content
                 if (!$adapter->fileExists($target)) {
                     $adapter->copy($path, $target, new Config());
                     if (!$adapter->fileExists($target)) {
@@ -241,6 +343,7 @@ final class StorageOperationQueueProcessor
             foreach ($adapter->listContents($source, true) as $item) {
                 if ($deadline !== null && ++$entriesSinceCheck >= $this->checkInterval) {
                     $entriesSinceCheck = 0;
+                    $this->invokeHeartbeat($heartbeat);
                     if (time() >= $deadline) {
                         return false;
                     }
