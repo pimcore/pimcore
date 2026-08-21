@@ -79,7 +79,7 @@ class StorageQueueCommandsTest extends Unit
 
     public function testProcessFailsWithClearMessageWhenFeatureDisabled(): void
     {
-        $command = new StorageQueueProcessCommand($this->lockFactory(), null);
+        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), null);
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute([]);
@@ -94,7 +94,7 @@ class StorageQueueCommandsTest extends Unit
         $this->repository->add(new StorageOperation(
             null, 'asset', StorageOperationType::Move, 'One', 'Moved/One', new DateTimeImmutable('+5 seconds')
         ));
-        $command = new StorageQueueProcessCommand($this->lockFactory(), $this->realProcessor());
+        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $this->realProcessor());
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute([]);
@@ -106,14 +106,34 @@ class StorageQueueCommandsTest extends Unit
 
     public function testProcessWarnsWhenIdOptionMatchesNoRow(): void
     {
-        $command = new StorageQueueProcessCommand($this->lockFactory(), $this->realProcessor());
+        // new flow: the row is resolved BEFORE the lock is acquired/processed - a nonexistent id
+        // returns immediately, so no "processed" line is emitted at all
+        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $this->realProcessor());
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute(['--id' => '999999']);
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('0 processed', $tester->getDisplay());
         $this->assertStringContainsString('No queue row found with id 999999', $tester->getDisplay());
+    }
+
+    public function testProcessReportsRetainedRowDistinctly(): void
+    {
+        // existing row that cannot complete in this run (deadline reached immediately) - must be
+        // reported distinctly from "no such row", and must stay queued
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Move, 'One', 'Moved/One', new DateTimeImmutable()
+        ));
+        $id = $this->repository->all()[0]->getId();
+        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $this->realProcessor());
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute(['--id' => (string) $id, '--max-runtime' => '0']);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('0 processed', $tester->getDisplay());
+        $this->assertStringContainsString('stays queued', $tester->getDisplay());
+        $this->assertNotNull($this->repository->findById($id), 'row must remain queued for the next run');
     }
 
     public function testProcessExitsFailureWhenARowFails(): void
@@ -124,7 +144,7 @@ class StorageQueueCommandsTest extends Unit
         $this->repository->add(new StorageOperation(
             null, 'asset', StorageOperationType::Delete, 'Anything', null, new DateTimeImmutable()
         ));
-        $command = new StorageQueueProcessCommand($this->lockFactory(), $processor);
+        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $processor);
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute([]);
@@ -138,7 +158,7 @@ class StorageQueueCommandsTest extends Unit
         $lockFactory = $this->lockFactory();
         $foreign = $lockFactory->createLock('asset_storage_operation_queue_process');
         $this->assertTrue($foreign->acquire());
-        $command = new StorageQueueProcessCommand($lockFactory, $this->realProcessor());
+        $command = new StorageQueueProcessCommand($this->repository, $lockFactory, $this->realProcessor());
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute([]);

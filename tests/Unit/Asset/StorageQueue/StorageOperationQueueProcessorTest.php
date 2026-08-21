@@ -170,6 +170,59 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame([], $this->repository->all(), 'row completes - remaining content is post-cutoff');
     }
 
+    /**
+     * F1 regression: A -> B queued 2h ago; B is then deleted while A's legacy content is still
+     * pending, converting the Move row into a Delete-A tombstone. Namespace reuse: content
+     * written into the re-created A folder AFTER the move was queued (but before the delete
+     * conversion) must survive - only a fresh "now" cutoff on conversion would misclassify it
+     * as pre-cutoff and destroy it.
+     */
+    public function testConvertedRowSparesContentWrittenIntoReusedSourceNamespace(): void
+    {
+        $this->writeWithMtime('A/old.jpg', 'old', time() - 10800); // -3h: predates the move
+        $this->addRow(StorageOperationType::Move, 'A', 'B', new DateTimeImmutable('-2 hours'));
+        // A is re-created (namespace reuse) after the move was queued, before the delete arrives
+        $this->writeWithMtime('A/reused.jpg', 'reused', time() - 3600); // -1h
+
+        // simulates a live QueueAwareStorageAdapter::deleteDirectory('B'): converts the pending
+        // A -> B move into a Delete-A tombstone (preserving A's original created_at, per F1)
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Delete, 'B', null, new DateTimeImmutable()
+        ));
+
+        $result = $this->processor()->process();
+
+        $this->assertSame(0, $result->getFailedRows());
+        $this->assertFalse($this->adapter->fileExists('A/old.jpg'), 'pre-cutoff legacy content swept');
+        $this->assertSame(
+            'reused',
+            $this->adapter->read('A/reused.jpg'),
+            'content written into the reused source namespace after the move must survive the sweep'
+        );
+        $this->assertSame([], $this->repository->all(), 'row(s) complete - remaining content is post-cutoff');
+    }
+
+    /**
+     * F3 regression: timestamps have 1-second resolution, so a file written in the SAME second
+     * as the row's cutoff must be treated as post-cutoff (spared) - and, symmetrically, must not
+     * block the row's completion either.
+     */
+    public function testSameSecondWriteIsNeverSwept(): void
+    {
+        $ts = time() - 3600;
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Delete, 'Trash', null, (new DateTimeImmutable())->setTimestamp($ts)
+        ));
+        $this->writeWithMtime('Trash/pre-cutoff.jpg', 'pre', $ts - 10);
+        $this->writeWithMtime('Trash/equal.jpg', 'equal', $ts);
+
+        $result = $this->processor()->process();
+
+        $this->assertFalse($this->adapter->fileExists('Trash/pre-cutoff.jpg'), 'strictly pre-cutoff file swept');
+        $this->assertSame('equal', $this->adapter->read('Trash/equal.jpg'), 'same-second file must survive');
+        $this->assertSame([], $this->repository->all(), 'completion must not be blocked by the equal-timestamp file');
+    }
+
     public function testEmptySourceCompletesImmediately(): void
     {
         $this->addRow(StorageOperationType::Move, 'Ghost', 'Elsewhere/Ghost');

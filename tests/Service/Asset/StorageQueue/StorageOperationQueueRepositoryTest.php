@@ -27,6 +27,11 @@ class StorageOperationQueueRepositoryTest extends TestCase
 {
     private StorageOperationQueueRepository $repository;
 
+    protected function needsDb(): bool
+    {
+        return true;
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -64,6 +69,29 @@ class StorageOperationQueueRepositoryTest extends TestCase
         $this->assertCount(1, $this->repository->findCovering('asset', 'Car'));
         $this->assertCount(0, $this->repository->findCovering('asset', 'Carpets/img.jpg'));
         $this->assertCount(0, $this->repository->findCovering('thumbnail', 'Car/img.jpg'));
+    }
+
+    public function testFindWithTargetUnderMatchesDescendantsAndRoot(): void
+    {
+        $this->repository->add($this->move('asset', 'A', 'Archive/A'));
+        $this->repository->add($this->move('asset', 'Other', 'ArchiveSibling'));
+
+        $underArchive = $this->repository->findWithTargetUnder('asset', 'Archive');
+        $this->assertCount(1, $underArchive);
+        $this->assertSame('Archive/A', $underArchive[0]->getTargetPrefix());
+
+        // sibling prefix boundary: 'ArchiveSibling' must not match 'Archive'
+        $this->assertSame(['Archive/A'], array_map(
+            static fn (StorageOperation $op) => $op->getTargetPrefix(),
+            $underArchive
+        ));
+
+        $atRoot = $this->repository->findWithTargetUnder('asset', '');
+        $targets = array_map(static fn (StorageOperation $op) => $op->getTargetPrefix(), $atRoot);
+        sort($targets);
+        $this->assertSame(['Archive/A', 'ArchiveSibling'], $targets);
+
+        $this->assertSame([], $this->repository->findWithTargetUnder('thumbnail', 'Archive'));
     }
 
     public function testAddMoveRepointsExistingRowsUnderTheMovedPrefix(): void
@@ -223,6 +251,34 @@ class StorageOperationQueueRepositoryTest extends TestCase
         $deleteRow = $this->repository->all()[0];
         $this->assertTrue($this->repository->removeIfUnchanged($deleteRow), 'null target_prefix matches via null-safe comparison');
         $this->assertFalse($this->repository->hasOperations('asset'));
+    }
+
+    public function testConversionPreservesOriginalCreatedAt(): void
+    {
+        // /A -> /B pending, queued an hour ago; then /B is deleted - the converted A row must
+        // keep its ORIGINAL cutoff, not a fresh "now" (a fresh cutoff would sweep content written
+        // into a re-created source namespace between the move and the delete).
+        $original = new DateTimeImmutable('-1 hour');
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Move, 'A', 'B', $original
+        ));
+        $this->repository->add($this->delete('asset', 'B'));
+
+        $all = $this->repository->all();
+        $converted = null;
+        foreach ($all as $op) {
+            if ($op->getSourcePrefix() === 'A') {
+                $converted = $op;
+            }
+        }
+        $this->assertNotNull($converted);
+        $this->assertSame(StorageOperationType::Delete, $converted->getType());
+        $this->assertEqualsWithDelta(
+            $original->getTimestamp(),
+            $converted->getCreatedAt()->getTimestamp(),
+            2,
+            'conversion must preserve the original created_at, not stamp a fresh now'
+        );
     }
 
     public function testCreatedAtRoundTripsAcrossTimezones(): void

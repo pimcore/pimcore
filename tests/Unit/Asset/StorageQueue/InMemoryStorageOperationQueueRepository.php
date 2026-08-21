@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Asset\StorageQueue;
 
-use DateTimeImmutable;
 use Pimcore\Asset\StorageQueue\StorageOperation;
 use Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface;
 use Pimcore\Asset\StorageQueue\StorageOperationType;
@@ -64,6 +63,31 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
         );
 
         return array_values($covering);
+    }
+
+    public function findWithTargetUnder(string $storage, string $prefix): array
+    {
+        $found = array_filter(
+            $this->operations,
+            static function (StorageOperation $op) use ($storage, $prefix) {
+                if ($op->getStorage() !== $storage || $op->getType() !== StorageOperationType::Move) {
+                    return false;
+                }
+                $target = (string) $op->getTargetPrefix();
+                if ($prefix === '') {
+                    return true; // everything lies under the root
+                }
+
+                return $target === $prefix || str_starts_with($target, $prefix . '/');
+            }
+        );
+        usort(
+            $found,
+            static fn (StorageOperation $a, StorageOperation $b) =>
+                [mb_strlen((string) $a->getTargetPrefix()), $a->getId()] <=> [mb_strlen((string) $b->getTargetPrefix()), $b->getId()]
+        );
+
+        return array_values($found);
     }
 
     public function hasOperations(string $storage): bool
@@ -154,8 +178,10 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
                 continue;
             }
             if ($target === $deletedPrefix || str_starts_with($target, $deletedPrefix . '/')) {
+                // preserve the original created_at - a fresh "now" would sweep content written
+                // into a re-created source namespace between the move and the delete (F1)
                 $this->operations[$i] = new StorageOperation(
-                    $op->getId(), $op->getStorage(), StorageOperationType::Delete, $op->getSourcePrefix(), null, new DateTimeImmutable()
+                    $op->getId(), $op->getStorage(), StorageOperationType::Delete, $op->getSourcePrefix(), null, $op->getCreatedAt()
                 );
             }
         }

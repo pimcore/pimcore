@@ -142,6 +142,23 @@ class FrontendPathResolverTest extends Unit
         );
     }
 
+    public function testSameSecondModificationKeepsLogicalPath(): void
+    {
+        // F3: equality = same-second write during the pending window - must resolve literal,
+        // just like a strictly-later modification would
+        $ts = time() - 3600;
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Move, 'Campaigns', 'Archive/Campaigns',
+            (new DateTimeImmutable())->setTimestamp($ts)
+        ));
+        $resolver = new FrontendPathResolver($this->repository, true);
+
+        $this->assertSame(
+            '/Archive/Campaigns/x.jpg',
+            $resolver->resolvePhysicalPath('/Archive/Campaigns/x.jpg', $ts)
+        );
+    }
+
     public function testNullModificationTimestampStillMaps(): void
     {
         // existing behavior preserved: an unknown modification timestamp must not suppress the

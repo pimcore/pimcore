@@ -663,6 +663,70 @@ class QueueAwareStorageAdapterTest extends Unit
         $this->assertSame('bytes', $adapter->read('Archive/Campaigns/img.jpg'));
     }
 
+    public function testShallowListingOfTargetAncestorShowsMovedDirectory(): void
+    {
+        // A -> Archive/A pending; listing the (physically nonexistent) ancestor 'Archive' must
+        // surface the pending subtree as a directory entry, not silently omit it.
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('A/img.jpg', 'bytes', new Config());
+        $this->addMove('A', 'Archive/A');
+
+        $paths = [];
+        foreach ($adapter->listContents('Archive', false) as $item) {
+            $paths[] = $item->path();
+        }
+
+        $this->assertSame(['Archive/A'], $paths);
+    }
+
+    public function testDeepListingOfTargetAncestorContainsTranslatedFiles(): void
+    {
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('A/img.jpg', 'bytes', new Config());
+        $this->addMove('A', 'Archive/A');
+
+        $paths = [];
+        foreach ($adapter->listContents('Archive', true) as $item) {
+            $paths[] = $item->path();
+        }
+        sort($paths);
+
+        $this->assertSame(['Archive/A', 'Archive/A/img.jpg'], $paths);
+    }
+
+    public function testAncestorListingDedupesLiteralWins(): void
+    {
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('A/img.jpg', 'legacy-bytes', new Config());
+        $this->addMove('A', 'Archive/A');
+        // a fresh upload already lands literally at the translated path
+        $adapter->write('Archive/A/x', 'fresh-bytes', new Config());
+
+        $items = [];
+        foreach ($adapter->listContents('Archive', true) as $item) {
+            $items[$item->path()] = $item;
+        }
+
+        $this->assertArrayHasKey('Archive/A/x', $items);
+        $this->assertCount(1, array_filter(array_keys($items), static fn ($p) => $p === 'Archive/A/x'));
+        // literal wins: content must be the fresh upload, not the (nonexistent) translated candidate
+        $this->assertSame('fresh-bytes', $adapter->read('Archive/A/x'));
+    }
+
+    public function testRootListingIncludesPendingTargets(): void
+    {
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('A/img.jpg', 'bytes', new Config());
+        $this->addMove('A', 'Archive/A');
+
+        $paths = [];
+        foreach ($adapter->listContents('', false) as $item) {
+            $paths[] = $item->path();
+        }
+
+        $this->assertContains('Archive', $paths);
+    }
+
     public function testDeleteRemovesLiteralAndStaleMappedCandidate(): void
     {
         // A -> B pending with legacy content still at A; a fresh literal lands at B and shadows

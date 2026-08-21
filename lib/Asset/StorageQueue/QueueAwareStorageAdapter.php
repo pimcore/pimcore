@@ -19,6 +19,7 @@ use DateTimeInterface;
 use League\Flysystem\CalculateChecksumFromStream;
 use League\Flysystem\ChecksumProvider;
 use League\Flysystem\Config;
+use League\Flysystem\DirectoryAttributes;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\UnableToGeneratePublicUrl;
@@ -177,6 +178,50 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
                 }
                 $seenLogicalPaths[$logicalPath] = true;
                 yield $item->withPath($logicalPath);
+            }
+        }
+
+        // Ancestor synthesis: a pending move's target may be a descendant of the listed path
+        // even though nothing physically exists there yet (e.g. A -> Archive/A, listing
+        // 'Archive'). Rows whose target equals $path exactly are already surfaced by the
+        // covering-merge above and are skipped here.
+        foreach ($this->repository->findWithTargetUnder($this->storageName, $path) as $operation) {
+            $target = (string) $operation->getTargetPrefix();
+            if ($target === $path) {
+                continue;
+            }
+
+            $relative = $path === '' ? $target : mb_substr($target, mb_strlen($path) + 1);
+            $segments = explode('/', $relative);
+
+            if ($deep) {
+                $sourcePrefix = $operation->getSourcePrefix();
+                if ($this->inner->directoryExists($sourcePrefix)) {
+                    foreach ($this->inner->listContents($sourcePrefix, true) as $item) {
+                        $logicalPath = $target . mb_substr($item->path(), mb_strlen($sourcePrefix));
+                        if (isset($seenLogicalPaths[$logicalPath])) {
+                            continue; // literal wins
+                        }
+                        $seenLogicalPaths[$logicalPath] = true;
+                        yield $item->withPath($logicalPath);
+                    }
+                }
+
+                $ancestor = $path;
+                foreach ($segments as $segment) {
+                    $ancestor = $ancestor === '' ? $segment : $ancestor . '/' . $segment;
+                    if (isset($seenLogicalPaths[$ancestor])) {
+                        continue; // literal wins
+                    }
+                    $seenLogicalPaths[$ancestor] = true;
+                    yield new DirectoryAttributes($ancestor);
+                }
+            } else {
+                $firstSegment = $path === '' ? $segments[0] : $path . '/' . $segments[0];
+                if (!isset($seenLogicalPaths[$firstSegment])) {
+                    $seenLogicalPaths[$firstSegment] = true;
+                    yield new DirectoryAttributes($firstSegment);
+                }
             }
         }
     }

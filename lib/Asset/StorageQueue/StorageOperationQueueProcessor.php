@@ -151,8 +151,8 @@ final class StorageOperationQueueProcessor
 
             $path = $item->path();
             $lastModified = $item->lastModified() ?? $adapter->lastModified($path)->lastModified();
-            if ($lastModified === null || $lastModified > $cutoff) {
-                continue; // undated (never destructive) or namespace-reuse content
+            if ($lastModified === null || $lastModified >= $cutoff) {
+                continue; // undated (never destructive), same-second write, or namespace-reuse content
             }
 
             $adapter->delete($path);
@@ -172,8 +172,8 @@ final class StorageOperationQueueProcessor
                 continue;
             }
             $lastModified = $item->lastModified() ?? $adapter->lastModified($item->path())->lastModified();
-            if ($lastModified === null || $lastModified <= $cutoff) {
-                return false; // undated or still-pending entries keep the row alive
+            if ($lastModified === null || $lastModified < $cutoff) {
+                return false; // undated or still-pending entries keep the row alive - equality is spared, so it must not block completion either
             }
             $filesRemain = true;
         }
@@ -219,8 +219,8 @@ final class StorageOperationQueueProcessor
                 }
                 $path = $item->path();
                 $lastModified = $item->lastModified() ?? $adapter->lastModified($path)->lastModified();
-                if ($lastModified === null || $lastModified > $cutoff) {
-                    continue; // undated (never destructive) or namespace-reuse content
+                if ($lastModified === null || $lastModified >= $cutoff) {
+                    continue; // undated (never destructive), same-second write, or namespace-reuse content
                 }
                 $suffix = mb_substr($path, mb_strlen($source));
                 $target = $this->targetPrefixOf($current) . $suffix;
@@ -249,8 +249,8 @@ final class StorageOperationQueueProcessor
                     continue;
                 }
                 $lastModified = $item->lastModified() ?? $adapter->lastModified($item->path())->lastModified();
-                if ($lastModified === null || $lastModified <= $cutoff) {
-                    return false; // undated or still-pending entries keep the row alive
+                if ($lastModified === null || $lastModified < $cutoff) {
+                    return false; // undated or still-pending entries keep the row alive - equality is spared, so it must not block completion either
                 }
                 $filesRemain = true;
             }

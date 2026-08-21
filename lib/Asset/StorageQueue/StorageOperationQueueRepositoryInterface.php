@@ -34,6 +34,15 @@ interface StorageOperationQueueRepositoryInterface
      */
     public function findCovering(string $storage, string $logicalPath): array;
 
+    /**
+     * Active move operations whose target prefix equals the given prefix or lies under it
+     * (pattern-free comparison). Used for ancestor listings: a pending move's target may be a
+     * descendant of a listed path even though nothing physically exists there yet.
+     *
+     * @return StorageOperation[]
+     */
+    public function findWithTargetUnder(string $storage, string $prefix): array;
+
     public function hasOperations(string $storage): bool;
 
     /**

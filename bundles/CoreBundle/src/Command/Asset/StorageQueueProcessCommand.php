@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command\Asset;
 
 use Pimcore\Asset\StorageQueue\StorageOperationQueueProcessor;
+use Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface;
 use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,6 +35,7 @@ final class StorageQueueProcessCommand extends AbstractCommand
     private const LOCK_NAME = 'asset_storage_operation_queue_process';
 
     public function __construct(
+        private readonly StorageOperationQueueRepositoryInterface $repository,
         private readonly LockFactory $lockFactory,
         private readonly ?StorageOperationQueueProcessor $processor = null,
     ) {
@@ -55,6 +57,14 @@ final class StorageQueueProcessCommand extends AbstractCommand
             return self::FAILURE;
         }
 
+        $id = $input->getOption('id') !== null ? (int) $input->getOption('id') : null;
+
+        if ($id !== null && $this->repository->findById($id) === null) {
+            $output->writeln(sprintf('<comment>No queue row found with id %d.</comment>', $id));
+
+            return self::SUCCESS;
+        }
+
         $lock = $this->lockFactory->createLock(self::LOCK_NAME, 86400);
         if (!$lock->acquire()) {
             $output->writeln('<comment>Another storage-queue:process run is already running - skipping.</comment>');
@@ -63,7 +73,6 @@ final class StorageQueueProcessCommand extends AbstractCommand
         }
 
         try {
-            $id = $input->getOption('id') !== null ? (int) $input->getOption('id') : null;
             $maxRuntime = $input->getOption('max-runtime') !== null ? (int) $input->getOption('max-runtime') : null;
 
             $result = $this->processor->process($id, $maxRuntime);
@@ -76,7 +85,10 @@ final class StorageQueueProcessCommand extends AbstractCommand
                 $result->isTimedOut() ? ' (stopped at max-runtime)' : ''
             ));
             if ($id !== null && $result->getProcessedRows() === 0 && $result->getFailedRows() === 0) {
-                $output->writeln(sprintf('<comment>No queue row found with id %d.</comment>', $id));
+                $output->writeln(sprintf(
+                    '<comment>Queue row #%d was not completed in this run (deadline reached or undated entries) and stays queued for the next run.</comment>',
+                    $id
+                ));
             }
             foreach ($result->getErrors() as $error) {
                 $this->writeError($error);

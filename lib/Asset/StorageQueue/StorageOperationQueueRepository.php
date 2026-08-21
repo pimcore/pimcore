@@ -17,7 +17,6 @@ namespace Pimcore\Asset\StorageQueue;
 use DateTimeImmutable;
 use DateTimeZone;
 use Doctrine\DBAL\Connection;
-use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 
 /**
@@ -78,6 +77,40 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
         return array_map($this->hydrate(...), $rows);
     }
 
+    /**
+     * @return StorageOperation[] active move operations whose target prefix equals $prefix or
+     *                            lies under it, shallowest target first
+     */
+    public function findWithTargetUnder(string $storage, string $prefix): array
+    {
+        if (!$this->hasOperations($storage)) {
+            return [];
+        }
+
+        if ($prefix === '') {
+            // every target lies under the root - no prefix comparison needed (and CONCAT('', '/')
+            // would never match, since target_prefix never carries a leading slash)
+            $rows = $this->db->fetchAllAssociative(
+                'SELECT * FROM ' . self::TABLE . " WHERE `storage` = :storage AND `operation` = 'move'
+                 ORDER BY LENGTH(`target_prefix`) ASC, `id` ASC",
+                ['storage' => $storage]
+            );
+
+            return array_map($this->hydrate(...), $rows);
+        }
+
+        $rows = $this->db->fetchAllAssociative(
+            'SELECT * FROM ' . self::TABLE . "
+             WHERE `storage` = :storage
+               AND `operation` = 'move'
+               AND (`target_prefix` = :prefix OR LEFT(`target_prefix`, CHAR_LENGTH(:prefixB) + 1) = CONCAT(:prefixC, '/'))
+             ORDER BY LENGTH(`target_prefix`) ASC, `id` ASC",
+            ['storage' => $storage, 'prefix' => $prefix, 'prefixB' => $prefix, 'prefixC' => $prefix]
+        );
+
+        return array_map($this->hydrate(...), $rows);
+    }
+
     public function hasOperations(string $storage): bool
     {
         $cacheKey = self::HAS_OPERATIONS_CACHE_KEY . $storage;
@@ -85,22 +118,11 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
             return (bool) RuntimeCache::get($cacheKey);
         }
 
-        $cached = Cache::load($cacheKey);
-        if ($cached !== false) {
-            $has = (bool) $cached;
-            RuntimeCache::set($cacheKey, $has);
-
-            return $has;
-        }
-
         $has = (bool) $this->db->fetchOne(
             'SELECT 1 FROM ' . self::TABLE . ' WHERE `storage` = :storage LIMIT 1',
             ['storage' => $storage]
         );
         RuntimeCache::set($cacheKey, $has);
-        // stored as int: Cache::load() also returns false on a cache miss, so a stored "false"
-        // (no pending operations) would otherwise be indistinguishable from a miss
-        Cache::save((int) $has, $cacheKey, [], null, 0, true);
 
         return $has;
     }
@@ -195,18 +217,20 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
 
     /**
      * Deleting a prefix that is the target of pending moves logically deletes the legacy objects
-     * still sitting at those moves' source prefixes: convert the move rows into delete rows.
+     * still sitting at those moves' source prefixes: convert the move rows into delete rows. The
+     * row's original `created_at` is preserved (NOT stamped with a fresh now): a fresh cutoff
+     * would classify content written into a re-created source namespace between the move and the
+     * delete as pre-cutoff and sweep it, when it must survive (Copilot review finding, PR #19383).
      */
     private function convertCoveredMovesToDeletes(string $storage, string $deletedPrefix): void
     {
         $this->db->executeStatement(
             'UPDATE ' . self::TABLE . "
-             SET `operation` = 'delete', `target_prefix` = NULL, `created_at` = :now
+             SET `operation` = 'delete', `target_prefix` = NULL
              WHERE `storage` = :storage
                AND `operation` = 'move'
                AND (`target_prefix` = :deletedPrefix OR LEFT(`target_prefix`, CHAR_LENGTH(:deletedPrefixB) + 1) = CONCAT(:deletedPrefixC, '/'))",
             [
-                'now' => (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Y-m-d H:i:s'),
                 'storage' => $storage,
                 'deletedPrefix' => $deletedPrefix,
                 'deletedPrefixB' => $deletedPrefix,
@@ -230,12 +254,17 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
         );
     }
 
+    /**
+     * Per-request RuntimeCache flag ONLY (amended after Copilot review, PR #19383): a shared
+     * cache layer here would race with the move's open transaction - another process could
+     * re-cache `false` between the in-transaction invalidation and the commit, hiding the
+     * committed move from queue-aware reads until that shared cache entry happened to expire.
+     */
     private function invalidateHasOperationsCache(string $storage): void
     {
         $cacheKey = self::HAS_OPERATIONS_CACHE_KEY . $storage;
         if (RuntimeCache::isRegistered($cacheKey)) {
             RuntimeCache::getInstance()->offsetUnset($cacheKey);
         }
-        Cache::remove($cacheKey);
     }
 }

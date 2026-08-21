@@ -56,8 +56,8 @@ final class FrontendPathResolver
         }
 
         $row = $covering[0];
-        if ($modificationTimestamp !== null && $modificationTimestamp > $row->getCreatedAt()->getTimestamp()) {
-            return $logicalPath; // written during the window - lives at its literal key
+        if ($modificationTimestamp !== null && $modificationTimestamp >= $row->getCreatedAt()->getTimestamp()) {
+            return $logicalPath; // written during the window (equality = same-second write) - lives at its literal key
         }
 
         $target = $row->getTargetPrefix();
