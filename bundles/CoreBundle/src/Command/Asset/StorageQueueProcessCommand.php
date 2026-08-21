@@ -37,7 +37,8 @@ final class StorageQueueProcessCommand extends AbstractCommand
     public function __construct(
         private readonly StorageOperationQueueRepositoryInterface $repository,
         private readonly LockFactory $lockFactory,
-        private readonly ?StorageOperationQueueProcessor $processor = null,
+        private readonly StorageOperationQueueProcessor $processor,
+        private readonly bool $enabled = true,
     ) {
         parent::__construct();
     }
@@ -51,7 +52,7 @@ final class StorageQueueProcessCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if ($this->processor === null) {
+        if (!$this->enabled) {
             $this->writeError('The storage operation queue is disabled (pimcore.assets.storage_operation_queue.enabled) - nothing can be processed.');
 
             return self::FAILURE;

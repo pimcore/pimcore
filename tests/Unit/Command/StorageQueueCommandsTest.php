@@ -79,7 +79,7 @@ class StorageQueueCommandsTest extends Unit
 
     public function testProcessFailsWithClearMessageWhenFeatureDisabled(): void
     {
-        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), null);
+        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $this->realProcessor(), false);
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute([]);
