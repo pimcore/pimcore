@@ -648,9 +648,15 @@ class Model extends AbstractDefinitionHelper
             $lFields->addChild($this->createDataChild('input'));
             $lFields->addChild($this->createDataChild('textarea'));
             $lFields->addChild($this->createDataChild('wysiwyg'));
+            $lCalculatedInherited = $this->createDataChild('calculatedValue', 'lcalculatedinherited');
+            $lCalculatedInherited->setCalculatorClass('@test.calculatorservice');
+            $lFields->addChild($lCalculatedInherited);
 
             $otherPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('Layout');
             $otherPanel->addChild($this->createDataChild('input', 'normalinput'));
+            $calculatedInherited = $this->createDataChild('calculatedValue', 'calculatedinherited');
+            $calculatedInherited->setCalculatorClass('@test.calculatorservice');
+            $otherPanel->addChild($calculatedInherited);
             $otherPanel->addChild($this->createDataChild('image', 'yx'));
             $otherPanel->addChild($this->createDataChild('slider'));
             $otherPanel->addChild($this->createDataChild('manyToManyObjectRelation', 'relationobjects')
@@ -983,6 +989,10 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('input', 'brickinput'));
 
             $panel->addChild($this->createDataChild('input', 'brickinput2'));
+
+            $brickCalculated = $this->createDataChild('calculatedValue', 'brickcalculated');
+            $brickCalculated->setCalculatorClass('@test.calculatorservice');
+            $panel->addChild($brickCalculated);
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'brickLazyRelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])

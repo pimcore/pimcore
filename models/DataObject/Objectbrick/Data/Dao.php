@@ -166,7 +166,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     // if the current value is empty and we have data from the parent, we just use it
-                    if ($isEmpty && $parentData) {
+                    if ($isEmpty && $parentData && $fd->supportsInheritance()) {
                         foreach ($columnNames as $columnName) {
                             if (array_key_exists($columnName, $parentData)) {
                                 $data[$columnName] = $parentData[$columnName];
@@ -181,7 +181,7 @@ class Dao extends Model\Dao\AbstractDao
 
                     if ($inheritanceEnabled) {
                         //get changed fields for inheritance
-                        if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                        if (!$fd->supportsInheritance()) {
                             // nothing to do, see https://github.com/pimcore/pimcore/issues/727
                             continue;
                         } elseif ($fd->isRelationType()) {
@@ -304,7 +304,7 @@ class Dao extends Model\Dao\AbstractDao
                 if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                     //exclude untouchables if value is not an array - this means data has not been loaded
                     //get changed fields for inheritance
-                    if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                    if (!$fd->supportsInheritance()) {
                         continue;
                     }
 
