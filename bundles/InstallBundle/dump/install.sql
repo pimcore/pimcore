@@ -49,17 +49,6 @@ CREATE TABLE `assets_image_thumbnail_cache` (
     CONSTRAINT `FK_assets_image_thumbnail_cache_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
-DROP TABLE IF EXISTS `asset_storage_operation_queue`;
-CREATE TABLE `asset_storage_operation_queue` (
-    `id` INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    `storage` VARCHAR(50) NOT NULL,
-    `operation` ENUM('move','delete') NOT NULL,
-    `source_prefix` VARCHAR(765) NOT NULL,
-    `target_prefix` VARCHAR(765) DEFAULT NULL,
-    `created_at` DATETIME NOT NULL,
-    PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
 DROP TABLE IF EXISTS `cache_items`; /* this table is created by the installer (see: Pimcore\Bundle\InstallBundle\Installer::setupDatabase) */
 
 DROP TABLE IF EXISTS `classes` ;

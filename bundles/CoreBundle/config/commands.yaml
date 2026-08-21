@@ -67,7 +67,8 @@ services:
         arguments:
             - '@Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface'
             - '@lock.factory'
-            - '@?pimcore.asset.storage_queue.processor'
+            - '@pimcore.asset.storage_queue.processor'
+            - '%pimcore.assets.storage_operation_queue.enabled%'
 
     Pimcore\Bundle\CoreBundle\Command\Asset\StorageQueueStatusCommand:
         arguments:

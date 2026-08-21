@@ -30,7 +30,6 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterMaintenanceTa
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SerializerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\StorageQueueAdapterPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TranslationSanitizerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\PimcoreCoreExtension;
@@ -69,7 +68,6 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new TranslationSanitizerPass());
         $container->addCompilerPass(new SerializerPass());
         $container->addCompilerPass(new ImageAdapterAliasPass());
-        $container->addCompilerPass(new StorageQueueAdapterPass());
     }
 
     public function getPath(): string

@@ -62,6 +62,33 @@ applies even to local/SFTP-only installs.
 
 ## Enabling
 
+Setting up the feature takes four steps:
+
+### 1. Create the queue table
+
+The feature has no dedicated installer step or database migration — enabling the flag
+does **not** create its table automatically. Create the table **before** enabling the flag —
+with the flag on and the table missing, asset storage operations fail until it exists:
+
+```sql
+CREATE TABLE `asset_storage_operation_queue` (
+    `id` INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    `storage` VARCHAR(50) NOT NULL,
+    `operation` ENUM('move','delete') NOT NULL,
+    `source_prefix` VARCHAR(765) NOT NULL,
+    `target_prefix` VARCHAR(765) DEFAULT NULL,
+    `created_at` DATETIME NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+```
+
+This is the single source of truth for the table's schema — there is no migration or
+install.sql entry to keep in sync with it. Running the commands below against a
+database that doesn't have this table yet fails with a clear error pointing back at
+this section, rather than a raw SQL error.
+
+### 2. Enable the flag
+
 Enable the feature with the `pimcore.assets.storage_operation_queue.enabled` configuration
 option, which defaults to `false`:
 
@@ -74,6 +101,20 @@ pimcore:
 
 When disabled (the default), asset storages behave exactly as they did before this
 feature was introduced — there is no behavior change.
+
+### 3. Verify the setup
+
+```bash
+bin/console pimcore:assets:storage-queue:status
+```
+
+reports `The storage operation queue is empty.` once the table exists and the flag is
+enabled. If the table is missing, both this command and the processing command below
+fail with `The storage operation queue table does not exist yet. Please check the
+Asset Storage Operation Queue documentation for the required setup steps.` — re-run
+step 2.
+
+### 4. Schedule processing
 
 Enabling the flag alone is not sufficient. Deferred operations only become permanent
 once they are applied by:
