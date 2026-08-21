@@ -99,6 +99,11 @@ class Asset extends Element\AbstractElement
 
     /**
      * @internal
+     */
+    protected bool $streamIsPlaceholder = false;
+
+    /**
+     * @internal
      *
      */
     protected ?array $versions = null;
@@ -170,7 +175,7 @@ class Asset extends Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['scheduledTasks', 'versions', 'stream'];
+        $blockedVars = ['scheduledTasks', 'versions', 'stream', 'streamIsPlaceholder'];
 
         if (!$this->isInDumpState()) {
             // for caching asset
@@ -1136,12 +1141,25 @@ class Asset extends Element\AbstractElement
         if (!$this->stream && $this->getType() !== 'folder') {
             try {
                 $this->stream = Storage::get('asset')->readStream($this->getRealFullPath());
+                $this->streamIsPlaceholder = false;
             } catch (Exception $e) {
+                Logger::error('Unable to read the data of asset ' . $this->getRealFullPath() . ' from storage, returning an empty placeholder stream instead: ' . $e);
                 $this->stream = tmpfile();
+                $this->streamIsPlaceholder = true;
             }
         }
 
         return $this->stream;
+    }
+
+    /**
+     * Returns true if the stream returned by getStream() is an empty placeholder that was substituted
+     * because the asset's binary data could not be read from storage (e.g. the file is missing),
+     * false if the stream contains the asset's actual data.
+     */
+    public function isStreamPlaceholder(): bool
+    {
+        return $this->streamIsPlaceholder;
     }
 
     public function getChecksum(): string
@@ -1188,6 +1206,7 @@ class Asset extends Element\AbstractElement
             $this->setDataChanged();
             $this->setDataModificationDate(time());
             $this->stream = $stream;
+            $this->streamIsPlaceholder = false;
 
             $isRewindable = @rewind($this->stream);
 
@@ -1198,6 +1217,7 @@ class Asset extends Element\AbstractElement
             }
         } elseif (is_null($stream)) {
             $this->stream = null;
+            $this->streamIsPlaceholder = false;
         }
 
         return $this;
@@ -1209,6 +1229,7 @@ class Asset extends Element\AbstractElement
             @fclose($this->stream);
             $this->stream = null;
         }
+        $this->streamIsPlaceholder = false;
     }
 
     public function getDataChanged(): bool
@@ -1567,6 +1588,7 @@ class Asset extends Element\AbstractElement
         try {
             $bytes = Storage::get('asset')->fileSize($this->getRealFullPath());
         } catch (Exception $e) {
+            Logger::error('Unable to determine the file size of asset ' . $this->getRealFullPath() . ': ' . $e);
             $bytes = 0;
         }
 
