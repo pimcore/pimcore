@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command\Asset;
 
 use DateTimeImmutable;
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface;
 use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -46,7 +47,17 @@ final class StorageQueueStatusCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $operations = $this->repository->all();
+        try {
+            $operations = $this->repository->all();
+        } catch (TableNotFoundException) {
+            $this->writeError(
+                'The storage operation queue table does not exist yet. Please check the Asset '
+                . 'Storage Operation Queue documentation for the required setup steps.'
+            );
+
+            return self::FAILURE;
+        }
+
         if ($operations === []) {
             $output->writeln('The storage operation queue is empty.');
 

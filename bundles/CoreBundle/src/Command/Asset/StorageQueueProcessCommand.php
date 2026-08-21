@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Asset;
 
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Asset\StorageQueue\StorageOperationQueueProcessor;
 use Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface;
 use Pimcore\Console\AbstractCommand;
@@ -37,7 +38,8 @@ final class StorageQueueProcessCommand extends AbstractCommand
     public function __construct(
         private readonly StorageOperationQueueRepositoryInterface $repository,
         private readonly LockFactory $lockFactory,
-        private readonly ?StorageOperationQueueProcessor $processor = null,
+        private readonly StorageOperationQueueProcessor $processor,
+        private readonly bool $enabled = true,
     ) {
         parent::__construct();
     }
@@ -51,7 +53,7 @@ final class StorageQueueProcessCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if ($this->processor === null) {
+        if (!$this->enabled) {
             $this->writeError('The storage operation queue is disabled (pimcore.assets.storage_operation_queue.enabled) - nothing can be processed.');
 
             return self::FAILURE;
@@ -59,49 +61,58 @@ final class StorageQueueProcessCommand extends AbstractCommand
 
         $id = $input->getOption('id') !== null ? (int) $input->getOption('id') : null;
 
-        if ($id !== null && $this->repository->findById($id) === null) {
-            $output->writeln(sprintf('<comment>No queue row found with id %d.</comment>', $id));
-
-            return self::SUCCESS;
-        }
-
-        $lock = $this->lockFactory->createLock(self::LOCK_NAME, 86400);
-        if (!$lock->acquire()) {
-            $output->writeln('<comment>Another storage-queue:process run is already running - skipping.</comment>');
-
-            return self::SUCCESS;
-        }
-
         try {
-            $maxRuntime = $input->getOption('max-runtime') !== null ? (int) $input->getOption('max-runtime') : null;
+            if ($id !== null && $this->repository->findById($id) === null) {
+                $output->writeln(sprintf('<comment>No queue row found with id %d.</comment>', $id));
 
-            // Refreshes the lock (resetting its 86400s TTL) at interval ticks during long runs.
-            // If the lock was lost, refresh() throws LockConflictedException - the processor
-            // catches and logs it, letting the run finish rather than aborting mid-drain
-            // (single-host semantics: a second concurrent run is prevented by the acquire() above,
-            // not by this heartbeat).
-            $result = $this->processor->process($id, $maxRuntime, static fn () => $lock->refresh());
+                return self::SUCCESS;
+            }
 
-            $output->writeln(sprintf(
-                '%d processed, %d failed, %d pending%s',
-                $result->getProcessedRows(),
-                $result->getFailedRows(),
-                $result->getPendingRows(),
-                $result->isTimedOut() ? ' (stopped at max-runtime)' : ''
-            ));
-            if ($id !== null && $result->getProcessedRows() === 0 && $result->getFailedRows() === 0) {
+            $lock = $this->lockFactory->createLock(self::LOCK_NAME, 86400);
+            if (!$lock->acquire()) {
+                $output->writeln('<comment>Another storage-queue:process run is already running - skipping.</comment>');
+
+                return self::SUCCESS;
+            }
+
+            try {
+                $maxRuntime = $input->getOption('max-runtime') !== null ? (int) $input->getOption('max-runtime') : null;
+
+                // Refreshes the lock (resetting its 86400s TTL) at interval ticks during long runs.
+                // If the lock was lost, refresh() throws LockConflictedException - the processor
+                // catches and logs it, letting the run finish rather than aborting mid-drain
+                // (single-host semantics: a second concurrent run is prevented by the acquire() above,
+                // not by this heartbeat).
+                $result = $this->processor->process($id, $maxRuntime, static fn () => $lock->refresh());
+
                 $output->writeln(sprintf(
-                    '<comment>Queue row #%d was not completed in this run (deadline reached or undated entries) and stays queued for the next run.</comment>',
-                    $id
+                    '%d processed, %d failed, %d pending%s',
+                    $result->getProcessedRows(),
+                    $result->getFailedRows(),
+                    $result->getPendingRows(),
+                    $result->isTimedOut() ? ' (stopped at max-runtime)' : ''
                 ));
-            }
-            foreach ($result->getErrors() as $error) {
-                $this->writeError($error);
-            }
+                if ($id !== null && $result->getProcessedRows() === 0 && $result->getFailedRows() === 0) {
+                    $output->writeln(sprintf(
+                        '<comment>Queue row #%d was not completed in this run (deadline reached or undated entries) and stays queued for the next run.</comment>',
+                        $id
+                    ));
+                }
+                foreach ($result->getErrors() as $error) {
+                    $this->writeError($error);
+                }
 
-            return $result->getFailedRows() > 0 ? self::FAILURE : self::SUCCESS;
-        } finally {
-            $lock->release();
+                return $result->getFailedRows() > 0 ? self::FAILURE : self::SUCCESS;
+            } finally {
+                $lock->release();
+            }
+        } catch (TableNotFoundException) {
+            $this->writeError(
+                'The storage operation queue table does not exist yet. Please check the Asset '
+                . 'Storage Operation Queue documentation for the required setup steps.'
+            );
+
+            return self::FAILURE;
         }
     }
 }

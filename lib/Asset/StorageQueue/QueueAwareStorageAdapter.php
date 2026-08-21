@@ -45,27 +45,48 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
         private readonly StorageOperationQueueRepositoryInterface $repository,
         private readonly string $storageName,
         private readonly bool $regeneratesOnMove = false,
+        private readonly bool $enabled = true,
     ) {
     }
 
     public function fileExists(string $path): bool
     {
+        if (!$this->enabled) {
+            return $this->inner->fileExists($path);
+        }
+
         return $this->inner->fileExists($this->resolveFilePath($path));
     }
 
     public function directoryExists(string $path): bool
     {
+        if (!$this->enabled) {
+            return $this->inner->directoryExists($path);
+        }
+
         return $this->inner->directoryExists($this->resolveDirectoryPath($path));
     }
 
     public function write(string $path, string $contents, Config $config): void
     {
+        if (!$this->enabled) {
+            $this->inner->write($path, $contents, $config);
+
+            return;
+        }
+
         $this->materializeShadowedSource($path);
         $this->inner->write($path, $contents, $config);
     }
 
     public function writeStream(string $path, $contents, Config $config): void
     {
+        if (!$this->enabled) {
+            $this->inner->writeStream($path, $contents, $config);
+
+            return;
+        }
+
         $this->materializeShadowedSource($path);
         $this->inner->writeStream($path, $contents, $config);
     }
@@ -77,16 +98,30 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
     // retried read succeeds via the literal target once the row is fully applied.
     public function read(string $path): string
     {
+        if (!$this->enabled) {
+            return $this->inner->read($path);
+        }
+
         return $this->inner->read($this->resolveFilePath($path));
     }
 
     public function readStream(string $path)
     {
+        if (!$this->enabled) {
+            return $this->inner->readStream($path);
+        }
+
         return $this->inner->readStream($this->resolveFilePath($path));
     }
 
     public function delete(string $path): void
     {
+        if (!$this->enabled) {
+            $this->inner->delete($path);
+
+            return;
+        }
+
         if (!$this->repository->hasOperations($this->storageName)) {
             $this->inner->delete($path);
 
@@ -108,6 +143,12 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
 
     public function deleteDirectory(string $path): void
     {
+        if (!$this->enabled) {
+            $this->inner->deleteDirectory($path);
+
+            return;
+        }
+
         $hasContent = $this->inner->directoryExists($path)
             || ($this->repository->hasOperations($this->storageName)
                 && $this->inner->directoryExists($this->resolveDirectoryPath($path)));
@@ -135,26 +176,48 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
 
     public function visibility(string $path): FileAttributes
     {
+        if (!$this->enabled) {
+            return $this->inner->visibility($path);
+        }
+
         return $this->inner->visibility($this->resolveFilePath($path));
     }
 
     public function mimeType(string $path): FileAttributes
     {
+        if (!$this->enabled) {
+            return $this->inner->mimeType($path);
+        }
+
         return $this->inner->mimeType($this->resolveFilePath($path));
     }
 
     public function lastModified(string $path): FileAttributes
     {
+        if (!$this->enabled) {
+            return $this->inner->lastModified($path);
+        }
+
         return $this->inner->lastModified($this->resolveFilePath($path));
     }
 
     public function fileSize(string $path): FileAttributes
     {
+        if (!$this->enabled) {
+            return $this->inner->fileSize($path);
+        }
+
         return $this->inner->fileSize($this->resolveFilePath($path));
     }
 
     public function listContents(string $path, bool $deep): iterable
     {
+        if (!$this->enabled) {
+            yield from $this->inner->listContents($path, $deep);
+
+            return;
+        }
+
         if (!$this->repository->hasOperations($this->storageName)) {
             yield from $this->inner->listContents($path, $deep);
 
@@ -230,6 +293,15 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
 
     public function move(string $source, string $destination, Config $config): void
     {
+        if (!$this->enabled) {
+            // Plain inner move: a prefix move on a backend without native directory rename
+            // throws UnableToMoveFile, which propagates as-is - restoring the legacy core
+            // fallback behavior instead of falling back to queueing (there may be no queue table).
+            $this->inner->move($source, $destination, $config);
+
+            return;
+        }
+
         $resolvedSource = $this->resolveFilePath($source);
         if ($this->inner->fileExists($resolvedSource)) {
             // single file: normal move, source possibly at its legacy location
@@ -351,6 +423,12 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
 
     public function copy(string $source, string $destination, Config $config): void
     {
+        if (!$this->enabled) {
+            $this->inner->copy($source, $destination, $config);
+
+            return;
+        }
+
         $this->materializeShadowedSource($destination);
         $this->inner->copy($this->resolveFilePath($source), $destination, $config);
     }
@@ -385,6 +463,10 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             throw UnableToGeneratePublicUrl::noGeneratorConfigured($path);
         }
 
+        if (!$this->enabled) {
+            return $this->inner->publicUrl($path, $config);
+        }
+
         return $this->inner->publicUrl($this->resolveFilePath($path), $config);
     }
 
@@ -395,6 +477,10 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             throw UnableToGenerateTemporaryUrl::noGeneratorConfigured($path);
         }
 
+        if (!$this->enabled) {
+            return $this->inner->temporaryUrl($path, $expiresAt, $config);
+        }
+
         return $this->inner->temporaryUrl($this->resolveFilePath($path), $expiresAt, $config);
     }
 
@@ -403,7 +489,11 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
         if (!$this->inner instanceof ChecksumProvider) {
             // mirror League\Flysystem\Filesystem::checksum's fallback when the adapter doesn't
             // implement ChecksumProvider: hash the stream ourselves instead of throwing.
-            return $this->calculateChecksumFromStream($this->resolveFilePath($path), $config);
+            return $this->calculateChecksumFromStream($this->enabled ? $this->resolveFilePath($path) : $path, $config);
+        }
+
+        if (!$this->enabled) {
+            return $this->inner->checksum($path, $config);
         }
 
         return $this->inner->checksum($this->resolveFilePath($path), $config);

@@ -893,4 +893,95 @@ class QueueAwareStorageAdapterTest extends Unit
         $this->assertSame('content', $adapter->read('A/x.png'));
         $this->assertFalse((new LocalFilesystemAdapter($this->tmpDir))->fileExists('B/x.png'), 'no materialization when there was nothing to preserve');
     }
+
+    /**
+     * On a disabled install the `asset_storage_operation_queue` table may not exist at all - a
+     * single stray repository call would throw. The disabled adapter must delegate every public
+     * method 1:1 to the inner adapter WITHOUT ever touching the repository: the guard has to run
+     * before any repository access, not just before the queueing/translation logic.
+     */
+    public function testDisabledAdapterDelegatesEverythingWithoutTouchingTheRepository(): void
+    {
+        $throwingRepository = new ThrowingStorageOperationQueueRepository();
+        $adapter = new QueueAwareStorageAdapter(
+            new NonRenamingAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir)),
+            $throwingRepository,
+            'asset',
+            false,
+            false,
+        );
+
+        // reads / metadata / existence / checksum
+        $adapter->write('folder/file.txt', 'content', new Config());
+        $this->assertTrue($adapter->fileExists('folder/file.txt'));
+        $this->assertTrue($adapter->directoryExists('folder'));
+        $this->assertSame('content', $adapter->read('folder/file.txt'));
+        $this->assertSame('content', stream_get_contents($adapter->readStream('folder/file.txt')));
+        $this->assertGreaterThan(0, $adapter->fileSize('folder/file.txt')->fileSize());
+        $this->assertNotNull($adapter->lastModified('folder/file.txt')->lastModified());
+        $this->assertSame('text/plain', $adapter->mimeType('folder/file.txt')->mimeType());
+        $this->assertNotNull($adapter->visibility('folder/file.txt')->visibility());
+        $this->assertSame(md5('content'), $adapter->checksum('folder/file.txt', new Config()));
+
+        // write / writeStream (materialize guard skipped entirely)
+        $adapter->write('folder/file.txt', 'updated', new Config());
+        $this->assertSame('updated', $adapter->read('folder/file.txt'));
+        $stream = fopen('php://memory', 'r+');
+        fwrite($stream, 'streamed');
+        rewind($stream);
+        $adapter->writeStream('folder/streamed.txt', $stream, new Config());
+        $this->assertSame('streamed', $adapter->read('folder/streamed.txt'));
+
+        // copy / createDirectory / setVisibility
+        $adapter->copy('folder/file.txt', 'folder/copy.txt', new Config());
+        $this->assertTrue($adapter->fileExists('folder/copy.txt'));
+        $adapter->createDirectory('newdir', new Config());
+        $this->assertTrue($adapter->directoryExists('newdir'));
+        $adapter->setVisibility('folder/file.txt', 'private');
+
+        // listContents: plain delegate
+        $paths = [];
+        foreach ($adapter->listContents('folder', true) as $item) {
+            $paths[] = $item->path();
+        }
+        sort($paths);
+        $this->assertSame(['folder/copy.txt', 'folder/file.txt', 'folder/streamed.txt'], $paths);
+
+        // deleteDirectory on EXISTING content: plain delegate, physical delete, NO tombstone
+        $adapter->write('ToDelete/a.txt', 'x', new Config());
+        $adapter->deleteDirectory('ToDelete');
+        $this->assertFalse($adapter->directoryExists('ToDelete'), 'deleteDirectory must physically delete when disabled, not tombstone');
+
+        // delete: plain delegate
+        $adapter->delete('folder/copy.txt');
+        $this->assertFalse($adapter->fileExists('folder/copy.txt'));
+
+        // move: plain inner move - a prefix move on a non-renaming backend must propagate
+        // UnableToMoveFile (restoring the legacy core fallback behavior), not fall back to queueing
+        $adapter->write('PrefixSource/x.txt', 'x', new Config());
+
+        try {
+            $adapter->move('PrefixSource', 'PrefixTarget', new Config());
+            $this->fail('expected UnableToMoveFile to propagate for a prefix move when disabled');
+        } catch (UnableToMoveFile) {
+        }
+
+        // single-file move still works via plain delegate
+        $adapter->move('folder/file.txt', 'folder/moved.txt', new Config());
+        $this->assertTrue($adapter->fileExists('folder/moved.txt'));
+
+        // publicUrl / temporaryUrl: inner supports neither, but the guard must run before the
+        // repository would otherwise be consulted to resolve the path
+        try {
+            $adapter->publicUrl('folder/moved.txt', new Config());
+            $this->fail('expected UnableToGeneratePublicUrl');
+        } catch (UnableToGeneratePublicUrl) {
+        }
+
+        try {
+            $adapter->temporaryUrl('folder/moved.txt', new DateTimeImmutable(), new Config());
+            $this->fail('expected UnableToGenerateTemporaryUrl');
+        } catch (UnableToGenerateTemporaryUrl) {
+        }
+    }
 }

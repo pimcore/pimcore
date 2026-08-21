@@ -35,6 +35,22 @@ class StorageOperationQueueRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // The dedicated migration was removed in favor of documented manual table setup (see
+        // doc/02_Assets/05_Asset_Storage_Operation_Queue.md, which is the canonical DDL) - a
+        // fresh test environment bootstrapped from install.sql no longer has this table, so this
+        // test class creates it itself. Kept in sync with the doc's CREATE TABLE statement.
+        Db::get()->executeStatement(
+            'CREATE TABLE IF NOT EXISTS `asset_storage_operation_queue` (
+                `id` INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                `storage` VARCHAR(50) NOT NULL,
+                `operation` ENUM(\'move\',\'delete\') NOT NULL,
+                `source_prefix` VARCHAR(765) NOT NULL,
+                `target_prefix` VARCHAR(765) DEFAULT NULL,
+                `created_at` DATETIME NOT NULL,
+                PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;'
+        );
         Db::get()->executeStatement('DELETE FROM asset_storage_operation_queue');
         $this->repository = new StorageOperationQueueRepository(Db::get());
     }

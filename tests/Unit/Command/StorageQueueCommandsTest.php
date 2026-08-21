@@ -26,6 +26,7 @@ use Pimcore\Asset\StorageQueue\StorageOperationType;
 use Pimcore\Bundle\CoreBundle\Command\Asset\StorageQueueProcessCommand;
 use Pimcore\Bundle\CoreBundle\Command\Asset\StorageQueueStatusCommand;
 use Pimcore\Tests\Unit\Asset\StorageQueue\InMemoryStorageOperationQueueRepository;
+use Pimcore\Tests\Unit\Asset\StorageQueue\MissingTableStorageOperationQueueRepository;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\NullLogger;
@@ -79,7 +80,7 @@ class StorageQueueCommandsTest extends Unit
 
     public function testProcessFailsWithClearMessageWhenFeatureDisabled(): void
     {
-        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), null);
+        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $this->realProcessor(), false);
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute([]);
@@ -259,6 +260,44 @@ class StorageQueueCommandsTest extends Unit
 
         $this->assertSame(Command::FAILURE, $exitCode);
         $this->assertStringContainsString('disabled', $tester->getDisplay());
+    }
+
+    /**
+     * The dedicated migration was removed in favor of documented manual table setup (see
+     * doc/02_Assets/05_Asset_Storage_Operation_Queue.md) - a fresh install with the feature
+     * flag enabled but the table not yet created must fail with a clear, actionable message
+     * instead of leaking a raw DBAL stack trace / SQL.
+     */
+    public function testStatusFailsWithDocumentationPointerWhenTableIsMissing(): void
+    {
+        $command = new StorageQueueStatusCommand(new MissingTableStorageOperationQueueRepository(), true);
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute([]);
+
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('does not exist yet', $tester->getDisplay());
+        $this->assertStringContainsString('documentation', $tester->getDisplay());
+        $this->assertStringNotContainsString('SELECT', $tester->getDisplay(), 'no SQL leaked into the message');
+    }
+
+    public function testProcessFailsWithDocumentationPointerWhenTableIsMissing(): void
+    {
+        $repository = new MissingTableStorageOperationQueueRepository();
+        $processor = new StorageOperationQueueProcessor(
+            new StorageQueueCommandsTestAdapterLocator($this->adapter),
+            $repository,
+            new NullLogger()
+        );
+        $command = new StorageQueueProcessCommand($repository, $this->lockFactory(), $processor);
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute([]);
+
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('does not exist yet', $tester->getDisplay());
+        $this->assertStringContainsString('documentation', $tester->getDisplay());
+        $this->assertStringNotContainsString('SELECT', $tester->getDisplay(), 'no SQL leaked into the message');
     }
 }
 
