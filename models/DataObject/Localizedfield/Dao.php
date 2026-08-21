@@ -417,6 +417,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     $queryTable = $this->getQueryTableName().'_'.$language;
+
                     try {
                         Helper::upsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
                     } catch (TableNotFoundException $e) {
