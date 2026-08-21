@@ -722,6 +722,37 @@ class ImageThumbnailTraitTest extends ImageThumbnailDimensionTestCase
         self::assertNull($asset->getCustomSetting('imageHeight'));
     }
 
+    public function testGetLocalFileReusesStableLocalStreamWithMatchingExtension(): void
+    {
+        $source = $this->createRasterFixture(400, 300);
+        $asset = $this->countingImage(400, 300, 'source.png', $source);
+        $thumbnail = new RealAssetImageThumbnailTraitProbe($asset, $this->config([]));
+
+        self::assertSame($source, $thumbnail->getLocalFile());
+        self::assertSame(1, $asset->streamCalls);
+        self::assertFileExists($source);
+    }
+
+    public function testGetLocalFileCopiesLocalStreamWhenSourceExtensionDiffers(): void
+    {
+        $source = $this->createRasterFixture(400, 300);
+        $asset = $this->countingImage(400, 300, 'source.svg', $source);
+        $config = $this->config([
+            ['method' => 'scaleByWidth', 'arguments' => ['width' => 200]],
+        ]);
+        $config->setFormat('SOURCE');
+        $thumbnail = new RealAssetImageThumbnailTraitProbe($asset, $config);
+
+        $localFile = $thumbnail->getLocalFile();
+
+        self::assertNotNull($localFile);
+        $this->temporaryFiles[] = $localFile;
+        self::assertNotSame($source, $localFile);
+        self::assertSame('svg', pathinfo($localFile, PATHINFO_EXTENSION));
+        self::assertSame(file_get_contents($source), file_get_contents($localFile));
+        self::assertSame(1, $asset->streamCalls);
+    }
+
     public function testPrintSvgWithoutStoredDimensionsPreservesExtensionForRealAssetFallback(): void
     {
         $this->requireImagickExtension();

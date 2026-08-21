@@ -401,6 +401,18 @@ trait ImageThumbnailTrait
                 $fileExtension = pathinfo($this->getAsset()->getFilename(), PATHINFO_EXTENSION);
             }
 
+            $metadata = stream_get_meta_data($stream);
+            $streamUri = $metadata['uri'] ?? null;
+            if (is_string($streamUri) && stream_is_local($stream) && is_file($streamUri)) {
+                $streamPath = (string) (parse_url($streamUri, PHP_URL_PATH) ?: $streamUri);
+                $streamExtension = pathinfo($streamPath, PATHINFO_EXTENSION);
+                if ($fileExtension !== '' && strcasecmp($streamExtension, $fileExtension) === 0) {
+                    fclose($stream);
+
+                    return $streamUri;
+                }
+            }
+
             $localFile = File::getLocalTempFilePath($fileExtension ?: null);
             $destination = fopen($localFile, 'wb', false, File::getContext());
             if ($destination === false) {
@@ -410,7 +422,6 @@ trait ImageThumbnailTrait
             }
 
             try {
-                $metadata = stream_get_meta_data($stream);
                 if ($metadata['seekable'] && !rewind($stream)) {
                     throw new Exception('Unable to rewind thumbnail stream before copying');
                 }
@@ -424,10 +435,6 @@ trait ImageThumbnailTrait
 
             return $localFile;
         }
-
-        $localFile = self::getLocalFileFromStream($stream);
-
-        return $localFile;
     }
 
     public function exists(): bool
