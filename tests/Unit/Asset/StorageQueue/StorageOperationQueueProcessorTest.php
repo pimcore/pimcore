@@ -524,6 +524,51 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertTrue($this->adapter->fileExists('Archive/Campaigns/a.jpg'));
     }
 
+    /**
+     * H2 (Copilot round 3): two Move rows share an IDENTICAL target - a re-move flattened them
+     * onto the same cluster (see orderForProcessing). Processing the OLDER row directly via
+     * --id, out of the newest-first cluster order that full runs enforce, risks landing stale
+     * bytes at the shared target and then having the newer row see the target occupied and
+     * delete its own (fresher) source content. --id must refuse the older row instead.
+     */
+    public function testIdRefusesOlderRowOfSameTargetCluster(): void
+    {
+        $this->write('A/same.jpg', 'from-A');
+        $this->write('B/same.jpg', 'from-B');
+        $this->addRow(StorageOperationType::Move, 'A', 'T');
+        $this->addRow(StorageOperationType::Move, 'B', 'T');
+        $olderId = $this->repository->all()[0]->getId();
+        $newerId = $this->repository->all()[1]->getId();
+
+        $result = $this->processor()->process($olderId);
+
+        $this->assertSame(0, $result->getProcessedRows());
+        $this->assertSame(1, $result->getFailedRows());
+        $this->assertCount(1, $result->getErrors());
+        $this->assertStringContainsString((string) $newerId, $result->getErrors()[0]);
+        $this->assertTrue($this->adapter->fileExists('A/same.jpg'), 'older row source untouched');
+        $this->assertTrue($this->adapter->fileExists('B/same.jpg'), 'newer row source untouched');
+        $this->assertFalse($this->adapter->fileExists('T/same.jpg'), 'nothing landed at the shared target');
+        $this->assertCount(2, $this->repository->all(), 'both rows still queued');
+    }
+
+    public function testIdProcessesNewestRowOfCluster(): void
+    {
+        $this->write('A/same.jpg', 'from-A');
+        $this->write('B/same.jpg', 'from-B');
+        $this->addRow(StorageOperationType::Move, 'A', 'T');
+        $this->addRow(StorageOperationType::Move, 'B', 'T');
+        $newerId = $this->repository->all()[1]->getId();
+
+        $result = $this->processor()->process($newerId);
+
+        $this->assertSame(1, $result->getProcessedRows());
+        $this->assertSame(0, $result->getFailedRows());
+        $this->assertSame('from-B', $this->adapter->read('T/same.jpg'));
+        $this->assertFalse($this->adapter->fileExists('B/same.jpg'));
+        $this->assertSame(1, $result->getPendingRows(), 'older row untouched, stays queued');
+    }
+
     public function testOrderForProcessingKeepsFifoOtherwise(): void
     {
         $ops = [

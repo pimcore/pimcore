@@ -818,4 +818,79 @@ class QueueAwareStorageAdapterTest extends Unit
         $this->assertSame(['A->C', 'B->C'], $pairs, 'literal content under the source still needs its own row');
         $this->assertSame('from-b', $adapter->read('C/fresh.jpg'));
     }
+
+    /**
+     * Copilot round-3 finding: A -> B pending, with the only physical copy of the moved file
+     * still sitting at A/x.png (nothing yet at B/x.png). A literal write() targets the pending
+     * SOURCE key A/x.png directly (e.g. a re-created source namespace). Before BASE's fix, the
+     * write lands straight on A/x.png, destroying the only physical copy of the moved bytes -
+     * B/x.png (which only ever resolved to A/x.png through the pending mapping) silently starts
+     * serving the NEW bytes instead of the ORIGINAL ones. The guard must materialize the
+     * original bytes at the mapped target first.
+     */
+    public function testWriteIntoRecreatedSourceNamespaceMaterializesMovedBytesFirst(): void
+    {
+        $adapter = $this->adapter();
+        $adapter->write('A/x.png', 'ORIGINAL', new Config());
+        $this->addMove('A', 'B');
+
+        $adapter->write('A/x.png', 'NEW', new Config());
+
+        $this->assertSame('ORIGINAL', $adapter->read('B/x.png'), 'moved bytes materialized at the target before the overwrite');
+        $this->assertSame('NEW', $adapter->read('A/x.png'));
+        $this->assertTrue((new LocalFilesystemAdapter($this->tmpDir))->fileExists('B/x.png'), 'target physically materialized');
+        $this->assertSame('ORIGINAL', (new LocalFilesystemAdapter($this->tmpDir))->read('B/x.png'), 'physical target key holds the original bytes');
+    }
+
+    public function testWriteStreamSameGuard(): void
+    {
+        $adapter = $this->adapter();
+        $adapter->write('A/x.png', 'ORIGINAL', new Config());
+        $this->addMove('A', 'B');
+
+        $stream = fopen('php://memory', 'r+');
+        fwrite($stream, 'NEW');
+        rewind($stream);
+        $adapter->writeStream('A/x.png', $stream, new Config());
+
+        $this->assertSame('ORIGINAL', $adapter->read('B/x.png'), 'moved bytes materialized at the target before the overwrite');
+        $this->assertSame('NEW', $adapter->read('A/x.png'));
+        $this->assertSame('ORIGINAL', (new LocalFilesystemAdapter($this->tmpDir))->read('B/x.png'), 'physical target key holds the original bytes');
+    }
+
+    public function testSingleFileMoveDestinationGuard(): void
+    {
+        $adapter = $this->adapter();
+        $adapter->write('A/x.png', 'ORIGINAL', new Config());
+        $adapter->write('Other/y.png', 'INCOMING', new Config());
+        $this->addMove('A', 'B');
+
+        // destination collides with the pending move's source key
+        $adapter->move('Other/y.png', 'A/x.png', new Config());
+
+        $this->assertSame('ORIGINAL', $adapter->read('B/x.png'), 'moved bytes materialized at the target before the move lands');
+        $this->assertSame('INCOMING', $adapter->read('A/x.png'));
+        $this->assertSame('ORIGINAL', (new LocalFilesystemAdapter($this->tmpDir))->read('B/x.png'), 'physical target key holds the original bytes');
+    }
+
+    public function testWriteWithoutPendingOpsHasNoExtraChecks(): void
+    {
+        $adapter = $this->adapter();
+
+        $adapter->write('Fresh/file.txt', 'content', new Config());
+
+        $this->assertSame('content', $adapter->read('Fresh/file.txt'));
+        $this->assertSame(0, $this->repository->getFindSourceCoveringCallCount(), 'no-pending fast path must not even query for a covering source row');
+    }
+
+    public function testWriteUnderSourceWithAbsentKeyJustWrites(): void
+    {
+        $adapter = $this->adapter();
+        $this->addMove('A', 'B'); // covering row exists, but nothing physically sits at A/x.png
+
+        $adapter->write('A/x.png', 'content', new Config());
+
+        $this->assertSame('content', $adapter->read('A/x.png'));
+        $this->assertFalse((new LocalFilesystemAdapter($this->tmpDir))->fileExists('B/x.png'), 'no materialization when there was nothing to preserve');
+    }
 }

@@ -59,9 +59,27 @@ final class StorageOperationQueueProcessor
         $errors = [];
         $clearedAssetMove = false;
 
-        $operations = $onlyId !== null
-            ? array_filter([$this->repository->findById($onlyId)])
-            : $this->orderForProcessing($this->repository->all());
+        if ($onlyId !== null) {
+            $requested = $this->repository->findById($onlyId);
+            $operations = array_filter([$requested]);
+
+            if ($requested !== null && $requested->getType() === StorageOperationType::Move) {
+                $newerSameTarget = $this->findNewerSameTargetRow($requested);
+                if ($newerSameTarget !== null) {
+                    $operations = [];
+                    $failed++;
+                    $errors[] = sprintf(
+                        '#%d move %s: refusing to process out of order - row #%d targets the same prefix "%s" and is newer; run without --id so the cluster drains newest-first',
+                        $requested->getId(),
+                        $requested->getSourcePrefix(),
+                        $newerSameTarget->getId(),
+                        (string) $requested->getTargetPrefix()
+                    );
+                }
+            }
+        } else {
+            $operations = $this->orderForProcessing($this->repository->all());
+        }
 
         foreach ($operations as $operation) {
             if ($deadline !== null && time() >= $deadline) {
@@ -141,6 +159,32 @@ final class StorageOperationQueueProcessor
         } catch (Exception $e) {
             $this->logger->debug('Storage queue heartbeat failed', ['exception' => $e]);
         }
+    }
+
+    /**
+     * Finds the newest (highest id) Move row in the same storage sharing an IDENTICAL
+     * target_prefix with $operation, other than $operation itself. Used to refuse processing an
+     * older member of a same-target cluster via --id: orderForProcessing's newest-first drain
+     * order is load-bearing for such clusters (see its docblock), and --id bypasses that
+     * ordering entirely, so it must refuse instead of risking the same data-loss shape.
+     */
+    private function findNewerSameTargetRow(StorageOperation $operation): ?StorageOperation
+    {
+        $newest = null;
+        foreach ($this->repository->all() as $candidate) {
+            if ($candidate->getType() !== StorageOperationType::Move
+                || $candidate->getStorage() !== $operation->getStorage()
+                || $candidate->getTargetPrefix() !== $operation->getTargetPrefix()
+                || (int) $candidate->getId() <= (int) $operation->getId()
+            ) {
+                continue;
+            }
+            if ($newest === null || (int) $candidate->getId() > (int) $newest->getId()) {
+                $newest = $candidate;
+            }
+        }
+
+        return $newest;
     }
 
     /**

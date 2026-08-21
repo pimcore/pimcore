@@ -60,11 +60,13 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
 
     public function write(string $path, string $contents, Config $config): void
     {
+        $this->materializeShadowedSource($path);
         $this->inner->write($path, $contents, $config);
     }
 
     public function writeStream(string $path, $contents, Config $config): void
     {
+        $this->materializeShadowedSource($path);
         $this->inner->writeStream($path, $contents, $config);
     }
 
@@ -231,6 +233,7 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
         $resolvedSource = $this->resolveFilePath($source);
         if ($this->inner->fileExists($resolvedSource)) {
             // single file: normal move, source possibly at its legacy location
+            $this->materializeShadowedSource($destination);
             $this->inner->move($resolvedSource, $destination, $config);
             $this->cleanupOtherCandidates($source, $resolvedSource);
 
@@ -348,7 +351,31 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
 
     public function copy(string $source, string $destination, Config $config): void
     {
+        $this->materializeShadowedSource($destination);
         $this->inner->copy($this->resolveFilePath($source), $destination, $config);
+    }
+
+    /**
+     * A key under a pending Move row's SOURCE prefix may hold the only physical copy of the
+     * moved logical file. Before a literal write lands on it, materialize those bytes at their
+     * mapped target so the overwrite cannot destroy them (Copilot round-3 finding).
+     */
+    private function materializeShadowedSource(string $path): void
+    {
+        if (!$this->repository->hasOperations($this->storageName)) {
+            return;
+        }
+        foreach ($this->repository->findSourceCovering($this->storageName, $path) as $operation) {
+            if (!$this->inner->fileExists($path)) {
+                return; // nothing to preserve
+            }
+            $target = $this->mapToTarget($path, $operation);
+            if (!$this->inner->fileExists($target)) {
+                $this->inner->copy($path, $target, new Config());
+            }
+
+            return; // most specific row wins; one materialization is sufficient
+        }
     }
 
     public function publicUrl(string $path, Config $config): string
@@ -427,5 +454,15 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
     private function mapToSource(string $logicalPath, StorageOperation $operation): string
     {
         return $operation->getSourcePrefix() . mb_substr($logicalPath, mb_strlen((string) $operation->getTargetPrefix()));
+    }
+
+    /**
+     * Inverse of mapToSource(): maps a path under $operation's source prefix to its counterpart
+     * under the target prefix (the target is guaranteed non-null for a Move row, which is the
+     * only type findSourceCovering() returns).
+     */
+    private function mapToTarget(string $path, StorageOperation $operation): string
+    {
+        return (string) $operation->getTargetPrefix() . mb_substr($path, mb_strlen($operation->getSourcePrefix()));
     }
 }

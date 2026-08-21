@@ -111,6 +111,28 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
         return array_map($this->hydrate(...), $rows);
     }
 
+    /**
+     * @return StorageOperation[] move operations whose source prefix covers the path, most
+     *                            specific source first
+     */
+    public function findSourceCovering(string $storage, string $path): array
+    {
+        if (!$this->hasOperations($storage)) {
+            return [];
+        }
+
+        $rows = $this->db->fetchAllAssociative(
+            'SELECT * FROM ' . self::TABLE . "
+             WHERE `storage` = :storage
+               AND `operation` = 'move'
+               AND (`source_prefix` = :path OR LEFT(:path2, CHAR_LENGTH(`source_prefix`) + 1) = CONCAT(`source_prefix`, '/'))
+             ORDER BY LENGTH(`source_prefix`) DESC, `id` DESC",
+            ['storage' => $storage, 'path' => $path, 'path2' => $path]
+        );
+
+        return array_map($this->hydrate(...), $rows);
+    }
+
     public function hasOperations(string $storage): bool
     {
         $cacheKey = self::HAS_OPERATIONS_CACHE_KEY . $storage;

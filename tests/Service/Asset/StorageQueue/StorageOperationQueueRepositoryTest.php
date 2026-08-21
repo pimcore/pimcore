@@ -71,6 +71,39 @@ class StorageOperationQueueRepositoryTest extends TestCase
         $this->assertCount(0, $this->repository->findCovering('thumbnail', 'Car/img.jpg'));
     }
 
+    public function testFindSourceCoveringMatchesEqualCoveringAndSiblingPrefix(): void
+    {
+        $this->repository->add($this->move('asset', 'A', 'B'));
+        $this->repository->add($this->move('asset', 'A/inner', 'B/inner')); // nested source, more specific
+
+        // covering: exact source match
+        $exact = $this->repository->findSourceCovering('asset', 'A');
+        $this->assertSame(['A'], array_map(static fn (StorageOperation $op) => $op->getSourcePrefix(), $exact));
+
+        // covering: descendant of the source, most specific first
+        $covering = $this->repository->findSourceCovering('asset', 'A/inner/img.jpg');
+        $this->assertCount(2, $covering);
+        $this->assertSame('A/inner', $covering[0]->getSourcePrefix());
+        $this->assertSame('A', $covering[1]->getSourcePrefix());
+
+        // sibling prefix boundary: 'A-old' must not match source 'A'
+        $this->repository->add($this->move('asset', 'A-old', 'C'));
+        $this->assertSame([], array_filter(
+            $this->repository->findSourceCovering('asset', 'A-old/img.jpg'),
+            static fn (StorageOperation $op) => $op->getSourcePrefix() === 'A'
+        ));
+        $this->assertSame(
+            ['A-old'],
+            array_map(static fn (StorageOperation $op) => $op->getSourcePrefix(), $this->repository->findSourceCovering('asset', 'A-old/img.jpg'))
+        );
+
+        // different storage must not match
+        $this->assertSame([], $this->repository->findSourceCovering('thumbnail', 'A/inner/img.jpg'));
+
+        // a path outside any source prefix matches nothing
+        $this->assertSame([], $this->repository->findSourceCovering('asset', 'Unrelated/img.jpg'));
+    }
+
     public function testFindWithTargetUnderMatchesDescendantsAndRoot(): void
     {
         $this->repository->add($this->move('asset', 'A', 'Archive/A'));

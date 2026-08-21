@@ -181,6 +181,33 @@ class StorageQueueCommandsTest extends Unit
         $this->assertStringContainsString('1 failed', $tester->getDisplay());
     }
 
+    public function testProcessRefusesIdOfOlderSameTargetRow(): void
+    {
+        // H2 (Copilot round 3): two Move rows share an identical target - --id on the older one
+        // must refuse rather than risk stranding the newer row's fresher content.
+        $this->adapter->write('A/same.jpg', 'from-A', new Config());
+        $this->adapter->write('B/same.jpg', 'from-B', new Config());
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()
+        ));
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Move, 'B', 'T', new DateTimeImmutable()
+        ));
+        $olderId = $this->repository->all()[0]->getId();
+        $newerId = $this->repository->all()[1]->getId();
+        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $this->realProcessor());
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute(['--id' => (string) $olderId]);
+
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('1 failed', $tester->getDisplay());
+        $this->assertStringContainsString((string) $newerId, $tester->getDisplay());
+        $this->assertTrue($this->adapter->fileExists('A/same.jpg'));
+        $this->assertTrue($this->adapter->fileExists('B/same.jpg'));
+        $this->assertFalse($this->adapter->fileExists('T/same.jpg'));
+    }
+
     public function testProcessSkipsCleanlyWhenLocked(): void
     {
         $lockFactory = $this->lockFactory();

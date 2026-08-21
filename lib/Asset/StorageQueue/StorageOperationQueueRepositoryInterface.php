@@ -43,6 +43,16 @@ interface StorageOperationQueueRepositoryInterface
      */
     public function findWithTargetUnder(string $storage, string $prefix): array;
 
+    /**
+     * Active move operations whose source prefix covers the given path (equal, or the path
+     * starts with source_prefix . '/'), most specific source first. A key under a pending
+     * move's source prefix may hold the only physical copy of the moved logical file - used to
+     * guard literal writes from destroying it (Copilot round-3 finding, PR #19383).
+     *
+     * @return StorageOperation[]
+     */
+    public function findSourceCovering(string $storage, string $path): array;
+
     public function hasOperations(string $storage): bool;
 
     /**

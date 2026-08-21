@@ -29,6 +29,8 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
 
     private int $nextId = 1;
 
+    private int $findSourceCoveringCalls = 0;
+
     public function add(StorageOperation $operation): void
     {
         if ($operation->getType() === StorageOperationType::Move) {
@@ -88,6 +90,31 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
         );
 
         return array_values($found);
+    }
+
+    public function findSourceCovering(string $storage, string $path): array
+    {
+        $this->findSourceCoveringCalls++;
+
+        $covering = array_filter(
+            $this->operations,
+            static fn (StorageOperation $op) => $op->getStorage() === $storage
+                && $op->getType() === StorageOperationType::Move
+                && ($op->getSourcePrefix() === $path
+                    || str_starts_with($path, $op->getSourcePrefix() . '/'))
+        );
+        usort(
+            $covering,
+            static fn (StorageOperation $a, StorageOperation $b) =>
+                [mb_strlen($b->getSourcePrefix()), $b->getId()] <=> [mb_strlen($a->getSourcePrefix()), $a->getId()]
+        );
+
+        return array_values($covering);
+    }
+
+    public function getFindSourceCoveringCallCount(): int
+    {
+        return $this->findSourceCoveringCalls;
     }
 
     public function hasOperations(string $storage): bool
