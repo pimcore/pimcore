@@ -43,6 +43,7 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
         private readonly FilesystemAdapter $inner,
         private readonly StorageOperationQueueRepositoryInterface $repository,
         private readonly string $storageName,
+        private readonly bool $regeneratesOnMove = false,
     ) {
     }
 
@@ -116,14 +117,7 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
 
         // Always deferred when the feature is enabled - there is no "native failed" signal
         // for deletes, and deferring a local delete until the processor run is harmless.
-        $this->repository->add(new StorageOperation(
-            null,
-            $this->storageName,
-            StorageOperationType::Delete,
-            $path,
-            null,
-            new DateTimeImmutable(),
-        ));
+        $this->tombstone($path);
     }
 
     public function createDirectory(string $path, Config $config): void
@@ -233,6 +227,16 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             return; // native rename moved everything physically - never insert a row
         }
 
+        if ($this->regeneratesOnMove) {
+            // Derived, regenerable content (thumbnails, asset_cache): don't translate reads for
+            // the pending window at all - tombstone the source prefix so the processor sweeps
+            // the stale renditions, and let fresh ones regenerate on demand at their new,
+            // literal paths through the standard deferred-thumbnail mechanism.
+            $this->tombstone($source);
+
+            return;
+        }
+
         // Queue the operation: the backend could not (or did not attempt to) move the prefix
         // physically, so reads/writes must be translated until the processor catches up.
         $this->repository->add(new StorageOperation(
@@ -241,6 +245,21 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             StorageOperationType::Move,
             $source,
             $destination,
+            new DateTimeImmutable(),
+        ));
+    }
+
+    /**
+     * Enqueues a Delete tombstone for $prefix on this storage.
+     */
+    private function tombstone(string $prefix): void
+    {
+        $this->repository->add(new StorageOperation(
+            null,
+            $this->storageName,
+            StorageOperationType::Delete,
+            $prefix,
+            null,
             new DateTimeImmutable(),
         ));
     }

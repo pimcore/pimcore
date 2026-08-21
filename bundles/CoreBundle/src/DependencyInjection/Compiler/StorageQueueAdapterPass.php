@@ -38,6 +38,13 @@ final class StorageQueueAdapterPass implements CompilerPassInterface
         'asset_cache' => 'flysystem.adapter.pimcore.asset_cache.storage',
     ];
 
+    /**
+     * Storages whose content is derived and regenerable: on the prefix-move fallback (backends
+     * without native directory rename), the old content is tombstoned instead of queued as a
+     * Move row, and regenerates on demand at its new, literal paths.
+     */
+    private const REGENERATES_ON_MOVE = ['thumbnail', 'asset_cache'];
+
     public function process(ContainerBuilder $container): void
     {
         if (!$container->hasParameter('pimcore.assets.storage_operation_queue.enabled')
@@ -57,6 +64,7 @@ final class StorageQueueAdapterPass implements CompilerPassInterface
                 new Reference($decoratorId . '.inner'),
                 new Reference(StorageOperationQueueRepositoryInterface::class),
                 $storageName,
+                in_array($storageName, self::REGENERATES_ON_MOVE, true),
             ]);
             $container->setDefinition($decoratorId, $definition);
         }

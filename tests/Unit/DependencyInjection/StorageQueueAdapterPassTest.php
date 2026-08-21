@@ -57,6 +57,17 @@ class StorageQueueAdapterPassTest extends Unit
         }
     }
 
+    public function testRegenerateFlagWiredPerStorage(): void
+    {
+        $container = $this->buildContainer(true);
+
+        $expected = ['asset' => false, 'thumbnail' => true, 'asset_cache' => true];
+        foreach ($expected as $name => $regeneratesOnMove) {
+            $definition = $container->getDefinition('pimcore.asset.storage_queue.adapter.' . $name);
+            $this->assertSame($regeneratesOnMove, $definition->getArgument(3), $name);
+        }
+    }
+
     public function testMissingAdapterServiceIsSkipped(): void
     {
         $container = new ContainerBuilder();

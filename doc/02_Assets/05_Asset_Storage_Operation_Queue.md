@@ -15,21 +15,42 @@ block the request.
 
 The asset storage operation queue is an opt-in feature that defers this physical work
 instead of performing it synchronously. It covers the three asset-related storages:
-`asset`, `thumbnail`, and `asset_cache`.
+`asset` (originals), `thumbnail`, and `asset_cache`. Thumbnails and asset_cache entries
+are derived, regenerable content, so once a folder move falls back from a native rename,
+they are handled differently from originals — see below.
 
-- **Folder moves** still try the storage's native rename first. Backends with real
-  directory rename (local filesystem, SFTP) keep behaving exactly as before — no queue
-  row is created. Only when the backend cannot rename (object storage, which throws a
-  Flysystem `UnableToMoveFile` error) is the move recorded as a queue row instead,
-  making the move an O(1) database operation regardless of folder size.
+- **Folder moves** always try the storage's native rename first, on every storage.
+  Backends with real directory rename (local filesystem, SFTP) keep behaving exactly as
+  before — no queue row is created, and thumbnails/asset_cache renditions are renamed
+  along with the originals, so nothing needs to regenerate.
+  Only when the backend cannot rename a folder natively (object storage, which throws a
+  Flysystem `UnableToMoveFile` error) does behavior diverge by storage:
+    - For the **`asset`** storage, the move is recorded as a Move queue row instead,
+      making the move an O(1) database operation regardless of folder size. Reads
+      transparently resolve through the pending row (pre-move or post-move path, either
+      way) until it is processed.
+    - For **`thumbnail`** and **`asset_cache`**, the existing renditions under the
+      source prefix are not moved and their reads are not translated. Instead, the
+      source prefix is tombstoned — recorded as a Delete row, swept by the processing
+      command — and new renditions simply regenerate on demand at their new, post-move
+      paths through Pimcore's standard deferred-thumbnail mechanism, the same as they
+      would for a newly uploaded asset. There is no pending-window read translation for
+      these two storages after a folder move: a thumbnail requested at its post-move
+      path before the tombstone is swept is generated fresh, exactly as if the folder
+      had never been moved.
 - **Folder deletes** with existing content are always deferred via a tombstone row, on
-  every backend. There is no native-failure signal for deletes the way there is for
-  moves, and a deferred local delete is harmless.
+  every backend and for all three storages. There is no native-failure signal for
+  deletes the way there is for moves, and a deferred local delete is harmless.
 
-While a queue row is pending, the storage adapter transparently resolves reads,
-existence checks, metadata lookups, and directory listings by checking the literal path
-first and then the mapped (pre-move) candidate paths. Writes always go to the literal
-(post-move) path.
+While a Move row is pending (the `asset` storage only), the storage adapter transparently
+resolves reads, existence checks, metadata lookups, and directory listings by checking
+the literal path first and then the mapped (pre-move) candidate paths. Writes always go
+to the literal (post-move) path. A pending Delete row (any storage, including the
+tombstones `thumbnail`/`asset_cache` moves create) has no mapped candidate: the source
+prefix's content stays reachable at its own, unmapped physical path until the row is
+processed, and nothing resolves at the target — for thumbnails and asset_cache, a lookup
+at the target simply misses and regenerates, the same as for any not-yet-generated
+rendition.
 
 Enable it when asset folders on an object storage backend are moved or deleted often
 enough, or are large enough, that the synchronous per-object cost is a problem. Folder
@@ -97,11 +118,15 @@ flag is disabled.
 
 Between the moment an operation is queued and the moment it is processed:
 
-- Reads, existence checks, metadata, and listings performed through Pimcore (the PHP
-  API, the asset delivery pipeline, Pimcore Studio) resolve transparently through the
-  storage adapter, whether the queried path is the pre-move or post-move location.
-- The physical storage layout only converges to match the logical (post-move) paths
-  once the processing command runs.
+- For the `asset` storage's Move rows, reads, existence checks, metadata, and listings
+  performed through Pimcore (the PHP API, the asset delivery pipeline, Pimcore Studio)
+  resolve transparently through the storage adapter, whether the queried path is the
+  pre-move or post-move location. For `thumbnail`/`asset_cache` tombstones created by a
+  folder move, there is no such translation: content at the post-move path is generated
+  fresh on first request, the same as for a newly uploaded asset.
+- The physical storage layout only converges to match the logical (post-move) paths, and
+  old thumbnail/asset_cache renditions are only physically removed, once the processing
+  command runs.
 - For deletes, the content is only physically removed from storage at processing time.
   It is unreadable through Pimcore immediately (the queue row makes it disappear from
   reads), but it still exists physically in the storage backend until processed. On
@@ -122,10 +147,15 @@ physical (pre-move) path instead of the logical (post-move) path, so it keeps re
 correctly for the duration of the pending window, and automatically switches back to the
 logical path once the move is processed.
 
-`pimcore.assets.frontend_prefixes.thumbnail` URLs (generated thumbnail renditions) are
-**not** queue-aware in this version — a thumbnail requested for an asset under a pending
-move can 404 until the move is processed. If this matters for a given folder, regenerate
-its thumbnails after processing, or keep the pending window short.
+`pimcore.assets.frontend_prefixes.thumbnail` URLs need no queue-awareness at all: a
+thumbnail requested at its post-move path is simply a not-yet-generated thumbnail, no
+different from one requested for a newly uploaded asset, and it is generated on the fly
+through the normal deferred-thumbnail flow — for this to work,
+`pimcore.assets.frontend_prefixes.thumbnail_deferred` must be routed to PHP, exactly as
+it must be for any new asset. Installs that front original files with a CDN image
+optimizer (transforming `frontend_prefixes.source` URLs on the fly, so no thumbnail
+storage is ever written to by Pimcore) are entirely unaffected by any of this — there is
+no thumbnail rendition to tombstone or regenerate.
 
 An asset uploaded or replaced inside a moved folder during the pending window resolves to
 its logical (post-move) URL right away, because writes always target the literal,
@@ -148,10 +178,22 @@ Without a configured prefix, frontend URLs are unaffected by this feature.
   name is never overwritten or touched by the deferred operation. However, the old
   physical namespace (the objects at the pre-move/pre-delete keys) persists in the
   storage backend until the next processing run.
-- **Double round-trips on reads:** reads inside a subtree that has pending operations
-  cost roughly twice the normal number of storage round-trips, because the adapter has
-  to check the literal path and then the mapped candidate paths. This is why processing
-  promptly (rather than only nightly) matters for subtrees under sustained read load.
+- **Double round-trips on reads:** for the `asset` storage, reads inside a subtree that
+  has a pending Move row cost roughly twice the normal number of storage round-trips,
+  because the adapter has to check the literal path and then the mapped candidate paths.
+  This is why processing promptly (rather than only nightly) matters for subtrees under
+  sustained read load. Pending Delete rows (deletes on any storage, and the tombstones a
+  folder move creates on `thumbnail`/`asset_cache`) do not have this cost — there is no
+  mapped candidate to check.
+- **Thumbnail/asset_cache regeneration cost:** on installs where Pimcore itself
+  generates thumbnails (i.e. not offloaded to a CDN image optimizer acting on
+  originals), moving a large folder on a backend without native rename causes every one
+  of its thumbnails to regenerate on first request after the move, rather than being
+  moved along with the originals. The cost (CPU time, and added latency on the first
+  view of each asset) is spread out over demand rather than paid up front, but it is
+  real cumulative cost across a large folder. Schedule large folder moves accordingly
+  (e.g. outside peak traffic) or pre-warm thumbnails for critical folders immediately
+  after moving them.
 - **Thumbnail temp-file cleanup:** `Asset\Thumbnail` temporary-file cleanup may list
   physical (pre-move) paths while operations on that subtree are pending. This
   converges once the queue is processed; no manual action is needed.

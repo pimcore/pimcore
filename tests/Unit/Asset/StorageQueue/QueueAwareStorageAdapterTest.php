@@ -581,6 +581,88 @@ class QueueAwareStorageAdapterTest extends Unit
         $this->assertSame(['Archive/Campaigns/sub/deep.jpg'], $paths);
     }
 
+    public function testPrefixMoveOnRegeneratingStorageTombstonesInsteadOfQueueingMove(): void
+    {
+        $adapter = new QueueAwareStorageAdapter(
+            new NonRenamingAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir)),
+            $this->repository,
+            'thumbnail',
+            true,
+        );
+        $adapter->write('Camp/img.jpg', 'bytes', new Config());
+
+        $adapter->move('Camp', 'Arch/Camp', new Config());
+
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations);
+        $this->assertSame('delete', $operations[0]->getType()->value);
+        $this->assertSame('thumbnail', $operations[0]->getStorage());
+        $this->assertSame('Camp', $operations[0]->getSourcePrefix());
+        $this->assertNull($operations[0]->getTargetPrefix());
+
+        $this->assertFalse($adapter->fileExists('Arch/Camp/img.jpg'), 'nothing moved, nothing mapped');
+        $this->assertTrue(
+            (new LocalFilesystemAdapter($this->tmpDir))->fileExists('Camp/img.jpg'),
+            'the literal source object still physically exists - swept later by the processor'
+        );
+    }
+
+    public function testPrefixMoveOnRegeneratingStorageStillSkipsEmptyFolder(): void
+    {
+        $adapter = new QueueAwareStorageAdapter(
+            new NonRenamingAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir)),
+            $this->repository,
+            'thumbnail',
+            true,
+        );
+
+        try {
+            $adapter->move('DoesNotExist', 'Elsewhere', new Config());
+            $this->fail('expected UnableToMoveFile');
+        } catch (UnableToMoveFile) {
+        }
+        $this->assertSame([], $this->repository->all());
+    }
+
+    public function testNativeRenameOnRegeneratingStorageMovesWithoutRow(): void
+    {
+        $adapter = new QueueAwareStorageAdapter(
+            new LocalFilesystemAdapter($this->tmpDir),
+            $this->repository,
+            'thumbnail',
+            true,
+        );
+        $adapter->write('Camp/img.jpg', 'bytes', new Config());
+
+        $adapter->move('Camp', 'Arch', new Config());
+
+        $this->assertTrue($adapter->fileExists('Arch/img.jpg'), 'thumbnails preserved for free on renaming backends');
+        $this->assertFalse($adapter->directoryExists('Camp'));
+        $this->assertSame([], $this->repository->all(), 'native rename produced no queue row');
+    }
+
+    public function testDefaultFlagKeepsMoveRowBehavior(): void
+    {
+        // 3-arg constructor (flag omitted) must keep the pre-existing Move-row fallback
+        // behavior on a non-renaming backend, unchanged.
+        $adapter = new QueueAwareStorageAdapter(
+            new NonRenamingAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir)),
+            $this->repository,
+            'asset',
+        );
+        $adapter->write('Campaigns/img.jpg', 'bytes', new Config());
+
+        $adapter->move('Campaigns', 'Archive/Campaigns', new Config());
+
+        $this->assertTrue($adapter->fileExists('Campaigns/img.jpg'), 'physical object untouched');
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations);
+        $this->assertSame('move', $operations[0]->getType()->value);
+        $this->assertSame('Campaigns', $operations[0]->getSourcePrefix());
+        $this->assertSame('Archive/Campaigns', $operations[0]->getTargetPrefix());
+        $this->assertSame('bytes', $adapter->read('Archive/Campaigns/img.jpg'));
+    }
+
     public function testDeleteRemovesLiteralAndStaleMappedCandidate(): void
     {
         // A -> B pending with legacy content still at A; a fresh literal lands at B and shadows
