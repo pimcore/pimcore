@@ -36,6 +36,10 @@ class Dao extends Model\Dao\AbstractDao
     use DataObject\ClassDefinition\Helper\Dao;
     use DataObject\Traits\CompositeIndexTrait;
 
+    private const TABLE_KEY_COLUMNS = ['ooo_id', 'language'];
+
+    private const CONTAINER_TABLE_KEY_COLUMNS = ['ooo_id', 'language', 'index', 'fieldname'];
+
     protected array $tableDefinitions = [];
 
     protected DataObject\Concrete\Dao\InheritanceHelper $inheritanceHelper;
@@ -72,6 +76,35 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         return 'object_localized_query_'.$this->model->getClass()->getId();
+    }
+
+    /**
+     * The store tables are exclusively created by createUpdateTable() with a fixed primary key,
+     * so the key columns are known without a schema lookup. This avoids querying the table
+     * metadata for every language on save, which gets expensive with many languages enabled.
+     *
+     * @return string[]
+     */
+    public function getTableKeyColumns(): array
+    {
+        $containerType = $this->model->getContext()['containerType'] ?? null;
+        if ($containerType === 'fieldcollection' || $containerType === 'objectbrick') {
+            return self::CONTAINER_TABLE_KEY_COLUMNS;
+        }
+
+        return self::TABLE_KEY_COLUMNS;
+    }
+
+    /**
+     * The per-language query tables are exclusively created by createUpdateTable() with a fixed
+     * primary key, identical for every language, so the key columns are known without a schema
+     * lookup per language table.
+     *
+     * @return string[]
+     */
+    public function getQueryTableKeyColumns(): array
+    {
+        return self::TABLE_KEY_COLUMNS;
     }
 
     /**
@@ -224,7 +257,7 @@ class Dao extends Model\Dao\AbstractDao
                     if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty(
                         $language
                     )) {
-                        Helper::upsert($this->db, $storeTable, $insertData, $this->getPrimaryKey($storeTable));
+                        Helper::upsert($this->db, $storeTable, $insertData, $this->getTableKeyColumns());
                     }
                 } catch (TableNotFoundException $e) {
                     // if the table doesn't exist -> create it! deferred creation for object bricks ...
@@ -383,8 +416,9 @@ class Dao extends Model\Dao\AbstractDao
                         }
                     }
 
+                    $queryTable = $this->getQueryTableName().'_'.$language;
                     try {
-                        Helper::upsert($this->db, $queryTable, $data, $this->getPrimaryKey($queryTable));
+                        Helper::upsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
                     } catch (TableNotFoundException $e) {
                         // with inheritance disabled this is the first statement touching the query table,
                         // so the deferred creation of a missing language table has to be handled here as well
