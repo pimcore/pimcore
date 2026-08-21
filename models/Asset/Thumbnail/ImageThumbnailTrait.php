@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\Thumbnail;
 
 use Exception;
+use Pimcore;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\Asset;
@@ -327,6 +328,12 @@ trait ImageThumbnailTrait
                 $path = $prefix . urlencode_ignore_slash($path);
             } elseif ($type === 'asset') {
                 $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
+                if ($prefix !== '' && $prefix !== null) {
+                    // prefix-based URLs point straight at the storage (CDN/bucket); while a queued
+                    // folder move is pending the bytes still live under the pre-move prefix
+                    $path = Pimcore::getContainer()->get(\Pimcore\Asset\StorageQueue\FrontendPathResolver::class)
+                        ->resolvePhysicalPath($path, $this->getAsset()->getModificationDate());
+                }
                 $path = $prefix . urlencode_ignore_slash($path);
             } else {
                 $path = urlencode_ignore_slash($path);
