@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command\Asset;
 
 use Pimcore\Asset\StorageQueue\StorageOperationQueueProcessor;
-use Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface;
 use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -35,7 +34,6 @@ final class StorageQueueProcessCommand extends AbstractCommand
     private const LOCK_NAME = 'asset_storage_operation_queue_process';
 
     public function __construct(
-        private readonly StorageOperationQueueRepositoryInterface $repository,
         private readonly LockFactory $lockFactory,
         private readonly ?StorageOperationQueueProcessor $processor = null,
     ) {

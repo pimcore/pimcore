@@ -47,8 +47,7 @@ final class StorageQueueAdapterPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->hasParameter('pimcore.assets.storage_operation_queue.enabled')
-            || !$container->getParameter('pimcore.assets.storage_operation_queue.enabled')) {
+        if (!$container->getParameter('pimcore.assets.storage_operation_queue.enabled')) {
             return;
         }
 

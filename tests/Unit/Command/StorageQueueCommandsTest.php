@@ -79,7 +79,7 @@ class StorageQueueCommandsTest extends Unit
 
     public function testProcessFailsWithClearMessageWhenFeatureDisabled(): void
     {
-        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), null);
+        $command = new StorageQueueProcessCommand($this->lockFactory(), null);
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute([]);
@@ -94,7 +94,7 @@ class StorageQueueCommandsTest extends Unit
         $this->repository->add(new StorageOperation(
             null, 'asset', StorageOperationType::Move, 'One', 'Moved/One', new DateTimeImmutable('+5 seconds')
         ));
-        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $this->realProcessor());
+        $command = new StorageQueueProcessCommand($this->lockFactory(), $this->realProcessor());
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute([]);
@@ -106,7 +106,7 @@ class StorageQueueCommandsTest extends Unit
 
     public function testProcessWarnsWhenIdOptionMatchesNoRow(): void
     {
-        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $this->realProcessor());
+        $command = new StorageQueueProcessCommand($this->lockFactory(), $this->realProcessor());
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute(['--id' => '999999']);
@@ -124,7 +124,7 @@ class StorageQueueCommandsTest extends Unit
         $this->repository->add(new StorageOperation(
             null, 'asset', StorageOperationType::Delete, 'Anything', null, new DateTimeImmutable()
         ));
-        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $processor);
+        $command = new StorageQueueProcessCommand($this->lockFactory(), $processor);
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute([]);
@@ -138,7 +138,7 @@ class StorageQueueCommandsTest extends Unit
         $lockFactory = $this->lockFactory();
         $foreign = $lockFactory->createLock('asset_storage_operation_queue_process');
         $this->assertTrue($foreign->acquire());
-        $command = new StorageQueueProcessCommand($this->repository, $lockFactory, $this->realProcessor());
+        $command = new StorageQueueProcessCommand($lockFactory, $this->realProcessor());
         $tester = new CommandTester($command);
 
         $exitCode = $tester->execute([]);

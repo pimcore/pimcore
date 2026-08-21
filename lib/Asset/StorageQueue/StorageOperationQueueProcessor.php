@@ -223,7 +223,7 @@ final class StorageOperationQueueProcessor
                     continue; // undated (never destructive) or namespace-reuse content
                 }
                 $suffix = mb_substr($path, mb_strlen($source));
-                $target = $current->getTargetPrefix() . $suffix;
+                $target = $this->targetPrefixOf($current) . $suffix;
                 if (!$adapter->fileExists($target)) {
                     $adapter->copy($path, $target, new Config());
                     if (!$adapter->fileExists($target)) {
@@ -231,7 +231,7 @@ final class StorageOperationQueueProcessor
                     }
                 }
                 // existing target key: literal wins - never overwrite; the source entry is superseded
-                $copied[$suffix] = $current->getTargetPrefix();
+                $copied[$suffix] = $this->targetPrefixOf($current);
                 $adapter->delete($path);
             }
 
@@ -292,18 +292,27 @@ final class StorageOperationQueueProcessor
                     continue;
                 }
                 $stale = $usedTarget . $suffix;
-                $new = $fresh->getTargetPrefix() . $suffix;
+                $new = $this->targetPrefixOf($fresh) . $suffix;
                 if ($adapter->fileExists($stale)) {
                     if (!$adapter->fileExists($new)) {
                         $adapter->copy($stale, $new, new Config());
                     }
                     $adapter->delete($stale);
                 }
-                $copied[$suffix] = $fresh->getTargetPrefix();
+                $copied[$suffix] = $this->targetPrefixOf($fresh);
             }
         }
 
         return $fresh;
+    }
+
+    /**
+     * A Move row's target prefix is guaranteed non-null by the StorageOperation value object;
+     * this narrows the type for static analysis and fails loudly if the invariant ever breaks.
+     */
+    private function targetPrefixOf(StorageOperation $operation): string
+    {
+        return $operation->getTargetPrefix() ?? throw new RuntimeException(sprintf('Move operation #%d has no target prefix', (int) $operation->getId()));
     }
 
     /**
