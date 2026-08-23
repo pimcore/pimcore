@@ -169,6 +169,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         $this->updatePathFromInternal();
 
         $url = $this->data['path'] ?? '';
+        $url = $this->hasDangerousUrlScheme($url) ? '' : htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
             $url .= (str_contains($url, '?') ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));
@@ -180,6 +181,26 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         }
 
         return $url;
+    }
+
+    /**
+     * A `direct`-type link keeps the editor-supplied path verbatim (see setDataFromEditmode()),
+     * so the href value can carry a script-executing scheme even after HTML-escaping. Browsers
+     * ignore leading/trailing whitespace and embedded control characters (e.g. tabs, newlines)
+     * when parsing a URL scheme, so those are stripped before the comparison to prevent bypasses
+     * such as "java\tscript:".
+     */
+    private function hasDangerousUrlScheme(string $url): bool
+    {
+        $normalized = strtolower(preg_replace('/[\x00-\x20]+/', '', $url) ?? '');
+
+        foreach (['javascript:', 'vbscript:', 'data:'] as $scheme) {
+            if (str_starts_with($normalized, $scheme)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function updatePathFromInternal(bool $realPath = false, bool $editmode = false): void
