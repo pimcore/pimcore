@@ -145,10 +145,34 @@ class ListingTest extends ModelTestCase
         $this->assertSame($this->role->getId(), $children[0]->getId());
     }
 
-    private function createUserFolder(string $name): User\Folder
+    public function testDeletingUserFolderDeletesNestedChildren(): void
+    {
+        $parentFolder = $this->createUserFolder(self::FOLDERNAME_PREFIX . 'u_parent');
+        $nestedFolder = $this->createUserFolder(self::FOLDERNAME_PREFIX . 'u_nested', $parentFolder->getId());
+        $nestedUser = $this->createUser(self::USERNAME_PREFIX . 'nested', $nestedFolder->getId());
+
+        $parentFolder->delete();
+
+        $this->assertNull(User\Folder::getById($nestedFolder->getId()));
+        $this->assertNull(User::getById($nestedUser->getId()));
+    }
+
+    public function testDeletingRoleFolderDeletesNestedChildren(): void
+    {
+        $parentFolder = $this->createRoleFolder(self::FOLDERNAME_PREFIX . 'r_parent');
+        $nestedFolder = $this->createRoleFolder(self::FOLDERNAME_PREFIX . 'r_nested', $parentFolder->getId());
+        $nestedRole = $this->createRole(self::ROLENAME_PREFIX . 'nested', $nestedFolder->getId());
+
+        $parentFolder->delete();
+
+        $this->assertNull(User\Role\Folder::getById($nestedFolder->getId()));
+        $this->assertNull(User\Role::getById($nestedRole->getId()));
+    }
+
+    private function createUserFolder(string $name, int $parentId = 0): User\Folder
     {
         $folder = new User\Folder();
-        $folder->setParentId(0);
+        $folder->setParentId($parentId);
         $folder->setName($name);
         $folder->save();
 
@@ -165,10 +189,10 @@ class ListingTest extends ModelTestCase
         ]);
     }
 
-    private function createRoleFolder(string $name): User\Role\Folder
+    private function createRoleFolder(string $name, int $parentId = 0): User\Role\Folder
     {
         $folder = new User\Role\Folder();
-        $folder->setParentId(0);
+        $folder->setParentId($parentId);
         $folder->setName($name);
         $folder->save();
 
