@@ -227,11 +227,17 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
             throw new Exception('Function ReverseObjectRelation::getFilterConditionExt called without a table prefix.');
         }
 
-        if ($value === null || $value === 'null') {
-            return $noResult;
-        }
-
         $db = \Pimcore\Db::get();
+
+        if ($value === null || $value === 'null') {
+            // An empty filter value means "no relation from the owner side": select the objects
+            // that are not referenced by any object of the owner class through the owner field.
+            return $tablePrefix . 'id NOT IN ('
+                . 'SELECT dest_id FROM object_relations_' . $this->getOwnerClassId()
+                . ' WHERE fieldname = ' . $db->quote($this->getOwnerFieldName())
+                . " AND ownertype = 'object'"
+            . ')';
+        }
 
         if ($operator === '=') {
             $subFilter = '`' . 'src_id' . '`' . ' = ' . $db->quote((string) $value);
