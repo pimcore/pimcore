@@ -43,10 +43,15 @@ trait ElementWithMetadataComparisonTrait
                 return !$container1 && !$container2;
             }
 
-            // A value can reach isEqual() as a plain element path instead of an ElementMetadata
+            // A value can reach isEqual() as a plain element path instead of a metadata
             // container - the getElement() call below would then fatal with a TypeError. Compare
             // such entries directly, and treat a container and a path as different.
-            if (!$container1 instanceof ElementMetadata || !$container2 instanceof ElementMetadata) {
+            //
+            // The check is is_object() rather than an instanceof: the trait serves both
+            // ElementMetadata (AdvancedManyToManyRelation) and ObjectMetadata
+            // (AdvancedManyToManyObjectRelation), which are siblings rather than subclasses,
+            // and any future container implementing getElement()/getData() belongs here too.
+            if (!is_object($container1) || !is_object($container2)) {
                 if ($container1 != $container2) {
                     return false;
                 }
