@@ -175,7 +175,11 @@ class AdvancedManyToManyAssetRelation extends AdvancedManyToManyRelation impleme
                         if (!$value) {
                             continue;
                         }
-                        $subItems[] = $key . ': ' . $value;
+                        // relation metadata is free text, and this string is rendered as HTML in
+                        // the version preview - escape it rather than letting a value close the
+                        // surrounding span
+                        $subItems[] = htmlspecialchars((string) $key, ENT_QUOTES, 'UTF-8')
+                            . ': ' . htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
                     }
 
                     if (count($subItems)) {
