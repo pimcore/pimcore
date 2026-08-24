@@ -35,11 +35,11 @@ trait HasBlockOptionsTrait
             $name = $stream->getCurrent()->getValue();
             $stream->next();
 
-            $argsNode = $parser
-                ->parseExpression()
-                ->getAttribute('arguments');
+            $argsNode = $valueNode = $parser->parseExpression();
 
-            $valueNode = $argsNode->getNode('0');
+            if ($argsNode->hasAttribute('arguments')) {
+                $valueNode = $argsNode->getNode('0');
+            }
 
             $value = $valueNode->getAttribute('value');
 

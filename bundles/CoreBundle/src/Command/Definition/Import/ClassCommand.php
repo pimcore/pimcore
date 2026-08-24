@@ -39,7 +39,7 @@ class ClassCommand extends AbstractStructureImportCommand
     protected function getDefinitionName(string $filename): ?string
     {
         $parts = [];
-        if (1 === preg_match('/^class_(.*)_export\.json$/', $filename, $parts)) {
+        if (1 === preg_match('/^class_(.+)_export(?:_v(.+))?\.json$/', $filename, $parts)) {
             return $parts[1];
         }
 

@@ -103,19 +103,6 @@ final class Requirements
             'state' => ($result && (strtolower($result['Value']) == 'utf8mb4')) ? Check::STATE_OK : Check::STATE_ERROR,
         ]);
 
-        // empty values are provided by MariaDB => 10.3
-        $largePrefix = $db->fetchAssociative("SHOW GLOBAL VARIABLES LIKE 'innodb\_large\_prefix';");
-        $checks[] = new Check([
-            'name' => 'innodb_large_prefix = ON ',
-            'state' => ($largePrefix && !in_arrayi(strtolower((string) $largePrefix['Value']), ['on', '1', ''])) ? Check::STATE_ERROR : Check::STATE_OK,
-        ]);
-
-        $fileFormat = $db->fetchAssociative("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_format';");
-        $checks[] = new Check([
-            'name' => 'innodb_file_format = Barracuda',
-            'state' => ($fileFormat && (!empty($fileFormat['Value']) && strtolower($fileFormat['Value']) != 'barracuda')) ? Check::STATE_ERROR : Check::STATE_OK,
-        ]);
-
         $fileFilePerTable = $db->fetchAssociative("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_per\_table';");
         $checks[] = new Check([
             'name' => 'innodb_file_per_table = ON',
@@ -130,7 +117,7 @@ final class Requirements
                   id int(11) NOT NULL AUTO_INCREMENT,
                   field varchar(190) DEFAULT NULL,
                   PRIMARY KEY (id)
-                ) DEFAULT CHARSET=utf8mb4;');
+                ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;');
         } catch (Exception $e) {
             $queryCheck = false;
         }

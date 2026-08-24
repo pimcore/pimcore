@@ -48,6 +48,9 @@ class EditableHandler implements LoggerAwareInterface
 
     protected AreabrickManagerInterface $brickManager;
 
+    /**
+     * @deprecated since 12.3, will be removed in 13.0. Use Twig\Environment instead.
+     */
     protected EngineInterface $templating;
 
     protected BundleLocatorInterface $bundleLocator;

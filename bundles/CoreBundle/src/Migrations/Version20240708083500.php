@@ -66,9 +66,14 @@ final class Version20240708083500 extends AbstractMigration
             }
         } catch (DataObject\Exception\DefinitionWriteException $e) {
             $this->write(
-                'Could not write class definition file. Please set PIMCORE_CLASS_DEFINITION_WRITABLE env.' . "\n" .
+                'Could not write class definition file.' . "\n" .
+                'Possible causes:' . "\n" .
+                '- If using symfony-config write target: Configs are read-only in production mode (non-debug). ' .
+                'Temporarily enable debug mode or switch to an alternate config-storage to run this migration.' . "\n" .
+                '- Missing write permissions: Set PIMCORE_CLASS_DEFINITION_WRITABLE env variable.' . "\n" .
                 sprintf(
-                    'If you already have migrate the definitions you can skip this migration via "php bin/console doctrine:migrations:version --add %s"',
+                    'If definitions are already migrated, skip this migration: ' . "\n" .
+                    '  "php bin/console doctrine:migrations:version --add %s"',
                     __CLASS__
                 )
             );

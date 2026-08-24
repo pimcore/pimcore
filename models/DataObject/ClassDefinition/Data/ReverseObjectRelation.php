@@ -84,6 +84,16 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $this->ownerClassName;
     }
 
+    /**
+     * @return $this
+     */
+    public function setOwnerClassId(string $ownerClassId): static
+    {
+        $this->ownerClassId = $ownerClassId;
+
+        return $this;
+    }
+
     public function getOwnerClassId(): ?string
     {
         if (empty($this->ownerClassId)) {
@@ -200,7 +210,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
 
     public function getClasses(): array
     {
-        if ($this->getOwnerClassId()) {
+        if ($this->ownerClassName) {
             return Model\Element\Service::fixAllowedTypes([$this->ownerClassName], 'classes');
         }
 
@@ -224,12 +234,12 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         $db = \Pimcore\Db::get();
 
         if ($operator === '=') {
-            $subFilter = '`' . 'src_id' . '`' . ' = ' . $db->quote($value);
+            $subFilter = '`' . 'src_id' . '`' . ' = ' . $db->quote((string) $value);
         } elseif ($operator === 'LIKE' || $operator === 'IN') {
             $values = explode(',', $value);
             // we treat LIKE and IN the same. UI sends LIKE
             $fieldConditions = array_map(function ($value) use ($db) {
-                return '`' . 'src_id' . '`' . ' = ' . $db->quote($value);
+                return '`' . 'src_id' . '`' . ' = ' . $db->quote((string) $value);
             }, array_filter($values));
             if (!empty($fieldConditions)) {
                 // we use OR

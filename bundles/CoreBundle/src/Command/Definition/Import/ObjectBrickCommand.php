@@ -39,7 +39,7 @@ class ObjectBrickCommand extends AbstractStructureImportCommand
     protected function getDefinitionName(string $filename): ?string
     {
         $parts = [];
-        if (1 === preg_match('/^objectbrick_(.*)_export\.json$/', $filename, $parts)) {
+        if (1 === preg_match('/^objectbrick_(.+)_export(?:_v(.+))?\.json$/', $filename, $parts)) {
             return $parts[1];
         }
 

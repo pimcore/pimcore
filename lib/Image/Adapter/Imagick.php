@@ -78,6 +78,12 @@ class Imagick extends Adapter
 
             $imagePathLoad = $imagePathLoad . '[0]';
 
+            // setBackgroundColor must be called BEFORE readImage so that the Inkscape/ImageMagick
+            // delegate composites onto the correct (transparent) background, not black
+            if (!$this->reinitializing && !$this->isPreserveColor() && $this->isVectorGraphic($imagePath)) {
+                $i->setBackgroundColor(new ImagickPixel('transparent'));
+            }
+
             if (!$i->readImage($imagePathLoad) || !@filesize($imagePath)) {
                 return false;
             }
@@ -88,11 +94,12 @@ class Imagick extends Adapter
                 $i->setColorspace(\Imagick::COLORSPACE_SRGB);
 
                 if ($this->isVectorGraphic($imagePath)) {
-                    // only for vector graphics
-                    // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
-                    $i->setBackgroundColor(new ImagickPixel('transparent'));
-                    //for certain edge-cases simply setting the background-color to transparent does not seem to work
-                    //workaround by using transparentPaintImage (somehow even works without setting a target. no clue why)
+                    // After reading, re-apply on the loaded image object — the Inkscape delegate
+                    // can override the background setting during rasterization (e.g. IM 7.1.0-48+)
+                    $i->setImageBackgroundColor(new ImagickPixel('transparent'));
+                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_ACTIVATE);
+                    // for certain edge-cases simply setting the background-color to transparent does not seem to work;
+                    // workaround by using transparentPaintImage (somehow even works without setting a target, no clue why)
                     $i->transparentPaintImage('', 1, 0, false);
                 }
 
@@ -117,9 +124,9 @@ class Imagick extends Adapter
             }
 
             if ($this->checkPreserveAnimation($i->getImageFormat(), $i, false)) {
-                if (!$this->resource->readImage($imagePath) || !filesize($imagePath)) {
-                    return false;
-                }
+                // \Imagick::readImage() throws on failure (it never returns false) and
+                // a non-empty file size was already ensured when the image was read above
+                $this->resource->readImage($imagePath);
                 $this->resource = $this->resource->coalesceImages();
             }
 
@@ -131,11 +138,26 @@ class Imagick extends Adapter
                 //$identifyRaw = $i->identifyImage(true)['rawOutput'];
                 //if (strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
                 // if there's a clipping path embedded, apply the first one
+                // clipping overwrites the alpha channel of the image, so keep a copy of the unclipped image
+                // around: it is the only way to still deliver the image when the clipping fails
+                $unclipped = clone $i;
+
                 try {
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
                     $i->clipImage();
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
+                    $unclipped->clear();
                 } catch (Exception $e) {
+                    // the image is entirely transparent at this point, so restore the copy instead of
+                    // just resetting the alpha channel, which would drop any pre-existing transparency
+                    if ($this->resource === $i) {
+                        $this->resource = $unclipped;
+                    } else {
+                        // the animation handling above replaced the resource with a different image,
+                        // which was never clipped in the first place
+                        $unclipped->clear();
+                    }
+
                     Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
                 }
                 //}
@@ -158,13 +180,12 @@ class Imagick extends Adapter
         fclose($handle);
 
         // according to 8BIM format: https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577409_pgfId-1037504
-        // we're looking for the resource id 'Name of clipping path' which is 8BIM 2999 (decimal) or 0x0BB7 in hex
-        // and the first path information which is 8BIM 2000 (decimal) or 0x07D0 in hex
-        if (preg_match('/8BIM\x0b\xb7/', $chunk) || preg_match('/8BIM\x07\xd0/', $chunk)) {
-            return true;
-        }
-
-        return false;
+        // we're looking for the resource id 'Name of clipping path' which is 8BIM 2999 (decimal) or 0x0BB7 in hex.
+        // The path information resources (8BIM 2000 - 2998 / 0x07D0 - 0x0BB6) must not be taken into account here:
+        // they hold every path saved with the image, no matter whether it was designated as the clipping path or
+        // not. Clipping an image by an arbitrary Photoshop path (e.g. a guide or an unrelated shape) removes the
+        // entire image content, which resulted in empty thumbnails.
+        return (bool) preg_match('/8BIM\x0b\xb7/', $chunk);
     }
 
     public function getContentOptimizedFormat(): string
@@ -260,7 +281,7 @@ class Imagick extends Adapter
             $success = file_exists($path);
         } else {
             if ($this->checkPreserveAnimation($format, $i)) {
-                $success = $i->writeImages('GIF:' . $path, true);
+                $success = $i->writeImages($format . ':' . $path, true);
             } else {
                 $success = $i->writeImage($format . ':' . $path);
             }
@@ -291,7 +312,7 @@ class Imagick extends Adapter
             return false;
         }
 
-        if ($format && !in_array(strtolower($format), ['gif', 'original', 'auto'])) {
+        if ($format && !in_array(strtolower($format), ['gif', 'original', 'auto', 'webp'])) {
             return false;
         }
 
@@ -505,7 +526,7 @@ class Imagick extends Adapter
             }
 
             $this->resource->setResolution($res['x'], $res['y']);
-            $this->resource->readImage($this->imagePath);
+            $this->resource->readImage($this->imagePath . '[0]');
 
             if (!$this->isPreserveColor()) {
                 $this->setColorspaceToRGB();
@@ -524,7 +545,7 @@ class Imagick extends Adapter
             $this->setHeight($height);
         }
 
-        if ($this->resource->getNumberImages() > 1) {
+        if ($this->isVectorGraphic() && $this->resource->getNumberImages() > 1) {
             $this->resource->removeImage();
         }
 
@@ -622,8 +643,40 @@ class Imagick extends Adapter
         $newImage = new \Imagick();
         $newImage->newimage($width, $height, $color);
         $newImage->setImageFormat($this->resource->getImageFormat());
+        $this->inheritColorspace($newImage);
 
         return $newImage;
+    }
+
+    /**
+     * A canvas created by \Imagick::newImage() is always sRGB. Compositing a source image with a
+     * different colorspace (eg. CMYK) onto it copies the raw channel data without any conversion,
+     * which results in an sRGB image containing CMYK data - the colors appear inverted.
+     * Converting the canvas to the colorspace of the source image and transferring its embedded
+     * ICC profile keeps both images in the same color space. For images that were already
+     * converted to sRGB while loading (preserveColor = false) this is a no-op.
+     */
+    private function inheritColorspace(\Imagick $newImage): void
+    {
+        $colorspace = $this->resource->getImageColorspace();
+        if ($colorspace === \Imagick::COLORSPACE_UNDEFINED || $colorspace === $newImage->getImageColorspace()) {
+            return;
+        }
+
+        if ($newImage->getImageAlphaChannel()) {
+            // A canvas that is (partly) transparent has to be flattened onto the background color
+            // when the thumbnail is written, and save() does that with \Imagick::ALPHACHANNEL_REMOVE,
+            // which applies the background color as raw channel data. That only yields the intended
+            // result in an RGB colorspace, so such a canvas is left untouched.
+            return;
+        }
+
+        $newImage->transformImageColorspace($colorspace);
+
+        $profiles = $this->resource->getImageProfiles('icc', true);
+        if (isset($profiles['icc'])) {
+            $newImage->setImageProfile('icc', $profiles['icc']);
+        }
     }
 
     /**

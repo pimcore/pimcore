@@ -30,7 +30,7 @@ class Dao extends AbstractDao
         $sql = sprintf('SELECT COUNT(*) AS num FROM `%s`%s', static::DB_TABLE_NAME, $this->getCondition());
 
         try {
-            $count = (int) $this->db->fetchOne($sql, $this->getModel()->getConditionVariables());
+            $count = (int) $this->db->fetchOne($sql, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
         } catch (\Exception $ex) {
             $count = 0;
         }
@@ -58,8 +58,7 @@ class Dao extends AbstractDao
             $this->getOffsetLimit()
         );
 
-        $ids = $this->db->fetchFirstColumn($sql, $this->getModel()->getConditionVariables());
-
+        $ids = $this->db->fetchFirstColumn($sql, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
         foreach ($ids as $id) {
             $notification = Notification::getById((int) $id);
 
@@ -68,13 +67,8 @@ class Dao extends AbstractDao
             }
         }
 
-        $this->getModel()->setNotifications($notifications);
+        $this->model->setNotifications($notifications);
 
         return $notifications;
-    }
-
-    protected function getModel(): Notification\Listing
-    {
-        return $this->model;
     }
 }

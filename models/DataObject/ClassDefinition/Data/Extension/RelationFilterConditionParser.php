@@ -33,11 +33,11 @@ trait RelationFilterConditionParser
             return $result;
         }
         if ($operator === '=') {
-            return $db->quoteIdentifier($name) . ' = ' . $db->quote($value);
+            return $db->quoteIdentifier($name) . ' = ' . $db->quote((string) $value);
         }
         $values = explode(',', $value);
         $fieldConditions = array_map(function ($value) use ($name, $db) {
-            $quotedValue = $db->quote('%,' . Helper::escapeLike($value) . ',%');
+            $quotedValue = $db->quote('%,' . Helper::escapeLike((string) $value) . ',%');
 
             return $db->quoteIdentifier($name) . ' LIKE ' . $quotedValue . ' ';
         }, array_filter($values));

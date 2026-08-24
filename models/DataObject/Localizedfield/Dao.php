@@ -36,6 +36,10 @@ class Dao extends Model\Dao\AbstractDao
     use DataObject\ClassDefinition\Helper\Dao;
     use DataObject\Traits\CompositeIndexTrait;
 
+    private const TABLE_KEY_COLUMNS = ['ooo_id', 'language'];
+
+    private const CONTAINER_TABLE_KEY_COLUMNS = ['ooo_id', 'language', 'index', 'fieldname'];
+
     protected array $tableDefinitions = [];
 
     protected DataObject\Concrete\Dao\InheritanceHelper $inheritanceHelper;
@@ -72,6 +76,35 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         return 'object_localized_query_'.$this->model->getClass()->getId();
+    }
+
+    /**
+     * The store tables are exclusively created by createUpdateTable() with a fixed primary key,
+     * so the key columns are known without a schema lookup. This avoids querying the table
+     * metadata for every language on save, which gets expensive with many languages enabled.
+     *
+     * @return string[]
+     */
+    public function getTableKeyColumns(): array
+    {
+        $containerType = $this->model->getContext()['containerType'] ?? null;
+        if ($containerType === 'fieldcollection' || $containerType === 'objectbrick') {
+            return self::CONTAINER_TABLE_KEY_COLUMNS;
+        }
+
+        return self::TABLE_KEY_COLUMNS;
+    }
+
+    /**
+     * The per-language query tables are exclusively created by createUpdateTable() with a fixed
+     * primary key, identical for every language, so the key columns are known without a schema
+     * lookup per language table.
+     *
+     * @return string[]
+     */
+    public function getQueryTableKeyColumns(): array
+    {
+        return self::TABLE_KEY_COLUMNS;
     }
 
     /**
@@ -135,6 +168,8 @@ class Dao extends Model\Dao\AbstractDao
             DataObject\Localizedfield::setGetFallbackValues(true);
         }
 
+        $inheritanceEnabled = $object->getClass()->getAllowInherit();
+
         foreach ($validLanguages as $language) {
             if (empty($params['newParent'])
                 && !empty($params['isUpdate'])
@@ -196,7 +231,15 @@ class Dao extends Model\Dao\AbstractDao
                             $insertData = array_merge($insertData, $insertDataArray);
                             $this->model->setLocalizedValue($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams), $language, false);
                         } else {
-                            $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)]);
+                            $isUpdate = $params['isUpdate'] ?? false;
+                            if ($context['containerType'] === 'fieldcollection') {
+                                $isUpdate = $this->model->getDirtyLanguages() === null;
+                            }
+                            $fieldDefinitionParams = $this->getFieldDefinitionParams(
+                                $fieldName,
+                                $language,
+                                ['isUpdate' => $isUpdate]
+                            );
                             $insertData[$fd->getName()] = $fd->getDataForResource(
                                 $this->model->getLocalizedValue($fieldName, $language, true),
                                 $object,
@@ -214,21 +257,11 @@ class Dao extends Model\Dao\AbstractDao
                     if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty(
                         $language
                     )) {
-                        Helper::upsert($this->db, $storeTable, $insertData, $this->getPrimaryKey($storeTable));
+                        Helper::upsert($this->db, $storeTable, $insertData, $this->getTableKeyColumns());
                     }
                 } catch (TableNotFoundException $e) {
                     // if the table doesn't exist -> create it! deferred creation for object bricks ...
-                    try {
-                        $this->db->rollBack();
-                    } catch (Exception $er) {
-                        // PDO adapter throws exceptions if rollback fails
-                        Logger::info((string) $er);
-                    }
-
-                    $this->createUpdateTable();
-
-                    // throw exception which gets caught in AbstractObject::save() -> retry saving
-                    throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
+                    $this->createMissingTableAndRetry();
                 }
 
                 if ($container instanceof DataObject\ClassDefinition || $container instanceof DataObject\Objectbrick\Definition) {
@@ -244,43 +277,31 @@ class Dao extends Model\Dao\AbstractDao
                         $queryTable
                     );
                     $this->inheritanceHelper->resetFieldsToCheck();
-                    $sql = 'SELECT * FROM '.$queryTable.' WHERE ooo_id = '.$object->getId(
-                    )." AND language = '".$language."'";
-
-                    $oldData = [];
-
-                    try {
-                        $oldData = $this->db->fetchAssociative($sql);
-                    } catch (TableNotFoundException $e) {
-                        // if the table doesn't exist -> create it!
-
-                        // the following is to ensure consistent data and atomic transactions, while having the flexibility
-                        // to add new languages on the fly without saving all classes having localized fields
-
-                        // first we need to roll back all modifications, because otherwise they would be implicitly committed
-                        // by the following DDL
-                        try {
-                            $this->db->rollBack();
-                        } catch (Exception $er) {
-                            // PDO adapter throws exceptions if rollback fails
-                            Logger::info((string) $er);
-                        }
-
-                        // this creates the missing table
-                        $this->createUpdateTable();
-
-                        // at this point we throw an exception so that the transaction gets repeated in DataObject::save()
-                        throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
-                    }
 
                     // get fields which shouldn't be updated
                     $untouchable = [];
 
                     // @TODO: currently we do not support lazyloading in localized fields
 
-                    $inheritanceEnabled = $object->getClass()->getAllowInherit();
+                    $oldData = [];
                     $parentData = null;
+
+                    // both the currently stored data and the data of the parent object are only needed to
+                    // determine which fields have to be propagated to the child objects, so there is no point
+                    // in reading the query table at all if inheritance is disabled. this saves one SELECT per
+                    // language and object on every save.
                     if ($inheritanceEnabled) {
+                        $sql = 'SELECT * FROM '.$queryTable.' WHERE ooo_id = '.$object->getId(
+                        )." AND language = '".$language."'";
+
+                        try {
+                            $oldData = $this->db->fetchAssociative($sql);
+                        } catch (TableNotFoundException $e) {
+                            // if the table doesn't exist -> create it! this gives us the flexibility to add new
+                            // languages on the fly without saving all classes having localized fields
+                            $this->createMissingTableAndRetry();
+                        }
+
                         // get the next suitable parent for inheritance
                         $parentForInheritance = $object->getNextParentForInheritance();
                         if ($parentForInheritance) {
@@ -396,7 +417,15 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     $queryTable = $this->getQueryTableName().'_'.$language;
-                    Helper::upsert($this->db, $queryTable, $data, $this->getPrimaryKey($queryTable));
+
+                    try {
+                        Helper::upsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
+                    } catch (TableNotFoundException $e) {
+                        // with inheritance disabled this is the first statement touching the query table,
+                        // so the deferred creation of a missing language table has to be handled here as well
+                        $this->createMissingTableAndRetry();
+                    }
+
                     if ($inheritanceEnabled) {
                         $context = isset($params['context']) ? $params['context'] : [];
                         if ($context['containerType'] === 'objectbrick') {
@@ -427,6 +456,29 @@ class Dao extends Model\Dao\AbstractDao
         }
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(false);
         DataObject\Concrete\Dao\InheritanceHelper::clearRuntimeCache();
+    }
+
+    /**
+     * Creates a query/store table that does not exist yet (deferred creation, e.g. when a new language
+     * was added or for object bricks) and signals DataObject::save() to retry the whole save.
+     *
+     * The current transaction has to be rolled back first, otherwise the modifications made so far would
+     * be committed implicitly by the following DDL.
+     *
+     * @throws LanguageTableDoesNotExistException
+     */
+    private function createMissingTableAndRetry(): never
+    {
+        try {
+            $this->db->rollBack();
+        } catch (Exception $er) {
+            // PDO adapter throws exceptions if rollback fails
+            Logger::info((string) $er);
+        }
+
+        $this->createUpdateTable();
+
+        throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
     }
 
     /**
@@ -492,17 +544,7 @@ class Dao extends Model\Dao\AbstractDao
             Logger::error((string) $e);
 
             if ($isUpdate && $e instanceof TableNotFoundException) {
-                try {
-                    $this->db->rollBack();
-                } catch (Exception $er) {
-                    // PDO adapter throws exceptions if rollback fails
-                    Logger::info((string) $er);
-                }
-
-                $this->createUpdateTable();
-
-                // throw exception which gets caught in AbstractObject::save() -> retry saving
-                throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
+                $this->createMissingTableAndRetry();
             }
         }
 
@@ -802,7 +844,7 @@ QUERY;
               INDEX `fieldname` (`fieldname`),
               INDEX `language` (`language`),
               CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-            ) DEFAULT CHARSET=utf8mb4;'
+            ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;'
             );
         } else {
             $this->db->executeQuery(
@@ -812,7 +854,7 @@ QUERY;
               PRIMARY KEY (`ooo_id`,`language`),
               INDEX `language` (`language`),
               CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-            ) DEFAULT CHARSET=utf8mb4;'
+            ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;'
             );
         }
 
@@ -848,6 +890,7 @@ QUERY;
                             foreach ($value->getColumnType() as $fkey => $fvalue) {
                                 $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
                                 $protectedColumns[] = $key . '__' . $fkey;
+                                $this->ensureForeignKeys($table, $key, $fkey, $value);
                             }
                         } else {
                             $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
@@ -877,7 +920,7 @@ QUERY;
                       PRIMARY KEY (`ooo_id`,`language`),
                       INDEX `language` (`language`),
                       CONSTRAINT `".self::getForeignKeyName($queryTable, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
-                    ) DEFAULT CHARSET=utf8mb4;'
+                    ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;'
                 );
 
                 $this->handleEncryption($this->model->getClass(), [$queryTable]);
@@ -917,6 +960,7 @@ QUERY;
                             foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
                                 $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
                                 $protectedColumns[] = $key.'__'.$fkey;
+                                $this->ensureForeignKeys($queryTable, $key, $fkey, $value);
                             }
                         } elseif ($value->getQueryColumnType()) {
                             $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL');

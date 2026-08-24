@@ -15,15 +15,19 @@ namespace Pimcore\Bundle\ApplicationLoggerBundle\Controller;
 
 use Carbon\Carbon;
 use DateTime;
+use DateTimeZone;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Types;
+use Exception;
 use Pimcore\Bundle\ApplicationLoggerBundle\Enum\LogLevel;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
+use Pimcore\Helper\ParameterBagHelper;
+use Pimcore\Model\Helper\QueryParams;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -61,20 +65,18 @@ class LogController extends UserAwareController implements KernelControllerEvent
         $qb
             ->select('*')
             ->from(ApplicationLoggerDb::TABLE_NAME)
-            ->setFirstResult($requestSource->getInt('start', 0))
-            ->setMaxResults($requestSource->getInt('limit', 50));
+            ->setFirstResult(ParameterBagHelper::getInt($requestSource, 'start', 0))
+            ->setMaxResults(ParameterBagHelper::getInt($requestSource, 'limit', 50));
 
         $qb->orderBy('id', 'DESC');
 
-        if (class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge(
-                $request->request->all(),
-                $request->query->all()
-            ));
+        $sortingSettings = QueryParams::extractSortingSettings(array_merge(
+            $request->request->all(),
+            $request->query->all()
+        ));
 
-            if ($sortingSettings['orderKey']) {
-                $qb->orderBy($db->quoteIdentifier($sortingSettings['orderKey']), $sortingSettings['order']);
-            }
+        if ($sortingSettings['orderKey']) {
+            $qb->orderBy($db->quoteIdentifier($sortingSettings['orderKey']), $sortingSettings['order']);
         }
 
         $priority = $requestSource->getString('priority');
@@ -83,12 +85,14 @@ class LogController extends UserAwareController implements KernelControllerEvent
             $qb->setParameter('priority', $priority, ParameterType::INTEGER);
         }
 
-        if ($fromDate = $this->parseDateObject($requestSource->getString('fromDate'), $requestSource->getString('fromTime'))) {
-            $qb->andWhere('timestamp > :fromDate');
+        $userTimezone = $requestSource->getString('userTimezone');
+
+        if ($fromDate = $this->parseDateObject($requestSource->getString('fromDate'), $requestSource->getString('fromTime'), $userTimezone)) {
+            $qb->andWhere('timestamp >= :fromDate');
             $qb->setParameter('fromDate', $fromDate, Types::DATETIME_MUTABLE);
         }
 
-        if ($toDate = $this->parseDateObject($requestSource->getString('toDate'), $requestSource->getString('toTime'))) {
+        if ($toDate = $this->parseDateObject($requestSource->getString('toDate'), $requestSource->getString('toTime'), $userTimezone)) {
             $qb->andWhere('timestamp <= :toDate');
             $qb->setParameter('toDate', $toDate, Types::DATETIME_MUTABLE);
         }
@@ -105,7 +109,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
             $qb->andWhere('message LIKE ' . $qb->createNamedParameter('%' . $message . '%'));
         }
 
-        if (!empty($pid = $requestSource->getInt('pid'))) {
+        if (!empty($pid = ParameterBagHelper::getInt($requestSource, 'pid'))) {
             $qb->andWhere('pid LIKE ' . $qb->createNamedParameter('%' . $pid . '%'));
         }
 
@@ -152,7 +156,7 @@ class LogController extends UserAwareController implements KernelControllerEvent
         ]);
     }
 
-    private function parseDateObject(?string $date, ?string $time): ?DateTime
+    private function parseDateObject(?string $date, ?string $time, ?string $userTimezone = null): ?DateTime
     {
         if (empty($date)) {
             return null;
@@ -160,14 +164,25 @@ class LogController extends UserAwareController implements KernelControllerEvent
 
         $pattern = '/^(?P<date>\d{4}\-\d{2}\-\d{2})T(?P<time>\d{2}:\d{2}:\d{2})$/';
 
+        $tz = new DateTimeZone('UTC');
+        if ($userTimezone !== null && $userTimezone !== '') {
+            try {
+                $tz = new DateTimeZone($userTimezone);
+            } catch (Exception) {
+                $tz = new DateTimeZone('UTC');
+            }
+        }
+
         $dateTime = null;
         if (preg_match($pattern, $date, $dateMatches)) {
             if (!empty($time) && preg_match($pattern, $time, $timeMatches)) {
-                $dateTime = new DateTime(sprintf('%sT%s', $dateMatches['date'], $timeMatches['time']));
+                $dateTime = new DateTime(sprintf('%sT%s', $dateMatches['date'], $timeMatches['time']), $tz);
             } else {
-                $dateTime = new DateTime($date);
+                $dateTime = new DateTime($date, $tz);
             }
         }
+
+        $dateTime?->setTimezone(new DateTimeZone('UTC'));
 
         return $dateTime;
     }

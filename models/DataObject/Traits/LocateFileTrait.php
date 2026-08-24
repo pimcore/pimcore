@@ -13,30 +13,62 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Traits;
 
+use RuntimeException;
+
 /**
  * @internal
  */
 trait LocateFileTrait
 {
+    // @throws RuntimeException
     protected function locateDefinitionFile(string $key, string $pathTemplate): string
     {
-        $customFile = sprintf('%s/classes/' . $pathTemplate, PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY, $key);
-
-        if (is_file($customFile)) {
-            return $customFile;
+        if (str_contains($key, '/') || str_contains($key, '\\') || str_contains($key, '..')) {
+            throw new RuntimeException('Invalid key');
         }
 
-        return sprintf('%s/' . $pathTemplate, PIMCORE_CLASS_DEFINITION_DIRECTORY, $key);
+        $customBase = realpath(PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY);
+
+        if ($customBase !== false) {
+            $customFile = sprintf('%s/' . $pathTemplate, $customBase, $key);
+
+            if (is_file($customFile)) {
+                return $customFile;
+            }
+        }
+
+        $defaultBase = realpath(PIMCORE_CLASS_DEFINITION_DIRECTORY);
+
+        if ($defaultBase === false) {
+            throw new RuntimeException('Invalid file path');
+        }
+
+        return sprintf('%s/' . $pathTemplate, $defaultBase, $key);
     }
 
+    // @throws RuntimeException
     protected function locateFile(string $key, string $pathTemplate): string
     {
-        $customFile = sprintf('%s/classes/' . $pathTemplate, PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY, $key);
-
-        if (is_file($customFile)) {
-            return $customFile;
+        if (str_contains($key, '/') || str_contains($key, '\\') || str_contains($key, '..')) {
+            throw new RuntimeException('Invalid key');
         }
 
-        return sprintf('%s/' . $pathTemplate, PIMCORE_CLASS_DIRECTORY, $key);
+        $customBase = realpath(PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY);
+
+        if ($customBase !== false) {
+            $customFile = sprintf('%s/' . $pathTemplate, $customBase, $key);
+
+            if (is_file($customFile)) {
+                return $customFile;
+            }
+        }
+
+        $defaultBase = realpath(PIMCORE_CLASS_DIRECTORY);
+
+        if ($defaultBase === false) {
+            throw new RuntimeException('Invalid file path');
+        }
+
+        return sprintf('%s/' . $pathTemplate, $defaultBase, $key);
     }
 }

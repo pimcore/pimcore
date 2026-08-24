@@ -127,6 +127,8 @@ class FullPageCacheListener
         }
 
         if (!\Pimcore\Tool::useFrontendOutputFilters()) {
+            $this->disable('frontend output filters are disabled');
+
             return;
         }
 

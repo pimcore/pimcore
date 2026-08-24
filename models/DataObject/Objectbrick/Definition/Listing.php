@@ -52,17 +52,23 @@ class Listing
      */
     public function loadFileNames(): array
     {
-        $filenames= [];
+        $filenames = [];
 
-        $objectBricksFolders = array_unique([PIMCORE_CLASS_DEFINITION_DIRECTORY . '/objectbricks', PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY . '/objectbricks']);
+        $objectBricksFolders = array_filter(array_unique(array_map('realpath', [
+            PIMCORE_CLASS_DEFINITION_DIRECTORY . '/objectbricks',
+            PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY . '/objectbricks',
+        ])));
 
         foreach ($objectBricksFolders as $objectBricksFolder) {
             $files = glob($objectBricksFolder . '/*.php');
             foreach ($files as $file) {
-                $filenames[] = $file;
+                $realFile = realpath($file);
+                if ($realFile) {
+                    $filenames[] = $realFile;
+                }
             }
         }
 
-        return $filenames;
+        return array_unique($filenames);
     }
 }

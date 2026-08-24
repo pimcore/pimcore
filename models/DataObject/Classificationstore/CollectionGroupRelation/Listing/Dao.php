@@ -42,7 +42,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             . ',' . DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS
             . $condition . $this->getOrder() . $this->getOffsetLimit();
 
-        $data = $this->db->fetchAllAssociative($sql, $this->model->getConditionVariables());
+        $data = $this->db->fetchAllAssociative($sql, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         $configData = [];
         foreach ($data as $dataItem) {
@@ -60,15 +60,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function getDataArray(): array
     {
-        $configsData = $this->db->fetchAllAssociative('SELECT * FROM ' . DataObject\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-
-        return $configsData;
+        return $this->db->fetchAllAssociative('SELECT * FROM ' . DataObject\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
     }
 
     public function getTotalCount(): int
     {
         try {
-            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . DataObject\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS . ' '. $this->getCondition(), $this->model->getConditionVariables());
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . DataObject\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS . ' '. $this->getCondition(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
         } catch (Exception $e) {
             return 0;
         }

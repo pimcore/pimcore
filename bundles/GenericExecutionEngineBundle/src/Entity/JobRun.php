@@ -20,6 +20,7 @@ use Doctrine\ORM\Mapping\Table;
 use Pimcore\Bundle\GenericExecutionEngineBundle\CurrentMessage\MessageInterface;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\Job;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Model\JobRunStates;
+use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\LogParser;
 use Pimcore\Bundle\GenericExecutionEngineBundle\Utils\ValueObjects\LogLine;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
@@ -145,13 +146,7 @@ class JobRun
      */
     public function getLogs(): array
     {
-        if ($this->log === null) {
-            return [];
-        }
-
-        $logLines = explode("\n", $this->log);
-
-        return array_map(static fn ($line) => new LogLine($line), $logLines);
+        return (new LogParser())->parse($this->log);
     }
 
     public function setLog(?string $log): void

@@ -2,6 +2,6 @@ actor: ServiceTester
 modules:
     enabled:
         - \Pimcore\Tests\Support\Helper\Pimcore:
-            connect_db: true
+              connect_db: true
         - \Pimcore\Tests\Support\Helper\ClassManager
-        - \Pimcore\Tests\Support\Helper\Model
+        - \Pimcore\Tests\Support\Helper\CoreModel

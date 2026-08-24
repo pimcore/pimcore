@@ -594,6 +594,7 @@ class Mail extends Email
 
     private function renderParams(string $string, string $context): string
     {
+        trigger_deprecation('pimcore/pimcore', '12.3', 'Retrieving "pimcore.templating.engine.delegating" from the container is deprecated and will be removed in 13.0. Inject Twig\Environment directly instead.');
         $templatingEngine = Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
         $defaultStrategy = null;
         $twig = null;

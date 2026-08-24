@@ -1,5 +1,7 @@
 services:
     Pimcore\Messenger\Handler\VideoConvertHandler:
+        arguments:
+            - '@Pimcore\Helper\LongRunningHelper'
         tags:
             - { name: messenger.message_handler }
 
@@ -11,12 +13,14 @@ services:
         arguments:
             - '@logger'
             - '@Pimcore\Helper\LongRunningHelper'
+            - '@lock.factory'
         tags:
             - { name: messenger.message_handler }
 
     Pimcore\Messenger\Handler\AssetPreviewImageHandler:
         arguments:
             - '@logger'
+            - '@Pimcore\Helper\LongRunningHelper'
         tags:
             - { name: messenger.message_handler }
 
@@ -36,6 +40,7 @@ services:
         arguments:
             - '@Pimcore\Image\Optimizer'
             - '@logger'
+            - '@Pimcore\Helper\LongRunningHelper'
         tags:
             - { name: messenger.message_handler }
 

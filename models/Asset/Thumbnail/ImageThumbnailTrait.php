@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\Thumbnail;
 
 use Exception;
+use Pimcore;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\Asset;
@@ -204,10 +205,13 @@ trait ImageThumbnailTrait
             $dimensions = [];
 
             if ($config) {
-                $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $this->getFilename());
-                if (isset($thumbnail['width'], $thumbnail['height'])) {
-                    $dimensions['width'] = $thumbnail['width'];
-                    $dimensions['height'] = $thumbnail['height'];
+                $statusCacheEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['status_cache'];
+                if ($statusCacheEnabled) {
+                    $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $this->getFilename());
+                    if (isset($thumbnail['width'], $thumbnail['height'])) {
+                        $dimensions['width'] = $thumbnail['width'];
+                        $dimensions['height'] = $thumbnail['height'];
+                    }
                 }
             }
 
@@ -284,10 +288,34 @@ trait ImageThumbnailTrait
         return pathinfo($this->getPath(), PATHINFO_EXTENSION);
     }
 
+    /**
+     * Path reference used whenever no thumbnail can be provided at all, so that the path getters
+     * always resolve to a valid (placeholder) path instead of null.
+     *
+     * @internal
+     *
+     * @return array{type: string, src: string}
+     */
+    protected function getErrorPathReference(): array
+    {
+        return [
+            'type' => 'error',
+            'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+        ];
+    }
+
     protected function convertToWebPath(array $pathReference, bool $frontend): ?string
     {
         $type = $pathReference['type'] ?? null;
         $path = $pathReference['src'] ?? null;
+
+        if ($path === null) {
+            // an incomplete path reference must not result in a null path, as the path getters are
+            // contracted to return a string - use the placeholder instead
+            $pathReference = $this->getErrorPathReference();
+            $type = $pathReference['type'];
+            $path = $pathReference['src'];
+        }
 
         if ($frontend) {
             if ($type === 'data-uri') {
@@ -300,6 +328,12 @@ trait ImageThumbnailTrait
                 $path = $prefix . urlencode_ignore_slash($path);
             } elseif ($type === 'asset') {
                 $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
+                if ($prefix !== '' && $prefix !== null) {
+                    // prefix-based URLs point straight at the storage (CDN/bucket); while a queued
+                    // folder move is pending the bytes still live under the pre-move prefix
+                    $path = Pimcore::getContainer()->get(\Pimcore\Asset\StorageQueue\FrontendPathResolver::class)
+                        ->resolvePhysicalPath($path, $this->getAsset()->getModificationDate());
+                }
                 $path = $prefix . urlencode_ignore_slash($path);
             } else {
                 $path = urlencode_ignore_slash($path);
@@ -385,9 +419,12 @@ trait ImageThumbnailTrait
 
     public function getFileSize(): ?int
     {
-        $thumbnail = $this->getAsset()->getDao()->getCachedThumbnail($this->getConfig()->getName(), $this->getFilename());
-        if ($thumbnail && $thumbnail['filesize']) {
-            return $thumbnail['filesize'];
+        $statusCacheEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['status_cache'];
+        if ($statusCacheEnabled) {
+            $thumbnail = $this->getAsset()->getDao()->getCachedThumbnail($this->getConfig()->getName(), $this->getFilename());
+            if ($thumbnail && $thumbnail['filesize']) {
+                return $thumbnail['filesize'];
+            }
         }
 
         $pathReference = $this->getPathReference(false);

@@ -54,7 +54,7 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
     protected function getDefinitionName(string $filename): ?string
     {
         $parts = [];
-        if (preg_match('/^custom_definition_(.*)_export\.json$/', $filename, $parts) === 1) {
+        if (preg_match('/^custom_definition_(.+)_export(?:_v(.+))?\.json$/', $filename, $parts) === 1) {
             return $parts[1];
         }
 

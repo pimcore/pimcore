@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\Controller;
 use Exception;
 use Pimcore\Bundle\SeoBundle\Config;
 use Pimcore\Controller\Controller;
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
@@ -38,7 +39,7 @@ class PublicServicesController extends Controller
         $config = [
             'prefix' => $request->attributes->getString('prefix', ''),
             'type' => $request->attributes->getString('type'),
-            'asset_id' => $request->attributes->getInt('assetId'),
+            'asset_id' => ParameterBagHelper::getInt($request->attributes, 'assetId'),
             'thumbnail_name' => $request->attributes->getString('thumbnailName'),
             'filename' => $filename,
             'file_extension' => $requestedFileExtension,
