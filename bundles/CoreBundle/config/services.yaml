@@ -150,6 +150,62 @@ services:
         arguments:
             $locator: !tagged_locator { tag: flysystem.storage }
 
+    Pimcore\Asset\StorageQueue\StorageOperationQueueRepository:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+
+    Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface:
+        alias: Pimcore\Asset\StorageQueue\StorageOperationQueueRepository
+
+    Pimcore\Asset\StorageQueue\FrontendPathResolver:
+        public: true
+        arguments:
+            - '@Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface'
+            - '%pimcore.assets.storage_operation_queue.enabled%'
+
+    # Static wiring: the queue-aware adapters always decorate the flysystem adapters; the runtime
+    # `enabled` flag (last argument) makes every public method a pass-through when the feature is
+    # off, so a disabled install never touches the storage_operation_queue repository/table.
+    pimcore.asset.storage_queue.adapter.asset:
+        class: Pimcore\Asset\StorageQueue\QueueAwareStorageAdapter
+        decorates: flysystem.adapter.pimcore.asset.storage
+        arguments:
+            - '@.inner'
+            - '@Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface'
+            - 'asset'
+            - false
+            - '%pimcore.assets.storage_operation_queue.enabled%'
+
+    pimcore.asset.storage_queue.adapter.thumbnail:
+        class: Pimcore\Asset\StorageQueue\QueueAwareStorageAdapter
+        decorates: flysystem.adapter.pimcore.thumbnail.storage
+        arguments:
+            - '@.inner'
+            - '@Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface'
+            - 'thumbnail'
+            - true
+            - '%pimcore.assets.storage_operation_queue.enabled%'
+
+    pimcore.asset.storage_queue.adapter.asset_cache:
+        class: Pimcore\Asset\StorageQueue\QueueAwareStorageAdapter
+        decorates: flysystem.adapter.pimcore.asset_cache.storage
+        arguments:
+            - '@.inner'
+            - '@Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface'
+            - 'asset_cache'
+            - true
+            - '%pimcore.assets.storage_operation_queue.enabled%'
+
+    pimcore.asset.storage_queue.processor:
+        class: Pimcore\Asset\StorageQueue\StorageOperationQueueProcessor
+        arguments:
+            - !service_locator
+                asset: '@pimcore.asset.storage_queue.adapter.asset.inner'
+                thumbnail: '@pimcore.asset.storage_queue.adapter.thumbnail.inner'
+                asset_cache: '@pimcore.asset.storage_queue.adapter.asset_cache.inner'
+            - '@Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface'
+            - '@logger'
+
     Pimcore\Image\Adapter\Imagick:
         shared: false
         public: true
