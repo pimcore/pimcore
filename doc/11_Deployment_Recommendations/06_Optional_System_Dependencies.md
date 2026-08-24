@@ -52,7 +52,7 @@ the feature described below.
 | `ffmpeg` | Video transcoding, poster frames, duration/dimensions | Video assets are not transcoded or previewed |
 | `exiftool` | Reading embedded asset metadata | Falls back to PHP's EXIF/IPTC/XMP readers (less complete) |
 | `jpegoptim`, `pngquant`, `optipng`, `cwebp` | Recompressing generated thumbnails | That step is skipped, the rest of the chain still runs; thumbnails get larger |
-| `dot` (Graphviz) | Rendering workflow graphs from DOT source | Pimcore still emits DOT source; nothing renders it |
+| `dot` (Graphviz) | Rendering workflow graphs from DOT source | The workflow overview in the classic admin UI cannot render the graph; DOT source via `pimcore:workflow:dump` still works |
 | Imagick (PHP extension) | Image processing backend | Falls back to GD: fewer formats, lower quality |
 | Redis | Cache and Messenger transport backend | Doctrine/database cache and transports are used instead |
 | OpenSearch / Elasticsearch | Generic Data Index search and grid filtering | Search and filtering backed by the index are unavailable |
@@ -155,10 +155,10 @@ pimcore:
 ```
 
 Availability is determined by polling the service's `/health` endpoint. A successful check is
-cached as available for `ping_cache_ttl` seconds. A failure is not cached immediately: the ping is
-retried after 15 seconds, and only three consecutive failures mark the service unavailable for
-`ping_cache_ttl` seconds. This keeps a restarting Gotenberg container from disabling document
-conversion for the full TTL.
+cached as available for `ping_cache_ttl` seconds. A failure is not cached as unavailable straight
+away: it stores a retry counter for 15 seconds, so the next request pings again, and only three
+consecutive failures within that window mark the service unavailable for `ping_cache_ttl` seconds.
+This keeps a restarting Gotenberg container from disabling document conversion for the full TTL.
 
 **Without it:** document conversion falls back to local LibreOffice; HTML-to-image conversion is
 reported as unsupported.
@@ -244,16 +244,21 @@ video metadata, and less common tags are not.
 
 ## Workflow Graphs
 
-Pimcore generates workflow graphs as Graphviz **DOT source** — it does not call the `dot` binary
-itself in the core framework. The `graphviz` package provides `dot`, which turns that source into
-an image.
+Pimcore generates workflow graphs as Graphviz **DOT source**. The `graphviz` package provides
+`dot`, which turns that source into an image.
 
 ```bash
 bin/console pimcore:workflow:dump <workflow-name> | dot -Tpng > workflow.png
 ```
 
-The requirements check reports Graphviz so that administrators know whether graph rendering is
-possible on the machine.
+The core framework only emits the DOT source and never calls `dot` itself. The classic admin UI
+does: its workflow overview pipes `pimcore:workflow:dump` into `dot -Tsvg` and renders the result
+inline. The binary is resolved through `Console::getExecutable('dot')` there as well, so
+`pimcore_executable_dot` applies to it.
+
+**Without it:** the workflow overview in the classic admin UI cannot render the graph and reports
+that the command was not found. `pimcore:workflow:dump` still produces DOT source, which can be
+rendered elsewhere.
 
 ## Backing Services
 
@@ -270,8 +275,9 @@ These are configured rather than detected, and are covered in their own chapters
 
 ## Configuring Binary Locations
 
-`Pimcore\Tool\Console::getExecutable()` resolves the binaries Pimcore invokes itself — `gs`,
-`pdftotext`, `soffice`, `ffmpeg`, `exiftool`, `php`, `composer`, `nice`, `nohup` — in this order:
+`Pimcore\Tool\Console::getExecutable()` resolves the binaries looked up through this helper —
+`gs`, `pdftotext`, `soffice`, `ffmpeg`, `exiftool`, `php`, `composer`, `dot`, `nice`, `nohup` — in
+this order:
 
 1. **A container parameter** named `pimcore_executable_<name>`, where `<name>` is the binary name
    from the list above:
@@ -283,6 +289,7 @@ These are configured rather than detected, and are covered in their own chapters
        pimcore_executable_pdftotext: /opt/poppler/bin/pdftotext
        pimcore_executable_soffice: /opt/libreoffice/bin/soffice
        pimcore_executable_ffmpeg: /opt/tools/ffmpeg
+       pimcore_executable_dot: /opt/graphviz/bin/dot
    ```
 
 2. **Additional search paths** from the system configuration, colon-separated and searched before
@@ -295,6 +302,10 @@ These are configured rather than detected, and are covered in their own chapters
    ```
 
 3. **The `PATH` of the process**, via Symfony's `ExecutableFinder`.
+
+Not every name on that list is a binary the core framework runs: `composer` is only resolved so the
+requirements check can report it, and `dot` is resolved for the same reason plus the classic admin
+UI's workflow overview — see [Workflow Graphs](#workflow-graphs).
 
 Lookups are cached statically for the lifetime of the PHP process. A newly installed binary is
 therefore picked up by the next web request, but long-running Messenger workers keep the previous
