@@ -48,18 +48,21 @@ final class Executor implements ExecutorInterface
 
         $task = $this->tasks[$name]['taskClass'];
 
+        $startedAt = microtime(true);
         try {
             $this->logger->info('Starting job with ID {id}', [
                 'id' => $name,
             ]);
             $task->execute();
 
-            $this->logger->info('Finished job with ID {id}', [
+            $this->logger->info('Finished job with ID {id} in {duration}s', [
                 'id' => $name,
+                'duration' => round(microtime(true) - $startedAt, 3),
             ]);
         } catch (Exception $e) {
-            $this->logger->error('Failed to execute job with ID {id}: {exception}', [
+            $this->logger->error('Failed to execute job with ID {id} after {duration}s: {exception}', [
                 'id' => $name,
+                'duration' => round(microtime(true) - $startedAt, 3),
                 'exception' => $e,
             ]);
         }
