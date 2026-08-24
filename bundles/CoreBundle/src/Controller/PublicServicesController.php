@@ -19,12 +19,14 @@ use Pimcore\Controller\Controller;
 use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Exception\ThumbnailGenerationFailedException;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @internal
@@ -47,16 +49,28 @@ class PublicServicesController extends Controller
 
         try {
             $response = Asset\Service::getStreamedResponseForThumbnail($config, $request->getPathInfo());
-            if ($response) {
-                return $response;
-            }
+        } catch (NotFoundHttpException $e) {
+            throw $e;
+        } catch (ThumbnailGenerationFailedException $e) {
+            // show the placeholder image for thumbnails which could not be generated
+            Logger::error($e->getMessage());
 
-            throw new Exception('Unable to generate '.$config['type'].' thumbnail, see logs for details.');
+            return new RedirectResponse('/bundles/pimcoreadmin/img/filetype-not-supported.svg');
         } catch (Exception $e) {
+            // unexpected errors degrade to the placeholder as well, instead of breaking frontend pages
             Logger::error($e->getMessage());
 
             return new RedirectResponse('/bundles/pimcoreadmin/img/filetype-not-supported.svg');
         }
+
+        if ($response) {
+            return $response;
+        }
+
+        // no response means the asset, the thumbnail config or the thumbnail file doesn't exist
+        throw new NotFoundHttpException(
+            sprintf('Unable to generate %s thumbnail for %s', $config['type'], $request->getPathInfo())
+        );
     }
 
     public function robotsTxtAction(Request $request): Response
