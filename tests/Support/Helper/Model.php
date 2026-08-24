@@ -651,12 +651,14 @@ class Model extends AbstractDefinitionHelper
             $lCalculatedInherited = $this->createDataChild('calculatedValue', 'lcalculatedinherited');
             $lCalculatedInherited->setCalculatorClass('@test.calculatorservice');
             $lFields->addChild($lCalculatedInherited);
+            $lFields->addChild($this->createDataChild('consent', 'lconsentinherited'));
 
             $otherPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('Layout');
             $otherPanel->addChild($this->createDataChild('input', 'normalinput'));
             $calculatedInherited = $this->createDataChild('calculatedValue', 'calculatedinherited');
             $calculatedInherited->setCalculatorClass('@test.calculatorservice');
             $otherPanel->addChild($calculatedInherited);
+            $otherPanel->addChild($this->createDataChild('consent', 'consentinherited'));
             $otherPanel->addChild($this->createDataChild('image', 'yx'));
             $otherPanel->addChild($this->createDataChild('slider'));
             $otherPanel->addChild($this->createDataChild('manyToManyObjectRelation', 'relationobjects')
@@ -993,6 +995,7 @@ class Model extends AbstractDefinitionHelper
             $brickCalculated = $this->createDataChild('calculatedValue', 'brickcalculated');
             $brickCalculated->setCalculatorClass('@test.calculatorservice');
             $panel->addChild($brickCalculated);
+            $panel->addChild($this->createDataChild('consent', 'brickconsent'));
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'brickLazyRelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
