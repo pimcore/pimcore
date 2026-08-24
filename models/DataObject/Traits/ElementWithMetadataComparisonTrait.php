@@ -43,6 +43,17 @@ trait ElementWithMetadataComparisonTrait
                 return !$container1 && !$container2;
             }
 
+            // A value can reach isEqual() as a plain element path instead of an ElementMetadata
+            // container - the getElement() call below would then fatal with a TypeError. Compare
+            // such entries directly, and treat a container and a path as different.
+            if (!$container1 instanceof ElementMetadata || !$container2 instanceof ElementMetadata) {
+                if ($container1 != $container2) {
+                    return false;
+                }
+
+                continue;
+            }
+
             /** @var ElementInterface|null $el1 */
             $el1 = $container1->getElement();
             /** @var ElementInterface|null $el2 */
