@@ -93,6 +93,42 @@ class ConsentTest extends ModelTestCase
         $this->assertNull($childBrickRow['brickinput']);
     }
 
+    public function testBrickRowCreatedForChildWithoutBrickDoesNotCopyConsent(): void
+    {
+        $db = Db::get();
+
+        // neither object has a brick yet, so the child has no brick query row at all
+        $one = new Inheritance();
+        $one->setKey('consent-one');
+        $one->setParentId(1);
+        $one->setPublished(true);
+        $one->setNormalInput('parenttext');
+        $one->save();
+
+        $two = $this->createChild($one, false);
+
+        $classId = $one->getClassId();
+        $this->assertFalse(
+            $db->fetchAssociative('SELECT * FROM object_brick_query_unittestBrick_' . $classId . ' WHERE id = ?', [$two->getId()]),
+            'child has no brick query row yet'
+        );
+
+        // adding the brick on the parent creates the missing child rows by copying the
+        // parent row — consent must not be carried over
+        $one = Inheritance::getById($one->getId(), ['force' => true]);
+        $oneBrick = new DataObject\Objectbrick\Data\UnittestBrick($one);
+        $oneBrick->setBrickInput('parentbrick');
+        $oneBrick->setBrickconsent(new Consent(true));
+        $one->getMybricks()->setUnittestBrick($oneBrick);
+        $one->save();
+
+        $childBrickRow = $db->fetchAssociative('SELECT * FROM object_brick_query_unittestBrick_' . $classId . ' WHERE id = ?', [$two->getId()]);
+        $this->assertIsArray($childBrickRow, 'the missing child brick query row was created');
+        $this->assertSame(0, (int) $childBrickRow['brickconsent'], 'child must not inherit the parent consent');
+        // the inheritable brick field is still copied over
+        $this->assertEquals('parentbrick', $childBrickRow['brickinput']);
+    }
+
     private function createParent(bool $withConsent): Inheritance
     {
         $one = new Inheritance();
@@ -116,7 +152,7 @@ class ConsentTest extends ModelTestCase
         return $one;
     }
 
-    private function createChild(Inheritance $one): Inheritance
+    private function createChild(Inheritance $one, bool $withBrick = true): Inheritance
     {
         // the child does not give any consent
         $two = new Inheritance();
@@ -124,9 +160,11 @@ class ConsentTest extends ModelTestCase
         $two->setParentId($one->getId());
         $two->setPublished(true);
 
-        $twoBrick = new DataObject\Objectbrick\Data\UnittestBrick($two);
-        $twoBrick->setBrickInput2('childbrick');
-        $two->getMybricks()->setUnittestBrick($twoBrick);
+        if ($withBrick) {
+            $twoBrick = new DataObject\Objectbrick\Data\UnittestBrick($two);
+            $twoBrick->setBrickInput2('childbrick');
+            $two->getMybricks()->setUnittestBrick($twoBrick);
+        }
 
         $two->save();
 

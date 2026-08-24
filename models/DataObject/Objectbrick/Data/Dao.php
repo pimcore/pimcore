@@ -150,6 +150,8 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
+            $nonInheritableColumns = [];
+
             foreach ($fieldDefinitions as $key => $fd) {
                 if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                     $method = 'get' . $key;
@@ -163,6 +165,10 @@ class Dao extends Model\Dao\AbstractDao
                     } else {
                         $columnNames = [$key];
                         $data[$key] = $insertData;
+                    }
+
+                    if (!$fd->supportsInheritance()) {
+                        $nonInheritableColumns = array_merge($nonInheritableColumns, $columnNames);
                     }
 
                     // if the current value is empty and we have data from the parent, we just use it
@@ -241,9 +247,12 @@ class Dao extends Model\Dao\AbstractDao
 
             if ($inheritanceEnabled) {
                 $this->inheritanceHelper->doUpdate($object->getId(), true,
-                    ['inheritanceRelationContext' => [
-                        'ownertype' => 'objectbrick',
-                    ]]);
+                    [
+                        'inheritanceRelationContext' => [
+                            'ownertype' => 'objectbrick',
+                        ],
+                        'nonInheritableColumns' => $nonInheritableColumns,
+                    ]);
             }
             $this->inheritanceHelper->resetFieldsToCheck();
         } finally {

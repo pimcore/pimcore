@@ -94,4 +94,45 @@ class CalculatedValueTest extends ModelTestCase
         // regular fields still inherit
         $this->assertEquals('parenttext', $row['normalinput']);
     }
+
+    public function testBrickRowCreatedForChildWithoutBrickDoesNotCopyCalculatedValue(): void
+    {
+        $db = Db::get();
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'parentcalc');
+
+        // neither object has a brick yet, so the child has no brick query row at all
+        $one = new Inheritance();
+        $one->setKey('calc-one');
+        $one->setParentId(1);
+        $one->setPublished(true);
+        $one->setNormalInput('parenttext');
+        $one->save();
+
+        $two = new Inheritance();
+        $two->setKey('calc-two');
+        $two->setParentId($one->getId());
+        $two->setPublished(true);
+        $two->save();
+
+        $classId = $one->getClassId();
+        $this->assertFalse(
+            $db->fetchAssociative('SELECT * FROM object_brick_query_unittestBrick_' . $classId . ' WHERE id = ?', [$two->getId()]),
+            'child has no brick query row yet'
+        );
+
+        // adding the brick on the parent creates the missing child rows by copying the
+        // parent row — the calculated value must not be carried over
+        $one = Inheritance::getById($one->getId(), ['force' => true]);
+        $oneBrick = new DataObject\Objectbrick\Data\UnittestBrick($one);
+        $oneBrick->setBrickInput('parentbrick');
+        $one->getMybricks()->setUnittestBrick($oneBrick);
+        $one->save();
+
+        $childBrickRow = $db->fetchAssociative('SELECT * FROM object_brick_query_unittestBrick_' . $classId . ' WHERE id = ?', [$two->getId()]);
+        $this->assertIsArray($childBrickRow, 'the missing child brick query row was created');
+        $this->assertSame('', (string) $childBrickRow['brickcalculated'], 'child must not inherit the parent calculated value');
+        // the inheritable brick field is still copied over
+        $this->assertEquals('parentbrick', $childBrickRow['brickinput']);
+    }
 }

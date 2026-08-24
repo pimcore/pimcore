@@ -302,6 +302,8 @@ class Dao extends Model\Dao\AbstractDao
                         }
                     }
 
+                    $nonInheritableColumns = [];
+
                     foreach ($fieldDefinitions as $fd) {
                         if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                             $key = $fd->getName();
@@ -322,6 +324,10 @@ class Dao extends Model\Dao\AbstractDao
                                 } else {
                                     $columnNames = [$key];
                                     $data[$key] = $insertData;
+                                }
+
+                                if (!$fd->supportsInheritance()) {
+                                    $nonInheritableColumns = array_merge($nonInheritableColumns, $columnNames);
                                 }
 
                                 // if the current value is empty and we have data from the parent, we just use it
@@ -420,6 +426,7 @@ class Dao extends Model\Dao\AbstractDao
                         $this->inheritanceHelper->doUpdate($object->getId(), true, [
                             'language' => $language,
                             'inheritanceRelationContext' => $inheritanceRelationContext,
+                            'nonInheritableColumns' => $nonInheritableColumns,
                         ]);
                     }
                     $this->inheritanceHelper->resetFieldsToCheck();
