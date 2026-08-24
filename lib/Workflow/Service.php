@@ -39,8 +39,9 @@ class Service
             $dateTime = new DateTime();
 
             if (empty($fc['timeformat']) || $fc['timeformat'] === 'milliseconds') {
-                $dateTime->setTimestamp($value / 1000);
-            } else {
+                $numericValue = is_numeric($value) ? $value : $dateTime->getTimestamp();
+                $dateTime->setTimestamp(intval($numericValue / 1000));
+            } elseif (is_numeric($value)) {
                 $dateTime->setTimestamp($value);
             }
             $data['value'] = $dateTime;

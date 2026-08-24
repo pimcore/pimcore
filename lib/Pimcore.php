@@ -215,11 +215,6 @@ class Pimcore
             return true;
         }
 
-        // magic parameter for debugging ExtJS stuff
-        if (array_key_exists('unminified_js', $_REQUEST) && self::inDebugMode()) {
-            return true;
-        }
-
         return false;
     }
 }

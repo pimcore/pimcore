@@ -44,7 +44,7 @@ class CollectionServiceLocator extends ServiceLocator implements IteratorAggrega
     public function getIterator(): Traversable
     {
         foreach ($this->ids as $id) {
-            yield $this->get($id);
+            yield $id => $this->get($id);
         }
     }
 }

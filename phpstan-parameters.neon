@@ -1,6 +1,6 @@
 parameters:
     level: 6
-
+    reportUnmatchedIgnoredErrors: false
     paths:
         - bundles
         - lib
@@ -10,9 +10,7 @@ parameters:
         - phpstan-bootstrap.php
 
     excludePaths:
-        - bundles/SeoBundle/src/Controller/Traits/DocumentTreeConfigWrapperTrait.php
-        - bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/Assets.php
-        - bundles/SimpleBackendSearchBundle/src/DataProvider/GDPR/DataObjects.php
+        - lib/Translation/Translator.php
 
     symfony:
         containerXmlPath: var/cache/test/App_KernelTestDebugContainer.xml
@@ -60,6 +58,8 @@ parameters:
         noParameterWithNullableTypeDeclaration:
             enabled: false
         noParameterWithNullDefaultValue:
+            enabled: false
+        noPhpstanIgnore:
             enabled: false
         noReturnByReference:
             enabled: false

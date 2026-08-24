@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Maintenance\Tasks;
 
+use FilesystemIterator;
 use Pimcore\Maintenance\TaskInterface;
 use RecursiveCallbackFilterIterator;
 use RecursiveDirectoryIterator;
@@ -39,48 +40,74 @@ class HousekeepingTask implements TaskInterface
         foreach (['dev'] as $environment) {
             $profilerDir = sprintf('%s/%s/profiler', PIMCORE_SYMFONY_CACHE_DIRECTORY, $environment);
 
-            $this->deleteFilesInFolderOlderThanSeconds($profilerDir, $this->profilerTime);
+            $this->deleteFilesInFolderOlderThanSeconds($profilerDir, $this->profilerTime, true);
         }
 
-        $this->deleteFilesInFolderOlderThanSeconds(PIMCORE_SYSTEM_TEMP_DIRECTORY, $this->tmpFileTime);
+        $this->deleteFilesInFolderOlderThanSeconds(PIMCORE_SYSTEM_TEMP_DIRECTORY, $this->tmpFileTime, false);
     }
 
-    private function deleteFilesInFolderOlderThanSeconds(string $folder, int $seconds): void
+    private function deleteFilesInFolderOlderThanSeconds(string $folder, int $seconds, bool $clearFolder): void
     {
         if (!is_dir($folder)) {
             return;
         }
 
-        $directory = new RecursiveDirectoryIterator($folder);
-        $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($seconds) {
-            if (strpos($current->getFilename(), '-low-quality-preview.svg')) {
-                // do not delete low quality image previews
+        $cutoff = time() - $seconds;
+        $dirTimes = [];
+
+        $directory = new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS);
+        $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($cutoff, $clearFolder, &$dirTimes) {
+            if (str_contains($current->getFilename(), '-low-quality-preview.svg') && $current->isFile()) {
                 return false;
             }
 
             if ($current->isFile()) {
-                if ($current->getATime() && $current->getATime() < (time() - $seconds)) {
+                $aTime = $current->getATime();
+                $mTime = $current->getMTime();
+                $timeToCheck = $aTime ?: $mTime;
+
+                if ($timeToCheck && $timeToCheck < $cutoff) {
                     return true;
                 }
-            } else {
-                return true;
+
+                return false;
             }
 
-            return false;
+            if ($clearFolder) {
+                $path = $current->getPathname();
+                // Capture the mtime before this directory's contents are deleted, so a
+                // directory that was already stale can be removed in the same run. The
+                // filter may run more than once per entry; keep the first (pre-deletion)
+                // value. stat() is served from the cache warmed by isFile() above.
+                if (!array_key_exists($path, $dirTimes)) {
+                    $stat = @stat($path);
+                    $dirTimes[$path] = $stat ? ($stat['mtime'] ?: $stat['ctime']) : false;
+                }
+            }
+
+            return true;
         });
 
-        $iterator = new RecursiveIteratorIterator($filter);
+        $mode = $clearFolder ? RecursiveIteratorIterator::CHILD_FIRST : RecursiveIteratorIterator::LEAVES_ONLY;
+        // CATCH_GET_CHILD: a directory can vanish between the parent's readdir and the
+        // attempt to descend into it - either because this run just removed it, or
+        // because another node did. On NFS the parent's cached listing makes that
+        // routine. Without this flag the UnexpectedValueException aborts the whole
+        // walk and the job dies partway; with it, the subtree is skipped and picked
+        // up on the next run.
+        $iterator = new RecursiveIteratorIterator($filter, $mode, RecursiveIteratorIterator::CATCH_GET_CHILD);
 
-        foreach ($iterator as $file) {
-            /**
-             * @var SplFileInfo $file
-             */
-            if ($file->isFile()) {
-                @unlink($file->getPathname());
-            }
+        foreach ($iterator as $entry) {
+            $path = $entry->getPathname();
 
-            if (is_dir_empty($file->getPath())) {
-                @rmdir($file->getPath());
+            if (isset($dirTimes[$path])) {
+                if ($dirTimes[$path] && $dirTimes[$path] < $cutoff) {
+                    // rmdir() is atomic: the kernel checks emptiness and removes in one
+                    // operation, avoiding the TOCTOU race of a separate is_dir_empty() call.
+                    @rmdir($path);
+                }
+            } else {
+                @unlink($path);
             }
         }
     }

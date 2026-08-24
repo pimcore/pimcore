@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
-use Pimcore\Bundle\AdminBundle\Perspective\Config;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\User\Role;
@@ -32,6 +31,8 @@ final class User extends User\UserRole implements UserInterface
 
     protected ?string $passwordRecoveryToken = null;
 
+    private ?int $lastPasswordReset = null;
+
     protected ?string $firstname = null;
 
     protected ?string $lastname = null;
@@ -41,6 +42,8 @@ final class User extends User\UserRole implements UserInterface
     protected string $language = 'en';
 
     protected ?string $datetimeLocale = null;
+
+    protected string $theme = 'default';
 
     protected bool $admin = false;
 
@@ -533,11 +536,6 @@ final class User extends User\UserRole implements UserInterface
                 $this->mergedPerspectives = array_merge($this->mergedPerspectives, $userRole->getPerspectives());
             }
             $this->mergedPerspectives = array_values($this->mergedPerspectives);
-            if (!$this->mergedPerspectives) {
-                // $perspectives = \Pimcore\Config::getAvailablePerspectives($this);
-                $allPerspectives = Config::get();
-                $this->mergedPerspectives = array_keys($allPerspectives);
-            }
         }
 
         return $this->mergedPerspectives;
@@ -551,14 +549,8 @@ final class User extends User\UserRole implements UserInterface
     public function getFirstAllowedPerspective(): string
     {
         $perspectives = $this->getMergedPerspectives();
-        if (!empty($perspectives)) {
-            return $perspectives[0];
-        } else {
-            // all perspectives are allowed
-            $perspectives = Config::getAvailablePerspectives($this);
 
-            return $perspectives[0]['name'];
-        }
+        return $perspectives[0] ?? 'default';
     }
 
     /**
@@ -655,6 +647,16 @@ final class User extends User\UserRole implements UserInterface
         return $this;
     }
 
+    /**
+     * @return $this
+     */
+    public function setLastPasswordReset(int $lastPasswordReset): static
+    {
+        $this->lastPasswordReset = $lastPasswordReset;
+
+        return $this;
+    }
+
     public function getKeyBindings(): ?string
     {
         return $this->keyBindings;
@@ -738,5 +740,22 @@ final class User extends User\UserRole implements UserInterface
         $this->datetimeLocale = $datetimeLocale;
 
         return $this;
+    }
+
+    public function getTheme(): string
+    {
+        return $this->theme;
+    }
+
+    public function setTheme(string $theme): static
+    {
+        $this->theme = $theme;
+
+        return $this;
+    }
+
+    public function getLastPasswordReset(): ?int
+    {
+        return $this->lastPasswordReset;
     }
 }

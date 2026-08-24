@@ -39,7 +39,7 @@ class FieldCollectionCommand extends AbstractStructureImportCommand
     protected function getDefinitionName(string $filename): ?string
     {
         $parts = [];
-        if (1 === preg_match('/^fieldcollection_(.*)_export\.json$/', $filename, $parts)) {
+        if (1 === preg_match('/^fieldcollection_(.+)_export(?:_v(.+))?\.json$/', $filename, $parts)) {
             return $parts[1];
         }
 

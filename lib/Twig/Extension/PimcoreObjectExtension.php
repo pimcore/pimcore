@@ -17,6 +17,8 @@ namespace Pimcore\Twig\Extension;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\Tag;
 use Pimcore\Model\Site;
 use Pimcore\Model\User;
 use Twig\Extension\AbstractExtension;
@@ -47,6 +49,7 @@ class PimcoreObjectExtension extends AbstractExtension
             new TwigFunction('pimcore_object_classificationstore_group', [DataObject\Classificationstore\GroupConfig::class, 'getById']),
             new TwigFunction('pimcore_object_classificationstore_get_field_definition_from_json', [$this, 'getFieldDefinitionFromJson']),
             new TwigFunction('pimcore_object_brick_definition_key', [DataObject\Objectbrick\Definition::class, 'getByKey']),
+            new TwigFunction('pimcore_element_tags', [$this, 'getPimcoreElementTags']),
         ];
     }
 
@@ -57,5 +60,20 @@ class PimcoreObjectExtension extends AbstractExtension
         }
 
         return DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+    }
+
+    public function getPimcoreElementTags(?AbstractElement $element, bool $asNameList): array
+    {
+        if (!$element) {
+            return [];
+        }
+
+        if ($asNameList) {
+            return array_map(function ($tag) {
+                return $tag->getName();
+            }, Tag::getTagsForElement($element->getType(), $element->getId()));
+        }
+
+        return Tag::getTagsForElement($element->getType(), $element->getId());
     }
 }

@@ -1,1 +1,0 @@
-DROP TABLE IF EXISTS `search_backend_data`;

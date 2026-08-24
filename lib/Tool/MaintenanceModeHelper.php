@@ -29,8 +29,11 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
 
     protected const OFF = 'OFF';
 
-    public function __construct(protected RequestStack $requestStack, protected Connection $db)
-    {
+    public function __construct(
+        protected RequestStack $requestStack,
+        /** @deprecated - will be removed in Pimcore 2027.1.0 **/
+        protected Connection $db
+    ) {
     }
 
     public function activate(string $sessionId): void
@@ -68,26 +71,27 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
 
     protected function addEntry(string $sessionId): void
     {
-        Cache::save($sessionId, self::ENTRY_ID, lifetime: null);
+        Cache::save($sessionId, self::ENTRY_ID, lifetime: null, force: true);
         TmpStore::add(self::ENTRY_ID, $sessionId);
     }
 
     protected function getEntry(): ?string
     {
-        $entryId = Cache::load(self::ENTRY_ID);
-        if ($entryId) {
-            // If the entry is set to OFF, we return null to indicate that maintenance mode is not active
-            return $entryId === self::OFF ? null : $entryId;
-        }
+        $tmpStore = null;
 
-        // The cache entry is not set, we try to load it from the database
         try {
-            if (!$this->db->isConnected()) {
-                $this->db->getNativeConnection();
+            $entryId = Cache::load(self::ENTRY_ID);
+            if ($entryId) {
+                // If the entry is set to OFF, we return null to indicate that maintenance mode is not active
+                return $entryId === self::OFF ? null : $entryId;
             }
-            $tmpStore = TmpStore::get(self::ENTRY_ID);
-        } catch (Exception $e) {
-            return null;
+        } catch (Exception $exception) {
+            // The cache entry is not set, we try to load it from the database
+            try {
+                $tmpStore = TmpStore::get(self::ENTRY_ID);
+            } catch (Exception $e) {
+                return null;
+            }
         }
 
         $entryValue = null;
@@ -103,7 +107,7 @@ class MaintenanceModeHelper implements MaintenanceModeHelperInterface
     protected function removeEntry(): void
     {
         try {
-            Cache::save(self::OFF, self::ENTRY_ID, lifetime: null);
+            Cache::save(self::OFF, self::ENTRY_ID, lifetime: null, force: true);
             TmpStore::delete(self::ENTRY_ID);
         } catch (Exception $e) {
             //nothing to log as the tmp doesn't exist

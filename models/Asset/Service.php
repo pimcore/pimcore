@@ -14,11 +14,13 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset;
 
 use Exception;
+use League\Flysystem\UnableToReadFile;
 use Pimcore;
 use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image\Thumbnail\Config as ThumbnailConfig;
@@ -209,7 +211,10 @@ class Service extends Model\Element\Service
             $asset = new Asset();
 
             if (self::isValidPath($path, 'asset')) {
-                $asset->getDao()->getByPath($path);
+                Element\Service::getByPathWithNfcFallback(
+                    fn (string $candidate) => $asset->getDao()->getByPath($candidate),
+                    $path
+                );
 
                 return true;
             }
@@ -446,13 +451,11 @@ class Service extends Model\Element\Service
 
                 //check if high res image is called
 
-                preg_match("@([^\@]+)(\@[0-9.]+x)?\.?([^\.]+)?\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
-
-                if (empty($matches) || !isset($matches[1])) {
+                if (!preg_match("@([^\@]+)(\@[0-9.]+x)?\.?([^\.]+)?\.([a-zA-Z]{2,5})@", $config['filename'], $matches)) {
                     return null;
                 }
 
-                if (array_key_exists(2, $matches) && $matches[2]) {
+                if ($matches[2]) {
                     $highResFactor = (float)str_replace(['@', 'x'], '', $matches[2]);
                     $thumbnailConfig->setHighResolution($highResFactor);
                 }
@@ -516,7 +519,7 @@ class Service extends Model\Element\Service
         }
         // set appropriate caching headers
         // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
-        $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
+        $lifetime = \Pimcore\Config::getSystemConfiguration('assets')['thumbnails']['cache_lifetime'];
 
         $headers = [
             'Cache-Control' => 'public, max-age=' . $lifetime,
@@ -565,11 +568,25 @@ class Service extends Model\Element\Service
             $storagePath = preg_replace('/^' . preg_quote($prefix, '/') . '/', '', $storagePath);
         }
 
-        // thumbnail urls are at least 10 characters long
-        if (strlen($uri) > 10 && $storage->fileExists($storagePath)) {
-            $stream = $storage->readStream($storagePath);
+        // Attempt to stream the cached thumbnail directly. On remote storage adapters (e.g. S3),
+        // this avoids the extra HEAD request that a preceding fileExists() check would issue.
+        // Paths without a filename component are skipped: unlike fileExists(), the local adapter's
+        // readStream() opens directories successfully, so the storage root would be streamed
+        // instead of falling back to thumbnail generation.
+        $stream = null;
+        if ($storagePath !== '' && !str_ends_with($storagePath, '/')) {
+            try {
+                $stream = $storage->readStream($storagePath);
+            } catch (UnableToReadFile $e) {
+                // Logged at debug level because a cache miss - the common case on first delivery -
+                // is reported the same way as an actual storage failure.
+                Logger::debug('Could not stream cached thumbnail ' . $storagePath . ': ' . $e->getMessage());
+                $stream = null;
+            }
+        }
 
-            $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
+        if ($stream !== null) {
+            $lifetime = \Pimcore\Config::getSystemConfiguration('assets')['thumbnails']['cache_lifetime'];
 
             return new StreamedResponse(function () use ($stream) {
                 fpassthru($stream);
@@ -578,12 +595,13 @@ class Service extends Model\Element\Service
                 'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
                 'Content-Type' => $storage->mimeType($storagePath),
                 'Content-Length' => $storage->fileSize($storagePath),
+                AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER => true,
             ]);
-        } else {
-            $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
-            if ($thumbnail) {
-                return Asset\Service::getStreamedResponseFromImageThumbnail($thumbnail, $config);
-            }
+        }
+
+        $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
+        if ($thumbnail) {
+            return Asset\Service::getStreamedResponseFromImageThumbnail($thumbnail, $config);
         }
 
         return null;
@@ -608,7 +626,7 @@ class Service extends Model\Element\Service
             return [
                 'prefix' => $matches[1],
                 'type' => $matches[2],
-                'asset_id' => $matches[3],
+                'asset_id' => (int) $matches[3],
                 'thumbnail_name' => $matches[4],
                 'filename' => $matches[5],
             ];

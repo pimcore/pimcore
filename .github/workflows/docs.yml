@@ -1,0 +1,30 @@
+name: "Documentation (Reusable)"
+
+on:
+  pull_request:
+    branches:
+      - "[0-9]+.[0-9]+"
+      - "[0-9]+.x"
+      - "docs_actions"
+    paths:
+      - "doc/**"
+      - ".github/workflows/docs.yml"
+      - "README.md"
+  push:
+    branches:
+      - "[0-9]+.[0-9]+"
+      - "[0-9]+.x"
+      - "docs_actions"
+    paths:
+      - "doc/**"
+      - ".github/workflows/docs.yml"
+      - "README.md"
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-docs.yaml@main
+    with:
+      docs_path: "doc"

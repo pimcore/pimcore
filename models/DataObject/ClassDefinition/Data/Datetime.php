@@ -311,14 +311,15 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
             if ($this->getColumnType() == 'datetime') {
                 $brickPrefix = $params['brickPrefix'] ? $db->quoteIdentifier($params['brickPrefix']) . '.' : '';
-                $condition = 'DATE(' . $brickPrefix . '`' . $params['name'] . '`) = ' . $db->quote($value);
+                $condition = 'DATE(' . $brickPrefix . '`' . $params['name'] . '`) = ' . $db->quote((string) $value);
 
                 return $condition;
             } else {
                 $maxTime = $timestamp + (86400 - 1); //specifies the top point of the range used in the condition
                 $filterField = $params['name'] ?: $this->getName();
 
-                return '`' . $filterField . '` BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote((string)$maxTime);
+                return '`' . $filterField . '` BETWEEN ' .
+                    $db->quote((string) $value) . ' AND ' . $db->quote((string)$maxTime);
             }
         }
 

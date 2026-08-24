@@ -40,13 +40,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * @internal
      *
-     * @var string[]|string|null
-     */
-    public array|string|null $visibleFields = null;
-
-    /**
-     * @internal
-     *
      */
     public array $columns = [];
 
@@ -201,17 +194,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     {
         $return = [];
 
-        $visibleFieldsArray = $this->getVisibleFields() ? explode(',', $this->getVisibleFields()) : [];
-
-        $gridFields = $visibleFieldsArray;
-
         // add data
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $mkey => $metaObject) {
                 $index = $mkey + 1;
                 $object = $metaObject->getObject();
                 if ($object instanceof DataObject\Concrete) {
-                    $columnData = DataObject\Service::gridObjectData($object, $gridFields, null, ['purpose' => 'editmode']);
+                    $columnData = Element\Service::gridElementData($object);
                     foreach ($this->getColumns() as $c) {
                         $getter = 'get' . ucfirst($c['key']);
 
@@ -501,7 +490,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $container->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($container);
             }
-        } elseif ($container instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             parent::loadLazyFieldcollectionField($container);
@@ -567,28 +556,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     public function getAllowedClassId(): ?string
     {
         return $this->allowedClassId;
-    }
-
-    public function setVisibleFields(array|string|null $visibleFields): static
-    {
-        /**
-         * @extjs6
-         */
-        if (is_array($visibleFields)) {
-            if (count($visibleFields)) {
-                $visibleFields = implode(',', $visibleFields);
-            } else {
-                $visibleFields = null;
-            }
-        }
-        $this->visibleFields = $visibleFields;
-
-        return $this;
-    }
-
-    public function getVisibleFields(): array|string|null
-    {
-        return $this->visibleFields;
     }
 
     /**

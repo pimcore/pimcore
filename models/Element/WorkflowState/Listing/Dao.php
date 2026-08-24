@@ -28,7 +28,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load(): array
     {
-        $workflowStateData = $this->db->fetchAllAssociative('SELECT cid, ctype, workflow FROM element_workflow_state' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $workflowStateData = $this->db->fetchAllAssociative('SELECT cid, ctype, workflow FROM element_workflow_state' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         $workflowStates = [];
         foreach ($workflowStateData as $entry) {
@@ -45,7 +45,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount(): int
     {
         try {
-            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM element_workflow_state ' . $this->getCondition(), $this->model->getConditionVariables());
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM element_workflow_state ' . $this->getCondition(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
         } catch (Exception $e) {
             return 0;
         }

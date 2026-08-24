@@ -32,6 +32,7 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Throwable;
 
 class Manager
 {
@@ -223,18 +224,47 @@ class Manager
     ): Marking {
         $this->notesSubscriber->setAdditionalData($additionalData);
 
-        $marking = $workflow->apply($subject, $transition, $additionalData);
+        // Only snapshot when we are going to save: rolling back is the sole
+        // consumer, and reading the marking can hit the database (e.g. the
+        // state_table store).
+        $markingStore = $workflow->getMarkingStore();
+        $previousMarking = null;
+        $previousPublishedState = null;
+        if ($saveSubject) {
+            $previousMarking = $markingStore->getMarking($subject);
+            if ($subject instanceof Concrete || $subject instanceof PageSnippet) {
+                $previousPublishedState = $subject->isPublished();
+            }
+        }
 
-        $this->notesSubscriber->setAdditionalData([]);
+        try {
+            $marking = $workflow->apply($subject, $transition, $additionalData);
+        } finally {
+            $this->notesSubscriber->setAdditionalData([]);
+        }
 
         $transition = $this->getTransitionByName($workflow->getName(), $transition);
         $changePublishedState = $transition instanceof Transition ? $transition->getChangePublishedState() : null;
 
         if ($saveSubject) {
-            if ($changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION) {
-                $subject->saveVersion();
-            } else {
-                $subject->save();
+            try {
+                if ($changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION) {
+                    $subject->saveVersion();
+                } else {
+                    $subject->save();
+                }
+            } catch (Throwable $e) {
+                // Roll back the workflow place and published state when the
+                // post-transition save fails (e.g. due to a mandatory field
+                // validation error on a force_published transition). Otherwise
+                // marking stores that persist immediately (such as the
+                // state_table store) leave the subject in an inconsistent state.
+                $markingStore->setMarking($subject, $previousMarking);
+                if ($previousPublishedState !== null) {
+                    $subject->setPublished($previousPublishedState);
+                }
+
+                throw $e;
             }
         }
 
@@ -267,6 +297,11 @@ class Manager
         $this->eventDispatcher->dispatch($event, WorkflowEvents::PRE_GLOBAL_ACTION);
 
         $markingStore = $workflow->getMarkingStore();
+        // Only snapshot when the save below can actually run and fail, so that
+        // read-only global actions do not pay for an extra marking-store read.
+        $previousMarking = ($saveSubject && $subject instanceof ElementInterface)
+            ? $markingStore->getMarking($subject)
+            : null;
 
         if (!empty($globalActionObj->getTos())) {
             $places = [];
@@ -281,7 +316,18 @@ class Manager
         $this->notesSubscriber->setAdditionalData([]);
 
         if ($saveSubject && $subject instanceof ElementInterface) {
-            $subject->save();
+            try {
+                $subject->save();
+            } catch (Throwable $e) {
+                // Roll back the workflow place if the save fails so marking
+                // stores that persist immediately do not leave the subject in
+                // an inconsistent state (see pimcore/pimcore#18178).
+                if ($previousMarking !== null) {
+                    $markingStore->setMarking($subject, $previousMarking);
+                }
+
+                throw $e;
+            }
         }
 
         return $markingStore->getMarking($subject);
@@ -379,7 +425,11 @@ class Manager
                 continue;
             }
 
-            $marking = $workflow->getMarking($element);
+            try {
+                $marking = $workflow->getMarking($element);
+            } catch (LogicException $e) {
+                continue;
+            }
 
             if (!count($marking->getPlaces())) {
                 continue;

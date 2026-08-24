@@ -34,6 +34,9 @@ class NotificationEmailService extends AbstractNotificationService
 {
     const MAIL_PATH_LANGUAGE_PLACEHOLDER = '%_locale%';
 
+    /**
+     * @deprecated since 12.3, will be removed in 13.0. Use Twig\Environment instead.
+     */
     private EngineInterface $template;
 
     private RouterInterface $router;

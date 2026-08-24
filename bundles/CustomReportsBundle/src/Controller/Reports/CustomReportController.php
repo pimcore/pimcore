@@ -17,7 +17,8 @@ use Exception;
 use Pimcore\Bundle\CustomReportsBundle\Tool;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
-use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
+use Pimcore\Helper\ParameterBagHelper;
+use Pimcore\Logger;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
 use stdClass;
@@ -26,6 +27,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 use function array_key_exists;
@@ -40,6 +42,33 @@ use function strlen;
 class CustomReportController extends UserAwareController
 {
     use JsonHelperTrait;
+
+    /**
+     * Fields that may be written through updateAction(). Mirrors the writable set of the
+     * Studio API (CustomReportHydrator::dehydrateReportDetails()) and deliberately excludes
+     * identity and audit fields (name, creationDate, modificationDate) that must never be
+     * settable through the update payload.
+     */
+    private const ALLOWED_UPDATE_FIELDS = [
+        'sql',
+        'columnConfiguration',
+        'dataSourceConfig',
+        'niceName',
+        'group',
+        'groupIconClass',
+        'iconClass',
+        'menuShortcut',
+        'reportClass',
+        'chartType',
+        'pieColumn',
+        'pieLabelColumn',
+        'xAxis',
+        'yAxis',
+        'shareGlobally',
+        'sharedUserNames',
+        'sharedRoleNames',
+        'pagination',
+    ];
 
     #[Route('/tree', name: 'pimcore_bundle_customreports_customreport_tree', methods: ['GET', 'POST'])]
     public function treeAction(): JsonResponse
@@ -151,6 +180,9 @@ class CustomReportController extends UserAwareController
         if (!$report) {
             throw $this->createNotFoundException();
         }
+
+        $this->assertUserCanAccessReport($report);
+
         $data = $report->getObjectVars();
         $data['writeable'] = $report->isWriteable();
 
@@ -181,16 +213,31 @@ class CustomReportController extends UserAwareController
         $pagination = $adapter->getPagination();
         $data['pagination'] = $pagination;
 
-        foreach ($data as $key => $value) {
-            $setter = 'set' . ucfirst($key);
-            if (method_exists($report, $setter)) {
-                $report->$setter($value);
-            }
-        }
+        $this->applyReportConfiguration($report, $data);
 
         $report->save();
 
         return $this->jsonResponse(['success' => true]);
+    }
+
+    /**
+     * Applies only whitelisted fields from the decoded update payload to the report,
+     * guarding against mass assignment of arbitrary Config setters.
+     *
+     * @param array<string, mixed> $data
+     */
+    protected function applyReportConfiguration(Tool\Config $report, array $data): void
+    {
+        foreach (self::ALLOWED_UPDATE_FIELDS as $field) {
+            if (!array_key_exists($field, $data)) {
+                continue;
+            }
+
+            $setter = 'set' . ucfirst($field);
+            if (method_exists($report, $setter)) {
+                $report->$setter($data[$field]);
+            }
+        }
     }
 
     #[Route('/column-config', name: 'pimcore_bundle_customreports_customreport_columnconfig', methods: ['POST'])]
@@ -231,7 +278,7 @@ class CustomReportController extends UserAwareController
 
             $success = true;
         } catch (Exception $e) {
-            $errorMessage = $e->getMessage();
+            $errorMessage = $this->getColumnConfigurationErrorMessage($e);
         }
 
         return $this->jsonResponse([
@@ -239,6 +286,18 @@ class CustomReportController extends UserAwareController
             'columns' => $result,
             'errorMessage' => $errorMessage,
         ]);
+    }
+
+    /**
+     * Returns a client-safe message for a failed column-configuration lookup. The underlying
+     * exception is logged server-side; its raw message must never be returned to the client, as
+     * it can disclose database schema, table names and system paths.
+     */
+    protected function getColumnConfigurationErrorMessage(Exception $e): string
+    {
+        Logger::error('Custom report column configuration failed: ' . $e->getMessage(), ['exception' => $e]);
+
+        return 'An error occurred while loading the column configuration.';
     }
 
     #[Route('/get-report-config', name: 'pimcore_bundle_customreports_customreport_getreportconfig', methods: ['GET'])]
@@ -271,31 +330,6 @@ class CustomReportController extends UserAwareController
         ]);
     }
 
-    #[Route('/data', name: 'pimcore_bundle_customreports_customreport_data', methods: ['POST'])]
-    public function dataAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('reports');
-        if (!class_exists(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::class)) {
-            throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
-        }
-        $offset = $request->request->getInt('start', 0);
-        $limit = $request->request->getInt('limit', 40);
-        $config = Tool\Config::getByName($request->request->getString('name'));
-        if (!$config) {
-            throw $this->createNotFoundException();
-        }
-        $configuration = $config->getDataSourceConfig();
-        $adapter = Tool\Config::getAdapter($configuration, $config);
-        $sortFilters = $this->getSortAndFilters($request, $configuration);
-        $result = $adapter->getData($sortFilters['filters'], $sortFilters['sort'], $sortFilters['dir'], $offset, $limit, null, $sortFilters['drillDownFilters']);
-
-        return $this->jsonResponse([
-            'success' => true,
-            'data' => $result['data'],
-            'total' => $result['total'],
-        ]);
-    }
-
     #[Route(
         '/drill-down-options',
         name: 'pimcore_bundle_customreports_customreport_drilldownoptions',
@@ -313,6 +347,9 @@ class CustomReportController extends UserAwareController
         if (!$config) {
             throw $this->createNotFoundException();
         }
+
+        $this->assertUserCanAccessReport($config);
+
         $configuration = $config->getDataSourceConfig();
 
         $adapter = Tool\Config::getAdapter($configuration, $config);
@@ -332,6 +369,8 @@ class CustomReportController extends UserAwareController
         if (!$config) {
             throw $this->createNotFoundException();
         }
+        $this->assertUserCanAccessReport($config);
+
         $configuration = $config->getDataSourceConfig();
         $adapter = Tool\Config::getAdapter($configuration, $config);
         $sortFilters = $this->getSortAndFilters($request, $configuration);
@@ -349,6 +388,11 @@ class CustomReportController extends UserAwareController
         $exportFileName = basename($exportFileName);
         if (!str_ends_with($exportFileName, '.csv')) {
             throw new InvalidArgumentException($exportFileName . ' is not a valid csv file.');
+        }
+
+        $currentUserId = $this->getPimcoreUser()?->getId();
+        if (!preg_match('/^report-export-(\d+)-/', $exportFileName, $matches) || (int) $matches[1] !== $currentUserId) {
+            throw new AccessDeniedHttpException('You are not allowed to access this export file.');
         }
 
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $exportFileName;
@@ -369,11 +413,14 @@ class CustomReportController extends UserAwareController
             $drillDownFilters = json_decode($drillDownFilters, true);
         }
         $includeHeaders = $request->query->getBoolean('headers');
+        $delimiter = $request->query->getString('delimiter', ';');
 
         $config = Tool\Config::getByName($request->query->getString('name'));
         if (!$config) {
             throw $this->createNotFoundException();
         }
+
+        $this->assertUserCanAccessReport($config);
 
         $columns = $config->getColumnConfiguration();
         $fields = [];
@@ -387,13 +434,13 @@ class CustomReportController extends UserAwareController
 
         $adapter = Tool\Config::getAdapter($configuration, $config);
 
-        $offset = $request->query->getInt('offset');
+        $offset = ParameterBagHelper::getInt($request->query, 'offset');
         $limit = 5000;
         $result = $adapter->getData($filters, $sort, $dir, $offset * $limit, $limit, $fields, $drillDownFilters);
         ++$offset;
 
         if (!($exportFile = $request->query->getString('exportFile'))) {
-            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
+            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . $this->getPimcoreUser()?->getId() . '-' . uniqid() . '.csv';
             @unlink($exportFile);
         } else {
             $exportFile = $this->getTemporaryFileFromFileName($exportFile);
@@ -402,12 +449,12 @@ class CustomReportController extends UserAwareController
         $fp = fopen($exportFile, 'a');
 
         if ($includeHeaders) {
-            fputcsv($fp, $fields, ';');
+            fputcsv($fp, $fields, $delimiter);
         }
 
         foreach ($result['data'] as $row) {
             $row = Service::escapeCsvRecord($row);
-            fputcsv($fp, array_values($row), ';');
+            fputcsv($fp, array_values($row), $delimiter);
         }
 
         fclose($fp);
@@ -453,23 +500,33 @@ class CustomReportController extends UserAwareController
     // gets the sort, direction, filters, drilldownfilters from grid or initial config
     private function getSortAndFilters(Request $request, stdClass $configuration): array
     {
-        $sortingSettings = null;
         $sort = null;
         $dir = null;
-        if (class_exists('\Pimcore\Bundle\AdminBundle\Helper\QueryParams')) {
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
-        }
-        if (is_array($sortingSettings) && $sortingSettings['orderKey']) {
+
+        $sortingSettings = \Pimcore\Model\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+
+        if ($sortingSettings['orderKey']) {
             $sort = $sortingSettings['orderKey'];
             $dir = $sortingSettings['order'];
         }
         $filters = ($request->request->has('filter') ? json_decode($request->request->getString('filter'), true) : null);
         $drillDownFilters = $request->request->all('drillDownFilters');
-        if ($sort === null && $dir === null && property_exists($configuration, 'orderby') && $configuration->orderby !== '' && $configuration->orderbydir !== '') {
+        if ($sort === null && property_exists($configuration, 'orderby') && $configuration->orderby !== '' && $configuration->orderbydir !== '') {
             $sort = $configuration->orderby;
             $dir = $configuration->orderbydir;
         }
 
         return ['sort' => $sort, 'dir' => $dir, 'filters' => $filters, 'drillDownFilters' => $drillDownFilters];
+    }
+
+    /**
+     * @throws AccessDeniedHttpException
+     */
+    private function assertUserCanAccessReport(Tool\Config $config): void
+    {
+        $user = $this->getPimcoreUser();
+        if ($user === null || !$config->isUserAllowed($user)) {
+            throw $this->createAccessDeniedHttpException();
+        }
     }
 }

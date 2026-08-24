@@ -470,7 +470,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 $this->markLazyloadedFieldAsLoaded($container);
                 $container->markFieldDirty($this->getName(), false);
             }
-        } elseif ($container instanceof DataObject\Localizedfield) {
+        } elseif ($container instanceof DataObject\Localizedfield || $container instanceof DataObject\Data\BlockElement) {
             $data = $params['data'];
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             parent::loadLazyFieldcollectionField($container);

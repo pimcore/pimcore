@@ -26,7 +26,10 @@ class PHPObjectBrickContainerClassDumper implements PHPObjectBrickContainerClass
 
     public function dumpContainerClasses(Definition $definition): void
     {
-        $objectClassesFolders = array_unique([PIMCORE_CLASS_DEFINITION_DIRECTORY, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY]);
+        $objectClassesFolders = array_filter(array_unique(array_map('realpath', [
+            PIMCORE_CLASS_DEFINITION_DIRECTORY,
+            PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY,
+        ])));
         $containerDefinition = [];
 
         foreach ($definition->getClassDefinitions() as $cl) {
@@ -46,6 +49,8 @@ class PHPObjectBrickContainerClassDumper implements PHPObjectBrickContainerClass
             }
         }
 
+        $includedFiles = [];
+
         foreach ($containerDefinition as $classId => $cd) {
             foreach ($objectClassesFolders as $objectClassesFolder) {
                 $file = $objectClassesFolder . '/definition_' . $classId . '.php';
@@ -53,6 +58,13 @@ class PHPObjectBrickContainerClassDumper implements PHPObjectBrickContainerClass
                     continue;
                 }
 
+                $realFile = realpath($file);
+
+                if (isset($includedFiles[$realFile])) {
+                    continue;
+                }
+
+                $includedFiles[$realFile] = true;
                 $class = include $file;
 
                 if (!$class) {

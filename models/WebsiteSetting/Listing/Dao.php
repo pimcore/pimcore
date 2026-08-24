@@ -27,7 +27,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load(): array
     {
         $sql = 'SELECT id FROM website_settings' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
-        $settingsData = $this->db->fetchFirstColumn($sql, $this->model->getConditionVariables());
+        $settingsData = $this->db->fetchFirstColumn($sql, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         $settings = [];
         foreach ($settingsData as $settingData) {
@@ -41,6 +41,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function getTotalCount(): int
     {
-        return (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM website_settings ' . $this->getCondition(), $this->model->getConditionVariables());
+        return (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM website_settings ' . $this->getCondition(), $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
     }
 }

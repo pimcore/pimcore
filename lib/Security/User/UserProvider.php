@@ -38,10 +38,39 @@ class UserProvider implements UserProviderInterface
             throw new UnsupportedUserException();
         }
 
-        /** @var PimcoreUser $refreshedPimcoreUser */
         $refreshedPimcoreUser = PimcoreUser::getById($user->getId());
 
+        if ($refreshedPimcoreUser === null) {
+            // the user no longer exists (e.g. was deleted) - invalidate the session gracefully
+            throw $this->createSessionInvalidatingException(
+                $user,
+                sprintf('User with ID %s was not found', $user->getId())
+            );
+        }
+
+        if ($user->getLastPasswordReset() !== $refreshedPimcoreUser->getLastPasswordReset()) {
+            // password was changed since the session was created, so we invalidate the session
+            throw $this->createSessionInvalidatingException(
+                $user,
+                'User is valid but password was changed'
+            );
+        }
+
         return $this->buildUser($refreshedPimcoreUser);
+    }
+
+    /**
+     * A session can only be invalidated by throwing a UserNotFoundException: ContextListener
+     * treats an UnsupportedUserException as "let's try the next user provider" and throws a
+     * RuntimeException once the provider list is exhausted - which, in a stock installation
+     * where this is the only user provider, means a 500 instead of a redirect to the login.
+     */
+    private function createSessionInvalidatingException(User $user, string $message): UserNotFoundException
+    {
+        $exception = new UserNotFoundException($message);
+        $exception->setUserIdentifier($user->getUserIdentifier());
+
+        return $exception;
     }
 
     protected function buildUser(PimcoreUser $pimcoreUser): User

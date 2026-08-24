@@ -15,15 +15,15 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SeoBundle\Controller;
 
 use Exception;
-use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\Csv;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
-use Pimcore\Extension\Bundle\Exception\AdminClassicBundleNotFoundException;
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Logger;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Helper\QueryParams;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -135,15 +135,11 @@ class RedirectsController extends UserAwareController
                 return $this->jsonResponse(['data' => $redirect->getObjectVars(), 'success' => true]);
             }
         } else {
-            if (!class_exists(QueryParams::class)) {
-                throw new AdminClassicBundleNotFoundException('This action requires package "pimcore/admin-ui-classic-bundle" to be installed.');
-            }
-
             // get list of routes
 
             $list = new Redirect\Listing();
-            $list->setLimit($request->request->getInt('limit', 50));
-            $list->setOffset($request->request->getInt('start'));
+            $list->setLimit(ParameterBagHelper::getInt($request->request, 'limit', 50));
+            $list->setOffset(ParameterBagHelper::getInt($request->request, 'start'));
 
             $sortingSettings = QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {

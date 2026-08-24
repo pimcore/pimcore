@@ -143,13 +143,6 @@ class Video extends Model\Asset
             return new Video\ImageThumbnail(null); // returns error image
         }
 
-        if (!$this->getCustomSetting('videoWidth') || !$this->getCustomSetting('videoHeight')) {
-            Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
-            $this->addToUpdateTaskQueue();
-
-            return new Video\ImageThumbnail(null); // returns error image
-        }
-
         return new Video\ImageThumbnail($this, $thumbnailName, $timeOffset, $imageAsset);
     }
 
@@ -160,18 +153,14 @@ class Video extends Model\Asset
      */
     public function getDurationFromBackend(?string $filePath = null): ?float
     {
-        if (\Pimcore\Video::isAvailable()) {
-            if (!$filePath) {
-                $filePath = $this->getLocalFile();
-            }
-
-            $converter = \Pimcore\Video::getInstance();
-            $converter->load($filePath, ['asset' => $this]);
-
-            return $converter->getDuration();
+        $converter = \Pimcore\Video::getInstance();
+        if ($converter === null) {
+            return null;
         }
 
-        return null;
+        $converter->load($filePath ?? $this->getLocalFile(), ['asset' => $this]);
+
+        return $converter->getDuration();
     }
 
     /**
@@ -180,14 +169,14 @@ class Video extends Model\Asset
      */
     public function getDimensionsFromBackend(): ?array
     {
-        if (\Pimcore\Video::isAvailable()) {
-            $converter = \Pimcore\Video::getInstance();
-            $converter->load($this->getLocalFile(), ['asset' => $this]);
-
-            return $converter->getDimensions();
+        $converter = \Pimcore\Video::getInstance();
+        if ($converter === null) {
+            return null;
         }
 
-        return null;
+        $converter->load($this->getLocalFile(), ['asset' => $this]);
+
+        return $converter->getDimensions();
     }
 
     /**
@@ -197,7 +186,7 @@ class Video extends Model\Asset
     public function getDuration(): float|int|null
     {
         $duration = $this->getCustomSetting('duration');
-        if (!$duration) {
+        if (!$duration && !$this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED)) {
             $duration = $this->getDurationFromBackend();
             if ($duration) {
                 $this->setCustomSetting('duration', $duration);
@@ -213,23 +202,27 @@ class Video extends Model\Asset
 
     public function getDimensions(): ?array
     {
+        $dimensions = null;
         $width = $this->getCustomSetting('videoWidth');
         $height = $this->getCustomSetting('videoHeight');
-        if (!$width || !$height) {
-            $dimensions = $this->getDimensionsFromBackend();
-            if ($dimensions) {
-                $this->setCustomSetting('videoWidth', (int) $dimensions['width']);
-                $this->setCustomSetting('videoHeight', (int) $dimensions['height']);
 
-                Model\Version::disable();
-                $this->save(); // auto save
-                Model\Version::enable();
-            }
-        } else {
+        if ($width && $height) {
             $dimensions = [
                 'width' => $width,
                 'height' => $height,
             ];
+        } elseif (!$this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED)) {
+            $dimensions = $this->getDimensionsFromBackend();
+            if ($dimensions) {
+                $this->setCustomSetting('videoWidth', (int) $dimensions['width']);
+                $this->setCustomSetting('videoHeight', (int) $dimensions['height']);
+            } else {
+                $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED, true);
+            }
+
+            Model\Version::disable();
+            $this->save(); // auto save
+            Model\Version::enable();
         }
 
         return $dimensions;

@@ -274,7 +274,7 @@ class RgbaColor extends Data implements
             if ($operator === 'LIKE') {
                 $value = $db->quote('%' . $value . '%');
             } else {
-                $value = $db->quote($value);
+                $value = $db->quote((string) $value);
             }
         }
 
@@ -288,7 +288,8 @@ class RgbaColor extends Data implements
 
     public function unmarshalAfterDecryption(mixed $value, ?Concrete $object = null, array $params = []): mixed
     {
-        return Serialize::unserialize($value);
+        // Encrypted RgbaColor resource data is serialized as a plain array; disallow object instantiation.
+        return Serialize::unserialize($value, false);
     }
 
     public function isEqual(mixed $oldValue, mixed $newValue): bool
