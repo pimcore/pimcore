@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow\EventSubscriber;
 
+use Pimcore\Event\Workflow\NotificationEmailEvent;
+use Pimcore\Event\WorkflowEvents;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
@@ -25,6 +27,7 @@ use Pimcore\Workflow\Transition;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -54,18 +57,22 @@ class NotificationSubscriber implements EventSubscriberInterface
 
     protected Workflow\Manager $workflowManager;
 
+    protected EventDispatcherInterface $eventDispatcher;
+
     public function __construct(
         NotificationEmailService $mailService,
         PimcoreNotificationService $pimcoreNotificationService,
         TranslatorInterface $translator,
         ExpressionService $expressionService,
-        Manager $workflowManager
+        Manager $workflowManager,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->mailService = $mailService;
         $this->pimcoreNotificationService = $pimcoreNotificationService;
         $this->translator = $translator;
         $this->expressionService = $expressionService;
         $this->workflowManager = $workflowManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function onWorkflowCompleted(Event $event): void
@@ -92,6 +99,20 @@ class NotificationSubscriber implements EventSubscriberInterface
             if (empty($condition) || $this->expressionService->evaluateExpression($workflow, $subject, $condition)) {
                 $notifyUsers = $notificationSetting['notifyUsers'] ?? [];
                 $notifyRoles = $notificationSetting['notifyRoles'] ?? [];
+
+                $notificationEmailEvent = new NotificationEmailEvent(
+                    $transition,
+                    $workflow,
+                    $subject,
+                    $notificationSetting['mailType'],
+                    $notificationSetting['mailPath'],
+                    $notifyUsers,
+                    $notifyRoles
+                );
+                $this->eventDispatcher->dispatch($notificationEmailEvent, WorkflowEvents::PRE_NOTIFICATION_SENDING);
+
+                $notifyUsers = $notificationEmailEvent->getUsers();
+                $notifyRoles = $notificationEmailEvent->getRoles();
 
                 if (in_array(self::NOTIFICATION_CHANNEL_MAIL, $notificationSetting['channelType'])) {
                     $this->handleNotifyPostWorkflowEmail(
