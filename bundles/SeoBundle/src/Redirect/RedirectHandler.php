@@ -157,8 +157,11 @@ final class RedirectHandler
         $this->dispatchEvent(new RedirectEvent($redirect), RedirectEvents::PRE_BUILD);
         $target = $redirect->getTarget();
         $targetType = $redirect->getTargetType();
-        if (is_numeric($target) && in_array($targetType, ['object', 'asset', 'document'])) {
-            $targetElement = Service::getElementById($targetType, $target);
+        if (is_numeric($target)) {
+            // legacy rows and auto-created redirects store a numeric document ID without an
+            // explicit target type - treat those as documents to preserve the former behavior
+            $targetType = $targetType ?: Redirect::TARGET_TYPE_DOCUMENT;
+            $targetElement = Service::getElementById($targetType, (int) $target);
             if ($targetElement) {
                 $linkGenerator = $targetElement instanceof Concrete
                     ? $targetElement->getClass()->getLinkGenerator()
@@ -169,10 +172,12 @@ final class RedirectHandler
                     $getFallBackValues = Localizedfield::getGetFallbackValues();
                     Localizedfield::setGetFallbackValues(true);
 
-                    $target = $linkGenerator->generate($targetElement);
-
-                    DataObject::setGetInheritedValues($getInheritedValues);
-                    Localizedfield::setGetFallbackValues($getFallBackValues);
+                    try {
+                        $target = $linkGenerator->generate($targetElement);
+                    } finally {
+                        DataObject::setGetInheritedValues($getInheritedValues);
+                        Localizedfield::setGetFallbackValues($getFallBackValues);
+                    }
                 } elseif ($targetElement instanceof Asset || $targetElement instanceof Document) {
                     $target = $targetElement->getFullPath();
                 } else {

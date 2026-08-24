@@ -21,7 +21,6 @@ use League\Csv\Reader;
 use League\Csv\Statement;
 use League\Csv\Writer;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
-use Pimcore\Model\Document;
 use Pimcore\Model\Element\Service;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\ArrayNormalizer;
@@ -43,6 +42,7 @@ class Csv
         'source',
         'sourceSite',
         'target',
+        'targetType',
         'targetSite',
         'statusCode',
         'priority',
@@ -75,12 +75,14 @@ class Csv
 
         foreach ($list->getRedirects() as $redirect) {
             $target = $redirect->getTarget();
+            $targetType = $redirect->getTargetType();
 
-            if (is_numeric($redirect->getTarget())) {
-                $document = Document::getById((int)$redirect->getTarget());
+            if (is_numeric($target)) {
+                // legacy rows without an explicit type point to documents
+                $element = Service::getElementById($targetType ?: Redirect::TARGET_TYPE_DOCUMENT, (int) $target);
 
-                if ($document) {
-                    $target = $document->getRealFullPath();
+                if ($element) {
+                    $target = $element->getRealFullPath();
                 }
             }
 
@@ -95,6 +97,7 @@ class Csv
                 $redirect->getSource(),
                 $redirect->getSourceSite(),
                 $target,
+                $targetType,
                 $redirect->getTargetSite(),
                 $redirect->getStatusCode(),
                 $redirect->getPriority(),
@@ -195,6 +198,16 @@ class Csv
         // ID is already set or will be generated
         unset($data['id']);
 
+        // resolve a path-based target to its element ID using the (optional) target type;
+        // legacy exports without a target type point to documents
+        if (is_string($data['target']) && '' !== $data['target']) {
+            $targetType = $data['targetType'] ?: Redirect::TARGET_TYPE_DOCUMENT;
+            if ($element = Service::getElementByPath($targetType, $data['target'])) {
+                $data['target'] = (string) $element->getId();
+                $data['targetType'] = $targetType;
+            }
+        }
+
         $redirect->setValues($data);
         $redirect->save();
     }
@@ -230,10 +243,15 @@ class Csv
 
             if (is_numeric($value)) {
                 return (int)$value;
-            } elseif (is_string($value)) {
-                if ($target = Document::getByPath($value)) {
-                    return (int)$target->getId();
-                }
+            }
+
+            // a path is resolved to an element ID later, once the target type is known
+            return (string)$value;
+        });
+
+        $normalizer->addNormalizer(['targetType'], function ($value) {
+            if (empty($value)) {
+                return null;
             }
 
             return (string)$value;
@@ -267,7 +285,8 @@ class Csv
         }
 
         $resolver = new OptionsResolver();
-        $resolver->setRequired($this->columns);
+        // targetType is optional so CSV files exported before it existed can still be imported
+        $resolver->setRequired(array_values(array_diff($this->columns, ['targetType'])));
 
         $resolver->setAllowedTypes('id', ['int', 'null']);
 
@@ -277,6 +296,9 @@ class Csv
         $resolver->setAllowedTypes('source', ['string', 'null']);
         $resolver->setAllowedTypes('sourceSite', ['int', 'null']);
         $resolver->setAllowedTypes('target', ['string', 'int', 'null']);
+        $resolver->setDefault('targetType', null);
+        $resolver->setAllowedTypes('targetType', ['string', 'null']);
+        $resolver->setAllowedValues('targetType', array_merge([null], Redirect::TARGET_TYPES));
         $resolver->setAllowedTypes('targetSite', ['int', 'null']);
 
         $resolver->setAllowedTypes('statusCode', ['int']);

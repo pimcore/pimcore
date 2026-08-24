@@ -48,15 +48,15 @@ class RedirectsController extends UserAwareController
         $this->checkPermission('redirects');
 
         $setRedirectTargetId = function (array &$data): void {
-            $targetType = $data['targetType'];
-            if (!$targetType) {
-                return;
-            }
+            // existing clients may omit targetType on update; assume a document target for
+            // backward compatibility while honoring any explicitly provided type
+            $targetType = $data['targetType'] ?? Redirect::TARGET_TYPE_DOCUMENT;
 
             $targetPath = $data['target'];
             $target = Service::getElementByPath($targetType, $targetPath);
             if ($target) {
                 $data['target'] = $target->getId();
+                $data['targetType'] = $targetType;
             } else {
                 $data['targetType'] = null;
             }
@@ -66,7 +66,7 @@ class RedirectsController extends UserAwareController
             $targetId = $redirect->getTarget();
             $targetType = $redirect->getTargetType();
             if ($targetType && is_numeric($targetId)) {
-                $target = Service::getElementById($targetType, $targetId);
+                $target = Service::getElementById($targetType, (int) $targetId);
                 if ($target) {
                     $redirect->setTarget($target->getRealFullPath());
                 }
@@ -117,8 +117,8 @@ class RedirectsController extends UserAwareController
                 $redirect = new Redirect();
 
                 if (!empty($data['target'])) {
-                    // assume target is document
-                    $data['targetType'] = 'document';
+                    // assume target is document unless the client provided an explicit type
+                    $data['targetType'] ??= Redirect::TARGET_TYPE_DOCUMENT;
                     $setRedirectTargetId($data);
                 }
 
