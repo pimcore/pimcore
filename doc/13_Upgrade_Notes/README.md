@@ -9,6 +9,7 @@
 - [Thumbnails] The cache lifetime used for the `Cache-Control` and `Expires` HTTP headers when a thumbnail is delivered on-the-fly through the thumbnail service is now configurable via `pimcore.assets.thumbnails.cache_lifetime` (in seconds). It defaults to `604800` (one week), which preserves the previous hard-coded behavior.
 
 ### [DataObject]
+- [Deployment] `pimcore:deployment:classes-rebuild` now regenerates missing or outdated node-local PHP class files (`var/classes/DataObject/<Class>.php` and the corresponding `Listing.php`) even when the database is already up-to-date, so secondary nodes in a shared-database cluster no longer require `--force`. Affected classes are reported as `saved` instead of `skipped` in verbose output. `Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager` gained the public method `hasStalePhpClassFiles()`.
 - [Relations] The `ownername` column has been widened from `VARCHAR(70)` to `VARCHAR(190)` in the per-class relation tables (`object_relations_*`), the advanced-relation metadata tables (`object_metadata_*`) and `object_url_slugs`. The generated `ownername` for a localized field nested inside an object brick or field collection (e.g. `/objectbrick~<field>/<brickKey>/localizedfield~localizedfield`) can exceed 70 characters, which caused "Data too long for column 'ownername'" on save under strict SQL mode. Existing installations are updated automatically by the migration `Version20260721000000`; no code or configuration changes are required.
 
 

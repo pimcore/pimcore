@@ -144,6 +144,8 @@ class ClassDefinitionManager
      * Additional method that gives more control over the saving process. Added as a separate method to avoid compatibility issues.
      * TODO: Should be refactored in Pimcore 13 to avoid duplication with saveClass.
      *
+     * @return bool whether the class was saved (or its PHP class files were regenerated) or not
+     *
      * @throws Exception
      * @throws DefinitionWriteException
      */
