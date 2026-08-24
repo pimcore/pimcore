@@ -286,14 +286,19 @@ class WebDavIntegrationTest extends ModelTestCase
     }
 
     /**
-     * The delete-log restore must also bring back the deleted destination's own properties and
-     * metadata (captured as a scalar snapshot), not just its id.
+     * The delete-log restore must also bring back the deleted destination's own properties,
+     * metadata, owner and creation date (captured as a scalar snapshot), not just its id.
      */
     public function testMoveRestoresDestinationMetadataAndProperties(): void
     {
+        $originalCreationDate = time() - 86400;
+
         $dest = $this->createFileAssetIn($this->root, 'meta-target.txt', 'OLD');
         $dest->setProperty('reviewed', 'text', 'yes');
         $dest->addMetadata('copyright', 'input', 'ACME');
+        // distinct values a freshly rebuilt asset would not get on its own
+        $dest->setUserOwner(12345);
+        $dest->setCreationDate($originalCreationDate);
         $dest->save();
         $destId = $dest->getId();
         $destPath = $dest->getRealFullPath();

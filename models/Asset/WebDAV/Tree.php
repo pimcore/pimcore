@@ -95,15 +95,25 @@ class Tree extends DAV\Tree
                     $logEntry = $log['/' . $destinationPath];
                     $restoredId = $logEntry['id'] ?? null;
                     if ($restoredId !== null) {
+                        // no 'type' here: Asset::create() ignores a passed type when 'data' is
+                        // present and derives the concrete class from the detected mime type
                         $asset = Asset::create($sourceAsset->getParentId(), [
                             'filename' => basename($destinationPath),
                             'data' => $sourceAsset->getData(),
-                            'type' => $sourceAsset->getType(),
                         ], false);
                         $asset->setId((int) $restoredId);
                         // destination lives in the same folder as the source; set the path now
                         // so the permission check below sees the correct workspace location
                         $asset->setPath((string) $sourceAsset->getRealPath());
+
+                        // restore ownership and creation date from the snapshot, so the rebuilt
+                        // destination keeps them like the id (the mover only becomes the modifier)
+                        if (isset($logEntry['userOwner'])) {
+                            $asset->setUserOwner((int) $logEntry['userOwner']);
+                        }
+                        if (isset($logEntry['creationDate'])) {
+                            $asset->setCreationDate((int) $logEntry['creationDate']);
+                        }
 
                         // restore the deleted destination's own properties and metadata from the
                         // scalar snapshot, so they survive the delete + create + move round-trip
@@ -182,6 +192,9 @@ class Tree extends DAV\Tree
      * Rebuilds an asset's own properties from the scalar rows captured in the delete log
      * (see Asset\WebDAV\File::delete()). Mirrors how Asset\Dao::getProperties() hydrates
      * properties from the database, so setDataFromResource() receives the raw scalar value.
+     * For date-type properties that hydration is not instantiation-free: their `data` column
+     * holds a serialized datetime string which setDataFromResource() unserializes - the same
+     * standard path normal property loading uses.
      *
      * cid/cpath are intentionally not set here: Asset::update() assigns them from the target
      * asset when the properties are persisted on save().
@@ -196,13 +209,19 @@ class Tree extends DAV\Tree
                 continue;
             }
 
+            $data = $row['data'] ?? null;
+            if ($data !== null && !is_string($data)) {
+                // properties.data is a string column; anything else is a malformed log entry
+                continue;
+            }
+
             $name = (string) ($row['name'] ?? '');
 
             $property = new Property();
             $property->setType((string) ($row['type'] ?? ''));
             $property->setName($name);
             $property->setCtype('asset');
-            $property->setDataFromResource($row['data'] ?? null);
+            $property->setDataFromResource($data);
             $property->setInherited(false);
             $property->setInheritable((bool) ($row['inheritable'] ?? false));
 

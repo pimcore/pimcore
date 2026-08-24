@@ -105,6 +105,17 @@ class Folder extends DAV\Collection
      */
     public function createFile($name, $data = null)
     {
+        // check authentication and permission before touching the disk, so an unauthorized
+        // request never causes a temp-file write
+        $user = AdminTool::getCurrentUser();
+        if ($user === null) {
+            throw new DAV\Exception\Forbidden('No authenticated user available');
+        }
+
+        if (!$this->asset->isAllowed('create')) {
+            throw new DAV\Exception\Forbidden('Missing "create" permission');
+        }
+
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-dav-tmp-file-' . uniqid();
         if (is_resource($data)) {
             @rewind($data);
@@ -115,23 +126,14 @@ class Folder extends DAV\Collection
                 throw new DAV\Exception('Unable to write temporary file');
             }
 
-            $user = AdminTool::getCurrentUser();
-            if ($user === null) {
-                throw new DAV\Exception\Forbidden('No authenticated user available');
-            }
+            Asset::create($this->asset->getId(), [
+                'filename' => Element\Service::getValidKey($name, 'asset'),
+                'sourcePath' => $tmpFile,
+                'userModification' => $user->getId(),
+                'userOwner' => $user->getId(),
+            ]);
 
-            if ($this->asset->isAllowed('create')) {
-                Asset::create($this->asset->getId(), [
-                    'filename' => Element\Service::getValidKey($name, 'asset'),
-                    'sourcePath' => $tmpFile,
-                    'userModification' => $user->getId(),
-                    'userOwner' => $user->getId(),
-                ]);
-
-                return null;
-            }
-
-            throw new DAV\Exception\Forbidden('Missing "create" permission');
+            return null;
         } finally {
             if (file_exists($tmpFile)) {
                 unlink($tmpFile);

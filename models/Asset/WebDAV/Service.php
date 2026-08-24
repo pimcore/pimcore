@@ -51,9 +51,12 @@ class Service
         if (file_exists(self::getDeleteLogFile())) {
             $raw = file_get_contents(self::getDeleteLogFile());
             if (is_string($raw)) {
-                // the delete log only holds scalar entries (path => [id, timestamp, properties,
-                // metadata]), so no object instantiation is expected or allowed anywhere in this
-                // path - see the class docblock and Tree::move()
+                // the log file itself only holds scalar entries (path => [id, timestamp,
+                // properties, metadata]), so THIS unserialize never needs to instantiate objects.
+                // Note that re-applying the snapshot later is not entirely instantiation-free:
+                // date-type property rows pass through Property::setDataFromResource(), which
+                // unserializes their stored datetime string - the same standard hydration path
+                // Asset\Dao::getProperties() uses. See Tree::restoreProperties().
                 $log = unserialize($raw, ['allowed_classes' => false]);
             }
 
