@@ -268,8 +268,9 @@ class LocationAwareConfigRepository
         // Follows the same source precedence as loadConfigByKey(): a configured read target is
         // the only source, a disabled one reads nothing, and without one both are consulted.
         // Enumeration previously treated every case other than symfony-config as settings-store,
-        // so it disagreed with loading whenever the read target was disabled or absent, and
-        // reached for the database in both of those cases even though loading would not have.
+        // which disagreed with loading twice: a disabled target listed keys that loading refuses
+        // to read at all - and queried the database to find them - and an absent one listed only
+        // the store, hiding the container entries that loading falls back through.
         return match ($this->getReadTargets()[0] ?? null) {
             self::LOCATION_SYMFONY_CONFIG => array_keys($this->containerConfig),
             self::LOCATION_SETTINGS_STORE => array_unique(

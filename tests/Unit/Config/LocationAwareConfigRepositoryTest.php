@@ -24,10 +24,11 @@ use Pimcore\Tests\Support\Test\TestCase;
  * no read target configured both the symfony-config entries and the settings store are.
  *
  * Enumeration used to treat every case other than symfony-config as settings-store, so it
- * disagreed with loading for the two remaining ones: a disabled read target listed keys that
- * loading refuses to read, and an absent one listed only the settings store while loading falls
- * back through the container config as well. Both also queried the database where loading would
- * not have, and an absent read_target node raised an undefined array key on the way through.
+ * disagreed with loading for the two remaining ones. A disabled read target listed keys that
+ * loading reads from no source at all, and queried the database to produce them. An absent one
+ * listed only the settings store, hiding the container entries that loading falls back through -
+ * its own store query is legitimate, since loading consults the store there too. An absent
+ * read_target node additionally raised an undefined array key on the way through.
  *
  * @internal
  */
