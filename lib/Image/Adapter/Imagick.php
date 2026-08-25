@@ -1175,12 +1175,26 @@ class Imagick extends Adapter
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . uniqid() . '_pimcore_image_tmp_file.png';
         $this->tmpFiles[] = $tmpFile;
         $this->save($tmpFile, 'png32');
-        $this->destroy();
         $this->setIsAlphaPossible(true);
-        $this->reinitializing = true;
-        if (!$this->load($tmpFile)) {
-            throw new Exception('Failed to reinitialize image from temporary file');
+
+        $prevResource = $this->resource;
+        $this->resource = null;
+
+        try {
+            $this->reinitializing = true;
+
+            if (!$this->load($tmpFile)) {
+                throw new Exception('Failed to reinitialize image from temporary file');
+            }
+        } catch (Exception $e) {
+            $this->destroy();
+            $this->resource = $prevResource;
+
+            throw $e;
+        } finally {
+            $this->reinitializing = false;
         }
-        $this->reinitializing = false;
+
+        $prevResource->clear();
     }
 }
