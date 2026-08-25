@@ -34,7 +34,7 @@
   - The `ALTER TABLE`/`CONVERT TO CHARACTER SET` statements rewrite the affected columns' storage and typically run as full table rebuilds, which can take time and hold locks on `assets`, `documents`, `objects` and `properties` on large installations — plan to run this migration during a maintenance window on such installs.
 
 ### [Workflow]
-- [Notifications] A new event `Pimcore\Event\WorkflowEvents::PRE_NOTIFICATION_SENDING` (`Pimcore\Event\Workflow\NotificationEmailEvent`) is dispatched before the notification channels configured on a transition are notified. Listeners can rewrite the user and role lists - e.g. to notify the subject's owner - and the behaviour is unchanged when no listener is registered. The `@internal` `Pimcore\Workflow\EventSubscriber\NotificationSubscriber` takes an additional `EventDispatcherInterface` constructor argument.
+- [Notifications] A new event `Pimcore\Event\WorkflowEvents::PRE_NOTIFICATION_SENDING` (`Pimcore\Event\Workflow\WorkflowNotificationEvent`) is dispatched once per notification setting on a transition, before every channel that setting configures - so a listener's changes apply to the Pimcore notification as well as to the mail. Listeners can rewrite the user and role lists, e.g. to notify the subject's owner, and the behaviour is unchanged when no listener is registered. The `@internal` `Pimcore\Workflow\EventSubscriber\NotificationSubscriber` takes an additional `EventDispatcherInterface` constructor argument.
 
 ## Pimcore 2026.2.5
 

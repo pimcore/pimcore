@@ -19,11 +19,16 @@ use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Dispatched before a workflow transition notification is sent, so that listeners can adjust the
- * recipients configured on the transition - for example to add the element's owner, or to resolve a
+ * Dispatched before the notifications configured on a workflow transition are sent, so that
+ * listeners can adjust the recipients - for example to add the element's owner, or to resolve a
  * role to the users that currently hold it.
+ *
+ * One event per notification setting, dispatched before *every* channel that setting configures,
+ * so a listener's changes apply to the Pimcore notification as well as to the mail. The mail type
+ * and path describe the setting's mail configuration and are carried for context; they are set
+ * whether or not the mail channel is among the configured ones.
  */
-class NotificationEmailEvent extends Event
+class WorkflowNotificationEvent extends Event
 {
     /**
      * @param string[] $users names of the users to notify

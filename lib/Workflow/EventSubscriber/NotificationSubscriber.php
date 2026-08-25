@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow\EventSubscriber;
 
-use Pimcore\Event\Workflow\NotificationEmailEvent;
+use Pimcore\Event\Workflow\WorkflowNotificationEvent;
 use Pimcore\Event\WorkflowEvents;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
@@ -100,7 +100,7 @@ class NotificationSubscriber implements EventSubscriberInterface
                 $notifyUsers = $notificationSetting['notifyUsers'] ?? [];
                 $notifyRoles = $notificationSetting['notifyRoles'] ?? [];
 
-                $notificationEmailEvent = new NotificationEmailEvent(
+                $notificationEvent = new WorkflowNotificationEvent(
                     $transition,
                     $workflow,
                     $subject,
@@ -109,10 +109,10 @@ class NotificationSubscriber implements EventSubscriberInterface
                     $notifyUsers,
                     $notifyRoles
                 );
-                $this->eventDispatcher->dispatch($notificationEmailEvent, WorkflowEvents::PRE_NOTIFICATION_SENDING);
+                $this->eventDispatcher->dispatch($notificationEvent, WorkflowEvents::PRE_NOTIFICATION_SENDING);
 
-                $notifyUsers = $notificationEmailEvent->getUsers();
-                $notifyRoles = $notificationEmailEvent->getRoles();
+                $notifyUsers = $notificationEvent->getUsers();
+                $notifyRoles = $notificationEvent->getRoles();
 
                 if (in_array(self::NOTIFICATION_CHANNEL_MAIL, $notificationSetting['channelType'])) {
                     $this->handleNotifyPostWorkflowEmail(
