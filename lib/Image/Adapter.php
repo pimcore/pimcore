@@ -337,13 +337,13 @@ abstract class Adapter implements AdapterInterface
         $this->setModified(true);
     }
 
-    protected function reinitializeImage(): void
+    protected function reinitializeImage(?string $forcedFormat = null): void
     {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . uniqid() . '_pimcore_image_tmp_file.png';
         $this->tmpFiles[] = $tmpFile;
 
-        $format = 'png32';
-        if ($this->isPreserveColor() || $this->isPreserveMetaData() || $this->isPreserveAnimation()) {
+        $format = $forcedFormat ?? 'png32';
+        if ($forcedFormat === null && ($this->isPreserveColor() || $this->isPreserveMetaData() || $this->isPreserveAnimation())) {
             $format = 'original';
         }
 

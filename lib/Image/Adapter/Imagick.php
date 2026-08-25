@@ -150,8 +150,7 @@ class Imagick extends Adapter
                     // Save and reload the cut-out image as PNG32.
                     // Keep alpha pixels. Remove the active ImageMagick mask.
                     $this->setIsAlphaPossible($i->getImageAlphaChannel());
-                    $this->setModified(true);
-                    $this->preModify();
+                    $this->reinitializeImage('png32');
                     $unclipped->clear();
                 } catch (Exception $e) {
                     // the image is entirely transparent at this point, so restore the copy instead of
