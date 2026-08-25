@@ -252,7 +252,9 @@ class AdvancedManyToManyAssetRelation extends AdvancedManyToManyRelation impleme
             $items = $data['data'];
             $newItems = [];
             if ($items) {
-                $columns = array_merge(['id', 'fullpath'], $this->getColumnKeys());
+                // the parent's getDataForEditmode() emits rows keyed 'path', so the diff editor
+                // has to read the same key or every row loses its path and title
+                $columns = array_merge(['id', 'path'], $this->getColumnKeys());
                 foreach ($items as $itemBeforeCleanup) {
                     $unique = $this->buildUniqueKeyForDiffEditor($itemBeforeCleanup);
                     $item = [];
@@ -268,7 +270,7 @@ class AdvancedManyToManyAssetRelation extends AdvancedManyToManyRelation impleme
 
                     $newItems[] = [
                         'itemId' => $itemId,
-                        'title' => $item['fullpath'] ?? '',
+                        'title' => $item['path'] ?? '',
                         'raw' => $raw,
                         'gridrow' => $item,
                         'unique' => $unique,
@@ -283,7 +285,7 @@ class AdvancedManyToManyAssetRelation extends AdvancedManyToManyRelation impleme
                     'id' => [
                         'width' => 60,
                     ],
-                    'fullpath' => [
+                    'path' => [
                         'flex' => 2,
                     ],
                 ],

@@ -34,7 +34,8 @@ class AdvancedManyToManyAssetRelationEditModeTest extends ModelTestCase
 
         $this->assertCount(1, $result);
         $this->assertSame($asset->getId(), $result[0]['id']);
-        $this->assertArrayHasKey('fullpath', $result[0]);
+        $this->assertArrayHasKey('path', $result[0], 'the row shape follows the parent, which emits path');
+        $this->assertSame($asset->getRealFullPath(), $result[0]['path']);
         $this->assertSame('test-value', $result[0]['meta1']);
         $this->assertArrayHasKey('rowId', $result[0]);
     }
