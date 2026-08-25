@@ -52,7 +52,12 @@ trait ElementWithMetadataComparisonTrait
             // (AdvancedManyToManyObjectRelation), which are siblings rather than subclasses,
             // and any future container implementing getElement()/getData() belongs here too.
             if (!is_object($container1) || !is_object($container2)) {
-                if ($container1 != $container2) {
+                // Strict on purpose, unlike the metadata comparison below. The result of this
+                // method decides whether the field is marked dirty, and a value wrongly reported
+                // as equal is never written back - so "5" and "05", or 1 and "1", must not
+                // collapse into one another here. Reporting a difference that is not one only
+                // costs a redundant write.
+                if ($container1 !== $container2) {
                     return false;
                 }
 

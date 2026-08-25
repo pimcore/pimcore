@@ -97,6 +97,20 @@ class ElementWithMetadataComparisonTraitTest extends TestCase
         ));
     }
 
+    /**
+     * The comparison is strict: isEqual() decides whether the field is marked dirty, and a value
+     * wrongly reported as equal is never written back, so values that merely look alike under
+     * loose comparison must stay different.
+     */
+    public function testLooselyEqualValuesAreStillDifferent(): void
+    {
+        $fd = new AdvancedManyToManyRelation();
+
+        $this->assertFalse($fd->isEqual(['5'], ['05']));
+        $this->assertFalse($fd->isEqual(['1'], ['1.0']));
+        $this->assertFalse($fd->isEqual([['role' => 1]], [['role' => '1']]));
+    }
+
     public function testAContainerAndAPathAreNotEqual(): void
     {
         $fd = new AdvancedManyToManyRelation();
