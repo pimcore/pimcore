@@ -49,10 +49,14 @@ class LogArchiveTask implements TaskInterface
         $storage = Storage::get('application_log');
 
         $date = new DateTime('now');
-        $tablename = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_'.$date->format('Y').'_'.$date->format('m');
+        $archiveTableName = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_'.$date->format('Y').'_'.$date->format('m');
+        $tablename = $archiveTableName;
+        $quotedTablename = $db->quoteIdentifier($archiveTableName);
 
         if (!empty($this->config['applicationlog']['archive_alternative_database'])) {
-            $tablename = $db->quoteIdentifier($this->config['applicationlog']['archive_alternative_database']).'.'.$tablename;
+            $quotedDatabase = $db->quoteIdentifier($this->config['applicationlog']['archive_alternative_database']);
+            $tablename = $quotedDatabase.'.'.$tablename;
+            $quotedTablename = $quotedDatabase.'.'.$quotedTablename;
         }
 
         $archive_threshold = (int) ($this->config['applicationlog']['archive_treshold'] ?? 30);
@@ -92,7 +96,7 @@ class LogArchiveTask implements TaskInterface
                        maintenanceChecked TINYINT(1)
                     ) ENGINE = " . $storageEngine . ' DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci ROW_FORMAT = DEFAULT;');
             }
-            $db->executeStatement($this->getArchiveStatement($tablename, $timestamp, $archive_threshold));
+            $db->executeStatement($this->getArchiveStatement($quotedTablename, $timestamp, $archive_threshold));
 
             $fileObjectPaths = $db->fetchFirstColumn(sprintf($sql, 'fileobject'));
 
@@ -144,13 +148,15 @@ class LogArchiveTask implements TaskInterface
      * table has no key on `id`, and the ARCHIVE storage engine used by default cannot have one -
      * so they would be appended once more on every following run.
      */
-    private function getArchiveStatement(string $archiveTable, int $timestamp, int $archiveThreshold): string
+    private function getArchiveStatement(string $quotedArchiveTable, int $timestamp, int $archiveThreshold): string
     {
+        $quotedSourceTable = $this->db->quoteIdentifier(ApplicationLoggerDb::TABLE_NAME);
+
         $olderThanThreshold = '`log`.`timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '
             .$archiveThreshold.' DAY)';
 
-        return 'INSERT INTO '.$archiveTable.' SELECT `log`.* FROM '.ApplicationLoggerDb::TABLE_NAME.' `log`'
-            .' LEFT JOIN '.$archiveTable.' `archived` ON `archived`.`id` = `log`.`id`'
+        return 'INSERT INTO '.$quotedArchiveTable.' SELECT `log`.* FROM '.$quotedSourceTable.' `log`'
+            .' LEFT JOIN '.$quotedArchiveTable.' `archived` ON `archived`.`id` = `log`.`id`'
             .' WHERE '.$olderThanThreshold.' AND `archived`.`id` IS NULL';
     }
 }

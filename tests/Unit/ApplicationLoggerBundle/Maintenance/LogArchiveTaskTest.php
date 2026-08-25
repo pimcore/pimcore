@@ -48,6 +48,8 @@ final class LogArchiveTaskTest extends TestCase
 
     private string $archiveTable;
 
+    private string $sourceTable;
+
     protected function needsDb(): bool
     {
         return true;
@@ -58,7 +60,10 @@ final class LogArchiveTaskTest extends TestCase
         parent::setUp();
 
         $this->db = Db::get();
-        $this->archiveTable = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . '_' . date('Y') . '_' . date('m');
+        $this->archiveTable = $this->db->quoteIdentifier(
+            ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . '_' . date('Y') . '_' . date('m')
+        );
+        $this->sourceTable = $this->db->quoteIdentifier(ApplicationLoggerDb::TABLE_NAME);
 
         $this->createSourceTable();
         $this->resetTables();
@@ -186,7 +191,7 @@ final class LogArchiveTaskTest extends TestCase
     private function preArchive(array $ids): void
     {
         $this->db->executeStatement(
-            'INSERT INTO ' . $this->archiveTable . ' SELECT * FROM ' . ApplicationLoggerDb::TABLE_NAME
+            'INSERT INTO ' . $this->archiveTable . ' SELECT * FROM ' . $this->sourceTable
             . ' WHERE id IN (:ids)',
             ['ids' => $ids],
             ['ids' => ArrayParameterType::INTEGER]
@@ -196,7 +201,7 @@ final class LogArchiveTaskTest extends TestCase
     private function createSourceTable(): void
     {
         $this->db->executeStatement(
-            'CREATE TABLE IF NOT EXISTS ' . ApplicationLoggerDb::TABLE_NAME . " (
+            'CREATE TABLE IF NOT EXISTS ' . $this->sourceTable . " (
                 `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `pid` INT(11) NULL DEFAULT NULL,
                 `timestamp` DATETIME NOT NULL,
@@ -261,12 +266,12 @@ final class LogArchiveTaskTest extends TestCase
 
     private function countSourceRows(): int
     {
-        return (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . ApplicationLoggerDb::TABLE_NAME);
+        return (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . $this->sourceTable);
     }
 
     private function resetTables(): void
     {
         $this->db->executeStatement('DROP TABLE IF EXISTS ' . $this->archiveTable);
-        $this->db->executeStatement('DELETE FROM ' . ApplicationLoggerDb::TABLE_NAME);
+        $this->db->executeStatement('DELETE FROM ' . $this->sourceTable);
     }
 }
