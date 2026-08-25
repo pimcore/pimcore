@@ -44,13 +44,16 @@ class AssetUpdateTasksHandler
         }
         $this->logger->debug(sprintf('Processing asset with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
 
+        // whether the marker was persisted matters below: clearing it here only reaches the
+        // database if something in this run saves the asset
+        $hadProcessingFailure = (bool) $asset->getCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
         $asset->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
 
         try {
             if ($asset instanceof Asset\Image) {
                 $this->processImage($asset);
             } elseif ($asset instanceof Asset\Document) {
-                $this->processDocument($asset);
+                $this->processDocument($asset, $hadProcessingFailure);
             } elseif ($asset instanceof Asset\Video) {
                 $this->processVideo($asset);
             }
@@ -75,13 +78,17 @@ class AssetUpdateTasksHandler
         }
     }
 
-    private function processDocument(Asset\Document $asset): void
+    private function processDocument(Asset\Document $asset, bool $hadProcessingFailure = false): void
     {
         // checkIfPdfContainsJS() records the scan status on the asset, so a save is
         // required to persist it. The $save flag defers that save until after the
         // (optional) page-count processing and thumbnail generation, so at most one
         // save happens - and none at all when nothing changed.
         $save = $asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS();
+
+        // Clearing a persisted processing-failure marker is itself a change worth saving.
+        // Ordered after the scan on purpose: || short-circuits, and the scan has to run.
+        $save = $hadProcessingFailure || $save;
 
         if ($asset->isPageCountProcessingEnabled()) {
             $pageCount = $asset->getCustomSetting('document_page_count');
