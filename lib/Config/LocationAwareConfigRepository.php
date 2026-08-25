@@ -265,15 +265,17 @@ class LocationAwareConfigRepository
 
     public function fetchAllKeysByReadTargets(): array
     {
-        // Follows the same source precedence as loadConfigByKey(): a configured read target is the
-        // only source, and without one both are consulted. Enumerating only the settings store in
-        // that case hid every symfony-config entry - which is where the default write target puts
-        // them - and made a database connection mandatory to list a purely file based set.
+        // Follows the same source precedence as loadConfigByKey(): a configured read target is
+        // the only source, a disabled one reads nothing, and without one both are consulted.
+        // Enumeration previously treated every case other than symfony-config as settings-store,
+        // so it disagreed with loading whenever the read target was disabled or absent, and
+        // reached for the database in both of those cases even though loading would not have.
         return match ($this->getReadTargets()[0] ?? null) {
             self::LOCATION_SYMFONY_CONFIG => array_keys($this->containerConfig),
             self::LOCATION_SETTINGS_STORE => array_unique(
                 SettingsStore::getIdsByScope($this->settingsStoreScope)
             ),
+            self::LOCATION_DISABLED => [],
             default => $this->fetchAllKeys(),
         };
     }

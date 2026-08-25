@@ -20,14 +20,14 @@ use Pimcore\Tests\Support\Test\TestCase;
 
 /**
  * Key enumeration has to follow the same source precedence as loadConfigByKey(): a configured
- * read target is the only source that is consulted, and with no read target configured both the
- * symfony-config entries and the settings store are.
+ * read target is the only source consulted, a disabled one is not read from at all, and with
+ * no read target configured both the symfony-config entries and the settings store are.
  *
- * The case that regressed is the one without a read target, which is what the shipped default
- * uses. Enumeration went straight to the settings store there, so entries written by the default
- * symfony-config write target were never listed - pimcore:build:classes generated no enum for a
- * file based select option - and a database connection was required to enumerate a set of
- * configurations that lives entirely on disk.
+ * Enumeration used to treat every case other than symfony-config as settings-store, so it
+ * disagreed with loading for the two remaining ones: a disabled read target listed keys that
+ * loading refuses to read, and an absent one listed only the settings store while loading falls
+ * back through the container config as well. Both also queried the database where loading would
+ * not have, and an absent read_target node raised an undefined array key on the way through.
  *
  * @internal
  */
@@ -97,6 +97,18 @@ final class LocationAwareConfigRepositoryTest extends TestCase
             self::SETTINGS_STORE_KEY,
             $keys,
             'a symfony-config read target must not fall back to the settings store'
+        );
+    }
+
+    public function testReadsNothingWhenTheReadTargetIsDisabled(): void
+    {
+        $keys = $this->createRepository(LocationAwareConfigRepository::LOCATION_DISABLED)
+            ->fetchAllKeysByReadTargets();
+
+        $this->assertSame(
+            [],
+            $keys,
+            'loadConfigByKey() reads from no source for a disabled read target, so nothing is listed'
         );
     }
 
