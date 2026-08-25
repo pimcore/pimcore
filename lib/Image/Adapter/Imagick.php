@@ -149,8 +149,7 @@ class Imagick extends Adapter
 
                     // Save and reload the cut-out image as PNG32.
                     // Keep alpha pixels. Remove the active ImageMagick mask.
-                    $this->setIsAlphaPossible($i->getImageAlphaChannel());
-                    $this->reinitializeImage('png32');
+                    $this->materializeClipPath();
                     $unclipped->clear();
                 } catch (Exception $e) {
                     // the image is entirely transparent at this point, so restore the copy instead of
@@ -1163,5 +1162,25 @@ class Imagick extends Adapter
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * Materializes the active clipping path by saving and reloading the image.
+     *
+     * @return void
+     * @throws Exception
+     */
+    private function materializeClipPath(): void
+    {
+        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . uniqid() . '_pimcore_image_tmp_file.png';
+        $this->tmpFiles[] = $tmpFile;
+        $this->save($tmpFile, 'png32');
+        $this->destroy();
+        $this->setIsAlphaPossible(true);
+        $this->reinitializing = true;
+        if (!$this->load($tmpFile)) {
+            throw new Exception('Failed to reinitialize image from temporary file');
+        }
+        $this->reinitializing = false;
     }
 }
