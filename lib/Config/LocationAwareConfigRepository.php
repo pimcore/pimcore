@@ -265,11 +265,17 @@ class LocationAwareConfigRepository
 
     public function fetchAllKeysByReadTargets(): array
     {
-        if ($this->storageConfig[self::READ_TARGET][self::TYPE] === self::LOCATION_SYMFONY_CONFIG) {
-            return array_keys($this->containerConfig);
-        }
-
-        return array_unique(SettingsStore::getIdsByScope($this->settingsStoreScope));
+        // Follows the same source precedence as loadConfigByKey(): a configured read target is the
+        // only source, and without one both are consulted. Enumerating only the settings store in
+        // that case hid every symfony-config entry - which is where the default write target puts
+        // them - and made a database connection mandatory to list a purely file based set.
+        return match ($this->getReadTargets()[0] ?? null) {
+            self::LOCATION_SYMFONY_CONFIG => array_keys($this->containerConfig),
+            self::LOCATION_SETTINGS_STORE => array_unique(
+                SettingsStore::getIdsByScope($this->settingsStoreScope)
+            ),
+            default => $this->fetchAllKeys(),
+        };
     }
 
     private function invalidateConfigCache(): void
