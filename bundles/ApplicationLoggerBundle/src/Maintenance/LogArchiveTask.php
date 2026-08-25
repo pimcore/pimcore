@@ -92,21 +92,21 @@ class LogArchiveTask implements TaskInterface
                        maintenanceChecked TINYINT(1)
                     ) ENGINE = " . $storageEngine . ' DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci ROW_FORMAT = DEFAULT;');
             }
-            $db->executeQuery('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));
+            $db->executeStatement($this->getArchiveStatement($tablename, $timestamp, $archive_threshold));
+
+            $fileObjectPaths = $db->fetchFirstColumn(sprintf($sql, 'fileobject'));
+
+            $db->executeStatement('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
 
             $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '.$archive_threshold.' days');
 
-            $fileObjectPaths = $db->fetchAllAssociative(sprintf($sql, 'fileobject'));
-            foreach ($fileObjectPaths as $objectPath) {
-                $filePath = $objectPath['fileobject'];
-                if ($filePath !== null) {
-                    if ($storage->fileExists($filePath)) {
-                        $storage->delete($filePath);
-                    }
+            // the file objects are removed only after the rows are gone from the source table, so
+            // that a failing storage never keeps already archived rows around for the next run
+            foreach ($fileObjectPaths as $filePath) {
+                if ($filePath !== null && $storage->fileExists($filePath)) {
+                    $storage->delete($filePath);
                 }
             }
-
-            $db->executeQuery('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
         }
 
         $archiveTables = $db->fetchFirstColumn(
@@ -133,5 +133,24 @@ class LogArchiveTask implements TaskInterface
                 }
             }
         }
+    }
+
+    /**
+     * Archives every log entry older than the threshold that is not in the archive table yet.
+     *
+     * Skipping the entries that are already there is what keeps a re-run harmless: whenever an
+     * earlier run failed between archiving the entries and deleting them from the source table,
+     * those entries are picked up again by the next run. Nothing would reject them - the archive
+     * table has no key on `id`, and the ARCHIVE storage engine used by default cannot have one -
+     * so they would be appended once more on every following run.
+     */
+    private function getArchiveStatement(string $archiveTable, int $timestamp, int $archiveThreshold): string
+    {
+        $olderThanThreshold = '`log`.`timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '
+            .$archiveThreshold.' DAY)';
+
+        return 'INSERT INTO '.$archiveTable.' SELECT `log`.* FROM '.ApplicationLoggerDb::TABLE_NAME.' `log`'
+            .' LEFT JOIN '.$archiveTable.' `archived` ON `archived`.`id` = `log`.`id`'
+            .' WHERE '.$olderThanThreshold.' AND `archived`.`id` IS NULL';
     }
 }
