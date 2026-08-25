@@ -146,6 +146,12 @@ class Imagick extends Adapter
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
                     $i->clipImage();
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
+
+                    // Save and reload the cut-out image as PNG32.
+                    // Keep alpha pixels. Remove the active ImageMagick mask.
+                    $this->setIsAlphaPossible($i->getImageAlphaChannel());
+                    $this->setModified(true);
+                    $this->preModify();
                     $unclipped->clear();
                 } catch (Exception $e) {
                     // the image is entirely transparent at this point, so restore the copy instead of
@@ -224,7 +230,7 @@ class Imagick extends Adapter
 
             if ($i->getImageAlphaChannel()) {
                 // Imagick version compatibility
-                $alphaChannel = 11; // This works at least as far back as version 3.1.0~rc1-1
+                $alphaChannel = \Imagick::ALPHACHANNEL_OPAQUE;
                 if (defined('Imagick::ALPHACHANNEL_REMOVE')) {
                     // Imagick::ALPHACHANNEL_REMOVE has been added in 3.2.0b2
                     $alphaChannel = \Imagick::ALPHACHANNEL_REMOVE;
