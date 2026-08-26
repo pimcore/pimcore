@@ -23,6 +23,8 @@ use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\LockInterface;
 use function in_arrayi;
 
 /**
@@ -36,14 +38,40 @@ class LogArchiveTask implements TaskInterface
 
     private LoggerInterface $logger;
 
-    public function __construct(Connection $db, Config $config, LoggerInterface $logger)
+    private LockInterface $lock;
+
+    public function __construct(Connection $db, Config $config, LoggerInterface $logger, LockFactory $lockFactory)
     {
         $this->db = $db;
         $this->config = $config;
         $this->logger = $logger;
+        // the ttl only has to outlive a legitimate run so that a killed process cannot block
+        // archiving forever; a day matches the cadence the task is normally scheduled at
+        $this->lock = $lockFactory->createLock(self::class, 86400);
     }
 
+    /**
+     * Archiving is not safe to run twice at the same time. Nothing serializes maintenance tasks -
+     * executeMaintenance() dispatches them to the messenger and a run slower than the scheduling
+     * interval overlaps the next one - and two overlapping runs can both see the same entries as
+     * missing from the archive table and both insert them, since it has no key to reject that.
+     */
     public function execute(): void
+    {
+        if (!$this->lock->acquire()) {
+            $this->logger->info('Skipping application log archiving, a previous run is still in progress');
+
+            return;
+        }
+
+        try {
+            $this->archiveLogEntries();
+        } finally {
+            $this->lock->release();
+        }
+    }
+
+    private function archiveLogEntries(): void
     {
         $db = $this->db;
         $storage = Storage::get('application_log');

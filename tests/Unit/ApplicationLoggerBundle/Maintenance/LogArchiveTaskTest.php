@@ -22,6 +22,8 @@ use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Tests\Support\Test\TestCase;
 use Psr\Log\NullLogger;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\Store\InMemoryStore;
 
 /**
  * Regression tests for the application log archiving task.
@@ -50,6 +52,8 @@ final class LogArchiveTaskTest extends TestCase
 
     private string $sourceTable;
 
+    private LockFactory $lockFactory;
+
     protected function needsDb(): bool
     {
         return true;
@@ -64,6 +68,7 @@ final class LogArchiveTaskTest extends TestCase
             ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . '_' . date('Y') . '_' . date('m')
         );
         $this->sourceTable = $this->db->quoteIdentifier(ApplicationLoggerDb::TABLE_NAME);
+        $this->lockFactory = new LockFactory(new InMemoryStore());
 
         $this->createSourceTable();
         $this->resetTables();
@@ -142,9 +147,39 @@ final class LogArchiveTaskTest extends TestCase
         $this->assertSame(1, $this->countSourceRows(), 'A row below the archive threshold must be kept.');
     }
 
+    public function testAConcurrentRunIsSkippedInsteadOfArchivingTheSameEntriesAgain(): void
+    {
+        $ids = $this->insertSourceLogs(3);
+        $this->createArchiveTable();
+
+        // hold the task's lock, the way a still running earlier execution would
+        $concurrentRun = $this->lockFactory->createLock(LogArchiveTask::class, 86400);
+        self::assertTrue($concurrentRun->acquire(), 'The lock must be free before this test holds it.');
+
+        try {
+            $this->runTask();
+        } finally {
+            $concurrentRun->release();
+        }
+
+        foreach ($ids as $id) {
+            $this->assertSame(
+                0,
+                $this->countArchivedRows($id),
+                'A run that cannot take the lock must archive nothing.'
+            );
+        }
+        $this->assertSame(3, $this->countSourceRows(), 'A skipped run must not delete anything either.');
+
+        // and once the lock is free again the entries are archived exactly once
+        $this->runTask();
+
+        $this->assertArchivedExactlyOnce($ids);
+    }
+
     private function runTask(): void
     {
-        (new LogArchiveTask($this->db, new Config(), new NullLogger()))->execute();
+        (new LogArchiveTask($this->db, new Config(), new NullLogger(), $this->lockFactory))->execute();
     }
 
     /**
