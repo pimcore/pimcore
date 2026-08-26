@@ -20,6 +20,7 @@ use League\Flysystem\UnableToMoveFile;
 use League\Flysystem\UnableToProvideChecksum;
 use Normalizer;
 use Pimcore;
+use Pimcore\Asset\StorageQueue\FrontendPathResolver;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
@@ -901,9 +902,15 @@ class Asset extends Element\AbstractElement
     public function getFrontendFullPath(): string
     {
         $path = $this->getPath() . $this->getFilename();
-        $path = urlencode_ignore_slash($path);
 
         $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
+        if ($prefix !== '' && $prefix !== null) {
+            // prefix-based URLs point straight at the storage (CDN/bucket); while a queued
+            // folder move is pending the bytes still live under the pre-move prefix
+            $path = Pimcore::getContainer()->get(FrontendPathResolver::class)->resolvePhysicalPath($path, $this->getModificationDate());
+        }
+
+        $path = urlencode_ignore_slash($path);
         $path = $prefix . $path;
 
         $event = new GenericEvent($this, [

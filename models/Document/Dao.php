@@ -96,7 +96,7 @@ class Dao extends Model\Element\Dao
      */
     public function getByPrettyUrl(string $path): void
     {
-        $data = $this->db->fetchAssociative('SELECT id FROM documents_page WHERE prettyUrl = :prettyUrl', [
+        $data = $this->db->fetchAssociative('SELECT id FROM documents_page WHERE prettyUrl = :prettyUrl ORDER BY id LIMIT 1', [
             'prettyUrl' => $path,
         ]);
 

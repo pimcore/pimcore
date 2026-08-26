@@ -49,6 +49,56 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
+     * Verifies that an object cannot be moved into one of its own children, which
+     * would create a circular parent/child reference in the tree.
+     */
+    public function testParentCannotBeOwnDescendant(): void
+    {
+        $parent = TestHelper::createEmptyObject();
+        $child = TestHelper::createEmptyObject('', false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Cannot set parent, because the new parent is one of its own children, which would create a circular reference in the tree.');
+
+        $parent->setParentId($child->getId());
+        $parent->save();
+    }
+
+    /**
+     * Verifies that an object cannot be moved into a grandchild several levels down,
+     * which would create a circular parent/child reference in the tree.
+     */
+    public function testParentCannotBeOwnGrandchild(): void
+    {
+        $grandParent = TestHelper::createEmptyObject();
+        $parent = TestHelper::createEmptyObject('', false);
+        $parent->setParentId($grandParent->getId());
+        $parent->save();
+        $child = TestHelper::createEmptyObject('', false);
+        $child->setParentId($parent->getId());
+        $child->save();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Cannot set parent, because the new parent is one of its own children, which would create a circular reference in the tree.');
+
+        $grandParent->setParentId($child->getId());
+        $grandParent->save();
+    }
+
+    /**
+     * Verifies that the locking variant of getCurrentFullPath() used to re-check for
+     * circular parent references inside the save transaction returns the same path.
+     */
+    public function testGetCurrentFullPathForUpdateMatchesGetCurrentFullPath(): void
+    {
+        $object = TestHelper::createEmptyObject();
+
+        $this->assertSame($object->getDao()->getCurrentFullPath(), $object->getDao()->getCurrentFullPathForUpdate());
+    }
+
+    /**
      * Verifies that object PHP API version note is saved
      */
     public function testSavingVersionNotes(): void

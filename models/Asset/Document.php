@@ -18,6 +18,7 @@ use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Asset\Document\PdfScanner;
 
 /**
  * @method Dao getDao()
@@ -151,26 +152,13 @@ class Document extends Model\Asset
             Model\Asset\Enum\PdfScanStatus::IN_PROGRESS->value
         );
 
-        $chunkSize = 1024;
-        $filePointer = $this->getStream();
+        if ((new PdfScanner())->containsJavaScript($this->getStream())) {
+            $this->setCustomSetting(
+                self::CUSTOM_SETTING_PDF_SCAN_STATUS,
+                Model\Asset\Enum\PdfScanStatus::UNSAFE->value
+            );
 
-        $tagLength = strlen('/JS');
-
-        while ($chunk = fread($filePointer, $chunkSize)) {
-            if (strlen($chunk) <= $tagLength) {
-                break;
-            }
-
-            // NOTE: raw string matching produces false positives (see #16955) — /JS can appear
-            // in font names, operator sequences, or other non-JavaScript PDF structures.
-            if (str_contains($chunk, '/JS') || str_contains($chunk, '/JavaScript')) {
-                $this->setCustomSetting(
-                    self::CUSTOM_SETTING_PDF_SCAN_STATUS,
-                    Model\Asset\Enum\PdfScanStatus::UNSAFE->value
-                );
-
-                return true;
-            }
+            return true;
         }
 
         $this->setCustomSetting(

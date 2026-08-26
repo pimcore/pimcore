@@ -56,3 +56,15 @@ services:
     Pimcore\Bundle\CoreBundle\Command\Migrate\StorageCommand:
         arguments:
             $locator: !tagged_locator { tag: flysystem.storage }
+
+    Pimcore\Bundle\CoreBundle\Command\Asset\StorageQueueProcessCommand:
+        arguments:
+            - '@Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface'
+            - '@lock.factory'
+            - '@pimcore.asset.storage_queue.processor'
+            - '%pimcore.assets.storage_operation_queue.enabled%'
+
+    Pimcore\Bundle\CoreBundle\Command\Asset\StorageQueueStatusCommand:
+        arguments:
+            - '@Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface'
+            - '%pimcore.assets.storage_operation_queue.enabled%'
