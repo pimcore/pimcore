@@ -13,7 +13,8 @@ on:
             - 'bundles/**/public/**'
     push:
         branches:
-            - "2026.*"
+            - "[0-9]+.[0-9]+"
+            - "[0-9]+.x"
             - "*_actions"
         paths-ignore:
             - 'doc/**'
@@ -31,10 +32,15 @@ env:
 permissions:
   contents: read
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+    cancel-in-progress: true
+
 jobs:
     static-analysis-phpstan:
         name: "Static Analysis with PHPStan"
         runs-on: "ubuntu-latest"
+        timeout-minutes: 30
         continue-on-error: ${{ matrix.experimental }}
         strategy:
             matrix:

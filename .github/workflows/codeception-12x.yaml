@@ -11,12 +11,17 @@ on:
             - 'bundles/**/public/**'
     push:
         branches:
-            - "12.*"
+            - "[0-9]+.[0-9]+"
+            - "[0-9]+.x"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
 permissions:
   contents: read
+concurrency:
+    group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+    cancel-in-progress: true
+
 jobs:
     codeception-tests:
         uses: pimcore/workflows-collection-public/.github/workflows/reusable-codeception-public.yaml@main
