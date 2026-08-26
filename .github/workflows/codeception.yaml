@@ -13,8 +13,7 @@ on:
             - 'bundles/**/public/**'
     push:
         branches:
-            - "[0-9]+.[0-9]+"
-            - "[0-9]+.x"
+            - "2026.*"
             - "*_actions"
         paths-ignore:
             - 'doc/**'
@@ -23,7 +22,7 @@ permissions:
   contents: read
  
 concurrency:
-    group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
     cancel-in-progress: true
 
 jobs:
