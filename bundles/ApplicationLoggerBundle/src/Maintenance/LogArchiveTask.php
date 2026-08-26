@@ -98,19 +98,18 @@ class LogArchiveTask implements TaskInterface
             }
             $db->executeStatement($this->getArchiveStatement($quotedTablename, $timestamp, $archive_threshold));
 
-            $fileObjectPaths = $db->fetchFirstColumn(sprintf($sql, 'fileobject'));
-
-            $db->executeStatement('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
-
             $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '.$archive_threshold.' days');
 
-            // the file objects are removed only after the rows are gone from the source table, so
-            // that a failing storage never keeps already archived rows around for the next run
+            // the source rows stay until their file objects are gone, so that a failing storage
+            // leaves a retryable state behind rather than files nothing points to any more
+            $fileObjectPaths = $db->fetchFirstColumn(sprintf($sql, 'fileobject'));
             foreach ($fileObjectPaths as $filePath) {
                 if ($filePath !== null && $storage->fileExists($filePath)) {
                     $storage->delete($filePath);
                 }
             }
+
+            $db->executeStatement('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
         }
 
         $archiveTables = $db->fetchFirstColumn(
