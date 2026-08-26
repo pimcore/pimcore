@@ -23,6 +23,7 @@ use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Lock\Exception\ExceptionInterface as LockException;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use function in_arrayi;
@@ -32,6 +33,11 @@ use function in_arrayi;
  */
 class LogArchiveTask implements TaskInterface
 {
+    /**
+     * How many file objects to delete before the lock gets its ttl reset again.
+     */
+    private const LOCK_REFRESH_INTERVAL = 1000;
+
     private Connection $db;
 
     private Config $config;
@@ -131,9 +137,14 @@ class LogArchiveTask implements TaskInterface
             // the source rows stay until their file objects are gone, so that a failing storage
             // leaves a retryable state behind rather than files nothing points to any more
             $fileObjectPaths = $db->fetchFirstColumn(sprintf($sql, 'fileobject'));
+            $deleted = 0;
             foreach ($fileObjectPaths as $filePath) {
                 if ($filePath !== null && $storage->fileExists($filePath)) {
                     $storage->delete($filePath);
+                }
+
+                if (++$deleted % self::LOCK_REFRESH_INTERVAL === 0) {
+                    $this->refreshLock();
                 }
             }
 
@@ -185,5 +196,24 @@ class LogArchiveTask implements TaskInterface
         return 'INSERT INTO '.$quotedArchiveTable.' SELECT `log`.* FROM '.$quotedSourceTable.' `log`'
             .' LEFT JOIN '.$quotedArchiveTable.' `archived` ON `archived`.`id` = `log`.`id`'
             .' WHERE '.$olderThanThreshold.' AND `archived`.`id` IS NULL';
+    }
+
+    /**
+     * Keeps the lock alive while the file objects are removed one by one, which is the part of a
+     * run that can take long enough to outlive the ttl. The ttl is kept rather than dropped so a
+     * process that dies mid-run still frees the lock eventually.
+     *
+     * A lost lock is logged and the run continues: a second run is kept out by the acquire() in
+     * execute(), and aborting here would leave the entries archived but not deleted.
+     */
+    private function refreshLock(): void
+    {
+        try {
+            $this->lock->refresh();
+        } catch (LockException $e) {
+            $this->logger->warning('Could not refresh the application log archive lock: {exception}', [
+                'exception' => $e,
+            ]);
+        }
     }
 }
