@@ -112,6 +112,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     $this->__objectAwareFields['localizedfields'] = true;
                 }
 
+                if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                    // a calculated value is computed on read and never persisted from user input,
+                    // and CalculatedValue::checkValidity() is a no-op for that reason - including
+                    // for the mandatory check. Calling the getter here would run the calculator
+                    // for every calculated field on every save, only to discard the result.
+                    continue;
+                }
+
                 $getter = 'get' . ucfirst($fd->getName());
 
                 if (method_exists($this, $getter)) {
