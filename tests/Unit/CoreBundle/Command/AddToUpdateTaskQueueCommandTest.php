@@ -34,6 +34,9 @@ class AddToUpdateTaskQueueCommandTest extends TestCase
     private const DOCUMENT_CONDITION = '(`type` = \'document\' AND ('
         . 'JSON_EXTRACT(customSettings, \'$."document_page_count"\') IS NULL))';
 
+    private const NOT_FAILED_CONDITION =
+        'JSON_EXTRACT(customSettings, \'$."pimcore-asset-processing-failed"\') IS NULL';
+
     /**
      * @return array{0: string[], 1: array<int, mixed>}
      */
@@ -75,6 +78,7 @@ class AddToUpdateTaskQueueCommandTest extends TestCase
             [
                 "`type` IN ('image','video','document')",
                 '(' . self::IMAGE_CONDITION . ' OR ' . self::VIDEO_CONDITION . ' OR ' . self::DOCUMENT_CONDITION . ')',
+                self::NOT_FAILED_CONDITION,
             ],
             $conditions
         );
@@ -89,6 +93,7 @@ class AddToUpdateTaskQueueCommandTest extends TestCase
             [
                 "`type` IN ('image','video','document')",
                 '(' . self::IMAGE_CONDITION . ' OR ' . self::VIDEO_CONDITION . ')',
+                self::NOT_FAILED_CONDITION,
             ],
             $conditions
         );
@@ -108,10 +113,28 @@ class AddToUpdateTaskQueueCommandTest extends TestCase
                 'id in (3,5)',
                 'CONCAT(`path`, filename) REGEXP ?',
                 '(' . self::IMAGE_CONDITION . ' OR ' . self::VIDEO_CONDITION . ' OR ' . self::DOCUMENT_CONDITION . ')',
+                self::NOT_FAILED_CONDITION,
             ],
             $conditions
         );
         $this->assertSame(['^/Sample.*urban.jpg$'], $variables);
+    }
+
+    public function testMissingMetadataOptionCombinedWithRetryFailedKeepsFailedAssets(): void
+    {
+        [$conditions] = $this->buildConditions([
+            '--missing-metadata' => true,
+            '--retry-failed' => true,
+        ]);
+
+        $this->assertSame(
+            [
+                "`type` IN ('image','video','document')",
+                'customSettings LIKE \'%"pimcore-asset-processing-failed":true%\'',
+                '(' . self::IMAGE_CONDITION . ' OR ' . self::VIDEO_CONDITION . ' OR ' . self::DOCUMENT_CONDITION . ')',
+            ],
+            $conditions
+        );
     }
 
     public function testRetryFailedOptionIsNotAffectedByMissingMetadataOption(): void
