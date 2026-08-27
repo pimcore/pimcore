@@ -125,18 +125,20 @@ class AddToUpdateTaskQueueCommandTest extends TestCase
         $this->assertSame(['^/Sample.*urban.jpg$'], $variables);
     }
 
-    public function testMissingMetadataOptionCombinedWithRetryFailedKeepsFailedAssets(): void
+    public function testMissingMetadataOptionCombinedWithRetryFailedAlsoQueuesFailedAssets(): void
     {
         [$conditions] = $this->buildConditions([
             '--missing-metadata' => true,
             '--retry-failed' => true,
         ]);
 
+        // the two are OR-ed: a failed asset is queued even if it does not look like it is missing meta-data,
+        // which is the case for documents (`document_page_count` is set to `failed`) and images
         $this->assertSame(
             [
                 "`type` IN ('image','video','document')",
-                self::FAILED_CONDITION,
-                '(' . self::IMAGE_CONDITION . ' OR ' . self::VIDEO_CONDITION . ' OR ' . self::DOCUMENT_CONDITION . ')',
+                '((' . self::IMAGE_CONDITION . ' OR ' . self::VIDEO_CONDITION . ' OR ' . self::DOCUMENT_CONDITION . ')'
+                . ' OR ' . self::FAILED_CONDITION . ')',
             ],
             $conditions
         );

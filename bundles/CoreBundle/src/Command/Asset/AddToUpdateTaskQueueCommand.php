@@ -23,7 +23,6 @@ use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use function ceil;
 use function implode;
 use function sprintf;
 
@@ -46,6 +45,8 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
         'video' => ['embeddedMetaDataExtracted', 'duration', 'videoWidth', 'videoHeight'],
         'document' => ['document_page_count'],
     ];
+
+    private const ASSETS_PER_LOOP = 10;
 
     protected array $types = ['image', 'video', 'document'];
 
@@ -82,7 +83,8 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
                 InputOption::VALUE_NONE,
                 'only add assets that are missing meta-data (embedded meta-data, image dimensions, video duration, ' .
                 'page count), e.g. to backfill assets that were uploaded before the update task queue was ' .
-                'processed. Assets that previously failed to be processed are skipped unless --retry-failed is used'
+                'processed. Assets that previously failed to be processed are only included if --retry-failed is ' .
+                'used as well'
             );
 
     }
@@ -99,25 +101,38 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
 
         $list = new Asset\Listing();
         $list->setCondition(implode(' AND ', $conditions), $conditionVariables);
-        $total = $list->getTotalCount();
-        $perLoop = 10;
+        $list->setOrderKey('id');
+        $list->setOrder('ASC');
+        $list->setLimit(self::ASSETS_PER_LOOP);
 
-        $this->output->writeln(sprintf('Adding %d asset(s) to the update task queue ...', $total));
+        $this->output->writeln(sprintf('Found %d asset(s) to add to the update task queue ...', $list->getTotalCount()));
 
-        for ($i = 0; $i < (ceil($total / $perLoop)); $i++) {
-            $list->setLimit($perLoop);
-            $list->setOffset($i * $perLoop);
+        // the update task writes the very custom settings that are filtered on here, so the result set can shrink
+        // while the queue is being consumed - paginate by ID instead of by offset, which would skip assets
+        $lastId = 0;
+        $count = 0;
+
+        do {
+            $list->setCondition(
+                implode(' AND ', [...$conditions, 'id > ?']),
+                [...$conditionVariables, $lastId]
+            );
+
             $assets = $list->load();
             foreach ($assets as $asset) {
+                $lastId = (int) $asset->getId();
                 $this->output->writeln(
                     sprintf('Adding asset %s (%s) to the update task queue', $asset->getId(), $asset->getRealFullPath()),
                     OutputInterface::VERBOSITY_VERBOSE
                 );
                 $asset->triggerUpdateTask();
+                $count++;
             }
 
             Pimcore::collectGarbage();
-        }
+        } while (count($assets) === self::ASSETS_PER_LOOP);
+
+        $this->output->writeln(sprintf('Added %d asset(s) to the update task queue', $count));
 
         return 0;
     }
@@ -151,18 +166,23 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
             $conditionVariables[] = $regex;
         }
 
-        if ($input->getOption('retry-failed')) {
+        $retryFailed = (bool) $input->getOption('retry-failed');
+        $missingMetadata = (bool) $input->getOption('missing-metadata');
+
+        if ($retryFailed && $missingMetadata) {
+            // everything that still needs processing: never processed before, or failed while doing so
+            $conditions[] = sprintf(
+                '(%s OR %s)',
+                $this->buildMissingMetadataCondition(),
+                $this->buildProcessingFailedCondition(true)
+            );
+        } elseif ($retryFailed) {
             $conditions[] = $this->buildProcessingFailedCondition(true);
-        }
-
-        if ($input->getOption('missing-metadata')) {
+        } elseif ($missingMetadata) {
             $conditions[] = $this->buildMissingMetadataCondition();
-
-            if (!$input->getOption('retry-failed')) {
-                // assets that are flagged as failed are not missing their meta-data because they were never
-                // processed, but because processing them did not work - they'd just fail again on every run
-                $conditions[] = $this->buildProcessingFailedCondition(false);
-            }
+            // assets that are flagged as failed are not missing their meta-data because they were never
+            // processed, but because processing them did not work - they'd just fail again on every run
+            $conditions[] = $this->buildProcessingFailedCondition(false);
         }
 
         return [$conditions, $conditionVariables];
