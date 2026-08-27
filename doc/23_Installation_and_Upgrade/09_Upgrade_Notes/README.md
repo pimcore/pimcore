@@ -7,6 +7,43 @@
 -   The housekeeping maintenance task now removes empty directories under the system temp directory (`var/tmp`), not just files. Previously `rmdir()` was never reached for that tree, so every directory ever created below it survived indefinitely.
 -   Directories have a retention of their own, separate from `pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than` (which continues to govern files, default 1 day). A directory is removed only once it is both empty and untouched for at least 7 days, so a directory a request is still writing into is not pulled out from under it. The profiler directory is unaffected and keeps its existing single-retention behaviour.
 
+## Pimcore 2026.2.10
+
+### [Notifications]
+
+Notification `creationDate` / `modificationDate` are now written in UTC, which is the convention
+these columns have used since the `Version20230321133700` migration converted the existing rows,
+and which every reader already assumes. Previously they were written in the local timezone, so with
+a non-UTC `general.timezone` the notification date shown in Studio and in the Classic UI was shifted
+by the zone offset (for example two hours ahead for `Europe/Berlin` during DST).
+
+Rows written before this fix remain in local time and will still be displayed with that offset.
+They cannot be corrected automatically, because a local-time row is indistinguishable from a
+correctly stored UTC row. If the skew on historical entries matters for your instance, convert the
+affected rows manually, for example:
+
+```sql
+-- 1. Preflight. This must return a datetime, not NULL. NULL means the named time-zone
+--    tables are not loaded (see mysql_tzinfo_to_sql) and CONVERT_TZ() cannot be used -
+--    load them first, or convert with a fixed INTERVAL instead.
+SELECT CONVERT_TZ('2000-01-01 00:00:00', 'Europe/Berlin', 'UTC');
+
+-- 2. Convert. COALESCE keeps the original value if the conversion yields NULL, so a
+--    missing time-zone table makes this a no-op rather than erasing the dates.
+UPDATE notifications
+SET creationDate = COALESCE(CONVERT_TZ(creationDate, 'Europe/Berlin', 'UTC'), creationDate),
+    modificationDate = COALESCE(CONVERT_TZ(modificationDate, 'Europe/Berlin', 'UTC'), modificationDate)
+WHERE id > <last id created before the upgrade>;
+```
+
+Take a backup first, and note that a single named-zone conversion is only exact if all the rows
+you convert fall on the same side of a DST boundary.
+
+Directly after the upgrade, unread notifications created shortly before it may be re-announced by
+the Classic UI popup for up to the zone-offset duration - their local-time `creationDate` sits
+"in the future" relative to the corrected UTC polling bound. This resolves itself once that
+offset has elapsed (or once the rows are converted / marked as read).
+
 ## Pimcore 2026.2.9
 
 ### Deprecations
