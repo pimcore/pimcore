@@ -48,8 +48,6 @@ final class ChangePublishedStateTest extends TestCase
                 self::WORKFLOW_NAME => $workflowConfig + [
                     'type' => 'state_machine',
                     'supports' => [Concrete::class],
-                    // WorkflowPass reads the label unconditionally although it has no default.
-                    'label' => 'Product workflow',
                 ],
             ],
         ]]);

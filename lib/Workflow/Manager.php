@@ -302,15 +302,16 @@ class Manager
         $markingStore = $workflow->getMarkingStore();
         $changePublishedState = $globalActionObj->getChangePublishedState();
 
+        // Narrowed once: only documents and data objects carry a published state.
+        $publishableSubject = $subject instanceof Concrete || $subject instanceof Document ? $subject : null;
+
         // Only snapshot when the save below can actually run and fail, so that
         // read-only global actions do not pay for an extra marking-store read.
         $previousMarking = null;
         $previousPublishedState = null;
         if ($saveSubject && $subject instanceof ElementInterface) {
             $previousMarking = $markingStore->getMarking($subject);
-            if ($subject instanceof Concrete || $subject instanceof Document) {
-                $previousPublishedState = $subject->isPublished();
-            }
+            $previousPublishedState = $publishableSubject?->isPublished();
         }
 
         if (!empty($globalActionObj->getTos())) {
@@ -343,9 +344,8 @@ class Manager
                 if ($previousMarking !== null) {
                     $markingStore->setMarking($subject, $previousMarking);
                 }
-                if ($previousPublishedState !== null
-                    && ($subject instanceof Concrete || $subject instanceof Document)) {
-                    $subject->setPublished($previousPublishedState);
+                if ($previousPublishedState !== null) {
+                    $publishableSubject?->setPublished($previousPublishedState);
                 }
 
                 throw $e;
