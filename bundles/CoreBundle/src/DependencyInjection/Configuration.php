@@ -1578,6 +1578,11 @@ final class Configuration implements ConfigurationInterface
                                             ->scalarNode('color')->info('Color of the place which will be used in the Pimcore backend.')->defaultValue('#bfdadc')->end()
                                             ->booleanNode('colorInverted')->info('If set to true the color will be used as border and font color otherwise as background color.')->defaultFalse()->end()
                                             ->booleanNode('visibleInHeader')->info('If set to false, the place will be hidden in the header of the Pimcore element detail view in the backend.')->defaultTrue()->end()
+                                            ->enumNode('changePublishedState')
+                                                ->values([ChangePublishedStateSubscriber::NO_CHANGE, ChangePublishedStateSubscriber::FORCE_UNPUBLISHED, ChangePublishedStateSubscriber::FORCE_PUBLISHED, ChangePublishedStateSubscriber::SAVE_VERSION])
+                                                ->defaultValue(ChangePublishedStateSubscriber::NO_CHANGE)
+                                                ->info('Change published state of element when it enters this place (only available for documents and data objects). A changePublishedState other than no_change on the applied transition overrules this setting.')
+                                            ->end()
 
                                             ->arrayNode('permissions')
                                                 ->prototype('array')
@@ -1779,7 +1784,7 @@ final class Configuration implements ConfigurationInterface
                                                     ->enumNode('changePublishedState')
                                                         ->values([ChangePublishedStateSubscriber::NO_CHANGE, ChangePublishedStateSubscriber::FORCE_UNPUBLISHED, ChangePublishedStateSubscriber::FORCE_PUBLISHED, ChangePublishedStateSubscriber::SAVE_VERSION])
                                                         ->defaultValue(ChangePublishedStateSubscriber::NO_CHANGE)
-                                                        ->info('Change published state of element while transition (only available for documents and data objects).')
+                                                        ->info('Change published state of element while transition (only available for documents and data objects). Unless it is set to no_change, this setting overrules the changePublishedState settings of the places the transition leads to.')
                                                     ->end()
                                                     ->enumNode('unsavedChangesBehaviour')
                                                         ->values([Transition::UNSAVED_CHANGES_BEHAVIOUR_SAVE,

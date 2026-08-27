@@ -2,6 +2,11 @@
 
 ## Pimcore 2026.3.0
 
+### [Workflow]
+- [Places] `changePublishedState` can now be configured on a place in addition to a transition, so a published state can be enforced whenever an element enters a place instead of having to repeat the setting on every incoming transition. A `changePublishedState` set on the applied transition still takes precedence; if the transition leaves it at `no_change`, the setting of the places the transition leads to is used (the first place defining one, in the order of the workflow config, wins). Existing configurations are unaffected, since places default to `no_change`.
+- [Global Actions] A global action which sets a place (via its `to` option) now applies the `changePublishedState` configured on that place as well, so the published state is consistent no matter how an element reaches a place. Global actions themselves still have no `changePublishedState` option.
+- The `@internal` `Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber` now requires `Pimcore\Workflow\Manager` as a constructor argument to resolve the place-level setting.
+
 ### [GenericExecutionEngine]
 - [JobRun] Log entries stored in the `generic_execution_engine_job_run.log` column are now delimited by a short versioned frame (a version token wrapped in ASCII record separators, `0x1E`) instead of a newline, so a newline that belongs to a single (multi-line) log message is no longer mistaken for an entry boundary. The version token is framed rather than using a bare `0x1E` so that legacy payloads, which were stored verbatim and may already contain a stray `0x1E`, are never split on such a byte. Logs written in the previous newline-delimited format are still read on a best-effort basis, so no migration is required. The parsing of the column has moved from `JobRun::getLogs()` into the new `@internal` `Pimcore\Bundle\GenericExecutionEngineBundle\Utils\LogParser`, and the `@internal` value object `LogLine` now takes the timestamp and message as separate constructor arguments and no longer exposes `appendLogLine()`.
 

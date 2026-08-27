@@ -19,6 +19,7 @@ use Pimcore\Event\Workflow\GlobalActionEvent;
 use Pimcore\Event\WorkflowEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
@@ -227,8 +228,10 @@ class Manager
 
         $this->notesSubscriber->setAdditionalData([]);
 
-        $transition = $this->getTransitionByName($workflow->getName(), $transition);
-        $changePublishedState = $transition instanceof Transition ? $transition->getChangePublishedState() : null;
+        $transitionObject = $this->getTransitionByName($workflow->getName(), $transition);
+        $changePublishedState = $transitionObject !== null
+            ? $this->getChangePublishedState($workflow->getName(), $transitionObject)
+            : ChangePublishedStateSubscriber::NO_CHANGE;
 
         if ($saveSubject) {
             if ($changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION) {
@@ -267,6 +270,7 @@ class Manager
         $this->eventDispatcher->dispatch($event, WorkflowEvents::PRE_GLOBAL_ACTION);
 
         $markingStore = $workflow->getMarkingStore();
+        $changePublishedState = ChangePublishedStateSubscriber::NO_CHANGE;
 
         if (!empty($globalActionObj->getTos())) {
             $places = [];
@@ -275,16 +279,83 @@ class Manager
             }
 
             $markingStore->setMarking($subject, new Marking($places));
+
+            $changePublishedState = $this->getChangePublishedStateOfPlaces(
+                $workflow->getName(),
+                $globalActionObj->getTos()
+            );
+            $this->applyChangePublishedState($subject, $changePublishedState);
         }
 
         $this->eventDispatcher->dispatch($event, WorkflowEvents::POST_GLOBAL_ACTION);
         $this->notesSubscriber->setAdditionalData([]);
 
         if ($saveSubject && $subject instanceof ElementInterface) {
-            $subject->save();
+            if ($changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION
+                && ($subject instanceof Concrete || $subject instanceof PageSnippet)) {
+                $subject->saveVersion();
+            } else {
+                $subject->save();
+            }
         }
 
         return $markingStore->getMarking($subject);
+    }
+
+    /**
+     * Applies a resolved changePublishedState to the subject. Only documents and data objects can be
+     * (un)published, all other subjects are left untouched.
+     */
+    public function applyChangePublishedState(object $subject, string $changePublishedState): void
+    {
+        if (!$subject instanceof Concrete && !$subject instanceof Document) {
+            return;
+        }
+
+        if ($changePublishedState === ChangePublishedStateSubscriber::FORCE_UNPUBLISHED) {
+            $subject->setPublished(false);
+        } elseif ($changePublishedState === ChangePublishedStateSubscriber::FORCE_PUBLISHED) {
+            $subject->setPublished(true);
+        }
+    }
+
+    /**
+     * Resolves the changePublishedState setting which applies when the given transition is performed.
+     *
+     * The setting configured on the transition takes precedence. If it is not set (or set to no_change),
+     * the setting of the places the transition leads to is used - the first place (in the order of the
+     * workflow config) which defines a changePublishedState wins.
+     */
+    public function getChangePublishedState(string $workflowName, \Symfony\Component\Workflow\Transition $transition): string
+    {
+        if ($transition instanceof Transition
+            && ($changePublishedState = $transition->getChangePublishedState()) !== ChangePublishedStateSubscriber::NO_CHANGE) {
+            return $changePublishedState;
+        }
+
+        return $this->getChangePublishedStateOfPlaces($workflowName, $transition->getTos());
+    }
+
+    /**
+     * Returns the changePublishedState configured for the first of the given places (in the order of the
+     * workflow config) which defines one.
+     *
+     * @param string[] $places
+     */
+    public function getChangePublishedStateOfPlaces(string $workflowName, array $places): string
+    {
+        foreach ($this->getPlaceConfigsByWorkflowName($workflowName) as $placeConfig) {
+            if (!in_array($placeConfig->getPlace(), $places, true)) {
+                continue;
+            }
+
+            $changePublishedState = $placeConfig->getChangePublishedState();
+            if ($changePublishedState !== ChangePublishedStateSubscriber::NO_CHANGE) {
+                return $changePublishedState;
+            }
+        }
+
+        return ChangePublishedStateSubscriber::NO_CHANGE;
     }
 
     /**

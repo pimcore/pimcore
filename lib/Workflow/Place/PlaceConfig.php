@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Workflow\Place;
 
 use Pimcore\Helper\ContrastColor;
+use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\ExpressionService;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -73,6 +74,15 @@ class PlaceConfig
     public function isVisibleInHeader(): bool
     {
         return $this->placeConfigArray['visibleInHeader'];
+    }
+
+    /**
+     * Published state which is enforced as soon as an element enters this place. A changePublishedState
+     * setting on the applied transition takes precedence over this one.
+     */
+    public function getChangePublishedState(): string
+    {
+        return (string) ($this->placeConfigArray['changePublishedState'] ?? ChangePublishedStateSubscriber::NO_CHANGE);
     }
 
     public function getObjectLayout(WorkflowInterface $workflow, object $subject): ?string
