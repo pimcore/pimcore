@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * This source file is available under the terms of the
@@ -17,6 +18,7 @@ use PDO;
 use Pimcore\Controller\Controller;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @internal
@@ -26,6 +28,13 @@ class WebDavController extends Controller
     public function webdavAction(): void
     {
         $homeDir = Asset::getById(1);
+
+        if (!$homeDir) {
+            Logger::error('WebDAV: home directory asset (ID 1) not found');
+
+            // let Symfony emit a proper 404 instead of exiting with an empty 200 response
+            throw new NotFoundHttpException('WebDAV root not found');
+        }
 
         try {
             $publicDir = new Asset\WebDAV\Folder($homeDir);
@@ -43,7 +52,9 @@ class WebDavController extends Controller
             $server->addPlugin($lockPlugin);
 
             // browser plugin
-            $server->addPlugin(new \Sabre\DAV\Browser\Plugin());
+            if (\Pimcore::inDebugMode()) {
+                $server->addPlugin(new \Sabre\DAV\Browser\Plugin());
+            }
 
             $server->start();
         } catch (Exception $e) {

@@ -13,12 +13,27 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset\WebDAV;
 
-use Pimcore\Model\Asset;
-use Pimcore\Tool\Serialize;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @internal
+ *
+ * The WebDAV delete log lets Tree::move() restore a destination that a client deleted and then
+ * re-created via a separate MOVE request (e.g. Photoshop). See Asset\WebDAV\File::delete() and
+ * Asset\WebDAV\Tree::move().
+ *
+ * KNOWN LIMITATION (multi-node): the log is stored on the local filesystem
+ * (PIMCORE_SYSTEM_TEMP_DIRECTORY), and the DELETE and the follow-up MOVE are separate HTTP
+ * requests. In a horizontally-scaled deployment (typical with blob/cloud asset storage) those two
+ * requests may land on different nodes, so the MOVE won't find the entry and the restore silently
+ * degrades to a plain rename (source keeps its own id; the deleted asset's id/metadata are not
+ * preserved).
+ *
+ * TODO (cluster-safe delete log): move this state into a shared backend so it works regardless of
+ * which node handles each request. The natural choice is a small DB table (mirroring how the Sabre
+ * lock plugin already uses the `webdav_locks` table) or the Pimcore cache/Redis. That would also
+ * make the read-modify-write genuinely atomic cluster-wide. Start in File::delete() (writer),
+ * Tree::move() (reader), and this class.
  */
 class Service
 {
@@ -28,39 +43,20 @@ class Service
     }
 
     /**
-     * Rebuilds the asset that File::delete() stored in a delete-log entry, so Tree::move() can turn
-     * a third-party "delete then move" back into an overwrite of the existing asset.
-     *
-     * Object deserialization has to stay enabled here: the payload is a whole serialized Asset.
-     * Forbidding it yielded an __PHP_Incomplete_Class, which is truthy, so the caller's setData()
-     * call became fatal - see pimcore/platform-version#298 for the same defect in document
-     * editables.
-     *
-     * An allowlist is not viable either. The asset is serialized in dump state, where
-     * Asset::getBlockedVars() keeps `properties` and `children`, so the graph also holds Property
-     * objects (a `date` property carries a Carbon), further Asset objects, and the free-form
-     * `customSettings` array that bundles write into. Scoping this is tracked with the other
-     * permissive readers in pimcore/internal-improvements#24.
-     *
-     * Returns null when the payload does not rebuild into an Asset, so the caller can fall back
-     * instead of operating on an unusable value.
+     * @return array<string, array<string, mixed>>
      */
-    public static function restoreDeletedAsset(string $payload): ?Asset
-    {
-        $asset = Serialize::unserialize($payload, true);
-
-        return $asset instanceof Asset ? $asset : null;
-    }
-
     public static function getDeleteLog(): array
     {
         $log = [];
         if (file_exists(self::getDeleteLogFile())) {
             $raw = file_get_contents(self::getDeleteLogFile());
             if (is_string($raw)) {
-                // The log itself is a plain array of scalars: each entry holds an id, a timestamp
-                // and the already-serialized asset as a string. The asset object is reconstructed
-                // one level down, in Tree::move(), against getDeleteLogAllowedClasses().
+                // the log file itself only holds scalar entries (path => [id, timestamp,
+                // properties, metadata]), so THIS unserialize never needs to instantiate objects.
+                // Note that re-applying the snapshot later is not entirely instantiation-free:
+                // date-type property rows pass through Property::setDataFromResource(), which
+                // unserializes their stored datetime string - the same standard hydration path
+                // Asset\Dao::getProperties() uses. See Tree::restoreProperties().
                 $log = unserialize($raw, ['allowed_classes' => false]);
             }
 
@@ -93,6 +89,6 @@ class Service
         }
 
         $filesystem = new Filesystem();
-        $filesystem->dumpFile(Asset\WebDAV\Service::getDeleteLogFile(), serialize($tmpLog));
+        $filesystem->dumpFile(self::getDeleteLogFile(), serialize($tmpLog));
     }
 }
