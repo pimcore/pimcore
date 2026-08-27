@@ -107,7 +107,9 @@ pimcore:
                     # If set to false, the place will be hidden in the header of the Pimcore element detail view in Pimcore Studio.
                     visibleInHeader:      true
 
-                    # Change published state of element when it enters this place (only available for documents and data objects).
+                    # Change published state of element when it enters this place through a completed workflow
+                    # transition or a global action with a "to" option (only available for documents and data objects).
+                    # Initial markings and direct marking store writes do not apply it.
                     # A changePublishedState other than no_change on the applied transition overrules this setting.
                     changePublishedState: no_change # One of "no_change", "force_unpublished", "force_published", "save_version"
                     permissions:
@@ -377,8 +379,13 @@ pimcore:
 The setting configured on the applied transition takes precedence. As long as the transition leaves
 it at `no_change` (the default), the setting of the places the transition leads to is used - the
 first place which defines a `changePublishedState`, in the order of the workflow config, wins. This
-mirrors how `objectLayout` works on transitions and places. A global action which sets a place via
-its `to` option applies the `changePublishedState` of that place too.
+mirrors how `objectLayout` works on transitions and places.
+
+> **A place-level `changePublishedState` is an entry behaviour, not an invariant.** It is applied on
+> two paths only: a completed workflow transition into the place, and a global action which sets the
+> place via its `to` option. An element which reaches the place through `initial_markings`, through a
+> direct write to the marking store, or by having an attribute-based marking store field set directly,
+> keeps its current published state. Do not rely on "every element in this place is published".
 
 Since `no_change` is the default of a transition, it cannot be used to opt out of the setting of a
 place. If a single transition into a place has to behave differently, configure the setting on the

@@ -77,8 +77,10 @@ class PlaceConfig
     }
 
     /**
-     * Published state which is enforced as soon as an element enters this place. A changePublishedState
-     * setting on the applied transition takes precedence over this one.
+     * Published state which is enforced when an element enters this place through a completed workflow
+     * transition, or through a global action which sets places via its "to" option. Elements which reach
+     * the place any other way are not touched: initial markings and direct marking store writes bypass
+     * this setting. A changePublishedState on the applied transition takes precedence over this one.
      */
     public function getChangePublishedState(): string
     {

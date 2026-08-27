@@ -1612,7 +1612,7 @@ final class Configuration implements ConfigurationInterface
                                             ->enumNode('changePublishedState')
                                                 ->values([ChangePublishedStateSubscriber::NO_CHANGE, ChangePublishedStateSubscriber::FORCE_UNPUBLISHED, ChangePublishedStateSubscriber::FORCE_PUBLISHED, ChangePublishedStateSubscriber::SAVE_VERSION])
                                                 ->defaultValue(ChangePublishedStateSubscriber::NO_CHANGE)
-                                                ->info('Change published state of element when it enters this place (only available for documents and data objects). A changePublishedState other than no_change on the applied transition overrules this setting.')
+                                                ->info('Change published state of element when it enters this place through a completed workflow transition or a global action with a "to" option (only available for documents and data objects). Initial markings and direct marking store writes do not apply it. A changePublishedState other than no_change on the applied transition overrules this setting.')
                                             ->end()
 
                                             ->arrayNode('permissions')
