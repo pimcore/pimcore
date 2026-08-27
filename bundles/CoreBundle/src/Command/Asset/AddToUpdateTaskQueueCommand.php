@@ -81,7 +81,8 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
                 'm',
                 InputOption::VALUE_NONE,
                 'only add assets that are missing meta-data (embedded meta-data, image dimensions, video duration, ' .
-                'page count), e.g. to backfill assets that were uploaded before the update task queue was processed'
+                'page count), e.g. to backfill assets that were uploaded before the update task queue was ' .
+                'processed. Assets that previously failed to be processed are skipped unless --retry-failed is used'
             );
 
     }
@@ -160,6 +161,12 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
 
         if ($input->getOption('missing-metadata')) {
             $conditions[] = $this->buildMissingMetadataCondition();
+
+            if (!$input->getOption('retry-failed')) {
+                // assets that are flagged as failed are not missing their meta-data because they were never
+                // processed, but because processing them did not work - they'd just fail again on every run
+                $conditions[] = $this->buildMissingCustomSettingCondition(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
+            }
         }
 
         return [$conditions, $conditionVariables];
@@ -177,10 +184,7 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
 
             $missingCustomSettings = [];
             foreach ($customSettings as $customSetting) {
-                $missingCustomSettings[] = sprintf(
-                    'JSON_EXTRACT(customSettings, \'$."%s"\') IS NULL',
-                    $customSetting
-                );
+                $missingCustomSettings[] = $this->buildMissingCustomSettingCondition($customSetting);
             }
 
             $typeConditions[] = sprintf(
@@ -191,6 +195,11 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
         }
 
         return '(' . implode(' OR ', $typeConditions) . ')';
+    }
+
+    private function buildMissingCustomSettingCondition(string $customSetting): string
+    {
+        return sprintf('JSON_EXTRACT(customSettings, \'$."%s"\') IS NULL', $customSetting);
     }
 
     protected function isPageCountProcessingEnabled(): bool
