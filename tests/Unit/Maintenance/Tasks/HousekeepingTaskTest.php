@@ -44,7 +44,7 @@ final class HousekeepingTaskTest extends TestCase
         $this->makeDir('stale/a/b');
         $this->age();
 
-        $this->runHousekeeping(seconds: 0, clearFolder: true);
+        $this->runHousekeeping(seconds: 0, dirSeconds: 0);
 
         $this->assertDirectoryDoesNotExist($this->root . '/stale', 'a stale empty tree should be pruned');
         $this->assertDirectoryExists($this->root, 'the folder being cleaned must never be removed');
@@ -56,7 +56,7 @@ final class HousekeepingTaskTest extends TestCase
         $this->age();
         $this->makeDir('fresh');
 
-        $this->runHousekeeping(seconds: 0, clearFolder: true);
+        $this->runHousekeeping(seconds: 0, dirSeconds: 0);
 
         $this->assertDirectoryDoesNotExist($this->root . '/stale');
         $this->assertDirectoryExists($this->root . '/fresh', 'a directory created after the cutoff must survive');
@@ -69,7 +69,7 @@ final class HousekeepingTaskTest extends TestCase
         $this->makeFile('emptied/older.tmp');
         $this->age();
 
-        $this->runHousekeeping(seconds: 0, clearFolder: true);
+        $this->runHousekeeping(seconds: 0, dirSeconds: 0);
 
         // Deleting the files bumps the directory's mtime/ctime to "now". The directory time
         // is captured in the filter callback before that happens, so the directory is still
@@ -93,7 +93,7 @@ final class HousekeepingTaskTest extends TestCase
         $this->age();
         $this->makeFile('mixed/keep.tmp', age: -3600);
 
-        $this->runHousekeeping(seconds: 0, clearFolder: true);
+        $this->runHousekeeping(seconds: 0, dirSeconds: 0);
 
         $this->assertFileDoesNotExist($this->root . '/mixed/old.tmp');
         $this->assertFileExists($this->root . '/mixed/keep.tmp');
@@ -113,7 +113,7 @@ final class HousekeepingTaskTest extends TestCase
         $this->makeFile('working/old.tmp', age: 7200);
         $this->age();
 
-        $this->runHousekeeping(seconds: 0, clearFolder: true, dirSeconds: 86400);
+        $this->runHousekeeping(seconds: 0, dirSeconds: 86400);
 
         $this->assertFileDoesNotExist($this->root . '/working/old.tmp', 'the stale file should still be deleted');
         $this->assertDirectoryExists(
@@ -122,18 +122,37 @@ final class HousekeepingTaskTest extends TestCase
         );
     }
 
-    public function testKeepsDirectoriesWhenClearFolderIsDisabled(): void
+    public function testKeepsDirectoriesWhenDirectoryPruningIsDisabled(): void
     {
         $this->makeDir('temp_like/nested');
         $this->makeFile('temp_like/nested/old.tmp');
         $this->age();
 
-        $this->runHousekeeping(seconds: 0, clearFolder: false);
+        $this->runHousekeeping(seconds: 0, dirSeconds: null);
 
         $this->assertFileDoesNotExist($this->root . '/temp_like/nested/old.tmp');
         $this->assertDirectoryExists(
             $this->root . '/temp_like/nested',
-            'directories must be untouched when the caller opts out of folder clearing'
+            'directories must be untouched when the caller opts out of directory pruning'
+        );
+    }
+
+    public function testDirectoryAgeIsTheLatestOfMtimeAndCtime(): void
+    {
+        // touch() can back-date a directory's mtime, but setting it is itself an inode
+        // change, so ctime lands on "now". max(mtime, ctime) therefore keeps this
+        // directory; the previous expression, mtime ?: ctime, would read the 30-day-old
+        // mtime and prune it. The same asymmetry protects a real directory whose inode
+        // changed recently (rename, chmod) while its entries stayed untouched.
+        $dir = $this->makeDir('backdated');
+        touch($dir, time() - 30 * 86400);
+        $this->age();
+
+        $this->runHousekeeping(seconds: 0, dirSeconds: 86400);
+
+        $this->assertDirectoryExists(
+            $dir,
+            'a directory with an old mtime but a fresh ctime is not stale and must be kept'
         );
     }
 
@@ -144,7 +163,7 @@ final class HousekeepingTaskTest extends TestCase
         $this->makeFile('regular.tmp');
         $this->age();
 
-        $this->runHousekeeping(seconds: 0, clearFolder: true);
+        $this->runHousekeeping(seconds: 0, dirSeconds: 0);
 
         $this->assertFileExists($this->root . '/image-low-quality-preview.svg');
         // Guards the substring check: a name *starting* with the marker sits at offset 0,
@@ -153,12 +172,12 @@ final class HousekeepingTaskTest extends TestCase
         $this->assertFileDoesNotExist($this->root . '/regular.tmp');
     }
 
-    private function runHousekeeping(int $seconds, bool $clearFolder, ?int $dirSeconds = null): void
+    private function runHousekeeping(int $seconds, ?int $dirSeconds): void
     {
-        $task = new HousekeepingTask(86400, 1800);
+        $task = new HousekeepingTask(86400, 1800, 604800);
 
         $method = new ReflectionMethod($task, 'deleteFilesInFolderOlderThanSeconds');
-        $method->invoke($task, $this->root, $seconds, $clearFolder, $dirSeconds);
+        $method->invoke($task, $this->root, $seconds, $dirSeconds);
     }
 
     private function makeDir(string $relativePath): string
@@ -179,8 +198,9 @@ final class HousekeepingTaskTest extends TestCase
 
     /**
      * Let real time pass so the entries created so far are strictly older than a cutoff of
-     * "now". Directory age is derived from the directory's own timestamps, which cannot be
-     * back-dated by touch() the way a file's can, so elapsed time is the only way to age one.
+     * "now". Directory age is max(mtime, ctime), and while touch() can back-date a
+     * directory's mtime, doing so bumps its ctime to "now" - so elapsed time is the only
+     * way to genuinely age one.
      */
     private function age(): void
     {

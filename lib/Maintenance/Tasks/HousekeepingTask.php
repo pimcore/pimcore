@@ -29,10 +29,13 @@ class HousekeepingTask implements TaskInterface
 
     protected int $profilerTime;
 
-    public function __construct(int $tmpFileTime, int $profilerTime)
+    protected int $tmpDirectoryTime;
+
+    public function __construct(int $tmpFileTime, int $profilerTime, int $tmpDirectoryTime)
     {
         $this->tmpFileTime = $tmpFileTime;
         $this->profilerTime = $profilerTime;
+        $this->tmpDirectoryTime = $tmpDirectoryTime;
     }
 
     public function execute(): void
@@ -40,33 +43,39 @@ class HousekeepingTask implements TaskInterface
         foreach (['dev'] as $environment) {
             $profilerDir = sprintf('%s/%s/profiler', PIMCORE_SYMFONY_CACHE_DIRECTORY, $environment);
 
-            $this->deleteFilesInFolderOlderThanSeconds($profilerDir, $this->profilerTime, true);
+            $this->deleteFilesInFolderOlderThanSeconds($profilerDir, $this->profilerTime, $this->profilerTime);
         }
 
-        // Prune empty directories too: without $clearFolder the system temp tree only ever
-        // grows, because rmdir() is never reached. Directories are held for at least a week
-        // so that a still-in-use working directory is not pulled out from under a request.
+        // Prune empty directories too: without a directory cutoff the system temp tree only
+        // ever grows, because rmdir() is never reached. Directories get a retention of their
+        // own (cleanup_tmp_directories_older_than, default 7 days) so that a still-in-use
+        // working directory is not pulled out from under a request just because the files it
+        // already wrote have aged out.
         $this->deleteFilesInFolderOlderThanSeconds(
             PIMCORE_SYSTEM_TEMP_DIRECTORY,
             $this->tmpFileTime,
-            true,
-            max($this->tmpFileTime, 7 * 86400)
+            $this->tmpDirectoryTime
         );
     }
 
-    private function deleteFilesInFolderOlderThanSeconds(string $folder, int $seconds, bool $clearFolder, ?int $dirSeconds = null): void
+    /**
+     * @param int $seconds retention for files
+     * @param ?int $dirSeconds retention for empty directories, null = leave directories alone
+     */
+    private function deleteFilesInFolderOlderThanSeconds(string $folder, int $seconds, ?int $dirSeconds): void
     {
         if (!is_dir($folder)) {
             return;
         }
 
+        $pruneDirectories = $dirSeconds !== null;
         $now = time();
         $cutoff = $now - $seconds;
         $dirCutoff = $now - ($dirSeconds ?? $seconds);
         $dirTimes = [];
 
         $directory = new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS);
-        $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($cutoff, $clearFolder, &$dirTimes) {
+        $filter = new RecursiveCallbackFilterIterator($directory, function (SplFileInfo $current, $key, $iterator) use ($cutoff, $pruneDirectories, &$dirTimes) {
             if (str_contains($current->getFilename(), '-low-quality-preview.svg') && $current->isFile()) {
                 return false;
             }
@@ -83,7 +92,7 @@ class HousekeepingTask implements TaskInterface
                 return false;
             }
 
-            if ($clearFolder) {
+            if ($pruneDirectories) {
                 $path = $current->getPathname();
                 // Capture the directory time before its contents are deleted, so a
                 // directory that was already stale can be removed in the same run. The
@@ -103,7 +112,7 @@ class HousekeepingTask implements TaskInterface
             return true;
         });
 
-        $mode = $clearFolder ? RecursiveIteratorIterator::CHILD_FIRST : RecursiveIteratorIterator::LEAVES_ONLY;
+        $mode = $pruneDirectories ? RecursiveIteratorIterator::CHILD_FIRST : RecursiveIteratorIterator::LEAVES_ONLY;
         // CATCH_GET_CHILD: a directory can vanish between the parent's readdir and the
         // attempt to descend into it - either because this run just removed it, or
         // because another node did. On NFS the parent's cached listing makes that
