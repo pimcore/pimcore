@@ -435,6 +435,15 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                    ->arrayNode('storage_operation_queue')
+                        ->addDefaultsIfNotSet()
+                        ->info('Defers the physical part of asset folder moves/deletes on storages that cannot rename directories natively (e.g. object storage such as S3). Operations are recorded in the asset_storage_operation_queue table and applied by the pimcore:assets:storage-queue:process command, which must be scheduled (e.g. nightly cron) when this feature is enabled.')
+                        ->children()
+                            ->booleanNode('enabled')
+                                ->defaultFalse()
+                            ->end()
+                        ->end()
+                    ->end()
                     ->arrayNode('frontend_prefixes')
                         ->addDefaultsIfNotSet()
                         ->children()
@@ -761,6 +770,28 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end();
         $this->addImplementationNodeFromArrayDefinition($assetsNode, 'type_definitions');
+
+        $assetsNode
+            ->children()
+                ->arrayNode('mime_mappings')
+                    ->info('Override MIME type detection by file extension. Map of lowercase file extensions (without leading dot) to MIME type, e.g. `indd: application/x-indesign`.')
+                    ->useAttributeAsKey('name')
+                    ->normalizeKeys(false)
+                    ->beforeNormalization()
+                        ->ifArray()
+                        ->then(function (array $v) {
+                            $result = [];
+                            foreach ($v as $extension => $mimeType) {
+                                $extension = ltrim((string)$extension, '.');
+                                $result[strtolower($extension)] = $mimeType;
+                            }
+
+                            return $result;
+                        })
+                    ->end()
+                    ->scalarPrototype()->end()
+                ->end()
+            ->end();
     }
 
     /**
@@ -2113,6 +2144,40 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                             ->arrayNode('functions')
                                 ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('blocked_classes')
+                                ->info('FQCNs that must not be traversable (method calls or property access) from
+                                sandboxed twig templates. Defaults to Pimcore\'s built-in denylist (database/
+                                infrastructure layer, `Pimcore\Model\User`) - a site can append further FQCNs on
+                                top of that default. Ignored when `allowed_classes` is non-empty.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('allowed_classes')
+                                ->info('FQCNs that are traversable (method calls or property access) from
+                                sandboxed twig templates. As soon as this list contains at least one entry, the
+                                security policy switches from denylist mode to allowlist mode: the
+                                `blocked_classes` denylist is deactivated, and only instances of the classes
+                                listed here (and their subclasses) remain reachable.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('blocked_functions')
+                                ->info('`pimcore_*` function names that must not be covered by the blanket
+                                `pimcore_*` prefix auto-allow. Defaults to Pimcore\'s built-in denylist of
+                                functions that look up and return a live model instance by id/path, or that
+                                expose a filesystem/state oracle (e.g. `pimcore_file_exists`) - a site can
+                                append further function names on top of that default.')
+                                ->scalarPrototype()->end()
+                            ->end()
+                            ->arrayNode('hard_blocked_methods')
+                                ->info('FQCN => list-of-method-names map. Methods listed here can never be called
+                                on a matching instance from a sandboxed twig template, regardless of the
+                                blocked_classes/allowed_classes configuration. Defaults to a small set of
+                                secret/content-returning getters (e.g. `User::getPassword`, `Asset::getData`) -
+                                a site can extend the map with further classes/methods on top of that default.')
+                                ->useAttributeAsKey('class')
+                                ->arrayPrototype()
+                                    ->scalarPrototype()->end()
+                                ->end()
                             ->end()
                         ->end()
                     ->end()

@@ -33,6 +33,7 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Throwable;
 
 class Manager
 {
@@ -224,9 +225,24 @@ class Manager
     ): Marking {
         $this->notesSubscriber->setAdditionalData($additionalData);
 
-        $marking = $workflow->apply($subject, $transition, $additionalData);
+        // Only snapshot when we are going to save: rolling back is the sole
+        // consumer, and reading the marking can hit the database (e.g. the
+        // state_table store).
+        $markingStore = $workflow->getMarkingStore();
+        $previousMarking = null;
+        $previousPublishedState = null;
+        if ($saveSubject) {
+            $previousMarking = $markingStore->getMarking($subject);
+            if ($subject instanceof Concrete || $subject instanceof PageSnippet) {
+                $previousPublishedState = $subject->isPublished();
+            }
+        }
 
-        $this->notesSubscriber->setAdditionalData([]);
+        try {
+            $marking = $workflow->apply($subject, $transition, $additionalData);
+        } finally {
+            $this->notesSubscriber->setAdditionalData([]);
+        }
 
         $transitionObject = $this->getTransitionByName($workflow->getName(), $transition);
         $changePublishedState = $transitionObject !== null
@@ -234,10 +250,24 @@ class Manager
             : ChangePublishedStateSubscriber::NO_CHANGE;
 
         if ($saveSubject) {
-            if ($changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION) {
-                $subject->saveVersion();
-            } else {
-                $subject->save();
+            try {
+                if ($changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION) {
+                    $subject->saveVersion();
+                } else {
+                    $subject->save();
+                }
+            } catch (Throwable $e) {
+                // Roll back the workflow place and published state when the
+                // post-transition save fails (e.g. due to a mandatory field
+                // validation error on a force_published transition). Otherwise
+                // marking stores that persist immediately (such as the
+                // state_table store) leave the subject in an inconsistent state.
+                $markingStore->setMarking($subject, $previousMarking);
+                if ($previousPublishedState !== null) {
+                    $subject->setPublished($previousPublishedState);
+                }
+
+                throw $e;
             }
         }
 
@@ -272,6 +302,17 @@ class Manager
         $markingStore = $workflow->getMarkingStore();
         $changePublishedState = ChangePublishedStateSubscriber::NO_CHANGE;
 
+        // Only snapshot when the save below can actually run and fail, so that
+        // read-only global actions do not pay for an extra marking-store read.
+        $previousMarking = null;
+        $previousPublishedState = null;
+        if ($saveSubject && $subject instanceof ElementInterface) {
+            $previousMarking = $markingStore->getMarking($subject);
+            if ($subject instanceof Concrete || $subject instanceof Document) {
+                $previousPublishedState = $subject->isPublished();
+            }
+        }
+
         if (!empty($globalActionObj->getTos())) {
             $places = [];
             foreach ($globalActionObj->getTos() as $place) {
@@ -291,11 +332,27 @@ class Manager
         $this->notesSubscriber->setAdditionalData([]);
 
         if ($saveSubject && $subject instanceof ElementInterface) {
-            if ($changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION
-                && ($subject instanceof Concrete || $subject instanceof PageSnippet)) {
-                $subject->saveVersion();
-            } else {
-                $subject->save();
+            try {
+                if ($changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION
+                    && ($subject instanceof Concrete || $subject instanceof PageSnippet)) {
+                    $subject->saveVersion();
+                } else {
+                    $subject->save();
+                }
+            } catch (Throwable $e) {
+                // Roll back the workflow place and the published state if the
+                // save fails so marking stores that persist immediately do not
+                // leave the subject in an inconsistent state
+                // (see pimcore/pimcore#18178).
+                if ($previousMarking !== null) {
+                    $markingStore->setMarking($subject, $previousMarking);
+                }
+                if ($previousPublishedState !== null
+                    && ($subject instanceof Concrete || $subject instanceof Document)) {
+                    $subject->setPublished($previousPublishedState);
+                }
+
+                throw $e;
             }
         }
 

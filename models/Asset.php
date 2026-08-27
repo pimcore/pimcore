@@ -20,6 +20,7 @@ use League\Flysystem\UnableToMoveFile;
 use League\Flysystem\UnableToProvideChecksum;
 use Normalizer;
 use Pimcore;
+use Pimcore\Asset\StorageQueue\FrontendPathResolver;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
@@ -57,6 +58,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Throwable;
+use TypeError;
 
 /**
  * @method Dao getDao()
@@ -219,7 +221,11 @@ class Asset extends Element\AbstractElement
 
         try {
             $asset = new static();
-            $asset->getDao()->getByPath($path);
+
+            Element\Service::getByPathWithNfcFallback(
+                fn (string $candidate) => $asset->getDao()->getByPath($candidate),
+                $path
+            );
 
             return static::getById(
                 $asset->getId(),
@@ -357,6 +363,7 @@ class Asset extends Element\AbstractElement
             }
 
             $mimeType ??= 'application/octet-stream';
+            $mimeType = self::resolveMimeTypeFromMapping($mimeType, $data['filename']);
             $mimeTypeEvent = new ResolveMimeTypeEvent($data['filename'], $mimeType);
             Pimcore::getEventDispatcher()->dispatch($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
             $mimeType = $mimeTypeEvent->getMimeType();
@@ -450,6 +457,30 @@ class Asset extends Element\AbstractElement
         $list->setValues($config);
 
         return $list;
+    }
+
+    /**
+     *
+     *
+     * @internal
+     */
+    public static function resolveMimeTypeFromMapping(string $detectedMimeType, string $filename): string
+    {
+        if ($detectedMimeType === 'directory') {
+            return $detectedMimeType;
+        }
+
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        if ($extension === '') {
+            return $detectedMimeType;
+        }
+
+        $mappings = Config::getSystemConfiguration('assets')['mime_mappings'] ?? [];
+        if (isset($mappings[$extension])) {
+            return (string)$mappings[$extension];
+        }
+
+        return $detectedMimeType;
     }
 
     /**
@@ -749,6 +780,7 @@ class Asset extends Element\AbstractElement
                     $mimeType = (new MimeTypeHelper())->guessMimeType($src) ?? 'application/octet-stream';
                 }
 
+                $mimeType = self::resolveMimeTypeFromMapping($mimeType, $this->getFilename());
                 $mimeTypeEvent = new ResolveMimeTypeEvent($this->getFilename(), $mimeType, $this, !($params['isUpdate'] ?? false));
                 $this->dispatchEvent($mimeTypeEvent, AssetEvents::RESOLVE_MIME_TYPE);
                 $mimeType = $mimeTypeEvent->getMimeType();
@@ -820,19 +852,30 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Accepts an additional optional argument `array $parameters = []` (read via func_get_arg())
+     * with custom arguments that are passed on to the versioning events. It will become a regular
+     * method parameter in the next major version.
+     *
      * @param string|null $versionNote version note
      *
      * @throws Exception
      */
-    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null): ?Version
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, ?string $versionNote = null /* , array $parameters = [] */): ?Version
     {
+        // TODO: promote $parameters to a regular signature parameter in the next major version (2027.1)
+        $parameters = 4 <= func_num_args() ? func_get_arg(3) : [];
+        if (!is_array($parameters)) {
+            throw new TypeError(sprintf('%s(): Argument #4 ($parameters) must be of type array, %s given', __METHOD__, get_debug_type($parameters)));
+        }
+        $coreParameters = ['saveVersionOnly' => true];
+        $eventParameters = array_merge($parameters, $coreParameters);
+
         try {
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $event = new AssetEvent($this, [
-                    'saveVersionOnly' => true,
-                ]);
+                $event = new AssetEvent($this, $eventParameters);
                 $this->dispatchEvent($event, AssetEvents::PRE_UPDATE);
+                $eventParameters = $event->getArguments();
             }
 
             // set date
@@ -859,18 +902,13 @@ class Asset extends Element\AbstractElement
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                $event = new AssetEvent($this, [
-                    'saveVersionOnly' => true,
-                ]);
+                $event = new AssetEvent($this, array_merge($eventParameters, $coreParameters));
                 $this->dispatchEvent($event, AssetEvents::POST_UPDATE);
             }
 
             return $version;
         } catch (Exception $e) {
-            $event = new AssetEvent($this, [
-                'saveVersionOnly' => true,
-                'exception' => $e,
-            ]);
+            $event = new AssetEvent($this, array_merge($eventParameters, $coreParameters, ['exception' => $e]));
             $this->dispatchEvent($event, AssetEvents::POST_UPDATE_FAILURE);
 
             throw $e;
@@ -897,9 +935,15 @@ class Asset extends Element\AbstractElement
     public function getFrontendFullPath(): string
     {
         $path = $this->getPath() . $this->getFilename();
-        $path = urlencode_ignore_slash($path);
 
         $prefix = Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
+        if ($prefix !== '' && $prefix !== null) {
+            // prefix-based URLs point straight at the storage (CDN/bucket); while a queued
+            // folder move is pending the bytes still live under the pre-move prefix
+            $path = Pimcore::getContainer()->get(FrontendPathResolver::class)->resolvePhysicalPath($path, $this->getModificationDate());
+        }
+
+        $path = urlencode_ignore_slash($path);
         $path = $prefix . $path;
 
         $event = new GenericEvent($this, [
@@ -1774,12 +1818,18 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Moves a thumbnail directory/file, retrying with alternate Unicode normalization
-     * forms of the source path if the initial attempt fails to find it. This covers
-     * cases where the DB-stored path and the on-disk directory name ended up in
-     * different Unicode normalization forms - e.g. because the original folder/file
-     * name was created on a macOS client, which reports accented names in decomposed
-     * (NFD) form, while other parts of the stack normalize to precomposed (NFC).
+     * Moves a thumbnail directory, checking alternate Unicode normalization forms of the
+     * source path if the literal one doesn't exist. This covers cases where the DB-stored
+     * path and the on-disk directory name ended up in different Unicode normalization forms
+     * - e.g. because the original folder/file name was created on a macOS client, which
+     * reports accented names in decomposed (NFD) form, while other parts of the stack
+     * normalize to precomposed (NFC).
+     *
+     * The existing source is established via directoryExists() before moving, rather than
+     * moving each candidate in turn and reacting to UnableToMoveFile: that exception also
+     * covers destination, permission and backend failures, not just a missing source, so
+     * catching it to decide "try the next Unicode form" could otherwise move an unrelated,
+     * coincidentally-present legacy-form directory into $newPath on an unrelated failure.
      *
      * @throws UnableToMoveFile
      */
@@ -1791,18 +1841,19 @@ class Asset extends Element\AbstractElement
             Normalizer::normalize($oldPath, Normalizer::FORM_D) ?: null,
         ]));
 
-        $lastException = null;
+        $source = $oldPath;
         foreach ($candidates as $candidate) {
-            try {
-                $storage->move($candidate, $newPath);
+            if ($storage->directoryExists($candidate)) {
+                $source = $candidate;
 
-                return;
-            } catch (UnableToMoveFile $e) {
-                $lastException = $e;
+                break;
             }
         }
 
-        throw $lastException;
+        // None of the Unicode-form candidates exist (e.g. no thumbnails were ever
+        // generated) - move the literal requested path so the caller sees the normal
+        // "nothing to move" failure rather than one masked by this fallback.
+        $storage->move($source, $newPath);
     }
 
     private function clearFolderThumbnails(Asset $asset): void

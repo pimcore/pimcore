@@ -18,7 +18,6 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin;
-use Pimcore\Tool\Serialize;
 use Sabre\DAV;
 use Sabre\DAV\Exception\Forbidden;
 
@@ -68,8 +67,12 @@ class Tree extends DAV\Tree
                 // see: Asset\WebDAV\File::delete() why this is necessary
                 $log = Asset\WebDAV\Service::getDeleteLog();
                 if (!$asset && array_key_exists('/' .$destinationPath, $log)) {
-                    $asset = Serialize::unserialize($log['/' . $destinationPath]['data'], false);
-                    if ($asset) {
+                    // Returns null when the payload does not rebuild into an Asset, so the fallback
+                    // below still resolves the source asset. See restoreDeletedAsset() for why the
+                    // payload needs object deserialization.
+                    $restored = Asset\WebDAV\Service::restoreDeletedAsset($log['/' . $destinationPath]['data']);
+                    if ($restored !== null) {
+                        $asset = $restored;
                         $sourceAsset = Asset::getByPath('/' . $sourcePath);
                         $asset->setData($sourceAsset->getData());
                     }
@@ -78,6 +81,15 @@ class Tree extends DAV\Tree
                 if (!$asset) {
                     $asset = Asset::getByPath('/' . $sourcePath);
                 }
+
+                // Only require the "rename" permission when the filename actually changes. On the
+                // overwrite paths above $asset is resolved from the destination, so setFilename()
+                // below is a no-op there and the MOVE is not a rename - gating it would break the
+                // safe-save flow of third party software described above.
+                if ($asset->getFilename() !== basename($destinationPath) && !$asset->isAllowed('rename', $user)) {
+                    throw new Forbidden('Missing "rename" permission');
+                }
+
                 $asset->setFilename(basename($destinationPath));
             } else {
                 $asset = Asset::getByPath('/' . $sourcePath);

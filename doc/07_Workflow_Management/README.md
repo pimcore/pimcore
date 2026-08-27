@@ -59,7 +59,11 @@ including all configured workflows, their current places, and a workflow graph.
 ![Workflow Overview](../img/workflow-overview.jpg)
 
 :::note
-Rendering the workflow graph requires `graphviz` as an additional system requirement.
+Pimcore generates the workflow graph as Graphviz DOT source; rendering it to an image requires
+the `dot` binary from the `graphviz` package as an additional system requirement. Use the
+`pimcore:workflow:dump` console command to produce the DOT source manually. See
+[Optional System Dependencies](../11_Deployment_Recommendations/06_Optional_System_Dependencies.md#workflow-graphs)
+for details.
 :::
 
 ### Workflow History

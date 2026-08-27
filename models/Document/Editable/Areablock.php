@@ -367,6 +367,10 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
         $outerAttributes = [
             'key' => $this->indices[$this->current]['key'],
+            // `data-key` mirrors `key` for editmode consumers: `key` is a reserved
+            // React prop / non-standard attribute and can be stripped downstream,
+            // while `data-*` survives. The editmode UI must read `data-key` first.
+            'data-key' => $this->indices[$this->current]['key'],
             'type' => $this->indices[$this->current]['type'],
             'data-hidden' => $hidden,
         ];
