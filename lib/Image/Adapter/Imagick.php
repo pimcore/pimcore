@@ -158,7 +158,7 @@ class Imagick extends Adapter
                         $unclipped->clear();
                     }
 
-                    Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
+                    Logger::error(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
                 }
                 //}
             }
