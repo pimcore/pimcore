@@ -152,10 +152,7 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
         }
 
         if ($input->getOption('retry-failed')) {
-            $conditions[] = sprintf(
-                "customSettings LIKE '%%%s%%'",
-                '"' . Asset::CUSTOM_SETTING_PROCESSING_FAILED . '":true'
-            );
+            $conditions[] = $this->buildProcessingFailedCondition(true);
         }
 
         if ($input->getOption('missing-metadata')) {
@@ -164,7 +161,7 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
             if (!$input->getOption('retry-failed')) {
                 // assets that are flagged as failed are not missing their meta-data because they were never
                 // processed, but because processing them did not work - they'd just fail again on every run
-                $conditions[] = $this->buildMissingCustomSettingCondition(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
+                $conditions[] = $this->buildProcessingFailedCondition(false);
             }
         }
 
@@ -199,6 +196,21 @@ class AddToUpdateTaskQueueCommand extends AbstractCommand
     private function buildMissingCustomSettingCondition(string $customSetting): string
     {
         return sprintf('JSON_EXTRACT(customSettings, \'$."%s"\') IS NULL', $customSetting);
+    }
+
+    /**
+     * The custom setting is only ever set to `true` or removed again, so a missing value means "not failed".
+     * `JSON_UNQUOTE()` is used instead of comparing to a JSON boolean, as MySQL renders JSON columns with a
+     * space after the colon (`{"key": true}`) while MariaDB stores them verbatim, which makes a plain LIKE
+     * on the serialized column unreliable.
+     */
+    private function buildProcessingFailedCondition(bool $failed): string
+    {
+        return sprintf(
+            'COALESCE(JSON_UNQUOTE(JSON_EXTRACT(customSettings, \'$."%s"\')), \'false\') %s \'true\'',
+            Asset::CUSTOM_SETTING_PROCESSING_FAILED,
+            $failed ? '=' : '<>'
+        );
     }
 
     protected function isPageCountProcessingEnabled(): bool

@@ -34,8 +34,13 @@ class AddToUpdateTaskQueueCommandTest extends TestCase
     private const DOCUMENT_CONDITION = '(`type` = \'document\' AND ('
         . 'JSON_EXTRACT(customSettings, \'$."document_page_count"\') IS NULL))';
 
+    private const FAILED_CONDITION =
+        'COALESCE(JSON_UNQUOTE(JSON_EXTRACT(customSettings, \'$."pimcore-asset-processing-failed"\')), \'false\')'
+        . ' = \'true\'';
+
     private const NOT_FAILED_CONDITION =
-        'JSON_EXTRACT(customSettings, \'$."pimcore-asset-processing-failed"\') IS NULL';
+        'COALESCE(JSON_UNQUOTE(JSON_EXTRACT(customSettings, \'$."pimcore-asset-processing-failed"\')), \'false\')'
+        . ' <> \'true\'';
 
     /**
      * @return array{0: string[], 1: array<int, mixed>}
@@ -130,21 +135,21 @@ class AddToUpdateTaskQueueCommandTest extends TestCase
         $this->assertSame(
             [
                 "`type` IN ('image','video','document')",
-                'customSettings LIKE \'%"pimcore-asset-processing-failed":true%\'',
+                self::FAILED_CONDITION,
                 '(' . self::IMAGE_CONDITION . ' OR ' . self::VIDEO_CONDITION . ' OR ' . self::DOCUMENT_CONDITION . ')',
             ],
             $conditions
         );
     }
 
-    public function testRetryFailedOptionIsNotAffectedByMissingMetadataOption(): void
+    public function testRetryFailedOptionMatchesTheFlagIndependentlyOfTheJsonSerialization(): void
     {
         [$conditions] = $this->buildConditions(['--retry-failed' => true]);
 
         $this->assertSame(
             [
                 "`type` IN ('image','video','document')",
-                'customSettings LIKE \'%"pimcore-asset-processing-failed":true%\'',
+                self::FAILED_CONDITION,
             ],
             $conditions
         );
