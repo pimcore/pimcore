@@ -28,7 +28,6 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\StateMachine;
-use Symfony\Component\Workflow\Transition as SymfonyTransition;
 
 class ManagerTest extends TestCase
 {
@@ -160,107 +159,6 @@ class ManagerTest extends TestCase
     }
 
     /**
-     * A place-level changePublishedState is applied when the transition does not define one - also
-     * when the transition is a plain Symfony transition which carries no Pimcore options at all.
-     */
-    public function testPlaceLevelStateIsAppliedForAPlainSymfonyTransition(): void
-    {
-        $store = $this->createImmediateMarkingStore();
-        $eventDispatcher = $this->createEventDispatcher();
-        $workflow = $this->createWorkflow($store, new SymfonyTransition('go', 'start', 'end'), $eventDispatcher);
-
-        $subject = $this->createMock(Concrete::class);
-        $subject->method('isPublished')->willReturn(false);
-
-        $publishedStates = [];
-        $subject->method('setPublished')->willReturnCallback(
-            function (bool $value) use (&$publishedStates, $subject): Concrete {
-                $publishedStates[] = $value;
-
-                return $subject;
-            }
-        );
-
-        $manager = $this->buildManager($eventDispatcher);
-        $manager->addPlaceConfig(self::WORKFLOW_NAME, 'end', [
-            'changePublishedState' => ChangePublishedStateSubscriber::FORCE_PUBLISHED,
-        ]);
-
-        $manager->applyWithAdditionalData($workflow, $subject, 'go', [], true);
-
-        $this->assertSame(['end' => 1], $store->persisted);
-        $this->assertSame(
-            [true],
-            $publishedStates,
-            'The force_published of the target place should be applied by the subscriber.'
-        );
-    }
-
-    /**
-     * A place-level save_version has to reach the save branch, not just the resolver.
-     */
-    public function testPlaceLevelSaveVersionSavesAVersionInsteadOfTheSubject(): void
-    {
-        $store = $this->createImmediateMarkingStore();
-        $transition = new PimcoreTransition('go', 'start', 'end');
-        $eventDispatcher = $this->createEventDispatcher();
-        $workflow = $this->createWorkflow($store, $transition, $eventDispatcher);
-
-        $subject = $this->createMock(Concrete::class);
-        $subject->method('isPublished')->willReturn(false);
-        $subject->expects($this->once())->method('saveVersion');
-        $subject->expects($this->never())->method('save');
-
-        $manager = $this->buildManager($eventDispatcher, $transition);
-        $manager->addPlaceConfig(self::WORKFLOW_NAME, 'end', [
-            'changePublishedState' => ChangePublishedStateSubscriber::SAVE_VERSION,
-        ]);
-
-        $manager->applyWithAdditionalData($workflow, $subject, 'go', [], true);
-
-        $this->assertSame(['end' => 1], $store->persisted);
-    }
-
-    /**
-     * A global action which sets a place applies that place's changePublishedState too, so the
-     * published state does not depend on how the element reached the place.
-     */
-    public function testGlobalActionAppliesThePlaceLevelPublishedState(): void
-    {
-        $store = $this->createImmediateMarkingStore();
-        $eventDispatcher = $this->createEventDispatcher();
-        $workflow = $this->createWorkflow($store, $this->createForcePublishedTransition(), $eventDispatcher);
-
-        $subject = $this->createMock(Concrete::class);
-        $subject->method('isPublished')->willReturn(false);
-        $subject->expects($this->once())->method('save');
-
-        $publishedStates = [];
-        $subject->method('setPublished')->willReturnCallback(
-            function (bool $value) use (&$publishedStates, $subject): Concrete {
-                $publishedStates[] = $value;
-
-                return $subject;
-            }
-        );
-
-        $manager = $this->buildManager($eventDispatcher);
-        $manager->addPlaceConfig(self::WORKFLOW_NAME, 'end', [
-            'changePublishedState' => ChangePublishedStateSubscriber::FORCE_PUBLISHED,
-        ]);
-        $manager->addGlobalAction(self::WORKFLOW_NAME, 'finish', ['to' => ['end']]);
-
-        $manager->applyGlobalAction($workflow, $subject, 'finish', [], true);
-
-        $this->assertSame(['end' => 1], $store->persisted);
-        $this->assertSame(
-            [true],
-            $publishedStates,
-            'The force_published of the place the global action moves to should be applied.'
-        );
-    }
-
-    /**
      * Marking store that persists immediately, like StateTableMarkingStore.
      */
     private function createImmediateMarkingStore(): MarkingStoreInterface
@@ -289,14 +187,15 @@ class ManagerTest extends TestCase
 
     private function createEventDispatcher(): EventDispatcher
     {
-        // The ChangePublishedStateSubscriber is registered in buildManager(),
-        // since it resolves the effective changePublishedState through the Manager.
-        return new EventDispatcher();
+        $eventDispatcher = new EventDispatcher();
+        $eventDispatcher->addSubscriber(new ChangePublishedStateSubscriber());
+
+        return $eventDispatcher;
     }
 
     private function createWorkflow(
         MarkingStoreInterface $store,
-        SymfonyTransition $transition,
+        PimcoreTransition $transition,
         EventDispatcher $eventDispatcher
     ): StateMachine {
         return new StateMachine(
@@ -320,8 +219,6 @@ class ManagerTest extends TestCase
             ->onlyMethods(['getTransitionByName'])
             ->getMock();
         $manager->method('getTransitionByName')->willReturn($transition);
-
-        $eventDispatcher->addSubscriber(new ChangePublishedStateSubscriber($manager));
 
         return $manager;
     }

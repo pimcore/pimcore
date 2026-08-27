@@ -245,8 +245,8 @@ class Manager
         }
 
         $transitionObject = $this->getTransitionByName($workflow->getName(), $transition);
-        $changePublishedState = $transitionObject !== null
-            ? $this->getChangePublishedState($workflow->getName(), $transitionObject)
+        $changePublishedState = $transitionObject instanceof Transition
+            ? $transitionObject->getChangePublishedState()
             : ChangePublishedStateSubscriber::NO_CHANGE;
 
         if ($saveSubject) {
@@ -300,7 +300,7 @@ class Manager
         $this->eventDispatcher->dispatch($event, WorkflowEvents::PRE_GLOBAL_ACTION);
 
         $markingStore = $workflow->getMarkingStore();
-        $changePublishedState = ChangePublishedStateSubscriber::NO_CHANGE;
+        $changePublishedState = $globalActionObj->getChangePublishedState();
 
         // Only snapshot when the save below can actually run and fail, so that
         // read-only global actions do not pay for an extra marking-store read.
@@ -321,10 +321,6 @@ class Manager
 
             $markingStore->setMarking($subject, new Marking($places));
 
-            $changePublishedState = $this->getChangePublishedStateOfPlaces(
-                $workflow->getName(),
-                $globalActionObj->getTos()
-            );
             $this->applyChangePublishedState($subject, $changePublishedState);
         }
 
@@ -360,10 +356,10 @@ class Manager
     }
 
     /**
-     * Applies a resolved changePublishedState to the subject. Only documents and data objects can be
-     * (un)published, all other subjects are left untouched.
+     * Applies an already-resolved changePublishedState to the subject. Only documents and data objects
+     * can be (un)published, all other subjects are left untouched.
      */
-    public function applyChangePublishedState(object $subject, string $changePublishedState): void
+    private function applyChangePublishedState(object $subject, string $changePublishedState): void
     {
         if (!$subject instanceof Concrete && !$subject instanceof Document) {
             return;
@@ -374,45 +370,6 @@ class Manager
         } elseif ($changePublishedState === ChangePublishedStateSubscriber::FORCE_PUBLISHED) {
             $subject->setPublished(true);
         }
-    }
-
-    /**
-     * Resolves the changePublishedState setting which applies when the given transition is performed.
-     *
-     * The setting configured on the transition takes precedence. If it is not set (or set to no_change),
-     * the setting of the places the transition leads to is used - the first place (in the order of the
-     * workflow config) which defines a changePublishedState wins.
-     */
-    public function getChangePublishedState(string $workflowName, \Symfony\Component\Workflow\Transition $transition): string
-    {
-        if ($transition instanceof Transition
-            && ($changePublishedState = $transition->getChangePublishedState()) !== ChangePublishedStateSubscriber::NO_CHANGE) {
-            return $changePublishedState;
-        }
-
-        return $this->getChangePublishedStateOfPlaces($workflowName, $transition->getTos());
-    }
-
-    /**
-     * Returns the changePublishedState configured for the first of the given places (in the order of the
-     * workflow config) which defines one.
-     *
-     * @param string[] $places
-     */
-    public function getChangePublishedStateOfPlaces(string $workflowName, array $places): string
-    {
-        foreach ($this->getPlaceConfigsByWorkflowName($workflowName) as $placeConfig) {
-            if (!in_array($placeConfig->getPlace(), $places, true)) {
-                continue;
-            }
-
-            $changePublishedState = $placeConfig->getChangePublishedState();
-            if ($changePublishedState !== ChangePublishedStateSubscriber::NO_CHANGE) {
-                return $changePublishedState;
-            }
-        }
-
-        return ChangePublishedStateSubscriber::NO_CHANGE;
     }
 
     /**

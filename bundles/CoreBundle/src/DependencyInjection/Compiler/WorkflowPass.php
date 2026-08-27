@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
+use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\Transition;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -33,6 +34,41 @@ use Symfony\Component\Workflow\Exception\LogicException;
  */
 final class WorkflowPass implements CompilerPassInterface
 {
+    /**
+     * Bakes the changePublishedState of the target places into the options of a transition or global
+     * action, so that the effective value is readable from the resulting object alone - notably through
+     * Transition::getChangePublishedState(), which is what consumers outside of the Manager read.
+     *
+     * An explicitly configured value always wins; the places are only consulted when the transition or
+     * global action leaves the option at no_change. The first target place (in the order of the workflow
+     * config) which defines a value wins.
+     *
+     * @param string[] $targetPlaces
+     */
+    private function inheritChangePublishedState(array $options, array $placesConfig, array $targetPlaces): array
+    {
+        $configured = $options['changePublishedState'] ?? ChangePublishedStateSubscriber::NO_CHANGE;
+
+        if ($configured !== ChangePublishedStateSubscriber::NO_CHANGE) {
+            return $options;
+        }
+
+        foreach ($placesConfig as $place => $placeConfig) {
+            if (!in_array($place, $targetPlaces, true)) {
+                continue;
+            }
+
+            $placeState = $placeConfig['changePublishedState'] ?? ChangePublishedStateSubscriber::NO_CHANGE;
+            if ($placeState !== ChangePublishedStateSubscriber::NO_CHANGE) {
+                $options['changePublishedState'] = $placeState;
+
+                return $options;
+            }
+        }
+
+        return $options;
+    }
+
     public function process(ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader(
@@ -66,6 +102,8 @@ final class WorkflowPass implements CompilerPassInterface
                 ]
             );
 
+            $placesConfig = $workflowConfig['places'] ?? [];
+
             $transitions = [];
             foreach ($workflowConfig['transitions'] as $transitionName => $transitionConfig) {
                 if ('workflow' === $type) {
@@ -75,7 +113,11 @@ final class WorkflowPass implements CompilerPassInterface
                             $transitionName,
                             $transitionConfig['from'],
                             $transitionConfig['to'],
-                            $transitionConfig['options'],
+                            $this->inheritChangePublishedState(
+                                $transitionConfig['options'],
+                                $placesConfig,
+                                $transitionConfig['to']
+                            ),
                         ]
                     );
                 } elseif ('state_machine' === $type) {
@@ -83,7 +125,16 @@ final class WorkflowPass implements CompilerPassInterface
                         foreach ($transitionConfig['to'] as $to) {
                             $transitions[] = new Definition(
                                 Transition::class,
-                                [$transitionName, $from, $to, $transitionConfig['options']]
+                                [
+                                    $transitionName,
+                                    $from,
+                                    $to,
+                                    $this->inheritChangePublishedState(
+                                        $transitionConfig['options'],
+                                        $placesConfig,
+                                        [$to]
+                                    ),
+                                ]
                             );
                         }
                     }
@@ -117,6 +168,12 @@ final class WorkflowPass implements CompilerPassInterface
                     $customHtmlServiceDefinition->setPublic(false);
                     $customHtmlServiceDefinition->setAutowired(true);
                 }
+                $actionConfig = $this->inheritChangePublishedState(
+                    $actionConfig,
+                    $placesConfig,
+                    $actionConfig['to'] ?? []
+                );
+
                 $workflowManagerDefinition->addMethodCall('addGlobalAction', [$workflowName, $action, $actionConfig, $customHtmlServiceDefinition]);
             }
 

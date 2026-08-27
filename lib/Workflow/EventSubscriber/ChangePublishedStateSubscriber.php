@@ -15,7 +15,7 @@ namespace Pimcore\Workflow\EventSubscriber;
 
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
-use Pimcore\Workflow\Manager;
+use Pimcore\Workflow\Transition;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -32,26 +32,34 @@ class ChangePublishedStateSubscriber implements EventSubscriberInterface
 
     const SAVE_VERSION = 'save_version';
 
-    public function __construct(private readonly Manager $workflowManager)
-    {
-    }
-
     public function onWorkflowCompleted(Event $event): void
     {
-        $transition = $event->getTransition();
-        $subject = $event->getSubject();
-
-        // only documents and data objects have a published state
-        if ($transition === null || (!$subject instanceof Concrete && !$subject instanceof Document)) {
+        if (!$this->checkEvent($event)) {
             return;
         }
 
-        $changePublishedState = $this->workflowManager->getChangePublishedState(
-            $event->getWorkflowName(),
-            $transition
-        );
+        /** @var Transition $transition */
+        $transition = $event->getTransition();
 
-        $this->workflowManager->applyChangePublishedState($subject, $changePublishedState);
+        /** @var Document|Concrete $subject */
+        $subject = $event->getSubject();
+
+        $changePublishedState = $transition->getChangePublishedState();
+
+        if ($changePublishedState === self::FORCE_UNPUBLISHED) {
+            $subject->setPublished(false);
+        } elseif ($changePublishedState === self::FORCE_PUBLISHED) {
+            $subject->setPublished(true);
+        }
+    }
+
+    /**
+     * check's if the event subscriber should be executed
+     */
+    private function checkEvent(Event $event): bool
+    {
+        return $event->getTransition() instanceof Transition
+            && ($event->getSubject() instanceof Concrete || $event->getSubject() instanceof Document);
     }
 
     public static function getSubscribedEvents(): array

@@ -77,10 +77,13 @@ class PlaceConfig
     }
 
     /**
-     * Published state which is enforced when an element enters this place through a completed workflow
-     * transition, or through a global action which sets places via its "to" option. Elements which reach
-     * the place any other way are not touched: initial markings and direct marking store writes bypass
-     * this setting. A changePublishedState on the applied transition takes precedence over this one.
+     * The changePublishedState configured on this place, as written in the workflow config.
+     *
+     * This is not the value which gets applied: transitions and global actions inherit it when they do
+     * not configure one themselves, which is resolved when the container is compiled (see WorkflowPass).
+     * Read Transition::getChangePublishedState() / GlobalAction::getChangePublishedState() for the value
+     * which actually applies. Elements which reach the place through initial markings or a direct
+     * marking store write are not touched at all.
      */
     public function getChangePublishedState(): string
     {

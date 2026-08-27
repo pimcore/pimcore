@@ -381,6 +381,11 @@ it at `no_change` (the default), the setting of the places the transition leads 
 first place which defines a `changePublishedState`, in the order of the workflow config, wins. This
 mirrors how `objectLayout` works on transitions and places.
 
+The inherited value is resolved when the container is compiled: a transition or global action which
+does not configure `changePublishedState` itself gets the value of the place it leads to baked into
+its options. `Transition::getChangePublishedState()` and `GlobalAction::getChangePublishedState()`
+therefore report the value which will actually be applied.
+
 > **A place-level `changePublishedState` is an entry behaviour, not an invariant.** It is applied on
 > two paths only: a completed workflow transition into the place, and a global action which sets the
 > place via its `to` option. An element which reaches the place through `initial_markings`, through a
