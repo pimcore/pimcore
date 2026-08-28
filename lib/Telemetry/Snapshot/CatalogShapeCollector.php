@@ -21,10 +21,10 @@ use Pimcore\Telemetry\Snapshot\Statistics\ElementStatisticsProviderInterface;
  *
  * Emits the *shape* of the catalog - how deep the element hierarchies go, how products fan out into
  * variants, and how wide folders get - to complement the element *counts* already emitted by
- * {@see CoreSnapshotCollector} and {@see PillarUsageCollector}. The scale facets of #3 (size buckets,
+ * {@see CoreSnapshotCollector} and {@see PillarUsageCollector}. The scale facets of #3 (sizes,
  * asset volumes) are answered by those; this adds only depth/variant/organization shape.
  *
- * Everything is content-never: counts, buckets, and small depth integers only - never a path, name,
+ * Everything is content-never: counts and small depth integers only - never a path, name,
  * or value. All figures come from {@see ElementStatisticsProviderInterface}: in the SQL default these
  * are the snapshot's heaviest queries (path-depth and GROUP BY aggregates that no MySQL index serves,
  * time-boxed so they can never stall the run); when Studio's decorating provider is active they are
@@ -44,7 +44,6 @@ final readonly class CatalogShapeCollector implements SnapshotCollectorInterface
 
     public function __construct(
         private ElementStatisticsProviderInterface $statistics,
-        private Bucketizer $bucketizer,
     ) {
     }
 
@@ -67,7 +66,7 @@ final readonly class CatalogShapeCollector implements SnapshotCollectorInterface
             'document_tree_max_depth' => $this->statistics->treeDepth(ElementKind::Document)->max,
 
             // Product/variant shape.
-            'products_with_variants_bucket' => $this->bucketizer->bucket($this->statistics->objectsWithVariants()),
+            'products_with_variants' => $this->statistics->objectsWithVariants(),
             'max_variants_per_product' => $this->statistics->maxVariantsPerObject(),
 
             // Organization shape.
