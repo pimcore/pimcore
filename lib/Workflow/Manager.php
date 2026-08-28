@@ -308,10 +308,12 @@ class Manager
         // Only snapshot when the save below can actually run and fail, so that
         // read-only global actions do not pay for an extra marking-store read.
         $previousMarking = null;
-        $previousPublishedState = null;
+        $previousPublishedState = false;
         if ($saveSubject && $subject instanceof ElementInterface) {
             $previousMarking = $markingStore->getMarking($subject);
-            $previousPublishedState = $publishableSubject?->isPublished();
+            if ($publishableSubject !== null) {
+                $previousPublishedState = $publishableSubject->isPublished();
+            }
         }
 
         if (!empty($globalActionObj->getTos())) {
@@ -344,8 +346,10 @@ class Manager
                 if ($previousMarking !== null) {
                     $markingStore->setMarking($subject, $previousMarking);
                 }
-                if ($previousPublishedState !== null) {
-                    $publishableSubject?->setPublished($previousPublishedState);
+                // The snapshot above ran under the same condition as this block, so a
+                // non-null $publishableSubject means $previousPublishedState was taken.
+                if ($publishableSubject !== null) {
+                    $publishableSubject->setPublished($previousPublishedState);
                 }
 
                 throw $e;
