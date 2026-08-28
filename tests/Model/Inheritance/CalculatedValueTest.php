@@ -135,4 +135,41 @@ class CalculatedValueTest extends ModelTestCase
         // the inheritable brick field is still copied over
         $this->assertEquals('parentbrick', $childBrickRow['brickinput']);
     }
+
+    public function testLocalizedRowCreatedForChildWithoutLanguageRowDoesNotCopyCalculatedValue(): void
+    {
+        $db = Db::get();
+
+        RuntimeCache::set('modeltest.testCalculatedValue.value', 'parentcalc');
+
+        $one = new Inheritance();
+        $one->setKey('calc-one');
+        $one->setParentId(1);
+        $one->setPublished(true);
+        $one->save();
+
+        $two = new Inheritance();
+        $two->setKey('calc-two');
+        $two->setParentId($one->getId());
+        $two->setPublished(true);
+        $two->save();
+
+        $queryTable = 'object_localized_query_' . $one->getClassId() . '_en';
+
+        // simulate a language introduced after the child was last saved: the
+        // child has no row in that language's query table yet
+        $db->delete($queryTable, ['ooo_id' => $two->getId()]);
+
+        // saving the parent creates the missing child row by copying the parent
+        // row — the calculated value must not be carried over
+        $one = Inheritance::getById($one->getId(), ['force' => true]);
+        $one->setInput('parentlocalized', 'en');
+        $one->save();
+
+        $childRow = $db->fetchAssociative('SELECT * FROM ' . $queryTable . ' WHERE ooo_id = ?', [$two->getId()]);
+        $this->assertIsArray($childRow, 'the missing child localized query row was created');
+        $this->assertSame('', (string) $childRow['lcalculatedinherited'], 'child must not inherit the parent calculated value');
+        // the inheritable localized field is still copied over
+        $this->assertEquals('parentlocalized', $childRow['input']);
+    }
 }

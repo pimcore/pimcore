@@ -129,6 +129,32 @@ class ConsentTest extends ModelTestCase
         $this->assertEquals('parentbrick', $childBrickRow['brickinput']);
     }
 
+    public function testLocalizedRowCreatedForChildWithoutLanguageRowDoesNotCopyConsent(): void
+    {
+        $db = Db::get();
+
+        $one = $this->createParent(true);
+        $two = $this->createChild($one);
+
+        $queryTable = 'object_localized_query_' . $one->getClassId() . '_en';
+
+        // simulate a language introduced after the child was last saved: the
+        // child has no row in that language's query table yet
+        $db->delete($queryTable, ['ooo_id' => $two->getId()]);
+
+        // saving the parent creates the missing child row by copying the parent
+        // row — consent must not be carried over
+        $one = Inheritance::getById($one->getId(), ['force' => true]);
+        $one->setInput('parentlocalized', 'en');
+        $one->save();
+
+        $childRow = $db->fetchAssociative('SELECT * FROM ' . $queryTable . ' WHERE ooo_id = ?', [$two->getId()]);
+        $this->assertIsArray($childRow, 'the missing child localized query row was created');
+        $this->assertSame(0, (int) $childRow['lconsentinherited'], 'child must not inherit the parent consent');
+        // the inheritable localized field is still copied over
+        $this->assertEquals('parentlocalized', $childRow['input']);
+    }
+
     private function createParent(bool $withConsent): Inheritance
     {
         $one = new Inheritance();
