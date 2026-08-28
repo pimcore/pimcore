@@ -19,7 +19,6 @@ use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
@@ -303,6 +302,8 @@ class Dao extends Model\Dao\AbstractDao
                         }
                     }
 
+                    $nonInheritableColumns = [];
+
                     foreach ($fieldDefinitions as $fd) {
                         if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                             $key = $fd->getName();
@@ -325,8 +326,12 @@ class Dao extends Model\Dao\AbstractDao
                                     $data[$key] = $insertData;
                                 }
 
+                                if (!$fd->supportsInheritance()) {
+                                    $nonInheritableColumns = array_merge($nonInheritableColumns, $columnNames);
+                                }
+
                                 // if the current value is empty and we have data from the parent, we just use it
-                                if ($isEmpty && $parentData) {
+                                if ($isEmpty && $parentData && $fd->supportsInheritance()) {
                                     foreach ($columnNames as $columnName) {
                                         if (array_key_exists($columnName, $parentData)) {
                                             $data[$columnName] = $parentData[$columnName];
@@ -339,7 +344,7 @@ class Dao extends Model\Dao\AbstractDao
                                     }
                                 }
 
-                                if ($inheritanceEnabled && !$fd instanceof CalculatedValue) {
+                                if ($inheritanceEnabled && $fd->supportsInheritance()) {
                                     //get changed fields for inheritance
                                     if ($fd->isRelationType()) {
                                         if (is_array($insertData)) {
@@ -421,6 +426,7 @@ class Dao extends Model\Dao\AbstractDao
                         $this->inheritanceHelper->doUpdate($object->getId(), true, [
                             'language' => $language,
                             'inheritanceRelationContext' => $inheritanceRelationContext,
+                            'nonInheritableColumns' => $nonInheritableColumns,
                         ]);
                     }
                     $this->inheritanceHelper->resetFieldsToCheck();
