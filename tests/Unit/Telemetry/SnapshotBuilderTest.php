@@ -26,7 +26,7 @@ class SnapshotBuilderTest extends TestCase
     public function testCollectorsAreMergedUnderTheirNamespace(): void
     {
         $snapshot = (new SnapshotBuilder([
-            $this->collector('core', ['asset_count_bucket' => '11-100', 'php_version' => '8.4.0']),
+            $this->collector('core', ['asset_count' => 42, 'php_version' => '8.4.0']),
             $this->collector('datahub', ['graphql_configs' => '1-10', 'rest_enabled' => true]),
         ]))->build();
 
@@ -34,7 +34,7 @@ class SnapshotBuilderTest extends TestCase
 
         $this->assertSame(
             [
-                'core.asset_count_bucket' => '11-100',
+                'core.asset_count' => 42,
                 'core.php_version' => '8.4.0',
                 'datahub.graphql_configs' => '1-10',
                 'datahub.rest_enabled' => true,

@@ -19,7 +19,7 @@ namespace Pimcore\Telemetry\Snapshot;
  * with `pimcore.telemetry.snapshot_collector`; the {@see SnapshotBuilder} gathers all
  * registered collectors into a single periodic snapshot.
  *
- * Implementations MUST return safe data only: counts, buckets, booleans, categoricals,
+ * Implementations MUST return safe data only: counts, booleans, categoricals,
  * versions - never class/field/product names, domains, or any customer content.
  *
  * This is a public extension point and therefore intentionally not `@internal`.
@@ -28,7 +28,7 @@ interface SnapshotCollectorInterface
 {
     /**
      * Short, stable key the builder uses to namespace this collector's metrics
-     * (e.g. "core" -> "core.asset_count_bucket").
+     * (e.g. "core" -> "core.asset_count").
      */
     public function getNamespace(): string;
 

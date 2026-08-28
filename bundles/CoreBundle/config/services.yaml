@@ -325,7 +325,6 @@ services:
     # framework-level content-never guard (event-name taxonomy + scalar-only properties)
     Pimcore\Telemetry\EventSanitizer: ~
 
-    Pimcore\Telemetry\Snapshot\Bucketizer: ~
 
     # time-boxes every snapshot collector query so a full scan on a huge table (path-depth, GROUP BY)
     # aborts instead of stalling the maintenance run; collectors autowire this in place of Connection
