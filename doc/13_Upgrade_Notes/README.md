@@ -3,6 +3,7 @@
 ## Pimcore 2026.3.0
 
 ### [General]
+- [DataObject] Class definition files are now cached in-process by `Pimcore\Model\DataObject\ClassDefinition\DefinitionFileCache` (`@internal`), so clearing the runtime cache in long-running scripts no longer re-includes the definition file on every `ClassDefinition::getById()` call (previously very slow and eventually failing with "Too many open files"). The cache is validated against the definition file's modification time and is invalidated whenever Pimcore writes or deletes a definition file. Behavioral note: after `RuntimeCache::clear()` (or `Pimcore::collectGarbage()`), `getById()`/`getByName()` may now return the same `ClassDefinition` instance as before the clear (instead of a freshly included copy) as long as the definition file is unchanged — unsaved in-memory modifications of a class definition are therefore no longer discarded by a runtime cache clear. Use `ClassDefinition::getById($id, force: true)` to force a fresh include from disk.
 - [Composer] Bumped minimum requirements of `scheb/2fa-bundle` and `scheb/2fa-google-authenticator` to `8.6.1` and of `phpdocumentor/reflection-docblock` to `5.6.7` (5.x line) / `6.0.3` (6.x line). These are floor raises within the majors already required since 2026.1.0 and carry no BC impact of their own (see the 2026.1.0 notes below for the major-version upgrade guidance).
 
 ### [Console]
