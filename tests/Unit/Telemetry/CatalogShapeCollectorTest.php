@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Telemetry;
 
-use Pimcore\Telemetry\Snapshot\Bucketizer;
 use Pimcore\Telemetry\Snapshot\CatalogShapeCollector;
 use Pimcore\Telemetry\Snapshot\Statistics\ElementKind;
 use Pimcore\Telemetry\Snapshot\Statistics\ElementStatisticsProviderInterface;
@@ -37,13 +36,25 @@ class CatalogShapeCollectorTest extends TestCase
         $this->assertSame(5, $metrics['object_tree_avg_depth']);
         $this->assertSame(4, $metrics['asset_tree_max_depth']);
         $this->assertSame(5, $metrics['document_tree_max_depth']);
-        $this->assertSame('11-100', $metrics['products_with_variants_bucket']); // bucket(12)
+        $this->assertSame(12, $metrics['products_with_variants']);
         $this->assertSame(7, $metrics['max_variants_per_product']);
         $this->assertSame(43, $metrics['max_folder_fanout']);
 
         foreach ($metrics as $key => $value) {
             $this->assertIsScalar($value, "metric '$key' must be scalar");
         }
+    }
+
+    /**
+     * Assortment breadth is a raw count now - the bucket hid exactly the differences that make one
+     * catalog interesting versus another.
+     */
+    public function testAssortmentBreadthIsARawInteger(): void
+    {
+        $metrics = $this->collector()->collect();
+
+        $this->assertIsInt($metrics['products_with_variants']);
+        $this->assertArrayNotHasKey('products_with_variants_bucket', $metrics);
     }
 
     private function collector(): CatalogShapeCollector
@@ -60,6 +71,6 @@ class CatalogShapeCollectorTest extends TestCase
         $statistics->method('maxVariantsPerObject')->willReturn(7);
         $statistics->method('maxObjectFanout')->willReturn(43);
 
-        return new CatalogShapeCollector($statistics, new Bucketizer());
+        return new CatalogShapeCollector($statistics);
     }
 }

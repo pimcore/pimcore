@@ -17,7 +17,6 @@ namespace Pimcore\Tests\Unit\Telemetry;
 use Doctrine\DBAL\Connection;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Telemetry\Snapshot\ActiveBundles;
-use Pimcore\Telemetry\Snapshot\Bucketizer;
 use Pimcore\Telemetry\Snapshot\ElementTypeCounts;
 use Pimcore\Telemetry\Snapshot\PillarUsageCollector;
 use Pimcore\Telemetry\Snapshot\SnapshotQueryRunner;
@@ -46,22 +45,24 @@ class PillarUsageCollectorTest extends TestCase
         $metrics = $this->collector([])->collect();
 
         // assets: total 42 (30+5+4+0+3); each per-type count comes from the provider's type counts.
-        $this->assertSame('11-100', $metrics['asset_count_bucket']);         // bucket(42)
-        $this->assertSame('11-100', $metrics['asset_image_count_bucket']);   // bucket(30)
-        $this->assertSame('1-10', $metrics['asset_video_count_bucket']);     // bucket(5)
-        $this->assertSame('1-10', $metrics['asset_document_count_bucket']);  // bucket(4)
-        $this->assertSame('0', $metrics['asset_audio_count_bucket']);        // bucket(0)
+        $this->assertSame(42, $metrics['asset_count']);
+        $this->assertSame(30, $metrics['asset_image_count']);
+        $this->assertSame(5, $metrics['asset_video_count']);
+        $this->assertSame(4, $metrics['asset_document_count']);
+        $this->assertSame(0, $metrics['asset_audio_count']);
         $this->assertSame(5, $metrics['asset_type_variety']);                // distinct types incl. folder
 
-        $this->assertSame('11-100', $metrics['object_count_bucket']);        // bucket(40)
-        $this->assertSame('0', $metrics['object_variant_count_bucket']);     // bucket(0)
-        $this->assertSame('11-100', $metrics['document_page_count_bucket']); // bucket(60)
-        $this->assertSame('1-10', $metrics['document_email_count_bucket']);  // bucket(5)
-        $this->assertSame('1-10', $metrics['document_link_count_bucket']);   // bucket(5)
+        $this->assertSame(40, $metrics['object_count']);
+        $this->assertSame(0, $metrics['object_variant_count']);
+        $this->assertSame(42, $metrics['object_total_count']);   // 40 objects + 0 variants + 2 folders
+        $this->assertSame(60, $metrics['document_page_count']);
+        $this->assertSame(5, $metrics['document_email_count']);
+        $this->assertSame(5, $metrics['document_link_count']);
+        $this->assertSame(70, $metrics['document_total_count']); // 60 pages + 5 emails + 5 links
 
         // Low-cardinality facts (classes/sites) still come from a direct count.
         $this->assertSame(1, $metrics['schema_version']);
-        $this->assertSame('11-100', $metrics['class_count_bucket']);         // bucket(20)
+        $this->assertSame(20, $metrics['class_count']);
         $this->assertSame(1, $metrics['site_count']);
 
         foreach ($metrics as $key => $value) {
@@ -85,6 +86,52 @@ class PillarUsageCollectorTest extends TestCase
     /**
      * @param list<object> $activeBundles
      */
+    /**
+     * Raw counts, not ranges. Management concluded a count is not personal data, and bucketing was
+     * throwing away exactly the precision that makes segment sizing possible.
+     */
+    public function testEveryCountIsARawInteger(): void
+    {
+        $metrics = $this->collector([])->collect();
+
+        foreach ($metrics as $key => $value) {
+            $this->assertStringNotContainsString('_bucket', (string)$key);
+        }
+
+        foreach ([
+            'asset_count', 'asset_image_count', 'asset_video_count', 'asset_document_count',
+            'asset_audio_count', 'class_count', 'object_count', 'object_variant_count',
+            'document_page_count', 'document_email_count', 'document_link_count',
+            'object_total_count', 'document_total_count',
+        ] as $key) {
+            $this->assertIsInt($metrics[$key], "metric '$key' must be an int");
+        }
+    }
+
+    /**
+     * core.* used to report table-wide totals separately, which duplicated pillars.* (core.asset_count
+     * was byte-identical to pillars.asset_count) and made the element aggregation run twice. The
+     * totals moved here, where the per-kind counts are already in hand, so they cost no extra query.
+     */
+    public function testTableWideTotalsCoverWhatCoreUsedToReport(): void
+    {
+        $metrics = $this->collector([])->collect();
+
+        // assets: `asset_count` is already the table-wide total, so there is no asset_total_count
+        $this->assertSame(42, $metrics['asset_count']);
+        $this->assertArrayNotHasKey('asset_total_count', $metrics);
+
+        // objects/documents: the per-type counts do not add up to the table, so totals are explicit
+        $this->assertGreaterThanOrEqual(
+            $metrics['object_count'] + $metrics['object_variant_count'],
+            $metrics['object_total_count']
+        );
+        $this->assertGreaterThanOrEqual(
+            $metrics['document_page_count'] + $metrics['document_email_count'] + $metrics['document_link_count'],
+            $metrics['document_total_count']
+        );
+    }
+
     private function collector(array $activeBundles): PillarUsageCollector
     {
         $statistics = $this->createMock(ElementStatisticsProviderInterface::class);
@@ -114,7 +161,6 @@ class PillarUsageCollectorTest extends TestCase
             new ActiveBundles($bundleManager),
             new SnapshotQueryRunner($connection, 0),
             $statistics,
-            new Bucketizer(),
         );
     }
 }
