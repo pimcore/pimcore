@@ -84,9 +84,6 @@ class PillarUsageCollectorTest extends TestCase
     }
 
     /**
-     * @param list<object> $activeBundles
-     */
-    /**
      * Raw counts, not ranges. Management concluded a count is not personal data, and bucketing was
      * throwing away exactly the precision that makes segment sizing possible.
      */
