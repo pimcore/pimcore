@@ -313,11 +313,7 @@ class Dao extends Model\Dao\AbstractDao
                 if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                     //exclude untouchables if value is not an array - this means data has not been loaded
                     //get changed fields for inheritance
-                    if (!$fd->supportsInheritance()) {
-                        continue;
-                    }
-
-                    if (!empty($oldData[$key])) {
+                    if ($fd->supportsInheritance() && !empty($oldData[$key])) {
                         if ($fd->isRelationType()) {
                             $this->inheritanceHelper->addRelationToCheck($key, $fd);
                         } else {
