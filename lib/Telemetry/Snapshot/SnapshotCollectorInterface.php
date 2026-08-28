@@ -28,7 +28,7 @@ interface SnapshotCollectorInterface
 {
     /**
      * Short, stable key the builder uses to namespace this collector's metrics
-     * (e.g. "core" -> "core.asset_count").
+     * (e.g. "core" -> "core.php_version").
      */
     public function getNamespace(): string;
 

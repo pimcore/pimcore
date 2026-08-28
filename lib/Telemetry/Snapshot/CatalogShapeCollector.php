@@ -20,9 +20,9 @@ use Pimcore\Telemetry\Snapshot\Statistics\ElementStatisticsProviderInterface;
  * Evidence for "what is the shape of the managed catalog/content landscape?" (EM question #3).
  *
  * Emits the *shape* of the catalog - how deep the element hierarchies go, how products fan out into
- * variants, and how wide folders get - to complement the element *counts* already emitted by
- * {@see CoreSnapshotCollector} and {@see PillarUsageCollector}. The scale facets of #3 (sizes,
- * asset volumes) are answered by those; this adds only depth/variant/organization shape.
+ * variants, and how wide folders get - to complement the element *counts* emitted by
+ * {@see PillarUsageCollector}, which owns element volume outright. The scale facets of #3 (sizes,
+ * asset volumes) are answered there; this adds only depth/variant/organization shape.
  *
  * Everything is content-never: counts and small depth integers only - never a path, name,
  * or value. All figures come from {@see ElementStatisticsProviderInterface}: in the SQL default these
