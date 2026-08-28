@@ -23,12 +23,12 @@ use function is_numeric;
  *
  * The pillars (DAM, PIM, MDM, DXP, Commerce) are not bundles - they are core capabilities every
  * install technically has - so we cannot answer by checking a feature flag. Instead we emit the
- * *structural evidence* of real usage: bucketed element-type volumes and a few capability bundle
+ * *structural evidence* of real usage: element-type volumes and a few capability bundle
  * flags. The actual pillar classification (and the "combination" label) is deliberately left to
  * the analysis layer (HogQL over these group properties), so the definition can be tuned without
  * shipping a new Pimcore release.
  *
- * Everything here is content-never: counts, buckets, types, and booleans only - never class,
+ * Everything here is content-never: counts, types, and booleans only - never class,
  * product, asset, document, or field names. Per-element-kind counts come from
  * {@see ElementStatisticsProviderInterface} - a single type aggregation per kind (a SQL `GROUP BY
  * type`, or a search-index terms aggregation when Studio's decorating provider is active) yielding
@@ -48,7 +48,6 @@ final readonly class PillarUsageCollector implements SnapshotCollectorInterface
         private ActiveBundles $activeBundles,
         private SnapshotQueryRunner $queryRunner,
         private ElementStatisticsProviderInterface $statistics,
-        private Bucketizer $bucketizer,
     ) {
     }
 
@@ -69,22 +68,27 @@ final readonly class PillarUsageCollector implements SnapshotCollectorInterface
             'schema_version' => self::SCHEMA_VERSION,
 
             // DAM - digital asset volume and the variety of rich-media types managed.
-            'asset_count_bucket' => $this->bucket($assets->total()),
-            'asset_image_count_bucket' => $this->bucket($assets->ofType('image')),
-            'asset_video_count_bucket' => $this->bucket($assets->ofType('video')),
-            'asset_document_count_bucket' => $this->bucket($assets->ofType('document')),
-            'asset_audio_count_bucket' => $this->bucket($assets->ofType('audio')),
+            'asset_count' => $assets->total(),
+            'asset_image_count' => $assets->ofType('image'),
+            'asset_video_count' => $assets->ofType('video'),
+            'asset_document_count' => $assets->ofType('document'),
+            'asset_audio_count' => $assets->ofType('audio'),
             'asset_type_variety' => $assets->distinctTypes(),
 
             // PIM - modelled data objects, product-like variant depth, and class-model breadth.
-            'class_count_bucket' => $this->bucket($this->count('classes')),
-            'object_count_bucket' => $this->bucket($objects->ofType('object')),
-            'object_variant_count_bucket' => $this->bucket($objects->ofType('variant')),
+            // `object_count` is plain objects only; `object_total_count` is every row in the table
+            // (objects + variants + folders), which is what core.* used to report separately.
+            // Assets need no equivalent: `asset_count` above is already the table-wide total.
+            'class_count' => $this->count('classes'),
+            'object_count' => $objects->ofType('object'),
+            'object_variant_count' => $objects->ofType('variant'),
+            'object_total_count' => $objects->total(),
 
             // DXP - web documents, page vs. transactional content, and multi-site footprint.
-            'document_page_count_bucket' => $this->bucket($documents->ofType('page')),
-            'document_email_count_bucket' => $this->bucket($documents->ofType('email')),
-            'document_link_count_bucket' => $this->bucket($documents->ofType('link')),
+            'document_page_count' => $documents->ofType('page'),
+            'document_email_count' => $documents->ofType('email'),
+            'document_link_count' => $documents->ofType('link'),
+            'document_total_count' => $documents->total(),
             'site_count' => $this->count('sites'),
             'seo_bundle_active' => $this->activeBundles->has('Seo'),
             'personalization_bundle_active' => $this->activeBundles->has('Personalization'),
@@ -115,10 +119,5 @@ final readonly class PillarUsageCollector implements SnapshotCollectorInterface
         } catch (Exception) {
             return 0;
         }
-    }
-
-    private function bucket(int $count): string
-    {
-        return $this->bucketizer->bucket($count);
     }
 }
