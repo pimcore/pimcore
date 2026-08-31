@@ -133,6 +133,7 @@ ORDER BY TABLE_NAME, COLUMN_NAME;
 - Removed legacy Admin UI (Classic UI) `EditmodeListener`.
 - Added support for PHP `8.5` and bumped minimum requirement of Symfony to `7.4`.
 - Dropped support for PHP `8.3` and Symfony `6`.
+- [Workflow] `Pimcore\Workflow\Notification\NotificationEmailService`: the protected methods `getHtmlBody()` and `getNotificationEmailParameters()` got a new optional parameter `array $recipients = []`. If you override one of these methods in a subclass, update its signature accordingly, otherwise PHP will fail with a fatal error. The recipients (`Pimcore\Model\User[]`) are now also available as `recipients` parameter in the notification email template.
 - [QuantityValue] Introduced foreign key constraints on `__unit` columns in object store, query, localized, objectbrick and fieldcollection tables for `QuantityValue`, `InputQuantityValue` and `QuantityValueRange` fields. These constraints reference `quantityvalue_units(id)` with `ON DELETE SET NULL` and `ON UPDATE CASCADE`, ensuring referential integrity. The migration automatically cleans up orphaned unit references (setting them to `NULL`) and changes the `__unit` column type from `varchar(64)` to `varchar(50)` to match the referenced `quantityvalue_units.id` column. If you have custom unit IDs longer than 50 characters, they will be truncated.
 
 #### Composer Dependency Majors: `scheb/2fa` 8.x and `phpdocumentor/reflection-docblock` 6.x
