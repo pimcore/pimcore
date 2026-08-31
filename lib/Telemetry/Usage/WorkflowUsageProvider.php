@@ -16,10 +16,10 @@ namespace Pimcore\Telemetry\Usage;
 use Exception;
 use Pimcore\Telemetry\Snapshot\SnapshotQueryRunner;
 use Pimcore\Workflow\Manager;
+use function array_fill;
 use function count;
 use function implode;
 use function is_numeric;
-use function array_fill;
 
 /**
  * Reference {@see BundleUsageProviderInterface} for a core capability: workflows are "used" when at
@@ -98,6 +98,7 @@ final readonly class WorkflowUsageProvider implements BundleUsageProviderInterfa
 
     /**
      * @param  list<string> $configured
+     *
      * @return list<string> those whose marking is readable from `element_workflow_state`
      */
     private function observableWorkflows(array $configured): array
@@ -122,6 +123,7 @@ final readonly class WorkflowUsageProvider implements BundleUsageProviderInterfa
 
     /**
      * @param  list<string> $workflows scoped to these, so rows from removed workflows do not count
+     *
      * @return int|null     null when the state table could not be read - unknown, not unused
      */
     private function activeElementCount(array $workflows): ?int
