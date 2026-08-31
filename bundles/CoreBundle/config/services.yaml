@@ -344,6 +344,11 @@ services:
             $debugMode: '%kernel.debug%'
             $timezone: '%pimcore.telemetry.timezone%'
 
+    # seats, permission-model shape, database footprint, schema currency and workflow reach - the
+    # install-scale facts the legacy StatisticsManager carried in its `tables` payload, without the
+    # per-class table names that made that payload unsendable
+    Pimcore\Telemetry\Snapshot\PlatformCollector: ~
+
     # evidence for EM question #1 - which pillars (DAM/PIM/MDM/DXP/Commerce) are actually used
     Pimcore\Telemetry\Snapshot\PillarUsageCollector: ~
 
