@@ -17,33 +17,16 @@ namespace Pimcore\Tests\Unit\Telemetry;
 use Doctrine\DBAL\Connection;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Telemetry\Snapshot\ActiveBundles;
-use Pimcore\Telemetry\Snapshot\Bucketizer;
 use Pimcore\Telemetry\Snapshot\CoreSnapshotCollector;
 use Pimcore\Telemetry\Snapshot\SnapshotQueryRunner;
 use Pimcore\Tests\Support\Test\TestCase;
-use RuntimeException;
+use function count;
+use function is_string;
+use function sprintf;
 use function str_contains;
 
 class CoreSnapshotCollectorTest extends TestCase
 {
-    /**
-     * Every table below is set up so that trusting the estimate and running an exact count land in
-     * DIFFERENT buckets. A wrong decision therefore changes the asserted value instead of being
-     * masked by both paths agreeing.
-     *
-     * @var array<string, array{estimate: int, exact: int}>
-     */
-    private const TABLES = [
-        // mid-decade estimate: 125k..500k all sit in 100001-1000000, so no COUNT(*) is needed
-        'objects' => ['estimate' => 250_000, 'exact' => 999_999],
-        // straddles a decade boundary (4k..16k), so the estimate cannot be trusted
-        'classes' => ['estimate' => 8_000, 'exact' => 40],
-        // optimizer has no estimate at all
-        'assets' => ['estimate' => 0, 'exact' => 7],
-        // small but unambiguous (1..6 is entirely within 1-10)
-        'documents' => ['estimate' => 3, 'exact' => 5_000],
-    ];
-
     /**
      * @var list<string>
      */
@@ -55,57 +38,48 @@ class CoreSnapshotCollectorTest extends TestCase
     }
 
     /**
-     * The estimate is only trusted when it buckets identically after being scaled by the assumed error
-     * margin in both directions. That rule is derived from the bucket scale, so widening the buckets
-     * cannot silently invalidate it - which is exactly what a fixed row threshold did.
+     * The bucket scale is gone; nothing may emit a range string any more.
      */
-    public function testAnEstimateIsTrustedOnlyWhenItBucketsUnambiguously(): void
+    public function testNoMetricIsABucketString(): void
     {
-        $metrics = $this->collector()->collect();
+        foreach ($this->collector()->collect() as $key => $value) {
+            $this->assertStringNotContainsString('_bucket', (string)$key);
 
-        $this->assertSame('100001-1000000', $metrics['object_count_bucket'], 'mid-decade estimate is trusted');
-        $this->assertSame('11-100', $metrics['dataobject_class_count_bucket'], 'boundary estimate must be counted');
-        $this->assertSame('1-10', $metrics['asset_count_bucket'], 'a missing estimate must be counted');
-        $this->assertSame('1-10', $metrics['document_count_bucket'], 'unambiguous small estimate is trusted');
+            if (is_string($value)) {
+                $this->assertDoesNotMatchRegularExpression('/^\d+-\d+$|^\d+\+$/', $value);
+            }
+        }
     }
 
     /**
-     * The point of the estimate is to avoid scanning a huge table, so assert on the queries actually
-     * issued rather than only on the resulting bucket.
+     * The estimate shortcut is gone: it read information_schema, and nothing may any more.
      */
-    public function testTheExactCountIsSkippedForTablesWhoseEstimateIsTrusted(): void
+    public function testTheRowEstimateShortcutIsGone(): void
     {
         $this->collector()->collect();
 
-        $this->assertFalse($this->counted('objects'), 'a multi-million-row table must not be scanned');
-        $this->assertFalse($this->counted('documents'), 'an unambiguous small estimate needs no scan');
-        $this->assertTrue($this->counted('classes'), 'a boundary estimate must be resolved exactly');
-        $this->assertTrue($this->counted('assets'), 'a missing estimate must be resolved exactly');
+        foreach ($this->executedSql as $sql) {
+            $this->assertStringNotContainsString('information_schema', $sql);
+            $this->assertStringNotContainsString('TABLE_ROWS', $sql);
+        }
     }
 
     /**
-     * Exact counts can now land on large tables - any estimate within the error margin of a bucket
-     * boundary - so the statement timeout is reachable where it previously was not. A failed count must
-     * yield to the estimate: reporting a multi-thousand-element table as `0` would be a far worse
-     * answer than a coarse one.
+     * core.* reports no volume at all: pillars.* owns it and derives every count from one shared
+     * aggregation. Counting anything here would either duplicate that number under a second name or
+     * run the snapshot's most expensive query twice.
      */
-    public function testAFailedExactCountFallsBackToTheEstimateRatherThanZero(): void
+    public function testCoreCountsNothing(): void
     {
-        // 'classes' has an ambiguous estimate of 8000, so an exact count is attempted - and denied
-        $metrics = $this->collector('prod', failCountFor: 'classes')->collect();
+        $metrics = $this->collector()->collect();
 
-        $this->assertSame('1001-10000', $metrics['dataobject_class_count_bucket']);
-    }
+        foreach (['object_count', 'asset_count', 'document_count', 'dataobject_class_count'] as $key) {
+            $this->assertArrayNotHasKey($key, $metrics);
+        }
 
-    /**
-     * The corollary: a table that really is empty must still report 0, so the fallback has to
-     * distinguish "could not count" from "counted zero".
-     */
-    public function testAGenuinelyEmptyTableStillReportsZero(): void
-    {
-        $metrics = $this->collector('prod', exactOverrides: ['assets' => 0])->collect();
-
-        $this->assertSame('0', $metrics['asset_count_bucket']);
+        foreach ($this->executedSql as $sql) {
+            $this->assertStringNotContainsString('COUNT(*)', $sql);
+        }
     }
 
     /**
@@ -126,12 +100,26 @@ class CoreSnapshotCollectorTest extends TestCase
      */
     public function testReportsDebugAndDevMode(): void
     {
-        $this->assertFalse($this->collector('prod')->collect()['kernel_debug']);
-        $this->assertTrue($this->collector('prod', debugMode: true)->collect()['kernel_debug']);
+        $this->assertFalse($this->collector()->collect()['kernel_debug']);
+        $this->assertTrue($this->collector(debugMode: true)->collect()['kernel_debug']);
 
         // dev mode is read from $_SERVER rather than injected, because there is no container
         // parameter for it; Pimcore::inDevMode() normalises whatever is there to a bool
-        $this->assertIsBool($this->collector('prod')->collect()['dev_mode']);
+        $this->assertIsBool($this->collector()->collect()['dev_mode']);
+    }
+
+    /**
+     * A false boolean must survive the null-filter that omits failed counts - filtering on
+     * truthiness instead of an explicit null check would silently drop kernel_debug=false.
+     */
+    public function testFalseAndEmptyValuesSurviveTheNullFilter(): void
+    {
+        $metrics = $this->collector(environment: '')->collect();
+
+        $this->assertArrayHasKey('kernel_debug', $metrics);
+        $this->assertFalse($metrics['kernel_debug']);
+        $this->assertArrayHasKey('environment_name', $metrics);
+        $this->assertSame('', $metrics['environment_name']);
     }
 
     /**
@@ -171,13 +159,15 @@ class CoreSnapshotCollectorTest extends TestCase
      */
     public function testTheEnvironmentIsReportedVerbatim(): void
     {
-        $this->assertSame('prod', $this->collector('prod')->collect()['environment_name']);
-        $this->assertSame('staging', $this->collector('staging')->collect()['environment_name']);
+        $this->assertSame('prod', $this->collector()->collect()['environment_name']);
+        $this->assertSame('staging', $this->collector(environment: 'staging')->collect()['environment_name']);
 
         // no collapsing and no normalising: whatever the kernel reports is what is sent
-        $this->assertSame('prod_acme-gmbh', $this->collector('prod_acme-gmbh')->collect()['environment_name']);
-        $this->assertSame('  PROD ', $this->collector('  PROD ')->collect()['environment_name']);
-        $this->assertSame('', $this->collector('')->collect()['environment_name']);
+        $this->assertSame(
+            'prod_acme-gmbh',
+            $this->collector(environment: 'prod_acme-gmbh')->collect()['environment_name']
+        );
+        $this->assertSame('  PROD ', $this->collector(environment: '  PROD ')->collect()['environment_name']);
     }
 
     /**
@@ -188,13 +178,13 @@ class CoreSnapshotCollectorTest extends TestCase
     {
         $this->assertSame(
             'Europe/Vienna',
-            $this->collector('prod', timezone: 'Europe/Vienna')->collect()['timezone']
+            $this->collector(timezone: 'Europe/Vienna')->collect()['timezone']
         );
     }
 
     public function testAnUnconfiguredTimezoneFallsBackToThePhpDefault(): void
     {
-        $this->assertSame(date_default_timezone_get(), $this->collector('prod')->collect()['timezone']);
+        $this->assertSame(date_default_timezone_get(), $this->collector()->collect()['timezone']);
     }
 
     /**
@@ -222,25 +212,8 @@ class CoreSnapshotCollectorTest extends TestCase
         $this->assertIsString($this->collector()->collect()['pimcore_git_hash']);
     }
 
-    private function counted(string $table): bool
-    {
-        foreach ($this->executedSql as $sql) {
-            if (str_contains($sql, 'COUNT(*)') && str_contains($sql, $table)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param string|null            $failCountFor   table whose exact COUNT(*) should blow up
-     * @param array<string, int>     $exactOverrides replacement exact counts, by table
-     */
     private function collector(
         string $environment = 'prod',
-        ?string $failCountFor = null,
-        array $exactOverrides = [],
         bool $debugMode = false,
         string $timezone = '',
     ): CoreSnapshotCollector {
@@ -252,40 +225,16 @@ class CoreSnapshotCollectorTest extends TestCase
         $connection = $this->createMock(Connection::class);
         $connection->method('quoteIdentifier')->willReturnArgument(0);
         $connection->method('fetchOne')->willReturnCallback(
-            function (string $sql, array $params = []) use ($failCountFor, $exactOverrides): int|string {
+            function (string $sql): int|string {
                 $this->executedSql[] = $sql;
 
-                if (str_contains($sql, 'information_schema')) {
-                    return self::TABLES[$params[0] ?? '']['estimate'] ?? 0;
-                }
-
-                if (str_contains($sql, 'VERSION()')) {
-                    return '10.11-MariaDB';
-                }
-
-                foreach (self::TABLES as $table => $fixture) {
-                    if (!str_contains($sql, $table)) {
-                        continue;
-                    }
-
-                    if ($table === $failCountFor) {
-                        // stands in for what the per-statement timeout surfaces as; the collector
-                        // catches \Exception, and SnapshotQueryRunner passes driver errors straight
-                        // through, so the concrete Doctrine class does not matter here
-                        throw new RuntimeException('max_statement_time exceeded');
-                    }
-
-                    return $exactOverrides[$table] ?? $fixture['exact'];
-                }
-
-                return 0;
+                return str_contains($sql, 'VERSION()') ? '10.11-MariaDB' : 0;
             }
         );
 
         return new CoreSnapshotCollector(
             new ActiveBundles($bundleManager),
             new SnapshotQueryRunner($connection, 0),
-            new Bucketizer(),
             $environment,
             $debugMode,
             $timezone,

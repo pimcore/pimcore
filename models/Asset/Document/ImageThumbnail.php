@@ -111,10 +111,7 @@ final class ImageThumbnail implements ImageThumbnailInterface
         }
 
         if (empty($this->pathReference)) {
-            $this->pathReference = [
-                'type' => 'error',
-                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
-            ];
+            $this->pathReference = $this->getErrorPathReference();
         }
 
         $event = new GenericEvent($this, [

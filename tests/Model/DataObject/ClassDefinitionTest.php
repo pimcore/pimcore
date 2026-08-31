@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
@@ -293,6 +294,41 @@ public function getMybricks(): ?\Pimcore\Model\DataObject\Objectbrick
 
 ';
         $this->testGetterCode('mybricks', $expectedGetterCode);
+    }
+
+    /**
+     * Definition files are cached in-process (see DefinitionFileCache) so that long-running
+     * scripts clearing the runtime cache do not re-include them on every access. Saving a
+     * class definition must invalidate that cache, and a forced load must re-include the file.
+     */
+    public function testDefinitionChangeIsVisibleAfterRuntimeCacheClear(): void
+    {
+        $class = ClassDefinition::getByName('unittest');
+        $this->assertInstanceOf(ClassDefinition::class, $class);
+        $id = $class->getId();
+        $originalTitle = $class->getTitle();
+
+        // prime the runtime cache and the definition file cache
+        RuntimeCache::clear();
+        $this->assertInstanceOf(ClassDefinition::class, ClassDefinition::getById($id));
+
+        try {
+            $class->setTitle('definition file cache test');
+            $class->save();
+
+            RuntimeCache::clear();
+            $reloaded = ClassDefinition::getById($id);
+            $this->assertInstanceOf(ClassDefinition::class, $reloaded);
+            $this->assertSame('definition file cache test', $reloaded->getTitle());
+
+            $forced = ClassDefinition::getById($id, true);
+            $this->assertInstanceOf(ClassDefinition::class, $forced);
+            $this->assertNotSame($reloaded, $forced);
+            $this->assertSame('definition file cache test', $forced->getTitle());
+        } finally {
+            $class->setTitle($originalTitle);
+            $class->save();
+        }
     }
 
     public function testInputEmptyDefaultValueIsNormalizedToNullAfterImportAndReload(): void

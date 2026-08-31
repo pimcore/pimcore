@@ -19,12 +19,16 @@ use Pimcore\Tool;
 use Pimcore\Version;
 use Throwable;
 use function count;
-use function is_numeric;
 use function is_string;
 
 /**
- * Core snapshot collector: versions, environment, bucketed catalog/model sizes, and the set of active
- * bundle names. Structural only - no element names, field names, paths or values.
+ * Core snapshot collector: what this installation *is* - versions, environment, and the set of
+ * active bundle names. Structural only - no element names, field names, paths or values.
+ *
+ * Deliberately reports no element or class counts. {@see PillarUsageCollector} owns element volume
+ * and already derives it from the shared statistics provider; duplicating it here produced two names
+ * for one number (core.asset_count was byte-identical to pillars.asset_count) and made the snapshot
+ * run its most expensive aggregation twice.
  *
  * Serves as the reference implementation other bundles copy to add their own metrics.
  *
@@ -32,17 +36,9 @@ use function is_string;
  */
 final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
 {
-    /**
-     * How wrong an `information_schema.TABLES.TABLE_ROWS` estimate is assumed to be able to be, as a
-     * factor in either direction. InnoDB derives it from sampled index pages, so it is an
-     * approximation rather than a bounded error; 2x is a deliberately pessimistic working assumption.
-     */
-    private const ESTIMATE_ERROR_FACTOR = 2;
-
     public function __construct(
         private ActiveBundles $activeBundles,
         private SnapshotQueryRunner $queryRunner,
-        private Bucketizer $bucketizer,
         private string $environment,
         private bool $debugMode = false,
         private string $timezone = '',
@@ -75,10 +71,6 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
             'active_bundle_count' => $this->activeBundles->count(),
             'bundles' => $bundles,
             'third_party_bundle_count' => $this->activeBundles->thirdPartyCount(),
-            'dataobject_class_count_bucket' => $this->bucketizer->bucket($this->countTable('classes')),
-            'object_count_bucket' => $this->bucketizer->bucket($this->countTable('objects')),
-            'asset_count_bucket' => $this->bucketizer->bucket($this->countTable('assets')),
-            'document_count_bucket' => $this->bucketizer->bucket($this->countTable('documents')),
         ];
     }
 
@@ -107,77 +99,6 @@ final readonly class CoreSnapshotCollector implements SnapshotCollectorInterface
             return is_string($version) ? $version : 'unknown';
         } catch (Exception) {
             return 'unknown';
-        }
-    }
-
-    /**
-     * Element-table size for bucketing. Prefers the optimizer's cached row estimate (O(1), no scan)
-     * so a multi-million-row table costs nothing, and falls back to an exact COUNT(*) when the
-     * estimate is not good enough to bucket confidently.
-     *
-     * "Good enough" is derived from the bucket scale rather than hardcoded: an InnoDB row estimate can
-     * be off by a wide margin, so it is only trusted when scaling it by {@see self::ESTIMATE_ERROR_FACTOR}
-     * in either direction still lands in the same bucket. That keeps the optimisation correct whatever
-     * the buckets are - the previous fixed threshold silently became wrong the moment the scale was
-     * widened, because it was chosen for a top bucket that no longer starts there. Very large tables,
-     * the ones this exists for, fall in the open-ended top bucket and are always trusted.
-     */
-    private function countTable(string $table): int
-    {
-        $estimate = $this->estimateRows($table);
-
-        if ($estimate > 0 && $this->bucketIsUnambiguous($estimate)) {
-            return $estimate;
-        }
-
-        // An estimate straddling a bucket boundary is counted exactly - and that count can now land on
-        // a large table (anything within the error margin of a boundary), so it can hit the statement
-        // timeout. Falling back to 0 there would report a million-element catalog as empty, so a failed
-        // count yields to the estimate: coarse, but the right order of magnitude. A real empty table
-        // still returns an honest 0, because only a failure produces null.
-        return $this->exactCount($table) ?? $estimate;
-    }
-
-    /**
-     * Whether an estimate lands in the same bucket even when it is wrong by the assumed margin.
-     */
-    private function bucketIsUnambiguous(int $estimate): bool
-    {
-        $low = (int) ($estimate / self::ESTIMATE_ERROR_FACTOR);
-        $high = $estimate * self::ESTIMATE_ERROR_FACTOR;
-
-        return $this->bucketizer->bucket($low) === $this->bucketizer->bucket($high);
-    }
-
-    private function estimateRows(string $table): int
-    {
-        try {
-            $rows = $this->queryRunner->fetchOne(
-                'SELECT TABLE_ROWS FROM information_schema.TABLES'
-                . ' WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?',
-                [$table]
-            );
-
-            return is_numeric($rows) ? (int)$rows : 0;
-        } catch (Exception) {
-            return 0;
-        }
-    }
-
-    /**
-     * @return int|null null when the count could not be obtained (timeout, driver error) - distinct
-     *                  from a table that genuinely holds 0 rows
-     */
-    private function exactCount(string $table): ?int
-    {
-        try {
-            $count = $this->queryRunner->fetchOne(
-                'SELECT COUNT(*) FROM ' . $this->queryRunner->quoteIdentifier($table)
-            );
-
-            return is_numeric($count) ? (int)$count : null;
-        } catch (Exception) {
-            return null;
         }
     }
 }

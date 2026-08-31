@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Telemetry;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\Telemetry\Snapshot\Bucketizer;
 use Pimcore\Telemetry\Snapshot\DataModelComplexityCollector;
 use Pimcore\Telemetry\Snapshot\FieldTreeAnalyzer;
 use Pimcore\Telemetry\Snapshot\SnapshotQueryRunner;
@@ -63,6 +62,19 @@ class DataModelComplexityCollectorTest extends TestCase
         }
     }
 
+    /**
+     * These three keys were always named like integers but held bucket strings - a mismatch a
+     * consumer could only discover at query time. Removing bucketing settles it in favour of the name.
+     */
+    public function testTheIntegerNamedCountsAreActuallyIntegers(): void
+    {
+        $metrics = $this->collector()->collect();
+
+        foreach (['classificationstore_key_count', 'total_field_count', 'relation_field_count'] as $key) {
+            $this->assertIsInt($metrics[$key], "metric '$key' must be an int, not a bucket");
+        }
+    }
+
     private function collector(): DataModelComplexityCollector
     {
         $connection = $this->createMock(Connection::class);
@@ -71,7 +83,6 @@ class DataModelComplexityCollectorTest extends TestCase
 
         return new DataModelComplexityCollector(
             new FieldTreeAnalyzer(),
-            new Bucketizer(),
             new SnapshotQueryRunner($connection, 0),
         );
     }

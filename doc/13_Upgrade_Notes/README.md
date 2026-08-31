@@ -3,6 +3,7 @@
 ## Pimcore 2026.3.0
 
 ### [General]
+- [DataObject] Class definition files are now cached in-process by `Pimcore\Model\DataObject\ClassDefinition\DefinitionFileCache` (`@internal`), so clearing the runtime cache in long-running scripts no longer re-includes the definition file on every `ClassDefinition::getById()` call (previously very slow and eventually failing with "Too many open files"). The cache is validated against the definition file's modification time and is invalidated whenever Pimcore writes or deletes a definition file. Behavioral note: after `RuntimeCache::clear()` (or `Pimcore::collectGarbage()`), `getById()`/`getByName()` may now return the same `ClassDefinition` instance as before the clear (instead of a freshly included copy) as long as the definition file is unchanged — unsaved in-memory modifications of a class definition are therefore no longer discarded by a runtime cache clear. Use `ClassDefinition::getById($id, force: true)` to force a fresh include from disk.
 - [Composer] Bumped minimum requirements of `scheb/2fa-bundle` and `scheb/2fa-google-authenticator` to `8.6.1` and of `phpdocumentor/reflection-docblock` to `5.6.7` (5.x line) / `6.0.3` (6.x line). These are floor raises within the majors already required since 2026.1.0 and carry no BC impact of their own (see the 2026.1.0 notes below for the major-version upgrade guidance).
 
 ### [Console]
@@ -33,6 +34,20 @@
   - The migration is **irreversible** (`down()` throws) — reverting `utf8mb4` columns back to `utf8`/`utf8mb3` could silently replace stored 4-byte characters (e.g. emoji) with `?` given this application's intentionally permissive `sql_mode=''`. Restore from a backup if you need to roll back.
   - The `ALTER TABLE`/`CONVERT TO CHARACTER SET` statements rewrite the affected columns' storage and typically run as full table rebuilds, which can take time and hold locks on `assets`, `documents`, `objects` and `properties` on large installations — plan to run this migration during a maintenance window on such installs.
 
+## Pimcore 2026.2.5
+
+### [Custom Reports]
+- Added a `pimcore_custom_reports.enabled_adapters` config option to enable/disable individual Custom Report data-source adapters (e.g. the built-in `sql` adapter) per project. Adapters not listed default to enabled; a disabled adapter is removed from the shared `pimcore.custom_report.adapter.factories` service locator, so it becomes unavailable to every consumer (the classic admin controller and the Studio backend bundle alike).
+    ```yaml
+    pimcore_custom_reports:
+        enabled_adapters:
+            sql: false
+    ```
+  We recommend disabling the built-in `sql` adapter unless specifically needed: any user with the `reports_config` permission can otherwise define arbitrary `SELECT` statements against the application's database, including tables never intended to be exposed. See [Custom Reports](../06_Reporting/01_Custom_Reports.md)  for details.
+
+### [Assets]
+- [Assets] New opt-in **asset storage operation queue** (`pimcore.assets.storage_operation_queue.enabled`, default `false`): when enabled, moving or deleting asset folders no longer performs the physical per-object storage operations synchronously. Instead the operation is recorded and the storage adapter transparently resolves reads until the new `pimcore:assets:storage-queue:process` command (which **must be scheduled**, e.g. as a nightly cron) applies it. Backends with native directory rename (local filesystem, SFTP) keep renaming natively — including their thumbnails and asset_cache renditions, for free; object storages (S3, Azure, GCS) get O(1) folder moves for originals, while their derived content (thumbnails, asset_cache) is instead cleaned up and regenerated on demand rather than moved. `pimcore:assets:storage-queue:status` reports pending operations and warns about stale rows. See [Asset Storage Operation Queue](../02_Assets/05_Asset_Storage_Operation_Queue.md) for semantics and caveats. Disabled by default — no behavior change unless enabled.
+- [Thumbnails] Automatic clipping (`pimcore.assets.image.thumbnails.clip_auto_support`) is only applied again when the image actually carries a clipping path, i.e. the Photoshop image resource `8BIM 2999` ('Name of clipping path'). Images that only contain saved Photoshop paths (`8BIM 2000` - `2998`) are no longer clipped, since clipping them by an arbitrary path removed their whole content and resulted in empty thumbnails. Existing thumbnails of such images have to be cleared to be re-generated.
 
 ## Pimcore 2026.2.0
 
@@ -152,13 +167,13 @@ The following bundles have been removed:
 
 
 ### [Database]
-- All `utf8mb4` tables now use `utf8mb4_unicode_520_ci` as their default collation to match Doctrine's `default_table_options` 
-  configuration. Columns inherit this collation unless a different one is explicitly defined (for example `utf8mb4_bin` 
-  for case-sensitive keys). Previously, `install.sql` and Dao `CREATE TABLE` statements specified `DEFAULT CHARSET=utf8mb4` 
-  without an explicit `COLLATE` clause, which caused MySQL/MariaDB to assign the charset's built-in default collation 
-  (`utf8mb4_general_ci`) instead of the intended `utf8mb4_unicode_520_ci`. 
-  Existing installations need to update the collation of their tables and columns manually, details see 
-  'Tasks to Do Prior the Update' chapter above. 
+- All `utf8mb4` tables now use `utf8mb4_unicode_520_ci` as their default collation to match Doctrine's `default_table_options`
+  configuration. Columns inherit this collation unless a different one is explicitly defined (for example `utf8mb4_bin`
+  for case-sensitive keys). Previously, `install.sql` and Dao `CREATE TABLE` statements specified `DEFAULT CHARSET=utf8mb4`
+  without an explicit `COLLATE` clause, which caused MySQL/MariaDB to assign the charset's built-in default collation
+  (`utf8mb4_general_ci`) instead of the intended `utf8mb4_unicode_520_ci`.
+  Existing installations need to update the collation of their tables and columns manually, details see
+  'Tasks to Do Prior the Update' chapter above.
 
 ### [Models]
 - Added a new optional `$parameters` argument to `AbstractUser::save()` and `AbstractUser::delete()`, as well as their interface methods, to allow passing of arguments to `UserRoleEvent`.
