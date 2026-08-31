@@ -13,8 +13,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Snapshot;
 
+use Exception;
 use Pimcore\Telemetry\Snapshot\Statistics\ElementKind;
 use Pimcore\Telemetry\Snapshot\Statistics\ElementStatisticsProviderInterface;
+use function array_filter;
+use function is_numeric;
 
 /**
  * Evidence for "what is the shape of the managed catalog/content landscape?" (EM question #3).
@@ -44,6 +47,7 @@ final readonly class CatalogShapeCollector implements SnapshotCollectorInterface
 
     public function __construct(
         private ElementStatisticsProviderInterface $statistics,
+        private SnapshotQueryRunner $queryRunner,
     ) {
     }
 
@@ -56,7 +60,7 @@ final readonly class CatalogShapeCollector implements SnapshotCollectorInterface
     {
         $objectDepth = $this->statistics->treeDepth(ElementKind::DataObject);
 
-        return [
+        $metrics = [
             'schema_version' => self::SCHEMA_VERSION,
 
             // Tree shape - how deep each element hierarchy goes.
@@ -71,6 +75,35 @@ final readonly class CatalogShapeCollector implements SnapshotCollectorInterface
 
             // Organization shape.
             'max_folder_fanout' => $this->statistics->maxObjectFanout(),
+
+            // Content richness - how hard the content is worked, as opposed to how much of it exists.
+            // All fixed-name tables; a failed count omits its key rather than reporting nothing there.
+            'asset_metadata_count' => $this->count('assets_metadata'),
+            'document_editable_count' => $this->count('documents_editables'),
+            'property_count' => $this->count('properties'),
+            'tag_count' => $this->count('tags'),
+            'tag_assignment_count' => $this->count('tags_assignment'),
+            'note_count' => $this->count('notes'),
+            'object_url_slug_count' => $this->count('object_url_slugs'),
         ];
+
+        return array_filter($metrics, static fn (mixed $value): bool => $value !== null);
+    }
+
+    /**
+     * @return int|null null when the count could not be obtained (timeout, driver error), which omits
+     *                  the key rather than reporting the capability as unused
+     */
+    private function count(string $table): ?int
+    {
+        try {
+            $value = $this->queryRunner->fetchOne(
+                'SELECT COUNT(*) FROM ' . $this->queryRunner->quoteIdentifier($table)
+            );
+
+            return is_numeric($value) ? (int)$value : null;
+        } catch (Exception) {
+            return null;
+        }
     }
 }
