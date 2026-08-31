@@ -20,10 +20,21 @@ use Pimcore\Telemetry\Usage\BundleUsageProviderInterface;
 use Pimcore\Telemetry\Usage\WorkflowUsageProvider;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Workflow\Manager;
+use Pimcore\Workflow\WorkflowConfig;
 use RuntimeException;
 
 class WorkflowUsageProviderTest extends TestCase
 {
+    /**
+     * @var list<string>
+     */
+    private array $executedSql = [];
+
+    /**
+     * @var list<array<int|string, mixed>>
+     */
+    private array $executedParams = [];
+
     public function testReportsUnderTheWorkflowKey(): void
     {
         $provider = $this->provider();
@@ -33,45 +44,123 @@ class WorkflowUsageProviderTest extends TestCase
     }
 
     /**
-     * The reason this provider changed: a workflow defined in config that no element has ever entered
-     * is exactly the shelfware `usage.*` exists to expose. Counting it as used would report an adoption
-     * success where there is none.
+     * The reason this provider exists in this form: a workflow defined in config that no element has
+     * ever entered is exactly the shelfware `usage.*` is meant to expose.
      */
     public function testAConfiguredButNeverRunWorkflowIsNotUsed(): void
     {
-        $this->assertFalse($this->provider(workflows: ['product_approval'], elementsInWorkflow: 0)->isUsed());
+        $this->assertFalse($this->provider(['product_approval' => 'state_table'], 0)->isUsed());
     }
 
     public function testAWorkflowWithElementsInItIsUsed(): void
     {
-        $this->assertTrue($this->provider(workflows: ['product_approval'], elementsInWorkflow: 51)->isUsed());
+        $this->assertTrue($this->provider(['product_approval' => 'state_table'], 51)->isUsed());
     }
 
-    /**
-     * Self-resetting: archiving the last in-flight element flips it back rather than leaving a
-     * sticky true.
-     */
     public function testNoWorkflowsConfiguredIsNotUsed(): void
     {
-        $this->assertFalse($this->provider(workflows: [], elementsInWorkflow: 0)->isUsed());
+        $this->assertFalse($this->provider([], 0)->isUsed());
     }
 
     /**
      * With nothing configured there is nothing to exercise, so the state table must not be queried -
-     * the cheap path stays cheap on the majority of installs that use no workflows at all.
+     * the majority of installs run no workflows and should pay nothing.
      */
     public function testTheStateTableIsNotQueriedWhenNothingIsConfigured(): void
     {
-        $executed = [];
-        $this->provider(workflows: [], executedSql: $executed)->isUsed();
+        $this->provider([], 0)->isUsed();
 
-        $this->assertSame([], $executed);
+        $this->assertSame([], $this->executedSql);
+    }
+
+    /**
+     * Only the `state_table` marking store persists into element_workflow_state. `single_state`,
+     * `multiple_state` and both data-object stores keep the marking on the subject, where no aggregate
+     * query can see it - so reporting `false` there would invent an adoption gap for a workflow that
+     * may be in heavy use. Unknown is the only honest answer.
+     *
+     * @dataProvider unobservableMarkingStores
+     */
+    public function testAWorkflowWhoseMarkingIsNotInTheStateTableIsUnknownRatherThanUnused(
+        string $markingStore
+    ): void {
+        $used = $this->provider(['product_approval' => $markingStore], 0)->isUsed();
+
+        $this->assertNull($used, sprintf('%s keeps its marking on the subject', $markingStore));
+        $this->assertNotFalse($used);
+    }
+
+    /**
+     * @return array<string, list<string>>
+     */
+    public static function unobservableMarkingStores(): array
+    {
+        return [
+            'single_state' => ['single_state'],
+            'multiple_state' => ['multiple_state'],
+            'data_object_multiple_state' => ['data_object_multiple_state'],
+            'data_object_splitted_state' => ['data_object_splitted_state'],
+            'unset marking store' => [''],
+        ];
+    }
+
+    /**
+     * A mixed install: the observable workflow proves use, so the unobservable one cannot make the
+     * answer worse. Positive evidence wins over ignorance.
+     */
+    public function testPositiveEvidenceFromAnObservableWorkflowWins(): void
+    {
+        $provider = $this->provider(
+            ['product_approval' => 'state_table', 'asset_review' => 'single_state'],
+            7
+        );
+
+        $this->assertTrue($provider->isUsed());
+    }
+
+    /**
+     * Same mix with an empty state table: the observable one is genuinely unused, but the other cannot
+     * be seen at all, so the capability as a whole is unknown - not unused.
+     */
+    public function testAMixedInstallWithNoEvidenceIsUnknown(): void
+    {
+        $provider = $this->provider(
+            ['product_approval' => 'state_table', 'asset_review' => 'single_state'],
+            0
+        );
+
+        $this->assertNull($provider->isUsed());
+    }
+
+    /**
+     * Rows can outlive the workflow that wrote them. An unscoped count would report use that is no
+     * longer possible, so the query is bound to the currently configured workflows.
+     */
+    public function testStateRowsAreScopedToConfiguredWorkflows(): void
+    {
+        $this->provider(['product_approval' => 'state_table', 'asset_review' => 'state_table'], 3)->isUsed();
+
+        $this->assertCount(1, $this->executedSql);
+        $this->assertStringContainsString('WHERE workflow IN (?, ?)', $this->executedSql[0]);
+        $this->assertSame(['product_approval', 'asset_review'], $this->executedParams[0]);
+    }
+
+    /**
+     * Workflow names are customer-chosen. They may be bound as query parameters but must never be
+     * interpolated into SQL, where they could surface in a log or an error message.
+     */
+    public function testWorkflowNamesAreBoundNotInterpolated(): void
+    {
+        $this->provider(['secret_project_gate' => 'state_table'], 1)->isUsed();
+
+        foreach ($this->executedSql as $sql) {
+            $this->assertStringNotContainsString('secret_project_gate', $sql);
+        }
     }
 
     /**
      * The reason `isUsed()` returns `?bool`. A manager that cannot be consulted tells us nothing about
-     * adoption, and `false` there is indistinguishable from a genuine "installed but not used" - the
-     * one signal the `usage.*` namespace exists to produce. Null omits the key instead.
+     * adoption, and `false` there is indistinguishable from a genuine "installed but not used".
      */
     public function testAnUnavailableWorkflowManagerIsUnknownRatherThanUnused(): void
     {
@@ -80,54 +169,66 @@ class WorkflowUsageProviderTest extends TestCase
 
         $used = (new WorkflowUsageProvider($manager, $this->queryRunner(0)))->isUsed();
 
-        $this->assertNull($used, 'a failure must not be reported as "not used"');
+        $this->assertNull($used);
         $this->assertNotFalse($used);
     }
 
-    /**
-     * Same rule one level down: workflows are configured but the state table cannot be read, so
-     * adoption is unknown rather than absent.
-     */
     public function testAnUnreadableStateTableIsUnknownRatherThanUnused(): void
     {
-        $used = $this->provider(workflows: ['product_approval'], failStateQuery: true)->isUsed();
+        $used = $this->provider(['product_approval' => 'state_table'], 0, failStateQuery: true)->isUsed();
 
-        $this->assertNull($used, 'an unreadable state table must not be reported as "not used"');
+        $this->assertNull($used);
         $this->assertNotFalse($used);
     }
 
     /**
-     * @param list<string>  $workflows
-     * @param list<string>  $executedSql captured by reference
+     * A workflow the manager cannot describe cannot be claimed as observed either.
      */
-    private function provider(
-        array $workflows = ['product_approval'],
-        int $elementsInWorkflow = 0,
-        bool $failStateQuery = false,
-        array &$executedSql = [],
-    ): WorkflowUsageProvider {
+    public function testAnUnreadableWorkflowConfigIsTreatedAsUnobservable(): void
+    {
         $manager = $this->createMock(Manager::class);
-        $manager->method('getAllWorkflows')->willReturn($workflows);
+        $manager->method('getAllWorkflows')->willReturn(['product_approval']);
+        $manager->method('getWorkflowConfig')->willThrowException(new RuntimeException('workflow not found'));
 
-        return new WorkflowUsageProvider(
-            $manager,
-            $this->queryRunner($elementsInWorkflow, $failStateQuery, $executedSql)
-        );
+        $used = (new WorkflowUsageProvider($manager, $this->queryRunner(0)))->isUsed();
+
+        $this->assertNull($used);
+        $this->assertSame([], $this->executedSql, 'nothing observable, so no query');
     }
 
     /**
-     * @param list<string> $executedSql captured by reference
+     * @param array<string, string> $workflows name => marking store type
      */
-    private function queryRunner(
-        int $count,
-        bool $fail = false,
-        array &$executedSql = [],
-    ): SnapshotQueryRunner {
+    private function provider(
+        array $workflows = ['product_approval' => 'state_table'],
+        int $elementsInWorkflow = 0,
+        bool $failStateQuery = false,
+    ): WorkflowUsageProvider {
+        $manager = $this->createMock(Manager::class);
+        $manager->method('getAllWorkflows')->willReturn(array_keys($workflows));
+        $manager->method('getWorkflowConfig')->willReturnCallback(
+            static function (string $name) use ($workflows): WorkflowConfig {
+                $store = $workflows[$name];
+                $config = $store === '' ? [] : ['marking_store' => ['type' => $store]];
+
+                return new WorkflowConfig($name, $config);
+            }
+        );
+
+        return new WorkflowUsageProvider($manager, $this->queryRunner($elementsInWorkflow, $failStateQuery));
+    }
+
+    private function queryRunner(int $count, bool $fail = false): SnapshotQueryRunner
+    {
+        $this->executedSql = [];
+        $this->executedParams = [];
+
         $connection = $this->createMock(Connection::class);
         $connection->method('quoteIdentifier')->willReturnArgument(0);
         $connection->method('fetchOne')->willReturnCallback(
-            function (string $sql) use ($count, $fail, &$executedSql): int {
-                $executedSql[] = $sql;
+            function (string $sql, array $params = []) use ($count, $fail): int {
+                $this->executedSql[] = $sql;
+                $this->executedParams[] = $params;
 
                 if ($fail) {
                     throw new RuntimeException('max_statement_time exceeded');

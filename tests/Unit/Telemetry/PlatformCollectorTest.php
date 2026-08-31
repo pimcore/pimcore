@@ -211,7 +211,8 @@ class PlatformCollectorTest extends TestCase
     }
 
     /**
-     * An unavailable workflow manager is unknown, not "no workflows".
+     * An unavailable workflow manager is unknown, not "no workflows" - so the configured count is
+     * omitted while the state-table evidence, which stands on its own, is still collected.
      */
     public function testAnUnavailableWorkflowManagerOmitsTheConfiguredCount(): void
     {
@@ -219,6 +220,24 @@ class PlatformCollectorTest extends TestCase
 
         $this->assertArrayNotHasKey('workflow_configured_count', $metrics);
         $this->assertArrayHasKey('workflow_active_element_count', $metrics);
+    }
+
+    /**
+     * With no workflows configured there is nothing to observe, so neither state query may run - PHP
+     * evaluates array values eagerly, so this only holds because the workflow metrics are appended
+     * separately rather than inlined.
+     */
+    public function testTheStateTableIsNotQueriedWhenNoWorkflowsAreConfigured(): void
+    {
+        $metrics = $this->collector(workflows: [])->collect();
+
+        $this->assertSame(0, $metrics['workflow_configured_count']);
+        $this->assertArrayNotHasKey('workflow_active_element_count', $metrics);
+        $this->assertArrayNotHasKey('workflow_distinct_in_use_count', $metrics);
+
+        foreach ($this->executedSql as $sql) {
+            $this->assertStringNotContainsString('element_workflow_state', $sql);
+        }
     }
 
     /**

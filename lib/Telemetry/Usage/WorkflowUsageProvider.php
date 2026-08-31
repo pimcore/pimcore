@@ -16,28 +16,42 @@ namespace Pimcore\Telemetry\Usage;
 use Exception;
 use Pimcore\Telemetry\Snapshot\SnapshotQueryRunner;
 use Pimcore\Workflow\Manager;
+use function count;
+use function implode;
 use function is_numeric;
+use function array_fill;
 
 /**
  * Reference {@see BundleUsageProviderInterface} for a core capability: workflows are "used" when at
- * least one element actually sits in a workflow state - not merely when a workflow is configured.
+ * least one element has actually been moved through one - not merely when a workflow is configured.
  *
- * That distinction is the whole point of this namespace. A workflow defined in config that no element
- * has ever entered is exactly the shelfware `usage.*` exists to surface, and counting it as used would
- * report an adoption success where there is none. {@see PlatformCollector} emits the two counts side by
- * side (`workflow_configured_count` vs `workflow_active_element_count`) so the gap is visible.
+ * A workflow defined in config that no element has ever entered is exactly the shelfware `usage.*`
+ * exists to surface, and counting it as used would report an adoption success where there is none.
+ * {@see \Pimcore\Telemetry\Snapshot\PlatformCollector} emits the counts side by side so the gap shows.
  *
- * Purely structural and content-never: a boolean derived from a row count. It self-resets - archiving
- * the last in-flight element flips it back - so the capability owns the definition of "used".
+ * **Only some workflows are observable.** Pimcore supports five marking stores, and just `state_table`
+ * persists into `element_workflow_state`; `single_state`, `multiple_state`,
+ * `data_object_multiple_state` and `data_object_splitted_state` all keep the marking on the subject
+ * itself, where no aggregate query can reach it. Reporting `false` for those would invent an adoption
+ * gap for a workflow that is being exercised heavily, so anything not explicitly `state_table` counts
+ * as unobservable and yields `null` (unknown) in the absence of positive evidence. Erring toward
+ * unknown is deliberate: a false "not used" is the one answer this namespace must never give.
  *
- * Also the reference for the null case: if neither the workflow manager nor the state table can be
- * consulted we do not know whether workflows are in use, and saying `false` there would be a
- * fabricated adoption gap.
+ * The state-table query is scoped to the currently configured workflows, so rows left behind by a
+ * workflow that has since been removed cannot report use that is no longer possible.
+ *
+ * Content-never: a boolean derived from a row count. Workflow names are used only as query parameters
+ * and are never emitted.
  *
  * @internal
  */
 final readonly class WorkflowUsageProvider implements BundleUsageProviderInterface
 {
+    /**
+     * The one marking store whose state lands in `element_workflow_state`.
+     */
+    private const OBSERVABLE_MARKING_STORE = 'state_table';
+
     public function __construct(
         private Manager $workflowManager,
         private SnapshotQueryRunner $queryRunner,
@@ -52,28 +66,73 @@ final readonly class WorkflowUsageProvider implements BundleUsageProviderInterfa
     public function isUsed(): ?bool
     {
         try {
-            if ($this->workflowManager->getAllWorkflows() === []) {
-                // Nothing configured, so there is nothing to exercise - no need to touch the state
-                // table, and an empty state table here would be unused rather than unknown anyway.
-                return false;
-            }
+            $configured = $this->workflowManager->getAllWorkflows();
         } catch (Exception) {
             return null;
         }
 
-        $inWorkflow = $this->activeElementCount();
+        if ($configured === []) {
+            // Nothing configured, so nothing to exercise. The state table is not touched - the
+            // majority of installs run no workflows at all and should pay nothing for this metric.
+            return false;
+        }
 
-        return $inWorkflow === null ? null : $inWorkflow > 0;
+        $observable = $this->observableWorkflows($configured);
+
+        if ($observable !== []) {
+            $inWorkflow = $this->activeElementCount($observable);
+
+            if ($inWorkflow === null) {
+                return null;
+            }
+
+            if ($inWorkflow > 0) {
+                return true;
+            }
+        }
+
+        // No positive evidence. If every configured workflow is observable, the empty state table is a
+        // real "configured but never exercised". If any is not, we simply cannot see it - unknown.
+        return count($observable) === count($configured) ? false : null;
     }
 
     /**
-     * @return int|null null when the state table could not be read - unknown, not unused
+     * @param  list<string> $configured
+     * @return list<string> those whose marking is readable from `element_workflow_state`
      */
-    private function activeElementCount(): ?int
+    private function observableWorkflows(array $configured): array
     {
+        $observable = [];
+
+        foreach ($configured as $name) {
+            try {
+                $config = $this->workflowManager->getWorkflowConfig($name)->getWorkflowConfigArray();
+            } catch (Exception) {
+                // Cannot classify it, so cannot claim to observe it.
+                continue;
+            }
+
+            if (($config['marking_store']['type'] ?? null) === self::OBSERVABLE_MARKING_STORE) {
+                $observable[] = $name;
+            }
+        }
+
+        return $observable;
+    }
+
+    /**
+     * @param  list<string> $workflows scoped to these, so rows from removed workflows do not count
+     * @return int|null     null when the state table could not be read - unknown, not unused
+     */
+    private function activeElementCount(array $workflows): ?int
+    {
+        $placeholders = implode(', ', array_fill(0, count($workflows), '?'));
+
         try {
             $count = $this->queryRunner->fetchOne(
                 'SELECT COUNT(*) FROM ' . $this->queryRunner->quoteIdentifier('element_workflow_state')
+                . ' WHERE workflow IN (' . $placeholders . ')',
+                $workflows
             );
 
             return is_numeric($count) ? (int)$count : null;

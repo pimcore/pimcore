@@ -89,15 +89,19 @@ final readonly class PlatformCollector implements SnapshotCollectorInterface
             'recyclebin_item_count' => $this->count('recyclebin'),
             'recyclebin_element_count' => $this->recyclebinElementCount(),
 
-            // Workflow reach. Names are deliberately absent: `element_workflow_state.workflow` holds
-            // customer-defined workflow names, so only the DISTINCT count is emitted.
-            'workflow_configured_count' => $this->workflowCount(),
-            'workflow_active_element_count' => $this->count('element_workflow_state'),
-            'workflow_distinct_in_use_count' => $this->fetchCount(
-                'SELECT COUNT(DISTINCT workflow) FROM '
-                . $this->queryRunner->quoteIdentifier('element_workflow_state')
-            ),
         ];
+
+        // Workflow reach, appended separately so the state table is only queried when at least one
+        // workflow is configured - PHP would otherwise evaluate both counts regardless, making every
+        // workflow-free install pay for two scans. Names are deliberately absent:
+        // `element_workflow_state.workflow` holds customer-defined names, so only the DISTINCT count
+        // is emitted.
+        //
+        // Both counts are unscoped on purpose. Rows can outlive the workflow that wrote them, so
+        // comparing them against `workflow_configured_count` is itself the signal for leftover state -
+        // scoping them would hide exactly that. `usage.workflow` does scope, because there the answer
+        // is a single boolean that must not claim use which is no longer possible.
+        $metrics += $this->workflowMetrics();
 
         // Unknown is not zero: a timed-out or failed count omits its key rather than claiming the
         // install has no seats.
@@ -148,13 +152,33 @@ final readonly class PlatformCollector implements SnapshotCollectorInterface
         );
     }
 
-    private function workflowCount(): ?int
+    /**
+     * The state table is skipped only when the configured count is known to be zero. An unavailable
+     * manager is unknown rather than zero, and the state counts stand on their own as evidence, so
+     * they are still collected in that case - just without a configured count to compare them to.
+     *
+     * @return array<string, int|null>
+     */
+    private function workflowMetrics(): array
     {
         try {
-            return count($this->workflowManager->getAllWorkflows());
+            $configured = count($this->workflowManager->getAllWorkflows());
         } catch (Exception) {
-            return null;
+            $configured = null;
         }
+
+        if ($configured === 0) {
+            return ['workflow_configured_count' => 0];
+        }
+
+        return [
+            'workflow_configured_count' => $configured,
+            'workflow_active_element_count' => $this->count('element_workflow_state'),
+            'workflow_distinct_in_use_count' => $this->fetchCount(
+                'SELECT COUNT(DISTINCT workflow) FROM '
+                . $this->queryRunner->quoteIdentifier('element_workflow_state')
+            ),
+        ];
     }
 
     private function fetchCount(string $sql): ?int
