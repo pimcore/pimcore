@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Telemetry;
 
+use Doctrine\DBAL\Connection;
+use Pimcore\Telemetry\Snapshot\SnapshotQueryRunner;
 use Pimcore\Telemetry\Usage\BundleUsageProviderInterface;
 use Pimcore\Telemetry\Usage\WorkflowUsageProvider;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -24,24 +26,46 @@ class WorkflowUsageProviderTest extends TestCase
 {
     public function testReportsUnderTheWorkflowKey(): void
     {
-        $provider = new WorkflowUsageProvider($this->manager([]));
+        $provider = $this->provider();
 
         $this->assertInstanceOf(BundleUsageProviderInterface::class, $provider);
         $this->assertSame('workflow', $provider->getBundleKey());
     }
 
-    public function testWorkflowsConfiguredCountsAsUsed(): void
+    /**
+     * The reason this provider changed: a workflow defined in config that no element has ever entered
+     * is exactly the shelfware `usage.*` exists to expose. Counting it as used would report an adoption
+     * success where there is none.
+     */
+    public function testAConfiguredButNeverRunWorkflowIsNotUsed(): void
     {
-        $this->assertTrue((new WorkflowUsageProvider($this->manager(['product_approval'])))->isUsed());
+        $this->assertFalse($this->provider(workflows: ['product_approval'], elementsInWorkflow: 0)->isUsed());
+    }
+
+    public function testAWorkflowWithElementsInItIsUsed(): void
+    {
+        $this->assertTrue($this->provider(workflows: ['product_approval'], elementsInWorkflow: 51)->isUsed());
     }
 
     /**
-     * Self-resetting: the capability owns the definition of "used", and removing the last workflow
-     * flips it back rather than leaving a sticky true.
+     * Self-resetting: archiving the last in-flight element flips it back rather than leaving a
+     * sticky true.
      */
-    public function testNoWorkflowsCountsAsNotUsed(): void
+    public function testNoWorkflowsConfiguredIsNotUsed(): void
     {
-        $this->assertFalse((new WorkflowUsageProvider($this->manager([])))->isUsed());
+        $this->assertFalse($this->provider(workflows: [], elementsInWorkflow: 0)->isUsed());
+    }
+
+    /**
+     * With nothing configured there is nothing to exercise, so the state table must not be queried -
+     * the cheap path stays cheap on the majority of installs that use no workflows at all.
+     */
+    public function testTheStateTableIsNotQueriedWhenNothingIsConfigured(): void
+    {
+        $executed = [];
+        $this->provider(workflows: [], executedSql: $executed)->isUsed();
+
+        $this->assertSame([], $executed);
     }
 
     /**
@@ -54,20 +78,65 @@ class WorkflowUsageProviderTest extends TestCase
         $manager = $this->createMock(Manager::class);
         $manager->method('getAllWorkflows')->willThrowException(new RuntimeException('container not booted'));
 
-        $used = (new WorkflowUsageProvider($manager))->isUsed();
+        $used = (new WorkflowUsageProvider($manager, $this->queryRunner(0)))->isUsed();
 
         $this->assertNull($used, 'a failure must not be reported as "not used"');
         $this->assertNotFalse($used);
     }
 
     /**
-     * @param list<string> $workflows
+     * Same rule one level down: workflows are configured but the state table cannot be read, so
+     * adoption is unknown rather than absent.
      */
-    private function manager(array $workflows): Manager
+    public function testAnUnreadableStateTableIsUnknownRatherThanUnused(): void
     {
+        $used = $this->provider(workflows: ['product_approval'], failStateQuery: true)->isUsed();
+
+        $this->assertNull($used, 'an unreadable state table must not be reported as "not used"');
+        $this->assertNotFalse($used);
+    }
+
+    /**
+     * @param list<string>  $workflows
+     * @param list<string>  $executedSql captured by reference
+     */
+    private function provider(
+        array $workflows = ['product_approval'],
+        int $elementsInWorkflow = 0,
+        bool $failStateQuery = false,
+        array &$executedSql = [],
+    ): WorkflowUsageProvider {
         $manager = $this->createMock(Manager::class);
         $manager->method('getAllWorkflows')->willReturn($workflows);
 
-        return $manager;
+        return new WorkflowUsageProvider(
+            $manager,
+            $this->queryRunner($elementsInWorkflow, $failStateQuery, $executedSql)
+        );
+    }
+
+    /**
+     * @param list<string> $executedSql captured by reference
+     */
+    private function queryRunner(
+        int $count,
+        bool $fail = false,
+        array &$executedSql = [],
+    ): SnapshotQueryRunner {
+        $connection = $this->createMock(Connection::class);
+        $connection->method('quoteIdentifier')->willReturnArgument(0);
+        $connection->method('fetchOne')->willReturnCallback(
+            function (string $sql) use ($count, $fail, &$executedSql): int {
+                $executedSql[] = $sql;
+
+                if ($fail) {
+                    throw new RuntimeException('max_statement_time exceeded');
+                }
+
+                return $count;
+            }
+        );
+
+        return new SnapshotQueryRunner($connection, 0);
     }
 }

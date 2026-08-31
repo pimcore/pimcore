@@ -89,6 +89,10 @@ final readonly class PillarUsageCollector implements SnapshotCollectorInterface
             'document_email_count' => $documents->ofType('email'),
             'document_link_count' => $documents->ofType('link'),
             'document_total_count' => $documents->total(),
+            // Exact count of Site entities. The legacy StatisticsManager appeared to disagree here -
+            // it reported `sites: 0` alongside a non-empty `sites_domains` - but its table rows came
+            // from information_schema.TABLE_ROWS, an InnoDB estimate that commonly reads 0 for small
+            // tables. The estimate was wrong; this count is not.
             'site_count' => $this->count('sites'),
             'seo_bundle_active' => $this->activeBundles->has('Seo'),
             'personalization_bundle_active' => $this->activeBundles->has('Personalization'),
