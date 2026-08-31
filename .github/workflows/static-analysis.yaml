@@ -39,7 +39,7 @@ jobs:
     static-analysis-phpstan:
         name: "Static Analysis with PHPStan"
         runs-on: "ubuntu-latest"
-        timeout-minutes: 60
+        timeout-minutes: 30
         continue-on-error: ${{ matrix.experimental }}
         strategy:
             matrix:
