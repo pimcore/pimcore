@@ -339,9 +339,7 @@ class Manager
                 if ($previousMarking !== null) {
                     $markingStore->setMarking($subject, $previousMarking);
                 }
-                if ($previousPublishedState !== null
-                    && ($subject instanceof Concrete || $subject instanceof Document)
-                ) {
+                if ($previousPublishedState !== null) {
                     $subject->setPublished($previousPublishedState);
                 }
 
