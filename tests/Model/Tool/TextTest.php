@@ -54,11 +54,56 @@ class TextTest extends ModelTestCase
         $this->assertEquals($expected, Text::wysiwygText($text));
     }
 
-    private function createDocument(string $key, int $parentId): Document\Page
+    public function testWysiwygTextWithBrokenLinkAndExtraAttributes(): void
+    {
+        RuntimeCache::clear();
+
+        $unpublishedDocument = $this->createDocument('unpublished-testing', $this->testingDocument->getParentId(), false);
+
+        $text = sprintf(
+            'Link to a document <a href="/some/path" target="_blank" pimcore_id="%s" pimcore_type="document" rel="noopener">Link text</a>',
+            $unpublishedDocument->getId()
+        );
+        $expected = 'Link to a document Link text';
+
+        $this->assertEquals($expected, Text::wysiwygText($text));
+    }
+
+    public function testWysiwygTextWithBrokenLinkAndNestedMarkup(): void
+    {
+        RuntimeCache::clear();
+
+        $unpublishedDocument = $this->createDocument('unpublished-testing-nested', $this->testingDocument->getParentId(), false);
+
+        $text = sprintf(
+            'Link to a document <a href="/some/path" target="_blank" pimcore_id="%s" pimcore_type="document" rel="noopener"><strong>Link text</strong></a>',
+            $unpublishedDocument->getId()
+        );
+        $expected = 'Link to a document <strong>Link text</strong>';
+
+        $this->assertEquals($expected, Text::wysiwygText($text));
+    }
+
+    public function testWysiwygTextWithBrokenLinkAndEmptyLabel(): void
+    {
+        RuntimeCache::clear();
+
+        $unpublishedDocument = $this->createDocument('unpublished-testing-empty', $this->testingDocument->getParentId(), false);
+
+        $text = sprintf(
+            'Link to a document <a href="/some/path" target="_blank" pimcore_id="%s" pimcore_type="document" rel="noopener"></a>',
+            $unpublishedDocument->getId()
+        );
+        $expected = 'Link to a document ';
+
+        $this->assertEquals($expected, Text::wysiwygText($text));
+    }
+
+    private function createDocument(string $key, int $parentId, bool $published = true): Document\Page
     {
         $document = new Document\Page();
         $document->setKey($key);
-        $document->setPublished(true);
+        $document->setPublished($published);
         $document->setParentId($parentId);
         $document->setUserOwner(1);
         $document->setUserModification(1);
