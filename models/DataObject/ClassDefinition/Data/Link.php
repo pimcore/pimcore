@@ -349,6 +349,10 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             unset($oldValue['_owner']);
             unset($oldValue['_fieldname']);
             unset($oldValue['_language']);
+        } elseif ($this->isEmpty($oldValue)) {
+            // e.g. version-diff templates fall back to an empty string for an unset
+            // localized value, which is not a valid `?array` for isEqualArray()
+            $oldValue = null;
         }
 
         if ($newValue instanceof DataObject\Data\Link) {
@@ -357,6 +361,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             unset($newValue['_owner']);
             unset($newValue['_fieldname']);
             unset($newValue['_language']);
+        } elseif ($this->isEmpty($newValue)) {
+            $newValue = null;
         }
 
         return $this->isEqualArray($oldValue, $newValue);

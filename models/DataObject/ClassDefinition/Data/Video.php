@@ -135,7 +135,7 @@ class Video extends Data implements
     public function getDataFromResource(mixed $data, ?Concrete $object = null, array $params = []): ?DataObject\Data\Video
     {
         if ($data) {
-            $raw = Serialize::unserialize($data);
+            $raw = Serialize::unserialize($data, false);
 
             if ($raw['type'] === 'asset') {
                 if ($asset = Asset::getById($raw['data'])) {
