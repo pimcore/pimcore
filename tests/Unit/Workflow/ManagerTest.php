@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Workflow;
 
 use PHPUnit\Framework\MockObject\MockObject;
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
@@ -156,6 +158,101 @@ class ManagerTest extends TestCase
 
         $this->assertSame(['end' => 1], $store->persisted);
         $this->assertSame(['end' => 1], $marking->getPlaces());
+    }
+
+    public function testGlobalActionAppliesChangePublishedState(): void
+    {
+        $store = $this->createImmediateMarkingStore();
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $this->createForcePublishedTransition(), $eventDispatcher);
+
+        $publishedStates = [];
+        $subject = $this->createMock(Concrete::class);
+        $subject->method('setPublished')->willReturnCallback(
+            function (bool $value) use (&$publishedStates, $subject): Concrete {
+                $publishedStates[] = $value;
+
+                return $subject;
+            }
+        );
+
+        $manager = $this->buildManager($eventDispatcher);
+        $manager->addGlobalAction(self::WORKFLOW_NAME, 'finish', [
+            'to' => ['end'],
+            'changePublishedState' => ChangePublishedStateSubscriber::FORCE_PUBLISHED,
+        ]);
+
+        $manager->applyGlobalAction($workflow, $subject, 'finish', [], true);
+
+        $this->assertSame([true], $publishedStates);
+    }
+
+    public function testGlobalActionRollsBackPublishedStateWhenSaveFails(): void
+    {
+        $store = $this->createImmediateMarkingStore();
+        $eventDispatcher = $this->createEventDispatcher();
+        $workflow = $this->createWorkflow($store, $this->createForcePublishedTransition(), $eventDispatcher);
+
+        $publishedStates = [];
+        $subject = $this->createMock(Concrete::class);
+        $subject->method('isPublished')->willReturn(false);
+        $subject->method('setPublished')->willReturnCallback(
+            function (bool $value) use (&$publishedStates, $subject): Concrete {
+                $publishedStates[] = $value;
+
+                return $subject;
+            }
+        );
+        $subject->method('save')->willThrowException(new ValidationException('mandatory field missing'));
+
+        $manager = $this->buildManager($eventDispatcher);
+        $manager->addGlobalAction(self::WORKFLOW_NAME, 'finish', [
+            'to' => ['end'],
+            'changePublishedState' => ChangePublishedStateSubscriber::FORCE_PUBLISHED,
+        ]);
+
+        $thrown = null;
+
+        try {
+            $manager->applyGlobalAction($workflow, $subject, 'finish', [], true);
+        } catch (ValidationException $e) {
+            $thrown = $e;
+        }
+
+        $this->assertInstanceOf(ValidationException::class, $thrown);
+        $this->assertSame(['start' => 1], $store->persisted);
+        $this->assertSame(
+            [true, false],
+            $publishedStates,
+            'The published state set by the global action should be rolled back when the save fails.'
+        );
+    }
+
+    /**
+     * `save_version` replaces the regular save, exactly like it does for a transition.
+     * Assets are versionable too, so they must not fall back to a plain save.
+     */
+    public function testGlobalActionWithSaveVersionSavesAVersion(): void
+    {
+        foreach ([Concrete::class, PageSnippet::class, Asset::class] as $subjectClass) {
+            $store = $this->createImmediateMarkingStore();
+            $eventDispatcher = $this->createEventDispatcher();
+            $workflow = $this->createWorkflow($store, $this->createForcePublishedTransition(), $eventDispatcher);
+
+            $subject = $this->createMock($subjectClass);
+            $subject->expects($this->once())->method('saveVersion');
+            $subject->expects($this->never())->method('save');
+
+            $manager = $this->buildManager($eventDispatcher);
+            $manager->addGlobalAction(self::WORKFLOW_NAME, 'finish', [
+                'to' => ['end'],
+                'changePublishedState' => ChangePublishedStateSubscriber::SAVE_VERSION,
+            ]);
+
+            $manager->applyGlobalAction($workflow, $subject, 'finish', [], true);
+
+            $this->assertSame(['end' => 1], $store->persisted);
+        }
     }
 
     /**
