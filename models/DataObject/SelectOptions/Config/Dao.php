@@ -111,7 +111,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             throw new InvalidArgumentException('A select options definition needs an ID to be saved!', 1676639722696);
         }
 
-        if (!preg_match('/[A-Z][a-zA-Z0-9]+/', $id)) {
+        if (!preg_match('/^[A-Z][a-zA-Z0-9]+$/', $id)) {
             throw new InvalidArgumentException('Invalid ID: Must start with capital letter, followed by alphanumeric characters', 1676639634486);
         }
     }
