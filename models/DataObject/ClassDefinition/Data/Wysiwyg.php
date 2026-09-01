@@ -318,6 +318,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getVersionPreview(mixed $data, ?DataObject\Concrete $object = null, array $params = []): string
     {
-        return self::getWysiwygSanitizer()->sanitizeFor('body', (string) $data);
+        $sanitized = self::getWysiwygSanitizer()->sanitizeFor('body', (string) $data);
+
+        return Text::wysiwygText($sanitized, array_merge($params, [
+            'object' => $object,
+            'context' => $this,
+        ])) ?? '';
     }
 }
