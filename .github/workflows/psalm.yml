@@ -3,11 +3,13 @@ name: "Psalm Static Analysis"
 
 on:
     pull_request:
-    push:
-            branches:
+        branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
-            - "*_actions"
+    push:
+        branches:
+            - "[0-9]+.[0-9]+"
+            - "[0-9]+.x"
             - "*_actions"
 
 concurrency:
