@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
@@ -36,6 +38,19 @@ class ClassDefinitionTest extends ModelTestCase
         }
         $setterCode = $fd->getSetterCode($class);
         $this->assertEquals($expectedSetterCode, $setterCode);
+    }
+
+    private function testGetterCode(string $fieldName, string $expectedGetterCode, bool $localizedField = false): void
+    {
+        $class = ClassDefinition::getByName('unittest');
+        if ($localizedField) {
+            $fd = $class->getFieldDefinition('localizedfields')->getFieldDefinition($fieldName);
+            $getterCode = $fd->getGetterCodeLocalizedfields($class);
+        } else {
+            $fd = $class->getFieldDefinition($fieldName);
+            $getterCode = $fd->getGetterCode($class);
+        }
+        $this->assertEquals($expectedGetterCode, $getterCode);
     }
 
     /**
@@ -82,7 +97,7 @@ public function setInput(?string $input): static
         $expectedSetterCode =
             '/**
 * Set fieldcollection - fieldcollection
-* @param \Pimcore\Model\DataObject\Fieldcollection|null $fieldcollection
+* @param \Pimcore\Model\DataObject\Fieldcollection<\Pimcore\Model\DataObject\Fieldcollection\Data\Unittestfieldcollection>|null $fieldcollection
 * @return $this
 */
 public function setFieldcollection(?\Pimcore\Model\DataObject\Fieldcollection $fieldcollection): static
@@ -95,6 +110,20 @@ public function setFieldcollection(?\Pimcore\Model\DataObject\Fieldcollection $f
 
 ';
         $this->testSetterCode('fieldcollection', $expectedSetterCode);
+    }
+
+    public function testFieldCollectionPhpdocTypeWithoutAllowedTypes(): void
+    {
+        $fieldDefinition = new Fieldcollections();
+
+        $this->assertSame(
+            '\Pimcore\Model\DataObject\Fieldcollection|null',
+            $fieldDefinition->getPhpdocInputType()
+        );
+        $this->assertSame(
+            '\Pimcore\Model\DataObject\Fieldcollection|null',
+            $fieldDefinition->getPhpdocReturnType()
+        );
     }
 
     /**
@@ -166,6 +195,140 @@ public function setLinput(?string $linput): static
 
 ';
         $this->testSetterCode('linput', $expectedSetterCode, true);
+    }
+
+    /**
+     * Verifies that the getter code gets created properly and that the
+     * PreGetValueHook is called before actually getting the data
+     */
+    public function testLocalizedFieldGetterCode(): void
+    {
+        $expectedGetterCode =
+            '/**
+* Get linput - linput
+* @return string|null
+*/
+public function getLinput(?string $language = null): ?string
+{
+	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
+		$preValue = $this->preGetValue("linput");
+		if ($preValue !== null) {
+			return $preValue;
+		}
+	}
+
+	$data = $this->getLocalizedfields()->getLocalizedValue("linput", $language);
+	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
+		return $data->getPlain();
+	}
+
+	return $data;
+}
+
+';
+        $this->testGetterCode('linput', $expectedGetterCode, true);
+    }
+
+    /**
+     * Verifies that the getter code gets created properly and that the
+     * PreGetValueHook is called before actually getting the data
+     */
+    public function testLocalizedTableGetterCode(): void
+    {
+        $expectedGetterCode =
+            '/**
+* Get ltable - ltable
+* @return array
+*/
+public function getLtable (?string $language = null): array
+{
+	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
+		$preValue = $this->preGetValue("ltable");
+		if ($preValue !== null) {
+			return $preValue;
+		}
+	}
+
+	$data = $this->getLocalizedfields()->getLocalizedValue("ltable", $language);
+	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
+		return $data->getPlain() ?? [];
+	}
+	return $data ?? [];
+}
+
+';
+        $this->testGetterCode('ltable', $expectedGetterCode, true);
+    }
+
+    /**
+     * Verifies that the getter code gets created properly and that the
+     * PreGetValueHook is called before actually getting the data
+     * (i.e. before the object brick container is lazily initialized)
+     */
+    public function testBricksGetterCode(): void
+    {
+        $expectedGetterCode =
+            '/**
+* @return \Pimcore\Model\DataObject\Unittest\Mybricks
+*/
+public function getMybricks(): ?\Pimcore\Model\DataObject\Objectbrick
+{
+	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
+		$preValue = $this->preGetValue("mybricks");
+		if ($preValue !== null) {
+			return $preValue;
+		}
+	}
+
+	$data = $this->mybricks;
+	if (!$data) {
+		if (\Pimcore\Tool::classExists("\\\\Pimcore\\\\Model\\\\DataObject\\\\Unittest\\\\Mybricks")) {
+			$data = new \Pimcore\Model\DataObject\Unittest\Mybricks($this, "mybricks");
+			$this->mybricks = $data;
+		} else {
+			return null;
+		}
+	}
+	return $data;
+}
+
+';
+        $this->testGetterCode('mybricks', $expectedGetterCode);
+    }
+
+    /**
+     * Definition files are cached in-process (see DefinitionFileCache) so that long-running
+     * scripts clearing the runtime cache do not re-include them on every access. Saving a
+     * class definition must invalidate that cache, and a forced load must re-include the file.
+     */
+    public function testDefinitionChangeIsVisibleAfterRuntimeCacheClear(): void
+    {
+        $class = ClassDefinition::getByName('unittest');
+        $this->assertInstanceOf(ClassDefinition::class, $class);
+        $id = $class->getId();
+        $originalTitle = $class->getTitle();
+
+        // prime the runtime cache and the definition file cache
+        RuntimeCache::clear();
+        $this->assertInstanceOf(ClassDefinition::class, ClassDefinition::getById($id));
+
+        try {
+            $class->setTitle('definition file cache test');
+            $class->save();
+
+            RuntimeCache::clear();
+            $reloaded = ClassDefinition::getById($id);
+            $this->assertInstanceOf(ClassDefinition::class, $reloaded);
+            $this->assertSame('definition file cache test', $reloaded->getTitle());
+
+            $forced = ClassDefinition::getById($id, true);
+            $this->assertInstanceOf(ClassDefinition::class, $forced);
+            $this->assertNotSame($reloaded, $forced);
+            $this->assertSame('definition file cache test', $forced->getTitle());
+        } finally {
+            $class->setTitle($originalTitle);
+            $class->save();
+        }
     }
 
     public function testInputEmptyDefaultValueIsNormalizedToNullAfterImportAndReload(): void

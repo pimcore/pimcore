@@ -15,7 +15,9 @@ namespace Pimcore\Tests\Service\Element;
 
 use Normalizer;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -116,6 +118,276 @@ class ServiceTest extends TestCase
 
         $this->assertNotSame($nfd, $nfc, 'Test fixture setup issue: NFD and NFC forms should differ in bytes.');
         $this->assertSame($nfc, Service::getValidKey($nfd, 'asset'));
+    }
+
+    /**
+     * Regression test: isValidPath() must accept a segment that is in decomposed (NFD) Unicode
+     * form - e.g. created before keys were normalized to NFC on write (#19242) - since
+     * *\Service::pathExists() relies on it and must agree with getByPath(), which resolves the
+     * very same path via the NFC fallback. A segment with genuinely invalid characters (not
+     * just a different Unicode form) must still be rejected.
+     *
+     * @see \Pimcore\Model\Element\Service::isValidPath()
+     */
+    public function testIsValidPathAcceptsDecomposedUnicodeFormButRejectsInvalidCharacters(): void
+    {
+        $nfd = Normalizer::normalize('café', Normalizer::FORM_D);
+        $nfc = Normalizer::normalize('café', Normalizer::FORM_C);
+        $this->assertNotSame($nfd, $nfc, 'Test fixture setup issue: NFD and NFC forms should differ in bytes.');
+
+        $this->assertTrue(Service::isValidPath("/Upload Folder/$nfd", 'asset'));
+        $this->assertTrue(Service::isValidPath("/Upload Folder/$nfc", 'asset'));
+        $this->assertFalse(
+            Service::isValidPath('/Upload Folder/invalid<>name', 'asset'),
+            'A segment with genuinely invalid characters must still be rejected, not just a different Unicode form.'
+        );
+    }
+
+    /**
+     * correctPath() must leave the Unicode form of the path untouched. Unconditionally
+     * rewriting it to NFC here (as opposed to as a getByPath() lookup fallback, see
+     * getByPathWithNfcFallback()) would break the exact-path lookup for elements whose
+     * key is still stored in decomposed (NFD) form, e.g. created before keys were normalized
+     * to NFC on write.
+     *
+     * @see \Pimcore\Model\Element\Service::correctPath()
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testCorrectPathDoesNotChangeUnicodeForm(): void
+    {
+        $nfd = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_D);
+
+        $this->assertSame($nfd, Service::correctPath($nfd));
+    }
+
+    /**
+     * Records every path getByPathWithNfcFallback() attempts, without ever succeeding, so the
+     * full candidate order can be asserted on.
+     *
+     * @return string[]
+     */
+    private function recordAttemptedPaths(string $lookupPath): array
+    {
+        $attempted = [];
+        $attempt = function (string $candidate) use (&$attempted): void {
+            $attempted[] = $candidate;
+
+            throw new NotFoundException('not found: ' . $candidate);
+        };
+
+        try {
+            Service::getByPathWithNfcFallback($attempt, $lookupPath);
+            $this->fail('Expected a NotFoundException.');
+        } catch (NotFoundException) {
+            // expected - $attempt() never succeeds, so every candidate gets tried
+        }
+
+        return $attempted;
+    }
+
+    /**
+     * Regression test: the common case - and the one motivating this fix - is an entire
+     * subtree freshly created in the same operation (e.g. a Studio folder upload), where every
+     * segment is NFC-stored but the lookup path arrives in NFD form. getByPathWithNfcFallback()
+     * must try the fully NFC-normalized path first, so that common case costs one extra query,
+     * not one per path depth. A legacy parent path still stored in decomposed (NFD) form is the
+     * rarer case; its "preserve dirname, normalize only the key" candidate is tried after.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackTriesFullyNormalizedPathBeforePreservingDirname(): void
+    {
+        $nfdParent = Normalizer::normalize('/Legacy café Parent/', Normalizer::FORM_D);
+        $nfcChildKey = Normalizer::normalize('New café Child', Normalizer::FORM_C);
+        $nfdChildKey = Normalizer::normalize($nfcChildKey, Normalizer::FORM_D);
+        $this->assertNotSame(
+            $nfcChildKey,
+            $nfdChildKey,
+            'Test fixture setup issue: NFD and NFC forms should differ in bytes.'
+        );
+
+        $lookupPath = $nfdParent . $nfdChildKey;
+        $dirnamePreservedCandidate = $nfdParent . $nfcChildKey;
+        $fullyNormalizedCandidate = Normalizer::normalize($lookupPath, Normalizer::FORM_C);
+
+        $attempted = $this->recordAttemptedPaths($lookupPath);
+
+        $this->assertContains($fullyNormalizedCandidate, $attempted);
+        $this->assertContains($dirnamePreservedCandidate, $attempted);
+        $this->assertLessThan(
+            array_search($dirnamePreservedCandidate, $attempted, true),
+            array_search($fullyNormalizedCandidate, $attempted, true),
+            'The fully NFC-normalized path must be tried before the dirname-preserving candidate.'
+        );
+    }
+
+    /**
+     * Regression test: a lookup path may have any number of trailing segments freshly created
+     * (NFC-stored) below an ancestor still stored in legacy decomposed (NFD) form - the caller
+     * (e.g. a browser submitting every accented segment in NFD) has no way to know where that
+     * boundary is, so a mixed hierarchy more than one level deep must still resolve via one of
+     * the candidates getByPathWithNfcFallback() tries.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackHandlesNestedMixedHierarchy(): void
+    {
+        $nfdLegacySegment = Normalizer::normalize('Legacy café', Normalizer::FORM_D);
+        $nfcMiddleSegment = Normalizer::normalize('New café', Normalizer::FORM_C);
+        $nfdMiddleSegment = Normalizer::normalize($nfcMiddleSegment, Normalizer::FORM_D);
+        $nfcLastSegment = Normalizer::normalize('Child café', Normalizer::FORM_C);
+        $nfdLastSegment = Normalizer::normalize($nfcLastSegment, Normalizer::FORM_D);
+
+        // the actual stored path: legacy first segment still NFD, the two freshly created
+        // segments below it NFC
+        $storedPath = "/$nfdLegacySegment/$nfcMiddleSegment/$nfcLastSegment";
+
+        // what a browser submits: every accented segment in NFD, since it cannot tell which
+        // segments are legacy and which are freshly created
+        $lookupPath = "/$nfdLegacySegment/$nfdMiddleSegment/$nfdLastSegment";
+        $this->assertNotSame($storedPath, $lookupPath, 'Test fixture setup issue.');
+
+        $attempted = $this->recordAttemptedPaths($lookupPath);
+        $fullyNormalized = Normalizer::normalize($lookupPath, Normalizer::FORM_C);
+
+        $this->assertContains(
+            $storedPath,
+            $attempted,
+            'Normalizing only the trailing 2 segments (leaving the legacy first segment as NFD) must be tried.'
+        );
+        $this->assertLessThan(
+            array_search($storedPath, $attempted, true),
+            array_search($fullyNormalized, $attempted, true),
+            'The fully normalized path is tried before the candidate preserving the legacy segment.'
+        );
+    }
+
+    /**
+     * If the path is already fully NFC-normalized, no fallback candidates are produced -
+     * getByPathWithNfcFallback() must not retry with a path identical to the one that just
+     * missed.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackDoesNotRetryWhenPathAlreadyNfc(): void
+    {
+        $nfc = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_C);
+
+        $this->assertSame(
+            [$nfc],
+            $this->recordAttemptedPaths($nfc),
+            'No fallback candidates should be attempted when the path is already fully NFC.'
+        );
+    }
+
+    /**
+     * Regression test: getByPathWithNfcFallback() must not skip fallback based on the raw input
+     * path's length, even when that length is far beyond ElementInterface::MAX_FULL_PATH_LENGTH.
+     * A length-based short-circuit was deliberately not used: composition exclusions in Unicode
+     * (e.g. U+0344, which NFC always decomposes to two code points) mean the fully-normalized
+     * form of a path is not a universally reliable lower bound on how short a legitimate
+     * candidate could be, so treating it as one can incorrectly skip a fallback that would
+     * otherwise have resolved. Candidate volume is instead bounded solely by
+     * MAX_FALLBACK_CANDIDATES (see the cap test below), independent of path length.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackAttemptsFallbackRegardlessOfRawPathLength(): void
+    {
+        $nfcSegment = str_repeat(Normalizer::normalize('é', Normalizer::FORM_C), 260);
+        $nfdSegment = Normalizer::normalize($nfcSegment, Normalizer::FORM_D);
+        $this->assertNotSame($nfcSegment, $nfdSegment, 'Test fixture setup issue.');
+
+        $lookupPath = "/$nfdSegment/$nfdSegment/$nfdSegment";
+        $fullyNormalizedPath = Normalizer::normalize($lookupPath, Normalizer::FORM_C);
+        $this->assertGreaterThan(
+            ElementInterface::MAX_FULL_PATH_LENGTH,
+            mb_strlen($lookupPath),
+            'Test fixture setup issue: the raw path must exceed the maximum length any real element could have.'
+        );
+
+        $this->assertContains(
+            $fullyNormalizedPath,
+            $this->recordAttemptedPaths($lookupPath),
+            'A fallback candidate must still be attempted even for a path far longer than any real element could have.'
+        );
+    }
+
+    /**
+     * Regression test: a path within the maximum real path length can still be split into far
+     * more segments than any realistic element hierarchy would have (e.g. many short accented
+     * segments). Without a cap independent of total path length, a miss on such a path would
+     * generate and attempt one fallback candidate per segment. getByPathWithNfcFallback() must
+     * bound the number of candidates attempted to a small, fixed number regardless of segment
+     * count.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackCapsNumberOfCandidates(): void
+    {
+        $segment = Normalizer::normalize('é', Normalizer::FORM_D);
+        $segmentCount = 100;
+        $path = str_repeat('/' . $segment, $segmentCount);
+        $this->assertLessThanOrEqual(
+            ElementInterface::MAX_FULL_PATH_LENGTH,
+            mb_strlen(Normalizer::normalize($path, Normalizer::FORM_C)),
+            'Test fixture setup issue: the fully normalized path must still fit within the length limit.'
+        );
+
+        $attempted = $this->recordAttemptedPaths($path);
+
+        $this->assertLessThan(
+            $segmentCount,
+            count($attempted),
+            'The number of fallback candidates attempted must be bounded to a small fixed number, not one per path segment.'
+        );
+    }
+
+    /**
+     * Regression test: getByPathWithNfcFallback() must fall through the candidates in order
+     * and succeed as soon as one of them resolves - this is what lets a freshly created
+     * element (NFC-stored) still be found from an NFD-form lookup path, e.g. a browser's
+     * webkitdirectory/File System Access API on macOS.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackTriesCandidatesInOrder(): void
+    {
+        $nfd = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_D);
+        $nfc = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_C);
+
+        $attempted = [];
+        $attempt = function (string $candidate) use (&$attempted, $nfc): void {
+            $attempted[] = $candidate;
+            if ($candidate !== $nfc) {
+                throw new NotFoundException('not found: ' . $candidate);
+            }
+        };
+
+        Service::getByPathWithNfcFallback($attempt, $nfd);
+
+        $this->assertSame(
+            $nfc,
+            end($attempted),
+            'The lookup must eventually succeed with the fully NFC-normalized path.'
+        );
+    }
+
+    /**
+     * Regression test: if every candidate misses, getByPathWithNfcFallback() must rethrow the
+     * original exact-path NotFoundException rather than swallowing it.
+     *
+     * @see \Pimcore\Model\Element\Service::getByPathWithNfcFallback()
+     */
+    public function testGetByPathWithNfcFallbackRethrowsWhenNoCandidateMatches(): void
+    {
+        $nfd = Normalizer::normalize('/Upload Folder/Special café', Normalizer::FORM_D);
+
+        $this->expectException(NotFoundException::class);
+
+        Service::getByPathWithNfcFallback(function (string $candidate): void {
+            throw new NotFoundException('not found: ' . $candidate);
+        }, $nfd);
     }
 
     public function testCloneMe(): void

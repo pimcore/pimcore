@@ -15,9 +15,13 @@ namespace Pimcore\Model\Asset\Image\Thumbnail;
 
 use Exception;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Image\Adapter\Dimension as DimensionAdapter;
+use Pimcore\Image\Adapter\GD;
+use Pimcore\Image\Adapter\Imagick;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
+use Throwable;
 
 /**
  * @method bool isWriteable()
@@ -33,6 +37,22 @@ final class Config extends Model\AbstractModel
      * @internal
      */
     protected const PREVIEW_THUMBNAIL_NAME = 'pimcore-system-treepreview';
+
+    /**
+     * Operations which affect the legacy logical HTML dimensions even when Processor returns the original source before invoking an image adapter.
+     *
+     * @var list<string>
+     */
+    private const PASS_THROUGH_LOGICAL_TRANSFORMATIONS = [
+        'resize',
+        'scaleByWidth',
+        'scaleByHeight',
+        'contain',
+        'cover',
+        'frame',
+        'crop',
+        'cropPercent',
+    ];
 
     /**
      * format of array:
@@ -588,92 +608,301 @@ final class Config extends Model\AbstractModel
      *
      *
      * @internal
+     *
+     * @return array{width: int, height: int}|array{}
      */
     public function getEstimatedDimensions(Model\Asset\Image $asset): array
     {
-        $originalWidth = $asset->getWidth();
-        $originalHeight = $asset->getHeight();
+        $sourceWidth = $asset->getCustomSetting('imageWidth');
+        $sourceHeight = $asset->getCustomSetting('imageHeight');
 
-        $dimensions = [
-            'width' => $originalWidth,
-            'height' => $originalHeight,
-        ];
+        return $this->getEstimatedDimensionsForSource(
+            $asset,
+            is_numeric($sourceWidth) ? (int) $sourceWidth : 0,
+            is_numeric($sourceHeight) ? (int) $sourceHeight : 0
+        );
+    }
 
+    /**
+     * Estimates logical thumbnail dimensions from already-known source dimensions without reading or mutating the source asset.
+     *
+     * @internal
+     *
+     * @return array{width: int, height: int}|array{}
+     */
+    public function getEstimatedDimensionsForSource(
+        Model\Asset\Image $asset,
+        int $sourceWidth,
+        int $sourceHeight
+    ): array {
         $transformations = $this->getItems();
-        if ($originalWidth && $originalHeight) {
-            foreach ($transformations as $transformation) {
-                if (!empty($transformation)) {
-                    $arg = $transformation['arguments'];
 
-                    $forceResize = false;
-                    if (isset($arg['forceResize']) && $arg['forceResize'] === true) {
-                        $forceResize = true;
-                    }
-
-                    if (in_array($transformation['method'], ['resize', 'cover', 'frame', 'crop'])) {
-                        $dimensions['width'] = $arg['width'];
-                        $dimensions['height'] = $arg['height'];
-                    } elseif ($transformation['method'] == '1x1_pixel') {
-                        return [
-                            'width' => 1,
-                            'height' => 1,
-                        ];
-                    } elseif ($transformation['method'] == 'scaleByWidth') {
-                        if ($arg['width'] <= $dimensions['width'] || $asset->isVectorGraphic() || $forceResize) {
-                            $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
-                            $dimensions['width'] = $arg['width'];
-                        }
-                    } elseif ($transformation['method'] == 'scaleByHeight') {
-                        if ($arg['height'] < $dimensions['height'] || $asset->isVectorGraphic() || $forceResize) {
-                            $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
-                            $dimensions['height'] = $arg['height'];
-                        }
-                    } elseif ($transformation['method'] == 'contain') {
-                        $x = $dimensions['width'] / $arg['width'];
-                        $y = $dimensions['height'] / $arg['height'];
-
-                        if (!$forceResize && $x <= 1 && $y <= 1 && !$asset->isVectorGraphic()) {
-                            continue;
-                        }
-
-                        if ($x > $y) {
-                            $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
-                            $dimensions['width'] = $arg['width'];
-                        } else {
-                            $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
-                            $dimensions['height'] = $arg['height'];
-                        }
-                    } elseif ($transformation['method'] == 'cropPercent') {
-                        $dimensions['width'] = ceil($dimensions['width'] * ($arg['width'] / 100));
-                        $dimensions['height'] = ceil($dimensions['height'] * ($arg['height'] / 100));
-                    } elseif (in_array($transformation['method'], ['rotate', 'trim'])) {
-                        // unable to calculate dimensions -> return empty
-                        return [];
-                    }
-                }
-            }
-        } else {
-            // this method is only if we don't have the source dimensions
-            // this doesn't necessarily return both with & height
-            // and is only a very rough estimate, you should avoid falling back to this functionality
-            foreach ($transformations as $transformation) {
-                if (!empty($transformation)) {
-                    if (is_array($transformation['arguments']) && in_array($transformation['method'], ['resize', 'scaleByWidth', 'scaleByHeight', 'cover', 'frame'])) {
-                        foreach ($transformation['arguments'] as $key => $value) {
-                            if ($key == 'width' || $key == 'height') {
-                                $dimensions[$key] = $value;
-                            }
-                        }
-                    }
-                }
+        // Processor returns this data URI before loading the source or applying any other transformations, so its dimensions are always known.
+        foreach ($transformations as $transformation) {
+            if (($transformation['method'] ?? null) === '1x1_pixel') {
+                return [
+                    'width' => 1,
+                    'height' => 1,
+                ];
             }
         }
 
-        // ensure we return int's, sometimes $arg[...] contain strings
-        $dimensions['width'] = (int) $dimensions['width'] * ($this->getHighResolution() ?: 1);
-        $dimensions['height'] = (int) $dimensions['height'] * ($this->getHighResolution() ?: 1);
+        // Processor copies the source bytes for ORIGINAL instead of saving the transformed adapter.
+        // Inspect the generated file to retain the existing physical-file dimension semantics.
+        if (strtolower($this->getFormat()) === 'original') {
+            return [];
+        }
 
-        return $dimensions;
+        $usesSourceAssetOutput = $this->usesOriginalSvgOutput($asset)
+            || Processor::usesOriginalAssetOutput($asset, $this);
+
+        // Pass-through output returns the source before Processor creates an adapter.
+        // Generated thumbnails may only be estimated for the exact core implementations whose semantics DimensionAdapter models.
+        if (!$usesSourceAssetOutput && !$this->supportsConfiguredAdapterForDimensionEstimation()) {
+            return [];
+        }
+
+        if ($sourceWidth <= 0 || $sourceHeight <= 0) {
+            return [];
+        }
+
+        $transformationsForEstimation = [];
+
+        foreach ($transformations as $transformation) {
+            if (empty($transformation) || isset($transformation['isApplied'])) {
+                continue;
+            }
+
+            $method = $transformation['method'] ?? null;
+            if ($method === 'tifforiginal') {
+                if (!$usesSourceAssetOutput) {
+                    return [];
+                }
+
+                // Processor routing marker, not an image operation.
+                continue;
+            }
+
+            if (!is_string($method)) {
+                if ($usesSourceAssetOutput) {
+                    continue;
+                }
+
+                return [];
+            }
+
+            if ($usesSourceAssetOutput) {
+                if (in_array($method, ['rotate', 'trim'], true)) {
+                    return [];
+                }
+
+                if (!in_array($method, self::PASS_THROUGH_LOGICAL_TRANSFORMATIONS, true)) {
+                    // Processor returns the source before invoking visual-only or project-specific operations.
+                    // The legacy logical estimator ignored them, including their runtime-only argument validity.
+                    continue;
+                }
+            }
+
+            if (!Processor::hasTransformationArgumentMapping($method)
+                || !DimensionAdapter::supportsReliableTransformation($method)) {
+                // Unknown/custom operations cannot safely suppress file inspection.
+                return [];
+            }
+
+            $arguments = $transformation['arguments'] ?? null;
+            if (is_array($arguments)) {
+                $arguments = $this->normalizeReliableTransformationArguments(
+                    $method,
+                    $arguments,
+                    $usesSourceAssetOutput
+                );
+                if ($arguments === null) {
+                    return [];
+                }
+
+                $transformation['arguments'] = $arguments;
+            }
+
+            $transformationsForEstimation[] = $transformation;
+        }
+
+        // Pass-through routing is based on the filename and returns before an adapter loads the bytes.
+        // Use that same filename-based classification for logical HTML dimensions.
+        // Generated output retains the conservative extension/MIME conflict handling used to protect physical estimates.
+        $vectorGraphicState = $usesSourceAssetOutput
+            ? $asset->isVectorGraphic()
+            : $asset->getVectorGraphicStateForDimensionEstimation();
+        if (!$usesSourceAssetOutput && $vectorGraphicState !== false) {
+            // Generated output is reliable only when the source is positively known to be raster.
+            // Vector rasterization depends on the installed ImageMagick/delegate pipeline, and unknown/conflicting evidence can still describe vector bytes.
+            // Inspect the generated file instead.
+            return [];
+        }
+
+        $dimensionAdapter = new DimensionAdapter(
+            $sourceWidth,
+            $sourceHeight,
+            $vectorGraphicState === true,
+            $usesSourceAssetOutput
+        );
+
+        try {
+            // Reuse Processor's real argument mapping, focal-point handling and high-resolution normalization, and Adapter's actual dimension math.
+            Processor::applyTransformations(
+                $dimensionAdapter,
+                $asset,
+                $this,
+                $transformationsForEstimation,
+                !$usesSourceAssetOutput,
+                $sourceWidth,
+                $sourceHeight
+            );
+        } catch (Throwable $exception) {
+            // Malformed or unsupported runtime arguments require file inspection.
+            Logger::debug('Thumbnail dimension estimation declined: ' . $exception->getMessage());
+
+            return [];
+        }
+
+        if (!$dimensionAdapter->isReliable()
+            || $dimensionAdapter->getWidth() <= 0
+            || $dimensionAdapter->getHeight() <= 0) {
+            return [];
+        }
+
+        $estimatedWidth = $dimensionAdapter->getWidth();
+        $estimatedHeight = $dimensionAdapter->getHeight();
+
+        $highResolution = $this->getHighResolution();
+        if ($usesSourceAssetOutput && $highResolution > 1) {
+            // Pass-through output uses the source bytes, but dimensions retain the legacy logical contract.
+            // The trait truncates real dimensions before deriving the displayed size, including fractional high-resolution products.
+            $estimatedWidth = (int) ($estimatedWidth * $highResolution);
+            $estimatedHeight = (int) ($estimatedHeight * $highResolution);
+        }
+
+        return [
+            'width' => $estimatedWidth,
+            'height' => $estimatedHeight,
+        ];
+    }
+
+    private function supportsConfiguredAdapterForDimensionEstimation(): bool
+    {
+        try {
+            $adapter = Model\Asset\Image::getImageTransformInstance();
+        } catch (Throwable) {
+            return false;
+        }
+
+        return in_array($adapter::class, [GD::class, Imagick::class], true);
+    }
+
+    /**
+     * @param array<string, mixed> $arguments
+     */
+    private function normalizeReliableTransformationArguments(
+        string $method,
+        array $arguments,
+        bool $passThroughLogical = false
+    ): ?array {
+        $requiredStringArgument = match ($method) {
+            'setBackgroundColor' => 'color',
+            'setBackgroundImage', 'addOverlay', 'addOverlayFit', 'applyMask' => 'path',
+            'mirror' => 'mode',
+            default => null,
+        };
+        if ($requiredStringArgument !== null
+            && (!array_key_exists($requiredStringArgument, $arguments)
+                || !is_string($arguments[$requiredStringArgument]))) {
+            return null;
+        }
+
+        if ($method === 'roundCorners'
+            && (!array_key_exists('width', $arguments) || !array_key_exists('height', $arguments))) {
+            return null;
+        }
+
+        foreach (['width', 'height', 'x', 'y'] as $pixelArgument) {
+            if (!array_key_exists($pixelArgument, $arguments)) {
+                continue;
+            }
+
+            $normalizedValue = $this->normalizeIntegerArgument($arguments[$pixelArgument]);
+            if ($normalizedValue === null) {
+                return null;
+            }
+
+            // Normalize only the copied estimation plan.
+            // Config items, hashes and the arguments used by real thumbnail generation remain unchanged.
+            $arguments[$pixelArgument] = $normalizedValue;
+        }
+
+        if (array_key_exists('forceResize', $arguments) && !is_bool($arguments['forceResize'])) {
+            return null;
+        }
+
+        if (!$passThroughLogical
+            && $method === 'cover'
+            && !$this->hasValidCoverPositioning($arguments['positioning'] ?? 'center')) {
+            return null;
+        }
+
+        return $arguments;
+    }
+
+    private function normalizeIntegerArgument(mixed $value): ?int
+    {
+        if (is_int($value)) {
+            return $value;
+        }
+
+        if (is_float($value)) {
+            // The positive bound is exclusive because PHP_INT_MAX itself is not exactly representable as a float on 64-bit runtimes.
+            $exclusiveUpperBound = -(float) PHP_INT_MIN;
+            if (!is_finite($value)
+                || floor($value) !== $value
+                || $value < (float) PHP_INT_MIN
+                || $value >= $exclusiveUpperBound) {
+                return null;
+            }
+
+            return (int) $value;
+        }
+
+        if (!is_string($value) || preg_match('/^[+-]?\d+$/D', $value) !== 1) {
+            return null;
+        }
+
+        $normalizedValue = filter_var($value, FILTER_VALIDATE_INT);
+
+        return $normalizedValue === false ? null : $normalizedValue;
+    }
+
+    private function hasValidCoverPositioning(mixed $positioning): bool
+    {
+        if (!$positioning) {
+            return true;
+        }
+
+        if (is_string($positioning)) {
+            return in_array($positioning, [
+                'center',
+                'topleft',
+                'topright',
+                'bottomleft',
+                'bottomright',
+                'centerleft',
+                'centerright',
+                'topcenter',
+                'bottomcenter',
+            ], true);
+        }
+
+        return is_array($positioning)
+            && isset($positioning['x'], $positioning['y'])
+            && is_numeric($positioning['x'])
+            && is_numeric($positioning['y']);
     }
 
     public function getModificationDate(): ?int
@@ -729,6 +958,18 @@ final class Config extends Model\AbstractModel
     public function isRasterizeSVG(): bool
     {
         return $this->rasterizeSVG;
+    }
+
+    /**
+     * Whether the image thumbnail route returns the original SVG source instead of invoking Processor.
+     *
+     * @internal
+     */
+    public function usesOriginalSvgOutput(Model\Asset\Image $asset): bool
+    {
+        return preg_match('@\.svgz?$@', $asset->getFilename()) === 1
+            && !$this->isRasterizeSVG()
+            && $this->isSvgTargetFormatPossible();
     }
 
     public function setRasterizeSVG(bool $rasterizeSVG): void
@@ -856,15 +1097,47 @@ final class Config extends Model\AbstractModel
      */
     public function getHash(array $params = []): string
     {
-        return hash('xxh32', serialize([
+        return $this->buildHash($params, $this->isUseCropBox());
+    }
+
+    /**
+     * Hash as produced by Pimcore 12.3.0 - 12.3.11, where the crop box flag was
+     * serialized unconditionally (#18317). getHash() no longer includes the flag
+     * when the crop box is disabled, so thumbnails generated by those versions
+     * live under this hash. It is used as a lookup fallback so such thumbnails
+     * are reused instead of being regenerated.
+     *
+     * @internal
+     */
+    public function getCropBoxCompatHash(array $params = []): string
+    {
+        return $this->buildHash($params, true);
+    }
+
+    private function buildHash(array $params, bool $includeCropBox): string
+    {
+        $elements = [
             $this->getPreserveAnimation(),
             $this->getQuality(),
             $this->isPreserveColor(),
             $this->isPreserveMetaData(),
-            $this->isUseCropBox(),
-            $this->getItems(),
-            $params,
-        ]));
+        ];
+
+        // Only include the crop box flag in the hash when it is actually enabled.
+        // Adding it unconditionally would shift the serialized array indices and
+        // change the resulting hash for every thumbnail config - even those that
+        // do not use the crop box (the default) - forcing a full, unnecessary
+        // regeneration of all thumbnails on upgrade. Appending it only when true
+        // keeps the hash backward compatible for the common case while still
+        // distinguishing configs that opt into the crop box.
+        if ($includeCropBox) {
+            $elements[] = $this->isUseCropBox();
+        }
+
+        $elements[] = $this->getItems();
+        $elements[] = $params;
+
+        return hash('xxh32', serialize($elements));
     }
 
     /**

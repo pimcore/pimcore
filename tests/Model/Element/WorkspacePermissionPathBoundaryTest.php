@@ -140,6 +140,93 @@ class WorkspacePermissionPathBoundaryTest extends ModelTestCase
         $this->assertSame(1, $root->getDao()->getChildAmount($user), 'only "Carpets" is listable, not the prefix-sibling "Car"');
     }
 
+    /**
+     * getChildAmount counts a child with an allowed workspace directly on it together with a child
+     * that only has an allowed workspace deeper in its subtree, and ignores children with no grant.
+     * Exercises the de-correlated subtree lookup resolving several distinct child keys.
+     */
+    public function testObjectChildAmountCountsDirectAndDescendantGrants(): void
+    {
+        $root = $this->objectFolder('perm-grants-' . uniqid(), 1);
+        $direct = $this->objectFolder('direct', $root->getId());
+        $viaChild = $this->objectFolder('viaChild', $root->getId());
+        $deep = $this->objectFolder('deep', $viaChild->getId());
+        $this->objectFolder('none', $root->getId());
+
+        $user = $this->objectUserWithGrants([[$direct, true], [$deep, true]]);
+
+        $this->assertSame(
+            2,
+            $root->getDao()->getChildAmount([DataObject::OBJECT_TYPE_FOLDER], $user),
+            'the directly-granted child and the child with a granted descendant are both listable'
+        );
+        $this->assertTrue($root->getDao()->hasChildren([DataObject::OBJECT_TYPE_FOLDER], true, $user));
+    }
+
+    /**
+     * With an inherited list grant on the folder, every child is listable except one carrying an
+     * explicit list=0 for the user. Exercises the inherited-permission arm and the deny-on-child
+     * exclusion (empty allowed-subtree set).
+     */
+    public function testObjectChildAmountExcludesDeniedChild(): void
+    {
+        $root = $this->objectFolder('perm-deny-' . uniqid(), 1);
+        $this->objectFolder('a', $root->getId());
+        $denied = $this->objectFolder('b', $root->getId());
+        $this->objectFolder('c', $root->getId());
+
+        // list granted on the folder itself (inherited by its children), denied on "b"
+        $user = $this->objectUserWithGrants([[$root, true], [$denied, false]]);
+
+        $this->assertSame(
+            2,
+            $root->getDao()->getChildAmount([DataObject::OBJECT_TYPE_FOLDER], $user),
+            'the inherited grant lists every child except the explicitly denied one'
+        );
+    }
+
+    /**
+     * hasChildren mirrors getChildAmount > 0: true when a listable child exists, false when the
+     * user has no grant reaching this folder's subtree.
+     */
+    public function testObjectHasChildrenReflectsListPermission(): void
+    {
+        $root = $this->objectFolder('perm-has-' . uniqid(), 1);
+        $child = $this->objectFolder('child', $root->getId());
+
+        $granted = $this->objectUserWithGrants([[$child, true]]);
+        $this->assertTrue($root->getDao()->hasChildren([DataObject::OBJECT_TYPE_FOLDER], true, $granted));
+
+        $sibling = $this->objectFolder('sibling-' . uniqid(), 1);
+        $strangerGrant = $this->objectUserWithGrants([[$sibling, true]]);
+        $this->assertFalse(
+            $root->getDao()->hasChildren([DataObject::OBJECT_TYPE_FOLDER], true, $strangerGrant),
+            'a grant outside this folder must not make it report children'
+        );
+    }
+
+    /**
+     * A backslash is valid in an object key but is MySQL's default LIKE escape character. Expanding
+     * a folder whose path contains a backslash must still find the allowed workspaces in its
+     * subtree (guards the escapeLikePrefix() handling in buildChildListPermissionCondition()).
+     */
+    public function testObjectChildAmountHandlesBackslashInFolderPath(): void
+    {
+        $root = $this->objectFolder('perm-bslash-' . uniqid(), 1);
+        $backslashFolder = $this->objectFolder('a\\b', $root->getId());
+        $leaf = $this->objectFolder('leaf', $backslashFolder->getId());
+
+        // the grant sits on the descendant "leaf"; listing the backslash folder's children relies
+        // on a LIKE over its backslash-containing path
+        $user = $this->objectUserWithGrants([[$leaf, true]]);
+
+        $this->assertSame(
+            1,
+            $backslashFolder->getDao()->getChildAmount([DataObject::OBJECT_TYPE_FOLDER], $user),
+            'the allowed descendant must be found despite the backslash in the folder path'
+        );
+    }
+
     // ------------------------------------------------------------------ fixtures
 
     /**
@@ -215,6 +302,25 @@ class WorkspacePermissionPathBoundaryTest extends ModelTestCase
     {
         return $this->makeUser('objects', function (User\Role $role) use ($target): void {
             $role->setWorkspacesObject([$this->workspace(new User\Workspace\DataObject(), $target)]);
+        });
+    }
+
+    /**
+     * @param array<int, array{0: AbstractElement, 1: bool}> $grants  [target element, listAllowed]
+     */
+    private function objectUserWithGrants(array $grants): User
+    {
+        return $this->makeUser('objects', function (User\Role $role) use ($grants): void {
+            $workspaces = [];
+            foreach ($grants as [$target, $listAllowed]) {
+                $workspace = new User\Workspace\DataObject();
+                $workspace->setCid($target->getId());
+                $workspace->setCpath($target->getRealFullPath());
+                $workspace->setList($listAllowed);
+                $workspace->setView(true);
+                $workspaces[] = $workspace;
+            }
+            $role->setWorkspacesObject($workspaces);
         });
     }
 

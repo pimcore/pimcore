@@ -52,11 +52,16 @@ class Dao extends AbstractDao
     /**
      * Save notification
      *
+     * `creationDate` / `modificationDate` are stored in UTC (see migration
+     * Version20230321133700, which converted the existing rows), so they must be
+     * written in UTC too - otherwise readers parsing them as UTC shift the value
+     * by the configured `general.timezone` offset.
+     *
      * @throws Exception
      */
     public function save(): void
     {
-        $this->model->setModificationDate(date('Y-m-d H:i:s'));
+        $this->model->setModificationDate(gmdate('Y-m-d H:i:s'));
 
         if ($this->model->getId() === null || !$this->model->getCreationDate()) {
             $this->model->setCreationDate($this->model->getModificationDate());

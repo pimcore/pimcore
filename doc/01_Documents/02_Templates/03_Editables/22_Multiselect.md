@@ -11,12 +11,12 @@ The Multiselect editable generates a **multiselect** box component in editmode.
 
 ## Configuration
 
-| Name     | Type    | Description                                                                        |
-|----------|---------|------------------------------------------------------------------------------------|
-| `store`  | array   | Key/Value pairs for the available options.                                         |
-| `width`  | integer | Width of a generated block in editmode                                             |
-| `height` | integer | Height of a generated block in editmode                                            |
-| `class`  | string  | A CSS class that is added to the surrounding container of this element in editmode |
+| Name     | Type    | Description                                                                                                                         |
+|----------|---------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `store`  | array   | Key/Value pairs for the available options.                                                                                          |
+| `width`  | integer | Width of a generated block in editmode                                                                                              |
+| `height` | integer | **Deprecated since 2026.2.9, no longer has any effect.** Height of a generated block in editmode. Not interpreted by the Studio UI. |
+| `class`  | string  | A CSS class that is added to the surrounding container of this element in editmode                                                  |
 
 ## Methods
 
@@ -34,7 +34,6 @@ Also, it shows the list of chosen elements in the frontend.
 {% if editmode %}
     {{ pimcore_multiselect("categories", {
         "width": 200,
-        "height": 100,
         "store": [
             ["cars", "Cars"],
             ["motorcycles", "Motorcycles"],

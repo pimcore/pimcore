@@ -14,11 +14,14 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\Thumbnail;
 
 use Exception;
+use Pimcore;
 use Pimcore\Config as PimcoreConfig;
+use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
+use Pimcore\Model\Asset\Image\Thumbnail\Processor;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Mime\MimeTypes;
@@ -104,6 +107,15 @@ trait ImageThumbnailTrait
             $this->pathReference = [];
         }
 
+        if (empty($this->pathReference)
+            && $this->asset instanceof Image
+            && $this->config?->usesOriginalSvgOutput($this->asset)) {
+            $this->pathReference = [
+                'src' => $this->asset->getRealFullPath(),
+                'type' => 'asset',
+            ];
+        }
+
         if (empty($this->pathReference)) {
             $this->generate($deferredAllowed);
         }
@@ -171,8 +183,29 @@ trait ImageThumbnailTrait
         if (in_array($pathReference['type'], ['thumbnail', 'asset'])) {
             try {
                 $localFile = $this->getLocalFile();
-                if (null !== $localFile && isset($pathReference['storagePath']) && $config = $this->getConfig()) {
-                    $asset = $this->getAsset();
+                $asset = $this->getAsset();
+                if (null !== $localFile && $pathReference['type'] === 'asset' && $asset instanceof Image) {
+                    $dimensions = $asset->getDimensionsFromFile($localFile) ?? [];
+
+                    // Pass-through output still exposes the configuration's logical dimensions.
+                    // Reapply the zero-I/O plan to the dimensions discovered by this single physical read.
+                    $config = $this->getConfig();
+                    if (isset($dimensions['width'], $dimensions['height'])
+                        && $config
+                        && ($config->usesOriginalSvgOutput($asset)
+                            || Processor::usesOriginalAssetOutput($asset, $config))) {
+                        $estimatedDimensions = $config->getEstimatedDimensionsForSource(
+                            $asset,
+                            $dimensions['width'],
+                            $dimensions['height']
+                        );
+                        if (isset($estimatedDimensions['width'], $estimatedDimensions['height'])
+                            && $estimatedDimensions['width'] > 0
+                            && $estimatedDimensions['height'] > 0) {
+                            $dimensions = $estimatedDimensions;
+                        }
+                    }
+                } elseif (null !== $localFile && isset($pathReference['storagePath']) && $config = $this->getConfig()) {
                     $filename = basename($pathReference['storagePath']);
                     $asset->addThumbnailFileToCache(
                         $localFile,
@@ -214,13 +247,14 @@ trait ImageThumbnailTrait
                 }
             }
 
-            if (empty($dimensions) && $this->exists()) {
-                $dimensions = $this->readDimensionsFromFile();
-            }
-
             // try to calculate the final dimensions based on the thumbnail configuration
             if (empty($dimensions) && $config && $asset instanceof Image) {
-                $dimensions = $config->getEstimatedDimensions($asset);
+                $estimatedDimensions = $config->getEstimatedDimensions($asset);
+                if (isset($estimatedDimensions['width'], $estimatedDimensions['height'])
+                    && $estimatedDimensions['width'] > 0
+                    && $estimatedDimensions['height'] > 0) {
+                    $dimensions = $estimatedDimensions;
+                }
             }
 
             if (empty($dimensions)) {
@@ -287,10 +321,34 @@ trait ImageThumbnailTrait
         return pathinfo($this->getPath(), PATHINFO_EXTENSION);
     }
 
+    /**
+     * Path reference used whenever no thumbnail can be provided at all, so that the path getters
+     * always resolve to a valid (placeholder) path instead of null.
+     *
+     * @internal
+     *
+     * @return array{type: string, src: string}
+     */
+    protected function getErrorPathReference(): array
+    {
+        return [
+            'type' => 'error',
+            'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+        ];
+    }
+
     protected function convertToWebPath(array $pathReference, bool $frontend): ?string
     {
         $type = $pathReference['type'] ?? null;
         $path = $pathReference['src'] ?? null;
+
+        if ($path === null) {
+            // an incomplete path reference must not result in a null path, as the path getters are
+            // contracted to return a string - use the placeholder instead
+            $pathReference = $this->getErrorPathReference();
+            $type = $pathReference['type'];
+            $path = $pathReference['src'];
+        }
 
         if ($frontend) {
             if ($type === 'data-uri') {
@@ -303,6 +361,12 @@ trait ImageThumbnailTrait
                 $path = $prefix . urlencode_ignore_slash($path);
             } elseif ($type === 'asset') {
                 $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['source'];
+                if ($prefix !== '' && $prefix !== null) {
+                    // prefix-based URLs point straight at the storage (CDN/bucket); while a queued
+                    // folder move is pending the bytes still live under the pre-move prefix
+                    $path = Pimcore::getContainer()->get(\Pimcore\Asset\StorageQueue\FrontendPathResolver::class)
+                        ->resolvePhysicalPath($path, $this->getAsset()->getModificationDate());
+                }
                 $path = $prefix . urlencode_ignore_slash($path);
             } else {
                 $path = urlencode_ignore_slash($path);
@@ -335,10 +399,51 @@ trait ImageThumbnailTrait
             return null;
         }
 
-        $localFile = self::getLocalFileFromStream($stream);
-        @fclose($stream);
+        if (is_resource($stream)) {
+            $pathReference = $this->getPathReference();
+            $sourcePath = (string) ($pathReference['storagePath'] ?? $pathReference['src'] ?? '');
+            $sourcePath = (string) (parse_url($sourcePath, PHP_URL_PATH) ?: $sourcePath);
+            $fileExtension = pathinfo($sourcePath, PATHINFO_EXTENSION);
+            if ($fileExtension === '' && $this->getAsset() instanceof Image) {
+                $fileExtension = pathinfo($this->getAsset()->getFilename(), PATHINFO_EXTENSION);
+            }
 
-        return $localFile;
+            $metadata = stream_get_meta_data($stream);
+            $streamUri = $metadata['uri'] ?? null;
+            if (is_string($streamUri) && stream_is_local($stream) && is_file($streamUri)) {
+                $streamPath = (string) (parse_url($streamUri, PHP_URL_PATH) ?: $streamUri);
+                $streamExtension = pathinfo($streamPath, PATHINFO_EXTENSION);
+                if ($fileExtension !== '' && strcasecmp($streamExtension, $fileExtension) === 0) {
+                    fclose($stream);
+
+                    return $streamUri;
+                }
+            }
+
+            $localFile = File::getLocalTempFilePath($fileExtension ?: null);
+            $destination = fopen($localFile, 'wb', false, File::getContext());
+            if ($destination === false) {
+                fclose($stream);
+
+                throw new Exception(sprintf('Unable to create temporary file in %s', $localFile));
+            }
+
+            try {
+                if ($metadata['seekable'] && !rewind($stream)) {
+                    throw new Exception('Unable to rewind thumbnail stream before copying');
+                }
+                if (stream_copy_to_stream($stream, $destination) === false) {
+                    throw new Exception(sprintf('Unable to copy thumbnail stream to %s', $localFile));
+                }
+            } finally {
+                fclose($destination);
+                fclose($stream);
+            }
+
+            return $localFile;
+        }
+
+        return null;
     }
 
     public function exists(): bool

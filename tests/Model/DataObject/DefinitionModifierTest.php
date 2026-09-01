@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\DefinitionFileCache;
 use Pimcore\Model\DataObject\DefinitionModifier;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use ReflectionClass;
@@ -128,6 +129,9 @@ class DefinitionModifierTest extends ModelTestCase
     {
         if ($collectGarbage) {
             Pimcore::collectGarbage();
+            // discard unsaved in-memory modifications of the class definition, so the next
+            // fetch re-includes the pristine definition file (see DefinitionFileCache)
+            DefinitionFileCache::clear();
         }
 
         if ($type === self::_CLASS) {

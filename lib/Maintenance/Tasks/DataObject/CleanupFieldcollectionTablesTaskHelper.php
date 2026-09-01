@@ -14,18 +14,13 @@ declare(strict_types=1);
 namespace Pimcore\Maintenance\Tasks\DataObject;
 
 use Doctrine\DBAL\Connection;
-use Psr\Log\LoggerInterface;
 
 /**
  * @internal
  */
 class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterface
 {
-    private const PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY =
-        PIMCORE_CLASS_DEFINITION_DIRECTORY . '/fieldcollections';
-
     public function __construct(
-        private LoggerInterface $logger,
         private DataObjectTaskHelperInterface $helper,
         private Connection $db
     ) {
@@ -33,60 +28,56 @@ class CleanupFieldcollectionTablesTaskHelper implements ConcreteTaskHelperInterf
 
     public function cleanupCollectionTable(): void
     {
-        $collectionNames =
-            $this->helper->getCollectionNames(self::PIMCORE_FIELDCOLLECTION_CLASS_DIRECTORY);
-
-        if (empty($collectionNames)) {
+        // If the class definition store itself is unavailable (e.g. a broken/incomplete deployment)
+        // we must not treat any table as orphaned - otherwise live tables would be dropped.
+        if (!is_dir(PIMCORE_CLASS_DEFINITION_DIRECTORY)) {
             return;
         }
 
-        $tasks = [
-            [
-                'localized' => false,
-                'prefix' => 'object_collection_',
-                'pattern' => "object\_collection\_%",
-            ],
-        ];
-        foreach ($tasks as $task) {
-            $prefix = $task['prefix'];
-            $pattern = $task['pattern'];
-            $tableNames = $this->db->fetchAllAssociative("SHOW TABLES LIKE '" . $pattern . "'");
+        // Authoritative ownership list, loaded from all supported definition directories. May be
+        // empty when the last fieldcollection definition was removed - that is a valid state and we
+        // still scan, so the now-orphaned tables get cleaned up.
+        $collectionNames = $this->helper->getFieldcollectionCollectionNames();
 
-            foreach ($tableNames as $tableName) {
-                $tableName = current($tableName);
+        $prefix = 'object_collection_';
+        $pattern = 'object\_collection\_%';
+        $tableNames = $this->db->fetchAllAssociative("SHOW TABLES LIKE '" . $pattern . "'");
 
-                $fieldDescriptor = substr($tableName, strlen($prefix));
-                $idx = strpos($fieldDescriptor, '_');
-                $fcType = substr($fieldDescriptor, 0, $idx);
-                $fcType = $collectionNames[strtolower($fcType)] ?? $fcType;
+        foreach ($tableNames as $tableName) {
+            $tableName = current($tableName);
 
-                if (!$this->checkIfFcExists($fcType, $tableName)) {
-                    continue;
+            $fieldDescriptor = substr($tableName, strlen($prefix));
+
+            // Underscores make the split between fieldcollection key and class id ambiguous, so
+            // several live keys can claim this table. On top of that, a "localized_" remainder may
+            // be the localized-table marker or simply the start of a class id (class ids may
+            // contain underscores) - both readings compete. Ownership is resolved without touching
+            // any data: a parse owns the table when its class id resolves to a live class.
+            $liveParses = [];
+            foreach ($this->helper->matchCollectionKeys($fieldDescriptor, $collectionNames) as $fcType) {
+                $remainder = substr($fieldDescriptor, strlen($fcType) + 1);
+
+                if ($this->helper->classExists($remainder)) {
+                    $liveParses[] = ['classId' => $remainder, 'isLocalized' => false];
                 }
 
-                $classId = substr($fieldDescriptor, $idx + 1);
-
-                $isLocalized = false;
-
-                if (str_starts_with($classId, 'localized_')) {
-                    $isLocalized = true;
-                    $classId = substr($classId, strlen('localized_'));
+                if (str_starts_with($remainder, 'localized_')) {
+                    $classId = substr($remainder, strlen('localized_'));
+                    if ($this->helper->classExists($classId)) {
+                        $liveParses[] = ['classId' => $classId, 'isLocalized' => true];
+                    }
                 }
-
-                $this->helper->cleanupTable($tableName, $classId, $isLocalized);
             }
+
+            if ($liveParses === []) {
+                // No parse resolves to a live class -> orphan, drop it.
+                $this->helper->dropOrphanedTable($tableName);
+            } elseif (count($liveParses) === 1) {
+                $this->helper->cleanupTable($tableName, $liveParses[0]['classId'], $liveParses[0]['isLocalized']);
+            }
+            // Several live parses: the table name is genuinely ambiguous between multiple live
+            // owners. Keep the table and skip the row cleanup - cleaning against the wrong owner's
+            // field definitions would delete live rows.
         }
-    }
-
-    private function checkIfFcExists(string $fcType, string $tableName): bool
-    {
-        $fcDef = \Pimcore\Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
-        if (!$fcDef) {
-            $this->logger->error("Fieldcollection '" . $fcType . "' not found. Please check table " . $tableName);
-
-            return false;
-        }
-
-        return true;
     }
 }

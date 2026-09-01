@@ -3,6 +3,10 @@ services:
         autowire: true
         autoconfigure: true
 
+    # NOTE: the telemetry contributor interfaces are autoconfigured container-wide in
+    # PimcoreCoreExtension, not with `_instanceof` here - `_instanceof` would only tag services
+    # defined in this file, leaving collectors shipped by other bundles undiscovered.
+
     #
     # SECURITY
     #
@@ -146,6 +150,62 @@ services:
         arguments:
             $locator: !tagged_locator { tag: flysystem.storage }
 
+    Pimcore\Asset\StorageQueue\StorageOperationQueueRepository:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+
+    Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface:
+        alias: Pimcore\Asset\StorageQueue\StorageOperationQueueRepository
+
+    Pimcore\Asset\StorageQueue\FrontendPathResolver:
+        public: true
+        arguments:
+            - '@Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface'
+            - '%pimcore.assets.storage_operation_queue.enabled%'
+
+    # Static wiring: the queue-aware adapters always decorate the flysystem adapters; the runtime
+    # `enabled` flag (last argument) makes every public method a pass-through when the feature is
+    # off, so a disabled install never touches the storage_operation_queue repository/table.
+    pimcore.asset.storage_queue.adapter.asset:
+        class: Pimcore\Asset\StorageQueue\QueueAwareStorageAdapter
+        decorates: flysystem.adapter.pimcore.asset.storage
+        arguments:
+            - '@.inner'
+            - '@Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface'
+            - 'asset'
+            - false
+            - '%pimcore.assets.storage_operation_queue.enabled%'
+
+    pimcore.asset.storage_queue.adapter.thumbnail:
+        class: Pimcore\Asset\StorageQueue\QueueAwareStorageAdapter
+        decorates: flysystem.adapter.pimcore.thumbnail.storage
+        arguments:
+            - '@.inner'
+            - '@Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface'
+            - 'thumbnail'
+            - true
+            - '%pimcore.assets.storage_operation_queue.enabled%'
+
+    pimcore.asset.storage_queue.adapter.asset_cache:
+        class: Pimcore\Asset\StorageQueue\QueueAwareStorageAdapter
+        decorates: flysystem.adapter.pimcore.asset_cache.storage
+        arguments:
+            - '@.inner'
+            - '@Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface'
+            - 'asset_cache'
+            - true
+            - '%pimcore.assets.storage_operation_queue.enabled%'
+
+    pimcore.asset.storage_queue.processor:
+        class: Pimcore\Asset\StorageQueue\StorageOperationQueueProcessor
+        arguments:
+            - !service_locator
+                asset: '@pimcore.asset.storage_queue.adapter.asset.inner'
+                thumbnail: '@pimcore.asset.storage_queue.adapter.thumbnail.inner'
+                asset_cache: '@pimcore.asset.storage_queue.adapter.asset_cache.inner'
+            - '@Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface'
+            - '@logger'
+
     Pimcore\Image\Adapter\Imagick:
         shared: false
         public: true
@@ -169,6 +229,16 @@ services:
         alias: Pimcore\Model\Version\CoauthorContext
 
     Pimcore\Model\Version\CoauthorContext: ~
+
+    # request-scoped memoization of element permission lookups (DAO result only), cleared per
+    # request and per messenger message via the kernel.reset tag.
+    # public, because it is consumed from the AbstractElement model via the container — like the
+    # workflow Manager and the event dispatcher already are — and models are not container-managed
+    # so they cannot receive it through constructor injection.
+    Pimcore\Model\Element\PermissionCache:
+        public: true
+        tags:
+            - { name: kernel.reset, method: reset }
     #
     # SECURITY
     #
@@ -215,6 +285,102 @@ services:
         arguments:
             $instanceIdentifier: '%pimcore.product_registration.instance_identifier%'
             $config: '%pimcore.config%'
+
+    #
+    # TELEMETRY (collected -> durable spool -> product-key-encrypted -> first-party relay; content-never)
+    #
+    Pimcore\Telemetry\TelemetryInterface:
+        class: Pimcore\Telemetry\Telemetry
+        arguments:
+            $instanceIdentifier: '%pimcore.product_registration.instance_identifier%'
+            $productKey: '%pimcore.product_registration.product_key%'
+            $spool: '@Pimcore\Telemetry\Spool\TelemetrySpool'
+            # deployment discriminators for the group key; the domain is HMAC'd, never sent
+            $environment: '%kernel.environment%'
+            $mainDomain: '%pimcore.telemetry.main_domain%'
+
+    # authenticated encryption of the batch envelope, keyed by the product key (mirrored on the relay)
+    Pimcore\Telemetry\Crypto\EnvelopeCipher: ~
+
+    Pimcore\Telemetry\Spool\TelemetrySpool:
+        arguments:
+            $cap: '%pimcore.telemetry.spool.cap%'
+            $ttlDays: '%pimcore.telemetry.spool.ttl_days%'
+            $leaseSeconds: '%pimcore.telemetry.spool.lease_seconds%'
+
+    # drain seam: claim -> encrypt with the product key -> hand to a drainer (maintenance job / Studio UI)
+    Pimcore\Telemetry\Spool\TelemetryOutboxInterface:
+        class: Pimcore\Telemetry\Spool\TelemetryOutboxService
+        arguments:
+            $spool: '@Pimcore\Telemetry\Spool\TelemetrySpool'
+            $instanceIdentifier: '%pimcore.product_registration.instance_identifier%'
+            $productKey: '%pimcore.product_registration.product_key%'
+
+    # direct HTTP delivery to the relay, used by the maintenance drain task
+    Pimcore\Telemetry\Relay\RelayClientInterface:
+        class: Pimcore\Telemetry\Relay\RelayClient
+        arguments:
+            $endpoint: '%pimcore.telemetry.relay_endpoint%'
+
+    # framework-level content-never guard (event-name taxonomy + scalar-only properties)
+    Pimcore\Telemetry\EventSanitizer: ~
+
+
+    # time-boxes every snapshot collector query so a full scan on a huge table (path-depth, GROUP BY)
+    # aborts instead of stalling the maintenance run; collectors autowire this in place of Connection
+    Pimcore\Telemetry\Snapshot\SnapshotQueryRunner:
+        arguments:
+            $timeoutSeconds: '%pimcore.telemetry.snapshot_query_timeout_seconds%'
+
+    # element statistics (counts-by-type, tree depth, fan-out) behind an interface so a bundle that
+    # owns a search index (Studio via the Generic Data Index) can decorate it with index aggregations;
+    # the SQL default is always available and is the runtime fallback.
+    Pimcore\Telemetry\Snapshot\Statistics\ElementStatisticsProviderInterface:
+        class: Pimcore\Telemetry\Snapshot\Statistics\SqlElementStatisticsProvider
+
+    Pimcore\Telemetry\Snapshot\CoreSnapshotCollector:
+        arguments:
+            $environment: '%kernel.environment%'
+            $debugMode: '%kernel.debug%'
+            $timezone: '%pimcore.telemetry.timezone%'
+
+    # seats, permission-model shape, database footprint, schema currency and workflow reach - the
+    # install-scale facts the legacy StatisticsManager carried in its `tables` payload, without the
+    # per-class table names that made that payload unsendable
+    Pimcore\Telemetry\Snapshot\PlatformCollector: ~
+
+    # evidence for EM question #1 - which pillars (DAM/PIM/MDM/DXP/Commerce) are actually used
+    Pimcore\Telemetry\Snapshot\PillarUsageCollector: ~
+
+    Pimcore\Telemetry\Snapshot\FieldTreeAnalyzer: ~
+
+    Pimcore\Telemetry\Snapshot\DataModelComplexityCollector: ~
+
+    Pimcore\Telemetry\Snapshot\CatalogShapeCollector: ~
+
+    # active-bundle list, resolved once per snapshot (enumerating them costs ~1 statement per bundle)
+    Pimcore\Telemetry\Snapshot\ActiveBundles: ~
+
+    # reads the session statement counter so the snapshot can report its own DB cost as meta.*
+    Pimcore\Telemetry\Snapshot\StatementCounter: ~
+
+    Pimcore\Telemetry\Snapshot\SnapshotBuilder:
+        arguments:
+            $collectors: !tagged_iterator pimcore.telemetry.snapshot_collector
+            $statementCounter: '@Pimcore\Telemetry\Snapshot\StatementCounter'
+
+    # last-snapshot marker (SettingsStore-backed) used to throttle snapshot production
+    Pimcore\Telemetry\Snapshot\TelemetrySnapshotStateInterface:
+        class: Pimcore\Telemetry\Snapshot\SettingsStoreSnapshotState
+
+    # bundle usage: is a bundle actually USED (not just installed)? Aggregates every tagged
+    # BundleUsageProviderInterface into usage.<bundleKey>. Other bundles just register a provider.
+    Pimcore\Telemetry\Usage\BundleUsageCollector:
+        arguments:
+            $providers: !tagged_iterator pimcore.telemetry.bundle_usage_provider
+
+    # reference provider (core capability): are any workflows configured?
+    Pimcore\Telemetry\Usage\WorkflowUsageProvider: ~
 
     # Doctrine schema filter to only include managed tables
     Pimcore\Db\ManagedTablesOnlyFilter.default:
