@@ -23,11 +23,14 @@ use Pimcore\Model\Element\ValidationException;
 class Helper
 {
     /**
+     * Inserts a row, or updates it if a row with the same unique/primary key already exists.
+     *
+     * This is a single INSERT ... ON DUPLICATE KEY UPDATE statement, so the row is sent to the
+     * database only once, no matter which of the two paths it takes.
      *
      * @param array<string, mixed> $data The data to be inserted or updated into the database table.
      * Array key corresponds to the database column, array value to the actual value.
-     * @param string[] $keys If the table needs to be updated, the columns listed in this parameter will be used as criteria/condition for the where clause.
-     * Typically, these are the primary key columns.
+     * @param string[] $keys The columns identifying the row - typically the primary key columns.
      * The values for the specified keys are read from the $data parameter.
      *
      * @return int|string|null last insert id or null if the insert was not successful or it was an update.
@@ -39,24 +42,57 @@ class Helper
         array $keys,
         bool $quoteIdentifiers = true
     ): int|string|null {
-        try {
-            $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
+        $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
+
+        if ($data === []) {
             $connection->insert($table, $data);
 
-            try {
-                return $connection->lastInsertId();
-            } catch (DriverException) {
-                return null;
-            }
-        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $exception) {
-            $critera = [];
-            foreach ($keys as $key) {
-                $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
-                $critera[$key] = $data[$key] ?? throw new LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
-            }
+            return self::lastInsertId($connection);
+        }
 
-            $connection->update($table, $data, $critera);
+        $columns = [];
+        $placeholders = [];
+        $assignments = [];
 
+        foreach (array_keys($data) as $column) {
+            $columns[] = $column;
+            $placeholders[] = '?';
+            // VALUES() and not the row alias introduced with MySQL 8.0.20, which MariaDB does not know
+            $assignments[] = $column . ' = VALUES(' . $column . ')';
+        }
+
+        $sql = 'INSERT INTO ' . $table
+            . ' (' . implode(', ', $columns) . ')'
+            . ' VALUES (' . implode(', ', $placeholders) . ')'
+            . ' ON DUPLICATE KEY UPDATE ' . implode(', ', $assignments);
+
+        // MySQL/MariaDB report the affected rows of INSERT ... ON DUPLICATE KEY UPDATE as 1 for an
+        // inserted row, and as 2 (or 0, if the stored values already matched) for an updated one.
+        $affectedRows = (int) $connection->executeStatement($sql, array_values($data));
+
+        if ($affectedRows === 1) {
+            return self::lastInsertId($connection);
+        }
+
+        // The row already existed, so this is the update path, which never returned an id. $keys is
+        // not needed to address the row anymore, but it is still validated exactly where the
+        // previous implementation built its WHERE clause from it, so that the same misuse is
+        // reported under the same condition.
+        foreach ($keys as $key) {
+            $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
+            if (($data[$key] ?? null) === null) {
+                throw new LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
+            }
+        }
+
+        return null;
+    }
+
+    private static function lastInsertId(Connection $connection): int|string|null
+    {
+        try {
+            return $connection->lastInsertId();
+        } catch (DriverException) {
             return null;
         }
     }
