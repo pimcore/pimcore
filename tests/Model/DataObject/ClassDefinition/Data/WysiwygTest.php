@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Cache\RuntimeCache;
-use Pimcore\Model\Document;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Wysiwyg;
+use Pimcore\Model\Document;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
 class WysiwygTest extends ModelTestCase
