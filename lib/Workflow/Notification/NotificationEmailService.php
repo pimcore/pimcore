@@ -61,7 +61,55 @@ class NotificationEmailService extends AbstractNotificationService
         WorkflowInterface $workflow,
         string $subjectType,
         ElementInterface $subject,
-        Transition|GlobalAction $transition,
+        Transition $transition,
+        string $mailType,
+        string $mailPath
+    ): void {
+        $this->sendEmailNotification(
+            $users,
+            $roles,
+            $workflow,
+            $subjectType,
+            $subject,
+            $transition->getLabel(),
+            $mailType,
+            $mailPath
+        );
+    }
+
+    /**
+     * Sends a Mail for a global action. A global action is not a transition, so it gets its own
+     * entry point instead of widening the one above - both delegate to the same implementation.
+     */
+    public function sendGlobalActionEmailNotification(
+        array $users,
+        array $roles,
+        WorkflowInterface $workflow,
+        string $subjectType,
+        ElementInterface $subject,
+        GlobalAction $globalAction,
+        string $mailType,
+        string $mailPath
+    ): void {
+        $this->sendEmailNotification(
+            $users,
+            $roles,
+            $workflow,
+            $subjectType,
+            $subject,
+            $globalAction->getLabel(),
+            $mailType,
+            $mailPath
+        );
+    }
+
+    private function sendEmailNotification(
+        array $users,
+        array $roles,
+        WorkflowInterface $workflow,
+        string $subjectType,
+        ElementInterface $subject,
+        string $actionLabel,
         string $mailType,
         string $mailPath
     ): void {
@@ -100,7 +148,7 @@ class NotificationEmailService extends AbstractNotificationService
                             $subjectType,
                             $subject,
                             $workflow,
-                            $transition->getLabel(),
+                            $actionLabel,
                             $language,
                             $localizedMailPath,
                             $deeplink
@@ -115,7 +163,7 @@ class NotificationEmailService extends AbstractNotificationService
                             $subjectType,
                             $subject,
                             $workflow,
-                            $transition->getLabel(),
+                            $actionLabel,
                             $language,
                             $localizedMailPath,
                             $deeplink

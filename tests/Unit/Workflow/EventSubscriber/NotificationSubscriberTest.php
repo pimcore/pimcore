@@ -24,7 +24,10 @@ use Pimcore\Workflow\GlobalAction;
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\Notification\NotificationEmailService;
 use Pimcore\Workflow\Notification\PimcoreNotificationService;
+use Pimcore\Workflow\Transition;
 use stdClass;
+use Symfony\Component\Workflow\Event\Event;
+use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -50,7 +53,7 @@ final class NotificationSubscriberTest extends TestCase
 
         $this->mailService
             ->expects($this->once())
-            ->method('sendWorkflowEmailNotification')
+            ->method('sendGlobalActionEmailNotification')
             ->with(
                 ['admin'],
                 ['projectmanagers'],
@@ -64,7 +67,7 @@ final class NotificationSubscriberTest extends TestCase
 
         $this->pimcoreNotificationService
             ->expects($this->once())
-            ->method('sendPimcoreNotification')
+            ->method('sendGlobalActionPimcoreNotification')
             ->with(
                 ['admin'],
                 ['projectmanagers'],
@@ -86,6 +89,51 @@ final class NotificationSubscriberTest extends TestCase
                 'mailPath' => 'some/path.html.twig',
             ],
         ]));
+    }
+
+    /**
+     * A transition must keep going through the original, unchanged service methods - those are
+     * public and overridable, so the global-action support must not reroute them.
+     */
+    public function testTransitionStillUsesTheTransitionEntryPoints(): void
+    {
+        $workflow = $this->createStub(WorkflowInterface::class);
+        $workflow->method('getName')->willReturn('myWorkflow');
+
+        $workflowManager = $this->createStub(Manager::class);
+        $workflowManager->method('getWorkflowByName')->willReturn($workflow);
+
+        $this->createSubscriber($workflowManager);
+
+        $this->mailService
+            ->expects($this->once())
+            ->method('sendWorkflowEmailNotification')
+            ->with(
+                ['admin'],
+                [],
+                $this->anything(),
+                'Product',
+                $this->anything(),
+                $this->isInstanceOf(Transition::class),
+                NotificationSubscriber::MAIL_TYPE_TEMPLATE,
+                'some/path.html.twig'
+            );
+        $this->mailService->expects($this->never())->method('sendGlobalActionEmailNotification');
+        $this->pimcoreNotificationService
+            ->expects($this->never())
+            ->method('sendGlobalActionPimcoreNotification');
+
+        $subject = new Concrete();
+        $subject->setClassName('Product');
+
+        $transition = new Transition('go', 'start', 'end', [
+            'label' => 'My transition',
+            'notificationSettings' => [$this->mailNotificationSetting()],
+        ]);
+
+        $this->subscriber->onWorkflowCompleted(
+            new Event($subject, new Marking(['end' => 1]), $transition, $workflow)
+        );
     }
 
     public function testGlobalActionWithoutNotificationSettingsDoesNotNotify(): void
@@ -116,7 +164,7 @@ final class NotificationSubscriberTest extends TestCase
         );
     }
 
-    private function createSubscriber(): void
+    private function createSubscriber(?Manager $workflowManager = null): void
     {
         $this->mailService = $this->createMock(NotificationEmailService::class);
         $this->pimcoreNotificationService = $this->createMock(PimcoreNotificationService::class);
@@ -126,14 +174,14 @@ final class NotificationSubscriberTest extends TestCase
             $this->pimcoreNotificationService,
             $this->createStub(TranslatorInterface::class),
             $this->createStub(ExpressionService::class),
-            $this->createStub(Manager::class)
+            $workflowManager ?? $this->createStub(Manager::class)
         );
     }
 
     private function expectNoNotifications(): void
     {
-        $this->mailService->expects($this->never())->method('sendWorkflowEmailNotification');
-        $this->pimcoreNotificationService->expects($this->never())->method('sendPimcoreNotification');
+        $this->mailService->expects($this->never())->method('sendGlobalActionEmailNotification');
+        $this->pimcoreNotificationService->expects($this->never())->method('sendGlobalActionPimcoreNotification');
     }
 
     /**

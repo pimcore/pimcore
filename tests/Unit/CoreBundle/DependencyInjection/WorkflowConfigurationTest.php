@@ -117,6 +117,46 @@ final class WorkflowConfigurationTest extends TestCase
         );
     }
 
+    /**
+     * Transitions and global actions share one `notificationSettings` node definition, so the two
+     * must normalise identically - defaults included.
+     */
+    public function testTransitionAndGlobalActionNotificationSettingsAreIdentical(): void
+    {
+        $notificationSettings = [
+            [
+                'notifyUsers' => ['admin'],
+                'notifyRoles' => ['projectmanagers'],
+            ],
+        ];
+
+        $config = (new Processor())->processConfiguration(new Configuration(), [[
+            'workflows' => [
+                'myWorkflow' => [
+                    'supports' => ['Pimcore\Model\DataObject\Concrete'],
+                    'places' => ['open' => []],
+                    'transitions' => [
+                        'close' => [
+                            'from' => 'open',
+                            'to' => 'open',
+                            'options' => ['notificationSettings' => $notificationSettings],
+                        ],
+                    ],
+                    'globalActions' => [
+                        'myGlobalAction' => ['notificationSettings' => $notificationSettings],
+                    ],
+                ],
+            ],
+        ]]);
+
+        $workflow = $config['workflows']['myWorkflow'];
+
+        $this->assertSame(
+            $workflow['transitions']['close']['options']['notificationSettings'],
+            $workflow['globalActions']['myGlobalAction']['notificationSettings']
+        );
+    }
+
     public function testGlobalActionAcceptsThePimcoreNotificationChannel(): void
     {
         $globalAction = $this->processGlobalAction([

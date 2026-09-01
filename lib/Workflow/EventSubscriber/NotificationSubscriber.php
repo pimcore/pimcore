@@ -103,11 +103,11 @@ class NotificationSubscriber implements EventSubscriberInterface
     }
 
     private function handleNotifications(
-        Transition|GlobalAction $transition,
+        Transition|GlobalAction $action,
         WorkflowInterface $workflow,
         ElementInterface $subject
     ): void {
-        $notificationSettings = $transition->getNotificationSettings();
+        $notificationSettings = $action->getNotificationSettings();
         foreach ($notificationSettings as $notificationSetting) {
             $condition = $notificationSetting['condition'] ?? null;
 
@@ -117,7 +117,7 @@ class NotificationSubscriber implements EventSubscriberInterface
 
                 if (in_array(self::NOTIFICATION_CHANNEL_MAIL, $notificationSetting['channelType'])) {
                     $this->handleNotifyPostWorkflowEmail(
-                        $transition,
+                        $action,
                         $workflow,
                         $subject,
                         $notificationSetting['mailType'],
@@ -132,7 +132,7 @@ class NotificationSubscriber implements EventSubscriberInterface
                     $notificationSetting['channelType']
                 )) {
                     $this->handleNotifyPostWorkflowPimcoreNotification(
-                        $transition,
+                        $action,
                         $workflow,
                         $subject,
                         $notifyUsers,
@@ -144,7 +144,7 @@ class NotificationSubscriber implements EventSubscriberInterface
     }
 
     private function handleNotifyPostWorkflowEmail(
-        Transition|GlobalAction $transition,
+        Transition|GlobalAction $action,
         WorkflowInterface $workflow,
         ElementInterface $subject,
         string $mailType,
@@ -155,33 +155,62 @@ class NotificationSubscriber implements EventSubscriberInterface
         //notify users
         $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getElementType($subject));
 
+        if ($action instanceof GlobalAction) {
+            $this->mailService->sendGlobalActionEmailNotification(
+                $notifyUsers,
+                $notifyRoles,
+                $workflow,
+                $subjectType,
+                $subject,
+                $action,
+                $mailType,
+                $mailPath
+            );
+
+            return;
+        }
+
         $this->mailService->sendWorkflowEmailNotification(
             $notifyUsers,
             $notifyRoles,
             $workflow,
             $subjectType,
             $subject,
-            $transition,
+            $action,
             $mailType,
             $mailPath
         );
     }
 
     private function handleNotifyPostWorkflowPimcoreNotification(
-        Transition|GlobalAction $transition,
+        Transition|GlobalAction $action,
         WorkflowInterface $workflow,
         ElementInterface $subject,
         array $notifyUsers,
         array $notifyRoles
     ): void {
         $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getElementType($subject));
+
+        if ($action instanceof GlobalAction) {
+            $this->pimcoreNotificationService->sendGlobalActionPimcoreNotification(
+                $notifyUsers,
+                $notifyRoles,
+                $workflow,
+                $subjectType,
+                $subject,
+                $action
+            );
+
+            return;
+        }
+
         $this->pimcoreNotificationService->sendPimcoreNotification(
             $notifyUsers,
             $notifyRoles,
             $workflow,
             $subjectType,
             $subject,
-            $transition
+            $action
         );
     }
 
