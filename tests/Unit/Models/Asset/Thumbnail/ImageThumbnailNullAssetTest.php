@@ -12,7 +12,7 @@ declare(strict_types=1);
  *  @license    Pimcore Open Core License (POCL)
  */
 
-namespace Pimcore\Tests\Unit\Model\Asset\Thumbnail;
+namespace Pimcore\Tests\Unit\Models\Asset\Thumbnail;
 
 use Pimcore\Model\Asset\Document\ImageThumbnail as DocumentImageThumbnail;
 use Pimcore\Model\Asset\Video\ImageThumbnail as VideoImageThumbnail;
