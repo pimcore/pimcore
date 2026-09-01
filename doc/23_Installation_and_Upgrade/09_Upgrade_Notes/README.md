@@ -94,6 +94,15 @@ Pass an explicit value: `false` to forbid object deserialization (the safe choic
 or an array of allowed class names when a trusted stored object graph must be reconstructed.
 The default changes from `true` to `false` (object deserialization disabled) in Pimcore 2027.1.
 
+### [Custom Reports]
+- Added a `pimcore_custom_reports.enabled_adapters` config option to enable/disable individual Custom Report data-source adapters (e.g. the built-in `sql` adapter) per project. Adapters not listed default to enabled; a disabled adapter is removed from the shared `pimcore.custom_report.adapter.factories` service locator, so it becomes unavailable to every consumer (the classic admin controller and the Studio backend bundle alike).
+    ```yaml
+    pimcore_custom_reports:
+        enabled_adapters:
+            sql: false
+    ```
+  We recommend disabling the built-in `sql` adapter unless specifically needed: any user with the `reports_config` permission can otherwise define arbitrary `SELECT` statements against the application's database, including tables never intended to be exposed. See [Custom Reports](../../06_Reporting/01_Custom_Reports.md) for details.
+
 ## Pimcore 12.3.10
 
 ### Deprecations
