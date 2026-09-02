@@ -74,7 +74,7 @@ class EditableHandler implements LoggerAwareInterface
     protected array $brickTemplateCache = [];
 
     /**
-     * @var array<string, string> areabrick labels resolved during this request
+     * @var array<string, array<string, string>> areabrick labels resolved during this request, per locale
      */
     private array $translatedAreabrickLabels = [];
 
@@ -188,8 +188,10 @@ class EditableHandler implements LoggerAwareInterface
         }
 
         // translating a label unknown to the Studio domain puts it into the in-memory catalogue as its own
-        // translation, so a label is resolved only once per request to keep repeated occurrences consistent
-        return $this->translatedAreabrickLabels[$label] ??= $this->resolveAreabrickLabel($label);
+        // translation, so a label is resolved only once per locale to keep repeated occurrences consistent
+        $locale = $this->translator instanceof LocaleAwareInterface ? $this->translator->getLocale() : '';
+
+        return $this->translatedAreabrickLabels[$locale][$label] ??= $this->resolveAreabrickLabel($label);
     }
 
     private function resolveAreabrickLabel(string $label): string

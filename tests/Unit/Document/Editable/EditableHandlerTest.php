@@ -202,6 +202,27 @@ final class EditableHandlerTest extends TestCase
         self::assertSame('Teaser (messages) (via trans)', $areas['teaser']['description']);
     }
 
+    public function testResolvedLabelsAreCachedPerLocale(): void
+    {
+        $this->markStudioDomainAsRegistered(true);
+
+        $this->catalogue('de')->set('Teaser', 'Teaser (de)', Translation::DOMAIN_DEFAULT);
+        $this->catalogue('en')->set('Teaser', 'Teaser (en)', Translation::DOMAIN_DEFAULT);
+
+        $this->translator->method('trans')->willReturnCallback($this->translateFromCatalogues(...));
+
+        // the handler is a shared service and the translator locale is switched while rendering
+        // documents of different languages, so a resolved label must not leak into another locale
+        $handler = $this->createHandler();
+        $this->locale = 'de';
+        $german = $handler->getAvailableAreablockAreas(new Areablock(), []);
+        $this->locale = 'en';
+        $english = $handler->getAvailableAreablockAreas(new Areablock(), []);
+
+        self::assertSame('Teaser (de) (via trans)', $german['teaser']['name']);
+        self::assertSame('Teaser (en) (via trans)', $english['teaser']['name']);
+    }
+
     public function testLabelWithSurroundingWhitespaceIsLookedUpTrimmed(): void
     {
         $this->markStudioDomainAsRegistered(true);
