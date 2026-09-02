@@ -68,7 +68,7 @@ class AdvancedManyToManyAssetRelationEditModeTest extends ModelTestCase
         $fd->setColumns([['position' => 1, 'key' => 'meta1', 'type' => 'text', 'label' => 'Meta 1']]);
 
         $result = $fd->getDataFromEditmode([
-            ['id' => $asset->getId(), 'meta1' => 'from-edit'],
+            ['id' => $asset->getId(), 'type' => 'asset', 'meta1' => 'from-edit'],
         ]);
 
         $this->assertCount(1, $result);
