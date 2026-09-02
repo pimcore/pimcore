@@ -90,6 +90,29 @@ class FolderStorageMoveTest extends Unit
         self::assertFalse($storage->directoryExists('/old-folder'));
     }
 
+    public function testThumbnailFallbackOfANonFolderAssetRelocatesTheThumbnailDirectory(): void
+    {
+        // For a non-folder asset the thumbnail directory (".../<id>") differs from the
+        // asset's own old path (".../<filename>") - the fallback must operate on the
+        // thumbnail paths, not on the asset path.
+        $decorator = new NonRenamingAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir));
+        $storage = new Filesystem($decorator);
+        $storage->write('old-dir/123/image-thumb__123__preview/img.jpg', 'thumb-bytes');
+
+        $image = new Asset\Image();
+        $image->setPath('/new-dir/');
+        $image->setFilename('img.jpg');
+
+        $method = new ReflectionMethod(Asset::class, 'moveThumbnailDirectoryOnStorage');
+        $method->invoke($image, $storage, '/old-dir/123', '/new-dir/123');
+
+        self::assertTrue(
+            $storage->fileExists('/new-dir/123/image-thumb__123__preview/img.jpg'),
+            'thumbnails must be relocated to the new thumbnail directory'
+        );
+        self::assertFalse($storage->directoryExists('/old-dir/123'), 'nothing may stay at the old thumbnail directory');
+    }
+
     private function moveDirectoryOnStorage(Filesystem $storage, string $oldPath, string $newFilename): void
     {
         $folder = new Asset\Folder();

@@ -306,8 +306,10 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
         // A path that answers fileExists() can still be a directory: marker-materializing
         // backends expose an explicitly created directory as a zero-byte object at its bare
         // key, and moving only that object would silently strand the whole subtree - such a
-        // path must take the directory branch below.
-        if ($this->inner->fileExists($resolvedSource) && !$this->inner->directoryExists($source)) {
+        // path must take the directory branch below. The check uses the resolved directory
+        // view (own directoryExists()), so a source that exists purely through a pending
+        // move mapping repoints instead of moving its relocated marker as a single file.
+        if ($this->inner->fileExists($resolvedSource) && !$this->directoryExists($source)) {
             // single file: normal move, source possibly at its legacy location
             $this->materializeShadowedSource($destination);
             $this->inner->move($resolvedSource, $destination, $config);

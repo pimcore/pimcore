@@ -469,6 +469,27 @@ class QueueAwareStorageAdapterTest extends Unit
         $this->assertSame('bytes', $adapter->read('Archive/Campaigns/img.jpg'));
     }
 
+    public function testReMoveOfPendingSubtreeOnMarkerBackendRepointsInsteadOfMovingTheMarker(): void
+    {
+        // After a first queued move A -> B on a marker backend, the marker object sits
+        // physically at B while the children still sit under A. A second move B -> C must
+        // repoint the pending row (the mapped-directory branch), not treat B as a single
+        // file just because the relocated marker answers fileExists().
+        $marker = new MarkerSemanticsAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir));
+        $adapter = new QueueAwareStorageAdapter($marker, $this->repository, 'asset');
+        $adapter->write('A/img.jpg', 'bytes', new Config());
+        $marker->addMarker('A');
+        $adapter->move('A', 'B', new Config());
+
+        $adapter->move('B', 'C', new Config());
+
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations);
+        $this->assertSame('A', $operations[0]->getSourcePrefix());
+        $this->assertSame('C', $operations[0]->getTargetPrefix());
+        $this->assertSame('bytes', $adapter->read('C/img.jpg'));
+    }
+
     public function testMarkerWithoutChildrenMovesAsASingleObject(): void
     {
         // a bare marker with no subtree behind it is just a zero-byte object - a plain
