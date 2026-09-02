@@ -28,7 +28,7 @@ class AdvancedManyToManyAssetRelationTest extends AbstractLazyLoadingTest
 {
     private array $assets = [];
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->assets = $this->createAssets();
