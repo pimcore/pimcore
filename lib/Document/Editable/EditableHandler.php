@@ -176,6 +176,8 @@ class EditableHandler implements LoggerAwareInterface
 
     private function translateAreabrickLabel(string $label): string
     {
+        // the translator trims message ids as well
+        $label = trim($label);
         if ($label === '') {
             return $label;
         }
@@ -216,14 +218,31 @@ class EditableHandler implements LoggerAwareInterface
         }
 
         // same lookup order as the translator: the locale itself, then its configured fallback languages
+        $translation = null;
         foreach ([$locale, ...Tool::getFallbackLanguagesFor($locale)] as $lookupLocale) {
             $translation = $this->getCatalogueTranslation($label, Translation::DOMAIN_DEFAULT, $lookupLocale);
             if ($translation !== null) {
-                return $translation;
+                break;
             }
         }
 
-        return null;
+        if ($translation === null || $translation === $label) {
+            return $translation;
+        }
+
+        // the translator only creates keys that are unknown to the catalogue of the locale, so once the key is
+        // known there, translating is safe and yields the translator's complete pipeline (link updates, ...)
+        if ($this->isKnownToCatalogue($label, Translation::DOMAIN_DEFAULT, $locale)) {
+            return $this->translator->trans($label, [], Translation::DOMAIN_DEFAULT);
+        }
+
+        return $translation;
+    }
+
+    private function isKnownToCatalogue(string $label, string $domain, string $locale): bool
+    {
+        return $this->translator instanceof TranslatorBagInterface
+            && $this->translator->getCatalogue($locale)->has($label, $domain);
     }
 
     private function getTranslatorLocale(): ?string
