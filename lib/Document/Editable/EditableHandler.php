@@ -29,6 +29,7 @@ use Pimcore\Model\Document\Editable;
 use Pimcore\Model\Document\Editable\Area\Info;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Translation;
+use Pimcore\Tool;
 use Pimcore\Translation\Translator;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -184,6 +185,12 @@ class EditableHandler implements LoggerAwareInterface
             return $this->translator->trans($label, [], Translation::DOMAIN_DEFAULT);
         }
 
+        // a label maintained in the Studio domain always wins, also when its translation equals the key
+        if ($this->hasTranslation($label, self::AREABRICK_LABEL_TRANSLATION_DOMAIN)) {
+            return $this->translator->trans($label, [], self::AREABRICK_LABEL_TRANSLATION_DOMAIN);
+        }
+
+        // translating creates the missing key in the Studio domain, where the label is meant to be maintained
         $translated = $this->translator->trans($label, [], self::AREABRICK_LABEL_TRANSLATION_DOMAIN);
         if ($translated !== $label) {
             return $translated;
@@ -194,24 +201,60 @@ class EditableHandler implements LoggerAwareInterface
         return $this->getExistingDefaultDomainTranslation($label) ?? $label;
     }
 
+    private function hasTranslation(string $label, string $domain): bool
+    {
+        $locale = $this->getTranslatorLocale();
+
+        return $locale !== null && $this->getCatalogueTranslation($label, $domain, $locale) !== null;
+    }
+
     private function getExistingDefaultDomainTranslation(string $label): ?string
+    {
+        $locale = $this->getTranslatorLocale();
+        if ($locale === null) {
+            return null;
+        }
+
+        // same lookup order as the translator: the locale itself, then its configured fallback languages
+        foreach ([$locale, ...Tool::getFallbackLanguagesFor($locale)] as $lookupLocale) {
+            $translation = $this->getCatalogueTranslation($label, Translation::DOMAIN_DEFAULT, $lookupLocale);
+            if ($translation !== null) {
+                return $translation;
+            }
+        }
+
+        return null;
+    }
+
+    private function getTranslatorLocale(): ?string
+    {
+        if ($this->translator instanceof TranslatorBagInterface && $this->translator instanceof LocaleAwareInterface) {
+            return $this->translator->getLocale();
+        }
+
+        return null;
+    }
+
+    /**
+     * Reads a translation from the catalogue without translating, so that no missing key gets created.
+     */
+    private function getCatalogueTranslation(string $label, string $domain, string $locale): ?string
     {
         if (!$this->translator instanceof TranslatorBagInterface) {
             return null;
         }
 
-        $locale = $this->translator instanceof LocaleAwareInterface ? $this->translator->getLocale() : null;
-        if ($this->translator instanceof Translator && $locale !== null) {
-            // makes sure the database translations of the default domain are part of the catalogue
-            $this->translator->lazyInitialize(Translation::DOMAIN_DEFAULT, $locale);
+        if ($this->translator instanceof Translator) {
+            // makes sure the database translations of the domain are part of the catalogue
+            $this->translator->lazyInitialize($domain, $locale);
         }
 
         $catalogue = $this->translator->getCatalogue($locale);
-        if (!$catalogue->has($label, Translation::DOMAIN_DEFAULT)) {
+        if (!$catalogue->has($label, $domain)) {
             return null;
         }
 
-        $translation = $catalogue->get($label, Translation::DOMAIN_DEFAULT);
+        $translation = $catalogue->get($label, $domain);
 
         return $translation !== '' ? $translation : null;
     }

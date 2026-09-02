@@ -26,6 +26,7 @@ use Pimcore\HttpKernel\WebPathResolver;
 use Pimcore\Model\Document\Editable\Areablock;
 use Pimcore\Model\Translation;
 use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tool;
 use Pimcore\Translation\Translator;
 use ReflectionClassConstant;
 use Symfony\Bridge\Twig\Extension\HttpKernelRuntime;
@@ -53,20 +54,39 @@ final class EditableHandlerTest extends TestCase
 
     private EditmodeResolver&MockObject $editmodeResolver;
 
-    private MessageCatalogue $catalogue;
+    /**
+     * @var array<string, MessageCatalogue>
+     */
+    private array $catalogues = [];
+
+    /**
+     * @var list<string> "<domain>/<locale>" pairs the handler asked the translator to initialize
+     */
+    private array $initializedCatalogues = [];
+
+    private string $locale = self::LOCALE;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->catalogue = new MessageCatalogue(self::LOCALE);
+        $this->catalogues = [];
+        $this->initializedCatalogues = [];
+        $this->locale = self::LOCALE;
 
         $this->translator = $this->getMockBuilder(Translator::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['trans', 'getCatalogue', 'lazyInitialize', 'getLocale'])
             ->getMock();
-        $this->translator->method('getLocale')->willReturn(self::LOCALE);
-        $this->translator->method('getCatalogue')->willReturn($this->catalogue);
+        $this->translator->method('getLocale')->willReturnCallback(fn (): string => $this->locale);
+        $this->translator->method('getCatalogue')->willReturnCallback(
+            fn (?string $locale = null): MessageCatalogue => $this->catalogue($locale ?? $this->locale)
+        );
+        $this->translator->method('lazyInitialize')->willReturnCallback(
+            function (string $domain, string $locale): void {
+                $this->initializedCatalogues[] = $domain . '/' . $locale;
+            }
+        );
 
         $this->editmodeResolver = $this->createMock(EditmodeResolver::class);
         $this->editmodeResolver->method('isEditmode')->willReturn(true);
@@ -97,13 +117,31 @@ final class EditableHandlerTest extends TestCase
         self::assertSame('Ein Teaser-Baustein', $areas['teaser']['description']);
     }
 
+    public function testStudioTranslationEqualToItsKeyTakesPrecedenceOverDefaultDomain(): void
+    {
+        $this->markStudioDomainAsRegistered(true);
+
+        // a Studio translation that intentionally equals the key must not be mistaken for a missing one
+        $this->catalogue(self::LOCALE)->set('Teaser', 'Teaser', self::STUDIO_DOMAIN);
+        $this->catalogue(self::LOCALE)->set('Teaser', 'Vorspann', Translation::DOMAIN_DEFAULT);
+
+        $this->translator->expects($this->exactly(2))
+            ->method('trans')
+            ->with($this->anything(), [], self::STUDIO_DOMAIN)
+            ->willReturnArgument(0);
+
+        $areas = $this->createHandler()->getAvailableAreablockAreas(new Areablock(), []);
+
+        self::assertSame('Teaser', $areas['teaser']['name']);
+    }
+
     public function testExistingDefaultDomainTranslationIsUsedWithoutCreatingKeysThere(): void
     {
         $this->markStudioDomainAsRegistered(true);
 
         // an installation that already maintains the labels in "messages" (e.g. a classic install
         // that later added Studio) must keep its translations ...
-        $this->catalogue->set('Teaser', 'Teaser (messages)', Translation::DOMAIN_DEFAULT);
+        $this->catalogue(self::LOCALE)->set('Teaser', 'Teaser (messages)', Translation::DOMAIN_DEFAULT);
 
         // ... but the lookup must never go through trans() with the default domain, because that
         // is what auto-creates the missing keys in the "messages" domain.
@@ -111,14 +149,39 @@ final class EditableHandlerTest extends TestCase
             ->method('trans')
             ->with($this->anything(), [], self::STUDIO_DOMAIN)
             ->willReturnArgument(0);
-        $this->translator->expects($this->atLeastOnce())
-            ->method('lazyInitialize')
-            ->with(Translation::DOMAIN_DEFAULT, self::LOCALE);
 
         $areas = $this->createHandler()->getAvailableAreablockAreas(new Areablock(), []);
 
         self::assertSame('Teaser (messages)', $areas['teaser']['name']);
         self::assertSame('A teaser brick', $areas['teaser']['description']);
+        self::assertContains(
+            Translation::DOMAIN_DEFAULT . '/' . self::LOCALE,
+            $this->initializedCatalogues,
+            'The database translations of the default domain must be loaded before looking the label up.'
+        );
+    }
+
+    public function testConfiguredFallbackLanguageOfDefaultDomainIsUsed(): void
+    {
+        $this->markStudioDomainAsRegistered(true);
+
+        // the test system settings configure "de" as fallback language of "de_AT"
+        self::assertSame(['de'], Tool::getFallbackLanguagesFor('de_AT'));
+        $this->locale = 'de_AT';
+
+        // an empty "de_AT" value falls back to the configured "de" translation, like trans() does
+        $this->catalogue('de_AT')->set('Teaser', '', Translation::DOMAIN_DEFAULT);
+        $this->catalogue('de')->set('Teaser', 'Vorspann', Translation::DOMAIN_DEFAULT);
+
+        $this->translator->expects($this->exactly(2))
+            ->method('trans')
+            ->with($this->anything(), [], self::STUDIO_DOMAIN)
+            ->willReturnArgument(0);
+
+        $areas = $this->createHandler()->getAvailableAreablockAreas(new Areablock(), []);
+
+        self::assertSame('Vorspann', $areas['teaser']['name']);
+        self::assertContains(Translation::DOMAIN_DEFAULT . '/de', $this->initializedCatalogues);
     }
 
     public function testEmptyDefaultDomainTranslationFallsBackToTheLabel(): void
@@ -126,7 +189,7 @@ final class EditableHandlerTest extends TestCase
         $this->markStudioDomainAsRegistered(true);
 
         // an auto-created key without a text must not blank out the label
-        $this->catalogue->set('Teaser', '', Translation::DOMAIN_DEFAULT);
+        $this->catalogue(self::LOCALE)->set('Teaser', '', Translation::DOMAIN_DEFAULT);
 
         $this->translator->method('trans')->willReturnArgument(0);
 
@@ -146,12 +209,12 @@ final class EditableHandlerTest extends TestCase
                 ['Teaser', [], Translation::DOMAIN_DEFAULT, null, 'Teaser (messages)'],
                 ['A teaser brick', [], Translation::DOMAIN_DEFAULT, null, 'Ein Teaser-Baustein'],
             ]);
-        $this->translator->expects($this->never())->method('lazyInitialize');
 
         $areas = $this->createHandler()->getAvailableAreablockAreas(new Areablock(), []);
 
         self::assertSame('Teaser (messages)', $areas['teaser']['name']);
         self::assertSame('Ein Teaser-Baustein', $areas['teaser']['description']);
+        self::assertSame([], $this->initializedCatalogues);
     }
 
     public function testLabelsAreNotTranslatedOutsideOfEditmode(): void
@@ -182,6 +245,11 @@ final class EditableHandlerTest extends TestCase
 
         self::assertSame('Teaser (Studio)', $areas['teaser']['name']);
         self::assertSame('', $areas['teaser']['description']);
+    }
+
+    private function catalogue(string $locale): MessageCatalogue
+    {
+        return $this->catalogues[$locale] ??= new MessageCatalogue($locale);
     }
 
     private function createHandler(
