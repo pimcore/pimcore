@@ -1713,7 +1713,7 @@ class Asset extends Element\AbstractElement
 
     private function isStorageOperationQueueEnabled(): bool
     {
-        return (bool) Pimcore::getContainer()->getParameter('pimcore.assets.storage_operation_queue.enabled');
+        return (bool) (Config::getSystemConfiguration('assets')['storage_operation_queue']['enabled'] ?? false);
     }
 
     /**
