@@ -18,14 +18,14 @@ use Pimcore;
 use Pimcore\Model;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
 class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface
 {
-    private static HtmlSanitizer $pimcoreWysiwygSanitizer;
+    private static HtmlSanitizerInterface $pimcoreWysiwygSanitizer;
 
     /**
      * Contains the text
@@ -34,7 +34,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
      */
     protected ?string $text = null;
 
-    private static function getWysiwygSanitizer(): HtmlSanitizer
+    private static function getWysiwygSanitizer(): HtmlSanitizerInterface
     {
         return self::$pimcoreWysiwygSanitizer ??= Pimcore::getContainer()->get(Text::PIMCORE_WYSIWYG_SANITIZER_ID);
     }
