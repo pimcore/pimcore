@@ -16,7 +16,7 @@ namespace Pimcore\Tests\Model\DataType;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Tests\Support\Util\TestHelper;
-use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Support\Test\ModelTestCase;
 
 class AdvancedManyToManyAssetRelationEditModeTest extends ModelTestCase
 {
