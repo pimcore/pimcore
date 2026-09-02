@@ -36,6 +36,8 @@ class CalculatedValue implements OwnerAwareFieldInterface
 
     protected mixed $keyDefinition = null;
 
+    protected ?string $calculatorData = null;
+
     /**
      * CalculatedValue constructor.
      *
@@ -101,5 +103,15 @@ class CalculatedValue implements OwnerAwareFieldInterface
     public function getKeyId(): ?int
     {
         return $this->keyId;
+    }
+
+    public function getCalculatorData(): ?string
+    {
+        return $this->calculatorData;
+    }
+
+    public function setCalculatorData(?string $calculatorData): void
+    {
+        $this->calculatorData = $calculatorData;
     }
 }
