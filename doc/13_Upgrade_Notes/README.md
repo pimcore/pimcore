@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## Pimcore 2026.2.12
+
+### [Documents]
+- [Areabricks] In editmode, areabrick names and descriptions are now translated via the `studio` translation domain whenever that domain is registered (i.e. Pimcore Studio is installed), so these UI labels show up in Studio's translations instead of the website's `messages` domain. Labels that were already translated in the `messages` domain keep working as a read-only fallback, but missing keys are no longer auto-created there - they are created in the `studio` domain instead. Installations without the `studio` domain keep translating them via `messages` as before.
+
 ## Pimcore 2026.2.5
 
 ### [Custom Reports]

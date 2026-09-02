@@ -28,6 +28,8 @@ use Pimcore\HttpKernel\WebPathResolver;
 use Pimcore\Model\Document\Editable;
 use Pimcore\Model\Document\Editable\Area\Info;
 use Pimcore\Model\Document\PageSnippet;
+use Pimcore\Model\Translation;
+use Pimcore\Translation\Translator;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Bridge\Twig\Extension\HttpKernelRuntime;
@@ -37,6 +39,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Component\Templating\EngineInterface;
+use Symfony\Component\Translation\TranslatorBagInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -77,6 +81,13 @@ class EditableHandler implements LoggerAwareInterface
     protected RequestStack $requestStack;
 
     public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
+
+    /**
+     * Areabrick names and descriptions are labels of the editing UI, so they are resolved via the
+     * translation domain of the Studio UI when that domain is registered, instead of the website's
+     * default domain.
+     */
+    private const AREABRICK_LABEL_TRANSLATION_DOMAIN = 'studio';
 
     public function __construct(
         AreabrickManagerInterface $brickManager,
@@ -143,8 +154,8 @@ class EditableHandler implements LoggerAwareInterface
                 : null;
 
             if ($this->editmodeResolver->isEditmode()) {
-                $name = $this->translator->trans($name);
-                $desc = $this->translator->trans($desc);
+                $name = $this->translateAreabrickLabel($name);
+                $desc = $this->translateAreabrickLabel($desc);
             }
 
             $areas[$brick->getId()] = [
@@ -160,6 +171,49 @@ class EditableHandler implements LoggerAwareInterface
         }
 
         return $areas;
+    }
+
+    private function translateAreabrickLabel(string $label): string
+    {
+        if ($label === '') {
+            return $label;
+        }
+
+        if (!Translation::isAValidDomain(self::AREABRICK_LABEL_TRANSLATION_DOMAIN)) {
+            // without the Studio UI domain, the default domain is the only place to translate with
+            return $this->translator->trans($label, [], Translation::DOMAIN_DEFAULT);
+        }
+
+        $translated = $this->translator->trans($label, [], self::AREABRICK_LABEL_TRANSLATION_DOMAIN);
+        if ($translated !== $label) {
+            return $translated;
+        }
+
+        // labels that were translated in the default domain before must keep working, but they are
+        // only looked up there: translating via the default domain would auto-create the missing keys
+        return $this->getExistingDefaultDomainTranslation($label) ?? $label;
+    }
+
+    private function getExistingDefaultDomainTranslation(string $label): ?string
+    {
+        if (!$this->translator instanceof TranslatorBagInterface) {
+            return null;
+        }
+
+        $locale = $this->translator instanceof LocaleAwareInterface ? $this->translator->getLocale() : null;
+        if ($this->translator instanceof Translator && $locale !== null) {
+            // makes sure the database translations of the default domain are part of the catalogue
+            $this->translator->lazyInitialize(Translation::DOMAIN_DEFAULT, $locale);
+        }
+
+        $catalogue = $this->translator->getCatalogue($locale);
+        if (!$catalogue->has($label, Translation::DOMAIN_DEFAULT)) {
+            return null;
+        }
+
+        $translation = $catalogue->get($label, Translation::DOMAIN_DEFAULT);
+
+        return $translation !== '' ? $translation : null;
     }
 
     public function renderAreaFrontend(Info $info, array $templateParams = []): string
