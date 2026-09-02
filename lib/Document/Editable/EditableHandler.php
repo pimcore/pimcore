@@ -73,6 +73,11 @@ class EditableHandler implements LoggerAwareInterface
      */
     protected array $brickTemplateCache = [];
 
+    /**
+     * @var array<string, string> areabrick labels resolved during this request
+     */
+    private array $translatedAreabrickLabels = [];
+
     protected EditmodeResolver $editmodeResolver;
 
     protected HttpKernelRuntime $httpKernelRuntime;
@@ -182,6 +187,13 @@ class EditableHandler implements LoggerAwareInterface
             return $label;
         }
 
+        // translating a label unknown to the Studio domain puts it into the in-memory catalogue as its own
+        // translation, so a label is resolved only once per request to keep repeated occurrences consistent
+        return $this->translatedAreabrickLabels[$label] ??= $this->resolveAreabrickLabel($label);
+    }
+
+    private function resolveAreabrickLabel(string $label): string
+    {
         if (!Translation::isAValidDomain(self::AREABRICK_LABEL_TRANSLATION_DOMAIN)) {
             // without the Studio UI domain, the default domain is the only place to translate with
             return $this->translator->trans($label, [], Translation::DOMAIN_DEFAULT);
@@ -218,31 +230,23 @@ class EditableHandler implements LoggerAwareInterface
         }
 
         // same lookup order as the translator: the locale itself, then its configured fallback languages
-        $translation = null;
         foreach ([$locale, ...Tool::getFallbackLanguagesFor($locale)] as $lookupLocale) {
             $translation = $this->getCatalogueTranslation($label, Translation::DOMAIN_DEFAULT, $lookupLocale);
-            if ($translation !== null) {
-                break;
+            if ($translation === null) {
+                continue;
             }
+
+            if ($translation === $label) {
+                return $translation;
+            }
+
+            // the translator only creates keys that are unknown to the catalogue of the locale it translates
+            // in, so translating explicitly in the locale that knows the key is safe and yields the complete
+            // translator pipeline (link updates, disabled translations, ...) instead of the raw catalogue text
+            return $this->translator->trans($label, [], Translation::DOMAIN_DEFAULT, $lookupLocale);
         }
 
-        if ($translation === null || $translation === $label) {
-            return $translation;
-        }
-
-        // the translator only creates keys that are unknown to the catalogue of the locale, so once the key is
-        // known there, translating is safe and yields the translator's complete pipeline (link updates, ...)
-        if ($this->isKnownToCatalogue($label, Translation::DOMAIN_DEFAULT, $locale)) {
-            return $this->translator->trans($label, [], Translation::DOMAIN_DEFAULT);
-        }
-
-        return $translation;
-    }
-
-    private function isKnownToCatalogue(string $label, string $domain, string $locale): bool
-    {
-        return $this->translator instanceof TranslatorBagInterface
-            && $this->translator->getCatalogue($locale)->has($label, $domain);
+        return null;
     }
 
     private function getTranslatorLocale(): ?string
