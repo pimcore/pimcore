@@ -446,6 +446,44 @@ class QueueAwareStorageAdapterTest extends Unit
         $this->assertSame('bytes', $adapter->read('Archive/Campaigns/img.jpg'));
     }
 
+    public function testPrefixMoveOnMarkerBackendQueuesARowInsteadOfMovingOnlyTheMarker(): void
+    {
+        // Backend divergence observed on marker-materializing gateways (PEES-1617): a
+        // zero-byte object sits at the bare directory key, so a native move() "succeeds"
+        // by relocating just that object. The adapter must not mistake that for a moved
+        // subtree - the operation has to be queued like on any non-renaming backend.
+        $marker = new MarkerSemanticsAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir));
+        $adapter = new QueueAwareStorageAdapter($marker, $this->repository, 'asset');
+        $adapter->write('Campaigns/img.jpg', 'bytes', new Config());
+        $marker->addMarker('Campaigns');
+
+        $adapter->move('Campaigns', 'Archive/Campaigns', new Config());
+
+        $this->assertTrue($marker->fileExists('Campaigns/img.jpg'), 'physical object untouched until the processor runs');
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations);
+        $this->assertSame('move', $operations[0]->getType()->value);
+        $this->assertSame('Campaigns', $operations[0]->getSourcePrefix());
+        $this->assertSame('Archive/Campaigns', $operations[0]->getTargetPrefix());
+        // and the logical view is already correct:
+        $this->assertSame('bytes', $adapter->read('Archive/Campaigns/img.jpg'));
+    }
+
+    public function testMarkerWithoutChildrenMovesAsASingleObject(): void
+    {
+        // a bare marker with no subtree behind it is just a zero-byte object - a plain
+        // single-object move, no queue row
+        $marker = new MarkerSemanticsAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir));
+        $adapter = new QueueAwareStorageAdapter($marker, $this->repository, 'asset');
+        $marker->addMarker('Empty');
+
+        $adapter->move('Empty', 'Renamed', new Config());
+
+        $this->assertFalse($marker->hasMarker('Empty'));
+        $this->assertTrue($marker->hasMarker('Renamed'));
+        $this->assertSame([], $this->repository->all(), 'no queue row for a single-object move');
+    }
+
     public function testMovingAnEmptyFolderThrowsAndQueuesNothing(): void
     {
         $adapter = $this->nonRenamingAdapter();
