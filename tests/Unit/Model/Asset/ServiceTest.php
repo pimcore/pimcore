@@ -46,8 +46,9 @@ class ServiceTest extends TestCase
         $uri = '/testimage/999999999/image-thumb__999999999__unittest/testimage.jpg';
 
         $storage = $this->createMock(FilesystemOperator::class);
-        // the file exists on the direct-delivery check, but is gone when read and re-checked
-        $storage->method('fileExists')->willReturnOnConsecutiveCalls(true, false);
+        // the read fails and the re-check finds the file gone (there is no pre-check any more
+        // since #19135, so this is the only fileExists() call)
+        $storage->method('fileExists')->willReturn(false);
         $storage->method('readStream')->willThrowException(UnableToReadFile::fromLocation($uri));
 
         // falls through to the regular thumbnail resolution, which cannot resolve the
