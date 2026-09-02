@@ -370,6 +370,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 continue;
             }
 
+            if ($field instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
+                // a reverse relation cannot own a dependency either - the relation is recorded
+                // on the owning object - and ReverseObjectRelation::resolveDependencies() says so
+                // by returning an empty array. Its getter is never memoised, so calling it here
+                // would query the relation table and load every owning object for nothing.
+                continue;
+            }
+
             $key = $field->getName();
             $getter = 'get' . ucfirst($key);
             $dependencies[] = $field->resolveDependencies($this->$getter());
