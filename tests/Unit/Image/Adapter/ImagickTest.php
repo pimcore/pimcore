@@ -156,6 +156,29 @@ final class ImagickTest extends TestCase
         $this->assertPixelTransparent($result, 2, 2);
     }
 
+    /**
+     * clipImage() keeps an active ImageMagick mask. The clipped image must therefore be
+     * materialized before resize and crop operations use it for a thumbnail.
+     */
+    public function testClippingPathIsMaterializedBeforeCover(): void
+    {
+        $path = $this->createImageWithClippingPath();
+        $this->assertClippingPathIsSupported($path);
+
+        $adapter = $this->adapter($path, false);
+
+        $this->assertSame('png32', $adapter->getContentOptimizedFormat());
+
+        // cover() scales the square fixture to 20 x 20 and crops it to 20 x 10.
+        $adapter->cover(20, 10);
+
+        $result = $this->saveAndReload($adapter, 'png32', 'png');
+
+        $this->assertPixelOpaque($result, 10, 5);
+        $this->assertPixelColor(self::SOURCE_RGB, $result, 10, 5, self::DELTA);
+        $this->assertPixelTransparent($result, 2, 5);
+    }
+
     private function adapter(string $path, bool $preserveColor): Imagick
     {
         $adapter = new Imagick();
@@ -225,6 +248,40 @@ final class ImagickTest extends TestCase
         );
 
         return $path;
+    }
+
+    /**
+     * Creates an image using a Photoshop path that is set as a clipping path.
+     */
+    private function createImageWithClippingPath(): string
+    {
+        $path = $this->createImageWithPhotoshopPath();
+
+        $image = new \Imagick($path);
+        $image->profileImage('8bim', $image->getImageProfile('8bim') . $this->clippingPathNameImageResource());
+        $image->writeImage($path);
+
+        $this->assertStringContainsString(
+            "8BIM\x0b\xb7",
+            (string) file_get_contents($path),
+            'The test fixture was created without a clipping path.'
+        );
+
+        return $path;
+    }
+
+    private function assertClippingPathIsSupported(string $path): void
+    {
+        $image = new \Imagick($path);
+
+        try {
+            $image->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
+            $image->clipImage();
+        } catch (\ImagickException) {
+            $this->markTestSkipped('The current ImageMagick installation does not support clipping paths.');
+        } finally {
+            $image->clear();
+        }
     }
 
     /**

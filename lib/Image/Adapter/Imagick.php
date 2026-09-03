@@ -146,6 +146,10 @@ class Imagick extends Adapter
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
                     $i->clipImage();
                     $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
+
+                    // Save and reload the cut-out image as PNG32.
+                    // Keep alpha pixels. Remove the active ImageMagick mask.
+                    $this->materializeClipPath();
                     $unclipped->clear();
                 } catch (Exception $e) {
                     // the image is entirely transparent at this point, so restore the copy instead of
@@ -224,7 +228,7 @@ class Imagick extends Adapter
 
             if ($i->getImageAlphaChannel()) {
                 // Imagick version compatibility
-                $alphaChannel = 11; // This works at least as far back as version 3.1.0~rc1-1
+                $alphaChannel = \Imagick::ALPHACHANNEL_OPAQUE;
                 if (defined('Imagick::ALPHACHANNEL_REMOVE')) {
                     // Imagick::ALPHACHANNEL_REMOVE has been added in 3.2.0b2
                     $alphaChannel = \Imagick::ALPHACHANNEL_REMOVE;
@@ -1158,5 +1162,39 @@ class Imagick extends Adapter
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * Materializes the active clipping path by saving and reloading the image.
+     *
+     * @return void
+     * @throws Exception
+     */
+    private function materializeClipPath(): void
+    {
+        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . uniqid() . '_pimcore_image_tmp_file.png';
+        $this->tmpFiles[] = $tmpFile;
+        $this->save($tmpFile, 'png32');
+        $this->setIsAlphaPossible(true);
+
+        $prevResource = $this->resource;
+        $this->resource = null;
+
+        try {
+            $this->reinitializing = true;
+
+            if (!$this->load($tmpFile)) {
+                throw new Exception('Failed to reinitialize image from temporary file');
+            }
+        } catch (Exception $e) {
+            $this->destroy();
+            $this->resource = $prevResource;
+
+            throw $e;
+        } finally {
+            $this->reinitializing = false;
+        }
+
+        $prevResource->clear();
     }
 }
