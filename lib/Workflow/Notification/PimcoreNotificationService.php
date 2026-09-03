@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Logger;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification\Service\NotificationService;
+use Pimcore\Workflow\GlobalAction;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -45,6 +46,32 @@ class PimcoreNotificationService extends AbstractNotificationService
         ElementInterface $subject,
         Transition $transition
     ): void {
+        $this->sendNotification($users, $roles, $workflow, $subjectType, $subject, $transition->getLabel());
+    }
+
+    /**
+     * Sends a notification for a global action. A global action is not a transition, so it gets its
+     * own entry point instead of widening the one above - both delegate to the same implementation.
+     */
+    public function sendGlobalActionPimcoreNotification(
+        array $users,
+        array $roles,
+        WorkflowInterface $workflow,
+        string $subjectType,
+        ElementInterface $subject,
+        GlobalAction $globalAction
+    ): void {
+        $this->sendNotification($users, $roles, $workflow, $subjectType, $subject, $globalAction->getLabel());
+    }
+
+    private function sendNotification(
+        array $users,
+        array $roles,
+        WorkflowInterface $workflow,
+        string $subjectType,
+        ElementInterface $subject,
+        string $actionLabel
+    ): void {
         try {
             $recipients = $this->getNotificationUsersByName($users, $roles, true);
             if (!count($recipients)) {
@@ -63,7 +90,7 @@ class PimcoreNotificationService extends AbstractNotificationService
                     [
                         $subjectType . ' ' . $subject->getFullPath(),
                         $subject->getId(),
-                        $this->translator->trans($transition->getLabel(), [], 'admin', $language),
+                        $this->translator->trans($actionLabel, [], 'admin', $language),
                         $this->translator->trans($workflow->getName(), [], 'admin', $language),
                     ],
                     'admin',
