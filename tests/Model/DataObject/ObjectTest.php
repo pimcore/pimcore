@@ -303,7 +303,10 @@ class ObjectTest extends ModelTestCase
         $latestVersion = end($versions);
         $data = $latestVersion->getData();
 
-        $this->assertSame(0, $data->getMandatoryNumericWithZeroDefault(), 'Expected numeric default of 0 saved to version');
+        $numericValue = $data->getMandatoryNumericWithZeroDefault();
+        $this->assertNotNull($numericValue, 'Expected numeric default to be applied, not left null');
+        $this->assertEquals(0, $numericValue, 'Expected numeric default of 0 saved to version');
+
         $this->assertFalse($data->getMandatoryCheckboxWithFalseDefault(), 'Expected checkbox default of false saved to version');
     }
 
