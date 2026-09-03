@@ -33,6 +33,10 @@
   - This migration only touches a column when its current collation and length still match the stock legacy definition; a column a project has already widened or otherwise customized is left untouched (a notice is logged) instead of being silently reset.
   - The migration is **irreversible** (`down()` throws) — reverting `utf8mb4` columns back to `utf8`/`utf8mb3` could silently replace stored 4-byte characters (e.g. emoji) with `?` given this application's intentionally permissive `sql_mode=''`. Restore from a backup if you need to roll back.
   - The `ALTER TABLE`/`CONVERT TO CHARACTER SET` statements rewrite the affected columns' storage and typically run as full table rebuilds, which can take time and hold locks on `assets`, `documents`, `objects` and `properties` on large installations — plan to run this migration during a maintenance window on such installs.
+## Pimcore 2026.2.12
+
+### [Documents]
+- [Areabricks] In editmode, areabrick names and descriptions are now translated via the `studio` translation domain whenever that domain is registered (i.e. Pimcore Studio is installed), so these UI labels show up in Studio's translations instead of the website's `messages` domain. Labels that were already translated in the `messages` domain keep working as a read-only fallback, but missing keys are no longer auto-created there - they are created in the `studio` domain instead. Installations without the `studio` domain keep translating them via `messages` as before.
 
 ## Pimcore 2026.2.5
 
