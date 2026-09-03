@@ -289,6 +289,25 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
+     * Regression test for PEES-1279: a mandatory numeric field defaulting to
+     * 0, and a mandatory checkbox field defaulting to false, must not block
+     * publishing a brand-new object, and their default must be persisted.
+     */
+    public function testMandatoryZeroAndFalseDefaultsSavedToVersion(): void
+    {
+        $object = TestHelper::createEmptyObject('', false, true);
+        $object->setOmitMandatoryCheck(false);
+        $object->save();
+
+        $versions = $object->getVersions();
+        $latestVersion = end($versions);
+        $data = $latestVersion->getData();
+
+        $this->assertSame(0, $data->getMandatoryNumericWithZeroDefault(), 'Expected numeric default of 0 saved to version');
+        $this->assertFalse($data->getMandatoryCheckboxWithFalseDefault(), 'Expected checkbox default of false saved to version');
+    }
+
+    /**
      * Verifies that when an object gets cloned, the fields get copied properly
      */
     public function testCloning(): void
