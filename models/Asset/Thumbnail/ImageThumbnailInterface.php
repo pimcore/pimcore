@@ -42,7 +42,7 @@ interface ImageThumbnailInterface
 
     public function getDimensions(): array;
 
-    public function getAsset(): Asset;
+    public function getAsset(): ?Asset;
 
     public function getConfig(): ?Config;
 
