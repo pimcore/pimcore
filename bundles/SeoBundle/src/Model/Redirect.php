@@ -48,6 +48,18 @@ final class Redirect extends AbstractModel
         self::TYPE_AUTO_CREATE,
     ];
 
+    const TARGET_TYPE_DOCUMENT = 'document';
+
+    const TARGET_TYPE_ASSET = 'asset';
+
+    const TARGET_TYPE_OBJECT = 'object';
+
+    const TARGET_TYPES = [
+        self::TARGET_TYPE_DOCUMENT,
+        self::TARGET_TYPE_ASSET,
+        self::TARGET_TYPE_OBJECT,
+    ];
+
     protected ?int $id = null;
 
     protected string $type;
@@ -59,6 +71,8 @@ final class Redirect extends AbstractModel
     protected bool $passThroughParameters = false;
 
     protected ?string $target = null;
+
+    protected ?string $targetType = null;
 
     protected ?int $targetSite = null;
 
@@ -323,6 +337,27 @@ final class Redirect extends AbstractModel
     public function getTargetSite(): ?int
     {
         return $this->targetSite;
+    }
+
+    public function getTargetType(): ?string
+    {
+        return $this->targetType;
+    }
+
+    /**
+     * enum('document','asset','object')
+     */
+    public function setTargetType(?string $targetType): static
+    {
+        $targetType = $targetType ?: null;
+
+        if (null !== $targetType && !in_array($targetType, self::TARGET_TYPES, true)) {
+            throw new InvalidArgumentException(sprintf('Invalid target type "%s"', $targetType));
+        }
+
+        $this->targetType = $targetType;
+
+        return $this;
     }
 
     public function setPassThroughParameters(bool $passThroughParameters): static

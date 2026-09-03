@@ -13,8 +13,10 @@
 namespace Pimcore\Tests\Model\SeoBundle;
 
 use Pimcore;
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
 use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\HttpFoundation\Request;
 
 class RedirectHandlerTest extends TestCase
@@ -83,5 +85,93 @@ class RedirectHandlerTest extends TestCase
         $redirect->delete();
         $site->delete();
         $otherSite->delete();
+    }
+
+    public function testRedirectToDocumentTarget(): void
+    {
+        $document = TestHelper::createEmptyDocumentPage();
+
+        $redirect = new Redirect();
+        $redirect->setType(Redirect::TYPE_PATH);
+        $redirect->setSource('/document-source');
+        $redirect->setTarget((string) $document->getId());
+        $redirect->setTargetType(Redirect::TARGET_TYPE_DOCUMENT);
+        $redirect->save();
+
+        $response = $this->getRedirectHandler()->checkForRedirect(Request::create('http://example.org/document-source', 'GET'));
+
+        $this->assertNotNull($response);
+        $this->assertTrue($response->isRedirect());
+        $this->assertSame($document->getFullPath(), $response->headers->get('Location'));
+
+        $redirect->delete();
+        $document->delete();
+    }
+
+    public function testRedirectToLegacyNumericDocumentTargetWithoutTargetType(): void
+    {
+        // legacy rows (and auto-created redirects) store a numeric document ID without a target type;
+        // they must still resolve to the document, see #18293 review feedback
+        $document = TestHelper::createEmptyDocumentPage();
+
+        $redirect = new Redirect();
+        $redirect->setType(Redirect::TYPE_PATH);
+        $redirect->setSource('/legacy-source');
+        $redirect->setTarget((string) $document->getId());
+        $redirect->save();
+
+        $response = $this->getRedirectHandler()->checkForRedirect(Request::create('http://example.org/legacy-source', 'GET'));
+
+        $this->assertNotNull($response, 'legacy numeric document target must still resolve');
+        $this->assertTrue($response->isRedirect());
+        $this->assertSame($document->getFullPath(), $response->headers->get('Location'));
+
+        $redirect->delete();
+        $document->delete();
+    }
+
+    public function testRedirectToAssetTarget(): void
+    {
+        $asset = TestHelper::createImageAsset();
+
+        $redirect = new Redirect();
+        $redirect->setType(Redirect::TYPE_PATH);
+        $redirect->setSource('/asset-source');
+        $redirect->setTarget((string) $asset->getId());
+        $redirect->setTargetType(Redirect::TARGET_TYPE_ASSET);
+        $redirect->save();
+
+        $response = $this->getRedirectHandler()->checkForRedirect(Request::create('http://example.org/asset-source', 'GET'));
+
+        $this->assertNotNull($response);
+        $this->assertTrue($response->isRedirect());
+        $this->assertSame($asset->getFullPath(), $response->headers->get('Location'));
+
+        $redirect->delete();
+        $asset->delete();
+    }
+
+    public function testMissingTargetDoesNotRedirect(): void
+    {
+        $redirect = new Redirect();
+        $redirect->setType(Redirect::TYPE_PATH);
+        $redirect->setSource('/missing-source');
+        $redirect->setTarget('999999999');
+        $redirect->setTargetType(Redirect::TARGET_TYPE_DOCUMENT);
+        $redirect->save();
+
+        $response = $this->getRedirectHandler()->checkForRedirect(Request::create('http://example.org/missing-source', 'GET'));
+
+        $this->assertNull($response, 'a redirect to a non-existent target must not produce a response');
+
+        $redirect->delete();
+    }
+
+    private function getRedirectHandler(): RedirectHandler
+    {
+        /** @var RedirectHandler $redirectHandler */
+        $redirectHandler = Pimcore::getContainer()->get(RedirectHandler::class);
+
+        return $redirectHandler;
     }
 }

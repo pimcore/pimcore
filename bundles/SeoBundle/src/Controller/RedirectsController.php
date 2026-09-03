@@ -22,7 +22,7 @@ use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Logger;
-use Pimcore\Model\Document;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Helper\QueryParams;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -47,6 +47,32 @@ class RedirectsController extends UserAwareController
         // check permission for both update and listing
         $this->checkPermission('redirects');
 
+        $setRedirectTargetId = function (array &$data): void {
+            // existing clients may omit targetType on update; assume a document target for
+            // backward compatibility while honoring any explicitly provided type
+            $targetType = $data['targetType'] ?? Redirect::TARGET_TYPE_DOCUMENT;
+
+            $targetPath = $data['target'];
+            $target = Service::getElementByPath($targetType, $targetPath);
+            if ($target) {
+                $data['target'] = $target->getId();
+                $data['targetType'] = $targetType;
+            } else {
+                $data['targetType'] = null;
+            }
+        };
+
+        $setRedirectTargetPath = function (Redirect $redirect): void {
+            $targetId = $redirect->getTarget();
+            $targetType = $redirect->getTargetType();
+            if ($targetType && is_numeric($targetId)) {
+                $target = Service::getElementById($targetType, (int) $targetId);
+                if ($target) {
+                    $redirect->setTarget($target->getRealFullPath());
+                }
+            }
+        };
+
         if ($request->request->has('data')) {
             $data = $this->decodeJson($request->request->getString('data'));
 
@@ -69,9 +95,7 @@ class RedirectsController extends UserAwareController
                 }
 
                 if ($data['target']) {
-                    if ($doc = Document::getByPath($data['target'])) {
-                        $data['target'] = $doc->getId();
-                    }
+                    $setRedirectTargetId($data);
                 }
 
                 if (!$data['regex'] && $data['source']) {
@@ -82,12 +106,7 @@ class RedirectsController extends UserAwareController
 
                 $redirect->save();
 
-                $redirectTarget = $redirect->getTarget();
-                if (is_numeric($redirectTarget)) {
-                    if ($doc = Document::getById((int)$redirectTarget)) {
-                        $redirect->setTarget($doc->getRealFullPath());
-                    }
-                }
+                $setRedirectTargetPath($redirect);
 
                 return $this->jsonResponse(['data' => $redirect->getObjectVars(), 'success' => true]);
             }
@@ -98,9 +117,9 @@ class RedirectsController extends UserAwareController
                 $redirect = new Redirect();
 
                 if (!empty($data['target'])) {
-                    if ($doc = Document::getByPath($data['target'])) {
-                        $data['target'] = $doc->getId();
-                    }
+                    // assume target is document unless the client provided an explicit type
+                    $data['targetType'] ??= Redirect::TARGET_TYPE_DOCUMENT;
+                    $setRedirectTargetId($data);
                 }
 
                 if (isset($data['regex']) && !$data['regex'] && isset($data['source']) && $data['source']) {
@@ -111,12 +130,7 @@ class RedirectsController extends UserAwareController
 
                 $redirect->save();
 
-                $redirectTarget = $redirect->getTarget();
-                if (is_numeric($redirectTarget)) {
-                    if ($doc = Document::getById((int)$redirectTarget)) {
-                        $redirect->setTarget($doc->getRealFullPath());
-                    }
-                }
+                $setRedirectTargetPath($redirect);
 
                 return $this->jsonResponse(['data' => $redirect->getObjectVars(), 'success' => true]);
             }
@@ -155,13 +169,7 @@ class RedirectsController extends UserAwareController
 
             $redirects = [];
             foreach ($list->getRedirects() as $redirect) {
-                if ($link = $redirect->getTarget()) {
-                    if (is_numeric($link)) {
-                        if ($doc = Document::getById((int)$link)) {
-                            $redirect->setTarget($doc->getRealFullPath());
-                        }
-                    }
-                }
+                $setRedirectTargetPath($redirect);
 
                 $redirects[] = $redirect->getObjectVars();
             }

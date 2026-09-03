@@ -1,2 +1,3 @@
 imports:
     - { resource: default.yaml }
+    - { resource: doctrine_migrations.yaml }
