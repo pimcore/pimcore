@@ -1225,7 +1225,7 @@ final class Configuration implements ConfigurationInterface
         $prototype = $contextNode->prototype('array');
 
         // define routes child on each context entry
-        $this->addRoutesChild($prototype, 'routes');
+        $this->addRoutesChild($prototype, 'routes', supportsRoute: false);
     }
 
     private function addSecurityNode(ArrayNodeDefinition $rootNode): void
@@ -1327,32 +1327,33 @@ final class Configuration implements ConfigurationInterface
             ->arrayNode('toolbar')
                 ->addDefaultsIfNotSet();
 
-        $this->addRoutesChild($toolbarNode, 'excluded_routes');
+        $this->addRoutesChild($toolbarNode, 'excluded_routes', supportsRoute: true);
     }
 
     /**
      * Add a route prototype child
      */
-    private function addRoutesChild(ArrayNodeDefinition $parent, string $name): void
+    private function addRoutesChild(ArrayNodeDefinition $parent, string $name, bool $supportsRoute): void
     {
-        $node = $parent->children()->arrayNode($name);
-
-        /** @var ArrayNodeDefinition $prototype */
-        $prototype = $node->prototype('array');
-        $prototype
-            ->beforeNormalization()
-                ->ifNull()->then(function () {
-                    return [];
-                })
-            ->end()
+        $node = $parent
             ->children()
-                ->scalarNode('path')->defaultFalse()->end()
-                ->scalarNode('route')->defaultFalse()->end()
-                ->scalarNode('host')->defaultFalse()->end()
-                ->arrayNode('methods')
-                    ->prototype('scalar')->end()
-                ->end()
-            ->end();
+                ->arrayNode($name)
+                    ->prototype('array')
+                        ->beforeNormalization()
+                            ->ifNull()->then(function () {
+                                return [];
+                            })
+                        ->end()
+                        ->children()
+                            ->scalarNode('path')->defaultFalse()->end()
+                            ->scalarNode('host')->defaultFalse()->end()
+                            ->arrayNode('methods')
+                                ->prototype('scalar')->end()
+                            ->end();
+
+        if ($supportsRoute) {
+            $node->scalarNode('route')->defaultFalse();
+        }
     }
 
     /**

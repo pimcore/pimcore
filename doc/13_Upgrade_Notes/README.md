@@ -38,6 +38,17 @@
 ### [Documents]
 - [Areabricks] In editmode, areabrick names and descriptions are now translated via the `studio` translation domain whenever that domain is registered (i.e. Pimcore Studio is installed), so these UI labels show up in Studio's translations instead of the website's `messages` domain. Labels that were already translated in the `messages` domain keep working as a read-only fallback, but missing keys are no longer auto-created there - they are created in the `studio` domain instead. Installations without the `studio` domain keep translating them via `messages` as before.
 
+### [Routing]
+- [Pimcore Context] The `route` matcher is no longer accepted under `pimcore.context.<name>.routes` (e.g. `{ route: my_api }`); config using it now fails with `Unrecognized option "route" under "pimcore.context.<name>.routes.0". Available options are "host", "methods", "path".` Matching a Pimcore context by route name never actually worked: the context is resolved (and cached on the request) by several `kernel.request` listeners - `CustomAdminEntryPointCheckListener`, `RoutingListener`, `FullPageCacheListener` - that all run before Symfony's own `RouterListener` populates the request's `_route` attribute, so a `route:` entry could never match and the request silently fell back to the `default` context. If you have such a config, switch to a `path:` (optionally combined with `host:`/`methods:`) matcher instead:
+    ```yaml
+    pimcore:
+        context:
+            api:
+                routes:
+                    - { path: ^/my/api/ }
+    ```
+  This does not affect `pimcore.web_profiler.toolbar.excluded_routes`, which still supports `route:`.
+
 ## Pimcore 2026.2.5
 
 ### [Custom Reports]
