@@ -13,8 +13,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Model\DataObject;
 
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox;
+use Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Numeric;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValueRange;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 use Pimcore\Tests\Support\Test\TestCase;
 
@@ -126,5 +130,91 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
             !$field->isEmpty($field->getDefaultValue()),
             'A mandatory select field with a genuinely empty default must not get the create-time mandatory-check bypass'
         );
+    }
+
+    /**
+     * QuantityValue::doGetDefaultValue() constructs a default from
+     * `getDefaultValue() || getDefaultUnit()` — so a scalar default of 0
+     * combined with a configured default unit still resolves to a real
+     * default (value=0, unit=<configured>), even though the scalar value
+     * alone reads as empty. The guard must account for the unit, not just
+     * the scalar accessor.
+     */
+    public function testQuantityValueFieldWithZeroDefaultAndUnitIsRecognizedAsHavingADefault(): void
+    {
+        $field = new QuantityValue();
+        $field->setName('mandatoryQuantityValueWithZeroDefaultAndUnit');
+        $field->setMandatory(true);
+        $field->setDefaultValue(0);
+        $field->setDefaultUnit('unit-1');
+
+        $this->assertTrue(
+            $this->mandatoryCheckBypassApplies($field, null),
+            'A mandatory quantity value field with a scalar default of 0 but a configured default unit must get the create-time mandatory-check bypass'
+        );
+    }
+
+    public function testQuantityValueFieldWithNoDefaultIsNotRecognizedAsHavingADefault(): void
+    {
+        $field = new QuantityValue();
+        $field->setName('mandatoryQuantityValueWithNoDefault');
+        $field->setMandatory(true);
+
+        $this->assertFalse(
+            $this->mandatoryCheckBypassApplies($field, null),
+            'A mandatory quantity value field with neither a default value nor a default unit must not get the bypass'
+        );
+    }
+
+    /**
+     * Same compound value+unit default shape as QuantityValue.
+     */
+    public function testInputQuantityValueFieldWithZeroDefaultAndUnitIsRecognizedAsHavingADefault(): void
+    {
+        $field = new InputQuantityValue();
+        $field->setName('mandatoryInputQuantityValueWithZeroDefaultAndUnit');
+        $field->setMandatory(true);
+        $field->setDefaultValue('0');
+        $field->setDefaultUnit('unit-1');
+
+        $this->assertTrue(
+            $this->mandatoryCheckBypassApplies($field, null),
+            'A mandatory input quantity value field with a scalar default of "0" but a configured default unit must get the bypass'
+        );
+    }
+
+    /**
+     * QuantityValueRange also exposes getDefaultUnit(), but unlike
+     * QuantityValue/InputQuantityValue it has no getDefaultValue() and no
+     * default-resolution path at all (it does not use DefaultValueTrait).
+     * The default-unit branch must not sweep it in, or a mandatory range
+     * field with only a default unit configured could be published empty.
+     */
+    public function testQuantityValueRangeWithUnitOnlyIsNotSweptIntoTheDefaultUnitBranch(): void
+    {
+        $field = new QuantityValueRange();
+        $field->setName('mandatoryQuantityValueRangeWithUnit');
+        $field->setMandatory(true);
+        $field->setDefaultUnit('unit-1');
+
+        $this->assertFalse(method_exists($field, 'getDefaultValue'), 'Sanity check: QuantityValueRange has no getDefaultValue()');
+        $this->assertFalse(
+            $this->mandatoryCheckBypassApplies($field, null),
+            'A mandatory QuantityValueRange field with only a default unit must not get the bypass, since it never actually applies a default'
+        );
+    }
+
+    /**
+     * Mirrors the exact bypass condition from Concrete::update(), so these
+     * tests stay honest about what production code actually evaluates.
+     */
+    private function mandatoryCheckBypassApplies(Data $fd, mixed $value): bool
+    {
+        return $fd->isEmpty($value) &&
+            (
+                (method_exists($fd, 'getDefaultValue') && !$fd->isEmpty($fd->getDefaultValue()))
+                || (method_exists($fd, 'getDefaultValueGenerator') && $fd->getDefaultValueGenerator() !== '')
+                || (method_exists($fd, 'getDefaultValue') && method_exists($fd, 'getDefaultUnit') && $fd->getDefaultUnit() !== null)
+            );
     }
 }
