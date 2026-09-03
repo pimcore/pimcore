@@ -120,29 +120,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     $omitMandatoryCheck = $this->getOmitMandatoryCheck();
 
                     // when adding a new object, skip check on mandatory for fields
-                    // with default value or default value or default value generator
-                    if (!$omitMandatoryCheck && $fd->isEmpty($value) && !$isUpdate &&
-                        (
-                            (
-                                method_exists($fd, 'getDefaultValue') &&
-                                !$fd->isEmpty($fd->getDefaultValue())
-                            ) || (
-                                method_exists($fd, 'getDefaultValueGenerator') &&
-                                $fd->getDefaultValueGenerator() !== ''
-                            ) || (
-                                // compound quantity-value fields (QuantityValue, InputQuantityValue) can
-                                // resolve a default from a falsy-but-configured scalar plus a unit, even
-                                // though the scalar alone reads as empty; a unit with no configured value
-                                // at all must NOT bypass, since checkValidity() requires both to be set.
-                                // The unit check mirrors doGetDefaultValue()'s own truthy check on the
-                                // unit, so an empty-string unit (which it treats as "no unit") agrees here
-                                method_exists($fd, 'getDefaultValue') &&
-                                $fd->getDefaultValue() !== null &&
-                                method_exists($fd, 'getDefaultUnit') &&
-                                $fd->getDefaultUnit()
-                            )
-                        )
-                    ) {
+                    // with an applicable default value or default value generator
+                    if (!$omitMandatoryCheck && $fd->isEmpty($value) && !$isUpdate && self::fieldHasApplicableDefault($fd)) {
                         $omitMandatoryCheck = true;
                     }
 
@@ -226,6 +205,38 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         } finally {
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
         }
+    }
+
+    /**
+     * Decides whether a mandatory field's default value/generator is
+     * "applicable" enough to skip the mandatory check when creating a new
+     * object with that field left empty - i.e. whether a real default will
+     * actually be applied later, not just whether some accessor is non-null.
+     *
+     * Compound quantity-value fields (QuantityValue, InputQuantityValue) are
+     * handled separately from plain scalar-default fields: their own
+     * doGetDefaultValue() only constructs a default when both a scalar value
+     * and a unit are configured (and treats an empty-string unit as "no
+     * unit", same as a null one), and checkValidity() requires both to be
+     * set for a mandatory field. A non-zero scalar default alone (no unit),
+     * or a unit alone (no value), must NOT bypass the check, or an
+     * incomplete default could be persisted on a mandatory field.
+     */
+    private static function fieldHasApplicableDefault(DataObject\ClassDefinition\Data $fd): bool
+    {
+        if (method_exists($fd, 'getDefaultValueGenerator') && $fd->getDefaultValueGenerator() !== '') {
+            return true;
+        }
+
+        if (!method_exists($fd, 'getDefaultValue')) {
+            return false;
+        }
+
+        if (method_exists($fd, 'getDefaultUnit')) {
+            return $fd->getDefaultValue() !== null && (bool) $fd->getDefaultUnit();
+        }
+
+        return !$fd->isEmpty($fd->getDefaultValue());
     }
 
     private function saveChildData(): void
