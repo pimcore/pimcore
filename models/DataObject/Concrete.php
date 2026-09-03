@@ -112,6 +112,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     $this->__objectAwareFields['localizedfields'] = true;
                 }
 
+                if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                    // a calculated value is computed on read and never persisted from user input,
+                    // and CalculatedValue::checkValidity() is a no-op for that reason - including
+                    // for the mandatory check. Calling the getter here would run the calculator
+                    // for every calculated field on every save, only to discard the result.
+                    continue;
+                }
+
                 $getter = 'get' . ucfirst($fd->getName());
 
                 if (method_exists($this, $getter)) {
@@ -355,6 +363,21 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         // check in fields
         foreach ($this->getClass()->getFieldDefinitions() as $field) {
+            if ($field instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                // a calculated value cannot own a dependency: it is computed on read and
+                // CalculatedValue does not override Data::resolveDependencies(), which returns
+                // an empty array. Calling the getter would run the calculator for nothing.
+                continue;
+            }
+
+            if ($field instanceof DataObject\ClassDefinition\Data\ReverseObjectRelation) {
+                // a reverse relation cannot own a dependency either - the relation is recorded
+                // on the owning object - and ReverseObjectRelation::resolveDependencies() says so
+                // by returning an empty array. Its getter is never memoised, so calling it here
+                // would query the relation table and load every owning object for nothing.
+                continue;
+            }
+
             $key = $field->getName();
             $getter = 'get' . ucfirst($key);
             $dependencies[] = $field->resolveDependencies($this->$getter());

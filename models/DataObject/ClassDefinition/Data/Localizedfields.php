@@ -728,6 +728,16 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         foreach ($languages as $language) {
             $data[$language] = [];
             foreach ($this->getFieldDefinitions() as $fd) {
+                if ($fd instanceof CalculatedValue) {
+                    // getLocalizedValue() runs the calculator for a calculated value, and the only
+                    // consumer of this array is checkValidity(), where CalculatedValue::checkValidity()
+                    // is a no-op. The non-variant branch above already yields null for these fields,
+                    // because Localizedfield::getInternalData() nulls them out.
+                    $data[$language][$fd->getName()] = null;
+
+                    continue;
+                }
+
                 $data[$language][$fd->getName()] = $localizedObject->getLocalizedValue($fd->getName(), $language);
             }
         }
