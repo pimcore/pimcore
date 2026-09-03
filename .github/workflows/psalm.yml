@@ -7,6 +7,10 @@ on:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
     push:
+        paths-ignore:
+            - 'doc/**'
+            - 'bundles/**/public/**'
+            - '**.md'
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"

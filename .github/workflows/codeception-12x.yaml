@@ -9,12 +9,14 @@ on:
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
+            - '**.md'
     push:
         branches:
             - "12.*"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
+            - '**.md'
 permissions:
   contents: read
 concurrency:

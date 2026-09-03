@@ -9,12 +9,14 @@ on:
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
+            - '**.md'
     push:
         branches:
             - "12.*"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
+            - '**.md'
 
 env:
     PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_CI_INSTANCE_IDENTIFIER }}
