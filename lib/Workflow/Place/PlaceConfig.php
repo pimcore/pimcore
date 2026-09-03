@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Workflow\Place;
 
 use Pimcore\Helper\ContrastColor;
+use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\ExpressionService;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -73,6 +74,20 @@ class PlaceConfig
     public function isVisibleInHeader(): bool
     {
         return $this->placeConfigArray['visibleInHeader'];
+    }
+
+    /**
+     * The changePublishedState configured on this place, as written in the workflow config.
+     *
+     * This is not the value which gets applied: transitions and global actions inherit it when they do
+     * not configure one themselves, which is resolved when the container is compiled (see WorkflowPass).
+     * Read Transition::getChangePublishedState() / GlobalAction::getChangePublishedState() for the value
+     * which actually applies. Elements which reach the place through initial markings or a direct
+     * marking store write are not touched at all.
+     */
+    public function getChangePublishedState(): string
+    {
+        return (string) ($this->placeConfigArray['changePublishedState'] ?? ChangePublishedStateSubscriber::NO_CHANGE);
     }
 
     public function getObjectLayout(WorkflowInterface $workflow, object $subject): ?string

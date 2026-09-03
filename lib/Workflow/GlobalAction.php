@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow;
 
+use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Notes\NotesAwareInterface;
 use Pimcore\Workflow\Notes\NotesAwareTrait;
@@ -65,6 +66,16 @@ class GlobalAction implements NotesAwareInterface
     public function getObjectLayout(): bool|int|string
     {
         return $this->options['objectLayout'] ?: false;
+    }
+
+    /**
+     * Global actions have no changePublishedState option of their own. The value returned here is
+     * inherited from the places the global action moves to, and is resolved when the container is
+     * compiled (see WorkflowPass).
+     */
+    public function getChangePublishedState(): string
+    {
+        return (string) ($this->options['changePublishedState'] ?? ChangePublishedStateSubscriber::NO_CHANGE);
     }
 
     public function getTos(): array
