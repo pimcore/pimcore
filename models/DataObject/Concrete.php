@@ -125,7 +125,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                         (
                             (
                                 method_exists($fd, 'getDefaultValue') &&
-                                $fd->getDefaultValue() !== null
+                                !$fd->isEmpty($fd->getDefaultValue())
                             ) || (
                                 method_exists($fd, 'getDefaultValueGenerator') &&
                                 $fd->getDefaultValueGenerator() !== ''

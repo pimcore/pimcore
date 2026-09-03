@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Unit\Model\DataObject;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Numeric;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
@@ -24,8 +25,9 @@ use Pimcore\Tests\Support\Test\TestCase;
  * creation for a field that has a configured default value. That guard used
  * to read `empty($value) && !empty($fd->getDefaultValue())`, which mishandles
  * a value/default of 0 or false (empty(0) and empty(false) are both true in
- * PHP). The fix replaces those checks with `$fd->isEmpty($value)` and
- * `$fd->getDefaultValue() !== null`.
+ * PHP). The fix replaces those checks with `$fd->isEmpty($value)` for the
+ * value and `!$fd->isEmpty($fd->getDefaultValue())` for the default, using
+ * each field's own type-aware emptiness rules rather than PHP's empty().
  *
  * This test exercises those two building blocks directly against real field
  * definitions, since Concrete::update() itself can only be exercised through
@@ -46,11 +48,11 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
         $unsetValue = null;
 
         $this->assertTrue($field->isEmpty($unsetValue), 'An unset value must still be considered empty');
-        $this->assertNotNull($field->getDefaultValue(), 'A default of 0 must be recognized as "has a default"');
+        $this->assertFalse($field->isEmpty($field->getDefaultValue()), 'A default of 0 must be recognized as "has a default"');
 
         // the exact guard from Concrete::update() after the fix
         $this->assertTrue(
-            $field->isEmpty($unsetValue) && $field->getDefaultValue() !== null,
+            $field->isEmpty($unsetValue) && !$field->isEmpty($field->getDefaultValue()),
             'A mandatory numeric field with a default of 0 must get the create-time mandatory-check bypass'
         );
 
@@ -80,10 +82,10 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
         $unsetValue = null;
 
         $this->assertTrue($field->isEmpty($unsetValue), 'An unset value must still be considered empty');
-        $this->assertNotNull($field->getDefaultValue(), 'A default of false/0 must be recognized as "has a default"');
+        $this->assertFalse($field->isEmpty($field->getDefaultValue()), 'A default of false/0 must be recognized as "has a default"');
 
         $this->assertTrue(
-            $field->isEmpty($unsetValue) && $field->getDefaultValue() !== null,
+            $field->isEmpty($unsetValue) && !$field->isEmpty($field->getDefaultValue()),
             'A mandatory checkbox with a default of false must get the create-time mandatory-check bypass'
         );
 
@@ -100,5 +102,29 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
 
         $this->assertFalse($field->isEmpty(false), 'A checkbox value of false must not be treated as empty');
         $this->assertTrue(empty(false), 'Sanity check: PHP\'s empty() treats false as empty, which is the bug this fix avoids');
+    }
+
+    /**
+     * Regression guard: a naive `$fd->getDefaultValue() !== null` check (an
+     * earlier draft of this fix) would have treated a Select field's empty
+     * string default as "has a default" and incorrectly bypassed the
+     * mandatory check, potentially letting a mandatory field stay empty on
+     * publish. The field's own isEmpty() must be used instead.
+     */
+    public function testSelectFieldWithEmptyStringDefaultIsNotRecognizedAsHavingADefault(): void
+    {
+        $field = new Select();
+        $field->setName('mandatorySelectWithEmptyDefault');
+        $field->setMandatory(true);
+        $field->setDefaultValue('');
+
+        $this->assertNotNull($field->getDefaultValue(), 'Sanity check: the stored default is an empty string, not null');
+        $this->assertTrue($field->isEmpty($field->getDefaultValue()), 'An empty string default must be considered empty for a Select field');
+
+        // the exact guard from Concrete::update() after the fix must NOT bypass here
+        $this->assertFalse(
+            !$field->isEmpty($field->getDefaultValue()),
+            'A mandatory select field with a genuinely empty default must not get the create-time mandatory-check bypass'
+        );
     }
 }
