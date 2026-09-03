@@ -72,6 +72,8 @@ class Model extends AbstractDefinitionHelper
                 ->setClasses(['RelationTest'])
             );
 
+            $panel->addChild($this->createDataChild('manyToManyAssetRelation', 'assetRelations'));
+
             $panel->addChild($this->createDataChild('manyToOneRelation', 'relation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
@@ -100,6 +102,8 @@ class Model extends AbstractDefinitionHelper
             $lFields->addChild($this->createDataChild('manyToManyObjectRelation', 'lobjects')
                 ->setClasses(['RelationTest'])
             );
+
+            $lFields->addChild($this->createDataChild('manyToManyAssetRelation', 'lassetRelations'));
 
             $lFields->addChild($this->createDataChild('manyToOneRelation', 'lrelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
