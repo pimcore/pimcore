@@ -184,6 +184,26 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
     }
 
     /**
+     * A unit alone, with no configured scalar value at all, must NOT bypass.
+     * checkValidity() requires both value and unit to be set for a mandatory
+     * field; skipping that check here would let doGetDefaultValue()'s
+     * `(null, unit)` default be persisted on a mandatory field.
+     */
+    public function testQuantityValueFieldWithUnitOnlyIsNotRecognizedAsHavingADefault(): void
+    {
+        $field = new QuantityValue();
+        $field->setName('mandatoryQuantityValueWithUnitOnly');
+        $field->setMandatory(true);
+        $field->setDefaultUnit('unit-1');
+
+        $this->assertNull($field->getDefaultValue(), 'Sanity check: no scalar default was configured');
+        $this->assertFalse(
+            $this->mandatoryCheckBypassApplies($field, null),
+            'A mandatory quantity value field with only a default unit (no value) must not get the bypass'
+        );
+    }
+
+    /**
      * QuantityValueRange also exposes getDefaultUnit(), but unlike
      * QuantityValue/InputQuantityValue it has no getDefaultValue() and no
      * default-resolution path at all (it does not use DefaultValueTrait).
@@ -214,7 +234,12 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
             (
                 (method_exists($fd, 'getDefaultValue') && !$fd->isEmpty($fd->getDefaultValue()))
                 || (method_exists($fd, 'getDefaultValueGenerator') && $fd->getDefaultValueGenerator() !== '')
-                || (method_exists($fd, 'getDefaultValue') && method_exists($fd, 'getDefaultUnit') && $fd->getDefaultUnit() !== null)
+                || (
+                    method_exists($fd, 'getDefaultValue') &&
+                    $fd->getDefaultValue() !== null &&
+                    method_exists($fd, 'getDefaultUnit') &&
+                    $fd->getDefaultUnit() !== null
+                )
             );
     }
 }

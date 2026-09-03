@@ -311,6 +311,33 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
+     * Regression test for PEES-1279: a mandatory QuantityValue/InputQuantityValue
+     * field with a scalar default of 0 plus a configured default unit must not
+     * block publishing a brand-new object, and both the value and the unit must
+     * be persisted (not just the mandatory check silently skipped).
+     */
+    public function testMandatoryQuantityValueZeroPlusUnitDefaultSavedToVersion(): void
+    {
+        $object = TestHelper::createEmptyObject('', false, true);
+        $object->setOmitMandatoryCheck(false);
+        $object->save();
+
+        $versions = $object->getVersions();
+        $latestVersion = end($versions);
+        $data = $latestVersion->getData();
+
+        $quantityValue = $data->getMandatoryQuantityValueWithZeroDefaultAndUnit();
+        $this->assertNotNull($quantityValue, 'Expected quantity value default to be applied, not left null');
+        $this->assertNotNull($quantityValue->getUnitId(), 'Expected the configured default unit to be applied');
+        $this->assertEquals(0, $quantityValue->getValue(), 'Expected quantity value default of 0 saved to version');
+
+        $inputQuantityValue = $data->getMandatoryInputQuantityValueWithZeroDefaultAndUnit();
+        $this->assertNotNull($inputQuantityValue, 'Expected input quantity value default to be applied, not left null');
+        $this->assertNotNull($inputQuantityValue->getUnitId(), 'Expected the configured default unit to be applied');
+        $this->assertEquals(0, $inputQuantityValue->getValue(), 'Expected input quantity value default of 0 saved to version');
+    }
+
+    /**
      * Verifies that when an object gets cloned, the fields get copied properly
      */
     public function testCloning(): void

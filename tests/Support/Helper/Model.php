@@ -493,6 +493,20 @@ class Model extends AbstractDefinitionHelper
             $mandatoryCheckboxWithFalseDefault->setDefaultValue(0);
             $panel->addChild($mandatoryCheckboxWithFalseDefault);
 
+            $defaultUnitId = DataObject\QuantityValue\Unit::getByAbbreviation('mm')->getId();
+
+            /** @var ClassDefinition\Data\QuantityValue $mandatoryQuantityValueWithZeroDefaultAndUnit */
+            $mandatoryQuantityValueWithZeroDefaultAndUnit = $this->createDataChild('quantityValue', 'mandatoryQuantityValueWithZeroDefaultAndUnit', true);
+            $mandatoryQuantityValueWithZeroDefaultAndUnit->setDefaultValue(0);
+            $mandatoryQuantityValueWithZeroDefaultAndUnit->setDefaultUnit($defaultUnitId);
+            $panel->addChild($mandatoryQuantityValueWithZeroDefaultAndUnit);
+
+            /** @var ClassDefinition\Data\InputQuantityValue $mandatoryInputQuantityValueWithZeroDefaultAndUnit */
+            $mandatoryInputQuantityValueWithZeroDefaultAndUnit = $this->createDataChild('inputQuantityValue', 'mandatoryInputQuantityValueWithZeroDefaultAndUnit', true);
+            $mandatoryInputQuantityValueWithZeroDefaultAndUnit->setDefaultValue('0');
+            $mandatoryInputQuantityValueWithZeroDefaultAndUnit->setDefaultUnit($defaultUnitId);
+            $panel->addChild($mandatoryInputQuantityValueWithZeroDefaultAndUnit);
+
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
