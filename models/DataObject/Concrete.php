@@ -133,11 +133,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                 // compound quantity-value fields (QuantityValue, InputQuantityValue) can
                                 // resolve a default from a falsy-but-configured scalar plus a unit, even
                                 // though the scalar alone reads as empty; a unit with no configured value
-                                // at all must NOT bypass, since checkValidity() requires both to be set
+                                // at all must NOT bypass, since checkValidity() requires both to be set.
+                                // The unit check mirrors doGetDefaultValue()'s own truthy check on the
+                                // unit, so an empty-string unit (which it treats as "no unit") agrees here
                                 method_exists($fd, 'getDefaultValue') &&
                                 $fd->getDefaultValue() !== null &&
                                 method_exists($fd, 'getDefaultUnit') &&
-                                $fd->getDefaultUnit() !== null
+                                $fd->getDefaultUnit()
                             )
                         )
                     ) {

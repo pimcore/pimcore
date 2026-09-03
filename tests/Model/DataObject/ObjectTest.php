@@ -329,11 +329,13 @@ class ObjectTest extends ModelTestCase
         $quantityValue = $data->getMandatoryQuantityValueWithZeroDefaultAndUnit();
         $this->assertNotNull($quantityValue, 'Expected quantity value default to be applied, not left null');
         $this->assertNotNull($quantityValue->getUnitId(), 'Expected the configured default unit to be applied');
+        $this->assertNotNull($quantityValue->getValue(), 'Expected the scalar value to be persisted, not just the unit');
         $this->assertEquals(0, $quantityValue->getValue(), 'Expected quantity value default of 0 saved to version');
 
         $inputQuantityValue = $data->getMandatoryInputQuantityValueWithZeroDefaultAndUnit();
         $this->assertNotNull($inputQuantityValue, 'Expected input quantity value default to be applied, not left null');
         $this->assertNotNull($inputQuantityValue->getUnitId(), 'Expected the configured default unit to be applied');
+        $this->assertNotNull($inputQuantityValue->getValue(), 'Expected the scalar value to be persisted, not just the unit');
         $this->assertEquals(0, $inputQuantityValue->getValue(), 'Expected input quantity value default of 0 saved to version');
     }
 

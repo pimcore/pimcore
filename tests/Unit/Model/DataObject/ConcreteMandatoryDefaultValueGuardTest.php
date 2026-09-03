@@ -204,6 +204,29 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
     }
 
     /**
+     * setDefaultUnit() accepts an empty string, and doGetDefaultValue()
+     * treats that as "no unit" (a truthy check, not a null check). A
+     * `!== null` check on the guard's unit side would disagree with that and
+     * bypass the mandatory check even though no default actually gets
+     * constructed, leaving the field empty on a mandatory field.
+     */
+    public function testQuantityValueFieldWithZeroDefaultAndEmptyStringUnitIsNotRecognizedAsHavingADefault(): void
+    {
+        $field = new QuantityValue();
+        $field->setName('mandatoryQuantityValueWithZeroDefaultAndEmptyUnit');
+        $field->setMandatory(true);
+        $field->setDefaultValue(0);
+        $field->setDefaultUnit('');
+
+        $this->assertNotNull($field->getDefaultUnit(), 'Sanity check: the stored unit is an empty string, not null');
+        $this->assertFalse((bool) $field->getDefaultUnit(), 'An empty string unit must read as falsy, matching doGetDefaultValue()');
+        $this->assertFalse(
+            $this->mandatoryCheckBypassApplies($field, null),
+            'A mandatory quantity value field with a 0 default but an empty string unit must not get the bypass, since doGetDefaultValue() resolves no default here'
+        );
+    }
+
+    /**
      * QuantityValueRange also exposes getDefaultUnit(), but unlike
      * QuantityValue/InputQuantityValue it has no getDefaultValue() and no
      * default-resolution path at all (it does not use DefaultValueTrait).
@@ -238,7 +261,7 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
                     method_exists($fd, 'getDefaultValue') &&
                     $fd->getDefaultValue() !== null &&
                     method_exists($fd, 'getDefaultUnit') &&
-                    $fd->getDefaultUnit() !== null
+                    $fd->getDefaultUnit()
                 )
             );
     }
