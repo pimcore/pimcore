@@ -303,7 +303,13 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
         }
 
         $resolvedSource = $this->resolveFilePath($source);
-        if ($this->inner->fileExists($resolvedSource)) {
+        // A path that answers fileExists() can still be a directory: marker-materializing
+        // backends expose an explicitly created directory as a zero-byte object at its bare
+        // key, and moving only that object would silently strand the whole subtree - such a
+        // path must take the directory branch below. The check uses the resolved directory
+        // view (own directoryExists()), so a source that exists purely through a pending
+        // move mapping repoints instead of moving its relocated marker as a single file.
+        if ($this->inner->fileExists($resolvedSource) && !$this->directoryExists($source)) {
             // single file: normal move, source possibly at its legacy location
             $this->materializeShadowedSource($destination);
             $this->inner->move($resolvedSource, $destination, $config);
@@ -331,7 +337,10 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
         if ($literalDirectoryExists) {
             try {
                 $this->inner->move($source, $destination, $config);
-                $movedNatively = true;
+                // Trust the native rename only if it actually emptied the source: a marker-
+                // materializing backend "succeeds" after moving just the zero-byte object at
+                // the bare key while the subtree stays behind - that must queue instead.
+                $movedNatively = !$this->inner->directoryExists($source);
             } catch (UnableToMoveFile) {
                 // backend cannot rename directories - fall through to queueing
             }

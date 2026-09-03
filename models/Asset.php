@@ -573,12 +573,7 @@ class Asset extends Element\AbstractElement
                     // finally move the actual assets themselves
                     // We do this last so that any prior errors don't require a rollback
                     // on potentially a remote service.
-                    try {
-                        $storage->move($oldPath, $this->getRealFullPath());
-                    } catch (UnableToMoveFile $e) {
-                        //update children, if unable to move parent
-                        $this->updateChildPaths($storage, $oldPath);
-                    }
+                    $this->moveDirectoryOnStorage($storage, $oldPath);
                 }
 
                 // lastly create a new version if necessary
@@ -1716,6 +1711,45 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Moves a directory (a folder's subtree) on the given storage: attempts the native
+     * move first (atomic and cheap where the adapter supports it, e.g. on the local
+     * filesystem) and falls back to relocating the contents file by file.
+     *
+     * Whether the fallback is needed is decided by what is actually left at the old
+     * path, never by the move() outcome alone: on some S3-compatible storages a
+     * directory is exposed as a copyable zero-byte object at its bare key, so move()
+     * reports success after relocating just that object while the entire subtree
+     * stays at the old prefix.
+     *
+     * @throws FilesystemException
+     */
+    private function moveDirectoryOnStorage(FilesystemOperator $storage, string $oldPath): void
+    {
+        try {
+            $storage->move($oldPath, $this->getRealFullPath());
+        } catch (UnableToMoveFile) {
+            // expected on storages without native directory rename - covered by the fallback below
+        }
+
+        if ($this->isStorageOperationQueueEnabled()) {
+            // the queue-aware adapter owns the move: a returned move() is either a real native
+            // rename or a queued operation whose source content must stay in place until the
+            // processor drains it - the fallback must not touch it
+            return;
+        }
+
+        if ($storage->directoryExists($oldPath)) {
+            //update children, if the parent move did not (fully) relocate them
+            $this->updateChildPaths($storage, $oldPath);
+        }
+    }
+
+    private function isStorageOperationQueueEnabled(): bool
+    {
+        return (bool) (Config::getSystemConfiguration('assets')['storage_operation_queue']['enabled'] ?? false);
+    }
+
+    /**
      * @throws FilesystemException
      */
     private function updateChildPaths(
@@ -1804,16 +1838,34 @@ class Asset extends Element\AbstractElement
             $this->clearFolderThumbnails($this);
 
             foreach (['thumbnail', 'asset_cache'] as $storageName) {
-                $storage = Storage::get($storageName);
-
-                try {
-                    $this->moveThumbnailPath($storage, $oldThumbnailsPath, $newThumbnailsPath);
-                } catch (UnableToMoveFile $e) {
-                    //update children, if unable to move parent
-                    //if there is an error, we can ignore it
-                    $this->updateChildPaths($storage, $oldPath, null, true);
-                }
+                $this->moveThumbnailDirectoryOnStorage(Storage::get($storageName), $oldThumbnailsPath, $newThumbnailsPath);
             }
+        }
+    }
+
+    /**
+     * Moves one asset's (or folder's) thumbnail directory on the given storage - same
+     * post-condition approach as moveDirectoryOnStorage(): the per-file fallback runs
+     * based on what is left at the old path, not on the move() outcome; with the storage
+     * operation queue enabled the adapter owns the operation instead.
+     *
+     * @throws FilesystemException
+     */
+    private function moveThumbnailDirectoryOnStorage(
+        FilesystemOperator $storage,
+        string $oldThumbnailsPath,
+        string $newThumbnailsPath
+    ): void {
+        try {
+            $this->moveThumbnailPath($storage, $oldThumbnailsPath, $newThumbnailsPath);
+        } catch (UnableToMoveFile) {
+            // expected on storages without native directory rename - covered by the fallback below
+        }
+
+        if (!$this->isStorageOperationQueueEnabled() && $storage->directoryExists($oldThumbnailsPath)) {
+            //update children, if the parent move did not (fully) relocate them
+            //if there is an error, we can ignore it
+            $this->updateChildPaths($storage, $oldThumbnailsPath, $newThumbnailsPath, true);
         }
     }
 
