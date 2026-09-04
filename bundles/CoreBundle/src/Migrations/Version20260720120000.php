@@ -31,6 +31,11 @@ final class Version20260720120000 extends AbstractMigration
         return 'Create the telemetry_spool outbox table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql(

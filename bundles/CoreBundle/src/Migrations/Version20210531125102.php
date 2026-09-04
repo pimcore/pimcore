@@ -27,6 +27,11 @@ final class Version20210531125102 extends AbstractMigration
         return 'Added LocalizedErrorDocuments to sites table.';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('sites')->hasColumn('localizedErrorDocuments')) {

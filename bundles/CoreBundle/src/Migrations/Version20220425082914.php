@@ -24,6 +24,11 @@ final class Version20220425082914 extends AbstractMigration
         return 'Improve data object grid loading performance';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if ($schema->getTable('objects')->hasIndex('type')) {

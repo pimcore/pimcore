@@ -29,6 +29,11 @@ final class Version20240222143211 extends AbstractMigration
         return 'Dynamically rename _o_id foreign keys to _id.';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('SET foreign_key_checks = 0');

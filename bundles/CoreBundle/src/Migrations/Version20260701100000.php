@@ -27,6 +27,11 @@ final class Version20260701100000 extends AbstractMigration
         return 'Add coauthorType and coauthor columns to versions table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('versions')->hasColumn('coauthorType')) {

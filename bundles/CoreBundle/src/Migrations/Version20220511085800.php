@@ -24,6 +24,11 @@ final class Version20220511085800 extends AbstractMigration
         return 'Add key and index to search_backend_data table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('search_backend_data')->hasColumn('key')) {
