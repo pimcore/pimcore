@@ -96,10 +96,13 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
             // old file first before opening a new stream -> see Asset::update()
             $useHardlinks = Config::getSystemConfiguration('assets')['versions']['use_hardlinks'];
             $this->storage->write($binaryStoragePath, '1'); // temp file to determine if stream is local or not
-            if ($useHardlinks && stream_is_local($this->getBinaryFileStream($version)) && stream_is_local($binaryDataStream)) {
-                $linkPath = stream_get_meta_data($this->getBinaryFileStream($version))['uri'];
+
+            $existingFilePath = $this->resolveLocalFilePath($this->getBinaryFileStream($version));
+            $dataFilePath = $this->resolveLocalFilePath($binaryDataStream);
+
+            if ($useHardlinks && $existingFilePath !== null && $dataFilePath !== null) {
                 $this->storage->delete($binaryStoragePath);
-                $linked = @link(stream_get_meta_data($binaryDataStream)['uri'], $linkPath);
+                $linked = @link($dataFilePath, $existingFilePath);
             }
 
             if (!$linked) {
@@ -121,6 +124,23 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
         if (!$isBinaryHashInUse) {
             $this->deleteFileIfExists($binaryStoragePath);
         }
+    }
+
+    /**
+     * resolveLocalFilePath returns the real filesystem path backing the given stream, or null when the
+     * stream isn't backed by an actual file. stream_is_local() alone isn't enough here: it also returns
+     * true for in-memory wrappers like php://temp, which have no real path on disk and make link() fail
+     * with "No such file or directory".
+     */
+    private function resolveLocalFilePath(mixed $stream): ?string
+    {
+        if (!is_resource($stream) || !stream_is_local($stream)) {
+            return null;
+        }
+
+        $uri = stream_get_meta_data($stream)['uri'] ?? null;
+
+        return $uri !== null && is_file($uri) ? $uri : null;
     }
 
     private function deleteFileIfExists(string $path): void

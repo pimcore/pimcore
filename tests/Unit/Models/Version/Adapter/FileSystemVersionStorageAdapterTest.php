@@ -23,6 +23,7 @@ use Pimcore\Model\Version;
 use Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter;
 use Pimcore\Tests\Support\Test\TestCase;
 use ReflectionClass;
+use ReflectionMethod;
 
 class FileSystemVersionStorageAdapterTest extends TestCase
 {
@@ -86,6 +87,39 @@ class FileSystemVersionStorageAdapterTest extends TestCase
 
         $this->expectException(UnableToDeleteFile::class);
         $adapter->delete($version, false);
+    }
+
+    public function testResolveLocalFilePathReturnsNullForInMemoryStream(): void
+    {
+        $adapter = $this->createAdapterWithStorage($this->createMock(FilesystemOperator::class));
+        $stream = fopen('php://temp', 'r+');
+
+        try {
+            $this->assertNull($this->callResolveLocalFilePath($adapter, $stream));
+        } finally {
+            fclose($stream);
+        }
+    }
+
+    public function testResolveLocalFilePathReturnsPathForRealFile(): void
+    {
+        $adapter = $this->createAdapterWithStorage($this->createMock(FilesystemOperator::class));
+        $tmpFile = tmpfile();
+        $tmpFilePath = stream_get_meta_data($tmpFile)['uri'];
+
+        try {
+            $this->assertSame($tmpFilePath, $this->callResolveLocalFilePath($adapter, $tmpFile));
+        } finally {
+            fclose($tmpFile);
+        }
+    }
+
+    private function callResolveLocalFilePath(FileSystemVersionStorageAdapter $adapter, mixed $stream): ?string
+    {
+        $method = new ReflectionMethod(FileSystemVersionStorageAdapter::class, 'resolveLocalFilePath');
+        $method->setAccessible(true);
+
+        return $method->invoke($adapter, $stream);
     }
 
     private function createAdapterWithStorage(FilesystemOperator $storage): FileSystemVersionStorageAdapter
