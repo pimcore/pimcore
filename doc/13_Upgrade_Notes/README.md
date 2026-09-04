@@ -18,6 +18,8 @@
 - [JobRun] Log entries stored in the `generic_execution_engine_job_run.log` column are now delimited by a short versioned frame (a version token wrapped in ASCII record separators, `0x1E`) instead of a newline, so a newline that belongs to a single (multi-line) log message is no longer mistaken for an entry boundary. The version token is framed rather than using a bare `0x1E` so that legacy payloads, which were stored verbatim and may already contain a stray `0x1E`, are never split on such a byte. Logs written in the previous newline-delimited format are still read on a best-effort basis, so no migration is required. The parsing of the column has moved from `JobRun::getLogs()` into the new `@internal` `Pimcore\Bundle\GenericExecutionEngineBundle\Utils\LogParser`, and the `@internal` value object `LogLine` now takes the timestamp and message as separate constructor arguments and no longer exposes `appendLogLine()`.
 
 ### [Assets]
+- [Documents] Document assets (e.g. PDFs) now support embedded metadata (XMP/EXIF/IPTC) extraction, analogous to image and video assets. The metadata is extracted asynchronously via the asset update tasks queue (preferably using `exiftool`, if available) and is available through `Asset\Document::getEmbeddedMetaData()` or the `embeddedMetaData` custom setting.
+- [Embedded Metadata] The `embeddedMetaData` and `embeddedMetaDataExtracted` custom settings are now removed for all asset types whenever the binary data of an asset changes, so the metadata is extracted again from the new data. This also covers changes of the asset type (e.g. an image asset that is replaced by a PDF and therefore becomes a document asset), which previously kept the metadata of the old file.
 - [Thumbnails] The cache lifetime used for the `Cache-Control` and `Expires` HTTP headers when a thumbnail is delivered on-the-fly through the thumbnail service is now configurable via `pimcore.assets.thumbnails.cache_lifetime` (in seconds). It defaults to `604800` (one week), which preserves the previous hard-coded behavior.
 - Added a new optional `$parameters` argument to `Asset::saveVersion()` to allow passing custom arguments to the `PRE_UPDATE` / `POST_UPDATE` / `POST_UPDATE_FAILURE` versioning events, analogous to `Concrete::saveVersion()`. To stay backwards-compatible for classes overriding `saveVersion()`, the argument is documented in the docblock but not yet part of the method signature (it is read via `func_get_arg()`); it will become a regular signature parameter in the next major version.
 
@@ -51,7 +53,6 @@
 ## Pimcore 2026.2.0
 
 ### [General]
-- [Assets] Document assets (e.g. PDFs) now support embedded metadata (XMP/EXIF/IPTC) extraction, analogous to image and video assets. The metadata is extracted asynchronously via the asset update tasks queue (preferably using `exiftool`, if available) and is available through `Asset\Document::getEmbeddedMetaData()` or the `embeddedMetaData` custom setting.
 - [Assets][Thumbnails][CDN] New core events for thumbnail-config lifecycle were introduced to support CDN purge integration:
     - `Pimcore\Event\ImageThumbnailConfigEvents::POST_UPDATE` and `POST_DELETE`
     - `Pimcore\Event\VideoThumbnailConfigEvents::POST_UPDATE` and `POST_DELETE`

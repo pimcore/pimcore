@@ -795,6 +795,13 @@ class Asset extends Element\AbstractElement
                     $typeChanged = true;
                 }
 
+                // embedded meta data (see EmbeddedMetaDataTrait) belongs to the binary data, so it has to be
+                // extracted again. This is done here for all asset types, as the type can change together with
+                // the data (e.g. image -> document) and the new type would otherwise keep the meta data of the old one.
+                foreach (['embeddedMetaData', 'embeddedMetaDataExtracted'] as $key) {
+                    $this->removeCustomSetting($key);
+                }
+
                 // not only check if the type is set but also if the implementation can be found
                 $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
 

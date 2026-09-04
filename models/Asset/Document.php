@@ -29,16 +29,15 @@ class Document extends Model\Asset
 
     public const CUSTOM_SETTING_PDF_SCAN_STATUS = 'document_pdf_scan_status';
 
-    public const CUSTOM_SETTING_PAGE_COUNT = 'document_page_count';
+    private const CUSTOM_SETTING_PAGE_COUNT = 'document_page_count';
 
     protected string $type = 'document';
 
     protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
-            foreach ([self::CUSTOM_SETTING_PAGE_COUNT, self::CUSTOM_SETTING_PDF_SCAN_STATUS, 'embeddedMetaData', 'embeddedMetaDataExtracted'] as $key) {
-                $this->removeCustomSetting($key);
-            }
+            $this->removeCustomSetting(self::CUSTOM_SETTING_PAGE_COUNT);
+            $this->removeCustomSetting(self::CUSTOM_SETTING_PDF_SCAN_STATUS);
         }
 
         parent::update($params);
