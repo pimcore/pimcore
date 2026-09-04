@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Traits;
 
 use Pimcore\Model\DataObject\Data\ElementMetadata;
-use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
 
 /**
  * @internal
@@ -34,10 +34,9 @@ trait ElementWithMetadataComparisonTrait
         $values2 = array_filter(array_values(is_array($newValue) ? $newValue : []));
 
         for ($i = 0; $i < $count1; $i++) {
-            /** @var ElementMetadata|null $container1 */
-            $container1 = $values1[$i];
-            /** @var ElementMetadata|null $container2 */
-            $container2 = $values2[$i];
+            // array_filter() may have dropped an entry, so either side can be missing here.
+            $container1 = $values1[$i] ?? null;
+            $container2 = $values2[$i] ?? null;
 
             if (!$container1 || !$container2) {
                 return !$container1 && !$container2;
@@ -47,11 +46,10 @@ trait ElementWithMetadataComparisonTrait
             // container - the getElement() call below would then fatal with a TypeError. Compare
             // such entries directly, and treat a container and a path as different.
             //
-            // The check is is_object() rather than an instanceof: the trait serves both
-            // ElementMetadata (AdvancedManyToManyRelation) and ObjectMetadata
-            // (AdvancedManyToManyObjectRelation), which are siblings rather than subclasses,
-            // and any future container implementing getElement()/getData() belongs here too.
-            if (!is_object($container1) || !is_object($container2)) {
+            // The trait serves both ElementMetadata (AdvancedManyToManyRelation) and
+            // ObjectMetadata (AdvancedManyToManyObjectRelation), which are siblings rather than
+            // subclasses, so both have to pass the guard.
+            if (!self::isMetadataContainer($container1) || !self::isMetadataContainer($container2)) {
                 // Strict on purpose, unlike the metadata comparison below. The result of this
                 // method decides whether the field is marked dirty, and a value wrongly reported
                 // as equal is never written back - so "5" and "05", or 1 and "1", must not
@@ -64,9 +62,7 @@ trait ElementWithMetadataComparisonTrait
                 continue;
             }
 
-            /** @var ElementInterface|null $el1 */
             $el1 = $container1->getElement();
-            /** @var ElementInterface|null $el2 */
             $el2 = $container2->getElement();
 
             if (! ($el1?->getType() == $el2?->getType() && ($el1?->getId() == $el2?->getId()))) {
@@ -81,5 +77,13 @@ trait ElementWithMetadataComparisonTrait
         }
 
         return true;
+    }
+
+    /**
+     * @phpstan-assert-if-true ElementMetadata|ObjectMetadata $value
+     */
+    private static function isMetadataContainer(mixed $value): bool
+    {
+        return $value instanceof ElementMetadata || $value instanceof ObjectMetadata;
     }
 }
