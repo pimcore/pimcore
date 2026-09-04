@@ -234,7 +234,7 @@ final class Thumbnail implements ThumbnailInterface
             $options['previewDataUri'] =  $image->getLowQualityPreviewDataUri() ?: $emptyGif;
         }
 
-        $isAutoFormat = $thumbConfig instanceof Config && strtolower($thumbConfig->getFormat()) === 'source';
+        $isAutoFormat = $thumbConfig instanceof Config && Config::isAutoFormat($thumbConfig->getFormat());
 
         if ($isAutoFormat) {
             // ensure the default image is not WebP
