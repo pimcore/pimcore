@@ -11,28 +11,27 @@ declare(strict_types=1);
  *  @license    Pimcore Open Core License (POCL)
  */
 
-namespace Pimcore\Model\User;
+namespace Pimcore\Model\User\Folder;
 
+use Pimcore\Model;
 use Pimcore\Model\User;
 
 /**
- * Lists Pimcore users (type "user") only.
+ * Lists Pimcore user folders (type "userfolder") only.
  *
- * For user folders use {@see User\Folder\Listing}.
- *
- * @method \Pimcore\Model\User\Listing\Dao getDao()
- * @method User[] load()
+ * @method \Pimcore\Model\User\Folder\Listing\Dao getDao()
+ * @method User\Folder[] load()
  */
-class Listing extends Listing\AbstractListing
+class Listing extends Model\User\Listing\AbstractListing
 {
-    protected string $type = 'user';
+    protected string $type = 'userfolder';
 
     /**
      * Alias for $this->getItems()
      *
-     * @return \Pimcore\Model\User[]
+     * @return User\Folder[]
      */
-    public function getUsers(): array
+    public function getFolders(): array
     {
         return $this->getItems();
     }
