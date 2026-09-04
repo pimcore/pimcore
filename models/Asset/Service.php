@@ -399,7 +399,7 @@ class Service extends Model\Element\Service
                 return null;
             }
 
-            if ($config['type'] === 'image' && strcasecmp($thumbnailConfig->getFormat(), 'SOURCE') === 0) {
+            if ($config['type'] === 'image' && ThumbnailConfig::isAutoFormat($thumbnailConfig->getFormat())) {
                 $formatOverride = $config['file_extension'];
                 if (in_array($config['file_extension'], ['jpg', 'jpeg'])) {
                     $formatOverride = 'pjpeg';
