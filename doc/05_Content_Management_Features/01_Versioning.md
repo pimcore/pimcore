@@ -46,6 +46,38 @@ pimcore:
 
 A maintenance job (`VersionsCleanupStackTraceDbTask`) automatically removes stack traces older than 7 days.
 
+### Skip the Initial Asset Version
+
+By default, a version is created every time an asset is saved, including the very first save when the asset is
+uploaded. The version of the initial upload contains a full copy of the binary data, which is wasted storage for
+assets that are uploaded once and never modified afterwards (a common case in DAM scenarios). On a local filesystem
+this copy is a cheap hardlink (see `pimcore.assets.versions.use_hardlinks`), but with remote or separate storages
+for assets and versions, it is a real copy.
+
+Enable `skip_initial_version` to create no version when an asset is added:
+
+```yaml
+pimcore:
+    assets:
+        versions:
+            skip_initial_version: true
+```
+
+The original state is not lost: the first time such an asset is modified, Pimcore versions the persisted state
+(metadata and binary data as they were uploaded) right before applying the change, and then creates the regular
+version of the modification. Assets that are never modified therefore never occupy version storage, while the upload
+state of modified assets remains restorable from the Versions tab.
+
+Notes:
+
+- Only assets are affected, versions of documents and data objects don't contain binary data.
+- Any save of the asset counts as a modification, including metadata or property changes, moves and renames, and
+  programmatic saves. If the binary data is unchanged, it is stored only once and shared by the versions.
+- The lazy version of the persisted state is only created for assets that have no versions at all. Assets created
+  while the option was disabled already have their upload version and behave as before; assets whose versions have
+  been removed by the versions cleanup get their persisted state versioned again on the next modification.
+- Calling `$asset->saveVersion()` directly always creates a version, regardless of this option.
+
 ## Version Storage
 
 Every version stores metadata and, if present, binary data. Since version data can grow quickly,
