@@ -580,7 +580,14 @@ class Asset extends Element\AbstractElement
                 // this has to be after the registry update and the DB update, otherwise this would cause problem in the
                 // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
                 if ($this->getType() != 'folder') {
-                    $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
+                    // optionally no version is created when adding an asset (see `pimcore.assets.versions.skip_initial_version`),
+                    // an asset which is modified already got a version of its persisted state in update()
+                    if (!self::isInitialVersionSkipped() || $this->getDao()->hasVersions()) {
+                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
+                    } else {
+                        // scheduled tasks are saved always, they are not versioned (see saveVersion())
+                        $this->saveScheduledTasks();
+                    }
                     $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
                 }
             },
@@ -716,6 +723,14 @@ class Asset extends Element\AbstractElement
     protected function update(array $params = []): void
     {
         $storage = Storage::get('asset');
+
+        // if no version was created when the asset was added (see `pimcore.assets.versions.skip_initial_version`),
+        // version the persisted state before it gets overwritten by the first modification, so that the
+        // original state of the asset stays restorable
+        if (($params['isUpdate'] ?? false) && $this->getType() != 'folder' && self::isInitialVersionSkipped()) {
+            $this->saveVersionOfPersistedState();
+        }
+
         $this->updateModificationInfos();
 
         $path = $this->getRealFullPath();
@@ -844,6 +859,68 @@ class Asset extends Element\AbstractElement
     protected function postPersistData(): void
     {
         // hook for the save process, can be overwritten in implementations, such as Image
+    }
+
+    /**
+     * Whether the creation of a version is skipped when an asset is added,
+     * see `pimcore.assets.versions.skip_initial_version`
+     *
+     * @internal
+     */
+    public static function isInitialVersionSkipped(): bool
+    {
+        return (bool) (Config::getSystemConfiguration('assets')['versions']['skip_initial_version'] ?? false);
+    }
+
+    /**
+     * Creates a version of the state of this asset as it is currently persisted in the database and on the storage,
+     * but only if the asset doesn't have any versions yet. This is used when no version was created on adding the
+     * asset (see `pimcore.assets.versions.skip_initial_version`) and the asset is now modified for the first time.
+     *
+     * @internal
+     *
+     * @throws Exception
+     */
+    protected function saveVersionOfPersistedState(): ?Version
+    {
+        if (!Version::isEnabled() || !$this->getId() || $this->getDao()->hasVersions()) {
+            return null;
+        }
+
+        $persisted = new Asset();
+        $persisted->getDao()->getById($this->getId());
+
+        if ($persisted->getType() === 'folder') {
+            return null;
+        }
+
+        $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($persisted->getType());
+        if (get_class($persisted) !== $className) {
+            /** @var Asset $persisted */
+            $persisted = self::getModelFactory()->build($className);
+            $persisted->getDao()->getById($this->getId());
+        }
+
+        // open the stream of the persisted binary data before anything else happens, so that the version definitely
+        // contains the binary data as it is currently on the storage (even if this save moves or renames the asset)
+        $persisted->getStream();
+
+        // Version::save() relies on Asset::getById() (runtime cache) for the path correction in __wakeup(), which
+        // would return the instance currently being saved (possibly already carrying a new path), so the persisted
+        // instance temporarily takes its place in the runtime cache
+        $cacheKey = self::getCacheKey($this->getId());
+        $cachedInstance = RuntimeCache::isRegistered($cacheKey) ? RuntimeCache::get($cacheKey) : null;
+        RuntimeCache::set($cacheKey, $persisted);
+
+        try {
+            $assetsConfig = SystemSettingsConfig::get()['assets'];
+            $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
+
+            return $persisted->doSaveVersion(null, false, $saveStackTrace);
+        } finally {
+            RuntimeCache::set($cacheKey, $cachedInstance ?? $this);
+            $persisted->closeStream();
+        }
     }
 
     /**

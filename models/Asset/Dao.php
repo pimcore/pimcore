@@ -298,6 +298,20 @@ class Dao extends Model\Element\Dao
         return $path;
     }
 
+    /**
+     * Checks whether at least one version exists for this asset
+     *
+     * @internal
+     */
+    public function hasVersions(): bool
+    {
+        if (!$this->model->getId()) {
+            return false;
+        }
+
+        return (bool) $this->db->fetchOne("SELECT 1 FROM versions WHERE cid = ? AND ctype = 'asset' LIMIT 1", [$this->model->getId()]);
+    }
+
     public function getVersionCountForUpdate(): int
     {
         if (!$this->model->getId()) {
