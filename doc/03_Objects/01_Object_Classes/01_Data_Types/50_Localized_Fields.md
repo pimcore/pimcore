@@ -61,12 +61,44 @@ The following code will create an array containing the available languages for t
 $languages = \Pimcore\Tool::getValidLanguages();
 ```
 
-### Disable Fallback languages ###
+### Enable / Disable Fallback languages ###
 
-You can disable the Fallback languages
+Whether getters return the value of the fallback language when the requested language has no value is controlled by
+the static flag `\Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues()`.
+
+Its default depends on the context Pimcore is running in:
+
+| Context | Fallback values |
+|---------|-----------------|
+| Frontend requests (website) | enabled |
+| CLI scripts / commands | enabled |
+| Admin requests (backend UI, admin API) | disabled |
+
+Note that in admin context (or in any other context where fallback values are disabled) getters will return an empty
+value for languages without a value, even if a fallback language is configured.
+
+You can change the behavior at any time:
 
 ```php
+// disable fallback values, e.g. in the frontend
 \Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues(false);
+
+// enable fallback values, e.g. in the admin context
+\Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues(true);
+
+// check the current state
+$fallbackEnabled = \Pimcore\Model\DataObject\Localizedfield::getGetFallbackValues();
+```
+
+As the flag is global, remember to restore the previous value after you are done:
+
+```php
+$fallbackEnabled = \Pimcore\Model\DataObject\Localizedfield::getGetFallbackValues();
+\Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues(true);
+
+// ... code that relies on fallback values ...
+
+\Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues($fallbackEnabled);
 ```
 
 ### Accessing the data
