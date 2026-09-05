@@ -107,6 +107,18 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected ?int $parentId = null;
 
+    /**
+     * Workflow markings that a marking store has set on this element but not persisted yet,
+     * keyed by workflow name. They are part of a version dump (so a draft carries them and
+     * discarding the draft drops them) but never part of the cache, and get persisted once
+     * the element is fully saved (see Pimcore\Workflow\MarkingStore\PendingMarkingStoreInterface).
+     *
+     * @var array<string, string[]>
+     *
+     * @internal
+     */
+    protected array $pendingWorkflowMarkings = [];
+
     private static bool $getInheritedProperties = true;
 
     public function getPath(): ?string
@@ -132,6 +144,45 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->parent = null;
 
         return $this;
+    }
+
+    /**
+     * Places of a workflow marking that was set on this element but not persisted yet,
+     * or null if there is no pending marking for the given workflow.
+     *
+     * @return string[]|null
+     *
+     * @internal
+     */
+    public function getPendingWorkflowMarking(string $workflowName): ?array
+    {
+        return $this->pendingWorkflowMarkings[$workflowName] ?? null;
+    }
+
+    /**
+     * @param string[]|null $places null removes the pending marking for the given workflow
+     *
+     * @internal
+     */
+    public function setPendingWorkflowMarking(string $workflowName, ?array $places): void
+    {
+        if ($places === null) {
+            unset($this->pendingWorkflowMarkings[$workflowName]);
+
+            return;
+        }
+
+        $this->pendingWorkflowMarkings[$workflowName] = array_values($places);
+    }
+
+    /**
+     * @return array<string, string[]> pending workflow markings keyed by workflow name
+     *
+     * @internal
+     */
+    public function getPendingWorkflowMarkings(): array
+    {
+        return $this->pendingWorkflowMarkings;
     }
 
     public function getUserModification(): ?int
@@ -688,7 +739,14 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected function getBlockedVars(): array
     {
-        return ['dependencies', 'parent'];
+        $blockedVars = ['dependencies', 'parent'];
+
+        if (!$this->isInDumpState()) {
+            // pending workflow markings belong to the draft (version dump) and must never leak into the cache
+            $blockedVars[] = 'pendingWorkflowMarkings';
+        }
+
+        return $blockedVars;
     }
 
     public function __sleep(): array
