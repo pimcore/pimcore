@@ -23,6 +23,7 @@ use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
+use Pimcore\Workflow\MarkingStore\PendingMarkingStoreInterface;
 use Pimcore\Workflow\MarkingStore\StateTableMarkingStore;
 use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Place\PlaceConfig;
@@ -237,14 +238,23 @@ class Manager
             }
         }
 
+        $transitionObject = $this->getTransitionByName($workflow->getName(), $transition);
+        $changePublishedState = $transitionObject instanceof Transition ? $transitionObject->getChangePublishedState() : null;
+
+        $context = $additionalData;
+        if ($saveSubject && $changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION) {
+            // The subject is only saved as a version (draft) after the transition.
+            // Marking stores that persist independently of the subject (such as
+            // the state_table store) keep the new place pending on the subject,
+            // so that it is published or discarded together with the draft.
+            $context[PendingMarkingStoreInterface::CONTEXT_SAVE_VERSION] = true;
+        }
+
         try {
-            $marking = $workflow->apply($subject, $transition, $additionalData);
+            $marking = $workflow->apply($subject, $transition, $context);
         } finally {
             $this->notesSubscriber->setAdditionalData([]);
         }
-
-        $transition = $this->getTransitionByName($workflow->getName(), $transition);
-        $changePublishedState = $transition instanceof Transition ? $transition->getChangePublishedState() : null;
 
         if ($saveSubject) {
             try {
@@ -259,7 +269,9 @@ class Manager
                 // validation error on a force_published transition). Otherwise
                 // marking stores that persist immediately (such as the
                 // state_table store) leave the subject in an inconsistent state.
-                $markingStore->setMarking($subject, $previousMarking);
+                // The context is passed along so that a marking that was kept
+                // pending on the subject is restored the same way.
+                $markingStore->setMarking($subject, $previousMarking, $context);
                 if ($previousPublishedState !== null) {
                     $subject->setPublished($previousPublishedState);
                 }
