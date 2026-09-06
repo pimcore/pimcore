@@ -582,7 +582,7 @@ class Asset extends Element\AbstractElement
                 if ($this->getType() != 'folder') {
                     // optionally no version is created when adding an asset (see `pimcore.assets.versions.skip_initial_version`),
                     // an asset which is modified already got a version of its persisted state in update()
-                    if (!self::isInitialVersionSkipped() || $this->getDao()->hasVersions()) {
+                    if (!self::isInitialVersionSkipped() || $this->getDao()->hasVersionsForUpdate()) {
                         $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
                     } else {
                         // scheduled tasks are saved always, they are not versioned (see saveVersion())
@@ -862,6 +862,21 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Whether the configured versioning policy (`assets.versions.steps` / `assets.versions.days`) allows the creation
+     * of versions at all: it does unless a limit is configured and set to 0, meaning that no versions are kept.
+     *
+     * @internal
+     */
+    public static function isVersionCreationEnabledByConfig(): bool
+    {
+        $versionsConfig = SystemSettingsConfig::get()['assets']['versions'] ?? [];
+
+        return (is_null($versionsConfig['days'] ?? null) && is_null($versionsConfig['steps'] ?? null))
+            || !empty($versionsConfig['steps'])
+            || !empty($versionsConfig['days']);
+    }
+
+    /**
      * Whether the creation of a version is skipped when an asset is added,
      * see `pimcore.assets.versions.skip_initial_version`
      *
@@ -883,7 +898,14 @@ class Asset extends Element\AbstractElement
      */
     protected function saveVersionOfPersistedState(): ?Version
     {
-        if (!Version::isEnabled() || !$this->getId() || $this->getDao()->hasVersions()) {
+        // the same versioning policy applies as for regular saves, see saveVersion()
+        if (!Version::isEnabled() || !$this->getId() || !self::isVersionCreationEnabledByConfig()) {
+            return null;
+        }
+
+        // hasVersionsForUpdate() locks the asset row, so concurrent first modifications of the same asset are
+        // serialized here and exactly one of them creates the version of the persisted state
+        if ($this->getDao()->hasVersionsForUpdate()) {
             return null;
         }
 
@@ -963,11 +985,8 @@ class Asset extends Element\AbstractElement
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
-            $assetsConfig = SystemSettingsConfig::get()['assets'];
-            if ((is_null($assetsConfig['versions']['days'] ?? null) && is_null($assetsConfig['versions']['steps'] ?? null))
-                || (!empty($assetsConfig['versions']['steps']))
-                || !empty($assetsConfig['versions']['days'])
-                || $setModificationDate) {
+            if (self::isVersionCreationEnabledByConfig() || $setModificationDate) {
+                $assetsConfig = SystemSettingsConfig::get()['assets'];
                 $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
             }

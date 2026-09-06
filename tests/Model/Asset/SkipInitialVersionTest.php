@@ -17,6 +17,8 @@ use Pimcore\Config;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\Version;
+use Pimcore\SystemSettingsConfig;
+use Pimcore\Tests\Support\Helper\Pimcore;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
@@ -30,17 +32,26 @@ class SkipInitialVersionTest extends ModelTestCase
 {
     private ?array $originalAssetsConfig = null;
 
+    private SystemSettingsConfig $systemSettingsConfig;
+
+    private array $originalSystemSettings;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->originalAssetsConfig = Config::getSystemConfiguration('assets');
         $this->setSkipInitialVersion(true);
+
+        $pimcoreModule = $this->getModule('\\' . Pimcore::class);
+        $this->systemSettingsConfig = $pimcoreModule->grabService(SystemSettingsConfig::class);
+        $this->originalSystemSettings = $this->systemSettingsConfig->get();
     }
 
     protected function tearDown(): void
     {
         Config::setSystemConfiguration($this->originalAssetsConfig, 'assets');
+        $this->systemSettingsConfig->testSave($this->originalSystemSettings);
         Version::enable();
 
         TestHelper::cleanUp();
@@ -257,6 +268,32 @@ class SkipInitialVersionTest extends ModelTestCase
         }
 
         $this->assertCount(0, $this->loadVersions($asset));
+    }
+
+    public function testRetentionPolicyWithoutVersionsIsRespected(): void
+    {
+        // "keep 0 versions" means regular saves create no versions at all, so the lazy version of the
+        // persisted state must not be created either
+        $settings = $this->originalSystemSettings;
+        $settings['assets']['versions']['steps'] = 0;
+        $settings['assets']['versions']['days'] = null;
+        $this->systemSettingsConfig->testSave($settings);
+        $this->assertFalse(Asset::isVersionCreationEnabledByConfig());
+
+        $asset = TestHelper::createImageAsset();
+        $this->assertCount(0, $this->loadVersions($asset));
+
+        $asset->setProperty('propname', 'text', 'changed');
+        $asset->save();
+        $this->assertCount(0, $this->loadVersions($asset), 'no lazy version with a zero-version retention policy');
+
+        $asset->setData($this->loadFileContent('assets/images/image1.jpg'));
+        $asset->save();
+        $this->assertCount(0, $this->loadVersions($asset));
+
+        // an explicit saveVersion() call is still honored, as for regular saves
+        $asset->saveVersion(true, true, 'explicit version');
+        $this->assertCount(1, $this->loadVersions($asset));
     }
 
     public function testSaveVersionCalledDirectlyStillCreatesVersion(): void

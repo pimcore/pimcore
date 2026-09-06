@@ -299,17 +299,23 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Checks whether at least one version exists for this asset
+     * Checks whether at least one version exists for this asset.
+     *
+     * Acquires the row lock of the asset first (like getVersionCountForUpdate()), so that concurrent saves of the
+     * same asset are serialized at this point, and uses a locking read, which returns the latest committed versions
+     * regardless of the transaction isolation level. Must be called inside a transaction to be effective.
      *
      * @internal
      */
-    public function hasVersions(): bool
+    public function hasVersionsForUpdate(): bool
     {
         if (!$this->model->getId()) {
             return false;
         }
 
-        return (bool) $this->db->fetchOne("SELECT 1 FROM versions WHERE cid = ? AND ctype = 'asset' LIMIT 1", [$this->model->getId()]);
+        $this->db->fetchOne('SELECT id FROM assets WHERE id = ? FOR UPDATE', [$this->model->getId()]);
+
+        return (bool) $this->db->fetchOne("SELECT 1 FROM versions WHERE cid = ? AND ctype = 'asset' LIMIT 1 FOR UPDATE", [$this->model->getId()]);
     }
 
     public function getVersionCountForUpdate(): int
