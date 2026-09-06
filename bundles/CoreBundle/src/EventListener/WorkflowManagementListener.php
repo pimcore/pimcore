@@ -30,6 +30,8 @@ use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\MarkingStore\PendingMarkingStoreInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Workflow\Exception\LogicException;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
  * @internal
@@ -101,15 +103,33 @@ class WorkflowManagementListener implements EventSubscriberInterface
 
     private function persistPendingWorkflowMarkings(ElementInterface $element): void
     {
-        if (!$element instanceof AbstractElement || $element->getPendingWorkflowMarkings() === []) {
+        if (!$element instanceof AbstractElement) {
             return;
         }
 
-        foreach ($this->workflowManager->getAllWorkflowsForSubject($element) as $workflow) {
+        foreach (array_keys($element->getPendingWorkflowMarkings()) as $workflowName) {
+            // Resolve the workflow by name on purpose: the pending place was set while the workflow
+            // applied to the element, and re-evaluating the support strategy (e.g. an expression)
+            // against the content being published must not silently drop it.
+            $workflow = $this->getWorkflowByName($workflowName);
+            if (!$workflow) {
+                continue;
+            }
+
             $markingStore = $workflow->getMarkingStore();
             if ($markingStore instanceof PendingMarkingStoreInterface) {
                 $markingStore->persistPendingMarking($element);
             }
+        }
+    }
+
+    private function getWorkflowByName(string $workflowName): ?WorkflowInterface
+    {
+        try {
+            return $this->workflowManager->getWorkflowByName($workflowName);
+        } catch (LogicException) {
+            // the workflow the pending place belongs to is not configured (anymore)
+            return null;
         }
     }
 
