@@ -77,6 +77,8 @@ Notes:
   while the option was disabled already have their upload version and behave as before; assets whose versions have
   been removed by the versions cleanup get their persisted state versioned again on the next modification.
 - Calling `$asset->saveVersion()` directly always creates a version, regardless of this option.
+- The configured retention policy still applies: with `steps` or `days` set to `0` (keep no versions), the lazy version
+  of the persisted state is not created either.
 
 ## Version Storage
 
