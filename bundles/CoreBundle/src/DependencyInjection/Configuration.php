@@ -699,7 +699,9 @@ final class Configuration implements ConfigurationInterface
                                 ->beforeNormalization()
                                     ->ifString()
                                     ->then(function ($v) {
-                                        return (bool)$v;
+                                        // "false", "off", "no", "0" and "" are false; anything unrecognized (e.g. an
+                                        // env placeholder) is passed through for the node to handle
+                                        return filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $v;
                                     })
                                 ->end()
                                 ->defaultFalse()

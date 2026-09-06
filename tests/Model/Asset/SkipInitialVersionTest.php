@@ -13,14 +13,22 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Asset;
 
+use Pimcore;
 use Pimcore\Config;
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\Model\Asset\ResolveMimeTypeEvent;
+use Pimcore\Event\Model\VersionEvent;
+use Pimcore\Event\VersionEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\Version;
+use Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter;
 use Pimcore\SystemSettingsConfig;
-use Pimcore\Tests\Support\Helper\Pimcore;
+use Pimcore\Tests\Support\Helper\Pimcore as PimcoreHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Pimcore\Tool\Storage;
+use RuntimeException;
 
 /**
  * Covers `pimcore.assets.versions.skip_initial_version`: no version is created when an asset is added, the persisted
@@ -36,6 +44,8 @@ class SkipInitialVersionTest extends ModelTestCase
 
     private array $originalSystemSettings;
 
+    private array $registeredListeners = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -43,7 +53,7 @@ class SkipInitialVersionTest extends ModelTestCase
         $this->originalAssetsConfig = Config::getSystemConfiguration('assets');
         $this->setSkipInitialVersion(true);
 
-        $pimcoreModule = $this->getModule('\\' . Pimcore::class);
+        $pimcoreModule = $this->getModule('\\' . PimcoreHelper::class);
         $this->systemSettingsConfig = $pimcoreModule->grabService(SystemSettingsConfig::class);
         $this->originalSystemSettings = $this->systemSettingsConfig->get();
     }
@@ -54,9 +64,20 @@ class SkipInitialVersionTest extends ModelTestCase
         $this->systemSettingsConfig->testSave($this->originalSystemSettings);
         Version::enable();
 
+        foreach ($this->registeredListeners as [$eventName, $listener]) {
+            Pimcore::getEventDispatcher()->removeListener($eventName, $listener);
+        }
+        $this->registeredListeners = [];
+
         TestHelper::cleanUp();
 
         parent::tearDown();
+    }
+
+    private function addListener(string $eventName, callable $listener): void
+    {
+        Pimcore::getEventDispatcher()->addListener($eventName, $listener);
+        $this->registeredListeners[] = [$eventName, $listener];
     }
 
     private function setSkipInitialVersion(bool $skip): void
@@ -294,6 +315,54 @@ class SkipInitialVersionTest extends ModelTestCase
         // an explicit saveVersion() call is still honored, as for regular saves
         $asset->saveVersion(true, true, 'explicit version');
         $this->assertCount(1, $this->loadVersions($asset));
+    }
+
+    public function testStorageFilesOfSnapshotAreRemovedWhenSaveIsRolledBack(): void
+    {
+        $asset = TestHelper::createImageAsset();
+
+        /** @var Version|null $snapshot */
+        $snapshot = null;
+        $this->addListener(VersionEvents::POST_SAVE, function (VersionEvent $event) use ($asset, &$snapshot): void {
+            if ($snapshot === null && $event->getVersion()->getCid() === $asset->getId()) {
+                $snapshot = $event->getVersion();
+            }
+        });
+
+        // fails inside update() after the version of the persisted state was written and the transaction is rolled back
+        $failingListener = function (ResolveMimeTypeEvent $event) use ($asset): void {
+            if ($event->getAsset() === $asset) {
+                throw new RuntimeException('simulated failure during save');
+            }
+        };
+        $this->addListener(AssetEvents::RESOLVE_MIME_TYPE, $failingListener);
+
+        $asset->setData($this->loadFileContent('assets/images/image1.jpg'));
+
+        try {
+            $asset->save();
+            $this->fail('save() was expected to fail');
+        } catch (RuntimeException $e) {
+            $this->assertSame('simulated failure during save', $e->getMessage());
+        }
+
+        $this->assertNotNull($snapshot, 'the version of the persisted state was written before the failure');
+        $this->assertCount(0, $this->loadVersions($asset), 'the version row was rolled back');
+
+        // version storage is not transactional, the files must have been cleaned up explicitly
+        $storage = Storage::get('version');
+        $adapter = new FileSystemVersionStorageAdapter();
+        $this->assertFalse($storage->fileExists($adapter->getStorageFilename($snapshot->getId(), $asset->getId(), 'asset')));
+        $this->assertFalse($storage->fileExists($adapter->getBinaryStoragePath($snapshot)));
+
+        // a subsequent successful save starts over: snapshot of the persisted state plus the regular version
+        Pimcore::getEventDispatcher()->removeListener(AssetEvents::RESOLVE_MIME_TYPE, $failingListener);
+        $asset->save();
+
+        $versions = $this->loadVersions($asset);
+        $this->assertCount(2, $versions);
+        $this->assertNotSame($snapshot->getId(), $versions[0]->getId());
+        $this->assertTrue($storage->fileExists($adapter->getBinaryStoragePath($versions[0])));
     }
 
     public function testSaveVersionCalledDirectlyStillCreatesVersion(): void
