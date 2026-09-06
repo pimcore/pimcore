@@ -694,6 +694,18 @@ final class Configuration implements ConfigurationInterface
                                 ->end()
                                 ->defaultFalse()
                             ->end()
+                            ->booleanNode('skip_initial_version')
+                                ->info('Do not create a version when an asset is created (uploaded). The persisted state is versioned lazily when the asset is modified for the first time, so write-once assets never occupy version storage while the original state of edited assets stays restorable.')
+                                ->beforeNormalization()
+                                    ->ifString()
+                                    ->then(function ($v) {
+                                        // "false", "off", "no", "0" and "" are false; anything unrecognized (e.g. an
+                                        // env placeholder) is passed through for the node to handle
+                                        return filter_var($v, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? $v;
+                                    })
+                                ->end()
+                                ->defaultFalse()
+                            ->end()
                         ->end()
                     ->end()
                     ->scalarNode('icc_rgb_profile')

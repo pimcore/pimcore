@@ -151,6 +151,12 @@ class Asset extends Element\AbstractElement
     protected bool $dataChanged = false;
 
     /**
+     * Version of the persisted state created in update() during the current save, until the transaction is committed.
+     * Its storage files have to be removed if the transaction is rolled back, see saveVersionOfPersistedState().
+     */
+    private ?Version $uncommittedVersionOfPersistedState = null;
+
+    /**
      * @internal
      */
     protected ?int $dataModificationDate = null;
@@ -172,7 +178,7 @@ class Asset extends Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['scheduledTasks', 'versions', 'stream'];
+        $blockedVars = ['scheduledTasks', 'versions', 'stream', 'uncommittedVersionOfPersistedState'];
 
         if (!$this->isInDumpState()) {
             // for caching asset
@@ -580,11 +586,20 @@ class Asset extends Element\AbstractElement
                 // this has to be after the registry update and the DB update, otherwise this would cause problem in the
                 // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
                 if ($this->getType() != 'folder') {
-                    $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
+                    // optionally no version is created when adding an asset (see `pimcore.assets.versions.skip_initial_version`),
+                    // an asset which is modified already got a version of its persisted state in update()
+                    if (!self::isInitialVersionSkipped() || $this->getDao()->hasVersionsForUpdate()) {
+                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
+                    } else {
+                        // scheduled tasks are saved always, they are not versioned (see saveVersion())
+                        $this->saveScheduledTasks();
+                    }
                     $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
                 }
             },
             onCommit: function () use (&$parameters, &$isUpdate, &$differentOldPath, &$updatedChildren) {
+                // the version of the persisted state (if any) is committed now, its storage files are kept
+                $this->uncommittedVersionOfPersistedState = null;
 
                 $additionalTags = [];
 
@@ -623,6 +638,11 @@ class Asset extends Element\AbstractElement
                 } else {
                     $this->dispatchEvent($postEvent, AssetEvents::POST_ADD);
                 }
+            },
+            onBeforeRetry: function () {
+                // the transaction was rolled back (and is possibly retried): version storage isn't transactional,
+                // so the files of a version of the persisted state written in this attempt have to be removed
+                $this->cleanUpUncommittedVersionOfPersistedState();
             },
             onFailure: function ($e) use (&$parameters, &$isUpdate) {
                 // TODO: we should rollback any files that were moved here,
@@ -716,6 +736,14 @@ class Asset extends Element\AbstractElement
     protected function update(array $params = []): void
     {
         $storage = Storage::get('asset');
+
+        // if no version was created when the asset was added (see `pimcore.assets.versions.skip_initial_version`),
+        // version the persisted state before it gets overwritten by the first modification, so that the
+        // original state of the asset stays restorable
+        if (($params['isUpdate'] ?? false) && $this->getType() != 'folder' && self::isInitialVersionSkipped()) {
+            $this->uncommittedVersionOfPersistedState = $this->saveVersionOfPersistedState();
+        }
+
         $this->updateModificationInfos();
 
         $path = $this->getRealFullPath();
@@ -847,6 +875,116 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Whether the configured versioning policy (`assets.versions.steps` / `assets.versions.days`) allows the creation
+     * of versions at all: it does unless a limit is configured and set to 0, meaning that no versions are kept.
+     *
+     * @internal
+     */
+    public static function isVersionCreationEnabledByConfig(): bool
+    {
+        $versionsConfig = SystemSettingsConfig::get()['assets']['versions'] ?? [];
+
+        return (is_null($versionsConfig['days'] ?? null) && is_null($versionsConfig['steps'] ?? null))
+            || !empty($versionsConfig['steps'])
+            || !empty($versionsConfig['days']);
+    }
+
+    /**
+     * Whether the creation of a version is skipped when an asset is added,
+     * see `pimcore.assets.versions.skip_initial_version`
+     *
+     * @internal
+     */
+    public static function isInitialVersionSkipped(): bool
+    {
+        return (bool) (Config::getSystemConfiguration('assets')['versions']['skip_initial_version'] ?? false);
+    }
+
+    /**
+     * Creates a version of the state of this asset as it is currently persisted in the database and on the storage,
+     * but only if the asset doesn't have any versions yet. This is used when no version was created on adding the
+     * asset (see `pimcore.assets.versions.skip_initial_version`) and the asset is now modified for the first time.
+     *
+     * @internal
+     *
+     * @throws Exception
+     */
+    protected function saveVersionOfPersistedState(): ?Version
+    {
+        // the same versioning policy applies as for regular saves, see saveVersion()
+        if (!Version::isEnabled() || !$this->getId() || !self::isVersionCreationEnabledByConfig()) {
+            return null;
+        }
+
+        // hasVersionsForUpdate() locks the asset row, so concurrent first modifications of the same asset are
+        // serialized here and exactly one of them creates the version of the persisted state
+        if ($this->getDao()->hasVersionsForUpdate()) {
+            return null;
+        }
+
+        $persisted = new Asset();
+        $persisted->getDao()->getById($this->getId());
+
+        if ($persisted->getType() === 'folder') {
+            return null;
+        }
+
+        $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($persisted->getType());
+        if (get_class($persisted) !== $className) {
+            /** @var Asset $persisted */
+            $persisted = self::getModelFactory()->build($className);
+            $persisted->getDao()->getById($this->getId());
+        }
+
+        // open the stream of the persisted binary data before anything else happens, so that the version definitely
+        // contains the binary data as it is currently on the storage (even if this save moves or renames the asset)
+        $persisted->getStream();
+
+        // Version::save() relies on Asset::getById() (runtime cache) for the path correction in __wakeup(), which
+        // would return the instance currently being saved (possibly already carrying a new path), so the persisted
+        // instance temporarily takes its place in the runtime cache
+        $cacheKey = self::getCacheKey($this->getId());
+        $cachedInstance = RuntimeCache::isRegistered($cacheKey) ? RuntimeCache::get($cacheKey) : null;
+        RuntimeCache::set($cacheKey, $persisted);
+
+        try {
+            $assetsConfig = SystemSettingsConfig::get()['assets'];
+            $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
+
+            return $persisted->doSaveVersion(null, false, $saveStackTrace);
+        } finally {
+            RuntimeCache::set($cacheKey, $cachedInstance ?? $this);
+            $persisted->closeStream();
+        }
+    }
+
+    /**
+     * Removes the storage files of a version of the persisted state whose transaction was rolled back,
+     * see saveVersionOfPersistedState()
+     */
+    private function cleanUpUncommittedVersionOfPersistedState(): void
+    {
+        $version = $this->uncommittedVersionOfPersistedState;
+        $this->uncommittedVersionOfPersistedState = null;
+
+        if (!$version) {
+            return;
+        }
+
+        try {
+            // the row is already gone with the rollback, this removes the (non-transactional) storage files
+            $version->delete();
+        } catch (Throwable $e) {
+            Logger::error(sprintf(
+                'Unable to clean up the storage files of the rolled back version %d of asset %d: %s',
+                $version->getId(),
+                $this->getId(),
+                $e->getMessage()
+            ));
+        }
+    }
+
+    /**
      * Accepts an additional optional argument `array $parameters = []` (read via func_get_arg())
      * with custom arguments that are passed on to the versioning events. It will become a regular
      * method parameter in the next major version.
@@ -886,11 +1024,8 @@ class Asset extends Element\AbstractElement
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
-            $assetsConfig = SystemSettingsConfig::get()['assets'];
-            if ((is_null($assetsConfig['versions']['days'] ?? null) && is_null($assetsConfig['versions']['steps'] ?? null))
-                || (!empty($assetsConfig['versions']['steps']))
-                || !empty($assetsConfig['versions']['days'])
-                || $setModificationDate) {
+            if (self::isVersionCreationEnabledByConfig() || $setModificationDate) {
+                $assetsConfig = SystemSettingsConfig::get()['assets'];
                 $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
             }
