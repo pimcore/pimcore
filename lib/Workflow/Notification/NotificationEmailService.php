@@ -150,7 +150,8 @@ class NotificationEmailService extends AbstractNotificationService
                     $workflow,
                     $action,
                     $deeplink,
-                    $language
+                    $language,
+                    $recipients
                 ),
             ]
         );
@@ -190,11 +191,14 @@ class NotificationEmailService extends AbstractNotificationService
             )
         );
 
-        $mail->html($this->getHtmlBody($subjectType, $subject, $workflow, $action, $language, $mailPath, $deeplink));
+        $mail->html($this->getHtmlBody($subjectType, $subject, $workflow, $action, $language, $mailPath, $deeplink, $recipients));
 
         $mail->send();
     }
 
+    /**
+     * @param User[] $recipients
+     */
     protected function getHtmlBody(
         string $subjectType,
         ElementInterface $subject,
@@ -202,7 +206,8 @@ class NotificationEmailService extends AbstractNotificationService
         string $action,
         string $language,
         string $mailPath,
-        string $deeplink
+        string $deeplink,
+        array $recipients = []
     ): string {
         $translatorLocaleBackup = null;
         if ($this->translator instanceof LocaleAwareInterface) {
@@ -214,7 +219,7 @@ class NotificationEmailService extends AbstractNotificationService
             // allow retrieval of inherited values
             return DataObject\Service::useInheritedValues(true, fn () => $this->template->render(
                 $mailPath,
-                $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language),
+                $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language, $recipients),
             ));
         } finally {
             if ($this->translator instanceof LocaleAwareInterface) {
@@ -224,13 +229,17 @@ class NotificationEmailService extends AbstractNotificationService
         }
     }
 
+    /**
+     * @param User[] $recipients
+     */
     protected function getNotificationEmailParameters(
         string $subjectType,
         ElementInterface $subject,
         WorkflowInterface $workflow,
         string $action,
         string $deeplink,
-        string $language
+        string $language,
+        array $recipients = []
     ): array {
         $noteDescription = $this->getNoteInfo($subject->getId());
 
@@ -244,6 +253,7 @@ class NotificationEmailService extends AbstractNotificationService
             'note_description' => $noteDescription,
             'translator' => $this->translator,
             'lang' => $language,
+            'recipients' => $recipients,
         ];
     }
 }
