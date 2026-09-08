@@ -88,7 +88,8 @@ final class Config extends AbstractModel implements JsonSerializable
         // The ID is emitted verbatim into the generated PHP enum file (as the enum name) and used
         // to build the on-disk class file path, so it must be a valid identifier. Anchored so it
         // cannot merely contain a valid substring alongside injected PHP (GHSA-g2vm-g4vq-qhwj).
-        if ($id !== '' && !preg_match('/^[A-Z][a-zA-Z0-9]+$/', $id)) {
+        // `\z` rather than `$`: PCRE `$` also matches before a trailing newline.
+        if ($id !== '' && !preg_match('/^[A-Z][a-zA-Z0-9]+\z/', $id)) {
             throw new InvalidArgumentException(
                 'Invalid ID: Must start with capital letter, followed by alphanumeric characters',
                 1676639634486

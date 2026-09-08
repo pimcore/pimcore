@@ -77,6 +77,10 @@ class SetIdValidationTest extends TestCase
             'contains space' => ['My Option'],
             'contains dash' => ['My-Option'],
             'single capital letter (too short)' => ['A'],
+            // PCRE `$` also matches before a final newline; only `\z` is an absolute end anchor.
+            'trailing newline' => ["MyOption\n"],
+            'trailing CRLF' => ["MyOption\r\n"],
+            'embedded newline' => ["My\nOption"],
         ];
     }
 }
