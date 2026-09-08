@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Exception;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
@@ -62,6 +63,35 @@ class ClassDefinitionTest extends ModelTestCase
 
         $renamedClass = ClassDefinition::getByName('unittest_renamed');
         $renamedClass->rename('unittest');
+    }
+
+    /**
+     * PCRE `$` also matches immediately before a trailing newline, so a class name, id or parent
+     * class ending in "\n" passed the identifier checks in save() and reached the class-file
+     * generator, which emits them verbatim into PHP source and file paths (GHSA-g2vm-g4vq-qhwj).
+     *
+     * @dataProvider trailingNewlineIdentifierProvider
+     */
+    public function testSaveRejectsIdentifiersWithTrailingNewline(string $name, string $id, string $parentClass): void
+    {
+        $class = new ClassDefinition();
+        $class->setName($name);
+        $class->setId($id);
+        $class->setParentClass($parentClass);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('for class definition');
+
+        $class->save();
+    }
+
+    public static function trailingNewlineIdentifierProvider(): array
+    {
+        return [
+            'name' => ["TrailingNewlineName\n", 'TrailingNewlineName', ''],
+            'id' => ['TrailingNewlineId', "TrailingNewlineId\n", ''],
+            'parentClass' => ['TrailingNewlineParent', 'TrailingNewlineParent', "\\Pimcore\\Model\\DataObject\\Concrete\n"],
+        ];
     }
 
     /**

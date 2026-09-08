@@ -76,6 +76,8 @@ class SetNameValidationTest extends TestCase
             'contains space' => ['my field'],
             'contains dash' => ['my-field'],
             'too long (64)' => [str_repeat('a', 64)],
+            // PCRE `$` also matches before a final newline; only `\z` is an absolute end anchor.
+            'trailing newline' => ["myField\n"],
         ];
     }
 
