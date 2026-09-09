@@ -108,7 +108,7 @@ class Processor
         $fileExt = pathinfo($asset->getFilename(), PATHINFO_EXTENSION);
 
         // simple detection for source type if SOURCE is selected
-        if ($format == 'source' || empty($format)) {
+        if ($format === '' || Config::isAutoFormat($format)) {
             $optimizedFormat = true;
             $format = self::getAllowedFormat($fileExt, ['pjpeg', 'jpeg', 'gif', 'png'], 'png');
             if ($format === 'jpeg') {

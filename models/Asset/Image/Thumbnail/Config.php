@@ -29,6 +29,8 @@ final class Config extends Model\AbstractModel
 {
     use Model\Asset\Thumbnail\ClearTempFilesTrait;
 
+    private const AUTO_FORMAT_ALIASES = ['source', 'auto'];
+
     /**
      * @internal
      */
@@ -806,6 +808,17 @@ final class Config extends Model\AbstractModel
                 }
             }
         }
+    }
+
+    /**
+     * Checks whether the given format name stands for the automatic, web-optimized format selection.
+     * "SOURCE" is the historic name used by the classic admin UI, "auto" is the name used by Pimcore Studio.
+     *
+     * @internal
+     */
+    public static function isAutoFormat(string $format): bool
+    {
+        return in_array(strtolower($format), self::AUTO_FORMAT_ALIASES, true);
     }
 
     /**
