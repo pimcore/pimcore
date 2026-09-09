@@ -1152,14 +1152,15 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             $this->setId((string) $maxId);
         }
 
-        if (!preg_match('/^[a-zA-Z]\w+$/', $this->getName())) {
+        // `\z` rather than `$` in these checks: PCRE `$` also matches before a trailing newline.
+        if (!preg_match('/^[a-zA-Z]\w+\z/', $this->getName())) {
             throw new Exception(sprintf(
                 'Invalid name for class definition: %s',
                 $this->getName()
             ));
         }
 
-        if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_]*$/', $this->getId())) {
+        if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_]*\z/', $this->getId())) {
             throw new Exception(sprintf(
                 'Invalid ID `%s` for class definition %s',
                 $this->getId(),
@@ -1169,7 +1170,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
 
         foreach (['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {
             $propertyValue = $this->{'get'.ucfirst($propertyName)}();
-            if ($propertyValue && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\ ,]*$/', $propertyValue)) {
+            if ($propertyValue && !preg_match('/^[a-zA-Z_\x7f-\xff\\\][a-zA-Z0-9_\x7f-\xff\\\ ,]*\z/', $propertyValue)) {
                 throw new Exception(sprintf('Invalid %s value for class definition: %s', $propertyName,
                     $this->getParentClass()));
             }

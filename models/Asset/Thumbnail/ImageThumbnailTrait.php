@@ -543,10 +543,7 @@ trait ImageThumbnailTrait
     {
         $format = strtolower($format);
         if ($asset) {
-            if (
-                $format === 'original' ||
-                $format === 'source'
-            ) {
+            if ($format === 'original' || Config::isAutoFormat($format)) {
                 return true;
             }
 
