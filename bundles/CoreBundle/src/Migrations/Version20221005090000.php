@@ -24,6 +24,11 @@ final class Version20221005090000 extends AbstractMigration
         return 'Add locked column to notes table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if ($schema->getTable('notes')->hasColumn('locked') === false) {

@@ -30,6 +30,11 @@ final class Version20230322114936 extends AbstractMigration
         return 'rename master to main';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE email_blacklist RENAME email_blocklist;');

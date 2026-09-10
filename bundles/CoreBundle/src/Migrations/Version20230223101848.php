@@ -19,6 +19,11 @@ use Doctrine\Migrations\AbstractMigration;
 
 final class Version20230223101848 extends AbstractMigration
 {
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if (!$schema->getTable('users')->hasColumn('provider')) {

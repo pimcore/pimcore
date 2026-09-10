@@ -24,6 +24,11 @@ final class Version20220906111031 extends AbstractMigration
         return 'Add date index to recyclebin table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE `recyclebin` ADD INDEX `recyclebin_date` (`date`)');

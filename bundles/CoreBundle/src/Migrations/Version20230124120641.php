@@ -24,6 +24,11 @@ final class Version20230124120641 extends AbstractMigration
         return 'Covert column types to JSON for columns containing only JSON data';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if ($schema->getTable('classificationstore_keys')->hasColumn('definition') === true) {
