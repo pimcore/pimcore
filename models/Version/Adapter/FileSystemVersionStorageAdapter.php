@@ -97,12 +97,14 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
             $useHardlinks = Config::getSystemConfiguration('assets')['versions']['use_hardlinks'];
             $this->storage->write($binaryStoragePath, '1'); // temp file to determine if stream is local or not
 
-            $existingFilePath = $this->resolveLocalFilePath($this->getBinaryFileStream($version));
-            $dataFilePath = $this->resolveLocalFilePath($binaryDataStream);
+            if ($useHardlinks) {
+                $existingFilePath = $this->resolveLocalFilePath($this->getBinaryFileStream($version));
+                $dataFilePath = $this->resolveLocalFilePath($binaryDataStream);
 
-            if ($useHardlinks && $existingFilePath !== null && $dataFilePath !== null) {
-                $this->storage->delete($binaryStoragePath);
-                $linked = @link($dataFilePath, $existingFilePath);
+                if ($existingFilePath !== null && $dataFilePath !== null) {
+                    $this->storage->delete($binaryStoragePath);
+                    $linked = @link($dataFilePath, $existingFilePath);
+                }
             }
 
             if (!$linked) {
