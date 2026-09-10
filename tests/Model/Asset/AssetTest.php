@@ -648,4 +648,48 @@ class AssetTest extends ModelTestCase
             'pathExists() must return true for the same NFD path that getByPath() resolves.'
         );
     }
+
+    public function testGetStreamReturnsPlaceholderForMissingBinary(): void
+    {
+        $asset = TestHelper::createImageAsset('', null, true, 'assets/images/image5.jpg');
+
+        $stream = $asset->getStream();
+        $this->assertIsResource($stream);
+        $this->assertFalse($asset->isStreamPlaceholder());
+
+        // remove the binary from storage while keeping the database row
+        Storage::get('asset')->delete($asset->getRealFullPath());
+
+        // fresh instance, so no stream is cached on the model
+        $reloaded = Asset::getById($asset->getId(), ['force' => true]);
+        $stream = $reloaded->getStream();
+        $this->assertIsResource($stream, 'an empty placeholder stream is still returned for a missing binary');
+        $this->assertSame(0, fstat($stream)['size']);
+        $this->assertTrue($reloaded->isStreamPlaceholder());
+        $this->assertSame(0, $reloaded->getFileSize());
+
+        // setting new data replaces the placeholder and resets the flag
+        $reloaded->setData('fresh data');
+        $this->assertFalse($reloaded->isStreamPlaceholder());
+    }
+
+    public function testIsStreamPlaceholderIsFalseForLegitimatelyEmptyFile(): void
+    {
+        $asset = new Asset();
+        $asset->setParentId(1);
+        $asset->setUserOwner(1);
+        $asset->setUserModification(1);
+        $asset->setFilename('empty-' . uniqid() . '.txt');
+        $asset->setData('');
+        $asset->save();
+
+        $reloaded = Asset::getById($asset->getId(), ['force' => true]);
+        $stream = $reloaded->getStream();
+        $this->assertIsResource($stream);
+        $this->assertSame(0, fstat($stream)['size']);
+        $this->assertFalse(
+            $reloaded->isStreamPlaceholder(),
+            'an empty file that exists in storage must not be reported as a placeholder'
+        );
+    }
 }
