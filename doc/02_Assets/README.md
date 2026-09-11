@@ -31,7 +31,8 @@ directly in Pimcore Studio:
 Assets support two kinds of metadata:
 
 - **Embedded metadata** (EXIF, IPTC, XMP) - Pimcore reads and displays embedded metadata
-  from uploaded files as read-only information. It cannot edit embedded metadata.
+  from uploaded image, video, and document files (e.g. PDFs) as read-only information.
+  It cannot edit embedded metadata.
 - **Custom metadata** - editable, localizable metadata fields that you define and manage
   within Pimcore. These can be accessed via the PHP API and used across all output channels.
 
