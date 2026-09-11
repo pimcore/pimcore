@@ -318,6 +318,8 @@ class WebDavIntegrationTest extends ModelTestCase
         $this->assertSame('NEW', $restored->getData());
         $this->assertSame('yes', $restored->getProperty('reviewed'));
         $this->assertSame('ACME', $restored->getMetadata('copyright'));
+        $this->assertSame(12345, $restored->getUserOwner());
+        $this->assertSame($originalCreationDate, $restored->getCreationDate());
     }
 
     /**
