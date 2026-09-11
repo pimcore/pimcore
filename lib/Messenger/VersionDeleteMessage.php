@@ -18,8 +18,18 @@ namespace Pimcore\Messenger;
  */
 class VersionDeleteMessage
 {
-    public function __construct(protected string $elementType, protected int $elementId)
-    {
+    /**
+     * @param int|null $maxVersionId highest version id of the element at the time of deletion.
+     * The handler only deletes versions up to this bound, so an element id that is re-used after
+     * the deletion (e.g. the WebDAV delete-log restore, see Asset\WebDAV\Tree::move()) does not
+     * lose versions created after the restore when the queued message is processed later.
+     * Null (also the value for messages queued by previous releases) keeps the unbounded behavior.
+     */
+    public function __construct(
+        protected string $elementType,
+        protected int $elementId,
+        protected ?int $maxVersionId = null
+    ) {
     }
 
     public function getElementType(): string
@@ -30,5 +40,10 @@ class VersionDeleteMessage
     public function getElementId(): int
     {
         return $this->elementId;
+    }
+
+    public function getMaxVersionId(): ?int
+    {
+        return $this->maxVersionId;
     }
 }

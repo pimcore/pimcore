@@ -120,6 +120,14 @@ class Tree extends DAV\Tree
                         $properties = $logEntry['properties'] ?? [];
                         $this->restoreProperties($asset, is_array($properties) ? $properties : []);
 
+                        // restore user-set custom settings (e.g. focal point) from the raw JSON
+                        // snapshot - setCustomSettings() decodes the JSON string itself; settings
+                        // derived from the binary are recomputed on save for the new data
+                        $customSettings = $logEntry['customSettings'] ?? null;
+                        if (is_string($customSettings) && $customSettings !== '') {
+                            $asset->setCustomSettings($customSettings);
+                        }
+
                         // the raw assets_metadata.data column IS the internal metadata form:
                         // element types (asset/document/object) only override getDataForResource(),
                         // not getDataFromResource(), so references stay ids (scalars). Feeding the
@@ -191,10 +199,9 @@ class Tree extends DAV\Tree
     /**
      * Rebuilds an asset's own properties from the scalar rows captured in the delete log
      * (see Asset\WebDAV\File::delete()). Mirrors how Asset\Dao::getProperties() hydrates
-     * properties from the database, so setDataFromResource() receives the raw scalar value.
-     * For date-type properties that hydration is not instantiation-free: their `data` column
-     * holds a serialized datetime string which setDataFromResource() unserializes - the same
-     * standard path normal property loading uses.
+     * properties from the database, so setDataFromResource() receives the raw scalar value -
+     * except for date rows, whose serialized datetime is re-hydrated here with an explicit
+     * DateTime/Carbon allowlist so log content never reaches a permissive unserializer.
      *
      * cid/cpath are intentionally not set here: Asset::update() assigns them from the target
      * asset when the properties are persisted on save().
@@ -216,12 +223,32 @@ class Tree extends DAV\Tree
             }
 
             $name = (string) ($row['name'] ?? '');
+            $type = (string) ($row['type'] ?? '');
 
             $property = new Property();
-            $property->setType((string) ($row['type'] ?? ''));
+            $property->setType($type);
             $property->setName($name);
             $property->setCtype('asset');
-            $property->setDataFromResource($data);
+
+            if ($type === 'date' && $data !== null) {
+                // a date row holds a serialized DateTimeInterface; setDataFromResource() would
+                // unserialize it with allowed_classes: true, so hydrate it here with an explicit
+                // allowlist instead - nothing read from the delete log may instantiate
+                // arbitrary classes. Unexpected payloads are skipped defensively.
+                $date = \Pimcore\Tool\Serialize::unserialize($data, [
+                    \Carbon\Carbon::class,
+                    \Carbon\CarbonImmutable::class,
+                    \DateTime::class,
+                    \DateTimeImmutable::class,
+                ]);
+                if (!$date instanceof \DateTimeInterface) {
+                    continue;
+                }
+                $property->setData($date);
+            } else {
+                $property->setDataFromResource($data);
+            }
+
             $property->setInherited(false);
             $property->setInheritable((bool) ($row['inheritable'] ?? false));
 

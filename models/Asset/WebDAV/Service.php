@@ -52,11 +52,11 @@ class Service
             $raw = file_get_contents(self::getDeleteLogFile());
             if (is_string($raw)) {
                 // the log file itself only holds scalar entries (path => [id, timestamp,
-                // properties, metadata]), so THIS unserialize never needs to instantiate objects.
-                // Note that re-applying the snapshot later is not entirely instantiation-free:
-                // date-type property rows pass through Property::setDataFromResource(), which
-                // unserializes their stored datetime string - the same standard hydration path
-                // Asset\Dao::getProperties() uses. See Tree::restoreProperties().
+                // properties, metadata, customSettings]), so THIS unserialize never needs to
+                // instantiate objects. Date-type property rows do hold a serialized datetime,
+                // but Tree::restoreProperties() re-hydrates those with an explicit
+                // DateTime/Carbon allowlist - nothing read from the log is fed to a
+                // permissive unserializer.
                 $log = unserialize($raw, ['allowed_classes' => false]);
             }
 

@@ -286,16 +286,21 @@ class WebDavIntegrationTest extends ModelTestCase
     }
 
     /**
-     * The delete-log restore must also bring back the deleted destination's own properties,
-     * metadata, owner and creation date (captured as a scalar snapshot), not just its id.
+     * The delete-log restore must also bring back the deleted destination's own properties
+     * (including a date property, hydrated through the allowlist), metadata, custom settings,
+     * owner and creation date (captured as a scalar snapshot), not just its id — and versions
+     * created by the restore must survive the deferred version cleanup queued by the deletion.
      */
     public function testMoveRestoresDestinationMetadataAndProperties(): void
     {
         $originalCreationDate = time() - 86400;
+        $reviewDate = new \Carbon\Carbon('2026-01-02 03:04:05');
 
         $dest = $this->createFileAssetIn($this->root, 'meta-target.txt', 'OLD');
         $dest->setProperty('reviewed', 'text', 'yes');
+        $dest->setProperty('reviewed_at', 'date', $reviewDate);
         $dest->addMetadata('copyright', 'input', 'ACME');
+        $dest->setCustomSetting('editorNote', 'keep-me');
         // distinct values a freshly rebuilt asset would not get on its own
         $dest->setUserOwner(12345);
         $dest->setCreationDate($originalCreationDate);
@@ -317,9 +322,33 @@ class WebDavIntegrationTest extends ModelTestCase
         $this->assertSame($destPath, $restored->getRealFullPath());
         $this->assertSame('NEW', $restored->getData());
         $this->assertSame('yes', $restored->getProperty('reviewed'));
+        $restoredDate = $restored->getProperty('reviewed_at');
+        $this->assertInstanceOf(\DateTimeInterface::class, $restoredDate);
+        $this->assertSame($reviewDate->getTimestamp(), $restoredDate->getTimestamp());
         $this->assertSame('ACME', $restored->getMetadata('copyright'));
+        $this->assertSame('keep-me', $restored->getCustomSetting('editorNote'));
         $this->assertSame(12345, $restored->getUserOwner());
         $this->assertSame($originalCreationDate, $restored->getCreationDate());
+
+        // the deletion queued a version cleanup for this id; since it is bounded to the versions
+        // existing at delete time, the version created by the restore save must survive it even
+        // when the queued message is only processed now (simulated by invoking the handler with
+        // the same bound the deletion captured, i.e. all pre-restore version ids)
+        $restoredVersions = $restored->getVersions();
+        $this->assertNotEmpty($restoredVersions, 'The restore save must create a version.');
+        $maxRestoredVersionId = max(array_map(fn ($v) => $v->getId(), $restoredVersions));
+
+        $preRestoreBound = min(array_map(fn ($v) => $v->getId(), $restoredVersions)) - 1;
+        (new \Pimcore\Messenger\Handler\VersionDeleteHandler())(
+            new \Pimcore\Messenger\VersionDeleteMessage('asset', $destId, $preRestoreBound)
+        );
+
+        $survivingVersions = Asset::getById($destId, ['force' => true])->getVersions();
+        $this->assertNotEmpty($survivingVersions, 'Versions created after the restore must survive the bounded cleanup.');
+        $this->assertSame(
+            $maxRestoredVersionId,
+            max(array_map(fn ($v) => $v->getId(), $survivingVersions))
+        );
     }
 
     /**

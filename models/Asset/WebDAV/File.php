@@ -88,6 +88,10 @@ class File extends DAV\File
                 'SELECT `name`, `type`, `data`, `language` FROM assets_metadata WHERE cid = ?',
                 [$id]
             );
+            // raw JSON string of the assets.customSettings column - scalar by definition, and
+            // needed so an overwrite-restore keeps user-set settings (e.g. focal point) just like
+            // an in-place overwrite does; type-derived settings are recomputed on save anyway
+            $customSettings = $db->fetchOne('SELECT customSettings FROM assets WHERE id = ?', [$id]);
 
             $this->asset->delete();
 
@@ -102,6 +106,7 @@ class File extends DAV\File
                 'creationDate' => $creationDate,
                 'properties' => $properties,
                 'metadata' => $metadata,
+                'customSettings' => is_string($customSettings) ? $customSettings : null,
             ];
 
             Asset\WebDAV\Service::saveDeleteLog($log);
