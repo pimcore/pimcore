@@ -95,6 +95,35 @@ class ClassDefinitionTest extends ModelTestCase
     }
 
     /**
+     * A class name is emitted verbatim as the PHP class name in the generated class file, so a
+     * PHP reserved word (e.g. "var") must be rejected at save time instead of reaching the class
+     * file generator, where it produces a fatal syntax error only when an object of that class is
+     * first instantiated (pimcore/platform-version#291).
+     *
+     * @dataProvider reservedWordClassNameProvider
+     */
+    public function testSaveRejectsReservedWordAsClassName(string $name, string $id): void
+    {
+        $class = new ClassDefinition();
+        $class->setName($name);
+        $class->setId($id);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('reserved word');
+
+        $class->save();
+    }
+
+    public static function reservedWordClassNameProvider(): array
+    {
+        return [
+            'php keyword' => ['var', 'ReservedWordVar'],
+            'php keyword, mixed case' => ['Var', 'ReservedWordVarMixedCase'],
+            'pimcore reserved word' => ['Folder', 'ReservedWordFolder'],
+        ];
+    }
+
+    /**
      * Verifies that the setter code gets created properly
      */
     public function testInputSetterCode(): void

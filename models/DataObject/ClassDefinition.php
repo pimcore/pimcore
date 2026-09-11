@@ -23,6 +23,7 @@ use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
+use Pimcore\Helper\ReservedWordsHelper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -1154,6 +1155,16 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         if (!preg_match('/^[a-zA-Z]\w+\z/', $this->getName())) {
             throw new Exception(sprintf(
                 'Invalid name for class definition: %s',
+                $this->getName()
+            ));
+        }
+
+        // The name is emitted verbatim as the PHP class name in the generated class file
+        // (see PHPClassDumper), so a reserved word here causes a syntax error at generation time.
+        $reservedWordsHelper = new ReservedWordsHelper();
+        if ($reservedWordsHelper->isReservedWord($this->getName())) {
+            throw new Exception(sprintf(
+                'Invalid name for class definition: `%s` is a reserved word and cannot be used as a class name',
                 $this->getName()
             ));
         }
