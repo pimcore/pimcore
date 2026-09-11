@@ -26,10 +26,12 @@ use Pimcore\Model\Element\Service;
 use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
 use Pimcore\Translation\TranslationEntriesDumper;
+use Pimcore\Translation\Translator;
 use stdClass;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @method \Pimcore\Model\Translation\Dao getDao()
@@ -228,6 +230,18 @@ final class Translation extends AbstractModel
     public static function clearDependentCache(): void
     {
         Cache::clearTags(['translator', 'translate']);
+
+        // Clearing the persistent cache tag above doesn't reset the Translator service's own
+        // in-memory record of which domain/locale catalogues it already built this process
+        // (lazyInitialize() short-circuits once a cache key is marked initialized). Without this,
+        // a save/delete that happens after a domain/locale was already read in the same process
+        // (e.g. within one request, worker, or test run) is invisible until that process restarts.
+        if (Pimcore::hasContainer()) {
+            $translator = Pimcore::getContainer()->get(TranslatorInterface::class);
+            if ($translator instanceof Translator) {
+                $translator->resetCache();
+            }
+        }
     }
 
     /**
