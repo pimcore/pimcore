@@ -308,6 +308,10 @@ class WebDavIntegrationTest extends ModelTestCase
         $destId = $dest->getId();
         $destPath = $dest->getRealFullPath();
 
+        // the bound VersionDeleteMessage captures at delete time (see Asset::delete())
+        $preDeleteMaxVersionId = \Pimcore\Model\Version::getHighestIdForElement('asset', $destId);
+        $this->assertNotNull($preDeleteMaxVersionId, 'The destination is expected to have versions before its deletion.');
+
         (new WebDavFile($dest))->delete();
 
         $source = $this->createFileAssetIn($this->root, 'meta-source.txt', 'NEW');
@@ -330,25 +334,27 @@ class WebDavIntegrationTest extends ModelTestCase
         $this->assertSame(12345, $restored->getUserOwner());
         $this->assertSame($originalCreationDate, $restored->getCreationDate());
 
-        // the deletion queued a version cleanup for this id; since it is bounded to the versions
-        // existing at delete time, the version created by the restore save must survive it even
-        // when the queued message is only processed now (simulated by invoking the handler with
-        // the same bound the deletion captured, i.e. all pre-restore version ids)
+        // the deletion queued a version cleanup for this id, bounded to the versions existing at
+        // delete time; versions created by the restore save (ids above that bound) must survive
+        // it even when the queued message is only processed now - simulated by invoking the
+        // handler with the exact bound the deletion captured
         $restoredVersions = $restored->getVersions();
         $this->assertNotEmpty($restoredVersions, 'The restore save must create a version.');
-        $maxRestoredVersionId = max(array_map(fn ($v) => $v->getId(), $restoredVersions));
+        $restoredVersionIds = array_map(static fn (\Pimcore\Model\Version $v): int => $v->getId(), $restoredVersions);
+        $survivorIds = array_values(array_filter($restoredVersionIds, fn (int $id): bool => $id > $preDeleteMaxVersionId));
+        $this->assertNotEmpty($survivorIds, 'The restore save must create a version above the pre-delete bound.');
 
-        $preRestoreBound = min(array_map(fn ($v) => $v->getId(), $restoredVersions)) - 1;
         (new \Pimcore\Messenger\Handler\VersionDeleteHandler())(
-            new \Pimcore\Messenger\VersionDeleteMessage('asset', $destId, $preRestoreBound)
+            new \Pimcore\Messenger\VersionDeleteMessage('asset', $destId, $preDeleteMaxVersionId)
         );
 
-        $survivingVersions = Asset::getById($destId, ['force' => true])->getVersions();
-        $this->assertNotEmpty($survivingVersions, 'Versions created after the restore must survive the bounded cleanup.');
-        $this->assertSame(
-            $maxRestoredVersionId,
-            max(array_map(fn ($v) => $v->getId(), $survivingVersions))
+        $survivingIds = array_map(
+            static fn (\Pimcore\Model\Version $v): int => $v->getId(),
+            Asset::getById($destId, ['force' => true])->getVersions()
         );
+        sort($survivorIds);
+        sort($survivingIds);
+        $this->assertSame($survivorIds, $survivingIds, 'Exactly the versions created after the deletion must survive the bounded cleanup.');
     }
 
     /**
