@@ -21,6 +21,9 @@ use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Model\Asset\Thumbnail\ImageThumbnailTrait;
 use Pimcore\Tests\Support\Test\TestCase;
 
+/**
+ * @internal
+ */
 class ImageThumbnailTraitTest extends TestCase
 {
     private const STORAGE_PATH = '/testimage/1/image-thumb__1__unittest/testimage.jpg';

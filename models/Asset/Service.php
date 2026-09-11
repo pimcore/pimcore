@@ -497,7 +497,7 @@ class Service extends Model\Element\Service
             }
 
             $thumbnailStream = $thumbnail->getStream();
-            if (!$thumbnailStream) {
+            if ($thumbnailStream === null) {
                 return null;
             }
 

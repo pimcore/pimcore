@@ -69,7 +69,7 @@ class PublicServicesController extends Controller
 
         // no response means the asset, the thumbnail config or the thumbnail file doesn't exist
         throw new NotFoundHttpException(
-            sprintf('Unable to generate %s thumbnail for %s', $config['type'], $request->getPathInfo())
+            sprintf('%s thumbnail not found for %s', ucfirst($config['type']), $request->getPathInfo())
         );
     }
 

@@ -19,6 +19,9 @@ use Pimcore\Model\Asset\Image\ThumbnailInterface;
 use Pimcore\Model\Asset\Service;
 use Pimcore\Tests\Support\Test\TestCase;
 
+/**
+ * @internal
+ */
 class ServiceTest extends TestCase
 {
     public function testGetStreamedResponseForThumbnailRethrowsWhenDirectDeliveryReadFails(): void
