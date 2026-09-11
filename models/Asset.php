@@ -1044,7 +1044,7 @@ class Asset extends Element\AbstractElement
                     new VersionDeleteMessage(
                         Service::getElementType($this),
                         $this->getId(),
-                        Version::getHighestIdForElement(Service::getElementType($this), $this->getId())
+                        Version::getHighestIdForElement(Service::getElementType($this), $this->getId()) ?? 0
                     )
                 );
 

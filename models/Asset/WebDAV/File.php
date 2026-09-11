@@ -107,6 +107,11 @@ class File extends DAV\File
                 'properties' => $properties,
                 'metadata' => $metadata,
                 'customSettings' => is_string($customSettings) ? $customSettings : null,
+                // rolling-deploy safety in the new-writer -> old-reader direction: the previous
+                // release reads this key unconditionally and feeds it to restoreDeletedAsset(),
+                // which returns null for an empty payload - the old node then degrades to a
+                // normal move instead of failing the MOVE with a TypeError
+                'data' => '',
             ];
 
             Asset\WebDAV\Service::saveDeleteLog($log);

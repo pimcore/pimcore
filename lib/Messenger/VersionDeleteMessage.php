@@ -19,17 +19,27 @@ namespace Pimcore\Messenger;
 class VersionDeleteMessage
 {
     /**
+     * Not a promoted property: promotion defaults are constructor defaults only, and Messenger
+     * deserialization bypasses the constructor - a class-level default is what keeps messages
+     * queued by previous releases (which did not carry this field) readable without an
+     * uninitialized-property error.
+     */
+    protected ?int $maxVersionId = null;
+
+    /**
      * @param int|null $maxVersionId highest version id of the element at the time of deletion.
      * The handler only deletes versions up to this bound, so an element id that is re-used after
      * the deletion (e.g. the WebDAV delete-log restore, see Asset\WebDAV\Tree::move()) does not
      * lose versions created after the restore when the queued message is processed later.
-     * Null (also the value for messages queued by previous releases) keeps the unbounded behavior.
+     * Pass 0 when the element has no versions at deletion time (nothing to clean up). Null is
+     * reserved for messages queued by previous releases and keeps their unbounded behavior.
      */
     public function __construct(
         protected string $elementType,
         protected int $elementId,
-        protected ?int $maxVersionId = null
+        ?int $maxVersionId = null
     ) {
+        $this->maxVersionId = $maxVersionId;
     }
 
     public function getElementType(): string

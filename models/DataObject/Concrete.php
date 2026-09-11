@@ -231,7 +231,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             new VersionDeleteMessage(
                 Model\Element\Service::getElementType($this),
                 $this->getId(),
-                Model\Version::getHighestIdForElement(Model\Element\Service::getElementType($this), $this->getId())
+                Model\Version::getHighestIdForElement(Model\Element\Service::getElementType($this), $this->getId()) ?? 0
             )
         );
 

@@ -222,7 +222,7 @@ abstract class PageSnippet extends Model\Document
             new VersionDeleteMessage(
                 Service::getElementType($this),
                 $this->getId(),
-                Model\Version::getHighestIdForElement(Service::getElementType($this), $this->getId())
+                Model\Version::getHighestIdForElement(Service::getElementType($this), $this->getId()) ?? 0
             )
         );
 

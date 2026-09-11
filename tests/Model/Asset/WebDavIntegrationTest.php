@@ -197,7 +197,11 @@ class WebDavIntegrationTest extends ModelTestCase
         (new WebDavFile($asset))->delete();
 
         $this->assertNull(Asset::getById($id, ['force' => true]), 'asset should be deleted');
-        $this->assertArrayHasKey($path, Service::getDeleteLog(), 'delete log should record the removed asset');
+        $log = Service::getDeleteLog();
+        $this->assertArrayHasKey($path, $log, 'delete log should record the removed asset');
+        // rolling-deploy safety: the previous release reads this key unconditionally and must
+        // degrade to a normal move (restoreDeletedAsset('') returns null) on new-format entries
+        $this->assertSame('', $log[$path]['data'] ?? null);
     }
 
     // ---- Tree::move ----------------------------------------------------------------------
@@ -355,6 +359,18 @@ class WebDavIntegrationTest extends ModelTestCase
         sort($survivorIds);
         sort($survivingIds);
         $this->assertSame($survivorIds, $survivingIds, 'Exactly the versions created after the deletion must survive the bounded cleanup.');
+
+        // an element without versions at deletion time dispatches the explicit empty bound 0
+        // (null is reserved for legacy messages); such a cleanup must never touch anything
+        (new \Pimcore\Messenger\Handler\VersionDeleteHandler())(
+            new \Pimcore\Messenger\VersionDeleteMessage('asset', $destId, 0)
+        );
+        $afterEmptyBound = array_map(
+            static fn (\Pimcore\Model\Version $v): int => $v->getId(),
+            Asset::getById($destId, ['force' => true])->getVersions()
+        );
+        sort($afterEmptyBound);
+        $this->assertSame($survivingIds, $afterEmptyBound, 'A 0-bounded cleanup must not delete any version.');
     }
 
     /**
