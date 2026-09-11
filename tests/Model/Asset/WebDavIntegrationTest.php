@@ -286,19 +286,22 @@ class WebDavIntegrationTest extends ModelTestCase
     }
 
     /**
-     * The delete-log restore must also bring back the deleted destination's own properties
-     * (including a date property, hydrated through the allowlist), metadata, custom settings,
-     * owner and creation date (captured as a scalar snapshot), not just its id — and versions
-     * created by the restore must survive the deferred version cleanup queued by the deletion.
+     * The delete-log restore must also bring back the deleted destination's own properties,
+     * metadata, custom settings, owner and creation date (captured as a scalar snapshot), not
+     * just its id — and versions created by the restore must survive the deferred version
+     * cleanup queued by the deletion.
+     *
+     * No date property in here: `properties`.`type` is an enum without a 'date' member, so a
+     * date property loses its type on every regular save already — the delete-log round-trip
+     * of such rows (hydrated via the allowlist in Tree::restoreProperties()) only matters for
+     * databases upgraded from versions whose enum still contained 'date'.
      */
     public function testMoveRestoresDestinationMetadataAndProperties(): void
     {
         $originalCreationDate = time() - 86400;
-        $reviewDate = new \Carbon\Carbon('2026-01-02 03:04:05');
 
         $dest = $this->createFileAssetIn($this->root, 'meta-target.txt', 'OLD');
         $dest->setProperty('reviewed', 'text', 'yes');
-        $dest->setProperty('reviewed_at', 'date', $reviewDate);
         $dest->addMetadata('copyright', 'input', 'ACME');
         $dest->setCustomSetting('editorNote', 'keep-me');
         // distinct values a freshly rebuilt asset would not get on its own
@@ -326,9 +329,6 @@ class WebDavIntegrationTest extends ModelTestCase
         $this->assertSame($destPath, $restored->getRealFullPath());
         $this->assertSame('NEW', $restored->getData());
         $this->assertSame('yes', $restored->getProperty('reviewed'));
-        $restoredDate = $restored->getProperty('reviewed_at');
-        $this->assertInstanceOf(\DateTimeInterface::class, $restoredDate);
-        $this->assertSame($reviewDate->getTimestamp(), $restoredDate->getTimestamp());
         $this->assertSame('ACME', $restored->getMetadata('copyright'));
         $this->assertSame('keep-me', $restored->getCustomSetting('editorNote'));
         $this->assertSame(12345, $restored->getUserOwner());
