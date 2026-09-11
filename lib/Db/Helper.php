@@ -35,16 +35,18 @@ class Helper
      *
      * The insert and the update path are told apart by the affected-rows value (1 = inserted,
      * 2 or 0 = updated). This requires the default MySQL/MariaDB affected-rows semantics: with
-     * CLIENT_FOUND_ROWS enabled on the connection (PDO::MYSQL_ATTR_FOUND_ROWS - Pimcore does not
-     * set it, and it must not be set in the doctrine driverOptions), an update that leaves the row
-     * unchanged would also report 1 and be misread as an insert, returning a stale last-insert-id.
+     * CLIENT_FOUND_ROWS enabled (PDO::MYSQL_ATTR_FOUND_ROWS in the doctrine driverOptions -
+     * Pimcore does not set it), an update that leaves the row unchanged would also report 1 and
+     * be misread as an insert, so such a connection is rejected with a LogicException before
+     * anything is written.
      *
      * @param array<string, mixed> $data The data to be inserted or updated into the database table.
      * Array key corresponds to the database column, array value to the actual value.
      * @param string[] $keys The columns identifying the row - typically the primary key columns.
-     * The values for the specified keys are read from the $data parameter, so every key column
-     * must be present in $data (a null value is allowed and inserts normally, e.g. a new
-     * auto-increment row, but can never address an existing row on the update path).
+     * The values for the specified keys are read from the $data parameter. A null key value is
+     * allowed and inserts normally (e.g. a new auto-increment row) but can never address an
+     * existing row on the update path; a key column missing from $data entirely keeps the
+     * previous behavior - the insert runs, and only a duplicate raises the misuse LogicException.
      *
      * @return int|string|null last insert id or null if the insert was not successful or it was an update.
      */
@@ -67,17 +69,37 @@ class Helper
             throw new LogicException('upsert() requires at least one key column');
         }
 
+        // the insert/update split below reads the affected-rows value, so a connection with
+        // CLIENT_FOUND_ROWS semantics (a no-op duplicate update also reports 1) would return a
+        // stale last insert id instead of the contractual null - reject it before any write
+        if (
+            defined('PDO::MYSQL_ATTR_FOUND_ROWS') &&
+            ($connection->getParams()['driverOptions'][\PDO::MYSQL_ATTR_FOUND_ROWS] ?? false)
+        ) {
+            throw new LogicException(
+                'upsert() requires the default affected-rows semantics - PDO::MYSQL_ATTR_FOUND_ROWS must not be enabled on the connection'
+            );
+        }
+
         $keys = array_map(
             static fn (string $key): string => $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key,
             $keys
         );
 
-        // the guard below reads every key via VALUES(), so key columns must be part of the row -
-        // checked before anything is sent to the database (the previous implementation reported
-        // the same misuse, but only when the insert happened to hit a duplicate)
-        foreach ($keys as $key) {
-            if (!array_key_exists($key, $data)) {
-                throw new LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
+        $missingKeys = array_filter($keys, static fn (string $key): bool => !array_key_exists($key, $data));
+        if ($missingKeys !== []) {
+            // the guarded single statement below needs every key readable via VALUES(). The
+            // previous implementation read $keys only after a duplicate, so an insert that does
+            // not collide succeeds even with a key missing from $data - keep exactly that
+            // behavior for such calls via the legacy two-step path.
+            try {
+                $connection->insert($table, $data);
+
+                return self::lastInsertId($connection);
+            } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException) {
+                throw new LogicException(
+                    sprintf('Key "%s" passed for upsert not found in data', reset($missingKeys))
+                );
             }
         }
 

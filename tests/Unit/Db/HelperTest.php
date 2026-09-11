@@ -211,11 +211,55 @@ final class HelperTest extends TestCase
         }
 
         $this->assertSame('Key "`missing`" passed for upsert not found in data', $caught->getMessage());
-        // the misuse is reported before anything is sent to the database
+        // the failed insert leaves no trace, so nothing was written
         $this->assertSame(
             'inserted',
             $this->db->fetchOne('SELECT `key` FROM ' . self::TABLE_COMPOSITE_KEY . ' WHERE cid = 9')
         );
+    }
+
+    public function testInsertWithMissingKeySucceedsWithoutConflict(): void
+    {
+        // BC pin: the previous implementation read $keys only after a duplicate, so an insert
+        // that does not collide succeeds even when a listed key is absent from $data (the
+        // return value is unspecified for tables without an identity column, as before)
+        Helper::upsert(
+            $this->db,
+            self::TABLE_COMPOSITE_KEY,
+            ['cid' => 11, 'ctype' => 'object', 'key' => 'inserted'],
+            ['cid', 'missing']
+        );
+
+        $this->assertSame(
+            'inserted',
+            $this->db->fetchOne('SELECT `key` FROM ' . self::TABLE_COMPOSITE_KEY . ' WHERE cid = 11')
+        );
+    }
+
+    public function testFoundRowsConnectionIsRejectedBeforeWriting(): void
+    {
+        $params = $this->db->getParams();
+        $params['driverOptions'][\PDO::MYSQL_ATTR_FOUND_ROWS] = true;
+        $foundRowsConnection = \Doctrine\DBAL\DriverManager::getConnection($params);
+
+        try {
+            $this->expectException(LogicException::class);
+            $this->expectExceptionMessage('PDO::MYSQL_ATTR_FOUND_ROWS');
+
+            Helper::upsert(
+                $foundRowsConnection,
+                self::TABLE_AUTO_INCREMENT,
+                ['id' => null, 'name' => 'found-rows', 'value' => 'rejected'],
+                ['id']
+            );
+        } finally {
+            $foundRowsConnection->close();
+            // rejected before any write
+            $this->assertSame(
+                0,
+                (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . self::TABLE_AUTO_INCREMENT . " WHERE name = 'found-rows'")
+            );
+        }
     }
 
     public function testConflictOnNonKeyUniqueIndexLeavesTheForeignRowUntouched(): void
