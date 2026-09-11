@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
 /**
@@ -63,6 +64,41 @@ class ClassDefinitionTest extends ModelTestCase
 
         $renamedClass = ClassDefinition::getByName('unittest_renamed');
         $renamedClass->rename('unittest');
+    }
+
+    /**
+     * rename() deletes the class's PHP files and renames every persisted object's className via
+     * raw SQL before ever calling save() - the method where the candidate name is actually
+     * validated. A rejected rename must not leave either side effect applied.
+     */
+    public function testRenameToReservedWordLeavesClassAndObjectsUnchanged(): void
+    {
+        $class = ClassDefinition::getByName('unittest');
+
+        $object = new Unittest();
+        $object->setOmitMandatoryCheck(true);
+        $object->setParentId(1);
+        $object->setUserOwner(1);
+        $object->setKey('reserved-word-rename-test-' . uniqid());
+        $object->save();
+
+        try {
+            $class->rename('var');
+            $this->fail('Expected renaming a class to a reserved word to throw.');
+        } catch (Exception $exception) {
+            $this->assertStringContainsString('reserved word', $exception->getMessage());
+        }
+
+        $this->assertSame('unittest', ClassDefinition::getByName('unittest')?->getName());
+
+        $reloadedObject = Unittest::getById($object->getId(), ['force' => true]);
+        $this->assertInstanceOf(
+            Unittest::class,
+            $reloadedObject,
+            'The object must still resolve as Unittest - a rejected rename must not have renamed it in the database'
+        );
+
+        $object->delete();
     }
 
     /**
