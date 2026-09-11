@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
 /**
@@ -66,6 +67,41 @@ class ClassDefinitionTest extends ModelTestCase
     }
 
     /**
+     * rename() deletes the class's PHP files and renames every persisted object's className via
+     * raw SQL before ever calling save() - the method where the candidate name is actually
+     * validated. A rejected rename must not leave either side effect applied.
+     */
+    public function testRenameToReservedWordLeavesClassAndObjectsUnchanged(): void
+    {
+        $class = ClassDefinition::getByName('unittest');
+
+        $object = new Unittest();
+        $object->setOmitMandatoryCheck(true);
+        $object->setParentId(1);
+        $object->setUserOwner(1);
+        $object->setKey('reserved-word-rename-test-' . uniqid());
+        $object->save();
+
+        try {
+            $class->rename('var');
+            $this->fail('Expected renaming a class to a reserved word to throw.');
+        } catch (Exception $exception) {
+            $this->assertStringContainsString('reserved word', $exception->getMessage());
+        }
+
+        $this->assertSame('unittest', ClassDefinition::getByName('unittest')?->getName());
+
+        $reloadedObject = Unittest::getById($object->getId(), ['force' => true]);
+        $this->assertInstanceOf(
+            Unittest::class,
+            $reloadedObject,
+            'The object must still resolve as Unittest - a rejected rename must not have renamed it in the database'
+        );
+
+        $object->delete();
+    }
+
+    /**
      * PCRE `$` also matches immediately before a trailing newline, so a class name, id or parent
      * class ending in "\n" passed the identifier checks in save() and reached the class-file
      * generator, which emits them verbatim into PHP source and file paths (GHSA-g2vm-g4vq-qhwj).
@@ -91,6 +127,35 @@ class ClassDefinitionTest extends ModelTestCase
             'name' => ["TrailingNewlineName\n", 'TrailingNewlineName', ''],
             'id' => ['TrailingNewlineId', "TrailingNewlineId\n", ''],
             'parentClass' => ['TrailingNewlineParent', 'TrailingNewlineParent', "\\Pimcore\\Model\\DataObject\\Concrete\n"],
+        ];
+    }
+
+    /**
+     * A class name is emitted verbatim as the PHP class name in the generated class file, so a
+     * PHP reserved word (e.g. "var") must be rejected at save time instead of reaching the class
+     * file generator, where it produces a fatal syntax error only when an object of that class is
+     * first instantiated (pimcore/platform-version#291).
+     *
+     * @dataProvider reservedWordClassNameProvider
+     */
+    public function testSaveRejectsReservedWordAsClassName(string $name, string $id): void
+    {
+        $class = new ClassDefinition();
+        $class->setName($name);
+        $class->setId($id);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('reserved word');
+
+        $class->save();
+    }
+
+    public static function reservedWordClassNameProvider(): array
+    {
+        return [
+            'php keyword' => ['var', 'ReservedWordVar'],
+            'php keyword, mixed case' => ['Var', 'ReservedWordVarMixedCase'],
+            'pimcore reserved word' => ['Folder', 'ReservedWordFolder'],
         ];
     }
 
