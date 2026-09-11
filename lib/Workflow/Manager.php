@@ -19,6 +19,7 @@ use Pimcore\Event\Workflow\GlobalActionEvent;
 use Pimcore\Event\WorkflowEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
@@ -299,9 +300,15 @@ class Manager
         $markingStore = $workflow->getMarkingStore();
         // Only snapshot when the save below can actually run and fail, so that
         // read-only global actions do not pay for an extra marking-store read.
-        $previousMarking = ($saveSubject && $subject instanceof ElementInterface)
-            ? $markingStore->getMarking($subject)
-            : null;
+        $previousMarking = null;
+        $previousPublishedState = null;
+        if ($saveSubject && $subject instanceof ElementInterface) {
+            $previousMarking = $markingStore->getMarking($subject);
+            // the element types the ChangePublishedStateSubscriber can act on
+            if ($subject instanceof Concrete || $subject instanceof Document) {
+                $previousPublishedState = $subject->isPublished();
+            }
+        }
 
         if (!empty($globalActionObj->getTos())) {
             $places = [];
@@ -317,13 +324,23 @@ class Manager
 
         if ($saveSubject && $subject instanceof ElementInterface) {
             try {
-                $subject->save();
+                if ($globalActionObj->getChangePublishedState() === ChangePublishedStateSubscriber::SAVE_VERSION
+                    && ($subject instanceof Asset || $subject instanceof PageSnippet || $subject instanceof Concrete)
+                ) {
+                    $subject->saveVersion();
+                } else {
+                    $subject->save();
+                }
             } catch (Throwable $e) {
                 // Roll back the workflow place if the save fails so marking
                 // stores that persist immediately do not leave the subject in
-                // an inconsistent state (see pimcore/pimcore#18178).
+                // an inconsistent state (see pimcore/pimcore#18178). The same
+                // applies to a published state changed by the global action.
                 if ($previousMarking !== null) {
                     $markingStore->setMarking($subject, $previousMarking);
+                }
+                if ($previousPublishedState !== null) {
+                    $subject->setPublished($previousPublishedState);
                 }
 
                 throw $e;

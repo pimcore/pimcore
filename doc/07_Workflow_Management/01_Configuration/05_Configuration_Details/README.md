@@ -334,5 +334,42 @@ pimcore:
                             service: 'App\Service\Workflow\CustomHtmlService'
                             
                             # Set position of custom HTML inside modal (top, center, bottom; default=top).
-                            position: 'top'                                
+                            position: 'top'
+
+                    # See notificationSettings section of transitions. It works exactly the same way.
+                    notificationSettings:
+
+                        # Prototype
+                        -
+
+                            # A symfony expression can be configured here. All sets of notification which are matching the condition will be used.
+                            condition:            ~
+
+                            # Send an email notification to a list of users (user names) when the global action gets applied
+                            notifyUsers:          []
+
+                            # Send an email notification to a list of user roles (role names) when the global action gets applied
+                            notifyRoles:          []
+
+                            # Define which channel notification should be sent to, possible values "mail" and "pimcore_notification", default value is "mail".
+                            channelType:
+
+                                # Default:
+                                - mail
+
+
+                            # Type of mail source.
+                            mailType:             template # One of "template"; "pimcore_document"
+
+                            # Path to mail source - either Symfony path to template or fullpath to Pimcore document. Optional use %_locale% as placeholder for language.
+                            mailPath:             '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig'
+
+                    # Change published state of element while the global action is applied (only available for documents and data objects).
+                    changePublishedState: no_change # One of "no_change", "force_unpublished", "force_published", "save_version"
+
+                    # behaviour when the global action gets applied but there are unsaved changes
+                    unsavedChangesBehaviour: warn # One of "warn", "save", "ignore"
 ```
+
+> Note: `save_version` for `changePublishedState` only takes effect if `saveSubject` is enabled, since it
+> replaces the regular save of the subject with a version save.
