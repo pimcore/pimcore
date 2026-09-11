@@ -185,6 +185,10 @@ final class Configuration implements ConfigurationInterface
                         ->info('Integer value in seconds.')
                         ->defaultValue(1800)
                     ->end()
+                    ->integerNode('cleanup_tmp_directories_older_than')
+                        ->info('Integer value in seconds. Empty directories under the system temp directory are removed once untouched for this long; files are governed by cleanup_tmp_files_atime_older_than.')
+                        ->defaultValue(604800) // 7 days
+                    ->end()
         ;
     }
 
