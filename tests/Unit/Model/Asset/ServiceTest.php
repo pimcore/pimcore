@@ -46,7 +46,7 @@ class ServiceTest extends TestCase
 
     public function testGetStreamedResponseForThumbnailFallsThroughWhenFileDisappears(): void
     {
-        $uri = '/testimage/999999999/image-thumb__999999999__unittest/testimage.jpg';
+        $uri = '/testimage/0/image-thumb__0__unittest/testimage.jpg';
 
         $storage = $this->createMock(FilesystemOperator::class);
         // the read fails and the re-check finds the file gone (there is no pre-check any more
@@ -55,10 +55,12 @@ class ServiceTest extends TestCase
         $storage->method('readStream')->willThrowException(UnableToReadFile::fromLocation($uri));
 
         // falls through to the regular thumbnail resolution, which cannot resolve the
-        // non-existing asset and returns null (-> 404 at the controller)
+        // non-existing asset and returns null (-> 404 at the controller). Asset id 0 is
+        // rejected by Asset::getById()'s guard before any DAO access, keeping this test
+        // runnable on unit environments without database support.
         $response = Service::getStreamedResponseForThumbnail([
             'type' => 'image',
-            'asset_id' => 999999999,
+            'asset_id' => 0,
             'thumbnail_name' => 'unittest',
             'filename' => 'testimage.jpg',
             'file_extension' => 'jpg',
