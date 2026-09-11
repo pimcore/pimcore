@@ -441,6 +441,27 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($targetObject2->getId(), $denormalizedValue[1]->getId());
     }
 
+    public function testManyToManyAssetRelation(): void
+    {
+        $targetAsset1 = TestHelper::createImageAsset();
+        $targetAsset2 = TestHelper::createImageAsset();
+
+        $originalValue = [$targetAsset1, $targetAsset2];
+
+        $fd = new DataObject\ClassDefinition\Data\ManyToManyAssetRelation();
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
+
+        $normalizedValue = $fd->normalize($originalValue);
+        $this->assertTrue(is_array($normalizedValue));
+        $this->assertCount(2, $normalizedValue);
+        $this->assertSame('asset', $normalizedValue[0]['type']);
+        $this->assertSame($targetAsset1->getId(), $normalizedValue[0]['id']);
+
+        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $this->assertEquals($targetAsset1->getId(), $denormalizedValue[0]->getId());
+        $this->assertEquals($targetAsset2->getId(), $denormalizedValue[1]->getId());
+    }
+
     public function testManyToManyRelation(): void
     {
         $targetObject1 = TestHelper::createEmptyObject();
