@@ -28,6 +28,12 @@ class Helper
      * This is a single INSERT ... ON DUPLICATE KEY UPDATE statement, so the row is sent to the
      * database only once, no matter which of the two paths it takes.
      *
+     * The insert and the update path are told apart by the affected-rows value (1 = inserted,
+     * 2 or 0 = updated). This requires the default MySQL/MariaDB affected-rows semantics: with
+     * CLIENT_FOUND_ROWS enabled on the connection (PDO::MYSQL_ATTR_FOUND_ROWS - Pimcore does not
+     * set it, and it must not be set in the doctrine driverOptions), an update that leaves the row
+     * unchanged would also report 1 and be misread as an insert, returning a stale last-insert-id.
+     *
      * @param array<string, mixed> $data The data to be inserted or updated into the database table.
      * Array key corresponds to the database column, array value to the actual value.
      * @param string[] $keys The columns identifying the row - typically the primary key columns.
