@@ -28,6 +28,7 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\StateMachine;
+use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
 
 class ManagerTest extends TestCase
 {
@@ -156,6 +157,73 @@ class ManagerTest extends TestCase
 
         $this->assertSame(['end' => 1], $store->persisted);
         $this->assertSame(['end' => 1], $marking->getPlaces());
+    }
+
+    /**
+     * getDeniedActionsInWorkflow() exists so a caller needing several permission types for one
+     * element resolves the workflow permissions once instead of once per type. It must answer
+     * exactly what isDeniedInWorkflow() answers for each type, including for a type no place
+     * config mentions.
+     */
+    public function testGetDeniedActionsInWorkflowMatchesTheSingleTypeCheck(): void
+    {
+        $element = self::createStub(Concrete::class);
+        $manager = $this->buildManagerWithPlacePermissions(['publish' => false, 'settings' => true]);
+
+        $denied = $manager->getDeniedActionsInWorkflow($element, ['publish', 'settings', 'rename']);
+
+        $this->assertSame(
+            [
+                'publish' => true,
+                'settings' => false,
+                // no place config mentions 'rename', which is not the same as denying it
+                'rename' => false,
+            ],
+            $denied
+        );
+
+        foreach ($denied as $permissionType => $isDenied) {
+            $this->assertSame(
+                $manager->isDeniedInWorkflow($element, $permissionType),
+                $isDenied,
+                sprintf('Batch and single-type checks disagree about "%s".', $permissionType)
+            );
+        }
+    }
+
+    public function testGetDeniedActionsInWorkflowReturnsAnEmptyMapForNoRequestedTypes(): void
+    {
+        $manager = $this->buildManagerWithPlacePermissions(['publish' => false]);
+
+        $this->assertSame([], $manager->getDeniedActionsInWorkflow(self::createStub(Concrete::class), []));
+    }
+
+    /**
+     * A Manager whose single workflow sits in a place carrying the given permissions.
+     */
+    private function buildManagerWithPlacePermissions(array $permissions): Manager
+    {
+        $eventDispatcher = new EventDispatcher();
+        $workflow = $this->createWorkflow(
+            $this->createImmediateMarkingStore(),
+            new PimcoreTransition('go', 'start', 'end', []),
+            $eventDispatcher
+        );
+
+        $registry = new Registry();
+        $registry->addWorkflow($workflow, new InstanceOfSupportStrategy(Concrete::class));
+
+        $manager = new Manager(
+            $registry,
+            self::createStub(NotesSubscriber::class),
+            self::createStub(ExpressionService::class),
+            $eventDispatcher
+        );
+        $manager->registerWorkflow(self::WORKFLOW_NAME);
+        // no 'condition' key, so the ExpressionService mock is never consulted
+        $manager->addPlaceConfig(self::WORKFLOW_NAME, 'start', ['permissions' => [$permissions]]);
+
+        return $manager;
     }
 
     /**
