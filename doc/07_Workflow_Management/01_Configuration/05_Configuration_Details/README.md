@@ -106,6 +106,12 @@ pimcore:
 
                     # If set to false, the place will be hidden in the header of the Pimcore element detail view in Pimcore Studio.
                     visibleInHeader:      true
+
+                    # Change published state of element when it enters this place through a completed workflow
+                    # transition or a global action with a "to" option (only available for documents and data objects).
+                    # Initial markings and direct marking store writes do not apply it.
+                    # A changePublishedState other than no_change on the applied transition overrules this setting.
+                    changePublishedState: no_change # One of "no_change", "force_unpublished", "force_published", "save_version"
                     permissions:
 
                         # Prototype
@@ -278,6 +284,7 @@ pimcore:
                                 mailPath:             '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig'
 
                         # Change published state of element while transition (only available for documents and data objects).
+                        # Unless it is set to no_change, this setting overrules the changePublishedState settings of the places the transition leads to.
                         changePublishedState: no_change # One of "no_change", "force_unpublished", "force_published", "save_version"
                         
                         # behaviour when transition gets applied but there are unsaved changes
@@ -336,3 +343,55 @@ pimcore:
                             # Set position of custom HTML inside modal (top, center, bottom; default=top).
                             position: 'top'                                
 ```
+
+## Published State
+
+`changePublishedState` controls the published state of documents and data objects and can be
+configured on a transition as well as on a place:
+
+```yaml
+pimcore:
+    workflows:
+        product_workflow:
+            places:
+                # every transition leading to "accepted" publishes the product
+                accepted:
+                    label: 'Accepted product'
+                    changePublishedState: force_published
+                rejected:
+                    label: 'Rejected product'
+                    changePublishedState: force_unpublished
+            transitions:
+                publish:
+                    from: content_prepared
+                    to: accepted
+                approve:
+                    from: review
+                    to: accepted
+                reject_product:
+                    from: [new, content_prepared]
+                    to: rejected
+                    options:
+                        # overrules the "force_unpublished" of the "rejected" place
+                        changePublishedState: save_version
+```
+
+The setting configured on the applied transition takes precedence. As long as the transition leaves
+it at `no_change` (the default), the setting of the places the transition leads to is used - the
+first place which defines a `changePublishedState`, in the order of the workflow config, wins. This
+mirrors how `objectLayout` works on transitions and places.
+
+The inherited value is resolved when the container is compiled: a transition or global action which
+does not configure `changePublishedState` itself gets the value of the place it leads to baked into
+its options. `Transition::getChangePublishedState()` and `GlobalAction::getChangePublishedState()`
+therefore report the value which will actually be applied.
+
+> **A place-level `changePublishedState` is an entry behaviour, not an invariant.** It is applied on
+> two paths only: a completed workflow transition into the place, and a global action which sets the
+> place via its `to` option. An element which reaches the place through `initial_markings`, through a
+> direct write to the marking store, or by having an attribute-based marking store field set directly,
+> keeps its current published state. Do not rely on "every element in this place is published".
+
+Since `no_change` is the default of a transition, it cannot be used to opt out of the setting of a
+place. If a single transition into a place has to behave differently, configure the setting on the
+transitions instead of the place.
