@@ -48,21 +48,33 @@ final class Executor implements ExecutorInterface
 
         $task = $this->tasks[$name]['taskClass'];
 
+        $startedAt = hrtime(true);
         try {
             $this->logger->info('Starting job with ID {id}', [
                 'id' => $name,
             ]);
             $task->execute();
 
-            $this->logger->info('Finished job with ID {id}', [
+            $this->logger->info('Finished job with ID {id} in {duration}s', [
                 'id' => $name,
+                'duration' => self::elapsedSeconds($startedAt),
             ]);
         } catch (Exception $e) {
-            $this->logger->error('Failed to execute job with ID {id}: {exception}', [
+            $this->logger->error('Failed to execute job with ID {id} after {duration}s: {exception}', [
                 'id' => $name,
+                'duration' => self::elapsedSeconds($startedAt),
                 'exception' => $e,
             ]);
         }
+    }
+
+    /**
+     * hrtime() rather than microtime(): the elapsed time of a long-running task must not be
+     * distorted - or turned negative - by an NTP or manual wall-clock adjustment while it runs.
+     */
+    private static function elapsedSeconds(int|float $startedAt): float
+    {
+        return round((hrtime(true) - $startedAt) / 1_000_000_000, 3);
     }
 
     public function executeMaintenance(array $validJobs = [], array $excludedJobs = []): void
