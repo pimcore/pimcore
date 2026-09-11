@@ -72,20 +72,120 @@ class ClassDefinitionManagerTest extends ModelTestCase
         $this->assertFileDoesNotExist($phpClassFile, 'PHP classes must not be dumped when $dumpPHPClasses is false');
     }
 
-    public function testDumpClassDefinitionsWithForceRestoresPhpClasses(): void
+    public function testDumpClassDefinitionsRestoresMissingPhpClassesWithoutForce(): void
     {
         $class = $this->createTestClassDefinition();
         $phpClassFile = $class->getPhpClassFile();
+        $phpListingClassFile = $class->getPhpListingClassFile();
 
         $this->simulateEmptyDatabase($class);
 
         $this->getClassDefinitionManager()->dumpClassDefinitions(dumpPHPClasses: false);
         $this->assertFileDoesNotExist($phpClassFile);
+        $this->assertFileDoesNotExist($phpListingClassFile);
 
-        // a subsequent run with PHP class dumping enabled needs force, as the definition did not change
-        $this->getClassDefinitionManager()->dumpClassDefinitions(force: true);
+        // even without force, missing PHP classes must be restored: the database being up-to-date
+        // (e.g. because another node sharing the same database already ran the rebuild)
+        // says nothing about the state of the generated files on this node
+        RuntimeCache::clear();
+        $changes = $this->getClassDefinitionManager()->dumpClassDefinitions();
 
-        $this->assertFileExists($phpClassFile, 'PHP classes must be dumped again when $dumpPHPClasses is true');
+        $this->assertContains(
+            [self::CLASS_NAME, self::CLASS_NAME, ClassDefinitionManager::SAVED],
+            $changes,
+            'Class must be reported as saved when its PHP classes were regenerated'
+        );
+        $this->assertFileExists($phpClassFile, 'PHP classes must be restored even if the database did not change');
+        $this->assertFileExists($phpListingClassFile, 'PHP listing class must be restored even if the database did not change');
+    }
+
+    public function testHasStalePhpClassFilesDetectsMissingAndOutdatedFiles(): void
+    {
+        $class = $this->createTestClassDefinition();
+        $manager = $this->getClassDefinitionManager();
+
+        $definitionFile = $class->getDefinitionFile();
+        $phpClassFile = $class->getPhpClassFile();
+        $phpListingClassFile = $class->getPhpListingClassFile();
+        $modificationDate = $class->getModificationDate();
+
+        // all files in sync with the definition -> up-to-date
+        touch($definitionFile, $modificationDate);
+        touch($phpClassFile, $modificationDate);
+        touch($phpListingClassFile, $modificationDate);
+        clearstatcache();
+        $this->assertFalse($manager->hasStalePhpClassFiles($class), 'Files in sync with the definition must not be considered stale');
+
+        // generated class file older than the modification date embedded in the definition -> stale
+        touch($phpClassFile, $modificationDate - 1);
+        clearstatcache();
+        $this->assertTrue($manager->hasStalePhpClassFiles($class), 'A class file older than the definition modification date must be considered stale');
+
+        // generated listing class file older than the modification date embedded in the definition -> stale
+        touch($phpClassFile, $modificationDate);
+        touch($phpListingClassFile, $modificationDate - 1);
+        clearstatcache();
+        $this->assertTrue($manager->hasStalePhpClassFiles($class), 'A listing class file older than the definition modification date must be considered stale');
+
+        // generated files older than the definition file on disk (e.g. freshly deployed) -> stale
+        touch($phpListingClassFile, $modificationDate);
+        touch($definitionFile, $modificationDate + 1);
+        clearstatcache();
+        $this->assertTrue($manager->hasStalePhpClassFiles($class), 'Class files older than the definition file on disk must be considered stale');
+
+        // missing listing class file, while the class file itself exists -> stale
+        touch($definitionFile, $modificationDate);
+        (new Filesystem())->remove($phpListingClassFile);
+        clearstatcache();
+        $this->assertTrue($manager->hasStalePhpClassFiles($class), 'A missing listing class file must be considered stale');
+    }
+
+    public function testDumpClassDefinitionsRegeneratesOutdatedPhpClassesWithoutForce(): void
+    {
+        $class = $this->createTestClassDefinition();
+        $phpClassFile = $class->getPhpClassFile();
+
+        // settle the generated files, so only the outdated class file triggers the regeneration below
+        RuntimeCache::clear();
+        $this->getClassDefinitionManager()->dumpClassDefinitions();
+
+        touch($phpClassFile, $class->getModificationDate() - 1);
+        clearstatcache();
+
+        RuntimeCache::clear();
+        $changes = $this->getClassDefinitionManager()->dumpClassDefinitions();
+
+        $this->assertContains(
+            [self::CLASS_NAME, self::CLASS_NAME, ClassDefinitionManager::SAVED],
+            $changes,
+            'Class must be reported as saved when its outdated PHP classes were regenerated'
+        );
+
+        clearstatcache();
+        $this->assertGreaterThanOrEqual(
+            $class->getModificationDate(),
+            filemtime($phpClassFile),
+            'An outdated PHP class file must be regenerated even if the database did not change'
+        );
+    }
+
+    public function testDumpClassDefinitionsSkipsClassesWithUpToDatePhpClasses(): void
+    {
+        $this->createTestClassDefinition();
+
+        // a first run may regenerate the PHP classes in case their modification time
+        // is older than the one of the definition file
+        RuntimeCache::clear();
+        $this->getClassDefinitionManager()->dumpClassDefinitions();
+
+        RuntimeCache::clear();
+        $changes = $this->getClassDefinitionManager()->dumpClassDefinitions();
+
+        $this->assertContains(
+            [self::CLASS_NAME, self::CLASS_NAME, ClassDefinitionManager::SKIPPED],
+            $changes,
+            'Class must be skipped when neither the database nor the generated PHP classes are outdated'
+        );
     }
 
     private function createTestClassDefinition(): ClassDefinition
@@ -106,7 +206,7 @@ class ClassDefinitionManagerTest extends ModelTestCase
     private function simulateEmptyDatabase(ClassDefinition $class): void
     {
         Db::get()->executeStatement('DELETE FROM classes WHERE id = ?', [$class->getId()]);
-        (new Filesystem())->remove($class->getPhpClassFile());
+        (new Filesystem())->remove([$class->getPhpClassFile(), $class->getPhpListingClassFile()]);
         RuntimeCache::clear();
 
         $this->assertNull(ClassDefinition::getByName(self::CLASS_NAME));
