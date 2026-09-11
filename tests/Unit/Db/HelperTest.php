@@ -195,15 +195,84 @@ final class HelperTest extends TestCase
         $this->assertSame(1, $this->countRows(self::TABLE_COMPOSITE_KEY));
     }
 
-    public function testMissingKeyThrowsOnTheUpdatePath(): void
+    public function testMissingKeyThrowsWithoutWriting(): void
     {
         $data = ['cid' => 9, 'ctype' => 'document', 'key' => 'inserted'];
         Helper::upsert($this->db, self::TABLE_COMPOSITE_KEY, $data, ['cid', 'ctype']);
 
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Key "`missing`" passed for upsert not found in data');
+        $caught = null;
 
-        Helper::upsert($this->db, self::TABLE_COMPOSITE_KEY, $data, ['cid', 'missing']);
+        try {
+            $data['key'] = 'changed';
+            Helper::upsert($this->db, self::TABLE_COMPOSITE_KEY, $data, ['cid', 'missing']);
+            $this->fail('Expected LogicException was not thrown.');
+        } catch (LogicException $e) {
+            $caught = $e;
+        }
+
+        $this->assertSame('Key "`missing`" passed for upsert not found in data', $caught->getMessage());
+        // the misuse is reported before anything is sent to the database
+        $this->assertSame(
+            'inserted',
+            $this->db->fetchOne('SELECT `key` FROM ' . self::TABLE_COMPOSITE_KEY . ' WHERE cid = 9')
+        );
+    }
+
+    public function testConflictOnNonKeyUniqueIndexLeavesTheForeignRowUntouched(): void
+    {
+        $id = (int) Helper::upsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => null, 'name' => 'first', 'value' => 'inserted'],
+            ['id']
+        );
+
+        // a different id colliding with the existing row's unique `name`: ON DUPLICATE KEY fires
+        // for that row, but $keys select no row - so nothing may be written, matching the
+        // previous implementation's UPDATE ... WHERE id = <other id> matching zero rows
+        $result = Helper::upsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => $id + 1000, 'name' => 'first', 'value' => 'hijacked'],
+            ['id']
+        );
+
+        $this->assertNull($result, 'A conflict on a non-key unique index is the update path and must not return an id.');
+        $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
+
+        $row = $this->fetchRowByName('first');
+        $this->assertSame($id, (int) $row['id'], 'The foreign row must keep its id.');
+        $this->assertSame('inserted', $row['value'], 'The foreign row must keep its values.');
+    }
+
+    public function testNullKeyWithNonKeyUniqueConflictThrowsWithoutWriting(): void
+    {
+        $id = (int) Helper::upsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => null, 'name' => 'first', 'value' => 'inserted'],
+            ['id']
+        );
+
+        try {
+            // null id + unique `name` conflict: previously LogicException while building the
+            // WHERE clause; now the guard skips the foreign row and the same misuse is reported
+            // after the statement - in both cases without writing anything
+            Helper::upsert(
+                $this->db,
+                self::TABLE_AUTO_INCREMENT,
+                ['id' => null, 'name' => 'first', 'value' => 'hijacked'],
+                ['id']
+            );
+            $this->fail('Expected LogicException was not thrown.');
+        } catch (LogicException $e) {
+            $this->assertStringContainsString('passed for upsert not found in data', $e->getMessage());
+        }
+
+        $row = $this->fetchRowByName('first');
+        $this->assertSame($id, (int) $row['id']);
+        $this->assertSame('inserted', $row['value'], 'The conflicting row must not be modified.');
+        $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
     }
 
     private function fetchRowByName(string $name): array
