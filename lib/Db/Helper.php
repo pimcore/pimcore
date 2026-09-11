@@ -23,12 +23,30 @@ use Pimcore\Model\Element\ValidationException;
 class Helper
 {
     /**
+     * Inserts a row, or updates it if the row identified by $keys already exists.
+     *
+     * This is a single INSERT ... ON DUPLICATE KEY UPDATE statement, so the row is sent to the
+     * database only once, no matter which of the two paths it takes. Because ON DUPLICATE KEY
+     * fires for a conflict on ANY unique index of the table - not just on $keys - every
+     * assignment is guarded to only apply when the conflicting row matches the incoming $keys
+     * values. A conflict on some other unique index therefore leaves that foreign row untouched
+     * and the call returns null, exactly like the previous implementation's
+     * UPDATE ... WHERE $keys, which matched no row in that situation.
+     *
+     * The insert and the update path are told apart by the affected-rows value (1 = inserted,
+     * 2 or 0 = updated). This requires the default MySQL/MariaDB affected-rows semantics: with
+     * CLIENT_FOUND_ROWS enabled (PDO::MYSQL_ATTR_FOUND_ROWS in the doctrine driverOptions -
+     * Pimcore does not set it), an update that leaves the row unchanged would also report 1 and
+     * be misread as an insert, so such a connection is rejected with a LogicException before
+     * anything is written.
      *
      * @param array<string, mixed> $data The data to be inserted or updated into the database table.
      * Array key corresponds to the database column, array value to the actual value.
-     * @param string[] $keys If the table needs to be updated, the columns listed in this parameter will be used as criteria/condition for the where clause.
-     * Typically, these are the primary key columns.
-     * The values for the specified keys are read from the $data parameter.
+     * @param string[] $keys The columns identifying the row - typically the primary key columns.
+     * The values for the specified keys are read from the $data parameter. A null key value is
+     * allowed and inserts normally (e.g. a new auto-increment row) but can never address an
+     * existing row on the update path; a key column missing from $data entirely keeps the
+     * previous behavior - the insert runs, and only a duplicate raises the misuse LogicException.
      *
      * @return int|string|null last insert id or null if the insert was not successful or it was an update.
      */
@@ -39,24 +57,105 @@ class Helper
         array $keys,
         bool $quoteIdentifiers = true
     ): int|string|null {
-        try {
-            $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
+        $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
+
+        if ($data === []) {
             $connection->insert($table, $data);
 
+            return self::lastInsertId($connection);
+        }
+
+        if ($keys === []) {
+            throw new LogicException('upsert() requires at least one key column');
+        }
+
+        // the insert/update split below reads the affected-rows value, so a connection with
+        // CLIENT_FOUND_ROWS semantics (a no-op duplicate update also reports 1) would return a
+        // stale last insert id instead of the contractual null - reject it before any write
+        if (
+            defined('PDO::MYSQL_ATTR_FOUND_ROWS') &&
+            ($connection->getParams()['driverOptions'][\PDO::MYSQL_ATTR_FOUND_ROWS] ?? false)
+        ) {
+            throw new LogicException(
+                'upsert() requires the default affected-rows semantics - PDO::MYSQL_ATTR_FOUND_ROWS must not be enabled on the connection'
+            );
+        }
+
+        $keys = array_map(
+            static fn (string $key): string => $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key,
+            $keys
+        );
+
+        $missingKeys = array_filter($keys, static fn (string $key): bool => !array_key_exists($key, $data));
+        if ($missingKeys !== []) {
+            // the guarded single statement below needs every key readable via VALUES(). The
+            // previous implementation read $keys only after a duplicate, so an insert that does
+            // not collide succeeds even with a key missing from $data - keep exactly that
+            // behavior for such calls via the legacy two-step path.
             try {
-                return $connection->lastInsertId();
-            } catch (DriverException) {
-                return null;
-            }
-        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $exception) {
-            $critera = [];
-            foreach ($keys as $key) {
-                $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
-                $critera[$key] = $data[$key] ?? throw new LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
-            }
+                $connection->insert($table, $data);
 
-            $connection->update($table, $data, $critera);
+                return self::lastInsertId($connection);
+            } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException) {
+                throw new LogicException(
+                    sprintf('Key "%s" passed for upsert not found in data', reset($missingKeys))
+                );
+            }
+        }
 
+        $columns = array_keys($data);
+        $placeholders = array_fill(0, count($columns), '?');
+
+        // NULL-safe <=> also keeps a null key value from ever matching an existing row
+        $keysMatch = implode(' AND ', array_map(
+            static fn (string $key): string => $key . ' <=> VALUES(' . $key . ')',
+            $keys
+        ));
+
+        $assignments = [];
+        foreach ($columns as $column) {
+            if (in_array($column, $keys, true)) {
+                continue;
+            }
+            // VALUES() and not the row alias introduced with MySQL 8.0.20, which MariaDB does not know
+            $assignments[] = $column . ' = IF(' . $keysMatch . ', VALUES(' . $column . '), ' . $column . ')';
+        }
+        if ($assignments === []) {
+            // every column is a key column - nothing to update, but the clause must not be empty
+            $assignments[] = $keys[0] . ' = ' . $keys[0];
+        }
+
+        $sql = 'INSERT INTO ' . $table
+            . ' (' . implode(', ', $columns) . ')'
+            . ' VALUES (' . implode(', ', $placeholders) . ')'
+            . ' ON DUPLICATE KEY UPDATE ' . implode(', ', $assignments);
+
+        // MySQL/MariaDB report the affected rows of INSERT ... ON DUPLICATE KEY UPDATE as 1 for an
+        // inserted row, and as 2 (or 0, if the stored values already matched - or the guard above
+        // skipped a row that conflicted on a non-key unique index) for an updated one.
+        $affectedRows = (int) $connection->executeStatement($sql, array_values($data));
+
+        if ($affectedRows === 1) {
+            return self::lastInsertId($connection);
+        }
+
+        // Update path: it never returned an id. A null key value cannot have matched the guard,
+        // so nothing was written for it - report the misuse exactly like the previous
+        // implementation did when building its WHERE clause.
+        foreach ($keys as $key) {
+            if ($data[$key] === null) {
+                throw new LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
+            }
+        }
+
+        return null;
+    }
+
+    private static function lastInsertId(Connection $connection): int|string|null
+    {
+        try {
+            return $connection->lastInsertId();
+        } catch (DriverException) {
             return null;
         }
     }
