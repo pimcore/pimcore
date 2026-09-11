@@ -40,10 +40,21 @@ class VersionDeleteHandler implements BatchHandlerInterface
         foreach ($jobs as [$message, $ack]) {
             try {
                 $versions = new Version\Listing();
-                $versions->setCondition('cid = :cid AND ctype = :ctype', [
-                    'cid' => $message->getElementId(),
-                    'ctype' => $message->getElementType(),
-                ]);
+                if ($message->getMaxVersionId() !== null) {
+                    // only delete versions that existed when the element was deleted - the id may
+                    // have been re-used since (e.g. WebDAV delete-log restore), and versions
+                    // created after that restore must survive this deferred cleanup
+                    $versions->setCondition('cid = :cid AND ctype = :ctype AND id <= :maxVersionId', [
+                        'cid' => $message->getElementId(),
+                        'ctype' => $message->getElementType(),
+                        'maxVersionId' => $message->getMaxVersionId(),
+                    ]);
+                } else {
+                    $versions->setCondition('cid = :cid AND ctype = :ctype', [
+                        'cid' => $message->getElementId(),
+                        'ctype' => $message->getElementType(),
+                    ]);
+                }
 
                 foreach ($versions as $version) {
                     try {

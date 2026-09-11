@@ -17,9 +17,11 @@ use Exception;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
+use Pimcore\Model\Property;
 use Pimcore\Tool\Admin;
 use Sabre\DAV;
 use Sabre\DAV\Exception\Forbidden;
+use Sabre\DAV\Exception\NotFound;
 
 /**
  * @internal
@@ -27,7 +29,18 @@ use Sabre\DAV\Exception\Forbidden;
 class Tree extends DAV\Tree
 {
     /**
-     * Moves a file/directory
+     * Moves a file/directory.
+     *
+     * Within the same directory this handles three cases:
+     *  1. the destination still exists -> overwrite it in place (keeps its id/history);
+     *  2. the destination was just deleted and is still in the delete log -> re-create it from
+     *     the source content while reusing the deleted id (see Asset\WebDAV\File::delete());
+     *  3. neither -> a plain rename of the source.
+     * Across directories it is a plain move of the source into the destination folder.
+     *
+     * The delete-log branch exists to support clients (e.g. Photoshop) that replace a file via
+     * delete + create + move instead of an overwrite. That log is a best-effort, ~30s-lived
+     * workaround, which is why the entries are read defensively (missing keys are tolerated).
      *
      * @param string $sourcePath
      * @param string $destinationPath
@@ -60,26 +73,77 @@ class Tree extends DAV\Tree
                     // be used elsewhere in the project that users/collaborators given only WebDav access have
                     // no control nor access.
                     $sourceAsset = Asset::getByPath('/' . $sourcePath);
+                    if (!$sourceAsset) {
+                        throw new NotFound('Source asset not found');
+                    }
                     $asset->setData($sourceAsset->getData());
 
                 }
 
                 // see: Asset\WebDAV\File::delete() why this is necessary
                 $log = Asset\WebDAV\Service::getDeleteLog();
-                if (!$asset && array_key_exists('/' .$destinationPath, $log)) {
-                    // Returns null when the payload does not rebuild into an Asset, so the fallback
-                    // below still resolves the source asset. See restoreDeletedAsset() for why the
-                    // payload needs object deserialization.
-                    $restored = Asset\WebDAV\Service::restoreDeletedAsset($log['/' . $destinationPath]['data']);
-                    if ($restored !== null) {
-                        $asset = $restored;
-                        $sourceAsset = Asset::getByPath('/' . $sourcePath);
-                        $asset->setData($sourceAsset->getData());
+                if (!$asset && array_key_exists('/' . $destinationPath, $log)) {
+                    $sourceAsset = Asset::getByPath('/' . $sourcePath);
+                    if (!$sourceAsset) {
+                        throw new NotFound('Source asset not found');
+                    }
+
+                    // The destination was already deleted (e.g. Photoshop replaces a file via
+                    // delete + create + move). Re-create it from the source content while reusing
+                    // the deleted asset's id, so hardcoded references to that id stay valid.
+                    // save() re-inserts the row via upsert; the source asset is removed below.
+                    $logEntry = $log['/' . $destinationPath];
+                    $restoredId = $logEntry['id'] ?? null;
+                    if ($restoredId !== null) {
+                        // no 'type' here: Asset::create() ignores a passed type when 'data' is
+                        // present and derives the concrete class from the detected mime type
+                        $asset = Asset::create($sourceAsset->getParentId(), [
+                            'filename' => basename($destinationPath),
+                            'data' => $sourceAsset->getData(),
+                        ], false);
+                        $asset->setId((int) $restoredId);
+                        // destination lives in the same folder as the source; set the path now
+                        // so the permission check below sees the correct workspace location
+                        $asset->setPath((string) $sourceAsset->getRealPath());
+
+                        // restore ownership and creation date from the snapshot, so the rebuilt
+                        // destination keeps them like the id (the mover only becomes the modifier)
+                        if (isset($logEntry['userOwner'])) {
+                            $asset->setUserOwner((int) $logEntry['userOwner']);
+                        }
+                        if (isset($logEntry['creationDate'])) {
+                            $asset->setCreationDate((int) $logEntry['creationDate']);
+                        }
+
+                        // restore the deleted destination's own properties and metadata from the
+                        // scalar snapshot, so they survive the delete + create + move round-trip
+                        $properties = $logEntry['properties'] ?? [];
+                        $this->restoreProperties($asset, is_array($properties) ? $properties : []);
+
+                        // restore user-set custom settings (e.g. focal point) from the raw JSON
+                        // snapshot - setCustomSettings() decodes the JSON string itself; settings
+                        // derived from the binary are recomputed on save for the new data
+                        $customSettings = $logEntry['customSettings'] ?? null;
+                        if (is_string($customSettings) && $customSettings !== '') {
+                            $asset->setCustomSettings($customSettings);
+                        }
+
+                        // the raw assets_metadata.data column IS the internal metadata form:
+                        // element types (asset/document/object) only override getDataForResource(),
+                        // not getDataFromResource(), so references stay ids (scalars). Feeding the
+                        // stored rows back via setMetadataRaw() therefore round-trips on save().
+                        $metadata = $logEntry['metadata'] ?? [];
+                        if (is_array($metadata) && $metadata !== []) {
+                            $asset->setMetadataRaw($metadata);
+                        }
                     }
                 }
 
                 if (!$asset) {
                     $asset = Asset::getByPath('/' . $sourcePath);
+                    if (!$asset) {
+                        throw new NotFound('Source asset not found');
+                    }
                 }
 
                 // Only require the "rename" permission when the filename actually changes. On the
@@ -94,6 +158,10 @@ class Tree extends DAV\Tree
             } else {
                 $asset = Asset::getByPath('/' . $sourcePath);
                 $parent = Asset::getByPath('/' . dirname($destinationPath));
+
+                if (!$asset || !$parent) {
+                    throw new NotFound('Source asset or destination folder not found');
+                }
 
                 $asset->setPath($parent->getRealFullPath() . '/');
                 $asset->setParentId($parent->getId());
@@ -125,6 +193,70 @@ class Tree extends DAV\Tree
             Logger::error((string) $e);
 
             throw $e;
+        }
+    }
+
+    /**
+     * Rebuilds an asset's own properties from the scalar rows captured in the delete log
+     * (see Asset\WebDAV\File::delete()). Mirrors how Asset\Dao::getProperties() hydrates
+     * properties from the database, so setDataFromResource() receives the raw scalar value -
+     * except for date rows, whose serialized datetime is re-hydrated here with an explicit
+     * DateTime/Carbon allowlist so log content never reaches a permissive unserializer.
+     *
+     * cid/cpath are intentionally not set here: Asset::update() assigns them from the target
+     * asset when the properties are persisted on save().
+     *
+     * @param array<mixed> $rows raw `properties` rows (name, type, data, inheritable) from the delete log
+     */
+    private function restoreProperties(Asset $asset, array $rows): void
+    {
+        $properties = [];
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $data = $row['data'] ?? null;
+            if ($data !== null && !is_string($data)) {
+                // properties.data is a string column; anything else is a malformed log entry
+                continue;
+            }
+
+            $name = (string) ($row['name'] ?? '');
+            $type = (string) ($row['type'] ?? '');
+
+            $property = new Property();
+            $property->setType($type);
+            $property->setName($name);
+            $property->setCtype('asset');
+
+            if ($type === 'date' && $data !== null) {
+                // a date row holds a serialized DateTimeInterface; setDataFromResource() would
+                // unserialize it with allowed_classes: true, so hydrate it here with an explicit
+                // allowlist instead - nothing read from the delete log may instantiate
+                // arbitrary classes. Unexpected payloads are skipped defensively.
+                $date = \Pimcore\Tool\Serialize::unserialize($data, [
+                    \Carbon\Carbon::class,
+                    \Carbon\CarbonImmutable::class,
+                    \DateTime::class,
+                    \DateTimeImmutable::class,
+                ]);
+                if (!$date instanceof \DateTimeInterface) {
+                    continue;
+                }
+                $property->setData($date);
+            } else {
+                $property->setDataFromResource($data);
+            }
+
+            $property->setInherited(false);
+            $property->setInheritable((bool) ($row['inheritable'] ?? false));
+
+            $properties[$name] = $property;
+        }
+
+        if ($properties) {
+            $asset->setProperties($properties);
         }
     }
 }

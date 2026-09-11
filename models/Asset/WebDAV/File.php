@@ -49,6 +49,9 @@ class File extends DAV\File
     {
         if ($this->asset->isAllowed('rename')) {
             $user = AdminTool::getCurrentUser();
+            if ($user === null) {
+                throw new DAV\Exception\Forbidden('No authenticated user available');
+            }
             $this->asset->setUserModification($user->getId());
 
             $this->asset->setFilename(Element\Service::getValidKey($name, 'asset'));
@@ -67,21 +70,49 @@ class File extends DAV\File
     public function delete(): void
     {
         if ($this->asset->isAllowed('delete')) {
-            Asset\Service::loadAllFields($this->asset);
+            $path = $this->asset->getRealFullPath();
+            $id = $this->asset->getId();
+            $userOwner = $this->asset->getUserOwner();
+            $creationDate = $this->asset->getCreationDate();
+
+            // Snapshot the asset's own properties and metadata as plain scalar rows *before*
+            // deleting, so the destination can be restored on a delete + create + move (see
+            // Asset\WebDAV\Tree::move()). Only scalars are stored, so the delete log never
+            // needs to deserialize objects.
+            $db = \Pimcore\Db::get();
+            $properties = $db->fetchAllAssociative(
+                "SELECT `name`, `type`, `data`, `inheritable` FROM properties WHERE cid = ? AND ctype = 'asset'",
+                [$id]
+            );
+            $metadata = $db->fetchAllAssociative(
+                'SELECT `name`, `type`, `data`, `language` FROM assets_metadata WHERE cid = ?',
+                [$id]
+            );
+            // raw JSON string of the assets.customSettings column - scalar by definition, and
+            // needed so an overwrite-restore keeps user-set settings (e.g. focal point) just like
+            // an in-place overwrite does; type-derived settings are recomputed on save anyway
+            $customSettings = $db->fetchOne('SELECT customSettings FROM assets WHERE id = ?', [$id]);
+
             $this->asset->delete();
 
-            // add the asset to the delete history, this is used so come over problems with programs like photoshop (delete, create instead of replace => move)
-            // for details see Asset\WebDAV\Tree::move()
+            // record the deleted asset's id (plus the scalar property/metadata snapshot) so
+            // the destination can keep its id - and thus any hardcoded references - and its
+            // metadata across a delete + create + move. For details see Asset\WebDAV\Tree::move().
             $log = Asset\WebDAV\Service::getDeleteLog();
-
-            $this->asset->setInDumpState(true);
-            $log[$this->asset->getRealFullPath()] = [
-                'id' => $this->asset->getId(),
+            $log[$path] = [
+                'id' => $id,
                 'timestamp' => time(),
-                'data' => \Pimcore\Tool\Serialize::serialize($this->asset),
+                'userOwner' => $userOwner,
+                'creationDate' => $creationDate,
+                'properties' => $properties,
+                'metadata' => $metadata,
+                'customSettings' => is_string($customSettings) ? $customSettings : null,
+                // rolling-deploy safety in the new-writer -> old-reader direction: the previous
+                // release reads this key unconditionally and feeds it to restoreDeletedAsset(),
+                // which returns null for an empty payload - the old node then degrades to a
+                // normal move instead of failing the MOVE with a TypeError
+                'data' => '',
             ];
-
-            $this->asset->setInDumpState(false);
 
             Asset\WebDAV\Service::saveDeleteLog($log);
         } else {
@@ -107,21 +138,37 @@ class File extends DAV\File
         if ($this->asset->isAllowed('publish')) {
             // read from resource -> default for SabreDAV
             $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-dav-tmp-file-' . uniqid();
-            file_put_contents($tmpFile, $data);
-            $file = fopen($tmpFile, 'r+', false, FileHelper::getContext());
+            $file = null;
 
-            $user = AdminTool::getCurrentUser();
-            $this->asset->setUserModification($user->getId());
+            try {
+                if (file_put_contents($tmpFile, $data) === false) {
+                    throw new DAV\Exception('Unable to write temporary file');
+                }
+                $file = fopen($tmpFile, 'r+', false, FileHelper::getContext());
+                if (!is_resource($file)) {
+                    // Asset::setStream() silently ignores non-resource values, which would
+                    // let save() "succeed" without replacing the data -> fail loudly instead
+                    throw new DAV\Exception('Unable to open temporary file');
+                }
 
-            $this->asset->setStream($file);
-            $this->asset->save();
+                $user = AdminTool::getCurrentUser();
+                if ($user === null) {
+                    throw new DAV\Exception\Forbidden('No authenticated user available');
+                }
+                $this->asset->setUserModification($user->getId());
 
-            if (is_resource($file)) {
-                fclose($file);
+                $this->asset->setStream($file);
+                $this->asset->save();
+
+                return null;
+            } finally {
+                if (is_resource($file)) {
+                    fclose($file);
+                }
+                if (file_exists($tmpFile)) {
+                    unlink($tmpFile);
+                }
             }
-            unlink($tmpFile);
-
-            return null;
         }
 
         throw new DAV\Exception\Forbidden();

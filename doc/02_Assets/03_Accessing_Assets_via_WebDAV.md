@@ -6,9 +6,12 @@ description: Connecting to the Pimcore asset tree using the WebDAV protocol.
 # Accessing Pimcore Assets via WebDAV
 
 Pimcore provides the option to access all assets via [WebDAV](https://en.wikipedia.org/wiki/WebDAV).
-Open the following URL via your browser or WebDAV client: `https://YOUR-DOMAIN/asset/webdav`
+Connect your WebDAV client to the following URL: `https://YOUR-DOMAIN/asset/webdav`
 
 Use any Pimcore user as credentials. Permissions for asset access are based on the user's permissions.
+
+> **Note:** The HTML browsing UI (viewing the URL in a regular web browser) is only available when
+> Pimcore runs in debug mode. In production, the endpoint responds to WebDAV clients only.
 
 ## Nginx Configuration
 
