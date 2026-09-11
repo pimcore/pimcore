@@ -138,9 +138,11 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         $images = $data[$this->getName() . '__images'];
-        $hotspots = $data[$this->getName() . '__hotspots'];
-        $hotspots = $hotspots ? Serialize::unserialize($hotspots, false) : [];
+$hotspots = $data[$this->getName() . '__hotspots'];
 
+// The gallery-level hotspots column stores an array of (already serialized) per-item hotspot
+// strings; disallow object instantiation to prevent PHP Object Injection via the DB.
+$hotspots = $hotspots ? Serialize::unserialize($hotspots, false) : [];
         if (!$images) {
             return $this->createEmptyImageGallery($params);
         }
