@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
 /**
@@ -323,6 +324,41 @@ public function getMybricks(): ?\Pimcore\Model\DataObject\Objectbrick
 
 ';
         $this->testGetterCode('mybricks', $expectedGetterCode);
+    }
+
+    /**
+     * An allowed-classes entry on an object-relation field is attacker-controlled (any backend
+     * user with class-edit rights). Its value is embedded raw into the generated model class'
+     * getter/setter PHPDoc type, so a comment-terminator in the entry used to close the docblock
+     * early and inject arbitrary PHP into the generated, autoloaded class (GHSA-f4jp-qhv6-g8gq).
+     * The getter and setter generators must scrub the PHPDoc type the same way they already
+     * scrub the field name and title, so the malicious sequence never reaches the emitted
+     * docblock intact.
+     */
+    public function testGetterSetterCodeSanitizesMaliciousAllowedClassPhpDocType(): void
+    {
+        $field = new ManyToManyObjectRelation();
+        $field->setName('vulnRelation');
+        $field->setTitle('vulnRelation');
+        $field->setClasses([
+            ['classes' => "Foo */ } echo 'INJECTED'; /*"],
+        ]);
+
+        $class = new ClassDefinition();
+
+        $getterCode = $field->getGetterCode($class);
+        $setterCode = $field->getSetterCode($class);
+
+        // Exactly one '*/' may appear in each snippet: the generator's own docblock terminator.
+        // A malicious allowed-class entry must not be able to introduce an earlier one that
+        // closes the docblock (and, in the full generated file, the enclosing class body) early.
+        $this->assertSame(1, substr_count($getterCode, '*/'));
+        $this->assertSame(1, substr_count($setterCode, '*/'));
+
+        // The payload text itself is left in place (it is now inert comment content) — only the
+        // comment-terminator sequence that would let it escape the docblock is stripped.
+        $this->assertStringContainsString("echo 'INJECTED'", $getterCode);
+        $this->assertStringContainsString("echo 'INJECTED'", $setterCode);
     }
 
     public function testInputEmptyDefaultValueIsNormalizedToNullAfterImportAndReload(): void
