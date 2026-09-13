@@ -496,7 +496,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '* @return ' . str_replace(['/**', '*/', '//'], '', (string) $this->getPhpdocReturnType()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
@@ -545,7 +545,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
+        $code .= '* @param ' . str_replace(['/**', '*/', '//'], '', (string) $this->getPhpdocInputType()) . ' $' . $key . "\n";
         $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . '): static' . "\n";
@@ -624,7 +624,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code = '';
         $code .= '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '* @return ' . str_replace(['/**', '*/', '//'], '', (string) $this->getPhpdocReturnType()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
@@ -670,7 +670,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
+        $code .= '* @param ' . str_replace(['/**', '*/', '//'], '', (string) $this->getPhpdocInputType()) . ' $' . $key . "\n";
         $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . '): static' . "\n";
@@ -751,7 +751,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '* @return ' . str_replace(['/**', '*/', '//'], '', (string) $this->getPhpdocReturnType()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
@@ -790,7 +790,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
+        $code .= '* @param ' . str_replace(['/**', '*/', '//'], '', (string) $this->getPhpdocInputType()) . ' $' . $key . "\n";
         $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . '): static' . "\n";
@@ -860,7 +860,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '* @return ' . str_replace(['/**', '*/', '//'], '', (string) $this->getPhpdocReturnType()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . '(?string $language = null)' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
@@ -905,7 +905,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
+        $code .= '* @param ' . str_replace(['/**', '*/', '//'], '', (string) $this->getPhpdocInputType()) . ' $' . $key . "\n";
         $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ', ?string $language = null): static' . "\n";
