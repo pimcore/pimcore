@@ -421,6 +421,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function setColumnType(string $columnType): void
     {
+        $this->validateColumnType($columnType);
         $this->columnType = $columnType;
     }
 

@@ -401,6 +401,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     public function setColumnType(string $columnType): void
     {
+        $this->validateColumnType($columnType);
         $this->columnType = $columnType;
     }
 
