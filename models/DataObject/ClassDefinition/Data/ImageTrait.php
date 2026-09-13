@@ -30,6 +30,11 @@ trait ImageTrait
     public string $uploadPath;
 
     /**
+     * @internal
+     */
+    public string $searchPath = '';
+
+    /**
      * @return $this
      */
     public function setUploadPath(string $uploadPath): static
@@ -42,5 +47,20 @@ trait ImageTrait
     public function getUploadPath(): string
     {
         return $this->uploadPath;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setSearchPath(string $searchPath): static
+    {
+        $this->searchPath = $searchPath;
+
+        return $this;
+    }
+
+    public function getSearchPath(): string
+    {
+        return $this->searchPath;
     }
 }
