@@ -125,13 +125,15 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
     }
 
     /**
-     * A non-zero scalar default alone, with no unit configured, must NOT
-     * bypass. doGetDefaultValue() would still construct an incomplete
-     * (value, null) default, which checkValidity() requires a unit for on a
-     * mandatory field - bypassing here would let that incomplete data
-     * persist unchecked.
+     * A non-zero scalar default with no unit configured keeps the bypass it
+     * has always had. doGetDefaultValue() constructs an incomplete
+     * (value, null) default from it, which checkValidity() would reject on a
+     * mandatory field - so arguably it should not bypass. But it did before
+     * this fix, and withdrawing it would turn a save that used to succeed
+     * into a hard ValidationException on a non-major line. That tightening
+     * needs its own deprecation path, not a side effect of the 0/false fix.
      */
-    public function testQuantityValueFieldWithValueOnlyIsNotRecognizedAsHavingADefault(): void
+    public function testQuantityValueFieldWithValueOnlyKeepsItsPreExistingBypass(): void
     {
         $field = new QuantityValue();
         $field->setName('mandatoryQuantityValueWithValueOnly');
@@ -139,9 +141,9 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
         $field->setDefaultValue(5);
 
         $this->assertNull($field->getDefaultUnit(), 'Sanity check: no unit was configured');
-        $this->assertFalse(
+        $this->assertTrue(
             $this->fieldHasApplicableDefault($field),
-            'A mandatory quantity value field with a non-zero scalar default but no unit must not get the bypass'
+            'A mandatory quantity value field with a truthy scalar default must keep the bypass it had before this fix'
         );
     }
 
@@ -224,6 +226,95 @@ class ConcreteMandatoryDefaultValueGuardTest extends TestCase
             $this->fieldHasApplicableDefault($field),
             'A mandatory QuantityValueRange field with only a default unit must not get the bypass'
         );
+    }
+
+    /**
+     * The guard must never be *stricter* than the condition it replaced. Every
+     * field whose configured default qualified for the bypass under the pre-fix
+     * `!empty($fd->getDefaultValue())` test must still qualify, otherwise an
+     * object that saved successfully before would start throwing a
+     * ValidationException - a behaviour break on a non-major line.
+     *
+     * The pre-fix condition is deliberately reproduced here rather than read
+     * from production code: it is a frozen historical contract, not something
+     * that should follow future edits to the guard.
+     */
+    public function testGuardNeverWithdrawsABypassThePreFixConditionGranted(): void
+    {
+        $asserted = 0;
+
+        foreach ($this->fieldDefinitionsUnderTest() as $label => $field) {
+            if (!$this->qualifiedBeforeTheFix($field)) {
+                continue;
+            }
+
+            $asserted++;
+            $this->assertTrue(
+                $this->fieldHasApplicableDefault($field),
+                sprintf('%s qualified for the mandatory-check bypass before this fix and must still qualify', $label)
+            );
+        }
+
+        $this->assertGreaterThan(0, $asserted, 'Sanity check: the sample must contain fields that qualified before the fix');
+    }
+
+    /**
+     * The condition `Concrete::update()` used before this fix.
+     */
+    private function qualifiedBeforeTheFix(Data $fd): bool
+    {
+        return (method_exists($fd, 'getDefaultValue') && !empty($fd->getDefaultValue()))
+            || (method_exists($fd, 'getDefaultValueGenerator') && $fd->getDefaultValueGenerator() !== '');
+    }
+
+    /**
+     * @return array<string, Data>
+     */
+    private function fieldDefinitionsUnderTest(): array
+    {
+        $numericZero = (new Numeric())->setDefaultValue(0);
+        $numericFive = (new Numeric())->setDefaultValue(5);
+        $checkboxFalse = (new Checkbox())->setDefaultValue(0);
+        $selectEmpty = new Select();
+        $selectEmpty->setDefaultValue('');
+
+        $selectOption = new Select();
+        $selectOption->setDefaultValue('someOption');
+
+        $quantityValueOnly = new QuantityValue();
+        $quantityValueOnly->setDefaultValue(5);
+
+        $quantityZeroPlusUnit = new QuantityValue();
+        $quantityZeroPlusUnit->setDefaultValue(0);
+        $quantityZeroPlusUnit->setDefaultUnit('unit-1');
+
+        $quantityUnitOnly = new QuantityValue();
+        $quantityUnitOnly->setDefaultUnit('unit-1');
+
+        $quantityZeroPlusEmptyUnit = new QuantityValue();
+        $quantityZeroPlusEmptyUnit->setDefaultValue(0);
+        $quantityZeroPlusEmptyUnit->setDefaultUnit('');
+
+        $inputQuantityZeroPlusUnit = new InputQuantityValue();
+        $inputQuantityZeroPlusUnit->setDefaultValue('0');
+        $inputQuantityZeroPlusUnit->setDefaultUnit('unit-1');
+
+        $range = new QuantityValueRange();
+        $range->setDefaultUnit('unit-1');
+
+        return [
+            'Numeric with a 0 default' => $numericZero,
+            'Numeric with a 5 default' => $numericFive,
+            'Checkbox with a false default' => $checkboxFalse,
+            'Select with an empty-string default' => $selectEmpty,
+            'Select with an option default' => $selectOption,
+            'QuantityValue with a value but no unit' => $quantityValueOnly,
+            'QuantityValue with a 0 value and a unit' => $quantityZeroPlusUnit,
+            'QuantityValue with a unit but no value' => $quantityUnitOnly,
+            'QuantityValue with a 0 value and an empty-string unit' => $quantityZeroPlusEmptyUnit,
+            'InputQuantityValue with a "0" value and a unit' => $inputQuantityZeroPlusUnit,
+            'QuantityValueRange with a unit' => $range,
+        ];
     }
 
     private function fieldHasApplicableDefault(Data $fd): bool

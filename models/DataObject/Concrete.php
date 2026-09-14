@@ -119,9 +119,15 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
                     $omitMandatoryCheck = $this->getOmitMandatoryCheck();
 
-                    // when adding a new object, skip check on mandatory for fields
-                    // with an applicable default value or default value generator
-                    if (!$omitMandatoryCheck && $fd->isEmpty($value) && !$isUpdate && self::fieldHasApplicableDefault($fd)) {
+                    // When adding a new object, skip the mandatory check for fields that will
+                    // get a default value or default value generator applied anyway.
+                    // "Empty" is deliberately a superset of the plain empty() this replaced:
+                    // it adds the values empty() misjudges (a quantity-value object whose value
+                    // and unit are both unset) without dropping any it already accepted, so
+                    // widening it can only skip a check a default is about to satisfy.
+                    $valueIsEmpty = empty($value) || $fd->isEmpty($value);
+
+                    if (!$omitMandatoryCheck && $valueIsEmpty && !$isUpdate && self::fieldHasApplicableDefault($fd)) {
                         $omitMandatoryCheck = true;
                     }
 
@@ -208,19 +214,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * Decides whether a mandatory field's default value/generator is
-     * "applicable" enough to skip the mandatory check when creating a new
-     * object with that field left empty - i.e. whether a real default will
-     * actually be applied later, not just whether some accessor is non-null.
+     * Decides whether a mandatory field has a configured default that will
+     * actually be applied when a new object is created with that field left
+     * empty - and so whether the mandatory check can be skipped for it.
      *
-     * Compound quantity-value fields (QuantityValue, InputQuantityValue) are
-     * handled separately from plain scalar-default fields: their own
-     * doGetDefaultValue() only constructs a default when both a scalar value
-     * and a unit are configured (and treats an empty-string unit as "no
-     * unit", same as a null one), and checkValidity() requires both to be
-     * set for a mandatory field. A non-zero scalar default alone (no unit),
-     * or a unit alone (no value), must NOT bypass the check, or an
-     * incomplete default could be persisted on a mandatory field.
+     * The condition is deliberately a *superset* of the one this replaced:
+     * every default that qualified before still qualifies. It only adds the
+     * cases PHP's empty() got wrong, so no configuration that saved
+     * successfully before can start failing here.
      */
     private static function fieldHasApplicableDefault(DataObject\ClassDefinition\Data $fd): bool
     {
@@ -232,11 +233,24 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             return false;
         }
 
-        if (method_exists($fd, 'getDefaultUnit')) {
-            return $fd->getDefaultValue() !== null && (bool) $fd->getDefaultUnit();
+        $defaultValue = $fd->getDefaultValue();
+
+        // pre-existing behaviour: any truthy configured default qualifies
+        if (!empty($defaultValue)) {
+            return true;
         }
 
-        return !$fd->isEmpty($fd->getDefaultValue());
+        // Compound quantity-value fields (QuantityValue, InputQuantityValue) resolve their
+        // default from a value *and* a unit, and their isEmpty() only understands the value
+        // object, not the configured scalar - so a falsy-but-configured scalar is paired with
+        // the unit instead. The unit check mirrors doGetDefaultValue()'s own truthy check, so
+        // an empty-string unit (which it treats as "no unit") agrees here.
+        if (method_exists($fd, 'getDefaultUnit')) {
+            return $defaultValue !== null && (bool) $fd->getDefaultUnit();
+        }
+
+        // the fix: a type-aware emptiness check, so a default of 0 / false / '0' qualifies
+        return !$fd->isEmpty($defaultValue);
     }
 
     private function saveChildData(): void
