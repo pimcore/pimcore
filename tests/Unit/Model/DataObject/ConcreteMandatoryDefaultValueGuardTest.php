@@ -37,8 +37,7 @@ use ReflectionMethod;
  * Concrete::update() itself can only be exercised end-to-end through a full
  * save/publish integration test; see
  * ObjectTest::testDefaultValueAndMandatorySavedToVersion(),
- * ObjectTest::testMandatoryZeroAndFalseDefaultsSavedToVersion() and
- * ObjectTest::testMandatoryQuantityValueZeroPlusUnitDefaultSavedToVersion()
+ * ObjectTest::testMandatoryZeroAndFalseDefaultsSavedToVersion()
  * for that coverage.
  */
 class ConcreteMandatoryDefaultValueGuardTest extends TestCase
