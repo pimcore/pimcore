@@ -76,25 +76,39 @@ class ReservedWordsHelperTest extends TestCase
     }
 
     /**
-     * Select options are generated into the `Pimcore\Model\DataObject\SelectOptions` sub-namespace
-     * and therefore cannot collide with those classes. Tightening the shared list would reject
-     * existing select-options configurations named e.g. `Service` on their next save.
+     * A name that only collides for a DataObject class must not leak into the shared reserved word
+     * list: select options are generated into the `Pimcore\Model\DataObject\SelectOptions`
+     * sub-namespace and therefore cannot collide with those classes. Tightening the shared list
+     * would reject existing select-options configurations named e.g. `Service` on their next save.
      *
      * @see \Pimcore\Model\DataObject\SelectOptions\Config::setId()
+     *
+     * @dataProvider dataObjectOnlyReservedNameProvider
      */
-    public function testDataObjectClassNamesAreNotAddedToTheSharedReservedWordList(): void
+    public function testDataObjectClassNamesStayUsableAsSelectOptionsId(string $name): void
     {
-        $sharedWords = $this->helper->getAllReservedWords();
+        $this->assertTrue(
+            $this->helper->isReservedDataObjectClassName($name),
+            sprintf('`%s` must be rejected as a DataObject class name', $name)
+        );
 
-        foreach (ReservedWordsHelper::PIMCORE_DATA_OBJECT_CLASSES as $name) {
-            $this->assertNotContains(
-                $name,
-                $sharedWords,
-                sprintf('`%s` must stay usable as a select options ID', $name)
-            );
-        }
+        $this->assertFalse(
+            $this->helper->isReservedWord($name),
+            sprintf('`%s` must stay usable as a select options ID', $name)
+        );
+    }
 
-        $this->assertFalse($this->helper->isReservedWord('Service'));
+    /**
+     * @return array<string, string[]>
+     */
+    public static function dataObjectOnlyReservedNameProvider(): array
+    {
+        return [
+            'class' => ['Service'],
+            'class, lower case' => ['listing'],
+            'class, unconventional casing' => ['Localizedfield'],
+            'interface' => ['SelectOptionsInterface'],
+        ];
     }
 
     /**

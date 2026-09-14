@@ -46,9 +46,10 @@ class ReservedWordsHelper
      * generated file wins and the core class is never loaded.
      *
      * Keep in sync with the contents of `models/DataObject`. `concrete` and `folder` are covered by
-     * self::PIMCORE already.
+     * self::PIMCORE already. Exposed through self::getAllDataObjectClassReservedWords() rather than
+     * as a public constant, so the list stays consumable without becoming a BC commitment.
      */
-    public const PIMCORE_DATA_OBJECT_CLASSES = [
+    private const PIMCORE_DATA_OBJECT_CLASSES = [
         'abstractobject', 'classdefinition', 'classdefinitioninterface', 'classificationstore',
         'definitionmodifier', 'fieldcollection', 'importdataserviceinterface',
         'lazyloadedfieldsinterface', 'listing', 'localizedfield', 'objectawarefieldinterface',
@@ -100,7 +101,9 @@ class ReservedWordsHelper
     {
         return [
             ...$this->getAllReservedWords(),
-            ...static::PIMCORE_DATA_OBJECT_CLASSES,
+            // self:: rather than static::, unlike the public constants above: a private constant
+            // cannot be overridden, so late static binding would only be misleading here.
+            ...self::PIMCORE_DATA_OBJECT_CLASSES,
         ];
     }
 

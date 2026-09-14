@@ -270,7 +270,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      * PHPClassDumper) and used to build the on-disk class file path, so it must be a valid
      * identifier that is neither a PHP reserved word nor the name of a class already living in the
      * `Pimcore\Model\DataObject` namespace the generated class is emitted into (the latter would be
-     * shadowed by the generated file, see ReservedWordsHelper::PIMCORE_DATA_OBJECT_CLASSES).
+     * shadowed by the generated file, see ReservedWordsHelper::isReservedDataObjectClassName()).
      * Called from rename() as well as saveClassInternal(), because
      * rename() deletes the existing class files and renames persisted objects before ever
      * calling save() - validating only inside save() would let a rejected rename leave those
