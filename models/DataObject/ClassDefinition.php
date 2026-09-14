@@ -267,8 +267,11 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
 
     /**
      * The name is emitted verbatim as the PHP class name in the generated class file (see
-     * PHPClassDumper) and used to build the on-disk class file path, so it must be a valid,
-     * non-reserved identifier. Called from rename() as well as saveClassInternal(), because
+     * PHPClassDumper) and used to build the on-disk class file path, so it must be a valid
+     * identifier that is neither a PHP reserved word nor the name of a class already living in the
+     * `Pimcore\Model\DataObject` namespace the generated class is emitted into (the latter would be
+     * shadowed by the generated file, see ReservedWordsHelper::PIMCORE_DATA_OBJECT_CLASSES).
+     * Called from rename() as well as saveClassInternal(), because
      * rename() deletes the existing class files and renames persisted objects before ever
      * calling save() - validating only inside save() would let a rejected rename leave those
      * side effects applied while the class definition itself keeps its old name.
@@ -287,7 +290,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         }
 
         $reservedWordsHelper = new ReservedWordsHelper();
-        if ($reservedWordsHelper->isReservedWord($name)) {
+        if ($reservedWordsHelper->isReservedDataObjectClassName($name)) {
             throw new Exception(sprintf(
                 'Invalid name for class definition: `%s` is a reserved word and cannot be used as a class name',
                 $name

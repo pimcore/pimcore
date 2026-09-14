@@ -136,6 +136,10 @@ class ClassDefinitionTest extends ModelTestCase
      * file generator, where it produces a fatal syntax error only when an object of that class is
      * first instantiated (pimcore/platform-version#291).
      *
+     * The same applies to a class already living in the `Pimcore\Model\DataObject` namespace the
+     * generated class is emitted into - that one is shadowed by the generated file rather than
+     * producing a syntax error. ReservedWordsHelperTest guards the full list.
+     *
      * @dataProvider reservedWordClassNameProvider
      */
     public function testSaveRejectsReservedWordAsClassName(string $name, string $id): void
@@ -156,6 +160,9 @@ class ClassDefinitionTest extends ModelTestCase
             'php keyword' => ['var', 'ReservedWordVar'],
             'php keyword, mixed case' => ['Var', 'ReservedWordVarMixedCase'],
             'pimcore reserved word' => ['Folder', 'ReservedWordFolder'],
+            'data object namespace class' => ['Service', 'ReservedWordService'],
+            'data object namespace class, lower case' => ['listing', 'ReservedWordListing'],
+            'data object namespace interface' => ['SelectOptionsInterface', 'ReservedWordSelectOptions'],
         ];
     }
 
