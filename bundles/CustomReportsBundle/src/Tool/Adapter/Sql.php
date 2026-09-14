@@ -69,9 +69,13 @@ class Sql extends AbstractAdapter
         if (
             !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE)\s/i', $sqlStripped, $matches)
         ) {
-            $sql .= ' LIMIT 0,1';
+            // Wrap in a derived table (as getBaseQuery() does) rather than appending a raw
+            // ' LIMIT 0,1' to the concatenated string: a statement-terminating primitive such
+            // as INTO OUTFILE is a syntax error inside the subquery, whereas appending LIMIT
+            // directly is only a string suffix and can be neutralised by a trailing comment.
+            $wrappedSql = 'SELECT * FROM (' . $sql . ') AS somerandxyz LIMIT 0,1';
             $db = Db::get();
-            $res = $db->fetchAssociative($sql);
+            $res = $db->fetchAssociative($wrappedSql);
             if ($res) {
                 return array_keys($res);
             }
@@ -180,7 +184,7 @@ class Sql extends AbstractAdapter
         $sqlForValidation = preg_replace('/\s+/s', ' ', $sqlForValidation) ?? $sqlForValidation;
         $forbiddenPatterns = [
             '/;/',
-            '/--\s/', // comment start (MySQL-style, requires whitespace after --)
+            '/--(\s|$)/', // comment start (MySQL-style: "-- " or a fragment-terminal "--")
             '/#/',
             '/\/\*/',
             '/\*\//',
@@ -191,6 +195,9 @@ class Sql extends AbstractAdapter
             '/^\s*ALTER\b/i',
             '/^\s*CREATE\b/i',
             '/^\s*TRUNCATE\b/i',
+            '/\bINTO\s+OUTFILE\b/i',
+            '/\bINTO\s+DUMPFILE\b/i',
+            '/\bLOAD_FILE\s*\(/i',
         ];
 
         foreach ($forbiddenPatterns as $pattern) {
