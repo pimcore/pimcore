@@ -23,6 +23,7 @@ use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
+use Pimcore\Helper\ReservedWordsHelper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -255,11 +256,46 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
      */
     public function rename(string $name): void
     {
+        $this->validateName($name);
+
         $this->deletePhpClasses();
         $this->getDao()->updateClassNameInObjects($name);
 
         $this->setName($name);
         $this->save();
+    }
+
+    /**
+     * The name is emitted verbatim as the PHP class name in the generated class file (see
+     * PHPClassDumper) and used to build the on-disk class file path, so it must be a valid
+     * identifier that is neither a PHP reserved word nor the name of a class already living in the
+     * `Pimcore\Model\DataObject` namespace the generated class is emitted into (the latter would be
+     * shadowed by the generated file, see ReservedWordsHelper::isReservedDataObjectClassName()).
+     * Called from rename() as well as saveClassInternal(), because
+     * rename() deletes the existing class files and renames persisted objects before ever
+     * calling save() - validating only inside save() would let a rejected rename leave those
+     * side effects applied while the class definition itself keeps its old name.
+     *
+     * `\z` rather than `$`: PCRE `$` also matches before a trailing newline.
+     *
+     * @throws Exception
+     */
+    private function validateName(string $name): void
+    {
+        if (!preg_match('/^[a-zA-Z]\w+\z/', $name)) {
+            throw new Exception(sprintf(
+                'Invalid name for class definition: %s',
+                $name
+            ));
+        }
+
+        $reservedWordsHelper = new ReservedWordsHelper();
+        if ($reservedWordsHelper->isReservedDataObjectClassName($name)) {
+            throw new Exception(sprintf(
+                'Invalid name for class definition: `%s` is a reserved word and cannot be used as a class name',
+                $name
+            ));
+        }
     }
 
     /**
@@ -1150,14 +1186,9 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             $this->setId((string) $maxId);
         }
 
-        // `\z` rather than `$` in these checks: PCRE `$` also matches before a trailing newline.
-        if (!preg_match('/^[a-zA-Z]\w+\z/', $this->getName())) {
-            throw new Exception(sprintf(
-                'Invalid name for class definition: %s',
-                $this->getName()
-            ));
-        }
+        $this->validateName($this->getName());
 
+        // `\z` rather than `$`: PCRE `$` also matches before a trailing newline.
         if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_]*\z/', $this->getId())) {
             throw new Exception(sprintf(
                 'Invalid ID `%s` for class definition %s',
