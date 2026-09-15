@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Telemetry\Snapshot;
 
+use function array_key_exists;
 use function array_slice;
 use function array_sum;
 use function count;
@@ -36,18 +37,21 @@ final readonly class CountMap implements CountMapInterface
     public function ranked(array $counts, int $limit = PHP_INT_MAX, string $otherKey = 'other'): array
     {
         // the residual never competes for a named slot: it is set aside, receives the tail, and is
-        // ranked with the rest at the end
+        // ranked with the rest at the end. Once it exists it stays, even at zero - a residual of nothing
+        // waiting is a fact, like a named key at zero.
+        $hasResidual = array_key_exists($otherKey, $counts);
         $residual = $counts[$otherKey] ?? 0;
         unset($counts[$otherKey]);
 
         $named = $this->rank($counts);
 
         if (count($named) > $limit) {
+            $hasResidual = true;
             $residual += array_sum(array_slice($named, $limit, null, true));
             $named = array_slice($named, 0, $limit, true);
         }
 
-        if ($residual > 0) {
+        if ($hasResidual) {
             $named[$otherKey] = $residual;
         }
 

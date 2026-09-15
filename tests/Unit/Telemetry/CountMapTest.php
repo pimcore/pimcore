@@ -46,6 +46,15 @@ class CountMapTest extends TestCase
         $this->assertSame(['a' => 2, 'other' => 1], (new CountMap())->ranked(['other' => 1, 'a' => 2], 10));
     }
 
+    /**
+     * A residual that exists in the input stays visible even at zero, exactly like a named key at zero:
+     * a configured queue with nothing waiting is a fact, not an absence.
+     */
+    public function testAZeroResidualStaysVisible(): void
+    {
+        $this->assertSame(['a' => 2, 'other' => 0], (new CountMap())->ranked(['other' => 0, 'a' => 2]));
+    }
+
     public function testAnEmptyMapStaysEmpty(): void
     {
         $this->assertSame([], (new CountMap())->ranked([]));

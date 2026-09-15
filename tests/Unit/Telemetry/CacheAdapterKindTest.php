@@ -14,15 +14,24 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Telemetry;
 
 use Doctrine\DBAL\Connection;
+use FilesystemIterator;
 use LogicException;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use Pimcore\Telemetry\Snapshot\CacheAdapterKind;
 use Pimcore\Telemetry\Snapshot\CacheAdapterKindInterface;
 use Pimcore\Tests\Support\Test\TestCase;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use Redis;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\DoctrineDbalAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
 use Symfony\Component\Cache\Adapter\NullAdapter;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
+use Symfony\Component\Cache\Adapter\RedisTagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TraceableAdapter;
 use Symfony\Component\Cache\Adapter\TraceableTagAwareAdapter;
@@ -45,6 +54,33 @@ class CacheAdapterKindTest extends TestCase
             'database',
             $this->kind()->of(new DoctrineDbalAdapter($this->createStub(Connection::class))),
         );
+    }
+
+    /**
+     * The two kinds a production pool is realistically backed by. The filesystem adapters create their
+     * directory on construction, so they get a scratch directory that is removed again.
+     */
+    public function testClassifiesTheFilesystemAdapters(): void
+    {
+        $directory = sys_get_temp_dir() . '/pimcore-cache-kind-' . uniqid('', true);
+
+        try {
+            $this->assertSame('filesystem', $this->kind()->of(new FilesystemAdapter('kind', 0, $directory)));
+            $this->assertSame('filesystem', $this->kind()->of(new FilesystemTagAwareAdapter('kind', 0, $directory)));
+        } finally {
+            $this->removeDirectory($directory);
+        }
+    }
+
+    #[RequiresPhpExtension('redis')]
+    public function testClassifiesTheRedisAdapters(): void
+    {
+        $redis = $this->createStub(Redis::class);
+        // the tag-aware adapter refuses a client with compression switched on; the stub reports none
+        $redis->method('getOption')->willReturn(Redis::COMPRESSION_NONE);
+
+        $this->assertSame('redis', $this->kind()->of(new RedisAdapter($redis)));
+        $this->assertSame('redis', $this->kind()->of(new RedisTagAwareAdapter($redis)));
     }
 
     /**
@@ -120,5 +156,21 @@ class CacheAdapterKindTest extends TestCase
     private function kind(): CacheAdapterKindInterface
     {
         return new CacheAdapterKind();
+    }
+
+    private function removeDirectory(string $directory): void
+    {
+        if (!is_dir($directory)) {
+            return;
+        }
+
+        $entries = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST,
+        );
+        foreach ($entries as $entry) {
+            $entry->isDir() ? rmdir($entry->getPathname()) : unlink($entry->getPathname());
+        }
+        rmdir($directory);
     }
 }
