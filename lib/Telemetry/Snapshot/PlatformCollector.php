@@ -20,6 +20,14 @@ use function count;
 use function is_numeric;
 
 /**
+ * How large this installation is and how it is run: seats, permission-model shape, database footprint,
+ * schema currency, operational volume, and workflow reach and shape.
+ *
+ * Every figure reads a FIXED-NAME table and only aggregates leave the server; table names appear as
+ * bound predicates, never in a SELECT list. `version_count`, `dependency_count` and
+ * `search_index_entry_count` are InnoDB row estimates (information_schema TABLE_ROWS), because an
+ * exact COUNT(*) over those unbounded tables timed out in production; everything else is exact.
+ *
  * @internal
  */
 final readonly class PlatformCollector implements SnapshotCollectorInterface
@@ -136,7 +144,8 @@ final readonly class PlatformCollector implements SnapshotCollectorInterface
     {
         return $this->fetchCount(
             'SELECT TABLE_ROWS FROM information_schema.TABLES'
-            . " WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '" . $table . "'"
+            . ' WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?',
+            [$table],
         );
     }
 
@@ -185,10 +194,13 @@ final readonly class PlatformCollector implements SnapshotCollectorInterface
         return $metrics + ($this->workflowShape->sums($names) ?? []);
     }
 
-    private function fetchCount(string $sql): ?int
+    /**
+     * @param list<string> $params
+     */
+    private function fetchCount(string $sql, array $params = []): ?int
     {
         try {
-            $value = $this->queryRunner->fetchOne($sql);
+            $value = $this->queryRunner->fetchOne($sql, $params);
 
             return is_numeric($value) ? (int)$value : null;
         } catch (Exception) {

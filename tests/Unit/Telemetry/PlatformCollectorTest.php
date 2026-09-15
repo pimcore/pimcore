@@ -27,6 +27,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
 use function array_fill;
 use function array_filter;
 use function array_key_exists;
+use function in_array;
 use function is_string;
 use function preg_match;
 use function preg_quote;
@@ -39,6 +40,11 @@ class PlatformCollectorTest extends TestCase
      * @var list<string>
      */
     private array $executedSql = [];
+
+    /**
+     * @var list<list<mixed>>
+     */
+    private array $executedParams = [];
 
     private const SHAPE_KEYS = [
         'workflow_place_count',
@@ -99,8 +105,9 @@ class PlatformCollectorTest extends TestCase
     }
 
     /**
-     * Database size is an aggregate over information_schema. Only the SUM leaves the server - never a
-     * table name, which is exactly what made the legacy `tables` payload unsendable.
+     * Database size is an aggregate over information_schema. Only aggregates and bound fixed-name
+     * predicates leave the server - never a selected table name, which is exactly what made the
+     * legacy `tables` payload unsendable.
      */
     public function testReportsDatabaseSizeAndTableCountWithoutNamingTables(): void
     {
@@ -113,7 +120,8 @@ class PlatformCollectorTest extends TestCase
             if (!str_contains($sql, 'information_schema')) {
                 continue;
             }
-            $this->assertStringNotContainsString('TABLE_NAME', $sql, 'must not select table names');
+            $this->assertStringNotContainsString('SELECT TABLE_NAME', $sql, 'must not select table names');
+            $this->assertStringNotContainsString('LIKE', $sql, 'must not pattern-match table names');
         }
     }
 
@@ -173,16 +181,17 @@ class PlatformCollectorTest extends TestCase
             );
             $this->assertSame([], $scans, "$table must not be scanned with COUNT(*)");
 
-            $estimates = array_filter(
-                $this->executedSql,
-                static fn (string $sql): bool => str_contains($sql, 'TABLE_ROWS')
-                    && str_contains($sql, "TABLE_NAME = '$table'"),
-            );
+            $estimates = [];
+            foreach ($this->executedSql as $i => $sql) {
+                if (str_contains($sql, 'TABLE_ROWS') && ($this->executedParams[$i] ?? []) === [$table]) {
+                    $estimates[] = $sql;
+                }
+            }
             $this->assertCount(1, $estimates, "$table must be estimated exactly once");
 
             foreach ($estimates as $sql) {
                 $this->assertStringContainsString('TABLE_SCHEMA = DATABASE()', $sql);
-                $this->assertMatchesRegularExpression("/TABLE_NAME = '[a-z_]+'$/", rtrim($sql));
+                $this->assertStringEndsWith('TABLE_NAME = ?', rtrim($sql));
                 $this->assertStringNotContainsString('LIKE', $sql);
                 $this->assertStringNotContainsString('SELECT TABLE_NAME', $sql);
             }
@@ -449,6 +458,7 @@ class PlatformCollectorTest extends TestCase
         array $globalActions = [],
     ): PlatformCollector {
         $this->executedSql = [];
+        $this->executedParams = [];
 
         $counts = $overrides + [
             'users'                        => 10,
@@ -500,8 +510,9 @@ class PlatformCollectorTest extends TestCase
         $connection->method('fetchOne')->willReturnCallback(
             function (string $sql, array $params = []) use ($counts, $failFor): int|string|false {
                 $this->executedSql[] = $sql;
+                $this->executedParams[] = $params;
 
-                if ($failFor !== null && str_contains($sql, $failFor)) {
+                if ($failFor !== null && (str_contains($sql, $failFor) || in_array($failFor, $params, true))) {
                     // stands in for what the per-statement timeout surfaces as
                     throw new RuntimeException('max_statement_time exceeded');
                 }
@@ -511,12 +522,13 @@ class PlatformCollectorTest extends TestCase
                 }
 
                 if (str_contains($sql, 'TABLE_ROWS')) {
-                    // information_schema row estimate for one fixed-name table
-                    if (preg_match("/TABLE_NAME = '([a-z_]+)'/", $sql, $m) !== 1) {
-                        throw new RuntimeException('estimate query must name exactly one table: ' . $sql);
+                    // information_schema row estimate for one fixed-name table, bound as a parameter
+                    $table = $params[0] ?? null;
+                    if (!is_string($table)) {
+                        throw new RuntimeException('estimate query must bind exactly one table name: ' . $sql);
                     }
 
-                    return $counts[$m[1]] ?? false; // false: table does not exist
+                    return $counts[$table] ?? false; // false: table does not exist
                 }
 
                 if (str_contains($sql, 'information_schema')) {
