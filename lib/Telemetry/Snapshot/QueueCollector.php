@@ -15,6 +15,10 @@ namespace Pimcore\Telemetry\Snapshot;
 
 use Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
+use Symfony\Component\Messenger\Transport\Receiver\MessageCountAwareInterface;
+use Symfony\Contracts\Service\ServiceProviderInterface;
+use function array_keys;
 use function in_array;
 use function str_ends_with;
 use function strstr;
@@ -23,25 +27,27 @@ use function strtolower;
 /**
  * The `queue.*` namespace: how Pimcore's asynchronous work is transported and how much of it is waiting.
  *
- * The transport is the scheme of the DSN prefix every Pimcore queue is configured with, reported as one of
- * a fixed set of names - nothing else of the DSN (host, credentials, database) is looked at. Depth is
- * only observable on the Doctrine transport, whose queues share the `messenger_messages` table; on any
- * other transport the depth keys are simply absent (unknown), and no query is attempted.
+ * The transport is the scheme of the DSN prefix Pimcore's queues are configured with, reported as one of
+ * a fixed set of names - nothing else of the DSN (host, credentials, database) is looked at.
  *
- * Depth means waiting: rows a worker has already picked up (`delivered_at` set) are not backlog. The
- * per-queue map names only the transports core itself configures and Symfony's conventional `failed`
- * transport. A `pimcore_` prefix is no proof of ownership - a project can call its own queue
- * `pimcore_customer_import` - so every other queue, from a bundle or a project, is folded into `other`.
- * Failed messages are counted wherever they sit, by the `_failed` naming convention of the failure
- * transports.
+ * Depth is what every configured transport reports about itself through Symfony's
+ * {@see MessageCountAwareInterface}, exactly as `messenger:stats` does: the Doctrine transport counts in
+ * its own connection and table, Redis and AMQP in theirs, and a transport that cannot count (sync,
+ * in-memory) is simply not part of the sum. Nothing here assumes where a queue is stored. The depth is
+ * all-or-nothing: one transport that fails to count would make every sum read as a smaller backlog, so
+ * the whole depth is unknown instead.
+ *
+ * The per-transport map names only the transports core itself configures and Symfony's conventional
+ * `failed` transport. A `pimcore_` prefix is no proof of ownership - a project can call its own
+ * transport `pimcore_customer_import` - so every other transport, from a bundle or a project, is folded
+ * into `other`. Failed messages are counted wherever they sit, by the `_failed` naming convention of
+ * the failure transports.
  *
  * @internal
  */
 final readonly class QueueCollector implements SnapshotCollectorInterface
 {
     private const SCHEMA_VERSION = 1;
-
-    private const TABLE = 'messenger_messages';
 
     /**
      * The transports core configures in `config/pimcore/default.yaml`, plus Symfony's default failure
@@ -58,8 +64,12 @@ final readonly class QueueCollector implements SnapshotCollectorInterface
         'failed',
     ];
 
+    /**
+     * @param ServiceProviderInterface<object> $transports every messenger transport, keyed by its name
+     */
     public function __construct(
-        private SnapshotQueryRunner $queryRunner,
+        #[AutowireLocator('messenger.receiver', indexAttribute: 'alias')]
+        private ServiceProviderInterface $transports,
         private CountMapInterface $countMap,
         #[Autowire('%pimcore.messenger.transport_dsn_prefix%')]
         private string $transportDsnPrefix,
@@ -73,15 +83,10 @@ final readonly class QueueCollector implements SnapshotCollectorInterface
 
     public function collect(): array
     {
-        $transport = $this->transport();
         $metrics = [
             'schema_version' => self::SCHEMA_VERSION,
-            'transport' => $transport,
+            'transport' => $this->transport(),
         ];
-
-        if ($transport !== 'doctrine') {
-            return $metrics;
-        }
 
         return $metrics + ($this->depth() ?? []);
     }
@@ -98,35 +103,41 @@ final readonly class QueueCollector implements SnapshotCollectorInterface
     }
 
     /**
-     * @return array<string, int|array<string, int>>|null null when the table cannot be read
+     * @return array<string, int|array<string, int>>|null null when no transport can count, or one fails to
      */
     private function depth(): ?array
     {
-        $table = $this->queryRunner->quoteIdentifier(self::TABLE);
-
-        try {
-            $rows = $this->queryRunner->fetchAllKeyValue(
-                'SELECT queue_name, COUNT(*) FROM ' . $table . ' WHERE delivered_at IS NULL GROUP BY queue_name'
-            );
-        } catch (Exception) {
-            return null;
-        }
-
         $byQueue = [];
         $total = 0;
         $failed = 0;
+        $counted = false;
 
-        foreach ($rows as $queue => $count) {
-            $queue = (string) $queue;
-            $count = (int) $count;
+        foreach (array_keys($this->transports->getProvidedServices()) as $name) {
+            try {
+                $transport = $this->transports->get($name);
+
+                if (!$transport instanceof MessageCountAwareInterface) {
+                    continue;
+                }
+
+                $count = $transport->getMessageCount();
+            } catch (Exception) {
+                return null;
+            }
+
+            $counted = true;
             $total += $count;
 
-            if ($this->isFailureQueue($queue)) {
+            if ($this->isFailureQueue($name)) {
                 $failed += $count;
             }
 
-            $key = $this->queueKey($queue);
+            $key = $this->queueKey($name);
             $byQueue[$key] = ($byQueue[$key] ?? 0) + $count;
+        }
+
+        if (!$counted) {
+            return null;
         }
 
         return [

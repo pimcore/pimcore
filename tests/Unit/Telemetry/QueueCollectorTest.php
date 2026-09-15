@@ -13,22 +13,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Telemetry;
 
-use Doctrine\DBAL\Connection;
 use Pimcore\Telemetry\Snapshot\CountMap;
 use Pimcore\Telemetry\Snapshot\QueueCollector;
-use Pimcore\Telemetry\Snapshot\SnapshotQueryRunner;
 use Pimcore\Tests\Support\Test\TestCase;
 use RuntimeException;
+use Symfony\Component\DependencyInjection\ServiceLocator;
+use Symfony\Component\Messenger\Transport\Receiver\MessageCountAwareInterface;
+use Symfony\Component\Messenger\Transport\Receiver\ReceiverInterface;
 use function json_encode;
 
 class QueueCollectorTest extends TestCase
 {
     private const DOCTRINE = 'doctrine://default?queue_name=';
 
-    /**
-     * @var string[]
-     */
-    private array $executedSql = [];
+    private const DEPTH_KEYS = ['depth_total', 'depth_by_queue', 'failed_count'];
 
     public function testNamespaceIsQueue(): void
     {
@@ -36,7 +34,7 @@ class QueueCollectorTest extends TestCase
     }
 
     /**
-     * Only the scheme of the transport DSN is reported, as one of a fixed set of names.
+     * Only the scheme of the transport DSN prefix is reported, as one of a fixed set of names.
      */
     public function testReportsTheTransportSchemeOnly(): void
     {
@@ -62,32 +60,44 @@ class QueueCollectorTest extends TestCase
         $this->assertStringNotContainsString('cache.internal', (string) json_encode($metrics));
     }
 
-    public function testReportsDepthPerQueueInTotalAndTheFailedShare(): void
+    /**
+     * Depth is what every transport reports about itself, so it follows the transport's own connection
+     * and table, and works for Redis and AMQP the same way.
+     */
+    public function testReportsDepthPerTransportInTotalAndTheFailedShare(): void
     {
         $metrics = $this->collector(
-            queues: ['pimcore_core' => 3, 'pimcore_asset_update' => 5, 'pimcore_generic_data_index_failed' => 2],
+            transports: [
+                'pimcore_core' => $this->countable(3),
+                'pimcore_asset_update' => $this->countable(5),
+                'pimcore_generic_data_index_failed' => $this->countable(2),
+            ],
         )->collect();
 
         $this->assertSame(10, $metrics['depth_total'] ?? null);
         $this->assertSame(
             ['pimcore_asset_update' => 5, 'pimcore_core' => 3, 'other' => 2],
             $metrics['depth_by_queue'] ?? null,
-            'ranked by depth, ties by name; a bundle queue is not core and folds into other',
+            'ranked by depth, ties by name; a bundle transport is not core and folds into other',
         );
         $this->assertSame(2, $metrics['failed_count'] ?? null);
-        $this->assertArrayNotHasKey('oldest_message_age_s', $metrics, 'the age was dropped on purpose');
     }
 
     /**
      * Only the transports core itself configures and Symfony's conventional `failed` transport are
-     * named. A `pimcore_` prefix is no proof of ownership - a project can call its own queue
+     * named. A `pimcore_` prefix is no proof of ownership - a project can call its own transport
      * `pimcore_customer_import` - so everything else, bundle or project, is one `other` figure.
      * Failed messages are counted wherever they sit.
      */
-    public function testOnlyCoreQueuesAndTheFailedTransportAreNamed(): void
+    public function testOnlyCoreTransportsAndTheFailedTransportAreNamed(): void
     {
         $metrics = $this->collector(
-            queues: ['pimcore_core' => 1, 'pimcore_customer_import' => 4, 'failed' => 2, 'acme_orders_failed' => 1],
+            transports: [
+                'pimcore_core' => $this->countable(1),
+                'pimcore_customer_import' => $this->countable(4),
+                'failed' => $this->countable(2),
+                'acme_orders_failed' => $this->countable(1),
+            ],
         )->collect();
 
         $this->assertSame(['other' => 5, 'failed' => 2, 'pimcore_core' => 1], $metrics['depth_by_queue'] ?? null);
@@ -96,83 +106,84 @@ class QueueCollectorTest extends TestCase
         $this->assertStringNotContainsString('acme', (string) json_encode($metrics));
     }
 
-    public function testAnEmptyQueueReportsZeroDepth(): void
+    public function testEmptyTransportsReportZero(): void
     {
-        $metrics = $this->collector(queues: [])->collect();
+        $metrics = $this->collector(transports: ['pimcore_core' => $this->countable(0)])->collect();
 
         $this->assertSame(0, $metrics['depth_total'] ?? null);
-        $this->assertSame([], $metrics['depth_by_queue'] ?? null);
+        $this->assertSame(['pimcore_core' => 0], $metrics['depth_by_queue'] ?? null);
         $this->assertSame(0, $metrics['failed_count'] ?? null);
     }
 
     /**
-     * Only the Doctrine transport keeps its queues in a table this snapshot can read; anything else is
-     * unknown, and no query is even attempted.
+     * A transport that cannot count (sync, in-memory) is simply not part of the depth; with none that
+     * can, the depth is unknown and absent.
      */
-    public function testDepthIsUnknownOnANonDoctrineTransport(): void
+    public function testTransportsThatCannotCountAreLeftOut(): void
     {
-        $metrics = $this->collector(dsnPrefix: 'redis://localhost/messages')->collect();
+        $metrics = $this->collector(
+            transports: ['pimcore_core' => $this->countable(3), 'sync' => $this->createStub(ReceiverInterface::class)],
+        )->collect();
+        $this->assertSame(3, $metrics['depth_total'] ?? null);
+        $this->assertSame(['pimcore_core' => 3], $metrics['depth_by_queue'] ?? null);
 
-        $this->assertSame('redis', $metrics['transport'] ?? null);
-        foreach (['depth_total', 'depth_by_queue', 'failed_count'] as $key) {
-            $this->assertArrayNotHasKey($key, $metrics);
+        $none = $this->collector(transports: ['sync' => $this->createStub(ReceiverInterface::class)])->collect();
+        foreach (self::DEPTH_KEYS as $key) {
+            $this->assertArrayNotHasKey($key, $none);
         }
-        $this->assertSame([], $this->executedSql);
+        $this->assertSame('doctrine', $none['transport'] ?? null);
     }
 
-    public function testAFailedDepthQueryOmitsTheDepthKeysButKeepsTheTransport(): void
+    /**
+     * The depth is all-or-nothing: one transport that fails to count would make every sum read as a
+     * smaller backlog, so the whole depth is unknown instead. The transport kind stands.
+     */
+    public function testAFailingCountLeavesTheWholeDepthUnknown(): void
     {
-        $metrics = $this->collector(failDepth: true)->collect();
+        $broken = $this->createStub(MessageCountAwareInterface::class);
+        $broken->method('getMessageCount')->willThrowException(new RuntimeException('connection refused'));
+
+        $metrics = $this->collector(
+            transports: ['pimcore_core' => $this->countable(3), 'pimcore_maintenance' => $broken],
+        )->collect();
 
         $this->assertSame('doctrine', $metrics['transport'] ?? null);
-        foreach (['depth_total', 'depth_by_queue', 'failed_count'] as $key) {
+        foreach (self::DEPTH_KEYS as $key) {
             $this->assertArrayNotHasKey($key, $metrics);
         }
     }
 
-    /**
-     * Depth means waiting: messages a worker has already picked up are not backlog.
-     */
-    public function testOnlyWaitingMessagesAreCountedWithOneQuery(): void
+    public function testWithoutAnyTransportTheDepthIsUnknown(): void
     {
-        $this->collector()->collect();
+        $metrics = $this->collector(transports: [])->collect();
 
-        $this->assertCount(1, $this->executedSql);
-        $this->assertStringContainsString('delivered_at IS NULL', $this->executedSql[0]);
+        foreach (self::DEPTH_KEYS as $key) {
+            $this->assertArrayNotHasKey($key, $metrics);
+        }
+    }
+
+    private function countable(int $count): MessageCountAwareInterface
+    {
+        $transport = $this->createStub(MessageCountAwareInterface::class);
+        $transport->method('getMessageCount')->willReturn($count);
+
+        return $transport;
     }
 
     /**
-     * @param array<string, int> $queues queue name => waiting messages, as the GROUP BY returns them
+     * @param array<string, object|null> $transports transport name => transport service as the tagged
+     *                                               locator serves them; null stands for one waiting message
      */
     private function collector(
         string $dsnPrefix = self::DOCTRINE,
-        array $queues = ['pimcore_core' => 1],
-        bool $failDepth = false,
+        array $transports = ['pimcore_core' => null],
     ): QueueCollector {
-        $this->executedSql = [];
+        $factories = [];
+        foreach ($transports as $name => $transport) {
+            $service = $transport ?? $this->countable(1);
+            $factories[$name] = static fn (): object => $service;
+        }
 
-        $connection = $this->createStub(Connection::class);
-        $connection->method('quoteIdentifier')->willReturnArgument(0);
-        $connection->method('fetchAllKeyValue')->willReturnCallback(
-            function (string $sql) use ($queues, $failDepth): array {
-                $this->executedSql[] = $sql;
-                if ($failDepth) {
-                    // stands in for what the per-statement timeout surfaces as
-                    throw new RuntimeException('max_statement_time exceeded');
-                }
-
-                return $queues;
-            }
-        );
-        // any single-value query is recorded and answered, so a stray second statement cannot hide
-        $connection->method('fetchOne')->willReturnCallback(
-            function (string $sql): int {
-                $this->executedSql[] = $sql;
-
-                return 42;
-            }
-        );
-
-        return new QueueCollector(new SnapshotQueryRunner($connection, 0), new CountMap(), $dsnPrefix);
+        return new QueueCollector(new ServiceLocator($factories), new CountMap(), $dsnPrefix);
     }
 }

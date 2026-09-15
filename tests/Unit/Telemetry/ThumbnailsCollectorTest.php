@@ -62,13 +62,21 @@ class ThumbnailsCollectorTest extends TestCase
     }
 
     /**
-     * Formats are Pimcore's own tokens (SOURCE, JPEG, WEBP, ...); anything else is counted as OTHER.
+     * Only Pimcore's own format labels are named. `allowed_formats` is project-configurable and a preset
+     * accepts any string, so a custom label is somebody's vocabulary and counts as OTHER; the aliases of
+     * the automatic format (`auto`, `original`) read as SOURCE.
      */
-    public function testAFormatOutsideTheTokenShapeIsFoldedIntoOther(): void
+    public function testOnlyPimcoreFormatLabelsAreNamed(): void
     {
-        $metrics = $this->collector(images: [$this->image('a', 'weird format!'), $this->image('b', 'PNG')])->collect();
+        $metrics = $this->collector(images: [
+            $this->image('a', 'SECRET'),
+            $this->image('b', 'png'),
+            $this->image('c', 'auto'),
+            $this->image('d', 'original'),
+        ])->collect();
 
-        $this->assertSame(['OTHER' => 1, 'PNG' => 1], $metrics['image_format_breakdown'] ?? null);
+        $this->assertSame(['SOURCE' => 2, 'OTHER' => 1, 'PNG' => 1], $metrics['image_format_breakdown'] ?? null);
+        $this->assertStringNotContainsString('SECRET', (string) json_encode($metrics));
     }
 
     public function testNoImageConfigurationsIsAnHonestZero(): void

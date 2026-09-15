@@ -20,8 +20,8 @@ use Pimcore\Model\Asset\Image\Thumbnail\Config\Listing as ImageListing;
 use Pimcore\Model\Asset\Video\Thumbnail\Config as VideoConfig;
 use Pimcore\Model\Asset\Video\Thumbnail\Config\Listing as VideoListing;
 use function count;
+use function in_array;
 use function is_array;
-use function preg_match;
 use function strtoupper;
 use function trim;
 
@@ -33,8 +33,9 @@ use function trim;
  *
  * Both listings read the configuration store only (settings store or `var/config`), nothing is written.
  * They are independent probes: a listing that cannot be read leaves its own keys unknown and the other
- * one standing. Formats are Pimcore's own tokens (SOURCE, JPEG, WEBP, ...) and are reported upper-cased;
- * anything outside that token shape counts as OTHER. Configuration names never leave.
+ * one standing. Only Pimcore's own format labels are named (SOURCE, JPEG, WEBP, ...):
+ * `allowed_formats` is project-configurable and a preset accepts any string, so any other label counts as
+ * OTHER. Configuration names never leave.
  *
  * @internal
  */
@@ -42,7 +43,21 @@ final readonly class ThumbnailsCollector implements SnapshotCollectorInterface
 {
     private const SCHEMA_VERSION = 1;
 
-    private const FORMAT_TOKEN = '/^[A-Z0-9]{1,16}$/';
+    /**
+     * The format labels Pimcore itself knows: the automatic format and the default `allowed_formats`.
+     * `allowed_formats` is project-configurable and a preset accepts any string, so nothing outside this
+     * list is ever named.
+     */
+    private const KNOWN_FORMATS = [
+        'SOURCE', 'AVIF', 'EPS', 'GIF', 'JPEG', 'JPG', 'PJPEG', 'PNG', 'SVG', 'TIFF', 'WEBM', 'WEBP', 'PRINT',
+    ];
+
+    /**
+     * Spellings of the automatic format: the classic admin UI's SOURCE, Studio's `auto`, legacy `original`.
+     */
+    private const SOURCE_ALIASES = ['SOURCE', 'AUTO', 'ORIGINAL'];
+
+    private const FORMAT_LIMIT = 16;
 
     /**
      * @var Closure(): iterable<ImageConfig>
@@ -126,7 +141,7 @@ final readonly class ThumbnailsCollector implements SnapshotCollectorInterface
 
         return [
             'image_config_count' => $count,
-            'image_format_breakdown' => $this->countMap->ranked($formats),
+            'image_format_breakdown' => $this->countMap->ranked($formats, self::FORMAT_LIMIT, 'OTHER'),
             'image_transformation_count' => $transformations,
             'image_configs_with_media_queries' => $withMediaQueries,
         ];
@@ -148,8 +163,12 @@ final readonly class ThumbnailsCollector implements SnapshotCollectorInterface
 
     private function formatKey(string $format): string
     {
-        $token = strtoupper(trim($format));
+        $label = strtoupper(trim($format));
 
-        return preg_match(self::FORMAT_TOKEN, $token) === 1 ? $token : 'OTHER';
+        if (in_array($label, self::SOURCE_ALIASES, true)) {
+            return 'SOURCE';
+        }
+
+        return in_array($label, self::KNOWN_FORMATS, true) ? $label : 'OTHER';
     }
 }
