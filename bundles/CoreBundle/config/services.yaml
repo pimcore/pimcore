@@ -365,7 +365,7 @@ services:
     Pimcore\Telemetry\Snapshot\CacheAdapterKindInterface:
         class: Pimcore\Telemetry\Snapshot\CacheAdapterKind
 
-    # queue transport and backlog (Doctrine transport only for the depth)
+    # queue transport and backlog, as every configured transport reports it about itself
     Pimcore\Telemetry\Snapshot\QueueCollector: ~
 
     # thumbnail configuration shape: counts, formats, transformations, media queries

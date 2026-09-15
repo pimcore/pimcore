@@ -14,13 +14,13 @@ declare(strict_types=1);
 namespace Pimcore\Telemetry\Snapshot;
 
 use Exception;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MessengerFailureTransportsPass;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
 use Symfony\Component\Messenger\Transport\Receiver\MessageCountAwareInterface;
 use Symfony\Contracts\Service\ServiceProviderInterface;
 use function array_keys;
 use function in_array;
-use function str_ends_with;
 use function strstr;
 use function strtolower;
 
@@ -40,8 +40,9 @@ use function strtolower;
  * The per-transport map names only the transports core itself configures and Symfony's conventional
  * `failed` transport. A `pimcore_` prefix is no proof of ownership - a project can call its own
  * transport `pimcore_customer_import` - so every other transport, from a bundle or a project, is folded
- * into `other`. Failed messages are counted wherever they sit, by the `_failed` naming convention of
- * the failure transports.
+ * into `other`. Failed messages are counted wherever they sit: which transports are failure transports
+ * comes from the metadata Symfony puts on them, collected by {@see MessengerFailureTransportsPass},
+ * never from their names.
  *
  * @internal
  */
@@ -66,6 +67,7 @@ final readonly class QueueCollector implements SnapshotCollectorInterface
 
     /**
      * @param ServiceProviderInterface<object> $transports every messenger transport, keyed by its name
+     * @param string[] $failureTransports the names Symfony marked as failure transports
      */
     public function __construct(
         #[AutowireLocator('messenger.receiver', indexAttribute: 'alias')]
@@ -73,6 +75,8 @@ final readonly class QueueCollector implements SnapshotCollectorInterface
         private CountMapInterface $countMap,
         #[Autowire('%pimcore.messenger.transport_dsn_prefix%')]
         private string $transportDsnPrefix,
+        #[Autowire('%pimcore.telemetry.messenger_failure_transports%')]
+        private array $failureTransports = [],
     ) {
     }
 
@@ -97,6 +101,9 @@ final readonly class QueueCollector implements SnapshotCollectorInterface
 
         return match ($scheme) {
             'doctrine', 'redis', 'amqp', 'sqs', 'beanstalkd', 'sync' => $scheme,
+            // the TLS variants Pimcore's installer and Symfony accept are the same kind of transport
+            'rediss' => 'redis',
+            'amqps' => 'amqp',
             'in-memory' => 'in_memory',
             default => 'other',
         };
@@ -149,7 +156,7 @@ final readonly class QueueCollector implements SnapshotCollectorInterface
 
     private function isFailureQueue(string $queue): bool
     {
-        return $queue === 'failed' || str_ends_with($queue, '_failed');
+        return in_array($queue, $this->failureTransports, true);
     }
 
     private function queueKey(string $queue): string

@@ -139,9 +139,11 @@ final readonly class PillarUsageCollector implements SnapshotCollectorInterface
     private function mimeTypeBreakdown(): ?array
     {
         try {
+            $mimetype = $this->queryRunner->quoteIdentifier('mimetype');
             $rows = $this->queryRunner->fetchAllKeyValue(
-                'SELECT mimetype, COUNT(*) FROM ' . $this->queryRunner->quoteIdentifier('assets')
-                . " WHERE type <> 'folder' GROUP BY mimetype"
+                'SELECT ' . $mimetype . ', COUNT(*) FROM ' . $this->queryRunner->quoteIdentifier('assets')
+                . ' WHERE ' . $this->queryRunner->quoteIdentifier('type') . ' <> ? GROUP BY ' . $mimetype,
+                ['folder']
             );
         } catch (Exception) {
             return null;

@@ -49,6 +49,11 @@ class PillarUsageCollectorTest extends TestCase
 
     private string $breakdownSql = '';
 
+    /**
+     * @var list<mixed>
+     */
+    private array $breakdownParams = [];
+
     public function testNamespaceIsPillars(): void
     {
         $this->assertSame('pillars', $this->collector([])->getNamespace());
@@ -166,8 +171,9 @@ class PillarUsageCollectorTest extends TestCase
             ['image/jpeg' => 20, 'image/png' => 10, 'video/mp4' => 5, 'unknown' => 2],
             $metrics['asset_mimetype_breakdown'] ?? null,
         );
-        $this->assertStringContainsString("type <> 'folder'", $this->breakdownSql);
-        $this->assertStringContainsString('GROUP BY mimetype', $this->breakdownSql);
+        // identifiers quoted, the folder type bound - never a literal in the statement
+        $this->assertStringContainsString('WHERE type <> ? GROUP BY mimetype', $this->breakdownSql);
+        $this->assertSame(['folder'], $this->breakdownParams);
     }
 
     /**
@@ -236,8 +242,9 @@ class PillarUsageCollectorTest extends TestCase
             }
         );
         $connection->method('fetchAllKeyValue')->willReturnCallback(
-            function (string $sql) use ($mimetypes, $failMimetypes): array {
+            function (string $sql, array $params = []) use ($mimetypes, $failMimetypes): array {
                 $this->breakdownSql = $sql;
+                $this->breakdownParams = $params;
                 if ($failMimetypes) {
                     // stands in for what the per-statement timeout surfaces as
                     throw new RuntimeException('max_statement_time exceeded');

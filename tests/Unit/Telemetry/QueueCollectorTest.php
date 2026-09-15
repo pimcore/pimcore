@@ -48,6 +48,15 @@ class QueueCollectorTest extends TestCase
             'amqp',
             $this->collector(dsnPrefix: 'amqp://guest:guest@rabbit:5672/%2f/')->collect()['transport'] ?? null,
         );
+        // the TLS variants are the same kind of transport
+        $this->assertSame(
+            'amqp',
+            $this->collector(dsnPrefix: 'amqps://rabbit:5671/%2f/')->collect()['transport'] ?? null,
+        );
+        $this->assertSame(
+            'redis',
+            $this->collector(dsnPrefix: 'rediss://cache:6380/messages')->collect()['transport'] ?? null,
+        );
         $this->assertSame('in_memory', $this->collector(dsnPrefix: 'in-memory://')->collect()['transport'] ?? null);
         $this->assertSame('other', $this->collector(dsnPrefix: 'enqueue://default')->collect()['transport'] ?? null);
     }
@@ -72,6 +81,7 @@ class QueueCollectorTest extends TestCase
                 'pimcore_asset_update' => $this->countable(5),
                 'pimcore_generic_data_index_failed' => $this->countable(2),
             ],
+            failureTransports: ['pimcore_generic_data_index_failed'],
         )->collect();
 
         $this->assertSame(10, $metrics['depth_total'] ?? null);
@@ -98,12 +108,32 @@ class QueueCollectorTest extends TestCase
                 'failed' => $this->countable(2),
                 'acme_orders_failed' => $this->countable(1),
             ],
+            failureTransports: ['failed', 'acme_orders_failed'],
         )->collect();
 
         $this->assertSame(['other' => 5, 'failed' => 2, 'pimcore_core' => 1], $metrics['depth_by_queue'] ?? null);
         $this->assertSame(3, $metrics['failed_count'] ?? null);
         $this->assertStringNotContainsString('customer', (string) json_encode($metrics));
         $this->assertStringNotContainsString('acme', (string) json_encode($metrics));
+    }
+
+    /**
+     * Which transports hold failed messages is Symfony's metadata, not a naming convention: a failure
+     * transport called `dead_letters` counts, a transport that merely sounds like one does not.
+     */
+    public function testFailureTransportsComeFromTheMetadataNotFromTheirNames(): void
+    {
+        $metrics = $this->collector(
+            transports: [
+                'pimcore_core' => $this->countable(1),
+                'dead_letters' => $this->countable(4),
+                'acme_failed' => $this->countable(2),
+            ],
+            failureTransports: ['dead_letters'],
+        )->collect();
+
+        $this->assertSame(4, $metrics['failed_count'] ?? null);
+        $this->assertSame(7, $metrics['depth_total'] ?? null);
     }
 
     public function testEmptyTransportsReportZero(): void
@@ -173,10 +203,12 @@ class QueueCollectorTest extends TestCase
     /**
      * @param array<string, object|null> $transports transport name => transport service as the tagged
      *                                               locator serves them; null stands for one waiting message
+     * @param string[] $failureTransports the names Symfony marked as failure transports
      */
     private function collector(
         string $dsnPrefix = self::DOCTRINE,
         array $transports = ['pimcore_core' => null],
+        array $failureTransports = [],
     ): QueueCollector {
         $factories = [];
         foreach ($transports as $name => $transport) {
@@ -184,6 +216,6 @@ class QueueCollectorTest extends TestCase
             $factories[$name] = static fn (): object => $service;
         }
 
-        return new QueueCollector(new ServiceLocator($factories), new CountMap(), $dsnPrefix);
+        return new QueueCollector(new ServiceLocator($factories), new CountMap(), $dsnPrefix, $failureTransports);
     }
 }
