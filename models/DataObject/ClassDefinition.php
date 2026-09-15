@@ -381,6 +381,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         $cd .= ' * Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
 
         if ($title = $this->getTitle()) {
+            $title = str_replace(['/**', '*/', '//'], '', $title);
             $cd .= ' * Title: ' . $title."\n";
         }
 
