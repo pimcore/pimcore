@@ -17,6 +17,7 @@ use Exception;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
@@ -225,6 +226,66 @@ public function setFieldcollection(?\Pimcore\Model\DataObject\Fieldcollection $f
             '\Pimcore\Model\DataObject\Fieldcollection|null',
             $fieldDefinition->getPhpdocReturnType()
         );
+    }
+
+    /**
+     * The relation "allowed classes" list is attacker-controlled (an admin holding only the
+     * "classes" permission) and is emitted verbatim into the generated getter/setter docblock's
+     * @return/@param type. An entry containing the docblock end marker closed the comment early,
+     * and because the same unsanitized string is emitted a second time in the paired
+     * getter/setter, a single payload could inject a constructor that runs on first instantiation
+     * (GHSA-9r9j-g82w-9578).
+     */
+    public function testRelationGetterAndSetterCodeSanitizeMaliciousAllowedClassEntry(): void
+    {
+        $maliciousClassName = 'x */ function __construct(){ file_put_contents(sys_get_temp_dir() . "/ghsa-9r9j-poc.txt", "1"); } private $p = \'; /*';
+
+        $fieldDefinition = new ManyToOneRelation();
+        $fieldDefinition->setName('myRelation');
+        $fieldDefinition->setTitle('My Relation');
+        $fieldDefinition->setObjectsAllowed(true);
+        $fieldDefinition->setClasses([['classes' => $maliciousClassName]]);
+
+        // Sanity check: the type string itself is still built without any validation - the fix
+        // sits at the docblock emission site, not in the type builder.
+        $expectedRawType = '\Pimcore\Model\DataObject\\' . ucfirst($maliciousClassName) . '|null';
+        $this->assertSame($expectedRawType, $fieldDefinition->getPhpdocReturnType());
+
+        $expectedSanitizedType = str_replace(['/**', '*/', '//'], '', $expectedRawType);
+
+        $class = ClassDefinition::getByName('unittest');
+        $getterCode = $fieldDefinition->getGetterCode($class);
+        $setterCode = $fieldDefinition->getSetterCode($class);
+
+        foreach (['getter' => $getterCode, 'setter' => $setterCode] as $label => $generatedCode) {
+            $this->assertSame(1, substr_count($generatedCode, '/**'), "generated $label code must open exactly one docblock");
+            $this->assertSame(1, substr_count($generatedCode, '*/'), "generated $label code must close exactly one docblock - a payload \"*/\" must not close it early");
+        }
+
+        $this->assertSame(1, preg_match('/^\* @return (.+)$/m', $getterCode, $getterMatch));
+        $this->assertSame($expectedSanitizedType, $getterMatch[1]);
+
+        $this->assertSame(1, preg_match('/^\* @param (.+) \$myRelation$/m', $setterCode, $setterMatch));
+        $this->assertSame($expectedSanitizedType, $setterMatch[1]);
+    }
+
+    /**
+     * Negative control for testRelationGetterAndSetterCodeSanitizeMaliciousAllowedClassEntry(): a
+     * legitimate allowed-classes entry must still produce its unmangled fully-qualified type.
+     */
+    public function testRelationGetterCodeKeepsBenignAllowedClassIntact(): void
+    {
+        $fieldDefinition = new ManyToOneRelation();
+        $fieldDefinition->setName('myRelation');
+        $fieldDefinition->setTitle('My Relation');
+        $fieldDefinition->setObjectsAllowed(true);
+        $fieldDefinition->setClasses([['classes' => 'TargetClass']]);
+
+        $class = ClassDefinition::getByName('unittest');
+        $getterCode = $fieldDefinition->getGetterCode($class);
+
+        $this->assertSame(1, preg_match('/^\* @return (.+)$/m', $getterCode, $getterMatch));
+        $this->assertSame('\Pimcore\Model\DataObject\TargetClass|null', $getterMatch[1]);
     }
 
     /**
