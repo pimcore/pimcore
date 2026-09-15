@@ -21,7 +21,7 @@ use function is_numeric;
 
 /**
  * How large this installation is and how it is run: seats, permission-model shape, database footprint,
- * schema currency, operational volume, and workflow reach.
+ * schema currency, operational volume, and workflow reach and shape.
  *
  * Complements the content collectors - {@see PillarUsageCollector} counts what is managed, this counts
  * who manages it and what it costs to host.
@@ -35,12 +35,15 @@ use function is_numeric;
  */
 final readonly class PlatformCollector implements SnapshotCollectorInterface
 {
-    private const SCHEMA_VERSION = 1;
+    private const SCHEMA_VERSION = 2;
+
+    private WorkflowShape $workflowShape;
 
     public function __construct(
         private SnapshotQueryRunner $queryRunner,
         private Manager $workflowManager,
     ) {
+        $this->workflowShape = new WorkflowShape($workflowManager);
     }
 
     public function getNamespace(): string
@@ -157,28 +160,37 @@ final readonly class PlatformCollector implements SnapshotCollectorInterface
      * manager is unknown rather than zero, and the state counts stand on their own as evidence, so
      * they are still collected in that case - just without a configured count to compare them to.
      *
+     * The shape sums - places, transitions, start and end places, global actions - come from the workflow
+     * definitions themselves and cost no query; {@see WorkflowShape} makes them all-or-nothing.
+     *
      * @return array<string, int|null>
      */
     private function workflowMetrics(): array
     {
         try {
-            $configured = count($this->workflowManager->getAllWorkflows());
+            $names = $this->workflowManager->getAllWorkflows();
         } catch (Exception) {
-            $configured = null;
+            $names = null;
         }
 
-        if ($configured === 0) {
+        if ($names === []) {
             return ['workflow_configured_count' => 0];
         }
 
-        return [
-            'workflow_configured_count' => $configured,
+        $metrics = [
+            'workflow_configured_count' => $names === null ? null : count($names),
             'workflow_active_element_count' => $this->count('element_workflow_state'),
             'workflow_distinct_in_use_count' => $this->fetchCount(
                 'SELECT COUNT(DISTINCT workflow) FROM '
                 . $this->queryRunner->quoteIdentifier('element_workflow_state')
             ),
         ];
+
+        if ($names === null) {
+            return $metrics;
+        }
+
+        return $metrics + ($this->workflowShape->sums($names) ?? []);
     }
 
     private function fetchCount(string $sql): ?int
