@@ -32,6 +32,11 @@ use Symfony\Component\Cache\Adapter\TraceableTagAwareAdapter;
  */
 class CacheAdapterKindTest extends TestCase
 {
+    /**
+     * The value set is closed: redis, filesystem, database, array, null, other. A Symfony adapter outside
+     * the kinds Pimcore's pool is realistically backed by is `other` as well - it is classified by class
+     * name, so a name that would spell another kind must still not produce one.
+     */
     public function testClassifiesSymfonyAdaptersByKind(): void
     {
         $this->assertSame('array', $this->kind()->of(new ArrayAdapter()));

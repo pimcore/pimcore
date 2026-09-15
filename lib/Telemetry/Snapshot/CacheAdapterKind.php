@@ -22,9 +22,10 @@ use function str_contains;
 use function str_starts_with;
 
 /**
- * The kind of cache adapter behind a pool, as one of a fixed set of names. Only Symfony's own adapters
- * are classified, by class; a pool from anywhere else is `other`, so no third-party or project class name
- * is inspected or emitted.
+ * The kind of cache adapter behind a pool, as one of a fixed set of names: redis, filesystem, database,
+ * array, null or other. Only Symfony's own adapters are classified, by class, and only the kinds Pimcore's
+ * pool is realistically backed by; every other Symfony adapter and any pool from elsewhere is `other`, so
+ * the value set is closed and no third-party or project class name is inspected or emitted.
  *
  * Two wrappers are looked through, because they hide the real adapter without being one: the tracing
  * adapter the debug container puts around every pool, and the generic `TagAwareAdapter` Pimcore's own
@@ -46,12 +47,12 @@ final readonly class CacheAdapterKind implements CacheAdapterKindInterface
             return 'other';
         }
 
+        // the kinds Pimcore's cache pool is realistically backed by; anything else Symfony ships
+        // (Memcached, APCu, chains, ...) is `other`, so the value set stays exactly the documented one
         return match (true) {
             str_contains($class, 'Redis') => 'redis',
-            str_contains($class, 'Memcached') => 'memcached',
             str_contains($class, 'Filesystem') => 'filesystem',
             str_contains($class, 'Doctrine'), str_contains($class, 'Pdo') => 'database',
-            str_contains($class, 'Apcu') => 'apcu',
             str_contains($class, 'Array') => 'array',
             str_contains($class, 'Null') => 'null',
             default => 'other',
