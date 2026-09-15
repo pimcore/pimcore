@@ -26,7 +26,7 @@ class QueueCollectorTest extends TestCase
 {
     private const DOCTRINE = 'doctrine://default?queue_name=';
 
-    private const DEPTH_KEYS = ['depth_total', 'depth_by_queue', 'failed_count'];
+    private const DEPTH_KEYS = ['depth_total', 'depth_by_queue'];
 
     public function testNamespaceIsQueue(): void
     {
@@ -71,9 +71,10 @@ class QueueCollectorTest extends TestCase
 
     /**
      * Depth is what every transport reports about itself, so it follows the transport's own connection
-     * and table, and works for Redis and AMQP the same way.
+     * and table, and works for Redis and AMQP the same way. Failed messages are not singled out: which
+     * transports hold them is Symfony compile-time metadata, and a name is no proof.
      */
-    public function testReportsDepthPerTransportInTotalAndTheFailedShare(): void
+    public function testReportsDepthPerTransportAndInTotal(): void
     {
         $metrics = $this->collector(
             transports: [
@@ -81,7 +82,6 @@ class QueueCollectorTest extends TestCase
                 'pimcore_asset_update' => $this->countable(5),
                 'pimcore_generic_data_index_failed' => $this->countable(2),
             ],
-            failureTransports: ['pimcore_generic_data_index_failed'],
         )->collect();
 
         $this->assertSame(10, $metrics['depth_total'] ?? null);
@@ -90,14 +90,13 @@ class QueueCollectorTest extends TestCase
             $metrics['depth_by_queue'] ?? null,
             'ranked by depth, ties by name; a bundle transport is not core and folds into other',
         );
-        $this->assertSame(2, $metrics['failed_count'] ?? null);
+        $this->assertArrayNotHasKey('failed_count', $metrics);
     }
 
     /**
      * Only the transports core itself configures and Symfony's conventional `failed` transport are
      * named. A `pimcore_` prefix is no proof of ownership - a project can call its own transport
      * `pimcore_customer_import` - so everything else, bundle or project, is one `other` figure.
-     * Failed messages are counted wherever they sit.
      */
     public function testOnlyCoreTransportsAndTheFailedTransportAreNamed(): void
     {
@@ -108,32 +107,11 @@ class QueueCollectorTest extends TestCase
                 'failed' => $this->countable(2),
                 'acme_orders_failed' => $this->countable(1),
             ],
-            failureTransports: ['failed', 'acme_orders_failed'],
         )->collect();
 
         $this->assertSame(['other' => 5, 'failed' => 2, 'pimcore_core' => 1], $metrics['depth_by_queue'] ?? null);
-        $this->assertSame(3, $metrics['failed_count'] ?? null);
         $this->assertStringNotContainsString('customer', (string) json_encode($metrics));
         $this->assertStringNotContainsString('acme', (string) json_encode($metrics));
-    }
-
-    /**
-     * Which transports hold failed messages is Symfony's metadata, not a naming convention: a failure
-     * transport called `dead_letters` counts, a transport that merely sounds like one does not.
-     */
-    public function testFailureTransportsComeFromTheMetadataNotFromTheirNames(): void
-    {
-        $metrics = $this->collector(
-            transports: [
-                'pimcore_core' => $this->countable(1),
-                'dead_letters' => $this->countable(4),
-                'acme_failed' => $this->countable(2),
-            ],
-            failureTransports: ['dead_letters'],
-        )->collect();
-
-        $this->assertSame(4, $metrics['failed_count'] ?? null);
-        $this->assertSame(7, $metrics['depth_total'] ?? null);
     }
 
     public function testEmptyTransportsReportZero(): void
@@ -142,7 +120,6 @@ class QueueCollectorTest extends TestCase
 
         $this->assertSame(0, $metrics['depth_total'] ?? null);
         $this->assertSame(['pimcore_core' => 0], $metrics['depth_by_queue'] ?? null);
-        $this->assertSame(0, $metrics['failed_count'] ?? null);
     }
 
     /**
@@ -203,12 +180,10 @@ class QueueCollectorTest extends TestCase
     /**
      * @param array<string, object|null> $transports transport name => transport service as the tagged
      *                                               locator serves them; null stands for one waiting message
-     * @param string[] $failureTransports the names Symfony marked as failure transports
      */
     private function collector(
         string $dsnPrefix = self::DOCTRINE,
         array $transports = ['pimcore_core' => null],
-        array $failureTransports = [],
     ): QueueCollector {
         $factories = [];
         foreach ($transports as $name => $transport) {
@@ -216,6 +191,6 @@ class QueueCollectorTest extends TestCase
             $factories[$name] = static fn (): object => $service;
         }
 
-        return new QueueCollector(new ServiceLocator($factories), new CountMap(), $dsnPrefix, $failureTransports);
+        return new QueueCollector(new ServiceLocator($factories), new CountMap(), $dsnPrefix);
     }
 }

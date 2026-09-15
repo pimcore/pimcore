@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Pimcore\Telemetry\Snapshot;
 
 use Exception;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MessengerFailureTransportsPass;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
 use Symfony\Component\Messenger\Transport\Receiver\MessageCountAwareInterface;
@@ -40,9 +39,9 @@ use function strtolower;
  * The per-transport map names only the transports core itself configures and Symfony's conventional
  * `failed` transport. A `pimcore_` prefix is no proof of ownership - a project can call its own
  * transport `pimcore_customer_import` - so every other transport, from a bundle or a project, is folded
- * into `other`. Failed messages are counted wherever they sit: which transports are failure transports
- * comes from the metadata Symfony puts on them, collected by {@see MessengerFailureTransportsPass},
- * never from their names.
+ * into `other`. Failed messages are not singled out: which transports are failure transports is
+ * compile-time metadata Symfony does not expose at runtime, and a name is no proof, so their messages
+ * simply count as waiting like any other.
  *
  * @internal
  */
@@ -67,7 +66,6 @@ final readonly class QueueCollector implements SnapshotCollectorInterface
 
     /**
      * @param ServiceProviderInterface<object> $transports every messenger transport, keyed by its name
-     * @param string[] $failureTransports the names Symfony marked as failure transports
      */
     public function __construct(
         #[AutowireLocator('messenger.receiver', indexAttribute: 'alias')]
@@ -75,8 +73,6 @@ final readonly class QueueCollector implements SnapshotCollectorInterface
         private CountMapInterface $countMap,
         #[Autowire('%pimcore.messenger.transport_dsn_prefix%')]
         private string $transportDsnPrefix,
-        #[Autowire('%pimcore.telemetry.messenger_failure_transports%')]
-        private array $failureTransports = [],
     ) {
     }
 
@@ -116,7 +112,6 @@ final readonly class QueueCollector implements SnapshotCollectorInterface
     {
         $byQueue = [];
         $total = 0;
-        $failed = 0;
         $counted = false;
 
         foreach (array_keys($this->transports->getProvidedServices()) as $name) {
@@ -135,10 +130,6 @@ final readonly class QueueCollector implements SnapshotCollectorInterface
             $counted = true;
             $total += $count;
 
-            if ($this->isFailureQueue($name)) {
-                $failed += $count;
-            }
-
             $key = $this->queueKey($name);
             $byQueue[$key] = ($byQueue[$key] ?? 0) + $count;
         }
@@ -150,13 +141,7 @@ final readonly class QueueCollector implements SnapshotCollectorInterface
         return [
             'depth_total' => $total,
             'depth_by_queue' => $this->countMap->ranked($byQueue),
-            'failed_count' => $failed,
         ];
-    }
-
-    private function isFailureQueue(string $queue): bool
-    {
-        return in_array($queue, $this->failureTransports, true);
     }
 
     private function queueKey(string $queue): string
