@@ -4,7 +4,46 @@
 
 ### [Database]
 - [Doctrine] The shipped `doctrine.dbal.connections.default.default_table_options` used the key `collate`, which Doctrine DBAL 4 (in use since Pimcore 12.0) silently ignores in favour of `collation`. As a result, every table created through the Doctrine schema API - bundle installers and migrations working on the `Schema` object, the ORM schema tool - was created with `DEFAULT CHARSET=utf8mb4` but **without** a `COLLATE` clause, so MySQL/MariaDB applied the charset's built-in default collation (`utf8mb4_general_ci` on MariaDB / MySQL 5.7, `utf8mb4_0900_ai_ci` on MySQL 8) instead of the configured `utf8mb4_unicode_520_ci`. The key is now `collation`, so newly created tables get the configured collation again. The `webdav_locks` table in `install.sql` also received the missing `COLLATE` clause.
-  Existing tables are **not** changed automatically. Known affected tables on installations set up or upgraded since Pimcore 12.0 are the ones created by bundle installers, e.g. `bundle_studio_*` and `translations_studio` (Studio backend), `generic_execution_engine_*`, the Generic Data Index, Backend Power Tools and Portal Engine tables, as well as `webdav_locks`. A mismatch only matters when string columns of differently collated tables are compared directly (`Illegal mix of collations`) or when consistent sorting across tables is required; adapting existing tables is therefore optional. Use the queries from the [2026.1.0 "Tasks to Do Prior the Update"](#tasks-to-do-prior-the-update) section to list tables and columns still using the charset default collation and to generate the `ALTER TABLE` statements. Do **not** convert columns that intentionally use a different collation (e.g. `utf8mb4_bin` for case-sensitive keys and JSON data - the Studio grid and saved-search configuration tables contain such columns). Run the statements in a maintenance window; large tables are rewritten.
+  Existing tables are **not** changed automatically. Known affected tables on installations set up or upgraded since Pimcore 12.0 are the ones created by bundle installers, e.g. `bundle_studio_*` and `translations_studio` (Studio backend), `generic_execution_engine_*`, the Generic Data Index, Backend Power Tools and Portal Engine tables, as well as `webdav_locks`. A mismatch only matters when string columns of differently collated tables are compared directly (`Illegal mix of collations`) or when consistent sorting across tables is required; adapting existing tables is therefore optional. Use the detection queries from the [2026.1.0 "Tasks to Do Prior the Update"](#tasks-to-do-prior-the-update) section to list tables and columns still using the charset default collation, and the queries below to generate the `ALTER TABLE` statements. Do **not** convert columns that intentionally use a different collation (e.g. `utf8mb4_bin` for case-sensitive keys and JSON data - the Studio grid and saved-search configuration tables contain such columns); the generators below exclude them by only matching the default collations and by handling mixed tables column by column. Review the generated statements before running them in a maintenance window; `CONVERT TO` and `MODIFY` rewrite the table.
+    ```sql
+    -- 1) Table default collation (metadata only, affects columns added later)
+    SELECT CONCAT('ALTER TABLE `', TABLE_NAME, '` DEFAULT COLLATE utf8mb4_unicode_520_ci;')
+    FROM INFORMATION_SCHEMA.TABLES
+    WHERE TABLE_SCHEMA = 'your_database_name' AND TABLE_TYPE = 'BASE TABLE'
+      AND TABLE_COLLATION IN ('utf8mb4_general_ci', 'utf8mb4_0900_ai_ci')
+    ORDER BY TABLE_NAME;
+
+    -- 2) Whole-table conversion, only for tables where every string column uses a default collation
+    SELECT CONCAT('ALTER TABLE `', t.TABLE_NAME, '` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;')
+    FROM INFORMATION_SCHEMA.TABLES t
+    WHERE t.TABLE_SCHEMA = 'your_database_name' AND t.TABLE_TYPE = 'BASE TABLE'
+      AND t.TABLE_COLLATION IN ('utf8mb4_general_ci', 'utf8mb4_0900_ai_ci')
+      AND NOT EXISTS (
+          SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS c
+          WHERE c.TABLE_SCHEMA = t.TABLE_SCHEMA AND c.TABLE_NAME = t.TABLE_NAME
+            AND c.COLLATION_NAME IS NOT NULL
+            AND c.COLLATION_NAME NOT IN ('utf8mb4_general_ci', 'utf8mb4_0900_ai_ci')
+      )
+    ORDER BY t.TABLE_NAME;
+
+    -- 3) Column-level statements for the remaining tables that also contain intentionally different collations.
+    --    DEFAULT / ON UPDATE / COMMENT clauses are not reproduced: check COLUMN_DEFAULT and EXTRA and add them manually.
+    SELECT CONCAT('ALTER TABLE `', c.TABLE_NAME, '` MODIFY `', c.COLUMN_NAME, '` ', c.COLUMN_TYPE,
+                  ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci',
+                  IF(c.IS_NULLABLE = 'NO', ' NOT NULL', ' NULL'), ';') AS statement,
+           c.COLUMN_DEFAULT, c.EXTRA
+    FROM INFORMATION_SCHEMA.COLUMNS c
+    JOIN INFORMATION_SCHEMA.TABLES t ON t.TABLE_SCHEMA = c.TABLE_SCHEMA AND t.TABLE_NAME = c.TABLE_NAME AND t.TABLE_TYPE = 'BASE TABLE'
+    WHERE c.TABLE_SCHEMA = 'your_database_name'
+      AND c.COLLATION_NAME IN ('utf8mb4_general_ci', 'utf8mb4_0900_ai_ci')
+      AND EXISTS (
+          SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS o
+          WHERE o.TABLE_SCHEMA = c.TABLE_SCHEMA AND o.TABLE_NAME = c.TABLE_NAME
+            AND o.COLLATION_NAME IS NOT NULL
+            AND o.COLLATION_NAME NOT IN ('utf8mb4_general_ci', 'utf8mb4_0900_ai_ci')
+      )
+    ORDER BY c.TABLE_NAME, c.ORDINAL_POSITION;
+    ```
 
 ## Pimcore 2026.2.12
 
