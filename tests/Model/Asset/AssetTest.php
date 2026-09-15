@@ -692,4 +692,65 @@ class AssetTest extends ModelTestCase
             'an empty file that exists in storage must not be reported as a placeholder'
         );
     }
+
+    /**
+     * Regression test for GHSA-4xrp-5ggg-fg5p: correctPath() must rename filenames that would be
+     * served with an executable/active content-type (HTML, JS, and versioned PHP suffixes) to a
+     * harmless ".txt" extension, the same way it already does for plain ".php" and ".htaccess".
+     */
+    public function testCorrectPathRewritesActiveContentTypeExtensions(): void
+    {
+        $dangerousNames = [
+            'xss.html',
+            'xss.htm',
+            'xss.xhtml',
+            'xss.js',
+            'xss.mjs',
+            'shell.php80',
+            'shell.php8.2',
+        ];
+
+        foreach ($dangerousNames as $filename) {
+            $asset = new Asset();
+            $asset->setParentId(1);
+            $asset->setUserOwner(1);
+            $asset->setUserModification(1);
+            $asset->setFilename(uniqid() . '-' . $filename);
+            $asset->setData('<script>document.title="xss"</script>');
+            $asset->save();
+
+            $this->assertStringEndsWith(
+                $filename . '.txt',
+                $asset->getFilename(),
+                "Filename '$filename' must be rewritten with a '.txt' suffix so it is never served as active content."
+            );
+        }
+    }
+
+    public function testCorrectPathKeepsLegitimateExtensionsUnchanged(): void
+    {
+        $safeNames = [
+            'picture.jpg',
+            'document.pdf',
+            'report.txt',
+            'vector.svg',
+        ];
+
+        foreach ($safeNames as $filename) {
+            $asset = new Asset();
+            $asset->setParentId(1);
+            $asset->setUserOwner(1);
+            $asset->setUserModification(1);
+            $uniqueFilename = uniqid() . '-' . $filename;
+            $asset->setFilename($uniqueFilename);
+            $asset->setData('some content');
+            $asset->save();
+
+            $this->assertSame(
+                $uniqueFilename,
+                $asset->getFilename(),
+                "Legitimate filename '$filename' must not be altered by correctPath()."
+            );
+        }
+    }
 }
