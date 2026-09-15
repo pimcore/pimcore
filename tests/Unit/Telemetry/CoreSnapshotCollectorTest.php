@@ -17,9 +17,12 @@ namespace Pimcore\Tests\Unit\Telemetry;
 use Doctrine\DBAL\Connection;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Telemetry\Snapshot\ActiveBundles;
+use Pimcore\Telemetry\Snapshot\CacheAdapterKind;
 use Pimcore\Telemetry\Snapshot\CoreSnapshotCollector;
 use Pimcore\Telemetry\Snapshot\SnapshotQueryRunner;
 use Pimcore\Tests\Support\Test\TestCase;
+use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use function count;
 use function is_string;
 use function sprintf;
@@ -212,10 +215,21 @@ class CoreSnapshotCollectorTest extends TestCase
         $this->assertIsString($this->collector()->collect()['pimcore_git_hash']);
     }
 
+    /**
+     * The cache adapter arrives as a kind through {@see \Pimcore\Telemetry\Snapshot\CacheAdapterKind};
+     * without a wired pool the key is unknown and absent.
+     */
+    public function testReportsTheCacheAdapterKindAndOmitsItWithoutAPool(): void
+    {
+        $this->assertSame('array', $this->collector(cachePool: new ArrayAdapter())->collect()['cache_adapter'] ?? null);
+        $this->assertArrayNotHasKey('cache_adapter', $this->collector()->collect());
+    }
+
     private function collector(
         string $environment = 'prod',
         bool $debugMode = false,
         string $timezone = '',
+        ?CacheItemPoolInterface $cachePool = null,
     ): CoreSnapshotCollector {
         $this->executedSql = [];
 
@@ -235,9 +249,11 @@ class CoreSnapshotCollectorTest extends TestCase
         return new CoreSnapshotCollector(
             new ActiveBundles($bundleManager),
             new SnapshotQueryRunner($connection, 0),
+            new CacheAdapterKind(),
             $environment,
             $debugMode,
             $timezone,
+            $cachePool,
         );
     }
 }

@@ -18,9 +18,15 @@ use Doctrine\DBAL\Connection;
 use Pimcore\Telemetry\Snapshot\PlatformCollector;
 use Pimcore\Telemetry\Snapshot\SnapshotQueryRunner;
 use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Workflow\GlobalAction;
 use Pimcore\Workflow\Manager;
 use RuntimeException;
+use Symfony\Component\Workflow\Definition;
+use Symfony\Component\Workflow\Transition;
+use Symfony\Component\Workflow\WorkflowInterface;
+use function array_fill;
 use function array_filter;
+use function array_key_exists;
 use function is_string;
 use function preg_match;
 use function preg_quote;
@@ -32,6 +38,14 @@ class PlatformCollectorTest extends TestCase
      * @var list<string>
      */
     private array $executedSql = [];
+
+    private const SHAPE_KEYS = [
+        'workflow_place_count',
+        'workflow_transition_count',
+        'workflow_start_place_count',
+        'workflow_end_place_count',
+        'workflow_global_action_count',
+    ];
 
     public function testNamespaceIsPlatform(): void
     {
@@ -158,12 +172,104 @@ class PlatformCollectorTest extends TestCase
     }
 
     /**
+     * Workflow shape: the definitions summed over every configured workflow. A start place is an initial
+     * marking, an end place is a place no transition leaves.
+     */
+    public function testReportsTheWorkflowShape(): void
+    {
+        $metrics = $this->collector(
+            workflows: ['product_approval', 'asset_review'],
+            definitions: [
+                'product_approval' => new Definition(
+                    ['draft', 'review', 'published', 'rejected'],
+                    [
+                        new Transition('submit', 'draft', 'review'),
+                        new Transition('approve', 'review', 'published'),
+                        new Transition('reject', 'review', 'rejected'),
+                        new Transition('rework', 'rejected', 'draft'),
+                    ],
+                    'draft',
+                ),
+                'asset_review' => new Definition(['new', 'checked'], [new Transition('check', 'new', 'checked')]),
+            ],
+            globalActions: ['product_approval' => 2],
+        )->collect();
+
+        $this->assertSame(6, $metrics['workflow_place_count'] ?? null);
+        $this->assertSame(5, $metrics['workflow_transition_count'] ?? null);
+        $this->assertSame(2, $metrics['workflow_start_place_count'] ?? null);
+        // `published` and `checked`: no transition leaves them
+        $this->assertSame(2, $metrics['workflow_end_place_count'] ?? null);
+        $this->assertSame(2, $metrics['workflow_global_action_count'] ?? null);
+    }
+
+    /**
+     * Several initial markings are several start places, and a place that nothing leaves is an end place
+     * even when it is also a start.
+     */
+    public function testEveryInitialMarkingIsAStartAndEveryPlaceNothingLeavesIsAnEnd(): void
+    {
+        $metrics = $this->collector(
+            definitions: [
+                'product_approval' => new Definition(
+                    ['inbox', 'archive', 'done'],
+                    [new Transition('finish', 'inbox', 'done')],
+                    ['inbox', 'archive'],
+                ),
+            ],
+        )->collect();
+
+        $this->assertSame(2, $metrics['workflow_start_place_count'] ?? null);
+        // `archive` and `done`
+        $this->assertSame(2, $metrics['workflow_end_place_count'] ?? null);
+    }
+
+    /**
+     * The shape is all-or-nothing: one workflow whose service cannot be resolved makes every shape sum
+     * unknown, because a partial sum would read as a smaller installation. The reach counts stand.
+     */
+    public function testAnUnloadableWorkflowLeavesTheWholeShapeUnknown(): void
+    {
+        $metrics = $this->collector(
+            workflows: ['product_approval', 'asset_review'],
+            definitions: ['asset_review' => null],
+        )->collect();
+
+        $this->assertSame(2, $metrics['workflow_configured_count']);
+        $this->assertArrayHasKey('workflow_active_element_count', $metrics);
+        foreach (self::SHAPE_KEYS as $key) {
+            $this->assertArrayNotHasKey($key, $metrics);
+        }
+    }
+
+    /**
+     * With no workflows configured there is no shape to report, only the zero.
+     */
+    public function testNoShapeIsReportedWhenNoWorkflowsAreConfigured(): void
+    {
+        $metrics = $this->collector(workflows: [])->collect();
+
+        foreach (self::SHAPE_KEYS as $key) {
+            $this->assertArrayNotHasKey($key, $metrics);
+        }
+    }
+
+    /**
      * `element_workflow_state.workflow` holds customer-chosen workflow names, so only the DISTINCT
      * count may be emitted. Nothing in this namespace may be a string.
      */
     public function testNoWorkflowNameCanLeak(): void
     {
-        $metrics = $this->collector(workflows: ['secret_project_gate'])->collect();
+        $metrics = $this->collector(
+            workflows: ['secret_project_gate'],
+            definitions: [
+                'secret_project_gate' => new Definition(
+                    ['secret_place_a', 'secret_place_b'],
+                    [new Transition('secret_transition', 'secret_place_a', 'secret_place_b')],
+                ),
+            ],
+            globalActions: ['secret_project_gate' => 1],
+        )->collect();
 
         foreach ($metrics as $key => $value) {
             $this->assertIsInt($value, "metric '$key' must be an int");
@@ -297,11 +403,19 @@ class PlatformCollectorTest extends TestCase
      * @param array<string, int> $overrides replacement counts, by table
      * @param list<string>       $workflows configured workflow names
      */
+    /**
+     * @param array<string, Definition|null> $definitions workflow name => definition; null stands for a
+     *        workflow whose service the container cannot resolve. Workflows without an entry get a
+     *        two-place definition so the shape is always computable unless a test says otherwise.
+     * @param array<string, int> $globalActions workflow name => number of configured global actions
+     */
     private function collector(
         ?string $failFor = null,
         array $overrides = [],
         array $workflows = ['product_approval'],
         bool $failWorkflowManager = false,
+        array $definitions = [],
+        array $globalActions = [],
     ): PlatformCollector {
         $this->executedSql = [];
 
@@ -328,6 +442,27 @@ class PlatformCollectorTest extends TestCase
         } else {
             $manager->method('getAllWorkflows')->willReturn($workflows);
         }
+        $manager->method('getWorkflowByName')->willReturnCallback(
+            function (string $name) use ($definitions): ?WorkflowInterface {
+                $definition = array_key_exists($name, $definitions)
+                    ? $definitions[$name]
+                    : new Definition(['open', 'closed'], [new Transition('close', 'open', 'closed')]);
+                if ($definition === null) {
+                    return null;
+                }
+                $workflow = $this->createStub(WorkflowInterface::class);
+                $workflow->method('getDefinition')->willReturn($definition);
+
+                return $workflow;
+            }
+        );
+        $manager->method('getGlobalActions')->willReturnCallback(
+            fn (string $name): array => array_fill(
+                0,
+                $globalActions[$name] ?? 0,
+                $this->createStub(GlobalAction::class),
+            )
+        );
 
         $connection = $this->createMock(Connection::class);
         $connection->method('quoteIdentifier')->willReturnArgument(0);

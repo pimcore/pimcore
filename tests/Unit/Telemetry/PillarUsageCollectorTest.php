@@ -17,12 +17,14 @@ namespace Pimcore\Tests\Unit\Telemetry;
 use Doctrine\DBAL\Connection;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Telemetry\Snapshot\ActiveBundles;
+use Pimcore\Telemetry\Snapshot\CountMap;
 use Pimcore\Telemetry\Snapshot\ElementTypeCounts;
 use Pimcore\Telemetry\Snapshot\PillarUsageCollector;
 use Pimcore\Telemetry\Snapshot\SnapshotQueryRunner;
 use Pimcore\Telemetry\Snapshot\Statistics\ElementKind;
 use Pimcore\Telemetry\Snapshot\Statistics\ElementStatisticsProviderInterface;
 use Pimcore\Tests\Support\Test\TestCase;
+use RuntimeException;
 use function str_contains;
 
 // Stub bundles whose short class name carries the needle the collector matches on.
@@ -35,6 +37,18 @@ class PillarStubDataHubBundle
 
 class PillarUsageCollectorTest extends TestCase
 {
+    private const MIMETYPES = [
+        'image/jpeg' => 20,
+        'image/png' => 10,
+        'video/mp4' => 5,
+        'application/pdf' => 4,
+    ];
+
+    private const MIMETYPE_KEY = '#^([a-z0-9][a-z0-9!\#$&^_.+-]*/[a-z0-9][a-z0-9!\#$&^_.+-]*'
+        . '|unknown|other)$#';
+
+    private string $breakdownSql = '';
+
     public function testNamespaceIsPillars(): void
     {
         $this->assertSame('pillars', $this->collector([])->getNamespace());
@@ -66,6 +80,15 @@ class PillarUsageCollectorTest extends TestCase
         $this->assertSame(1, $metrics['site_count']);
 
         foreach ($metrics as $key => $value) {
+            if ($key === 'asset_mimetype_breakdown') {
+                // the one map in this namespace: normalised mime-type tokens => counts, nothing else
+                foreach ($value as $mimetype => $count) {
+                    $this->assertMatchesRegularExpression(self::MIMETYPE_KEY, $mimetype);
+                    $this->assertIsInt($count);
+                }
+
+                continue;
+            }
             $this->assertIsScalar($value, "metric '$key' must be scalar");
         }
     }
@@ -129,8 +152,70 @@ class PillarUsageCollectorTest extends TestCase
         );
     }
 
-    private function collector(array $activeBundles): PillarUsageCollector
+    /**
+     * The mime-type breakdown refines the per-type asset counts: values are normalised `type/subtype`
+     * tokens, an empty mime type reads as `unknown`, and the query itself leaves folders out.
+     */
+    public function testReportsTheMimeTypeBreakdownNormalised(): void
     {
+        $metrics = $this->collector(
+            mimetypes: ['image/jpeg' => 20, ' IMAGE/PNG' => 10, 'video/mp4' => 5, '' => 2],
+        )->collect();
+
+        $this->assertSame(
+            ['image/jpeg' => 20, 'image/png' => 10, 'video/mp4' => 5, 'unknown' => 2],
+            $metrics['asset_mimetype_breakdown'] ?? null,
+        );
+        $this->assertStringContainsString("type <> 'folder'", $this->breakdownSql);
+        $this->assertStringContainsString('GROUP BY mimetype', $this->breakdownSql);
+    }
+
+    /**
+     * The map stays bounded: the forty most frequent types are named, the tail is one `other` figure.
+     */
+    public function testTheBreakdownIsCappedAtFortyTypesPlusOther(): void
+    {
+        $rows = [];
+        for ($i = 1; $i <= 45; $i++) {
+            $rows['application/x-type-' . $i] = 100 - $i;
+        }
+
+        $breakdown = $this->collector(mimetypes: $rows)->collect()['asset_mimetype_breakdown'] ?? [];
+
+        $this->assertCount(41, $breakdown);
+        $this->assertArrayHasKey('application/x-type-40', $breakdown);
+        $this->assertArrayNotHasKey('application/x-type-41', $breakdown);
+        $this->assertSame(59 + 58 + 57 + 56 + 55, $breakdown['other']);
+    }
+
+    /**
+     * Whatever is not a `type/subtype` token is counted under `other`, never echoed.
+     */
+    public function testAValueThatIsNotAMimeTypeIsFoldedIntoOther(): void
+    {
+        $metrics = $this->collector(
+            mimetypes: ['image/jpeg' => 3, 'not a mime type' => 2, 'text/html; charset=utf-8' => 1],
+        )->collect();
+
+        $this->assertSame(['image/jpeg' => 3, 'other' => 3], $metrics['asset_mimetype_breakdown'] ?? null);
+    }
+
+    public function testAFailedBreakdownQueryOmitsTheKeyRatherThanReportingAnEmptyMap(): void
+    {
+        $metrics = $this->collector(failMimetypes: true)->collect();
+
+        $this->assertArrayNotHasKey('asset_mimetype_breakdown', $metrics);
+        $this->assertSame(42, $metrics['asset_count'], 'the rest of the namespace is unaffected');
+    }
+
+    /**
+     * @param array<string, int> $mimetypes what the GROUP BY returns, mime type => count
+     */
+    private function collector(
+        array $activeBundles = [],
+        array $mimetypes = self::MIMETYPES,
+        bool $failMimetypes = false,
+    ): PillarUsageCollector {
         $statistics = $this->createMock(ElementStatisticsProviderInterface::class);
         $statistics->method('typeCounts')->willReturnCallback(
             static fn (ElementKind $kind): ElementTypeCounts => match ($kind) {
@@ -150,6 +235,17 @@ class PillarUsageCollectorTest extends TestCase
                 default => 0,
             }
         );
+        $connection->method('fetchAllKeyValue')->willReturnCallback(
+            function (string $sql) use ($mimetypes, $failMimetypes): array {
+                $this->breakdownSql = $sql;
+                if ($failMimetypes) {
+                    // stands in for what the per-statement timeout surfaces as
+                    throw new RuntimeException('max_statement_time exceeded');
+                }
+
+                return $mimetypes;
+            }
+        );
 
         $bundleManager = $this->createMock(PimcoreBundleManager::class);
         $bundleManager->method('getActiveBundles')->willReturn($activeBundles);
@@ -158,6 +254,7 @@ class PillarUsageCollectorTest extends TestCase
             new ActiveBundles($bundleManager),
             new SnapshotQueryRunner($connection, 0),
             $statistics,
+            new CountMap(),
         );
     }
 }

@@ -17,6 +17,10 @@ use Exception;
 use Pimcore\Telemetry\Snapshot\Statistics\ElementKind;
 use Pimcore\Telemetry\Snapshot\Statistics\ElementStatisticsProviderInterface;
 use function is_numeric;
+use function is_string;
+use function preg_match;
+use function strtolower;
+use function trim;
 
 /**
  * Evidence for "which Pimcore pillars does each customer actually use?" (EM question #1).
@@ -44,10 +48,18 @@ final readonly class PillarUsageCollector implements SnapshotCollectorInterface
 {
     private const SCHEMA_VERSION = 1;
 
+    private const MIMETYPE_LIMIT = 40;
+
+    /**
+     * `type/subtype` as RFC 2045 spells it, lower-cased; no parameters, no spaces.
+     */
+    private const MIMETYPE_TOKEN = '#^[a-z0-9][a-z0-9!\#$&^_.+-]*/[a-z0-9][a-z0-9!\#$&^_.+-]*$#';
+
     public function __construct(
         private ActiveBundles $activeBundles,
         private SnapshotQueryRunner $queryRunner,
         private ElementStatisticsProviderInterface $statistics,
+        private CountMapInterface $countMap,
     ) {
     }
 
@@ -64,7 +76,7 @@ final readonly class PillarUsageCollector implements SnapshotCollectorInterface
         $objects = $this->statistics->typeCounts(ElementKind::DataObject);
         $documents = $this->statistics->typeCounts(ElementKind::Document);
 
-        return [
+        $metrics = [
             'schema_version' => self::SCHEMA_VERSION,
 
             // DAM - digital asset volume and the variety of rich-media types managed.
@@ -106,6 +118,53 @@ final readonly class PillarUsageCollector implements SnapshotCollectorInterface
             // Integration - Data Hub as a cross-cutting maturity signal (see also question #5).
             'datahub_bundle_active' => $this->activeBundles->has('DataHub'),
         ];
+
+        $breakdown = $this->mimeTypeBreakdown();
+        if ($breakdown !== null) {
+            $metrics['asset_mimetype_breakdown'] = $breakdown;
+        }
+
+        return $metrics;
+    }
+
+    /**
+     * Exact mime types behind the per-type asset counts, as normalised `type/subtype` tokens: an empty
+     * mime type reads as `unknown`, anything that is not a token as `other`, and the map is capped at the
+     * most frequent {@see self::MIMETYPE_LIMIT} types with the tail summed into `other`. Folders carry no
+     * mime type and are left out by the query. Unknown (key omitted) when the query fails - an empty map
+     * would read as an installation without assets.
+     *
+     * @return array<string, int>|null
+     */
+    private function mimeTypeBreakdown(): ?array
+    {
+        try {
+            $rows = $this->queryRunner->fetchAllKeyValue(
+                'SELECT mimetype, COUNT(*) FROM ' . $this->queryRunner->quoteIdentifier('assets')
+                . " WHERE type <> 'folder' GROUP BY mimetype"
+            );
+        } catch (Exception) {
+            return null;
+        }
+
+        $counts = [];
+        foreach ($rows as $mimetype => $count) {
+            $key = $this->mimeTypeKey($mimetype);
+            $counts[$key] = ($counts[$key] ?? 0) + (int) $count;
+        }
+
+        return $this->countMap->ranked($counts, self::MIMETYPE_LIMIT);
+    }
+
+    private function mimeTypeKey(mixed $mimetype): string
+    {
+        if (!is_string($mimetype) || trim($mimetype) === '') {
+            return 'unknown';
+        }
+
+        $token = strtolower(trim($mimetype));
+
+        return preg_match(self::MIMETYPE_TOKEN, $token) === 1 ? $token : 'other';
     }
 
     /**
