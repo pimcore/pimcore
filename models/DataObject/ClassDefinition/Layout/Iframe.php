@@ -31,13 +31,13 @@ class Iframe extends Model\DataObject\ClassDefinition\Layout implements LayoutDe
      * @internal
      *
      */
-    public string $iframeUrl;
+    public string $iframeUrl = '';
 
     /**
      * @internal
      *
      */
-    public string $renderingData;
+    public string $renderingData = '';
 
     public function getIframeUrl(): string
     {
