@@ -30,6 +30,7 @@ use function array_key_exists;
 use function is_string;
 use function preg_match;
 use function preg_quote;
+use function rtrim;
 use function str_contains;
 
 class PlatformCollectorTest extends TestCase
@@ -127,7 +128,8 @@ class PlatformCollectorTest extends TestCase
 
     /**
      * Versioning volume and relation-graph density are the two biggest storage drivers on a mature
-     * install and neither was collected before.
+     * install. Both are information_schema estimates (see PlatformCollector::rowEstimate); the test
+     * fakes the estimate, so the assertion is on plumbing, not precision.
      */
     public function testReportsOperationalVolume(): void
     {
@@ -143,17 +145,48 @@ class PlatformCollectorTest extends TestCase
     }
 
     /**
-     * These are the counts most likely to hit the statement timeout, because they are unbounded. An
-     * absent key says "too large to count in budget", which is information; a wrong integer is not.
-     * Losing one must not cost the others.
+     * An estimate that cannot be obtained - the table is absent (search_backend_data on an install
+     * without the legacy search bundle), or the driver fails - omits its key. Losing one must not cost
+     * the others, and an absent key must never become 0.
      */
-    public function testATimedOutVolumeCountIsOmittedWithoutLosingTheRest(): void
+    public function testAnUnavailableVolumeEstimateIsOmittedWithoutLosingTheRest(): void
     {
         $metrics = $this->collector(failFor: 'versions')->collect();
 
         $this->assertArrayNotHasKey('version_count', $metrics);
         $this->assertArrayHasKey('dependency_count', $metrics);
         $this->assertArrayHasKey('user_count', $metrics);
+    }
+
+
+    public function testUnboundedVolumeTablesAreEstimatedWithAFixedNameNotScanned(): void
+    {
+        $this->collector()->collect();
+
+        foreach (['versions', 'dependencies', 'search_backend_data'] as $table) {
+            $scans = array_filter(
+                $this->executedSql,
+                static fn (string $sql): bool => preg_match(
+                    '/COUNT\(\*\)\s+FROM\s+`?' . preg_quote($table, '/') . '`?\b/',
+                    $sql,
+                ) === 1,
+            );
+            $this->assertSame([], $scans, "$table must not be scanned with COUNT(*)");
+
+            $estimates = array_filter(
+                $this->executedSql,
+                static fn (string $sql): bool => str_contains($sql, 'TABLE_ROWS')
+                    && str_contains($sql, "TABLE_NAME = '$table'"),
+            );
+            $this->assertCount(1, $estimates, "$table must be estimated exactly once");
+
+            foreach ($estimates as $sql) {
+                $this->assertStringContainsString('TABLE_SCHEMA = DATABASE()', $sql);
+                $this->assertMatchesRegularExpression("/TABLE_NAME = '[a-z_]+'$/", rtrim($sql));
+                $this->assertStringNotContainsString('LIKE', $sql);
+                $this->assertStringNotContainsString('SELECT TABLE_NAME', $sql);
+            }
+        }
     }
 
     /**
@@ -400,10 +433,8 @@ class PlatformCollectorTest extends TestCase
     }
 
     /**
-     * @param array<string, int> $overrides replacement counts, by table
-     * @param list<string>       $workflows configured workflow names
-     */
-    /**
+     * @param array<string, int> $overrides     replacement counts, by table
+     * @param list<string>       $workflows     configured workflow names
      * @param array<string, Definition|null> $definitions workflow name => definition; null stands for a
      *        workflow whose service the container cannot resolve. Workflows without an entry get a
      *        two-place definition so the shape is always computable unless a test says otherwise.
@@ -477,6 +508,15 @@ class PlatformCollectorTest extends TestCase
 
                 if (str_contains($sql, 'SUM(data_length')) {
                     return 26_214_400; // 25 MiB
+                }
+
+                if (str_contains($sql, 'TABLE_ROWS')) {
+                    // information_schema row estimate for one fixed-name table
+                    if (preg_match("/TABLE_NAME = '([a-z_]+)'/", $sql, $m) !== 1) {
+                        throw new RuntimeException('estimate query must name exactly one table: ' . $sql);
+                    }
+
+                    return $counts[$m[1]] ?? false; // false: table does not exist
                 }
 
                 if (str_contains($sql, 'information_schema')) {
