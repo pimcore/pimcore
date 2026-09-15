@@ -20,15 +20,16 @@ use Pimcore\Model\Asset\Image\Thumbnail\Config\Listing as ImageListing;
 use Pimcore\Model\Asset\Video\Thumbnail\Config as VideoConfig;
 use Pimcore\Model\Asset\Video\Thumbnail\Config\Listing as VideoListing;
 use function count;
+use function is_array;
 use function preg_match;
 use function strtoupper;
 use function trim;
 
 /**
  * The `thumbnails.*` namespace: how elaborate the installation's thumbnail set-up is - how many image and
- * video configurations exist, which output formats they target, how many transformations they chain and
- * how many branch on media queries. The generated files themselves are not counted: that is a walk over
- * the thumbnail storage, not a configuration read.
+ * video configurations exist, which output formats they target, how many transformations they chain -
+ * default chain and media-query chains alike - and how many branch on media queries. The generated files
+ * themselves are not counted: that is a walk over the thumbnail storage, not a configuration read.
  *
  * Both listings read the configuration store only (settings store or `var/config`), nothing is written.
  * They are independent probes: a listing that cannot be read leaves its own keys unknown and the other
@@ -111,6 +112,12 @@ final readonly class ThumbnailsCollector implements SnapshotCollectorInterface
             $format = $this->formatKey($config->getFormat());
             $formats[$format] = ($formats[$format] ?? 0) + 1;
             $transformations += count($config->getItems());
+
+            // a responsive preset carries one more chain per media query; those steps run just like the
+            // default chain once the media query matches, so they count as transformations too
+            foreach ($config->getMedias() as $items) {
+                $transformations += is_array($items) ? count($items) : 0;
+            }
 
             if ($config->getMedias() !== []) {
                 $withMediaQueries++;

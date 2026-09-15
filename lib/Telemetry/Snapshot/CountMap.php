@@ -35,17 +35,34 @@ final readonly class CountMap implements CountMapInterface
      */
     public function ranked(array $counts, int $limit = PHP_INT_MAX, string $otherKey = 'other'): array
     {
-        uksort($counts, static fn (string $a, string $b): int => ($counts[$b] <=> $counts[$a]) ?: strcmp($a, $b));
+        // the residual never competes for a named slot: it is set aside, receives the tail, and is
+        // ranked with the rest at the end
+        $residual = $counts[$otherKey] ?? 0;
+        unset($counts[$otherKey]);
 
-        if (count($counts) <= $limit) {
-            return $counts;
+        $named = $this->rank($counts);
+
+        if (count($named) > $limit) {
+            $residual += array_sum(array_slice($named, $limit, null, true));
+            $named = array_slice($named, 0, $limit, true);
         }
 
-        $kept = array_slice($counts, 0, $limit, true);
-        $other = array_sum(array_slice($counts, $limit, null, true)) + ($kept[$otherKey] ?? 0);
-        unset($kept[$otherKey]);
-        $kept[$otherKey] = $other;
+        if ($residual > 0) {
+            $named[$otherKey] = $residual;
+        }
 
-        return $kept;
+        return $this->rank($named);
+    }
+
+    /**
+     * @param array<string, int> $counts
+     *
+     * @return array<string, int>
+     */
+    private function rank(array $counts): array
+    {
+        uksort($counts, static fn (string $a, string $b): int => ($counts[$b] <=> $counts[$a]) ?: strcmp($a, $b));
+
+        return $counts;
     }
 }

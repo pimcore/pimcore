@@ -35,7 +35,7 @@ use function is_numeric;
  */
 final readonly class PlatformCollector implements SnapshotCollectorInterface
 {
-    private const SCHEMA_VERSION = 1;
+    private const SCHEMA_VERSION = 2;
 
     private WorkflowShape $workflowShape;
 

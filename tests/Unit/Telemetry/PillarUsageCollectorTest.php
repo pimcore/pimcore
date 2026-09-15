@@ -75,7 +75,7 @@ class PillarUsageCollectorTest extends TestCase
         $this->assertSame(70, $metrics['document_total_count']); // 60 pages + 5 emails + 5 links
 
         // Low-cardinality facts (classes/sites) still come from a direct count.
-        $this->assertSame(1, $metrics['schema_version']);
+        $this->assertSame(2, $metrics['schema_version']);
         $this->assertSame(20, $metrics['class_count']);
         $this->assertSame(1, $metrics['site_count']);
 

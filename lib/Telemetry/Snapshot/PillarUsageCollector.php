@@ -46,7 +46,7 @@ use function trim;
  */
 final readonly class PillarUsageCollector implements SnapshotCollectorInterface
 {
-    private const SCHEMA_VERSION = 1;
+    private const SCHEMA_VERSION = 2;
 
     private const MIMETYPE_LIMIT = 40;
 

@@ -70,27 +70,29 @@ class QueueCollectorTest extends TestCase
 
         $this->assertSame(10, $metrics['depth_total'] ?? null);
         $this->assertSame(
-            ['pimcore_asset_update' => 5, 'pimcore_core' => 3, 'pimcore_generic_data_index_failed' => 2],
+            ['pimcore_asset_update' => 5, 'pimcore_core' => 3, 'other' => 2],
             $metrics['depth_by_queue'] ?? null,
-            'ranked by depth, ties by name',
+            'ranked by depth, ties by name; a bundle queue is not core and folds into other',
         );
         $this->assertSame(2, $metrics['failed_count'] ?? null);
         $this->assertArrayNotHasKey('oldest_message_age_s', $metrics, 'the age was dropped on purpose');
     }
 
     /**
-     * Queue names are configuration, but a project's own names can carry its vocabulary: only
-     * Pimcore's `pimcore_*` queues and Symfony's conventional `failed` transport are named, the rest
-     * is one `other` figure. Failed messages are counted wherever they sit.
+     * Only the transports core itself configures and Symfony's conventional `failed` transport are
+     * named. A `pimcore_` prefix is no proof of ownership - a project can call its own queue
+     * `pimcore_customer_import` - so everything else, bundle or project, is one `other` figure.
+     * Failed messages are counted wherever they sit.
      */
-    public function testQueueNamesOutsideThePimcoreNamespaceAreCountedButNeverNamed(): void
+    public function testOnlyCoreQueuesAndTheFailedTransportAreNamed(): void
     {
         $metrics = $this->collector(
-            queues: ['pimcore_core' => 1, 'acme_orders' => 4, 'failed' => 2, 'acme_orders_failed' => 1],
+            queues: ['pimcore_core' => 1, 'pimcore_customer_import' => 4, 'failed' => 2, 'acme_orders_failed' => 1],
         )->collect();
 
         $this->assertSame(['other' => 5, 'failed' => 2, 'pimcore_core' => 1], $metrics['depth_by_queue'] ?? null);
         $this->assertSame(3, $metrics['failed_count'] ?? null);
+        $this->assertStringNotContainsString('customer', (string) json_encode($metrics));
         $this->assertStringNotContainsString('acme', (string) json_encode($metrics));
     }
 

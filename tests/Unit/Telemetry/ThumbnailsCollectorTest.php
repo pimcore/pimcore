@@ -56,7 +56,8 @@ class ThumbnailsCollectorTest extends TestCase
         $this->assertSame(3, $metrics['image_config_count'] ?? null);
         $this->assertSame(1, $metrics['video_config_count'] ?? null);
         $this->assertSame(['JPEG' => 1, 'SOURCE' => 1, 'WEBP' => 1], $metrics['image_format_breakdown'] ?? null);
-        $this->assertSame(5, $metrics['image_transformation_count'] ?? null);
+        // 2 + 3 default steps and the one step of the media-query branch
+        $this->assertSame(6, $metrics['image_transformation_count'] ?? null);
         $this->assertSame(1, $metrics['image_configs_with_media_queries'] ?? null);
     }
 

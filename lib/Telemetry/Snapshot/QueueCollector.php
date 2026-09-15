@@ -15,8 +15,8 @@ namespace Pimcore\Telemetry\Snapshot;
 
 use Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use function in_array;
 use function str_ends_with;
-use function str_starts_with;
 use function strstr;
 use function strtolower;
 
@@ -29,9 +29,11 @@ use function strtolower;
  * other transport the depth keys are simply absent (unknown), and no query is attempted.
  *
  * Depth means waiting: rows a worker has already picked up (`delivered_at` set) are not backlog. The
- * per-queue map names Pimcore's own `pimcore_*` queues and Symfony's conventional `failed` transport;
- * every other queue is a project's vocabulary and is folded into `other`. Failed messages are counted
- * wherever they sit, by the `_failed` naming convention of the failure transports.
+ * per-queue map names only the transports core itself configures and Symfony's conventional `failed`
+ * transport. A `pimcore_` prefix is no proof of ownership - a project can call its own queue
+ * `pimcore_customer_import` - so every other queue, from a bundle or a project, is folded into `other`.
+ * Failed messages are counted wherever they sit, by the `_failed` naming convention of the failure
+ * transports.
  *
  * @internal
  */
@@ -40,6 +42,21 @@ final readonly class QueueCollector implements SnapshotCollectorInterface
     private const SCHEMA_VERSION = 1;
 
     private const TABLE = 'messenger_messages';
+
+    /**
+     * The transports core configures in `config/pimcore/default.yaml`, plus Symfony's default failure
+     * transport name. Nothing outside this list is ever named.
+     */
+    private const NAMED_QUEUES = [
+        'pimcore_core',
+        'pimcore_maintenance',
+        'pimcore_scheduled_tasks',
+        'pimcore_image_optimize',
+        'pimcore_asset_update',
+        'pimcore_cdn_purge',
+        'pimcore_cdn_purge_failed',
+        'failed',
+    ];
 
     public function __construct(
         private SnapshotQueryRunner $queryRunner,
@@ -126,6 +143,6 @@ final readonly class QueueCollector implements SnapshotCollectorInterface
 
     private function queueKey(string $queue): string
     {
-        return $queue === 'failed' || str_starts_with($queue, 'pimcore_') ? $queue : 'other';
+        return in_array($queue, self::NAMED_QUEUES, true) ? $queue : 'other';
     }
 }
