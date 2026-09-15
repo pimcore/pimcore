@@ -166,7 +166,6 @@ class PlatformCollectorTest extends TestCase
         $this->assertArrayHasKey('user_count', $metrics);
     }
 
-
     public function testUnboundedVolumeTablesAreEstimatedWithAFixedNameNotScanned(): void
     {
         $this->collector()->collect();
