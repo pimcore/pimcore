@@ -1,5 +1,11 @@
 # Upgrade Notes
 
+## Pimcore 2026.2.14
+
+### [Database]
+- [Doctrine] The shipped `doctrine.dbal.connections.default.default_table_options` used the key `collate`, which Doctrine DBAL 4 (in use since Pimcore 12.0) silently ignores in favour of `collation`. As a result, every table created through the Doctrine schema API - bundle installers and migrations working on the `Schema` object, the ORM schema tool - was created with `DEFAULT CHARSET=utf8mb4` but **without** a `COLLATE` clause, so MySQL/MariaDB applied the charset's built-in default collation (`utf8mb4_general_ci` on MariaDB / MySQL 5.7, `utf8mb4_0900_ai_ci` on MySQL 8) instead of the configured `utf8mb4_unicode_520_ci`. The key is now `collation`, so newly created tables get the configured collation again. The `webdav_locks` table in `install.sql` also received the missing `COLLATE` clause.
+  Existing tables are **not** changed automatically. Known affected tables on installations set up or upgraded since Pimcore 12.0 are the ones created by bundle installers, e.g. `bundle_studio_*` and `translations_studio` (Studio backend), `generic_execution_engine_*`, the Generic Data Index, Backend Power Tools and Portal Engine tables, as well as `webdav_locks`. A mismatch only matters when string columns of differently collated tables are compared directly (`Illegal mix of collations`) or when consistent sorting across tables is required; adapting existing tables is therefore optional. Use the queries from the [2026.1.0 "Tasks to Do Prior the Update"](#tasks-to-do-prior-the-update) section to list tables and columns still using the charset default collation and to generate the `ALTER TABLE` statements. Do **not** convert columns that intentionally use a different collation (e.g. `utf8mb4_bin` for case-sensitive keys and JSON data - the Studio grid and saved-search configuration tables contain such columns). Run the statements in a maintenance window; large tables are rewritten.
+
 ## Pimcore 2026.2.12
 
 ### [Documents]
