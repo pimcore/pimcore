@@ -24,6 +24,11 @@ final class Version20220120121803 extends AbstractMigration
         return 'Use foreign key for delete cascade on documents references';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         //disable foreign key checks

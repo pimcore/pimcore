@@ -27,6 +27,11 @@ final class Version20210428145320 extends AbstractMigration
         return 'Increases prettyUrl field size to 255';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE `documents_page` CHANGE `prettyUrl` `prettyUrl` varchar(255) NULL AFTER `metaData`;');

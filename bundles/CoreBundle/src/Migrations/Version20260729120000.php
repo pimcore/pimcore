@@ -64,6 +64,11 @@ final class Version20260729120000 extends AbstractMigration
         return 'Modernize deprecated utf8/utf8_bin/utf8_general_ci charset and collation usage across the core schema';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->modifyColumnIfStockLegacy($schema, 'assets', 'filename', 'utf8_bin', 255, "ALTER TABLE `assets` MODIFY `filename` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '';");

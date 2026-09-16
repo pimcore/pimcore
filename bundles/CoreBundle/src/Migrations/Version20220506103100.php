@@ -24,6 +24,11 @@ final class Version20220506103100 extends AbstractMigration
         return 'Modify `storageType` column in `version` database table';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         if ($schema->getTable('versions')->hasColumn('storageType') === true) {

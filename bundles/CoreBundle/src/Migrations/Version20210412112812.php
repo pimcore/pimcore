@@ -27,6 +27,11 @@ final class Version20210412112812 extends AbstractMigration
         return '';
     }
 
+    public function isTransactional(): bool
+    {
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $notesTable = $schema->getTable('notes_data');
