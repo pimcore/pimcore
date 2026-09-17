@@ -188,6 +188,37 @@ final class StorageOperationQueueProcessor
     }
 
     /**
+     * Finds a pending Move in the same storage whose source content lies under - or contains -
+     * the prefix a Delete row is about to sweep. Either overlap is unsafe: the Move has not been
+     * applied yet, so its bytes are still at the source, and deleting them would strand the
+     * asset with no copy anywhere (the Move row would then fail forever with an empty source).
+     */
+    private function findPendingMoveDependingOn(StorageOperation $delete): ?StorageOperation
+    {
+        $prefix = trim($delete->getSourcePrefix(), '/');
+
+        foreach ($this->repository->all() as $candidate) {
+            if ($candidate->getType() !== StorageOperationType::Move
+                || $candidate->getStorage() !== $delete->getStorage()
+                || (int) $candidate->getId() === (int) $delete->getId()
+            ) {
+                continue;
+            }
+
+            $moveSource = trim($candidate->getSourcePrefix(), '/');
+            $overlaps = $moveSource === $prefix
+                || str_starts_with($moveSource, $prefix . '/')   // the delete would sweep the move's source
+                || str_starts_with($prefix, $moveSource . '/');  // the delete sits inside the move's source
+
+            if ($overlaps) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Reorders operations for processing: global id-ASC (FIFO) is preserved, except that Move
      * rows sharing an IDENTICAL target_prefix are drained newest-first within their cluster, at
      * the position of the cluster's first (oldest) member. Delete rows and Move rows with
@@ -259,6 +290,27 @@ final class StorageOperationQueueProcessor
             $this->repository->remove((int) $operation->getId());
 
             return true; // nothing left - idempotent completion
+        }
+
+        // A pending Move still reads its bytes from underneath this prefix: deferring a folder
+        // move leaves the content at the old location, so an "empty" folder in the element tree
+        // can still be full in storage. Sweeping it here would destroy exactly what that Move
+        // has to relocate, and the Move could never complete afterwards. Leave the row queued -
+        // once the Move drains, the prefix is empty and the next run completes this in one step.
+        $blocking = $this->findPendingMoveDependingOn($operation);
+        if ($blocking !== null) {
+            $this->logger->info(
+                'Storage queue delete deferred - a pending move still needs this content',
+                [
+                    'delete' => $operation->getId(),
+                    'storage' => $operation->getStorage(),
+                    'prefix' => $source,
+                    'blockedBy' => $blocking->getId(),
+                    'moveSource' => $blocking->getSourcePrefix(),
+                ]
+            );
+
+            return false;
         }
 
         $entriesSinceCheck = 0;

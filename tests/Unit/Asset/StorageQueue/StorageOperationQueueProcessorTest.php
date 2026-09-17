@@ -126,6 +126,55 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame([], $this->repository->all(), 'row removed - no pre-cutoff entries left');
     }
 
+    public function testDeleteInsideAPendingMoveSourceIsDeferred(): void
+    {
+        // Inverse overlap: the Delete sits INSIDE the prefix a pending Move still has to
+        // relocate, so sweeping it would punch a hole in content the Move has not copied yet.
+        $this->write('legacy/campaigns/a.jpg', 'a');
+        $this->addRow(StorageOperationType::Move, 'legacy', 'live');
+        $this->addRow(StorageOperationType::Delete, 'legacy/campaigns', null);
+
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator(new CopyRefusingAdapterDecorator($this->adapter)),
+            $this->repository,
+            new NullLogger()
+        );
+        $processor->process();
+
+        $this->assertSame('a', $this->adapter->read('legacy/campaigns/a.jpg'), 'content the move still needs survives');
+    }
+
+    public function testDeleteIsDeferredWhileAFailedMoveStillNeedsItsSource(): void
+    {
+        // The move cannot complete (the backend refuses to copy), so its source content must
+        // stay put - a Delete covering that source must not sweep it away in the same run.
+        $this->write('legacy/campaigns/a.jpg', 'a');
+        $this->addRow(StorageOperationType::Move, 'legacy/campaigns', 'live/campaigns');
+        $this->addRow(StorageOperationType::Delete, 'legacy', null);
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator(new CopyRefusingAdapterDecorator($this->adapter)),
+            $this->repository,
+            new NullLogger()
+        );
+
+        $result = $processor->process();
+
+        $this->assertSame('a', $this->adapter->read('legacy/campaigns/a.jpg'), 'source content preserved');
+        $this->assertGreaterThan(0, $result->getPendingRows(), 'the delete stays queued for a later run');
+    }
+
+    public function testDeleteStillRunsWhenNoPendingMoveDependsOnIt(): void
+    {
+        $this->write('legacy/other/a.jpg', 'a');
+        $this->write('unrelated/campaigns/b.jpg', 'b');
+        $this->addRow(StorageOperationType::Move, 'unrelated/campaigns', 'live/campaigns');
+        $this->addRow(StorageOperationType::Delete, 'legacy', null);
+
+        $this->processor()->process();
+
+        $this->assertFalse($this->adapter->fileExists('legacy/other/a.jpg'), 'unrelated delete still executes');
+    }
+
     public function testLiteralWinsTargetIsNeverOverwritten(): void
     {
         $this->write('Campaigns/a.jpg', 'stale-source');
