@@ -31,11 +31,13 @@ class Table implements MarshallerInterface
     }
 
     public function unmarshal(mixed $value, array $params = []): mixed
-    {
-        if (is_array($value)) {
-            return Serialize::unserialize($value['value'], false);
-        }
-
-        return null;
+{
+    if (is_array($value)) {
+        // Classificationstore table data is stored as a plain array; disallow object
+        // instantiation to prevent PHP Object Injection via the DB.
+        return Serialize::unserialize($value['value'], false);
     }
+
+    return null;
+}
 }
