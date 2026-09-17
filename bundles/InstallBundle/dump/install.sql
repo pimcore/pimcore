@@ -843,4 +843,4 @@ CREATE TABLE `webdav_locks` (
     uri     VARBINARY(1000),
     INDEX (token),
     INDEX (uri(100))
-) DEFAULT CHARSET = utf8mb4;
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
