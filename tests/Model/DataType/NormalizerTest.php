@@ -14,11 +14,13 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataType;
 
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Exception;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Unittest;
+use Pimcore\Model\Element\Data\MarkerHotspotItem;
 use Pimcore\Model\User;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -51,13 +53,31 @@ class NormalizerTest extends ModelTestCase
         parent::tearDown();
     }
 
+    /**
+     * The NormalizerInterface contract this suite enforces: normalize() output must
+     * survive a JSON encode/decode boundary (that is what makes the format portable —
+     * it is persisted e.g. by Classificationstore\Dao and shipped over APIs) and
+     * denormalize() must restore an equal value from the decoded representation.
+     * Without this boundary, object instances leaking through normalize() go
+     * undetected because denormalize() receives them back unchanged.
+     */
+    private function jsonRoundTrip(mixed $normalizedValue): mixed
+    {
+        return json_decode(
+            json_encode($normalizedValue, JSON_THROW_ON_ERROR),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+    }
+
     public function testBooleanSelect(): void
     {
         $originalValue = true;
         $fd = new DataObject\ClassDefinition\Data\BooleanSelect();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -67,7 +87,7 @@ class NormalizerTest extends ModelTestCase
         $fd = new DataObject\ClassDefinition\Data\Checkbox();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -78,7 +98,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -88,7 +108,7 @@ class NormalizerTest extends ModelTestCase
         $fd = new DataObject\ClassDefinition\Data\Country();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -98,7 +118,7 @@ class NormalizerTest extends ModelTestCase
         $fd = new DataObject\ClassDefinition\Data\Countrymultiselect();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -111,7 +131,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($ts, $normalizedValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -124,7 +144,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($ts, $normalizedValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -134,22 +154,80 @@ class NormalizerTest extends ModelTestCase
         $fd = new DataObject\ClassDefinition\Data\Email();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
     public function testEncryptedField(): void
     {
-        $this->markTestSkipped('implement this as soon as marshal() is gone');
+        $container = \Pimcore::getContainer();
+        if (!$container->hasParameter('pimcore.encryption.secret') || !$container->getParameter('pimcore.encryption.secret')) {
+            $this->markTestSkipped('no pimcore.encryption.secret configured for the test environment');
+        }
+
+        $delegate = new DataObject\ClassDefinition\Data\Input();
+        $fd = new DataObject\ClassDefinition\Data\EncryptedField();
+        $fd->setDelegate($delegate);
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
+
+        $originalValue = new DataObject\Data\EncryptedField($delegate, 'top secret value');
+
+        // default: plain representation (consumers like a GDPR data-subject export need the data)
+        $normalizedValue = $fd->normalize($originalValue);
+        $this->assertSame('top secret value', $normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
+        $this->assertEquals($originalValue, $denormalizedValue);
+
+        // opt-in: value stays encrypted — normalize() output is used as a storage/wire
+        // format, persisting it must not silently defeat encryption at rest
+        $normalizedValue = $fd->normalize($originalValue, ['preserveEncryption' => true]);
+        $this->assertIsArray($normalizedValue);
+        $this->assertArrayHasKey(DataObject\ClassDefinition\Data\EncryptedField::ENCRYPTED_NORMALIZED_KEY, $normalizedValue);
+        $this->assertStringNotContainsString('top secret value', json_encode($normalizedValue, JSON_THROW_ON_ERROR));
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
+        $this->assertEquals($originalValue, $denormalizedValue);
+
+        // an undecodable envelope keeps the documented soft failure when strict mode is
+        // off: decrypt() returns null, and denormalize() must not raise instead
+        $strictMode = DataObject\ClassDefinition\Data\EncryptedField::isStrictMode();
+        DataObject\ClassDefinition\Data\EncryptedField::setStrictMode(
+            DataObject\ClassDefinition\Data\EncryptedField::STRICT_DISABLED
+        );
+
+        try {
+            $denormalizedValue = $fd->denormalize([
+                DataObject\ClassDefinition\Data\EncryptedField::ENCRYPTED_NORMALIZED_KEY => 'not a ciphertext',
+            ]);
+            $this->assertNull($denormalizedValue->getPlain());
+        } finally {
+            DataObject\ClassDefinition\Data\EncryptedField::setStrictMode($strictMode);
+        }
+    }
+
+    public function testDateRange(): void
+    {
+        $originalValue = CarbonPeriod::create('2023-01-01', '2025-12-31');
+
+        $fd = new DataObject\ClassDefinition\Data\DateRange();
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
+        $normalizedValue = $fd->normalize($originalValue);
+        $this->assertIsArray($normalizedValue);
+        $this->assertCount(2, $normalizedValue, 'expected the period boundaries only, not every date the period contains');
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
+        $this->assertEquals($originalValue->getStartDate(), $denormalizedValue->getStartDate());
+        $this->assertEquals($originalValue->getEndDate(), $denormalizedValue->getEndDate());
     }
 
     public function testExternalImage(): void
     {
         $originalValue = new DataObject\Data\ExternalImage('http://someurl.com');
-        $fd = new DataObject\ClassDefinition\Data\Email();
+        // was Data\Email() — the passthrough normalize returned the ExternalImage object
+        // unchanged, so the pre-JSON-boundary assertion compared the object to itself
+        // and the type was never actually tested
+        $fd = new DataObject\ClassDefinition\Data\ExternalImage();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -159,7 +237,7 @@ class NormalizerTest extends ModelTestCase
         $fd = new DataObject\ClassDefinition\Data\Firstname();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -169,7 +247,7 @@ class NormalizerTest extends ModelTestCase
         $fd = new DataObject\ClassDefinition\Data\Gender();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -185,7 +263,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
-        $denormalizedValue = $fd->denormalize($normalizedValue, $ownerInfo);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue), $ownerInfo);
 
         $this->assertEquals($originalValue, $denormalizedValue);
     }
@@ -202,7 +280,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
-        $denormalizedValue = $fd->denormalize($normalizedValue, $ownerInfo);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue), $ownerInfo);
 
         $this->assertEquals($originalValue, $denormalizedValue);
     }
@@ -230,7 +308,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertNotEquals($normalizedValue, $originalValue);
 
         $this->assertTrue(is_array($normalizedValue));
-        $denormalizedValue = $fd->denormalize($normalizedValue, $ownerInfo);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue), $ownerInfo);
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -257,7 +335,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertNotEquals($normalizedValue, $originalValue);
 
         $this->assertTrue(is_array($normalizedValue));
-        $denormalizedValue = $fd->denormalize($normalizedValue, $ownerInfo);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue), $ownerInfo);
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -288,6 +366,15 @@ class NormalizerTest extends ModelTestCase
             [
                 'top' => 56,
                 'left' => 62,
+                // metadata entries are MarkerHotspotItem instances on a loaded value and
+                // must be re-wrapped by denormalize() after the JSON boundary
+                'data' => [
+                    new MarkerHotspotItem([
+                        'name' => 'campaign',
+                        'type' => 'textfield',
+                        'value' => 'summer',
+                    ]),
+                ],
             ],
         ]);
 
@@ -296,7 +383,7 @@ class NormalizerTest extends ModelTestCase
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertNotEquals($normalizedValue, $originalValue);
         $this->assertTrue(is_array($normalizedValue));
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -310,7 +397,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertNotEquals($normalizedValue, $originalValue);
         $this->assertTrue(is_array($normalizedValue));
 
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -334,6 +421,13 @@ class NormalizerTest extends ModelTestCase
                 [
                     'top' => 56 + $i,
                     'left' => 62 + $i,
+                    'data' => [
+                        new MarkerHotspotItem([
+                            'name' => 'campaign',
+                            'type' => 'textfield',
+                            'value' => 'summer-' . $i,
+                        ]),
+                    ],
                 ],
             ]);
             $originalValue[] = $item;
@@ -345,7 +439,7 @@ class NormalizerTest extends ModelTestCase
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertNotEquals($normalizedValue, $originalValue);
         $this->assertTrue(is_array($normalizedValue));
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -356,7 +450,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($normalizedValue, $originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -373,7 +467,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertNotEquals($normalizedValue, $originalValue);
         $this->assertTrue(is_array($normalizedValue));
 
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
 
         $this->assertTrue($denormalizedValue instanceof DataObject\Data\InputQuantityValue);
         $this->assertEquals($originalValue->getValue(), $denormalizedValue->getValue());
@@ -393,7 +487,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -413,7 +507,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue, ['object' => $object]);
         /** @var DataObject\Localizedfield $denormalizedValue */
-        $denormalizedValue = $fd->denormalize($normalizedValue, ['object' => $object]);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue), ['object' => $object]);
         $this->assertEquals('123', $denormalizedValue->getLocalizedValue('linput'));
 
         $objects = $denormalizedValue->getLocalizedValue('lobjects');
@@ -436,7 +530,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue(is_array($normalizedValue[0]));
         $this->assertTrue(is_array($normalizedValue[1]));
 
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($targetObject1->getId(), $denormalizedValue[0]->getId());
         $this->assertEquals($targetObject2->getId(), $denormalizedValue[1]->getId());
     }
@@ -459,7 +553,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue(is_array($normalizedValue[1]));
         $this->assertTrue(is_array($normalizedValue[2]));
 
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($targetObject1->getId(), $denormalizedValue[0]->getId());
         $this->assertEquals($targetObject2->getId(), $denormalizedValue[1]->getId());
         $this->assertEquals($targetAsset1->getId(), $denormalizedValue[2]->getId());
@@ -475,7 +569,7 @@ class NormalizerTest extends ModelTestCase
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
 
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue->getId(), $denormalizedValue->getId());
     }
 
@@ -489,7 +583,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $normalizedValue);
         $this->assertTrue(is_array($normalizedValue));
 
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -499,7 +593,7 @@ class NormalizerTest extends ModelTestCase
         $fd = new DataObject\ClassDefinition\Data\Numeric();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -509,7 +603,7 @@ class NormalizerTest extends ModelTestCase
         $fd = new DataObject\ClassDefinition\Data\Password();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -526,7 +620,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertNotEquals($normalizedValue, $originalValue);
         $this->assertTrue(is_array($normalizedValue));
 
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
 
         $this->assertTrue($denormalizedValue instanceof DataObject\Data\QuantityValue);
         $this->assertEquals($originalValue->getValue(), $denormalizedValue->getValue());
@@ -542,7 +636,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertNotEquals($normalizedValue, $originalValue);
         $this->assertTrue(is_array($normalizedValue));
 
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
 
         $this->assertTrue($denormalizedValue instanceof DataObject\Data\RgbaColor);
         $this->assertEquals($originalValue, $denormalizedValue);
@@ -557,7 +651,7 @@ class NormalizerTest extends ModelTestCase
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($originalValue, $normalizedValue);
 
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -570,7 +664,7 @@ class NormalizerTest extends ModelTestCase
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($originalValue, $normalizedValue);
 
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -588,7 +682,7 @@ class NormalizerTest extends ModelTestCase
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
 
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -607,7 +701,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue(is_array($normalizedValue));
         $this->assertEquals($normalizedValue, $originalValue);
 
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -618,7 +712,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($normalizedValue, $originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -629,7 +723,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($normalizedValue, $originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -644,7 +738,7 @@ class NormalizerTest extends ModelTestCase
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
         $this->assertNotEquals($originalValue, $normalizedValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -658,7 +752,7 @@ class NormalizerTest extends ModelTestCase
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($originalValue, $normalizedValue);
 
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -680,7 +774,7 @@ class NormalizerTest extends ModelTestCase
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
         $this->assertNotEquals($originalValue, $normalizedValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -691,7 +785,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertEquals($normalizedValue, $originalValue);
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($this->jsonRoundTrip($normalizedValue));
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 }

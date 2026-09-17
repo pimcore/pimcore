@@ -210,7 +210,13 @@ class DateRange extends Data implements
     public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof CarbonPeriod) {
-            return $value->toArray();
+            // only the boundaries, not CarbonPeriod::toArray(): expanding the period
+            // enumerates EVERY date it contains (unbounded for years-long ranges) while
+            // denormalize() only ever consumed the first and last entry anyway
+            return [
+                $value->getStartDate()->toIso8601String(),
+                $value->getEndDate()?->toIso8601String(),
+            ];
         }
 
         return null;
