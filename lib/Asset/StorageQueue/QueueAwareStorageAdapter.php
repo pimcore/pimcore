@@ -48,6 +48,15 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
      * its constant in league/flysystem 3.24, and the lowest version this package supports is
      * 3.12. The string values are the wire format either way, and a config that predates the
      * option simply never carries it.
+     *
+     * Known limitation. An adapter may read further keys off the config it is handed - the S3
+     * adapter forwards ACL, StorageClass, Metadata and friends - and those are not journalled
+     * here, because the whole config cannot be enumerated on flysystem 3.12 (Config::toArray()
+     * arrived in 3.20) and naming them would tie this class to one adapter. In practice nothing
+     * is lost: storage-level adapter options are applied by the adapter itself on every call, so
+     * a deferred copy still gets them, and the flysystem bundle offers no storage-level node for
+     * the rest. Only an option passed per call, as $storage->move($a, $b, ['StorageClass' => ...]),
+     * would be dropped when the move is deferred. Pimcore itself never does that.
      */
     private const COPY_OPTION_KEYS = [
         'visibility',
