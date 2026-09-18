@@ -430,4 +430,30 @@ class StorageOperationQueueRepositoryTest extends TestCase
             $this->assertNull($operation->getCopyOptions());
         }
     }
+
+    public function testRemoveIfUnchangedRefusesWhenOnlyTheCopyOptionsChanged(): void
+    {
+        // A live repoint can rewrite copy_options while leaving the target alone, so the row the
+        // processor applied is no longer the row in the table. Deleting it from the stale
+        // snapshot would drop an operation nobody has carried out under its current settings.
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'A',
+            'B',
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+        $stale = $this->repository->all()[0];
+
+        $this->repository->repointMoves('asset', 'B', 'B', ['visibility' => 'private', 'retain_visibility' => false]);
+
+        $this->assertFalse($this->repository->removeIfUnchanged($stale));
+        $this->assertCount(1, $this->repository->all(), 'the row stays queued for the retry');
+
+        // completeMove() refreshes and retries; against the current row the deletion goes through
+        $this->assertTrue($this->repository->removeIfUnchanged($this->repository->all()[0]));
+        $this->assertSame([], $this->repository->all());
+    }
 }

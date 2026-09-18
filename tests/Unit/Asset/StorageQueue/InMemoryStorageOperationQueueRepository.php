@@ -165,6 +165,7 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
                 && $op->getType() === $operation->getType()
                 && $op->getSourcePrefix() === $operation->getSourcePrefix()
                 && $op->getTargetPrefix() === $operation->getTargetPrefix()
+                && $op->getCopyOptions() === $operation->getCopyOptions()
             ) {
                 unset($this->operations[$i]);
                 $this->operations = array_values($this->operations);

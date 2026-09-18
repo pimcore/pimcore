@@ -189,16 +189,24 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
 
     public function removeIfUnchanged(StorageOperation $operation): bool
     {
+        // copy_options is part of the compared state: a live repoint can change it while leaving
+        // the target alone, and the row the processor applied is then no longer the row in the
+        // table. completeMove() reacts by refreshing and retrying, so the deletion happens
+        // against what is actually queued rather than against a stale snapshot.
         $affected = $this->db->executeStatement(
             'DELETE FROM ' . self::TABLE
             . ' WHERE `id` = :id AND `storage` = :storage AND `operation` = :operation'
-            . ' AND `source_prefix` = :sourcePrefix AND (`target_prefix` <=> :targetPrefix)',
+            . ' AND `source_prefix` = :sourcePrefix AND (`target_prefix` <=> :targetPrefix)'
+            . ' AND (`copy_options` <=> :copyOptions)',
             [
                 'id' => (int) $operation->getId(),
                 'storage' => $operation->getStorage(),
                 'operation' => $operation->getType()->value,
                 'sourcePrefix' => $operation->getSourcePrefix(),
                 'targetPrefix' => $operation->getTargetPrefix(),
+                'copyOptions' => $operation->getCopyOptions() === null
+                    ? null
+                    : json_encode($operation->getCopyOptions(), JSON_THROW_ON_ERROR),
             ]
         );
 
