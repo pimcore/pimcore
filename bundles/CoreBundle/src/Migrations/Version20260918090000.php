@@ -21,7 +21,7 @@ use Doctrine\Migrations\AbstractMigration;
  * documented in doc/02_Assets/05_Asset_Storage_Operation_Queue.md. Installs that never enabled
  * the feature therefore have no table at all, and this migration has nothing to do for them.
  */
-final class Version20260918120000 extends AbstractMigration
+final class Version20260918090000 extends AbstractMigration
 {
     private const TABLE = 'asset_storage_operation_queue';
 

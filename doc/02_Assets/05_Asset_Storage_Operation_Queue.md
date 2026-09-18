@@ -84,7 +84,7 @@ CREATE TABLE `asset_storage_operation_queue` (
 ```
 
 Tables created before the `copy_options` column existed are upgraded by the
-`Version20260918120000` migration, which skips installs that never created the table.
+`Version20260918090000` migration, which skips installs that never created the table.
 See [Copy options](#copy-options) for what the column carries and when an existing
 queue needs a one-off backfill.
 

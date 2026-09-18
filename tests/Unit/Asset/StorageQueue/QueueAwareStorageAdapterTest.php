@@ -1127,4 +1127,21 @@ class QueueAwareStorageAdapterTest extends Unit
             $operations[0]->getCopyOptions()
         );
     }
+
+    public function testADeleteNeverCarriesCopyOptions(): void
+    {
+        // A sweep has nothing to copy, so options on a delete are meaningless. They are dropped
+        // rather than rejected: a hand-edited row must not be able to stop the queue draining.
+        $operation = new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Delete,
+            'Campaigns',
+            null,
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        );
+
+        $this->assertNull($operation->getCopyOptions());
+    }
 }
