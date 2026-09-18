@@ -419,10 +419,8 @@ final class StorageOperationQueueProcessor
 
                 continue;
             }
-            if ($operation->getType() !== StorageOperationType::Move) {
-                continue;
-            }
 
+            // everything else in the queue is a Move
             $barrier = 0;
             foreach ($deletes as $delete) {
                 if ($delete->getStorage() === $operation->getStorage()
