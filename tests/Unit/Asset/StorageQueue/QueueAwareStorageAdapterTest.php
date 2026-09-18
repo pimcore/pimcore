@@ -1043,4 +1043,39 @@ class QueueAwareStorageAdapterTest extends Unit
         } catch (UnableToGenerateTemporaryUrl) {
         }
     }
+
+    public function testQueuedFolderMoveRecordsTheResolvedCopyOptions(): void
+    {
+        // Filesystem::move() resolves the storage's configuration before handing it down, so the
+        // decorator already holds the effective visibility settings. Recording them on the row is
+        // what lets the processor copy the same way a non-deferred move would.
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('Campaigns/a.jpg', 'a', new Config());
+
+        $adapter->move('Campaigns', 'Archive/Campaigns', new Config([
+            'visibility' => 'public',
+            'retain_visibility' => false,
+            'public_url' => 'https://cdn.example.com',
+        ]));
+
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations);
+        $this->assertSame(
+            ['visibility' => 'public', 'retain_visibility' => false],
+            $operations[0]->getCopyOptions(),
+            'only the copy-relevant keys are persisted'
+        );
+    }
+
+    public function testQueuedFolderMoveWithoutVisibilitySettingsRecordsNothing(): void
+    {
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('Campaigns/a.jpg', 'a', new Config());
+
+        $adapter->move('Campaigns', 'Archive/Campaigns', new Config());
+
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations);
+        $this->assertNull($operations[0]->getCopyOptions());
+    }
 }

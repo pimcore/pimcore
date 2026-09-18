@@ -40,6 +40,16 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
 {
     use CalculateChecksumFromStream;
 
+    /**
+     * The resolved flysystem options a deferred copy has to reproduce. Everything else in a
+     * resolved config (public urls, the deprecated flags) has no bearing on a copy.
+     */
+    private const COPY_OPTION_KEYS = [
+        Config::OPTION_VISIBILITY,
+        Config::OPTION_DIRECTORY_VISIBILITY,
+        Config::OPTION_RETAIN_VISIBILITY,
+    ];
+
     public function __construct(
         private readonly FilesystemAdapter $inner,
         private readonly StorageOperationQueueRepositoryInterface $repository,
@@ -389,7 +399,29 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             $source,
             $destination,
             new DateTimeImmutable(),
+            $this->copyOptions($config),
         ));
+    }
+
+    /**
+     * The visibility settings the processor needs to copy the way this move would have.
+     *
+     * Filesystem::move() resolves the storage's configuration before calling the adapter, so
+     * $config already carries the effective values. The processor works on the inner adapter and
+     * therefore never sees that configuration, and a bare Config() leaves the adapter on
+     * retain_visibility=true - reading the source object's ACL before every copy, which costs a
+     * request per file on object storage and fails outright on backends that do not serve it.
+     *
+     * Only the copy-relevant keys are kept; the rest of a resolved config (public urls, the
+     * deprecated flags) has no bearing on a copy and does not belong in the queue.
+     *
+     * @return array<string, mixed>|null null when the storage configures none of them
+     */
+    private function copyOptions(Config $config): ?array
+    {
+        $options = array_intersect_key($config->toArray(), array_flip(self::COPY_OPTION_KEYS));
+
+        return $options === [] ? null : $options;
     }
 
     /**

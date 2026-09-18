@@ -46,6 +46,7 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
             $operation->getSourcePrefix(),
             $operation->getTargetPrefix(),
             $operation->getCreatedAt(),
+            $operation->getCopyOptions(),
         );
     }
 

@@ -25,6 +25,12 @@ use InvalidArgumentException;
  */
 final readonly class StorageOperation
 {
+    /**
+     * @param array<string, mixed>|null $copyOptions the flysystem options the original call was
+     *        resolved with, so the processor can copy the way a non-deferred move would. Null
+     *        means nothing was recorded - rows queued before this was introduced, and any
+     *        storage whose configuration sets none of the relevant options.
+     */
     public function __construct(
         private ?int $id,
         private string $storage,
@@ -32,6 +38,7 @@ final readonly class StorageOperation
         private string $sourcePrefix,
         private ?string $targetPrefix,
         private DateTimeImmutable $createdAt,
+        private ?array $copyOptions = null,
     ) {
         $this->assertValidPrefix($sourcePrefix);
 
@@ -75,6 +82,14 @@ final readonly class StorageOperation
     public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function getCopyOptions(): ?array
+    {
+        return $this->copyOptions;
     }
 
     private function assertValidPrefix(string $prefix): void

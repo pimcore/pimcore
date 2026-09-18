@@ -326,6 +326,10 @@ final class StorageOperationQueueProcessor
         $cutoff = $current->getCreatedAt()->getTimestamp(); // anchored to the ORIGINAL creation - repoint does not change it
         $source = $current->getSourcePrefix();
         $copied = []; // relative suffix => target prefix the copy was made under
+        // The options the original move was resolved with, recorded on the row when it was
+        // queued. Without them the adapter falls back to flysystem defaults, which on S3 means
+        // reading the source object ACL before every copy.
+        $copyConfig = new Config($current->getCopyOptions() ?? []);
 
         if ($adapter->directoryExists($source)) {
             $entriesSinceCheck = 0;
@@ -363,7 +367,7 @@ final class StorageOperationQueueProcessor
                     // must not be swept, re-targeted on a repoint, or block completion (the
                     // completion re-list already treats equality as non-blocking).
                     if (!$adapter->fileExists($target)) {
-                        $adapter->copy($path, $target, new Config());
+                        $adapter->copy($path, $target, $copyConfig);
                     }
 
                     continue;
@@ -371,7 +375,7 @@ final class StorageOperationQueueProcessor
 
                 // $lastModified < $cutoff: unambiguously pre-cutoff content
                 if (!$adapter->fileExists($target)) {
-                    $adapter->copy($path, $target, new Config());
+                    $adapter->copy($path, $target, $copyConfig);
                     if (!$adapter->fileExists($target)) {
                         throw new RuntimeException(sprintf('Copy verification failed for %s -> %s', $path, $target));
                     }

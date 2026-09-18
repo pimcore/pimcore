@@ -50,6 +50,9 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
             'source_prefix' => $operation->getSourcePrefix(),
             'target_prefix' => $operation->getTargetPrefix(),
             'created_at' => $operation->getCreatedAt()->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s'),
+            'copy_options' => $operation->getCopyOptions() === null
+                ? null
+                : json_encode($operation->getCopyOptions(), JSON_THROW_ON_ERROR),
         ]);
 
         $this->invalidateHasOperationsCache($operation->getStorage());
@@ -248,7 +251,7 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
     {
         $this->db->executeStatement(
             'UPDATE ' . self::TABLE . "
-             SET `operation` = 'delete', `target_prefix` = NULL
+             SET `operation` = 'delete', `target_prefix` = NULL, `copy_options` = NULL
              WHERE `storage` = :storage
                AND `operation` = 'move'
                AND (`target_prefix` = :deletedPrefix OR LEFT(`target_prefix`, CHAR_LENGTH(:deletedPrefixB) + 1) = CONCAT(:deletedPrefixC, '/'))",
@@ -273,7 +276,25 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
             (string) $row['source_prefix'],
             $row['target_prefix'] === null ? null : (string) $row['target_prefix'],
             new DateTimeImmutable((string) $row['created_at'], new DateTimeZone('UTC')),
+            $this->decodeCopyOptions($row['copy_options'] ?? null),
         );
+    }
+
+    /**
+     * Rows predating the column decode to null, as do installs that have not run the ALTER
+     * statement yet - both keep the previous behaviour of copying with flysystem's own defaults.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function decodeCopyOptions(mixed $value): ?array
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        $decoded = json_decode((string) $value, true, 512, JSON_THROW_ON_ERROR);
+
+        return is_array($decoded) && $decoded !== [] ? $decoded : null;
     }
 
     /**

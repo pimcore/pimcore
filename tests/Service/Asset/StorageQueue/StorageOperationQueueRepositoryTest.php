@@ -48,6 +48,7 @@ class StorageOperationQueueRepositoryTest extends TestCase
                 `source_prefix` VARCHAR(765) NOT NULL,
                 `target_prefix` VARCHAR(765) DEFAULT NULL,
                 `created_at` DATETIME NOT NULL,
+                `copy_options` JSON DEFAULT NULL,
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;'
         );
@@ -372,5 +373,61 @@ class StorageOperationQueueRepositoryTest extends TestCase
         // and the mapping itself against the REAL repository (bypassing the bool):
         $enabledResolver = new FrontendPathResolver($this->repository, true);
         $this->assertSame('/WiredSource/a.jpg', $enabledResolver->resolvePhysicalPath('/WiredTarget/a.jpg'));
+    }
+
+    public function testCopyOptionsRoundTripThroughTheDatabase(): void
+    {
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'Campaigns',
+            'Archive/Campaigns',
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+
+        $stored = $this->repository->all();
+
+        $this->assertCount(1, $stored);
+        $this->assertSame(
+            ['visibility' => 'public', 'retain_visibility' => false],
+            $stored[0]->getCopyOptions(),
+            'retain_visibility must come back as a boolean, not as 0'
+        );
+    }
+
+    public function testARowWithoutCopyOptionsHydratesAsNull(): void
+    {
+        $this->repository->add($this->move('asset', 'Campaigns', 'Archive/Campaigns'));
+
+        $stored = $this->repository->all();
+
+        $this->assertCount(1, $stored);
+        $this->assertNull($stored[0]->getCopyOptions());
+    }
+
+    public function testConvertingAMoveToADeleteDropsItsCopyOptions(): void
+    {
+        // A sweep has no visibility to preserve, and leaving the options behind would carry
+        // settings from an operation that no longer exists.
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'Campaigns',
+            'Archive/Campaigns',
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Delete, 'Archive', null, new DateTimeImmutable()
+        ));
+
+        foreach ($this->repository->all() as $operation) {
+            $this->assertSame(StorageOperationType::Delete, $operation->getType());
+            $this->assertNull($operation->getCopyOptions());
+        }
     }
 }

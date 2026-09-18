@@ -592,6 +592,61 @@ class StorageOperationQueueProcessorTest extends Unit
             'only the equal-target Move cluster (ids 4 and 5) is reversed, in place; everything else stays FIFO'
         );
     }
+
+    /**
+     * @param array<string, mixed>|null $copyOptions
+     */
+    private function addRowWithCopyOptions(
+        StorageOperationType $type,
+        string $source,
+        ?string $target,
+        ?array $copyOptions
+    ): void {
+        $this->repository->add(new StorageOperation(
+            null, 'asset', $type, $source, $target, new DateTimeImmutable('+5 seconds'), $copyOptions
+        ));
+    }
+
+    public function testCopyOptionsRecordedOnTheRowReachTheAdapter(): void
+    {
+        // The processor copies on the raw adapter, so the storage's flysystem configuration never
+        // reaches it on its own. Without the row carrying them, the adapter falls back to
+        // retain_visibility=true and reads the source object's ACL before every copy - an extra
+        // request per file, and a hard failure on endpoints that do not implement that read.
+        $spy = new ConfigCapturingAdapterDecorator($this->adapter);
+        $this->adapter = $spy;
+        $this->write('A/a.jpg', 'a');
+        $this->addRowWithCopyOptions(
+            StorageOperationType::Move,
+            'A',
+            'T',
+            ['visibility' => 'public', 'retain_visibility' => false]
+        );
+
+        $this->processor()->process();
+
+        $this->assertSame('a', $this->adapter->read('T/a.jpg'));
+        $this->assertSame(
+            [['visibility' => 'public', 'retain_visibility' => false]],
+            $spy->copyConfigs,
+            'the recorded options are replayed verbatim'
+        );
+    }
+
+    public function testARowWithoutCopyOptionsCopiesWithAnEmptyConfig(): void
+    {
+        // Rows queued before the column existed decode to null and must keep behaving exactly as
+        // they did, rather than inventing options nobody configured.
+        $spy = new ConfigCapturingAdapterDecorator($this->adapter);
+        $this->adapter = $spy;
+        $this->write('A/a.jpg', 'a');
+        $this->addRowWithCopyOptions(StorageOperationType::Move, 'A', 'T', null);
+
+        $this->processor()->process();
+
+        $this->assertSame('a', $this->adapter->read('T/a.jpg'));
+        $this->assertSame([[]], $spy->copyConfigs);
+    }
 }
 
 /**
