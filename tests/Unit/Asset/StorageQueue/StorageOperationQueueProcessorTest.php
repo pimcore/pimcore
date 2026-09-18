@@ -897,6 +897,159 @@ class StorageOperationQueueProcessorTest extends Unit
             'only the equal-target Move cluster (ids 4 and 5) is reversed, in place; everything else stays FIFO'
         );
     }
+
+    /**
+     * @param array<string, mixed>|null $copyOptions
+     */
+    private function addRowWithCopyOptions(
+        StorageOperationType $type,
+        string $source,
+        ?string $target,
+        ?array $copyOptions
+    ): void {
+        $this->repository->add(new StorageOperation(
+            null, 'asset', $type, $source, $target, new DateTimeImmutable('+5 seconds'), $copyOptions
+        ));
+    }
+
+    public function testCopyOptionsRecordedOnTheRowReachTheAdapter(): void
+    {
+        // The processor copies on the raw adapter, so the storage's flysystem configuration never
+        // reaches it on its own. Without the row carrying them, the adapter falls back to
+        // retain_visibility=true and reads the source object's ACL before every copy - an extra
+        // request per file, and a hard failure on endpoints that do not implement that read.
+        $spy = new ConfigCapturingAdapterDecorator($this->adapter);
+        $this->adapter = $spy;
+        $this->write('A/a.jpg', 'a');
+        $this->addRowWithCopyOptions(
+            StorageOperationType::Move,
+            'A',
+            'T',
+            ['visibility' => 'public', 'retain_visibility' => false]
+        );
+
+        $this->processor()->process();
+
+        $this->assertSame('a', $this->adapter->read('T/a.jpg'));
+        $this->assertSame(
+            [['visibility' => 'public', 'retain_visibility' => false]],
+            $spy->copyConfigs,
+            'the recorded options are replayed verbatim'
+        );
+    }
+
+    public function testARowWithoutCopyOptionsCopiesWithAnEmptyConfig(): void
+    {
+        // Rows queued before the column existed decode to null and must keep behaving exactly as
+        // they did, rather than inventing options nobody configured.
+        $spy = new ConfigCapturingAdapterDecorator($this->adapter);
+        $this->adapter = $spy;
+        $this->write('A/a.jpg', 'a');
+        $this->addRowWithCopyOptions(StorageOperationType::Move, 'A', 'T', null);
+
+        $this->processor()->process();
+
+        $this->assertSame('a', $this->adapter->read('T/a.jpg'));
+        $this->assertSame([[]], $spy->copyConfigs);
+    }
+
+    public function testMidDrainRepointStillCopiesWithTheRecordedOptions(): void
+    {
+        // A live re-move repoints the row mid-drain, and the processor relocates what it already
+        // copied to the new target. That relocation is part of applying the same row, so it has
+        // to use the same options - otherwise the very backend this exists for fails halfway.
+        for ($i = 1; $i <= 8; $i++) {
+            $this->writeWithMtime("A/file{$i}.jpg", "content-{$i}", time() - 7200);
+        }
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'A',
+            'B',
+            new DateTimeImmutable('+5 seconds'),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+
+        $spy = new ConfigCapturingAdapterDecorator($this->adapter);
+        $mutatingAdapter = new StorageOperationQueueProcessorTestMutatingAdapter(
+            $spy,
+            4,
+            function (): void {
+                // same storage, so the re-move resolves to the same configuration
+                $this->repository->add(new StorageOperation(
+                    null,
+                    'asset',
+                    StorageOperationType::Move,
+                    'B',
+                    'C',
+                    new DateTimeImmutable(),
+                    ['visibility' => 'public', 'retain_visibility' => false]
+                ));
+            }
+        );
+        $locator = new StorageOperationQueueProcessorTestAdapterLocator($mutatingAdapter);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger(), 3);
+
+        $processor->process();
+
+        $this->assertNotEmpty($spy->copyConfigs);
+        foreach ($spy->copyConfigs as $captured) {
+            $this->assertSame(
+                ['visibility' => 'public', 'retain_visibility' => false],
+                $captured,
+                'every copy, including the post-repoint relocation, carries the recorded options'
+            );
+        }
+    }
+
+    public function testARepointedRowDrainsWithTheLaterMovesOptions(): void
+    {
+        // Performed immediately, A -> B then B -> C would land the bytes at C under the second
+        // move's configuration. Deferred, the two collapse into one A -> C copy, which therefore
+        // has to use the later options rather than the ones the first move was queued with.
+        for ($i = 1; $i <= 8; $i++) {
+            $this->writeWithMtime("A/file{$i}.jpg", "content-{$i}", time() - 7200);
+        }
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'A',
+            'B',
+            new DateTimeImmutable('+5 seconds'),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+
+        $spy = new ConfigCapturingAdapterDecorator($this->adapter);
+        $mutatingAdapter = new StorageOperationQueueProcessorTestMutatingAdapter(
+            $spy,
+            4,
+            function (): void {
+                $this->repository->add(new StorageOperation(
+                    null,
+                    'asset',
+                    StorageOperationType::Move,
+                    'B',
+                    'C',
+                    new DateTimeImmutable(),
+                    ['visibility' => 'private', 'retain_visibility' => false]
+                ));
+            }
+        );
+        $locator = new StorageOperationQueueProcessorTestAdapterLocator($mutatingAdapter);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger(), 3);
+
+        $processor->process();
+
+        $later = ['visibility' => 'private', 'retain_visibility' => false];
+        $this->assertContains($later, $spy->copyConfigs, 'copies after the repoint use the later options');
+        $this->assertSame(
+            $later,
+            $spy->copyConfigs[count($spy->copyConfigs) - 1],
+            'the reconciliation copy that relocates to the final target uses them too'
+        );
+    }
 }
 
 /**

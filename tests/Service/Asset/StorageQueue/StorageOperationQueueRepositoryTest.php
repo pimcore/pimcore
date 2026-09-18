@@ -48,6 +48,7 @@ class StorageOperationQueueRepositoryTest extends TestCase
                 `source_prefix` VARCHAR(765) NOT NULL,
                 `target_prefix` VARCHAR(765) DEFAULT NULL,
                 `created_at` DATETIME NOT NULL,
+                `copy_options` JSON DEFAULT NULL,
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;'
         );
@@ -372,5 +373,87 @@ class StorageOperationQueueRepositoryTest extends TestCase
         // and the mapping itself against the REAL repository (bypassing the bool):
         $enabledResolver = new FrontendPathResolver($this->repository, true);
         $this->assertSame('/WiredSource/a.jpg', $enabledResolver->resolvePhysicalPath('/WiredTarget/a.jpg'));
+    }
+
+    public function testCopyOptionsRoundTripThroughTheDatabase(): void
+    {
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'Campaigns',
+            'Archive/Campaigns',
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+
+        $stored = $this->repository->all();
+
+        $this->assertCount(1, $stored);
+        $this->assertSame(
+            ['visibility' => 'public', 'retain_visibility' => false],
+            $stored[0]->getCopyOptions(),
+            'retain_visibility must come back as a boolean, not as 0'
+        );
+    }
+
+    public function testARowWithoutCopyOptionsHydratesAsNull(): void
+    {
+        $this->repository->add($this->move('asset', 'Campaigns', 'Archive/Campaigns'));
+
+        $stored = $this->repository->all();
+
+        $this->assertCount(1, $stored);
+        $this->assertNull($stored[0]->getCopyOptions());
+    }
+
+    public function testConvertingAMoveToADeleteDropsItsCopyOptions(): void
+    {
+        // A sweep has no visibility to preserve, and leaving the options behind would carry
+        // settings from an operation that no longer exists.
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'Campaigns',
+            'Archive/Campaigns',
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Delete, 'Archive', null, new DateTimeImmutable()
+        ));
+
+        foreach ($this->repository->all() as $operation) {
+            $this->assertSame(StorageOperationType::Delete, $operation->getType());
+            $this->assertNull($operation->getCopyOptions());
+        }
+    }
+
+    public function testRemoveIfUnchangedRefusesWhenOnlyTheCopyOptionsChanged(): void
+    {
+        // A live repoint can rewrite copy_options while leaving the target alone, so the row the
+        // processor applied is no longer the row in the table. Deleting it from the stale
+        // snapshot would drop an operation nobody has carried out under its current settings.
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'A',
+            'B',
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+        $stale = $this->repository->all()[0];
+
+        $this->repository->repointMoves('asset', 'B', 'B', ['visibility' => 'private', 'retain_visibility' => false]);
+
+        $this->assertFalse($this->repository->removeIfUnchanged($stale));
+        $this->assertCount(1, $this->repository->all(), 'the row stays queued for the retry');
+
+        // completeMove() refreshes and retries; against the current row the deletion goes through
+        $this->assertTrue($this->repository->removeIfUnchanged($this->repository->all()[0]));
+        $this->assertSame([], $this->repository->all());
     }
 }

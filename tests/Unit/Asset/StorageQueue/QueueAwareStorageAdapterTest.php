@@ -1043,4 +1043,105 @@ class QueueAwareStorageAdapterTest extends Unit
         } catch (UnableToGenerateTemporaryUrl) {
         }
     }
+
+    public function testQueuedFolderMoveRecordsTheResolvedCopyOptions(): void
+    {
+        // Filesystem::move() resolves the storage's configuration before handing it down, so the
+        // decorator already holds the effective visibility settings. Recording them on the row is
+        // what lets the processor copy the same way a non-deferred move would.
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('Campaigns/a.jpg', 'a', new Config());
+
+        $adapter->move('Campaigns', 'Archive/Campaigns', new Config([
+            'visibility' => 'public',
+            'retain_visibility' => false,
+            'public_url' => 'https://cdn.example.com',
+        ]));
+
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations);
+        $this->assertSame(
+            ['visibility' => 'public', 'retain_visibility' => false],
+            $operations[0]->getCopyOptions(),
+            'only the copy-relevant keys are persisted'
+        );
+    }
+
+    public function testQueuedFolderMoveWithoutVisibilitySettingsRecordsNothing(): void
+    {
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('Campaigns/a.jpg', 'a', new Config());
+
+        $adapter->move('Campaigns', 'Archive/Campaigns', new Config());
+
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations);
+        $this->assertNull($operations[0]->getCopyOptions());
+    }
+
+    public function testPendingWindowMaterializationCopiesWithTheRecordedOptions(): void
+    {
+        // Writing into a prefix a pending move still covers first materializes the moved bytes at
+        // the target. That copy carries out part of the move, so it must use the move's options
+        // rather than the adapter's defaults.
+        $spy = new ConfigCapturingAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir));
+        $adapter = new QueueAwareStorageAdapter($spy, $this->repository, 'asset');
+        $adapter->write('A/x.png', 'ORIGINAL', new Config());
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'A',
+            'B',
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+
+        $adapter->write('A/x.png', 'NEW', new Config());
+
+        $this->assertSame('ORIGINAL', $adapter->read('B/x.png'), 'moved bytes materialized at the target');
+        $this->assertSame(
+            [['visibility' => 'public', 'retain_visibility' => false]],
+            $spy->copyConfigs,
+            'the materializing copy used the pending move options'
+        );
+    }
+
+    public function testRepointingAPendingMoveAdoptsTheLaterMovesCopyOptions(): void
+    {
+        // Re-moving a subtree that is still queued repoints the pending row instead of adding a
+        // second one, so the row also has to pick up the later move's options - it is that move
+        // which decides how the bytes land at their final target.
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('A/x.png', 'bytes', new Config());
+        $adapter->move('A', 'B', new Config(['visibility' => 'public', 'retain_visibility' => false]));
+
+        $adapter->move('B', 'C', new Config(['visibility' => 'private', 'retain_visibility' => false]));
+
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations, 'the pending row was repointed, not duplicated');
+        $this->assertSame('A', $operations[0]->getSourcePrefix());
+        $this->assertSame('C', $operations[0]->getTargetPrefix());
+        $this->assertSame(
+            ['visibility' => 'private', 'retain_visibility' => false],
+            $operations[0]->getCopyOptions()
+        );
+    }
+
+    public function testADeleteNeverCarriesCopyOptions(): void
+    {
+        // A sweep has nothing to copy, so options on a delete are meaningless. They are dropped
+        // rather than rejected: a hand-edited row must not be able to stop the queue draining.
+        $operation = new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Delete,
+            'Campaigns',
+            null,
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        );
+
+        $this->assertNull($operation->getCopyOptions());
+    }
 }
