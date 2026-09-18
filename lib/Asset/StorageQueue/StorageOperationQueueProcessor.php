@@ -75,6 +75,9 @@ final class StorageOperationQueueProcessor
         $timedOut = false;
         $errors = [];
         $clearedAssetMove = false;
+        // Deletes that did not complete in this run. A deferred Delete stays an ordering barrier:
+        // a later overlapping Move must not carry away the very bytes it was queued to sweep.
+        $unfinishedDeletes = [];
 
         if ($onlyId !== null) {
             $requested = $this->repository->findById($onlyId);
@@ -118,16 +121,30 @@ final class StorageOperationQueueProcessor
 
             $this->invokeHeartbeat($heartbeat); // row boundary
 
+            if ($operation->getType() === StorageOperationType::Move) {
+                $blockingDelete = $this->findUnfinishedDeleteBlocking($operation, $unfinishedDeletes);
+                if ($blockingDelete !== null) {
+                    $this->logSkippedMove($operation, $blockingDelete);
+
+                    continue; // stays queued; the Delete gets its turn first on a later run
+                }
+            }
+
             try {
                 if ($this->processOperation($operation, $deadline, $heartbeat)) {
                     $processed++;
                     if ($operation->getType() === StorageOperationType::Move && $operation->getStorage() === 'asset') {
                         $clearedAssetMove = true;
                     }
+                } elseif ($operation->getType() === StorageOperationType::Delete) {
+                    $unfinishedDeletes[] = $operation;
                 }
                 // incomplete rows (deadline hit, undated entries, contested rows) stay queued
                 // for the next run - processOperation removes its own row on completion
             } catch (Exception $e) {
+                if ($operation->getType() === StorageOperationType::Delete) {
+                    $unfinishedDeletes[] = $operation;
+                }
                 $failed++;
                 $errors[] = sprintf(
                     '#%d %s %s: %s',
@@ -314,6 +331,65 @@ final class StorageOperationQueueProcessor
         }
 
         return null;
+    }
+
+    /**
+     * Re-reads the pending Move rows and re-applies the blocker check.
+     *
+     * Residual window, accepted deliberately: a producer allocates its row id inside an open
+     * transaction and the row only becomes readable on commit, so no number of re-reads can rule
+     * out a lower-id Move appearing between the last read and the next delete() call. Closing it
+     * entirely would mean holding mutual exclusion against every asset save for the duration of a
+     * sweep, which is a far worse trade than the narrow window that remains. The checks here bound
+     * that window to a single storage call rather than to a whole listing.
+     */
+    private function findLateBlockingMove(StorageOperation $delete): ?StorageOperation
+    {
+        $this->refreshPendingMoves();
+
+        return $this->findPendingMoveDependingOn($delete);
+    }
+
+    /**
+     * The run-loop counterpart to findPendingMoveDependingOn(): that one holds a Delete back while
+     * an older Move still needs its content, this one holds a Move back while an older Delete that
+     * could not run yet still has a claim on the same content.
+     *
+     * Without it a deferred Delete stops being a barrier. Its later overlapping Moves keep their
+     * FIFO turn, relocate the bytes the Delete was queued to sweep, and the Delete then completes
+     * against an empty source on a later run - leaving explicitly deleted content alive under the
+     * move target. Only Deletes queued BEFORE the Move qualify; a Delete queued afterwards is the
+     * Move's successor in FIFO order and has no claim on what the Move relocates first.
+     *
+     * @param list<StorageOperation> $unfinishedDeletes
+     */
+    private function findUnfinishedDeleteBlocking(StorageOperation $move, array $unfinishedDeletes): ?StorageOperation
+    {
+        foreach ($unfinishedDeletes as $delete) {
+            if ($delete->getStorage() === $move->getStorage()
+                && (int) $delete->getId() < (int) $move->getId()
+                && $this->deleteOverlapsMove($delete, $move)
+            ) {
+                return $delete;
+            }
+        }
+
+        return null;
+    }
+
+    private function logSkippedMove(StorageOperation $move, StorageOperation $blocking): void
+    {
+        $this->logger->info(
+            'Storage queue move skipped - an older delete on an overlapping prefix has not run yet',
+            [
+                'move' => $move->getId(),
+                'storage' => $move->getStorage(),
+                'moveSource' => $move->getSourcePrefix(),
+                'moveTarget' => $move->getTargetPrefix(),
+                'blockedBy' => $blocking->getId(),
+                'deletePrefix' => $blocking->getSourcePrefix(),
+            ]
+        );
     }
 
     /**
@@ -552,6 +628,7 @@ final class StorageOperationQueueProcessor
         }
 
         $entriesSinceCheck = 0;
+        $recheckedBeforeFirstDelete = false;
         foreach ($adapter->listContents($source, true) as $item) {
             if (++$entriesSinceCheck >= self::DEADLINE_CHECK_INTERVAL) {
                 $entriesSinceCheck = 0;
@@ -561,8 +638,7 @@ final class StorageOperationQueueProcessor
                 }
                 // The snapshot taken above can age during a long sweep: a producer may queue an
                 // overlapping Move meanwhile. Re-read and stop before deleting its content.
-                $this->refreshPendingMoves();
-                $late = $this->findPendingMoveDependingOn($operation);
+                $late = $this->findLateBlockingMove($operation);
                 if ($late !== null) {
                     $this->logDeferredDelete($operation, $late);
 
@@ -577,6 +653,20 @@ final class StorageOperationQueueProcessor
             $lastModified = $item->lastModified() ?? $adapter->lastModified($path)->lastModified();
             if ($lastModified === null || $lastModified >= $cutoff) {
                 continue; // undated (never destructive), same-second write, or namespace-reuse content
+            }
+
+            if (!$recheckedBeforeFirstDelete) {
+                // The initial check sits BEFORE listContents(), so on object storage the entire
+                // listing round trip falls inside the window - and a prefix holding fewer entries
+                // than the interval never reaches the periodic re-check at all. One more read
+                // immediately before the first destructive call covers both cases.
+                $recheckedBeforeFirstDelete = true;
+                $late = $this->findLateBlockingMove($operation);
+                if ($late !== null) {
+                    $this->logDeferredDelete($operation, $late);
+
+                    return false;
+                }
             }
 
             $adapter->delete($path);

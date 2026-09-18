@@ -897,6 +897,74 @@ class StorageOperationQueueProcessorTest extends Unit
             'only the equal-target Move cluster (ids 4 and 5) is reversed, in place; everything else stays FIFO'
         );
     }
+
+    public function testLaterOverlappingMoveIsSkippedWhileADeferredDeleteStillNeedsItsSource(): void
+    {
+        // A Delete that could not run yet is still an ordering barrier. Here move #1 fails (its
+        // target is unreachable), which defers delete #2, and move #3 would otherwise carry the
+        // very bytes #2 was queued to sweep off to a different target - leaving explicitly
+        // deleted content alive under that target once #2 later completes against an empty source.
+        $this->writeWithMtime('A/keep.jpg', 'bytes', time() - 7200);
+        $this->adapter = new CopyRefusingAdapterDecorator($this->adapter, 'T');
+
+        $this->addRow(StorageOperationType::Move, 'A', 'T');
+        $this->addRow(StorageOperationType::Delete, 'A', null);
+        $this->addRow(StorageOperationType::Move, 'A', 'Y');
+
+        $result = $this->processor()->process();
+
+        $this->assertSame('bytes', $this->adapter->read('A/keep.jpg'), 'the contested source is untouched');
+        $this->assertFalse($this->adapter->fileExists('Y/keep.jpg'), 'the later move must not jump the deferred delete');
+        $this->assertCount(3, $this->repository->all(), 'all three rows stay queued for the next run');
+        $this->assertSame(0, $result->getProcessedRows());
+    }
+
+    public function testMoveStillRunsOnceTheOverlappingDeleteHasCompleted(): void
+    {
+        // The mirror case: the delete completes in this run, so the later move is not blocked and
+        // relocates the post-cutoff content the delete deliberately spared.
+        $this->writeWithMtime('A/old.jpg', 'old', time() - 7200);
+        $this->addRow(StorageOperationType::Delete, 'A', null, new DateTimeImmutable('-1 hour'));
+        $this->write('A/new.jpg', 'new'); // namespace reuse: written after the delete was queued
+        $this->addRow(StorageOperationType::Move, 'A', 'Y');
+
+        $this->processor()->process();
+
+        $this->assertFalse($this->adapter->fileExists('A/old.jpg'), 'pre-cutoff content was deleted as requested');
+        $this->assertSame('new', $this->adapter->read('Y/new.jpg'), 'spared content still reaches the move target');
+        $this->assertSame([], $this->repository->all(), 'both rows completed');
+    }
+
+    public function testMoveCommittedDuringTheSweepStillStopsTheDeleteOnASmallPrefix(): void
+    {
+        // Queue-insertion race: a producer allocates a Move id inside an open transaction and
+        // commits after this Delete's first blocker check, so a LOWER-id Move becomes visible
+        // part-way through the run. The periodic re-check is keyed to the listing interval, so a
+        // prefix holding fewer entries than that interval would never reach it and would sweep
+        // content the newly visible Move still needs.
+        $this->writeWithMtime('A/keep.jpg', 'bytes', time() - 7200);
+        $this->addRow(StorageOperationType::Move, 'A', 'T');
+        $this->addRow(StorageOperationType::Delete, 'A', null);
+
+        $hiddenMove = $this->findRow(StorageOperationType::Move, 'A');
+        $this->assertNotNull($hiddenMove);
+        $this->repository->remove((int) $hiddenMove->getId()); // not committed yet
+
+        // call 1 orders the queue, call 2 is the Delete's initial blocker check, call 3 is the
+        // re-read the sweep must perform before its first destructive call
+        $racyRepository = new LateMoveRevealingQueueRepository($this->repository, $hiddenMove, 3);
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator($this->adapter),
+            $racyRepository,
+            new NullLogger()
+        );
+
+        $result = $processor->process();
+
+        $this->assertSame('bytes', $this->adapter->read('A/keep.jpg'), 'the late move still needs this content');
+        $this->assertSame(0, $result->getProcessedRows());
+        $this->assertNotNull($this->findRow(StorageOperationType::Delete, 'A'), 'the delete stays queued');
+    }
 }
 
 /**

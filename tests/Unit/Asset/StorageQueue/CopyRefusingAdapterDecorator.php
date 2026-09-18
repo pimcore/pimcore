@@ -26,13 +26,27 @@ use League\Flysystem\UnableToCopyFile;
  */
 final class CopyRefusingAdapterDecorator implements FilesystemAdapter
 {
-    public function __construct(private readonly FilesystemAdapter $inner)
-    {
+    /**
+     * @param string|null $onlyDestinationPrefix when given, only copies landing under this prefix
+     *        are refused - models a destination-specific failure, where one target is
+     *        unreachable while another works
+     */
+    public function __construct(
+        private readonly FilesystemAdapter $inner,
+        private readonly ?string $onlyDestinationPrefix = null,
+    ) {
     }
 
     public function copy(string $source, string $destination, Config $config): void
     {
-        throw UnableToCopyFile::fromLocationTo($source, $destination);
+        if ($this->onlyDestinationPrefix === null
+            || $destination === $this->onlyDestinationPrefix
+            || str_starts_with($destination, $this->onlyDestinationPrefix . '/')
+        ) {
+            throw UnableToCopyFile::fromLocationTo($source, $destination);
+        }
+
+        $this->inner->copy($source, $destination, $config);
     }
 
     public function fileExists(string $path): bool
