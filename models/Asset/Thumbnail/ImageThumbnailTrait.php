@@ -14,9 +14,12 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\Thumbnail;
 
 use Exception;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\UnableToReadFile;
 use Pimcore;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\Helper\TemporaryFileHelperTrait;
+use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
@@ -93,10 +96,43 @@ trait ImageThumbnailTrait
         if ($pathReference['type'] === 'asset') {
             return $this->asset->getStream();
         } elseif (isset($pathReference['storagePath'])) {
-            return Tool\Storage::get('thumbnail')->readStream($pathReference['storagePath']);
+            $storage = $this->getThumbnailStorage();
+
+            try {
+                return $storage->readStream($pathReference['storagePath']);
+            } catch (UnableToReadFile $e) {
+                Logger::warning($e->getMessage());
+
+                // the file is missing from the thumbnail storage although the path reference claims
+                // it exists, e.g. because of a stale entry in the thumbnail status cache. Invalidate
+                // the entry so the thumbnail is regenerated on the next request instead of failing again.
+                if (($cacheOwner = $this->getThumbnailStatusCacheOwner()) && $this->config) {
+                    $cacheOwner->getDao()->deleteFromThumbnailCache($this->config->getName(), basename($pathReference['storagePath']));
+                }
+            }
         }
 
         return null;
+    }
+
+    /**
+     * @internal
+     */
+    protected function getThumbnailStorage(): FilesystemOperator
+    {
+        return Storage::get('thumbnail');
+    }
+
+    /**
+     * The asset owning the thumbnail status cache entries for the current path reference.
+     * This can differ from the thumbnail's own asset when the path reference is delegated
+     * to another asset's thumbnail, e.g. custom video poster images.
+     *
+     * @internal
+     */
+    protected function getThumbnailStatusCacheOwner(): ?Asset
+    {
+        return $this->asset;
     }
 
     public function getPathReference(bool $deferredAllowed = false): array
