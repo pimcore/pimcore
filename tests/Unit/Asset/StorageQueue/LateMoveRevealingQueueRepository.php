@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Asset\StorageQueue;
 
+use DateTimeImmutable;
 use Pimcore\Asset\StorageQueue\StorageOperation;
 use Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface;
 
@@ -44,12 +45,13 @@ final class LateMoveRevealingQueueRepository implements StorageOperationQueueRep
         return $this->inner->all();
     }
 
-    public function findOverlappingMoveOlderThan(
+    public function findOverlappingMoveQueuedBefore(
         string $storage,
         string $prefix,
+        DateTimeImmutable $createdAt,
         int $beforeId
     ): ?StorageOperation {
-        $found = $this->inner->findOverlappingMoveOlderThan($storage, $prefix, $beforeId);
+        $found = $this->inner->findOverlappingMoveQueuedBefore($storage, $prefix, $createdAt, $beforeId);
         if ($found !== null) {
             return $found;
         }

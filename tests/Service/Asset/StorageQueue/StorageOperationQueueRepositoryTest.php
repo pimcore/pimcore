@@ -385,17 +385,17 @@ class StorageOperationQueueRepositoryTest extends TestCase
 
         $this->assertSame(
             'A/deep/inner',
-            $this->repository->findOverlappingMoveOlderThan('asset', 'A', $beforeId)?->getSourcePrefix(),
+            $this->repository->findOverlappingMoveQueuedBefore('asset', 'A', new DateTimeImmutable('+1 hour'), $beforeId)?->getSourcePrefix(),
             'a delete above the move source overlaps it'
         );
         $this->assertSame(
             'B',
-            $this->repository->findOverlappingMoveOlderThan('asset', 'B/deep/inner', $beforeId)?->getSourcePrefix(),
+            $this->repository->findOverlappingMoveQueuedBefore('asset', 'B/deep/inner', new DateTimeImmutable('+1 hour'), $beforeId)?->getSourcePrefix(),
             'a delete inside the move source overlaps it'
         );
         $this->assertSame(
             'C',
-            $this->repository->findOverlappingMoveOlderThan('asset', 'C', $beforeId)?->getSourcePrefix(),
+            $this->repository->findOverlappingMoveQueuedBefore('asset', 'C', new DateTimeImmutable('+1 hour'), $beforeId)?->getSourcePrefix(),
             'an identical prefix overlaps'
         );
     }
@@ -406,7 +406,7 @@ class StorageOperationQueueRepositoryTest extends TestCase
         $beforeId = (int) $this->repository->all()[0]->getId() + 1;
 
         $this->assertNotNull(
-            $this->repository->findOverlappingMoveOlderThan('asset', 'Archive/Campaigns/2026', $beforeId),
+            $this->repository->findOverlappingMoveQueuedBefore('asset', 'Archive/Campaigns/2026', new DateTimeImmutable('+1 hour'), $beforeId),
             'a delete under the move target names content the move has not materialised yet'
         );
     }
@@ -419,15 +419,15 @@ class StorageOperationQueueRepositoryTest extends TestCase
         $beforeId = (int) $onlyRow->getId() + 1;
 
         $this->assertNull(
-            $this->repository->findOverlappingMoveOlderThan('asset', 'legacy-archive', $beforeId),
+            $this->repository->findOverlappingMoveQueuedBefore('asset', 'legacy-archive', new DateTimeImmutable('+1 hour'), $beforeId),
             'a shared leading substring is not an overlap'
         );
         $this->assertNull(
-            $this->repository->findOverlappingMoveOlderThan('asset', 'shared', $beforeId),
+            $this->repository->findOverlappingMoveQueuedBefore('asset', 'shared', new DateTimeImmutable('+1 hour'), $beforeId),
             'rows on another storage never match'
         );
         $this->assertNull(
-            $this->repository->findOverlappingMoveOlderThan('asset', 'legacy', (int) $onlyRow->getId()),
+            $this->repository->findOverlappingMoveQueuedBefore('asset', 'legacy', $onlyRow->getCreatedAt(), (int) $onlyRow->getId()),
             'the row itself and anything newer is out of range'
         );
     }
@@ -441,7 +441,7 @@ class StorageOperationQueueRepositoryTest extends TestCase
 
         $this->assertSame(
             'A/one',
-            $this->repository->findOverlappingMoveOlderThan('asset', 'A', $beforeId)?->getSourcePrefix()
+            $this->repository->findOverlappingMoveQueuedBefore('asset', 'A', new DateTimeImmutable('+1 hour'), $beforeId)?->getSourcePrefix()
         );
     }
 

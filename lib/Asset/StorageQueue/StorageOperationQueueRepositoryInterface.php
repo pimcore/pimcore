@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Asset\StorageQueue;
 
+use DateTimeImmutable;
+
 /**
  * @internal
  */
@@ -54,16 +56,22 @@ interface StorageOperationQueueRepositoryInterface
     public function findSourceCovering(string $storage, string $path): array;
 
     /**
-     * The oldest pending Move row on this storage with an id below $beforeId whose source OR
-     * target prefix overlaps $prefix in either nesting direction, or null when there is none.
+     * The oldest pending Move row on this storage queued before ($createdAt, $beforeId) whose
+     * source OR target prefix overlaps $prefix in either nesting direction, or null.
+     *
+     * Ordered by creation time with the id only breaking ties, the same ordering the processor
+     * uses in the opposite direction. Ids alone do not express causal order - a row committing
+     * late still carries the id it reserved - and using two different orderings for the two
+     * dependency directions can leave a pair of rows each yielding to the other forever.
      *
      * Targeted on purpose: the processor asks this repeatedly while sweeping a Delete, and
      * hydrating the whole queue for each of those checks would make a large Delete cost
      * O(files x queue size).
      */
-    public function findOverlappingMoveOlderThan(
+    public function findOverlappingMoveQueuedBefore(
         string $storage,
         string $prefix,
+        DateTimeImmutable $createdAt,
         int $beforeId
     ): ?StorageOperation;
 

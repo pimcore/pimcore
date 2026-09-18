@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Asset\StorageQueue;
 
+use DateTimeImmutable;
 use Doctrine\DBAL\Driver\Exception as DriverExceptionInterface;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Asset\StorageQueue\StorageOperation;
@@ -54,9 +55,10 @@ final class MissingTableStorageOperationQueueRepository implements StorageOperat
         throw self::exception();
     }
 
-    public function findOverlappingMoveOlderThan(
+    public function findOverlappingMoveQueuedBefore(
         string $storage,
         string $prefix,
+        DateTimeImmutable $createdAt,
         int $beforeId
     ): ?StorageOperation {
         throw self::exception();

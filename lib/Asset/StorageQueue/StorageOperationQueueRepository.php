@@ -133,9 +133,10 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
         return array_map($this->hydrate(...), $rows);
     }
 
-    public function findOverlappingMoveOlderThan(
+    public function findOverlappingMoveQueuedBefore(
         string $storage,
         string $prefix,
+        DateTimeImmutable $createdAt,
         int $beforeId
     ): ?StorageOperation {
         if (!$this->hasOperations($storage)) {
@@ -144,7 +145,12 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
 
         // Overlap in both nesting directions, against source and target alike: the row's bytes
         // still sit at the source, and its target names content that does not exist yet.
-        $parameters = ['storage' => $storage, 'beforeId' => $beforeId];
+        $parameters = [
+            'storage' => $storage,
+            'beforeId' => $beforeId,
+            'createdAt' => $createdAt->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s'),
+            'createdAtTie' => $createdAt->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s'),
+        ];
         $sourceOverlap = $this->overlapPredicate('source_prefix', 'src', $prefix, $parameters);
         $targetOverlap = $this->overlapPredicate('target_prefix', 'tgt', $prefix, $parameters);
 
@@ -152,9 +158,9 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
             'SELECT * FROM ' . self::TABLE . "
              WHERE `storage` = :storage
                AND `operation` = 'move'
-               AND `id` < :beforeId
+               AND (`created_at` < :createdAt OR (`created_at` = :createdAtTie AND `id` < :beforeId))
                AND (" . $sourceOverlap . ' OR ' . $targetOverlap . ')
-             ORDER BY `id` ASC
+             ORDER BY `created_at` ASC, `id` ASC
              LIMIT 1',
             $parameters
         );

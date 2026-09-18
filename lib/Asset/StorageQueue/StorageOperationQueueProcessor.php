@@ -287,9 +287,10 @@ final class StorageOperationQueueProcessor
      */
     private function findPendingMoveDependingOn(StorageOperation $delete): ?StorageOperation
     {
-        return $this->repository->findOverlappingMoveOlderThan(
+        return $this->repository->findOverlappingMoveQueuedBefore(
             $delete->getStorage(),
             $delete->getSourcePrefix(),
+            $delete->getCreatedAt(),
             (int) $delete->getId()
         );
     }
@@ -311,7 +312,7 @@ final class StorageOperationQueueProcessor
         foreach ($this->repository->all() as $candidate) {
             if ($candidate->getType() !== StorageOperationType::Delete
                 || $candidate->getStorage() !== $move->getStorage()
-                || (int) $candidate->getId() >= (int) $move->getId()
+                || !$this->isQueuedBefore($candidate, $move)
             ) {
                 continue;
             }
@@ -374,7 +375,7 @@ final class StorageOperationQueueProcessor
     {
         foreach ($unfinishedDeletes as $delete) {
             if ($delete->getStorage() === $move->getStorage()
-                && (int) $delete->getId() < (int) $move->getId()
+                && $this->isQueuedBefore($delete, $move)
                 && $this->deleteOverlapsMove($delete, $move)
             ) {
                 return $delete;
@@ -477,14 +478,19 @@ final class StorageOperationQueueProcessor
      */
     private function isQueuedAfter(StorageOperation $delete, StorageOperation $move): bool
     {
-        $deleteAt = $delete->getCreatedAt()->getTimestamp();
-        $moveAt = $move->getCreatedAt()->getTimestamp();
+        return $this->isQueuedBefore($move, $delete);
+    }
 
-        if ($deleteAt !== $moveAt) {
-            return $deleteAt > $moveAt;
-        }
-
-        return (int) $delete->getId() > (int) $move->getId();
+    /**
+     * The single causal ordering: creation time first, id only as a same-second tie-breaker.
+     *
+     * Every dependency check between two rows uses this, in both directions. Mixing orderings -
+     * time one way, id the other - can leave a pair of rows each yielding to the other forever.
+     */
+    private function isQueuedBefore(StorageOperation $a, StorageOperation $b): bool
+    {
+        return [$a->getCreatedAt()->getTimestamp(), (int) $a->getId()]
+            < [$b->getCreatedAt()->getTimestamp(), (int) $b->getId()];
     }
 
     private function logMoveDeferredForDelete(

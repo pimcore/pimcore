@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Asset\StorageQueue;
 
+use DateTimeImmutable;
 use Pimcore\Asset\StorageQueue\StorageOperation;
 use Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface;
 use Pimcore\Asset\StorageQueue\StorageOperationType;
@@ -117,11 +118,13 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
         return $this->findSourceCoveringCalls;
     }
 
-    public function findOverlappingMoveOlderThan(
+    public function findOverlappingMoveQueuedBefore(
         string $storage,
         string $prefix,
+        DateTimeImmutable $createdAt,
         int $beforeId
     ): ?StorageOperation {
+        $before = [$createdAt->getTimestamp(), $beforeId];
         $overlaps = static function (?string $candidate) use ($prefix): bool {
             if ($candidate === null) {
                 return false;
@@ -136,14 +139,17 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
 
         $found = null;
         foreach ($this->operations as $operation) {
+            $order = [$operation->getCreatedAt()->getTimestamp(), (int) $operation->getId()];
             if ($operation->getStorage() !== $storage
                 || $operation->getType() !== StorageOperationType::Move
-                || (int) $operation->getId() >= $beforeId
+                || $order >= $before
                 || (!$overlaps($operation->getSourcePrefix()) && !$overlaps($operation->getTargetPrefix()))
             ) {
                 continue;
             }
-            if ($found === null || (int) $operation->getId() < (int) $found->getId()) {
+            if ($found === null
+                || $order < [$found->getCreatedAt()->getTimestamp(), (int) $found->getId()]
+            ) {
                 $found = $operation;
             }
         }

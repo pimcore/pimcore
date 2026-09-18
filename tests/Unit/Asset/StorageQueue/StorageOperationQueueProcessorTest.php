@@ -1239,6 +1239,29 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertFalse($this->adapter->fileExists('B/sub/x.jpg'), 'never materialised under a deleted target');
         $this->assertSame('x', $this->adapter->read('A/sub/x.jpg'), 'but the ambiguous source entry is preserved');
     }
+
+    public function testInvertedIdAndTimeOrderingDoesNotBlockBothRowsForever(): void
+    {
+        // Clock skew across app servers can leave a delete with a HIGHER id but an EARLIER
+        // creation time than a move it overlaps. Judging one direction by time and the other by
+        // id then makes each row yield to the other, and neither ever runs again. Both
+        // directions use the same (created_at, id) ordering, so the earlier-by-time delete wins.
+        $this->writeWithMtime('A/x.jpg', 'x', time() - 18000);
+        $this->addRow(StorageOperationType::Move, 'A', 'B', new DateTimeImmutable('-2 hours'));
+        $this->addRow(StorageOperationType::Delete, 'A', null, new DateTimeImmutable('-4 hours'));
+
+        $processor = $this->processor();
+        $processor->process();
+
+        $this->assertFalse($this->adapter->fileExists('A/x.jpg'), 'the earlier delete swept its prefix');
+        $this->assertFalse($this->adapter->directoryExists('B'), 'the later move carried nothing across');
+        $this->assertNull($this->findRow(StorageOperationType::Delete, 'A'), 'the delete completed');
+
+        // and the move is not stuck: the next run finds nothing left and retires the row
+        $processor->process();
+
+        $this->assertSame([], $this->repository->all(), 'the queue drains rather than deadlocking');
+    }
 }
 
 /**
