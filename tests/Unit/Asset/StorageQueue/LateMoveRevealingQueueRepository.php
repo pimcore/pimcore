@@ -100,9 +100,9 @@ final class LateMoveRevealingQueueRepository implements StorageOperationQueueRep
     /**
      * @return StorageOperation[]
      */
-    public function findDeletesQueuedAfter(string $storage, int $afterId): array
+    public function findPendingDeletes(string $storage): array
     {
-        return $this->inner->findDeletesQueuedAfter($storage, $afterId);
+        return $this->inner->findPendingDeletes($storage);
     }
 
     public function hasOperations(string $storage): bool

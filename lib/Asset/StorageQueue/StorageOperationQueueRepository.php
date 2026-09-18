@@ -181,7 +181,7 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
     /**
      * @return StorageOperation[]
      */
-    public function findDeletesQueuedAfter(string $storage, int $afterId): array
+    public function findPendingDeletes(string $storage): array
     {
         if (!$this->hasOperations($storage)) {
             return [];
@@ -191,9 +191,8 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
             'SELECT * FROM ' . self::TABLE . "
              WHERE `storage` = :storage
                AND `operation` = 'delete'
-               AND `id` > :afterId
              ORDER BY `id` ASC",
-            ['storage' => $storage, 'afterId' => $afterId]
+            ['storage' => $storage]
         );
 
         return array_map($this->hydrate(...), $rows);

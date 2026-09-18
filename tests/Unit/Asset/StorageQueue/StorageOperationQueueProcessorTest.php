@@ -1054,6 +1054,103 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertFalse($this->adapter->fileExists('B/sub/gone.jpg'), 'the tombstoned subtree is never materialised');
         $this->assertFalse($this->adapter->fileExists('A/sub/gone.jpg'), 'and does not survive at the source either');
     }
+
+    public function testAMoveConvertedMidDrainStillBlocksALaterOverlappingMove(): void
+    {
+        // Live traffic deletes B, which converts the draining "Move A -> B" row into "Delete A".
+        // The drain reports "not completed" while still holding the original Move, so without
+        // re-reading the row the run would not treat it as a delete barrier - and the later
+        // "Move A -> Y" would carry the remaining bytes off to Y before that delete ever runs.
+        for ($i = 1; $i <= 8; $i++) {
+            $this->writeWithMtime("A/file{$i}.jpg", "content-{$i}", time() - 7200);
+        }
+        $this->addRow(StorageOperationType::Move, 'A', 'B');
+        $this->addRow(StorageOperationType::Move, 'A', 'Y');
+
+        $mutatingAdapter = new StorageOperationQueueProcessorTestMutatingAdapter(
+            $this->adapter,
+            4,
+            function (): void {
+                // deleting B converts the pending A -> B row into a Delete on A
+                $this->repository->add(new StorageOperation(
+                    null, 'asset', StorageOperationType::Delete, 'B', null, new DateTimeImmutable()
+                ));
+            }
+        );
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator($mutatingAdapter),
+            $this->repository,
+            new NullLogger(),
+            3
+        );
+
+        $processor->process();
+
+        $this->assertFalse(
+            $this->adapter->directoryExists('Y'),
+            'the later move must not relocate bytes the converted delete now owns'
+        );
+        $this->assertNotNull($this->findRow(StorageOperationType::Move, 'A'), 'that move stays queued');
+    }
+
+    public function testDeletePrecedingEveryClusterMemberDoesNotSplitTheCluster(): void
+    {
+        // The delete sits before BOTH same-target rows, so reversing them crosses nothing.
+        // Splitting here would drain the older row first, let it claim T, and leave the newer
+        // row's fresher content to be discarded by literal-wins.
+        $ops = [
+            new StorageOperation(1, 'asset', StorageOperationType::Delete, 'A', null, new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'B', 'T', new DateTimeImmutable()),
+        ];
+
+        $processor = $this->processor();
+        $method = new ReflectionMethod($processor, 'orderForProcessing');
+        $method->setAccessible(true);
+
+        /** @var StorageOperation[] $ordered */
+        $ordered = $method->invoke($processor, $ops);
+
+        $this->assertSame(
+            [1, 3, 2],
+            array_map(static fn (StorageOperation $op) => $op->getId(), $ordered),
+            'the cluster still drains newest-first'
+        );
+    }
+
+    public function testTombstoneWithALowerIdCommittedMidDrainStillStopsMaterialisation(): void
+    {
+        // The mirror of the late-tombstone case: a producer allocates its row id inside an open
+        // transaction, so a Delete committing mid-drain can carry a LOWER id than the Move that
+        // is draining. An id-bounded lookup would never see it for the rest of the run.
+        $this->addRow(StorageOperationType::Move, 'Z', 'Zt'); // consumes id 1
+        $placeholder = $this->findRow(StorageOperationType::Move, 'Z');
+        $this->assertNotNull($placeholder);
+        $this->repository->remove((int) $placeholder->getId());
+
+        $this->writeWithMtime('A/sub/gone.jpg', 'gone', time() - 10800);
+        $this->addRow(StorageOperationType::Move, 'A', 'B', new DateTimeImmutable('-2 hours'));
+
+        $hiddenDelete = new StorageOperation(
+            1, // lower than the draining move
+            'asset',
+            StorageOperationType::Delete,
+            'B/sub',
+            null,
+            new DateTimeImmutable('-1 hour')
+        );
+        $racyRepository = new LateDeleteRevealingQueueRepository($this->repository, $hiddenDelete, 2);
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator($this->adapter),
+            $racyRepository,
+            new NullLogger()
+        );
+
+        $processor->process();
+
+        $this->assertFalse($this->adapter->fileExists('B/sub/gone.jpg'), 'the tombstoned subtree is never materialised');
+        $this->assertFalse($this->adapter->fileExists('A/sub/gone.jpg'), 'and does not survive at the source either');
+    }
 }
 
 /**

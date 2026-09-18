@@ -130,15 +130,13 @@ final class StorageOperationQueueProcessor
                     if ($operation->getType() === StorageOperationType::Move && $operation->getStorage() === 'asset') {
                         $clearedAssetMove = true;
                     }
-                } elseif ($operation->getType() === StorageOperationType::Delete) {
-                    $unfinishedDeletes[] = $operation;
+                } else {
+                    $this->rememberUnfinishedDelete($operation, $unfinishedDeletes);
                 }
                 // incomplete rows (deadline hit, undated entries, contested rows) stay queued
                 // for the next run - processOperation removes its own row on completion
             } catch (Exception $e) {
-                if ($operation->getType() === StorageOperationType::Delete) {
-                    $unfinishedDeletes[] = $operation;
-                }
+                $this->rememberUnfinishedDelete($operation, $unfinishedDeletes);
                 $failed++;
                 $errors[] = sprintf(
                     '#%d %s %s: %s',
@@ -220,14 +218,15 @@ final class StorageOperationQueueProcessor
         // splits the cluster, and a full run then drains those rows in plain FIFO order. Refusing
         // here on a shared target alone would reject a row a normal run processes first.
         $all = $this->repository->all();
-        $barriers = $this->moveBarriers($all);
-        $cluster = $this->clusterKey($operation, $barriers);
+        $clusterKeys = $this->moveClusterKeys($all);
+        $cluster = $clusterKeys[(int) $operation->getId()] ?? null;
 
         $newest = null;
         foreach ($all as $candidate) {
-            if ($candidate->getType() !== StorageOperationType::Move
+            if ($cluster === null
+                || $candidate->getType() !== StorageOperationType::Move
                 || (int) $candidate->getId() <= (int) $operation->getId()
-                || $this->clusterKey($candidate, $barriers) !== $cluster
+                || ($clusterKeys[(int) $candidate->getId()] ?? null) !== $cluster
             ) {
                 continue;
             }
@@ -341,6 +340,24 @@ final class StorageOperationQueueProcessor
     }
 
     /**
+     * Records a row that did not complete, when it is (or has just become) a Delete.
+     *
+     * Re-read rather than trusting the row we started with: live traffic converts a Move whose
+     * target was deleted into a Delete mid-drain, and the drain then reports "not completed"
+     * while still holding the original Move. Treating that as a Move would let a later
+     * overlapping Move relocate the very bytes the converted Delete now owns.
+     *
+     * @param list<StorageOperation> $unfinishedDeletes
+     */
+    private function rememberUnfinishedDelete(StorageOperation $operation, array &$unfinishedDeletes): void
+    {
+        $current = $this->repository->findById((int) $operation->getId());
+        if ($current !== null && $current->getType() === StorageOperationType::Delete) {
+            $unfinishedDeletes[] = $current;
+        }
+    }
+
+    /**
      * The run-loop counterpart to findPendingMoveDependingOn(): that one holds a Delete back while
      * an older Move still needs its content, this one holds a Move back while an older Delete that
      * could not run yet still has a claim on the same content.
@@ -383,7 +400,14 @@ final class StorageOperationQueueProcessor
     }
 
     /**
-     * Delete rows queued after the given Move, on the same storage.
+     * Pending Delete rows on the Move's storage.
+     *
+     * Deliberately not bounded by the Move's id. A producer allocates its row id inside an open
+     * transaction, so a Delete that commits mid-drain can carry a LOWER id than the Move and
+     * would be invisible to an id-bounded lookup for the rest of the run - long enough for the
+     * Move to relocate the bytes out of the deleted prefix. Rows that were already visible when
+     * the run was ordered never reach this point anyway: the run loop skips a Move that an
+     * unfinished older Delete overlaps.
      *
      * Targeted rather than a scan of the whole queue: this is re-read at every drain checkpoint,
      * so hydrating every row here would make a run cost O(moves x queue size).
@@ -397,9 +421,9 @@ final class StorageOperationQueueProcessor
      *
      * @return StorageOperation[]
      */
-    private function findDeletesQueuedAfter(StorageOperation $move): array
+    private function findPendingDeletes(StorageOperation $move): array
     {
-        return $this->repository->findDeletesQueuedAfter($move->getStorage(), (int) $move->getId());
+        return $this->repository->findPendingDeletes($move->getStorage());
     }
 
     /**
@@ -481,30 +505,51 @@ final class StorageOperationQueueProcessor
      * @return StorageOperation[]
      */
     /**
-     * Cluster identity for the newest-first drain: same target prefix, same storage, and the same
-     * most recent blocking Delete (see moveBarriers()).
+     * Cluster identity per Move row, for the newest-first drain: same storage, same target
+     * prefix, and no overlapping Delete queued between one member and the next.
      *
-     * @param array<int, int> $barriers
+     * Reversing a cluster moves its later members ahead of everything between them, so a Delete
+     * in that gap would suddenly see different content. A Delete that precedes every member of
+     * the cluster is not in any such gap and must NOT split it: doing so would drain the older
+     * row first, let it claim the shared target, and leave the newer row's fresher content to be
+     * discarded by literal-wins - the very data loss the newest-first drain exists to prevent.
+     *
+     * @param StorageOperation[] $operations
+     *
+     * @return array<int, string>
      */
-    private function clusterKey(StorageOperation $move, array $barriers): string
+    private function moveClusterKeys(array $operations): array
     {
-        $barrier = $barriers[(int) $move->getId()] ?? 0;
+        $barriers = $this->moveBarriers($operations);
 
-        return $barrier . "\0" . $move->getStorage() . "\0" . (string) $move->getTargetPrefix();
+        $keys = [];
+        $segment = [];
+        $previousMemberId = [];
+        foreach ($operations as $operation) {
+            if ($operation->getType() !== StorageOperationType::Move) {
+                continue;
+            }
+
+            $group = $operation->getStorage() . "\0" . (string) $operation->getTargetPrefix();
+            $id = (int) $operation->getId();
+
+            if (!isset($segment[$group])) {
+                $segment[$group] = 0;
+            } elseif (($barriers[$id] ?? 0) > $previousMemberId[$group]) {
+                $segment[$group]++; // an overlapping Delete sits between the two members
+            }
+
+            $keys[$id] = $segment[$group] . "\0" . $group;
+            $previousMemberId[$group] = $id;
+        }
+
+        return $keys;
     }
 
     /**
      * For each Move row, the id of the most recent Delete queued before it that overlaps the
-     * Move (0 when there is none).
-     *
-     * This is what a same-target cluster may not be drained across. Reversing a cluster moves its
-     * later members ahead of everything between them, so a Delete in that gap would suddenly see
-     * different content: either the Move carried bytes out of the prefix the Delete was queued to
-     * remove, or it dropped bytes into it just before the sweep. Two Moves share a barrier id
-     * exactly when no such Delete sits between them, which is precisely when reordering them is
-     * safe. A Delete that overlaps neither end of the Move is irrelevant and must NOT split the
-     * cluster - doing so would strand the older row's stale bytes at the shared target, the very
-     * data loss the newest-first drain exists to prevent.
+     * Move (0 when there is none). Used by moveClusterKeys() to tell whether such a Delete sits
+     * between two same-target rows.
      *
      * @param StorageOperation[] $operations
      *
@@ -588,14 +633,14 @@ final class StorageOperationQueueProcessor
         // queued to remove, and the dependency check in processDelete() deliberately only
         // considers rows older than the Delete, so it would not cover a Move that jumped ahead
         // of it either. Unrelated Deletes do not split a cluster.
-        $barriers = $this->moveBarriers($operations);
+        $clusterKeys = $this->moveClusterKeys($operations);
 
         $moveClusters = [];
         foreach ($operations as $operation) {
             if ($operation->getType() !== StorageOperationType::Move) {
                 continue;
             }
-            $moveClusters[$this->clusterKey($operation, $barriers)][] = $operation;
+            $moveClusters[$clusterKeys[(int) $operation->getId()]][] = $operation;
         }
 
         $emittedClusters = [];
@@ -607,7 +652,7 @@ final class StorageOperationQueueProcessor
                 continue;
             }
 
-            $targetPrefix = $this->clusterKey($operation, $barriers);
+            $targetPrefix = $clusterKeys[(int) $operation->getId()];
             $cluster = $moveClusters[$targetPrefix];
             if (count($cluster) < 2) {
                 $ordered[] = $operation;
@@ -759,7 +804,7 @@ final class StorageOperationQueueProcessor
         $source = $current->getSourcePrefix();
         $copied = []; // relative suffix => target prefix the copy was made under
         // Deletes queued after this move, re-read at the drain checkpoints below.
-        $laterDeletes = $this->findDeletesQueuedAfter($current);
+        $laterDeletes = $this->findPendingDeletes($current);
         $recheckedBeforeFirstMaterialisation = false;
 
         if ($adapter->directoryExists($source)) {
@@ -775,7 +820,7 @@ final class StorageOperationQueueProcessor
                     if ($current === null) {
                         return false; // row vanished or was converted - tracked copies already reconciled
                     }
-                    $laterDeletes = $this->findDeletesQueuedAfter($current);
+                    $laterDeletes = $this->findPendingDeletes($current);
                 }
                 if (!$item->isFile()) {
                     continue;
@@ -812,7 +857,7 @@ final class StorageOperationQueueProcessor
                     // the check interval never reaches the checkpoint above at all. Re-read once
                     // before the first materialisation so a tombstone committed meanwhile is seen.
                     $recheckedBeforeFirstMaterialisation = true;
-                    $laterDeletes = $this->findDeletesQueuedAfter($current);
+                    $laterDeletes = $this->findPendingDeletes($current);
                 }
 
                 $tombstoned = $this->findTombstoneCovering($laterDeletes, $target, $lastModified);

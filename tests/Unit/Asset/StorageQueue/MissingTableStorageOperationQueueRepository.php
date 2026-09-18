@@ -65,7 +65,7 @@ final class MissingTableStorageOperationQueueRepository implements StorageOperat
     /**
      * @return StorageOperation[]
      */
-    public function findDeletesQueuedAfter(string $storage, int $afterId): array
+    public function findPendingDeletes(string $storage): array
     {
         throw self::exception();
     }
