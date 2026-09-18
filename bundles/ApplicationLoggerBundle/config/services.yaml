@@ -75,11 +75,3 @@ services:
             - '@doctrine.dbal.default_connection'
         tags:
             - { name: pimcore.maintenance.task, type: logmaintenance }
-
-    # @deprecated since Pimcore 2026.3, will be removed in Pimcore 2027.0
-    Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface:
-        class: Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationService
-        deprecated:
-            package: 'pimcore/pimcore'
-            version: '2026.3'
-            message: 'The "%service_id%" service is deprecated and will be removed in Pimcore 2027.0.'

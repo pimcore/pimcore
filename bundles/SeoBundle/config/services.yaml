@@ -11,16 +11,3 @@ services:
         public: true
         arguments:
             $bundle: "@=service('kernel').getBundle('PimcoreSeoBundle')"
-
-    #
-    # CONTROLLERS
-    #
-
-    # @deprecated since Pimcore 2026.3, will be removed in Pimcore 2027.0
-    Pimcore\Bundle\SeoBundle\Controller\SettingsController:
-        public: true
-        tags: ['controller.service_arguments']
-        deprecated:
-            package: 'pimcore/pimcore'
-            version: '2026.3'
-            message: 'The "%service_id%" service is deprecated and will be removed in Pimcore 2027.0.'
