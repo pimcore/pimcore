@@ -758,6 +758,48 @@ class StorageOperationQueueProcessorTest extends Unit
         );
     }
 
+    public function testNestedDeleteSplitsTheClusterInBothDirections(): void
+    {
+        // The barrier index has to answer the same three overlap cases the pairwise scan did.
+        // Here the Delete is an ANCESTOR of the later Move's source, so it must still split.
+        $coveringDelete = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Delete, 'legacy', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'legacy/deep/B', 'T', new DateTimeImmutable()),
+        ];
+        // ...and here it sits INSIDE the later Move's source, which must also split.
+        $nestedDelete = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Delete, 'legacy/deep/B', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'legacy', 'T', new DateTimeImmutable()),
+        ];
+        // A sibling prefix that merely shares a leading substring is NOT an overlap.
+        $siblingDelete = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Delete, 'legacy-archive', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'legacy', 'T', new DateTimeImmutable()),
+        ];
+        // A Delete on a different storage never splits a cluster either.
+        $otherStorageDelete = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'thumbnail', StorageOperationType::Delete, 'legacy', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'legacy/B', 'T', new DateTimeImmutable()),
+        ];
+
+        $processor = $this->processor();
+        $method = new ReflectionMethod($processor, 'orderForProcessing');
+        $method->setAccessible(true);
+        $ids = static fn (array $ops) => array_map(
+            static fn (StorageOperation $op) => $op->getId(),
+            $method->invoke($processor, $ops)
+        );
+
+        $this->assertSame([1, 2, 3], $ids($coveringDelete), 'the delete covers the later move source');
+        $this->assertSame([1, 2, 3], $ids($nestedDelete), 'the delete sits inside the later move source');
+        $this->assertSame([3, 1, 2], $ids($siblingDelete), 'a shared substring is not an overlap');
+        $this->assertSame([3, 1, 2], $ids($otherStorageDelete), 'a delete on another storage is irrelevant');
+    }
+
     public function testDeleteOfTheSharedTargetSplitsTheCluster(): void
     {
         // Here the Delete covers the cluster target, so the later Move must not jump ahead of it

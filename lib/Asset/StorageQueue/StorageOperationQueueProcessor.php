@@ -410,29 +410,73 @@ final class StorageOperationQueueProcessor
      */
     private function moveBarriers(array $operations): array
     {
+        // Comparing every Move against every preceding Delete is quadratic, and it runs before
+        // the first row-level deadline check, so a large backlog could burn the whole --max-runtime
+        // budget on ordering alone. Two prefix indexes, both maintained incrementally as the queue
+        // is walked, answer the same question with a handful of lookups per row:
+        //   $exact[storage][p]      - newest Delete seen so far naming exactly prefix p,
+        //                             which answers "same prefix" and, walked over the Move's
+        //                             ancestors, "the Delete covers the Move";
+        //   $descendant[storage][p] - newest Delete seen so far sitting strictly below p, which
+        //                             answers "the Delete sits inside the Move".
+        // Together those are exactly the three cases prefixesOverlap() tests, at a cost of one
+        // lookup per path segment instead of one comparison per earlier Delete.
         $barriers = [];
-        $deletes = [];
+        $exact = [];
+        $descendant = [];
 
         foreach ($operations as $operation) {
+            $storage = $operation->getStorage();
+
             if ($operation->getType() === StorageOperationType::Delete) {
-                $deletes[] = $operation;
+                $id = (int) $operation->getId();
+                $prefix = trim($operation->getSourcePrefix(), '/');
+                $exact[$storage][$prefix] = max($exact[$storage][$prefix] ?? 0, $id);
+                foreach ($this->ancestorPrefixes($prefix) as $ancestor) {
+                    $descendant[$storage][$ancestor] = max($descendant[$storage][$ancestor] ?? 0, $id);
+                }
 
                 continue;
             }
 
             // everything else in the queue is a Move
             $barrier = 0;
-            foreach ($deletes as $delete) {
-                if ($delete->getStorage() === $operation->getStorage()
-                    && $this->deleteOverlapsMove($delete, $operation)
-                ) {
-                    $barrier = (int) $delete->getId();
+            foreach ([$operation->getSourcePrefix(), $operation->getTargetPrefix()] as $movePath) {
+                if ($movePath === null) {
+                    continue;
+                }
+                $movePath = trim($movePath, '/');
+                $barrier = max(
+                    $barrier,
+                    $exact[$storage][$movePath] ?? 0,
+                    $descendant[$storage][$movePath] ?? 0
+                );
+                foreach ($this->ancestorPrefixes($movePath) as $ancestor) {
+                    $barrier = max($barrier, $exact[$storage][$ancestor] ?? 0);
                 }
             }
             $barriers[(int) $operation->getId()] = $barrier;
         }
 
         return $barriers;
+    }
+
+    /**
+     * The strict ancestor prefixes of a storage prefix, deepest first: "a/b/c" gives "a/b", "a".
+     *
+     * @return list<string>
+     */
+    private function ancestorPrefixes(string $prefix): array
+    {
+        $ancestors = [];
+        $current = trim($prefix, '/');
+
+        while (($slash = strrpos($current, '/')) !== false) {
+            $current = substr($current, 0, $slash);
+            $ancestors[] = $current;
+        }
+
+        return $ancestors;
     }
 
     private function orderForProcessing(array $operations): array
