@@ -13,14 +13,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Workflow;
 
+use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Notes\NotesAwareInterface;
 use Pimcore\Workflow\Notes\NotesAwareTrait;
+use Pimcore\Workflow\Notification\NotificationInterface;
+use Pimcore\Workflow\Notification\NotificationTrait;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class GlobalAction implements NotesAwareInterface
+class GlobalAction implements NotesAwareInterface, NotificationInterface
 {
     use NotesAwareTrait;
+    use NotificationTrait;
 
     private string $name;
 
@@ -94,6 +98,16 @@ class GlobalAction implements NotesAwareInterface
     public function getSaveSubject(): bool
     {
         return $this->options['saveSubject'] ?? true;
+    }
+
+    public function getChangePublishedState(): string
+    {
+        return (string) ($this->options['changePublishedState'] ?? ChangePublishedStateSubscriber::NO_CHANGE);
+    }
+
+    public function getUnsavedChangesBehaviour(): string
+    {
+        return (string) ($this->options['unsavedChangesBehaviour'] ?? Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN);
     }
 
     /**

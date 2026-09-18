@@ -23,6 +23,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
+use Pimcore\Workflow\GlobalAction;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
@@ -64,6 +65,54 @@ class NotificationEmailService extends AbstractNotificationService
         string $mailType,
         string $mailPath
     ): void {
+        $this->sendEmailNotification(
+            $users,
+            $roles,
+            $workflow,
+            $subjectType,
+            $subject,
+            $transition->getLabel(),
+            $mailType,
+            $mailPath
+        );
+    }
+
+    /**
+     * Sends a Mail for a global action. A global action is not a transition, so it gets its own
+     * entry point instead of widening the one above - both delegate to the same implementation.
+     */
+    public function sendGlobalActionEmailNotification(
+        array $users,
+        array $roles,
+        WorkflowInterface $workflow,
+        string $subjectType,
+        ElementInterface $subject,
+        GlobalAction $globalAction,
+        string $mailType,
+        string $mailPath
+    ): void {
+        $this->sendEmailNotification(
+            $users,
+            $roles,
+            $workflow,
+            $subjectType,
+            $subject,
+            $globalAction->getLabel(),
+            $mailType,
+            $mailPath
+        );
+    }
+
+    private function sendEmailNotification(
+        array $users,
+        array $roles,
+        WorkflowInterface $workflow,
+        string $subjectType,
+        ElementInterface $subject,
+        string $actionLabel,
+        string $mailType,
+        string $mailPath
+    ): void {
         try {
             $recipients = $this->getNotificationUsersByName($users, $roles);
             if (!count($recipients)) {
@@ -99,7 +148,7 @@ class NotificationEmailService extends AbstractNotificationService
                             $subjectType,
                             $subject,
                             $workflow,
-                            $transition->getLabel(),
+                            $actionLabel,
                             $language,
                             $localizedMailPath,
                             $deeplink
@@ -114,7 +163,7 @@ class NotificationEmailService extends AbstractNotificationService
                             $subjectType,
                             $subject,
                             $workflow,
-                            $transition->getLabel(),
+                            $actionLabel,
                             $language,
                             $localizedMailPath,
                             $deeplink
