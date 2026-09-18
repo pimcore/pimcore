@@ -1078,4 +1078,32 @@ class QueueAwareStorageAdapterTest extends Unit
         $this->assertCount(1, $operations);
         $this->assertNull($operations[0]->getCopyOptions());
     }
+
+    public function testPendingWindowMaterializationCopiesWithTheRecordedOptions(): void
+    {
+        // Writing into a prefix a pending move still covers first materializes the moved bytes at
+        // the target. That copy carries out part of the move, so it must use the move's options
+        // rather than the adapter's defaults.
+        $spy = new ConfigCapturingAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir));
+        $adapter = new QueueAwareStorageAdapter($spy, $this->repository, 'asset');
+        $adapter->write('A/x.png', 'ORIGINAL', new Config());
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'A',
+            'B',
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+
+        $adapter->write('A/x.png', 'NEW', new Config());
+
+        $this->assertSame('ORIGINAL', $adapter->read('B/x.png'), 'moved bytes materialized at the target');
+        $this->assertSame(
+            [['visibility' => 'public', 'retain_visibility' => false]],
+            $spy->copyConfigs,
+            'the materializing copy used the pending move options'
+        );
+    }
 }

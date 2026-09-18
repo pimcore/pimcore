@@ -446,7 +446,8 @@ final class StorageOperationQueueProcessor
                 $new = $this->targetPrefixOf($fresh) . $suffix;
                 if ($adapter->fileExists($stale)) {
                     if (!$adapter->fileExists($new)) {
-                        $adapter->copy($stale, $new, new Config());
+                        // The repointed row's own options - this relocation is part of applying it.
+                        $adapter->copy($stale, $new, new Config($fresh->getCopyOptions() ?? []));
                     }
                     $adapter->delete($stale);
                 }

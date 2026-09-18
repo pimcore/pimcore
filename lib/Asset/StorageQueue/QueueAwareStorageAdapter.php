@@ -503,7 +503,9 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             }
             $target = $this->mapToTarget($path, $operation);
             if (!$this->inner->fileExists($target)) {
-                $this->inner->copy($path, $target, new Config());
+                // This copy carries out part of the pending move, so it has to use the options
+                // that move was recorded with rather than the adapter's own defaults.
+                $this->inner->copy($path, $target, new Config($operation->getCopyOptions() ?? []));
             }
 
             return; // most specific row wins; one materialization is sufficient

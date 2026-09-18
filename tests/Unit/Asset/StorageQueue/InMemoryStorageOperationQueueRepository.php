@@ -191,7 +191,13 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
                     continue;
                 }
                 $this->operations[$i] = new StorageOperation(
-                    $op->getId(), $op->getStorage(), $op->getType(), $op->getSourcePrefix(), $newTarget, $op->getCreatedAt()
+                    $op->getId(),
+                    $op->getStorage(),
+                    $op->getType(),
+                    $op->getSourcePrefix(),
+                    $newTarget,
+                    $op->getCreatedAt(),
+                    $op->getCopyOptions()
                 );
             }
         }

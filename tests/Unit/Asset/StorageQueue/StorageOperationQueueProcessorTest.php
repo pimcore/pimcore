@@ -647,6 +647,49 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame('a', $this->adapter->read('T/a.jpg'));
         $this->assertSame([[]], $spy->copyConfigs);
     }
+
+    public function testMidDrainRepointStillCopiesWithTheRecordedOptions(): void
+    {
+        // A live re-move repoints the row mid-drain, and the processor relocates what it already
+        // copied to the new target. That relocation is part of applying the same row, so it has
+        // to use the same options - otherwise the very backend this exists for fails halfway.
+        for ($i = 1; $i <= 8; $i++) {
+            $this->writeWithMtime("A/file{$i}.jpg", "content-{$i}", time() - 7200);
+        }
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'A',
+            'B',
+            new DateTimeImmutable('+5 seconds'),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+
+        $spy = new ConfigCapturingAdapterDecorator($this->adapter);
+        $mutatingAdapter = new StorageOperationQueueProcessorTestMutatingAdapter(
+            $spy,
+            4,
+            function (): void {
+                $this->repository->add(new StorageOperation(
+                    null, 'asset', StorageOperationType::Move, 'B', 'C', new DateTimeImmutable()
+                ));
+            }
+        );
+        $locator = new StorageOperationQueueProcessorTestAdapterLocator($mutatingAdapter);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger(), 3);
+
+        $processor->process();
+
+        $this->assertNotEmpty($spy->copyConfigs);
+        foreach ($spy->copyConfigs as $captured) {
+            $this->assertSame(
+                ['visibility' => 'public', 'retain_visibility' => false],
+                $captured,
+                'every copy, including the post-repoint relocation, carries the recorded options'
+            );
+        }
+    }
 }
 
 /**

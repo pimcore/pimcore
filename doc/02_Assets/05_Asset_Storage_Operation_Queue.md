@@ -83,20 +83,17 @@ CREATE TABLE `asset_storage_operation_queue` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 ```
 
-If the table was created before the `copy_options` column existed, add it:
-
-```sql
-ALTER TABLE `asset_storage_operation_queue`
-    ADD COLUMN `copy_options` JSON DEFAULT NULL AFTER `created_at`;
-```
-
+Tables created before the `copy_options` column existed are upgraded by the
+`Version20260918120000` migration, which skips installs that never created the table.
 See [Copy options](#copy-options) for what the column carries and when an existing
 queue needs a one-off backfill.
 
-This is the single source of truth for the table's schema — there is no migration or
-install.sql entry to keep in sync with it. Running the commands below against a
-database that doesn't have this table yet fails with a clear error pointing back at
-this section, rather than a raw SQL error.
+This is the single source of truth for the table's schema: creating it stays manual and
+there is no install.sql entry to keep in sync with it. Later column additions do ship as
+migrations, which skip installs that never created the table, so keep this statement and
+those migrations in agreement. Running the commands below against a database that doesn't
+have this table yet fails with a clear error pointing back at this section, rather than a
+raw SQL error.
 
 ### 2. Enable the flag
 
@@ -189,8 +186,8 @@ none of the three settings.
 
 ### Backfilling an existing queue
 
-Rows already in the queue when the column is added keep `NULL` and keep the previous
-behaviour. If those rows are stuck because the backend cannot serve the visibility read,
+The migration adds the column but does not fill it, so rows already in the queue keep
+`NULL` and keep the previous behaviour. If those rows are stuck because the backend cannot serve the visibility read,
 fill the column once to match the storage configuration, for example for a storage declared
 with `visibility: public` and `retain_visibility: false`:
 
