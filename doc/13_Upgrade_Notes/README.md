@@ -10,9 +10,11 @@
   - `Pimcore\Bundle\SeoBundle\Controller\RedirectsController` (`/admin/bundle/seo/redirects/*`) — replaced by `Pimcore\Bundle\StudioBackendBundle\Bundle\Seo\Controller\Redirect\*`.
 
   The services behind those controllers (`Pimcore\Bundle\SeoBundle\Redirect\Csv`, `Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler`, `Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb`, …) as well as the controller base class `Pimcore\Controller\UserAwareController` and the trait `Pimcore\Controller\Traits\JsonHelperTrait` are **kept** and remain available for custom controllers.
-- [Legacy Admin UI] **Deprecated**, for removal in Pimcore 2027.0, the two remaining pieces of the legacy admin UI integration that are not `@internal` and can therefore not be removed in a minor release:
-  - `Pimcore\Bundle\SeoBundle\Controller\SettingsController` (`/admin/bundle/seo/robots-txt`) — use the Studio backend API instead (`Pimcore\Bundle\StudioBackendBundle\Bundle\Seo\Controller\RobotsTxt\{Get,Update}Controller`). The controller is still registered and routed, but its service definition is now marked as deprecated.
-  - `Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationService` and `Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface` — they only served the removed `LogController` and translate into the legacy `admin` translation domain. Studio resolves log-level labels on its own.
+- [Legacy Admin UI] **Removed** the last pieces of the legacy admin UI integration, deprecated since Pimcore 2026.3. This is a backwards-compatibility break and must not land before the next major release.
+  - `Pimcore\Bundle\SeoBundle\Controller\SettingsController` and the `/admin/bundle/seo/robots-txt` route, together with the SEO bundle's `config/pimcore/routing.yaml`. Use the Studio backend API instead (`Pimcore\Bundle\StudioBackendBundle\Bundle\Seo\Controller\RobotsTxt\{Get,Update}Controller`).
+  - `Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationService` and `Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationServiceInterface`, including the `TranslationServiceInterface` service definition. They only served the removed `LogController` and translated into the legacy `admin` translation domain; Studio resolves log-level labels on its own.
+
+  With this, no bundled Pimcore controller extends `Pimcore\Controller\UserAwareController` or uses `Pimcore\Controller\Traits\JsonHelperTrait` any more. Both are **kept** as public API for custom controllers.
 - [Composer] Bumped minimum requirements of `scheb/2fa-bundle` and `scheb/2fa-google-authenticator` to `8.6.1` and of `phpdocumentor/reflection-docblock` to `5.6.7` (5.x line) / `6.0.3` (6.x line). These are floor raises within the majors already required since 2026.1.0 and carry no BC impact of their own (see the 2026.1.0 notes below for the major-version upgrade guidance).
 
 ### [Console]
