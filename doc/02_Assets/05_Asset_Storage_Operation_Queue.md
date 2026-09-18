@@ -194,10 +194,15 @@ with `visibility: public` and `retain_visibility: false`:
 ```sql
 UPDATE `asset_storage_operation_queue`
    SET `copy_options` = '{"visibility":"public","retain_visibility":false}'
- WHERE `storage` IN ('asset','thumbnail')
+ WHERE `storage` = 'asset'
    AND `operation` = 'move'
    AND `copy_options` IS NULL;
 ```
+
+Run one statement per storage, and only ever against a storage whose configuration matches
+the JSON you are writing. The three storages are configured independently, so `thumbnail`
+and `asset_cache` may well declare different visibility settings than `asset`; a single
+statement covering several of them would persist the wrong options for the others.
 
 Run the equivalent `SELECT` first to see how many rows are affected. The `copy_options IS
 NULL` predicate keeps the statement idempotent and stops it overwriting values the adapter

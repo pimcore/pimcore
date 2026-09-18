@@ -191,38 +191,64 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
     {
         // copy_options is part of the compared state - a live repoint can rewrite it while leaving
         // the target alone, so a row matching on the other columns is not necessarily the row the
-        // processor applied. It is compared in PHP rather than in the DELETE: the column is a real
-        // JSON type on MySQL and LONGTEXT on MariaDB, so a literal <=> against a serialized string
-        // only matches on the latter. Reading first opens no window the DELETE below does not
-        // already have, and completeMove() refreshes and retries on a miss either way.
-        $current = $this->findById((int) $operation->getId());
-        if ($current === null
-            || $this->canonicalCopyOptions($current->getCopyOptions())
-               !== $this->canonicalCopyOptions($operation->getCopyOptions())
-        ) {
-            return false;
-        }
+        // processor applied.
+        //
+        // It cannot be compared inside the DELETE: the column is a real JSON type on MySQL and
+        // LONGTEXT on MariaDB, so a literal <=> against a serialized string only matches on the
+        // latter, and comparing the raw text would break on any hand-written backfill that spells
+        // the same options differently. So the row is read and compared in PHP - under FOR UPDATE,
+        // inside the same transaction as the DELETE, so a concurrent repoint cannot slip between
+        // the two. completeMove() refreshes and retries when this returns false.
+        $removed = (bool) $this->db->transactional(function () use ($operation): bool {
+            $row = $this->db->fetchAssociative(
+                'SELECT * FROM ' . self::TABLE
+                . ' WHERE `id` = :id AND `storage` = :storage AND `operation` = :operation'
+                . ' AND `source_prefix` = :sourcePrefix AND (`target_prefix` <=> :targetPrefix)'
+                . ' FOR UPDATE',
+                $this->identityParameters($operation)
+            );
 
-        $affected = $this->db->executeStatement(
-            'DELETE FROM ' . self::TABLE
-            . ' WHERE `id` = :id AND `storage` = :storage AND `operation` = :operation'
-            . ' AND `source_prefix` = :sourcePrefix AND (`target_prefix` <=> :targetPrefix)',
-            [
-                'id' => (int) $operation->getId(),
-                'storage' => $operation->getStorage(),
-                'operation' => $operation->getType()->value,
-                'sourcePrefix' => $operation->getSourcePrefix(),
-                'targetPrefix' => $operation->getTargetPrefix(),
-            ]
-        );
+            if ($row === false) {
+                return false;
+            }
 
-        if ($affected > 0) {
+            $current = $this->hydrate($row);
+            if ($this->canonicalCopyOptions($current->getCopyOptions())
+                !== $this->canonicalCopyOptions($operation->getCopyOptions())
+            ) {
+                return false;
+            }
+
+            return $this->db->executeStatement(
+                'DELETE FROM ' . self::TABLE
+                . ' WHERE `id` = :id AND `storage` = :storage AND `operation` = :operation'
+                . ' AND `source_prefix` = :sourcePrefix AND (`target_prefix` <=> :targetPrefix)',
+                $this->identityParameters($operation)
+            ) > 0;
+        });
+
+        if ($removed) {
             $this->invalidateHasOperationsCache($operation->getStorage());
-
-            return true;
         }
 
-        return false;
+        return $removed;
+    }
+
+    /**
+     * The columns that identify the row the processor is applying, shared by the locking read and
+     * the delete so the two cannot drift apart.
+     *
+     * @return array<string, mixed>
+     */
+    private function identityParameters(StorageOperation $operation): array
+    {
+        return [
+            'id' => (int) $operation->getId(),
+            'storage' => $operation->getStorage(),
+            'operation' => $operation->getType()->value,
+            'sourcePrefix' => $operation->getSourcePrefix(),
+            'targetPrefix' => $operation->getTargetPrefix(),
+        ];
     }
 
     /**
