@@ -138,8 +138,10 @@ during low-traffic hours — nothing runs it automatically.** Options:
 - `--max-runtime`: stop cleanly after this many seconds; any unfinished rows stay
   queued for the next run.
 - `--stop-on-error`: end the run at the first failing row instead of continuing with
-  the remaining ones. Rows are independent of each other, so by default one
-  unprocessable row never blocks the rest of the queue. Use this during a risky
+  the remaining ones. By default the run carries on after a failure, so one
+  unprocessable row does not stop the rest. A move that could not complete does still
+  keep an overlapping delete deferred, which is deliberate - that delete would
+  otherwise destroy content the move has not relocated yet. Use this during a risky
   window - a large restructuring, for example - when you would rather have the run
   stop and be reviewed than keep going.
 

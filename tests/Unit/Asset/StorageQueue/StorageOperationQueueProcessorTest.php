@@ -1050,6 +1050,26 @@ class StorageOperationQueueProcessorTest extends Unit
             'the reconciliation copy that relocates to the final target uses them too'
         );
     }
+
+    public function testADeleteIsNotDeferredByAMoveThatAlreadyDrainedInTheSameRun(): void
+    {
+        // The pending-move snapshot is taken once and consulted by every Delete. A Move that
+        // completes mid-run no longer blocks anything, so a later Delete over its source must
+        // still run in this pass rather than wait for the next one.
+        $this->writeWithMtime('unrelated/u.jpg', 'u', time() - 7200);
+        $this->writeWithMtime('A/a.jpg', 'a', time() - 7200);
+
+        $this->addRow(StorageOperationType::Delete, 'unrelated', null);   // primes the snapshot
+        $this->addRow(StorageOperationType::Move, 'A', 'B');              // drains during this run
+        $this->addRow(StorageOperationType::Delete, 'A', null);           // must not be deferred
+
+        $result = $this->processor()->process();
+
+        $this->assertSame(3, $result->getProcessedRows(), 'all three rows complete in one run');
+        $this->assertSame([], $this->repository->all(), 'nothing is left queued for a second run');
+        $this->assertSame('a', $this->adapter->read('B/a.jpg'), 'the move landed');
+        $this->assertFalse($this->adapter->directoryExists('A'), 'the delete swept the drained source');
+    }
 }
 
 /**

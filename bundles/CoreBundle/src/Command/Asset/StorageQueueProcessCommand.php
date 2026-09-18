@@ -55,8 +55,9 @@ final class StorageQueueProcessCommand extends AbstractCommand
                 null,
                 InputOption::VALUE_NONE,
                 'End the run at the first failing row instead of continuing with the remaining ones. '
-                . 'Rows are independent by default, so one unprocessable row does not block the queue - '
-                . 'use this during a risky window, such as a large migration, to stop for review instead.'
+                . 'By default the run carries on after a failure, so one unprocessable row does not stop '
+                . 'the rest - though a move that could not complete still keeps an overlapping delete '
+                . 'deferred. Use this during a risky window, such as a large migration, to stop for review.'
             );
     }
 

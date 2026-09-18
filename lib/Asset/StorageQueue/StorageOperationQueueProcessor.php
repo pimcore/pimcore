@@ -56,9 +56,11 @@ final class StorageOperationQueueProcessor
     }
 
     /**
-     * @param bool $stopOnError end the run at the first failing row instead of isolating it.
-     *                          Rows are independent by default, so one unprocessable row must not
-     *                          block the rest of the queue - but during a risky window (a large
+     * @param bool $stopOnError end the run at the first failing row instead of isolating it. By
+     *                          default the run carries on after a failure, so one unprocessable
+     *                          row does not stop the rest - though a Move that could not complete
+     *                          still keeps an overlapping Delete deferred, which is the whole
+     *                          point of the dependency guard. During a risky window (a large
      *                          migration, say) an operator can ask for a hard stop instead.
      */
     public function process(
@@ -124,6 +126,14 @@ final class StorageOperationQueueProcessor
                     if ($operation->getType() === StorageOperationType::Move && $operation->getStorage() === 'asset') {
                         $clearedAssetMove = true;
                     }
+                }
+                if ($operation->getType() === StorageOperationType::Move) {
+                    // The snapshot below is what later Deletes consult. A Move that just drained
+                    // no longer blocks anything, and one that ended incomplete may have been
+                    // repointed under us, so the cached copy is stale either way. Dropping it
+                    // costs one re-read per Move rather than per Delete, which is the ratio the
+                    // snapshot exists to protect.
+                    $this->pendingMoves = null;
                 }
                 // incomplete rows (deadline hit, undated entries, contested rows) stay queued
                 // for the next run - processOperation removes its own row on completion
