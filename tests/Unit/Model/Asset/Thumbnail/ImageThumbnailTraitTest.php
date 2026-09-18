@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Model\Asset\Thumbnail;
 
 use League\Flysystem\FilesystemOperator;
+use League\Flysystem\UnableToCheckFileExistence;
 use League\Flysystem\UnableToReadFile;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
@@ -27,10 +28,47 @@ class ImageThumbnailTraitTest extends TestCase
 {
     private const STORAGE_PATH = '/testimage/1/image-thumb__1__unittest/testimage.jpg';
 
+    public function testGetStreamRethrowsWhenFileStillExists(): void
+    {
+        $storage = $this->createMock(FilesystemOperator::class);
+        $storage->method('readStream')->willThrowException(UnableToReadFile::fromLocation(self::STORAGE_PATH));
+        $storage->method('fileExists')->willReturn(true);
+
+        // a permission, I/O or backend availability problem is not a stale reference,
+        // so the status cache entry must survive and the instance keeps its state
+        $asset = $this->createMock(Asset\Image::class);
+        $asset->expects($this->never())->method('getDao');
+
+        $thumbnail = $this->createThumbnail($storage, $asset, $this->createConfig());
+
+        try {
+            $thumbnail->getStream();
+            $this->fail('Expected ' . UnableToReadFile::class . ' to be thrown');
+        } catch (UnableToReadFile $e) {
+            $this->assertSame(self::STORAGE_PATH, $thumbnail->getPathReference(true)['storagePath']);
+        }
+    }
+
+    public function testGetStreamRethrowsWhenExistenceCannotBeDetermined(): void
+    {
+        $storage = $this->createMock(FilesystemOperator::class);
+        $storage->method('readStream')->willThrowException(UnableToReadFile::fromLocation(self::STORAGE_PATH));
+        $storage->method('fileExists')->willThrowException(new UnableToCheckFileExistence('Unable to check file existence for: ' . self::STORAGE_PATH));
+
+        $asset = $this->createMock(Asset\Image::class);
+        $asset->expects($this->never())->method('getDao');
+
+        $thumbnail = $this->createThumbnail($storage, $asset, $this->createConfig());
+
+        $this->expectException(UnableToReadFile::class);
+        $thumbnail->getStream();
+    }
+
     public function testGetStreamInvalidatesStatusCacheWhenFileIsMissing(): void
     {
         $storage = $this->createMock(FilesystemOperator::class);
         $storage->method('readStream')->willThrowException(UnableToReadFile::fromLocation(self::STORAGE_PATH));
+        $storage->method('fileExists')->willReturn(false);
 
         $dao = $this->createMock(Asset\Dao::class);
         $dao->expects($this->once())
@@ -49,6 +87,7 @@ class ImageThumbnailTraitTest extends TestCase
     {
         $storage = $this->createMock(FilesystemOperator::class);
         $storage->method('readStream')->willThrowException(UnableToReadFile::fromLocation(self::STORAGE_PATH));
+        $storage->method('fileExists')->willReturn(false);
 
         // e.g. a video thumbnail delegating its path reference to a poster image asset:
         // the stale status cache entry belongs to the delegated asset, not the thumbnail's own asset

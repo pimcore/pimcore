@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\Thumbnail;
 
 use Exception;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToReadFile;
 use Pimcore;
@@ -89,6 +90,8 @@ trait ImageThumbnailTrait
 
     /**
      * @return null|resource
+     *
+     * @throws UnableToReadFile if the file exists but cannot be read, or if its existence cannot be determined
      */
     public function getStream()
     {
@@ -101,6 +104,12 @@ trait ImageThumbnailTrait
             try {
                 return $storage->readStream($pathReference['storagePath']);
             } catch (UnableToReadFile $e) {
+                if ($this->existsOnStorageAfterFailedRead($storage, $pathReference['storagePath'])) {
+                    // reading failed although the file still exists (e.g. permission, I/O or backend
+                    // availability problems) - not a stale reference, so keep the status cache intact
+                    throw $e;
+                }
+
                 Logger::warning($e->getMessage());
 
                 // the file is missing from the thumbnail storage although the path reference claims
@@ -113,6 +122,19 @@ trait ImageThumbnailTrait
         }
 
         return null;
+    }
+
+    /**
+     * whether the file still exists on the storage after a failed read,
+     * treating an indeterminate result as existing (storage-side problem)
+     */
+    private function existsOnStorageAfterFailedRead(FilesystemOperator $storage, string $storagePath): bool
+    {
+        try {
+            return $storage->fileExists($storagePath);
+        } catch (FilesystemException) {
+            return true;
+        }
     }
 
     /**
