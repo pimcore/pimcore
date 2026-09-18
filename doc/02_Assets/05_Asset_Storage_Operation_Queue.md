@@ -137,6 +137,13 @@ during low-traffic hours — nothing runs it automatically.** Options:
 - `--id`: process only the given queue row.
 - `--max-runtime`: stop cleanly after this many seconds; any unfinished rows stay
   queued for the next run.
+- `--stop-on-error`: end the run at the first failing row instead of continuing with
+  the remaining ones. By default the run carries on after a failure, so one
+  unprocessable row does not stop the rest. A move that could not complete does still
+  keep an overlapping delete deferred, which is deliberate - that delete would
+  otherwise destroy content the move has not relocated yet. Use this during a risky
+  window - a large restructuring, for example - when you would rather have the run
+  stop and be reviewed than keep going.
 
 A single run is guarded by a 24-hour, non-refreshing lock, so it is safe to schedule
 the command frequently — a run that finds the lock held (a previous run still in
