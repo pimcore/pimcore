@@ -115,6 +115,48 @@ For example
 
 ![Many-To-One Object Inline Search example](../../../img/classes-datatypes-relation8.png)
 
+## Visible fields on Many-To-Many and Advanced Many-To-Many Relations
+Like the Many-To-Many Object Relation, the generic Many-To-Many Relation and Advanced Many-To-Many Relation can show
+additional, read-only columns next to each related element ("visible fields"). Because these types can reference
+documents, assets and objects of several classes at once, the fields you can pick are the union of what every allowed
+element type offers:
+
+| Allowed type | Offered fields |
+|--------------|----------------|
+| Objects (per allowed class) | all top-level data fields of the class, plus its localized fields |
+| Assets | `filename`, `mimetype`, `fileSize` and every predefined asset metadata definition (filtered by the allowed asset types) |
+| Documents | – |
+| All types | `creationDate`, `modificationDate` |
+
+A field that does not apply to a related element's type is simply empty for that row: an asset row shows nothing in a
+class-field column, an object row nothing in a metadata column. Visible fields are only offered once at least one
+element type is allowed; objects contribute fields only when the relation is restricted to specific classes.
+
+```php
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation;
+
+/** @var ManyToManyRelation $fd */
+$fd->setVisibleFields(['title', 'filename', 'copyright']);
+
+// superset of fields that can be selected for this definition, keyed by field name
+$available = $fd->getAvailableVisibleFields();
+
+// definitions of the configured fields (populated by enrichLayoutDefinition())
+$fd->enrichLayoutDefinition($object);
+$columns = $fd->visibleFieldDefinitions;
+
+// values of the configured fields for one related element
+$values = $fd->getVisibleFieldData($relatedElement);
+```
+
+Each entry of `getAvailableVisibleFields()` / `visibleFieldDefinitions` carries `name`, `title`, `fieldtype`,
+`noteditable` and `sources` (the origins of the field, e.g. `object:Product`, `asset` or `document`); select fields
+additionally carry their `options`, predefined metadata its `metadataType`. For the Advanced Many-To-Many Relation the
+values are also part of the edit-mode rows; metadata columns with the same name take precedence over visible fields.
+
+To offer additional asset fields (for example from asset metadata class definitions), extend the type and override
+`getAssetVisibleFieldCandidates()` / `resolveAssetVisibleFieldValue()`.
+
 ## Advanced Many-To-One Object Relation 
 This data type is an extension to the Many-To-One Object data type. To each assigned object additional metadata can be saved. 
 The type of the metadata can be text, number, selection or a boolean value.
