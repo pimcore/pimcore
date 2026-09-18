@@ -223,6 +223,39 @@ final class StorageOperationQueueProcessor
     }
 
     /**
+     * Whether two storage prefixes name overlapping content: the same prefix, or one nested
+     * inside the other. Both nesting directions matter, since either makes one operation's
+     * outcome depend on whether the other ran first.
+     */
+    private function prefixesOverlap(string $a, string $b): bool
+    {
+        $a = trim($a, '/');
+        $b = trim($b, '/');
+
+        return $a === $b
+            || str_starts_with($a, $b . '/')
+            || str_starts_with($b, $a . '/');
+    }
+
+    /**
+     * Whether the Delete's prefix overlaps either end of the Move.
+     *
+     * The SOURCE matters because the Move's bytes are still sitting there; the TARGET matters
+     * because a prefix that only exists once the Move has run is content the Delete has not
+     * seen yet. Ordering the two rows differently changes the outcome in both cases.
+     */
+    private function deleteOverlapsMove(StorageOperation $delete, StorageOperation $move): bool
+    {
+        foreach ([$move->getSourcePrefix(), $move->getTargetPrefix()] as $movePath) {
+            if ($movePath !== null && $this->prefixesOverlap($delete->getSourcePrefix(), $movePath)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Finds a pending Move the given Delete must not run ahead of.
      *
      * Two overlaps matter, in both nesting directions:
@@ -238,8 +271,6 @@ final class StorageOperationQueueProcessor
      */
     private function findPendingMoveDependingOn(StorageOperation $delete): ?StorageOperation
     {
-        $prefix = trim($delete->getSourcePrefix(), '/');
-
         foreach ($this->pendingMoves() as $candidate) {
             if ($candidate->getStorage() !== $delete->getStorage()
                 || (int) $candidate->getId() >= (int) $delete->getId()
@@ -247,17 +278,8 @@ final class StorageOperationQueueProcessor
                 continue;
             }
 
-            foreach ([$candidate->getSourcePrefix(), $candidate->getTargetPrefix()] as $movePath) {
-                if ($movePath === null) {
-                    continue;
-                }
-                $movePath = trim($movePath, '/');
-                if ($movePath === $prefix
-                    || str_starts_with($movePath, $prefix . '/')  // the delete would cover it
-                    || str_starts_with($prefix, $movePath . '/')  // the delete sits inside it
-                ) {
-                    return $candidate;
-                }
+            if ($this->deleteOverlapsMove($delete, $candidate)) {
+                return $candidate;
             }
         }
 
@@ -286,19 +308,8 @@ final class StorageOperationQueueProcessor
                 continue;
             }
 
-            $deletePrefix = trim($candidate->getSourcePrefix(), '/');
-
-            foreach ([$move->getSourcePrefix(), $move->getTargetPrefix()] as $movePath) {
-                if ($movePath === null) {
-                    continue;
-                }
-                $movePath = trim($movePath, '/');
-                if ($movePath === $deletePrefix
-                    || str_starts_with($movePath, $deletePrefix . '/')  // the delete would cover it
-                    || str_starts_with($deletePrefix, $movePath . '/')  // the delete sits inside it
-                ) {
-                    return $candidate;
-                }
+            if ($this->deleteOverlapsMove($candidate, $move)) {
+                return $candidate;
             }
         }
 
@@ -368,44 +379,91 @@ final class StorageOperationQueueProcessor
      * @return StorageOperation[]
      */
     /**
-     * Cluster identity for the newest-first drain: same target prefix, same storage, and no
-     * Delete row queued in between (the generation counter, bumped on every non-Move row).
+     * Cluster identity for the newest-first drain: same target prefix, same storage, and the same
+     * most recent blocking Delete (see moveBarriers()).
+     *
+     * @param array<int, int> $barriers
      */
-    private function clusterKey(StorageOperation $move, int $generation): string
+    private function clusterKey(StorageOperation $move, array $barriers): string
     {
-        return $generation . "\0" . $move->getStorage() . "\0" . (string) $move->getTargetPrefix();
+        $barrier = $barriers[(int) $move->getId()] ?? 0;
+
+        return $barrier . "\0" . $move->getStorage() . "\0" . (string) $move->getTargetPrefix();
+    }
+
+    /**
+     * For each Move row, the id of the most recent Delete queued before it that overlaps the
+     * Move (0 when there is none).
+     *
+     * This is what a same-target cluster may not be drained across. Reversing a cluster moves its
+     * later members ahead of everything between them, so a Delete in that gap would suddenly see
+     * different content: either the Move carried bytes out of the prefix the Delete was queued to
+     * remove, or it dropped bytes into it just before the sweep. Two Moves share a barrier id
+     * exactly when no such Delete sits between them, which is precisely when reordering them is
+     * safe. A Delete that overlaps neither end of the Move is irrelevant and must NOT split the
+     * cluster - doing so would strand the older row's stale bytes at the shared target, the very
+     * data loss the newest-first drain exists to prevent.
+     *
+     * @param StorageOperation[] $operations
+     *
+     * @return array<int, int>
+     */
+    private function moveBarriers(array $operations): array
+    {
+        $barriers = [];
+        $deletes = [];
+
+        foreach ($operations as $operation) {
+            if ($operation->getType() === StorageOperationType::Delete) {
+                $deletes[] = $operation;
+
+                continue;
+            }
+            if ($operation->getType() !== StorageOperationType::Move) {
+                continue;
+            }
+
+            $barrier = 0;
+            foreach ($deletes as $delete) {
+                if ($delete->getStorage() === $operation->getStorage()
+                    && $this->deleteOverlapsMove($delete, $operation)
+                ) {
+                    $barrier = (int) $delete->getId();
+                }
+            }
+            $barriers[(int) $operation->getId()] = $barrier;
+        }
+
+        return $barriers;
     }
 
     private function orderForProcessing(array $operations): array
     {
-        // A cluster never spans a Delete row. Draining a same-target Move across an intervening
-        // Delete would change which content that Delete sees - the later Move could carry content
-        // out of the very prefix the Delete was queued to remove - and the dependency check in
-        // processDelete() deliberately only considers rows older than the Delete, so it would not
-        // cover a Move that jumped ahead of it either. Deletes therefore keep strict FIFO, always.
+        // Deletes always keep strict FIFO, and a cluster is never drained across a Delete that
+        // overlaps it: the later Move could carry content out of the very prefix the Delete was
+        // queued to remove, and the dependency check in processDelete() deliberately only
+        // considers rows older than the Delete, so it would not cover a Move that jumped ahead
+        // of it either. Unrelated Deletes do not split a cluster.
+        $barriers = $this->moveBarriers($operations);
+
         $moveClusters = [];
-        $generation = 0;
         foreach ($operations as $operation) {
             if ($operation->getType() !== StorageOperationType::Move) {
-                $generation++;
-
                 continue;
             }
-            $moveClusters[$this->clusterKey($operation, $generation)][] = $operation;
+            $moveClusters[$this->clusterKey($operation, $barriers)][] = $operation;
         }
 
         $emittedClusters = [];
         $ordered = [];
-        $generation = 0;
         foreach ($operations as $operation) {
             if ($operation->getType() !== StorageOperationType::Move) {
                 $ordered[] = $operation;
-                $generation++;
 
                 continue;
             }
 
-            $targetPrefix = $this->clusterKey($operation, $generation);
+            $targetPrefix = $this->clusterKey($operation, $barriers);
             $cluster = $moveClusters[$targetPrefix];
             if (count($cluster) < 2) {
                 $ordered[] = $operation;

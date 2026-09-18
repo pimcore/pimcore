@@ -733,6 +733,54 @@ class StorageOperationQueueProcessorTest extends Unit
         );
     }
 
+    public function testUnrelatedDeleteDoesNotSplitASameTargetCluster(): void
+    {
+        // The Delete names a prefix neither Move touches, so reordering the cluster cannot change
+        // what it sweeps. Splitting the cluster here would drain the older row first and let it
+        // claim the shared target, so the newer row would then destroy its own fresher source.
+        $ops = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Delete, 'unrelated', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'B', 'T', new DateTimeImmutable()),
+        ];
+
+        $processor = $this->processor();
+        $method = new ReflectionMethod($processor, 'orderForProcessing');
+        $method->setAccessible(true);
+
+        /** @var StorageOperation[] $ordered */
+        $ordered = $method->invoke($processor, $ops);
+
+        $this->assertSame(
+            [3, 1, 2],
+            array_map(static fn (StorageOperation $op) => $op->getId(), $ordered),
+            'the cluster still drains newest-first; the unrelated Delete keeps its FIFO position'
+        );
+    }
+
+    public function testDeleteOfTheSharedTargetSplitsTheCluster(): void
+    {
+        // Here the Delete covers the cluster target, so the later Move must not jump ahead of it
+        // and land bytes in a prefix that is about to be swept.
+        $ops = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Delete, 'T', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'B', 'T', new DateTimeImmutable()),
+        ];
+
+        $processor = $this->processor();
+        $method = new ReflectionMethod($processor, 'orderForProcessing');
+        $method->setAccessible(true);
+
+        /** @var StorageOperation[] $ordered */
+        $ordered = $method->invoke($processor, $ops);
+
+        $this->assertSame(
+            [1, 2, 3],
+            array_map(static fn (StorageOperation $op) => $op->getId(), $ordered)
+        );
+    }
+
     public function testDeleteAcrossASameTargetClusterKeepsItsOwnContentSemantics(): void
     {
         // End to end for the sequence above: the Delete runs before the later same-target Move,
