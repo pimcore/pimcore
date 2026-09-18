@@ -67,6 +67,16 @@ interface StorageOperationQueueRepositoryInterface
         int $beforeId
     ): ?StorageOperation;
 
+    /**
+     * Pending Delete rows on this storage queued after $afterId, oldest first.
+     *
+     * Targeted for the same reason as the lookup above: a Move consults this while draining, and
+     * hydrating the whole queue per Move row would make a run cost O(moves x queue size).
+     *
+     * @return StorageOperation[]
+     */
+    public function findDeletesQueuedAfter(string $storage, int $afterId): array;
+
     public function hasOperations(string $storage): bool;
 
     /**

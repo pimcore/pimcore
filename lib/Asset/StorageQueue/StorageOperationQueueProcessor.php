@@ -385,24 +385,21 @@ final class StorageOperationQueueProcessor
     /**
      * Delete rows queued after the given Move, on the same storage.
      *
-     * Delete rows are immutable once queued, so one read per Move row is enough - the per-file
-     * check below is plain string work against this list.
+     * Targeted rather than a scan of the whole queue: this is re-read at every drain checkpoint,
+     * so hydrating every row here would make a run cost O(moves x queue size).
      *
-     * @return list<StorageOperation>
+     * Residual window, the same one the Delete side carries: a producer allocates its row id
+     * inside an open transaction and the row only becomes readable on commit, so a tombstone can
+     * still appear between the last read and the next copy. Entries already materialised at that
+     * point keep their fresh modification time and the Delete will spare them. Closing it
+     * entirely would mean holding mutual exclusion against every asset save for the length of a
+     * drain; the re-reads bound the window to a single storage call instead.
+     *
+     * @return StorageOperation[]
      */
     private function findDeletesQueuedAfter(StorageOperation $move): array
     {
-        $deletes = [];
-        foreach ($this->repository->all() as $candidate) {
-            if ($candidate->getType() === StorageOperationType::Delete
-                && $candidate->getStorage() === $move->getStorage()
-                && (int) $candidate->getId() > (int) $move->getId()
-            ) {
-                $deletes[] = $candidate;
-            }
-        }
-
-        return $deletes;
+        return $this->repository->findDeletesQueuedAfter($move->getStorage(), (int) $move->getId());
     }
 
     /**
@@ -761,8 +758,9 @@ final class StorageOperationQueueProcessor
         $cutoff = $current->getCreatedAt()->getTimestamp(); // anchored to the ORIGINAL creation - repoint does not change it
         $source = $current->getSourcePrefix();
         $copied = []; // relative suffix => target prefix the copy was made under
-        // Deletes queued after this move. Read once per row, never per file.
+        // Deletes queued after this move, re-read at the drain checkpoints below.
         $laterDeletes = $this->findDeletesQueuedAfter($current);
+        $recheckedBeforeFirstMaterialisation = false;
 
         if ($adapter->directoryExists($source)) {
             $entriesSinceCheck = 0;
@@ -777,6 +775,7 @@ final class StorageOperationQueueProcessor
                     if ($current === null) {
                         return false; // row vanished or was converted - tracked copies already reconciled
                     }
+                    $laterDeletes = $this->findDeletesQueuedAfter($current);
                 }
                 if (!$item->isFile()) {
                     continue;
@@ -807,6 +806,15 @@ final class StorageOperationQueueProcessor
                 }
 
                 // $lastModified < $cutoff: unambiguously pre-cutoff content
+                if (!$recheckedBeforeFirstMaterialisation) {
+                    // The snapshot above is taken before any listing work, so on object storage a
+                    // whole listing round trip sits inside the window - and a prefix smaller than
+                    // the check interval never reaches the checkpoint above at all. Re-read once
+                    // before the first materialisation so a tombstone committed meanwhile is seen.
+                    $recheckedBeforeFirstMaterialisation = true;
+                    $laterDeletes = $this->findDeletesQueuedAfter($current);
+                }
+
                 $tombstoned = $this->findTombstoneCovering($laterDeletes, $target, $lastModified);
                 if ($tombstoned !== null) {
                     // The user deleted this path after queueing the move, so its bytes are only

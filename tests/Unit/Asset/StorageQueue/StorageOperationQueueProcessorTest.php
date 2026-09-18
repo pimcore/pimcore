@@ -1022,6 +1022,38 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame(0, $result->getFailedRows(), implode(' ', $result->getErrors()));
         $this->assertSame('x', $this->adapter->read('T/x.jpg'));
     }
+
+    public function testTombstoneCommittedDuringTheDrainStillStopsMaterialisation(): void
+    {
+        // The later-delete view is read before any listing work. A tombstone committed between
+        // that read and the first copy would otherwise be missed, the bytes would land at the
+        // target with a fresh modification time, and the Delete would then read them as
+        // namespace reuse and spare content the user deleted.
+        $this->writeWithMtime('A/sub/gone.jpg', 'gone', time() - 10800);
+        $this->addRow(StorageOperationType::Move, 'A', 'B', new DateTimeImmutable('-2 hours'));
+
+        $hiddenDelete = new StorageOperation(
+            2,
+            'asset',
+            StorageOperationType::Delete,
+            'B/sub',
+            null,
+            new DateTimeImmutable('-1 hour')
+        );
+        // lookup 1 is the snapshot taken before listing, lookup 2 is the re-read the drain must
+        // perform before materialising anything
+        $racyRepository = new LateDeleteRevealingQueueRepository($this->repository, $hiddenDelete, 2);
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator($this->adapter),
+            $racyRepository,
+            new NullLogger()
+        );
+
+        $processor->process();
+
+        $this->assertFalse($this->adapter->fileExists('B/sub/gone.jpg'), 'the tombstoned subtree is never materialised');
+        $this->assertFalse($this->adapter->fileExists('A/sub/gone.jpg'), 'and does not survive at the source either');
+    }
 }
 
 /**

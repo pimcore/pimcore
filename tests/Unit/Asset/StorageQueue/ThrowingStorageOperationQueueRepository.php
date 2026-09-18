@@ -59,6 +59,14 @@ final class ThrowingStorageOperationQueueRepository implements StorageOperationQ
         throw new LogicException(__METHOD__ . ' must not be called when the adapter is disabled');
     }
 
+    /**
+     * @return StorageOperation[]
+     */
+    public function findDeletesQueuedAfter(string $storage, int $afterId): array
+    {
+        throw new LogicException(__METHOD__ . ' must not be called when the adapter is disabled');
+    }
+
     public function hasOperations(string $storage): bool
     {
         throw new LogicException(__METHOD__ . ' must not be called when the adapter is disabled');

@@ -78,8 +78,19 @@ CREATE TABLE `asset_storage_operation_queue` (
     `source_prefix` VARCHAR(765) NOT NULL,
     `target_prefix` VARCHAR(765) DEFAULT NULL,
     `created_at` DATETIME NOT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    KEY `storage_operation_id` (`storage`, `operation`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+```
+
+The processing command asks repeatedly, while draining a single row, whether any other row
+on the same storage overlaps it. The index keeps those lookups off a full table scan; a
+queue that grows during a large migration is exactly when it matters. On a table created
+before this index existed, add it once:
+
+```sql
+ALTER TABLE `asset_storage_operation_queue`
+    ADD KEY `storage_operation_id` (`storage`, `operation`, `id`);
 ```
 
 This is the single source of truth for the table's schema — there is no migration or

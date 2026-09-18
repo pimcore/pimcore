@@ -151,6 +151,24 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
         return $found;
     }
 
+    /**
+     * @return StorageOperation[]
+     */
+    public function findDeletesQueuedAfter(string $storage, int $afterId): array
+    {
+        $deletes = [];
+        foreach ($this->operations as $operation) {
+            if ($operation->getStorage() === $storage
+                && $operation->getType() === StorageOperationType::Delete
+                && (int) $operation->getId() > $afterId
+            ) {
+                $deletes[] = $operation;
+            }
+        }
+
+        return $deletes;
+    }
+
     public function hasOperations(string $storage): bool
     {
         foreach ($this->operations as $op) {

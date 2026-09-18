@@ -48,7 +48,8 @@ class StorageOperationQueueRepositoryTest extends TestCase
                 `source_prefix` VARCHAR(765) NOT NULL,
                 `target_prefix` VARCHAR(765) DEFAULT NULL,
                 `created_at` DATETIME NOT NULL,
-                PRIMARY KEY (`id`)
+                PRIMARY KEY (`id`),
+                KEY `storage_operation_id` (`storage`, `operation`, `id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;'
         );
         Db::get()->executeStatement('DELETE FROM asset_storage_operation_queue');
@@ -443,5 +444,4 @@ class StorageOperationQueueRepositoryTest extends TestCase
             $this->repository->findOverlappingMoveOlderThan('asset', 'A', $beforeId)?->getSourcePrefix()
         );
     }
-
 }

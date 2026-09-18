@@ -18,22 +18,38 @@ use Pimcore\Asset\StorageQueue\StorageOperation;
 use Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface;
 
 /**
- * Models the queue-insertion race: a producer allocates a Move row id inside an open transaction
- * and commits it only afterwards, so a row with a LOWER id than an already-visible Delete becomes
- * readable part-way through that Delete's run.
+ * The move-side mirror of LateMoveRevealingQueueRepository: a producer tombstones part of a
+ * pending move's target while that move is already draining, and the row only becomes readable
+ * once its transaction commits.
  *
- * The hidden row is revealed from the given all() call onwards, which is the same read the
- * processor uses to refresh its pending-move snapshot.
+ * The hidden Delete is revealed from the given findDeletesQueuedAfter() call onwards.
  */
-final class LateMoveRevealingQueueRepository implements StorageOperationQueueRepositoryInterface
+final class LateDeleteRevealingQueueRepository implements StorageOperationQueueRepositoryInterface
 {
-    private int $blockerChecks = 0;
+    private int $deleteLookups = 0;
 
     public function __construct(
         private readonly InMemoryStorageOperationQueueRepository $inner,
-        private readonly StorageOperation $hiddenMove,
+        private readonly StorageOperation $hiddenDelete,
         private readonly int $revealFromCall,
     ) {
+    }
+
+    /**
+     * @return StorageOperation[]
+     */
+    public function findDeletesQueuedAfter(string $storage, int $afterId): array
+    {
+        $deletes = $this->inner->findDeletesQueuedAfter($storage, $afterId);
+
+        if (++$this->deleteLookups >= $this->revealFromCall
+            && $this->hiddenDelete->getStorage() === $storage
+            && (int) $this->hiddenDelete->getId() > $afterId
+        ) {
+            $deletes[] = $this->hiddenDelete;
+        }
+
+        return $deletes;
     }
 
     /**
@@ -49,18 +65,7 @@ final class LateMoveRevealingQueueRepository implements StorageOperationQueueRep
         string $prefix,
         int $beforeId
     ): ?StorageOperation {
-        $found = $this->inner->findOverlappingMoveOlderThan($storage, $prefix, $beforeId);
-        if ($found !== null) {
-            return $found;
-        }
-
-        if (++$this->blockerChecks < $this->revealFromCall) {
-            return null; // not committed yet
-        }
-
-        return $this->hiddenMove->getStorage() === $storage && (int) $this->hiddenMove->getId() < $beforeId
-            ? $this->hiddenMove
-            : null;
+        return $this->inner->findOverlappingMoveOlderThan($storage, $prefix, $beforeId);
     }
 
     public function add(StorageOperation $operation): void
@@ -95,14 +100,6 @@ final class LateMoveRevealingQueueRepository implements StorageOperationQueueRep
     public function findSourceCovering(string $storage, string $path): array
     {
         return $this->inner->findSourceCovering($storage, $path);
-    }
-
-    /**
-     * @return StorageOperation[]
-     */
-    public function findDeletesQueuedAfter(string $storage, int $afterId): array
-    {
-        return $this->inner->findDeletesQueuedAfter($storage, $afterId);
     }
 
     public function hasOperations(string $storage): bool
