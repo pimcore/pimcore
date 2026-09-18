@@ -326,6 +326,10 @@ final class StorageOperationQueueProcessor
         $cutoff = $current->getCreatedAt()->getTimestamp(); // anchored to the ORIGINAL creation - repoint does not change it
         $source = $current->getSourcePrefix();
         $copied = []; // relative suffix => target prefix the copy was made under
+        // The options the original move was resolved with, recorded on the row when it was
+        // queued. Without them the adapter falls back to flysystem defaults, which on S3 means
+        // reading the source object ACL before every copy.
+        $copyConfig = new Config($current->getCopyOptions() ?? []);
 
         if ($adapter->directoryExists($source)) {
             $entriesSinceCheck = 0;
@@ -340,6 +344,8 @@ final class StorageOperationQueueProcessor
                     if ($current === null) {
                         return false; // row vanished or was converted - tracked copies already reconciled
                     }
+                    // a live re-move repoints the row and carries its own options along
+                    $copyConfig = new Config($current->getCopyOptions() ?? []);
                 }
                 if (!$item->isFile()) {
                     continue;
@@ -363,7 +369,7 @@ final class StorageOperationQueueProcessor
                     // must not be swept, re-targeted on a repoint, or block completion (the
                     // completion re-list already treats equality as non-blocking).
                     if (!$adapter->fileExists($target)) {
-                        $adapter->copy($path, $target, new Config());
+                        $adapter->copy($path, $target, $copyConfig);
                     }
 
                     continue;
@@ -371,7 +377,7 @@ final class StorageOperationQueueProcessor
 
                 // $lastModified < $cutoff: unambiguously pre-cutoff content
                 if (!$adapter->fileExists($target)) {
-                    $adapter->copy($path, $target, new Config());
+                    $adapter->copy($path, $target, $copyConfig);
                     if (!$adapter->fileExists($target)) {
                         throw new RuntimeException(sprintf('Copy verification failed for %s -> %s', $path, $target));
                     }
@@ -442,7 +448,8 @@ final class StorageOperationQueueProcessor
                 $new = $this->targetPrefixOf($fresh) . $suffix;
                 if ($adapter->fileExists($stale)) {
                     if (!$adapter->fileExists($new)) {
-                        $adapter->copy($stale, $new, new Config());
+                        // The repointed row's own options - this relocation is part of applying it.
+                        $adapter->copy($stale, $new, new Config($fresh->getCopyOptions() ?? []));
                     }
                     $adapter->delete($stale);
                 }

@@ -34,7 +34,12 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
     public function add(StorageOperation $operation): void
     {
         if ($operation->getType() === StorageOperationType::Move) {
-            $this->repointMoves($operation->getStorage(), $operation->getSourcePrefix(), (string) $operation->getTargetPrefix());
+            $this->repointMoves(
+                $operation->getStorage(),
+                $operation->getSourcePrefix(),
+                (string) $operation->getTargetPrefix(),
+                $operation->getCopyOptions() ?? []
+            );
         } else {
             $this->convert($operation->getStorage(), $operation->getSourcePrefix());
         }
@@ -46,6 +51,7 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
             $operation->getSourcePrefix(),
             $operation->getTargetPrefix(),
             $operation->getCreatedAt(),
+            $operation->getCopyOptions(),
         );
     }
 
@@ -151,6 +157,22 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
         );
     }
 
+    /**
+     * Mirrors the SQL repository: key order is not significant and an empty set means "none".
+     *
+     * @param array<string, mixed>|null $options
+     */
+    private function canonicalCopyOptions(?array $options): ?string
+    {
+        if ($options === null || $options === []) {
+            return null;
+        }
+
+        ksort($options);
+
+        return json_encode($options, JSON_THROW_ON_ERROR);
+    }
+
     public function removeIfUnchanged(StorageOperation $operation): bool
     {
         foreach ($this->operations as $i => $op) {
@@ -159,6 +181,8 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
                 && $op->getType() === $operation->getType()
                 && $op->getSourcePrefix() === $operation->getSourcePrefix()
                 && $op->getTargetPrefix() === $operation->getTargetPrefix()
+                && $this->canonicalCopyOptions($op->getCopyOptions())
+                   === $this->canonicalCopyOptions($operation->getCopyOptions())
             ) {
                 unset($this->operations[$i]);
                 $this->operations = array_values($this->operations);
@@ -170,12 +194,19 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
         return false;
     }
 
-    public function repointMoves(string $storage, string $movedPrefix, string $newPrefix): void
-    {
-        $this->repoint($storage, $movedPrefix, $newPrefix);
+    public function repointMoves(
+        string $storage,
+        string $movedPrefix,
+        string $newPrefix,
+        ?array $copyOptions = null
+    ): void {
+        $this->repoint($storage, $movedPrefix, $newPrefix, $copyOptions);
     }
 
-    private function repoint(string $storage, string $movedPrefix, string $newPrefix): void
+    /**
+     * @param array<string, mixed>|null $copyOptions
+     */
+    private function repoint(string $storage, string $movedPrefix, string $newPrefix, ?array $copyOptions = null): void
     {
         foreach ($this->operations as $i => $op) {
             $target = $op->getTargetPrefix();
@@ -190,7 +221,13 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
                     continue;
                 }
                 $this->operations[$i] = new StorageOperation(
-                    $op->getId(), $op->getStorage(), $op->getType(), $op->getSourcePrefix(), $newTarget, $op->getCreatedAt()
+                    $op->getId(),
+                    $op->getStorage(),
+                    $op->getType(),
+                    $op->getSourcePrefix(),
+                    $newTarget,
+                    $op->getCreatedAt(),
+                    $copyOptions === null ? $op->getCopyOptions() : ($copyOptions ?: null)
                 );
             }
         }
