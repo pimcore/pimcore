@@ -182,6 +182,18 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
+     * Column/query column types (Date, Datetime, DateRange) are emitted verbatim into
+     * ALTER TABLE DDL, so they must be restricted to a plain SQL type expression instead
+     * of accepting arbitrary strings.
+     */
+    protected function validateColumnType(string $columnType): void
+    {
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9_]*(\(\s*\d+\s*(,\s*\d+\s*)?\))?(\s+(?:unsigned|zerofill))*\z/i', $columnType)) {
+            throw new InvalidArgumentException(sprintf('Invalid column type "%s"', $columnType));
+        }
+    }
+
+    /**
      * @return $this
      */
     public function setTitle(string $title): static

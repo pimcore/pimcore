@@ -358,8 +358,12 @@ class DateRange extends Data implements
     public function setColumnType(string|array $columnType): void
     {
         if (is_array($columnType)) {
+            foreach ($columnType as $singleColumnType) {
+                $this->validateColumnType($singleColumnType);
+            }
             $this->columnType = $columnType;
         } else {
+            $this->validateColumnType($columnType);
             $this->columnType = [
                 'start_date' => $columnType,
                 'end_date' => $columnType,
