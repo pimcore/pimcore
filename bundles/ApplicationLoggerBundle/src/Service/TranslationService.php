@@ -16,6 +16,10 @@ namespace Pimcore\Bundle\ApplicationLoggerBundle\Service;
 use Pimcore\Bundle\ApplicationLoggerBundle\Enum\LogLevel;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @deprecated since Pimcore 2026.3, will be removed in Pimcore 2027.0. It only served the removed
+ *             legacy admin log controller and translates into the legacy "admin" domain.
+ */
 readonly class TranslationService implements TranslationServiceInterface
 {
     public function __construct(

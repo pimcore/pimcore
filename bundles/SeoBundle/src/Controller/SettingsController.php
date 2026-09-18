@@ -21,6 +21,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * @deprecated since Pimcore 2026.3, will be removed in Pimcore 2027.0. The robots.txt settings
+ *             are served by the Studio backend API
+ *             (Pimcore\Bundle\StudioBackendBundle\Bundle\Seo\Controller\RobotsTxt) instead.
+ */
 class SettingsController extends UserAwareController
 {
     use JsonHelperTrait;

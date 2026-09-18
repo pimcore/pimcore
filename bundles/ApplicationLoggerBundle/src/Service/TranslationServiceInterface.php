@@ -13,6 +13,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\ApplicationLoggerBundle\Service;
 
+/**
+ * @deprecated since Pimcore 2026.3, will be removed in Pimcore 2027.0. It only served the removed
+ *             legacy admin log controller and translates into the legacy "admin" domain.
+ */
 interface TranslationServiceInterface
 {
     public function getTranslatedLogLevels(): array;
