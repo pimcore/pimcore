@@ -39,7 +39,12 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
     public function add(StorageOperation $operation): void
     {
         if ($operation->getType() === StorageOperationType::Move) {
-            $this->repointMoves($operation->getStorage(), $operation->getSourcePrefix(), $operation->getTargetPrefix());
+            $this->repointMoves(
+                $operation->getStorage(),
+                $operation->getSourcePrefix(),
+                $operation->getTargetPrefix(),
+                $operation->getCopyOptions() ?? []
+            );
         } else {
             $this->convertCoveredMovesToDeletes($operation->getStorage(), $operation->getSourcePrefix());
         }
@@ -211,22 +216,36 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
      * the new target so lookups stay flat (single-hop candidates, never chains). Rows that
      * become self-mappings (moved back to their source) are dropped.
      */
-    public function repointMoves(string $storage, string $movedPrefix, string $newPrefix): void
-    {
+    public function repointMoves(
+        string $storage,
+        string $movedPrefix,
+        string $newPrefix,
+        ?array $copyOptions = null
+    ): void {
+        $parameters = [
+            'newPrefix' => $newPrefix,
+            'storage' => $storage,
+            'movedPrefix' => $movedPrefix,
+            'movedPrefixB' => $movedPrefix,
+            'movedPrefixC' => $movedPrefix,
+            'movedPrefixD' => $movedPrefix,
+        ];
+
+        $copyOptionsAssignment = '';
+        if ($copyOptions !== null) {
+            $copyOptionsAssignment = ', `copy_options` = :copyOptions';
+            $parameters['copyOptions'] = $copyOptions === []
+                ? null
+                : json_encode($copyOptions, JSON_THROW_ON_ERROR);
+        }
+
         $this->db->executeStatement(
-            'UPDATE ' . self::TABLE . "
-             SET `target_prefix` = CONCAT(:newPrefix, SUBSTRING(`target_prefix`, CHAR_LENGTH(:movedPrefixD) + 1))
+            'UPDATE ' . self::TABLE . '
+             SET `target_prefix` = CONCAT(:newPrefix, SUBSTRING(`target_prefix`, CHAR_LENGTH(:movedPrefixD) + 1))' . $copyOptionsAssignment . "
              WHERE `storage` = :storage
                AND `operation` = 'move'
                AND (`target_prefix` = :movedPrefix OR LEFT(`target_prefix`, CHAR_LENGTH(:movedPrefixB) + 1) = CONCAT(:movedPrefixC, '/'))",
-            [
-                'newPrefix' => $newPrefix,
-                'storage' => $storage,
-                'movedPrefix' => $movedPrefix,
-                'movedPrefixB' => $movedPrefix,
-                'movedPrefixC' => $movedPrefix,
-                'movedPrefixD' => $movedPrefix,
-            ]
+            $parameters
         );
 
         $this->db->executeStatement(

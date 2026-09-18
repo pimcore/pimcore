@@ -34,7 +34,12 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
     public function add(StorageOperation $operation): void
     {
         if ($operation->getType() === StorageOperationType::Move) {
-            $this->repointMoves($operation->getStorage(), $operation->getSourcePrefix(), (string) $operation->getTargetPrefix());
+            $this->repointMoves(
+                $operation->getStorage(),
+                $operation->getSourcePrefix(),
+                (string) $operation->getTargetPrefix(),
+                $operation->getCopyOptions() ?? []
+            );
         } else {
             $this->convert($operation->getStorage(), $operation->getSourcePrefix());
         }
@@ -171,12 +176,19 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
         return false;
     }
 
-    public function repointMoves(string $storage, string $movedPrefix, string $newPrefix): void
-    {
-        $this->repoint($storage, $movedPrefix, $newPrefix);
+    public function repointMoves(
+        string $storage,
+        string $movedPrefix,
+        string $newPrefix,
+        ?array $copyOptions = null
+    ): void {
+        $this->repoint($storage, $movedPrefix, $newPrefix, $copyOptions);
     }
 
-    private function repoint(string $storage, string $movedPrefix, string $newPrefix): void
+    /**
+     * @param array<string, mixed>|null $copyOptions
+     */
+    private function repoint(string $storage, string $movedPrefix, string $newPrefix, ?array $copyOptions = null): void
     {
         foreach ($this->operations as $i => $op) {
             $target = $op->getTargetPrefix();
@@ -197,7 +209,7 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
                     $op->getSourcePrefix(),
                     $newTarget,
                     $op->getCreatedAt(),
-                    $op->getCopyOptions()
+                    $copyOptions === null ? $op->getCopyOptions() : ($copyOptions ?: null)
                 );
             }
         }

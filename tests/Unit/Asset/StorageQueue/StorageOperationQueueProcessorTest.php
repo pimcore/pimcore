@@ -671,8 +671,15 @@ class StorageOperationQueueProcessorTest extends Unit
             $spy,
             4,
             function (): void {
+                // same storage, so the re-move resolves to the same configuration
                 $this->repository->add(new StorageOperation(
-                    null, 'asset', StorageOperationType::Move, 'B', 'C', new DateTimeImmutable()
+                    null,
+                    'asset',
+                    StorageOperationType::Move,
+                    'B',
+                    'C',
+                    new DateTimeImmutable(),
+                    ['visibility' => 'public', 'retain_visibility' => false]
                 ));
             }
         );
@@ -689,6 +696,54 @@ class StorageOperationQueueProcessorTest extends Unit
                 'every copy, including the post-repoint relocation, carries the recorded options'
             );
         }
+    }
+
+    public function testARepointedRowDrainsWithTheLaterMovesOptions(): void
+    {
+        // Performed immediately, A -> B then B -> C would land the bytes at C under the second
+        // move's configuration. Deferred, the two collapse into one A -> C copy, which therefore
+        // has to use the later options rather than the ones the first move was queued with.
+        for ($i = 1; $i <= 8; $i++) {
+            $this->writeWithMtime("A/file{$i}.jpg", "content-{$i}", time() - 7200);
+        }
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'A',
+            'B',
+            new DateTimeImmutable('+5 seconds'),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+
+        $spy = new ConfigCapturingAdapterDecorator($this->adapter);
+        $mutatingAdapter = new StorageOperationQueueProcessorTestMutatingAdapter(
+            $spy,
+            4,
+            function (): void {
+                $this->repository->add(new StorageOperation(
+                    null,
+                    'asset',
+                    StorageOperationType::Move,
+                    'B',
+                    'C',
+                    new DateTimeImmutable(),
+                    ['visibility' => 'private', 'retain_visibility' => false]
+                ));
+            }
+        );
+        $locator = new StorageOperationQueueProcessorTestAdapterLocator($mutatingAdapter);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger(), 3);
+
+        $processor->process();
+
+        $later = ['visibility' => 'private', 'retain_visibility' => false];
+        $this->assertContains($later, $spy->copyConfigs, 'copies after the repoint use the later options');
+        $this->assertSame(
+            $later,
+            $spy->copyConfigs[count($spy->copyConfigs) - 1],
+            'the reconciliation copy that relocates to the final target uses them too'
+        );
     }
 }
 

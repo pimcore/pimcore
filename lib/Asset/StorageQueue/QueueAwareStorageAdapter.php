@@ -365,7 +365,12 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             if ($hasOperations) {
                 // Legacy rows still pointing at this prefix must follow along so lookups stay
                 // flat; a genuinely empty destination would drop to a self-mapping and vanish.
-                $this->repository->repointMoves($this->storageName, $source, $destination);
+                $this->repository->repointMoves(
+                    $this->storageName,
+                    $source,
+                    $destination,
+                    $this->copyOptions($config) ?? []
+                );
             }
 
             return; // native rename moved everything physically - never insert a row
@@ -388,7 +393,12 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
             // row for $source itself would be vacuous and would wrongly shadow whatever gets
             // (re-)created at $source afterwards.
             if ($hasOperations) {
-                $this->repository->repointMoves($this->storageName, $source, $destination);
+                $this->repository->repointMoves(
+                    $this->storageName,
+                    $source,
+                    $destination,
+                    $this->copyOptions($config) ?? []
+                );
             }
 
             return;

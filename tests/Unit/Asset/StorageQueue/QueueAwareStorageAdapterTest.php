@@ -1106,4 +1106,25 @@ class QueueAwareStorageAdapterTest extends Unit
             'the materializing copy used the pending move options'
         );
     }
+
+    public function testRepointingAPendingMoveAdoptsTheLaterMovesCopyOptions(): void
+    {
+        // Re-moving a subtree that is still queued repoints the pending row instead of adding a
+        // second one, so the row also has to pick up the later move's options - it is that move
+        // which decides how the bytes land at their final target.
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('A/x.png', 'bytes', new Config());
+        $adapter->move('A', 'B', new Config(['visibility' => 'public', 'retain_visibility' => false]));
+
+        $adapter->move('B', 'C', new Config(['visibility' => 'private', 'retain_visibility' => false]));
+
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations, 'the pending row was repointed, not duplicated');
+        $this->assertSame('A', $operations[0]->getSourcePrefix());
+        $this->assertSame('C', $operations[0]->getTargetPrefix());
+        $this->assertSame(
+            ['visibility' => 'private', 'retain_visibility' => false],
+            $operations[0]->getCopyOptions()
+        );
+    }
 }

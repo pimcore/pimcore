@@ -344,6 +344,8 @@ final class StorageOperationQueueProcessor
                     if ($current === null) {
                         return false; // row vanished or was converted - tracked copies already reconciled
                     }
+                    // a live re-move repoints the row and carries its own options along
+                    $copyConfig = new Config($current->getCopyOptions() ?? []);
                 }
                 if (!$item->isFile()) {
                     continue;
