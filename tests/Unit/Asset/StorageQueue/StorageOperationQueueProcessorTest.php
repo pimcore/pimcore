@@ -752,6 +752,38 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame('a', $this->adapter->read('T/a.jpg'), 'the unrelated move still completed');
     }
 
+    public function testIdRefusesAMoveThatWouldJumpAheadOfAnOlderOverlappingDelete(): void
+    {
+        // --id bypasses FIFO entirely. Running this Move alone would carry the content out of
+        // "legacy" before the older Delete ever sees it, so explicitly deleted content would
+        // survive under the move target.
+        $this->writeWithMtime('legacy/campaigns/a.jpg', 'a', time() - 7200);
+        $this->addRow(StorageOperationType::Delete, 'legacy', null, new DateTimeImmutable('-1 hour'));
+        $this->addRow(StorageOperationType::Move, 'legacy/campaigns', 'live/campaigns');
+        $moveId = (int) $this->findRow(StorageOperationType::Move, 'legacy/campaigns')?->getId();
+
+        $result = $this->processor()->process($moveId);
+
+        $this->assertSame(0, $result->getProcessedRows());
+        $this->assertSame(1, $result->getFailedRows());
+        $this->assertStringContainsString('refusing to process out of order', implode(' ', $result->getErrors()));
+        $this->assertSame('a', $this->adapter->read('legacy/campaigns/a.jpg'), 'nothing was relocated');
+        $this->assertFalse($this->adapter->fileExists('live/campaigns/a.jpg'));
+    }
+
+    public function testIdStillProcessesAMoveWithNoOverlappingDelete(): void
+    {
+        $this->write('other/a.jpg', 'a');
+        $this->addRow(StorageOperationType::Delete, 'legacy', null, new DateTimeImmutable('-1 hour'));
+        $this->addRow(StorageOperationType::Move, 'other', 'live/other');
+        $moveId = (int) $this->findRow(StorageOperationType::Move, 'other')?->getId();
+
+        $result = $this->processor()->process($moveId);
+
+        $this->assertSame(1, $result->getProcessedRows());
+        $this->assertSame('a', $this->adapter->read('live/other/a.jpg'));
+    }
+
     public function testOrderForProcessingKeepsFifoOtherwise(): void
     {
         $ops = [

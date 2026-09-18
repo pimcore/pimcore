@@ -182,6 +182,30 @@ class StorageQueueCommandsTest extends Unit
         $this->assertStringContainsString('1 failed', $tester->getDisplay());
     }
 
+    public function testProcessRefusesIdOfMoveBlockedByAnOlderDelete(): void
+    {
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Delete, 'legacy', null, new DateTimeImmutable('-1 hour')
+        ));
+        $this->repository->add(new StorageOperation(
+            null, 'asset', StorageOperationType::Move, 'legacy/campaigns', 'live/campaigns', new DateTimeImmutable()
+        ));
+        $moveId = 0;
+        foreach ($this->repository->all() as $row) {
+            if ($row->getType() === StorageOperationType::Move) {
+                $moveId = (int) $row->getId();
+            }
+        }
+        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $this->realProcessor());
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute(['--id' => (string) $moveId]);
+
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('refusing to process out of order', $tester->getDisplay());
+        $this->assertCount(2, $this->repository->all(), 'both rows stay queued');
+    }
+
     public function testProcessStopsAtTheFirstErrorWhenAskedTo(): void
     {
         // Two rows that both fail (the locator resolves no storage). With --stop-on-error the run

@@ -82,6 +82,7 @@ final class StorageOperationQueueProcessor
 
             if ($requested !== null && $requested->getType() === StorageOperationType::Move) {
                 $newerSameTarget = $this->findNewerSameTargetRow($requested);
+                $olderDelete = $this->findOlderOverlappingDelete($requested);
                 if ($newerSameTarget !== null) {
                     $operations = [];
                     $failed++;
@@ -91,6 +92,16 @@ final class StorageOperationQueueProcessor
                         $requested->getSourcePrefix(),
                         $newerSameTarget->getId(),
                         (string) $requested->getTargetPrefix()
+                    );
+                } elseif ($olderDelete !== null) {
+                    $operations = [];
+                    $failed++;
+                    $errors[] = sprintf(
+                        '#%d move %s: refusing to process out of order - row #%d deletes the overlapping prefix "%s" and is older; run without --id so the queue drains in order',
+                        $requested->getId(),
+                        $requested->getSourcePrefix(),
+                        $olderDelete->getId(),
+                        $olderDelete->getSourcePrefix()
                     );
                 }
             }
@@ -244,6 +255,47 @@ final class StorageOperationQueueProcessor
                 if ($movePath === $prefix
                     || str_starts_with($movePath, $prefix . '/')  // the delete would cover it
                     || str_starts_with($prefix, $movePath . '/')  // the delete sits inside it
+                ) {
+                    return $candidate;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * The mirror image of findPendingMoveDependingOn(), for the --id entry point.
+     *
+     * A full run drains in FIFO order, so an older Delete always gets its chance before a Move
+     * that overlaps it. --id skips that ordering entirely: it would carry the bytes out of the
+     * deleted prefix first, and the Delete would then find an empty directory and complete
+     * silently - leaving explicitly deleted content alive under the move target.
+     *
+     * Overlap is tested in both nesting directions, and against the Move's target as well: a
+     * Delete covering the target names content the Move has not materialised yet, so running the
+     * Move first would recreate the subtree the Delete is meant to remove.
+     */
+    private function findOlderOverlappingDelete(StorageOperation $move): ?StorageOperation
+    {
+        foreach ($this->repository->all() as $candidate) {
+            if ($candidate->getType() !== StorageOperationType::Delete
+                || $candidate->getStorage() !== $move->getStorage()
+                || (int) $candidate->getId() >= (int) $move->getId()
+            ) {
+                continue;
+            }
+
+            $deletePrefix = trim($candidate->getSourcePrefix(), '/');
+
+            foreach ([$move->getSourcePrefix(), $move->getTargetPrefix()] as $movePath) {
+                if ($movePath === null) {
+                    continue;
+                }
+                $movePath = trim($movePath, '/');
+                if ($movePath === $deletePrefix
+                    || str_starts_with($movePath, $deletePrefix . '/')  // the delete would cover it
+                    || str_starts_with($deletePrefix, $movePath . '/')  // the delete sits inside it
                 ) {
                     return $candidate;
                 }
