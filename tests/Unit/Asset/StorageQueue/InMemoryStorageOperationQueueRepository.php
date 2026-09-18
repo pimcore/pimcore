@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Asset\StorageQueue;
 
-use DateTimeImmutable;
 use Pimcore\Asset\StorageQueue\StorageOperation;
 use Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface;
 use Pimcore\Asset\StorageQueue\StorageOperationType;
@@ -116,78 +115,6 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
     public function getFindSourceCoveringCallCount(): int
     {
         return $this->findSourceCoveringCalls;
-    }
-
-    public function findOverlappingMoveQueuedBefore(
-        string $storage,
-        string $prefix,
-        DateTimeImmutable $createdAt,
-        int $beforeId
-    ): ?StorageOperation {
-        $before = [$createdAt->getTimestamp(), $beforeId];
-        $overlaps = static function (?string $candidate) use ($prefix): bool {
-            if ($candidate === null) {
-                return false;
-            }
-            $candidate = trim($candidate, '/');
-            $prefix = trim($prefix, '/');
-
-            return $candidate === $prefix
-                || str_starts_with($candidate, $prefix . '/')
-                || str_starts_with($prefix, $candidate . '/');
-        };
-
-        $found = null;
-        foreach ($this->operations as $operation) {
-            $order = [$operation->getCreatedAt()->getTimestamp(), (int) $operation->getId()];
-            if ($operation->getStorage() !== $storage
-                || $operation->getType() !== StorageOperationType::Move
-                || $order >= $before
-                || (!$overlaps($operation->getSourcePrefix()) && !$overlaps($operation->getTargetPrefix()))
-            ) {
-                continue;
-            }
-            if ($found === null
-                || $order < [$found->getCreatedAt()->getTimestamp(), (int) $found->getId()]
-            ) {
-                $found = $operation;
-            }
-        }
-
-        return $found;
-    }
-
-    /**
-     * @return StorageOperation[]
-     */
-    public function findPendingDeletesOverlapping(string $storage, string ...$prefixes): array
-    {
-        $overlaps = static function (string $candidate) use ($prefixes): bool {
-            $candidate = trim($candidate, '/');
-            foreach ($prefixes as $prefix) {
-                $prefix = trim($prefix, '/');
-                if ($candidate === $prefix
-                    || str_starts_with($candidate, $prefix . '/')
-                    || str_starts_with($prefix, $candidate . '/')
-                ) {
-                    return true;
-                }
-            }
-
-            return false;
-        };
-
-        $deletes = [];
-        foreach ($this->operations as $operation) {
-            if ($operation->getStorage() === $storage
-                && $operation->getType() === StorageOperationType::Delete
-                && $overlaps($operation->getSourcePrefix())
-            ) {
-                $deletes[] = $operation;
-            }
-        }
-
-        return $deletes;
     }
 
     public function hasOperations(string $storage): bool

@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Asset\StorageQueue;
 
-use DateTimeImmutable;
 use Doctrine\DBAL\Driver\Exception as DriverExceptionInterface;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Asset\StorageQueue\StorageOperation;
@@ -51,23 +50,6 @@ final class MissingTableStorageOperationQueueRepository implements StorageOperat
     }
 
     public function findSourceCovering(string $storage, string $path): array
-    {
-        throw self::exception();
-    }
-
-    public function findOverlappingMoveQueuedBefore(
-        string $storage,
-        string $prefix,
-        DateTimeImmutable $createdAt,
-        int $beforeId
-    ): ?StorageOperation {
-        throw self::exception();
-    }
-
-    /**
-     * @return StorageOperation[]
-     */
-    public function findPendingDeletesOverlapping(string $storage, string ...$prefixes): array
     {
         throw self::exception();
     }

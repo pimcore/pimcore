@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Asset\StorageQueue;
 
-use DateTimeImmutable;
 use LogicException;
 use Pimcore\Asset\StorageQueue\StorageOperation;
 use Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface;
@@ -48,23 +47,6 @@ final class ThrowingStorageOperationQueueRepository implements StorageOperationQ
     }
 
     public function findSourceCovering(string $storage, string $path): array
-    {
-        throw new LogicException(__METHOD__ . ' must not be called when the adapter is disabled');
-    }
-
-    public function findOverlappingMoveQueuedBefore(
-        string $storage,
-        string $prefix,
-        DateTimeImmutable $createdAt,
-        int $beforeId
-    ): ?StorageOperation {
-        throw new LogicException(__METHOD__ . ' must not be called when the adapter is disabled');
-    }
-
-    /**
-     * @return StorageOperation[]
-     */
-    public function findPendingDeletesOverlapping(string $storage, string ...$prefixes): array
     {
         throw new LogicException(__METHOD__ . ' must not be called when the adapter is disabled');
     }

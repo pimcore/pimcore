@@ -48,8 +48,7 @@ class StorageOperationQueueRepositoryTest extends TestCase
                 `source_prefix` VARCHAR(765) NOT NULL,
                 `target_prefix` VARCHAR(765) DEFAULT NULL,
                 `created_at` DATETIME NOT NULL,
-                PRIMARY KEY (`id`),
-                KEY `storage_operation_id` (`storage`, `operation`, `id`)
+                PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;'
         );
         Db::get()->executeStatement('DELETE FROM asset_storage_operation_queue');
@@ -373,107 +372,5 @@ class StorageOperationQueueRepositoryTest extends TestCase
         // and the mapping itself against the REAL repository (bypassing the bool):
         $enabledResolver = new FrontendPathResolver($this->repository, true);
         $this->assertSame('/WiredSource/a.jpg', $enabledResolver->resolvePhysicalPath('/WiredTarget/a.jpg'));
-    }
-
-    public function testFindOverlappingMoveOlderThanMatchesBothNestingDirections(): void
-    {
-        $this->repository->add($this->move('asset', 'A/deep/inner', 'T1')); // delete sits above it
-        $this->repository->add($this->move('asset', 'B', 'T2'));            // delete sits inside it
-        $this->repository->add($this->move('asset', 'C', 'T3'));            // exact prefix match
-        $rows = $this->repository->all();
-        $beforeId = (int) $rows[count($rows) - 1]->getId() + 1;
-
-        $this->assertSame(
-            'A/deep/inner',
-            $this->repository->findOverlappingMoveQueuedBefore('asset', 'A', new DateTimeImmutable('+1 hour'), $beforeId)?->getSourcePrefix(),
-            'a delete above the move source overlaps it'
-        );
-        $this->assertSame(
-            'B',
-            $this->repository->findOverlappingMoveQueuedBefore('asset', 'B/deep/inner', new DateTimeImmutable('+1 hour'), $beforeId)?->getSourcePrefix(),
-            'a delete inside the move source overlaps it'
-        );
-        $this->assertSame(
-            'C',
-            $this->repository->findOverlappingMoveQueuedBefore('asset', 'C', new DateTimeImmutable('+1 hour'), $beforeId)?->getSourcePrefix(),
-            'an identical prefix overlaps'
-        );
-    }
-
-    public function testFindOverlappingMoveOlderThanMatchesOnTheTargetSide(): void
-    {
-        $this->repository->add($this->move('asset', 'A', 'Archive/Campaigns'));
-        $beforeId = (int) $this->repository->all()[0]->getId() + 1;
-
-        $this->assertNotNull(
-            $this->repository->findOverlappingMoveQueuedBefore('asset', 'Archive/Campaigns/2026', new DateTimeImmutable('+1 hour'), $beforeId),
-            'a delete under the move target names content the move has not materialised yet'
-        );
-    }
-
-    public function testFindOverlappingMoveOlderThanIgnoresSiblingsOtherStoragesAndNewerRows(): void
-    {
-        $this->repository->add($this->move('asset', 'legacy', 'T'));
-        $this->repository->add($this->move('thumbnail', 'shared', 'T'));
-        $onlyRow = $this->repository->all()[0];
-        $beforeId = (int) $onlyRow->getId() + 1;
-
-        $this->assertNull(
-            $this->repository->findOverlappingMoveQueuedBefore('asset', 'legacy-archive', new DateTimeImmutable('+1 hour'), $beforeId),
-            'a shared leading substring is not an overlap'
-        );
-        $this->assertNull(
-            $this->repository->findOverlappingMoveQueuedBefore('asset', 'shared', new DateTimeImmutable('+1 hour'), $beforeId),
-            'rows on another storage never match'
-        );
-        $this->assertNull(
-            $this->repository->findOverlappingMoveQueuedBefore('asset', 'legacy', $onlyRow->getCreatedAt(), (int) $onlyRow->getId()),
-            'the row itself and anything newer is out of range'
-        );
-    }
-
-    public function testFindOverlappingMoveOlderThanReturnsTheOldestMatch(): void
-    {
-        $this->repository->add($this->move('asset', 'A/one', 'T1'));
-        $this->repository->add($this->move('asset', 'A/two', 'T2'));
-        $rows = $this->repository->all();
-        $beforeId = (int) $rows[count($rows) - 1]->getId() + 1;
-
-        $this->assertSame(
-            'A/one',
-            $this->repository->findOverlappingMoveQueuedBefore('asset', 'A', new DateTimeImmutable('+1 hour'), $beforeId)?->getSourcePrefix()
-        );
-    }
-
-    public function testFindPendingDeletesOverlappingMatchesBothNestingDirections(): void
-    {
-        $this->repository->add($this->delete('asset', 'Archive/Campaigns/2026'));
-        $this->repository->add($this->delete('asset', 'Legacy'));
-        $this->repository->add($this->delete('asset', 'legacy-archive'));
-        $this->repository->add($this->delete('thumbnail', 'Legacy'));
-
-        $prefixes = array_map(
-            static fn (StorageOperation $op) => $op->getSourcePrefix(),
-            $this->repository->findPendingDeletesOverlapping('asset', 'Archive', 'Legacy/deep')
-        );
-        sort($prefixes);
-
-        $this->assertSame(
-            ['Archive/Campaigns/2026', 'Legacy'],
-            $prefixes,
-            'a delete under one prefix and a delete above the other both match; siblings and other storages do not'
-        );
-    }
-
-    public function testFindPendingDeletesOverlappingIgnoresMoveRowsAndUnrelatedPrefixes(): void
-    {
-        $this->repository->add($this->move('asset', 'Archive', 'Elsewhere'));
-        $this->repository->add($this->delete('asset', 'Unrelated'));
-
-        $this->assertSame(
-            [],
-            $this->repository->findPendingDeletesOverlapping('asset', 'Archive'),
-            'move rows never match, and an unrelated delete prefix does not overlap'
-        );
     }
 }
