@@ -659,8 +659,9 @@ class Asset extends Element\AbstractElement
             $this->setType('folder');
         }
 
-        // do not allow PHP and .htaccess files
-        if (preg_match("@\.ph(p[\d+]?|t|tml|ps|ar)$@i", $this->getFilename()) || $this->getFilename() == '.htaccess') {
+        // do not allow PHP, HTML/JS and .htaccess files, since they would be served with an
+        // executable/active content-type and can be used for stored XSS (e.g. via WebDAV uploads)
+        if (preg_match('@\.(ph(p(\d+(\.\d+)*)?|t(ml)?|ps|ar)|html?|xhtml|js|mjs)$@i', $this->getFilename()) || $this->getFilename() == '.htaccess') {
             $this->setFilename($this->getFilename() . '.txt');
         }
 
