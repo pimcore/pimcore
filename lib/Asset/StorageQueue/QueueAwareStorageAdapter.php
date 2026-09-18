@@ -43,11 +43,16 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
     /**
      * The resolved flysystem options a deferred copy has to reproduce. Everything else in a
      * resolved config (public urls, the deprecated flags) has no bearing on a copy.
+     *
+     * Spelled out rather than referenced as Config:: constants: 'retain_visibility' only gained
+     * its constant in league/flysystem 3.24, and the lowest version this package supports is
+     * 3.12. The string values are the wire format either way, and a config that predates the
+     * option simply never carries it.
      */
     private const COPY_OPTION_KEYS = [
-        Config::OPTION_VISIBILITY,
-        Config::OPTION_DIRECTORY_VISIBILITY,
-        Config::OPTION_RETAIN_VISIBILITY,
+        'visibility',
+        'directory_visibility',
+        'retain_visibility',
     ];
 
     public function __construct(
@@ -419,7 +424,15 @@ final class QueueAwareStorageAdapter implements FilesystemAdapter, PublicUrlGene
      */
     private function copyOptions(Config $config): ?array
     {
-        $options = array_intersect_key($config->toArray(), array_flip(self::COPY_OPTION_KEYS));
+        // Read key by key instead of Config::toArray(), which only exists from
+        // league/flysystem 3.20 while this package still supports 3.12.
+        $options = [];
+        foreach (self::COPY_OPTION_KEYS as $key) {
+            $value = $config->get($key);
+            if ($value !== null) {
+                $options[$key] = $value;
+            }
+        }
 
         return $options === [] ? null : $options;
     }

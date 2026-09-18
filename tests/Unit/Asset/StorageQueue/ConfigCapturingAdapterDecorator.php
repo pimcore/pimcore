@@ -35,7 +35,17 @@ final class ConfigCapturingAdapterDecorator implements FilesystemAdapter
 
     public function copy(string $source, string $destination, Config $config): void
     {
-        $this->copyConfigs[] = $config->toArray();
+        // Config::toArray() only exists from league/flysystem 3.20 and this package still
+        // supports 3.12, so read the keys the queue can carry instead.
+        $recorded = [];
+        foreach (['visibility', 'directory_visibility', 'retain_visibility'] as $key) {
+            $value = $config->get($key);
+            if ($value !== null) {
+                $recorded[$key] = $value;
+            }
+        }
+
+        $this->copyConfigs[] = $recorded;
         $this->inner->copy($source, $destination, $config);
     }
 
