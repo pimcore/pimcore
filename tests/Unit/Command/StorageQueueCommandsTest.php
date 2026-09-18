@@ -182,6 +182,52 @@ class StorageQueueCommandsTest extends Unit
         $this->assertStringContainsString('1 failed', $tester->getDisplay());
     }
 
+    public function testProcessStopsAtTheFirstErrorWhenAskedTo(): void
+    {
+        // Two rows that both fail (the locator resolves no storage). With --stop-on-error the run
+        // must end after the first one instead of attempting the second.
+        $processor = new StorageOperationQueueProcessor(
+            new StorageQueueCommandsTestStrictLocator(),
+            $this->repository,
+            new NullLogger()
+        );
+        foreach (['First', 'Second'] as $prefix) {
+            $this->repository->add(new StorageOperation(
+                null, 'asset', StorageOperationType::Delete, $prefix, null, new DateTimeImmutable()
+            ));
+        }
+        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $processor);
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute(['--stop-on-error' => true]);
+
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('1 failed', $tester->getDisplay());
+        $this->assertStringContainsString('stopped at the first error', $tester->getDisplay());
+        $this->assertCount(2, $this->repository->all(), 'the second row was never attempted and stays queued');
+    }
+
+    public function testProcessContinuesPastAFailureByDefault(): void
+    {
+        $processor = new StorageOperationQueueProcessor(
+            new StorageQueueCommandsTestStrictLocator(),
+            $this->repository,
+            new NullLogger()
+        );
+        foreach (['First', 'Second'] as $prefix) {
+            $this->repository->add(new StorageOperation(
+                null, 'asset', StorageOperationType::Delete, $prefix, null, new DateTimeImmutable()
+            ));
+        }
+        $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $processor);
+        $tester = new CommandTester($command);
+
+        $tester->execute([]);
+
+        $this->assertStringContainsString('2 failed', $tester->getDisplay(), 'both rows are attempted without the flag');
+        $this->assertStringNotContainsString('stopped at the first error', $tester->getDisplay());
+    }
+
     public function testProcessRefusesIdOfOlderSameTargetRow(): void
     {
         // H2 (Copilot round 3): two Move rows share an identical target - --id on the older one
