@@ -1034,9 +1034,15 @@ class Asset extends Element\AbstractElement
                     }
                 }
 
-                // Dispatch Symfony Message Bus to delete versions
+                // Dispatch Symfony Message Bus to delete versions - bounded to the versions
+                // existing right now, so a later re-use of this id (WebDAV delete-log restore)
+                // does not lose versions created after the restore
                 Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                    new VersionDeleteMessage(Service::getElementType($this), $this->getId())
+                    new VersionDeleteMessage(
+                        Service::getElementType($this),
+                        $this->getId(),
+                        Version::getHighestIdForElement(Service::getElementType($this), $this->getId()) ?? 0
+                    )
                 );
 
                 // remove all properties

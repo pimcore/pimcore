@@ -128,6 +128,24 @@ final class Version extends AbstractModel
         return !self::$disabled;
     }
 
+    /**
+     * Highest version id currently stored for the given element, or null if it has no versions.
+     * Used to scope the deferred version cleanup dispatched on element deletion (see
+     * Messenger\VersionDeleteMessage), so an element id re-used after the deletion does not lose
+     * versions created later.
+     *
+     * @internal
+     */
+    public static function getHighestIdForElement(string $elementType, int $elementId): ?int
+    {
+        $id = \Pimcore\Db::get()->fetchOne(
+            'SELECT MAX(id) FROM versions WHERE cid = ? AND ctype = ?',
+            [$elementId, $elementType]
+        );
+
+        return $id === null || $id === false ? null : (int) $id;
+    }
+
     public function save(): void
     {
         if (!self::$disabled && $this->id === null && $this->coauthorType === null && $this->coauthor === null
