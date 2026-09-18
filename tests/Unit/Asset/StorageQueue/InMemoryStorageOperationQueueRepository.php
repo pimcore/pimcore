@@ -157,6 +157,22 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
         );
     }
 
+    /**
+     * Mirrors the SQL repository: key order is not significant and an empty set means "none".
+     *
+     * @param array<string, mixed>|null $options
+     */
+    private function canonicalCopyOptions(?array $options): ?string
+    {
+        if ($options === null || $options === []) {
+            return null;
+        }
+
+        ksort($options);
+
+        return json_encode($options, JSON_THROW_ON_ERROR);
+    }
+
     public function removeIfUnchanged(StorageOperation $operation): bool
     {
         foreach ($this->operations as $i => $op) {
@@ -165,7 +181,8 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
                 && $op->getType() === $operation->getType()
                 && $op->getSourcePrefix() === $operation->getSourcePrefix()
                 && $op->getTargetPrefix() === $operation->getTargetPrefix()
-                && $op->getCopyOptions() === $operation->getCopyOptions()
+                && $this->canonicalCopyOptions($op->getCopyOptions())
+                   === $this->canonicalCopyOptions($operation->getCopyOptions())
             ) {
                 unset($this->operations[$i]);
                 $this->operations = array_values($this->operations);

@@ -189,24 +189,30 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
 
     public function removeIfUnchanged(StorageOperation $operation): bool
     {
-        // copy_options is part of the compared state: a live repoint can change it while leaving
-        // the target alone, and the row the processor applied is then no longer the row in the
-        // table. completeMove() reacts by refreshing and retrying, so the deletion happens
-        // against what is actually queued rather than against a stale snapshot.
+        // copy_options is part of the compared state - a live repoint can rewrite it while leaving
+        // the target alone, so a row matching on the other columns is not necessarily the row the
+        // processor applied. It is compared in PHP rather than in the DELETE: the column is a real
+        // JSON type on MySQL and LONGTEXT on MariaDB, so a literal <=> against a serialized string
+        // only matches on the latter. Reading first opens no window the DELETE below does not
+        // already have, and completeMove() refreshes and retries on a miss either way.
+        $current = $this->findById((int) $operation->getId());
+        if ($current === null
+            || $this->canonicalCopyOptions($current->getCopyOptions())
+               !== $this->canonicalCopyOptions($operation->getCopyOptions())
+        ) {
+            return false;
+        }
+
         $affected = $this->db->executeStatement(
             'DELETE FROM ' . self::TABLE
             . ' WHERE `id` = :id AND `storage` = :storage AND `operation` = :operation'
-            . ' AND `source_prefix` = :sourcePrefix AND (`target_prefix` <=> :targetPrefix)'
-            . ' AND (`copy_options` <=> :copyOptions)',
+            . ' AND `source_prefix` = :sourcePrefix AND (`target_prefix` <=> :targetPrefix)',
             [
                 'id' => (int) $operation->getId(),
                 'storage' => $operation->getStorage(),
                 'operation' => $operation->getType()->value,
                 'sourcePrefix' => $operation->getSourcePrefix(),
                 'targetPrefix' => $operation->getTargetPrefix(),
-                'copyOptions' => $operation->getCopyOptions() === null
-                    ? null
-                    : json_encode($operation->getCopyOptions(), JSON_THROW_ON_ERROR),
             ]
         );
 
@@ -305,6 +311,24 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
             new DateTimeImmutable((string) $row['created_at'], new DateTimeZone('UTC')),
             $this->decodeCopyOptions($row['copy_options'] ?? null),
         );
+    }
+
+    /**
+     * A stable representation for comparing two option sets. MySQL normalises a JSON object's key
+     * order on storage, so the decoded array need not come back in the order it went in; an empty
+     * set and an absent one mean the same thing.
+     *
+     * @param array<string, mixed>|null $options
+     */
+    private function canonicalCopyOptions(?array $options): ?string
+    {
+        if ($options === null || $options === []) {
+            return null;
+        }
+
+        ksort($options);
+
+        return json_encode($options, JSON_THROW_ON_ERROR);
     }
 
     /**
