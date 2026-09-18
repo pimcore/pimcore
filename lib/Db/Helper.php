@@ -18,6 +18,7 @@ use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Exception\DriverException;
 use Exception;
 use LogicException;
+use PDO;
 use Pimcore\Model\Element\ValidationException;
 
 class Helper
@@ -70,7 +71,7 @@ class Helper
         // CLIENT_FOUND_ROWS semantics (a no-op duplicate update also reports 1) would return a
         // stale last insert id instead of the contractual null
         $foundRows = defined('PDO::MYSQL_ATTR_FOUND_ROWS')
-            && ($connection->getParams()['driverOptions'][\PDO::MYSQL_ATTR_FOUND_ROWS] ?? false);
+            && ($connection->getParams()['driverOptions'][PDO::MYSQL_ATTR_FOUND_ROWS] ?? false);
 
         // the guarded single statement needs at least one key and every key readable via
         // VALUES(); the previous implementation read $keys only after a duplicate, so an insert

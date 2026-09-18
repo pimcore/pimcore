@@ -15,6 +15,7 @@ namespace Pimcore\Tests\Unit\Db;
 
 use Doctrine\DBAL\Connection;
 use LogicException;
+use PDO;
 use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -275,7 +276,7 @@ final class HelperTest extends TestCase
         // must keep working - the single statement cannot tell insert from update there, so the
         // previous two-statement path is used, which does not depend on the option
         $params = $this->db->getParams();
-        $params['driverOptions'][\PDO::MYSQL_ATTR_FOUND_ROWS] = true;
+        $params['driverOptions'][PDO::MYSQL_ATTR_FOUND_ROWS] = true;
         $foundRowsConnection = \Doctrine\DBAL\DriverManager::getConnection($params);
 
         try {
