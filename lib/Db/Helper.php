@@ -31,22 +31,25 @@ class Helper
      * assignment is guarded to only apply when the conflicting row matches the incoming $keys
      * values. A conflict on some other unique index therefore leaves that foreign row untouched
      * and the call returns null, exactly like the previous implementation's
-     * UPDATE ... WHERE $keys, which matched no row in that situation.
+     * UPDATE ... WHERE $keys, which matched no row in that situation. If the keyed row exists and
+     * the update itself would violate another unique index, the statement fails with a
+     * UniqueConstraintViolationException - again the same outcome as the previous UPDATE.
      *
      * The insert and the update path are told apart by the affected-rows value (1 = inserted,
      * 2 or 0 = updated). This requires the default MySQL/MariaDB affected-rows semantics: with
      * CLIENT_FOUND_ROWS enabled (PDO::MYSQL_ATTR_FOUND_ROWS in the doctrine driverOptions -
      * Pimcore does not set it), an update that leaves the row unchanged would also report 1 and
-     * be misread as an insert, so such a connection is rejected with a LogicException before
-     * anything is written.
+     * be misread as an insert. Such a connection, an empty $keys list and a key column missing
+     * from $data all fall back to the previous two-statement implementation (INSERT, and on a
+     * duplicate UPDATE ... WHERE $keys), which is independent of the connection options and keeps
+     * the behavior these calls had before.
      *
      * @param array<string, mixed> $data The data to be inserted or updated into the database table.
      * Array key corresponds to the database column, array value to the actual value.
      * @param string[] $keys The columns identifying the row - typically the primary key columns.
      * The values for the specified keys are read from the $data parameter. A null key value is
      * allowed and inserts normally (e.g. a new auto-increment row) but can never address an
-     * existing row on the update path; a key column missing from $data entirely keeps the
-     * previous behavior - the insert runs, and only a duplicate raises the misuse LogicException.
+     * existing row on the update path.
      *
      * @return int|string|null last insert id or null if the insert was not successful or it was an update.
      */
@@ -58,57 +61,35 @@ class Helper
         bool $quoteIdentifiers = true
     ): int|string|null {
         $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
-
-        if ($data === []) {
-            $connection->insert($table, $data);
-
-            return self::lastInsertId($connection);
-        }
-
-        if ($keys === []) {
-            throw new LogicException('upsert() requires at least one key column');
-        }
-
-        // the insert/update split below reads the affected-rows value, so a connection with
-        // CLIENT_FOUND_ROWS semantics (a no-op duplicate update also reports 1) would return a
-        // stale last insert id instead of the contractual null - reject it before any write
-        if (
-            defined('PDO::MYSQL_ATTR_FOUND_ROWS') &&
-            ($connection->getParams()['driverOptions'][\PDO::MYSQL_ATTR_FOUND_ROWS] ?? false)
-        ) {
-            throw new LogicException(
-                'upsert() requires the default affected-rows semantics - PDO::MYSQL_ATTR_FOUND_ROWS must not be enabled on the connection'
-            );
-        }
-
         $keys = array_map(
             static fn (string $key): string => $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key,
             $keys
         );
 
-        $missingKeys = array_filter($keys, static fn (string $key): bool => !array_key_exists($key, $data));
-        if ($missingKeys !== []) {
-            // the guarded single statement below needs every key readable via VALUES(). The
-            // previous implementation read $keys only after a duplicate, so an insert that does
-            // not collide succeeds even with a key missing from $data - keep exactly that
-            // behavior for such calls via the legacy two-step path.
-            try {
-                $connection->insert($table, $data);
+        // the insert/update split below reads the affected-rows value, so a connection with
+        // CLIENT_FOUND_ROWS semantics (a no-op duplicate update also reports 1) would return a
+        // stale last insert id instead of the contractual null
+        $foundRows = defined('PDO::MYSQL_ATTR_FOUND_ROWS')
+            && ($connection->getParams()['driverOptions'][\PDO::MYSQL_ATTR_FOUND_ROWS] ?? false);
 
-                return self::lastInsertId($connection);
-            } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException) {
-                throw new LogicException(
-                    sprintf('Key "%s" passed for upsert not found in data', reset($missingKeys))
-                );
-            }
+        // the guarded single statement needs at least one key and every key readable via
+        // VALUES(); the previous implementation read $keys only after a duplicate, so an insert
+        // that does not collide succeeds even without keys or with a key missing from $data
+        $keysUsable = $keys !== []
+            && array_filter($keys, static fn (string $key): bool => !array_key_exists($key, $data)) === [];
+
+        if ($data === [] || $foundRows || !$keysUsable) {
+            return self::legacyUpsert($connection, $table, $data, $keys);
         }
 
         $columns = array_keys($data);
         $placeholders = array_fill(0, count($columns), '?');
 
-        // NULL-safe <=> also keeps a null key value from ever matching an existing row
+        // a plain = and not the NULL-safe <=>: NULL = NULL is not true, so a null key value never
+        // matches an existing row - not even one storing NULL in that column - and the guard
+        // below skips the row instead of writing it
         $keysMatch = implode(' AND ', array_map(
-            static fn (string $key): string => $key . ' <=> VALUES(' . $key . ')',
+            static fn (string $key): string => $key . ' = VALUES(' . $key . ')',
             $keys
         ));
 
@@ -149,6 +130,34 @@ class Helper
         }
 
         return null;
+    }
+
+    /**
+     * The previous two-statement implementation: INSERT, and on a duplicate UPDATE ... WHERE $keys.
+     *
+     * @param array<string, mixed> $data already quoted, as are $keys
+     * @param string[] $keys
+     */
+    private static function legacyUpsert(
+        Connection $connection,
+        string $table,
+        array $data,
+        array $keys
+    ): int|string|null {
+        try {
+            $connection->insert($table, $data);
+
+            return self::lastInsertId($connection);
+        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException) {
+            $criteria = [];
+            foreach ($keys as $key) {
+                $criteria[$key] = $data[$key] ?? throw new LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
+            }
+
+            $connection->update($table, $data, $criteria);
+
+            return null;
+        }
     }
 
     private static function lastInsertId(Connection $connection): int|string|null

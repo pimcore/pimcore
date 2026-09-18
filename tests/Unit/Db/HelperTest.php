@@ -34,6 +34,8 @@ final class HelperTest extends TestCase
 
     private const TABLE_COMPOSITE_KEY = 'test_upsert_composite_key';
 
+    private const TABLE_NULLABLE_KEY = 'test_upsert_nullable_key';
+
     protected bool $cleanupDbInSetup = false;
 
     private Connection $db;
@@ -70,6 +72,20 @@ final class HelperTest extends TestCase
                 `ctype` varchar(20) NOT NULL,
                 `key` varchar(50) DEFAULT NULL,
                 PRIMARY KEY (`cid`, `ctype`)
+            ) DEFAULT CHARSET=utf8mb4'
+        );
+
+        // a nullable unique key column next to a second unique index - not something a core
+        // table has, but the one shape where a null key value can meet a stored NULL
+        $this->db->executeStatement(
+            'CREATE TABLE ' . self::TABLE_NULLABLE_KEY . ' (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `code` varchar(50) DEFAULT NULL,
+                `name` varchar(50) NOT NULL,
+                `value` varchar(50) DEFAULT NULL,
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `code` (`code`),
+                UNIQUE KEY `name` (`name`)
             ) DEFAULT CHARSET=utf8mb4'
         );
     }
@@ -236,30 +252,66 @@ final class HelperTest extends TestCase
         );
     }
 
-    public function testFoundRowsConnectionIsRejectedBeforeWriting(): void
+    public function testEmptyKeysInsertViaTheLegacyPath(): void
     {
+        // BC pin: AbstractDao::getPrimaryKey() returns [] for a table without a primary key, and
+        // the previous implementation inserted fine with it - only a duplicate misbehaved
+        Helper::upsert(
+            $this->db,
+            self::TABLE_COMPOSITE_KEY,
+            ['cid' => 13, 'ctype' => 'object', 'key' => 'inserted'],
+            []
+        );
+
+        $this->assertSame(
+            'inserted',
+            $this->db->fetchOne('SELECT `key` FROM ' . self::TABLE_COMPOSITE_KEY . ' WHERE cid = 13')
+        );
+    }
+
+    public function testFoundRowsConnectionFallsBackToTheLegacyPath(): void
+    {
+        // an install enabling CLIENT_FOUND_ROWS in the doctrine driverOptions worked before and
+        // must keep working - the single statement cannot tell insert from update there, so the
+        // previous two-statement path is used, which does not depend on the option
         $params = $this->db->getParams();
         $params['driverOptions'][\PDO::MYSQL_ATTR_FOUND_ROWS] = true;
         $foundRowsConnection = \Doctrine\DBAL\DriverManager::getConnection($params);
 
         try {
-            $this->expectException(LogicException::class);
-            $this->expectExceptionMessage('PDO::MYSQL_ATTR_FOUND_ROWS');
-
-            Helper::upsert(
+            $lastInsertId = Helper::upsert(
                 $foundRowsConnection,
                 self::TABLE_AUTO_INCREMENT,
-                ['id' => null, 'name' => 'found-rows', 'value' => 'rejected'],
+                ['id' => null, 'name' => 'found-rows', 'value' => 'inserted'],
                 ['id']
             );
+            $this->assertNotNull($lastInsertId, 'The insert path has to return the generated id.');
+            $id = (int) $lastInsertId;
+
+            $updateResult = Helper::upsert(
+                $foundRowsConnection,
+                self::TABLE_AUTO_INCREMENT,
+                ['id' => $id, 'name' => 'found-rows', 'value' => 'updated'],
+                ['id']
+            );
+            $this->assertNull($updateResult, 'The update path must not return an id.');
+
+            // the case a FOUND_ROWS connection would misreport as an insert on the single statement
+            $unchangedResult = Helper::upsert(
+                $foundRowsConnection,
+                self::TABLE_AUTO_INCREMENT,
+                ['id' => $id, 'name' => 'found-rows', 'value' => 'updated'],
+                ['id']
+            );
+            $this->assertNull($unchangedResult, 'An update that changes nothing must not return an id either.');
         } finally {
             $foundRowsConnection->close();
-            // rejected before any write
-            $this->assertSame(
-                0,
-                (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . self::TABLE_AUTO_INCREMENT . " WHERE name = 'found-rows'")
-            );
         }
+
+        $row = $this->fetchRowByName('found-rows');
+        $this->assertSame($id, (int) $row['id']);
+        $this->assertSame('updated', $row['value']);
+        $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
     }
 
     public function testConflictOnNonKeyUniqueIndexLeavesTheForeignRowUntouched(): void
@@ -287,6 +339,85 @@ final class HelperTest extends TestCase
         $row = $this->fetchRowByName('first');
         $this->assertSame($id, (int) $row['id'], 'The foreign row must keep its id.');
         $this->assertSame('inserted', $row['value'], 'The foreign row must keep its values.');
+    }
+
+    public function testConflictOnNonKeyUniqueIndexWithAnExistingKeyedRowThrowsWithoutWriting(): void
+    {
+        $firstId = (int) Helper::upsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => null, 'name' => 'first', 'value' => 'inserted'],
+            ['id']
+        );
+        $secondId = (int) Helper::upsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => null, 'name' => 'second', 'value' => 'inserted'],
+            ['id']
+        );
+
+        try {
+            // the keyed row exists AND the new values collide with another row's unique `name`:
+            // the guard selects the keyed row, and writing `name` to it violates the unique index -
+            // the same UniqueConstraintViolationException the previous implementation's
+            // UPDATE ... WHERE id = <second id> raised
+            Helper::upsert(
+                $this->db,
+                self::TABLE_AUTO_INCREMENT,
+                ['id' => $secondId, 'name' => 'first', 'value' => 'hijacked'],
+                ['id']
+            );
+            $this->fail('Expected UniqueConstraintViolationException was not thrown.');
+        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException) {
+        }
+
+        $this->assertSame(2, $this->countRows(self::TABLE_AUTO_INCREMENT));
+
+        $first = $this->fetchRowByName('first');
+        $this->assertSame($firstId, (int) $first['id'], 'The row owning the unique value must keep its id.');
+        $this->assertSame('inserted', $first['value'], 'The row owning the unique value must keep its values.');
+
+        $second = $this->fetchRowByName('second');
+        $this->assertSame($secondId, (int) $second['id'], 'The keyed row must keep its id.');
+        $this->assertSame('inserted', $second['value'], 'The keyed row must not be partially written.');
+    }
+
+    public function testNullKeyDoesNotMatchAStoredNullKey(): void
+    {
+        $this->db->executeStatement(
+            'INSERT INTO ' . self::TABLE_NULLABLE_KEY . " (`code`, `name`, `value`) VALUES (NULL, 'first', 'inserted')"
+        );
+
+        try {
+            // the stored `code` is NULL as well: a NULL-safe comparison would match it, write the
+            // row and only then report the misuse - the guard must not match, so nothing is written
+            Helper::upsert(
+                $this->db,
+                self::TABLE_NULLABLE_KEY,
+                ['code' => null, 'name' => 'first', 'value' => 'hijacked'],
+                ['code']
+            );
+            $this->fail('Expected LogicException was not thrown.');
+        } catch (LogicException $e) {
+            $this->assertSame('Key "`code`" passed for upsert not found in data', $e->getMessage());
+        }
+
+        $this->assertSame(1, $this->countRows(self::TABLE_NULLABLE_KEY));
+        $this->assertSame(
+            'inserted',
+            $this->db->fetchOne('SELECT `value` FROM ' . self::TABLE_NULLABLE_KEY . " WHERE name = 'first'"),
+            'The row storing NULL in the key column must not be modified.'
+        );
+
+        // while a null key value that does not collide still inserts normally
+        $lastInsertId = Helper::upsert(
+            $this->db,
+            self::TABLE_NULLABLE_KEY,
+            ['code' => null, 'name' => 'second', 'value' => 'inserted'],
+            ['code']
+        );
+        $this->assertNotNull($lastInsertId);
+        $this->assertSame(2, $this->countRows(self::TABLE_NULLABLE_KEY));
     }
 
     public function testNullKeyWithNonKeyUniqueConflictThrowsWithoutWriting(): void
@@ -340,5 +471,6 @@ final class HelperTest extends TestCase
     {
         $this->db->executeStatement('DROP TABLE IF EXISTS ' . self::TABLE_AUTO_INCREMENT);
         $this->db->executeStatement('DROP TABLE IF EXISTS ' . self::TABLE_COMPOSITE_KEY);
+        $this->db->executeStatement('DROP TABLE IF EXISTS ' . self::TABLE_NULLABLE_KEY);
     }
 }
