@@ -68,16 +68,17 @@ interface StorageOperationQueueRepositoryInterface
     ): ?StorageOperation;
 
     /**
-     * Pending Delete rows on this storage, oldest first.
+     * Pending Delete rows on this storage whose prefix overlaps any of the given prefixes, oldest
+     * first.
      *
      * Targeted for the same reason as the lookup above: a Move consults this while draining, and
-     * hydrating the whole queue per Move row would make a run cost O(moves x queue size). It is
-     * deliberately unbounded by id - a Delete committing mid-drain can carry a lower id than the
-     * Move that is draining.
+     * hydrating every Delete on the storage per checkpoint would make a large drain cost
+     * O(checkpoints x deletes). It is deliberately unbounded by id - a Delete committing
+     * mid-drain can carry a lower id than the Move that is draining.
      *
      * @return StorageOperation[]
      */
-    public function findPendingDeletes(string $storage): array;
+    public function findPendingDeletesOverlapping(string $storage, string ...$prefixes): array;
 
     public function hasOperations(string $storage): bool;
 

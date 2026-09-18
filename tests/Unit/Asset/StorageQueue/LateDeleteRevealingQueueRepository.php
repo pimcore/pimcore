@@ -22,7 +22,7 @@ use Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface;
  * pending move's target while that move is already draining, and the row only becomes readable
  * once its transaction commits.
  *
- * The hidden Delete is revealed from the given findPendingDeletes() call onwards.
+ * The hidden Delete is revealed from the given findPendingDeletesOverlapping() call onwards.
  */
 final class LateDeleteRevealingQueueRepository implements StorageOperationQueueRepositoryInterface
 {
@@ -38,9 +38,9 @@ final class LateDeleteRevealingQueueRepository implements StorageOperationQueueR
     /**
      * @return StorageOperation[]
      */
-    public function findPendingDeletes(string $storage): array
+    public function findPendingDeletesOverlapping(string $storage, string ...$prefixes): array
     {
-        $deletes = $this->inner->findPendingDeletes($storage);
+        $deletes = $this->inner->findPendingDeletesOverlapping($storage, ...$prefixes);
 
         if (++$this->deleteLookups >= $this->revealFromCall
             && $this->hiddenDelete->getStorage() === $storage

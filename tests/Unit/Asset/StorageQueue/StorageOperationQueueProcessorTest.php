@@ -1151,6 +1151,94 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertFalse($this->adapter->fileExists('B/sub/gone.jpg'), 'the tombstoned subtree is never materialised');
         $this->assertFalse($this->adapter->fileExists('A/sub/gone.jpg'), 'and does not survive at the source either');
     }
+
+    public function testADeleteOlderThanTheMoveDoesNotTombstoneItsTarget(): void
+    {
+        // The user deleted B/sub first and moved A to B afterwards, so the move legitimately
+        // repopulates that path - FIFO has the delete sweep whatever stood there before. Only a
+        // delete issued after the move tombstones its target, and queue ids cannot tell the two
+        // apart because a late-committing row can carry a lower id.
+        $this->addRow(StorageOperationType::Move, 'Z', 'Zt'); // consumes id 1
+        $placeholder = $this->findRow(StorageOperationType::Move, 'Z');
+        $this->assertNotNull($placeholder);
+        $this->repository->remove((int) $placeholder->getId());
+
+        $this->writeWithMtime('A/sub/x.jpg', 'x', time() - 18000);
+        $this->addRow(StorageOperationType::Move, 'A', 'B', new DateTimeImmutable('-2 hours'));
+
+        $olderDelete = new StorageOperation(
+            1,
+            'asset',
+            StorageOperationType::Delete,
+            'B/sub',
+            null,
+            new DateTimeImmutable('-4 hours')
+        );
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator($this->adapter),
+            new LateDeleteRevealingQueueRepository($this->repository, $olderDelete, 1),
+            new NullLogger()
+        );
+
+        $processor->process();
+
+        $this->assertSame('x', $this->adapter->read('B/sub/x.jpg'), 'the move repopulates the path it owns');
+    }
+
+    public function testAnOlderDeleteCoveringTheMoveSourceStopsTheDrain(): void
+    {
+        // The mirror of the target case: a delete the user issued before the move, covering the
+        // move's own source, has to run first. Copying now would carry the bytes to the target
+        // and leave that delete to complete against an empty source.
+        $this->addRow(StorageOperationType::Move, 'Z', 'Zt'); // consumes id 1
+        $placeholder = $this->findRow(StorageOperationType::Move, 'Z');
+        $this->assertNotNull($placeholder);
+        $this->repository->remove((int) $placeholder->getId());
+
+        $this->writeWithMtime('A/x.jpg', 'x', time() - 18000);
+        $this->addRow(StorageOperationType::Move, 'A', 'B', new DateTimeImmutable('-2 hours'));
+
+        $olderDelete = new StorageOperation(
+            1,
+            'asset',
+            StorageOperationType::Delete,
+            'A',
+            null,
+            new DateTimeImmutable('-4 hours')
+        );
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator($this->adapter),
+            new LateDeleteRevealingQueueRepository($this->repository, $olderDelete, 2),
+            new NullLogger()
+        );
+
+        $processor->process();
+
+        $this->assertSame('x', $this->adapter->read('A/x.jpg'), 'the contested source is untouched');
+        $this->assertFalse($this->adapter->directoryExists('B'), 'nothing is carried to the target');
+        $this->assertNotNull($this->findRow(StorageOperationType::Move, 'A'), 'the move stays queued');
+    }
+
+    public function testAnEqualityBoundaryEntryIsNotMaterialisedUnderATombstonedTarget(): void
+    {
+        // The equality branch copies without deleting the source. Under a tombstoned target that
+        // copy would get a fresh modification time, and the delete would read it as namespace
+        // reuse - so the ambiguous entry is preserved at the source but never materialised.
+        $cutoff = time() - 7200;
+        $this->writeWithMtime('A/sub/x.jpg', 'x', $cutoff);
+        $this->addRow(
+            StorageOperationType::Move,
+            'A',
+            'B',
+            (new DateTimeImmutable())->setTimestamp($cutoff)
+        );
+        $this->addRow(StorageOperationType::Delete, 'B/sub', null, new DateTimeImmutable('-1 hour'));
+
+        $this->processor()->process();
+
+        $this->assertFalse($this->adapter->fileExists('B/sub/x.jpg'), 'never materialised under a deleted target');
+        $this->assertSame('x', $this->adapter->read('A/sub/x.jpg'), 'but the ambiguous source entry is preserved');
+    }
 }
 
 /**

@@ -62,7 +62,7 @@ final class ThrowingStorageOperationQueueRepository implements StorageOperationQ
     /**
      * @return StorageOperation[]
      */
-    public function findPendingDeletes(string $storage): array
+    public function findPendingDeletesOverlapping(string $storage, string ...$prefixes): array
     {
         throw new LogicException(__METHOD__ . ' must not be called when the adapter is disabled');
     }

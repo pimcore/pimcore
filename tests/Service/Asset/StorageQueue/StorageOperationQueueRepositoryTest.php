@@ -444,4 +444,36 @@ class StorageOperationQueueRepositoryTest extends TestCase
             $this->repository->findOverlappingMoveOlderThan('asset', 'A', $beforeId)?->getSourcePrefix()
         );
     }
+
+    public function testFindPendingDeletesOverlappingMatchesBothNestingDirections(): void
+    {
+        $this->repository->add($this->delete('asset', 'Archive/Campaigns/2026'));
+        $this->repository->add($this->delete('asset', 'Legacy'));
+        $this->repository->add($this->delete('asset', 'legacy-archive'));
+        $this->repository->add($this->delete('thumbnail', 'Legacy'));
+
+        $prefixes = array_map(
+            static fn (StorageOperation $op) => $op->getSourcePrefix(),
+            $this->repository->findPendingDeletesOverlapping('asset', 'Archive', 'Legacy/deep')
+        );
+        sort($prefixes);
+
+        $this->assertSame(
+            ['Archive/Campaigns/2026', 'Legacy'],
+            $prefixes,
+            'a delete under one prefix and a delete above the other both match; siblings and other storages do not'
+        );
+    }
+
+    public function testFindPendingDeletesOverlappingIgnoresMoveRowsAndUnrelatedPrefixes(): void
+    {
+        $this->repository->add($this->move('asset', 'Archive', 'Elsewhere'));
+        $this->repository->add($this->delete('asset', 'Unrelated'));
+
+        $this->assertSame(
+            [],
+            $this->repository->findPendingDeletesOverlapping('asset', 'Archive'),
+            'move rows never match, and an unrelated delete prefix does not overlap'
+        );
+    }
 }

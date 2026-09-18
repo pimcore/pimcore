@@ -144,32 +144,16 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
 
         // Overlap in both nesting directions, against source and target alike: the row's bytes
         // still sit at the source, and its target names content that does not exist yet.
-        // Each occurrence of the prefix gets its own placeholder, as everywhere else in this
-        // class - repeating one name across a statement is not portable across drivers.
-        $names = ['srcSame', 'srcUnder', 'srcOver', 'srcOverCat', 'tgtSame', 'tgtUnder', 'tgtOver', 'tgtOverCat'];
-        $overlaps = static fn (string $column, string $same, string $under, string $over, string $overCat): string => sprintf(
-            '(`%1$s` = :%2$s'
-            . " OR LEFT(:%3\$s, CHAR_LENGTH(`%1\$s`) + 1) = CONCAT(`%1\$s`, '/')"
-            . " OR LEFT(`%1\$s`, CHAR_LENGTH(:%4\$s) + 1) = CONCAT(:%5\$s, '/'))",
-            $column,
-            $same,
-            $under,
-            $over,
-            $overCat
-        );
-
         $parameters = ['storage' => $storage, 'beforeId' => $beforeId];
-        foreach ($names as $name) {
-            $parameters[$name] = $prefix;
-        }
+        $sourceOverlap = $this->overlapPredicate('source_prefix', 'src', $prefix, $parameters);
+        $targetOverlap = $this->overlapPredicate('target_prefix', 'tgt', $prefix, $parameters);
 
         $row = $this->db->fetchAssociative(
             'SELECT * FROM ' . self::TABLE . "
              WHERE `storage` = :storage
                AND `operation` = 'move'
                AND `id` < :beforeId
-               AND (" . $overlaps('source_prefix', ...array_slice($names, 0, 4)) . ' OR '
-                      . $overlaps('target_prefix', ...array_slice($names, 4, 4)) . ')
+               AND (" . $sourceOverlap . ' OR ' . $targetOverlap . ')
              ORDER BY `id` ASC
              LIMIT 1',
             $parameters
@@ -179,20 +163,52 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
     }
 
     /**
+     * SQL testing whether $column overlaps $value: identical, $value nested under the column, or
+     * the column nested under $value. Each occurrence gets its own placeholder, as everywhere
+     * else in this class - repeating one name across a statement is not portable across drivers.
+     *
+     * @param array<string, mixed> $parameters collects the bindings this predicate needs
+     */
+    private function overlapPredicate(string $column, string $alias, string $value, array &$parameters): string
+    {
+        $names = [];
+        foreach (['Same', 'Under', 'Over', 'OverCat'] as $role) {
+            $name = $alias . $role;
+            $names[] = $name;
+            $parameters[$name] = $value;
+        }
+
+        return sprintf(
+            '(`%1$s` = :%2$s'
+            . " OR LEFT(:%3\$s, CHAR_LENGTH(`%1\$s`) + 1) = CONCAT(`%1\$s`, '/')"
+            . " OR LEFT(`%1\$s`, CHAR_LENGTH(:%4\$s) + 1) = CONCAT(:%5\$s, '/'))",
+            $column,
+            ...$names
+        );
+    }
+
+    /**
      * @return StorageOperation[]
      */
-    public function findPendingDeletes(string $storage): array
+    public function findPendingDeletesOverlapping(string $storage, string ...$prefixes): array
     {
-        if (!$this->hasOperations($storage)) {
+        if (!$this->hasOperations($storage) || $prefixes === []) {
             return [];
+        }
+
+        $parameters = ['storage' => $storage];
+        $predicates = [];
+        foreach (array_values(array_unique($prefixes)) as $i => $prefix) {
+            $predicates[] = $this->overlapPredicate('source_prefix', 'p' . $i, $prefix, $parameters);
         }
 
         $rows = $this->db->fetchAllAssociative(
             'SELECT * FROM ' . self::TABLE . "
              WHERE `storage` = :storage
                AND `operation` = 'delete'
-             ORDER BY `id` ASC",
-            ['storage' => $storage]
+               AND (" . implode(' OR ', $predicates) . ')
+             ORDER BY `id` ASC',
+            $parameters
         );
 
         return array_map($this->hydrate(...), $rows);

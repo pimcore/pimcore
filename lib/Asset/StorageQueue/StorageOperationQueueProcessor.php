@@ -400,7 +400,7 @@ final class StorageOperationQueueProcessor
     }
 
     /**
-     * Pending Delete rows on the Move's storage.
+     * Pending Delete rows overlapping the Move, on its storage.
      *
      * Deliberately not bounded by the Move's id. A producer allocates its row id inside an open
      * transaction, so a Delete that commits mid-drain can carry a LOWER id than the Move and
@@ -423,32 +423,110 @@ final class StorageOperationQueueProcessor
      */
     private function findPendingDeletes(StorageOperation $move): array
     {
-        return $this->repository->findPendingDeletes($move->getStorage());
+        return $this->repository->findPendingDeletesOverlapping(
+            $move->getStorage(),
+            $move->getSourcePrefix(),
+            (string) $move->getTargetPrefix()
+        );
+    }
+
+    /**
+     * Groups Delete rows by their prefix, so a lookup for a path walks that path and its
+     * ancestors instead of scanning every Delete for every file.
+     *
+     * @param StorageOperation[] $deletes
+     *
+     * @return array<string, list<StorageOperation>>
+     */
+    private function indexDeletesByPrefix(array $deletes): array
+    {
+        $index = [];
+        foreach ($deletes as $delete) {
+            $index[trim($delete->getSourcePrefix(), '/')][] = $delete;
+        }
+
+        return $index;
+    }
+
+    /**
+     * The first Delete naming $path or any of its ancestors that $accept approves.
+     *
+     * @param array<string, list<StorageOperation>> $index
+     */
+    private function findDeleteCovering(array $index, string $path, callable $accept): ?StorageOperation
+    {
+        $path = trim($path, '/');
+        foreach ([$path, ...$this->ancestorPrefixes($path)] as $candidate) {
+            foreach ($index[$candidate] ?? [] as $delete) {
+                if ($accept($delete)) {
+                    return $delete;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Whether the Delete represents a user action that came after the Move.
+     *
+     * Queue ids cannot answer this on their own: a producer allocates its id inside an open
+     * transaction, so a row that commits later can still carry a lower id. The recorded creation
+     * time is the honest record of what the user did second, with the id only breaking ties
+     * within the same second.
+     */
+    private function isQueuedAfter(StorageOperation $delete, StorageOperation $move): bool
+    {
+        $deleteAt = $delete->getCreatedAt()->getTimestamp();
+        $moveAt = $move->getCreatedAt()->getTimestamp();
+
+        if ($deleteAt !== $moveAt) {
+            return $deleteAt > $moveAt;
+        }
+
+        return (int) $delete->getId() > (int) $move->getId();
+    }
+
+    private function logMoveDeferredForDelete(
+        StorageOperation $move,
+        StorageOperation $delete,
+        string $path
+    ): void {
+        $this->logger->info(
+            'Storage queue move deferred - an older delete covers this content and must run first',
+            [
+                'move' => $move->getId(),
+                'storage' => $move->getStorage(),
+                'source' => $path,
+                'blockedBy' => $delete->getId(),
+                'deletePrefix' => $delete->getSourcePrefix(),
+            ]
+        );
     }
 
     /**
      * The Delete that already tombstoned $target, if the entry predates it.
      *
-     * The Delete's own cutoff rule decides: content older than the tombstone is what the user
-     * deleted, content written afterwards is namespace reuse and still belongs at the target.
-     *
-     * @param list<StorageOperation> $laterDeletes
+     * @param array<string, list<StorageOperation>> $deleteIndex
      */
-    private function findTombstoneCovering(array $laterDeletes, string $target, int $lastModified): ?StorageOperation
-    {
-        foreach ($laterDeletes as $delete) {
-            if ($lastModified >= $delete->getCreatedAt()->getTimestamp()) {
-                continue; // written after the tombstone - not what was deleted
-            }
-
-            $prefix = trim($delete->getSourcePrefix(), '/');
-            $candidate = trim($target, '/');
-            if ($candidate === $prefix || str_starts_with($candidate, $prefix . '/')) {
-                return $delete;
-            }
-        }
-
-        return null;
+    private function findTombstoneCovering(
+        array $deleteIndex,
+        StorageOperation $move,
+        string $target,
+        int $lastModified
+    ): ?StorageOperation {
+        return $this->findDeleteCovering(
+            $deleteIndex,
+            $target,
+            fn (StorageOperation $delete): bool =>
+                // Only a Delete the user issued AFTER the move tombstones its target. An older one
+                // refers to whatever stood there before, and FIFO has the move repopulate the path
+                // afterwards.
+                $this->isQueuedAfter($delete, $move)
+                // The Delete's own cutoff rule decides the rest: content older than the tombstone
+                // is what the user deleted, content written afterwards is namespace reuse.
+                && $lastModified < $delete->getCreatedAt()->getTimestamp()
+        );
     }
 
     private function logTombstonedMoveEntry(
@@ -803,8 +881,10 @@ final class StorageOperationQueueProcessor
         $cutoff = $current->getCreatedAt()->getTimestamp(); // anchored to the ORIGINAL creation - repoint does not change it
         $source = $current->getSourcePrefix();
         $copied = []; // relative suffix => target prefix the copy was made under
-        // Deletes queued after this move, re-read at the drain checkpoints below.
-        $laterDeletes = $this->findPendingDeletes($current);
+        // Pending Deletes that overlap this move, re-read at the drain checkpoints below and
+        // kept as a prefix index so the per-entry lookups cost one step per path segment rather
+        // than one comparison per Delete.
+        $deleteIndex = $this->indexDeletesByPrefix($this->findPendingDeletes($current));
         $recheckedBeforeFirstMaterialisation = false;
 
         if ($adapter->directoryExists($source)) {
@@ -820,7 +900,7 @@ final class StorageOperationQueueProcessor
                     if ($current === null) {
                         return false; // row vanished or was converted - tracked copies already reconciled
                     }
-                    $laterDeletes = $this->findPendingDeletes($current);
+                    $deleteIndex = $this->indexDeletesByPrefix($this->findPendingDeletes($current));
                 }
                 if (!$item->isFile()) {
                     continue;
@@ -837,13 +917,44 @@ final class StorageOperationQueueProcessor
                     continue; // namespace-reuse content, strictly post-cutoff - never touched
                 }
 
+                if (!$recheckedBeforeFirstMaterialisation) {
+                    // The snapshot above is taken before any listing work, so on object storage a
+                    // whole listing round trip sits inside the window - and a prefix smaller than
+                    // the check interval never reaches the checkpoint above at all. Re-read once
+                    // before the first decision so a Delete committed meanwhile is seen.
+                    $recheckedBeforeFirstMaterialisation = true;
+                    $deleteIndex = $this->indexDeletesByPrefix($this->findPendingDeletes($current));
+                }
+
+                // A Delete queued BEFORE this move, covering the entry's own source, has to run
+                // first: FIFO says the bytes are swept and the move finds nothing. Copying now
+                // would carry them to the target and leave that Delete to complete against an
+                // empty source, so the move yields its turn and is retried once the Delete ran.
+                $blockingSourceDelete = $this->findDeleteCovering(
+                    $deleteIndex,
+                    $path,
+                    fn (StorageOperation $delete): bool => !$this->isQueuedAfter($delete, $current)
+                );
+                if ($blockingSourceDelete !== null) {
+                    $this->logMoveDeferredForDelete($current, $blockingSourceDelete, $path);
+
+                    return false;
+                }
+
+                // Checked BEFORE the equality branch below: that branch copies, and a copy under
+                // an already deleted target gets a fresh modification time the Delete would then
+                // read as namespace reuse.
+                $tombstoned = $this->findTombstoneCovering($deleteIndex, $current, $target, $lastModified);
+
                 if ($lastModified === $cutoff) {
                     // Exact boundary: a same-second write cannot be told apart from content that
                     // legitimately predates the row. Copy it to the target so it is reachable
                     // there too, but never delete the source and never track it in $copied - it
                     // must not be swept, re-targeted on a repoint, or block completion (the
-                    // completion re-list already treats equality as non-blocking).
-                    if (!$adapter->fileExists($target)) {
+                    // completion re-list already treats equality as non-blocking). Under a
+                    // tombstoned target the source is still preserved, but nothing is
+                    // materialised: ambiguity must not resurrect a deleted path either.
+                    if ($tombstoned === null && !$adapter->fileExists($target)) {
                         $adapter->copy($path, $target, new Config());
                     }
 
@@ -851,16 +962,6 @@ final class StorageOperationQueueProcessor
                 }
 
                 // $lastModified < $cutoff: unambiguously pre-cutoff content
-                if (!$recheckedBeforeFirstMaterialisation) {
-                    // The snapshot above is taken before any listing work, so on object storage a
-                    // whole listing round trip sits inside the window - and a prefix smaller than
-                    // the check interval never reaches the checkpoint above at all. Re-read once
-                    // before the first materialisation so a tombstone committed meanwhile is seen.
-                    $recheckedBeforeFirstMaterialisation = true;
-                    $laterDeletes = $this->findPendingDeletes($current);
-                }
-
-                $tombstoned = $this->findTombstoneCovering($laterDeletes, $target, $lastModified);
                 if ($tombstoned !== null) {
                     // The user deleted this path after queueing the move, so its bytes are only
                     // still here because the move had not run yet. Materialising them at the

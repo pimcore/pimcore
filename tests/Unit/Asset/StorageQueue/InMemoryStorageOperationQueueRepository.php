@@ -154,12 +154,28 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
     /**
      * @return StorageOperation[]
      */
-    public function findPendingDeletes(string $storage): array
+    public function findPendingDeletesOverlapping(string $storage, string ...$prefixes): array
     {
+        $overlaps = static function (string $candidate) use ($prefixes): bool {
+            $candidate = trim($candidate, '/');
+            foreach ($prefixes as $prefix) {
+                $prefix = trim($prefix, '/');
+                if ($candidate === $prefix
+                    || str_starts_with($candidate, $prefix . '/')
+                    || str_starts_with($prefix, $candidate . '/')
+                ) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+
         $deletes = [];
         foreach ($this->operations as $operation) {
             if ($operation->getStorage() === $storage
                 && $operation->getType() === StorageOperationType::Delete
+                && $overlaps($operation->getSourcePrefix())
             ) {
                 $deletes[] = $operation;
             }

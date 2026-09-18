@@ -65,7 +65,7 @@ final class MissingTableStorageOperationQueueRepository implements StorageOperat
     /**
      * @return StorageOperation[]
      */
-    public function findPendingDeletes(string $storage): array
+    public function findPendingDeletesOverlapping(string $storage, string ...$prefixes): array
     {
         throw self::exception();
     }
