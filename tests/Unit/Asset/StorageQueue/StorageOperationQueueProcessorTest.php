@@ -708,6 +708,50 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame(1, $result->getPendingRows(), 'older row untouched, stays queued');
     }
 
+    public function testSameTargetClusterIsNotReorderedAcrossADelete(): void
+    {
+        // Reordering a same-target Move across an intervening Delete would change which content
+        // that Delete sees: the newer Move could carry content out of the prefix the Delete was
+        // queued to remove, and the dependency guard (older rows only) would not cover it either.
+        $ops = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Delete, 'B', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'B', 'T', new DateTimeImmutable()),
+        ];
+
+        $processor = $this->processor();
+        $method = new ReflectionMethod($processor, 'orderForProcessing');
+        $method->setAccessible(true);
+
+        /** @var StorageOperation[] $ordered */
+        $ordered = $method->invoke($processor, $ops);
+
+        $this->assertSame(
+            [1, 2, 3],
+            array_map(static fn (StorageOperation $op) => $op->getId(), $ordered),
+            'the Delete keeps strict FIFO - the same-target cluster is not drained across it'
+        );
+    }
+
+    public function testDeleteAcrossASameTargetClusterKeepsItsOwnContentSemantics(): void
+    {
+        // End to end for the sequence above: the Delete runs before the later same-target Move,
+        // so it sweeps the content it was queued for, while content written into the reused
+        // namespace afterwards (post-cutoff) is spared and still relocated by that Move.
+        $this->writeWithMtime('B/old.jpg', 'old', time() - 7200);
+        $this->write('A/a.jpg', 'a');
+        $this->addRow(StorageOperationType::Move, 'A', 'T');
+        $this->addRow(StorageOperationType::Delete, 'B', null, new DateTimeImmutable('-1 hour'));
+        $this->addRow(StorageOperationType::Move, 'B', 'T');
+        $this->write('B/new.jpg', 'new'); // namespace reuse: written after the delete was queued
+
+        $this->processor()->process();
+
+        $this->assertFalse($this->adapter->fileExists('B/old.jpg'), 'pre-cutoff content is deleted as requested');
+        $this->assertSame('new', $this->adapter->read('T/new.jpg'), 'post-cutoff content is spared and moved');
+        $this->assertSame('a', $this->adapter->read('T/a.jpg'), 'the unrelated move still completed');
+    }
+
     public function testOrderForProcessingKeepsFifoOtherwise(): void
     {
         $ops = [

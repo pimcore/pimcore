@@ -312,29 +312,48 @@ final class StorageOperationQueueProcessor
      *
      * Pure and side-effect-free so it can be unit-tested directly.
      *
-     * @param StorageOperation[] $operations
      *
      * @return StorageOperation[]
      */
+    /**
+     * Cluster identity for the newest-first drain: same target prefix, same storage, and no
+     * Delete row queued in between (the generation counter, bumped on every non-Move row).
+     */
+    private function clusterKey(StorageOperation $move, int $generation): string
+    {
+        return $generation . "\0" . $move->getStorage() . "\0" . (string) $move->getTargetPrefix();
+    }
+
     private function orderForProcessing(array $operations): array
     {
+        // A cluster never spans a Delete row. Draining a same-target Move across an intervening
+        // Delete would change which content that Delete sees - the later Move could carry content
+        // out of the very prefix the Delete was queued to remove - and the dependency check in
+        // processDelete() deliberately only considers rows older than the Delete, so it would not
+        // cover a Move that jumped ahead of it either. Deletes therefore keep strict FIFO, always.
         $moveClusters = [];
+        $generation = 0;
         foreach ($operations as $operation) {
-            if ($operation->getType() === StorageOperationType::Move) {
-                $moveClusters[(string) $operation->getTargetPrefix()][] = $operation;
+            if ($operation->getType() !== StorageOperationType::Move) {
+                $generation++;
+
+                continue;
             }
+            $moveClusters[$this->clusterKey($operation, $generation)][] = $operation;
         }
 
         $emittedClusters = [];
         $ordered = [];
+        $generation = 0;
         foreach ($operations as $operation) {
             if ($operation->getType() !== StorageOperationType::Move) {
                 $ordered[] = $operation;
+                $generation++;
 
                 continue;
             }
 
-            $targetPrefix = (string) $operation->getTargetPrefix();
+            $targetPrefix = $this->clusterKey($operation, $generation);
             $cluster = $moveClusters[$targetPrefix];
             if (count($cluster) < 2) {
                 $ordered[] = $operation;
