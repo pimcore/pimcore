@@ -183,6 +183,7 @@ class StorageOperationQueueProcessorTest extends Unit
         // must not be dropped as "already complete" just because nothing sits at B/sub yet -
         // otherwise the move later recreates exactly the subtree the user deleted.
         $this->write('A/sub/a.jpg', 'a');
+        $this->write('A/keep.jpg', 'keep'); // untombstoned, so the refused copy keeps the move queued
         $this->addRow(StorageOperationType::Move, 'A', 'B');
         $this->addRow(StorageOperationType::Delete, 'B/sub', null);
 
@@ -950,9 +951,9 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertNotNull($hiddenMove);
         $this->repository->remove((int) $hiddenMove->getId()); // not committed yet
 
-        // call 1 orders the queue, call 2 is the Delete's initial blocker check, call 3 is the
-        // re-read the sweep must perform before its first destructive call
-        $racyRepository = new LateMoveRevealingQueueRepository($this->repository, $hiddenMove, 3);
+        // blocker check 1 is the Delete's initial guard, check 2 is the re-read the sweep must
+        // perform before its first destructive call
+        $racyRepository = new LateMoveRevealingQueueRepository($this->repository, $hiddenMove, 2);
         $processor = new StorageOperationQueueProcessor(
             new StorageOperationQueueProcessorTestAdapterLocator($this->adapter),
             $racyRepository,
@@ -964,6 +965,62 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame('bytes', $this->adapter->read('A/keep.jpg'), 'the late move still needs this content');
         $this->assertSame(0, $result->getProcessedRows());
         $this->assertNotNull($this->findRow(StorageOperationType::Delete, 'A'), 'the delete stays queued');
+    }
+
+    public function testMoveDropsContentASubsequentDeleteAlreadyTombstoned(): void
+    {
+        // Move A -> B is queued, then the user deletes B/sub - whose bytes physically still sit
+        // at A/sub. Copying them to B/sub first stamps fresh modification times on them, so the
+        // Delete reads them as post-cutoff namespace reuse, spares them and drops its row,
+        // leaving content the user explicitly deleted alive under B/sub.
+        $this->writeWithMtime('A/keep.jpg', 'keep', time() - 10800);
+        $this->writeWithMtime('A/sub/gone.jpg', 'gone', time() - 10800);
+        $this->addRow(StorageOperationType::Move, 'A', 'B', new DateTimeImmutable('-2 hours'));
+        $this->addRow(StorageOperationType::Delete, 'B/sub', null, new DateTimeImmutable('-1 hour'));
+
+        $this->processor()->process();
+
+        $this->assertSame('keep', $this->adapter->read('B/keep.jpg'), 'unaffected content still moves');
+        $this->assertFalse($this->adapter->fileExists('B/sub/gone.jpg'), 'the tombstoned subtree is never materialised');
+        $this->assertFalse($this->adapter->fileExists('A/sub/gone.jpg'), 'and does not survive at the source either');
+        $this->assertSame([], $this->repository->all(), 'both rows completed');
+    }
+
+    public function testMoveKeepsContentOlderThanTheMoveButNewerThanTheTombstone(): void
+    {
+        // Defensive branch. In queue order a tombstone is always younger than the move, so
+        // anything the move carries is older than it too. Only disagreeing timestamps - clock
+        // skew across app servers - can produce an entry that postdates the tombstone while still
+        // predating the move, and there the conservative reading wins: ambiguous evidence never
+        // destroys content, it is carried to the target as usual.
+        $this->writeWithMtime('A/sub/x.jpg', 'x', time() - 10800);
+        $this->addRow(StorageOperationType::Move, 'A', 'B', new DateTimeImmutable('-2 hours'));
+        $this->addRow(StorageOperationType::Delete, 'B/sub', null, new DateTimeImmutable('-4 hours'));
+
+        $this->processor()->process();
+
+        $this->assertSame('x', $this->adapter->read('B/sub/x.jpg'), 'ambiguous timestamps are never destructive');
+    }
+
+    public function testIdAcceptsAMoveWhoseSameTargetSiblingSitsBehindADeleteBarrier(): void
+    {
+        // A full run processes #1 first: delete #2 overlaps only #3, so the barrier splits the
+        // target cluster and no newest-first drain applies. --id must agree with that ordering
+        // instead of refusing a row a normal run would happily process first.
+        $ops = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Delete, 'B', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'B', 'T', new DateTimeImmutable()),
+        ];
+        foreach ($ops as $op) {
+            $this->repository->add($op);
+        }
+        $this->write('A/x.jpg', 'x');
+
+        $result = $this->processor()->process(1);
+
+        $this->assertSame(0, $result->getFailedRows(), implode(' ', $result->getErrors()));
+        $this->assertSame('x', $this->adapter->read('T/x.jpg'));
     }
 }
 

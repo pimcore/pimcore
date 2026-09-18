@@ -117,6 +117,40 @@ final class InMemoryStorageOperationQueueRepository implements StorageOperationQ
         return $this->findSourceCoveringCalls;
     }
 
+    public function findOverlappingMoveOlderThan(
+        string $storage,
+        string $prefix,
+        int $beforeId
+    ): ?StorageOperation {
+        $overlaps = static function (?string $candidate) use ($prefix): bool {
+            if ($candidate === null) {
+                return false;
+            }
+            $candidate = trim($candidate, '/');
+            $prefix = trim($prefix, '/');
+
+            return $candidate === $prefix
+                || str_starts_with($candidate, $prefix . '/')
+                || str_starts_with($prefix, $candidate . '/');
+        };
+
+        $found = null;
+        foreach ($this->operations as $operation) {
+            if ($operation->getStorage() !== $storage
+                || $operation->getType() !== StorageOperationType::Move
+                || (int) $operation->getId() >= $beforeId
+                || (!$overlaps($operation->getSourcePrefix()) && !$overlaps($operation->getTargetPrefix()))
+            ) {
+                continue;
+            }
+            if ($found === null || (int) $operation->getId() < (int) $found->getId()) {
+                $found = $operation;
+            }
+        }
+
+        return $found;
+    }
+
     public function hasOperations(string $storage): bool
     {
         foreach ($this->operations as $op) {

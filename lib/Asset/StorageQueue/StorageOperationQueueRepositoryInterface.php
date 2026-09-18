@@ -53,6 +53,20 @@ interface StorageOperationQueueRepositoryInterface
      */
     public function findSourceCovering(string $storage, string $path): array;
 
+    /**
+     * The oldest pending Move row on this storage with an id below $beforeId whose source OR
+     * target prefix overlaps $prefix in either nesting direction, or null when there is none.
+     *
+     * Targeted on purpose: the processor asks this repeatedly while sweeping a Delete, and
+     * hydrating the whole queue for each of those checks would make a large Delete cost
+     * O(files x queue size).
+     */
+    public function findOverlappingMoveOlderThan(
+        string $storage,
+        string $prefix,
+        int $beforeId
+    ): ?StorageOperation;
+
     public function hasOperations(string $storage): bool;
 
     /**

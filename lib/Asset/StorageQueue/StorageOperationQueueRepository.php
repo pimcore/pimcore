@@ -133,6 +133,37 @@ final class StorageOperationQueueRepository implements StorageOperationQueueRepo
         return array_map($this->hydrate(...), $rows);
     }
 
+    public function findOverlappingMoveOlderThan(
+        string $storage,
+        string $prefix,
+        int $beforeId
+    ): ?StorageOperation {
+        if (!$this->hasOperations($storage)) {
+            return null;
+        }
+
+        // Overlap in both nesting directions, against source and target alike: the row's bytes
+        // still sit at the source, and its target names content that does not exist yet.
+        $overlaps = static fn (string $column): string => sprintf(
+            "(`%1\$s` = :prefix OR LEFT(:prefix, CHAR_LENGTH(`%1\$s`) + 1) = CONCAT(`%1\$s`, '/')"
+            . " OR LEFT(`%1\$s`, CHAR_LENGTH(:prefix) + 1) = CONCAT(:prefix, '/'))",
+            $column
+        );
+
+        $row = $this->db->fetchAssociative(
+            'SELECT * FROM ' . self::TABLE . "
+             WHERE `storage` = :storage
+               AND `operation` = 'move'
+               AND `id` < :beforeId
+               AND (" . $overlaps('source_prefix') . ' OR ' . $overlaps('target_prefix') . ')
+             ORDER BY `id` ASC
+             LIMIT 1',
+            ['storage' => $storage, 'prefix' => $prefix, 'beforeId' => $beforeId]
+        );
+
+        return $row === false ? null : $this->hydrate($row);
+    }
+
     public function hasOperations(string $storage): bool
     {
         $cacheKey = self::HAS_OPERATIONS_CACHE_KEY . $storage;

@@ -27,7 +27,7 @@ use Pimcore\Asset\StorageQueue\StorageOperationQueueRepositoryInterface;
  */
 final class LateMoveRevealingQueueRepository implements StorageOperationQueueRepositoryInterface
 {
-    private int $allCalls = 0;
+    private int $blockerChecks = 0;
 
     public function __construct(
         private readonly InMemoryStorageOperationQueueRepository $inner,
@@ -41,13 +41,26 @@ final class LateMoveRevealingQueueRepository implements StorageOperationQueueRep
      */
     public function all(): array
     {
-        $rows = $this->inner->all();
+        return $this->inner->all();
+    }
 
-        if (++$this->allCalls >= $this->revealFromCall) {
-            $rows[] = $this->hiddenMove;
+    public function findOverlappingMoveOlderThan(
+        string $storage,
+        string $prefix,
+        int $beforeId
+    ): ?StorageOperation {
+        $found = $this->inner->findOverlappingMoveOlderThan($storage, $prefix, $beforeId);
+        if ($found !== null) {
+            return $found;
         }
 
-        return $rows;
+        if (++$this->blockerChecks < $this->revealFromCall) {
+            return null; // not committed yet
+        }
+
+        return $this->hiddenMove->getStorage() === $storage && (int) $this->hiddenMove->getId() < $beforeId
+            ? $this->hiddenMove
+            : null;
     }
 
     public function add(StorageOperation $operation): void

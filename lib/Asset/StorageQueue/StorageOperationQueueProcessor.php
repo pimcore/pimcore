@@ -40,11 +40,6 @@ final class StorageOperationQueueProcessor
 {
     private const DEADLINE_CHECK_INTERVAL = 100;
 
-    /**
-     * @var list<StorageOperation>|null run-scoped snapshot, see pendingMoves()
-     */
-    private ?array $pendingMoves = null;
-
     private const COMPLETION_ATTEMPTS = 3;
 
     public function __construct(
@@ -68,7 +63,6 @@ final class StorageOperationQueueProcessor
         bool $stopOnError = false
     ): StorageQueueProcessingResult {
         $deadline = $maxRuntimeSeconds !== null ? time() + $maxRuntimeSeconds : null;
-        $this->pendingMoves = null; // fresh snapshot per run
         $stoppedOnError = false;
         $processed = 0;
         $failed = 0;
@@ -222,12 +216,18 @@ final class StorageOperationQueueProcessor
      */
     private function findNewerSameTargetRow(StorageOperation $operation): ?StorageOperation
     {
+        // Cluster membership, not merely a shared target: an intervening overlapping Delete
+        // splits the cluster, and a full run then drains those rows in plain FIFO order. Refusing
+        // here on a shared target alone would reject a row a normal run processes first.
+        $all = $this->repository->all();
+        $barriers = $this->moveBarriers($all);
+        $cluster = $this->clusterKey($operation, $barriers);
+
         $newest = null;
-        foreach ($this->repository->all() as $candidate) {
+        foreach ($all as $candidate) {
             if ($candidate->getType() !== StorageOperationType::Move
-                || $candidate->getStorage() !== $operation->getStorage()
-                || $candidate->getTargetPrefix() !== $operation->getTargetPrefix()
                 || (int) $candidate->getId() <= (int) $operation->getId()
+                || $this->clusterKey($candidate, $barriers) !== $cluster
             ) {
                 continue;
             }
@@ -288,19 +288,11 @@ final class StorageOperationQueueProcessor
      */
     private function findPendingMoveDependingOn(StorageOperation $delete): ?StorageOperation
     {
-        foreach ($this->pendingMoves() as $candidate) {
-            if ($candidate->getStorage() !== $delete->getStorage()
-                || (int) $candidate->getId() >= (int) $delete->getId()
-            ) {
-                continue;
-            }
-
-            if ($this->deleteOverlapsMove($delete, $candidate)) {
-                return $candidate;
-            }
-        }
-
-        return null;
+        return $this->repository->findOverlappingMoveOlderThan(
+            $delete->getStorage(),
+            $delete->getSourcePrefix(),
+            (int) $delete->getId()
+        );
     }
 
     /**
@@ -345,8 +337,6 @@ final class StorageOperationQueueProcessor
      */
     private function findLateBlockingMove(StorageOperation $delete): ?StorageOperation
     {
-        $this->refreshPendingMoves();
-
         return $this->findPendingMoveDependingOn($delete);
     }
 
@@ -393,19 +383,70 @@ final class StorageOperationQueueProcessor
     }
 
     /**
-     * Run-scoped snapshot of the pending Move rows, so a backlog of Delete rows does not re-read
-     * and re-hydrate the whole queue once per row. Refreshed explicitly while a long sweep is
-     * running, since producers keep writing to the queue during a processor run.
+     * Delete rows queued after the given Move, on the same storage.
+     *
+     * Delete rows are immutable once queued, so one read per Move row is enough - the per-file
+     * check below is plain string work against this list.
      *
      * @return list<StorageOperation>
      */
-    private function pendingMoves(): array
+    private function findDeletesQueuedAfter(StorageOperation $move): array
     {
-        if ($this->pendingMoves === null) {
-            $this->refreshPendingMoves();
+        $deletes = [];
+        foreach ($this->repository->all() as $candidate) {
+            if ($candidate->getType() === StorageOperationType::Delete
+                && $candidate->getStorage() === $move->getStorage()
+                && (int) $candidate->getId() > (int) $move->getId()
+            ) {
+                $deletes[] = $candidate;
+            }
         }
 
-        return $this->pendingMoves ?? [];
+        return $deletes;
+    }
+
+    /**
+     * The Delete that already tombstoned $target, if the entry predates it.
+     *
+     * The Delete's own cutoff rule decides: content older than the tombstone is what the user
+     * deleted, content written afterwards is namespace reuse and still belongs at the target.
+     *
+     * @param list<StorageOperation> $laterDeletes
+     */
+    private function findTombstoneCovering(array $laterDeletes, string $target, int $lastModified): ?StorageOperation
+    {
+        foreach ($laterDeletes as $delete) {
+            if ($lastModified >= $delete->getCreatedAt()->getTimestamp()) {
+                continue; // written after the tombstone - not what was deleted
+            }
+
+            $prefix = trim($delete->getSourcePrefix(), '/');
+            $candidate = trim($target, '/');
+            if ($candidate === $prefix || str_starts_with($candidate, $prefix . '/')) {
+                return $delete;
+            }
+        }
+
+        return null;
+    }
+
+    private function logTombstonedMoveEntry(
+        StorageOperation $move,
+        StorageOperation $tombstone,
+        string $path,
+        string $target
+    ): void {
+        $this->logger->info(
+            'Storage queue move entry dropped - its target was deleted after the move was queued',
+            [
+                'move' => $move->getId(),
+                'storage' => $move->getStorage(),
+                'source' => $path,
+                'target' => $target,
+                'tombstonedBy' => $tombstone->getId(),
+                'deletePrefix' => $tombstone->getSourcePrefix(),
+            ]
+        );
     }
 
     private function logDeferredDelete(StorageOperation $delete, StorageOperation $blocking): void
@@ -421,18 +462,6 @@ final class StorageOperationQueueProcessor
                 'moveTarget' => $blocking->getTargetPrefix(),
             ]
         );
-    }
-
-    private function refreshPendingMoves(): void
-    {
-        $moves = [];
-        foreach ($this->repository->all() as $row) {
-            if ($row->getType() === StorageOperationType::Move) {
-                $moves[] = $row;
-            }
-        }
-
-        $this->pendingMoves = $moves;
     }
 
     /**
@@ -622,6 +651,15 @@ final class StorageOperationQueueProcessor
         }
 
         if (!$adapter->directoryExists($source)) {
+            // Re-read rather than trusting the check above: it may have been answered before an
+            // even older Move became visible or was repointed onto this prefix, and dropping the
+            // row now would let that Move materialise a subtree whose Delete no longer exists.
+            if (($late = $this->findLateBlockingMove($operation)) !== null) {
+                $this->logDeferredDelete($operation, $late);
+
+                return false;
+            }
+
             $this->repository->remove((int) $operation->getId());
 
             return true; // nothing left - idempotent completion
@@ -693,6 +731,14 @@ final class StorageOperationQueueProcessor
             $filesRemain = true;
         }
 
+        // Same reasoning as the empty-prefix completion above: the row must not be dropped
+        // while an older Move that overlaps it has become visible during the sweep.
+        if (($late = $this->findLateBlockingMove($operation)) !== null) {
+            $this->logDeferredDelete($operation, $late);
+
+            return false;
+        }
+
         if (!$filesRemain) {
             $adapter->deleteDirectory($source); // cleanup (empty dirs on local backends)
         }
@@ -715,6 +761,8 @@ final class StorageOperationQueueProcessor
         $cutoff = $current->getCreatedAt()->getTimestamp(); // anchored to the ORIGINAL creation - repoint does not change it
         $source = $current->getSourcePrefix();
         $copied = []; // relative suffix => target prefix the copy was made under
+        // Deletes queued after this move. Read once per row, never per file.
+        $laterDeletes = $this->findDeletesQueuedAfter($current);
 
         if ($adapter->directoryExists($source)) {
             $entriesSinceCheck = 0;
@@ -759,6 +807,20 @@ final class StorageOperationQueueProcessor
                 }
 
                 // $lastModified < $cutoff: unambiguously pre-cutoff content
+                $tombstoned = $this->findTombstoneCovering($laterDeletes, $target, $lastModified);
+                if ($tombstoned !== null) {
+                    // The user deleted this path after queueing the move, so its bytes are only
+                    // still here because the move had not run yet. Materialising them at the
+                    // target would stamp a fresh modification time on them, and that Delete would
+                    // then read them as post-cutoff namespace reuse and spare them for good.
+                    // Drop them at the source instead - which is what the two operations mean
+                    // together - and let the Delete complete against a prefix that never appears.
+                    $this->logTombstonedMoveEntry($current, $tombstoned, $path, $target);
+                    $adapter->delete($path);
+
+                    continue;
+                }
+
                 if (!$adapter->fileExists($target)) {
                     $adapter->copy($path, $target, new Config());
                     if (!$adapter->fileExists($target)) {

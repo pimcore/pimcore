@@ -373,4 +373,75 @@ class StorageOperationQueueRepositoryTest extends TestCase
         $enabledResolver = new FrontendPathResolver($this->repository, true);
         $this->assertSame('/WiredSource/a.jpg', $enabledResolver->resolvePhysicalPath('/WiredTarget/a.jpg'));
     }
+
+    public function testFindOverlappingMoveOlderThanMatchesBothNestingDirections(): void
+    {
+        $this->repository->add($this->move('asset', 'A/deep/inner', 'T1')); // delete sits above it
+        $this->repository->add($this->move('asset', 'B', 'T2'));            // delete sits inside it
+        $this->repository->add($this->move('asset', 'C', 'T3'));            // exact prefix match
+        $rows = $this->repository->all();
+        $beforeId = (int) $rows[count($rows) - 1]->getId() + 1;
+
+        $this->assertSame(
+            'A/deep/inner',
+            $this->repository->findOverlappingMoveOlderThan('asset', 'A', $beforeId)?->getSourcePrefix(),
+            'a delete above the move source overlaps it'
+        );
+        $this->assertSame(
+            'B',
+            $this->repository->findOverlappingMoveOlderThan('asset', 'B/deep/inner', $beforeId)?->getSourcePrefix(),
+            'a delete inside the move source overlaps it'
+        );
+        $this->assertSame(
+            'C',
+            $this->repository->findOverlappingMoveOlderThan('asset', 'C', $beforeId)?->getSourcePrefix(),
+            'an identical prefix overlaps'
+        );
+    }
+
+    public function testFindOverlappingMoveOlderThanMatchesOnTheTargetSide(): void
+    {
+        $this->repository->add($this->move('asset', 'A', 'Archive/Campaigns'));
+        $beforeId = (int) $this->repository->all()[0]->getId() + 1;
+
+        $this->assertNotNull(
+            $this->repository->findOverlappingMoveOlderThan('asset', 'Archive/Campaigns/2026', $beforeId),
+            'a delete under the move target names content the move has not materialised yet'
+        );
+    }
+
+    public function testFindOverlappingMoveOlderThanIgnoresSiblingsOtherStoragesAndNewerRows(): void
+    {
+        $this->repository->add($this->move('asset', 'legacy', 'T'));
+        $this->repository->add($this->move('thumbnail', 'shared', 'T'));
+        $onlyRow = $this->repository->all()[0];
+        $beforeId = (int) $onlyRow->getId() + 1;
+
+        $this->assertNull(
+            $this->repository->findOverlappingMoveOlderThan('asset', 'legacy-archive', $beforeId),
+            'a shared leading substring is not an overlap'
+        );
+        $this->assertNull(
+            $this->repository->findOverlappingMoveOlderThan('asset', 'shared', $beforeId),
+            'rows on another storage never match'
+        );
+        $this->assertNull(
+            $this->repository->findOverlappingMoveOlderThan('asset', 'legacy', (int) $onlyRow->getId()),
+            'the row itself and anything newer is out of range'
+        );
+    }
+
+    public function testFindOverlappingMoveOlderThanReturnsTheOldestMatch(): void
+    {
+        $this->repository->add($this->move('asset', 'A/one', 'T1'));
+        $this->repository->add($this->move('asset', 'A/two', 'T2'));
+        $rows = $this->repository->all();
+        $beforeId = (int) $rows[count($rows) - 1]->getId() + 1;
+
+        $this->assertSame(
+            'A/one',
+            $this->repository->findOverlappingMoveOlderThan('asset', 'A', $beforeId)?->getSourcePrefix()
+        );
+    }
+
 }

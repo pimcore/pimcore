@@ -54,6 +54,14 @@ final class MissingTableStorageOperationQueueRepository implements StorageOperat
         throw self::exception();
     }
 
+    public function findOverlappingMoveOlderThan(
+        string $storage,
+        string $prefix,
+        int $beforeId
+    ): ?StorageOperation {
+        throw self::exception();
+    }
+
     public function hasOperations(string $storage): bool
     {
         throw self::exception();

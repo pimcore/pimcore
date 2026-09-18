@@ -51,6 +51,14 @@ final class ThrowingStorageOperationQueueRepository implements StorageOperationQ
         throw new LogicException(__METHOD__ . ' must not be called when the adapter is disabled');
     }
 
+    public function findOverlappingMoveOlderThan(
+        string $storage,
+        string $prefix,
+        int $beforeId
+    ): ?StorageOperation {
+        throw new LogicException(__METHOD__ . ' must not be called when the adapter is disabled');
+    }
+
     public function hasOperations(string $storage): bool
     {
         throw new LogicException(__METHOD__ . ' must not be called when the adapter is disabled');
