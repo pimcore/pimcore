@@ -410,12 +410,47 @@ class Manager
 
     public function isDeniedInWorkflow(ElementInterface $element, string $permissionType): bool
     {
-        $userPermissions = $this->getWorkflowUserPermissions($element);
-
-        return ($userPermissions[$permissionType] ?? null) === false;
+        return $this->getDeniedActionsInWorkflow($element, [$permissionType])[$permissionType];
     }
 
-    private function getWorkflowUserPermissions(ElementInterface $element): array
+    /**
+     * Returns, for each requested permission type, whether the element's workflows deny it.
+     *
+     * Equivalent to calling isDeniedInWorkflow() once per type, but resolves the element's
+     * workflow permissions only once. That resolution walks every registered workflow, resolves
+     * each marking - a database read under StateTableMarkingStore - and evaluates the ordered
+     * place configs, so asking for n types one at a time costs n full scans. Callers that need
+     * several permission types for the same element should use this instead.
+     *
+     * @param string[] $permissionTypes
+     *
+     * @return array<string, bool> permission type => whether it is denied
+     */
+    public function getDeniedActionsInWorkflow(ElementInterface $element, array $permissionTypes): array
+    {
+        $userPermissions = $this->getWorkflowUserPermissions($element);
+
+        $deniedActions = [];
+        foreach ($permissionTypes as $permissionType) {
+            $deniedActions[$permissionType] = ($userPermissions[$permissionType] ?? null) === false;
+        }
+
+        return $deniedActions;
+    }
+
+    /**
+     * Returns the merged workflow user permissions for an element.
+     *
+     * Public so that a caller needing more than one permission type for the same element can read
+     * the map once: isDeniedInWorkflow() calls this internally, so checking n types costs n full
+     * scans over every workflow, marking and place config.
+     *
+     * Values are the permission values as declared by the matching place configs - bool for the
+     * element permissions, a comma-joined string for lEdit/lView.
+     *
+     * @return array<string, mixed>
+     */
+    public function getWorkflowUserPermissions(ElementInterface $element): array
     {
         $userPermissions = [];
         foreach ($this->getAllWorkflows() as $workflowName) {
