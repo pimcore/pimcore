@@ -55,10 +55,21 @@ final class StorageOperationQueueProcessor
     ) {
     }
 
-    public function process(?int $onlyId = null, ?int $maxRuntimeSeconds = null, ?Closure $heartbeat = null): StorageQueueProcessingResult
-    {
+    /**
+     * @param bool $stopOnError end the run at the first failing row instead of isolating it.
+     *                          Rows are independent by default, so one unprocessable row must not
+     *                          block the rest of the queue - but during a risky window (a large
+     *                          migration, say) an operator can ask for a hard stop instead.
+     */
+    public function process(
+        ?int $onlyId = null,
+        ?int $maxRuntimeSeconds = null,
+        ?Closure $heartbeat = null,
+        bool $stopOnError = false
+    ): StorageQueueProcessingResult {
         $deadline = $maxRuntimeSeconds !== null ? time() + $maxRuntimeSeconds : null;
         $this->pendingMoves = null; // fresh snapshot per run
+        $stoppedOnError = false;
         $processed = 0;
         $failed = 0;
         $timedOut = false;
@@ -119,6 +130,12 @@ final class StorageOperationQueueProcessor
                     'storage' => $operation->getStorage(),
                     'exception' => $e,
                 ]);
+
+                if ($stopOnError) {
+                    $stoppedOnError = true;
+
+                    break;
+                }
             }
         }
 
@@ -132,6 +149,7 @@ final class StorageOperationQueueProcessor
             count($this->repository->all()),
             $timedOut,
             $errors,
+            $stoppedOnError,
         );
     }
 

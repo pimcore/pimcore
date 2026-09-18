@@ -213,6 +213,46 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertNull($this->findRow(StorageOperationType::Delete, 'legacy'), 'the delete completed');
     }
 
+    public function testStopOnErrorHaltsBeforeTheNextRow(): void
+    {
+        // Opt-in belt and braces for risky windows (migrations): the first failure ends the run
+        // instead of carrying on into rows the operator has not had a chance to look at yet.
+        $this->write('Broken/a.jpg', 'a');
+        $this->write('Later/b.jpg', 'b');
+        $this->addRow(StorageOperationType::Move, 'Broken', 'BrokenTarget');
+        $this->addRow(StorageOperationType::Move, 'Later', 'LaterTarget');
+
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator(new CopyRefusingAdapterDecorator($this->adapter)),
+            $this->repository,
+            new NullLogger()
+        );
+        $result = $processor->process(null, null, null, true);
+
+        $this->assertSame(1, $result->getFailedRows());
+        $this->assertTrue($result->isStoppedOnError());
+        $this->assertSame('b', $this->adapter->read('Later/b.jpg'), 'the later row was not touched');
+        $this->assertNotNull($this->findRow(StorageOperationType::Move, 'Later'), 'the later row stays queued');
+    }
+
+    public function testFailuresStillIsolateByDefault(): void
+    {
+        $this->write('Broken/a.jpg', 'a');
+        $this->write('Later/b.jpg', 'b');
+        $this->addRow(StorageOperationType::Move, 'Broken', 'BrokenTarget');
+        $this->addRow(StorageOperationType::Delete, 'Later', null);
+
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator(new CopyRefusingAdapterDecorator($this->adapter)),
+            $this->repository,
+            new NullLogger()
+        );
+        $result = $processor->process();
+
+        $this->assertFalse($result->isStoppedOnError());
+        $this->assertFalse($this->adapter->fileExists('Later/b.jpg'), 'unrelated rows keep draining after a failure');
+    }
+
     public function testDeleteStillRunsWhenNoPendingMoveDependsOnIt(): void
     {
         $this->write('legacy/other/a.jpg', 'a');

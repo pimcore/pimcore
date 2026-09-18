@@ -129,6 +129,11 @@ during low-traffic hours — nothing runs it automatically.** Options:
 - `--id`: process only the given queue row.
 - `--max-runtime`: stop cleanly after this many seconds; any unfinished rows stay
   queued for the next run.
+- `--stop-on-error`: end the run at the first failing row instead of continuing with
+  the remaining ones. Rows are independent of each other, so by default one
+  unprocessable row never blocks the rest of the queue. Use this during a risky
+  window - a large restructuring, for example - when you would rather have the run
+  stop and be reviewed than keep going.
 
 A single run is guarded by a 24-hour, non-refreshing lock, so it is safe to schedule
 the command frequently — a run that finds the lock held (a previous run still in
