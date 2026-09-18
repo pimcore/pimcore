@@ -40,6 +40,11 @@ final class StorageOperationQueueProcessor
 {
     private const DEADLINE_CHECK_INTERVAL = 100;
 
+    /**
+     * @var list<StorageOperation>|null run-scoped snapshot, see pendingMoves()
+     */
+    private ?array $pendingMoves = null;
+
     private const COMPLETION_ATTEMPTS = 3;
 
     public function __construct(
@@ -53,6 +58,7 @@ final class StorageOperationQueueProcessor
     public function process(?int $onlyId = null, ?int $maxRuntimeSeconds = null, ?Closure $heartbeat = null): StorageQueueProcessingResult
     {
         $deadline = $maxRuntimeSeconds !== null ? time() + $maxRuntimeSeconds : null;
+        $this->pendingMoves = null; // fresh snapshot per run
         $processed = 0;
         $failed = 0;
         $timedOut = false;
@@ -188,34 +194,88 @@ final class StorageOperationQueueProcessor
     }
 
     /**
-     * Finds a pending Move in the same storage whose source content lies under - or contains -
-     * the prefix a Delete row is about to sweep. Either overlap is unsafe: the Move has not been
-     * applied yet, so its bytes are still at the source, and deleting them would strand the
-     * asset with no copy anywhere (the Move row would then fail forever with an empty source).
+     * Finds a pending Move the given Delete must not run ahead of.
+     *
+     * Two overlaps matter, in both nesting directions:
+     *  - the Move's SOURCE: its bytes are still there (the move is only queued), so sweeping
+     *    them would leave the asset with no copy anywhere and the Move permanently unsatisfiable;
+     *  - the Move's TARGET: the Delete names a path that only exists through that Move, so the
+     *    content it refers to has not been materialised yet. Completing the Delete now would let
+     *    the Move recreate exactly the subtree the user deleted.
+     *
+     * Only Moves OLDER than the Delete qualify. A Move queued afterwards has to be processed
+     * after it in FIFO order anyway, and letting it defer the Delete would allow content that
+     * was explicitly deleted to be rescued out of the swept prefix.
      */
     private function findPendingMoveDependingOn(StorageOperation $delete): ?StorageOperation
     {
         $prefix = trim($delete->getSourcePrefix(), '/');
 
-        foreach ($this->repository->all() as $candidate) {
-            if ($candidate->getType() !== StorageOperationType::Move
-                || $candidate->getStorage() !== $delete->getStorage()
-                || (int) $candidate->getId() === (int) $delete->getId()
+        foreach ($this->pendingMoves() as $candidate) {
+            if ($candidate->getStorage() !== $delete->getStorage()
+                || (int) $candidate->getId() >= (int) $delete->getId()
             ) {
                 continue;
             }
 
-            $moveSource = trim($candidate->getSourcePrefix(), '/');
-            $overlaps = $moveSource === $prefix
-                || str_starts_with($moveSource, $prefix . '/')   // the delete would sweep the move's source
-                || str_starts_with($prefix, $moveSource . '/');  // the delete sits inside the move's source
-
-            if ($overlaps) {
-                return $candidate;
+            foreach ([$candidate->getSourcePrefix(), $candidate->getTargetPrefix()] as $movePath) {
+                if ($movePath === null) {
+                    continue;
+                }
+                $movePath = trim($movePath, '/');
+                if ($movePath === $prefix
+                    || str_starts_with($movePath, $prefix . '/')  // the delete would cover it
+                    || str_starts_with($prefix, $movePath . '/')  // the delete sits inside it
+                ) {
+                    return $candidate;
+                }
             }
         }
 
         return null;
+    }
+
+    /**
+     * Run-scoped snapshot of the pending Move rows, so a backlog of Delete rows does not re-read
+     * and re-hydrate the whole queue once per row. Refreshed explicitly while a long sweep is
+     * running, since producers keep writing to the queue during a processor run.
+     *
+     * @return list<StorageOperation>
+     */
+    private function pendingMoves(): array
+    {
+        if ($this->pendingMoves === null) {
+            $this->refreshPendingMoves();
+        }
+
+        return $this->pendingMoves ?? [];
+    }
+
+    private function logDeferredDelete(StorageOperation $delete, StorageOperation $blocking): void
+    {
+        $this->logger->info(
+            'Storage queue delete deferred - a pending move still needs this content',
+            [
+                'delete' => $delete->getId(),
+                'storage' => $delete->getStorage(),
+                'prefix' => $delete->getSourcePrefix(),
+                'blockedBy' => $blocking->getId(),
+                'moveSource' => $blocking->getSourcePrefix(),
+                'moveTarget' => $blocking->getTargetPrefix(),
+            ]
+        );
+    }
+
+    private function refreshPendingMoves(): void
+    {
+        $moves = [];
+        foreach ($this->repository->all() as $row) {
+            if ($row->getType() === StorageOperationType::Move) {
+                $moves[] = $row;
+            }
+        }
+
+        $this->pendingMoves = $moves;
     }
 
     /**
@@ -286,39 +346,37 @@ final class StorageOperationQueueProcessor
         $cutoff = $operation->getCreatedAt()->getTimestamp();
         $source = $operation->getSourcePrefix();
 
+        // Checked BEFORE the "nothing here" completion below: a Delete can name a path that only
+        // exists through a pending Move, in which case the prefix is legitimately empty right now
+        // and dropping the row would let the Move recreate the deleted subtree later.
+        $blocking = $this->findPendingMoveDependingOn($operation);
+        if ($blocking !== null) {
+            $this->logDeferredDelete($operation, $blocking);
+
+            return false;
+        }
+
         if (!$adapter->directoryExists($source)) {
             $this->repository->remove((int) $operation->getId());
 
             return true; // nothing left - idempotent completion
         }
 
-        // A pending Move still reads its bytes from underneath this prefix: deferring a folder
-        // move leaves the content at the old location, so an "empty" folder in the element tree
-        // can still be full in storage. Sweeping it here would destroy exactly what that Move
-        // has to relocate, and the Move could never complete afterwards. Leave the row queued -
-        // once the Move drains, the prefix is empty and the next run completes this in one step.
-        $blocking = $this->findPendingMoveDependingOn($operation);
-        if ($blocking !== null) {
-            $this->logger->info(
-                'Storage queue delete deferred - a pending move still needs this content',
-                [
-                    'delete' => $operation->getId(),
-                    'storage' => $operation->getStorage(),
-                    'prefix' => $source,
-                    'blockedBy' => $blocking->getId(),
-                    'moveSource' => $blocking->getSourcePrefix(),
-                ]
-            );
-
-            return false;
-        }
-
         $entriesSinceCheck = 0;
         foreach ($adapter->listContents($source, true) as $item) {
-            if ($deadline !== null && ++$entriesSinceCheck >= self::DEADLINE_CHECK_INTERVAL) {
+            if (++$entriesSinceCheck >= self::DEADLINE_CHECK_INTERVAL) {
                 $entriesSinceCheck = 0;
                 $this->invokeHeartbeat($heartbeat);
-                if (time() >= $deadline) {
+                if ($deadline !== null && time() >= $deadline) {
+                    return false;
+                }
+                // The snapshot taken above can age during a long sweep: a producer may queue an
+                // overlapping Move meanwhile. Re-read and stop before deleting its content.
+                $this->refreshPendingMoves();
+                $late = $this->findPendingMoveDependingOn($operation);
+                if ($late !== null) {
+                    $this->logDeferredDelete($operation, $late);
+
                     return false;
                 }
             }

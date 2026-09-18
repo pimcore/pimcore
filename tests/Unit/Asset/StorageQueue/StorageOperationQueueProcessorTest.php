@@ -76,6 +76,17 @@ class StorageOperationQueueProcessorTest extends Unit
         // default cutoff is slightly in the FUTURE so freshly written test fixtures count as pre-cutoff
     }
 
+    private function findRow(StorageOperationType $type, string $sourcePrefix): ?StorageOperation
+    {
+        foreach ($this->repository->all() as $row) {
+            if ($row->getType() === $type && $row->getSourcePrefix() === $sourcePrefix) {
+                return $row;
+            }
+        }
+
+        return null;
+    }
+
     private function write(string $path, string $content): void
     {
         $this->adapter->write($path, $content, new Config());
@@ -142,6 +153,7 @@ class StorageOperationQueueProcessorTest extends Unit
         $processor->process();
 
         $this->assertSame('a', $this->adapter->read('legacy/campaigns/a.jpg'), 'content the move still needs survives');
+        $this->assertNotNull($this->findRow(StorageOperationType::Delete, 'legacy/campaigns'), 'the delete row itself is still queued');
     }
 
     public function testDeleteIsDeferredWhileAFailedMoveStillNeedsItsSource(): void
@@ -160,7 +172,45 @@ class StorageOperationQueueProcessorTest extends Unit
         $result = $processor->process();
 
         $this->assertSame('a', $this->adapter->read('legacy/campaigns/a.jpg'), 'source content preserved');
-        $this->assertGreaterThan(0, $result->getPendingRows(), 'the delete stays queued for a later run');
+        $this->assertGreaterThan(0, $result->getPendingRows(), 'rows stay queued for a later run');
+        $this->assertNotNull($this->findRow(StorageOperationType::Delete, 'legacy'), 'the delete row itself is still queued');
+    }
+
+    public function testDeleteOfAPendingMoveTargetIsNotSilentlyCompleted(): void
+    {
+        // Deleting a folder that only exists through a pending move: the adapter tombstones the
+        // LOGICAL path (B/sub) while the bytes are still at the move's source (A/sub). The row
+        // must not be dropped as "already complete" just because nothing sits at B/sub yet -
+        // otherwise the move later recreates exactly the subtree the user deleted.
+        $this->write('A/sub/a.jpg', 'a');
+        $this->addRow(StorageOperationType::Move, 'A', 'B');
+        $this->addRow(StorageOperationType::Delete, 'B/sub', null);
+
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator(new CopyRefusingAdapterDecorator($this->adapter)),
+            $this->repository,
+            new NullLogger()
+        );
+        $processor->process();
+
+        $this->assertNotNull(
+            $this->findRow(StorageOperationType::Delete, 'B/sub'),
+            'the delete stays queued until the move has materialised the content it refers to'
+        );
+    }
+
+    public function testDeleteIsNotDeferredByAMoveQueuedAfterIt(): void
+    {
+        // FIFO: a Move queued after the Delete must not rescue content out of the swept prefix -
+        // otherwise a deletion request could be undone by a later move.
+        $this->writeWithMtime('legacy/campaigns/a.jpg', 'a', time() - 7200);
+        $this->addRow(StorageOperationType::Delete, 'legacy', null, new DateTimeImmutable('-1 hour'));
+        $this->addRow(StorageOperationType::Move, 'legacy/campaigns', 'live/campaigns');
+
+        $this->processor()->process();
+
+        $this->assertFalse($this->adapter->fileExists('legacy/campaigns/a.jpg'), 'pre-cutoff content is still swept');
+        $this->assertNull($this->findRow(StorageOperationType::Delete, 'legacy'), 'the delete completed');
     }
 
     public function testDeleteStillRunsWhenNoPendingMoveDependsOnIt(): void
