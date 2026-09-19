@@ -619,7 +619,9 @@ class Asset extends Element\AbstractElement
                 // add to queue that saves dependencies
                 $this->addToDependenciesQueue();
 
-                if ($this->getDataChanged()) {
+                // restored data (see restoreStream()) doesn't need to be processed again, as the data derived from
+                // it was restored as well, and processing it again could even discard the restored data
+                if ($this->isDataReplaced()) {
                     $this->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
                     if (in_array($this->getType(), ['image', 'video', 'document'])) {
                         $this->addToUpdateTaskQueue();

@@ -76,7 +76,10 @@ class EmbeddedMetaDataTest extends ModelTestCase
         $this->assertNull($document->getCustomSetting('embeddedMetaDataExtracted'));
         $this->assertNull($document->getCustomSetting('embeddedMetaData'));
 
+        $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
         $document->save();
+        // replaced data is processed again (in contrast to restored data)
+        $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize());
 
         $document = Asset::getById($document->getId(), ['force' => true]);
         $this->assertNull($document->getCustomSetting('embeddedMetaDataExtracted'));
@@ -165,7 +168,11 @@ class EmbeddedMetaDataTest extends ModelTestCase
 
             $version = $asset->getLatestVersion(null, true);
             $this->assertNotNull($version);
+
+            $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
             $version->loadData()->save();
+            // the restored data must not be processed again, as this could discard the restored derived settings
+            $this->assertSame($queueSize, TestHelper::getAssetUpdateTaskQueueSize(), get_class($asset) . ': update task queued');
 
             $restoredAsset = Asset::getById($asset->getId(), ['force' => true]);
             foreach ($derivedSettings as $key => $value) {

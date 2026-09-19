@@ -14,9 +14,11 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Support\Util;
 
 use DateTimeInterface;
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Exception;
 use InvalidArgumentException;
 use Pimcore;
+use Pimcore\Db;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -586,6 +588,22 @@ class TestHelper
         }
 
         return $asset;
+    }
+
+    /**
+     * Returns the number of messages currently waiting in the asset update tasks queue (doctrine transport)
+     */
+    public static function getAssetUpdateTaskQueueSize(): int
+    {
+        try {
+            return (int) Db::get()->fetchOne(
+                'SELECT COUNT(*) FROM messenger_messages WHERE queue_name = ?',
+                ['pimcore_asset_update']
+            );
+        } catch (TableNotFoundException) {
+            // the transport creates the table with the first message
+            return 0;
+        }
     }
 
     /**

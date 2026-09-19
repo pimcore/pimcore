@@ -104,7 +104,10 @@ class RecyclebinTest extends ModelTestCase
         $asset->delete();
 
         $recycledItems = new Item\Listing();
+        $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
         $recycledItems->current()->restore();
+        // the restored data must not be processed again, as this could discard the restored derived settings
+        $this->assertSame($queueSize, TestHelper::getAssetUpdateTaskQueueSize());
 
         $restoredAsset = Asset::getById($assetId, ['force' => true]);
         $this->assertInstanceOf(Asset\Document::class, $restoredAsset);
