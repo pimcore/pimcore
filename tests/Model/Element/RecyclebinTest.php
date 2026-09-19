@@ -214,6 +214,41 @@ class RecyclebinTest extends ModelTestCase
     }
 
     /**
+     * An asset can be added to the recycle bin without saving it after its data was replaced. Such an item contains
+     * the new data, but the settings derived from the previous data, so restoring it must not keep them but process
+     * the data again
+     */
+    public function testRecycleBinItemOfReplacedDataIsProcessedAgainAfterRestore(): void
+    {
+        $asset = TestHelper::createDocumentAsset();
+        $assetId = $asset->getId();
+        $asset->setCustomSetting('document_page_count', 3);
+        $asset->setProcessingPending(false);
+        $asset->save();
+
+        // the data is replaced, but the asset is only added to the recycle bin
+        $asset->setData(file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf')));
+        Item::create($asset, $this->user);
+        $asset->delete();
+
+        $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
+        (new Item\Listing())->current()->restore();
+        // the settings derived from the previous data are not restored, the data is processed again instead
+        $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize());
+
+        $restoredAsset = Asset::getById($assetId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $restoredAsset);
+        $this->assertNull($restoredAsset->getPageCount());
+        $this->assertNull($restoredAsset->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertTrue($restoredAsset->isProcessingPending());
+
+        TestHelper::runAssetUpdateTasks($assetId);
+        $restoredAsset = Asset::getById($assetId, ['force' => true]);
+        $this->assertFalse($restoredAsset->isProcessingPending());
+        $this->assertSame('Pimcore Test Suite', $restoredAsset->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
+    }
+
+    /**
      * Recycle bin items created before it was tracked whether the processing of the data was still pending when the
      * asset was dumped may have been created while it was pending (before the derived settings existed), so
      * restoring them processes the data again, as it was done in the past

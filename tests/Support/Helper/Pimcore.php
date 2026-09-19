@@ -29,6 +29,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Authentication;
+use Pimcore\Tool\Storage;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -206,6 +207,7 @@ class Pimcore extends Module\Symfony
         $databaseSetup = new DatabaseSetup();
         $databaseSetup->createSchema($connection);
         $databaseSetup->insertSeedData($connection);
+        $this->purgeVersionStorage();
 
         $connection->insert('users', [
             'parentId' => 0,
@@ -287,6 +289,25 @@ class Pimcore extends Module\Symfony
     /**
      * Remove and re-create class directory
      */
+    /**
+     * Purges the version storage. The versions of a new DB start with the same IDs as the ones of the previous DB,
+     * and the binary data of a version is only written if the file doesn't exist yet, so stale binary data of
+     * versions of a previous run would be reused otherwise.
+     */
+    protected function purgeVersionStorage(): void
+    {
+        $this->debug('[DB] Purging version storage');
+
+        $storage = Storage::get('version');
+        foreach ($storage->listContents('', false) as $item) {
+            if ($item->isDir()) {
+                $storage->deleteDirectory($item->path());
+            } else {
+                $storage->delete($item->path());
+            }
+        }
+    }
+
     protected function purgeClassDirectory(): void
     {
         $directories = [

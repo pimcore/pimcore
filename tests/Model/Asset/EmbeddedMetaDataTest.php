@@ -242,6 +242,44 @@ class EmbeddedMetaDataTest extends ModelTestCase
     }
 
     /**
+     * A version can be created directly (without saving the asset) after the data of the asset was replaced. Such a
+     * version contains the new data, but the settings derived from the previous data, so restoring it must not keep
+     * them but process the data again
+     */
+    public function testDirectVersionOfReplacedDataIsProcessedAgainAfterRestore(): void
+    {
+        $document = TestHelper::createDocumentAsset();
+        $document->setCustomSetting('document_page_count', 3);
+        $document->setProcessingPending(false);
+        $document->save();
+
+        // the data is replaced, but only a version is saved
+        $document->setData($this->getPdfWithMetaData());
+        $document->saveVersion();
+        $version = $document->getLatestVersion(null, true);
+        $this->assertNotNull($version);
+
+        $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
+        $restoredDocument = $version->loadData();
+        $this->assertInstanceOf(Asset\Document::class, $restoredDocument);
+        // the version contains the settings derived from the previous data ...
+        $this->assertSame(3, $restoredDocument->getPageCount());
+        $restoredDocument->save();
+        // ... which are not restored, the data is processed again instead
+        $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize());
+
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertNull($document->getPageCount());
+        $this->assertNull($document->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertTrue($document->isProcessingPending());
+
+        TestHelper::runAssetUpdateTasks($document->getId());
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertFalse($document->isProcessingPending());
+        $this->assertSame('Pimcore Test Suite', $document->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
+    }
+
+    /**
      * Versions created before it was tracked whether the processing of the data was still pending when the asset
      * was dumped may have been created while it was pending (before the derived settings existed), so restoring
      * them processes the data again, as it was done in the past

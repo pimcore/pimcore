@@ -175,9 +175,10 @@ class Asset extends Element\AbstractElement
     protected bool $dataRestored = false;
 
     /**
-     * whether the custom settings were not loaded yet when the asset was dumped (e.g. for a version or the recycle
-     * bin), so that the dump doesn't contain them. null if unknown (dumps created before this was tracked, and
-     * assets that were not loaded from a dump).
+     * whether the custom settings didn't (completely) belong to the data when the asset was dumped (e.g. for a version
+     * or the recycle bin): they were not loaded yet, so that the dump doesn't contain them, or the data had been
+     * replaced without saving the asset, so that the settings derived from the previous data were not invalidated
+     * yet. null if unknown (dumps created before this was tracked, and assets that were not loaded from a dump).
      *
      * @internal
      */
@@ -221,9 +222,12 @@ class Asset extends Element\AbstractElement
 
     public function __sleep(): array
     {
-        // a dump (e.g. version, recycle bin) has to know whether the dumped custom settings are complete, which is
-        // not the case if they were not loaded yet (see refreshCustomSettings()) when the asset was dumped
-        $this->customSettingsIncomplete = $this->isInDumpState() ? $this->customSettingsNeedRefresh : null;
+        // a dump (e.g. version, recycle bin) has to know whether the dumped custom settings belong to the dumped data,
+        // which is not the case if they were not loaded yet (see refreshCustomSettings()) or if the data was replaced
+        // without saving the asset (which invalidates the settings derived from the previous data, see update())
+        $this->customSettingsIncomplete = $this->isInDumpState()
+            ? ($this->customSettingsNeedRefresh || $this->isDataReplaced())
+            : null;
 
         $blockedVars = parent::__sleep();
         if (in_array('customSettings', $blockedVars)) {
@@ -1328,10 +1332,11 @@ class Asset extends Element\AbstractElement
     public function restoreStream(mixed $stream): static
     {
         if ($this->customSettingsIncomplete !== false) {
-            // the dump this asset was loaded from didn't contain the custom settings (true), or it was created before
-            // it was tracked whether they are complete and whether the processing of the data was still pending
-            // (null). In both cases the data derived from the restored data is unknown and has to be generated again,
-            // so the restored data is treated like replaced data (which is how it was treated in the past)
+            // the custom settings of the dump this asset was loaded from don't belong to its data (true: they were not
+            // loaded when the asset was dumped, or the data had been replaced without saving the asset), or the dump
+            // was created before it was tracked whether they do and whether the processing of the data was still
+            // pending (null). In both cases the data derived from the restored data is unknown and has to be generated
+            // again, so the restored data is treated like replaced data (which is how it was treated in the past)
             $this->setStream($stream);
 
             return $this;
@@ -1871,7 +1876,10 @@ class Asset extends Element\AbstractElement
         $this->versions = null;
         $this->siblings = null;
         $this->scheduledTasks = null;
-        $this->closeStream();
+        // the stream is shared with the original asset, so it must not be closed here (which would close it for the
+        // original asset as well, which would then fall back to the data in the storage and lose data that was
+        // assigned but not saved yet, e.g. when it is cloned for a version or a recycle bin item), but just dropped
+        $this->stream = null;
     }
 
     public function clearThumbnails(bool $force = false): void
