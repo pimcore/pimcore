@@ -243,7 +243,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            Helper::upsert($this->db, $querytable, $data, $this->getPrimaryKey($querytable));
+            Helper::upsertByUniqueKey($this->db, $querytable, $data, $this->getPrimaryKey($querytable));
 
             if ($inheritanceEnabled) {
                 $this->inheritanceHelper->doUpdate($object->getId(), true,

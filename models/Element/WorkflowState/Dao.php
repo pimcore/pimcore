@@ -53,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::upsert($this->db, 'element_workflow_state', $data, $this->getPrimaryKey('element_workflow_state'));
+        Helper::upsertByUniqueKey($this->db, 'element_workflow_state', $data, $this->getPrimaryKey('element_workflow_state'));
 
         return true;
     }

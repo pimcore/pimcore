@@ -144,7 +144,7 @@ class Dao extends Model\Dao\AbstractDao
             $language = $translation->getProperty('language');
         }
 
-        Helper::upsert($this->db, 'documents_translations', [
+        Helper::upsertByUniqueKey($this->db, 'documents_translations', [
             'id' => $translation->getId(),
             'sourceId' => $sourceId,
             'language' => $language,

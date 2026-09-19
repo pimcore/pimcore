@@ -183,10 +183,10 @@ class Dao extends Model\Element\Dao
         $dataDocument['path'] = $this->model->getRealPath();
 
         // update the values in the database
-        Helper::upsert($this->db, 'documents', $dataDocument, $this->getPrimaryKey('documents'));
+        Helper::upsertByUniqueKey($this->db, 'documents', $dataDocument, $this->getPrimaryKey('documents'));
 
         if ($typeSpecificTable) {
-            Helper::upsert($this->db, $typeSpecificTable, $dataTypeSpecific, $this->getPrimaryKey($typeSpecificTable));
+            Helper::upsertByUniqueKey($this->db, $typeSpecificTable, $dataTypeSpecific, $this->getPrimaryKey($typeSpecificTable));
         }
 
         $this->updateLocks();

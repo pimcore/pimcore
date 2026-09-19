@@ -157,7 +157,7 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        Helper::upsert($this->db, 'assets', $data, $this->getPrimaryKey('assets'));
+        Helper::upsertByUniqueKey($this->db, 'assets', $data, $this->getPrimaryKey('assets'));
         if ($data['hasMetaData'] && count($metadataItems)) {
             foreach ($metadataItems as $metadataItem) {
                 $this->db->insert('assets_metadata', $metadataItem);
@@ -510,7 +510,7 @@ class Dao extends Model\Element\Dao
             'width' => $width,
             'height' => $height,
         ];
-        Helper::upsert($this->db, 'assets_image_thumbnail_cache', $thumb, $this->getPrimaryKey('assets_image_thumbnail_cache'));
+        Helper::upsertByUniqueKey($this->db, 'assets_image_thumbnail_cache', $thumb, $this->getPrimaryKey('assets_image_thumbnail_cache'));
 
         if (isset(self::$thumbnailStatusCache[$assetId])) {
             $hash = $name . $filename;
@@ -558,7 +558,7 @@ class Dao extends Model\Element\Dao
         }
 
         $cachedThumbnail['filename'] = $targetFilename;
-        Helper::upsert($this->db, 'assets_image_thumbnail_cache', $cachedThumbnail, $this->getPrimaryKey('assets_image_thumbnail_cache'));
+        Helper::upsertByUniqueKey($this->db, 'assets_image_thumbnail_cache', $cachedThumbnail, $this->getPrimaryKey('assets_image_thumbnail_cache'));
 
         $this->db->delete('assets_image_thumbnail_cache', [
             'cid' => $this->model->getId(),

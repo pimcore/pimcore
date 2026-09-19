@@ -60,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $lastInsertId = Helper::upsert($this->db, 'edit_lock', $data, $this->getPrimaryKey('edit_lock'));
+        $lastInsertId = Helper::upsertByUniqueKey($this->db, 'edit_lock', $data, $this->getPrimaryKey('edit_lock'));
         if ($lastInsertId !== null && !$this->model->getId()) {
             $this->model->setId((int) $lastInsertId);
         }

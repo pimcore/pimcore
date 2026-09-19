@@ -31,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->getValidObjectVars();
 
-        Helper::upsert($this->db, self::TABLE_NAME, $data, $this->getPrimaryKey(self::TABLE_NAME));
+        Helper::upsertByUniqueKey($this->db, self::TABLE_NAME, $data, $this->getPrimaryKey(self::TABLE_NAME));
     }
 
     public function create(): void
