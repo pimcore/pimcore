@@ -216,6 +216,32 @@ class EmbeddedMetaDataTest extends ModelTestCase
     }
 
     /**
+     * Replacing the data of an asset with pending processing by data of a type that isn't processed by the asset
+     * update tasks queue must not leave the processing pending, as nothing would finish it
+     */
+    public function testReplacingPendingAssetWithUnprocessedTypeClearsPendingProcessing(): void
+    {
+        $document = TestHelper::createDocumentAsset('', $this->getPdfWithMetaData());
+        $this->assertTrue($document->isProcessingPending());
+
+        $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
+        $document->setData('plain text, which is not processed by the asset update tasks queue');
+        $document->setFilename(pathinfo($document->getFilename(), PATHINFO_FILENAME) . '.txt');
+        $document->save();
+        $this->assertSame($queueSize, TestHelper::getAssetUpdateTaskQueueSize());
+
+        $asset = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertNotContains($asset->getType(), ['image', 'video', 'document']);
+        $this->assertFalse($asset->isProcessingPending());
+
+        // consequently, restoring a version of the asset doesn't process it either
+        $version = $asset->getLatestVersion(null, true);
+        $this->assertNotNull($version);
+        $version->loadData()->save();
+        $this->assertSame($queueSize, TestHelper::getAssetUpdateTaskQueueSize());
+    }
+
+    /**
      * Versions created before the custom settings were loaded explicitly before dumping, of an asset that was
      * hydrated from the cache without its custom settings (too large for the cache), don't contain the custom
      * settings at all. Restoring such a version can't restore the derived settings, so they have to be generated

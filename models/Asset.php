@@ -832,11 +832,13 @@ class Asset extends Element\AbstractElement
                     $typeChanged = true;
                 }
 
-                // replaced data is processed by the asset update tasks queue after saving (see save()). This is
-                // remembered in the custom settings, so that it is part of a dump (e.g. version, recycle bin) created
-                // in the meantime, whose derived data is therefore missing (see restoreStream())
-                if ($this->isDataReplaced() && in_array($type, self::PROCESSED_TYPES, true)) {
-                    $this->setProcessingPending(true);
+                // replaced data is processed by the asset update tasks queue after saving (see save()), if the type
+                // is processed at all. This is remembered in the custom settings, so that it is part of a dump (e.g.
+                // version, recycle bin) created in the meantime, whose derived data is therefore missing (see
+                // restoreStream()). Data of a type that isn't processed clears a pending processing of the previous
+                // data, as nothing would finish it otherwise.
+                if ($this->isDataReplaced()) {
+                    $this->setProcessingPending(in_array($type, self::PROCESSED_TYPES, true));
                 }
 
                 // not only check if the type is set but also if the implementation can be found
