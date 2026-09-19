@@ -594,8 +594,8 @@ final class HelperTest extends TestCase
         );
 
         try {
-            // the stored `code` is NULL as well: a NULL-safe comparison would match it, write the
-            // row and only then report the misuse - the guard must not match, so nothing is written
+            // the stored `code` is NULL as well: a null key takes the upsert() path, so no
+            // duplicate-key update can touch the row before the misuse is reported
             Helper::upsertByUniqueKey(
                 $this->db,
                 self::TABLE_NULLABLE_KEY,
@@ -635,9 +635,8 @@ final class HelperTest extends TestCase
         );
 
         try {
-            // null id + unique `name` conflict: previously LogicException while building the
-            // WHERE clause; now the guard skips the foreign row and the same misuse is reported
-            // after the statement - in both cases without writing anything
+            // null id + unique `name` conflict: a null key takes the upsert() path, whose failing
+            // INSERT writes nothing and whose WHERE clause reports the misuse
             Helper::upsertByUniqueKey(
                 $this->db,
                 self::TABLE_AUTO_INCREMENT,
@@ -750,16 +749,58 @@ final class HelperTest extends TestCase
         Helper::updateOrInsert($this->db, self::TABLE_AUTO_INCREMENT, $data, ['id']);
         $this->db->executeStatement('DELETE FROM ' . self::TABLE_TRIGGER_LOG);
 
-        // the UPDATE changes nothing, the INSERT fails on the duplicate (the failed statement
-        // rolls back what its BEFORE INSERT trigger wrote), and the second UPDATE is restricted to
-        // differing values - so the row's UPDATE triggers run exactly once, as with upsert()
+        // the UPDATE changes nothing but recorded its match, so neither an INSERT nor a second
+        // UPDATE runs - the row's UPDATE triggers run exactly once, as with upsert()
         $this->assertNull(Helper::updateOrInsert($this->db, self::TABLE_AUTO_INCREMENT, $data, ['id']));
 
         $this->assertSame(
             ['before_update'],
             $this->db->fetchFirstColumn('SELECT `event` FROM ' . self::TABLE_TRIGGER_LOG),
-            'An unchanged row runs its BEFORE UPDATE trigger once, not again after the failed INSERT.'
+            'An unchanged row runs its BEFORE UPDATE trigger once and nothing else.'
         );
+        $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
+    }
+
+    public function testUpdateOrInsertRunsTheUpdateTriggersOnceForARowATriggerNormalizes(): void
+    {
+        $this->db->executeStatement(
+            'CREATE TABLE ' . self::TABLE_TRIGGER_LOG . ' (
+                `event` varchar(20) NOT NULL,
+                `id` int(11) NOT NULL
+            ) DEFAULT CHARSET=utf8mb4'
+        );
+        // a BEFORE UPDATE trigger that logs and resets the incoming value: the UPDATE matches the
+        // row but changes nothing, exactly like an unchanged row - and unlike a missing one
+        $this->db->executeStatement(
+            'CREATE TRIGGER test_upsert_normalizing BEFORE UPDATE ON ' . self::TABLE_AUTO_INCREMENT
+            . ' FOR EACH ROW BEGIN'
+            . ' INSERT INTO ' . self::TABLE_TRIGGER_LOG . " VALUES ('before_update', OLD.id);"
+            . ' SET NEW.value = OLD.value;'
+            . ' END'
+        );
+
+        $id = (int) Helper::updateOrInsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => null, 'name' => 'first', 'value' => 'inserted'],
+            ['id']
+        );
+        $this->db->executeStatement('DELETE FROM ' . self::TABLE_TRIGGER_LOG);
+
+        $result = Helper::updateOrInsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => $id, 'name' => 'first', 'value' => 'rejected by the trigger'],
+            ['id']
+        );
+
+        $this->assertNull($result, 'The row matched, so this is the update path.');
+        $this->assertSame(
+            ['before_update'],
+            $this->db->fetchFirstColumn('SELECT `event` FROM ' . self::TABLE_TRIGGER_LOG),
+            'The trigger runs once; the zero changed rows must not be mistaken for a missing row.'
+        );
+        $this->assertSame('inserted', $this->fetchRowByName('first')['value']);
         $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
     }
 
@@ -767,7 +808,8 @@ final class HelperTest extends TestCase
     {
         // the interleaving: the UPDATE matches no row, then a second connection inserts the
         // keyed row before this connection can - reproduced deterministically by a connection
-        // wrapper that performs that insert right after its own zero-row UPDATE
+        // wrapper that performs that insert right after its own zero-row UPDATE; upsert()'s
+        // duplicate handling then applies the data to that row
         $params = $this->db->getParams();
         $params['wrapperClass'] = ConcurrentInsertConnection::class;
         $connection = \Doctrine\DBAL\DriverManager::getConnection($params);
@@ -886,10 +928,11 @@ final class ConcurrentInsertConnection extends Connection
     /** @var array<string, mixed> */
     public array $concurrentRow = [];
 
-    public function update(string $table, array $data, array $criteria = [], array $types = []): int|string
+    public function executeStatement(string $sql, array $params = [], array $types = []): int|string
     {
-        $affected = parent::update($table, $data, $criteria, $types);
-        if ((int) $affected === 0 && $this->other !== null && $this->concurrentRow !== []) {
+        $affected = parent::executeStatement($sql, $params, $types);
+        if (str_starts_with($sql, 'UPDATE ') && (int) $affected === 0 && $this->other !== null && $this->concurrentRow !== []) {
+            $table = explode(' ', $sql, 3)[1];
             $this->other->insert($table, $this->concurrentRow);
             $this->concurrentRow = [];
         }

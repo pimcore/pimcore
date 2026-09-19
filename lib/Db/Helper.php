@@ -100,16 +100,16 @@ class Helper
      * CLIENT_FOUND_ROWS enabled (PDO::MYSQL_ATTR_FOUND_ROWS, or MYSQLI_CLIENT_FOUND_ROWS in the
      * mysqli 'flags', in the doctrine driverOptions - Pimcore does not set either), an update
      * that leaves the row unchanged would also report 1 and be misread as an insert. Such a
-     * connection, an empty $uniqueKeyColumns list and a key
-     * column missing from $data all fall back to {@see self::upsert()}, which is independent of
-     * the connection options.
+     * connection, an empty $uniqueKeyColumns list and a key column missing from $data or null
+     * all fall back to {@see self::upsert()}, which is independent of the connection options.
      *
      * @param array<string, mixed> $data The data to be inserted or updated into the database table.
      * Array key corresponds to the database column, array value to the actual value.
      * @param string[] $uniqueKeyColumns The columns of the primary key or of a unique index of
      * the table, identifying the row. The values are read from the $data parameter. A null key
-     * value is allowed and inserts normally (e.g. a new auto-increment row) but can never address
-     * an existing row on the update path.
+     * value (e.g. the id of a new auto-increment row) can only ever insert, so such a call takes
+     * the upsert() path, which also reports the misuse of a null key on a duplicate exactly as
+     * before.
      *
      * @return int|string|null last insert id or null if the insert was not successful or it was an update.
      */
@@ -131,11 +131,13 @@ class Helper
             $uniqueKeyColumns
         );
 
-        // the guarded single statement needs at least one key and every key readable via
-        // VALUES(); upsert() reads its keys only after a duplicate, so an insert that does not
-        // collide succeeds there even without keys or with a key missing from $data
+        // the guarded single statement needs at least one key and every key present and not
+        // null: upsert() reads its keys only after a duplicate, so an insert that does not
+        // collide succeeds there even without keys or with a key missing from $data, and a null
+        // key value can only insert - on the single statement a conflict with another unique
+        // index would still run that row's UPDATE triggers before the misuse is reported
         $keysUsable = $keys !== []
-            && array_filter($keys, static fn (string $key): bool => !array_key_exists($key, $quotedData)) === [];
+            && array_filter($keys, static fn (string $key): bool => !isset($quotedData[$key])) === [];
 
         if ($quotedData === [] || $foundRows || !$keysUsable) {
             return self::upsert($connection, $table, $data, $uniqueKeyColumns, $quoteIdentifiers);
@@ -144,9 +146,8 @@ class Helper
         $columns = array_keys($quotedData);
         $placeholders = array_fill(0, count($columns), '?');
 
-        // a plain = and not the NULL-safe <=>: NULL = NULL is not true, so a null key value never
-        // matches an existing row - not even one storing NULL in that column - and the guard
-        // below skips the row instead of writing it
+        // a plain = and not the NULL-safe <=>, so that a stored NULL in a key column can never be
+        // matched either
         $keysMatch = implode(' AND ', array_map(
             static fn (string $key): string => $key . ' = VALUES(' . $key . ')',
             $keys
@@ -179,15 +180,7 @@ class Helper
             }
         }
 
-        // Update path: it never returned an id. A null key value cannot have matched the guard,
-        // so nothing was written for it - report the misuse exactly like upsert() does when
-        // building its WHERE clause.
-        foreach ($keys as $key) {
-            if ($quotedData[$key] === null) {
-                throw new LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
-            }
-        }
-
+        // the update path never returned an id
         return null;
     }
 
@@ -202,13 +195,17 @@ class Helper
      * key exception, on any connection: with CLIENT_FOUND_ROWS the UPDATE of an unchanged row
      * reports 1, which is equally correct here.
      *
-     * If the UPDATE changes no row, the row is missing or already holds these values, and the
-     * two cannot be told apart by the affected-rows value. The INSERT is tried then, exactly as
-     * upsert() does; if it fails on the duplicate the row exists now - whether it was unchanged
-     * all along or inserted concurrently since the UPDATE - and a second UPDATE, restricted to
-     * a row whose values differ from $data, applies the data in the concurrent case and
-     * matches nothing in the unchanged one. So a concurrent insert is never lost, and the
-     * UPDATE triggers of an unchanged row run once, as they did with upsert().
+     * If the UPDATE changes no row, the row is missing or it matched but nothing changed (it
+     * already holds these values, or a BEFORE UPDATE trigger reset them), and the affected-rows
+     * value cannot tell the two apart. The UPDATE therefore records that it matched a row: one
+     * of its assignments evaluates LAST_INSERT_ID(<token>) - a random token, in an expression
+     * that depends on the row so it is evaluated per matched row and never constant-folded -
+     * and a matched row leaves the token in the connection's LAST_INSERT_ID(), read back with
+     * one cheap SELECT only on this path. Matched means done, without touching the row (or its
+     * triggers) a second time; not matched means missing, and the insert goes through upsert(),
+     * whose duplicate handling also covers a row inserted concurrently since the UPDATE. Note
+     * that this leaves the token as the connection's last insert id, which nothing reads after
+     * an UPDATE anyway.
      *
      * Where the row usually does not exist, upsert() or {@see self::upsertByUniqueKey()} are
      * the better choice, as the UPDATE would be a wasted round trip. A null or missing key value
@@ -252,34 +249,33 @@ class Helper
             return self::upsert($connection, $table, $data, $keys, $quoteIdentifiers);
         }
 
-        if ((int) $connection->update($table, $quotedData, $criteria) > 0) {
+        // the first key column's assignment also records the match: LAST_INSERT_ID(<token>) is
+        // evaluated for every matched row (the LENGTH() of the column keeps it from being folded
+        // into a constant) and is never NULL, so the column is assigned its value as usual
+        $token = random_int(1, PHP_INT_MAX);
+        $matchKey = array_key_first($criteria);
+        $assignments = [];
+        foreach (array_keys($quotedData) as $column) {
+            $assignments[] = $column === $matchKey
+                ? $column . ' = IF(LAST_INSERT_ID(' . $token . ' + 0 * LENGTH(' . $column . ')) IS NULL, ' . $column . ', ?)'
+                : $column . ' = ?';
+        }
+        $affectedRows = (int) $connection->executeStatement(
+            'UPDATE ' . $table
+            . ' SET ' . implode(', ', $assignments)
+            . ' WHERE ' . implode(' AND ', array_map(static fn (string $key): string => $key . ' = ?', array_keys($criteria))),
+            [...array_values($quotedData), ...array_values($criteria)]
+        );
+        if ($affectedRows > 0) {
             return null;
         }
 
-        // 0 changed rows: the row is missing, or it already holds these values
-        try {
-            $connection->insert($table, $quotedData);
-
-            try {
-                return $connection->lastInsertId();
-            } catch (DriverException) {
-                return null;
-            }
-        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException) {
-            // the row exists now: unchanged all along, or inserted concurrently since the
-            // UPDATE above - only a row whose values differ from $data is written, so the
-            // concurrent insert is not lost and an unchanged row is not updated a second time
-            $columns = array_keys($quotedData);
-            $connection->executeStatement(
-                'UPDATE ' . $table
-                . ' SET ' . implode(', ', array_map(static fn (string $column): string => $column . ' = ?', $columns))
-                . ' WHERE ' . implode(' AND ', array_map(static fn (string $key): string => $key . ' = ?', array_keys($criteria)))
-                . ' AND NOT (' . implode(' AND ', array_map(static fn (string $column): string => $column . ' <=> ?', $columns)) . ')',
-                [...array_values($quotedData), ...array_values($criteria), ...array_values($quotedData)]
-            );
-
+        // 0 changed rows: matched but unchanged (done), or missing - the token tells
+        if ((string) $connection->fetchOne('SELECT LAST_INSERT_ID()') === (string) $token) {
             return null;
         }
+
+        return self::upsert($connection, $table, $data, $keys, $quoteIdentifiers);
     }
 
     /**
