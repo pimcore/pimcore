@@ -33,6 +33,8 @@ final class Predefined extends Model\AbstractModel
 {
     private const RUNTIME_CACHE_KEY_BY_NAME = 'pimcore_metadata_predefined_by_name';
 
+    private static int $runtimeCacheGeneration = 0;
+
     protected ?string $id = null;
 
     protected ?string $name = null;
@@ -126,6 +128,19 @@ final class Predefined extends Model\AbstractModel
     public static function clearRuntimeCache(): void
     {
         RuntimeCache::set(self::RUNTIME_CACHE_KEY_BY_NAME, null);
+        self::$runtimeCacheGeneration++;
+    }
+
+    /**
+     * Changes whenever the per-request cache of getAllByName() is cleared, i.e. whenever a definition is saved
+     * or deleted. Callers that derive their own per-request caches from the definitions include it in their
+     * cache keys to have them invalidated alongside.
+     *
+     * @internal
+     */
+    public static function getRuntimeCacheGeneration(): int
+    {
+        return self::$runtimeCacheGeneration;
     }
 
     public function getName(): ?string

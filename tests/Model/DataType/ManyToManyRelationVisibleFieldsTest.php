@@ -306,6 +306,8 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         $available = $fd->getAvailableVisibleFields();
         $this->assertArrayNotHasKey(self::IMAGE_ONLY_METADATA, $available);
         $this->assertArrayHasKey(self::PREDEFINED_METADATA, $available);
+        $this->assertArrayNotHasKey(self::IMAGE_ONLY_METADATA, $fd->getVisibleFieldSources(), 'the cached source map follows the allowed asset types');
+        $this->assertNull($fd->getVisibleFieldData($image)[self::IMAGE_ONLY_METADATA]);
     }
 
     public function testPredefinedMetadataChangesAreReflectedWithinTheSameRequest(): void
@@ -313,11 +315,14 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         $fd = $this->createMixedDefinition();
         $this->assertArrayHasKey(self::PREDEFINED_METADATA, $fd->getAvailableVisibleFields());
         $this->assertArrayNotHasKey('visibleFieldsTestLateArrival', $fd->getAvailableVisibleFields());
+        // prime the per-request source map, which must be invalidated by the save below
+        $this->assertArrayNotHasKey('visibleFieldsTestLateArrival', $fd->getVisibleFieldSources());
 
         $late = $this->createPredefinedMetadata('visibleFieldsTestLateArrival');
 
         try {
             $this->assertArrayHasKey('visibleFieldsTestLateArrival', $fd->getAvailableVisibleFields(), 'a definition saved after the first lookup must be offered');
+            $this->assertSame(['asset'], $fd->getVisibleFieldSources()['visibleFieldsTestLateArrival'] ?? null, 'the cached source map must be invalidated by the save');
 
             $asset = TestHelper::createImageAsset('visible-fields-');
             $asset->addMetadata('visibleFieldsTestLateArrival', 'input', 'late value');
@@ -329,7 +334,50 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         }
 
         $this->assertArrayNotHasKey('visibleFieldsTestLateArrival', $fd->getAvailableVisibleFields(), 'a deleted definition must no longer be offered');
+        $this->assertArrayNotHasKey('visibleFieldsTestLateArrival', $fd->getVisibleFieldSources(), 'the cached source map must be invalidated by the delete');
         $this->assertNull($fd->getVisibleFieldData($asset)['visibleFieldsTestLateArrival'], 'a deleted definition must no longer resolve');
+    }
+
+    public function testTheSourceMapIsBuiltOncePerConfigurationNotPerElement(): void
+    {
+        $assets = [
+            $this->createAssetWithMetadata('one'),
+            $this->createAssetWithMetadata('two'),
+            $this->createAssetWithMetadata('three'),
+        ];
+
+        $fd = new class() extends ManyToManyRelation {
+            public int $assetCandidateBuilds = 0;
+
+            protected function getAssetVisibleFieldCandidates(): array
+            {
+                $this->assetCandidateBuilds++;
+
+                return parent::getAssetVisibleFieldCandidates();
+            }
+        };
+        $fd->setObjectsAllowed(true)->setClasses([['classes' => 'RelationTest']]);
+        $fd->setAssetsAllowed(true)->setAssetTypes([]);
+        $fd->setDocumentsAllowed(false);
+        $fd->setVisibleFields(['filename', self::PREDEFINED_METADATA]);
+
+        foreach ($assets as $index => $asset) {
+            $data = $fd->getVisibleFieldData($asset);
+            $this->assertSame($asset->getFilename(), $data['filename']);
+            $this->assertSame(['one', 'two', 'three'][$index], $data[self::PREDEFINED_METADATA]);
+        }
+        $this->assertSame(1, $fd->assetCandidateBuilds, 'resolving several rows must not rebuild the asset candidates per row');
+
+        // a configuration change is a different fingerprint and rebuilds the map once
+        $fd->setAssetTypes([['assetTypes' => 'image']]);
+        $fd->getVisibleFieldData($assets[0]);
+        $fd->getVisibleFieldData($assets[1]);
+        $this->assertSame(2, $fd->assetCandidateBuilds);
+
+        // once assets are not allowed, the asset candidates are not consulted at all
+        $fd->setAssetsAllowed(false);
+        $this->assertNull($fd->getVisibleFieldData($assets[0])['filename']);
+        $this->assertSame(2, $fd->assetCandidateBuilds);
     }
 
     public function testAdvancedRelationEditmodeRowsLeaveVisibleFieldValuesToTheConsumer(): void

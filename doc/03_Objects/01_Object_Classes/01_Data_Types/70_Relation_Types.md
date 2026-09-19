@@ -175,7 +175,10 @@ To offer additional asset fields (for example from asset metadata class definiti
 `getAssetVisibleFieldCandidates()` to describe them and `resolveAssetVisibleFieldValue()` to resolve their values; the
 names the candidates hook returns are also the ones `getVisibleFieldData()` resolves for assets, so no further
 registration is needed. Document fields work the same way through `getDocumentVisibleFieldCandidates()` /
-`resolveDocumentVisibleFieldValue()`.
+`resolveDocumentVisibleFieldValue()`. The source map behind `getVisibleFieldData()` is cached per request for the
+definition's configuration (allowed types, classes, asset types and the predefined metadata definitions); if your
+additional fields depend on other state, extend `getVisibleFieldSourcesFingerprint()` with it so changes to that state
+invalidate the map.
 
 ## Advanced Many-To-One Object Relation 
 This data type is an extension to the Many-To-One Object data type. To each assigned object additional metadata can be saved. 
