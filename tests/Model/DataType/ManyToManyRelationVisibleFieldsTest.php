@@ -128,9 +128,9 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         $this->assertSame('input', $available[self::PREDEFINED_METADATA]['metadataType']);
         $this->assertSame(['asset'], $available[self::PREDEFINED_METADATA]['sources']);
 
-        // shared element properties are attributed to every allowed source
+        // shared element properties are attributed to every allowed element type, not to a class
         $this->assertArrayHasKey('creationDate', $available);
-        $this->assertSame(['object:RelationTest', 'asset'], $available['creationDate']['sources']);
+        $this->assertSame(['object', 'asset'], $available['creationDate']['sources']);
 
         // documents are not allowed, objects only offer their class fields
         $this->assertArrayNotHasKey('localizedfields', $available);
@@ -150,6 +150,26 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
 
         $fd->setObjectsAllowed(true)->setClasses([]);
         $this->assertArrayNotHasKey('someAttribute', $fd->getAvailableVisibleFields(), 'objects without a class restriction contribute no class fields');
+    }
+
+    public function testObjectsWithoutClassRestrictionStillOfferTheCommonProperties(): void
+    {
+        $fd = new ManyToManyRelation();
+        $fd->setObjectsAllowed(true)->setClasses([]);
+        $fd->setAssetsAllowed(false)->setDocumentsAllowed(false);
+
+        $available = $fd->getAvailableVisibleFields();
+
+        $this->assertSame(['creationDate', 'modificationDate'], array_keys($available));
+        $this->assertSame(['object'], $available['creationDate']['sources']);
+        $this->assertSame('date', $available['modificationDate']['fieldtype']);
+
+        $fd->setVisibleFields('creationDate');
+        $fd->enrichLayoutDefinition(null);
+        $this->assertSame(['object'], $fd->visibleFieldDefinitions['creationDate']['sources']);
+
+        $object = $this->createRelationTestObject('any');
+        $this->assertSame($object->getCreationDate(), $fd->getVisibleFieldData($object)['creationDate']);
     }
 
     public function testEnrichLayoutDefinitionResolvesConfiguredFields(): void

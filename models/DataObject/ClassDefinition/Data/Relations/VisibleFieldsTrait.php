@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
+use Exception;
 use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -22,7 +23,6 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Metadata\Predefined;
-use Throwable;
 
 /**
  * Adds a "visible fields" feature to relation types that may reference elements of several types
@@ -137,7 +137,8 @@ trait VisibleFieldsTrait
      *
      * Each entry is keyed by the field name and carries at least `name`, `title`, `fieldtype`,
      * `noteditable` and `sources` (the element types / classes the field originates from, e.g.
-     * `object:Product`, `asset`, `document`). The first definition encountered for a name wins;
+     * `object` for properties of every object, `object:Product` for the fields of a class, `asset`,
+     * `document`). The first definition encountered for a name wins;
      * further sources are only appended to `sources`.
      *
      * @return array<string, array<string, mixed>>
@@ -147,6 +148,9 @@ trait VisibleFieldsTrait
         $fields = [];
 
         if ($this->getObjectsAllowed()) {
+            // properties every object has, whether or not the relation is restricted to classes
+            $this->mergeVisibleFieldCandidates($fields, $this->getCommonVisibleFieldCandidates(), 'object');
+
             foreach ($this->getClasses() as $classItem) {
                 $class = VisibleFieldDefinitionHelper::resolveClass($classItem['classes']);
                 if (!$class) {
@@ -206,7 +210,7 @@ trait VisibleFieldsTrait
      */
     protected function getObjectVisibleFieldCandidates(ClassDefinition $class, array $context = []): array
     {
-        $candidates = $this->getCommonVisibleFieldCandidates();
+        $candidates = [];
 
         foreach ($class->getFieldDefinitions($context) as $fieldDefinition) {
             if ($fieldDefinition instanceof Data\Localizedfields) {
@@ -251,7 +255,7 @@ trait VisibleFieldsTrait
         try {
             $listing = new Predefined\Listing();
             $definitions = $listing->getDefinitions();
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             Logger::debug('Could not load predefined asset metadata for visible fields: ' . $e->getMessage());
             $definitions = [];
         }
@@ -321,7 +325,7 @@ trait VisibleFieldsTrait
             $value = $object->get($name, $language);
 
             return $fieldDefinition->getDataForEditmode($value, $object, $params);
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             Logger::debug(sprintf('Could not resolve visible field "%s" of object %d: %s', $name, $object->getId(), $e->getMessage()));
 
             return null;
@@ -338,7 +342,7 @@ trait VisibleFieldsTrait
             case 'fileSize':
                 try {
                     return $asset->getFileSize();
-                } catch (Throwable $e) {
+                } catch (Exception $e) {
                     return null;
                 }
         }
