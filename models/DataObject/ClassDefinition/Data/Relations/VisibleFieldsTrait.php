@@ -177,19 +177,48 @@ trait VisibleFieldsTrait
     }
 
     /**
-     * Resolves the values of the configured visible fields for one related element. Fields that do
-     * not apply to the element's type resolve to null.
+     * Resolves the values of the configured visible fields for one related element. Names that are not
+     * offered for this definition (see getAvailableVisibleFields()), or not offered for the element's type
+     * or class, resolve to null.
      *
      * @return array<string, mixed>
      */
     public function getVisibleFieldData(Element\ElementInterface $element, array $params = []): array
     {
+        $available = $this->getAvailableVisibleFields($params['context'] ?? []);
+        $elementSources = $this->getVisibleFieldSourcesOf($element);
+
         $data = [];
         foreach ($this->getVisibleFieldNames() as $name) {
-            $data[$name] = $this->resolveVisibleFieldValue($element, $name, $params);
+            $sources = $available[$name]['sources'] ?? [];
+            $data[$name] = is_array($sources) && array_intersect($sources, $elementSources)
+                ? $this->resolveVisibleFieldValue($element, $name, $params)
+                : null;
         }
 
         return $data;
+    }
+
+    /**
+     * The sources of getAvailableVisibleFields() an element's fields can come from.
+     *
+     * @return string[]
+     */
+    protected function getVisibleFieldSourcesOf(Element\ElementInterface $element): array
+    {
+        if ($element instanceof Concrete) {
+            return ['object', 'object:' . $element->getClassName()];
+        }
+
+        if ($element instanceof Asset) {
+            return ['asset'];
+        }
+
+        if ($element instanceof Document) {
+            return ['document'];
+        }
+
+        return [];
     }
 
     /**
@@ -214,11 +243,14 @@ trait VisibleFieldsTrait
 
         foreach ($class->getFieldDefinitions($context) as $fieldDefinition) {
             if ($fieldDefinition instanceof Data\Localizedfields) {
-                foreach ($fieldDefinition->getFieldDefinitions($context) as $localizedFieldDefinition) {
-                    if ($this->isVisibleFieldCandidate($localizedFieldDefinition)) {
+                foreach (array_keys($fieldDefinition->getFieldDefinitions($context)) as $localizedFieldName) {
+                    // resolve the child through the class so that it is enriched with the class as context
+                    // (the container would pass itself, which e.g. options providers do not expect)
+                    $localizedFieldDefinition = VisibleFieldDefinitionHelper::findClassFieldDefinition($class, $localizedFieldName, $context);
+                    if ($localizedFieldDefinition && $this->isVisibleFieldCandidate($localizedFieldDefinition)) {
                         $candidate = VisibleFieldDefinitionHelper::buildDefinition($localizedFieldDefinition);
                         $candidate['localized'] = true;
-                        $candidates[$localizedFieldDefinition->getName()] ??= $candidate;
+                        $candidates[$localizedFieldName] ??= $candidate;
                     }
                 }
 

@@ -31,10 +31,7 @@ use Pimcore\Model;
  */
 final class Predefined extends Model\AbstractModel
 {
-    /**
-     * @internal
-     */
-    public const RUNTIME_CACHE_KEY_BY_NAME = 'pimcore_metadata_predefined_by_name';
+    private const RUNTIME_CACHE_KEY_BY_NAME = 'pimcore_metadata_predefined_by_name';
 
     protected ?string $id = null;
 
