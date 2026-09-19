@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
+use Exception;
 use Pimcore;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -33,6 +34,8 @@ final class VisibleFieldDefinitionHelper
     /**
      * Resolves a class by id or by name, as stored in the `classes` / `allowedClassId`
      * configuration of relation types.
+     *
+     * @throws Exception
      */
     public static function resolveClass(int|string|null $classIdentifier): ?ClassDefinition
     {

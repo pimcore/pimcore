@@ -642,6 +642,44 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws Exception
      */
+    /**
+     * Set up a class with top-level and localized fields of the types relevant for visible fields.
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_VisibleFieldsTest(string $name = 'VisibleFieldsTest', string $filename = 'relations/class_VisibleFieldsTest_export.json'): ?DataObject\ClassDefinitionInterface
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $panel->addChild($this->createDataChild('input', 'plainInput'));
+            $panel->addChild($this->createDataChild('booleanSelect', 'plainBool'));
+            $panel->addChild($this->createDataChild('select', 'plainSelect')->setOptions([
+                ['key' => 'Selection 1', 'value' => '1'],
+                ['key' => 'Selection 2', 'value' => '2'], ]));
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+            $lFields->addChild($this->createDataChild('input', 'linput'));
+            $lFields->addChild($this->createDataChild('booleanSelect', 'lbool'));
+            $lFields->addChild($this->createDataChild('select', 'lselect')->setOptions([
+                ['key' => 'Localized 1', 'value' => 'l1'],
+                ['key' => 'Localized 2', 'value' => 'l2'], ]));
+            $panel->addChild($lFields);
+
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename);
+        }
+
+        return $class;
+    }
+
     public function setupPimcoreClass_Inheritance(string $name = 'inheritance', string $filename = 'inheritance.json'): ?DataObject\ClassDefinitionInterface
     {
         /** @var ClassManager $cm */
