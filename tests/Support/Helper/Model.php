@@ -638,11 +638,6 @@ class Model extends AbstractDefinitionHelper
     }
 
     /**
-     * Used for inheritance tests
-     *
-     * @throws Exception
-     */
-    /**
      * Set up a class with top-level and localized fields of the types relevant for visible fields.
      *
      * @throws Exception
@@ -704,6 +699,11 @@ class Model extends AbstractDefinitionHelper
         return $root;
     }
 
+    /**
+     * Used for inheritance tests
+     *
+     * @throws Exception
+     */
     public function setupPimcoreClass_Inheritance(string $name = 'inheritance', string $filename = 'inheritance.json'): ?DataObject\ClassDefinitionInterface
     {
         /** @var ClassManager $cm */

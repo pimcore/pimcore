@@ -22,9 +22,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\VisibleFieldDefiniti
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
 /**
- * Covers the visible-field definitions built for the object relation types, in particular that
- * top-level and localized fields are described the same way and that the advanced type resolves
- * its class through allowedClassId.
+ * Covers the visible-field definitions built for the object relation types: top-level and localized
+ * fields are described the same way, unresolved names fall back to a read-only input, and the
+ * advanced type resolves its class through allowedClassId.
  *
  * @group dataTypeLocal
  */

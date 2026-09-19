@@ -51,21 +51,12 @@ final class VisibleFieldDefinitionHelper
     }
 
     /**
-     * Looks a field up on a class, falling back to the class' localized fields.
+     * Looks a field up on a class; ClassDefinition::getFieldDefinition() already falls back to the
+     * class' localized fields, so a localized field name resolves as well.
      */
     public static function findClassFieldDefinition(ClassDefinition $class, string $name, array $context = []): ?Data
     {
-        $fieldDefinition = $class->getFieldDefinition($name, $context);
-        if ($fieldDefinition) {
-            return $fieldDefinition;
-        }
-
-        $localizedFields = $class->getFieldDefinitions($context)['localizedfields'] ?? null;
-        if ($localizedFields instanceof Data\Localizedfields) {
-            return $localizedFields->getFieldDefinition($name, $context);
-        }
-
-        return null;
+        return $class->getFieldDefinition($name, $context);
     }
 
     /**
