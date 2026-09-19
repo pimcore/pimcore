@@ -252,6 +252,12 @@ And the transition with a *"timeWorked"* additional field:
 (...)
 ```
 
+The `guard` is a Symfony expression that blocks the transition unless it evaluates to true.
+`is_granted('ROLE_PIMCORE_ADMIN')` restricts this transition to admins; `'ROLE_PIMCORE_ADMIN' in role_names`
+would be equivalent. See
+[Condition and guard expressions](./01_Configuration/03_Permissions.md#condition-and-guard-expressions)
+for the available functions and variables.
+
 
 ### Workflow in action
 
