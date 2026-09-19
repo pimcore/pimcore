@@ -32,9 +32,14 @@ class ObjectRelationVisibleFieldsTest extends ModelTestCase
 {
     private const CLASS_NAME = 'VisibleFieldsTest';
 
+    private const NUMERIC_CLASS_NAME = 'VisibleFieldsNumericIdTest';
+
+    private const NUMERIC_CLASS_ID = '4711';
+
     protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_VisibleFieldsTest();
+        $this->tester->setupPimcoreClass_VisibleFieldsNumericIdTest();
     }
 
     private function testClass(): ClassDefinition
@@ -102,6 +107,13 @@ class ObjectRelationVisibleFieldsTest extends ModelTestCase
         $fd->enrichLayoutDefinition(null);
         $this->assertLocalizedAndTopLevelDescribedAlike($fd->visibleFieldDefinitions);
 
+        // a numeric identifier is looked up as class id, not as class name
+        $byId = new AdvancedManyToManyObjectRelation();
+        $byId->setAllowedClassId(self::NUMERIC_CLASS_ID);
+        $byId->setVisibleFields('plainInput,plainBool,plainSelect,linput,lbool,lselect');
+        $byId->enrichLayoutDefinition(null);
+        $this->assertLocalizedAndTopLevelDescribedAlike($byId->visibleFieldDefinitions);
+
         // without an allowed class nothing is resolved, even if "classes" is set
         $noClass = new AdvancedManyToManyObjectRelation();
         $noClass->setClasses([['classes' => self::CLASS_NAME]]);
@@ -110,6 +122,17 @@ class ObjectRelationVisibleFieldsTest extends ModelTestCase
         $noClass->enrichLayoutDefinition(null);
 
         $this->assertSame([], $noClass->visibleFieldDefinitions);
+    }
+
+    public function testManyToManyObjectRelationResolvesANumericClassIdentifier(): void
+    {
+        $fd = new ManyToManyObjectRelation();
+        $fd->setClasses([['classes' => self::NUMERIC_CLASS_ID]]);
+        $fd->setVisibleFields('plainInput,plainBool,plainSelect,linput,lbool,lselect');
+
+        $fd->enrichLayoutDefinition(null);
+
+        $this->assertLocalizedAndTopLevelDescribedAlike($fd->visibleFieldDefinitions);
     }
 
     public function testUnresolvedFieldFallsBackToReadOnlyInput(): void
@@ -154,10 +177,14 @@ class ObjectRelationVisibleFieldsTest extends ModelTestCase
         $class = $this->testClass();
 
         $this->assertSame($class->getId(), VisibleFieldDefinitionHelper::resolveClass(self::CLASS_NAME)?->getId());
-        if (is_numeric($class->getId())) {
-            // numeric identifiers are looked up as class ids
-            $this->assertSame($class->getId(), VisibleFieldDefinitionHelper::resolveClass($class->getId())?->getId());
-        }
+
+        // numeric identifiers are looked up as class ids (as string and as int), names by name
+        $numericClass = ClassDefinition::getById(self::NUMERIC_CLASS_ID);
+        $this->assertInstanceOf(ClassDefinition::class, $numericClass);
+        $this->assertSame(self::NUMERIC_CLASS_NAME, $numericClass->getName());
+        $this->assertSame(self::NUMERIC_CLASS_ID, VisibleFieldDefinitionHelper::resolveClass(self::NUMERIC_CLASS_ID)?->getId());
+        $this->assertSame(self::NUMERIC_CLASS_ID, VisibleFieldDefinitionHelper::resolveClass((int) self::NUMERIC_CLASS_ID)?->getId());
+        $this->assertSame(self::NUMERIC_CLASS_ID, VisibleFieldDefinitionHelper::resolveClass(self::NUMERIC_CLASS_NAME)?->getId());
         $this->assertNull(VisibleFieldDefinitionHelper::resolveClass(null));
         $this->assertNull(VisibleFieldDefinitionHelper::resolveClass(''));
         $this->assertNull(VisibleFieldDefinitionHelper::resolveClass('DoesNotExistClass'));

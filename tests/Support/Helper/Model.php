@@ -653,31 +653,55 @@ class Model extends AbstractDefinitionHelper
         $cm = $this->getClassManager();
 
         if (!$class = $cm->getClass($name)) {
-            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
-            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
-            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
-            $rootPanel->addChild($panel);
-
-            $panel->addChild($this->createDataChild('input', 'plainInput'));
-            $panel->addChild($this->createDataChild('booleanSelect', 'plainBool'));
-            $panel->addChild($this->createDataChild('select', 'plainSelect')->setOptions([
-                ['key' => 'Selection 1', 'value' => '1'],
-                ['key' => 'Selection 2', 'value' => '2'], ]));
-
-            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
-            $lFields->setName('localizedfields');
-            $lFields->addChild($this->createDataChild('input', 'linput'));
-            $lFields->addChild($this->createDataChild('booleanSelect', 'lbool'));
-            $lFields->addChild($this->createDataChild('select', 'lselect')->setOptions([
-                ['key' => 'Localized 1', 'value' => 'l1'],
-                ['key' => 'Localized 2', 'value' => 'l2'], ]));
-            $panel->addChild($lFields);
-
-            $root->addChild($rootPanel);
-            $class = $this->createClass($name, $root, $filename);
+            $class = $this->createClass($name, $this->createVisibleFieldsTestLayout(), $filename);
         }
 
         return $class;
+    }
+
+    /**
+     * Same fields as the VisibleFieldsTest class, but with a numeric class id (class ids are strings, so the
+     * relation types have to tell a numeric id apart from a class name when resolving their allowed class).
+     *
+     * @throws Exception
+     */
+    public function setupPimcoreClass_VisibleFieldsNumericIdTest(string $name = 'VisibleFieldsNumericIdTest', string $filename = 'relations/class_VisibleFieldsNumericIdTest_export.json', string $id = '4711'): ?DataObject\ClassDefinitionInterface
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $class = $this->createClass($name, $this->createVisibleFieldsTestLayout(), $filename, false, $id);
+        }
+
+        return $class;
+    }
+
+    private function createVisibleFieldsTestLayout(): ClassDefinition\Layout
+    {
+        $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+        $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+        $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+        $rootPanel->addChild($panel);
+
+        $panel->addChild($this->createDataChild('input', 'plainInput'));
+        $panel->addChild($this->createDataChild('booleanSelect', 'plainBool'));
+        $panel->addChild($this->createDataChild('select', 'plainSelect')->setOptions([
+            ['key' => 'Selection 1', 'value' => '1'],
+            ['key' => 'Selection 2', 'value' => '2'], ]));
+
+        $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+        $lFields->setName('localizedfields');
+        $lFields->addChild($this->createDataChild('input', 'linput'));
+        $lFields->addChild($this->createDataChild('booleanSelect', 'lbool'));
+        $lFields->addChild($this->createDataChild('select', 'lselect')->setOptions([
+            ['key' => 'Localized 1', 'value' => 'l1'],
+            ['key' => 'Localized 2', 'value' => 'l2'], ]));
+        $panel->addChild($lFields);
+
+        $root->addChild($rootPanel);
+
+        return $root;
     }
 
     public function setupPimcoreClass_Inheritance(string $name = 'inheritance', string $filename = 'inheritance.json'): ?DataObject\ClassDefinitionInterface
