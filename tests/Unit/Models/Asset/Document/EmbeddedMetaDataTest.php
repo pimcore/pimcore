@@ -17,6 +17,7 @@ use Pimcore\Model\Asset\Document;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Console;
+use RuntimeException;
 
 /**
  * Document assets support embedded meta data (#18478) by reusing the
@@ -26,9 +27,43 @@ use Pimcore\Tool\Console;
  */
 class EmbeddedMetaDataTest extends TestCase
 {
+    /**
+     * @var string[]
+     */
+    private array $tempFiles = [];
+
+    protected function tearDown(): void
+    {
+        foreach ($this->tempFiles as $tempFile) {
+            @unlink($tempFile);
+        }
+        $this->tempFiles = [];
+
+        parent::tearDown();
+    }
+
     private function getFixturePath(): string
     {
         return TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf');
+    }
+
+    /**
+     * Creates a file with an XMP open tag, followed by the given amount of bytes without a close tag
+     */
+    private function createFileWithUnclosedXmpPacket(int $bytesAfterOpenTag): string
+    {
+        $filePath = tempnam(sys_get_temp_dir(), 'pimcore-embedded-meta-data-test-');
+        $this->tempFiles[] = $filePath;
+
+        $handle = fopen($filePath, 'wb');
+        fwrite($handle, "%PDF-1.4\n<x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n");
+        $chunk = str_repeat('x', 1024 * 1024);
+        for ($written = 0; $written < $bytesAfterOpenTag; $written += strlen($chunk)) {
+            fwrite($handle, substr($chunk, 0, min(strlen($chunk), $bytesAfterOpenTag - $written)));
+        }
+        fclose($handle);
+
+        return $filePath;
     }
 
     public function testEmbeddedMetaDataIsReadFromXmpPacket(): void
@@ -68,6 +103,44 @@ class EmbeddedMetaDataTest extends TestCase
         foreach (['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removedKey) {
             $this->assertArrayNotHasKey($removedKey, $metaData);
         }
+    }
+
+    public function testXmpPacketWithoutCloseTagIsAbortedCleanly(): void
+    {
+        $filePath = $this->createFileWithUnclosedXmpPacket(4 * 1024);
+        $document = new Document();
+
+        try {
+            $document->getXMPData($filePath);
+            $this->fail('Expected an exception for an XMP packet without close tag');
+        } catch (RuntimeException $e) {
+            $this->assertStringContainsString('No close tag found', $e->getMessage());
+        }
+
+        // the extraction itself doesn't fail, the file just has no usable embedded meta data
+        $document->handleEmbeddedMetaData(false, $filePath);
+        $this->assertSame([], $document->getEmbeddedMetaData(false));
+        $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
+    }
+
+    /**
+     * An open tag without close tag in a large file must not be buffered until the memory is exhausted
+     */
+    public function testOversizedXmpPacketIsAbortedCleanly(): void
+    {
+        $filePath = $this->createFileWithUnclosedXmpPacket(11 * 1024 * 1024);
+        $document = new Document();
+
+        try {
+            $document->getXMPData($filePath);
+            $this->fail('Expected an exception for an oversized XMP packet');
+        } catch (RuntimeException $e) {
+            $this->assertStringContainsString('No close tag found within', $e->getMessage());
+        }
+
+        $document->handleEmbeddedMetaData(false, $filePath);
+        $this->assertSame([], $document->getEmbeddedMetaData(false));
+        $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
     }
 
     public function testEmbeddedMetaDataIsOnlyExtractedOnceUnlessDataChanged(): void

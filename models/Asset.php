@@ -1370,7 +1370,7 @@ class Asset extends Element\AbstractElement
         if ($this->customSettingsNeedRefresh === true) {
             $customSettings = $this->getDao()->getCustomSettings();
             $this->setCustomSettings($customSettings);
-            $this->customSettingsNeedRefresh = true;
+            $this->customSettingsNeedRefresh = false;
         }
     }
 

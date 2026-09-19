@@ -22,6 +22,11 @@ use Symfony\Component\Process\Process;
 trait EmbeddedMetaDataTrait
 {
     /**
+     * maximum size of an XMP packet read by getXMPData() in bytes
+     */
+    private const XMP_MAX_PACKET_SIZE = 10 * 1024 * 1024;
+
+    /**
      * @throws Exception
      */
     public function getEmbeddedMetaData(bool $force, bool $useExifTool = true): array
@@ -146,62 +151,77 @@ trait EmbeddedMetaDataTrait
                 throw new RuntimeException('Could not open file for reading');
             }
 
-            $tag = '<x:xmpmeta';
-            $tagLength = strlen($tag);
-            $buffer = false;
-
-            // find open tag
-            $overlapString = '';
-            while ($buffer === false && ($chunk = fread($file_pointer, $chunkSize)) !== false) {
-                if (strlen($chunk) <= $tagLength) {
-                    break;
-                }
-
-                $chunk = $overlapString . $chunk;
-
-                if (($position = strpos($chunk, $tag)) === false) {
-                    // if open tag not found, back up just in case the open tag is on the split.
-                    $overlapString = substr($chunk, $tagLength * -1);
-                } else {
-                    $buffer = substr($chunk, $position);
-                }
-            }
-
-            if ($buffer !== false) {
-                $tag = '</x:xmpmeta>';
+            try {
+                $tag = '<x:xmpmeta';
                 $tagLength = strlen($tag);
-                $offset = 0;
-                while (($position = strpos($buffer, $tag, $offset)) === false && ($chunk = fread($file_pointer,
-                    $chunkSize)) !== false && !empty($chunk)) {
-                    $offset = strlen($buffer) - $tagLength; // subtract the tag size just in case it's split between chunks.
-                    $buffer .= $chunk;
-                }
+                $buffer = false;
 
-                if ($position === false) {
-                    // this would mean the open tag was found, but the close tag was not.  Maybe file corruption?
-                    throw new RuntimeException('No close tag found.  Possibly corrupted file.');
-                } else {
-                    $buffer = substr($buffer, 0, $position + $tagLength);
-                }
+                // find open tag
+                $overlapString = '';
+                while ($buffer === false && ($chunk = fread($file_pointer, $chunkSize)) !== false) {
+                    if (strlen($chunk) <= $tagLength) {
+                        break;
+                    }
 
-                $buffer = preg_replace('/xmlns[^=]*="[^"]*"/i', '', $buffer);
-                $buffer = preg_replace('@<(/)?([a-zA-Z]+):([a-zA-Z]+)@', '<$1$2____$3', $buffer);
+                    $chunk = $overlapString . $chunk;
 
-                $xml = @simplexml_load_string($buffer);
-                if ($xml) {
-                    if ($xml->rdf____RDF->rdf____Description) {
-                        foreach ($xml->rdf____RDF->rdf____Description as $description) {
-                            $data = array_merge($data, object2array($description));
-                        }
+                    if (($position = strpos($chunk, $tag)) === false) {
+                        // if open tag not found, back up just in case the open tag is on the split.
+                        $overlapString = substr($chunk, $tagLength * -1);
+                    } else {
+                        $buffer = substr($chunk, $position);
                     }
                 }
 
-                if (isset($data['@attributes'])) {
-                    unset($data['@attributes']);
-                }
-            }
+                if ($buffer !== false) {
+                    $tag = '</x:xmpmeta>';
+                    $tagLength = strlen($tag);
+                    $offset = 0;
+                    while (($position = strpos($buffer, $tag, $offset)) === false) {
+                        // the packet size is limited, so that a corrupted or malicious file containing an open tag
+                        // without a close tag cannot exhaust the memory
+                        if (strlen($buffer) > self::XMP_MAX_PACKET_SIZE) {
+                            throw new RuntimeException(sprintf(
+                                'No close tag found within %d bytes after the open tag. Possibly corrupted file.',
+                                self::XMP_MAX_PACKET_SIZE
+                            ));
+                        }
 
-            fclose($file_pointer);
+                        $chunk = fread($file_pointer, $chunkSize);
+                        if ($chunk === false || $chunk === '') {
+                            break;
+                        }
+
+                        $offset = strlen($buffer) - $tagLength; // subtract the tag size just in case it's split between chunks.
+                        $buffer .= $chunk;
+                    }
+
+                    if ($position === false) {
+                        // this would mean the open tag was found, but the close tag was not.  Maybe file corruption?
+                        throw new RuntimeException('No close tag found.  Possibly corrupted file.');
+                    } else {
+                        $buffer = substr($buffer, 0, $position + $tagLength);
+                    }
+
+                    $buffer = preg_replace('/xmlns[^=]*="[^"]*"/i', '', $buffer);
+                    $buffer = preg_replace('@<(/)?([a-zA-Z]+):([a-zA-Z]+)@', '<$1$2____$3', $buffer);
+
+                    $xml = @simplexml_load_string($buffer);
+                    if ($xml) {
+                        if ($xml->rdf____RDF->rdf____Description) {
+                            foreach ($xml->rdf____RDF->rdf____Description as $description) {
+                                $data = array_merge($data, object2array($description));
+                            }
+                        }
+                    }
+
+                    if (isset($data['@attributes'])) {
+                        unset($data['@attributes']);
+                    }
+                }
+            } finally {
+                fclose($file_pointer);
+            }
         }
 
         // remove namespace prefixes if possible
