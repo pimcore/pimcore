@@ -20,6 +20,9 @@ use Pimcore\Db;
 use Pimcore\Model\Translation;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Translation\Translator;
+use ReflectionObject;
+use ReflectionProperty;
+use Symfony\Component\Translation\Translator as SymfonyTranslator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TranslatorTest extends TestCase
@@ -91,12 +94,54 @@ class TranslatorTest extends TestCase
 
         $this->translator = Pimcore::getContainer()->get(TranslatorInterface::class);
         $this->addTranslations();
+
+        // the translator is shared with everything that ran before this test (other suites included) and
+        // builds a domain/locale catalogue only once - make sure it sees the fixtures written above and
+        // nothing that was translated earlier in the run
+        $this->resetTranslatorState();
     }
 
     protected function tearDown(): void
     {
         $this->removeTranslations();
+        $this->resetTranslatorState();
         parent::tearDown();
+    }
+
+    private function resetTranslatorState(): void
+    {
+        $this->translator->resetCache();
+
+        $symfonyTranslator = $this->findWrappedSymfonyTranslator($this->translator);
+        if ($symfonyTranslator) {
+            (new ReflectionProperty(SymfonyTranslator::class, 'catalogues'))->setValue($symfonyTranslator, []);
+        }
+    }
+
+    /**
+     * Pimcore's translator (and, in debug mode, Symfony's data collector) wrap the Symfony translator that
+     * actually caches the catalogues; walk the "translator" properties down to it.
+     */
+    private function findWrappedSymfonyTranslator(object $translator): ?SymfonyTranslator
+    {
+        while (!$translator instanceof SymfonyTranslator) {
+            $inner = null;
+            for ($class = new ReflectionObject($translator); $class; $class = $class->getParentClass()) {
+                if ($class->hasProperty('translator')) {
+                    $inner = $class->getProperty('translator')->getValue($translator);
+
+                    break;
+                }
+            }
+
+            if (!is_object($inner)) {
+                return null;
+            }
+
+            $translator = $inner;
+        }
+
+        return $translator;
     }
 
     private function addTranslations(): void
