@@ -70,6 +70,7 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
     protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_RelationTest();
+        $this->tester->setupPimcoreClass_Unittest();
     }
 
     private function createRelationTestObject(string $someAttribute): RelationTest
@@ -186,6 +187,37 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
 
         $object = $this->createRelationTestObject('any');
         $this->assertSame($object->getCreationDate(), $fd->getVisibleFieldData($object)['creationDate']);
+
+        // a class field is not offered without a class restriction, so a configured name must not resolve either
+        $fd->setVisibleFields('creationDate,someAttribute');
+        $data = $fd->getVisibleFieldData($object);
+        $this->assertSame($object->getCreationDate(), $data['creationDate']);
+        $this->assertNull($data['someAttribute'], 'names that are not offered for the definition must not resolve');
+    }
+
+    public function testConfiguredNamesOnlyResolveForTheElementTypesTheyAreOfferedFor(): void
+    {
+        $object = $this->createRelationTestObject('object value');
+        $asset = $this->createAssetWithMetadata('(c) pimcore');
+
+        // objects restricted to another class: RelationTest fields are not offered, but common properties are
+        $fd = new ManyToManyRelation();
+        $fd->setObjectsAllowed(true)->setClasses([['classes' => 'unittest']]);
+        $fd->setAssetsAllowed(true)->setAssetTypes([]);
+        $fd->setVisibleFields(['someAttribute', 'creationDate', self::PREDEFINED_METADATA]);
+
+        $data = $fd->getVisibleFieldData($object);
+        $this->assertNull($data['someAttribute'], 'a field of a class that is not allowed must not resolve');
+        $this->assertSame($object->getCreationDate(), $data['creationDate']);
+        $this->assertNull($data[self::PREDEFINED_METADATA]);
+
+        $data = $fd->getVisibleFieldData($asset);
+        $this->assertSame('(c) pimcore', $data[self::PREDEFINED_METADATA]);
+        $this->assertSame($asset->getCreationDate(), $data['creationDate']);
+
+        // assets not allowed at all: asset metadata is not offered and therefore not resolved
+        $fd->setAssetsAllowed(false);
+        $this->assertNull($fd->getVisibleFieldData($asset)[self::PREDEFINED_METADATA]);
     }
 
     public function testEnrichLayoutDefinitionResolvesConfiguredFields(): void
