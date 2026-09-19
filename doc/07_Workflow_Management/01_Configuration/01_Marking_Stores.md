@@ -13,6 +13,13 @@ The default marking store. Place information is stored in the `element_workflow_
 Use this for assets and documents. For data objects, the other marking store options
 store data directly in the data object model as attributes.
 
+The place is written to the table as soon as a transition is applied - except for transitions with
+`changePublishedState: save_version`, which only save a draft (version) of the element: there the
+new place is kept with the draft and is written to the table once the draft gets published.
+Discarding the draft discards the place change as well, just like it does with the attribute based
+marking stores below. Consumers reading the `element_workflow_state` table directly (workflow reports,
+the workflow filter of the search index, ...) therefore always see the state of the published element.
+
 ##### Configuration Example
 ```yaml
    marking_store:

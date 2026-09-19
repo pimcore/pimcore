@@ -278,6 +278,8 @@ pimcore:
                                 mailPath:             '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig'
 
                         # Change published state of element while transition (only available for documents and data objects).
+                        # "save_version" only saves a draft (version) of the element - the new place is then published
+                        # or discarded together with that draft, for all marking store types.
                         changePublishedState: no_change # One of "no_change", "force_unpublished", "force_published", "save_version"
                         
                         # behaviour when transition gets applied but there are unsaved changes
