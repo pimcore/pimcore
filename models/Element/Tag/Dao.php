@@ -150,7 +150,7 @@ class Dao extends Model\Dao\AbstractDao
             'ctype' => $cType,
             'cid' => $cId,
         ];
-        Helper::upsertByUniqueKey($this->db, 'tags_assignment', $data, $this->getPrimaryKey('tags_assignment'));
+        Helper::upsert($this->db, 'tags_assignment', $data, $this->getPrimaryKey('tags_assignment'));
     }
 
     public function removeTagFromElement(string $cType, int $cId): void

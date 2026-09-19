@@ -104,7 +104,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::upsertByUniqueKey($this->db, self::TABLE_NAME, $data, $this->getPrimaryKey(self::TABLE_NAME));
+        Helper::upsert($this->db, self::TABLE_NAME, $data, $this->getPrimaryKey(self::TABLE_NAME));
     }
 
     /**

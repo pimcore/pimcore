@@ -513,7 +513,7 @@ class Dao extends Model\Element\Dao
             'width' => $width,
             'height' => $height,
         ];
-        Helper::upsertByUniqueKey($this->db, 'assets_image_thumbnail_cache', $thumb, $this->getPrimaryKey('assets_image_thumbnail_cache'));
+        Helper::upsert($this->db, 'assets_image_thumbnail_cache', $thumb, $this->getPrimaryKey('assets_image_thumbnail_cache'));
 
         if (isset(self::$thumbnailStatusCache[$assetId])) {
             $hash = $name . $filename;
@@ -561,7 +561,7 @@ class Dao extends Model\Element\Dao
         }
 
         $cachedThumbnail['filename'] = $targetFilename;
-        Helper::upsertByUniqueKey($this->db, 'assets_image_thumbnail_cache', $cachedThumbnail, $this->getPrimaryKey('assets_image_thumbnail_cache'));
+        Helper::upsert($this->db, 'assets_image_thumbnail_cache', $cachedThumbnail, $this->getPrimaryKey('assets_image_thumbnail_cache'));
 
         $this->db->delete('assets_image_thumbnail_cache', [
             'cid' => $this->model->getId(),

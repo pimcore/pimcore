@@ -60,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::upsertByUniqueKey($this->db, 'email_blocklist', $data, $this->getPrimaryKey('email_blocklist'));
+        Helper::upsert($this->db, 'email_blocklist', $data, $this->getPrimaryKey('email_blocklist'));
     }
 
     /**

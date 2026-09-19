@@ -75,12 +75,18 @@ class Helper
      * database only once, no matter which of the two paths it takes. The return value is the
      * same as for {@see self::upsert()}: the last insert id on an insert, null on an update.
      *
-     * $uniqueKeyColumns must be the primary key or a unique index of the table, and the method
-     * is meant for tables where that is the only unique index the data can collide on - as the
-     * class and brick query tables, the classification store tables, properties or versions.
-     * The class store and localized store tables are not such tables: a field marked unique
-     * gets a unique index there (u_index_*), and neither are objects, assets, documents and
-     * tags with their second unique index. ON DUPLICATE KEY
+     * It is the tool for one situation: rows whose existence the caller cannot know and which
+     * are written in numbers per save, as the editables of a document or the languages of a
+     * translation - there it is one round trip per row on either path, where upsert() pays two
+     * for every existing row. A row the caller knows to exist is cheaper still through
+     * {@see self::updateOrInsert()}, a bare UPDATE, and a row known to be new is a plain insert
+     * through upsert(); the core DAOs use those two everywhere else.
+     *
+     * $uniqueKeyColumns must be the primary key or a unique index of the table, and the table
+     * should have no other unique index the data can collide on - the class store and localized
+     * store tables are not such tables (a field marked unique gets a u_index_* there), and
+     * neither are objects, assets, documents and tags with their second unique index.
+     * ON DUPLICATE KEY
      * UPDATE can only ever touch the one row the conflict was detected on, so non-unique
      * criteria would update that row if it matches and nothing else (where upsert() addresses
      * every row matching its WHERE clause). On a table with another unique index the conflict
@@ -93,10 +99,7 @@ class Helper
      * writes to the row. And on the update path of the keyed row itself, the statement runs the
      * table's BEFORE INSERT triggers before the duplicate is resolved; as it succeeds, their
      * effects persist and the incoming values as such a trigger left them are what VALUES()
-     * writes, where upsert()'s failing INSERT rolled all of that back before its UPDATE. This is
-     * why the core DAOs use {@see self::updateOrInsert()} or upsert() for the tables named above
-     * and for the element and class tables in general, and this method only for tables of fixed
-     * schema. If the keyed
+     * writes, where upsert()'s failing INSERT rolled all of that back before its UPDATE. If the keyed
      * row exists and the update itself would violate another unique index, the statement fails
      * with a UniqueConstraintViolationException, the same outcome as upsert()'s UPDATE.
      *
