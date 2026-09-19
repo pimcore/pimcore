@@ -37,6 +37,8 @@ final class HelperTest extends TestCase
 
     private const TABLE_NULLABLE_KEY = 'test_upsert_nullable_key';
 
+    private const TABLE_TRIGGER_LOG = 'test_upsert_trigger_log';
+
     protected bool $cleanupDbInSetup = false;
 
     private Connection $db;
@@ -383,6 +385,129 @@ final class HelperTest extends TestCase
         $this->assertSame('inserted', $second['value'], 'The keyed row must not be partially written.');
     }
 
+    public function testKeyColumnsAreWrittenOnTheUpdatePath(): void
+    {
+        // the previous UPDATE wrote all of $data including the key columns, so a key value that
+        // compares equal but is stored differently - here under the case-insensitive collation
+        // of the test table - was updated to the incoming representation
+        Helper::upsert(
+            $this->db,
+            self::TABLE_COMPOSITE_KEY,
+            ['cid' => 15, 'ctype' => 'object', 'key' => 'inserted'],
+            ['cid', 'ctype']
+        );
+
+        $result = Helper::upsert(
+            $this->db,
+            self::TABLE_COMPOSITE_KEY,
+            ['cid' => 15, 'ctype' => 'OBJECT', 'key' => 'updated'],
+            ['cid', 'ctype']
+        );
+
+        $this->assertNull($result, 'The update path must not return an id.');
+        $this->assertSame(1, $this->countRows(self::TABLE_COMPOSITE_KEY));
+        $this->assertSame(
+            ['ctype' => 'OBJECT', 'key' => 'updated'],
+            $this->db->fetchAssociative('SELECT `ctype`, `key` FROM ' . self::TABLE_COMPOSITE_KEY . ' WHERE cid = 15'),
+            'The stored key representation must follow the incoming data.'
+        );
+    }
+
+    public function testNonUniqueKeysUpdateOnlyTheConflictingRow(): void
+    {
+        // contract pin: $keys have to be the primary key or a unique index. With non-unique
+        // criteria matching several rows, the previous UPDATE ... WHERE $keys wrote the
+        // conflicting unique value to all of them and failed with a unique constraint violation;
+        // ON DUPLICATE KEY UPDATE can only touch the row the conflict was detected on
+        $firstId = (int) Helper::upsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => null, 'name' => 'first', 'value' => 'shared'],
+            ['id']
+        );
+        $secondId = (int) Helper::upsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => null, 'name' => 'second', 'value' => 'shared'],
+            ['id']
+        );
+
+        $result = Helper::upsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => $firstId, 'name' => 'first-renamed', 'value' => 'shared'],
+            ['value']
+        );
+
+        $this->assertNull($result);
+        $this->assertSame(2, $this->countRows(self::TABLE_AUTO_INCREMENT));
+        $this->assertSame(
+            'first-renamed',
+            $this->db->fetchOne('SELECT `name` FROM ' . self::TABLE_AUTO_INCREMENT . ' WHERE id = ?', [$firstId]),
+            'The conflicting row matching the criteria is updated.'
+        );
+        $this->assertSame(
+            'second',
+            $this->db->fetchOne('SELECT `name` FROM ' . self::TABLE_AUTO_INCREMENT . ' WHERE id = ?', [$secondId]),
+            'Another row matching the non-unique criteria is not touched.'
+        );
+    }
+
+    public function testConflictOnNonKeyUniqueIndexRunsTheForeignRowsBeforeUpdateTrigger(): void
+    {
+        // contract pin: ON DUPLICATE KEY UPDATE runs the conflicting row's BEFORE UPDATE
+        // triggers even though every guarded assignment keeps the stored value (AFTER UPDATE
+        // triggers do not run for an unchanged row). The previous UPDATE ... WHERE $keys matched
+        // no row in this situation and ran no trigger.
+        $this->db->executeStatement(
+            'CREATE TABLE ' . self::TABLE_TRIGGER_LOG . ' (
+                `event` varchar(20) NOT NULL,
+                `id` int(11) NOT NULL,
+                `old_value` varchar(50) DEFAULT NULL,
+                `new_value` varchar(50) DEFAULT NULL
+            ) DEFAULT CHARSET=utf8mb4'
+        );
+        // the triggers are dropped together with their table in tearDown()
+        $this->db->executeStatement(
+            'CREATE TRIGGER test_upsert_before_update BEFORE UPDATE ON ' . self::TABLE_AUTO_INCREMENT
+            . ' FOR EACH ROW INSERT INTO ' . self::TABLE_TRIGGER_LOG . " VALUES ('before_update', OLD.id, OLD.value, NEW.value)"
+        );
+        $this->db->executeStatement(
+            'CREATE TRIGGER test_upsert_after_update AFTER UPDATE ON ' . self::TABLE_AUTO_INCREMENT
+            . ' FOR EACH ROW INSERT INTO ' . self::TABLE_TRIGGER_LOG . " VALUES ('after_update', OLD.id, OLD.value, NEW.value)"
+        );
+
+        $id = (int) Helper::upsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => null, 'name' => 'first', 'value' => 'inserted'],
+            ['id']
+        );
+        $this->db->executeStatement('DELETE FROM ' . self::TABLE_TRIGGER_LOG);
+
+        $result = Helper::upsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => $id + 1000, 'name' => 'first', 'value' => 'hijacked'],
+            ['id']
+        );
+
+        $this->assertNull($result);
+        $this->assertSame(
+            [['event' => 'before_update', 'id' => (string) $id, 'old_value' => 'inserted', 'new_value' => 'inserted']],
+            array_map(
+                static fn (array $row): array => ['event' => $row['event'], 'id' => (string) $row['id'], 'old_value' => $row['old_value'], 'new_value' => $row['new_value']],
+                $this->db->fetchAllAssociative('SELECT `event`, `id`, `old_value`, `new_value` FROM ' . self::TABLE_TRIGGER_LOG)
+            ),
+            'Only the BEFORE UPDATE trigger runs, and it sees the unchanged values.'
+        );
+
+        $row = $this->fetchRowByName('first');
+        $this->assertSame($id, (int) $row['id']);
+        $this->assertSame('inserted', $row['value'], 'The foreign row must keep its values.');
+        $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
+    }
+
     public function testNullKeyDoesNotMatchAStoredNullKey(): void
     {
         $this->db->executeStatement(
@@ -473,5 +598,6 @@ final class HelperTest extends TestCase
         $this->db->executeStatement('DROP TABLE IF EXISTS ' . self::TABLE_AUTO_INCREMENT);
         $this->db->executeStatement('DROP TABLE IF EXISTS ' . self::TABLE_COMPOSITE_KEY);
         $this->db->executeStatement('DROP TABLE IF EXISTS ' . self::TABLE_NULLABLE_KEY);
+        $this->db->executeStatement('DROP TABLE IF EXISTS ' . self::TABLE_TRIGGER_LOG);
     }
 }

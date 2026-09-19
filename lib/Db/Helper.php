@@ -30,11 +30,24 @@ class Helper
      * database only once, no matter which of the two paths it takes. Because ON DUPLICATE KEY
      * fires for a conflict on ANY unique index of the table - not just on $keys - every
      * assignment is guarded to only apply when the conflicting row matches the incoming $keys
-     * values. A conflict on some other unique index therefore leaves that foreign row untouched
-     * and the call returns null, exactly like the previous implementation's
+     * values. A conflict on some other unique index therefore leaves that foreign row's values
+     * untouched and the call returns null, like the previous implementation's
      * UPDATE ... WHERE $keys, which matched no row in that situation. If the keyed row exists and
      * the update itself would violate another unique index, the statement fails with a
      * UniqueConstraintViolationException - again the same outcome as the previous UPDATE.
+     *
+     * Two differences to the previous two-statement implementation follow from the single
+     * statement and define the contract of this method:
+     *  - $keys must be the primary key or a unique index of the table. ON DUPLICATE KEY UPDATE
+     *    can only ever touch the one row the conflict was detected on, so non-unique criteria
+     *    update that row if it matches and nothing else. The previous UPDATE ... WHERE $keys
+     *    addressed every matching row and, as it wrote the conflicting unique value to all of
+     *    them, failed with a unique constraint violation whenever the criteria matched any row
+     *    but the conflicting one.
+     *  - On a conflict with a different unique index, the database still runs the conflicting
+     *    row's BEFORE UPDATE triggers, with NEW equal to OLD (AFTER UPDATE triggers do not run,
+     *    as the row is unchanged). The previous implementation's UPDATE matched no row there
+     *    and ran no trigger at all.
      *
      * The insert and the update path are told apart by the affected-rows value (1 = inserted,
      * 2 or 0 = updated). This requires the default MySQL/MariaDB affected-rows semantics: with
@@ -94,18 +107,14 @@ class Helper
             $keys
         ));
 
-        $assignments = [];
-        foreach ($columns as $column) {
-            if (in_array($column, $keys, true)) {
-                continue;
-            }
+        // the key columns are assigned as well: they compare equal under the guard, but the
+        // stored representation may still differ (e.g. EN vs en under a case-insensitive
+        // collation) and the previous UPDATE wrote all of $data, so they are written too
+        $assignments = array_map(
             // VALUES() and not the row alias introduced with MySQL 8.0.20, which MariaDB does not know
-            $assignments[] = $column . ' = IF(' . $keysMatch . ', VALUES(' . $column . '), ' . $column . ')';
-        }
-        if ($assignments === []) {
-            // every column is a key column - nothing to update, but the clause must not be empty
-            $assignments[] = $keys[0] . ' = ' . $keys[0];
-        }
+            static fn (string $column): string => $column . ' = IF(' . $keysMatch . ', VALUES(' . $column . '), ' . $column . ')',
+            $columns
+        );
 
         $sql = 'INSERT INTO ' . $table
             . ' (' . implode(', ', $columns) . ')'
