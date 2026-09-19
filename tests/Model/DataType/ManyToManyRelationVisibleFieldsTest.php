@@ -321,7 +321,7 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         $this->assertNull($fd->getVisibleFieldData($asset)['visibleFieldsTestLateArrival'], 'a deleted definition must no longer resolve');
     }
 
-    public function testAdvancedRelationEditmodeRowsContainVisibleFieldData(): void
+    public function testAdvancedRelationEditmodeRowsLeaveVisibleFieldValuesToTheConsumer(): void
     {
         $object = $this->createRelationTestObject('object value');
         $asset = $this->createAssetWithMetadata('(c) pimcore');
@@ -337,31 +337,29 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         $objectMetadata->setFilename('meta value');
         $assetMetadata = new ElementMetadata('advancedMixedRelation', ['filename'], $asset);
 
+        // the edit-mode rows are not extended: resolving values needs the related elements, which the
+        // consumer fetches per row through getVisibleFieldData() when it renders the columns
         $rows = $fd->getDataForEditmode([$objectMetadata, $assetMetadata]);
 
         $this->assertCount(2, $rows);
-
         $this->assertSame($object->getId(), $rows[0]['id']);
-        $this->assertSame('object value', $rows[0]['someAttribute']);
-        $this->assertNull($rows[0][self::PREDEFINED_METADATA]);
-        $this->assertSame('meta value', $rows[0]['filename'], 'metadata columns take precedence over visible fields');
-
+        $this->assertSame('meta value', $rows[0]['filename'], 'metadata columns are still part of the rows');
+        $this->assertArrayNotHasKey('someAttribute', $rows[0]);
+        $this->assertArrayNotHasKey(self::PREDEFINED_METADATA, $rows[0]);
         $this->assertSame($asset->getId(), $rows[1]['id']);
-        $this->assertNull($rows[1]['someAttribute']);
-        $this->assertSame('(c) pimcore', $rows[1][self::PREDEFINED_METADATA]);
-        $this->assertNull($rows[1]['filename'], 'metadata columns take precedence over visible fields');
+        $this->assertArrayNotHasKey('someAttribute', $rows[1]);
+        $this->assertArrayNotHasKey(self::PREDEFINED_METADATA, $rows[1]);
 
-        // with optimized admin loading the values are left to the UI to fetch asynchronously
-        $fd->setOptimizedAdminLoading(true);
-        $rows = $fd->getDataForEditmode([$assetMetadata]);
-        $this->assertArrayNotHasKey('someAttribute', $rows[0]);
-        $this->assertArrayNotHasKey(self::PREDEFINED_METADATA, $rows[0]);
-        $fd->setOptimizedAdminLoading(false);
+        // the values for those rows, resolved from the related elements
+        $objectData = $fd->getVisibleFieldData($objectMetadata->getElement());
+        $this->assertSame('object value', $objectData['someAttribute']);
+        $this->assertNull($objectData['filename']);
+        $this->assertNull($objectData[self::PREDEFINED_METADATA]);
 
-        $fd->setVisibleFields(null);
-        $rows = $fd->getDataForEditmode([$assetMetadata]);
-        $this->assertArrayNotHasKey('someAttribute', $rows[0]);
-        $this->assertArrayNotHasKey(self::PREDEFINED_METADATA, $rows[0]);
+        $assetData = $fd->getVisibleFieldData($assetMetadata->getElement());
+        $this->assertNull($assetData['someAttribute']);
+        $this->assertSame($asset->getFilename(), $assetData['filename']);
+        $this->assertSame('(c) pimcore', $assetData[self::PREDEFINED_METADATA]);
     }
 
     public function testVisibleFieldsAreSynchronizedWithMainDefinition(): void

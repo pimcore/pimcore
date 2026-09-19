@@ -158,8 +158,9 @@ $values = $fd->getVisibleFieldData($relatedElement);
 Each entry of `getAvailableVisibleFields()` / `visibleFieldDefinitions` carries `name`, `title`, `fieldtype`,
 `noteditable` and `sources` (the origins of the field: `object` for properties of every object, `object:Product` for
 the fields of a class, `asset` or `document`); select fields
-additionally carry their `options`, predefined metadata its `metadataType`. For the Advanced Many-To-Many Relation the
-values are also part of the edit-mode rows; metadata columns with the same name take precedence over visible fields.
+additionally carry their `options`, predefined metadata its `metadataType`. The edit-mode rows of both types are not
+extended with the values: resolving them needs the related elements, so a consumer fetches them per row through
+`getVisibleFieldData()` when it renders the columns.
 
 To offer additional asset fields (for example from asset metadata class definitions), extend the type and override
 `getAssetVisibleFieldCandidates()` / `resolveAssetVisibleFieldValue()`.
