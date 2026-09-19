@@ -1549,10 +1549,16 @@ class Asset extends Element\AbstractElement
 
         foreach ($this->metadata as $md) {
             if ($md['name'] == $name) {
-                if ($language == $md['language'] || (empty($md['language']) && !$strictMatchLanguage)) {
+                if ($language == $md['language']) {
                     $data = $md;
 
                     break;
+                }
+
+                // Keep scanning for an exact language match before settling for the
+                // language-less fallback, since it may appear earlier in the array.
+                if ($data === null && empty($md['language']) && !$strictMatchLanguage) {
+                    $data = $md;
                 }
             }
         }
