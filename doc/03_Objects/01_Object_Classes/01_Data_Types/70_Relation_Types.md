@@ -153,6 +153,9 @@ $columns = $fd->visibleFieldDefinitions;
 
 // values of the configured fields for one related element
 $values = $fd->getVisibleFieldData($relatedElement);
+
+// the offered names and their sources only, without describing the fields (cheap enough per element)
+$sources = $fd->getVisibleFieldSources();
 ```
 
 Each entry of `getAvailableVisibleFields()` / `visibleFieldDefinitions` carries `name`, `title`, `fieldtype`,
