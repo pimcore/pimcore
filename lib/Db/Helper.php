@@ -199,8 +199,9 @@ class Helper
      * already holds these values, or a BEFORE UPDATE trigger reset them), and the affected-rows
      * value cannot tell the two apart. The UPDATE therefore records that it matched a row: one
      * of its assignments evaluates LAST_INSERT_ID(<token>) - a random token, in an expression
-     * that depends on the row so it is evaluated per matched row and never constant-folded -
-     * and a matched row leaves the token in the connection's LAST_INSERT_ID(), read back with
+     * that depends on the row and whose result is compared rather than null-tested, so it is
+     * evaluated per matched row on MariaDB and MySQL alike and never optimized away - and a
+     * matched row leaves the token in the connection's LAST_INSERT_ID(), read back with
      * one cheap SELECT only on this path. Matched means done, without touching the row (or its
      * triggers) a second time; not matched means missing, and the insert goes through upsert(),
      * whose duplicate handling also covers a row inserted concurrently since the UPDATE. Note
@@ -250,14 +251,16 @@ class Helper
         }
 
         // the first key column's assignment also records the match: LAST_INSERT_ID(<token>) is
-        // evaluated for every matched row (the LENGTH() of the column keeps it from being folded
-        // into a constant) and is never NULL, so the column is assigned its value as usual
+        // evaluated for every matched row and, as the token is never 0, the column is assigned
+        // its value as usual. The LENGTH() of the column keeps the argument from being folded
+        // into a constant, and the comparison with 0 (rather than IS NULL, which MySQL folds to
+        // false for a function that cannot return NULL) keeps the call from being optimized away
         $token = random_int(1, PHP_INT_MAX);
         $matchKey = array_key_first($criteria);
         $assignments = [];
         foreach (array_keys($quotedData) as $column) {
             $assignments[] = $column === $matchKey
-                ? $column . ' = IF(LAST_INSERT_ID(' . $token . ' + 0 * LENGTH(' . $column . ')) IS NULL, ' . $column . ', ?)'
+                ? $column . ' = IF(LAST_INSERT_ID(' . $token . ' + 0 * LENGTH(' . $column . ')) = 0, ' . $column . ', ?)'
                 : $column . ' = ?';
         }
         $affectedRows = (int) $connection->executeStatement(
