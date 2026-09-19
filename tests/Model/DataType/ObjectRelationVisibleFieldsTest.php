@@ -23,8 +23,9 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 
 /**
  * Covers the visible-field definitions built for the object relation types: top-level and localized
- * fields are described the same way, unresolved names fall back to a read-only input, and the
- * advanced type resolves its class through allowedClassId.
+ * fields are described the same way, unresolved names fall back to a read-only input, the
+ * advanced type resolves its class through allowedClassId and subclasses change the lookup through
+ * getVisibleFieldsClassIdentifier().
  *
  * @group dataTypeLocal
  */
@@ -133,6 +134,35 @@ class ObjectRelationVisibleFieldsTest extends ModelTestCase
         $fd->enrichLayoutDefinition(null);
 
         $this->assertLocalizedAndTopLevelDescribedAlike($fd->visibleFieldDefinitions);
+    }
+
+    public function testSubclassesChangeTheClassLookupThroughGetVisibleFieldsClassIdentifier(): void
+    {
+        // a subclass that takes the class from somewhere else than "classes" (the documented override point
+        // for types that used to override enrichLayoutDefinition() only to change the lookup)
+        $fd = new class(self::CLASS_NAME) extends ManyToManyObjectRelation {
+            public function __construct(private readonly string $visibleFieldsClass)
+            {
+            }
+
+            protected function getVisibleFieldsClassIdentifier(): ?string
+            {
+                return $this->visibleFieldsClass;
+            }
+        };
+        $fd->setClasses([['classes' => 'DoesNotExistClass']]);
+        $fd->setVisibleFields('plainInput,plainBool,plainSelect,linput,lbool,lselect');
+
+        $fd->enrichLayoutDefinition(null);
+        $this->assertLocalizedAndTopLevelDescribedAlike($fd->visibleFieldDefinitions);
+
+        // the advanced type's own override is exactly that: allowedClassId instead of the first "classes" entry
+        $advanced = new AdvancedManyToManyObjectRelation();
+        $advanced->setClasses([['classes' => 'DoesNotExistClass']]);
+        $advanced->setAllowedClassId(self::CLASS_NAME);
+        $advanced->setVisibleFields('plainInput,linput');
+        $advanced->enrichLayoutDefinition(null);
+        $this->assertSame(['plainInput', 'linput'], array_keys($advanced->visibleFieldDefinitions));
     }
 
     public function testUnresolvedFieldFallsBackToReadOnlyInput(): void
