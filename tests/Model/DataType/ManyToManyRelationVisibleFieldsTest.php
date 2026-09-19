@@ -265,6 +265,30 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         $this->assertArrayHasKey(self::PREDEFINED_METADATA, $available);
     }
 
+    public function testPredefinedMetadataChangesAreReflectedWithinTheSameRequest(): void
+    {
+        $fd = $this->createMixedDefinition();
+        $this->assertArrayHasKey(self::PREDEFINED_METADATA, $fd->getAvailableVisibleFields());
+        $this->assertArrayNotHasKey('visibleFieldsTestLateArrival', $fd->getAvailableVisibleFields());
+
+        $late = $this->createPredefinedMetadata('visibleFieldsTestLateArrival');
+
+        try {
+            $this->assertArrayHasKey('visibleFieldsTestLateArrival', $fd->getAvailableVisibleFields(), 'a definition saved after the first lookup must be offered');
+
+            $asset = TestHelper::createImageAsset('visible-fields-');
+            $asset->addMetadata('visibleFieldsTestLateArrival', 'input', 'late value');
+            $asset->save();
+            $fd->setVisibleFields('visibleFieldsTestLateArrival');
+            $this->assertSame('late value', $fd->getVisibleFieldData($asset)['visibleFieldsTestLateArrival']);
+        } finally {
+            $late->delete();
+        }
+
+        $this->assertArrayNotHasKey('visibleFieldsTestLateArrival', $fd->getAvailableVisibleFields(), 'a deleted definition must no longer be offered');
+        $this->assertNull($fd->getVisibleFieldData($asset)['visibleFieldsTestLateArrival'], 'a deleted definition must no longer resolve');
+    }
+
     public function testAdvancedRelationEditmodeRowsContainVisibleFieldData(): void
     {
         $object = $this->createRelationTestObject('object value');

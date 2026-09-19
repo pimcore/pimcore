@@ -15,7 +15,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Exception;
 use Pimcore;
-use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -275,33 +274,19 @@ trait VisibleFieldsTrait
 
     /**
      * The predefined asset metadata definitions, grouped by name (a name may exist once per language and
-     * asset subtype). Loaded once per request.
+     * asset subtype).
      *
      * @return array<string, Predefined[]>
      */
     protected function getPredefinedAssetMetadataByName(): array
     {
-        $cacheKey = 'pimcore_visible_fields_predefined_asset_metadata';
-        if (RuntimeCache::isRegistered($cacheKey)) {
-            return RuntimeCache::get($cacheKey);
-        }
-
-        $byName = [];
-
         try {
-            foreach ((new Predefined\Listing())->getDefinitions() as $definition) {
-                $name = $definition->getName();
-                if ($name) {
-                    $byName[$name][] = $definition;
-                }
-            }
+            return Predefined::getAllByName();
         } catch (Exception $e) {
             Logger::debug('Could not load predefined asset metadata for visible fields: ' . $e->getMessage());
+
+            return [];
         }
-
-        RuntimeCache::set($cacheKey, $byName);
-
-        return $byName;
     }
 
     /**
