@@ -376,11 +376,11 @@ class Select extends Data implements
         }
 
         if ($operator === '=') {
-            if ((string) $value === '') {
-                return '(' . $key . ' IS NULL OR ' . $key . " = '')";
-            }
-
             $quotedValue = $db->quote((string) $value);
+
+            if ((string) $value === '') {
+                return '(' . $key . ' IS NULL OR ' . $key . ' = ' . $quotedValue . ')';
+            }
 
             return $key . ' = ' . $quotedValue . ' ';
         }

@@ -35,8 +35,8 @@ class SelectFilterConditionTest extends ModelTestCase
 
     /**
      * An unset select is stored as NULL by a fresh save and as '' by an edit that clears it, so
-     * "no value" has to match both - otherwise the rows a user is looking for are split across a
-     * filter that finds neither.
+     * "no value" has to match both. The previous condition quoted '' and matched only the rows
+     * stored as the empty string, leaving the rows stored as NULL out of the result.
      */
     public function testAnEmptyValueMatchesNullAndTheEmptyString(): void
     {
