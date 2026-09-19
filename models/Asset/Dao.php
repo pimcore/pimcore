@@ -157,9 +157,7 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        // updateOrInsert() and not upsertByUniqueKey(): the row exists since create(), and the unique
-        // fullpath index is a second unique index, on which the single statement would run the
-        // conflicting row's UPDATE triggers
+        // the row exists since create(), so updateOrInsert() is a single UPDATE
         Helper::updateOrInsert($this->db, 'assets', $data, $this->getPrimaryKey('assets'));
         if ($data['hasMetaData'] && count($metadataItems)) {
             foreach ($metadataItems as $metadataItem) {

@@ -68,7 +68,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            // updateOrInsert() and not upsertByUniqueKey(): the unique (idPath, name) index is a second unique index
+            // an existing tag is a single UPDATE; a new one (null id) is a plain insert
             $lastInsertId = Helper::updateOrInsert($this->db, 'tags', $data, $this->getPrimaryKey('tags'));
             if ($lastInsertId !== null && !$this->model->getId()) {
                 $this->model->setId((int) $lastInsertId);

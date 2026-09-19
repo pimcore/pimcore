@@ -183,13 +183,12 @@ class Dao extends Model\Element\Dao
         $dataDocument['path'] = $this->model->getRealPath();
 
         // update the values in the database
-        // updateOrInsert() and not upsertByUniqueKey(): the row exists since create(), and the unique
-        // fullpath index is a second unique index, on which the single statement would run the
-        // conflicting row's UPDATE triggers
+        // the row exists since create(), so updateOrInsert() is a single UPDATE
         Helper::updateOrInsert($this->db, 'documents', $dataDocument, $this->getPrimaryKey('documents'));
 
         if ($typeSpecificTable) {
-            // upsert(): a custom document type brings its own table, whose unique indexes are not known here
+            // upsert(): the type-specific row does not exist before the first save, and a custom document
+            // type brings its own table, so nothing is known about the row here
             Helper::upsert($this->db, $typeSpecificTable, $dataTypeSpecific, $this->getPrimaryKey($typeSpecificTable));
         }
 

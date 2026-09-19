@@ -256,8 +256,8 @@ class Dao extends Model\Dao\AbstractDao
                     if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty(
                         $language
                     )) {
-                        // a unique field adds a second unique index to the store table, so it is not a table for
-                        // upsertByUniqueKey(): on an update the row exists and updateOrInsert() is a single UPDATE
+                        // on an update the row exists and updateOrInsert() is a single UPDATE; a new row is a
+                        // plain insert either way
                         if (!empty($params['isUpdate'])) {
                             Helper::updateOrInsert($this->db, $storeTable, $insertData, $this->getTableKeyColumns());
                         } else {
