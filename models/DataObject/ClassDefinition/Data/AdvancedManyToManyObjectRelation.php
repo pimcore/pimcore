@@ -645,87 +645,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         }
     }
 
-    public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
+    protected function getVisibleFieldsClassIdentifier(): ?string
     {
-        $classId = $this->allowedClassId;
-
-        if (!$classId) {
-            return $this;
-        }
-
-        if (is_numeric($classId)) {
-            $class = DataObject\ClassDefinition::getById($classId);
-        } else {
-            $class = DataObject\ClassDefinition::getByName($classId);
-        }
-
-        if (!$class) {
-            return $this;
-        }
-
-        if (!$this->visibleFields) {
-            return $this;
-        }
-
-        if (!isset($context['purpose'])) {
-            $context['purpose'] = 'layout';
-        }
-
-        $this->visibleFieldDefinitions = [];
-
-        $translator = Pimcore::getContainer()->get('translator');
-
-        $visibleFields = explode(',', $this->visibleFields);
-        foreach ($visibleFields as $field) {
-            $fd = $class->getFieldDefinition($field, $context);
-
-            if (!$fd) {
-                $fieldFound = false;
-                /** @var Localizedfields|null $localizedfields */
-                $localizedfields = $class->getFieldDefinitions($context)['localizedfields'] ?? null;
-                if ($localizedfields) {
-                    if ($fd = $localizedfields->getFieldDefinition($field)) {
-                        $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
-                        $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();
-                        $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
-
-                        if ($fd instanceof DataObject\ClassDefinition\Data\Select || $fd instanceof DataObject\ClassDefinition\Data\Multiselect) {
-                            $this->visibleFieldDefinitions[$field]['options'] = $fd->getOptions();
-                        }
-
-                        $fieldFound = true;
-                    }
-                }
-
-                if (!$fieldFound) {
-                    $this->visibleFieldDefinitions[$field]['name'] = $field;
-                    $this->visibleFieldDefinitions[$field]['title'] = $translator->trans($field, [], 'admin');
-                    $this->visibleFieldDefinitions[$field]['fieldtype'] = 'input';
-                }
-            } else {
-                $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
-                $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();
-                $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
-                $this->visibleFieldDefinitions[$field]['noteditable'] = true;
-
-                if (
-                    $fd instanceof DataObject\ClassDefinition\Data\Select
-                    || $fd instanceof DataObject\ClassDefinition\Data\Multiselect
-                    || $fd instanceof DataObject\ClassDefinition\Data\BooleanSelect
-                ) {
-                    if (
-                        $fd instanceof DataObject\ClassDefinition\Data\Select
-                        || $fd instanceof DataObject\ClassDefinition\Data\Multiselect
-                    ) {
-                        $this->visibleFieldDefinitions[$field]['optionsProviderClass'] = $fd->getOptionsProviderClass();
-                    }
-
-                    $this->visibleFieldDefinitions[$field]['options'] = $fd->getOptions();
-                }
-            }
-        }
-
-        return $this;
+        return $this->getAllowedClassId();
     }
 
     public function denormalize(mixed $value, array $params = []): ?array
