@@ -1,7 +1,9 @@
 flysystem:
     storages:
         pimcore.application_log.storage:
-            # Storage for application logs
+            # Storage for application log file objects.
+            # In multi-server setups (e.g. HA clusters) this must point to a storage
+            # shared by all servers, as file objects are written and read by any of them.
             adapter: 'local'
             visibility: private
             options:
