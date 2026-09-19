@@ -15,6 +15,7 @@ namespace Pimcore\Model\Metadata;
 
 use Exception;
 use Pimcore;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -30,6 +31,11 @@ use Pimcore\Model;
  */
 final class Predefined extends Model\AbstractModel
 {
+    /**
+     * @internal
+     */
+    public const RUNTIME_CACHE_KEY_BY_NAME = 'pimcore_metadata_predefined_by_name';
+
     protected ?string $id = null;
 
     protected ?string $name = null;
@@ -85,6 +91,44 @@ final class Predefined extends Model\AbstractModel
         $type = new self();
 
         return $type;
+    }
+
+    /**
+     * All definitions grouped by name (a name may exist once per language and target subtype), loaded once
+     * per request. The cache is invalidated whenever a definition is saved or deleted.
+     *
+     * @return array<string, self[]>
+     *
+     * @throws Exception
+     */
+    public static function getAllByName(): array
+    {
+        if (RuntimeCache::isRegistered(self::RUNTIME_CACHE_KEY_BY_NAME)) {
+            $byName = RuntimeCache::get(self::RUNTIME_CACHE_KEY_BY_NAME);
+            if (is_array($byName)) {
+                return $byName;
+            }
+        }
+
+        $byName = [];
+        foreach ((new Predefined\Listing())->getDefinitions() as $definition) {
+            $name = $definition->getName();
+            if ($name) {
+                $byName[$name][] = $definition;
+            }
+        }
+
+        RuntimeCache::set(self::RUNTIME_CACHE_KEY_BY_NAME, $byName);
+
+        return $byName;
+    }
+
+    /**
+     * @internal
+     */
+    public static function clearRuntimeCache(): void
+    {
+        RuntimeCache::set(self::RUNTIME_CACHE_KEY_BY_NAME, null);
     }
 
     public function getName(): ?string
