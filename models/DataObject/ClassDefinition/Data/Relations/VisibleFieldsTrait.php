@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Exception;
 use Pimcore;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -201,13 +202,64 @@ trait VisibleFieldsTrait
 
     /**
      * The names getAvailableVisibleFields() offers and where each comes from (the same `sources` as there),
-     * without describing the fields: the class fields are read without enrichment, so this is cheap enough to
-     * be called per related element. Asset and document names come from the same candidate hooks as the
+     * without describing the fields. Asset and document names come from the same candidate hooks as the
      * described fields, so a subclass offering additional fields there has them resolved as well.
+     *
+     * The map is built once per request and configuration (see getVisibleFieldSourcesFingerprint()), so
+     * calling this per related element, as getVisibleFieldData() does, does not rebuild the candidates per
+     * element. The context does not influence which names are offered (the class fields are read without
+     * enrichment), so it is not part of the cache key.
      *
      * @return array<string, string[]>
      */
     public function getVisibleFieldSources(array $context = []): array
+    {
+        $cacheKey = 'pimcore_visible_field_sources_' . md5(static::class . '|' . $this->getVisibleFieldSourcesFingerprint());
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            $sources = RuntimeCache::get($cacheKey);
+            if (is_array($sources)) {
+                return $sources;
+            }
+        }
+
+        $sources = $this->buildVisibleFieldSources($context);
+        RuntimeCache::set($cacheKey, $sources);
+
+        return $sources;
+    }
+
+    /**
+     * Everything the source map depends on: the allowed element types, the allowed classes (with their
+     * modification date) and asset types, and the generation of the predefined asset metadata. A subclass whose
+     * candidates depend on further state (e.g. asset metadata class definitions) must extend it, otherwise
+     * changes to that state are not picked up within the request.
+     */
+    protected function getVisibleFieldSourcesFingerprint(): string
+    {
+        $classes = [];
+        if ($this->getObjectsAllowed()) {
+            foreach ($this->getClasses() as $classItem) {
+                $class = VisibleFieldDefinitionHelper::resolveClass($classItem['classes']);
+                if ($class) {
+                    $classes[] = $class->getId() . ':' . $class->getModificationDate();
+                }
+            }
+        }
+
+        return serialize([
+            'objects' => $this->getObjectsAllowed(),
+            'classes' => $classes,
+            'assets' => $this->getAssetsAllowed(),
+            'assetTypes' => $this->getAssetsAllowed() ? array_column($this->getAssetTypes(), 'assetTypes') : [],
+            'predefinedMetadata' => Predefined::getRuntimeCacheGeneration(),
+            'documents' => $this->getDocumentsAllowed(),
+        ]);
+    }
+
+    /**
+     * @return array<string, string[]>
+     */
+    private function buildVisibleFieldSources(array $context): array
     {
         $sources = [];
         $add = static function (array $names, string $source) use (&$sources): void {
