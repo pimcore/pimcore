@@ -54,7 +54,9 @@ class EmbeddedMetaDataTest extends ModelTestCase
         $document = Asset::getById($document->getId(), ['force' => true]);
         $this->assertInstanceOf(Asset\Document::class, $document);
         $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
-        $this->assertSame($metaData, $document->getEmbeddedMetaData(false));
+        // assertEquals() instead of assertSame(): MySQL JSON columns do not preserve the key order of the
+        // custom settings, so the arrays are compared without considering the order of the keys
+        $this->assertEquals($metaData, $document->getEmbeddedMetaData(false));
     }
 
     public function testEmbeddedMetaDataIsResetWhenDataChanges(): void
@@ -105,7 +107,7 @@ class EmbeddedMetaDataTest extends ModelTestCase
 
         $document = Asset::getById($document->getId(), ['force' => true]);
         $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
-        $this->assertSame($metaData, $document->getEmbeddedMetaData(false));
+        $this->assertEquals($metaData, $document->getEmbeddedMetaData(false));
     }
 
     public function testVersionKeepsEmbeddedMetaData(): void
@@ -122,14 +124,14 @@ class EmbeddedMetaDataTest extends ModelTestCase
         $versionDocument = $version->loadData();
         $this->assertInstanceOf(Asset\Document::class, $versionDocument);
         $this->assertTrue($versionDocument->getCustomSetting('embeddedMetaDataExtracted'));
-        $this->assertSame($metaData, $versionDocument->getCustomSetting('embeddedMetaData'));
+        $this->assertEquals($metaData, $versionDocument->getCustomSetting('embeddedMetaData'));
 
         // the same applies when the version is restored
         $versionDocument->save();
 
         $document = Asset::getById($document->getId(), ['force' => true]);
         $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
-        $this->assertSame($metaData, $document->getEmbeddedMetaData(false));
+        $this->assertEquals($metaData, $document->getEmbeddedMetaData(false));
     }
 
     public function testUpdateTasksHandlerExtractsAndPersistsEmbeddedMetaData(): void
