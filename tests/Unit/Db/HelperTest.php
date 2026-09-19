@@ -317,6 +317,43 @@ final class HelperTest extends TestCase
         $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
     }
 
+    public function testMysqliFoundRowsConnectionFallsBackToTheLegacyPath(): void
+    {
+        if (!extension_loaded('mysqli')) {
+            $this->markTestSkipped('The mysqli extension is not available.');
+        }
+
+        // the same option on the mysqli driver is a client flag in the 'flags' bitmask
+        $params = $this->db->getParams();
+        unset($params['driverClass']);
+        $params['driver'] = 'mysqli';
+        $params['driverOptions'] = ['flags' => MYSQLI_CLIENT_FOUND_ROWS];
+        $foundRowsConnection = \Doctrine\DBAL\DriverManager::getConnection($params);
+
+        try {
+            $lastInsertId = Helper::upsertByUniqueKey(
+                $foundRowsConnection,
+                self::TABLE_AUTO_INCREMENT,
+                ['id' => null, 'name' => 'mysqli-found-rows', 'value' => 'inserted'],
+                ['id']
+            );
+            $this->assertNotNull($lastInsertId, 'The insert path has to return the generated id.');
+            $id = (int) $lastInsertId;
+
+            $data = ['id' => $id, 'name' => 'mysqli-found-rows', 'value' => 'updated'];
+            $this->assertNull(Helper::upsertByUniqueKey($foundRowsConnection, self::TABLE_AUTO_INCREMENT, $data, ['id']));
+            // the case a FOUND_ROWS connection would misreport as an insert on the single statement
+            $this->assertNull(Helper::upsertByUniqueKey($foundRowsConnection, self::TABLE_AUTO_INCREMENT, $data, ['id']));
+        } finally {
+            $foundRowsConnection->close();
+        }
+
+        $row = $this->fetchRowByName('mysqli-found-rows');
+        $this->assertSame($id, (int) $row['id']);
+        $this->assertSame('updated', $row['value']);
+        $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
+    }
+
     public function testConflictOnNonKeyUniqueIndexLeavesTheForeignRowUntouched(): void
     {
         $id = (int) Helper::upsertByUniqueKey(

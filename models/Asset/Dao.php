@@ -157,7 +157,9 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        Helper::upsertByUniqueKey($this->db, 'assets', $data, $this->getPrimaryKey('assets'));
+        // upsert() and not upsertByUniqueKey(): the unique fullpath index is a second unique index,
+        // on which the single statement would run the conflicting row's UPDATE triggers
+        Helper::upsert($this->db, 'assets', $data, $this->getPrimaryKey('assets'));
         if ($data['hasMetaData'] && count($metadataItems)) {
             foreach ($metadataItems as $metadataItem) {
                 $this->db->insert('assets_metadata', $metadataItem);

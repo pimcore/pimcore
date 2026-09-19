@@ -75,26 +75,29 @@ class Helper
      * database only once, no matter which of the two paths it takes. The return value is the
      * same as for {@see self::upsert()}: the last insert id on an insert, null on an update.
      *
-     * $uniqueKeyColumns must be the primary key or a unique index of the table. ON DUPLICATE KEY
+     * $uniqueKeyColumns must be the primary key or a unique index of the table, and the method
+     * is meant for tables where that is the only unique index the data can collide on - as the
+     * class store, query and localized tables, or properties and versions. ON DUPLICATE KEY
      * UPDATE can only ever touch the one row the conflict was detected on, so non-unique
      * criteria would update that row if it matches and nothing else (where upsert() addresses
-     * every row matching its WHERE clause). Because the conflict may also be detected on ANY
-     * other unique index of the table, every assignment is guarded to only apply when the
-     * conflicting row matches the incoming key values. A conflict on some other unique index
-     * therefore assigns that foreign row its own values and the call returns null, like
-     * upsert()'s UPDATE ... WHERE, which matches no row in that situation - the database does
-     * however still run the foreign row's UPDATE triggers with NEW equal to OLD (BEFORE UPDATE
-     * always, AFTER UPDATE depending on the server version), which upsert() never did. The
-     * statement itself leaves the row unchanged; a BEFORE UPDATE trigger that assigns to NEW
-     * does write to it, exactly as it would for any UPDATE of that row. If the keyed
+     * every row matching its WHERE clause). On a table with another unique index the conflict
+     * may be detected on that index instead; as a safety net every assignment is guarded to only
+     * apply when the conflicting row matches the incoming key values, so such a foreign row is
+     * assigned its own values and the call returns null, like upsert()'s UPDATE ... WHERE, which
+     * matches no row in that situation. The database does however still run the foreign row's
+     * UPDATE triggers with NEW equal to OLD (BEFORE UPDATE always, AFTER UPDATE depending on the
+     * server version), which upsert() never did, and a BEFORE UPDATE trigger that assigns to NEW
+     * writes to the row. This is why the core DAOs keep using upsert() for objects, assets and
+     * documents, whose fullpath index is a second unique index. If the keyed
      * row exists and the update itself would violate another unique index, the statement fails
      * with a UniqueConstraintViolationException, the same outcome as upsert()'s UPDATE.
      *
      * The insert and the update path are told apart by the affected-rows value (1 = inserted,
      * 2 or 0 = updated). This requires the default MySQL/MariaDB affected-rows semantics: with
-     * CLIENT_FOUND_ROWS enabled (PDO::MYSQL_ATTR_FOUND_ROWS in the doctrine driverOptions -
-     * Pimcore does not set it), an update that leaves the row unchanged would also report 1 and
-     * be misread as an insert. Such a connection, an empty $uniqueKeyColumns list and a key
+     * CLIENT_FOUND_ROWS enabled (PDO::MYSQL_ATTR_FOUND_ROWS, or MYSQLI_CLIENT_FOUND_ROWS in the
+     * mysqli 'flags', in the doctrine driverOptions - Pimcore does not set either), an update
+     * that leaves the row unchanged would also report 1 and be misread as an insert. Such a
+     * connection, an empty $uniqueKeyColumns list and a key
      * column missing from $data all fall back to {@see self::upsert()}, which is independent of
      * the connection options.
      *
@@ -117,8 +120,7 @@ class Helper
         // the insert/update split below reads the affected-rows value, so a connection with
         // CLIENT_FOUND_ROWS semantics (a no-op duplicate update also reports 1) would return a
         // stale last insert id instead of the contractual null
-        $foundRows = defined('PDO::MYSQL_ATTR_FOUND_ROWS')
-            && ($connection->getParams()['driverOptions'][PDO::MYSQL_ATTR_FOUND_ROWS] ?? false);
+        $foundRows = self::hasFoundRowsSemantics($connection);
 
         $quotedData = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
         $keys = array_map(
@@ -184,6 +186,23 @@ class Helper
         }
 
         return null;
+    }
+
+    /**
+     * Whether the connection was opened with CLIENT_FOUND_ROWS, i.e. reports matched instead of
+     * changed rows: PDO::MYSQL_ATTR_FOUND_ROWS for pdo_mysql, MYSQLI_CLIENT_FOUND_ROWS in the
+     * 'flags' bitmask for mysqli (both live in the doctrine driverOptions).
+     */
+    private static function hasFoundRowsSemantics(Connection $connection): bool
+    {
+        $driverOptions = $connection->getParams()['driverOptions'] ?? [];
+
+        if (defined('PDO::MYSQL_ATTR_FOUND_ROWS') && ($driverOptions[PDO::MYSQL_ATTR_FOUND_ROWS] ?? false)) {
+            return true;
+        }
+
+        return defined('MYSQLI_CLIENT_FOUND_ROWS')
+            && (((int) ($driverOptions['flags'] ?? 0)) & MYSQLI_CLIENT_FOUND_ROWS) !== 0;
     }
 
     public static function fetchPairs(Connection $db, string $sql, array $params = [], array $types = []): array
