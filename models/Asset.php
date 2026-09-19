@@ -158,6 +158,13 @@ class Asset extends Element\AbstractElement
     protected bool $dataChanged = false;
 
     /**
+     * whether the changed data was restored (see restoreStream()) instead of being replaced by other data
+     *
+     * @internal
+     */
+    protected bool $dataRestored = false;
+
+    /**
      * @internal
      */
     protected ?int $dataModificationDate = null;
@@ -620,6 +627,7 @@ class Asset extends Element\AbstractElement
                 }
 
                 $this->setDataChanged(false);
+                $this->dataRestored = false;
 
                 $postEvent = new AssetEvent($this, $parameters);
                 if ($isUpdate) {
@@ -1241,6 +1249,7 @@ class Asset extends Element\AbstractElement
 
         if (is_resource($stream)) {
             $this->setDataChanged();
+            $this->dataRestored = false;
             $this->setDataModificationDate(time());
             $this->stream = $stream;
             $this->streamIsPlaceholder = false;
@@ -1271,8 +1280,8 @@ class Asset extends Element\AbstractElement
 
     /**
      * Assigns binary data that belongs to the current state of the asset, e.g. the data stored by a version or
-     * the recycle bin. In contrast to setStream(), the embedded meta data custom settings are kept, as they
-     * were extracted from exactly this data.
+     * the recycle bin. In contrast to setStream(), the data derived from the binary data (embedded meta data,
+     * dimensions, page count, ...) is kept, as it was generated from exactly this data (see isDataReplaced()).
      *
      * @param resource $stream
      *
@@ -1295,6 +1304,8 @@ class Asset extends Element\AbstractElement
             }
         }
 
+        $this->dataRestored = true;
+
         return $this;
     }
 
@@ -1310,6 +1321,18 @@ class Asset extends Element\AbstractElement
     public function getDataChanged(): bool
     {
         return $this->dataChanged;
+    }
+
+    /**
+     * Whether the binary data was replaced by other data, so that data derived from it (e.g. dimensions,
+     * page count) has to be generated again. This is not the case if the changed data was restored
+     * (see restoreStream()), as the derived data belongs to the restored data.
+     *
+     * @internal
+     */
+    public function isDataReplaced(): bool
+    {
+        return $this->dataChanged && !$this->dataRestored;
     }
 
     /**

@@ -105,6 +105,28 @@ class EmbeddedMetaDataTest extends TestCase
         }
     }
 
+    /**
+     * The file is read in chunks of 1024 bytes. If the open tag ends less than the length of the close tag
+     * before the end of a chunk, the close tag must still be found in the next chunk
+     */
+    public function testXmpPacketIsFoundIfOpenTagIsAtTheEndOfAChunk(): void
+    {
+        $packet = '<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">'
+            . '<rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>Chunk Test</dc:title>'
+            . '</rdf:Description></rdf:RDF></x:xmpmeta>';
+        $document = new Document();
+
+        // 1012: the buffer is exactly as long as the close tag, 1013 and 1014: it is shorter
+        foreach ([1012, 1013, 1014] as $openTagPosition) {
+            $filePath = tempnam(sys_get_temp_dir(), 'pimcore-embedded-meta-data-test-');
+            $this->tempFiles[] = $filePath;
+            file_put_contents($filePath, str_repeat('a', $openTagPosition) . $packet . "\n%%EOF\n");
+
+            $data = $document->getXMPData($filePath);
+            $this->assertSame('Chunk Test', $data['title'] ?? null, 'open tag at position ' . $openTagPosition);
+        }
+    }
+
     public function testXmpPacketWithoutCloseTagIsAbortedCleanly(): void
     {
         $filePath = $this->createFileWithUnclosedXmpPacket(4 * 1024);

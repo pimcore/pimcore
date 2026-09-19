@@ -89,7 +89,7 @@ class AssetUpdateTasksHandler
 
         // handleEmbeddedMetaData() skips already extracted metadata on its own using the same condition,
         // but checking it here too avoids an unnecessary save in that case
-        if (!$asset->getCustomSetting('embeddedMetaDataExtracted') || $asset->getDataChanged()) {
+        if (!$asset->getCustomSetting('embeddedMetaDataExtracted') || $asset->isDataReplaced()) {
             $asset->handleEmbeddedMetaData();
             $save = true;
         }

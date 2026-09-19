@@ -95,6 +95,9 @@ class RecyclebinTest extends ModelTestCase
         $assetId = $asset->getId();
         $asset->setCustomSetting('embeddedMetaData', ['Title' => 'Embedded Meta Data Test']);
         $asset->setCustomSetting('embeddedMetaDataExtracted', true);
+        // derived from the binary data as well, must not be invalidated by the subtype when restoring the data
+        $asset->setCustomSetting('document_page_count', 3);
+        $asset->setCustomSetting(Asset\Document::CUSTOM_SETTING_PDF_SCAN_STATUS, Asset\Enum\PdfScanStatus::SAFE->value);
         $asset->save();
 
         Item::create($asset, $this->user);
@@ -107,6 +110,8 @@ class RecyclebinTest extends ModelTestCase
         $this->assertInstanceOf(Asset\Document::class, $restoredAsset);
         $this->assertTrue($restoredAsset->getCustomSetting('embeddedMetaDataExtracted'));
         $this->assertEquals(['Title' => 'Embedded Meta Data Test'], $restoredAsset->getCustomSetting('embeddedMetaData'));
+        $this->assertSame(3, $restoredAsset->getPageCount());
+        $this->assertSame(Asset\Enum\PdfScanStatus::SAFE, $restoredAsset->getScanStatus());
     }
 
     /**

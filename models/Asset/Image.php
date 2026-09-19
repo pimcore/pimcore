@@ -37,7 +37,7 @@ class Image extends Model\Asset
 
     protected function update(array $params = []): void
     {
-        if ($this->getDataChanged()) {
+        if ($this->isDataReplaced()) {
             foreach (['imageWidth', 'imageHeight', 'imageDimensionsCalculated'] as $key) {
                 $this->removeCustomSetting($key);
             }

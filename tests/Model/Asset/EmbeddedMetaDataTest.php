@@ -135,6 +135,46 @@ class EmbeddedMetaDataTest extends ModelTestCase
     }
 
     /**
+     * Restoring a version assigns the binary data of the version, which must not invalidate the custom settings
+     * derived from this data (page count, dimensions, ...), as the subtypes do when the data is replaced
+     */
+    public function testVersionRestoreKeepsDerivedCustomSettings(): void
+    {
+        $assets = [
+            [TestHelper::createDocumentAsset(), [
+                'document_page_count' => 3,
+                Asset\Document::CUSTOM_SETTING_PDF_SCAN_STATUS => Asset\Enum\PdfScanStatus::SAFE->value,
+            ]],
+            [TestHelper::createImageAsset(), [
+                'imageWidth' => 1024,
+                'imageHeight' => 768,
+                'imageDimensionsCalculated' => true,
+            ]],
+            [TestHelper::createVideoAsset(), [
+                'duration' => 12.5,
+                'videoWidth' => 640,
+                'videoHeight' => 480,
+            ]],
+        ];
+
+        foreach ($assets as [$asset, $derivedSettings]) {
+            foreach ($derivedSettings as $key => $value) {
+                $asset->setCustomSetting($key, $value);
+            }
+            $asset->save();
+
+            $version = $asset->getLatestVersion(null, true);
+            $this->assertNotNull($version);
+            $version->loadData()->save();
+
+            $restoredAsset = Asset::getById($asset->getId(), ['force' => true]);
+            foreach ($derivedSettings as $key => $value) {
+                $this->assertEquals($value, $restoredAsset->getCustomSetting($key), get_class($asset) . ': ' . $key);
+            }
+        }
+    }
+
+    /**
      * Custom settings which are too large for the cache are only loaded on access, which must not lead to
      * a version without custom settings when it is created from an asset that was hydrated from the cache
      */

@@ -45,7 +45,7 @@ trait EmbeddedMetaDataTrait
      */
     public function handleEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): void
     {
-        if (!$this->getCustomSetting('embeddedMetaDataExtracted') || $this->getDataChanged()) {
+        if (!$this->getCustomSetting('embeddedMetaDataExtracted') || $this->isDataReplaced()) {
             $this->readEmbeddedMetaData($useExifTool, $filePath);
         }
     }
@@ -192,7 +192,10 @@ trait EmbeddedMetaDataTrait
                             break;
                         }
 
-                        $offset = strlen($buffer) - $tagLength; // subtract the tag size just in case it's split between chunks.
+                        // subtract the tag size just in case it's split between chunks, but never search from the end
+                        // of the buffer (negative offset), which can be shorter than the tag if the open tag was found
+                        // at the end of a chunk
+                        $offset = max(0, strlen($buffer) - $tagLength);
                         $buffer .= $chunk;
                     }
 

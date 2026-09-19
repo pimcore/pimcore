@@ -35,7 +35,7 @@ class Document extends Model\Asset
 
     protected function update(array $params = []): void
     {
-        if ($this->getDataChanged()) {
+        if ($this->isDataReplaced()) {
             $this->removeCustomSetting(self::CUSTOM_SETTING_PAGE_COUNT);
             $this->removeCustomSetting(self::CUSTOM_SETTING_PDF_SCAN_STATUS);
         }

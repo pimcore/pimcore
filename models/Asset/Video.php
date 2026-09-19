@@ -34,7 +34,7 @@ class Video extends Model\Asset
 
     protected function update(array $params = []): void
     {
-        if ($this->getDataChanged()) {
+        if ($this->isDataReplaced()) {
             foreach (['duration', 'videoWidth', 'videoHeight'] as $key) {
                 $this->removeCustomSetting($key);
             }
