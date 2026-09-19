@@ -17,6 +17,7 @@ use Exception;
 use Pimcore;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
@@ -185,18 +186,57 @@ trait VisibleFieldsTrait
      */
     public function getVisibleFieldData(Element\ElementInterface $element, array $params = []): array
     {
-        $available = $this->getAvailableVisibleFields($params['context'] ?? []);
+        $sources = $this->getVisibleFieldSources($params['context'] ?? []);
         $elementSources = $this->getVisibleFieldSourcesOf($element);
 
         $data = [];
         foreach ($this->getVisibleFieldNames() as $name) {
-            $sources = $available[$name]['sources'] ?? [];
-            $data[$name] = is_array($sources) && array_intersect($sources, $elementSources)
+            $data[$name] = array_intersect($sources[$name] ?? [], $elementSources)
                 ? $this->resolveVisibleFieldValue($element, $name, $params)
                 : null;
         }
 
         return $data;
+    }
+
+    /**
+     * The names getAvailableVisibleFields() offers and where each comes from (the same `sources` as there),
+     * without describing the fields: no enrichment of class fields takes place, so this is cheap enough to
+     * be called per related element.
+     *
+     * @return array<string, string[]>
+     */
+    public function getVisibleFieldSources(array $context = []): array
+    {
+        $sources = [];
+        $add = static function (array $names, string $source) use (&$sources): void {
+            foreach ($names as $name) {
+                if (!in_array($source, $sources[$name] ?? [], true)) {
+                    $sources[$name][] = $source;
+                }
+            }
+        };
+
+        if ($this->getObjectsAllowed()) {
+            $add($this->getCommonVisibleFieldNames(), 'object');
+
+            foreach ($this->getClasses() as $classItem) {
+                $class = VisibleFieldDefinitionHelper::resolveClass($classItem['classes']);
+                if ($class) {
+                    $add($this->getObjectVisibleFieldNames($class, $context), 'object:' . $class->getName());
+                }
+            }
+        }
+
+        if ($this->getAssetsAllowed()) {
+            $add($this->getAssetVisibleFieldNames(), 'asset');
+        }
+
+        if ($this->getDocumentsAllowed()) {
+            $add($this->getCommonVisibleFieldNames(), 'document');
+        }
+
+        return $sources;
     }
 
     /**
@@ -208,6 +248,11 @@ trait VisibleFieldsTrait
     {
         if ($element instanceof Concrete) {
             return ['object', 'object:' . $element->getClassName()];
+        }
+
+        if ($element instanceof AbstractObject) {
+            // object folders (and variants of unrestricted relations): the common properties apply
+            return ['object'];
         }
 
         if ($element instanceof Asset) {
@@ -222,14 +267,92 @@ trait VisibleFieldsTrait
     }
 
     /**
+     * @return string[]
+     */
+    protected function getCommonVisibleFieldNames(): array
+    {
+        return ['creationDate', 'modificationDate'];
+    }
+
+    /**
      * @return array<string, array<string, mixed>>
      */
     protected function getCommonVisibleFieldCandidates(): array
     {
-        return [
-            'creationDate' => $this->buildVisibleFieldCandidate('creationDate', 'date'),
-            'modificationDate' => $this->buildVisibleFieldCandidate('modificationDate', 'date'),
-        ];
+        $candidates = [];
+        foreach ($this->getCommonVisibleFieldNames() as $name) {
+            $candidates[$name] = $this->buildVisibleFieldCandidate($name, 'date');
+        }
+
+        return $candidates;
+    }
+
+    /**
+     * Names of the top-level and localized data fields of an object class, read without enriching the
+     * definitions (see getObjectVisibleFieldCandidates() for the described fields).
+     *
+     * @return string[]
+     */
+    protected function getObjectVisibleFieldNames(ClassDefinition $class, array $context = []): array
+    {
+        $context['suppressEnrichment'] = true;
+        $names = [];
+
+        foreach ($class->getFieldDefinitions($context) as $fieldDefinition) {
+            if ($fieldDefinition instanceof Data\Localizedfields) {
+                foreach ($fieldDefinition->getFieldDefinitions($context) as $localizedFieldDefinition) {
+                    if ($this->isVisibleFieldCandidate($localizedFieldDefinition)) {
+                        $names[] = $localizedFieldDefinition->getName();
+                    }
+                }
+            } elseif ($this->isVisibleFieldCandidate($fieldDefinition)) {
+                $names[] = $fieldDefinition->getName();
+            }
+        }
+
+        return array_values(array_unique($names));
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getAssetVisibleFieldNames(): array
+    {
+        return array_values(array_unique(array_merge(
+            $this->getCommonVisibleFieldNames(),
+            ['filename', 'mimetype', 'fileSize'],
+            array_keys($this->getApplicablePredefinedAssetMetadata())
+        )));
+    }
+
+    /**
+     * The predefined asset metadata that can be offered for this definition: one definition per name, the
+     * first whose target subtype is not excluded by the allowed asset types.
+     *
+     * @return array<string, Predefined>
+     */
+    protected function getApplicablePredefinedAssetMetadata(): array
+    {
+        $allowedSubtypes = array_filter(array_map(
+            static fn (array $item): string => $item['assetTypes'],
+            $this->getAssetTypes()
+        ));
+
+        $applicable = [];
+        foreach ($this->getPredefinedAssetMetadataByName() as $name => $definitions) {
+            foreach ($definitions as $definition) {
+                $targetSubtype = $definition->getTargetSubtype();
+                if ($targetSubtype && $allowedSubtypes && !in_array($targetSubtype, $allowedSubtypes, true)) {
+                    continue;
+                }
+
+                $applicable[$name] = $definition;
+
+                break;
+            }
+        }
+
+        return $applicable;
     }
 
     /**
@@ -279,26 +402,8 @@ trait VisibleFieldsTrait
             'fileSize' => $this->buildVisibleFieldCandidate('fileSize', 'numeric'),
         ]);
 
-        $allowedSubtypes = array_filter(array_map(
-            static fn (array $item): string => $item['assetTypes'],
-            $this->getAssetTypes()
-        ));
-
-        foreach ($this->getPredefinedAssetMetadataByName() as $name => $definitions) {
-            if (isset($candidates[$name])) {
-                continue;
-            }
-
-            foreach ($definitions as $definition) {
-                $targetSubtype = $definition->getTargetSubtype();
-                if ($targetSubtype && $allowedSubtypes && !in_array($targetSubtype, $allowedSubtypes, true)) {
-                    continue;
-                }
-
-                $candidates[$name] = $this->buildVisibleFieldCandidateFromPredefinedMetadata($definition);
-
-                break;
-            }
+        foreach ($this->getApplicablePredefinedAssetMetadata() as $name => $definition) {
+            $candidates[$name] ??= $this->buildVisibleFieldCandidateFromPredefinedMetadata($definition);
         }
 
         return $candidates;

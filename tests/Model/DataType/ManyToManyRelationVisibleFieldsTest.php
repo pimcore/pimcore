@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\DataType;
 
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
@@ -151,6 +152,9 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
 
         // documents are not allowed, objects only offer their class fields
         $this->assertArrayNotHasKey('localizedfields', $available);
+
+        // the lightweight source map used for value resolution agrees with the described fields
+        $this->assertSame(array_map(static fn (array $field): array => $field['sources'], $available), $fd->getVisibleFieldSources());
     }
 
     public function testAvailableVisibleFieldsFollowTheAllowedTypes(): void
@@ -193,6 +197,13 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         $data = $fd->getVisibleFieldData($object);
         $this->assertSame($object->getCreationDate(), $data['creationDate']);
         $this->assertNull($data['someAttribute'], 'names that are not offered for the definition must not resolve');
+
+        // object folders are related elements of an unrestricted relation too and have the common properties
+        $folder = DataObject\Service::createFolderByPath('/visible-fields-folder-' . uniqid());
+        $this->assertInstanceOf(DataObject\Folder::class, $folder);
+        $data = $fd->getVisibleFieldData($folder);
+        $this->assertSame($folder->getCreationDate(), $data['creationDate']);
+        $this->assertNull($data['someAttribute']);
     }
 
     public function testConfiguredNamesOnlyResolveForTheElementTypesTheyAreOfferedFor(): void
