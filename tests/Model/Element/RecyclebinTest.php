@@ -146,6 +146,33 @@ class RecyclebinTest extends ModelTestCase
     }
 
     /**
+     * An asset remembers that its custom settings were too large for the cache, even if they are cleared
+     * afterwards. A recycle bin item of such an asset with cleared custom settings must not be mistaken for a
+     * legacy item without custom settings (see testLegacyRecycleBinItemWithoutCustomSettingsRegeneratesDerivedSettings())
+     */
+    public function testRecycleBinRestoreKeepsClearedOversizedCustomSettings(): void
+    {
+        $asset = TestHelper::createDocumentAsset();
+        $assetId = $asset->getId();
+        $asset = Asset::getById($assetId, ['force' => true]);
+        TestHelper::simulateCustomSettingsTooLargeForCache($asset);
+        $asset->setCustomSettings([]);
+        $asset->save();
+
+        Item::create($asset, $this->user);
+        $asset->delete();
+
+        $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
+        (new Item\Listing())->current()->restore();
+        // the empty custom settings are restored as they are, without processing the data again
+        $this->assertSame($queueSize, TestHelper::getAssetUpdateTaskQueueSize());
+
+        $restoredAsset = Asset::getById($assetId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $restoredAsset);
+        $this->assertNull($restoredAsset->getCustomSetting('embeddedMetaDataExtracted'));
+    }
+
+    /**
      * Recycle bin items created before the custom settings were loaded explicitly before dumping, of an asset that
      * was hydrated from the cache without its custom settings (too large for the cache), don't contain the custom
      * settings at all. Restoring such an item can't restore the derived settings, so they have to be generated
@@ -160,6 +187,7 @@ class RecyclebinTest extends ModelTestCase
         $assetId = $asset->getId();
         $asset->getEmbeddedMetaData(true, false);
         $asset->setCustomSetting('document_page_count', 3);
+        $asset->setCustomSetting('customSettingsTest', 'test');
         $asset->save();
 
         Item::create($asset, $this->user);
@@ -180,6 +208,8 @@ class RecyclebinTest extends ModelTestCase
         $this->assertInstanceOf(Asset\Document::class, $restoredAsset);
         $this->assertNull($restoredAsset->getPageCount());
         $this->assertNull($restoredAsset->getCustomSetting('embeddedMetaDataExtracted'));
+        // the dump doesn't contain any custom settings, and no custom settings are loaded from anywhere else
+        $this->assertNull($restoredAsset->getCustomSetting('customSettingsTest'));
 
         // ... which generates the derived settings again (with exiftool if available, so only a key
         // available with and without exiftool is checked)

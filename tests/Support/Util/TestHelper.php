@@ -643,6 +643,16 @@ class TestHelper
     }
 
     /**
+     * Simulates that the custom settings of the asset were loaded from the database with a size too large for the
+     * cache (the asset remembers this, even if the custom settings are changed or cleared afterwards)
+     */
+    public static function simulateCustomSettingsTooLargeForCache(Asset $asset): void
+    {
+        $canBeCachedProperty = new ReflectionProperty(Asset::class, 'customSettingsCanBeCached');
+        $canBeCachedProperty->setValue($asset, false);
+    }
+
+    /**
      * Simulates an asset with custom settings which are too large for the cache, that was hydrated from the cache:
      * the custom settings are not serialized in this case and are only loaded from the database on the first access.
      *
@@ -650,8 +660,7 @@ class TestHelper
      */
     public static function getCacheHydratedAsset(Asset $asset): Asset
     {
-        $canBeCachedProperty = new ReflectionProperty(Asset::class, 'customSettingsCanBeCached');
-        $canBeCachedProperty->setValue($asset, false);
+        self::simulateCustomSettingsTooLargeForCache($asset);
 
         $hydratedAsset = unserialize(serialize($asset));
         if (!$hydratedAsset instanceof Asset) {

@@ -165,11 +165,13 @@ class Asset extends Element\AbstractElement
     protected bool $dataRestored = false;
 
     /**
-     * whether the custom settings were omitted from the dump (e.g. version, recycle bin) this asset was loaded from
+     * whether the custom settings were not loaded yet when the asset was dumped (e.g. for a version or the recycle
+     * bin), so that the dump doesn't contain them. null if unknown (dumps created before this was tracked, and
+     * assets that were not loaded from a dump).
      *
      * @internal
      */
-    protected bool $customSettingsIncomplete = false;
+    protected ?bool $customSettingsIncomplete = null;
 
     /**
      * @internal
@@ -209,6 +211,10 @@ class Asset extends Element\AbstractElement
 
     public function __sleep(): array
     {
+        // a dump (e.g. version, recycle bin) has to know whether the dumped custom settings are complete, which is
+        // not the case if they were not loaded yet (see refreshCustomSettings()) when the asset was dumped
+        $this->customSettingsIncomplete = $this->isInDumpState() ? $this->customSettingsNeedRefresh : null;
+
         $blockedVars = parent::__sleep();
         if (in_array('customSettings', $blockedVars)) {
             $this->customSettingsNeedRefresh = true;
@@ -637,7 +643,7 @@ class Asset extends Element\AbstractElement
 
                 $this->setDataChanged(false);
                 $this->dataRestored = false;
-                $this->customSettingsIncomplete = false;
+                $this->customSettingsIncomplete = null;
 
                 $postEvent = new AssetEvent($this, $parameters);
                 if ($isUpdate) {
@@ -1301,7 +1307,7 @@ class Asset extends Element\AbstractElement
      */
     public function restoreStream($stream): static
     {
-        if ($this->customSettingsIncomplete) {
+        if ($this->customSettingsIncomplete === true) {
             // the dump this asset was loaded from didn't contain the custom settings, so the data derived from the
             // restored data is unknown and has to be generated again: the restored data is treated like replaced data
             $this->setStream($stream);
@@ -1753,13 +1759,20 @@ class Asset extends Element\AbstractElement
         if ($this->isInDumpState()) {
             // a dump (e.g. version, recycle bin) contains the custom settings of the dumped state, which must not be
             // replaced by the current custom settings of the asset in the database (which don't even exist anymore
-            // for a deleted asset).
-            // Exception: dumps created before the custom settings were loaded explicitly before dumping (see
-            // Asset\Service::loadAllFields()) of an asset that was hydrated from the cache without its custom settings
-            // (as they were too large for the cache) don't contain the custom settings at all. Custom settings that
-            // are too large for the cache can't be empty once they are loaded, so this state is detectable.
-            $this->customSettingsIncomplete = $this->customSettingsCanBeCached === false && $this->customSettings === [];
-            $this->customSettingsNeedRefresh = $this->customSettingsIncomplete;
+            // for a deleted asset). This also applies to dumps that don't contain the custom settings (see below),
+            // as the current custom settings don't belong to the dumped state either.
+            $this->customSettingsNeedRefresh = false;
+
+            if ($this->customSettingsIncomplete === null) {
+                // dump created before it was tracked whether the custom settings were loaded when the asset was
+                // dumped: an asset hydrated from the cache without its custom settings (as they were too large for
+                // the cache) was dumped without them, as they were not loaded explicitly before dumping (see
+                // Asset\Service::loadAllFields()). Custom settings that are too large for the cache can't be empty
+                // once they are loaded, so this state is detectable (but not distinguishable from custom settings
+                // that were cleared after loading them, which is why it is tracked explicitly now).
+                $this->customSettingsIncomplete = $this->customSettingsCanBeCached === false
+                    && $this->customSettings === [];
+            }
         } elseif ($this->customSettingsCanBeCached === false) {
             $this->customSettingsNeedRefresh = true;
         }

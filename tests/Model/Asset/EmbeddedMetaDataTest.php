@@ -199,9 +199,14 @@ class EmbeddedMetaDataTest extends ModelTestCase
             $document->getStream()
         );
 
+        // a custom setting added afterwards belongs to the current state of the asset, not to the version
+        $document->setCustomSetting('customSettingsTest', 'test');
+        $document->save();
+
         $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
         $restoredDocument = $version->loadData();
         $this->assertInstanceOf(Asset\Document::class, $restoredDocument);
+        $this->assertNull($restoredDocument->getCustomSetting('customSettingsTest'));
         $restoredDocument->save();
         // the derived settings are unknown, so the restored data is processed again ...
         $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize());
@@ -209,6 +214,8 @@ class EmbeddedMetaDataTest extends ModelTestCase
         $document = Asset::getById($document->getId(), ['force' => true]);
         $this->assertNull($document->getPageCount());
         $this->assertNull($document->getCustomSetting('embeddedMetaDataExtracted'));
+        // the current custom settings must not leak into the restored state
+        $this->assertNull($document->getCustomSetting('customSettingsTest'));
 
         // ... which generates the derived settings again (with exiftool if available, so only a key
         // available with and without exiftool is checked)
@@ -217,6 +224,38 @@ class EmbeddedMetaDataTest extends ModelTestCase
         $document = Asset::getById($document->getId(), ['force' => true]);
         $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
         $this->assertSame('Pimcore Test Suite', $document->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
+    }
+
+    /**
+     * An asset remembers that its custom settings were too large for the cache, even if they are cleared
+     * afterwards. A version of such an asset with cleared custom settings must not be mistaken for a legacy
+     * version without custom settings (see testLegacyVersionWithoutCustomSettingsRegeneratesDerivedSettings())
+     */
+    public function testVersionRestoreKeepsClearedOversizedCustomSettings(): void
+    {
+        $document = TestHelper::createDocumentAsset();
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        TestHelper::simulateCustomSettingsTooLargeForCache($document);
+        $document->setCustomSettings([]);
+        $document->save();
+
+        $clearedVersion = $document->getLatestVersion(null, true);
+        $this->assertNotNull($clearedVersion);
+
+        // the current state of the asset has custom settings again
+        $document->setCustomSetting('customSettingsTest', 'test');
+        $document->save();
+
+        $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
+        $restoredDocument = $clearedVersion->loadData();
+        $this->assertInstanceOf(Asset\Document::class, $restoredDocument);
+        $this->assertNull($restoredDocument->getCustomSetting('customSettingsTest'));
+        $restoredDocument->save();
+        // the empty custom settings of the version are restored as they are, without processing the data again
+        $this->assertSame($queueSize, TestHelper::getAssetUpdateTaskQueueSize());
+
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertNull($document->getCustomSetting('customSettingsTest'));
     }
 
     /**
