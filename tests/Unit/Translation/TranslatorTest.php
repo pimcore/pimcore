@@ -94,12 +94,27 @@ class TranslatorTest extends TestCase
         parent::setUp();
 
         $this->translator = Pimcore::getContainer()->get(TranslatorInterface::class);
+
+        // the first catalogue Symfony's translator has to build itself (instead of reading it from its cache
+        // directory) applies the translation resources it was configured with, which discards every catalogue
+        // loaded so far - while Pimcore's translator still considers them initialized and does not merge the
+        // database translations again. Trigger that once, before the fixtures and the reset below, instead of
+        // letting it happen in the middle of a test.
+        $this->warmUpCatalogues();
+
         $this->addTranslations();
 
         // the translator is shared with everything that ran before this test (other suites included) and
         // builds a domain/locale catalogue only once - make sure it sees the fixtures written above and
         // nothing that was translated earlier in the run
         $this->resetTranslatorState();
+    }
+
+    private function warmUpCatalogues(): void
+    {
+        foreach (array_keys($this->locales) as $locale) {
+            $this->translator->getCatalogue($locale);
+        }
     }
 
     protected function tearDown(): void
