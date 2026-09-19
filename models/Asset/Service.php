@@ -101,7 +101,8 @@ class Service extends Model\Element\Service
         $new->setDao(null);
         $new->setLocked(null);
         $new->setCreationDate(time());
-        $new->setStream($source->getStream());
+        // the custom settings (e.g. embedded meta data) were cloned from the source as well, so they belong to this data
+        $new->restoreStream($source->getStream());
         $new->save();
 
         // add to store
@@ -154,7 +155,8 @@ class Service extends Model\Element\Service
         $new->setDao(null);
         $new->setLocked(null);
         $new->setCreationDate(time());
-        $new->setStream($source->getStream());
+        // the custom settings (e.g. embedded meta data) were cloned from the source as well, so they belong to this data
+        $new->restoreStream($source->getStream());
         $new->save();
 
         if ($target instanceof Asset\Folder) {

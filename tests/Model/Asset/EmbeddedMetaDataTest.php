@@ -134,6 +134,27 @@ class EmbeddedMetaDataTest extends ModelTestCase
         $this->assertEquals($metaData, $document->getEmbeddedMetaData(false));
     }
 
+    public function testCopyKeepsEmbeddedMetaData(): void
+    {
+        $document = TestHelper::createDocumentAsset('', $this->getPdfWithMetaData());
+        $metaData = $document->getEmbeddedMetaData(true, false);
+        $this->assertSame('Pimcore Test Suite', $metaData['CreatorTool']);
+        $document->save();
+
+        $folder = Asset\Service::createFolderByPath('/' . uniqid('embedded-meta-data-copy-'));
+        $service = new Asset\Service();
+
+        foreach (['copyAsChild', 'copyRecursive'] as $copyMethod) {
+            $copy = $service->$copyMethod($folder, $document);
+            $this->assertNotSame($document->getId(), $copy->getId());
+
+            $copy = Asset::getById($copy->getId(), ['force' => true]);
+            $this->assertInstanceOf(Asset\Document::class, $copy);
+            $this->assertTrue($copy->getCustomSetting('embeddedMetaDataExtracted'), $copyMethod);
+            $this->assertEquals($metaData, $copy->getEmbeddedMetaData(false), $copyMethod);
+        }
+    }
+
     public function testUpdateTasksHandlerExtractsAndPersistsEmbeddedMetaData(): void
     {
         $document = TestHelper::createDocumentAsset('', $this->getPdfWithMetaData());

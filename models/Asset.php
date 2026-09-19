@@ -1270,8 +1270,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Assigns binary data that was stored together with the current state of the asset, e.g. by a version.
-     * In contrast to setStream(), the embedded meta data custom settings are kept, as they belong to this data.
+     * Assigns binary data that belongs to the current state of the asset, e.g. the data stored by a version or
+     * the recycle bin, or the data of the source asset when copying an asset. In contrast to setStream(),
+     * the embedded meta data custom settings are kept, as they were extracted from exactly this data.
      *
      * @param resource $stream
      *
@@ -1369,7 +1370,7 @@ class Asset extends Element\AbstractElement
         if ($this->customSettingsNeedRefresh === true) {
             $customSettings = $this->getDao()->getCustomSettings();
             $this->setCustomSettings($customSettings);
-            $this->customSettingsNeedRefresh = false;
+            $this->customSettingsNeedRefresh = true;
         }
     }
 
@@ -1706,7 +1707,12 @@ class Asset extends Element\AbstractElement
             $this->renewInheritedProperties();
         }
 
-        if (!$this->isInDumpState() && $this->customSettingsCanBeCached === false) {
+        if ($this->isInDumpState()) {
+            // a dump (e.g. version, recycle bin) contains the custom settings of the dumped state, which must not be
+            // replaced by the current custom settings of the asset in the database (which don't even exist anymore
+            // for a deleted asset)
+            $this->customSettingsNeedRefresh = false;
+        } elseif ($this->customSettingsCanBeCached === false) {
             $this->customSettingsNeedRefresh = true;
         }
 

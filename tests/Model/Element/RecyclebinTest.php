@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Element;
 
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Recyclebin\Item;
 use Pimcore\Model\User;
@@ -82,6 +83,30 @@ class RecyclebinTest extends ModelTestCase
 
         $restoredObject = DataObject::getById($objectId);
         $this->assertIsObject($restoredObject, 'Restored simple object');
+    }
+
+    /**
+     * Verifies that restoring an asset keeps its custom settings, in particular the embedded
+     * meta data, which belongs to the restored binary data
+     */
+    public function testAssetRecycleAndRestoreKeepsEmbeddedMetaData(): void
+    {
+        $asset = TestHelper::createDocumentAsset();
+        $assetId = $asset->getId();
+        $asset->setCustomSetting('embeddedMetaData', ['Title' => 'Embedded Meta Data Test']);
+        $asset->setCustomSetting('embeddedMetaDataExtracted', true);
+        $asset->save();
+
+        Item::create($asset, $this->user);
+        $asset->delete();
+
+        $recycledItems = new Item\Listing();
+        $recycledItems->current()->restore();
+
+        $restoredAsset = Asset::getById($assetId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $restoredAsset);
+        $this->assertTrue($restoredAsset->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertEquals(['Title' => 'Embedded Meta Data Test'], $restoredAsset->getCustomSetting('embeddedMetaData'));
     }
 
     /**
