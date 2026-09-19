@@ -29,26 +29,42 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
 {
     private const PREDEFINED_METADATA = 'visibleFieldsTestCopyright';
 
-    private ?Predefined $predefinedMetadata = null;
+    private const IMAGE_ONLY_METADATA = 'visibleFieldsTestImageOnly';
+
+    /** @var Predefined[] */
+    private array $predefinedMetadata = [];
 
     public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
 
-        $this->predefinedMetadata = Predefined::getByName(self::PREDEFINED_METADATA) ?? Predefined::create();
-        $this->predefinedMetadata->setName(self::PREDEFINED_METADATA);
-        $this->predefinedMetadata->setType('input');
-        $this->predefinedMetadata->save();
+        $this->predefinedMetadata = [
+            $this->createPredefinedMetadata(self::PREDEFINED_METADATA),
+            $this->createPredefinedMetadata(self::IMAGE_ONLY_METADATA, 'image'),
+        ];
     }
 
     public function tearDown(): void
     {
-        $this->predefinedMetadata?->delete();
-        $this->predefinedMetadata = null;
+        foreach ($this->predefinedMetadata as $predefined) {
+            $predefined->delete();
+        }
+        $this->predefinedMetadata = [];
 
         TestHelper::cleanUp();
         parent::tearDown();
+    }
+
+    private function createPredefinedMetadata(string $name, ?string $targetSubtype = null): Predefined
+    {
+        $predefined = Predefined::getByName($name) ?? Predefined::create();
+        $predefined->setName($name);
+        $predefined->setType('input');
+        $predefined->setTargetSubtype($targetSubtype);
+        $predefined->save();
+
+        return $predefined;
     }
 
     protected function setUpTestClasses(): void
@@ -214,6 +230,41 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         $this->assertSame('(c) pimcore', $assetData[self::PREDEFINED_METADATA]);
     }
 
+    public function testAssetMetadataIsOnlyResolvedWhereItApplies(): void
+    {
+        $image = TestHelper::createImageAsset('visible-fields-');
+        $image->addMetadata(self::IMAGE_ONLY_METADATA, 'input', 'image value');
+        // ad-hoc metadata named like a class field of the allowed object class
+        $image->addMetadata('someAttribute', 'input', 'ad-hoc collision');
+        $image->save();
+
+        $video = TestHelper::createVideoAsset('visible-fields-');
+        $video->addMetadata(self::IMAGE_ONLY_METADATA, 'input', 'video value');
+        $video->save();
+
+        $fd = $this->createMixedDefinition();
+        $fd->setVisibleFields(['someAttribute', self::IMAGE_ONLY_METADATA, self::PREDEFINED_METADATA]);
+
+        $available = $fd->getAvailableVisibleFields();
+        $this->assertSame(['asset'], $available[self::IMAGE_ONLY_METADATA]['sources']);
+        $this->assertSame(['object:RelationTest'], $available['someAttribute']['sources']);
+
+        $imageData = $fd->getVisibleFieldData($image);
+        $this->assertSame('image value', $imageData[self::IMAGE_ONLY_METADATA]);
+        $this->assertNull($imageData['someAttribute'], 'a class field must not surface same-named ad-hoc asset metadata');
+        $this->assertNull($imageData[self::PREDEFINED_METADATA], 'predefined metadata that is not set on the asset resolves to null');
+
+        $videoData = $fd->getVisibleFieldData($video);
+        $this->assertNull($videoData[self::IMAGE_ONLY_METADATA], 'metadata defined for images must not be shown on a video');
+        $this->assertNull($videoData['someAttribute']);
+
+        // restricting the allowed asset types removes metadata of other subtypes from the offered fields
+        $fd->setAssetTypes([['assetTypes' => 'video']]);
+        $available = $fd->getAvailableVisibleFields();
+        $this->assertArrayNotHasKey(self::IMAGE_ONLY_METADATA, $available);
+        $this->assertArrayHasKey(self::PREDEFINED_METADATA, $available);
+    }
+
     public function testAdvancedRelationEditmodeRowsContainVisibleFieldData(): void
     {
         $object = $this->createRelationTestObject('object value');
@@ -243,6 +294,13 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         $this->assertNull($rows[1]['someAttribute']);
         $this->assertSame('(c) pimcore', $rows[1][self::PREDEFINED_METADATA]);
         $this->assertNull($rows[1]['filename'], 'metadata columns take precedence over visible fields');
+
+        // with optimized admin loading the values are left to the UI to fetch asynchronously
+        $fd->setOptimizedAdminLoading(true);
+        $rows = $fd->getDataForEditmode([$assetMetadata]);
+        $this->assertArrayNotHasKey('someAttribute', $rows[0]);
+        $this->assertArrayNotHasKey(self::PREDEFINED_METADATA, $rows[0]);
+        $fd->setOptimizedAdminLoading(false);
 
         $fd->setVisibleFields(null);
         $rows = $fd->getDataForEditmode([$assetMetadata]);
