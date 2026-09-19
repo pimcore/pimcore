@@ -307,7 +307,8 @@ final class Version extends AbstractModel
         if ($data instanceof Asset) {
             $binaryStream = $this->storageAdapter->loadBinaryData($this);
             if ($binaryStream) {
-                $data->setStream($binaryStream);
+                // the binary data belongs to the state of the version, so the embedded meta data has to be kept
+                $data->restoreStream($binaryStream);
             }
         }
 

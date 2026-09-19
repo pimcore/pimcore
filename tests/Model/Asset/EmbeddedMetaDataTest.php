@@ -108,6 +108,30 @@ class EmbeddedMetaDataTest extends ModelTestCase
         $this->assertSame($metaData, $document->getEmbeddedMetaData(false));
     }
 
+    public function testVersionKeepsEmbeddedMetaData(): void
+    {
+        $document = TestHelper::createDocumentAsset('', $this->getPdfWithMetaData());
+        $metaData = $document->getEmbeddedMetaData(true, false);
+        $this->assertSame('Pimcore Test Suite', $metaData['CreatorTool']);
+        $document->save();
+
+        $version = $document->getLatestVersion(null, true);
+        $this->assertNotNull($version);
+
+        // loading the version restores its binary data, which must not invalidate the meta data stored with it
+        $versionDocument = $version->loadData();
+        $this->assertInstanceOf(Asset\Document::class, $versionDocument);
+        $this->assertTrue($versionDocument->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertSame($metaData, $versionDocument->getCustomSetting('embeddedMetaData'));
+
+        // the same applies when the version is restored
+        $versionDocument->save();
+
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertSame($metaData, $document->getEmbeddedMetaData(false));
+    }
+
     public function testUpdateTasksHandlerExtractsAndPersistsEmbeddedMetaData(): void
     {
         $document = TestHelper::createDocumentAsset('', $this->getPdfWithMetaData());
