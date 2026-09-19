@@ -101,8 +101,10 @@ class Service extends Model\Element\Service
         $new->setDao(null);
         $new->setLocked(null);
         $new->setCreationDate(time());
-        // the custom settings (e.g. embedded meta data) were cloned from the source as well, so they belong to this data
-        $new->restoreStream($source->getStream());
+        $new->setStream($source->getStream());
+        // the custom settings (e.g. embedded meta data) belong to this data, so they are taken over from the source,
+        // which also makes sure they are loaded completely (they might not be, if the source came from the cache)
+        $new->setCustomSettings($source->getCustomSettings());
         $new->save();
 
         // add to store
@@ -155,8 +157,10 @@ class Service extends Model\Element\Service
         $new->setDao(null);
         $new->setLocked(null);
         $new->setCreationDate(time());
-        // the custom settings (e.g. embedded meta data) were cloned from the source as well, so they belong to this data
-        $new->restoreStream($source->getStream());
+        $new->setStream($source->getStream());
+        // the custom settings (e.g. embedded meta data) belong to this data, so they are taken over from the source,
+        // which also makes sure they are loaded completely (they might not be, if the source came from the cache)
+        $new->setCustomSettings($source->getCustomSettings());
         $new->save();
 
         if ($target instanceof Asset\Folder) {
@@ -232,6 +236,12 @@ class Service extends Model\Element\Service
     public static function loadAllFields(Element\ElementInterface $element): Element\ElementInterface
     {
         $element->getProperties();
+
+        if ($element instanceof Asset) {
+            // custom settings which are too large for the cache are only loaded on access, so they have to be
+            // loaded explicitly before the asset is dumped (e.g. for a version or the recycle bin)
+            $element->getCustomSettings();
+        }
 
         return $element;
     }

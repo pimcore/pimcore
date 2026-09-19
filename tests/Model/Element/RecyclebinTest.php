@@ -110,6 +110,34 @@ class RecyclebinTest extends ModelTestCase
     }
 
     /**
+     * Verifies that restoring an asset keeps its custom settings, even if they were not loaded yet when the
+     * asset was added to the recycle bin (custom settings which are too large for the cache are only loaded on access)
+     */
+    public function testCacheHydratedAssetRecycleAndRestoreKeepsCustomSettings(): void
+    {
+        $asset = TestHelper::createDocumentAsset();
+        $assetId = $asset->getId();
+        $asset->setCustomSetting('embeddedMetaData', ['Title' => 'Embedded Meta Data Test']);
+        $asset->setCustomSetting('embeddedMetaDataExtracted', true);
+        $asset->setCustomSetting('customSettingsTest', 'test');
+        $asset->save();
+
+        $asset = TestHelper::getCacheHydratedAsset(Asset::getById($assetId, ['force' => true]));
+
+        Item::create($asset, $this->user);
+        $asset->delete();
+
+        $recycledItems = new Item\Listing();
+        $recycledItems->current()->restore();
+
+        $restoredAsset = Asset::getById($assetId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $restoredAsset);
+        $this->assertTrue($restoredAsset->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertEquals(['Title' => 'Embedded Meta Data Test'], $restoredAsset->getCustomSetting('embeddedMetaData'));
+        $this->assertSame('test', $restoredAsset->getCustomSetting('customSettingsTest'));
+    }
+
+    /**
      * Verifies that object with children can be moved to recyclebin and restored
      *
      */

@@ -134,6 +134,51 @@ class EmbeddedMetaDataTest extends ModelTestCase
         $this->assertEquals($metaData, $document->getEmbeddedMetaData(false));
     }
 
+    /**
+     * Custom settings which are too large for the cache are only loaded on access, which must not lead to
+     * a version without custom settings when it is created from an asset that was hydrated from the cache
+     */
+    public function testVersionKeepsCustomSettingsOfCacheHydratedAsset(): void
+    {
+        $document = TestHelper::createDocumentAsset('', $this->getPdfWithMetaData());
+        $metaData = $document->getEmbeddedMetaData(true, false);
+        $document->setCustomSetting('customSettingsTest', 'test');
+        $document->save();
+
+        $document = TestHelper::getCacheHydratedAsset(Asset::getById($document->getId(), ['force' => true]));
+        $document->saveVersion();
+
+        $version = $document->getLatestVersion(null, true);
+        $this->assertNotNull($version);
+
+        $versionDocument = $version->loadData();
+        $this->assertInstanceOf(Asset\Document::class, $versionDocument);
+        $this->assertTrue($versionDocument->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertEquals($metaData, $versionDocument->getCustomSetting('embeddedMetaData'));
+        $this->assertSame('test', $versionDocument->getCustomSetting('customSettingsTest'));
+    }
+
+    public function testCopyKeepsCustomSettingsOfCacheHydratedAsset(): void
+    {
+        $document = TestHelper::createDocumentAsset('', $this->getPdfWithMetaData());
+        $metaData = $document->getEmbeddedMetaData(true, false);
+        $document->setCustomSetting('customSettingsTest', 'test');
+        $document->save();
+
+        $source = TestHelper::getCacheHydratedAsset(Asset::getById($document->getId(), ['force' => true]));
+        $folder = Asset\Service::createFolderByPath('/' . uniqid('embedded-meta-data-copy-'));
+        $service = new Asset\Service();
+
+        foreach (['copyAsChild', 'copyRecursive'] as $copyMethod) {
+            $copy = $service->$copyMethod($folder, $source);
+            $copy = Asset::getById($copy->getId(), ['force' => true]);
+            $this->assertInstanceOf(Asset\Document::class, $copy);
+            $this->assertTrue($copy->getCustomSetting('embeddedMetaDataExtracted'), $copyMethod);
+            $this->assertEquals($metaData, $copy->getEmbeddedMetaData(false), $copyMethod);
+            $this->assertSame('test', $copy->getCustomSetting('customSettingsTest'), $copyMethod);
+        }
+    }
+
     public function testCopyKeepsEmbeddedMetaData(): void
     {
         $document = TestHelper::createDocumentAsset('', $this->getPdfWithMetaData());

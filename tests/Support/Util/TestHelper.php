@@ -34,6 +34,7 @@ use Pimcore\Tests\Support\Helper\DataType\TestDataHelper;
 use Pimcore\Tool;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionProperty;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -585,6 +586,31 @@ class TestHelper
         }
 
         return $asset;
+    }
+
+    /**
+     * Simulates an asset with custom settings which are too large for the cache, that was hydrated from the cache:
+     * the custom settings are not serialized in this case and are only loaded from the database on the first access.
+     *
+     * @throws Exception
+     */
+    public static function getCacheHydratedAsset(Asset $asset): Asset
+    {
+        $canBeCachedProperty = new ReflectionProperty(Asset::class, 'customSettingsCanBeCached');
+        $canBeCachedProperty->setValue($asset, false);
+
+        $hydratedAsset = unserialize(serialize($asset));
+        if (!$hydratedAsset instanceof Asset) {
+            throw new RuntimeException('Failed to serialize and unserialize the asset');
+        }
+
+        $customSettingsProperty = new ReflectionProperty(Asset::class, 'customSettings');
+        $needRefreshProperty = new ReflectionProperty(Asset::class, 'customSettingsNeedRefresh');
+        if ($customSettingsProperty->getValue($hydratedAsset) !== [] || $needRefreshProperty->getValue($hydratedAsset) !== true) {
+            throw new RuntimeException('The custom settings of the asset were expected to be omitted from the cache');
+        }
+
+        return $hydratedAsset;
     }
 
     /**

@@ -1271,8 +1271,8 @@ class Asset extends Element\AbstractElement
 
     /**
      * Assigns binary data that belongs to the current state of the asset, e.g. the data stored by a version or
-     * the recycle bin, or the data of the source asset when copying an asset. In contrast to setStream(),
-     * the embedded meta data custom settings are kept, as they were extracted from exactly this data.
+     * the recycle bin. In contrast to setStream(), the embedded meta data custom settings are kept, as they
+     * were extracted from exactly this data.
      *
      * @param resource $stream
      *
@@ -1429,6 +1429,8 @@ class Asset extends Element\AbstractElement
         }
 
         $this->customSettings = $customSettings;
+        // explicitly set custom settings are authoritative, so they must not be replaced by the ones from the database
+        $this->customSettingsNeedRefresh = false;
 
         return $this;
     }
