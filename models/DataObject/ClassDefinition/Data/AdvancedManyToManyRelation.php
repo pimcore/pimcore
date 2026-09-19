@@ -218,9 +218,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
         if (is_array($data) && count($data) > 0) {
             $itemData = null;
-            // resolving visible field values needs the related elements themselves, one load per relation; with
-            // optimized admin loading the UI fetches such additional data asynchronously (getVisibleFieldData())
-            $visibleFieldNames = $this->isOptimizedAdminLoading() ? [] : $this->getVisibleFieldNames();
 
             $targets = [];
             $existingTargets = [];
@@ -312,18 +309,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                         $itemData[$c['key']] = $metaObject->$getter();
                     } catch (Exception $e) {
                         Logger::debug('Meta column '.$c['key'].' does not exist');
-                    }
-                }
-
-                if ($visibleFieldNames) {
-                    $element = $metaObject->getElement();
-                    if ($element instanceof Element\ElementInterface) {
-                        foreach ($this->getVisibleFieldData($element, $params) as $visibleField => $visibleFieldValue) {
-                            // metadata columns and system columns take precedence over visible fields
-                            if (!array_key_exists($visibleField, $itemData)) {
-                                $itemData[$visibleField] = $visibleFieldValue;
-                            }
-                        }
                     }
                 }
 
