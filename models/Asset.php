@@ -165,6 +165,13 @@ class Asset extends Element\AbstractElement
     protected bool $dataRestored = false;
 
     /**
+     * whether the custom settings were omitted from the dump (e.g. version, recycle bin) this asset was loaded from
+     *
+     * @internal
+     */
+    protected bool $customSettingsIncomplete = false;
+
+    /**
      * @internal
      */
     protected ?int $dataModificationDate = null;
@@ -630,6 +637,7 @@ class Asset extends Element\AbstractElement
 
                 $this->setDataChanged(false);
                 $this->dataRestored = false;
+                $this->customSettingsIncomplete = false;
 
                 $postEvent = new AssetEvent($this, $parameters);
                 if ($isUpdate) {
@@ -1293,6 +1301,14 @@ class Asset extends Element\AbstractElement
      */
     public function restoreStream($stream): static
     {
+        if ($this->customSettingsIncomplete) {
+            // the dump this asset was loaded from didn't contain the custom settings, so the data derived from the
+            // restored data is unknown and has to be generated again: the restored data is treated like replaced data
+            $this->setStream($stream);
+
+            return $this;
+        }
+
         $embeddedMetaDataSettings = [];
         foreach (self::EMBEDDED_META_DATA_CUSTOM_SETTINGS as $key) {
             $embeddedMetaDataSettings[$key] = $this->getCustomSetting($key);
@@ -1737,8 +1753,13 @@ class Asset extends Element\AbstractElement
         if ($this->isInDumpState()) {
             // a dump (e.g. version, recycle bin) contains the custom settings of the dumped state, which must not be
             // replaced by the current custom settings of the asset in the database (which don't even exist anymore
-            // for a deleted asset)
-            $this->customSettingsNeedRefresh = false;
+            // for a deleted asset).
+            // Exception: dumps created before the custom settings were loaded explicitly before dumping (see
+            // Asset\Service::loadAllFields()) of an asset that was hydrated from the cache without its custom settings
+            // (as they were too large for the cache) don't contain the custom settings at all. Custom settings that
+            // are too large for the cache can't be empty once they are loaded, so this state is detectable.
+            $this->customSettingsIncomplete = $this->customSettingsCanBeCached === false && $this->customSettings === [];
+            $this->customSettingsNeedRefresh = $this->customSettingsIncomplete;
         } elseif ($this->customSettingsCanBeCached === false) {
             $this->customSettingsNeedRefresh = true;
         }

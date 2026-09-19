@@ -146,6 +146,51 @@ class RecyclebinTest extends ModelTestCase
     }
 
     /**
+     * Recycle bin items created before the custom settings were loaded explicitly before dumping, of an asset that
+     * was hydrated from the cache without its custom settings (too large for the cache), don't contain the custom
+     * settings at all. Restoring such an item can't restore the derived settings, so they have to be generated
+     * again from the restored data.
+     */
+    public function testLegacyRecycleBinItemWithoutCustomSettingsRegeneratesDerivedSettings(): void
+    {
+        $asset = TestHelper::createDocumentAsset(
+            '',
+            file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf'))
+        );
+        $assetId = $asset->getId();
+        $asset->getEmbeddedMetaData(true, false);
+        $asset->setCustomSetting('document_page_count', 3);
+        $asset->save();
+
+        Item::create($asset, $this->user);
+        $recycledItem = (new Item\Listing())->current();
+        // replace the data of the recycle bin item by a dump in the legacy format
+        Storage::get('recycle_bin')->write(
+            $recycledItem->getStorageFile(),
+            TestHelper::getLegacyDumpDataWithoutCustomSettings($asset)
+        );
+        $asset->delete();
+
+        $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
+        $recycledItem->restore();
+        // the derived settings are unknown, so the restored data is processed again ...
+        $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize());
+
+        $restoredAsset = Asset::getById($assetId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $restoredAsset);
+        $this->assertNull($restoredAsset->getPageCount());
+        $this->assertNull($restoredAsset->getCustomSetting('embeddedMetaDataExtracted'));
+
+        // ... which generates the derived settings again (with exiftool if available, so only a key
+        // available with and without exiftool is checked)
+        TestHelper::runAssetUpdateTasks($assetId);
+
+        $restoredAsset = Asset::getById($assetId, ['force' => true]);
+        $this->assertTrue($restoredAsset->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertSame('Pimcore Test Suite', $restoredAsset->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
+    }
+
+    /**
      * Verifies that object with children can be moved to recyclebin and restored
      *
      */

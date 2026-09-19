@@ -14,14 +14,10 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Asset;
 
 use Pimcore;
-use Pimcore\Helper\LongRunningHelper;
-use Pimcore\Messenger\AssetUpdateTasksMessage;
-use Pimcore\Messenger\Handler\AssetUpdateTasksHandler;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
-use Psr\Log\NullLogger;
-use Symfony\Component\Lock\LockFactory;
 
 /**
  * Embedded meta data of assets (see EmbeddedMetaDataTrait) is bound to the binary data of the asset,
@@ -182,6 +178,48 @@ class EmbeddedMetaDataTest extends ModelTestCase
     }
 
     /**
+     * Versions created before the custom settings were loaded explicitly before dumping, of an asset that was
+     * hydrated from the cache without its custom settings (too large for the cache), don't contain the custom
+     * settings at all. Restoring such a version can't restore the derived settings, so they have to be generated
+     * again from the restored data.
+     */
+    public function testLegacyVersionWithoutCustomSettingsRegeneratesDerivedSettings(): void
+    {
+        $document = TestHelper::createDocumentAsset('', $this->getPdfWithMetaData());
+        $document->getEmbeddedMetaData(true, false);
+        $document->setCustomSetting('document_page_count', 3);
+        $document->save();
+
+        // replace the data of the version by a dump in the legacy format
+        $version = $document->getLatestVersion(null, true);
+        $this->assertNotNull($version);
+        Pimcore::getContainer()->get(VersionStorageAdapterInterface::class)->save(
+            $version,
+            TestHelper::getLegacyDumpDataWithoutCustomSettings($document),
+            $document->getStream()
+        );
+
+        $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
+        $restoredDocument = $version->loadData();
+        $this->assertInstanceOf(Asset\Document::class, $restoredDocument);
+        $restoredDocument->save();
+        // the derived settings are unknown, so the restored data is processed again ...
+        $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize());
+
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertNull($document->getPageCount());
+        $this->assertNull($document->getCustomSetting('embeddedMetaDataExtracted'));
+
+        // ... which generates the derived settings again (with exiftool if available, so only a key
+        // available with and without exiftool is checked)
+        TestHelper::runAssetUpdateTasks($document->getId());
+
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertSame('Pimcore Test Suite', $document->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
+    }
+
+    /**
      * Custom settings which are too large for the cache are only loaded on access, which must not lead to
      * a version without custom settings when it is created from an asset that was hydrated from the cache
      */
@@ -262,13 +300,7 @@ class EmbeddedMetaDataTest extends ModelTestCase
         $this->assertNull($document->getCustomSetting('embeddedMetaDataExtracted'));
         $this->assertNull($document->getCustomSetting('embeddedMetaData'));
 
-        $container = Pimcore::getContainer();
-        $handler = new AssetUpdateTasksHandler(
-            new NullLogger(),
-            $container->get(LongRunningHelper::class),
-            $container->get(LockFactory::class)
-        );
-        $handler(new AssetUpdateTasksMessage($document->getId()));
+        TestHelper::runAssetUpdateTasks($document->getId());
 
         $document = Asset::getById($document->getId(), ['force' => true]);
         $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));

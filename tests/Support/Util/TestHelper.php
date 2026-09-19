@@ -19,8 +19,11 @@ use Exception;
 use InvalidArgumentException;
 use Pimcore;
 use Pimcore\Db;
+use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
+use Pimcore\Messenger\AssetUpdateTasksMessage;
+use Pimcore\Messenger\Handler\AssetUpdateTasksHandler;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -34,12 +37,14 @@ use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Support\Helper\DataType\TestDataHelper;
 use Pimcore\Tool;
+use Psr\Log\NullLogger;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Lock\LockFactory;
 use Traversable;
 
 class TestHelper
@@ -604,6 +609,37 @@ class TestHelper
             // the transport creates the table with the first message
             return 0;
         }
+    }
+
+    /**
+     * Returns the serialized data of a dump (e.g. version, recycle bin) of the asset in the format created before
+     * the custom settings were loaded explicitly before dumping, from an asset hydrated from the cache without its
+     * custom settings (as they were too large for the cache): such a dump doesn't contain the custom settings at all.
+     *
+     * @throws Exception
+     */
+    public static function getLegacyDumpDataWithoutCustomSettings(Asset $asset): string
+    {
+        $hydratedAsset = self::getCacheHydratedAsset(Asset::getById($asset->getId(), ['force' => true]));
+        $hydratedAsset->setInDumpState(true);
+
+        return Tool\Serialize::serialize($hydratedAsset);
+    }
+
+    /**
+     * Processes the asset like the asset update tasks queue does
+     *
+     * @throws Exception
+     */
+    public static function runAssetUpdateTasks(int $assetId): void
+    {
+        $container = Pimcore::getContainer();
+        $handler = new AssetUpdateTasksHandler(
+            new NullLogger(),
+            $container->get(LongRunningHelper::class),
+            $container->get(LockFactory::class)
+        );
+        $handler(new AssetUpdateTasksMessage($assetId));
     }
 
     /**
