@@ -48,11 +48,12 @@ final class Executor implements ExecutorInterface
 
         $task = $this->tasks[$name]['taskClass'];
 
+        $this->logger->info('Starting job with ID {id}', [
+            'id' => $name,
+        ]);
+
         $startedAt = hrtime(true);
         try {
-            $this->logger->info('Starting job with ID {id}', [
-                'id' => $name,
-            ]);
             $task->execute();
 
             $this->logger->info('Finished job with ID {id} in {duration}s', [
