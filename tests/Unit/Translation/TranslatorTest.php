@@ -19,7 +19,7 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Model\Translation;
 use Pimcore\Tests\Support\Test\TestCase;
-use Pimcore\Translation\TranslationEntriesDumper;
+use Pimcore\Tool;
 use Pimcore\Translation\Translator;
 use ReflectionObject;
 use ReflectionProperty;
@@ -170,45 +170,49 @@ class TranslatorTest extends TestCase
 
     /**
      * Guards the condition resetTranslatorState() exists for: once a locale's catalogue has been built,
-     * neither Translator::lazyInitialize() nor the wrapped Symfony translator pick up translations saved
-     * afterwards - the translator keeps answering with what it cached, including the key itself for a
-     * key it created on the fly. The "de" part only passes when the Symfony catalogues are dropped as
-     * well: its saved value is empty, so a re-initialization alone keeps the cached key instead of
-     * falling back to "en".
+     * neither Translator::lazyInitialize() nor the wrapped Symfony translator pick up a translation saved
+     * afterwards. The "de" part only passes when the Symfony catalogues are dropped as well: "de" has no
+     * value of its own, so the first lookup stores the "en" fallback value in the "de" catalogue, and a
+     * re-initialization alone keeps that copy instead of falling back to the new "en" value.
      */
     public function testResetMakesTranslationsSavedAfterCatalogueInitializationVisible(): void
     {
         $key = 'stale_catalogue_' . uniqid();
 
-        try {
-            // prime the catalogues with the unknown key, "de" first so that its own catalogue (and not
-            // only its "en" fallback) remembers the key
-            $this->translator->setLocale('de');
-            $this->assertSame($key, $this->translator->trans($key));
-            $this->translator->setLocale('en');
-            $this->assertSame($key, $this->translator->trans($key));
+        // the test's own fixture, saved directly so that the translator never has to create the key
+        $translation = new Translation();
+        $translation->setDomain(Translation::DOMAIN_DEFAULT);
+        $translation->setKey($key);
+        foreach (Tool::getValidLanguages() as $language) {
+            $translation->addTranslation($language, '');
+        }
+        $translation->addTranslation('en', 'Old EN');
+        $translation->save();
 
-            // persist the entry the translator queued for the unknown key, then give it an "en" value only
-            (new TranslationEntriesDumper())->dumpToDb();
-            $translation = Translation::getByKey($key);
-            $this->assertInstanceOf(Translation::class, $translation);
-            $translation->addTranslation('en', 'Late EN');
+        try {
+            // prime the catalogues: "de" resolves through its "en" fallback and remembers the value
+            $this->translator->setLocale('de');
+            $this->assertSame('Old EN', $this->translator->trans($key));
+            $this->translator->setLocale('en');
+            $this->assertSame('Old EN', $this->translator->trans($key));
+
+            $translation->addTranslation('en', 'New EN');
             $translation->save();
 
             // the already built catalogues do not see the saved value - this is the state an earlier test
             // leaves behind for this test class; if this assertion fails the translator no longer caches
             // stale entries and resetTranslatorState() can go
-            $this->assertSame($key, $this->translator->trans($key));
+            $this->assertSame('Old EN', $this->translator->trans($key));
             $this->translator->setLocale('de');
-            $this->assertSame($key, $this->translator->trans($key));
+            $this->assertSame('Old EN', $this->translator->trans($key));
 
             $this->resetTranslatorState();
 
-            $this->assertSame('Late EN', $this->translator->trans($key), 'saved "de" fallback value not visible after reset');
+            $this->assertSame('New EN', $this->translator->trans($key), 'saved "en" value not visible through the "de" fallback after reset');
             $this->translator->setLocale('en');
-            $this->assertSame('Late EN', $this->translator->trans($key), 'saved "en" value not visible after reset');
+            $this->assertSame('New EN', $this->translator->trans($key), 'saved "en" value not visible after reset');
         } finally {
-            Translation::getByKey($key)?->delete();
+            $translation->delete();
         }
     }
 
