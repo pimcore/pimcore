@@ -116,10 +116,16 @@ For example
 ![Many-To-One Object Inline Search example](../../../img/classes-datatypes-relation8.png)
 
 ## Visible fields on Many-To-Many and Advanced Many-To-Many Relations
-Like the Many-To-Many Object Relation, the generic Many-To-Many Relation and Advanced Many-To-Many Relation can show
-additional, read-only columns next to each related element ("visible fields"). Because these types can reference
-documents, assets and objects of several classes at once, the fields you can pick are the union of what every allowed
-element type offers:
+Like the Many-To-Many Object Relation, the generic Many-To-Many Relation and Advanced Many-To-Many Relation support
+additional, read-only columns next to each related element ("visible fields").
+
+> This section documents the core API of the feature. The bundled user interfaces do not expose it yet: the class
+> editor offers no field picker for these two types and the relation grids do not render the columns. Until that
+> support lands, visible fields can be configured through the PHP API only (`setVisibleFields()`) and are consumed
+> by custom code or bundles through the methods described below.
+
+Because these types can reference documents, assets and objects of several classes at once, the fields you can pick
+are the union of what every allowed element type offers:
 
 | Allowed type | Offered fields |
 |--------------|----------------|
@@ -130,7 +136,7 @@ element type offers:
 
 A field that does not apply to a related element's type is simply empty for that row: an asset row shows nothing in a
 class-field column, an object row nothing in a metadata column. Visible fields are only offered once at least one
-element type is allowed; objects contribute fields only when the relation is restricted to specific classes.
+element type is allowed; objects contribute class fields only when the relation is restricted to specific classes.
 
 ```php
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation;
@@ -150,7 +156,8 @@ $values = $fd->getVisibleFieldData($relatedElement);
 ```
 
 Each entry of `getAvailableVisibleFields()` / `visibleFieldDefinitions` carries `name`, `title`, `fieldtype`,
-`noteditable` and `sources` (the origins of the field, e.g. `object:Product`, `asset` or `document`); select fields
+`noteditable` and `sources` (the origins of the field: `object` for properties of every object, `object:Product` for
+the fields of a class, `asset` or `document`); select fields
 additionally carry their `options`, predefined metadata its `metadataType`. For the Advanced Many-To-Many Relation the
 values are also part of the edit-mode rows; metadata columns with the same name take precedence over visible fields.
 
