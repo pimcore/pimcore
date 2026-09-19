@@ -201,8 +201,9 @@ trait VisibleFieldsTrait
 
     /**
      * The names getAvailableVisibleFields() offers and where each comes from (the same `sources` as there),
-     * without describing the fields: no enrichment of class fields takes place, so this is cheap enough to
-     * be called per related element.
+     * without describing the fields: the class fields are read without enrichment, so this is cheap enough to
+     * be called per related element. Asset and document names come from the same candidate hooks as the
+     * described fields, so a subclass offering additional fields there has them resolved as well.
      *
      * @return array<string, string[]>
      */
@@ -229,11 +230,11 @@ trait VisibleFieldsTrait
         }
 
         if ($this->getAssetsAllowed()) {
-            $add($this->getAssetVisibleFieldNames(), 'asset');
+            $add(array_keys($this->getAssetVisibleFieldCandidates()), 'asset');
         }
 
         if ($this->getDocumentsAllowed()) {
-            $add($this->getCommonVisibleFieldNames(), 'document');
+            $add(array_keys($this->getDocumentVisibleFieldCandidates()), 'document');
         }
 
         return $sources;
@@ -314,18 +315,6 @@ trait VisibleFieldsTrait
     }
 
     /**
-     * @return string[]
-     */
-    protected function getAssetVisibleFieldNames(): array
-    {
-        return array_values(array_unique(array_merge(
-            $this->getCommonVisibleFieldNames(),
-            ['filename', 'mimetype', 'fileSize'],
-            array_keys($this->getApplicablePredefinedAssetMetadata())
-        )));
-    }
-
-    /**
      * The predefined asset metadata that can be offered for this definition: one definition per name, the
      * first whose target subtype is not excluded by the allowed asset types.
      *
@@ -389,8 +378,10 @@ trait VisibleFieldsTrait
     }
 
     /**
-     * System properties and predefined metadata of assets. Override (or decorate the class) to
-     * offer additional asset fields, e.g. from asset metadata class definitions.
+     * System properties and predefined metadata of assets. Override to offer additional asset fields
+     * (e.g. from asset metadata class definitions) and resolve their values in
+     * resolveAssetVisibleFieldValue(): the names returned here are the ones getVisibleFieldData()
+     * resolves for assets.
      *
      * @return array<string, array<string, mixed>>
      */
@@ -443,7 +434,8 @@ trait VisibleFieldsTrait
     }
 
     /**
-     * System properties of documents.
+     * System properties of documents. Override to offer additional document fields and resolve their
+     * values in resolveDocumentVisibleFieldValue().
      *
      * @return array<string, array<string, mixed>>
      */
@@ -527,7 +519,8 @@ trait VisibleFieldsTrait
 
     /**
      * Fields that can be rendered as a read-only grid column. Container types (field collections,
-     * object bricks, blocks, classification stores, nested localized fields) are skipped.
+     * object bricks, blocks, classification stores, nested localized fields) are skipped, as are
+     * fields holding secrets (passwords, encrypted fields), which must never be exposed as a column.
      */
     protected function isVisibleFieldCandidate(Data $fieldDefinition): bool
     {
@@ -535,7 +528,9 @@ trait VisibleFieldsTrait
             || $fieldDefinition instanceof Data\Fieldcollections
             || $fieldDefinition instanceof Data\Objectbricks
             || $fieldDefinition instanceof Data\Block
-            || $fieldDefinition instanceof Data\Classificationstore);
+            || $fieldDefinition instanceof Data\Classificationstore
+            || $fieldDefinition instanceof Data\Password
+            || $fieldDefinition instanceof Data\EncryptedField);
     }
 
     /**

@@ -166,7 +166,10 @@ extended with the values: resolving them needs the related elements, so a consum
 `getVisibleFieldData()` when it renders the columns.
 
 To offer additional asset fields (for example from asset metadata class definitions), extend the type and override
-`getAssetVisibleFieldCandidates()` / `resolveAssetVisibleFieldValue()`.
+`getAssetVisibleFieldCandidates()` to describe them and `resolveAssetVisibleFieldValue()` to resolve their values; the
+names the candidates hook returns are also the ones `getVisibleFieldData()` resolves for assets, so no further
+registration is needed. Document fields work the same way through `getDocumentVisibleFieldCandidates()` /
+`resolveDocumentVisibleFieldValue()`.
 
 ## Advanced Many-To-One Object Relation 
 This data type is an extension to the Many-To-One Object data type. To each assigned object additional metadata can be saved. 

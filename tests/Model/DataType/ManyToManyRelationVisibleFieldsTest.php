@@ -373,6 +373,79 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         $this->assertSame('(c) pimcore', $assetData[self::PREDEFINED_METADATA]);
     }
 
+    public function testFieldsHoldingSecretsAreNeverExposed(): void
+    {
+        $object = TestHelper::createEmptyObject('visible-fields-');
+        $object->setPassword('PasswordValue');
+        $object->save();
+        $this->assertNotEmpty($object->getPassword(), 'the password fixture must be stored (hashed)');
+
+        $fd = new ManyToManyRelation();
+        $fd->setObjectsAllowed(true)->setClasses([['classes' => 'unittest']]);
+        $fd->setAssetsAllowed(false)->setDocumentsAllowed(false);
+
+        $available = $fd->getAvailableVisibleFields();
+        $this->assertArrayHasKey('input', $available, 'the class fields are offered');
+        $this->assertArrayNotHasKey('password', $available);
+        $this->assertArrayNotHasKey('encryptedField', $available);
+        $this->assertArrayNotHasKey('password', $fd->getVisibleFieldSources());
+        $this->assertArrayNotHasKey('encryptedField', $fd->getVisibleFieldSources());
+
+        // even when configured (e.g. by hand in the class definition) the values are not resolved
+        $fd->setVisibleFields(['password', 'encryptedField', 'input']);
+        $fd->enrichLayoutDefinition(null);
+        $this->assertSame([], $fd->visibleFieldDefinitions['password']['sources']);
+        $this->assertSame([], $fd->visibleFieldDefinitions['encryptedField']['sources']);
+
+        $data = $fd->getVisibleFieldData($object);
+        $this->assertNull($data['password']);
+        $this->assertNull($data['encryptedField']);
+        $this->assertNotContains($object->getPassword(), $data);
+    }
+
+    public function testAdditionalAssetFieldsOfASubclassAreOfferedAndResolved(): void
+    {
+        $asset = TestHelper::createImageAsset('visible-fields-');
+
+        $fd = new class() extends ManyToManyRelation {
+            protected function getAssetVisibleFieldCandidates(): array
+            {
+                $candidates = parent::getAssetVisibleFieldCandidates();
+                $candidates['fullPath'] = $this->buildVisibleFieldCandidate('fullPath', 'input', 'Full path');
+
+                return $candidates;
+            }
+
+            protected function resolveAssetVisibleFieldValue(Asset $asset, string $name, array $params = []): mixed
+            {
+                if ($name === 'fullPath') {
+                    return $asset->getRealFullPath();
+                }
+
+                return parent::resolveAssetVisibleFieldValue($asset, $name, $params);
+            }
+        };
+        $fd->setObjectsAllowed(true)->setClasses([['classes' => 'RelationTest']]);
+        $fd->setAssetsAllowed(true)->setAssetTypes([]);
+        $fd->setDocumentsAllowed(false);
+        $fd->setVisibleFields(['fullPath', 'filename']);
+
+        $available = $fd->getAvailableVisibleFields();
+        $this->assertSame(['asset'], $available['fullPath']['sources']);
+        $this->assertSame('Full path', $available['fullPath']['title']);
+        $this->assertSame(['asset'], $fd->getVisibleFieldSources()['fullPath'], 'the source map must follow the overridden candidates');
+
+        $fd->enrichLayoutDefinition(null);
+        $this->assertSame(['asset'], $fd->visibleFieldDefinitions['fullPath']['sources']);
+
+        $data = $fd->getVisibleFieldData($asset);
+        $this->assertSame($asset->getRealFullPath(), $data['fullPath']);
+        $this->assertSame($asset->getFilename(), $data['filename'], 'the inherited fields keep resolving');
+
+        $object = $this->createRelationTestObject('object value');
+        $this->assertNull($fd->getVisibleFieldData($object)['fullPath'], 'an asset-only field must not resolve for objects');
+    }
+
     public function testVisibleFieldsAreSynchronizedWithMainDefinition(): void
     {
         $main = new ManyToManyRelation();
