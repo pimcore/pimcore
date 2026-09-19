@@ -80,6 +80,16 @@ class Asset extends Element\AbstractElement
     private const EMBEDDED_META_DATA_CUSTOM_SETTINGS = ['embeddedMetaData', 'embeddedMetaDataExtracted'];
 
     /**
+     * set while the processing of replaced data by the asset update tasks queue is pending (see isProcessingPending())
+     */
+    private const CUSTOM_SETTING_PROCESSING_PENDING = 'pimcore-asset-processing-pending';
+
+    /**
+     * types whose data is processed by the asset update tasks queue (see \Pimcore\Messenger\Handler\AssetUpdateTasksHandler)
+     */
+    private const PROCESSED_TYPES = ['image', 'video', 'document'];
+
+    /**
      * @internal
      *
      */
@@ -632,11 +642,12 @@ class Asset extends Element\AbstractElement
                 // add to queue that saves dependencies
                 $this->addToDependenciesQueue();
 
-                // restored data (see restoreStream()) doesn't need to be processed again, as the data derived from
-                // it was restored as well, and processing it again could even discard the restored data
-                if ($this->isDataReplaced()) {
+                // replaced data has to be processed. Restored data (see restoreStream()) doesn't, as the data derived
+                // from it was restored as well (and processing it again could even discard the restored data), unless
+                // the restored state was dumped while its processing was still pending, so the derived data is missing
+                if ($this->isDataReplaced() || ($this->dataRestored && $this->isProcessingPending())) {
                     $this->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
-                    if (in_array($this->getType(), ['image', 'video', 'document'])) {
+                    if (in_array($this->getType(), self::PROCESSED_TYPES, true)) {
                         $this->addToUpdateTaskQueue();
                     }
                 }
@@ -819,6 +830,13 @@ class Asset extends Element\AbstractElement
                 if ($type != $this->getType()) {
                     $this->setType($type);
                     $typeChanged = true;
+                }
+
+                // replaced data is processed by the asset update tasks queue after saving (see save()). This is
+                // remembered in the custom settings, so that it is part of a dump (e.g. version, recycle bin) created
+                // in the meantime, whose derived data is therefore missing (see restoreStream())
+                if ($this->isDataReplaced() && in_array($type, self::PROCESSED_TYPES, true)) {
+                    $this->setProcessingPending(true);
                 }
 
                 // not only check if the type is set but also if the implementation can be found
@@ -1357,6 +1375,29 @@ class Asset extends Element\AbstractElement
     public function isDataReplaced(): bool
     {
         return $this->dataChanged && !$this->dataRestored;
+    }
+
+    /**
+     * Whether the processing of the data by the asset update tasks queue, which generates the data derived from it
+     * (e.g. dimensions, page count, embedded meta data), is still pending
+     *
+     * @internal
+     */
+    public function isProcessingPending(): bool
+    {
+        return (bool) $this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING);
+    }
+
+    /**
+     * @internal
+     */
+    public function setProcessingPending(bool $pending): void
+    {
+        if ($pending) {
+            $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING, true);
+        } else {
+            $this->removeCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING);
+        }
     }
 
     /**

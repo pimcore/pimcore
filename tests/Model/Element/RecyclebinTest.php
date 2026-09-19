@@ -98,6 +98,8 @@ class RecyclebinTest extends ModelTestCase
         // derived from the binary data as well, must not be invalidated by the subtype when restoring the data
         $asset->setCustomSetting('document_page_count', 3);
         $asset->setCustomSetting(Asset\Document::CUSTOM_SETTING_PDF_SCAN_STATUS, Asset\Enum\PdfScanStatus::SAFE->value);
+        // the derived settings are complete, as if the asset update tasks queue had processed the data
+        $asset->setProcessingPending(false);
         $asset->save();
 
         Item::create($asset, $this->user);
@@ -143,6 +145,45 @@ class RecyclebinTest extends ModelTestCase
         $this->assertTrue($restoredAsset->getCustomSetting('embeddedMetaDataExtracted'));
         $this->assertEquals(['Title' => 'Embedded Meta Data Test'], $restoredAsset->getCustomSetting('embeddedMetaData'));
         $this->assertSame('test', $restoredAsset->getCustomSetting('customSettingsTest'));
+    }
+
+    /**
+     * An asset can be added to the recycle bin before the asset update tasks queue processed its data (e.g. extracted
+     * the embedded meta data). Restoring it has to process the data again, although the item contains all custom
+     * settings of that time.
+     */
+    public function testRecycleBinItemCreatedBeforeProcessingIsProcessedAgainAfterRestore(): void
+    {
+        $asset = TestHelper::createDocumentAsset(
+            '',
+            file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf'))
+        );
+        $assetId = $asset->getId();
+        $this->assertTrue($asset->isProcessingPending());
+        Item::create($asset, $this->user);
+
+        // the queue processes the data
+        TestHelper::runAssetUpdateTasks($assetId);
+        $asset = Asset::getById($assetId, ['force' => true]);
+        $this->assertFalse($asset->isProcessingPending());
+        $this->assertTrue($asset->getCustomSetting('embeddedMetaDataExtracted'));
+        $asset->delete();
+
+        $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
+        (new Item\Listing())->current()->restore();
+        // the processing was still pending when the item was created, so the restored data is processed again ...
+        $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize());
+
+        $restoredAsset = Asset::getById($assetId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $restoredAsset);
+        $this->assertTrue($restoredAsset->isProcessingPending());
+        $this->assertNull($restoredAsset->getCustomSetting('embeddedMetaDataExtracted'));
+
+        // ... which generates the derived settings
+        TestHelper::runAssetUpdateTasks($assetId);
+        $restoredAsset = Asset::getById($assetId, ['force' => true]);
+        $this->assertFalse($restoredAsset->isProcessingPending());
+        $this->assertSame('Pimcore Test Suite', $restoredAsset->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
     }
 
     /**

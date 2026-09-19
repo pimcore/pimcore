@@ -94,6 +94,11 @@ class AssetUpdateTasksHandler
             $save = true;
         }
 
+        if ($asset->isProcessingPending()) {
+            $asset->setProcessingPending(false);
+            $save = true;
+        }
+
         if ($asset->isThumbnailsEnabled() && !$asset->getCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED)) {
             $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
         }
@@ -130,6 +135,7 @@ class AssetUpdateTasksHandler
         }
 
         $asset->handleEmbeddedMetaData();
+        $asset->setProcessingPending(false);
         $this->saveAsset($asset);
 
         if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {
@@ -158,6 +164,7 @@ class AssetUpdateTasksHandler
         // calculate the dimensions on every request an also will create a version, ...
         $image->setCustomSetting('imageDimensionsCalculated', $imageDimensionsCalculated);
         $image->handleEmbeddedMetaData();
+        $image->setProcessingPending(false);
         $this->saveAsset($image);
 
         // generating the thumbnails must be after saving the image, because otherwise the generated

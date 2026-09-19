@@ -160,6 +160,8 @@ class EmbeddedMetaDataTest extends ModelTestCase
             foreach ($derivedSettings as $key => $value) {
                 $asset->setCustomSetting($key, $value);
             }
+            // the derived settings are complete, as if the asset update tasks queue had processed the data
+            $asset->setProcessingPending(false);
             $asset->save();
 
             $version = $asset->getLatestVersion(null, true);
@@ -175,6 +177,42 @@ class EmbeddedMetaDataTest extends ModelTestCase
                 $this->assertEquals($value, $restoredAsset->getCustomSetting($key), get_class($asset) . ': ' . $key);
             }
         }
+    }
+
+    /**
+     * A version is created when an asset is saved, which is before the asset update tasks queue processed its data
+     * (e.g. extracted the embedded meta data). Restoring such a version has to process the data again, although
+     * the version contains all custom settings of that time.
+     */
+    public function testVersionCreatedBeforeProcessingIsProcessedAgainAfterRestore(): void
+    {
+        $document = TestHelper::createDocumentAsset('', $this->getPdfWithMetaData());
+        $this->assertTrue($document->isProcessingPending());
+        $versionBeforeProcessing = $document->getLatestVersion(null, true);
+        $this->assertNotNull($versionBeforeProcessing);
+
+        // the queue processes the data
+        TestHelper::runAssetUpdateTasks($document->getId());
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertFalse($document->isProcessingPending());
+        $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
+
+        $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
+        $restoredDocument = $versionBeforeProcessing->loadData();
+        $this->assertInstanceOf(Asset\Document::class, $restoredDocument);
+        $restoredDocument->save();
+        // the processing was still pending when the version was created, so the restored data is processed again ...
+        $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize());
+
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertTrue($document->isProcessingPending());
+        $this->assertNull($document->getCustomSetting('embeddedMetaDataExtracted'));
+
+        // ... which generates the derived settings
+        TestHelper::runAssetUpdateTasks($document->getId());
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertFalse($document->isProcessingPending());
+        $this->assertSame('Pimcore Test Suite', $document->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
     }
 
     /**

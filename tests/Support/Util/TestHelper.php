@@ -622,8 +622,25 @@ class TestHelper
     {
         $hydratedAsset = self::getCacheHydratedAsset(Asset::getById($asset->getId(), ['force' => true]));
         $hydratedAsset->setInDumpState(true);
+        $data = Tool\Serialize::serialize($hydratedAsset);
 
-        return Tool\Serialize::serialize($hydratedAsset);
+        // the property tracking whether the custom settings were loaded when the asset was dumped didn't exist yet
+        $data = preg_replace('/s:\d+:"\0\*\0customSettingsIncomplete";(?:N;|b:[01];)/', '', $data, -1, $count);
+        if ($count !== 1) {
+            throw new RuntimeException(sprintf('Expected exactly one tracking property in the dump, found %d', $count));
+        }
+        $data = preg_replace_callback(
+            '/^(O:\d+:"[^"]+":)(\d+)(:\{)/',
+            fn (array $matches) => $matches[1] . ((int) $matches[2] - 1) . $matches[3],
+            $data,
+            1,
+            $count
+        );
+        if ($count !== 1 || str_contains($data, 'customSettingsIncomplete')) {
+            throw new RuntimeException('Failed to remove the tracking property from the dump');
+        }
+
+        return $data;
     }
 
     /**
