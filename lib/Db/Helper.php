@@ -81,10 +81,12 @@ class Helper
      * every row matching its WHERE clause). Because the conflict may also be detected on ANY
      * other unique index of the table, every assignment is guarded to only apply when the
      * conflicting row matches the incoming key values. A conflict on some other unique index
-     * therefore leaves that foreign row's values untouched and the call returns null, like
+     * therefore assigns that foreign row its own values and the call returns null, like
      * upsert()'s UPDATE ... WHERE, which matches no row in that situation - the database does
      * however still run the foreign row's UPDATE triggers with NEW equal to OLD (BEFORE UPDATE
-     * always, AFTER UPDATE depending on the server version), which upsert() never did. If the keyed
+     * always, AFTER UPDATE depending on the server version), which upsert() never did. The
+     * statement itself leaves the row unchanged; a BEFORE UPDATE trigger that assigns to NEW
+     * does write to it, exactly as it would for any UPDATE of that row. If the keyed
      * row exists and the update itself would violate another unique index, the statement fails
      * with a UniqueConstraintViolationException, the same outcome as upsert()'s UPDATE.
      *

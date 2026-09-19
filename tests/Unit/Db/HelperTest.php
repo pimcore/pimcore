@@ -510,6 +510,45 @@ final class HelperTest extends TestCase
         $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
     }
 
+    public function testConflictOnNonKeyUniqueIndexLetsAMutatingBeforeUpdateTriggerWriteTheForeignRow(): void
+    {
+        // contract pin: the guarded assignments keep the foreign row's values, but a BEFORE UPDATE
+        // trigger runs on it and may assign to NEW - that assignment is written, exactly as for
+        // any UPDATE of the row. upsert()'s UPDATE ... WHERE matches no row here and runs no
+        // trigger, so it would not have written anything.
+        $this->db->executeStatement(
+            'CREATE TRIGGER test_upsert_mutating BEFORE UPDATE ON ' . self::TABLE_AUTO_INCREMENT
+            . " FOR EACH ROW SET NEW.value = CONCAT(NEW.value, '-mutated')"
+        );
+
+        $id = (int) Helper::upsertByUniqueKey(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => null, 'name' => 'first', 'value' => 'inserted'],
+            ['id']
+        );
+
+        $result = Helper::upsertByUniqueKey(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => $id + 1000, 'name' => 'first', 'value' => 'hijacked'],
+            ['id']
+        );
+
+        // the trigger's write makes the statement report an updated row, which is still the
+        // update path and must not return an id
+        $this->assertNull($result);
+        $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
+
+        $row = $this->fetchRowByName('first');
+        $this->assertSame($id, (int) $row['id'], 'The foreign row keeps its id.');
+        $this->assertSame(
+            'inserted-mutated',
+            $row['value'],
+            'The trigger sees the unchanged value and its assignment to NEW is written; the incoming value is not.'
+        );
+    }
+
     public function testNullKeyDoesNotMatchAStoredNullKey(): void
     {
         $this->db->executeStatement(
