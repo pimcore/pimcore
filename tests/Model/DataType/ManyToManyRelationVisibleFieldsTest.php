@@ -65,7 +65,12 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         $predefined->setTargetSubtype($targetSubtype);
         $predefined->save();
 
-        return $predefined;
+        // reload: a definition saved from a fresh model does not know its storage location yet, so delete() on it
+        // would silently delete nothing
+        $reloaded = Predefined::getById((string) $predefined->getId());
+        $this->assertInstanceOf(Predefined::class, $reloaded);
+
+        return $reloaded;
     }
 
     protected function setUpTestClasses(): void
@@ -333,6 +338,7 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
             $late->delete();
         }
 
+        $this->assertNull(Predefined::getById((string) $late->getId()), 'the fixture must really be gone');
         $this->assertArrayNotHasKey('visibleFieldsTestLateArrival', $fd->getAvailableVisibleFields(), 'a deleted definition must no longer be offered');
         $this->assertArrayNotHasKey('visibleFieldsTestLateArrival', $fd->getVisibleFieldSources(), 'the cached source map must be invalidated by the delete');
         $this->assertNull($fd->getVisibleFieldData($asset)['visibleFieldsTestLateArrival'], 'a deleted definition must no longer resolve');
