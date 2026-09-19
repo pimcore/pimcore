@@ -183,9 +183,10 @@ class Dao extends Model\Element\Dao
         $dataDocument['path'] = $this->model->getRealPath();
 
         // update the values in the database
-        // upsert() and not upsertByUniqueKey(): the unique fullpath index is a second unique index,
-        // on which the single statement would run the conflicting row's UPDATE triggers
-        Helper::upsert($this->db, 'documents', $dataDocument, $this->getPrimaryKey('documents'));
+        // updateOrInsert() and not upsertByUniqueKey(): the row exists since create(), and the unique
+        // fullpath index is a second unique index, on which the single statement would run the
+        // conflicting row's UPDATE triggers
+        Helper::updateOrInsert($this->db, 'documents', $dataDocument, $this->getPrimaryKey('documents'));
 
         if ($typeSpecificTable) {
             Helper::upsertByUniqueKey($this->db, $typeSpecificTable, $dataTypeSpecific, $this->getPrimaryKey($typeSpecificTable));

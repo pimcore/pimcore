@@ -21,7 +21,8 @@ use Pimcore\Db\Helper;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
- * Tests for Db\Helper::upsertByUniqueKey() and the legacy Db\Helper::upsert() it falls back to.
+ * Tests for Db\Helper::upsertByUniqueKey(), Db\Helper::updateOrInsert() and the legacy
+ * Db\Helper::upsert() both fall back to.
  *
  * The return value is the delicate part: callers such as Notification\Dao and Element\Note\Dao
  * take it as the id of the freshly created row, so an insert has to return the generated id while
@@ -651,6 +652,107 @@ final class HelperTest extends TestCase
         $row = $this->fetchRowByName('first');
         $this->assertSame($id, (int) $row['id']);
         $this->assertSame('inserted', $row['value'], 'The conflicting row must not be modified.');
+        $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
+    }
+
+    public function testUpdateOrInsertInsertsWhenTheRowIsMissing(): void
+    {
+        $lastInsertId = Helper::updateOrInsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => null, 'name' => 'first', 'value' => 'inserted'],
+            ['id']
+        );
+
+        $this->assertNotNull($lastInsertId, 'The insert path has to return the generated id.');
+        $row = $this->fetchRowByName('first');
+        $this->assertSame((int) $lastInsertId, (int) $row['id']);
+        $this->assertSame('inserted', $row['value']);
+    }
+
+    public function testUpdateOrInsertUpdatesTheExistingRowWithoutInserting(): void
+    {
+        $id = (int) Helper::updateOrInsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => null, 'name' => 'first', 'value' => 'inserted'],
+            ['id']
+        );
+
+        $data = ['id' => $id, 'name' => 'first', 'value' => 'updated'];
+        $this->assertNull(Helper::updateOrInsert($this->db, self::TABLE_AUTO_INCREMENT, $data, ['id']), 'The update path must not return an id.');
+        // an unchanged row takes the upsert() path and still must not report an insert
+        $this->assertNull(Helper::updateOrInsert($this->db, self::TABLE_AUTO_INCREMENT, $data, ['id']));
+
+        $row = $this->fetchRowByName('first');
+        $this->assertSame($id, (int) $row['id']);
+        $this->assertSame('updated', $row['value']);
+        $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
+    }
+
+    public function testUpdateOrInsertNeverTouchesARowConflictingOnAnotherUniqueIndex(): void
+    {
+        $this->db->executeStatement(
+            'CREATE TABLE ' . self::TABLE_TRIGGER_LOG . ' (
+                `event` varchar(20) NOT NULL,
+                `id` int(11) NOT NULL
+            ) DEFAULT CHARSET=utf8mb4'
+        );
+        $this->db->executeStatement(
+            'CREATE TRIGGER test_upsert_before_update BEFORE UPDATE ON ' . self::TABLE_AUTO_INCREMENT
+            . ' FOR EACH ROW INSERT INTO ' . self::TABLE_TRIGGER_LOG . " VALUES ('before_update', OLD.id)"
+        );
+
+        $id = (int) Helper::updateOrInsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => null, 'name' => 'first', 'value' => 'inserted'],
+            ['id']
+        );
+
+        // a different id colliding with the existing row's unique `name`: the UPDATE ... WHERE id
+        // matches no row, the insert fails on `name`, and the fallback UPDATE matches no row
+        // either - so unlike upsertByUniqueKey() no trigger runs on the foreign row
+        $result = Helper::updateOrInsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => $id + 1000, 'name' => 'first', 'value' => 'hijacked'],
+            ['id']
+        );
+
+        $this->assertNull($result);
+        $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
+        $this->assertSame(0, (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . self::TABLE_TRIGGER_LOG), 'No UPDATE trigger runs on the foreign row.');
+
+        $row = $this->fetchRowByName('first');
+        $this->assertSame($id, (int) $row['id']);
+        $this->assertSame('inserted', $row['value']);
+    }
+
+    public function testUpdateOrInsertOnAFoundRowsConnection(): void
+    {
+        $params = $this->db->getParams();
+        $params['driverOptions'][PDO::MYSQL_ATTR_FOUND_ROWS] = true;
+        $foundRowsConnection = \Doctrine\DBAL\DriverManager::getConnection($params);
+
+        try {
+            $id = (int) Helper::updateOrInsert(
+                $foundRowsConnection,
+                self::TABLE_AUTO_INCREMENT,
+                ['id' => null, 'name' => 'found-rows', 'value' => 'inserted'],
+                ['id']
+            );
+            $data = ['id' => $id, 'name' => 'found-rows', 'value' => 'updated'];
+            $this->assertNull(Helper::updateOrInsert($foundRowsConnection, self::TABLE_AUTO_INCREMENT, $data, ['id']));
+            // the UPDATE of an unchanged row reports 1 matched row here, which is equally correct
+            $this->assertNull(Helper::updateOrInsert($foundRowsConnection, self::TABLE_AUTO_INCREMENT, $data, ['id']));
+        } finally {
+            $foundRowsConnection->close();
+        }
+
+        $row = $this->fetchRowByName('found-rows');
+        $this->assertSame($id, (int) $row['id']);
+        $this->assertSame('updated', $row['value']);
         $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
     }
 

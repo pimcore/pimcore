@@ -112,9 +112,10 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        // upsert() and not upsertByUniqueKey(): the unique fullpath index is a second unique index,
-        // on which the single statement would run the conflicting row's UPDATE triggers
-        Helper::upsert($this->db, 'objects', $data, $this->getPrimaryKey('objects'));
+        // updateOrInsert() and not upsertByUniqueKey(): the row exists since create(), and the unique
+        // fullpath index is a second unique index, on which the single statement would run the
+        // conflicting row's UPDATE triggers
+        Helper::updateOrInsert($this->db, 'objects', $data, $this->getPrimaryKey('objects'));
 
         // tree_locks
         $this->db->delete('tree_locks', ['id' => $this->model->getId(), 'type' => 'object']);

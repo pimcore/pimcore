@@ -87,8 +87,8 @@ class Helper
      * matches no row in that situation. The database does however still run the foreign row's
      * UPDATE triggers with NEW equal to OLD (BEFORE UPDATE always, AFTER UPDATE depending on the
      * server version), which upsert() never did, and a BEFORE UPDATE trigger that assigns to NEW
-     * writes to the row. This is why the core DAOs keep using upsert() for objects, assets and
-     * documents, whose fullpath index is a second unique index. If the keyed
+     * writes to the row. This is why the core DAOs use {@see self::updateOrInsert()} for
+     * objects, assets and documents, whose fullpath index is a second unique index. If the keyed
      * row exists and the update itself would violate another unique index, the statement fails
      * with a UniqueConstraintViolationException, the same outcome as upsert()'s UPDATE.
      *
@@ -186,6 +186,56 @@ class Helper
         }
 
         return null;
+    }
+
+    /**
+     * Updates the rows matching $keys, or inserts the row if none was changed.
+     *
+     * The exact contract of {@see self::upsert()} - $keys are the criteria of an
+     * UPDATE ... WHERE, no other row is ever touched, no trigger runs on a row the criteria do
+     * not match - but in the opposite order: the UPDATE runs first, and only if it changes no
+     * row (the row does not exist, or it already holds these values) the insert is tried via
+     * upsert(). Where the row usually exists and changes, as for the main element tables whose
+     * DAOs insert the row in create() before every update(), this is a single statement
+     * without the duplicate key exception, on any connection: with CLIENT_FOUND_ROWS the UPDATE
+     * of an unchanged row reports 1, which is equally correct here. Where the row usually does
+     * not exist, upsert() or {@see self::upsertByUniqueKey()} are the better choice, as the
+     * UPDATE would be a wasted round trip.
+     *
+     * @param array<string, mixed> $data The data to be inserted or updated into the database table.
+     * Array key corresponds to the database column, array value to the actual value.
+     * @param string[] $keys The columns used as criteria/condition for the where clause, typically
+     * the primary key columns. The values for the specified keys are read from the $data parameter.
+     *
+     * @return int|string|null last insert id if a row was inserted, null if a row was updated.
+     */
+    public static function updateOrInsert(
+        Connection $connection,
+        string $table,
+        array $data,
+        array $keys,
+        bool $quoteIdentifiers = true
+    ): int|string|null {
+        $quotedData = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
+
+        // a null or missing key value (e.g. the id of a new auto-increment row) cannot match a
+        // row, so the UPDATE is skipped and upsert() handles the call exactly as before
+        $criteria = [];
+        foreach ($keys as $key) {
+            $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
+            if (!isset($quotedData[$key])) {
+                $criteria = [];
+
+                break;
+            }
+            $criteria[$key] = $quotedData[$key];
+        }
+
+        if ($criteria !== [] && (int) $connection->update($table, $quotedData, $criteria) > 0) {
+            return null;
+        }
+
+        return self::upsert($connection, $table, $data, $keys, $quoteIdentifiers);
     }
 
     /**
