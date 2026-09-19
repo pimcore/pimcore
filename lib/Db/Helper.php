@@ -75,12 +75,13 @@ class Helper
      * database only once, no matter which of the two paths it takes. The return value is the
      * same as for {@see self::upsert()}: the last insert id on an insert, null on an update.
      *
-     * It is the tool for one situation: rows whose existence the caller cannot know and which
-     * are written in numbers per save, as the editables of a document or the languages of a
-     * translation - there it is one round trip per row on either path, where upsert() pays two
-     * for every existing row. A row the caller knows to exist is cheaper still through
-     * {@see self::updateOrInsert()}, a bare UPDATE, and a row known to be new is a plain insert
-     * through upsert(); the core DAOs use those two everywhere else.
+     * It is the tool for one situation: rows whose existence the caller cannot know, as the
+     * languages of a translation - there it is one round trip per row on either path, where
+     * upsert() pays two for every existing row. A row the caller knows to exist is cheaper
+     * still through {@see self::updateOrInsert()}, a bare UPDATE, and a row known to be new is
+     * a plain insert through upsert(), cheaper than this statement; the core DAOs use those two
+     * everywhere else (a document's editables, for instance, are deleted before being rewritten
+     * and are therefore plain inserts).
      *
      * $uniqueKeyColumns must be the primary key or a unique index of the table, and the table
      * should have no other unique index the data can collide on - the class store and localized

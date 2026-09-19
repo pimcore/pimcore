@@ -37,7 +37,7 @@ class Dao extends Model\Dao\AbstractDao
             'type' => $this->model->getType(),
         ];
 
-        Helper::upsertByUniqueKey($this->db, 'documents_editables', $element, $this->getPrimaryKey('documents_editables'));
+        Helper::upsert($this->db, 'documents_editables', $element, $this->getPrimaryKey('documents_editables'));
     }
 
     public function delete(): void
