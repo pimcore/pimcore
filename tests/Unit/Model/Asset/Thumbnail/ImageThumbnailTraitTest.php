@@ -53,7 +53,7 @@ class ImageThumbnailTraitTest extends TestCase
     {
         $storage = $this->createMock(FilesystemOperator::class);
         $storage->method('readStream')->willThrowException(UnableToReadFile::fromLocation(self::STORAGE_PATH));
-        $storage->method('fileExists')->willThrowException(new UnableToCheckFileExistence('Unable to check file existence for: ' . self::STORAGE_PATH));
+        $storage->method('fileExists')->willThrowException(UnableToCheckFileExistence::forLocation(self::STORAGE_PATH));
 
         $asset = $this->createMock(Asset\Image::class);
         $asset->expects($this->never())->method('getDao');
