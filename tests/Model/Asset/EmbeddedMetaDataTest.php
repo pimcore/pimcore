@@ -13,9 +13,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Asset;
 
+use Pimcore;
+use Pimcore\Helper\LongRunningHelper;
+use Pimcore\Messenger\AssetUpdateTasksMessage;
+use Pimcore\Messenger\Handler\AssetUpdateTasksHandler;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
+use Psr\Log\NullLogger;
+use Symfony\Component\Lock\LockFactory;
 
 /**
  * Embedded meta data of assets (see EmbeddedMetaDataTrait) is bound to the binary data of the asset,
@@ -62,6 +68,12 @@ class EmbeddedMetaDataTest extends ModelTestCase
         $this->assertSame('Pimcore Test Suite', $document->getEmbeddedMetaData(false)['CreatorTool']);
 
         $document->setData($this->getPdfWithoutMetaData());
+
+        // the settings are removed as soon as the data is assigned, so that the meta data
+        // can already be extracted from the new data before the asset is saved
+        $this->assertNull($document->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertNull($document->getCustomSetting('embeddedMetaData'));
+
         $document->save();
 
         $document = Asset::getById($document->getId(), ['force' => true]);
@@ -71,6 +83,57 @@ class EmbeddedMetaDataTest extends ModelTestCase
         // the meta data is extracted from the new data
         $this->assertSame([], $document->getEmbeddedMetaData(true, false));
         $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
+    }
+
+    public function testEmbeddedMetaDataExtractedBeforeSaveIsPersisted(): void
+    {
+        // extracted from a new, not yet saved asset
+        $document = TestHelper::createDocumentAsset('', $this->getPdfWithoutMetaData(), false);
+        $this->assertSame([], $document->getEmbeddedMetaData(true, false));
+        $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
+        $document->save();
+
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertSame([], $document->getEmbeddedMetaData(false));
+
+        // extracted from new data assigned to an existing asset, before the asset is saved
+        $document->setData($this->getPdfWithMetaData());
+        $metaData = $document->getEmbeddedMetaData(true, false);
+        $this->assertSame('Pimcore Test Suite', $metaData['CreatorTool']);
+        $document->save();
+
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertSame($metaData, $document->getEmbeddedMetaData(false));
+    }
+
+    public function testUpdateTasksHandlerExtractsAndPersistsEmbeddedMetaData(): void
+    {
+        $document = TestHelper::createDocumentAsset('', $this->getPdfWithMetaData());
+
+        // mark the other processing steps of the handler (PDF scan, page count) as already done,
+        // so that the embedded meta data extraction is the only reason for the handler to save the asset
+        $document->setCustomSetting(Asset\Document::CUSTOM_SETTING_PDF_SCAN_STATUS, Asset\Enum\PdfScanStatus::SAFE->value);
+        $document->setCustomSetting('document_page_count', 1);
+        $document->save();
+
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertSame(1, $document->getPageCount());
+        $this->assertNull($document->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertNull($document->getCustomSetting('embeddedMetaData'));
+
+        $container = Pimcore::getContainer();
+        $handler = new AssetUpdateTasksHandler(
+            new NullLogger(),
+            $container->get(LongRunningHelper::class),
+            $container->get(LockFactory::class)
+        );
+        $handler(new AssetUpdateTasksMessage($document->getId()));
+
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertSame('Pimcore Test Suite', $document->getCustomSetting('embeddedMetaData')['CreatorTool']);
     }
 
     public function testEmbeddedMetaDataIsResetWhenTypeChanges(): void
