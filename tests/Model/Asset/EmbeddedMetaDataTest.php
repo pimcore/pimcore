@@ -242,6 +242,47 @@ class EmbeddedMetaDataTest extends ModelTestCase
     }
 
     /**
+     * Versions created before it was tracked whether the processing of the data was still pending when the asset
+     * was dumped may have been created while it was pending (before the derived settings existed), so restoring
+     * them processes the data again, as it was done in the past
+     */
+    public function testLegacyVersionIsProcessedAgainAfterRestore(): void
+    {
+        $document = TestHelper::createDocumentAsset('', $this->getPdfWithMetaData());
+        // a legacy dump doesn't contain the marker of a pending processing
+        $document->setProcessingPending(false);
+        $document->setCustomSetting('customSettingsTest', 'test');
+        $document->save();
+
+        // replace the data of the version by a dump in the legacy format
+        $version = $document->getLatestVersion(null, true);
+        $this->assertNotNull($version);
+        Pimcore::getContainer()->get(VersionStorageAdapterInterface::class)->save(
+            $version,
+            TestHelper::getLegacyDumpData($document),
+            $document->getStream()
+        );
+
+        $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
+        $restoredDocument = $version->loadData();
+        $this->assertInstanceOf(Asset\Document::class, $restoredDocument);
+        // the custom settings of the dump are kept ...
+        $this->assertSame('test', $restoredDocument->getCustomSetting('customSettingsTest'));
+        $restoredDocument->save();
+        // ... but the data is processed again, as it is unknown whether it was processed when it was dumped
+        $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize());
+
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertTrue($document->isProcessingPending());
+        $this->assertSame('test', $document->getCustomSetting('customSettingsTest'));
+
+        TestHelper::runAssetUpdateTasks($document->getId());
+        $document = Asset::getById($document->getId(), ['force' => true]);
+        $this->assertFalse($document->isProcessingPending());
+        $this->assertSame('Pimcore Test Suite', $document->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
+    }
+
+    /**
      * Versions created before the custom settings were loaded explicitly before dumping, of an asset that was
      * hydrated from the cache without its custom settings (too large for the cache), don't contain the custom
      * settings at all. Restoring such a version can't restore the derived settings, so they have to be generated

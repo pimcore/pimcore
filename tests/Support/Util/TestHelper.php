@@ -622,9 +622,30 @@ class TestHelper
     {
         $hydratedAsset = self::getCacheHydratedAsset(Asset::getById($asset->getId(), ['force' => true]));
         $hydratedAsset->setInDumpState(true);
-        $data = Tool\Serialize::serialize($hydratedAsset);
 
-        // the property tracking whether the custom settings were loaded when the asset was dumped didn't exist yet
+        return self::removeCustomSettingsTrackingFromDumpData(Tool\Serialize::serialize($hydratedAsset));
+    }
+
+    /**
+     * Returns the serialized data of a dump (e.g. version, recycle bin) of the asset in the format created before
+     * it was tracked whether the custom settings were complete when the asset was dumped
+     *
+     * @throws Exception
+     */
+    public static function getLegacyDumpData(Asset $asset): string
+    {
+        $asset = Asset::getById($asset->getId(), ['force' => true]);
+        $asset->setInDumpState(true);
+
+        return self::removeCustomSettingsTrackingFromDumpData(Tool\Serialize::serialize($asset));
+    }
+
+    /**
+     * Removes the property tracking whether the custom settings were loaded when the asset was dumped, which didn't
+     * exist in the past, from the serialized data of a dump
+     */
+    private static function removeCustomSettingsTrackingFromDumpData(string $data): string
+    {
         $data = preg_replace('/s:\d+:"\0\*\0customSettingsIncomplete";(?:N;|b:[01];)/', '', $data, -1, $count);
         if ($count !== 1) {
             throw new RuntimeException(sprintf('Expected exactly one tracking property in the dump, found %d', $count));

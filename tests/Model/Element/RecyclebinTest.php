@@ -214,6 +214,46 @@ class RecyclebinTest extends ModelTestCase
     }
 
     /**
+     * Recycle bin items created before it was tracked whether the processing of the data was still pending when the
+     * asset was dumped may have been created while it was pending (before the derived settings existed), so
+     * restoring them processes the data again, as it was done in the past
+     */
+    public function testLegacyRecycleBinItemIsProcessedAgainAfterRestore(): void
+    {
+        $asset = TestHelper::createDocumentAsset(
+            '',
+            file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf'))
+        );
+        $assetId = $asset->getId();
+        // a legacy dump doesn't contain the marker of a pending processing
+        $asset->setProcessingPending(false);
+        $asset->setCustomSetting('customSettingsTest', 'test');
+        $asset->save();
+
+        Item::create($asset, $this->user);
+        $recycledItem = (new Item\Listing())->current();
+        // replace the data of the recycle bin item by a dump in the legacy format
+        Storage::get('recycle_bin')->write($recycledItem->getStorageFile(), TestHelper::getLegacyDumpData($asset));
+        $asset->delete();
+
+        $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
+        $recycledItem->restore();
+        // the data is processed again, as it is unknown whether it was processed when it was dumped
+        $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize());
+
+        $restoredAsset = Asset::getById($assetId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $restoredAsset);
+        $this->assertTrue($restoredAsset->isProcessingPending());
+        // the custom settings of the dump are kept
+        $this->assertSame('test', $restoredAsset->getCustomSetting('customSettingsTest'));
+
+        TestHelper::runAssetUpdateTasks($assetId);
+        $restoredAsset = Asset::getById($assetId, ['force' => true]);
+        $this->assertFalse($restoredAsset->isProcessingPending());
+        $this->assertSame('Pimcore Test Suite', $restoredAsset->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
+    }
+
+    /**
      * Recycle bin items created before the custom settings were loaded explicitly before dumping, of an asset that
      * was hydrated from the cache without its custom settings (too large for the cache), don't contain the custom
      * settings at all. Restoring such an item can't restore the derived settings, so they have to be generated
