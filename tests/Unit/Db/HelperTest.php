@@ -455,10 +455,11 @@ final class HelperTest extends TestCase
 
     public function testConflictOnNonKeyUniqueIndexRunsTheForeignRowsBeforeUpdateTrigger(): void
     {
-        // contract pin: ON DUPLICATE KEY UPDATE runs the conflicting row's BEFORE UPDATE
-        // triggers even though every guarded assignment keeps the stored value (AFTER UPDATE
-        // triggers do not run for an unchanged row). upsert()'s UPDATE ... WHERE matches no row
-        // in this situation and runs no trigger.
+        // contract pin: ON DUPLICATE KEY UPDATE runs the conflicting row's UPDATE triggers even
+        // though every guarded assignment keeps the stored value - BEFORE UPDATE always, AFTER
+        // UPDATE depending on the server (MariaDB 10.11 skips it for the unchanged row, other
+        // versions in the CI matrix run it). upsert()'s UPDATE ... WHERE matches no row in this
+        // situation and runs no trigger.
         $this->db->executeStatement(
             'CREATE TABLE ' . self::TABLE_TRIGGER_LOG . ' (
                 `event` varchar(20) NOT NULL,
@@ -493,14 +494,15 @@ final class HelperTest extends TestCase
         );
 
         $this->assertNull($result);
-        $this->assertSame(
-            [['event' => 'before_update', 'id' => (string) $id, 'old_value' => 'inserted', 'new_value' => 'inserted']],
-            array_map(
-                static fn (array $row): array => ['event' => $row['event'], 'id' => (string) $row['id'], 'old_value' => $row['old_value'], 'new_value' => $row['new_value']],
-                $this->db->fetchAllAssociative('SELECT `event`, `id`, `old_value`, `new_value` FROM ' . self::TABLE_TRIGGER_LOG)
-            ),
-            'Only the BEFORE UPDATE trigger runs, and it sees the unchanged values.'
-        );
+
+        $events = $this->db->fetchAllAssociative('SELECT `event`, `id`, `old_value`, `new_value` FROM ' . self::TABLE_TRIGGER_LOG);
+        $this->assertContains('before_update', array_column($events, 'event'), 'The BEFORE UPDATE trigger of the foreign row runs.');
+        foreach ($events as $event) {
+            $this->assertContains($event['event'], ['before_update', 'after_update']);
+            $this->assertSame($id, (int) $event['id'], 'Only the conflicting row is passed to the triggers.');
+            $this->assertSame('inserted', $event['old_value']);
+            $this->assertSame('inserted', $event['new_value'], 'The triggers see NEW equal to OLD.');
+        }
 
         $row = $this->fetchRowByName('first');
         $this->assertSame($id, (int) $row['id']);

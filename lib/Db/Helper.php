@@ -83,8 +83,8 @@ class Helper
      * conflicting row matches the incoming key values. A conflict on some other unique index
      * therefore leaves that foreign row's values untouched and the call returns null, like
      * upsert()'s UPDATE ... WHERE, which matches no row in that situation - the database does
-     * however still run the foreign row's BEFORE UPDATE triggers, with NEW equal to OLD (AFTER
-     * UPDATE triggers do not run for the unchanged row), which upsert() never did. If the keyed
+     * however still run the foreign row's UPDATE triggers with NEW equal to OLD (BEFORE UPDATE
+     * always, AFTER UPDATE depending on the server version), which upsert() never did. If the keyed
      * row exists and the update itself would violate another unique index, the statement fails
      * with a UniqueConstraintViolationException, the same outcome as upsert()'s UPDATE.
      *
