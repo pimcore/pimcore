@@ -99,6 +99,9 @@ class Helper
      * triggers first (their effects rolled back with the failed statement); this method runs
      * them only when it actually tries to insert.
      *
+     * @param string $table Used as given, exactly as upsert() and DBAL's insert()/update() use it:
+     * $quoteIdentifiers applies to the column names in $data and $keys only. A table name that
+     * needs quoting, or a schema-qualified one, is passed already quoted.
      * @param array<string, mixed> $data The data to be inserted or updated into the database table.
      * Array key corresponds to the database column, array value to the actual value.
      * @param string[] $keys The columns used as criteria/condition for the where clause, typically

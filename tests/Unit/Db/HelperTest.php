@@ -212,6 +212,25 @@ final class HelperTest extends TestCase
         $this->assertSame(1, $this->countRows(self::TABLE_COMPOSITE_KEY));
     }
 
+    public function testTakesTheTableNameAsGivenLikeUpsert(): void
+    {
+        // $quoteIdentifiers covers the column names only; the table is used as given, as by
+        // upsert() and DBAL's insert()/update() - so a name passed already quoted works on the
+        // UPDATE and on the upsert() fallback alike (blanket quoting would break it)
+        $table = $this->db->quoteIdentifier(self::TABLE_COMPOSITE_KEY);
+        $keys = ['cid', 'ctype'];
+
+        Helper::updateOrInsert($this->db, $table, ['cid' => 17, 'ctype' => 'object', 'key' => 'inserted'], $keys);
+        $result = Helper::updateOrInsert($this->db, $table, ['cid' => 17, 'ctype' => 'object', 'key' => 'updated'], $keys);
+
+        $this->assertNull($result);
+        $this->assertSame(1, $this->countRows(self::TABLE_COMPOSITE_KEY));
+        $this->assertSame(
+            'updated',
+            $this->db->fetchOne('SELECT `key` FROM ' . self::TABLE_COMPOSITE_KEY . ' WHERE cid = 17')
+        );
+    }
+
     public function testMissingKeyThrowsOnADuplicateWithoutWriting(): void
     {
         $data = ['cid' => 9, 'ctype' => 'document', 'key' => 'inserted'];
