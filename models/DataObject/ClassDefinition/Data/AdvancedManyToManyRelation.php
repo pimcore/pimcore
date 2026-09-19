@@ -218,7 +218,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
         if (is_array($data) && count($data) > 0) {
             $itemData = null;
-            $visibleFieldNames = $this->getVisibleFieldNames();
+            // resolving visible field values needs the related elements themselves, one load per relation; with
+            // optimized admin loading the UI fetches such additional data asynchronously (getVisibleFieldData())
+            $visibleFieldNames = $this->isOptimizedAdminLoading() ? [] : $this->getVisibleFieldNames();
 
             $targets = [];
             $existingTargets = [];

@@ -15,6 +15,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Exception;
 use Pimcore;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -252,29 +253,71 @@ trait VisibleFieldsTrait
             $this->getAssetTypes()
         ));
 
-        try {
-            $listing = new Predefined\Listing();
-            $definitions = $listing->getDefinitions();
-        } catch (Exception $e) {
-            Logger::debug('Could not load predefined asset metadata for visible fields: ' . $e->getMessage());
-            $definitions = [];
-        }
-
-        foreach ($definitions as $definition) {
-            $name = $definition->getName();
-            if (!$name || isset($candidates[$name])) {
+        foreach ($this->getPredefinedAssetMetadataByName() as $name => $definitions) {
+            if (isset($candidates[$name])) {
                 continue;
             }
 
-            $targetSubtype = $definition->getTargetSubtype();
-            if ($targetSubtype && $allowedSubtypes && !in_array($targetSubtype, $allowedSubtypes, true)) {
-                continue;
-            }
+            foreach ($definitions as $definition) {
+                $targetSubtype = $definition->getTargetSubtype();
+                if ($targetSubtype && $allowedSubtypes && !in_array($targetSubtype, $allowedSubtypes, true)) {
+                    continue;
+                }
 
-            $candidates[$name] = $this->buildVisibleFieldCandidateFromPredefinedMetadata($definition);
+                $candidates[$name] = $this->buildVisibleFieldCandidateFromPredefinedMetadata($definition);
+
+                break;
+            }
         }
 
         return $candidates;
+    }
+
+    /**
+     * The predefined asset metadata definitions, grouped by name (a name may exist once per language and
+     * asset subtype). Loaded once per request.
+     *
+     * @return array<string, Predefined[]>
+     */
+    protected function getPredefinedAssetMetadataByName(): array
+    {
+        $cacheKey = 'pimcore_visible_fields_predefined_asset_metadata';
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            return RuntimeCache::get($cacheKey);
+        }
+
+        $byName = [];
+
+        try {
+            foreach ((new Predefined\Listing())->getDefinitions() as $definition) {
+                $name = $definition->getName();
+                if ($name) {
+                    $byName[$name][] = $definition;
+                }
+            }
+        } catch (Exception $e) {
+            Logger::debug('Could not load predefined asset metadata for visible fields: ' . $e->getMessage());
+        }
+
+        RuntimeCache::set($cacheKey, $byName);
+
+        return $byName;
+    }
+
+    /**
+     * Whether a visible field name is a predefined metadata definition that applies to this asset's subtype;
+     * metadata that only exists ad hoc on the asset, or that is defined for another subtype, is not shown.
+     */
+    protected function isApplicableAssetMetadata(Asset $asset, string $name): bool
+    {
+        foreach ($this->getPredefinedAssetMetadataByName()[$name] ?? [] as $definition) {
+            $targetSubtype = $definition->getTargetSubtype();
+            if (!$targetSubtype || $targetSubtype === $asset->getType()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -340,11 +383,11 @@ trait VisibleFieldsTrait
             case 'mimetype':
                 return $asset->getMimeType();
             case 'fileSize':
-                try {
-                    return $asset->getFileSize();
-                } catch (Exception $e) {
-                    return null;
-                }
+                return $asset->getFileSize();
+        }
+
+        if (!$this->isApplicableAssetMetadata($asset, $name)) {
+            return null;
         }
 
         $value = $asset->getMetadata($name, $params['language'] ?? null);
