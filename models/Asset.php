@@ -75,6 +75,11 @@ class Asset extends Element\AbstractElement
     public const CUSTOM_SETTING_PROCESSING_FAILED = 'pimcore-asset-processing-failed';
 
     /**
+     * custom settings of the embedded meta data (see MetaData\EmbeddedMetaDataTrait), which belong to the binary data
+     */
+    private const EMBEDDED_META_DATA_CUSTOM_SETTINGS = ['embeddedMetaData', 'embeddedMetaDataExtracted'];
+
+    /**
      * @internal
      *
      */
@@ -1240,6 +1245,15 @@ class Asset extends Element\AbstractElement
             $this->stream = $stream;
             $this->streamIsPlaceholder = false;
 
+            // embedded meta data (see EmbeddedMetaDataTrait) belongs to the binary data, so it has to be extracted
+            // again from the new data. This is done here for all asset types, as the type can change together with
+            // the data (e.g. image -> document) and the new type would otherwise keep the meta data of the old one.
+            // It has to happen as soon as the data is assigned (and not during save()), so that the meta data can
+            // already be extracted from the new data before the asset is saved.
+            foreach (self::EMBEDDED_META_DATA_CUSTOM_SETTINGS as $key) {
+                $this->removeCustomSetting($key);
+            }
+
             $isRewindable = @rewind($this->stream);
 
             if (!$isRewindable) {
@@ -1250,6 +1264,34 @@ class Asset extends Element\AbstractElement
         } elseif (is_null($stream)) {
             $this->stream = null;
             $this->streamIsPlaceholder = false;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Assigns binary data that was stored together with the current state of the asset, e.g. by a version.
+     * In contrast to setStream(), the embedded meta data custom settings are kept, as they belong to this data.
+     *
+     * @param resource $stream
+     *
+     * @return $this
+     *
+     * @internal
+     */
+    public function restoreStream($stream): static
+    {
+        $embeddedMetaDataSettings = [];
+        foreach (self::EMBEDDED_META_DATA_CUSTOM_SETTINGS as $key) {
+            $embeddedMetaDataSettings[$key] = $this->getCustomSetting($key);
+        }
+
+        $this->setStream($stream);
+
+        foreach ($embeddedMetaDataSettings as $key => $value) {
+            if ($value !== null) {
+                $this->setCustomSetting($key, $value);
+            }
         }
 
         return $this;

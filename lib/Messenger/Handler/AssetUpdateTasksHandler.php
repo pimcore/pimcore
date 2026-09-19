@@ -76,15 +76,22 @@ class AssetUpdateTasksHandler
         }
 
         if ($asset->isPageCountProcessingEnabled()) {
-            $pageCount = $asset->getCustomSetting('document_page_count');
-            if (!$pageCount || $pageCount === 'failed') {
-                if (!$asset->processPageCount() || $asset->getCustomSetting('document_page_count') === 'failed') {
+            // getPageCount() is also falsy when the last processing attempt failed
+            if (!$asset->getPageCount()) {
+                if (!$asset->processPageCount()) {
                     $asset->setCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED, true);
                     $this->logger->warning(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
                 }
 
                 $save = true;
             }
+        }
+
+        // handleEmbeddedMetaData() skips already extracted metadata on its own using the same condition,
+        // but checking it here too avoids an unnecessary save in that case
+        if (!$asset->getCustomSetting('embeddedMetaDataExtracted') || $asset->getDataChanged()) {
+            $asset->handleEmbeddedMetaData();
+            $save = true;
         }
 
         if ($asset->isThumbnailsEnabled() && !$asset->getCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED)) {
