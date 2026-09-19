@@ -29,7 +29,7 @@ class Dao extends Model\Dao\AbstractDao
     public function set(string $id, float|bool|int|string $data, string $type = SettingsStore::TYPE_STRING, ?string $scope = null): bool
     {
         try {
-            Helper::upsert($this->db, self::TABLE_NAME, [
+            Helper::upsertByUniqueKey($this->db, self::TABLE_NAME, [
                 'id' => $id,
                 'data' => $data,
                 'scope' => (string) $scope,

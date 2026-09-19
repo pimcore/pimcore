@@ -37,7 +37,7 @@ class Dao extends Model\Dao\AbstractDao
                 $data = serialize($data);
             }
 
-            Helper::upsert($this->db, 'tmp_store', [
+            Helper::upsertByUniqueKey($this->db, 'tmp_store', [
                 'id' => $id,
                 'data' => $data,
                 'tag' => $tag,

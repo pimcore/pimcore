@@ -121,7 +121,7 @@ class Dao extends Model\Dao\AbstractDao
                     'userOwner' => $this->model->getUserOwner(),
                     'userModification' => $this->model->getUserModification(),
                 ];
-                Helper::upsert($this->db, $this->getDatabaseTableName(), $data, $this->getPrimaryKey($this->getDatabaseTableName()));
+                Helper::upsertByUniqueKey($this->db, $this->getDatabaseTableName(), $data, $this->getPrimaryKey($this->getDatabaseTableName()));
             }
         }
     }

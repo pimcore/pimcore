@@ -247,7 +247,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
             $tableName = 'object_store_' . $this->model->getClassId();
             if ($isUpdate) {
-                Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+                Helper::upsertByUniqueKey($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
             } else {
                 $this->db->insert('object_store_' . $this->model->getClassId(), Helper::quoteDataIdentifiers($this->db, $data));
             }
@@ -367,7 +367,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $data['oo_id'] = $this->model->getId();
 
             $tableName = 'object_query_' . $this->model->getClassId();
-            Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+            Helper::upsertByUniqueKey($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
         } finally {
             DataObject::setGetInheritedValues($inheritedValues);
         }

@@ -21,7 +21,7 @@ use Pimcore\Db\Helper;
 use Pimcore\Tests\Support\Test\TestCase;
 
 /**
- * Tests for Db\Helper::upsert().
+ * Tests for Db\Helper::upsertByUniqueKey() and the legacy Db\Helper::upsert() it falls back to.
  *
  * The return value is the delicate part: callers such as Notification\Dao and Element\Note\Dao
  * take it as the id of the freshly created row, so an insert has to return the generated id while
@@ -103,7 +103,7 @@ final class HelperTest extends TestCase
     public function testInsertReturnsTheGeneratedId(): void
     {
         // a new model carries no id yet, exactly as Note\Dao and Version\Dao pass it
-        $lastInsertId = Helper::upsert(
+        $lastInsertId = Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => null, 'name' => 'first', 'value' => 'inserted'],
@@ -119,14 +119,14 @@ final class HelperTest extends TestCase
 
     public function testUpdateReturnsNullAndUpdatesTheRow(): void
     {
-        $id = (int) Helper::upsert(
+        $id = (int) Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => null, 'name' => 'first', 'value' => 'inserted'],
             ['id']
         );
 
-        $lastInsertId = Helper::upsert(
+        $lastInsertId = Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => $id, 'name' => 'first', 'value' => 'updated'],
@@ -145,10 +145,10 @@ final class HelperTest extends TestCase
     public function testUpdateWithUnchangedValuesReturnsNull(): void
     {
         $data = ['id' => 1, 'name' => 'first', 'value' => 'unchanged'];
-        Helper::upsert($this->db, self::TABLE_AUTO_INCREMENT, $data, ['id']);
+        Helper::upsertByUniqueKey($this->db, self::TABLE_AUTO_INCREMENT, $data, ['id']);
 
         // MySQL reports 0 affected rows for a duplicate key update that changes nothing
-        $lastInsertId = Helper::upsert($this->db, self::TABLE_AUTO_INCREMENT, $data, ['id']);
+        $lastInsertId = Helper::upsertByUniqueKey($this->db, self::TABLE_AUTO_INCREMENT, $data, ['id']);
 
         $this->assertNull($lastInsertId, 'An update that changes nothing must not return an id either.');
         $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
@@ -156,21 +156,21 @@ final class HelperTest extends TestCase
 
     public function testInsertAfterAnUpdateReturnsTheNewId(): void
     {
-        $firstId = (int) Helper::upsert(
+        $firstId = (int) Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => null, 'name' => 'first', 'value' => 'inserted'],
             ['id']
         );
 
-        Helper::upsert(
+        Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => $firstId, 'name' => 'first', 'value' => 'updated'],
             ['id']
         );
 
-        $secondId = Helper::upsert(
+        $secondId = Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => null, 'name' => 'second', 'value' => 'inserted'],
@@ -187,12 +187,12 @@ final class HelperTest extends TestCase
         $data = ['cid' => 5, 'ctype' => 'object', 'key' => 'inserted'];
         $keys = ['cid', 'ctype'];
 
-        $insertResult = Helper::upsert($this->db, self::TABLE_COMPOSITE_KEY, $data, $keys);
+        $insertResult = Helper::upsertByUniqueKey($this->db, self::TABLE_COMPOSITE_KEY, $data, $keys);
         // there is no auto increment column, so there is no id to report
         $this->assertSame(0, (int) $insertResult);
 
         $data['key'] = 'updated';
-        $updateResult = Helper::upsert($this->db, self::TABLE_COMPOSITE_KEY, $data, $keys);
+        $updateResult = Helper::upsertByUniqueKey($this->db, self::TABLE_COMPOSITE_KEY, $data, $keys);
 
         $this->assertNull($updateResult, 'The update path must not return an id.');
         $this->assertSame(1, $this->countRows(self::TABLE_COMPOSITE_KEY));
@@ -207,8 +207,8 @@ final class HelperTest extends TestCase
         $data = ['cid' => 7, 'ctype' => 'asset'];
         $keys = ['cid', 'ctype'];
 
-        Helper::upsert($this->db, self::TABLE_COMPOSITE_KEY, $data, $keys, false);
-        $updateResult = Helper::upsert($this->db, self::TABLE_COMPOSITE_KEY, $data, $keys, false);
+        Helper::upsertByUniqueKey($this->db, self::TABLE_COMPOSITE_KEY, $data, $keys, false);
+        $updateResult = Helper::upsertByUniqueKey($this->db, self::TABLE_COMPOSITE_KEY, $data, $keys, false);
 
         $this->assertNull($updateResult);
         $this->assertSame(1, $this->countRows(self::TABLE_COMPOSITE_KEY));
@@ -217,13 +217,13 @@ final class HelperTest extends TestCase
     public function testMissingKeyThrowsWithoutWriting(): void
     {
         $data = ['cid' => 9, 'ctype' => 'document', 'key' => 'inserted'];
-        Helper::upsert($this->db, self::TABLE_COMPOSITE_KEY, $data, ['cid', 'ctype']);
+        Helper::upsertByUniqueKey($this->db, self::TABLE_COMPOSITE_KEY, $data, ['cid', 'ctype']);
 
         $caught = null;
 
         try {
             $data['key'] = 'changed';
-            Helper::upsert($this->db, self::TABLE_COMPOSITE_KEY, $data, ['cid', 'missing']);
+            Helper::upsertByUniqueKey($this->db, self::TABLE_COMPOSITE_KEY, $data, ['cid', 'missing']);
             $this->fail('Expected LogicException was not thrown.');
         } catch (LogicException $e) {
             $caught = $e;
@@ -242,7 +242,7 @@ final class HelperTest extends TestCase
         // BC pin: the previous implementation read $keys only after a duplicate, so an insert
         // that does not collide succeeds even when a listed key is absent from $data (the
         // return value is unspecified for tables without an identity column, as before)
-        Helper::upsert(
+        Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_COMPOSITE_KEY,
             ['cid' => 11, 'ctype' => 'object', 'key' => 'inserted'],
@@ -259,7 +259,7 @@ final class HelperTest extends TestCase
     {
         // BC pin: AbstractDao::getPrimaryKey() returns [] for a table without a primary key, and
         // the previous implementation inserted fine with it - only a duplicate misbehaved
-        Helper::upsert(
+        Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_COMPOSITE_KEY,
             ['cid' => 13, 'ctype' => 'object', 'key' => 'inserted'],
@@ -282,7 +282,7 @@ final class HelperTest extends TestCase
         $foundRowsConnection = \Doctrine\DBAL\DriverManager::getConnection($params);
 
         try {
-            $lastInsertId = Helper::upsert(
+            $lastInsertId = Helper::upsertByUniqueKey(
                 $foundRowsConnection,
                 self::TABLE_AUTO_INCREMENT,
                 ['id' => null, 'name' => 'found-rows', 'value' => 'inserted'],
@@ -291,7 +291,7 @@ final class HelperTest extends TestCase
             $this->assertNotNull($lastInsertId, 'The insert path has to return the generated id.');
             $id = (int) $lastInsertId;
 
-            $updateResult = Helper::upsert(
+            $updateResult = Helper::upsertByUniqueKey(
                 $foundRowsConnection,
                 self::TABLE_AUTO_INCREMENT,
                 ['id' => $id, 'name' => 'found-rows', 'value' => 'updated'],
@@ -300,7 +300,7 @@ final class HelperTest extends TestCase
             $this->assertNull($updateResult, 'The update path must not return an id.');
 
             // the case a FOUND_ROWS connection would misreport as an insert on the single statement
-            $unchangedResult = Helper::upsert(
+            $unchangedResult = Helper::upsertByUniqueKey(
                 $foundRowsConnection,
                 self::TABLE_AUTO_INCREMENT,
                 ['id' => $id, 'name' => 'found-rows', 'value' => 'updated'],
@@ -319,7 +319,7 @@ final class HelperTest extends TestCase
 
     public function testConflictOnNonKeyUniqueIndexLeavesTheForeignRowUntouched(): void
     {
-        $id = (int) Helper::upsert(
+        $id = (int) Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => null, 'name' => 'first', 'value' => 'inserted'],
@@ -329,7 +329,7 @@ final class HelperTest extends TestCase
         // a different id colliding with the existing row's unique `name`: ON DUPLICATE KEY fires
         // for that row, but $keys select no row - so nothing may be written, matching the
         // previous implementation's UPDATE ... WHERE id = <other id> matching zero rows
-        $result = Helper::upsert(
+        $result = Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => $id + 1000, 'name' => 'first', 'value' => 'hijacked'],
@@ -346,13 +346,13 @@ final class HelperTest extends TestCase
 
     public function testConflictOnNonKeyUniqueIndexWithAnExistingKeyedRowThrowsWithoutWriting(): void
     {
-        $firstId = (int) Helper::upsert(
+        $firstId = (int) Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => null, 'name' => 'first', 'value' => 'inserted'],
             ['id']
         );
-        $secondId = (int) Helper::upsert(
+        $secondId = (int) Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => null, 'name' => 'second', 'value' => 'inserted'],
@@ -364,7 +364,7 @@ final class HelperTest extends TestCase
             // the guard selects the keyed row, and writing `name` to it violates the unique index -
             // the same UniqueConstraintViolationException the previous implementation's
             // UPDATE ... WHERE id = <second id> raised
-            Helper::upsert(
+            Helper::upsertByUniqueKey(
                 $this->db,
                 self::TABLE_AUTO_INCREMENT,
                 ['id' => $secondId, 'name' => 'first', 'value' => 'hijacked'],
@@ -390,14 +390,14 @@ final class HelperTest extends TestCase
         // the previous UPDATE wrote all of $data including the key columns, so a key value that
         // compares equal but is stored differently - here under the case-insensitive collation
         // of the test table - was updated to the incoming representation
-        Helper::upsert(
+        Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_COMPOSITE_KEY,
             ['cid' => 15, 'ctype' => 'object', 'key' => 'inserted'],
             ['cid', 'ctype']
         );
 
-        $result = Helper::upsert(
+        $result = Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_COMPOSITE_KEY,
             ['cid' => 15, 'ctype' => 'OBJECT', 'key' => 'updated'],
@@ -415,24 +415,24 @@ final class HelperTest extends TestCase
 
     public function testNonUniqueKeysUpdateOnlyTheConflictingRow(): void
     {
-        // contract pin: $keys have to be the primary key or a unique index. With non-unique
-        // criteria matching several rows, the previous UPDATE ... WHERE $keys wrote the
-        // conflicting unique value to all of them and failed with a unique constraint violation;
+        // contract pin: the key columns have to be the primary key or a unique index. With
+        // non-unique criteria matching several rows, upsert()'s UPDATE ... WHERE writes the
+        // conflicting unique value to all of them and fails with a unique constraint violation;
         // ON DUPLICATE KEY UPDATE can only touch the row the conflict was detected on
-        $firstId = (int) Helper::upsert(
+        $firstId = (int) Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => null, 'name' => 'first', 'value' => 'shared'],
             ['id']
         );
-        $secondId = (int) Helper::upsert(
+        $secondId = (int) Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => null, 'name' => 'second', 'value' => 'shared'],
             ['id']
         );
 
-        $result = Helper::upsert(
+        $result = Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => $firstId, 'name' => 'first-renamed', 'value' => 'shared'],
@@ -457,8 +457,8 @@ final class HelperTest extends TestCase
     {
         // contract pin: ON DUPLICATE KEY UPDATE runs the conflicting row's BEFORE UPDATE
         // triggers even though every guarded assignment keeps the stored value (AFTER UPDATE
-        // triggers do not run for an unchanged row). The previous UPDATE ... WHERE $keys matched
-        // no row in this situation and ran no trigger.
+        // triggers do not run for an unchanged row). upsert()'s UPDATE ... WHERE matches no row
+        // in this situation and runs no trigger.
         $this->db->executeStatement(
             'CREATE TABLE ' . self::TABLE_TRIGGER_LOG . ' (
                 `event` varchar(20) NOT NULL,
@@ -477,7 +477,7 @@ final class HelperTest extends TestCase
             . ' FOR EACH ROW INSERT INTO ' . self::TABLE_TRIGGER_LOG . " VALUES ('after_update', OLD.id, OLD.value, NEW.value)"
         );
 
-        $id = (int) Helper::upsert(
+        $id = (int) Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => null, 'name' => 'first', 'value' => 'inserted'],
@@ -485,7 +485,7 @@ final class HelperTest extends TestCase
         );
         $this->db->executeStatement('DELETE FROM ' . self::TABLE_TRIGGER_LOG);
 
-        $result = Helper::upsert(
+        $result = Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => $id + 1000, 'name' => 'first', 'value' => 'hijacked'],
@@ -517,7 +517,7 @@ final class HelperTest extends TestCase
         try {
             // the stored `code` is NULL as well: a NULL-safe comparison would match it, write the
             // row and only then report the misuse - the guard must not match, so nothing is written
-            Helper::upsert(
+            Helper::upsertByUniqueKey(
                 $this->db,
                 self::TABLE_NULLABLE_KEY,
                 ['code' => null, 'name' => 'first', 'value' => 'hijacked'],
@@ -536,7 +536,7 @@ final class HelperTest extends TestCase
         );
 
         // while a null key value that does not collide still inserts normally
-        $lastInsertId = Helper::upsert(
+        $lastInsertId = Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_NULLABLE_KEY,
             ['code' => null, 'name' => 'second', 'value' => 'inserted'],
@@ -548,7 +548,7 @@ final class HelperTest extends TestCase
 
     public function testNullKeyWithNonKeyUniqueConflictThrowsWithoutWriting(): void
     {
-        $id = (int) Helper::upsert(
+        $id = (int) Helper::upsertByUniqueKey(
             $this->db,
             self::TABLE_AUTO_INCREMENT,
             ['id' => null, 'name' => 'first', 'value' => 'inserted'],
@@ -559,7 +559,7 @@ final class HelperTest extends TestCase
             // null id + unique `name` conflict: previously LogicException while building the
             // WHERE clause; now the guard skips the foreign row and the same misuse is reported
             // after the statement - in both cases without writing anything
-            Helper::upsert(
+            Helper::upsertByUniqueKey(
                 $this->db,
                 self::TABLE_AUTO_INCREMENT,
                 ['id' => null, 'name' => 'first', 'value' => 'hijacked'],
@@ -573,6 +573,32 @@ final class HelperTest extends TestCase
         $row = $this->fetchRowByName('first');
         $this->assertSame($id, (int) $row['id']);
         $this->assertSame('inserted', $row['value'], 'The conflicting row must not be modified.');
+        $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
+    }
+
+    public function testLegacyUpsertStillInsertsAndUpdates(): void
+    {
+        // upsert() keeps its two-statement implementation and contract unchanged
+        $lastInsertId = Helper::upsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => null, 'name' => 'legacy', 'value' => 'inserted'],
+            ['id']
+        );
+        $this->assertNotNull($lastInsertId);
+        $id = (int) $lastInsertId;
+
+        $updateResult = Helper::upsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => $id, 'name' => 'legacy', 'value' => 'updated'],
+            ['id']
+        );
+        $this->assertNull($updateResult);
+
+        $row = $this->fetchRowByName('legacy');
+        $this->assertSame($id, (int) $row['id']);
+        $this->assertSame('updated', $row['value']);
         $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
     }
 

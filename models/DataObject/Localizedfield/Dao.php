@@ -256,7 +256,7 @@ class Dao extends Model\Dao\AbstractDao
                     if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty(
                         $language
                     )) {
-                        Helper::upsert($this->db, $storeTable, $insertData, $this->getTableKeyColumns());
+                        Helper::upsertByUniqueKey($this->db, $storeTable, $insertData, $this->getTableKeyColumns());
                     }
                 } catch (TableNotFoundException $e) {
                     // if the table doesn't exist -> create it! deferred creation for object bricks ...
@@ -424,7 +424,7 @@ class Dao extends Model\Dao\AbstractDao
                     $queryTable = $this->getQueryTableName().'_'.$language;
 
                     try {
-                        Helper::upsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
+                        Helper::upsertByUniqueKey($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
                     } catch (TableNotFoundException $e) {
                         // with inheritance disabled this is the first statement touching the query table,
                         // so the deferred creation of a missing language table has to be handled here as well

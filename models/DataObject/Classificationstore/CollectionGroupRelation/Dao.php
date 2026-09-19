@@ -98,6 +98,6 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::upsert($this->db, self::TABLE_NAME_RELATIONS, $data, $this->getPrimaryKey(self::TABLE_NAME_RELATIONS));
+        Helper::upsertByUniqueKey($this->db, self::TABLE_NAME_RELATIONS, $data, $this->getPrimaryKey(self::TABLE_NAME_RELATIONS));
     }
 }
