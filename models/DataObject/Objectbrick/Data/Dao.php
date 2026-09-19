@@ -243,7 +243,13 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            Helper::upsertByUniqueKey($this->db, $querytable, $data, $this->getPrimaryKey($querytable));
+            // $isBrickUpdate says whether the row exists: then updateOrInsert() is a single UPDATE, else a
+            // plain insert either way
+            if ($isBrickUpdate) {
+                Helper::updateOrInsert($this->db, $querytable, $data, $this->getPrimaryKey($querytable));
+            } else {
+                Helper::upsert($this->db, $querytable, $data, $this->getPrimaryKey($querytable));
+            }
 
             if ($inheritanceEnabled) {
                 $this->inheritanceHelper->doUpdate($object->getId(), true,

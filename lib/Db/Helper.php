@@ -90,8 +90,13 @@ class Helper
      * matches no row in that situation. The database does however still run the foreign row's
      * UPDATE triggers with NEW equal to OLD (BEFORE UPDATE always, AFTER UPDATE depending on the
      * server version), which upsert() never did, and a BEFORE UPDATE trigger that assigns to NEW
-     * writes to the row. This is why the core DAOs use {@see self::updateOrInsert()} or
-     * upsert() for the tables named above. If the keyed
+     * writes to the row. And on the update path of the keyed row itself, the statement runs the
+     * table's BEFORE INSERT triggers before the duplicate is resolved; as it succeeds, their
+     * effects persist and the incoming values as such a trigger left them are what VALUES()
+     * writes, where upsert()'s failing INSERT rolled all of that back before its UPDATE. This is
+     * why the core DAOs use {@see self::updateOrInsert()} or upsert() for the tables named above
+     * and for the element and class tables in general, and this method only for tables of fixed
+     * schema. If the keyed
      * row exists and the update itself would violate another unique index, the statement fails
      * with a UniqueConstraintViolationException, the same outcome as upsert()'s UPDATE.
      *

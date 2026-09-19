@@ -369,7 +369,13 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $data['oo_id'] = $this->model->getId();
 
             $tableName = 'object_query_' . $this->model->getClassId();
-            Helper::upsertByUniqueKey($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+            // on an update the row exists and updateOrInsert() is a single UPDATE; a new object's row
+            // is a plain insert either way
+            if ($isUpdate) {
+                Helper::updateOrInsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+            } else {
+                Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+            }
         } finally {
             DataObject::setGetInheritedValues($inheritedValues);
         }

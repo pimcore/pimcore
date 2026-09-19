@@ -430,7 +430,13 @@ class Dao extends Model\Dao\AbstractDao
                     $queryTable = $this->getQueryTableName().'_'.$language;
 
                     try {
-                        Helper::upsertByUniqueKey($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
+                        // on an update the row exists and updateOrInsert() is a single UPDATE; a new row is a
+                        // plain insert either way
+                        if (!empty($params['isUpdate'])) {
+                            Helper::updateOrInsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
+                        } else {
+                            Helper::upsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
+                        }
                     } catch (TableNotFoundException $e) {
                         // with inheritance disabled this is the first statement touching the query table,
                         // so the deferred creation of a missing language table has to be handled here as well

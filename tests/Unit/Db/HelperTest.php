@@ -587,6 +587,52 @@ final class HelperTest extends TestCase
         );
     }
 
+    public function testUpsertByUniqueKeyRunsTheBeforeInsertTriggerOnTheUpdatePath(): void
+    {
+        // contract pin: INSERT ... ON DUPLICATE KEY UPDATE runs the BEFORE INSERT triggers before
+        // the duplicate is resolved, and as the statement succeeds their effects persist - the
+        // incoming values as the trigger left them are what VALUES() then writes. upsert()'s
+        // failing INSERT rolled all of that back before its separate UPDATE.
+        $this->db->executeStatement(
+            'CREATE TABLE ' . self::TABLE_TRIGGER_LOG . ' (
+                `event` varchar(20) NOT NULL,
+                `id` int(11) NOT NULL
+            ) DEFAULT CHARSET=utf8mb4'
+        );
+        $this->db->executeStatement(
+            'CREATE TRIGGER test_upsert_before_insert BEFORE INSERT ON ' . self::TABLE_COMPOSITE_KEY
+            . ' FOR EACH ROW BEGIN'
+            . ' INSERT INTO ' . self::TABLE_TRIGGER_LOG . " VALUES ('before_insert', NEW.cid);"
+            . " SET NEW.key = CONCAT(NEW.key, '-trigger');"
+            . ' END'
+        );
+
+        $data = ['cid' => 21, 'ctype' => 'object', 'key' => 'inserted'];
+        Helper::upsertByUniqueKey($this->db, self::TABLE_COMPOSITE_KEY, $data, ['cid', 'ctype']);
+        $this->db->executeStatement('DELETE FROM ' . self::TABLE_TRIGGER_LOG);
+
+        $data['key'] = 'updated';
+        $this->assertNull(Helper::upsertByUniqueKey($this->db, self::TABLE_COMPOSITE_KEY, $data, ['cid', 'ctype']));
+
+        $this->assertSame(
+            ['before_insert'],
+            $this->db->fetchFirstColumn('SELECT `event` FROM ' . self::TABLE_TRIGGER_LOG),
+            'The BEFORE INSERT trigger runs on the update path and its side effect persists.'
+        );
+        $this->assertSame(
+            'updated-trigger',
+            $this->db->fetchOne('SELECT `key` FROM ' . self::TABLE_COMPOSITE_KEY . ' WHERE cid = 21'),
+            'The value the trigger assigned to NEW is what the update writes.'
+        );
+
+        // upsert() on the same table: the failed INSERT rolls the trigger back, the UPDATE writes the data
+        $this->db->executeStatement('DELETE FROM ' . self::TABLE_TRIGGER_LOG);
+        $data['key'] = 'legacy';
+        $this->assertNull(Helper::upsert($this->db, self::TABLE_COMPOSITE_KEY, $data, ['cid', 'ctype']));
+        $this->assertSame([], $this->db->fetchFirstColumn('SELECT `event` FROM ' . self::TABLE_TRIGGER_LOG));
+        $this->assertSame('legacy', $this->db->fetchOne('SELECT `key` FROM ' . self::TABLE_COMPOSITE_KEY . ' WHERE cid = 21'));
+    }
+
     public function testNullKeyDoesNotMatchAStoredNullKey(): void
     {
         $this->db->executeStatement(
