@@ -196,20 +196,28 @@ class Helper
      *
      * The rows addressed are those of {@see self::upsert()} - $keys are the criteria of an
      * UPDATE ... WHERE, no other row is ever touched, no trigger runs on a row the criteria do
-     * not match - but the UPDATE runs first. If it changes no row, a SELECT on the same
-     * criteria tells an unchanged row (done, the UPDATE and its triggers ran exactly once) from
-     * a missing one, and only then the insert is tried via upsert(), which also handles a row
-     * inserted concurrently in the meantime. Where the row usually exists and changes, as for
+     * not match - but the UPDATE runs first. Where the row usually exists and changes, as for
      * the main element tables whose DAOs insert the row in create() before every update(), or
      * the class store tables on an update, this is a single statement without the duplicate
      * key exception, on any connection: with CLIENT_FOUND_ROWS the UPDATE of an unchanged row
-     * reports 1, which is equally correct here. Where the row usually does not exist, upsert()
-     * or {@see self::upsertByUniqueKey()} are the better choice, as the UPDATE would be a
-     * wasted round trip. A null or missing key value skips the UPDATE and goes to upsert().
+     * reports 1, which is equally correct here.
      *
-     * The one observable difference to upsert(): its INSERT, failing on the duplicate, ran the
-     * table's BEFORE INSERT triggers on the update path too (their effects were rolled back
-     * with the failed statement); this method runs them only when it actually inserts.
+     * If the UPDATE changes no row, the row is missing or already holds these values, and the
+     * two cannot be told apart by the affected-rows value. The INSERT is tried then, exactly as
+     * upsert() does; if it fails on the duplicate the row exists now - whether it was unchanged
+     * all along or inserted concurrently since the UPDATE - and a second UPDATE, restricted to
+     * a row whose values differ from $data, applies the data in the concurrent case and
+     * matches nothing in the unchanged one. So a concurrent insert is never lost, and the
+     * UPDATE triggers of an unchanged row run once, as they did with upsert().
+     *
+     * Where the row usually does not exist, upsert() or {@see self::upsertByUniqueKey()} are
+     * the better choice, as the UPDATE would be a wasted round trip. A null or missing key value
+     * skips the UPDATE and goes to upsert().
+     *
+     * The one observable difference to upsert(): on the update path of a row whose values
+     * change, upsert()'s INSERT failed on the duplicate and ran the table's BEFORE INSERT
+     * triggers first (their effects rolled back with the failed statement); this method runs
+     * them only when it actually tries to insert.
      *
      * @param array<string, mixed> $data The data to be inserted or updated into the database table.
      * Array key corresponds to the database column, array value to the actual value.
@@ -240,25 +248,38 @@ class Helper
             $criteria[$key] = $quotedData[$key];
         }
 
-        if ($criteria !== []) {
-            if ((int) $connection->update($table, $quotedData, $criteria) > 0) {
-                return null;
-            }
-
-            // 0 changed rows: the row is missing, or it already holds these values - a SELECT
-            // tells them apart without running the UPDATE (and its triggers) a second time
-            $exists = $connection->fetchOne(
-                'SELECT 1 FROM ' . $table . ' WHERE '
-                . implode(' AND ', array_map(static fn (string $key): string => $key . ' = ?', array_keys($criteria)))
-                . ' LIMIT 1',
-                array_values($criteria)
-            );
-            if ($exists !== false) {
-                return null;
-            }
+        if ($criteria === []) {
+            return self::upsert($connection, $table, $data, $keys, $quoteIdentifiers);
         }
 
-        return self::upsert($connection, $table, $data, $keys, $quoteIdentifiers);
+        if ((int) $connection->update($table, $quotedData, $criteria) > 0) {
+            return null;
+        }
+
+        // 0 changed rows: the row is missing, or it already holds these values
+        try {
+            $connection->insert($table, $quotedData);
+
+            try {
+                return $connection->lastInsertId();
+            } catch (DriverException) {
+                return null;
+            }
+        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException) {
+            // the row exists now: unchanged all along, or inserted concurrently since the
+            // UPDATE above - only a row whose values differ from $data is written, so the
+            // concurrent insert is not lost and an unchanged row is not updated a second time
+            $columns = array_keys($quotedData);
+            $connection->executeStatement(
+                'UPDATE ' . $table
+                . ' SET ' . implode(', ', array_map(static fn (string $column): string => $column . ' = ?', $columns))
+                . ' WHERE ' . implode(' AND ', array_map(static fn (string $key): string => $key . ' = ?', array_keys($criteria)))
+                . ' AND NOT (' . implode(' AND ', array_map(static fn (string $column): string => $column . ' <=> ?', $columns)) . ')',
+                [...array_values($quotedData), ...array_values($criteria), ...array_values($quotedData)]
+            );
+
+            return null;
+        }
     }
 
     /**

@@ -750,16 +750,48 @@ final class HelperTest extends TestCase
         Helper::updateOrInsert($this->db, self::TABLE_AUTO_INCREMENT, $data, ['id']);
         $this->db->executeStatement('DELETE FROM ' . self::TABLE_TRIGGER_LOG);
 
-        // the UPDATE changes nothing: the existence check must answer instead of upsert()'s
-        // failing INSERT plus second UPDATE, so the row's triggers run exactly once
+        // the UPDATE changes nothing, the INSERT fails on the duplicate (the failed statement
+        // rolls back what its BEFORE INSERT trigger wrote), and the second UPDATE is restricted to
+        // differing values - so the row's UPDATE triggers run exactly once, as with upsert()
         $this->assertNull(Helper::updateOrInsert($this->db, self::TABLE_AUTO_INCREMENT, $data, ['id']));
 
         $this->assertSame(
             ['before_update'],
             $this->db->fetchFirstColumn('SELECT `event` FROM ' . self::TABLE_TRIGGER_LOG),
-            'An unchanged row runs its BEFORE UPDATE trigger once and no INSERT trigger.'
+            'An unchanged row runs its BEFORE UPDATE trigger once, not again after the failed INSERT.'
         );
         $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
+    }
+
+    public function testUpdateOrInsertAppliesTheDataToARowInsertedConcurrently(): void
+    {
+        // the interleaving: the UPDATE matches no row, then a second connection inserts the
+        // keyed row before this connection can - reproduced deterministically by a connection
+        // wrapper that performs that insert right after its own zero-row UPDATE
+        $params = $this->db->getParams();
+        $params['wrapperClass'] = ConcurrentInsertConnection::class;
+        $connection = \Doctrine\DBAL\DriverManager::getConnection($params);
+        $connection->other = $this->db;
+        $connection->concurrentRow = ['id' => 7, 'name' => 'first', 'value' => 'concurrent'];
+
+        try {
+            $result = Helper::updateOrInsert(
+                $connection,
+                self::TABLE_AUTO_INCREMENT,
+                ['id' => 7, 'name' => 'first', 'value' => 'ours'],
+                ['id']
+            );
+        } finally {
+            $connection->close();
+        }
+
+        $this->assertNull($result, 'The row existed by the time of the insert, so this is the update path.');
+        $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
+        $this->assertSame(
+            'ours',
+            $this->fetchRowByName('first')['value'],
+            'The data must be applied to the concurrently inserted row, as upsert() did.'
+        );
     }
 
     public function testUpdateOrInsertOnAFoundRowsConnection(): void
@@ -838,5 +870,30 @@ final class HelperTest extends TestCase
         $this->db->executeStatement('DROP TABLE IF EXISTS ' . self::TABLE_COMPOSITE_KEY);
         $this->db->executeStatement('DROP TABLE IF EXISTS ' . self::TABLE_NULLABLE_KEY);
         $this->db->executeStatement('DROP TABLE IF EXISTS ' . self::TABLE_TRIGGER_LOG);
+    }
+}
+
+/**
+ * Inserts a row through another connection right after its own UPDATE changed nothing, to
+ * reproduce a concurrent insert between updateOrInsert()'s UPDATE and INSERT.
+ *
+ * @internal
+ */
+final class ConcurrentInsertConnection extends Connection
+{
+    public ?Connection $other = null;
+
+    /** @var array<string, mixed> */
+    public array $concurrentRow = [];
+
+    public function update(string $table, array $data, array $criteria = [], array $types = []): int|string
+    {
+        $affected = parent::update($table, $data, $criteria, $types);
+        if ((int) $affected === 0 && $this->other !== null && $this->concurrentRow !== []) {
+            $this->other->insert($table, $this->concurrentRow);
+            $this->concurrentRow = [];
+        }
+
+        return $affected;
     }
 }

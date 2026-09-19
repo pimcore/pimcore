@@ -189,7 +189,8 @@ class Dao extends Model\Element\Dao
         Helper::updateOrInsert($this->db, 'documents', $dataDocument, $this->getPrimaryKey('documents'));
 
         if ($typeSpecificTable) {
-            Helper::upsertByUniqueKey($this->db, $typeSpecificTable, $dataTypeSpecific, $this->getPrimaryKey($typeSpecificTable));
+            // upsert(): a custom document type brings its own table, whose unique indexes are not known here
+            Helper::upsert($this->db, $typeSpecificTable, $dataTypeSpecific, $this->getPrimaryKey($typeSpecificTable));
         }
 
         $this->updateLocks();
