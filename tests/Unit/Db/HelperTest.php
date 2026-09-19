@@ -729,6 +729,39 @@ final class HelperTest extends TestCase
         $this->assertSame('inserted', $row['value']);
     }
 
+    public function testUpdateOrInsertRunsTheUpdateTriggersOnceForAnUnchangedRow(): void
+    {
+        $this->db->executeStatement(
+            'CREATE TABLE ' . self::TABLE_TRIGGER_LOG . ' (
+                `event` varchar(20) NOT NULL,
+                `id` int(11) NOT NULL
+            ) DEFAULT CHARSET=utf8mb4'
+        );
+        $this->db->executeStatement(
+            'CREATE TRIGGER test_upsert_before_update BEFORE UPDATE ON ' . self::TABLE_AUTO_INCREMENT
+            . ' FOR EACH ROW INSERT INTO ' . self::TABLE_TRIGGER_LOG . " VALUES ('before_update', OLD.id)"
+        );
+        $this->db->executeStatement(
+            'CREATE TRIGGER test_upsert_before_insert BEFORE INSERT ON ' . self::TABLE_AUTO_INCREMENT
+            . ' FOR EACH ROW INSERT INTO ' . self::TABLE_TRIGGER_LOG . " VALUES ('before_insert', IFNULL(NEW.id, 0))"
+        );
+
+        $data = ['id' => 1, 'name' => 'first', 'value' => 'inserted'];
+        Helper::updateOrInsert($this->db, self::TABLE_AUTO_INCREMENT, $data, ['id']);
+        $this->db->executeStatement('DELETE FROM ' . self::TABLE_TRIGGER_LOG);
+
+        // the UPDATE changes nothing: the existence check must answer instead of upsert()'s
+        // failing INSERT plus second UPDATE, so the row's triggers run exactly once
+        $this->assertNull(Helper::updateOrInsert($this->db, self::TABLE_AUTO_INCREMENT, $data, ['id']));
+
+        $this->assertSame(
+            ['before_update'],
+            $this->db->fetchFirstColumn('SELECT `event` FROM ' . self::TABLE_TRIGGER_LOG),
+            'An unchanged row runs its BEFORE UPDATE trigger once and no INSERT trigger.'
+        );
+        $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
+    }
+
     public function testUpdateOrInsertOnAFoundRowsConnection(): void
     {
         $params = $this->db->getParams();

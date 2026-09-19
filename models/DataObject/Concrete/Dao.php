@@ -247,7 +247,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
             $tableName = 'object_store_' . $this->model->getClassId();
             if ($isUpdate) {
-                Helper::upsertByUniqueKey($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+                // updateOrInsert() and not upsertByUniqueKey(): the row exists on an update, and a unique
+                // field adds a second unique index to the store table
+                Helper::updateOrInsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
             } else {
                 $this->db->insert('object_store_' . $this->model->getClassId(), Helper::quoteDataIdentifiers($this->db, $data));
             }

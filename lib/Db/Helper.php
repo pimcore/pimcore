@@ -77,7 +77,10 @@ class Helper
      *
      * $uniqueKeyColumns must be the primary key or a unique index of the table, and the method
      * is meant for tables where that is the only unique index the data can collide on - as the
-     * class store, query and localized tables, or properties and versions. ON DUPLICATE KEY
+     * class and brick query tables, the classification store tables, properties or versions.
+     * The class store and localized store tables are not such tables: a field marked unique
+     * gets a unique index there (u_index_*), and neither are objects, assets, documents and
+     * tags with their second unique index. ON DUPLICATE KEY
      * UPDATE can only ever touch the one row the conflict was detected on, so non-unique
      * criteria would update that row if it matches and nothing else (where upsert() addresses
      * every row matching its WHERE clause). On a table with another unique index the conflict
@@ -87,8 +90,8 @@ class Helper
      * matches no row in that situation. The database does however still run the foreign row's
      * UPDATE triggers with NEW equal to OLD (BEFORE UPDATE always, AFTER UPDATE depending on the
      * server version), which upsert() never did, and a BEFORE UPDATE trigger that assigns to NEW
-     * writes to the row. This is why the core DAOs use {@see self::updateOrInsert()} for
-     * objects, assets and documents, whose fullpath index is a second unique index. If the keyed
+     * writes to the row. This is why the core DAOs use {@see self::updateOrInsert()} or
+     * upsert() for the tables named above. If the keyed
      * row exists and the update itself would violate another unique index, the statement fails
      * with a UniqueConstraintViolationException, the same outcome as upsert()'s UPDATE.
      *
@@ -191,16 +194,22 @@ class Helper
     /**
      * Updates the rows matching $keys, or inserts the row if none was changed.
      *
-     * The exact contract of {@see self::upsert()} - $keys are the criteria of an
+     * The rows addressed are those of {@see self::upsert()} - $keys are the criteria of an
      * UPDATE ... WHERE, no other row is ever touched, no trigger runs on a row the criteria do
-     * not match - but in the opposite order: the UPDATE runs first, and only if it changes no
-     * row (the row does not exist, or it already holds these values) the insert is tried via
-     * upsert(). Where the row usually exists and changes, as for the main element tables whose
-     * DAOs insert the row in create() before every update(), this is a single statement
-     * without the duplicate key exception, on any connection: with CLIENT_FOUND_ROWS the UPDATE
-     * of an unchanged row reports 1, which is equally correct here. Where the row usually does
-     * not exist, upsert() or {@see self::upsertByUniqueKey()} are the better choice, as the
-     * UPDATE would be a wasted round trip.
+     * not match - but the UPDATE runs first. If it changes no row, a SELECT on the same
+     * criteria tells an unchanged row (done, the UPDATE and its triggers ran exactly once) from
+     * a missing one, and only then the insert is tried via upsert(), which also handles a row
+     * inserted concurrently in the meantime. Where the row usually exists and changes, as for
+     * the main element tables whose DAOs insert the row in create() before every update(), or
+     * the class store tables on an update, this is a single statement without the duplicate
+     * key exception, on any connection: with CLIENT_FOUND_ROWS the UPDATE of an unchanged row
+     * reports 1, which is equally correct here. Where the row usually does not exist, upsert()
+     * or {@see self::upsertByUniqueKey()} are the better choice, as the UPDATE would be a
+     * wasted round trip. A null or missing key value skips the UPDATE and goes to upsert().
+     *
+     * The one observable difference to upsert(): its INSERT, failing on the duplicate, ran the
+     * table's BEFORE INSERT triggers on the update path too (their effects were rolled back
+     * with the failed statement); this method runs them only when it actually inserts.
      *
      * @param array<string, mixed> $data The data to be inserted or updated into the database table.
      * Array key corresponds to the database column, array value to the actual value.
@@ -231,8 +240,22 @@ class Helper
             $criteria[$key] = $quotedData[$key];
         }
 
-        if ($criteria !== [] && (int) $connection->update($table, $quotedData, $criteria) > 0) {
-            return null;
+        if ($criteria !== []) {
+            if ((int) $connection->update($table, $quotedData, $criteria) > 0) {
+                return null;
+            }
+
+            // 0 changed rows: the row is missing, or it already holds these values - a SELECT
+            // tells them apart without running the UPDATE (and its triggers) a second time
+            $exists = $connection->fetchOne(
+                'SELECT 1 FROM ' . $table . ' WHERE '
+                . implode(' AND ', array_map(static fn (string $key): string => $key . ' = ?', array_keys($criteria)))
+                . ' LIMIT 1',
+                array_values($criteria)
+            );
+            if ($exists !== false) {
+                return null;
+            }
         }
 
         return self::upsert($connection, $table, $data, $keys, $quoteIdentifiers);

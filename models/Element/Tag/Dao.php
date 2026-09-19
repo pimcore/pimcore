@@ -68,7 +68,8 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $lastInsertId = Helper::upsertByUniqueKey($this->db, 'tags', $data, $this->getPrimaryKey('tags'));
+            // updateOrInsert() and not upsertByUniqueKey(): the unique (idPath, name) index is a second unique index
+            $lastInsertId = Helper::updateOrInsert($this->db, 'tags', $data, $this->getPrimaryKey('tags'));
             if ($lastInsertId !== null && !$this->model->getId()) {
                 $this->model->setId((int) $lastInsertId);
             }
