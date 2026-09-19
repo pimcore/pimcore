@@ -129,10 +129,16 @@ are the union of what every allowed element type offers:
 
 | Allowed type | Offered fields |
 |--------------|----------------|
-| Objects (per allowed class) | all top-level data fields of the class, plus its localized fields |
+| Objects (per allowed class) | the top-level data fields of the class and the fields of its localized fields, except the exclusions below |
 | Assets | `filename`, `mimetype`, `fileSize` and every predefined asset metadata definition (filtered by the allowed asset types) |
 | Documents | – |
 | All types | `creationDate`, `modificationDate` |
+
+Not every class field can be shown as a read-only column. Container fields are never offered: field collections,
+object bricks, blocks, classification stores and localized fields nested in other containers. Fields holding secrets are
+excluded as well, `password` (its value is the stored hash) and `encryptedField` (its value would be decrypted): they are
+neither offered by `getAvailableVisibleFields()` nor resolved by `getVisibleFieldData()`, even if their names are
+configured by hand.
 
 A field that does not apply to a related element's type is simply empty for that row: an asset row shows nothing in a
 class-field column, an object row nothing in a metadata column. Visible fields are only offered once at least one
