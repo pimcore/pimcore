@@ -47,7 +47,7 @@ class Document extends Model\Asset
         }
     }
 
-    public function getDataDerivedCustomSettingKeys(): array
+    public static function getDataDerivedCustomSettingKeys(): array
     {
         return array_merge(
             parent::getDataDerivedCustomSettingKeys(),

@@ -505,6 +505,186 @@ class AssetUpdateTasksTest extends ModelTestCase
     }
 
     /**
+     * Custom settings which don't belong to the data can be changed by others while the data is processed. Saving
+     * the results of the processing must not discard these changes.
+     */
+    public function testUnrelatedChangesSavedDuringProcessingSurvive(): void
+    {
+        $document = TestHelper::createDocumentAsset(
+            '',
+            file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf'))
+        );
+        $documentId = $document->getId();
+        $task = $this->getLastQueuedTask($documentId);
+        $loadedState = Asset::getById($documentId, ['force' => true]);
+
+        // saved by others while the data is processed
+        $other = Asset::getById($documentId, ['force' => true]);
+        $other->setCustomSetting('customSettingsTest', 'test');
+        $other->save();
+
+        TestHelper::handleAssetUpdateTaskMessage($task, $loadedState);
+        $document = Asset::getById($documentId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $document);
+        $this->assertFalse($document->isProcessingPending());
+        $this->assertSame('Pimcore Test Suite', $document->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
+        $this->assertSame('test', $document->getCustomSetting('customSettingsTest'));
+    }
+
+    /**
+     * An outdated instance can even be of another type than the current data (e.g. an image replaced by a document).
+     * Saving it must neither write its type back nor discard the derived settings of the current type.
+     */
+    public function testOutdatedInstanceOfPreviousTypeKeepsStoredResults(): void
+    {
+        $pdf = file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf'));
+        $jpg = file_get_contents(TestHelper::resolveFilePath('assets/images/image1.jpg'));
+        $cases = [
+            [TestHelper::createImageAsset(), $pdf, 'pdf', Asset\Document::class, 'application/pdf', 'imageWidth'],
+            [TestHelper::createDocumentAsset('', $pdf), $jpg, 'jpg', Asset\Image::class, 'image/jpeg', 'document_page_count'],
+        ];
+
+        foreach ($cases as [$asset, $newData, $newExtension, $newClass, $newMimeType, $previousDerivedKey]) {
+            $label = get_class($asset);
+            $assetId = $asset->getId();
+            TestHelper::runAssetUpdateTasks($assetId);
+            $outdatedInstance = Asset::getById($assetId, ['force' => true]);
+            $this->assertInstanceOf(get_class($asset), $outdatedInstance, $label);
+            $this->assertNotNull($outdatedInstance->getCustomSetting($previousDerivedKey), $label);
+
+            // the data is replaced by data of another type and processed
+            $replacement = Asset::getById($assetId, ['force' => true]);
+            $replacement->setData($newData);
+            $replacement->setFilename(pathinfo($replacement->getFilename(), PATHINFO_FILENAME) . '.' . $newExtension);
+            $replacement->save();
+            TestHelper::runAssetUpdateTasks($assetId);
+            $processed = Asset::getById($assetId, ['force' => true]);
+            $this->assertInstanceOf($newClass, $processed, $label);
+            $this->assertFalse($processed->isProcessingPending(), $label);
+            $expectedSettings = [];
+            foreach ($newClass::getDataDerivedCustomSettingKeys() as $key) {
+                $expectedSettings[$key] = $processed->getCustomSetting($key);
+            }
+            $this->assertNotNull($expectedSettings['embeddedMetaDataExtracted'], $label);
+
+            $outdatedInstance->setCustomSetting('customSettingsTest', 'test');
+            $outdatedInstance->save();
+
+            $current = Asset::getById($assetId, ['force' => true]);
+            $this->assertInstanceOf($newClass, $current, $label);
+            $this->assertSame($newMimeType, $current->getMimeType(), $label);
+            $this->assertSame('test', $current->getCustomSetting('customSettingsTest'), $label);
+            $this->assertSame($processed->getDataGeneration(), $current->getDataGeneration(), $label);
+            $this->assertFalse($current->isProcessingPending(), $label);
+            $this->assertNull($current->getCustomSetting($previousDerivedKey), $label);
+            foreach ($expectedSettings as $key => $value) {
+                $this->assertEquals($value, $current->getCustomSetting($key), $label . ': ' . $key);
+            }
+        }
+    }
+
+    /**
+     * The marker of a failed processing belongs to the previous data, so it is removed when the data is replaced,
+     * even by data of a type which isn't processed (nothing would remove it otherwise, and it would prevent the asset
+     * from being added to the queue on demand)
+     */
+    public function testFailedProcessingMarkerIsRemovedWhenReplacedByUnprocessedType(): void
+    {
+        $image = TestHelper::createImageAsset();
+        $imageId = $image->getId();
+        $image->setCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED, true);
+        $image->setProcessingPending(false);
+        $image->save();
+        $this->assertTrue(Asset::getById($imageId, ['force' => true])->getCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED));
+
+        $image->setData('plain text, which is not processed by the asset update tasks queue');
+        $image->setFilename(pathinfo($image->getFilename(), PATHINFO_FILENAME) . '.txt');
+        $image->save();
+
+        $asset = Asset::getById($imageId, ['force' => true]);
+        $this->assertNotContains($asset->getType(), ['image', 'video', 'document']);
+        $this->assertNull($asset->getCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED));
+        $this->assertFalse($asset->isProcessingPending());
+    }
+
+    /**
+     * A copy of an asset takes over the derived settings of the source instead of generating them again (which could
+     * fail or differ), so only the previews of a processed source are generated for the copy
+     */
+    public function testCopyKeepsProcessedStateOfSource(): void
+    {
+        $source = TestHelper::createDocumentAsset(
+            '',
+            file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf'))
+        );
+        TestHelper::runAssetUpdateTasks($source->getId());
+        $source = Asset::getById($source->getId(), ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $source);
+        // derived settings which differ from what processing the data generates, so that processing is noticeable
+        $source->setCustomSetting('embeddedMetaData', ['CreatorTool' => 'Copied from the source']);
+        $source->setCustomSetting('document_page_count', 99);
+        $source->save();
+        $this->assertFalse($source->isProcessingPending());
+
+        $folder = Asset\Service::createFolderByPath('/' . uniqid('copy-processed-'));
+        $service = new Asset\Service();
+
+        foreach (['copyAsChild', 'copyRecursive', 'copyContents'] as $copyMethod) {
+            if ($copyMethod === 'copyContents') {
+                $copy = $service->copyContents(TestHelper::createDocumentAsset(), $source);
+            } else {
+                $copy = $service->$copyMethod($folder, $source);
+            }
+            $copyId = $copy->getId();
+            $this->assertNotSame($source->getId(), $copyId);
+
+            $copy = Asset::getById($copyId, ['force' => true]);
+            $this->assertInstanceOf(Asset\Document::class, $copy);
+            $this->assertFalse($copy->isProcessingPending(), $copyMethod);
+            $this->assertNotSame($source->getDataGeneration(), $copy->getDataGeneration(), $copyMethod);
+            $copyTask = $this->getLastQueuedTask($copyId);
+            $this->assertTrue($copyTask->isPreviewsOnly(), $copyMethod);
+            $this->assertSame($copy->getDataGeneration(), $copyTask->getDataGeneration(), $copyMethod);
+
+            TestHelper::handleAssetUpdateTaskMessage($copyTask);
+            $copy = Asset::getById($copyId, ['force' => true]);
+            $this->assertInstanceOf(Asset\Document::class, $copy);
+            $this->assertSame('Copied from the source', $copy->getEmbeddedMetaData(false)['CreatorTool'] ?? null, $copyMethod);
+            $this->assertSame(99, $copy->getPageCount(), $copyMethod);
+            $this->assertFalse($copy->isProcessingPending(), $copyMethod);
+        }
+    }
+
+    /**
+     * A copy of a source whose processing is pending is processed like the source
+     */
+    public function testCopyOfPendingSourceIsProcessed(): void
+    {
+        $source = TestHelper::createDocumentAsset(
+            '',
+            file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf'))
+        );
+        $this->assertTrue($source->isProcessingPending());
+
+        $folder = Asset\Service::createFolderByPath('/' . uniqid('copy-pending-'));
+        $copy = (new Asset\Service())->copyAsChild($folder, $source);
+        $copyId = $copy->getId();
+
+        $copy = Asset::getById($copyId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $copy);
+        $this->assertTrue($copy->isProcessingPending());
+        $copyTask = $this->getLastQueuedTask($copyId);
+        $this->assertFalse($copyTask->isPreviewsOnly());
+        $this->assertSame($copy->getDataGeneration(), $copyTask->getDataGeneration());
+
+        TestHelper::handleAssetUpdateTaskMessage($copyTask);
+        $copy = Asset::getById($copyId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $copy);
+        $this->assertFalse($copy->isProcessingPending());
+        $this->assertSame('Pimcore Test Suite', $copy->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
+    }
+
+    /**
      * @return string[]
      */
     private function getThumbnailFiles(Asset $asset): array

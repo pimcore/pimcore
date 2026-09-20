@@ -489,18 +489,16 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Returns the current values of custom settings from the database (which differ from the ones of the model if the
-     * asset was saved by others since the model was loaded) and locks the asset against concurrent saves until the
-     * end of the current transaction, so that the values can't change until the model is saved within this
-     * transaction. Must be called within a transaction.
+     * Returns the fields which belong to the data of the asset (its type, mime type and custom settings) as currently
+     * stored in the database (which differ from the ones of the model if the asset was saved by others since the model
+     * was loaded) and locks the asset against concurrent saves until the end of the current transaction, so that they
+     * can't change until the model is saved within this transaction. Must be called within a transaction.
      *
-     * @param string[] $names
-     *
-     * @return array<string, mixed> the values by name, null for settings which don't exist
+     * @return array{type: string|null, mimetype: string|null, customSettings: array<string, mixed>}
      *
      * @throws Exception
      */
-    public function getCustomSettingsForUpdate(array $names): array
+    public function getDataBoundFieldsForUpdate(): array
     {
         if (!$this->db->isTransactionActive()) {
             throw new Exception('Locking the asset against concurrent saves requires an active transaction');
@@ -509,15 +507,21 @@ class Dao extends Model\Element\Dao
         // saving an asset locks its row first (see getVersionCountForUpdate(), called at the beginning of the update)
         // and touches the other tables (e.g. the meta data) afterwards, so the row is the only lock acquired here:
         // acquiring further locks first could lead to deadlocks with concurrent saves of the asset
-        $customSettings = $this->db->fetchOne('SELECT customSettings FROM assets WHERE id = ? FOR UPDATE', [$this->model->getId()]);
-        $customSettings = is_string($customSettings) && $customSettings !== '' ? Serialize::fromJson($customSettings) : [];
-
-        $values = [];
-        foreach ($names as $name) {
-            $values[$name] = $customSettings[$name] ?? null;
+        $row = $this->db->fetchAssociative(
+            'SELECT `type`, mimetype, customSettings FROM assets WHERE id = ? FOR UPDATE',
+            [$this->model->getId()]
+        );
+        if (!$row) {
+            return ['type' => null, 'mimetype' => null, 'customSettings' => []];
         }
 
-        return $values;
+        $customSettings = $row['customSettings'];
+
+        return [
+            'type' => $row['type'] !== null ? (string) $row['type'] : null,
+            'mimetype' => $row['mimetype'] !== null ? (string) $row['mimetype'] : null,
+            'customSettings' => is_string($customSettings) && $customSettings !== '' ? Serialize::fromJson($customSettings) : [],
+        ];
     }
 
     public function __isBasedOnLatestData(): bool

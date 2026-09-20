@@ -24,6 +24,7 @@ use Pimcore\Asset\StorageQueue\FrontendPathResolver;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
+use Pimcore\Db;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\Asset\ResolveMimeTypeEvent;
@@ -47,6 +48,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\Traits\ScheduledTasksTrait;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Exception\DataStateChangedException;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
@@ -209,6 +211,12 @@ class Asset extends Element\AbstractElement
     private ?string $finishedProcessingGeneration = null;
 
     /**
+     * the state of the data (see getDataState()) the results of a processing being saved were generated for (see
+     * saveProcessingResults())
+     */
+    private ?string $expectedDataState = null;
+
+    /**
      * @internal
      */
     protected ?int $dataModificationDate = null;
@@ -230,7 +238,14 @@ class Asset extends Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['scheduledTasks', 'versions', 'stream', 'streamIsPlaceholder', 'finishedProcessingGeneration'];
+        $blockedVars = [
+            'scheduledTasks',
+            'versions',
+            'stream',
+            'streamIsPlaceholder',
+            'finishedProcessingGeneration',
+            'expectedDataState',
+        ];
 
         if (!$this->isInDumpState()) {
             // for caching asset
@@ -677,7 +692,6 @@ class Asset extends Element\AbstractElement
                 // were cleared when it was restored (see e.g. Image::update()).
                 if (in_array($this->getType(), self::PROCESSED_TYPES, true)) {
                     if ($this->isDataReplaced() || ($this->dataRestored && $this->isProcessingPending())) {
-                        $this->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
                         $this->addUpdateTaskForCurrentData(false);
                     } elseif ($this->dataRestored) {
                         $this->addUpdateTaskForCurrentData(true);
@@ -699,6 +713,11 @@ class Asset extends Element\AbstractElement
                 }
             },
             onFailure: function ($e) use (&$parameters, &$isUpdate) {
+                if ($e instanceof DataStateChangedException) {
+                    // not a failure: the results of a processing are discarded on purpose (see saveProcessingResults())
+                    return;
+                }
+
                 // TODO: we should rollback any files that were moved here,
                 // assuming a prior revert has not been done.
                 $failureEvent = new AssetEvent($this, $parameters);
@@ -792,6 +811,13 @@ class Asset extends Element\AbstractElement
         $storage = Storage::get('asset');
         $this->updateModificationInfos();
 
+        // the results of a processing are only saved for the data they were generated for (see
+        // saveProcessingResults()), which is checked here, as the asset is locked against concurrent saves from now
+        // on (see updateModificationInfos()) until the end of the transaction
+        if ($this->expectedDataState !== null) {
+            $this->applyProcessingResultsToStoredCustomSettings($this->expectedDataState);
+        }
+
         $path = $this->getRealFullPath();
         $typeChanged = false;
 
@@ -877,6 +903,9 @@ class Asset extends Element\AbstractElement
                 // data, as nothing would finish it otherwise.
                 if ($this->isDataReplaced()) {
                     $this->setProcessingPending(in_array($type, self::PROCESSED_TYPES, true));
+                    // a failed processing of the previous data doesn't concern the replaced data (it would prevent it
+                    // from being added to the queue on demand, see addToUpdateTaskQueue())
+                    $this->removeCustomSetting(self::CUSTOM_SETTING_PROCESSING_FAILED);
                 }
 
                 // not only check if the type is set but also if the implementation can be found
@@ -885,8 +914,8 @@ class Asset extends Element\AbstractElement
                 if (!self::getModelFactory()->supports($className)) {
                     throw new Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }
-            } elseif ($params['isUpdate'] ?? false) {
-                $this->keepStoredDataSettings();
+            } elseif (($params['isUpdate'] ?? false) && $this->expectedDataState === null) {
+                $typeChanged = $this->keepStoredDataSettings();
             }
         } else {
             $storage->createDirectory($path);
@@ -1383,6 +1412,30 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Assigns the data of the given asset (a new stream of it, see getStreamCopy()) together with the custom settings
+     * belonging to it, so that this asset becomes a copy of the given one. The derived settings of the source are
+     * taken over instead of being generated again (which could fail or differ), so the data is treated like restored
+     * data (see restoreStream()): if the processing of the source is pending, the copy is processed as well, otherwise
+     * only its previews are generated.
+     *
+     * @return $this
+     *
+     * @throws Exception
+     *
+     * @internal
+     */
+    public function copyDataFrom(Asset $source): static
+    {
+        // also makes sure the custom settings of the source are loaded completely
+        // (they might not be, if the source came from the cache)
+        $this->setCustomSettings($source->getCustomSettings());
+        $this->customSettingsIncomplete = false;
+        $this->restoreStream($source->getStreamCopy());
+
+        return $this;
+    }
+
+    /**
      * Assigns binary data that belongs to the current state of the asset, e.g. the data stored by a version or
      * the recycle bin. In contrast to setStream(), the data derived from the binary data (embedded meta data,
      * dimensions, page count, ...) is kept, as it was generated from exactly this data (see isDataReplaced()).
@@ -1499,47 +1552,164 @@ class Asset extends Element\AbstractElement
      *
      * @internal
      */
-    public function getDataDerivedCustomSettingKeys(): array
+    public static function getDataDerivedCustomSettingKeys(): array
     {
         return array_merge(self::EMBEDDED_META_DATA_CUSTOM_SETTINGS, [self::CUSTOM_SETTING_PROCESSING_FAILED]);
     }
 
     /**
-     * The settings describing the state of the data (see getDataState()) and the settings derived from it (see
-     * getDataDerivedCustomSettingKeys()) belong to the data in the storage. When this instance is saved without
-     * changing the data, but the data or its processing was changed by others since this instance was loaded (it was
-     * replaced or restored, or its pending processing was finished by the asset update tasks queue), the values
-     * stored in the database are therefore authoritative, not the outdated ones of this instance: saving them would
-     * discard a pending processing (whose task would find nothing left to process) or the results of a finished one,
-     * and it would attach the checksum and the derived settings of the previous data to the current one. Only the
-     * results of a processing this instance finished itself are saved. Must be called within the transaction saving
-     * the asset, as it locks the asset against concurrent saves until the end of the transaction.
+     * The fields which belong to the data in the storage (its type and mime type, the settings describing its state,
+     * see getDataState(), and the settings derived from it, see getDataDerivedCustomSettingKeys()) are authoritative
+     * as stored in the database when this instance is saved without changing the data, but the data or its processing
+     * was changed by others since this instance was loaded (it was replaced or restored, or its pending processing
+     * was finished by the asset update tasks queue): saving the outdated fields of this instance would discard a
+     * pending processing (whose task would find nothing left to process) or the results of a finished one, and it
+     * would attach the type, the checksum and the derived settings of the previous data to the current one. As the
+     * current data can be of another type than this instance (e.g. an image replaced by a document), the derived
+     * settings of both types are taken over. Only the results of a processing this instance finished itself are
+     * saved. Must be called within the transaction saving the asset, as it locks the asset against concurrent saves
+     * until the end of the transaction.
+     *
+     * @return bool whether the type of the asset changed
      */
-    private function keepStoredDataSettings(): void
+    private function keepStoredDataSettings(): bool
     {
-        $dataBoundKeys = array_merge(self::DATA_STATE_CUSTOM_SETTINGS, $this->getDataDerivedCustomSettingKeys());
-        $storedSettings = $this->getDao()->getCustomSettingsForUpdate($dataBoundKeys);
+        $stored = $this->getDao()->getDataBoundFieldsForUpdate();
+        $storedSettings = $stored['customSettings'];
 
         $storedState = self::buildDataState(
-            $storedSettings[self::CUSTOM_SETTING_DATA_GENERATION],
-            $storedSettings[self::CUSTOM_SETTING_PROCESSING_PENDING]
+            $storedSettings[self::CUSTOM_SETTING_DATA_GENERATION] ?? null,
+            $storedSettings[self::CUSTOM_SETTING_PROCESSING_PENDING] ?? null
         );
         if ($storedState === $this->getDataState()) {
-            return;
+            return false;
         }
 
-        $storedGeneration = self::normalizeDataGeneration($storedSettings[self::CUSTOM_SETTING_DATA_GENERATION]);
+        $storedGeneration = self::normalizeDataGeneration($storedSettings[self::CUSTOM_SETTING_DATA_GENERATION] ?? null);
         if ($storedGeneration !== null && $storedGeneration === $this->finishedProcessingGeneration) {
-            return;
+            return false;
         }
 
-        foreach ($dataBoundKeys as $key) {
-            if ($storedSettings[$key] === null) {
+        $typeChanged = false;
+        $derivedKeys = static::getDataDerivedCustomSettingKeys();
+        if ($stored['type'] !== null && $stored['type'] !== $this->getType()) {
+            $storedClass = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($stored['type']);
+            if (is_a($storedClass, self::class, true)) {
+                $derivedKeys = array_unique(array_merge($derivedKeys, $storedClass::getDataDerivedCustomSettingKeys()));
+            }
+            $this->setType($stored['type']);
+            $typeChanged = true;
+        }
+        if ($stored['mimetype'] !== null) {
+            $this->setMimeType($stored['mimetype']);
+        }
+
+        foreach (array_merge(self::DATA_STATE_CUSTOM_SETTINGS, $derivedKeys) as $key) {
+            if (($storedSettings[$key] ?? null) === null) {
                 $this->removeCustomSetting($key);
             } else {
                 $this->setCustomSetting($key, $storedSettings[$key]);
             }
         }
+
+        return $typeChanged;
+    }
+
+    /**
+     * Saves the results of processing the data (the settings derived from it, see getDataDerivedCustomSettingKeys(),
+     * and the state of its processing, see setProcessingPending()), unless the state of the data changed since the
+     * results were generated (see getDataState()): the data was replaced or restored, or its processing finished by
+     * others in the meantime, so the results belong to previous data and are discarded, as they would overwrite the
+     * state of the current data. This is checked within the transaction saving the asset, while the asset is locked
+     * against concurrent saves, so the state can't change in between. The other custom settings are saved as
+     * currently stored, as they might have been changed by others while the data was processed.
+     *
+     * @param string $dataState the state of the data the results were generated for
+     *
+     * @return bool whether the results were saved
+     *
+     * @throws Exception
+     *
+     * @internal
+     */
+    public function saveProcessingResults(string $dataState, array $parameters = []): bool
+    {
+        $this->expectedDataState = $dataState;
+
+        try {
+            $this->save($parameters);
+        } catch (Exception $e) {
+            // thrown by update() (see applyProcessingResultsToStoredCustomSettings())
+            if ($e instanceof DataStateChangedException) {
+                return false;
+            }
+
+            throw $e;
+        } finally {
+            $this->expectedDataState = null;
+        }
+
+        return true;
+    }
+
+    /**
+     * Whether the given state of the data (see getDataState()) is the one currently stored in the database, i.e. the
+     * data and its processing weren't changed by others since the state was determined. The stored state is read
+     * while the asset is locked shortly, so that a change being saved concurrently is seen.
+     *
+     * @throws Exception
+     *
+     * @internal
+     */
+    public function isDataStateStored(string $dataState): bool
+    {
+        $db = Db::get();
+        $db->beginTransaction();
+
+        try {
+            $storedDataState = $this->getStoredDataStateForUpdate();
+            $db->commit();
+        } catch (Throwable $e) {
+            $db->rollBack();
+
+            throw $e;
+        }
+
+        return $storedDataState === $dataState;
+    }
+
+    /**
+     * Applies the results of a processing (see saveProcessingResults()) to the custom settings as currently stored
+     * in the database: the settings which belong to the data are taken from this instance, the others as stored
+     *
+     * @throws DataStateChangedException if the data state stored in the database isn't the expected one
+     */
+    private function applyProcessingResultsToStoredCustomSettings(string $expectedDataState): void
+    {
+        $stored = $this->getDao()->getDataBoundFieldsForUpdate();
+        $storedSettings = $stored['customSettings'];
+
+        $storedState = self::buildDataState(
+            $storedSettings[self::CUSTOM_SETTING_DATA_GENERATION] ?? null,
+            $storedSettings[self::CUSTOM_SETTING_PROCESSING_PENDING] ?? null
+        );
+        if ($storedState !== $expectedDataState) {
+            throw new DataStateChangedException(sprintf(
+                'The data of asset %s was replaced or restored, or its processing finished, in the meantime',
+                $this->getRealFullPath()
+            ));
+        }
+
+        $customSettings = $this->getCustomSettings();
+        foreach (array_merge(self::DATA_STATE_CUSTOM_SETTINGS, static::getDataDerivedCustomSettingKeys()) as $key) {
+            if (array_key_exists($key, $customSettings)) {
+                $storedSettings[$key] = $customSettings[$key];
+            } else {
+                unset($storedSettings[$key]);
+            }
+        }
+
+        $this->setCustomSettings($storedSettings);
     }
 
     /**
@@ -1568,14 +1738,11 @@ class Asset extends Element\AbstractElement
      */
     public function getStoredDataStateForUpdate(): string
     {
-        $storedSettings = $this->getDao()->getCustomSettingsForUpdate([
-            self::CUSTOM_SETTING_DATA_GENERATION,
-            self::CUSTOM_SETTING_PROCESSING_PENDING,
-        ]);
+        $storedSettings = $this->getDao()->getDataBoundFieldsForUpdate()['customSettings'];
 
         return self::buildDataState(
-            $storedSettings[self::CUSTOM_SETTING_DATA_GENERATION],
-            $storedSettings[self::CUSTOM_SETTING_PROCESSING_PENDING]
+            $storedSettings[self::CUSTOM_SETTING_DATA_GENERATION] ?? null,
+            $storedSettings[self::CUSTOM_SETTING_PROCESSING_PENDING] ?? null
         );
     }
 

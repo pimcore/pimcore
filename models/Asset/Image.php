@@ -45,16 +45,18 @@ class Image extends Model\Asset
 
         parent::update($params);
 
-        // the thumbnails are cleared after the asset was locked against concurrent saves by parent::update() (see
-        // Asset\Dao::getCustomSettingsForUpdate()): the asset update tasks queue generates thumbnails while it holds
-        // this lock, so a thumbnail of the previous data generated in the meantime doesn't survive the change
+        // the thumbnails are cleared after the asset was locked against concurrent saves by parent::update(): the
+        // asset update tasks queue generates the previews before it saves its results, which locks the asset and
+        // checks that the data wasn't changed in the meantime (see Asset::saveProcessingResults()). A preview of the
+        // previous data written after the thumbnails were cleared, but before the change was saved, would survive
+        // otherwise, as the check wouldn't notice the change yet.
         if ($params['isUpdate']) {
             $this->clearThumbnails($this->clearThumbnailsOnSave);
             $this->clearThumbnailsOnSave = false; // reset to default
         }
     }
 
-    public function getDataDerivedCustomSettingKeys(): array
+    public static function getDataDerivedCustomSettingKeys(): array
     {
         return array_merge(parent::getDataDerivedCustomSettingKeys(), ['imageWidth', 'imageHeight', 'imageDimensionsCalculated']);
     }

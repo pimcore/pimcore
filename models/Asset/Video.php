@@ -41,9 +41,11 @@ class Video extends Model\Asset
         }
 
         // see clearThumbnails(): the custom settings of the thumbnails are cleared before the asset is saved by
-        // parent::update(), the thumbnail files afterwards, when the asset is locked against concurrent saves (see
-        // Asset\Dao::getCustomSettingsForUpdate()): the asset update tasks queue generates thumbnails while it holds
-        // this lock, so a thumbnail of the previous data generated in the meantime doesn't survive the change
+        // parent::update(), the thumbnail files afterwards, when the asset is locked against concurrent saves: the
+        // asset update tasks queue generates the previews before it saves its results, which locks the asset and
+        // checks that the data wasn't changed in the meantime (see Asset::saveProcessingResults()). A preview of the
+        // previous data written after the thumbnails were cleared, but before the change was saved, would survive
+        // otherwise, as the check wouldn't notice the change yet.
         $clearThumbnails = $params['isUpdate'] && $this->getDataChanged();
         if ($clearThumbnails) {
             $this->setCustomSetting('thumbnails', null);
@@ -56,7 +58,7 @@ class Video extends Model\Asset
         }
     }
 
-    public function getDataDerivedCustomSettingKeys(): array
+    public static function getDataDerivedCustomSettingKeys(): array
     {
         return array_merge(
             parent::getDataDerivedCustomSettingKeys(),
