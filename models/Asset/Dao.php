@@ -508,7 +508,7 @@ class Dao extends Model\Element\Dao
         // and touches the other tables (e.g. the meta data) afterwards, so the row is the only lock acquired here:
         // acquiring further locks first could lead to deadlocks with concurrent saves of the asset
         $row = $this->db->fetchAssociative(
-            'SELECT `type`, mimetype, customSettings FROM assets WHERE id = ? FOR UPDATE',
+            'SELECT ' . $this->db->quoteIdentifier('type') . ', mimetype, customSettings FROM assets WHERE id = ? FOR UPDATE',
             [$this->model->getId()]
         );
         if (!$row) {

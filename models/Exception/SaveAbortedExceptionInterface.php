@@ -13,14 +13,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Exception;
 
-use Exception;
-
 /**
- * Thrown when the results of processing the data of an asset can't be saved, as the data or its processing was
- * changed by others in the meantime (see \Pimcore\Model\Asset::saveProcessingResults())
+ * Marks an exception which aborts saving an element on purpose (e.g. because a precondition of the save isn't met),
+ * which is an expected outcome and therefore neither logged as critical nor dispatched as a failure event
  *
  * @internal
  */
-class DataStateChangedException extends Exception implements SaveAbortedExceptionInterface
+interface SaveAbortedExceptionInterface
 {
 }

@@ -609,6 +609,33 @@ class AssetUpdateTasksTest extends ModelTestCase
     }
 
     /**
+     * All settings derived from the data of a video (including the spherical meta data) belong to the previous data
+     * when it is replaced, even by data of a type which isn't processed (nothing would remove them otherwise)
+     */
+    public function testDerivedSettingsAreRemovedWhenVideoDataIsReplacedByUnprocessedType(): void
+    {
+        $video = TestHelper::createVideoAsset();
+        $videoId = $video->getId();
+        $video->setCustomSetting('SphericalMetaData', ['ProjectionType' => 'equirectangular']);
+        $video->setCustomSetting('duration', 12.5);
+        $video->setProcessingPending(false);
+        $video->save();
+        $video = Asset::getById($videoId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Video::class, $video);
+        $this->assertSame(['ProjectionType' => 'equirectangular'], $video->getSphericalMetaData());
+
+        $video->setData('plain text, which is not processed by the asset update tasks queue');
+        $video->setFilename(pathinfo($video->getFilename(), PATHINFO_FILENAME) . '.txt');
+        $video->save();
+
+        $asset = Asset::getById($videoId, ['force' => true]);
+        $this->assertNotContains($asset->getType(), ['image', 'video', 'document']);
+        $this->assertFalse($asset->isProcessingPending());
+        $this->assertNull($asset->getCustomSetting('SphericalMetaData'));
+        $this->assertNull($asset->getCustomSetting('duration'));
+    }
+
+    /**
      * A copy of an asset takes over the derived settings of the source instead of generating them again (which could
      * fail or differ), so only the previews of a processed source are generated for the copy
      */
@@ -654,6 +681,84 @@ class AssetUpdateTasksTest extends ModelTestCase
             $this->assertSame(99, $copy->getPageCount(), $copyMethod);
             $this->assertFalse($copy->isProcessingPending(), $copyMethod);
         }
+    }
+
+    /**
+     * A copy of a source whose data was replaced without saving the source has to be processed: the derived settings
+     * of the source still belong to its previous data
+     */
+    public function testCopyOfUnsavedReplacementIsProcessed(): void
+    {
+        $source = TestHelper::createDocumentAsset();
+        TestHelper::runAssetUpdateTasks($source->getId());
+        $source = Asset::getById($source->getId(), ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $source);
+        $source->setCustomSetting('document_page_count', 99);
+        $source->save();
+        $this->assertFalse($source->isProcessingPending());
+
+        // the data is replaced, but the source is not saved
+        $source->setData(file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf')));
+        $this->assertSame(99, $source->getPageCount());
+
+        $folder = Asset\Service::createFolderByPath('/' . uniqid('copy-replaced-'));
+        $copy = (new Asset\Service())->copyAsChild($folder, $source);
+        $copyId = $copy->getId();
+
+        $copy = Asset::getById($copyId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $copy);
+        $this->assertTrue($copy->isProcessingPending());
+        $this->assertNull($copy->getPageCount());
+        $copyTask = $this->getLastQueuedTask($copyId);
+        $this->assertFalse($copyTask->isPreviewsOnly());
+        $this->assertSame($copy->getDataGeneration(), $copyTask->getDataGeneration());
+
+        TestHelper::handleAssetUpdateTaskMessage($copyTask);
+        $copy = Asset::getById($copyId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $copy);
+        $this->assertFalse($copy->isProcessingPending());
+        $this->assertNotSame(99, $copy->getPageCount());
+        $this->assertSame('Pimcore Test Suite', $copy->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
+    }
+
+    /**
+     * Already processed data can be processed again on demand (e.g. by pimcore:assets:add-to-update-task-queue).
+     * An instance loaded before must not overwrite the new results with its outdated derived settings when it is
+     * saved afterwards, although the data and the pending state didn't change.
+     */
+    public function testResultsOfReprocessingSurviveSaveOfOutdatedInstance(): void
+    {
+        $image = TestHelper::createImageAsset();
+        $imageId = $image->getId();
+        TestHelper::runAssetUpdateTasks($imageId);
+
+        // the results of the previous processing differ from those the processing generates
+        $image = Asset::getById($imageId, ['force' => true]);
+        $image->setCustomSetting('imageWidth', 12345);
+        $image->save();
+
+        $outdatedInstance = Asset::getById($imageId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Image::class, $outdatedInstance);
+        $this->assertFalse($outdatedInstance->isProcessingPending());
+        $this->assertSame(12345, $outdatedInstance->getCustomSetting('imageWidth'));
+
+        // the data is processed again on demand ...
+        $image->triggerUpdateTask();
+        TestHelper::handleAssetUpdateTaskMessage($this->getLastQueuedTask($imageId));
+        $processedImage = Asset::getById($imageId, ['force' => true]);
+        $this->assertNotSame(12345, $processedImage->getCustomSetting('imageWidth'));
+        $this->assertNotSame($outdatedInstance->getDataState(), $processedImage->getDataState());
+
+        // ... and the outdated instance is saved with an unrelated change
+        $outdatedInstance->setCustomSetting('customSettingsTest', 'test');
+        $outdatedInstance->save();
+
+        $image = Asset::getById($imageId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Image::class, $image);
+        $this->assertSame('test', $image->getCustomSetting('customSettingsTest'));
+        $this->assertSame($processedImage->getCustomSetting('imageWidth'), $image->getCustomSetting('imageWidth'));
+        $this->assertSame($processedImage->getDataState(), $image->getDataState());
+        $this->assertFalse($image->isProcessingPending());
     }
 
     /**

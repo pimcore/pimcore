@@ -204,10 +204,8 @@ class AssetUpdateTasksHandler
 
     private function processDocument(Asset\Document $asset, string $dataState): void
     {
-        $save = false;
         $saveParams = [];
         if ($asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS()) {
-            $save = true;
             $saveParams['versionNote'] = 'PDF scan result';
         }
 
@@ -218,27 +216,15 @@ class AssetUpdateTasksHandler
                     $asset->setCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED, true);
                     $this->logger->warning(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
                 }
-
-                $save = true;
             }
         }
 
-        // handleEmbeddedMetaData() skips already extracted metadata on its own using the same condition,
-        // but checking it here too avoids an unnecessary save in that case
-        if (!$asset->getCustomSetting('embeddedMetaDataExtracted') || $asset->isDataReplaced()) {
-            $asset->handleEmbeddedMetaData();
-            $save = true;
-        }
+        $asset->handleEmbeddedMetaData();
 
-        if ($asset->isProcessingPending()) {
-            $asset->setProcessingPending(false);
-            $save = true;
-        }
+        // every finished processing is saved, as it assigns a new revision to the results (see Asset::getDataState())
+        $asset->setProcessingPending(false);
 
-        $generatePreviews = $this->getPreviewGenerator($asset);
-        if ($save || $generatePreviews) {
-            $this->completeProcessing($asset, $dataState, $save, $saveParams, $generatePreviews);
-        }
+        $this->completeProcessing($asset, $dataState, true, $saveParams, $this->getPreviewGenerator($asset));
     }
 
     private function processVideo(Asset\Video $asset, string $dataState): void

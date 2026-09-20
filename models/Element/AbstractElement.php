@@ -27,6 +27,7 @@ use Pimcore\Logger;
 use Pimcore\Messenger\ElementDependenciesMessage;
 use Pimcore\Model;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
+use Pimcore\Model\Exception\SaveAbortedExceptionInterface;
 use Pimcore\Model\User;
 use Pimcore\Workflow\Manager;
 use Throwable;
@@ -843,7 +844,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             if ($onFailure instanceof Closure) {
                 $onFailure($e);
             }
-            Logger::crit((string)$e);
+            if (!$e instanceof SaveAbortedExceptionInterface) {
+                Logger::crit((string)$e);
+            }
 
             throw $e;
         }

@@ -50,6 +50,7 @@ use Pimcore\Model\Element\Traits\ScheduledTasksTrait;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Exception\DataStateChangedException;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Exception\SaveAbortedExceptionInterface;
 use Pimcore\SystemSettingsConfig;
 use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
@@ -93,12 +94,20 @@ class Asset extends Element\AbstractElement
     private const CUSTOM_SETTING_PROCESSING_PENDING = 'pimcore-asset-processing-pending';
 
     /**
+     * identifies the results of the last processing of the data: a new value is assigned whenever a processing
+     * finishes (see setProcessingPending()), so that the state of the data (see getDataState()) changes even if
+     * already processed data was processed again on demand
+     */
+    private const CUSTOM_SETTING_PROCESSING_REVISION = 'pimcore-asset-processing-revision';
+
+    /**
      * custom settings describing the state of the data (see getDataState()), which belong to the data like the
      * derived settings (see getDataDerivedCustomSettingKeys())
      */
     private const DATA_STATE_CUSTOM_SETTINGS = [
         self::CUSTOM_SETTING_DATA_GENERATION,
         self::CUSTOM_SETTING_PROCESSING_PENDING,
+        self::CUSTOM_SETTING_PROCESSING_REVISION,
         'checksum',
     ];
 
@@ -713,8 +722,9 @@ class Asset extends Element\AbstractElement
                 }
             },
             onFailure: function ($e) use (&$parameters, &$isUpdate) {
-                if ($e instanceof DataStateChangedException) {
-                    // not a failure: the results of a processing are discarded on purpose (see saveProcessingResults())
+                if ($e instanceof SaveAbortedExceptionInterface) {
+                    // not a failure: the save was aborted on purpose (e.g. the results of a processing are discarded,
+                    // see saveProcessingResults())
                     return;
                 }
 
@@ -1416,7 +1426,9 @@ class Asset extends Element\AbstractElement
      * belonging to it, so that this asset becomes a copy of the given one. The derived settings of the source are
      * taken over instead of being generated again (which could fail or differ), so the data is treated like restored
      * data (see restoreStream()): if the processing of the source is pending, the copy is processed as well, otherwise
-     * only its previews are generated.
+     * only its previews are generated. If the data of the source was replaced without saving it, its derived settings
+     * still belong to its previous data, so the data is treated like replaced data instead (see setStream()) and the
+     * copy is processed.
      *
      * @return $this
      *
@@ -1429,8 +1441,13 @@ class Asset extends Element\AbstractElement
         // also makes sure the custom settings of the source are loaded completely
         // (they might not be, if the source came from the cache)
         $this->setCustomSettings($source->getCustomSettings());
-        $this->customSettingsIncomplete = false;
-        $this->restoreStream($source->getStreamCopy());
+
+        if ($source->isDataReplaced()) {
+            $this->setStream($source->getStreamCopy());
+        } else {
+            $this->customSettingsIncomplete = false;
+            $this->restoreStream($source->getStreamCopy());
+        }
 
         return $this;
     }
@@ -1515,7 +1532,8 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Marks the processing of the current data as pending or finished
+     * Marks the processing of the current data as pending or finished. Finishing it assigns a new revision to the
+     * results (see getDataState()), even if the data had been processed before.
      *
      * @internal
      */
@@ -1527,6 +1545,7 @@ class Asset extends Element\AbstractElement
         } else {
             $this->finishedProcessingGeneration = $this->getDataGeneration() ?? $this->finishedProcessingGeneration;
             $this->removeCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING);
+            $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_REVISION, bin2hex(random_bytes(8)));
         }
     }
 
@@ -1577,10 +1596,7 @@ class Asset extends Element\AbstractElement
         $stored = $this->getDao()->getDataBoundFieldsForUpdate();
         $storedSettings = $stored['customSettings'];
 
-        $storedState = self::buildDataState(
-            $storedSettings[self::CUSTOM_SETTING_DATA_GENERATION] ?? null,
-            $storedSettings[self::CUSTOM_SETTING_PROCESSING_PENDING] ?? null
-        );
+        $storedState = self::buildDataState($storedSettings);
         if ($storedState === $this->getDataState()) {
             return false;
         }
@@ -1689,10 +1705,7 @@ class Asset extends Element\AbstractElement
         $stored = $this->getDao()->getDataBoundFieldsForUpdate();
         $storedSettings = $stored['customSettings'];
 
-        $storedState = self::buildDataState(
-            $storedSettings[self::CUSTOM_SETTING_DATA_GENERATION] ?? null,
-            $storedSettings[self::CUSTOM_SETTING_PROCESSING_PENDING] ?? null
-        );
+        $storedState = self::buildDataState($storedSettings);
         if ($storedState !== $expectedDataState) {
             throw new DataStateChangedException(sprintf(
                 'The data of asset %s was replaced or restored, or its processing finished, in the meantime',
@@ -1714,18 +1727,16 @@ class Asset extends Element\AbstractElement
 
     /**
      * Returns a value identifying the state of the data of this instance, which changes whenever the data is replaced
-     * or restored (see getDataGeneration()) and whenever its processing starts or finishes (see isProcessingPending()).
-     * Comparing it with the stored state (see getStoredDataStateForUpdate()) tells whether the data or its processing
-     * was changed by others since this instance was loaded.
+     * or restored (see getDataGeneration()) and whenever its processing starts or finishes (see
+     * setProcessingPending()), even if already processed data is processed again. Comparing it with the stored state
+     * (see getStoredDataStateForUpdate()) tells whether the data or its processing was changed by others since this
+     * instance was loaded.
      *
      * @internal
      */
     public function getDataState(): string
     {
-        return self::buildDataState(
-            $this->getCustomSetting(self::CUSTOM_SETTING_DATA_GENERATION),
-            $this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING)
-        );
+        return self::buildDataState($this->getCustomSettings());
     }
 
     /**
@@ -1740,15 +1751,19 @@ class Asset extends Element\AbstractElement
     {
         $storedSettings = $this->getDao()->getDataBoundFieldsForUpdate()['customSettings'];
 
-        return self::buildDataState(
-            $storedSettings[self::CUSTOM_SETTING_DATA_GENERATION] ?? null,
-            $storedSettings[self::CUSTOM_SETTING_PROCESSING_PENDING] ?? null
-        );
+        return self::buildDataState($storedSettings);
     }
 
-    private static function buildDataState(mixed $dataGeneration, mixed $processingPending): string
+    /**
+     * @param array<string, mixed> $customSettings
+     */
+    private static function buildDataState(array $customSettings): string
     {
-        return (self::normalizeDataGeneration($dataGeneration) ?? '') . '|' . ($processingPending ? '1' : '');
+        return implode('|', [
+            self::normalizeDataGeneration($customSettings[self::CUSTOM_SETTING_DATA_GENERATION] ?? null) ?? '',
+            ($customSettings[self::CUSTOM_SETTING_PROCESSING_PENDING] ?? null) ? '1' : '',
+            self::normalizeDataGeneration($customSettings[self::CUSTOM_SETTING_PROCESSING_REVISION] ?? null) ?? '',
+        ]);
     }
 
     private static function normalizeDataGeneration(mixed $dataGeneration): ?string
