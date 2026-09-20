@@ -1319,6 +1319,29 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Returns a new stream of the data, which is independent of the stream of this asset (see getStream()). It can
+     * be assigned to another asset (e.g. a copy), which closes its stream when it is saved: closing the stream of
+     * this asset instead would make it fall back to the data in the storage and lose data assigned but not saved yet.
+     *
+     * @return resource|null
+     *
+     * @throws Exception
+     *
+     * @internal
+     */
+    public function getStreamCopy(): mixed
+    {
+        $stream = $this->getStream();
+        if (!is_resource($stream)) {
+            return null;
+        }
+
+        $streamCopy = fopen(self::getLocalFileFromStream($stream), 'rb', false, File::getContext());
+
+        return is_resource($streamCopy) ? $streamCopy : null;
+    }
+
+    /**
      * Assigns binary data that belongs to the current state of the asset, e.g. the data stored by a version or
      * the recycle bin. In contrast to setStream(), the data derived from the binary data (embedded meta data,
      * dimensions, page count, ...) is kept, as it was generated from exactly this data (see isDataReplaced()).

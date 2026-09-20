@@ -101,7 +101,8 @@ class Service extends Model\Element\Service
         $new->setDao(null);
         $new->setLocked(null);
         $new->setCreationDate(time());
-        $new->setStream($source->getStream());
+        // the copy must not share the stream of the source, as it closes its stream when it is saved
+        $new->setStream($source->getStreamCopy());
         // the custom settings (e.g. embedded meta data) belong to this data, so they are taken over from the source,
         // which also makes sure they are loaded completely (they might not be, if the source came from the cache)
         $new->setCustomSettings($source->getCustomSettings());
@@ -157,7 +158,8 @@ class Service extends Model\Element\Service
         $new->setDao(null);
         $new->setLocked(null);
         $new->setCreationDate(time());
-        $new->setStream($source->getStream());
+        // the copy must not share the stream of the source, as it closes its stream when it is saved
+        $new->setStream($source->getStreamCopy());
         // the custom settings (e.g. embedded meta data) belong to this data, so they are taken over from the source,
         // which also makes sure they are loaded completely (they might not be, if the source came from the cache)
         $new->setCustomSettings($source->getCustomSettings());
@@ -194,7 +196,8 @@ class Service extends Model\Element\Service
         $target = $event->getArgument('target_element');
 
         if (!$source instanceof Asset\Folder) {
-            $target->setStream($source->getStream());
+            // the target must not share the stream of the source, as it closes its stream when it is saved
+            $target->setStream($source->getStreamCopy());
             $target->setCustomSettings($source->getCustomSettings());
         }
 

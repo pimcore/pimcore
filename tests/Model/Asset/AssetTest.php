@@ -383,6 +383,34 @@ class AssetTest extends ModelTestCase
     }
 
     /**
+     * A copy of an asset must not share the stream of the source: the copy closes its stream when it is saved,
+     * which would close the stream of the source as well, so the source would lose data assigned but not saved yet
+     */
+    public function testCopyDoesNotShareStreamOfSource(): void
+    {
+        $newData = file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf'));
+        $folder = Asset\Service::createFolderByPath('/' . uniqid('copy-stream-'));
+        $service = new Asset\Service();
+
+        foreach (['copyAsChild', 'copyRecursive', 'copyContents'] as $copyMethod) {
+            $source = TestHelper::createDocumentAsset();
+            $this->assertNotSame($newData, $source->getData());
+            // the data is replaced, but the source is not saved yet
+            $source->setData($newData);
+
+            if ($copyMethod === 'copyContents') {
+                $copy = $service->copyContents(TestHelper::createDocumentAsset(), $source);
+            } else {
+                $copy = $service->$copyMethod($folder, $source);
+            }
+            $this->assertSame($newData, Asset::getById($copy->getId(), ['force' => true])->getData(), $copyMethod . ': copy');
+
+            $source->save();
+            $this->assertSame($newData, Asset::getById($source->getId(), ['force' => true])->getData(), $copyMethod . ': source');
+        }
+    }
+
+    /**
      * Verifies that an asset can be saved with custom user modification id.
      *
      */
