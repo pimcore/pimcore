@@ -24,17 +24,27 @@ final class HousekeepingTaskTest extends TestCase
 {
     private string $root;
 
+    /**
+     * Outside the tree being cleaned, so that a symlink target is never itself a candidate
+     * for pruning and "the target survived" means something.
+     */
+    private string $outside;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->root = sys_get_temp_dir() . '/pimcore_housekeeping_test_' . uniqid();
         mkdir($this->root, 0777, true);
+
+        $this->outside = sys_get_temp_dir() . '/pimcore_housekeeping_outside_' . uniqid();
+        mkdir($this->outside, 0777, true);
     }
 
     protected function tearDown(): void
     {
         $this->removeRecursively($this->root);
+        $this->removeRecursively($this->outside);
 
         parent::tearDown();
     }
@@ -156,6 +166,46 @@ final class HousekeepingTaskTest extends TestCase
         );
     }
 
+    public function testRemovesSymlinkToDirectoryAndLeavesItsTargetAlone(): void
+    {
+        // isFile() follows the link, so a symlink to a directory reports isFile() === false
+        // and looks like a directory to a "not a file" test. It is not one to prune: rmdir()
+        // removes only real directories, so recording it alongside them strands it in
+        // var/tmp for good. It belongs on the unlink() path that handled it before this tree
+        // was walked with a directory cutoff.
+        $target = $this->outside . '/target';
+        mkdir($target, 0777, true);
+        touch($target . '/precious.txt', time() - 7200, time() - 7200);
+        symlink($target, $this->root . '/link_to_dir');
+        $this->age();
+
+        $this->runHousekeeping(seconds: 0, dirSeconds: 0);
+
+        $this->assertFalse(
+            is_link($this->root . '/link_to_dir'),
+            'a symlink to a directory must be unlinked, not handed to rmdir()'
+        );
+        // The walk must not descend through the link: hasChildren() is false for a symlink
+        // unless FOLLOW_SYMLINKS is set, so removing it never reaches what it points at.
+        $this->assertDirectoryExists($target, 'the link target must be left alone');
+        $this->assertFileExists($target . '/precious.txt', 'the walk must not descend through a link');
+    }
+
+    public function testRemovesBrokenSymlink(): void
+    {
+        // A broken link is neither file nor directory, and stat() fails on it - so treating
+        // every non-file as a directory parked it in the lookup with no usable time, where
+        // it was neither unlinked nor rmdir()'d and simply accumulated.
+        symlink($this->root . '/missing', $this->root . '/broken_link');
+        $this->age();
+
+        $this->runHousekeeping(seconds: 0, dirSeconds: 0);
+
+        // file_exists() resolves the link, so it reports false either way; is_link() is the
+        // only check that distinguishes "removed" from "still dangling".
+        $this->assertFalse(is_link($this->root . '/broken_link'), 'a broken symlink must be unlinked');
+    }
+
     public function testKeepsLowQualityImagePreviews(): void
     {
         $this->makeFile('image-low-quality-preview.svg');
@@ -219,7 +269,14 @@ final class HousekeepingTaskTest extends TestCase
             }
 
             $child = $path . '/' . $entry;
-            is_dir($child) ? $this->removeRecursively($child) : @unlink($child);
+
+            // is_link() first: is_dir() follows the link, so a symlink to a directory would
+            // otherwise send this recursion into the target and delete the fixture it points at.
+            if (!is_link($child) && is_dir($child)) {
+                $this->removeRecursively($child);
+            } else {
+                @unlink($child);
+            }
         }
 
         @rmdir($path);

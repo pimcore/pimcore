@@ -92,7 +92,16 @@ class HousekeepingTask implements TaskInterface
                 return false;
             }
 
-            if ($pruneDirectories) {
+            // isDir() && !isLink() rather than "not a file": isFile() follows the link, so
+            // a symlink to a directory reports isFile() === false, and a broken one is
+            // neither file nor directory. Recording either would route it to rmdir(), which
+            // removes only real directories - the link would survive every run from here on.
+            // Leaving them out of $dirTimes keeps them on the unlink() path that cleaned
+            // them up before this tree was walked with a directory cutoff. The walk does not
+            // descend through them either: RecursiveDirectoryIterator::hasChildren() is
+            // false for a symlink unless FOLLOW_SYMLINKS is set, so removing the link never
+            // touches whatever it points at.
+            if ($pruneDirectories && $current->isDir() && !$current->isLink()) {
                 $path = $current->getPathname();
                 // Capture the directory time before its contents are deleted, so a
                 // directory that was already stale can be removed in the same run. The
