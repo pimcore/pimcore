@@ -316,6 +316,19 @@ class WebDavIntegrationTest extends ModelTestCase
         $destId = $dest->getId();
         $destPath = $dest->getRealFullPath();
 
+        // an explicit per-asset workspace grant/deny is removed together with the asset by the
+        // ON DELETE CASCADE on users_workspaces_asset.cid and must survive the restore
+        $db = \Pimcore\Db::get();
+        $db->insert('users_workspaces_asset', \Pimcore\Db\Helper::quoteDataIdentifiers($db, [
+            'cid' => $destId,
+            'cpath' => $destPath,
+            'userId' => $this->user->getId(),
+            'list' => 1,
+            'view' => 1,
+            'publish' => 0,
+            'delete' => 1,
+        ]));
+
         // the bound VersionDeleteMessage captures at delete time (see Asset::delete())
         $preDeleteMaxVersionId = \Pimcore\Model\Version::getHighestIdForElement('asset', $destId);
         $this->assertNotNull($preDeleteMaxVersionId, 'The destination is expected to have versions before its deletion.');
@@ -340,6 +353,16 @@ class WebDavIntegrationTest extends ModelTestCase
         $this->assertSame($originalCreationDate, $restored->getCreationDate());
         $this->assertSame('self', $restored->getLocked(), 'the restore must not silently unlock an asset an in-place overwrite would leave locked');
 
+        $workspaceRow = $db->fetchAssociative(
+            'SELECT cpath, `list`, `view`, `publish`, `delete` FROM users_workspaces_asset WHERE cid = ? AND userId = ?',
+            [$destId, $this->user->getId()]
+        );
+        $this->assertIsArray($workspaceRow, 'the explicit per-asset workspace row must survive the restore');
+        $this->assertSame($destPath, $workspaceRow['cpath']);
+        $this->assertEquals(1, $workspaceRow['list']);
+        $this->assertEquals(0, $workspaceRow['publish']);
+        $this->assertEquals(1, $workspaceRow['delete'], 'the workspace row must keep its original permission flags');
+
         // the deletion queued a version cleanup for this id, bounded to the versions existing at
         // delete time; versions created by the restore save (ids above that bound) must survive
         // it even when the queued message is only processed now - simulated by invoking the
@@ -350,6 +373,9 @@ class WebDavIntegrationTest extends ModelTestCase
         $survivorIds = array_values(array_filter($restoredVersionIds, fn (int $id): bool => $id > $preDeleteMaxVersionId));
         $this->assertNotEmpty($survivorIds, 'The restore save must create a version above the pre-delete bound.');
 
+        // invoking the handler without an Acknowledger is intentional: on that path Symfony's
+        // BatchHandlerTrait synthesizes a real one, flushes synchronously and re-throws any
+        // processing error - exactly what simulating the deferred cleanup here needs
         (new \Pimcore\Messenger\Handler\VersionDeleteHandler())(
             new \Pimcore\Messenger\VersionDeleteMessage('asset', $destId, $preDeleteMaxVersionId)
         );

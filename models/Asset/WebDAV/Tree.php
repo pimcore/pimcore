@@ -142,6 +142,14 @@ class Tree extends DAV\Tree
                             $asset->setCustomSettings($customSettings);
                         }
 
+                        // workspace rows (explicit per-asset grants/denies) can only be
+                        // re-inserted after save() has re-created the assets row (FK on cid),
+                        // so they are stashed here and applied below
+                        $workspaces = $logEntry['workspaces'] ?? null;
+                        if (is_array($workspaces) && $workspaces !== []) {
+                            $restoredWorkspaces = $workspaces;
+                        }
+
                         // hydrate the metadata snapshot through the configured metadata types
                         // (mirroring Asset\Dao::getById()): a bundle-defined type may transform
                         // its stored value in getDataFromResource(), and save() converts back
@@ -198,6 +206,10 @@ class Tree extends DAV\Tree
 
             $asset->setUserModification($user->getId());
             $asset->save();
+
+            if (isset($restoredWorkspaces)) {
+                $this->restoreWorkspaces($asset, $restoredWorkspaces);
+            }
 
             if (isset($sourceAsset)) {
                 $sourceAsset->delete();
@@ -304,6 +316,10 @@ class Tree extends DAV\Tree
                 'type' => $type,
                 'data' => $row['data'] ?? null,
                 'language' => (string) ($row['language'] ?? ''),
+                // the Dao load path hands the full row - including cid - to
+                // getDataFromResource(); the snapshot drops cid, but it always equals the
+                // restored id, so provide it for types that read $params['cid']
+                'cid' => $asset->getId(),
             ];
 
             try {
@@ -314,11 +330,48 @@ class Tree extends DAV\Tree
                 // unknown type: keep the raw value, same as the Dao load path
             }
 
+            // like the Dao load path: cid is not part of the model-level representation
+            unset($item['cid']);
             $metadata[] = $item;
         }
 
         if ($metadata) {
             $asset->setMetadataRaw($metadata);
+        }
+    }
+
+    /**
+     * Re-inserts the destination's per-asset workspace rows (explicit permission grants/denies)
+     * captured in the delete log. They were removed together with the asset by the
+     * ON DELETE CASCADE on users_workspaces_asset.cid, and nothing else recreates them - without
+     * this a restored asset would silently fall back to purely inherited permissions.
+     * cid/cpath are rewritten to the restored asset; all other columns are scalar permission
+     * flags and are re-inserted as captured.
+     *
+     * @param array<mixed> $rows raw `users_workspaces_asset` rows from the delete log
+     */
+    private function restoreWorkspaces(Asset $asset, array $rows): void
+    {
+        $db = \Pimcore\Db::get();
+
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            foreach ($row as $value) {
+                if ($value !== null && !is_scalar($value)) {
+                    // workspace rows hold only scalar columns; anything else is malformed
+                    continue 2;
+                }
+            }
+
+            $row['cid'] = $asset->getId();
+            $row['cpath'] = $asset->getRealFullPath();
+
+            // quoting is required: the table has MySQL-reserved column names
+            // (`delete`, `rename`, `create`) - same as User\Workspace\Dao::save()
+            $db->insert('users_workspaces_asset', \Pimcore\Db\Helper::quoteDataIdentifiers($db, $row));
         }
     }
 }

@@ -93,6 +93,11 @@ class File extends DAV\File
             // needed so an overwrite-restore keeps user-set settings (e.g. focal point) just like
             // an in-place overwrite does; type-derived settings are recomputed on save anyway
             $customSettings = $db->fetchOne('SELECT customSettings FROM assets WHERE id = ?', [$id]);
+            // per-asset workspace rows (explicit grants/denies) are removed with the asset by the
+            // ON DELETE CASCADE on users_workspaces_asset.cid - snapshot them (scalar columns
+            // only) so a restore keeps the asset's access boundary instead of silently widening
+            // or narrowing it to the inherited permissions
+            $workspaces = $db->fetchAllAssociative('SELECT * FROM users_workspaces_asset WHERE cid = ?', [$id]);
 
             $this->asset->delete();
 
@@ -109,6 +114,7 @@ class File extends DAV\File
                 'properties' => $properties,
                 'metadata' => $metadata,
                 'customSettings' => is_string($customSettings) ? $customSettings : null,
+                'workspaces' => $workspaces,
                 // rolling-deploy safety in the new-writer -> old-reader direction: the previous
                 // release reads this key unconditionally and feeds it to restoreDeletedAsset(),
                 // which returns null for an empty payload - the old node then degrades to a

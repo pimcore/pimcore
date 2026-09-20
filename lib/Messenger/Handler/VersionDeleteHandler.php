@@ -50,6 +50,14 @@ class VersionDeleteHandler implements BatchHandlerInterface
                         'maxVersionId' => $message->getMaxVersionId(),
                     ]);
                 } else {
+                    // legacy message queued by a previous release: it recorded no bound, and one
+                    // cannot be reconstructed here, so the cleanup stays unbounded. During a
+                    // mixed-version deployment window the same limitation exists in the other
+                    // direction (a previous-release worker ignores the bound on a new message).
+                    // In both cases the exposure is confined to that transient window and to an
+                    // element id re-used within it (WebDAV delete-log restore): version history
+                    // created by such a restore may be cleaned up, the restored element itself is
+                    // never touched. Drain the messenger queue across the deployment to avoid it.
                     $versions->setCondition('cid = :cid AND ctype = :ctype', [
                         'cid' => $message->getElementId(),
                         'ctype' => $message->getElementType(),
