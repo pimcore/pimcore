@@ -554,8 +554,6 @@ class Service extends Model\Element\Service
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
         $file = $doc->getPreviewImageFilesystemPath();
 
-        $filesystem->mkdir(dirname($file), 0775);
-
         if (HtmlToImage::convert($url, $tmpFile)) {
             $im = \Pimcore\Image::getInstance();
             if (!$im->load($tmpFile)) {
@@ -564,6 +562,13 @@ class Service extends Model\Element\Service
                 return false;
             }
             $im->scaleByWidth(800);
+            // Created here rather than before the conversion above: the directory is shared
+            // and long-lived, so mkdir() is a no-op that does not refresh its timestamps
+            // when it already exists. Creating it seconds before the write left a window in
+            // which anything reaping stale empty directories under var/tmp - housekeeping,
+            // systemd-tmpfiles, an operator - could remove it and make the save below fail.
+            // $tmpFile sits in the temp root, not in here, so the conversion does not need it.
+            $filesystem->mkdir(dirname($file), 0775);
             $im->save($file, 'jpeg', 85);
 
             unlink($tmpFile);
