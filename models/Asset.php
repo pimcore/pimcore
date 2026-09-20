@@ -1971,6 +1971,7 @@ class Asset extends Element\AbstractElement
         // original asset as well, which would then fall back to the data in the storage and lose data that was
         // assigned but not saved yet, e.g. when it is cloned for a version or a recycle bin item), but just dropped
         $this->stream = null;
+        $this->streamIsPlaceholder = false;
     }
 
     public function clearThumbnails(bool $force = false): void
