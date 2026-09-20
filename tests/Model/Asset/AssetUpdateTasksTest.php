@@ -541,7 +541,8 @@ class AssetUpdateTasksTest extends ModelTestCase
         $jpg = file_get_contents(TestHelper::resolveFilePath('assets/images/image1.jpg'));
         $cases = [
             [TestHelper::createImageAsset(), $pdf, 'pdf', Asset\Document::class, 'application/pdf', 'imageWidth'],
-            [TestHelper::createDocumentAsset('', $pdf), $jpg, 'jpg', Asset\Image::class, 'image/jpeg', 'document_page_count'],
+            // the scan status is used as derived setting of documents, as it doesn't need any external tool
+            [TestHelper::createDocumentAsset('', $pdf), $jpg, 'jpg', Asset\Image::class, 'image/jpeg', Asset\Document::CUSTOM_SETTING_PDF_SCAN_STATUS],
         ];
 
         foreach ($cases as [$asset, $newData, $newExtension, $newClass, $newMimeType, $previousDerivedKey]) {
