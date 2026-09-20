@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation;
@@ -342,6 +343,40 @@ class ManyToManyRelationVisibleFieldsTest extends ModelTestCase
         $this->assertArrayNotHasKey('visibleFieldsTestLateArrival', $fd->getAvailableVisibleFields(), 'a deleted definition must no longer be offered');
         $this->assertArrayNotHasKey('visibleFieldsTestLateArrival', $fd->getVisibleFieldSources(), 'the cached source map must be invalidated by the delete');
         $this->assertNull($fd->getVisibleFieldData($asset)['visibleFieldsTestLateArrival'], 'a deleted definition must no longer resolve');
+    }
+
+    public function testPredefinedMetadataChangesAreReflectedWhileTheRuntimeCacheIsDisabled(): void
+    {
+        $fd = $this->createMixedDefinition();
+        $fd->setVisibleFields('visibleFieldsTestWhileDisabled');
+
+        // populate the caches while the runtime cache is enabled, then disable it (as importers do)
+        $this->assertArrayNotHasKey('visibleFieldsTestWhileDisabled', Predefined::getAllByName());
+        $this->assertArrayNotHasKey('visibleFieldsTestWhileDisabled', $fd->getVisibleFieldSources());
+
+        RuntimeCache::disable();
+
+        try {
+            $late = $this->createPredefinedMetadata('visibleFieldsTestWhileDisabled');
+
+            try {
+                $this->assertArrayHasKey('visibleFieldsTestWhileDisabled', Predefined::getAllByName(), 'a save must drop the definitions cached before the runtime cache was disabled');
+                $this->assertArrayHasKey('visibleFieldsTestWhileDisabled', $fd->getAvailableVisibleFields());
+                $this->assertSame(['asset'], $fd->getVisibleFieldSources()['visibleFieldsTestWhileDisabled'] ?? null);
+
+                $asset = TestHelper::createImageAsset('visible-fields-');
+                $asset->addMetadata('visibleFieldsTestWhileDisabled', 'input', 'value while disabled');
+                $asset->save();
+                $this->assertSame('value while disabled', $fd->getVisibleFieldData($asset)['visibleFieldsTestWhileDisabled']);
+            } finally {
+                $late->delete();
+            }
+
+            $this->assertArrayNotHasKey('visibleFieldsTestWhileDisabled', Predefined::getAllByName(), 'a delete must drop the cached definitions as well');
+            $this->assertArrayNotHasKey('visibleFieldsTestWhileDisabled', $fd->getVisibleFieldSources());
+        } finally {
+            RuntimeCache::enable();
+        }
     }
 
     public function testTheSourceMapIsBuiltOncePerConfigurationNotPerElement(): void
