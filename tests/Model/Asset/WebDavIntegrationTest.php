@@ -311,6 +311,7 @@ class WebDavIntegrationTest extends ModelTestCase
         // distinct values a freshly rebuilt asset would not get on its own
         $dest->setUserOwner(12345);
         $dest->setCreationDate($originalCreationDate);
+        $dest->setLocked('self');
         $dest->save();
         $destId = $dest->getId();
         $destPath = $dest->getRealFullPath();
@@ -337,6 +338,7 @@ class WebDavIntegrationTest extends ModelTestCase
         $this->assertSame('keep-me', $restored->getCustomSetting('editorNote'));
         $this->assertSame(12345, $restored->getUserOwner());
         $this->assertSame($originalCreationDate, $restored->getCreationDate());
+        $this->assertSame('self', $restored->getLocked(), 'the restore must not silently unlock an asset an in-place overwrite would leave locked');
 
         // the deletion queued a version cleanup for this id, bounded to the versions existing at
         // delete time; versions created by the restore save (ids above that bound) must survive
@@ -408,6 +410,30 @@ class WebDavIntegrationTest extends ModelTestCase
         $this->assertInstanceOf(Asset::class, $restored);
         $this->assertSame($destId, $restored->getId(), 'a legacy entry must still restore the destination id');
         $this->assertSame('NEW', $restored->getData());
+    }
+
+    /**
+     * A delete-log entry for the destination path that carries no usable id (malformed, or
+     * written by something else) must degrade to a plain rename - and, critically, must not
+     * treat the source as consumed: doing so would delete the just-renamed asset after save
+     * and lose the file entirely.
+     */
+    public function testMoveTreatsDeleteLogEntryWithoutIdAsPlainRename(): void
+    {
+        $source = $this->createFileAssetIn($this->root, 'no-id-source.txt', 'CONTENT');
+        $sourceId = $source->getId();
+        $destPath = $this->root->getRealFullPath() . '/no-id-target.txt';
+
+        Service::saveDeleteLog([
+            $destPath => ['timestamp' => time()],
+        ]);
+
+        $this->newTree()->move($this->davPath($source), ltrim($destPath, '/'));
+
+        $moved = Asset::getById($sourceId, ['force' => true]);
+        $this->assertInstanceOf(Asset::class, $moved, 'the moved asset must not be deleted by the source cleanup');
+        $this->assertSame($destPath, $moved->getRealFullPath(), 'the id-less entry must fall through to a plain rename');
+        $this->assertSame('CONTENT', $moved->getData());
     }
 
     public function testMoveWithMissingSourceThrowsNotFound(): void

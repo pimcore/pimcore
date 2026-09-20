@@ -74,6 +74,7 @@ class File extends DAV\File
             $id = $this->asset->getId();
             $userOwner = $this->asset->getUserOwner();
             $creationDate = $this->asset->getCreationDate();
+            $locked = $this->asset->getLocked();
 
             // Snapshot the asset's own properties and metadata as plain scalar rows *before*
             // deleting, so the destination can be restored on a delete + create + move (see
@@ -104,6 +105,7 @@ class File extends DAV\File
                 'timestamp' => time(),
                 'userOwner' => $userOwner,
                 'creationDate' => $creationDate,
+                'locked' => $locked,
                 'properties' => $properties,
                 'metadata' => $metadata,
                 'customSettings' => is_string($customSettings) ? $customSettings : null,

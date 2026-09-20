@@ -1039,12 +1039,14 @@ class Asset extends Element\AbstractElement
 
                 // Dispatch Symfony Message Bus to delete versions - bounded to the versions
                 // existing right now, so a later re-use of this id (WebDAV delete-log restore)
-                // does not lose versions created after the restore
+                // does not lose versions created after the restore. The bound is captured FOR
+                // UPDATE inside this delete transaction, so a concurrent saveVersion() cannot
+                // slip a version above the bound before the delete commits
                 Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                     new VersionDeleteMessage(
                         Service::getElementType($this),
                         $this->getId(),
-                        Version::getHighestIdForElement(Service::getElementType($this), $this->getId()) ?? 0
+                        Version::getHighestIdForElement(Service::getElementType($this), $this->getId(), true) ?? 0
                     )
                 );
 

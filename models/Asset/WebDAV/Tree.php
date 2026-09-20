@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\WebDAV;
 
 use Exception;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
@@ -83,18 +84,23 @@ class Tree extends DAV\Tree
                 // see: Asset\WebDAV\File::delete() why this is necessary
                 $log = Asset\WebDAV\Service::getDeleteLog();
                 if (!$asset && array_key_exists('/' . $destinationPath, $log)) {
-                    $sourceAsset = Asset::getByPath('/' . $sourcePath);
-                    if (!$sourceAsset) {
-                        throw new NotFound('Source asset not found');
-                    }
-
                     // The destination was already deleted (e.g. Photoshop replaces a file via
                     // delete + create + move). Re-create it from the source content while reusing
                     // the deleted asset's id, so hardcoded references to that id stay valid.
                     // save() re-inserts the row via upsert; the source asset is removed below.
                     $logEntry = $log['/' . $destinationPath];
                     $restoredId = $logEntry['id'] ?? null;
-                    if ($restoredId !== null) {
+
+                    // Only an entry carrying a usable id can drive a restore. Anything else must
+                    // fall through to the plain rename below WITHOUT touching $sourceAsset:
+                    // assigning it here would alias $asset to the same asset via the fallback,
+                    // and the post-save source cleanup would then delete the just-moved file.
+                    if (is_numeric($restoredId) && (int) $restoredId > 0) {
+                        $sourceAsset = Asset::getByPath('/' . $sourcePath);
+                        if (!$sourceAsset) {
+                            throw new NotFound('Source asset not found');
+                        }
+
                         // no 'type' here: Asset::create() ignores a passed type when 'data' is
                         // present and derives the concrete class from the detected mime type
                         $asset = Asset::create($sourceAsset->getParentId(), [
@@ -115,6 +121,14 @@ class Tree extends DAV\Tree
                             $asset->setCreationDate((int) $logEntry['creationDate']);
                         }
 
+                        // restore the lock state: Asset\Dao::update() only recreates the
+                        // tree_locks row when getLocked() is set, so without this the restore
+                        // would silently unlock an asset that an in-place overwrite leaves locked
+                        $locked = $logEntry['locked'] ?? null;
+                        if (is_string($locked) && $locked !== '') {
+                            $asset->setLocked($locked);
+                        }
+
                         // restore the deleted destination's own properties and metadata from the
                         // scalar snapshot, so they survive the delete + create + move round-trip
                         $properties = $logEntry['properties'] ?? [];
@@ -128,13 +142,14 @@ class Tree extends DAV\Tree
                             $asset->setCustomSettings($customSettings);
                         }
 
-                        // the raw assets_metadata.data column IS the internal metadata form:
-                        // element types (asset/document/object) only override getDataForResource(),
-                        // not getDataFromResource(), so references stay ids (scalars). Feeding the
-                        // stored rows back via setMetadataRaw() therefore round-trips on save().
+                        // hydrate the metadata snapshot through the configured metadata types
+                        // (mirroring Asset\Dao::getById()): a bundle-defined type may transform
+                        // its stored value in getDataFromResource(), and save() converts back
+                        // via getDataForResource() - feeding the raw rows to setMetadataRaw()
+                        // directly would double-convert such types (core types are pass-through)
                         $metadata = $logEntry['metadata'] ?? [];
                         if (is_array($metadata) && $metadata !== []) {
-                            $asset->setMetadataRaw($metadata);
+                            $this->restoreMetadata($asset, $metadata);
                         }
                     }
                 }
@@ -257,6 +272,53 @@ class Tree extends DAV\Tree
 
         if ($properties) {
             $asset->setProperties($properties);
+        }
+    }
+
+    /**
+     * Hydrates raw `assets_metadata` rows from the delete log into the model-level metadata
+     * representation, mirroring Asset\Dao::getById(): each row's data runs through the configured
+     * metadata type's getDataFromResource(), so a bundle-defined type that transforms its stored
+     * value round-trips correctly when save() converts back with getDataForResource(). Core
+     * types are pass-through, so their behavior is unchanged.
+     *
+     * @param array<mixed> $rows raw `assets_metadata` rows (name, type, data, language) from the delete log
+     */
+    private function restoreMetadata(Asset $asset, array $rows): void
+    {
+        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+
+        $metadata = [];
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $type = (string) ($row['type'] ?? '');
+            if ($type === '') {
+                $type = 'input';
+            }
+
+            $item = [
+                'name' => (string) ($row['name'] ?? ''),
+                'type' => $type,
+                'data' => $row['data'] ?? null,
+                'language' => (string) ($row['language'] ?? ''),
+            ];
+
+            try {
+                /** @var \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
+                $instance = $loader->build($item['type']);
+                $item['data'] = $instance->getDataFromResource($item['data'], $item);
+            } catch (UnsupportedException $e) {
+                // unknown type: keep the raw value, same as the Dao load path
+            }
+
+            $metadata[] = $item;
+        }
+
+        if ($metadata) {
+            $asset->setMetadataRaw($metadata);
         }
     }
 }

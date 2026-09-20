@@ -134,12 +134,19 @@ final class Version extends AbstractModel
      * Messenger\VersionDeleteMessage), so an element id re-used after the deletion does not lose
      * versions created later.
      *
+     * With $forUpdate the ids are read FOR UPDATE. Called inside the element's delete transaction
+     * this blocks concurrent version inserts for the element until the delete commits, so the
+     * captured bound cannot miss a version created between the read and the commit (such a
+     * version would survive the deferred cleanup and could later surface in the history of an
+     * element that re-uses the id). Outside a transaction the lock is released immediately and
+     * the flag has no effect.
+     *
      * @internal
      */
-    public static function getHighestIdForElement(string $elementType, int $elementId): ?int
+    public static function getHighestIdForElement(string $elementType, int $elementId, bool $forUpdate = false): ?int
     {
         $id = \Pimcore\Db::get()->fetchOne(
-            'SELECT MAX(id) FROM versions WHERE cid = ? AND ctype = ?',
+            'SELECT MAX(id) FROM versions WHERE cid = ? AND ctype = ?' . ($forUpdate ? ' FOR UPDATE' : ''),
             [$elementId, $elementType]
         );
 
