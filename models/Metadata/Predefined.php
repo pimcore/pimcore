@@ -127,7 +127,12 @@ final class Predefined extends Model\AbstractModel
      */
     public static function clearRuntimeCache(): void
     {
-        RuntimeCache::set(self::RUNTIME_CACHE_KEY_BY_NAME, null);
+        // remove the entry rather than overwriting it: writes are ignored while the runtime cache is disabled
+        // (e.g. by importers), which would keep definitions cached before disabling it registered
+        $cache = RuntimeCache::getInstance();
+        if ($cache->offsetExists(self::RUNTIME_CACHE_KEY_BY_NAME)) {
+            $cache->offsetUnset(self::RUNTIME_CACHE_KEY_BY_NAME);
+        }
         self::$runtimeCacheGeneration++;
     }
 
