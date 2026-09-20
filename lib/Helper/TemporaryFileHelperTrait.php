@@ -32,7 +32,10 @@ trait TemporaryFileHelperTrait
      */
     protected static function getLocalFileFromStream(mixed $stream): string
     {
-        if (!stream_is_local($stream) || (is_resource($stream) && stream_get_meta_data($stream)['uri'] === 'php://temp')) {
+        // streams of the php:// wrapper (e.g. php://memory, php://temp) count as local, but their URI doesn't refer
+        // to a file with the data: opening it again would create a new, empty stream, so the data is copied to a
+        // temporary file instead
+        if (!stream_is_local($stream) || (is_resource($stream) && str_starts_with(stream_get_meta_data($stream)['uri'], 'php://'))) {
             $stream = self::getTemporaryFileFromStream($stream);
         }
 

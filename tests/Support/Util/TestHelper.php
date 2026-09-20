@@ -18,6 +18,7 @@ use Doctrine\DBAL\Exception\TableNotFoundException;
 use Exception;
 use InvalidArgumentException;
 use Pimcore;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Localization\LocaleServiceInterface;
@@ -31,6 +32,7 @@ use Pimcore\Model\DataObject as ObjectModel;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Tag;
 use Pimcore\Model\Element\ValidationException;
@@ -45,6 +47,7 @@ use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Messenger\Envelope;
 use Traversable;
 
 class TestHelper
@@ -665,19 +668,72 @@ class TestHelper
     }
 
     /**
-     * Processes the asset like the asset update tasks queue does
+     * Processes the asset like the asset update tasks queue does when a task was created on demand (without
+     * processing token), which processes the asset in any case
      *
      * @throws Exception
      */
     public static function runAssetUpdateTasks(int $assetId): void
     {
+        self::handleAssetUpdateTaskMessage(new AssetUpdateTasksMessage($assetId));
+    }
+
+    /**
+     * Handles the message like the worker of the asset update tasks queue does. The worker clears the runtime cache
+     * before handling a message, so the handler loads the current state of the asset. A state loaded before can be
+     * given instead, to simulate a handler which loaded the asset before it was changed by others (e.g. a replacement
+     * of its data saved while it was processed).
+     *
+     * @throws Exception
+     */
+    public static function handleAssetUpdateTaskMessage(AssetUpdateTasksMessage $message, ?Asset $loadedState = null): void
+    {
+        RuntimeCache::set(Element\Service::getElementCacheTag('asset', $message->getId()), $loadedState);
+
         $container = Pimcore::getContainer();
         $handler = new AssetUpdateTasksHandler(
             new NullLogger(),
             $container->get(LongRunningHelper::class),
             $container->get(LockFactory::class)
         );
-        $handler(new AssetUpdateTasksMessage($assetId));
+        $handler($message);
+    }
+
+    /**
+     * Returns the messages for the asset currently waiting in the asset update tasks queue (doctrine transport), in
+     * the order they were dispatched
+     *
+     * @return AssetUpdateTasksMessage[]
+     */
+    public static function getQueuedAssetUpdateTaskMessages(int $assetId): array
+    {
+        try {
+            $bodies = Db::get()->fetchFirstColumn(
+                'SELECT body FROM messenger_messages WHERE queue_name = ? ORDER BY id',
+                ['pimcore_asset_update']
+            );
+        } catch (TableNotFoundException) {
+            return [];
+        }
+
+        $messages = [];
+        foreach ($bodies as $body) {
+            // the format of the PhpSerializer of the messenger component
+            if (!str_ends_with($body, '}')) {
+                $body = base64_decode($body);
+            }
+            $envelope = unserialize(stripslashes($body));
+            if (!$envelope instanceof Envelope) {
+                throw new RuntimeException('Unexpected message format in the asset update tasks queue');
+            }
+
+            $message = $envelope->getMessage();
+            if ($message instanceof AssetUpdateTasksMessage && $message->getId() === $assetId) {
+                $messages[] = $message;
+            }
+        }
+
+        return $messages;
     }
 
     /**

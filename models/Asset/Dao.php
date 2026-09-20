@@ -488,6 +488,36 @@ class Dao extends Model\Element\Dao
         return $this->db->fetchOne('SELECT customSettings FROM assets WHERE id = :id', ['id' => $this->model->getId()]);
     }
 
+    /**
+     * Returns the current value of a custom setting from the database (which differs from the one of the model if the
+     * asset was saved by others since the model was loaded) and locks the asset against concurrent saves until the
+     * end of the current transaction, so that the value can't change until the model is saved within this transaction.
+     * Must be called within a transaction.
+     *
+     * @throws Exception
+     */
+    public function getCustomSettingForUpdate(string $name): mixed
+    {
+        if (!$this->db->isTransactionActive()) {
+            throw new Exception('Locking the asset against concurrent saves requires an active transaction');
+        }
+
+        $id = $this->model->getId();
+
+        // the locks are acquired in the same order as update() does (the meta data first, if there is any, then the
+        // asset itself), as a different order could lead to deadlocks with concurrent saves of the asset
+        if ($this->db->fetchOne('SELECT `name` FROM assets_metadata WHERE cid = ? LIMIT 1', [$id])) {
+            $this->db->fetchAllAssociative('SELECT `name` FROM assets_metadata WHERE cid = ? FOR UPDATE', [$id]);
+        }
+        $customSettings = $this->db->fetchOne('SELECT customSettings FROM assets WHERE id = ? FOR UPDATE', [$id]);
+
+        if (!is_string($customSettings) || $customSettings === '') {
+            return null;
+        }
+
+        return Serialize::fromJson($customSettings)[$name] ?? null;
+    }
+
     public function __isBasedOnLatestData(): bool
     {
         $data = $this->db->fetchAssociative('SELECT modificationDate, versionCount from assets WHERE id = ?', [$this->model->getId()]);

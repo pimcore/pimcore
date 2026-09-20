@@ -80,7 +80,8 @@ class Asset extends Element\AbstractElement
     private const EMBEDDED_META_DATA_CUSTOM_SETTINGS = ['embeddedMetaData', 'embeddedMetaDataExtracted'];
 
     /**
-     * set while the processing of replaced data by the asset update tasks queue is pending (see isProcessingPending())
+     * set to a token identifying the replaced data while its processing by the asset update tasks queue is pending
+     * (see isProcessingPending(), getProcessingToken())
      */
     private const CUSTOM_SETTING_PROCESSING_PENDING = 'pimcore-asset-processing-pending';
 
@@ -652,7 +653,7 @@ class Asset extends Element\AbstractElement
                 if ($this->isDataReplaced() || ($this->dataRestored && $this->isProcessingPending())) {
                     $this->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
                     if (in_array($this->getType(), self::PROCESSED_TYPES, true)) {
-                        $this->addToUpdateTaskQueue();
+                        $this->addPendingProcessingToUpdateTaskQueue();
                     }
                 }
 
@@ -1322,6 +1323,8 @@ class Asset extends Element\AbstractElement
      * Returns a new stream of the data, which is independent of the stream of this asset (see getStream()). It can
      * be assigned to another asset (e.g. a copy), which closes its stream when it is saved: closing the stream of
      * this asset instead would make it fall back to the data in the storage and lose data assigned but not saved yet.
+     * If the stream of this asset can't be opened again with the same data (e.g. a php://memory stream), its data is
+     * copied to a temporary file, which the new stream reads.
      *
      * @return resource|null
      *
@@ -1417,19 +1420,50 @@ class Asset extends Element\AbstractElement
      */
     public function isProcessingPending(): bool
     {
-        return (bool) $this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING);
+        return $this->getProcessingToken() !== null;
     }
 
     /**
+     * Returns the token identifying the data whose processing by the asset update tasks queue is pending (see
+     * isProcessingPending()), or null if no processing is pending. Each replacement of the data gets a new token,
+     * so the token tells whether the data is still the one a processing task was created for.
+     *
+     * @internal
+     */
+    public function getProcessingToken(): ?string
+    {
+        $token = $this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING);
+
+        return is_scalar($token) && $token ? (string) $token : null;
+    }
+
+    /**
+     * Marks the processing of the current data as pending (with a new token, see getProcessingToken()) or finished
+     *
      * @internal
      */
     public function setProcessingPending(bool $pending): void
     {
         if ($pending) {
-            $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING, true);
+            $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING, bin2hex(random_bytes(8)));
         } else {
             $this->removeCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING);
         }
+    }
+
+    /**
+     * Returns the processing token (see getProcessingToken()) as currently stored in the database, which differs
+     * from the one of this instance if the asset was saved by others since it was loaded, and locks the asset
+     * against concurrent saves until the end of the current transaction, so that the token can't change until
+     * the asset is saved within this transaction. Must be called within a transaction.
+     *
+     * @internal
+     */
+    public function getStoredProcessingTokenForUpdate(): ?string
+    {
+        $token = $this->getDao()->getCustomSettingForUpdate(self::CUSTOM_SETTING_PROCESSING_PENDING);
+
+        return is_scalar($token) && $token ? (string) $token : null;
     }
 
     /**
@@ -2137,6 +2171,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Adds a task to the asset update tasks queue which processes the asset in any case, e.g. to process it again
+     * on demand (see triggerUpdateTask()), unless the previous processing failed
+     *
      * @internal
      * public because it's also used by pimcore/admin-ui-classic-bundle
      */
@@ -2148,6 +2185,10 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * Adds a task to the asset update tasks queue which processes the asset in any case: it processes the state
+     * the asset has when the task is handled, regardless of what happened to the asset in the meantime (in contrast
+     * to the tasks created for replaced data when saving, see addPendingProcessingToUpdateTaskQueue())
+     *
      * @internal
      */
     public function triggerUpdateTask(): void
@@ -2160,6 +2201,26 @@ class Asset extends Element\AbstractElement
 
             $bus->dispatch($message);
         }
+    }
+
+    /**
+     * Adds a task to the asset update tasks queue which processes the data whose processing is pending (see
+     * isProcessingPending()). The task is bound to this data by its token: it is skipped if the data is replaced
+     * before the task is handled, as the replacement is processed by its own task (whose results the task must not
+     * overwrite), and if a processed state is restored before, as there is nothing left to process (and processing
+     * it anyway could overwrite the restored derived data). As such a task is only valid for its own data, it must
+     * never be suppressed in favour of a task created for previous data, which is why the lock of triggerUpdateTask()
+     * isn't used here.
+     */
+    private function addPendingProcessingToUpdateTaskQueue(): void
+    {
+        $processingToken = $this->getProcessingToken();
+        if ($processingToken === null) {
+            return;
+        }
+
+        $bus = Pimcore::getContainer()->get('messenger.bus.pimcore-core');
+        $bus->dispatch(new AssetUpdateTasksMessage($this->getId(), $processingToken));
     }
 
     /**

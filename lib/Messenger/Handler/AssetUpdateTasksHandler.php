@@ -14,12 +14,14 @@ declare(strict_types=1);
 namespace Pimcore\Messenger\Handler;
 
 use Exception;
+use Pimcore\Db;
 use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\LockFactory;
+use Throwable;
 use function sprintf;
 
 /**
@@ -44,29 +46,89 @@ class AssetUpdateTasksHandler
         }
         $this->logger->debug(sprintf('Processing asset with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
 
+        // a task created for replaced data (see Asset::save()) is only handled as long as the processing of this data
+        // is still pending: if the data was replaced in the meantime, it is processed by the task of the replacement,
+        // whose results this task must not overwrite, and if a processed state was restored, there is nothing left to
+        // process (processing it anyway could overwrite the restored derived data). A task without token (e.g. created
+        // on demand) processes the asset in any case.
+        $processingToken = $asset->getProcessingToken();
+        if ($message->getProcessingToken() !== null && $message->getProcessingToken() !== $processingToken) {
+            $this->logger->debug(sprintf(
+                'Skipping the task for asset with ID %s, as the data it was created for was replaced or restored in the meantime',
+                $asset->getId()
+            ));
+
+            return;
+        }
+
         $asset->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
 
         if ($asset instanceof Asset\Image) {
-            $this->processImage($asset);
+            $this->processImage($asset, $processingToken);
         } elseif ($asset instanceof Asset\Document) {
-            $this->processDocument($asset);
+            $this->processDocument($asset, $processingToken);
         } elseif ($asset instanceof Asset\Video) {
-            $this->processVideo($asset);
+            $this->processVideo($asset, $processingToken);
         }
 
         $this->longRunningHelper->deleteTemporaryFiles();
         $this->lockFactory->createLock($asset->getUpdateQueueLockId())->release();
     }
 
-    private function saveAsset(Asset $asset, array $saveParams = []): void
+    /**
+     * Saves the results of the processing, unless the processing token of the asset changed since it was loaded (see
+     * Asset::getProcessingToken()): its data was replaced or restored in the meantime then, so the results belong to
+     * previous data and are discarded, as they would overwrite the state of the current data, whose own task would
+     * find its processing finished and skip it (or which doesn't need any processing, as it was restored from a
+     * processed state). The asset is locked against concurrent saves while this is checked and the results are saved,
+     * so that a replacement can't slip in between.
+     *
+     * @param string|null $processingToken the processing token the asset had when it was loaded
+     *
+     * @return bool whether the results were saved
+     *
+     * @throws Exception
+     */
+    private function saveAsset(Asset $asset, ?string $processingToken, array $saveParams = []): bool
     {
-        Version::disable();
-        $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
-        $asset->save($saveParams);
-        Version::enable();
+        $db = Db::get();
+        $db->beginTransaction();
+
+        try {
+            if ($asset->getStoredProcessingTokenForUpdate() !== $processingToken) {
+                $db->rollBack();
+                $this->logger->info(sprintf(
+                    'Discarding the processing results of asset with ID %s, as its data was replaced or restored in the meantime',
+                    $asset->getId()
+                ));
+
+                return false;
+            }
+
+            Version::disable();
+
+            try {
+                $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
+                $asset->save($saveParams);
+            } finally {
+                Version::enable();
+            }
+
+            $db->commit();
+        } catch (Throwable $e) {
+            try {
+                $db->rollBack();
+            } catch (Throwable $rollbackException) {
+                $this->logger->info((string) $rollbackException);
+            }
+
+            throw $e;
+        }
+
+        return true;
     }
 
-    private function processDocument(Asset\Document $asset): void
+    private function processDocument(Asset\Document $asset, ?string $processingToken): void
     {
         $save = false;
         $saveParams = [];
@@ -104,11 +166,11 @@ class AssetUpdateTasksHandler
         }
 
         if ($save) {
-            $this->saveAsset($asset, $saveParams);
+            $this->saveAsset($asset, $processingToken, $saveParams);
         }
     }
 
-    private function processVideo(Asset\Video $asset): void
+    private function processVideo(Asset\Video $asset, ?string $processingToken): void
     {
         $failed = true;
 
@@ -136,14 +198,16 @@ class AssetUpdateTasksHandler
 
         $asset->handleEmbeddedMetaData();
         $asset->setProcessingPending(false);
-        $this->saveAsset($asset);
+        if (!$this->saveAsset($asset, $processingToken)) {
+            return;
+        }
 
         if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {
             $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
         }
     }
 
-    private function processImage(Asset\Image $image): void
+    private function processImage(Asset\Image $image, ?string $processingToken): void
     {
         // getDimensions() might fail, so assume `false` first
         $imageDimensionsCalculated = false;
@@ -165,7 +229,9 @@ class AssetUpdateTasksHandler
         $image->setCustomSetting('imageDimensionsCalculated', $imageDimensionsCalculated);
         $image->handleEmbeddedMetaData();
         $image->setProcessingPending(false);
-        $this->saveAsset($image);
+        if (!$this->saveAsset($image, $processingToken)) {
+            return;
+        }
 
         // generating the thumbnails must be after saving the image, because otherwise the generated
         // thumbnail would be invalidated on the next call, because it's older than the modification date of the asset

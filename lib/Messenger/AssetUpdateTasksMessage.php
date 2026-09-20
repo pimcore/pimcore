@@ -18,12 +18,23 @@ namespace Pimcore\Messenger;
  */
 class AssetUpdateTasksMessage
 {
-    public function __construct(protected int $id)
+    /**
+     * @param string|null $processingToken token of the data the task was created for (see
+     *     \Pimcore\Model\Asset::getProcessingToken()): the task is skipped if the processing of this data isn't
+     *     pending anymore when the task is handled, as the data was replaced or restored in the meantime. Without a
+     *     token, the task processes the asset in any case.
+     */
+    public function __construct(protected int $id, protected ?string $processingToken = null)
     {
     }
 
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function getProcessingToken(): ?string
+    {
+        return $this->processingToken;
     }
 }
