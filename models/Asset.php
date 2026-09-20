@@ -186,6 +186,13 @@ class Asset extends Element\AbstractElement
     protected ?bool $customSettingsIncomplete = null;
 
     /**
+     * the processing token (see getProcessingToken()) this instance finished the processing of (see
+     * setProcessingPending()), which is therefore removed when the instance is saved, in contrast to a token
+     * stored by others since the instance was loaded, which is kept (see update())
+     */
+    private ?string $finishedProcessingToken = null;
+
+    /**
      * @internal
      */
     protected ?int $dataModificationDate = null;
@@ -207,7 +214,7 @@ class Asset extends Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['scheduledTasks', 'versions', 'stream', 'streamIsPlaceholder'];
+        $blockedVars = ['scheduledTasks', 'versions', 'stream', 'streamIsPlaceholder', 'finishedProcessingToken'];
 
         if (!$this->isInDumpState()) {
             // for caching asset
@@ -852,6 +859,8 @@ class Asset extends Element\AbstractElement
                 if (!self::getModelFactory()->supports($className)) {
                     throw new Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }
+            } elseif ($params['isUpdate'] ?? false) {
+                $this->keepStoredProcessingToken();
             }
         } else {
             $storage->createDirectory($path);
@@ -1446,8 +1455,33 @@ class Asset extends Element\AbstractElement
     {
         if ($pending) {
             $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING, bin2hex(random_bytes(8)));
+            $this->finishedProcessingToken = null;
         } else {
+            $this->finishedProcessingToken = $this->getProcessingToken() ?? $this->finishedProcessingToken;
             $this->removeCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING);
+        }
+    }
+
+    /**
+     * A pending processing (see isProcessingPending()) belongs to the data in the storage. When this instance is
+     * saved without changing the data, the processing token stored in the database is therefore authoritative, not
+     * the one of this instance: the data might have been replaced by others since this instance was loaded, whose
+     * pending processing must not be discarded by saving the outdated custom settings of this instance (they include
+     * outdated derived settings as well, which the pending processing generates again). Only a processing this
+     * instance finished itself is removed. Must be called within the transaction saving the asset, as it locks the
+     * asset against concurrent saves until the end of the transaction.
+     */
+    private function keepStoredProcessingToken(): void
+    {
+        $storedToken = $this->getStoredProcessingTokenForUpdate();
+        if ($storedToken === $this->getProcessingToken() || ($storedToken !== null && $storedToken === $this->finishedProcessingToken)) {
+            return;
+        }
+
+        if ($storedToken === null) {
+            $this->removeCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING);
+        } else {
+            $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING, $storedToken);
         }
     }
 

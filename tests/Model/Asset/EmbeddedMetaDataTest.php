@@ -379,8 +379,12 @@ class EmbeddedMetaDataTest extends ModelTestCase
         $document = TestHelper::createDocumentAsset();
         $document = Asset::getById($document->getId(), ['force' => true]);
         TestHelper::simulateCustomSettingsTooLargeForCache($document);
+        // clearing the custom settings doesn't finish the pending processing of the data (its token is kept when the
+        // asset is saved), so it is finished first to get an asset without any custom settings
+        $document->setProcessingPending(false);
         $document->setCustomSettings([]);
         $document->save();
+        $this->assertSame([], Asset::getById($document->getId(), ['force' => true])->getCustomSettings());
 
         $clearedVersion = $document->getLatestVersion(null, true);
         $this->assertNotNull($clearedVersion);

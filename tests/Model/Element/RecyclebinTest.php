@@ -197,8 +197,12 @@ class RecyclebinTest extends ModelTestCase
         $assetId = $asset->getId();
         $asset = Asset::getById($assetId, ['force' => true]);
         TestHelper::simulateCustomSettingsTooLargeForCache($asset);
+        // clearing the custom settings doesn't finish the pending processing of the data (its token is kept when the
+        // asset is saved), so it is finished first to get an asset without any custom settings
+        $asset->setProcessingPending(false);
         $asset->setCustomSettings([]);
         $asset->save();
+        $this->assertSame([], Asset::getById($assetId, ['force' => true])->getCustomSettings());
 
         Item::create($asset, $this->user);
         $asset->delete();
