@@ -213,9 +213,10 @@ class Asset extends Element\AbstractElement
 
     /**
      * the data (see getDataGeneration()) this instance finished the processing of (see setProcessingPending()): its
-     * results are saved as the current derived settings, in contrast to the outdated derived settings of an instance
-     * loaded before the data or its processing was changed by others, which are replaced by the stored ones when the
-     * instance is saved (see update())
+     * results are saved as the current derived settings by the next save, in contrast to the outdated derived
+     * settings of an instance loaded before the data or its processing was changed by others, which are replaced by
+     * the stored ones when the instance is saved (see update()). Reset by the save (see save()), as the results of
+     * a processing others finished afterwards must not be overwritten by later saves of this instance either.
      */
     private ?string $finishedProcessingGeneration = null;
 
@@ -710,6 +711,9 @@ class Asset extends Element\AbstractElement
                 $this->setDataChanged(false);
                 $this->dataRestored = false;
                 $this->customSettingsIncomplete = null;
+                // only the save committing the finished processing of this instance saves its results in any case,
+                // later saves must not overwrite results stored by others in the meantime (see update())
+                $this->finishedProcessingGeneration = null;
 
                 $postEvent = new AssetEvent($this, $parameters);
                 if ($isUpdate) {
@@ -1676,6 +1680,8 @@ class Asset extends Element\AbstractElement
      * @throws Exception
      *
      * @internal
+     *
+     * @phpstan-impure
      */
     public function isDataStateStored(string $dataState): bool
     {

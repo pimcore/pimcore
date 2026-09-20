@@ -762,6 +762,41 @@ class AssetUpdateTasksTest extends ModelTestCase
     }
 
     /**
+     * An instance which finished the processing itself saves its results in any case, but only once: if it is
+     * reused after others processed the same data again, its later saves must not overwrite their results either
+     */
+    public function testInstanceReusedAfterReprocessingByOthersTakesOverTheirResults(): void
+    {
+        $image = TestHelper::createImageAsset();
+        $imageId = $image->getId();
+        $task = $this->getLastQueuedTask($imageId);
+
+        // this instance processes the data and saves its results
+        $instance = Asset::getById($imageId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Image::class, $instance);
+        TestHelper::handleAssetUpdateTaskMessage($task, $instance);
+        $this->assertFalse($instance->isProcessingPending());
+        $this->assertSame($instance->getDataState(), Asset::getById($imageId, ['force' => true])->getDataState());
+
+        // others process the same data again, with results which differ from those of this instance
+        TestHelper::runAssetUpdateTasks($imageId);
+        $reprocessed = Asset::getById($imageId, ['force' => true]);
+        $reprocessed->setCustomSetting('imageWidth', 54321);
+        $reprocessed->save();
+        $reprocessed = Asset::getById($imageId, ['force' => true]);
+        $this->assertNotSame($instance->getDataState(), $reprocessed->getDataState());
+
+        // this instance is saved with an unrelated change
+        $instance->setCustomSetting('customSettingsTest', 'test');
+        $instance->save();
+
+        $image = Asset::getById($imageId, ['force' => true]);
+        $this->assertSame('test', $image->getCustomSetting('customSettingsTest'));
+        $this->assertSame(54321, $image->getCustomSetting('imageWidth'));
+        $this->assertSame($reprocessed->getDataState(), $image->getDataState());
+    }
+
+    /**
      * A copy of a source whose processing is pending is processed like the source
      */
     public function testCopyOfPendingSourceIsProcessed(): void
