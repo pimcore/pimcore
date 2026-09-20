@@ -804,7 +804,10 @@ class Asset extends Element\AbstractElement
                     $storage->move($tempFilePath, $path);
                 }
 
-                //generate & save checksum in custom settings
+                //generate & save checksum in custom settings. The checksum of the previous data is removed first, so
+                // that it doesn't survive if the checksum can't be generated: it tells the data apart from the
+                // previous data (see getDataState())
+                $this->removeCustomSetting('checksum');
                 $this->generateChecksum();
 
                 // delete old legacy file if exists
@@ -860,7 +863,7 @@ class Asset extends Element\AbstractElement
                     throw new Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }
             } elseif ($params['isUpdate'] ?? false) {
-                $this->keepStoredProcessingToken();
+                $this->keepStoredDataSettings();
             }
         } else {
             $storage->createDirectory($path);
@@ -1441,9 +1444,7 @@ class Asset extends Element\AbstractElement
      */
     public function getProcessingToken(): ?string
     {
-        $token = $this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING);
-
-        return is_scalar($token) && $token ? (string) $token : null;
+        return self::normalizeProcessingToken($this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING));
     }
 
     /**
@@ -1463,40 +1464,74 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * A pending processing (see isProcessingPending()) belongs to the data in the storage. When this instance is
-     * saved without changing the data, the processing token stored in the database is therefore authoritative, not
-     * the one of this instance: the data might have been replaced by others since this instance was loaded, whose
-     * pending processing must not be discarded by saving the outdated custom settings of this instance (they include
-     * outdated derived settings as well, which the pending processing generates again). Only a processing this
-     * instance finished itself is removed. Must be called within the transaction saving the asset, as it locks the
-     * asset against concurrent saves until the end of the transaction.
+     * The checksum of the data and the token of its pending processing (see getProcessingToken()) belong to the data
+     * in the storage. When this instance is saved without changing the data, the values stored in the database are
+     * therefore authoritative, not the ones of this instance: the data might have been replaced (or restored) by
+     * others since this instance was loaded, whose pending processing must not be discarded by saving the outdated
+     * custom settings of this instance (they include outdated derived settings as well, which the pending processing
+     * generates again), and whose checksum must not be replaced by the one of the previous data. Only a processing
+     * this instance finished itself is removed. Must be called within the transaction saving the asset, as it locks
+     * the asset against concurrent saves until the end of the transaction.
      */
-    private function keepStoredProcessingToken(): void
+    private function keepStoredDataSettings(): void
     {
-        $storedToken = $this->getStoredProcessingTokenForUpdate();
-        if ($storedToken === $this->getProcessingToken() || ($storedToken !== null && $storedToken === $this->finishedProcessingToken)) {
-            return;
+        $storedSettings = $this->getDao()->getCustomSettingsForUpdate([self::CUSTOM_SETTING_PROCESSING_PENDING, 'checksum']);
+
+        $storedToken = self::normalizeProcessingToken($storedSettings[self::CUSTOM_SETTING_PROCESSING_PENDING]);
+        if ($storedToken !== $this->getProcessingToken() && !($storedToken !== null && $storedToken === $this->finishedProcessingToken)) {
+            if ($storedToken === null) {
+                $this->removeCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING);
+            } else {
+                $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING, $storedToken);
+            }
         }
 
-        if ($storedToken === null) {
-            $this->removeCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING);
-        } else {
-            $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING, $storedToken);
+        // a missing checksum is generated on demand (see getChecksum()), so a checksum of this instance is only
+        // replaced by a stored one, not removed
+        $storedChecksum = $storedSettings['checksum'];
+        if ($storedChecksum !== null && $storedChecksum !== $this->getCustomSetting('checksum')) {
+            $this->setCustomSetting('checksum', $storedChecksum);
         }
     }
 
     /**
-     * Returns the processing token (see getProcessingToken()) as currently stored in the database, which differs
-     * from the one of this instance if the asset was saved by others since it was loaded, and locks the asset
-     * against concurrent saves until the end of the current transaction, so that the token can't change until
-     * the asset is saved within this transaction. Must be called within a transaction.
+     * Returns a value identifying the state of the data of this instance, which changes whenever the data is replaced
+     * or restored (as this changes its checksum, see generateChecksum()) and whenever the processing of the data
+     * starts or finishes (see getProcessingToken()). Comparing it with the stored state (see
+     * getStoredDataStateForUpdate()) tells whether the data or its processing changed since this instance was loaded.
      *
      * @internal
      */
-    public function getStoredProcessingTokenForUpdate(): ?string
+    public function getDataState(): string
     {
-        $token = $this->getDao()->getCustomSettingForUpdate(self::CUSTOM_SETTING_PROCESSING_PENDING);
+        return self::buildDataState($this->getCustomSetting('checksum'), $this->getProcessingToken());
+    }
 
+    /**
+     * Returns the state of the data (see getDataState()) as currently stored in the database, which differs from the
+     * one of this instance if the asset was saved by others since it was loaded, and locks the asset against
+     * concurrent saves until the end of the current transaction, so that the state can't change until the asset is
+     * saved within this transaction. Must be called within a transaction.
+     *
+     * @internal
+     */
+    public function getStoredDataStateForUpdate(): string
+    {
+        $storedSettings = $this->getDao()->getCustomSettingsForUpdate(['checksum', self::CUSTOM_SETTING_PROCESSING_PENDING]);
+
+        return self::buildDataState(
+            $storedSettings['checksum'],
+            self::normalizeProcessingToken($storedSettings[self::CUSTOM_SETTING_PROCESSING_PENDING])
+        );
+    }
+
+    private static function buildDataState(mixed $checksum, ?string $processingToken): string
+    {
+        return (is_scalar($checksum) ? (string) $checksum : '') . '|' . ($processingToken ?? '');
+    }
+
+    private static function normalizeProcessingToken(mixed $token): ?string
+    {
         return is_scalar($token) && $token ? (string) $token : null;
     }
 

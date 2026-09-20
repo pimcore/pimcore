@@ -40,11 +40,20 @@ class Video extends Model\Asset
             }
         }
 
-        if ($params['isUpdate']) {
-            $this->clearThumbnails();
+        // see clearThumbnails(): the custom settings of the thumbnails are cleared before the asset is saved by
+        // parent::update(), the thumbnail files afterwards, when the asset is locked against concurrent saves (see
+        // Asset\Dao::getCustomSettingsForUpdate()): the asset update tasks queue generates thumbnails while it holds
+        // this lock, so a thumbnail of the previous data generated in the meantime doesn't survive the change
+        $clearThumbnails = $params['isUpdate'] && $this->getDataChanged();
+        if ($clearThumbnails) {
+            $this->setCustomSetting('thumbnails', null);
         }
 
         parent::update($params);
+
+        if ($clearThumbnails) {
+            parent::clearThumbnails(true);
+        }
     }
 
     public function clearThumbnails(bool $force = false): void

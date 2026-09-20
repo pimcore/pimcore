@@ -489,33 +489,35 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Returns the current value of a custom setting from the database (which differs from the one of the model if the
+     * Returns the current values of custom settings from the database (which differ from the ones of the model if the
      * asset was saved by others since the model was loaded) and locks the asset against concurrent saves until the
-     * end of the current transaction, so that the value can't change until the model is saved within this transaction.
-     * Must be called within a transaction.
+     * end of the current transaction, so that the values can't change until the model is saved within this
+     * transaction. Must be called within a transaction.
+     *
+     * @param string[] $names
+     *
+     * @return array<string, mixed> the values by name, null for settings which don't exist
      *
      * @throws Exception
      */
-    public function getCustomSettingForUpdate(string $name): mixed
+    public function getCustomSettingsForUpdate(array $names): array
     {
         if (!$this->db->isTransactionActive()) {
             throw new Exception('Locking the asset against concurrent saves requires an active transaction');
         }
 
-        $id = $this->model->getId();
+        // saving an asset locks its row first (see getVersionCountForUpdate(), called at the beginning of the update)
+        // and touches the other tables (e.g. the meta data) afterwards, so the row is the only lock acquired here:
+        // acquiring further locks first could lead to deadlocks with concurrent saves of the asset
+        $customSettings = $this->db->fetchOne('SELECT customSettings FROM assets WHERE id = ? FOR UPDATE', [$this->model->getId()]);
+        $customSettings = is_string($customSettings) && $customSettings !== '' ? Serialize::fromJson($customSettings) : [];
 
-        // the locks are acquired in the same order as update() does (the meta data first, if there is any, then the
-        // asset itself), as a different order could lead to deadlocks with concurrent saves of the asset
-        if ($this->db->fetchOne('SELECT `name` FROM assets_metadata WHERE cid = ? LIMIT 1', [$id])) {
-            $this->db->fetchAllAssociative('SELECT `name` FROM assets_metadata WHERE cid = ? FOR UPDATE', [$id]);
-        }
-        $customSettings = $this->db->fetchOne('SELECT customSettings FROM assets WHERE id = ? FOR UPDATE', [$id]);
-
-        if (!is_string($customSettings) || $customSettings === '') {
-            return null;
+        $values = [];
+        foreach ($names as $name) {
+            $values[$name] = $customSettings[$name] ?? null;
         }
 
-        return Serialize::fromJson($customSettings)[$name] ?? null;
+        return $values;
     }
 
     public function __isBasedOnLatestData(): bool

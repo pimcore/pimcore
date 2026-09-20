@@ -43,12 +43,15 @@ class Image extends Model\Asset
             }
         }
 
+        parent::update($params);
+
+        // the thumbnails are cleared after the asset was locked against concurrent saves by parent::update() (see
+        // Asset\Dao::getCustomSettingsForUpdate()): the asset update tasks queue generates thumbnails while it holds
+        // this lock, so a thumbnail of the previous data generated in the meantime doesn't survive the change
         if ($params['isUpdate']) {
             $this->clearThumbnails($this->clearThumbnailsOnSave);
             $this->clearThumbnailsOnSave = false; // reset to default
         }
-
-        parent::update($params);
     }
 
     private function isLowQualityPreviewEnabled(): bool
