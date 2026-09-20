@@ -19,20 +19,24 @@ namespace Pimcore\Messenger;
 class AssetUpdateTasksMessage
 {
     /**
-     * declared with a default value (not promoted), so that messages queued before the token was introduced, which
-     * are unserialized without it, process the asset in any case as they did before
+     * the properties are declared with default values (not promoted), so that messages queued before they were
+     * introduced, which are unserialized without them, process the asset in any case as they did before
      */
-    protected ?string $processingToken = null;
+    protected ?string $dataGeneration = null;
+
+    protected bool $previewsOnly = false;
 
     /**
-     * @param string|null $processingToken token of the data the task was created for (see
-     *     \Pimcore\Model\Asset::getProcessingToken()): the task is skipped if the processing of this data isn't
-     *     pending anymore when the task is handled, as the data was replaced or restored in the meantime. Without a
-     *     token, the task processes the asset in any case.
+     * @param string|null $dataGeneration the data the task was created for (see
+     *     \Pimcore\Model\Asset::getDataGeneration()): the task is skipped if the data was replaced or restored before
+     *     the task is handled, or if its processing isn't pending anymore. Without it, the task processes the asset
+     *     in any case.
+     * @param bool $previewsOnly whether the task only generates the previews of the data, without processing it
      */
-    public function __construct(protected int $id, ?string $processingToken = null)
+    public function __construct(protected int $id, ?string $dataGeneration = null, bool $previewsOnly = false)
     {
-        $this->processingToken = $processingToken;
+        $this->dataGeneration = $dataGeneration;
+        $this->previewsOnly = $previewsOnly;
     }
 
     public function getId(): int
@@ -40,8 +44,13 @@ class AssetUpdateTasksMessage
         return $this->id;
     }
 
-    public function getProcessingToken(): ?string
+    public function getDataGeneration(): ?string
     {
-        return $this->processingToken;
+        return $this->dataGeneration;
+    }
+
+    public function isPreviewsOnly(): bool
+    {
+        return $this->previewsOnly;
     }
 }

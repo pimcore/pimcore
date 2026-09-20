@@ -108,8 +108,11 @@ class RecyclebinTest extends ModelTestCase
         $recycledItems = new Item\Listing();
         $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
         $recycledItems->current()->restore();
-        // the restored data must not be processed again, as this could discard the restored derived settings
-        $this->assertSame($queueSize, TestHelper::getAssetUpdateTaskQueueSize());
+        // the restored data must not be processed again, as this could discard the restored derived settings:
+        // only its previews are generated again
+        $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize());
+        $tasks = TestHelper::getQueuedAssetUpdateTaskMessages($assetId);
+        $this->assertTrue($tasks[array_key_last($tasks)]->isPreviewsOnly());
 
         $restoredAsset = Asset::getById($assetId, ['force' => true]);
         $this->assertInstanceOf(Asset\Document::class, $restoredAsset);
@@ -212,7 +215,10 @@ class RecyclebinTest extends ModelTestCase
         $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
         (new Item\Listing())->current()->restore();
         // the empty custom settings are restored as they are, without processing the data again
-        $this->assertSame($queueSize, TestHelper::getAssetUpdateTaskQueueSize());
+        // (only its previews are generated again)
+        $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize());
+        $tasks = TestHelper::getQueuedAssetUpdateTaskMessages($assetId);
+        $this->assertTrue($tasks[array_key_last($tasks)]->isPreviewsOnly());
 
         $restoredAsset = Asset::getById($assetId, ['force' => true]);
         $this->assertInstanceOf(Asset\Document::class, $restoredAsset);

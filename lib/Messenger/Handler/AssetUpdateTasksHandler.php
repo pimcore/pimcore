@@ -47,48 +47,79 @@ class AssetUpdateTasksHandler
         }
         $this->logger->debug(sprintf('Processing asset with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
 
-        // a task created for replaced data (see Asset::save()) is only handled as long as the processing of this data
-        // is still pending: if the data was replaced in the meantime, it is processed by the task of the replacement,
-        // whose results this task must not overwrite, and if a processed state was restored, there is nothing left to
-        // process (processing it anyway could overwrite the restored derived data). A task without token (e.g. created
-        // on demand) processes the asset in any case.
-        $processingToken = $asset->getProcessingToken();
-        if ($message->getProcessingToken() !== null && $message->getProcessingToken() !== $processingToken) {
-            $this->logger->debug(sprintf(
-                'Skipping the task for asset with ID %s, as the data it was created for was replaced or restored in the meantime',
-                $asset->getId()
-            ));
+        // a task created for certain data (see Asset::save()) is only handled as long as this data is the current one:
+        // if the data was replaced or restored in the meantime, the new data has its own task (whose results this task
+        // must not overwrite) or doesn't need any processing (processing it anyway could overwrite the restored derived
+        // data). A task processing the data is also skipped if its processing was finished by others in the meantime.
+        // A task without data generation (e.g. created on demand) processes the asset in any case.
+        if ($message->getDataGeneration() !== null) {
+            if ($message->getDataGeneration() !== $asset->getDataGeneration()) {
+                $this->logger->debug(sprintf(
+                    'Skipping the task for asset with ID %s, as the data it was created for was replaced or restored in the meantime',
+                    $asset->getId()
+                ));
 
-            return;
+                return;
+            }
+            if (!$message->isPreviewsOnly() && !$asset->isProcessingPending()) {
+                $this->logger->debug(sprintf(
+                    'Skipping the task for asset with ID %s, as the processing of its data was finished in the meantime',
+                    $asset->getId()
+                ));
+
+                return;
+            }
         }
 
         // the state of the data the results are generated for (see completeProcessing())
         $dataState = $asset->getDataState();
 
-        $asset->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
-
-        if ($asset instanceof Asset\Image) {
-            $this->processImage($asset, $processingToken, $dataState);
-        } elseif ($asset instanceof Asset\Document) {
-            $this->processDocument($asset, $processingToken, $dataState);
-        } elseif ($asset instanceof Asset\Video) {
-            $this->processVideo($asset, $processingToken, $dataState);
+        if ($message->isPreviewsOnly()) {
+            if ($generatePreviews = $this->getPreviewGenerator($asset)) {
+                $this->completeProcessing($asset, $dataState, false, [], $generatePreviews);
+            }
+        } else {
+            $this->process($asset, $dataState);
         }
 
         $this->longRunningHelper->deleteTemporaryFiles();
         $this->lockFactory->createLock($asset->getUpdateQueueLockId())->release();
     }
 
+    private function process(Asset $asset, string $dataState): void
+    {
+        $asset->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
+
+        // the settings derived from data whose processing is pending are unknown: they belong to the previous data.
+        // They were normally cleared when the data was replaced, but an outdated instance of the asset saved by
+        // others in the meantime can have written them again, so they are removed before the data is processed,
+        // instead of being taken for already generated (or being kept, if the processing doesn't generate them, e.g.
+        // because it is disabled)
+        if ($asset->isProcessingPending()) {
+            foreach ($asset->getDataDerivedCustomSettingKeys() as $key) {
+                $asset->removeCustomSetting($key);
+            }
+        }
+
+        if ($asset instanceof Asset\Image) {
+            $this->processImage($asset, $dataState);
+        } elseif ($asset instanceof Asset\Document) {
+            $this->processDocument($asset, $dataState);
+        } elseif ($asset instanceof Asset\Video) {
+            $this->processVideo($asset, $dataState);
+        }
+    }
+
     /**
      * Completes the processing while the asset is locked against concurrent saves: runs the given completion (e.g.
-     * generating thumbnails) and saves the results. Both are skipped if the state of the data changed since the asset
-     * was loaded (see Asset::getDataState()): its data was replaced or restored in the meantime then (or its
+     * generating the previews) and saves the results. Both are skipped if the state of the data changed since the
+     * asset was loaded (see Asset::getDataState()): its data was replaced or restored in the meantime (or its
      * processing finished by others), so the results belong to previous data and are discarded, as they would
-     * overwrite the state of the current data, whose own task would find its processing finished and skip it (or which
-     * doesn't need any processing, as it was restored from a processed state). The lock makes sure that a replacement
-     * can't slip in between the check and the save, and that thumbnails generated by the completion can't survive a
-     * replacement or restore in the meantime, as the thumbnails are cleared after the asset was locked for saving the
-     * new data, which the lock delays until the completion is finished.
+     * overwrite the state of the current data, whose own task would find its processing finished and skip it (or
+     * which doesn't need any processing, as it was restored from a processed state). The lock makes sure that a
+     * replacement can't slip in between the check and the save, and that previews generated by the completion can't
+     * survive a replacement or restore in the meantime, as the previews are cleared after the asset was locked for
+     * saving the new data, which the lock delays until the completion is finished.
      *
      * @param string $dataState the state of the data the asset had when it was loaded
      *
@@ -147,29 +178,50 @@ class AssetUpdateTasksHandler
     }
 
     /**
-     * The settings derived from data whose processing is pending are unknown: they belong to the previous data. They
-     * were normally cleared when the data was replaced, but an outdated instance of the asset saved by others in the
-     * meantime can have written them again (see Asset::update()), so those which prevent the processing from
-     * generating them again are removed.
+     * Returns the generation of the previews of the asset (which is run while the asset is locked, see
+     * completeProcessing()), or null if there is nothing to generate
      */
-    private function resetEmbeddedMetaDataOfPendingData(Asset $asset, ?string $processingToken): void
+    private function getPreviewGenerator(Asset $asset): ?Closure
     {
-        if ($processingToken !== null) {
-            $asset->removeCustomSetting('embeddedMetaData');
-            $asset->removeCustomSetting('embeddedMetaDataExtracted');
+        if ($asset instanceof Asset\Image) {
+            return function () use ($asset): void {
+                $asset->getThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+
+                try {
+                    $asset->generateLowQualityPreview();
+                } catch (Exception $e) {
+                    $this->logger->warning($e->getMessage());
+                }
+            };
         }
+
+        if ($asset instanceof Asset\Document) {
+            if (!$asset->isThumbnailsEnabled() || $asset->getCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED)) {
+                return null;
+            }
+
+            return function () use ($asset): void {
+                $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+            };
+        }
+
+        if ($asset instanceof Asset\Video) {
+            if (!$asset->getCustomSetting('videoWidth') || !$asset->getCustomSetting('videoHeight')) {
+                return null;
+            }
+
+            return function () use ($asset): void {
+                $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+            };
+        }
+
+        return null;
     }
 
-    private function processDocument(Asset\Document $asset, ?string $processingToken, string $dataState): void
+    private function processDocument(Asset\Document $asset, string $dataState): void
     {
         $save = false;
         $saveParams = [];
-
-        $this->resetEmbeddedMetaDataOfPendingData($asset, $processingToken);
-        if ($processingToken !== null) {
-            $asset->removeCustomSetting(Asset\Document::CUSTOM_SETTING_PDF_SCAN_STATUS);
-        }
-
         if ($asset->getMimeType() === 'application/pdf' && $asset->checkIfPdfContainsJS()) {
             $save = true;
             $saveParams['versionNote'] = 'PDF scan result';
@@ -177,7 +229,7 @@ class AssetUpdateTasksHandler
 
         if ($asset->isPageCountProcessingEnabled()) {
             // getPageCount() is also falsy when the last processing attempt failed
-            if (!$asset->getPageCount() || $processingToken !== null) {
+            if (!$asset->getPageCount()) {
                 if (!$asset->processPageCount()) {
                     $asset->setCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED, true);
                     $this->logger->warning(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
@@ -199,19 +251,13 @@ class AssetUpdateTasksHandler
             $save = true;
         }
 
-        $generateThumbnail = null;
-        if ($asset->isThumbnailsEnabled() && !$asset->getCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED)) {
-            $generateThumbnail = function () use ($asset): void {
-                $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
-            };
-        }
-
-        if ($save || $generateThumbnail) {
-            $this->completeProcessing($asset, $dataState, $save, $saveParams, $generateThumbnail);
+        $generatePreviews = $this->getPreviewGenerator($asset);
+        if ($save || $generatePreviews) {
+            $this->completeProcessing($asset, $dataState, $save, $saveParams, $generatePreviews);
         }
     }
 
-    private function processVideo(Asset\Video $asset, ?string $processingToken, string $dataState): void
+    private function processVideo(Asset\Video $asset, string $dataState): void
     {
         $failed = true;
 
@@ -237,18 +283,13 @@ class AssetUpdateTasksHandler
             $asset->setCustomSetting('SphericalMetaData', $sphericalMetaData);
         }
 
-        $this->resetEmbeddedMetaDataOfPendingData($asset, $processingToken);
         $asset->handleEmbeddedMetaData();
         $asset->setProcessingPending(false);
 
-        $this->completeProcessing($asset, $dataState, true, [], function () use ($asset): void {
-            if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {
-                $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
-            }
-        });
+        $this->completeProcessing($asset, $dataState, true, [], $this->getPreviewGenerator($asset));
     }
 
-    private function processImage(Asset\Image $image, ?string $processingToken, string $dataState): void
+    private function processImage(Asset\Image $image, string $dataState): void
     {
         // getDimensions() might fail, so assume `false` first
         $imageDimensionsCalculated = false;
@@ -271,20 +312,11 @@ class AssetUpdateTasksHandler
         // and also to just do the calculation once, because the calculation can fail, an then the controller tries to
         // calculate the dimensions on every request an also will create a version, ...
         $image->setCustomSetting('imageDimensionsCalculated', $imageDimensionsCalculated);
-        $this->resetEmbeddedMetaDataOfPendingData($image, $processingToken);
         $image->handleEmbeddedMetaData();
         $image->setProcessingPending(false);
 
-        // the thumbnails are generated while the asset is locked (see completeProcessing()). Saving the image
+        // the previews are generated while the asset is locked (see completeProcessing()). Saving the image
         // afterwards doesn't invalidate them, as the modification date of the image is kept.
-        $this->completeProcessing($image, $dataState, true, [], function () use ($image): void {
-            $image->getThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
-
-            try {
-                $image->generateLowQualityPreview();
-            } catch (Exception $e) {
-                $this->logger->warning($e->getMessage());
-            }
-        });
+        $this->completeProcessing($image, $dataState, true, [], $this->getPreviewGenerator($image));
     }
 }

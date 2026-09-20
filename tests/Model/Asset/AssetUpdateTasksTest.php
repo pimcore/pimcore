@@ -19,6 +19,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
+use Pimcore\Video;
 
 /**
  * Tests the tasks which the asset update tasks queue processes replaced data with: they are bound to the data they
@@ -54,15 +55,20 @@ class AssetUpdateTasksTest extends ModelTestCase
         $image = Asset::getById($imageId, ['force' => true]);
         $this->assertTrue($image->isProcessingPending());
         $staleTask = $this->getLastQueuedTask($imageId);
-        $this->assertSame($image->getProcessingToken(), $staleTask->getProcessingToken());
+        $this->assertSame($image->getDataGeneration(), $staleTask->getDataGeneration());
+        $this->assertFalse($staleTask->isPreviewsOnly());
 
-        // the processed state is restored before the task is handled
+        // the processed state is restored before the task is handled, which only creates a task for its previews
         $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
         $processedVersion->loadData()->save();
-        $this->assertSame($queueSize, TestHelper::getAssetUpdateTaskQueueSize());
+        $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize());
         $image = Asset::getById($imageId, ['force' => true]);
         $this->assertFalse($image->isProcessingPending());
         $this->assertSame(12345, $image->getCustomSetting('imageWidth'));
+        $previewTask = $this->getLastQueuedTask($imageId);
+        $this->assertTrue($previewTask->isPreviewsOnly());
+        $this->assertSame($image->getDataGeneration(), $previewTask->getDataGeneration());
+        $this->assertNotSame($staleTask->getDataGeneration(), $previewTask->getDataGeneration());
 
         // handling the task of the replaced data leaves the restored state alone
         TestHelper::handleAssetUpdateTaskMessage($staleTask);
@@ -74,7 +80,7 @@ class AssetUpdateTasksTest extends ModelTestCase
         // in contrast to a task created on demand, which processes the asset in any case
         $image->triggerUpdateTask();
         $forcedTask = $this->getLastQueuedTask($imageId);
-        $this->assertNull($forcedTask->getProcessingToken());
+        $this->assertNull($forcedTask->getDataGeneration());
         TestHelper::handleAssetUpdateTaskMessage($forcedTask);
         $image = Asset::getById($imageId, ['force' => true]);
         $this->assertNotSame(12345, $image->getCustomSetting('imageWidth'));
@@ -94,22 +100,22 @@ class AssetUpdateTasksTest extends ModelTestCase
         $document->setData(file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf')));
         $document->save();
         $firstTask = $this->getLastQueuedTask($documentId);
-        $firstToken = Asset::getById($documentId, ['force' => true])->getProcessingToken();
-        $this->assertNotNull($firstToken);
-        $this->assertSame($firstToken, $firstTask->getProcessingToken());
+        $firstGeneration = Asset::getById($documentId, ['force' => true])->getDataGeneration();
+        $this->assertNotNull($firstGeneration);
+        $this->assertSame($firstGeneration, $firstTask->getDataGeneration());
 
         $document->setData(file_get_contents(TestHelper::resolveFilePath('assets/document/sonnenblume.pdf')));
         $document->save();
         $secondTask = $this->getLastQueuedTask($documentId);
-        $secondToken = Asset::getById($documentId, ['force' => true])->getProcessingToken();
-        $this->assertNotNull($secondToken);
-        $this->assertNotSame($firstToken, $secondToken);
-        $this->assertSame($secondToken, $secondTask->getProcessingToken());
+        $secondGeneration = Asset::getById($documentId, ['force' => true])->getDataGeneration();
+        $this->assertNotNull($secondGeneration);
+        $this->assertNotSame($firstGeneration, $secondGeneration);
+        $this->assertSame($secondGeneration, $secondTask->getDataGeneration());
 
         // the first task is skipped, as the data it was created for was replaced
         TestHelper::handleAssetUpdateTaskMessage($firstTask);
         $document = Asset::getById($documentId, ['force' => true]);
-        $this->assertSame($secondToken, $document->getProcessingToken());
+        $this->assertTrue($document->isProcessingPending());
         $this->assertNull($document->getCustomSetting('embeddedMetaDataExtracted'));
 
         // the second task processes the current data
@@ -118,6 +124,11 @@ class AssetUpdateTasksTest extends ModelTestCase
         $this->assertFalse($document->isProcessingPending());
         $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
         $this->assertNotSame('Pimcore Test Suite', $document->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
+
+        // a task whose processing was finished by others in the meantime is skipped as well
+        TestHelper::handleAssetUpdateTaskMessage($secondTask);
+        $document = Asset::getById($documentId, ['force' => true]);
+        $this->assertFalse($document->isProcessingPending());
     }
 
     /**
@@ -130,33 +141,35 @@ class AssetUpdateTasksTest extends ModelTestCase
         $document = TestHelper::createDocumentAsset();
         $documentId = $document->getId();
         $previousTask = $this->getLastQueuedTask($documentId);
-        $this->assertNotNull($previousTask->getProcessingToken());
+        $this->assertNotNull($previousTask->getDataGeneration());
 
         // the state the handler loaded when it started processing the previous data ...
         $loadedState = Asset::getById($documentId, ['force' => true]);
         $this->assertInstanceOf(Asset\Document::class, $loadedState);
-        $this->assertSame($previousTask->getProcessingToken(), $loadedState->getProcessingToken());
+        $this->assertSame($previousTask->getDataGeneration(), $loadedState->getDataGeneration());
 
         // ... while the data is replaced, which creates a task for the replacement
         $replacement = Asset::getById($documentId, ['force' => true]);
         $replacement->setData(file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf')));
         $replacement->save();
         $replacementTask = $this->getLastQueuedTask($documentId);
-        $replacementToken = Asset::getById($documentId, ['force' => true])->getProcessingToken();
-        $this->assertNotNull($replacementToken);
-        $this->assertNotSame($previousTask->getProcessingToken(), $replacementToken);
-        $this->assertSame($replacementToken, $replacementTask->getProcessingToken());
+        $replacementGeneration = Asset::getById($documentId, ['force' => true])->getDataGeneration();
+        $this->assertNotNull($replacementGeneration);
+        $this->assertNotSame($previousTask->getDataGeneration(), $replacementGeneration);
+        $this->assertSame($replacementGeneration, $replacementTask->getDataGeneration());
 
         // the results of the previous task are discarded, so the state of the replacement remains untouched
         TestHelper::handleAssetUpdateTaskMessage($previousTask, $loadedState);
         $document = Asset::getById($documentId, ['force' => true]);
-        $this->assertSame($replacementToken, $document->getProcessingToken());
+        $this->assertSame($replacementGeneration, $document->getDataGeneration());
+        $this->assertTrue($document->isProcessingPending());
         $this->assertNull($document->getCustomSetting('embeddedMetaDataExtracted'));
 
         // the same applies to a task created on demand, which was handled with the previous state
         TestHelper::handleAssetUpdateTaskMessage(new AssetUpdateTasksMessage($documentId), $loadedState);
         $document = Asset::getById($documentId, ['force' => true]);
-        $this->assertSame($replacementToken, $document->getProcessingToken());
+        $this->assertSame($replacementGeneration, $document->getDataGeneration());
+        $this->assertTrue($document->isProcessingPending());
         $this->assertNull($document->getCustomSetting('embeddedMetaDataExtracted'));
 
         // the task of the replacement processes it
@@ -170,46 +183,50 @@ class AssetUpdateTasksTest extends ModelTestCase
     /**
      * A task created on demand processes the asset in any case, but the results of a task handled with a state loaded
      * before a processed state was restored must not be saved either: they belong to the previous data and would
-     * overwrite the derived settings of the restored state (which are not regenerated, as its processing is finished)
+     * overwrite the derived settings of the restored state (which are not regenerated, as its processing is finished).
+     * This also applies if the restored data is identical to the previous data.
      */
     public function testResultsOfTaskAreDiscardedIfProcessedStateWasRestoredDuringProcessing(): void
     {
-        $image = TestHelper::createImageAsset();
-        $imageId = $image->getId();
+        foreach (['assets/images/image1.jpg', 'assets/images/image5.jpg'] as $replacementFile) {
+            $image = TestHelper::createImageAsset();
+            $imageId = $image->getId();
 
-        // a processed state with derived settings which differ from those the processing generates
-        $image->setCustomSetting('imageWidth', 12345);
-        $image->setCustomSetting('imageHeight', 54321);
-        $image->setCustomSetting('imageDimensionsCalculated', true);
-        $image->setProcessingPending(false);
-        $image->save();
-        $processedVersion = $image->getLatestVersion(null, true);
-        $this->assertNotNull($processedVersion);
+            // a processed state with derived settings which differ from those the processing generates
+            $image->setCustomSetting('imageWidth', 12345);
+            $image->setCustomSetting('imageHeight', 54321);
+            $image->setCustomSetting('imageDimensionsCalculated', true);
+            $image->setProcessingPending(false);
+            $image->save();
+            $processedVersion = $image->getLatestVersion(null, true);
+            $this->assertNotNull($processedVersion);
 
-        // the data is replaced and processed, which is the state a task on demand loads ...
-        $image->setData(file_get_contents(TestHelper::resolveFilePath('assets/images/image1.jpg')));
-        $image->save();
-        TestHelper::runAssetUpdateTasks($imageId);
-        $loadedState = Asset::getById($imageId, ['force' => true]);
-        $this->assertInstanceOf(Asset\Image::class, $loadedState);
-        $this->assertFalse($loadedState->isProcessingPending());
-        $this->assertNotSame(12345, $loadedState->getCustomSetting('imageWidth'));
+            // the data is replaced (by other or identical data) and processed, which is the state a task on demand loads ...
+            $image->setData(file_get_contents(TestHelper::resolveFilePath($replacementFile)));
+            $image->save();
+            TestHelper::runAssetUpdateTasks($imageId);
+            $loadedState = Asset::getById($imageId, ['force' => true]);
+            $this->assertInstanceOf(Asset\Image::class, $loadedState);
+            $this->assertFalse($loadedState->isProcessingPending());
+            $this->assertNotSame(12345, $loadedState->getCustomSetting('imageWidth'));
 
-        // ... while the processed state is restored
-        $processedVersion->loadData()->save();
-        $image = Asset::getById($imageId, ['force' => true]);
-        $this->assertFalse($image->isProcessingPending());
-        $this->assertSame(12345, $image->getCustomSetting('imageWidth'));
+            // ... while the processed state is restored
+            $processedVersion->loadData()->save();
+            $image = Asset::getById($imageId, ['force' => true]);
+            $this->assertFalse($image->isProcessingPending());
+            $this->assertSame(12345, $image->getCustomSetting('imageWidth'));
+            $this->assertNotSame($loadedState->getDataGeneration(), $image->getDataGeneration());
 
-        TestHelper::handleAssetUpdateTaskMessage(new AssetUpdateTasksMessage($imageId), $loadedState);
-        $image = Asset::getById($imageId, ['force' => true]);
-        $this->assertSame(12345, $image->getCustomSetting('imageWidth'));
-        $this->assertSame(54321, $image->getCustomSetting('imageHeight'));
+            TestHelper::handleAssetUpdateTaskMessage(new AssetUpdateTasksMessage($imageId), $loadedState);
+            $image = Asset::getById($imageId, ['force' => true]);
+            $this->assertSame(12345, $image->getCustomSetting('imageWidth'), $replacementFile);
+            $this->assertSame(54321, $image->getCustomSetting('imageHeight'), $replacementFile);
 
-        // a task on demand handled with the current state processes it
-        TestHelper::runAssetUpdateTasks($imageId);
-        $image = Asset::getById($imageId, ['force' => true]);
-        $this->assertNotSame(12345, $image->getCustomSetting('imageWidth'));
+            // a task on demand handled with the current state processes it
+            TestHelper::runAssetUpdateTasks($imageId);
+            $image = Asset::getById($imageId, ['force' => true]);
+            $this->assertNotSame(12345, $image->getCustomSetting('imageWidth'));
+        }
     }
 
     /**
@@ -265,10 +282,64 @@ class AssetUpdateTasksTest extends ModelTestCase
     }
 
     /**
+     * Restoring a processed state (e.g. from a version) clears the previews of the previous data, but doesn't process
+     * the restored data again (its derived settings were restored as well). Its previews are generated again by a
+     * task which leaves the derived settings alone.
+     */
+    public function testPreviewsAreGeneratedAgainAfterRestoringProcessedState(): void
+    {
+        $assets = [
+            [TestHelper::createImageAsset(), 'imageWidth', 12345, 'assets/images/image1.jpg', true],
+            [TestHelper::createDocumentAsset(), 'document_page_count', 99, 'assets/document/embedded-meta-data.pdf', Document::isAvailable() && (new Asset\Document())->isThumbnailsEnabled()],
+            [TestHelper::createVideoAsset(), 'duration', 12.5, 'assets/video/example.mp4', false],
+        ];
+
+        foreach ($assets as [$asset, $derivedKey, $derivedValue, $replacementFile, $previewsAvailable]) {
+            $label = get_class($asset);
+            $assetId = $asset->getId();
+            TestHelper::runAssetUpdateTasks($assetId);
+            if ($previewsAvailable) {
+                $this->assertNotSame([], $this->getThumbnailFiles($asset), $label . ': previews after processing');
+            }
+
+            // a processed state with a derived setting which differs from what the processing generates
+            $asset = Asset::getById($assetId, ['force' => true]);
+            $asset->setCustomSetting($derivedKey, $derivedValue);
+            $asset->save();
+            $this->assertFalse($asset->isProcessingPending(), $label);
+            $processedVersion = $asset->getLatestVersion(null, true);
+            $this->assertNotNull($processedVersion, $label);
+
+            // the data is replaced and processed in the meantime
+            $asset->setData(file_get_contents(TestHelper::resolveFilePath($replacementFile)));
+            $asset->save();
+            TestHelper::runAssetUpdateTasks($assetId);
+
+            // restoring the processed state clears the previews and creates a task for generating them again
+            $processedVersion->loadData()->save();
+            $asset = Asset::getById($assetId, ['force' => true]);
+            $this->assertSame([], $this->getThumbnailFiles($asset), $label . ': previews after restore');
+            $this->assertSame($derivedValue, $asset->getCustomSetting($derivedKey), $label);
+            $this->assertFalse($asset->isProcessingPending(), $label);
+            $previewTask = $this->getLastQueuedTask($assetId);
+            $this->assertTrue($previewTask->isPreviewsOnly(), $label);
+            $this->assertSame($asset->getDataGeneration(), $previewTask->getDataGeneration(), $label);
+
+            TestHelper::handleAssetUpdateTaskMessage($previewTask);
+            $asset = Asset::getById($assetId, ['force' => true]);
+            if ($previewsAvailable) {
+                $this->assertNotSame([], $this->getThumbnailFiles($asset), $label . ': previews after task');
+            }
+            $this->assertSame($derivedValue, $asset->getCustomSetting($derivedKey), $label);
+            $this->assertFalse($asset->isProcessingPending(), $label);
+        }
+    }
+
+    /**
      * An instance of the asset loaded before its data was replaced by others can be saved afterwards (without
      * changing the data). Its custom settings are outdated then, but saving them must not discard the pending
-     * processing of the replaced data: the token is kept, and the processing generates the derived settings again,
-     * even though the outdated instance wrote the ones of the previous data
+     * processing of the replaced data and must not attach the derived settings (and the checksum) of the previous
+     * data to the replaced data: the stored ones are kept instead.
      */
     public function testPendingProcessingSurvivesSaveOfOutdatedInstance(): void
     {
@@ -288,8 +359,8 @@ class AssetUpdateTasksTest extends ModelTestCase
         $replacement->setData(file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf')));
         $replacement->save();
         $replacementTask = $this->getLastQueuedTask($documentId);
-        $replacementToken = $replacementTask->getProcessingToken();
-        $this->assertNotNull($replacementToken);
+        $replacementGeneration = $replacementTask->getDataGeneration();
+        $this->assertNotNull($replacementGeneration);
         $replacementChecksum = Asset::getById($documentId, ['force' => true])->getCustomSetting('checksum');
         $this->assertNotEmpty($replacementChecksum);
         $this->assertNotSame($replacementChecksum, $outdatedInstance->getCustomSetting('checksum'));
@@ -299,14 +370,17 @@ class AssetUpdateTasksTest extends ModelTestCase
         $outdatedInstance->setCustomSetting('document_page_count', 99);
         $outdatedInstance->save();
 
-        // the token and the checksum of the replaced data are kept
+        // the state of the replaced data is kept, the outdated derived settings are not saved
         $document = Asset::getById($documentId, ['force' => true]);
         $this->assertInstanceOf(Asset\Document::class, $document);
         $this->assertSame('test', $document->getCustomSetting('customSettingsTest'));
-        $this->assertSame($replacementToken, $document->getProcessingToken());
+        $this->assertSame($replacementGeneration, $document->getDataGeneration());
+        $this->assertTrue($document->isProcessingPending());
         $this->assertSame($replacementChecksum, $document->getCustomSetting('checksum'));
+        $this->assertNull($document->getPageCount());
+        $this->assertNull($document->getCustomSetting('embeddedMetaDataExtracted'));
 
-        // the task of the replacement processes it, including the derived settings the outdated instance wrote
+        // the task of the replacement processes it
         TestHelper::handleAssetUpdateTaskMessage($replacementTask);
         $document = Asset::getById($documentId, ['force' => true]);
         $this->assertInstanceOf(Asset\Document::class, $document);
@@ -315,6 +389,118 @@ class AssetUpdateTasksTest extends ModelTestCase
         $this->assertSame('Pimcore Test Suite', $document->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
         if ($document->isPageCountProcessingEnabled() && Document::isAvailable()) {
             $this->assertSame(1, $document->getPageCount());
+        }
+    }
+
+    /**
+     * A stored checksum which is missing (as it couldn't be generated) must not be replaced by the outdated one of
+     * an instance loaded before the data was replaced
+     */
+    public function testOutdatedInstanceDoesNotRestoreChecksumOfPreviousData(): void
+    {
+        $document = TestHelper::createDocumentAsset();
+        $documentId = $document->getId();
+        $outdatedInstance = Asset::getById($documentId, ['force' => true]);
+        $this->assertNotEmpty($outdatedInstance->getCustomSetting('checksum'));
+
+        $replacement = Asset::getById($documentId, ['force' => true]);
+        $replacement->setData(file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf')));
+        $replacement->save();
+        // the checksum of the replaced data couldn't be generated
+        $replacement->removeCustomSetting('checksum');
+        $replacement->getDao()->updateCustomSettings();
+        $this->assertNull(Asset::getById($documentId, ['force' => true])->getCustomSetting('checksum'));
+
+        $outdatedInstance->setCustomSetting('customSettingsTest', 'test');
+        $outdatedInstance->save();
+
+        $document = Asset::getById($documentId, ['force' => true]);
+        $this->assertSame('test', $document->getCustomSetting('customSettingsTest'));
+        $this->assertNull($document->getCustomSetting('checksum'));
+        $this->assertTrue($document->isProcessingPending());
+    }
+
+    /**
+     * An instance loaded while the processing of the data was pending can be saved after the processing finished.
+     * Its derived settings are outdated then (they are missing, or belong to the previous data), so saving them must
+     * not overwrite the results of the processing: the stored ones are kept instead.
+     */
+    public function testResultsOfProcessingSurviveSaveOfOutdatedInstance(): void
+    {
+        $document = TestHelper::createDocumentAsset(
+            '',
+            file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf'))
+        );
+        $documentId = $document->getId();
+
+        // loaded while the processing was pending ...
+        $outdatedInstance = Asset::getById($documentId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $outdatedInstance);
+        $this->assertTrue($outdatedInstance->isProcessingPending());
+        $this->assertNull($outdatedInstance->getCustomSetting('embeddedMetaDataExtracted'));
+
+        // ... the processing finishes ...
+        TestHelper::runAssetUpdateTasks($documentId);
+        $processedDocument = Asset::getById($documentId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $processedDocument);
+        $this->assertFalse($processedDocument->isProcessingPending());
+        $this->assertTrue($processedDocument->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertSame('Pimcore Test Suite', $processedDocument->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
+
+        // ... and the outdated instance is saved with an unrelated change
+        $outdatedInstance->setCustomSetting('customSettingsTest', 'test');
+        $outdatedInstance->save();
+
+        $document = Asset::getById($documentId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $document);
+        $this->assertSame('test', $document->getCustomSetting('customSettingsTest'));
+        $this->assertFalse($document->isProcessingPending());
+        $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
+        $this->assertSame('Pimcore Test Suite', $document->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
+        $this->assertSame($processedDocument->getPageCount(), $document->getPageCount());
+        $this->assertSame($processedDocument->getScanStatus(), $document->getScanStatus());
+        $this->assertSame($processedDocument->getCustomSetting('checksum'), $document->getCustomSetting('checksum'));
+    }
+
+    /**
+     * Derived settings of the previous data which were written back after the data was replaced (e.g. directly to
+     * the database) are unknown to the processing of the replaced data, so it removes them, even if it doesn't
+     * generate them again (e.g. because the required tools are not available)
+     */
+    public function testStaleDerivedSettingsAreRemovedWhenProcessingPendingData(): void
+    {
+        $document = TestHelper::createDocumentAsset();
+        $documentId = $document->getId();
+        $document = Asset::getById($documentId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $document);
+        $this->assertTrue($document->isProcessingPending());
+        $document->setCustomSetting('document_page_count', 99);
+        $document->getDao()->updateCustomSettings();
+
+        $video = TestHelper::createVideoAsset();
+        $videoId = $video->getId();
+        $video = Asset::getById($videoId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Video::class, $video);
+        $this->assertTrue($video->isProcessingPending());
+        $video->setCustomSetting('thumbnails', ['pimcore-system-treepreview' => ['status' => 'error']]);
+        $video->setCustomSetting('duration', 12.5);
+        $video->getDao()->updateCustomSettings();
+
+        TestHelper::handleAssetUpdateTaskMessage($this->getLastQueuedTask($documentId));
+        $document = Asset::getById($documentId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $document);
+        $this->assertFalse($document->isProcessingPending());
+        $this->assertNotSame(99, $document->getPageCount());
+
+        TestHelper::handleAssetUpdateTaskMessage($this->getLastQueuedTask($videoId));
+        $video = Asset::getById($videoId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Video::class, $video);
+        $this->assertFalse($video->isProcessingPending());
+        $this->assertNull($video->getCustomSetting('thumbnails'));
+        if (!Video::isAvailable()) {
+            $this->assertNull($video->getCustomSetting('duration'));
+        } else {
+            $this->assertNotSame(12.5, $video->getCustomSetting('duration'));
         }
     }
 

@@ -56,6 +56,14 @@ class Video extends Model\Asset
         }
     }
 
+    public function getDataDerivedCustomSettingKeys(): array
+    {
+        return array_merge(
+            parent::getDataDerivedCustomSettingKeys(),
+            ['duration', 'videoWidth', 'videoHeight', 'SphericalMetaData', 'thumbnails']
+        );
+    }
+
     public function clearThumbnails(bool $force = false): void
     {
         if ($this->getDataChanged() || $force) {

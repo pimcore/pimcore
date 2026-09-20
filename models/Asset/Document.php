@@ -47,6 +47,14 @@ class Document extends Model\Asset
         }
     }
 
+    public function getDataDerivedCustomSettingKeys(): array
+    {
+        return array_merge(
+            parent::getDataDerivedCustomSettingKeys(),
+            [self::CUSTOM_SETTING_PAGE_COUNT, self::CUSTOM_SETTING_PDF_SCAN_STATUS]
+        );
+    }
+
     /**
      *
      * @internal

@@ -19,26 +19,30 @@ use Pimcore\Tests\Support\Test\TestCase;
 class AssetUpdateTasksMessageTest extends TestCase
 {
     /**
-     * Messages queued before the processing token was introduced don't contain it. They must still be handled
-     * (as tasks processing the asset in any case) after upgrading, instead of failing on the missing property.
+     * Messages queued before the data generation was introduced don't contain it. They must still be handled
+     * (as tasks processing the asset in any case) after upgrading, instead of failing on the missing properties.
      */
-    public function testMessageQueuedWithoutProcessingTokenIsUnserialized(): void
+    public function testMessageQueuedWithoutDataGenerationIsUnserialized(): void
     {
         $serializedLegacyMessage = 'O:41:"Pimcore\Messenger\AssetUpdateTasksMessage":1:{s:5:"' . "\0*\0" . 'id";i:42;}';
 
         $message = unserialize($serializedLegacyMessage);
         $this->assertInstanceOf(AssetUpdateTasksMessage::class, $message);
         $this->assertSame(42, $message->getId());
-        $this->assertNull($message->getProcessingToken());
+        $this->assertNull($message->getDataGeneration());
+        $this->assertFalse($message->isPreviewsOnly());
     }
 
-    public function testProcessingTokenSurvivesSerialization(): void
+    public function testDataGenerationSurvivesSerialization(): void
     {
-        $message = unserialize(serialize(new AssetUpdateTasksMessage(42, 'abcdef0123456789')));
+        $message = unserialize(serialize(new AssetUpdateTasksMessage(42, 'abcdef0123456789', true)));
         $this->assertInstanceOf(AssetUpdateTasksMessage::class, $message);
         $this->assertSame(42, $message->getId());
-        $this->assertSame('abcdef0123456789', $message->getProcessingToken());
+        $this->assertSame('abcdef0123456789', $message->getDataGeneration());
+        $this->assertTrue($message->isPreviewsOnly());
 
-        $this->assertNull((new AssetUpdateTasksMessage(42))->getProcessingToken());
+        $message = new AssetUpdateTasksMessage(42);
+        $this->assertNull($message->getDataGeneration());
+        $this->assertFalse($message->isPreviewsOnly());
     }
 }

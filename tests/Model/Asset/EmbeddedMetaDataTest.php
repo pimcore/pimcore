@@ -169,8 +169,11 @@ class EmbeddedMetaDataTest extends ModelTestCase
 
             $queueSize = TestHelper::getAssetUpdateTaskQueueSize();
             $version->loadData()->save();
-            // the restored data must not be processed again, as this could discard the restored derived settings
-            $this->assertSame($queueSize, TestHelper::getAssetUpdateTaskQueueSize(), get_class($asset) . ': update task queued');
+            // the restored data must not be processed again, as this could discard the restored derived settings:
+            // only its previews are generated again
+            $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize(), get_class($asset) . ': update task queued');
+            $tasks = TestHelper::getQueuedAssetUpdateTaskMessages($asset->getId());
+            $this->assertTrue($tasks[array_key_last($tasks)]->isPreviewsOnly(), get_class($asset) . ': previews only');
 
             $restoredAsset = Asset::getById($asset->getId(), ['force' => true]);
             foreach ($derivedSettings as $key => $value) {
@@ -403,7 +406,10 @@ class EmbeddedMetaDataTest extends ModelTestCase
         $this->assertNull($restoredDocument->getCustomSetting('customSettingsTest'));
         $restoredDocument->save();
         // the empty custom settings of the version are restored as they are, without processing the data again
-        $this->assertSame($queueSize, TestHelper::getAssetUpdateTaskQueueSize());
+        // (only its previews are generated again)
+        $this->assertSame($queueSize + 1, TestHelper::getAssetUpdateTaskQueueSize());
+        $tasks = TestHelper::getQueuedAssetUpdateTaskMessages($document->getId());
+        $this->assertTrue($tasks[array_key_last($tasks)]->isPreviewsOnly());
 
         $document = Asset::getById($document->getId(), ['force' => true]);
         $this->assertNull($document->getCustomSetting('customSettingsTest'));

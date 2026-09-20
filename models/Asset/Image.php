@@ -54,6 +54,11 @@ class Image extends Model\Asset
         }
     }
 
+    public function getDataDerivedCustomSettingKeys(): array
+    {
+        return array_merge(parent::getDataDerivedCustomSettingKeys(), ['imageWidth', 'imageHeight', 'imageDimensionsCalculated']);
+    }
+
     private function isLowQualityPreviewEnabled(): bool
     {
         return Config::getSystemConfiguration('assets')['image']['low_quality_image_preview']['enabled'];

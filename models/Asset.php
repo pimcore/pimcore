@@ -80,10 +80,25 @@ class Asset extends Element\AbstractElement
     private const EMBEDDED_META_DATA_CUSTOM_SETTINGS = ['embeddedMetaData', 'embeddedMetaDataExtracted'];
 
     /**
-     * set to a token identifying the replaced data while its processing by the asset update tasks queue is pending
-     * (see isProcessingPending(), getProcessingToken())
+     * identifies the current data: a new value is assigned whenever the data is replaced or restored (see
+     * getDataGeneration())
+     */
+    private const CUSTOM_SETTING_DATA_GENERATION = 'pimcore-asset-data-generation';
+
+    /**
+     * set while the processing of the data by the asset update tasks queue is pending (see isProcessingPending())
      */
     private const CUSTOM_SETTING_PROCESSING_PENDING = 'pimcore-asset-processing-pending';
+
+    /**
+     * custom settings describing the state of the data (see getDataState()), which belong to the data like the
+     * derived settings (see getDataDerivedCustomSettingKeys())
+     */
+    private const DATA_STATE_CUSTOM_SETTINGS = [
+        self::CUSTOM_SETTING_DATA_GENERATION,
+        self::CUSTOM_SETTING_PROCESSING_PENDING,
+        'checksum',
+    ];
 
     /**
      * types whose data is processed by the asset update tasks queue (see \Pimcore\Messenger\Handler\AssetUpdateTasksHandler)
@@ -186,11 +201,12 @@ class Asset extends Element\AbstractElement
     protected ?bool $customSettingsIncomplete = null;
 
     /**
-     * the processing token (see getProcessingToken()) this instance finished the processing of (see
-     * setProcessingPending()), which is therefore removed when the instance is saved, in contrast to a token
-     * stored by others since the instance was loaded, which is kept (see update())
+     * the data (see getDataGeneration()) this instance finished the processing of (see setProcessingPending()): its
+     * results are saved as the current derived settings, in contrast to the outdated derived settings of an instance
+     * loaded before the data or its processing was changed by others, which are replaced by the stored ones when the
+     * instance is saved (see update())
      */
-    private ?string $finishedProcessingToken = null;
+    private ?string $finishedProcessingGeneration = null;
 
     /**
      * @internal
@@ -214,7 +230,7 @@ class Asset extends Element\AbstractElement
 
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['scheduledTasks', 'versions', 'stream', 'streamIsPlaceholder', 'finishedProcessingToken'];
+        $blockedVars = ['scheduledTasks', 'versions', 'stream', 'streamIsPlaceholder', 'finishedProcessingGeneration'];
 
         if (!$this->isInDumpState()) {
             // for caching asset
@@ -656,11 +672,15 @@ class Asset extends Element\AbstractElement
 
                 // replaced data has to be processed. Restored data (see restoreStream()) doesn't, as the data derived
                 // from it was restored as well (and processing it again could even discard the restored data), unless
-                // the restored state was dumped while its processing was still pending, so the derived data is missing
-                if ($this->isDataReplaced() || ($this->dataRestored && $this->isProcessingPending())) {
-                    $this->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
-                    if (in_array($this->getType(), self::PROCESSED_TYPES, true)) {
-                        $this->addPendingProcessingToUpdateTaskQueue();
+                // the restored state was dumped while its processing was still pending, so the derived data is missing.
+                // The previews of restored data are generated again in any case, as the previews of the previous data
+                // were cleared when it was restored (see e.g. Image::update()).
+                if (in_array($this->getType(), self::PROCESSED_TYPES, true)) {
+                    if ($this->isDataReplaced() || ($this->dataRestored && $this->isProcessingPending())) {
+                        $this->removeCustomSetting(Asset::CUSTOM_SETTING_PROCESSING_FAILED);
+                        $this->addUpdateTaskForCurrentData(false);
+                    } elseif ($this->dataRestored) {
+                        $this->addUpdateTaskForCurrentData(true);
                     }
                 }
 
@@ -804,9 +824,12 @@ class Asset extends Element\AbstractElement
                     $storage->move($tempFilePath, $path);
                 }
 
+                // the new data gets a new generation (see getDataGeneration()), which tells it apart from the previous
+                // data, even if it is identical
+                $this->setCustomSetting(self::CUSTOM_SETTING_DATA_GENERATION, bin2hex(random_bytes(8)));
+
                 //generate & save checksum in custom settings. The checksum of the previous data is removed first, so
-                // that it doesn't survive if the checksum can't be generated: it tells the data apart from the
-                // previous data (see getDataState())
+                // that it doesn't survive if the checksum can't be generated
                 $this->removeCustomSetting('checksum');
                 $this->generateChecksum();
 
@@ -1352,8 +1375,11 @@ class Asset extends Element\AbstractElement
         }
 
         $streamCopy = fopen(self::getLocalFileFromStream($stream), 'rb', false, File::getContext());
+        if (!is_resource($streamCopy)) {
+            throw new Exception(sprintf('Unable to open a new stream of the data of asset %s', $this->getRealFullPath()));
+        }
 
-        return is_resource($streamCopy) ? $streamCopy : null;
+        return $streamCopy;
     }
 
     /**
@@ -1432,79 +1458,104 @@ class Asset extends Element\AbstractElement
      */
     public function isProcessingPending(): bool
     {
-        return $this->getProcessingToken() !== null;
+        return (bool) $this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING);
     }
 
     /**
-     * Returns the token identifying the data whose processing by the asset update tasks queue is pending (see
-     * isProcessingPending()), or null if no processing is pending. Each replacement of the data gets a new token,
-     * so the token tells whether the data is still the one a processing task was created for.
-     *
-     * @internal
-     */
-    public function getProcessingToken(): ?string
-    {
-        return self::normalizeProcessingToken($this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING));
-    }
-
-    /**
-     * Marks the processing of the current data as pending (with a new token, see getProcessingToken()) or finished
+     * Marks the processing of the current data as pending or finished
      *
      * @internal
      */
     public function setProcessingPending(bool $pending): void
     {
         if ($pending) {
-            $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING, bin2hex(random_bytes(8)));
-            $this->finishedProcessingToken = null;
+            $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING, true);
+            $this->finishedProcessingGeneration = null;
         } else {
-            $this->finishedProcessingToken = $this->getProcessingToken() ?? $this->finishedProcessingToken;
+            $this->finishedProcessingGeneration = $this->getDataGeneration() ?? $this->finishedProcessingGeneration;
             $this->removeCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING);
         }
     }
 
     /**
-     * The checksum of the data and the token of its pending processing (see getProcessingToken()) belong to the data
-     * in the storage. When this instance is saved without changing the data, the values stored in the database are
-     * therefore authoritative, not the ones of this instance: the data might have been replaced (or restored) by
-     * others since this instance was loaded, whose pending processing must not be discarded by saving the outdated
-     * custom settings of this instance (they include outdated derived settings as well, which the pending processing
-     * generates again), and whose checksum must not be replaced by the one of the previous data. Only a processing
-     * this instance finished itself is removed. Must be called within the transaction saving the asset, as it locks
-     * the asset against concurrent saves until the end of the transaction.
+     * Returns the value identifying the current data, which changes whenever the data is replaced or restored (even
+     * by identical data), or null for assets whose data wasn't saved since this was introduced. It tells whether the
+     * data is still the one a task of the asset update tasks queue was created for (see save()).
+     *
+     * @internal
+     */
+    public function getDataGeneration(): ?string
+    {
+        return self::normalizeDataGeneration($this->getCustomSetting(self::CUSTOM_SETTING_DATA_GENERATION));
+    }
+
+    /**
+     * Returns the keys of the custom settings derived from the data by the asset update tasks queue (see
+     * \Pimcore\Messenger\Handler\AssetUpdateTasksHandler), which are therefore unknown while the processing of the
+     * data is pending (see isProcessingPending()) and belong to the data like the settings describing its state
+     * (see getDataState())
+     *
+     * @return string[]
+     *
+     * @internal
+     */
+    public function getDataDerivedCustomSettingKeys(): array
+    {
+        return array_merge(self::EMBEDDED_META_DATA_CUSTOM_SETTINGS, [self::CUSTOM_SETTING_PROCESSING_FAILED]);
+    }
+
+    /**
+     * The settings describing the state of the data (see getDataState()) and the settings derived from it (see
+     * getDataDerivedCustomSettingKeys()) belong to the data in the storage. When this instance is saved without
+     * changing the data, but the data or its processing was changed by others since this instance was loaded (it was
+     * replaced or restored, or its pending processing was finished by the asset update tasks queue), the values
+     * stored in the database are therefore authoritative, not the outdated ones of this instance: saving them would
+     * discard a pending processing (whose task would find nothing left to process) or the results of a finished one,
+     * and it would attach the checksum and the derived settings of the previous data to the current one. Only the
+     * results of a processing this instance finished itself are saved. Must be called within the transaction saving
+     * the asset, as it locks the asset against concurrent saves until the end of the transaction.
      */
     private function keepStoredDataSettings(): void
     {
-        $storedSettings = $this->getDao()->getCustomSettingsForUpdate([self::CUSTOM_SETTING_PROCESSING_PENDING, 'checksum']);
+        $dataBoundKeys = array_merge(self::DATA_STATE_CUSTOM_SETTINGS, $this->getDataDerivedCustomSettingKeys());
+        $storedSettings = $this->getDao()->getCustomSettingsForUpdate($dataBoundKeys);
 
-        $storedToken = self::normalizeProcessingToken($storedSettings[self::CUSTOM_SETTING_PROCESSING_PENDING]);
-        if ($storedToken !== $this->getProcessingToken() && !($storedToken !== null && $storedToken === $this->finishedProcessingToken)) {
-            if ($storedToken === null) {
-                $this->removeCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING);
-            } else {
-                $this->setCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING, $storedToken);
-            }
+        $storedState = self::buildDataState(
+            $storedSettings[self::CUSTOM_SETTING_DATA_GENERATION],
+            $storedSettings[self::CUSTOM_SETTING_PROCESSING_PENDING]
+        );
+        if ($storedState === $this->getDataState()) {
+            return;
         }
 
-        // a missing checksum is generated on demand (see getChecksum()), so a checksum of this instance is only
-        // replaced by a stored one, not removed
-        $storedChecksum = $storedSettings['checksum'];
-        if ($storedChecksum !== null && $storedChecksum !== $this->getCustomSetting('checksum')) {
-            $this->setCustomSetting('checksum', $storedChecksum);
+        $storedGeneration = self::normalizeDataGeneration($storedSettings[self::CUSTOM_SETTING_DATA_GENERATION]);
+        if ($storedGeneration !== null && $storedGeneration === $this->finishedProcessingGeneration) {
+            return;
+        }
+
+        foreach ($dataBoundKeys as $key) {
+            if ($storedSettings[$key] === null) {
+                $this->removeCustomSetting($key);
+            } else {
+                $this->setCustomSetting($key, $storedSettings[$key]);
+            }
         }
     }
 
     /**
      * Returns a value identifying the state of the data of this instance, which changes whenever the data is replaced
-     * or restored (as this changes its checksum, see generateChecksum()) and whenever the processing of the data
-     * starts or finishes (see getProcessingToken()). Comparing it with the stored state (see
-     * getStoredDataStateForUpdate()) tells whether the data or its processing changed since this instance was loaded.
+     * or restored (see getDataGeneration()) and whenever its processing starts or finishes (see isProcessingPending()).
+     * Comparing it with the stored state (see getStoredDataStateForUpdate()) tells whether the data or its processing
+     * was changed by others since this instance was loaded.
      *
      * @internal
      */
     public function getDataState(): string
     {
-        return self::buildDataState($this->getCustomSetting('checksum'), $this->getProcessingToken());
+        return self::buildDataState(
+            $this->getCustomSetting(self::CUSTOM_SETTING_DATA_GENERATION),
+            $this->getCustomSetting(self::CUSTOM_SETTING_PROCESSING_PENDING)
+        );
     }
 
     /**
@@ -1517,22 +1568,25 @@ class Asset extends Element\AbstractElement
      */
     public function getStoredDataStateForUpdate(): string
     {
-        $storedSettings = $this->getDao()->getCustomSettingsForUpdate(['checksum', self::CUSTOM_SETTING_PROCESSING_PENDING]);
+        $storedSettings = $this->getDao()->getCustomSettingsForUpdate([
+            self::CUSTOM_SETTING_DATA_GENERATION,
+            self::CUSTOM_SETTING_PROCESSING_PENDING,
+        ]);
 
         return self::buildDataState(
-            $storedSettings['checksum'],
-            self::normalizeProcessingToken($storedSettings[self::CUSTOM_SETTING_PROCESSING_PENDING])
+            $storedSettings[self::CUSTOM_SETTING_DATA_GENERATION],
+            $storedSettings[self::CUSTOM_SETTING_PROCESSING_PENDING]
         );
     }
 
-    private static function buildDataState(mixed $checksum, ?string $processingToken): string
+    private static function buildDataState(mixed $dataGeneration, mixed $processingPending): string
     {
-        return (is_scalar($checksum) ? (string) $checksum : '') . '|' . ($processingToken ?? '');
+        return (self::normalizeDataGeneration($dataGeneration) ?? '') . '|' . ($processingPending ? '1' : '');
     }
 
-    private static function normalizeProcessingToken(mixed $token): ?string
+    private static function normalizeDataGeneration(mixed $dataGeneration): ?string
     {
-        return is_scalar($token) && $token ? (string) $token : null;
+        return is_scalar($dataGeneration) && $dataGeneration ? (string) $dataGeneration : null;
     }
 
     /**
@@ -2257,7 +2311,7 @@ class Asset extends Element\AbstractElement
     /**
      * Adds a task to the asset update tasks queue which processes the asset in any case: it processes the state
      * the asset has when the task is handled, regardless of what happened to the asset in the meantime (in contrast
-     * to the tasks created for replaced data when saving, see addPendingProcessingToUpdateTaskQueue())
+     * to the tasks created for replaced or restored data when saving, see addUpdateTaskForCurrentData())
      *
      * @internal
      */
@@ -2274,23 +2328,23 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Adds a task to the asset update tasks queue which processes the data whose processing is pending (see
-     * isProcessingPending()). The task is bound to this data by its token: it is skipped if the data is replaced
-     * before the task is handled, as the replacement is processed by its own task (whose results the task must not
-     * overwrite), and if a processed state is restored before, as there is nothing left to process (and processing
-     * it anyway could overwrite the restored derived data). As such a task is only valid for its own data, it must
-     * never be suppressed in favour of a task created for previous data, which is why the lock of triggerUpdateTask()
-     * isn't used here.
+     * Adds a task to the asset update tasks queue which processes the current data (whose processing is pending, see
+     * isProcessingPending()) or only generates its previews. The task is bound to the current data (see
+     * getDataGeneration()): it is skipped if the data is replaced or restored before the task is handled, as the new
+     * data has its own task (whose results the task must not overwrite) or doesn't need any processing (processing it
+     * anyway could overwrite the restored derived data). As such a task is only valid for its own data, it must never
+     * be suppressed in favour of a task created for previous data, which is why the lock of triggerUpdateTask() isn't
+     * used here.
      */
-    private function addPendingProcessingToUpdateTaskQueue(): void
+    private function addUpdateTaskForCurrentData(bool $previewsOnly): void
     {
-        $processingToken = $this->getProcessingToken();
-        if ($processingToken === null) {
+        $dataGeneration = $this->getDataGeneration();
+        if ($dataGeneration === null) {
             return;
         }
 
         $bus = Pimcore::getContainer()->get('messenger.bus.pimcore-core');
-        $bus->dispatch(new AssetUpdateTasksMessage($this->getId(), $processingToken));
+        $bus->dispatch(new AssetUpdateTasksMessage($this->getId(), $dataGeneration, $previewsOnly));
     }
 
     /**
