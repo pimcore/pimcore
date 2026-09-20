@@ -1636,6 +1636,23 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * The instance isn't of the class of its current type if the data was replaced by data of another type by others
+     * since it was loaded (see keepStoredDataSettings(), which takes over the stored type). A version must be dumped
+     * from an instance of the class of the current type, as loading a version restores the class of the dumped
+     * instance (which would run the logic of the previous type), so the current state is loaded from the database
+     * then, which reflects the state saved by this instance within the current transaction.
+     */
+    protected function getDataForVersion(): ElementInterface
+    {
+        $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($this->getType());
+        if ($className === null || is_a($this, $className)) {
+            return $this;
+        }
+
+        return Asset::getById($this->getId(), ['force' => true]) ?? $this;
+    }
+
+    /**
      * Saves the results of processing the data (the settings derived from it, see getDataDerivedCustomSettingKeys(),
      * and the state of its processing, see setProcessingPending()), unless the state of the data changed since the
      * results were generated (see getDataState()): the data was replaced or restored, or its processing finished by

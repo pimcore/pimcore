@@ -581,6 +581,17 @@ class AssetUpdateTasksTest extends ModelTestCase
             foreach ($expectedSettings as $key => $value) {
                 $this->assertEquals($value, $current->getCustomSetting($key), $label . ': ' . $key);
             }
+
+            // the version created by the save of the outdated instance must be of the current type as well
+            $version = $current->getLatestVersion(null, true);
+            $this->assertNotNull($version, $label);
+            $versionAsset = $version->loadData();
+            $this->assertInstanceOf($newClass, $versionAsset, $label . ': version');
+            $this->assertSame($current->getType(), $versionAsset->getType(), $label . ': version');
+            $this->assertSame('test', $versionAsset->getCustomSetting('customSettingsTest'), $label . ': version');
+            foreach ($expectedSettings as $key => $value) {
+                $this->assertEquals($value, $versionAsset->getCustomSetting($key), $label . ': version ' . $key);
+            }
         }
     }
 

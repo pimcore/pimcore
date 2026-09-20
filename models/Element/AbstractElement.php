@@ -643,7 +643,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $version->setCtype(Service::getElementType($this));
         $version->setDate($this->getModificationDate());
         $version->setUserId($this->getUserModification());
-        $version->setData($this);
+        $version->setData($this->getDataForVersion());
         if ($versionNote !== null) {
             $version->setNote($versionNote);
         }
@@ -661,6 +661,17 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $version->save();
 
         return $version;
+    }
+
+    /**
+     * Returns the element which is dumped into a version (see doSaveVersion()): this instance, unless a subclass has
+     * to substitute it (e.g. because the instance isn't of the class of its current type anymore, see Asset)
+     *
+     * @internal
+     */
+    protected function getDataForVersion(): ElementInterface
+    {
+        return $this;
     }
 
     public function getDependencies(): Model\Dependency

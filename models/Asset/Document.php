@@ -40,10 +40,15 @@ class Document extends Model\Asset
             $this->removeCustomSetting(self::CUSTOM_SETTING_PDF_SCAN_STATUS);
         }
 
-        parent::update($params);
-
-        if ($params['isUpdate']) {
-            $this->clearThumbnails();
+        try {
+            parent::update($params);
+        } finally {
+            // the thumbnails are cleared after the asset was locked against concurrent saves by parent::update() (see
+            // Image::update()), also if saving fails, as the new data might already have been written to the storage
+            // then (it isn't rolled back)
+            if ($params['isUpdate']) {
+                $this->clearThumbnails();
+            }
         }
     }
 
