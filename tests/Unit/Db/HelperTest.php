@@ -544,9 +544,11 @@ final class HelperTest extends TestCase
             $this->markTestSkipped('The mysqli extension is not available.');
         }
 
-        // the match detection reads LAST_INSERT_ID() back through the driver - both drivers see it
+        // the match detection reads LAST_INSERT_ID() back through the driver - both drivers see it.
+        // The driver options of the test connection are PDO's (MYSQL_ATTR_INIT_COMMAND), which
+        // mysqli would reject as unknown options
         $params = $this->db->getParams();
-        unset($params['driverClass']);
+        unset($params['driverClass'], $params['driverOptions']);
         $params['driver'] = 'mysqli';
         $mysqliConnection = \Doctrine\DBAL\DriverManager::getConnection($params);
 
