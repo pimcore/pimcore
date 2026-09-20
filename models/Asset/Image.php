@@ -225,7 +225,34 @@ EOT;
             return null;
         }
 
+        $dimensions = $this->getDimensionsFromFile($path);
+        if ($dimensions === null) {
+            return null;
+        }
+
+        if (($width = $dimensions['width']) && ($height = $dimensions['height'])) {
+            // persist dimensions to database
+            $this->setCustomSetting('imageDimensionsCalculated', true);
+            $this->setCustomSetting('imageWidth', $width);
+            $this->setCustomSetting('imageHeight', $height);
+            $this->getDao()->updateCustomSettings();
+            $this->clearDependentCache();
+        }
+
+        return $dimensions;
+    }
+
+    /**
+     * Determines image dimensions without updating the asset or its database record.
+     *
+     * @internal
+     *
+     * @return array{width: int, height: int}|null
+     */
+    public function getDimensionsFromFile(string $path): ?array
+    {
         $dimensions = null;
+        $dimensionPath = $path;
 
         //try to get the dimensions with getimagesize because it is much faster than e.g. the Imagick-Adapter
         if (is_readable($path)) {
@@ -239,9 +266,20 @@ EOT;
         }
 
         if (!$dimensions) {
+            // Flysystem commonly materializes remote streams as extensionless temporary files.
+            // Some ImageMagick delegates (notably SVG) require the source suffix to select a decoder.
+            // Reuse the already-downloaded bytes in a local suffixed file; this performs no additional storage read and does not mutate the asset.
+            $sourceExtension = pathinfo($this->getFilename(), PATHINFO_EXTENSION);
+            if (pathinfo($dimensionPath, PATHINFO_EXTENSION) === '' && $sourceExtension !== '') {
+                $suffixedPath = File::getLocalTempFilePath($sourceExtension);
+                if (@copy($dimensionPath, $suffixedPath)) {
+                    $dimensionPath = $suffixedPath;
+                }
+            }
+
             $image = self::getImageTransformInstance();
 
-            $status = $image->load($path, ['preserveColor' => true, 'asset' => $this]);
+            $status = $image->load($dimensionPath, ['preserveColor' => true, 'asset' => $this]);
             if ($status === false) {
                 return null;
             }
@@ -254,7 +292,7 @@ EOT;
 
         // EXIF orientation
         if (function_exists('exif_read_data')) {
-            $exif = @exif_read_data($path);
+            $exif = @exif_read_data($dimensionPath);
             if (is_array($exif)) {
                 if (array_key_exists('Orientation', $exif)) {
                     $orientation = (int)$exif['Orientation'];
@@ -267,15 +305,6 @@ EOT;
                     }
                 }
             }
-        }
-
-        if (($width = $dimensions['width']) && ($height = $dimensions['height'])) {
-            // persist dimensions to database
-            $this->setCustomSetting('imageDimensionsCalculated', true);
-            $this->setCustomSetting('imageWidth', $width);
-            $this->setCustomSetting('imageHeight', $height);
-            $this->getDao()->updateCustomSettings();
-            $this->clearDependentCache();
         }
 
         return $dimensions;
@@ -323,6 +352,70 @@ EOT;
         }
 
         return false;
+    }
+
+    /**
+     * Classifies vector-sensitive transformations without image I/O.
+     * Conflicting filename and persisted MIME evidence is intentionally unknown so callers can fail closed and inspect the actual generated file.
+     *
+     * @internal
+     */
+    public function getVectorGraphicStateForDimensionEstimation(): ?bool
+    {
+        $extension = strtolower(pathinfo($this->getFilename(), PATHINFO_EXTENSION));
+        $extensionState = match (true) {
+            in_array($extension, ['svg', 'svgz', 'eps', 'pdf', 'ps', 'ai', 'indd'], true) => true,
+            in_array($extension, [
+                'avif',
+                'bmp',
+                'gif',
+                'heic',
+                'heif',
+                'jpeg',
+                'jpg',
+                'png',
+                'tif',
+                'tiff',
+                'webp',
+            ], true) => false,
+            default => null,
+        };
+
+        $mimeType = strtolower((string) $this->getMimeType());
+        $mimeState = match (true) {
+            in_array($mimeType, [
+                'application/illustrator',
+                'application/pdf',
+                'application/postscript',
+                'image/eps',
+                'image/svg+xml',
+                'image/x-eps',
+            ], true) => true,
+            in_array($mimeType, [
+                'image/avif',
+                'image/bmp',
+                'image/gif',
+                'image/heic',
+                'image/heif',
+                'image/jpeg',
+                'image/png',
+                'image/tiff',
+                'image/webp',
+            ], true) => false,
+            default => null,
+        };
+
+        // A persisted MIME type can be replaced by project event listeners and is not proof of the loaded image format.
+        // Unknown extensions therefore remain unknown for vector-sensitive estimation.
+        if ($extensionState === null) {
+            return null;
+        }
+
+        if ($mimeState !== null && $extensionState !== $mimeState) {
+            return null;
+        }
+
+        return $extensionState;
     }
 
     /**

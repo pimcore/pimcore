@@ -24,8 +24,19 @@ interface StorageOperationQueueRepositoryInterface
     /**
      * Repoints pending move rows whose target equals or lies under the moved prefix, dropping
      * resulting self-mappings; invalidates the has-operations cache (rows may be dropped).
+     *
+     * @param array<string, mixed>|null $copyOptions the options the repointing move was resolved
+     *        with. A repointed row is applied against the NEW target, so it has to copy the way
+     *        that later move would have; performed immediately, the second move's configuration
+     *        is what governs the bytes' final resting place. An empty array clears the column,
+     *        null leaves it untouched.
      */
-    public function repointMoves(string $storage, string $movedPrefix, string $newPrefix): void;
+    public function repointMoves(
+        string $storage,
+        string $movedPrefix,
+        string $newPrefix,
+        ?array $copyOptions = null
+    ): void;
 
     /**
      * Move operations whose target prefix covers the logical path, most specific target first.

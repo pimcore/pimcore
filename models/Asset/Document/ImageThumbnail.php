@@ -23,6 +23,7 @@ use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Exception\ThumbnailFormatNotSupportedException;
 use Pimcore\Tool\Storage;
@@ -199,11 +200,8 @@ final class ImageThumbnail implements ImageThumbnailInterface
             throw new NotFoundException('Thumbnail definition "' . (is_string($selector) ? $selector : '') . '" does not exist');
         }
 
-        if ($config) {
-            $format = strtolower($config->getFormat());
-            if ($format == 'source') {
-                $config->setFormat('PNG');
-            }
+        if ($config && Config::isAutoFormat($config->getFormat())) {
+            $config->setFormat('PNG');
         }
 
         return $config;

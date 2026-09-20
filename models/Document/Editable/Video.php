@@ -655,7 +655,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
         }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
-            <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $seriesPrefix . $youtubeId . $wmode . $additionalParams . '" title="YouTube video" allow="fullscreen" data-type="pimcore_video_editable"></iframe>
+            <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $seriesPrefix . htmlspecialchars($youtubeId, ENT_QUOTES, 'UTF-8') . $wmode . $additionalParams . '" title="YouTube video" allow="fullscreen" data-type="pimcore_video_editable"></iframe>
         </div>';
 
         return $code;
@@ -805,7 +805,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface, Edit
             }
 
             $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
-                <iframe src="https://www.dailymotion.com/embed/video/' . $dailymotionId . '?' . $additionalParams . '" width="' . $width . '" height="' . $height . '" title="DailyMotion video" allow="fullscreen" data-type="pimcore_video_editable"></iframe>
+                <iframe src="https://www.dailymotion.com/embed/video/' . htmlspecialchars($dailymotionId, ENT_QUOTES, 'UTF-8') . '?' . $additionalParams . '" width="' . $width . '" height="' . $height . '" title="DailyMotion video" allow="fullscreen" data-type="pimcore_video_editable"></iframe>
             </div>';
 
             return $code;

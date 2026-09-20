@@ -2,6 +2,10 @@
 
 ## Pimcore 2026.2.10
 
+### [Assets]
+
+Image thumbnails using Pimcore's existing non-rasterized SVG source-output route now expose the original SVG consistently through `exists()`, `getStream()` and `getFileSize()`. These calls no longer generate an unused raster thumbnail or dispatch `AssetEvents::IMAGE_THUMBNAIL`; integrations that relied on those low-level side effects should be adjusted.
+
 ### [Notifications]
 
 Notification `creationDate` / `modificationDate` are now written in UTC, which is the convention
