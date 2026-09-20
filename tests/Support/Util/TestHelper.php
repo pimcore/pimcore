@@ -47,7 +47,7 @@ use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 use Traversable;
 
 class TestHelper
@@ -716,18 +716,12 @@ class TestHelper
             return [];
         }
 
+        $serializer = new PhpSerializer();
         $messages = [];
         foreach ($bodies as $body) {
-            // the format of the PhpSerializer of the messenger component
-            if (!str_ends_with($body, '}')) {
-                $body = base64_decode($body);
-            }
-            $envelope = unserialize(stripslashes($body));
-            if (!$envelope instanceof Envelope) {
-                throw new RuntimeException('Unexpected message format in the asset update tasks queue');
-            }
-
-            $message = $envelope->getMessage();
+            // the bodies are encoded by the PhpSerializer of the messenger component (the default serializer of
+            // the doctrine transport), which is therefore used to decode them as well
+            $message = $serializer->decode(['body' => $body, 'headers' => []])->getMessage();
             if ($message instanceof AssetUpdateTasksMessage && $message->getId() === $assetId) {
                 $messages[] = $message;
             }

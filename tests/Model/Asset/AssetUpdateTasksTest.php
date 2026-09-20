@@ -797,6 +797,43 @@ class AssetUpdateTasksTest extends ModelTestCase
     }
 
     /**
+     * When the results of an instance are discarded (as others finished processing the same data in the meantime),
+     * a later save of the instance must not save them either, but take over the stored results
+     */
+    public function testDiscardedResultsAreNotSavedByLaterSaveOfInstance(): void
+    {
+        $image = TestHelper::createImageAsset();
+        $imageId = $image->getId();
+        $task = $this->getLastQueuedTask($imageId);
+        $loadedState = Asset::getById($imageId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Image::class, $loadedState);
+        $this->assertTrue($loadedState->isProcessingPending());
+
+        // others finish processing the same data, with results which differ from those of this instance
+        TestHelper::runAssetUpdateTasks($imageId);
+        $processed = Asset::getById($imageId, ['force' => true]);
+        $processed->setCustomSetting('imageWidth', 54321);
+        $processed->save();
+        $processed = Asset::getById($imageId, ['force' => true]);
+        $this->assertFalse($processed->isProcessingPending());
+
+        // the results of this instance are discarded ...
+        TestHelper::handleAssetUpdateTaskMessage($task, $loadedState);
+        $this->assertSame($processed->getDataState(), Asset::getById($imageId, ['force' => true])->getDataState());
+        $this->assertSame(54321, Asset::getById($imageId, ['force' => true])->getCustomSetting('imageWidth'));
+
+        // ... and must not be saved by a later save of the instance either
+        $loadedState->setCustomSetting('customSettingsTest', 'test');
+        $loadedState->save();
+
+        $image = Asset::getById($imageId, ['force' => true]);
+        $this->assertSame('test', $image->getCustomSetting('customSettingsTest'));
+        $this->assertSame(54321, $image->getCustomSetting('imageWidth'));
+        $this->assertSame($processed->getDataState(), $image->getDataState());
+        $this->assertFalse($image->isProcessingPending());
+    }
+
+    /**
      * A copy of a source whose processing is pending is processed like the source
      */
     public function testCopyOfPendingSourceIsProcessed(): void

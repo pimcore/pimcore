@@ -43,16 +43,19 @@ class Image extends Model\Asset
             }
         }
 
-        parent::update($params);
-
-        // the thumbnails are cleared after the asset was locked against concurrent saves by parent::update(): the
-        // asset update tasks queue generates the previews before it saves its results, which locks the asset and
-        // checks that the data wasn't changed in the meantime (see Asset::saveProcessingResults()). A preview of the
-        // previous data written after the thumbnails were cleared, but before the change was saved, would survive
-        // otherwise, as the check wouldn't notice the change yet.
-        if ($params['isUpdate']) {
-            $this->clearThumbnails($this->clearThumbnailsOnSave);
-            $this->clearThumbnailsOnSave = false; // reset to default
+        try {
+            parent::update($params);
+        } finally {
+            // the thumbnails are cleared after the asset was locked against concurrent saves by parent::update(): the
+            // asset update tasks queue generates the previews before it saves its results, which locks the asset and
+            // checks that the data wasn't changed in the meantime (see Asset::saveProcessingResults()). A preview of
+            // the previous data written after the thumbnails were cleared, but before the change was saved, would
+            // survive otherwise, as the check wouldn't notice the change yet. They are also cleared if saving fails,
+            // as the new data might already have been written to the storage then (it isn't rolled back).
+            if ($params['isUpdate']) {
+                $this->clearThumbnails($this->clearThumbnailsOnSave);
+                $this->clearThumbnailsOnSave = false; // reset to default
+            }
         }
     }
 

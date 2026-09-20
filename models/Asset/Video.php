@@ -45,16 +45,19 @@ class Video extends Model\Asset
         // asset update tasks queue generates the previews before it saves its results, which locks the asset and
         // checks that the data wasn't changed in the meantime (see Asset::saveProcessingResults()). A preview of the
         // previous data written after the thumbnails were cleared, but before the change was saved, would survive
-        // otherwise, as the check wouldn't notice the change yet.
+        // otherwise, as the check wouldn't notice the change yet. The files are also cleared if saving fails, as the
+        // new data might already have been written to the storage then (it isn't rolled back).
         $clearThumbnails = $params['isUpdate'] && $this->getDataChanged();
         if ($clearThumbnails) {
             $this->setCustomSetting('thumbnails', null);
         }
 
-        parent::update($params);
-
-        if ($clearThumbnails) {
-            parent::clearThumbnails(true);
+        try {
+            parent::update($params);
+        } finally {
+            if ($clearThumbnails) {
+                parent::clearThumbnails(true);
+            }
         }
     }
 

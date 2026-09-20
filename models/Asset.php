@@ -1667,6 +1667,9 @@ class Asset extends Element\AbstractElement
             throw $e;
         } finally {
             $this->expectedDataState = null;
+            // a successful save reset this already (see save()). If the results were discarded (or the save failed),
+            // a later save of this instance must not save them either, but take over the stored results
+            $this->finishedProcessingGeneration = null;
         }
 
         return true;
