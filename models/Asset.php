@@ -1261,6 +1261,17 @@ class Asset extends Element\AbstractElement
     public function setFilename(string $filename): static
     {
         $this->filename = $filename;
+        // an intentional change of the location (see also setParentId(), setParent()), which is kept when the asset
+        // is saved, even if the location was changed by others in the meantime (see keepStoredDataSettings())
+        $this->markFieldDirty('filename');
+
+        return $this;
+    }
+
+    public function setParentId(?int $parentId): static
+    {
+        parent::setParentId($parentId);
+        $this->markFieldDirty('parentId');
 
         return $this;
     }
@@ -1602,15 +1613,19 @@ class Asset extends Element\AbstractElement
      * pending processing (whose task would find nothing left to process) or the results of a finished one, and it
      * would attach the type, the checksum and the derived settings of the previous data to the current one. As the
      * current data can be of another type than this instance (e.g. an image replaced by a document), the derived
-     * settings of both types are taken over. Only the results of a processing this instance finished itself are
-     * saved. Must be called within the transaction saving the asset, as it locks the asset against concurrent saves
-     * until the end of the transaction.
+     * settings of both types are taken over, and so is the location of the asset (unless this instance changed it on
+     * purpose), as the data might have been renamed or moved together with the change. Only the results of a
+     * processing this instance finished itself are saved. Must be called within the transaction saving the asset, as
+     * it locks the asset against concurrent saves until the end of the transaction.
      *
      * @return bool whether the type of the asset changed
      */
     private function keepStoredDataSettings(): bool
     {
-        $stored = $this->getDao()->getDataBoundFieldsForUpdate();
+        $stored = $this->getDao()->getStoredRowForUpdate();
+        if ($stored === null) {
+            return false;
+        }
         $storedSettings = $stored['customSettings'];
 
         $storedState = self::buildDataState($storedSettings);
@@ -1635,6 +1650,18 @@ class Asset extends Element\AbstractElement
         }
         if ($stored['mimetype'] !== null) {
             $this->setMimeType($stored['mimetype']);
+        }
+
+        // the location of the asset is taken over as well, unless this instance changed it on purpose (see
+        // setFilename(), setParentId()): the data was possibly renamed or moved together with the replacement,
+        // which the outdated location of this instance would undo (see save(), which moves the data to the
+        // location of the instance)
+        if (!$this->isFieldDirty('filename')) {
+            $this->filename = $stored['filename'];
+        }
+        if (!$this->isFieldDirty('parentId')) {
+            $this->parentId = $stored['parentId'];
+            $this->path = $stored['path'];
         }
 
         foreach (array_merge(self::DATA_STATE_CUSTOM_SETTINGS, $derivedKeys) as $key) {
@@ -1710,8 +1737,9 @@ class Asset extends Element\AbstractElement
 
     /**
      * Whether the given state of the data (see getDataState()) is the one currently stored in the database, i.e. the
-     * data and its processing weren't changed by others since the state was determined. The stored state is read
-     * while the asset is locked shortly, so that a change being saved concurrently is seen.
+     * data and its processing weren't changed by others since the state was determined (false if the asset doesn't
+     * exist anymore). The stored state is read while the asset is locked shortly, so that a change being saved
+     * concurrently is seen.
      *
      * @throws Exception
      *
@@ -1744,7 +1772,11 @@ class Asset extends Element\AbstractElement
      */
     private function applyProcessingResultsToStoredCustomSettings(string $expectedDataState): void
     {
-        $stored = $this->getDao()->getDataBoundFieldsForUpdate();
+        $stored = $this->getDao()->getStoredRowForUpdate();
+        if ($stored === null) {
+            // saving the results would create the asset again
+            throw new DataStateChangedException(sprintf('Asset %s was deleted in the meantime', $this->getRealFullPath()));
+        }
         $storedSettings = $stored['customSettings'];
 
         $storedState = self::buildDataState($storedSettings);
@@ -1783,17 +1815,17 @@ class Asset extends Element\AbstractElement
 
     /**
      * Returns the state of the data (see getDataState()) as currently stored in the database, which differs from the
-     * one of this instance if the asset was saved by others since it was loaded, and locks the asset against
-     * concurrent saves until the end of the current transaction, so that the state can't change until the asset is
-     * saved within this transaction. Must be called within a transaction.
+     * one of this instance if the asset was saved by others since it was loaded, or null if the asset doesn't exist
+     * (anymore), and locks the asset against concurrent saves until the end of the current transaction, so that the
+     * state can't change until the asset is saved within this transaction. Must be called within a transaction.
      *
      * @internal
      */
-    public function getStoredDataStateForUpdate(): string
+    public function getStoredDataStateForUpdate(): ?string
     {
-        $storedSettings = $this->getDao()->getDataBoundFieldsForUpdate()['customSettings'];
+        $stored = $this->getDao()->getStoredRowForUpdate();
 
-        return self::buildDataState($storedSettings);
+        return $stored !== null ? self::buildDataState($stored['customSettings']) : null;
     }
 
     /**
@@ -2190,6 +2222,7 @@ class Asset extends Element\AbstractElement
         $this->parent = $parent;
         if ($parent instanceof Asset) {
             $this->parentId = $parent->getId();
+            $this->markFieldDirty('parentId');
         }
 
         return $this;

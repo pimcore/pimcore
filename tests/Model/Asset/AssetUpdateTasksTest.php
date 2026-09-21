@@ -568,12 +568,20 @@ class AssetUpdateTasksTest extends ModelTestCase
             }
             $this->assertNotNull($expectedSettings['embeddedMetaDataExtracted'], $label);
 
+            $outdatedPath = $outdatedInstance->getRealFullPath();
+            $this->assertNotSame($processed->getRealFullPath(), $outdatedPath, $label);
             $outdatedInstance->setCustomSetting('customSettingsTest', 'test');
             $outdatedInstance->save();
 
             $current = Asset::getById($assetId, ['force' => true]);
             $this->assertInstanceOf($newClass, $current, $label);
             $this->assertSame($newMimeType, $current->getMimeType(), $label);
+            // the location of the replacement (renamed together with the data) is kept, and the data with it
+            $this->assertSame($processed->getFilename(), $current->getFilename(), $label);
+            $this->assertSame($processed->getRealFullPath(), $current->getRealFullPath(), $label);
+            $this->assertSame($newData, $current->getData(), $label);
+            $this->assertTrue(Storage::get('asset')->fileExists($current->getRealFullPath()), $label);
+            $this->assertFalse(Storage::get('asset')->fileExists($outdatedPath), $label);
             $this->assertSame('test', $current->getCustomSetting('customSettingsTest'), $label);
             $this->assertSame($processed->getDataGeneration(), $current->getDataGeneration(), $label);
             $this->assertFalse($current->isProcessingPending(), $label);
@@ -922,6 +930,78 @@ class AssetUpdateTasksTest extends ModelTestCase
         // a missing checksum is generated for the restored data
         $versionWithoutChecksum->loadData()->save();
         $this->assertSame($generatedChecksum, Asset::getById($documentId, ['force' => true])->getCustomSetting('checksum'));
+    }
+
+    /**
+     * An outdated instance which renames or moves the asset on purpose keeps this change when it is saved after
+     * others replaced (and renamed) the data, while the location isn't changed otherwise
+     */
+    public function testOutdatedInstanceKeepsIntentionalRenameAndMove(): void
+    {
+        $newData = file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf'));
+        $folder = Asset\Service::createFolderByPath('/' . uniqid('outdated-move-'));
+
+        foreach (['rename', 'move', 'none'] as $intentionalChange) {
+            $document = TestHelper::createDocumentAsset();
+            $documentId = $document->getId();
+            TestHelper::runAssetUpdateTasks($documentId);
+            $outdatedInstance = Asset::getById($documentId, ['force' => true]);
+            $this->assertInstanceOf(Asset\Document::class, $outdatedInstance);
+
+            // the data is replaced and the asset renamed by others
+            $replacement = Asset::getById($documentId, ['force' => true]);
+            $replacement->setData($newData);
+            $replacement->setFilename('renamed-by-others-' . $intentionalChange . '.pdf');
+            $replacement->save();
+            TestHelper::runAssetUpdateTasks($documentId);
+            $processed = Asset::getById($documentId, ['force' => true]);
+
+            $expectedFilename = $processed->getFilename();
+            $expectedPath = $processed->getRealPath();
+            if ($intentionalChange === 'rename') {
+                $expectedFilename = 'renamed-on-purpose-' . $intentionalChange . '.pdf';
+                $outdatedInstance->setFilename($expectedFilename);
+            } elseif ($intentionalChange === 'move') {
+                $expectedPath = $folder->getRealFullPath() . '/';
+                $outdatedInstance->setParentId($folder->getId());
+            }
+            $outdatedInstance->setCustomSetting('customSettingsTest', 'test');
+            $outdatedInstance->save();
+
+            $current = Asset::getById($documentId, ['force' => true]);
+            $this->assertSame($expectedFilename, $current->getFilename(), $intentionalChange);
+            $this->assertSame($expectedPath, $current->getRealPath(), $intentionalChange);
+            $this->assertSame($newData, $current->getData(), $intentionalChange);
+            $this->assertTrue(Storage::get('asset')->fileExists($current->getRealFullPath()), $intentionalChange);
+            $this->assertSame('test', $current->getCustomSetting('customSettingsTest'), $intentionalChange);
+            $this->assertSame($processed->getDataState(), $current->getDataState(), $intentionalChange);
+        }
+    }
+
+    /**
+     * An asset can be deleted while its data is processed. The results must not be saved then, as this would create
+     * the asset again, and no previews must be generated for it.
+     */
+    public function testNothingIsSavedOrGeneratedForDeletedAsset(): void
+    {
+        $image = TestHelper::createImageAsset();
+        $imageId = $image->getId();
+        $task = $this->getLastQueuedTask($imageId);
+        $loadedState = Asset::getById($imageId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Image::class, $loadedState);
+        $realPath = $loadedState->getRealPath() . $imageId;
+
+        Asset::getById($imageId, ['force' => true])->delete();
+        $this->assertNull(Asset::getById($imageId, ['force' => true]));
+
+        TestHelper::handleAssetUpdateTaskMessage($task, $loadedState);
+        $this->assertNull(Asset::getById($imageId, ['force' => true]));
+        $this->assertSame([], $this->getThumbnailFiles($loadedState));
+
+        TestHelper::handleAssetUpdateTaskMessage(new AssetUpdateTasksMessage($imageId, $task->getDataGeneration(), true), $loadedState);
+        $this->assertNull(Asset::getById($imageId, ['force' => true]));
+        $this->assertSame([], $this->getThumbnailFiles($loadedState));
+        $this->assertFalse(Storage::get('thumbnail')->directoryExists($realPath));
     }
 
     /**

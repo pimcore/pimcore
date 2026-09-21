@@ -489,16 +489,18 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Returns the fields which belong to the data of the asset (its type, mime type and custom settings) as currently
-     * stored in the database (which differ from the ones of the model if the asset was saved by others since the model
-     * was loaded) and locks the asset against concurrent saves until the end of the current transaction, so that they
-     * can't change until the model is saved within this transaction. Must be called within a transaction.
+     * Returns the fields of the asset which belong to its data (its type, mime type and custom settings) and its
+     * location (filename, path and parent) as currently stored in the database (which differ from the ones of the
+     * model if the asset was saved by others since the model was loaded) and locks the asset against concurrent saves
+     * until the end of the current transaction, so that they can't change until the model is saved within this
+     * transaction. Must be called within a transaction.
      *
-     * @return array{type: string|null, mimetype: string|null, customSettings: array<string, mixed>}
+     * @return array{type: string|null, mimetype: string|null, filename: string, path: string, parentId: int, customSettings: array<string, mixed>}|null
+     *     null if the asset doesn't exist (anymore)
      *
      * @throws Exception
      */
-    public function getDataBoundFieldsForUpdate(): array
+    public function getStoredRowForUpdate(): ?array
     {
         if (!$this->db->isTransactionActive()) {
             throw new Exception('Locking the asset against concurrent saves requires an active transaction');
@@ -508,11 +510,12 @@ class Dao extends Model\Element\Dao
         // and touches the other tables (e.g. the meta data) afterwards, so the row is the only lock acquired here:
         // acquiring further locks first could lead to deadlocks with concurrent saves of the asset
         $row = $this->db->fetchAssociative(
-            'SELECT ' . $this->db->quoteIdentifier('type') . ', mimetype, customSettings FROM assets WHERE id = ? FOR UPDATE',
+            'SELECT ' . $this->db->quoteIdentifier('type') . ', mimetype, filename, '
+            . $this->db->quoteIdentifier('path') . ', parentId, customSettings FROM assets WHERE id = ? FOR UPDATE',
             [$this->model->getId()]
         );
         if (!$row) {
-            return ['type' => null, 'mimetype' => null, 'customSettings' => []];
+            return null;
         }
 
         $customSettings = $row['customSettings'];
@@ -520,6 +523,9 @@ class Dao extends Model\Element\Dao
         return [
             'type' => $row['type'] !== null ? (string) $row['type'] : null,
             'mimetype' => $row['mimetype'] !== null ? (string) $row['mimetype'] : null,
+            'filename' => (string) $row['filename'],
+            'path' => (string) $row['path'],
+            'parentId' => (int) $row['parentId'],
             'customSettings' => is_string($customSettings) && $customSettings !== '' ? Serialize::fromJson($customSettings) : [],
         ];
     }
