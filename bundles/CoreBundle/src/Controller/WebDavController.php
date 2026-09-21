@@ -18,6 +18,7 @@ use PDO;
 use Pimcore\Controller\Controller;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -25,6 +26,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class WebDavController extends Controller
 {
+    public function __construct(
+        #[Autowire('%pimcore.assets.webdav.browser_plugin%')]
+        private readonly bool $browserPluginEnabled,
+    ) {
+    }
+
     public function webdavAction(): void
     {
         $homeDir = Asset::getById(1);
@@ -51,8 +58,9 @@ class WebDavController extends Controller
             $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
             $server->addPlugin($lockPlugin);
 
-            // browser plugin
-            if (\Pimcore::inDebugMode()) {
+            // browser plugin - the HTML directory listing and its POST-based creation form are
+            // opt-in, so the endpoint serves WebDAV clients only unless explicitly enabled
+            if ($this->browserPluginEnabled) {
                 $server->addPlugin(new \Sabre\DAV\Browser\Plugin());
             }
 

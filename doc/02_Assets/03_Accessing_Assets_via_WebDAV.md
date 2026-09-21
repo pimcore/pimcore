@@ -10,8 +10,16 @@ Connect your WebDAV client to the following URL: `https://YOUR-DOMAIN/asset/webd
 
 Use any Pimcore user as credentials. Permissions for asset access are based on the user's permissions.
 
-> **Note:** The HTML browsing UI (viewing the URL in a regular web browser) is only available when
-> Pimcore runs in debug mode. In production, the endpoint responds to WebDAV clients only.
+> **Note:** The HTML browsing UI (viewing the URL in a regular web browser) is disabled by default,
+> so the endpoint responds to WebDAV clients only. It also exposes a POST-based file/folder creation
+> form, which is why it is opt-in. Enable it with:
+>
+> ```yaml
+> pimcore:
+>     assets:
+>         webdav:
+>             browser_plugin: true
+> ```
 
 ## Nginx Configuration
 
