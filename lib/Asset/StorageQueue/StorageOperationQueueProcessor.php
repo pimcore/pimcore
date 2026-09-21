@@ -80,6 +80,8 @@ final class StorageOperationQueueProcessor
         /** @var array<int, int>|null $barriers */
         $barriers = null;
         $haltedClusters = [];
+        /** @var list<StorageOperation> $failedDeletes */
+        $failedDeletes = [];
 
         if ($onlyId !== null) {
             $requested = $this->repository->findById($onlyId);
@@ -139,6 +141,20 @@ final class StorageOperationQueueProcessor
                 continue; // stays queued for the next run
             }
 
+            // The mirror of the rule above, for the other row type. FIFO says an earlier Delete
+            // sweeps its prefix before anything relocates out of it. When that Delete only
+            // FAILED, a later overlapping Move must wait too: it would otherwise carry the
+            // content elsewhere, the next run would find the source empty and complete the
+            // Delete, and content the user explicitly deleted would survive under the move
+            // target. Whether that happens must not hinge on a transient backend error. A
+            // DEFERRED Delete is deliberately not a barrier here - deferral is an ordered wait,
+            // not a failure, and the row it waits for has already had its turn.
+            if ($operation->getType() === StorageOperationType::Move
+                && $this->isBlockedByFailedDelete($operation, $failedDeletes)
+            ) {
+                continue; // stays queued for the next run
+            }
+
             try {
                 if ($this->processOperation($operation, $deadline, $heartbeat)) {
                     $processed++;
@@ -164,6 +180,9 @@ final class StorageOperationQueueProcessor
                 $failed++;
                 if ($cluster !== null) {
                     $haltedClusters[$cluster] = true;
+                }
+                if ($operation->getType() === StorageOperationType::Delete) {
+                    $failedDeletes[] = $operation;
                 }
                 $errors[] = sprintf(
                     '#%d %s %s: %s',
@@ -271,6 +290,25 @@ final class StorageOperationQueueProcessor
         return $a === $b
             || str_starts_with($a, $b . '/')
             || str_starts_with($b, $a . '/');
+    }
+
+    /**
+     * Whether a Delete that failed earlier in this run still stands between the queue and this
+     * Move. Same storage only, and only Deletes the Move would have been ordered behind.
+     *
+     * @param list<StorageOperation> $failedDeletes
+     */
+    private function isBlockedByFailedDelete(StorageOperation $move, array $failedDeletes): bool
+    {
+        foreach ($failedDeletes as $delete) {
+            if ($delete->getStorage() === $move->getStorage()
+                && $this->deleteOverlapsMove($delete, $move)
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

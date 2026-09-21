@@ -1101,6 +1101,37 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame('fresh', $this->adapter->read('T/x.jpg'));
         $this->assertSame([], $this->repository->all(), 'both rows drained');
     }
+
+    public function testAFailedDeleteHoldsBackLaterMovesOverItsPrefix(): void
+    {
+        // FIFO says the delete sweeps "legacy" before anything relocates out of it. If the delete
+        // merely fails, a later overlapping move must not get to carry that content somewhere
+        // else - the next run would then find the source empty, complete the delete, and leave
+        // content the user explicitly deleted alive under the move target. Whether that happens
+        // must not depend on a transient backend error.
+        $this->writeWithMtime('legacy/campaigns/c.jpg', 'c', time() - 7200);
+        $this->addRow(StorageOperationType::Delete, 'legacy', null);
+        $this->addRow(StorageOperationType::Move, 'legacy/campaigns', 'live/campaigns');
+
+        $refusing = new DeleteRefusingAdapterDecorator($this->adapter, 'legacy');
+        $locator = new StorageOperationQueueProcessorTestAdapterLocator($refusing);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger());
+
+        $processor->process();
+
+        $this->assertFalse(
+            $this->adapter->fileExists('live/campaigns/c.jpg'),
+            'the move must not rescue content out of a prefix whose delete only failed'
+        );
+        $this->assertSame('c', $this->adapter->read('legacy/campaigns/c.jpg'), 'content untouched');
+
+        // once the backend recovers the delete completes, exactly as FIFO intended
+        $refusing->refusing = false;
+        $processor->process();
+
+        $this->assertFalse($this->adapter->fileExists('legacy/campaigns/c.jpg'), 'the delete swept it');
+        $this->assertFalse($this->adapter->fileExists('live/campaigns/c.jpg'), 'and nothing escaped');
+    }
 }
 
 /**
