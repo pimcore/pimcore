@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Asset;
 
 use League\Flysystem\FilesystemOperator;
+use League\Flysystem\UnableToReadFile;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\Controller\PublicServicesController;
 use Pimcore\Config;
@@ -520,5 +521,75 @@ class AssetThumbnailCacheTest extends TestCase
         fclose($stream);
         $this->assertTrue($thumbnailStorage->fileExists($storagePath));
         $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $filename));
+    }
+
+    public function testGetStreamedResponseByUriReturnsNullWhenTheThumbnailCannotBeRead(): void
+    {
+        $asset = $this->testAsset;
+
+        /** @var Asset\Image $asset */
+        $thumbnail = $asset->getThumbnail($this->thumbnailName);
+
+        //generate the thumbnail so the delivery below takes the direct-delivery path
+        $thumbnail->getPath(['deferredAllowed' => false]);
+        $storagePath = $thumbnail->getPathReference(true)['storagePath'];
+        $uri = sprintf('/image-thumb__%d__%s/%s', $asset->getId(), $this->thumbnailName, basename($storagePath));
+
+        //fileExists() reports the thumbnail, the subsequent read fails: either the file was removed
+        //in between, or the storage cannot serve it (permission/IO). readStream() is not guarded,
+        //so the UnableToReadFile used to escape this helper.
+        $storage = $this->createMock(FilesystemOperator::class);
+        $storage->method('fileExists')->willReturn(true);
+        $storage->method('readStream')->willThrowException(UnableToReadFile::fromLocation($storagePath));
+
+        $this->withThumbnailStorage($storage, function () use ($uri) {
+            //the public helper for custom asset delivery (see
+            //doc/02_Assets/02_Restricting_Public_Asset_Access.md) is documented as returning
+            //?StreamedResponse, so the storage failure must not reach the calling project code
+            $this->assertNull(Asset\Service::getStreamedResponseByUri($uri));
+        });
+    }
+
+    /**
+     * Runs $callback with the thumbnail storage replaced by $storage.
+     *
+     * Pimcore\Tool\Storage resolves each storage from a tagged service locator, so the whole
+     * service is swapped for one backed by a locator that returns $storage for the thumbnail
+     * storage and delegates everything else to the original.
+     */
+    private function withThumbnailStorage(FilesystemOperator $storage, callable $callback): mixed
+    {
+        $storageService = Pimcore::getContainer()->get(Storage::class);
+
+        // the container refuses to replace an already initialized service, and Storage is
+        // initialized long before a test runs, so swap the locator it resolves each storage from
+        $property = new ReflectionProperty(Storage::class, 'locator');
+        $originalLocator = $property->getValue($storageService);
+
+        $property->setValue($storageService, new class($storage, $originalLocator) implements ContainerInterface {
+            public function __construct(
+                private FilesystemOperator $thumbnailStorage,
+                private ContainerInterface $original,
+            ) {
+            }
+
+            public function has(string $id): bool
+            {
+                return $id === 'pimcore.thumbnail.storage' || $this->original->has($id);
+            }
+
+            public function get(string $id): mixed
+            {
+                return $id === 'pimcore.thumbnail.storage'
+                    ? $this->thumbnailStorage
+                    : $this->original->get($id);
+            }
+        });
+
+        try {
+            return $callback();
+        } finally {
+            $property->setValue($storageService, $originalLocator);
+        }
     }
 }

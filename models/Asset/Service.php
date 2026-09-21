@@ -579,7 +579,18 @@ class Service extends Model\Element\Service
         $config = self::extractThumbnailInfoFromUri($uri);
 
         if ($config) {
-            return self::getStreamedResponseForThumbnail($config, $uri);
+            try {
+                return self::getStreamedResponseForThumbnail($config, $uri);
+            } catch (UnableToReadFile $e) {
+                // the thumbnail file was reported as existing but could not be read, e.g. because
+                // it was removed between the existence check and the read, or because of a
+                // permission or I/O problem on the thumbnail storage. This helper is public API
+                // for custom asset delivery and documented as returning ?StreamedResponse, so the
+                // failure must not escape to the calling project code.
+                Logger::debug('Could not stream thumbnail for ' . $uri . ': ' . $e->getMessage());
+
+                return null;
+            }
         }
 
         return null;
