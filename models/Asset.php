@@ -227,6 +227,13 @@ class Asset extends Element\AbstractElement
     private ?string $expectedDataState = null;
 
     /**
+     * whether the fields belonging to the data were taken over from the database while saving this instance, as the
+     * data was changed by others since the instance was loaded (see keepStoredDataSettings()): the instance doesn't
+     * reflect the current data then (e.g. its stream can still be the previous data), see getDataForVersion()
+     */
+    private bool $storedDataStateAdopted = false;
+
+    /**
      * @internal
      */
     protected ?int $dataModificationDate = null;
@@ -255,6 +262,7 @@ class Asset extends Element\AbstractElement
             'streamIsPlaceholder',
             'finishedProcessingGeneration',
             'expectedDataState',
+            'storedDataStateAdopted',
         ];
 
         if (!$this->isInDumpState()) {
@@ -714,6 +722,7 @@ class Asset extends Element\AbstractElement
                 // only the save committing the finished processing of this instance saves its results in any case,
                 // later saves must not overwrite results stored by others in the meantime (see update())
                 $this->finishedProcessingGeneration = null;
+                $this->storedDataStateAdopted = false;
 
                 $postEvent = new AssetEvent($this, $parameters);
                 if ($isUpdate) {
@@ -868,10 +877,14 @@ class Asset extends Element\AbstractElement
                 // data, even if it is identical
                 $this->setCustomSetting(self::CUSTOM_SETTING_DATA_GENERATION, bin2hex(random_bytes(8)));
 
-                //generate & save checksum in custom settings. The checksum of the previous data is removed first, so
-                // that it doesn't survive if the checksum can't be generated
-                $this->removeCustomSetting('checksum');
-                $this->generateChecksum();
+                // generate & save checksum in custom settings. Restored data (see restoreStream()) keeps the checksum
+                // dumped with it (unless it is missing), as it was generated for exactly this data. The checksum of
+                // replaced data is generated again: the one of the previous data is removed first, so that it doesn't
+                // survive if the checksum can't be generated
+                if ($this->isDataReplaced() || !$this->getCustomSetting('checksum')) {
+                    $this->removeCustomSetting('checksum');
+                    $this->generateChecksum();
+                }
 
                 // delete old legacy file if exists
                 $dbPath = $this->getDao()->getCurrentFullPath();
@@ -1631,21 +1644,24 @@ class Asset extends Element\AbstractElement
                 $this->setCustomSetting($key, $storedSettings[$key]);
             }
         }
+        $this->storedDataStateAdopted = true;
 
         return $typeChanged;
     }
 
     /**
-     * The instance isn't of the class of its current type if the data was replaced by data of another type by others
-     * since it was loaded (see keepStoredDataSettings(), which takes over the stored type). A version must be dumped
-     * from an instance of the class of the current type, as loading a version restores the class of the dumped
-     * instance (which would run the logic of the previous type), so the current state is loaded from the database
-     * then, which reflects the state saved by this instance within the current transaction.
+     * If the data was changed by others since this instance was loaded, and the fields belonging to the data were
+     * taken over from the database while saving it (see keepStoredDataSettings()), the instance doesn't reflect the
+     * current data: its stream can still be the previous data (which a version must not store with the settings of
+     * the current data), and it isn't of the class of the current type if the type changed (loading a version
+     * restores the class of the dumped instance, which would run the logic of the previous type). The current state
+     * is loaded from the database then, which reflects the state saved by this instance within the current
+     * transaction. An instance whose data was changed on purpose (replaced or restored) is dumped as it is.
      */
     protected function getDataForVersion(): ElementInterface
     {
         $className = Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($this->getType());
-        if ($className === null || is_a($this, $className)) {
+        if (!$this->storedDataStateAdopted && ($className === null || is_a($this, $className))) {
             return $this;
         }
 

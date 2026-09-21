@@ -179,15 +179,17 @@ trait EmbeddedMetaDataTrait
                     $offset = 0;
                     while (($position = strpos($buffer, $tag, $offset)) === false) {
                         // the packet size is limited, so that a corrupted or malicious file containing an open tag
-                        // without a close tag cannot exhaust the memory
-                        if (strlen($buffer) > self::XMP_MAX_PACKET_SIZE) {
+                        // without a close tag cannot exhaust the memory: no more than the remaining allowance is
+                        // read, and the packet is rejected once it is exhausted
+                        $remainingAllowance = self::XMP_MAX_PACKET_SIZE - strlen($buffer);
+                        if ($remainingAllowance <= 0) {
                             throw new RuntimeException(sprintf(
                                 'No close tag found within %d bytes after the open tag. Possibly corrupted file.',
                                 self::XMP_MAX_PACKET_SIZE
                             ));
                         }
 
-                        $chunk = fread($file_pointer, $chunkSize);
+                        $chunk = fread($file_pointer, min($chunkSize, $remainingAllowance));
                         if ($chunk === false || $chunk === '') {
                             break;
                         }

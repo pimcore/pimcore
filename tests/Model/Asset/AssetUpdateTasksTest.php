@@ -845,6 +845,86 @@ class AssetUpdateTasksTest extends ModelTestCase
     }
 
     /**
+     * An outdated instance can still hold the stream of the previous data when the data was replaced by others (by
+     * data of the same type). The version created by saving it must contain the current data, not the previous one
+     * with the settings of the current data.
+     */
+    public function testVersionOfOutdatedInstanceContainsCurrentData(): void
+    {
+        $previousData = file_get_contents(TestHelper::resolveFilePath('assets/document/sonnenblume.pdf'));
+        $newData = file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf'));
+
+        $document = TestHelper::createDocumentAsset('', $previousData);
+        $documentId = $document->getId();
+        TestHelper::runAssetUpdateTasks($documentId);
+
+        // the outdated instance opened the stream of the previous data ...
+        $outdatedInstance = Asset::getById($documentId, ['force' => true]);
+        $this->assertInstanceOf(Asset\Document::class, $outdatedInstance);
+        $this->assertSame($previousData, stream_get_contents($outdatedInstance->getStream()));
+
+        // ... before the data was replaced by others
+        $replacement = Asset::getById($documentId, ['force' => true]);
+        $replacement->setData($newData);
+        $replacement->save();
+        TestHelper::runAssetUpdateTasks($documentId);
+        $this->assertSame($previousData, stream_get_contents($outdatedInstance->getStream()));
+
+        $outdatedInstance->setCustomSetting('customSettingsTest', 'test');
+        $outdatedInstance->save();
+
+        $current = Asset::getById($documentId, ['force' => true]);
+        $this->assertSame($newData, $current->getData());
+        $this->assertSame('test', $current->getCustomSetting('customSettingsTest'));
+
+        $version = $current->getLatestVersion(null, true);
+        $this->assertNotNull($version);
+        $versionDocument = $version->loadData();
+        $this->assertInstanceOf(Asset\Document::class, $versionDocument);
+        $this->assertSame($newData, $versionDocument->getData());
+        $this->assertSame('test', $versionDocument->getCustomSetting('customSettingsTest'));
+        $this->assertSame('Pimcore Test Suite', $versionDocument->getEmbeddedMetaData(false)['CreatorTool'] ?? null);
+    }
+
+    /**
+     * Restored data keeps the checksum dumped with it (it was generated for exactly this data), unless it is missing.
+     * Only the checksum of replaced data is generated again.
+     */
+    public function testRestoredDataKeepsItsChecksum(): void
+    {
+        $document = TestHelper::createDocumentAsset();
+        $documentId = $document->getId();
+        TestHelper::runAssetUpdateTasks($documentId);
+
+        // a checksum which differs from the generated one, so that generating it again is noticeable
+        $document = Asset::getById($documentId, ['force' => true]);
+        $generatedChecksum = $document->getCustomSetting('checksum');
+        $this->assertNotEmpty($generatedChecksum);
+        $document->setCustomSetting('checksum', 'dumped-with-the-data');
+        $document->save();
+        $versionWithChecksum = $document->getLatestVersion(null, true);
+        $this->assertNotNull($versionWithChecksum);
+
+        // a dump without checksum (e.g. of an asset saved before checksums were generated)
+        $document->removeCustomSetting('checksum');
+        $document->save();
+        $versionWithoutChecksum = $document->getLatestVersion(null, true);
+        $this->assertNotNull($versionWithoutChecksum);
+        $this->assertNull($versionWithoutChecksum->loadData()->getCustomSetting('checksum'));
+
+        $document->setData(file_get_contents(TestHelper::resolveFilePath('assets/document/embedded-meta-data.pdf')));
+        $document->save();
+        $this->assertNotSame($generatedChecksum, Asset::getById($documentId, ['force' => true])->getCustomSetting('checksum'));
+
+        $versionWithChecksum->loadData()->save();
+        $this->assertSame('dumped-with-the-data', Asset::getById($documentId, ['force' => true])->getCustomSetting('checksum'));
+
+        // a missing checksum is generated for the restored data
+        $versionWithoutChecksum->loadData()->save();
+        $this->assertSame($generatedChecksum, Asset::getById($documentId, ['force' => true])->getCustomSetting('checksum'));
+    }
+
+    /**
      * A copy of a source whose processing is pending is processed like the source
      */
     public function testCopyOfPendingSourceIsProcessed(): void

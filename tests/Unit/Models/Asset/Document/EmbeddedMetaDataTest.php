@@ -165,6 +165,53 @@ class EmbeddedMetaDataTest extends TestCase
         $this->assertTrue($document->getCustomSetting('embeddedMetaDataExtracted'));
     }
 
+    /**
+     * The size limit of an XMP packet is enforced exactly: a packet whose close tag lies beyond the limit is rejected,
+     * even if the close tag would be read with the next chunk, while a packet within the limit is read
+     */
+    public function testXmpPacketSizeLimitIsEnforcedExactly(): void
+    {
+        $limit = 10 * 1024 * 1024;
+        $openTag = "<x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n";
+        $closeTag = '</x:xmpmeta>';
+        $document = new Document();
+
+        // the close tag ends exactly at the limit
+        $filePath = $this->createFileWithXmpPacket($openTag, $limit - strlen($openTag) - strlen($closeTag), $closeTag);
+        $this->assertIsArray($document->getXMPData($filePath));
+
+        // the close tag ends one byte beyond the limit
+        $filePath = $this->createFileWithXmpPacket($openTag, $limit - strlen($openTag) - strlen($closeTag) + 1, $closeTag);
+
+        try {
+            $document->getXMPData($filePath);
+            $this->fail('Expected an exception for an XMP packet exceeding the size limit');
+        } catch (RuntimeException $e) {
+            $this->assertStringContainsString('No close tag found within', $e->getMessage());
+        }
+    }
+
+    /**
+     * Creates a file with an XMP packet consisting of the given open tag, the given amount of filler bytes and the
+     * given close tag
+     */
+    private function createFileWithXmpPacket(string $openTag, int $fillerBytes, string $closeTag): string
+    {
+        $filePath = tempnam(sys_get_temp_dir(), 'pimcore-embedded-meta-data-test-');
+        $this->tempFiles[] = $filePath;
+
+        $handle = fopen($filePath, 'wb');
+        fwrite($handle, "%PDF-1.4\n" . $openTag);
+        $chunk = str_repeat('x', 1024 * 1024);
+        for ($written = 0; $written < $fillerBytes; $written += strlen($chunk)) {
+            fwrite($handle, substr($chunk, 0, min(strlen($chunk), $fillerBytes - $written)));
+        }
+        fwrite($handle, $closeTag . "\n%%EOF\n");
+        fclose($handle);
+
+        return $filePath;
+    }
+
     public function testEmbeddedMetaDataIsOnlyExtractedOnceUnlessDataChanged(): void
     {
         $previousMetaData = ['title' => 'from a previous extraction'];
