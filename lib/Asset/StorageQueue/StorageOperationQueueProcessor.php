@@ -40,6 +40,11 @@ final class StorageOperationQueueProcessor
 {
     private const DEADLINE_CHECK_INTERVAL = 100;
 
+    /**
+     * @var list<StorageOperation>|null run-scoped snapshot, see pendingMoves()
+     */
+    private ?array $pendingMoves = null;
+
     private const COMPLETION_ATTEMPTS = 3;
 
     public function __construct(
@@ -50,14 +55,37 @@ final class StorageOperationQueueProcessor
     ) {
     }
 
-    public function process(?int $onlyId = null, ?int $maxRuntimeSeconds = null, ?Closure $heartbeat = null): StorageQueueProcessingResult
-    {
+    /**
+     * @param bool $continueOnError keep going after a failing row instead of ending the run.
+     *                              The default is to stop: these operations are destructive, the
+     *                              command is built to run unattended overnight, and a failure
+     *                              here is usually the backend being unhappy rather than one odd
+     *                              row - so the next thousand rows would fail the same way. One
+     *                              error naming one row is a better thing to wake someone with
+     *                              than a summary of several thousand. Pass true when an operator
+     *                              is watching a large one-off migration and would rather have the
+     *                              bulk proceed and read the errors afterwards.
+     */
+    public function process(
+        ?int $onlyId = null,
+        ?int $maxRuntimeSeconds = null,
+        ?Closure $heartbeat = null,
+        bool $continueOnError = false
+    ): StorageQueueProcessingResult {
         $deadline = $maxRuntimeSeconds !== null ? time() + $maxRuntimeSeconds : null;
+        $this->pendingMoves = null; // fresh snapshot per run
+        $stoppedOnError = false;
         $processed = 0;
         $failed = 0;
         $timedOut = false;
         $errors = [];
         $clearedAssetMove = false;
+        /** @var array<int, int>|null $barriers */
+        $barriers = null;
+        /** @var array<string, true> $haltedTargets storage + target of every Move that did not land this run */
+        $haltedTargets = [];
+        /** @var list<StorageOperation> $failedDeletes */
+        $failedDeletes = [];
 
         if ($onlyId !== null) {
             $requested = $this->repository->findById($onlyId);
@@ -65,6 +93,7 @@ final class StorageOperationQueueProcessor
 
             if ($requested !== null && $requested->getType() === StorageOperationType::Move) {
                 $newerSameTarget = $this->findNewerSameTargetRow($requested);
+                $olderDelete = $this->findOlderOverlappingDelete($requested);
                 if ($newerSameTarget !== null) {
                     $operations = [];
                     $failed++;
@@ -75,10 +104,22 @@ final class StorageOperationQueueProcessor
                         $newerSameTarget->getId(),
                         (string) $requested->getTargetPrefix()
                     );
+                } elseif ($olderDelete !== null) {
+                    $operations = [];
+                    $failed++;
+                    $errors[] = sprintf(
+                        '#%d move %s: refusing to process out of order - row #%d deletes the overlapping prefix "%s" and is older; run without --id so the queue drains in order',
+                        $requested->getId(),
+                        $requested->getSourcePrefix(),
+                        $olderDelete->getId(),
+                        $olderDelete->getSourcePrefix()
+                    );
                 }
             }
         } else {
-            $operations = $this->orderForProcessing($this->repository->all());
+            $queued = $this->repository->all();
+            $barriers = $this->moveBarriers($queued);
+            $operations = $this->orderForProcessing($queued, $barriers);
         }
 
         foreach ($operations as $operation) {
@@ -90,17 +131,67 @@ final class StorageOperationQueueProcessor
 
             $this->invokeHeartbeat($heartbeat); // row boundary
 
+            // Keyed by storage + target, NOT by the barrier-aware cluster key. Barrier segments only
+            // decide which moves may be reordered past each other; a failed move must hold back every
+            // other move onto its target regardless of segment, or a later segment claims the target
+            // and the failed move deletes its own fresher source as superseded on the next run.
+            $haltKey = $operation->getType() === StorageOperationType::Move
+                ? $operation->getStorage() . "\0" . (string) $operation->getTargetPrefix()
+                : null;
+
+            // Same-target moves drain newest-first so the freshest bytes claim the target before
+            // any superseded row can. Once one of them has not landed, every other move onto that
+            // target must wait: an older row would otherwise put stale bytes there, and the row
+            // that failed would then find the target occupied, treat its own source as superseded
+            // and delete it. Moves onto other targets are unaffected - a single unprocessable row
+            // still must not hold up the queue.
+            if ($haltKey !== null && isset($haltedTargets[$haltKey])) {
+                continue; // stays queued for the next run
+            }
+
+            // The mirror of the rule above, for the other row type. FIFO says an earlier Delete
+            // sweeps its prefix before anything relocates out of it. When that Delete only
+            // FAILED, a later overlapping Move must wait too: it would otherwise carry the
+            // content elsewhere, the next run would find the source empty and complete the
+            // Delete, and content the user explicitly deleted would survive under the move
+            // target. Whether that happens must not hinge on a transient backend error. A
+            // DEFERRED Delete is deliberately not a barrier here - deferral is an ordered wait,
+            // not a failure, and the row it waits for has already had its turn.
+            if ($operation->getType() === StorageOperationType::Move
+                && $this->isBlockedByFailedDelete($operation, $failedDeletes)
+            ) {
+                continue; // stays queued for the next run
+            }
+
             try {
                 if ($this->processOperation($operation, $deadline, $heartbeat)) {
                     $processed++;
                     if ($operation->getType() === StorageOperationType::Move && $operation->getStorage() === 'asset') {
                         $clearedAssetMove = true;
                     }
+                } elseif ($haltKey !== null) {
+                    // incomplete, not failed: the bytes are still at the source, so the same
+                    // reasoning applies and the rest of the cluster waits too
+                    $haltedTargets[$haltKey] = true;
+                }
+                if ($operation->getType() === StorageOperationType::Move) {
+                    // The snapshot below is what later Deletes consult. A Move that just drained
+                    // no longer blocks anything, and one that ended incomplete may have been
+                    // repointed under us, so the cached copy is stale either way. Dropping it
+                    // costs one re-read per Move rather than per Delete, which is the ratio the
+                    // snapshot exists to protect.
+                    $this->pendingMoves = null;
                 }
                 // incomplete rows (deadline hit, undated entries, contested rows) stay queued
                 // for the next run - processOperation removes its own row on completion
             } catch (Exception $e) {
                 $failed++;
+                if ($haltKey !== null) {
+                    $haltedTargets[$haltKey] = true;
+                }
+                if ($operation->getType() === StorageOperationType::Delete) {
+                    $failedDeletes[] = $operation;
+                }
                 $errors[] = sprintf(
                     '#%d %s %s: %s',
                     $operation->getId(),
@@ -113,6 +204,12 @@ final class StorageOperationQueueProcessor
                     'storage' => $operation->getStorage(),
                     'exception' => $e,
                 ]);
+
+                if (!$continueOnError) {
+                    $stoppedOnError = true;
+
+                    break;
+                }
             }
         }
 
@@ -126,6 +223,7 @@ final class StorageOperationQueueProcessor
             count($this->repository->all()),
             $timedOut,
             $errors,
+            $stoppedOnError,
         );
     }
 
@@ -188,6 +286,263 @@ final class StorageOperationQueueProcessor
     }
 
     /**
+     * Whether two storage prefixes name overlapping content: the same prefix, or one nested
+     * inside the other. Both nesting directions matter, since either makes one operation's
+     * outcome depend on whether the other ran first.
+     */
+    private function prefixesOverlap(string $a, string $b): bool
+    {
+        $a = trim($a, '/');
+        $b = trim($b, '/');
+
+        return $a === $b
+            || str_starts_with($a, $b . '/')
+            || str_starts_with($b, $a . '/');
+    }
+
+    /**
+     * Whether a Delete that failed earlier in this run still stands between the queue and this
+     * Move. Same storage only, and only Deletes the Move would have been ordered behind.
+     *
+     * @param list<StorageOperation> $failedDeletes
+     */
+    private function isBlockedByFailedDelete(StorageOperation $move, array $failedDeletes): bool
+    {
+        foreach ($failedDeletes as $delete) {
+            if ($delete->getStorage() === $move->getStorage()
+                && $this->deleteOverlapsMove($delete, $move)
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether the Delete's prefix overlaps either end of the Move.
+     *
+     * The SOURCE matters because the Move's bytes are still sitting there; the TARGET matters
+     * because a prefix that only exists once the Move has run is content the Delete has not
+     * seen yet. Ordering the two rows differently changes the outcome in both cases.
+     */
+    private function deleteOverlapsMove(StorageOperation $delete, StorageOperation $move): bool
+    {
+        foreach ([$move->getSourcePrefix(), $move->getTargetPrefix()] as $movePath) {
+            if ($movePath !== null && $this->prefixesOverlap($delete->getSourcePrefix(), $movePath)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Finds a pending Move the given Delete must not run ahead of.
+     *
+     * Two overlaps matter, in both nesting directions:
+     *  - the Move's SOURCE: its bytes are still there (the move is only queued), so sweeping
+     *    them would leave the asset with no copy anywhere and the Move permanently unsatisfiable;
+     *  - the Move's TARGET: the Delete names a path that only exists through that Move, so the
+     *    content it refers to has not been materialised yet. Completing the Delete now would let
+     *    the Move recreate exactly the subtree the user deleted.
+     *
+     * Only Moves OLDER than the Delete qualify. A Move queued afterwards has to be processed
+     * after it in FIFO order anyway, and letting it defer the Delete would allow content that
+     * was explicitly deleted to be rescued out of the swept prefix.
+     */
+    private function findPendingMoveDependingOn(StorageOperation $delete): ?StorageOperation
+    {
+        foreach ($this->pendingMoves() as $candidate) {
+            if ($candidate->getStorage() !== $delete->getStorage()
+                || (int) $candidate->getId() >= (int) $delete->getId()
+            ) {
+                continue;
+            }
+
+            if ($this->deleteOverlapsMove($delete, $candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * The mirror image of findPendingMoveDependingOn(), for the --id entry point.
+     *
+     * A full run drains in FIFO order, so an older Delete always gets its chance before a Move
+     * that overlaps it. --id skips that ordering entirely: it would carry the bytes out of the
+     * deleted prefix first, and the Delete would then find an empty directory and complete
+     * silently - leaving explicitly deleted content alive under the move target.
+     *
+     * Overlap is tested in both nesting directions, and against the Move's target as well: a
+     * Delete covering the target names content the Move has not materialised yet, so running the
+     * Move first would recreate the subtree the Delete is meant to remove.
+     */
+    private function findOlderOverlappingDelete(StorageOperation $move): ?StorageOperation
+    {
+        foreach ($this->repository->all() as $candidate) {
+            if ($candidate->getType() !== StorageOperationType::Delete
+                || $candidate->getStorage() !== $move->getStorage()
+                || (int) $candidate->getId() >= (int) $move->getId()
+            ) {
+                continue;
+            }
+
+            if ($this->deleteOverlapsMove($candidate, $move)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Run-scoped snapshot of the pending Move rows, so a backlog of Delete rows does not re-read
+     * and re-hydrate the whole queue once per row. Refreshed explicitly while a long sweep is
+     * running, since producers keep writing to the queue during a processor run.
+     *
+     * @return list<StorageOperation>
+     */
+    private function pendingMoves(): array
+    {
+        if ($this->pendingMoves === null) {
+            $this->refreshPendingMoves();
+        }
+
+        return $this->pendingMoves ?? [];
+    }
+
+    private function logDeferredDelete(StorageOperation $delete, StorageOperation $blocking): void
+    {
+        $this->logger->info(
+            'Storage queue delete deferred - a pending move still needs this content',
+            [
+                'delete' => $delete->getId(),
+                'storage' => $delete->getStorage(),
+                'prefix' => $delete->getSourcePrefix(),
+                'blockedBy' => $blocking->getId(),
+                'moveSource' => $blocking->getSourcePrefix(),
+                'moveTarget' => $blocking->getTargetPrefix(),
+            ]
+        );
+    }
+
+    private function refreshPendingMoves(): void
+    {
+        $moves = [];
+        foreach ($this->repository->all() as $row) {
+            if ($row->getType() === StorageOperationType::Move) {
+                $moves[] = $row;
+            }
+        }
+
+        $this->pendingMoves = $moves;
+    }
+
+    /**
+     * Cluster identity for the newest-first drain: same target prefix, same storage, and the same
+     * most recent blocking Delete (see moveBarriers()).
+     *
+     * @param array<int, int> $barriers
+     */
+    private function clusterKey(StorageOperation $move, array $barriers): string
+    {
+        $barrier = $barriers[(int) $move->getId()] ?? 0;
+
+        return $barrier . "\0" . $move->getStorage() . "\0" . (string) $move->getTargetPrefix();
+    }
+
+    /**
+     * For each Move row, the id of the most recent Delete queued before it that overlaps the
+     * Move (0 when there is none).
+     *
+     * This is what a same-target cluster may not be drained across. Reversing a cluster moves its
+     * later members ahead of everything between them, so a Delete in that gap would suddenly see
+     * different content: either the Move carried bytes out of the prefix the Delete was queued to
+     * remove, or it dropped bytes into it just before the sweep. Two Moves share a barrier id
+     * exactly when no such Delete sits between them, which is precisely when reordering them is
+     * safe. A Delete that overlaps neither end of the Move is irrelevant and must NOT split the
+     * cluster - doing so would strand the older row's stale bytes at the shared target, the very
+     * data loss the newest-first drain exists to prevent.
+     *
+     * @param StorageOperation[] $operations
+     *
+     * @return array<int, int>
+     */
+    private function moveBarriers(array $operations): array
+    {
+        // Comparing every Move against every preceding Delete is quadratic, and it runs before
+        // the first row-level deadline check, so a large backlog could burn the whole --max-runtime
+        // budget on ordering alone. Two prefix indexes, both maintained incrementally as the queue
+        // is walked, answer the same question with a handful of lookups per row:
+        //   $exact[storage][p]      - newest Delete seen so far naming exactly prefix p,
+        //                             which answers "same prefix" and, walked over the Move's
+        //                             ancestors, "the Delete covers the Move";
+        //   $descendant[storage][p] - newest Delete seen so far sitting strictly below p, which
+        //                             answers "the Delete sits inside the Move".
+        // Together those are exactly the three cases prefixesOverlap() tests, at a cost of one
+        // lookup per path segment instead of one comparison per earlier Delete.
+        $barriers = [];
+        $exact = [];
+        $descendant = [];
+
+        foreach ($operations as $operation) {
+            $storage = $operation->getStorage();
+
+            if ($operation->getType() === StorageOperationType::Delete) {
+                $id = (int) $operation->getId();
+                $prefix = trim($operation->getSourcePrefix(), '/');
+                $exact[$storage][$prefix] = max($exact[$storage][$prefix] ?? 0, $id);
+                foreach ($this->ancestorPrefixes($prefix) as $ancestor) {
+                    $descendant[$storage][$ancestor] = max($descendant[$storage][$ancestor] ?? 0, $id);
+                }
+
+                continue;
+            }
+
+            // everything else in the queue is a Move
+            $barrier = 0;
+            foreach ([$operation->getSourcePrefix(), $operation->getTargetPrefix()] as $movePath) {
+                if ($movePath === null) {
+                    continue;
+                }
+                $movePath = trim($movePath, '/');
+                $barrier = max(
+                    $barrier,
+                    $exact[$storage][$movePath] ?? 0,
+                    $descendant[$storage][$movePath] ?? 0
+                );
+                foreach ($this->ancestorPrefixes($movePath) as $ancestor) {
+                    $barrier = max($barrier, $exact[$storage][$ancestor] ?? 0);
+                }
+            }
+            $barriers[(int) $operation->getId()] = $barrier;
+        }
+
+        return $barriers;
+    }
+
+    /**
+     * The strict ancestor prefixes of a storage prefix, deepest first: "a/b/c" gives "a/b", "a".
+     *
+     * @return list<string>
+     */
+    private function ancestorPrefixes(string $prefix): array
+    {
+        $ancestors = [];
+        $current = trim($prefix, '/');
+
+        while (($slash = strrpos($current, '/')) !== false) {
+            $current = substr($current, 0, $slash);
+            $ancestors[] = $current;
+        }
+
+        return $ancestors;
+    }
+
+    /**
      * Reorders operations for processing: global id-ASC (FIFO) is preserved, except that Move
      * rows sharing an IDENTICAL target_prefix are drained newest-first within their cluster, at
      * the position of the cluster's first (oldest) member. Delete rows and Move rows with
@@ -203,17 +558,23 @@ final class StorageOperationQueueProcessor
      *
      * Pure and side-effect-free so it can be unit-tested directly.
      *
-     * @param StorageOperation[] $operations
-     *
      * @return StorageOperation[]
      */
-    private function orderForProcessing(array $operations): array
+    private function orderForProcessing(array $operations, ?array $barriers = null): array
     {
+        // Deletes always keep strict FIFO, and a cluster is never drained across a Delete that
+        // overlaps it: the later Move could carry content out of the very prefix the Delete was
+        // queued to remove, and the dependency check in processDelete() deliberately only
+        // considers rows older than the Delete, so it would not cover a Move that jumped ahead
+        // of it either. Unrelated Deletes do not split a cluster.
+        $barriers ??= $this->moveBarriers($operations);
+
         $moveClusters = [];
         foreach ($operations as $operation) {
-            if ($operation->getType() === StorageOperationType::Move) {
-                $moveClusters[(string) $operation->getTargetPrefix()][] = $operation;
+            if ($operation->getType() !== StorageOperationType::Move) {
+                continue;
             }
+            $moveClusters[$this->clusterKey($operation, $barriers)][] = $operation;
         }
 
         $emittedClusters = [];
@@ -225,7 +586,7 @@ final class StorageOperationQueueProcessor
                 continue;
             }
 
-            $targetPrefix = (string) $operation->getTargetPrefix();
+            $targetPrefix = $this->clusterKey($operation, $barriers);
             $cluster = $moveClusters[$targetPrefix];
             if (count($cluster) < 2) {
                 $ordered[] = $operation;
@@ -255,6 +616,16 @@ final class StorageOperationQueueProcessor
         $cutoff = $operation->getCreatedAt()->getTimestamp();
         $source = $operation->getSourcePrefix();
 
+        // Checked BEFORE the "nothing here" completion below: a Delete can name a path that only
+        // exists through a pending Move, in which case the prefix is legitimately empty right now
+        // and dropping the row would let the Move recreate the deleted subtree later.
+        $blocking = $this->findPendingMoveDependingOn($operation);
+        if ($blocking !== null) {
+            $this->logDeferredDelete($operation, $blocking);
+
+            return false;
+        }
+
         if (!$adapter->directoryExists($source)) {
             $this->repository->remove((int) $operation->getId());
 
@@ -263,10 +634,19 @@ final class StorageOperationQueueProcessor
 
         $entriesSinceCheck = 0;
         foreach ($adapter->listContents($source, true) as $item) {
-            if ($deadline !== null && ++$entriesSinceCheck >= self::DEADLINE_CHECK_INTERVAL) {
+            if (++$entriesSinceCheck >= self::DEADLINE_CHECK_INTERVAL) {
                 $entriesSinceCheck = 0;
                 $this->invokeHeartbeat($heartbeat);
-                if (time() >= $deadline) {
+                if ($deadline !== null && time() >= $deadline) {
+                    return false;
+                }
+                // The snapshot taken above can age during a long sweep: a producer may queue an
+                // overlapping Move meanwhile. Re-read and stop before deleting its content.
+                $this->refreshPendingMoves();
+                $late = $this->findPendingMoveDependingOn($operation);
+                if ($late !== null) {
+                    $this->logDeferredDelete($operation, $late);
+
                     return false;
                 }
             }
