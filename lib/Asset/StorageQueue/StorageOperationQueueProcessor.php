@@ -82,7 +82,8 @@ final class StorageOperationQueueProcessor
         $clearedAssetMove = false;
         /** @var array<int, int>|null $barriers */
         $barriers = null;
-        $haltedClusters = [];
+        /** @var array<string, true> $haltedTargets storage + target of every Move that did not land this run */
+        $haltedTargets = [];
         /** @var list<StorageOperation> $failedDeletes */
         $failedDeletes = [];
 
@@ -130,17 +131,21 @@ final class StorageOperationQueueProcessor
 
             $this->invokeHeartbeat($heartbeat); // row boundary
 
-            $cluster = $operation->getType() === StorageOperationType::Move && $barriers !== null
-                ? $this->clusterKey($operation, $barriers)
+            // Keyed by storage + target, NOT by the barrier-aware cluster key. Barrier segments only
+            // decide which moves may be reordered past each other; a failed move must hold back every
+            // other move onto its target regardless of segment, or a later segment claims the target
+            // and the failed move deletes its own fresher source as superseded on the next run.
+            $haltKey = $operation->getType() === StorageOperationType::Move
+                ? $operation->getStorage() . "\0" . (string) $operation->getTargetPrefix()
                 : null;
 
-            // A same-target cluster drains newest-first so the freshest bytes claim the target
-            // before any superseded row can. Once a member has not landed, the rest of that
-            // cluster must wait: an older row would otherwise put stale bytes at the shared
-            // target, and the row that failed would then find it occupied, treat its own source
-            // as superseded and delete it. Rows outside the cluster are unaffected - a single
-            // unprocessable row still must not hold up the queue.
-            if ($cluster !== null && isset($haltedClusters[$cluster])) {
+            // Same-target moves drain newest-first so the freshest bytes claim the target before
+            // any superseded row can. Once one of them has not landed, every other move onto that
+            // target must wait: an older row would otherwise put stale bytes there, and the row
+            // that failed would then find the target occupied, treat its own source as superseded
+            // and delete it. Moves onto other targets are unaffected - a single unprocessable row
+            // still must not hold up the queue.
+            if ($haltKey !== null && isset($haltedTargets[$haltKey])) {
                 continue; // stays queued for the next run
             }
 
@@ -164,10 +169,10 @@ final class StorageOperationQueueProcessor
                     if ($operation->getType() === StorageOperationType::Move && $operation->getStorage() === 'asset') {
                         $clearedAssetMove = true;
                     }
-                } elseif ($cluster !== null) {
+                } elseif ($haltKey !== null) {
                     // incomplete, not failed: the bytes are still at the source, so the same
                     // reasoning applies and the rest of the cluster waits too
-                    $haltedClusters[$cluster] = true;
+                    $haltedTargets[$haltKey] = true;
                 }
                 if ($operation->getType() === StorageOperationType::Move) {
                     // The snapshot below is what later Deletes consult. A Move that just drained
@@ -181,8 +186,8 @@ final class StorageOperationQueueProcessor
                 // for the next run - processOperation removes its own row on completion
             } catch (Exception $e) {
                 $failed++;
-                if ($cluster !== null) {
-                    $haltedClusters[$cluster] = true;
+                if ($haltKey !== null) {
+                    $haltedTargets[$haltKey] = true;
                 }
                 if ($operation->getType() === StorageOperationType::Delete) {
                     $failedDeletes[] = $operation;
