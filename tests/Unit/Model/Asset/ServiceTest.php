@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Model\Asset;
 
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\UnableToReadFile;
 use Pimcore\Model\Asset\Image\ThumbnailInterface;
 use Pimcore\Model\Asset\Service;
 use Pimcore\Tests\Support\Test\TestCase;
@@ -22,6 +24,52 @@ use Pimcore\Tests\Support\Test\TestCase;
  */
 class ServiceTest extends TestCase
 {
+    public function testGetStreamedResponseForThumbnailRethrowsWhenDirectDeliveryReadFails(): void
+    {
+        $uri = '/testimage/1/image-thumb__1__unittest/testimage.jpg';
+
+        $storage = $this->createMock(FilesystemOperator::class);
+        // the read fails and the file is still there afterwards, i.e. a storage fault rather
+        // than a cache miss - regenerating would mask it on every single request
+        $storage->method('fileExists')->willReturn(true);
+        $storage->method('readStream')->willThrowException(UnableToReadFile::fromLocation($uri));
+
+        $this->expectException(UnableToReadFile::class);
+        Service::getStreamedResponseForThumbnail([
+            'type' => 'image',
+            'asset_id' => 1,
+            'thumbnail_name' => 'unittest',
+            'filename' => 'testimage.jpg',
+            'file_extension' => 'jpg',
+            'prefix' => '',
+        ], $uri, $storage);
+    }
+
+    public function testGetStreamedResponseForThumbnailFallsThroughWhenFileDisappears(): void
+    {
+        $uri = '/testimage/0/image-thumb__0__unittest/testimage.jpg';
+
+        $storage = $this->createMock(FilesystemOperator::class);
+        // the read fails and the re-check finds the file gone (there is no pre-check any more
+        // since #19135, so this is the only fileExists() call)
+        $storage->method('fileExists')->willReturn(false);
+        $storage->method('readStream')->willThrowException(UnableToReadFile::fromLocation($uri));
+
+        // falls through to the regular thumbnail resolution, which cannot resolve the
+        // non-existing asset and returns null (-> 404 at the controller). Asset id 0 is
+        // rejected by Asset::getById()'s guard before any DAO access, keeping this test
+        // runnable on unit environments without database support.
+        $response = Service::getStreamedResponseForThumbnail([
+            'type' => 'image',
+            'asset_id' => 0,
+            'thumbnail_name' => 'unittest',
+            'filename' => 'testimage.jpg',
+            'file_extension' => 'jpg',
+            'prefix' => '',
+        ], $uri, $storage);
+
+        $this->assertNull($response);
+    }
     public function testGetStreamedResponseFromImageThumbnailReturnsNullOnGenerationError(): void
     {
         $thumbnail = $this->createMock(ThumbnailInterface::class);

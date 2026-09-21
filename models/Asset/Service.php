@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset;
 
 use Exception;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToReadFile;
 use Pimcore;
 use Pimcore\Config;
@@ -28,6 +30,7 @@ use Pimcore\Model\Asset\Image\ThumbnailInterface;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Exception\ThumbnailGenerationFailedException;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -557,7 +560,14 @@ class Service extends Model\Element\Service
         $config = self::extractThumbnailInfoFromUri($uri);
 
         if ($config) {
-            return self::getStreamedResponseForThumbnail($config, $uri);
+            try {
+                return self::getStreamedResponseForThumbnail($config, $uri);
+            } catch (ThumbnailGenerationFailedException|UnableToReadFile) {
+                // keep the nullable contract of this public helper: neither a failed generation
+                // nor a storage read error may escape here, the distinction between them is only
+                // relevant for the internal delivery through the thumbnail route
+                return null;
+            }
         }
 
         return null;
@@ -567,10 +577,12 @@ class Service extends Model\Element\Service
      * @internal
      *
      * @throws \League\Flysystem\FilesystemException
+     * @throws ThumbnailGenerationFailedException if the thumbnail could not be generated
+     * @throws UnableToReadFile if the direct delivery of an existing thumbnail file fails
      */
-    public static function getStreamedResponseForThumbnail(array $config, string $uri): ?StreamedResponse
+    public static function getStreamedResponseForThumbnail(array $config, string $uri, ?FilesystemOperator $storage = null): ?StreamedResponse
     {
-        $storage = Storage::get('thumbnail');
+        $storage ??= Storage::get('thumbnail');
         $storagePath = urldecode($uri);
 
         $prefix = \Pimcore\Config::getSystemConfiguration('assets')['frontend_prefixes']['thumbnail'];
@@ -588,8 +600,17 @@ class Service extends Model\Element\Service
             try {
                 $stream = $storage->readStream($storagePath);
             } catch (UnableToReadFile $e) {
-                // Logged at debug level because a cache miss - the common case on first delivery -
-                // is reported the same way as an actual storage failure.
+                if (self::fileStillExists($storage, $storagePath)) {
+                    // Reading failed although the file is still there (permission, I/O or backend
+                    // availability problems). Regenerating would mask a storage fault as a cache
+                    // miss - and on a broken storage it would do so for every request - so the
+                    // original failure is surfaced instead.
+                    throw $e;
+                }
+
+                // The file is genuinely gone: a cache miss on first delivery, or a thumbnail
+                // deleted concurrently. Fall through to the regular resolution below, which
+                // regenerates it or ends in a not-found response.
                 Logger::debug('Could not stream cached thumbnail ' . $storagePath . ': ' . $e->getMessage());
                 $stream = null;
             }
@@ -611,10 +632,29 @@ class Service extends Model\Element\Service
 
         $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
         if ($thumbnail) {
+            if (!is_array($thumbnail) && ($thumbnail->getPathReference()['type'] ?? '') === 'error') {
+                // distinguish failed generations from missing thumbnails (null), so the
+                // caller can respond with a placeholder instead of a not-found response
+                throw new ThumbnailGenerationFailedException('Unable to generate ' . $config['type'] . ' thumbnail for ' . $config['filename'] . ', see logs for details.');
+            }
+
             return Asset\Service::getStreamedResponseFromImageThumbnail($thumbnail, $config);
         }
 
         return null;
+    }
+
+    /**
+     * whether the file still exists on the storage after a failed read,
+     * treating an indeterminate result as existing (storage-side problem)
+     */
+    private static function fileStillExists(FilesystemOperator $storage, string $storagePath): bool
+    {
+        try {
+            return $storage->fileExists($storagePath);
+        } catch (FilesystemException) {
+            return true;
+        }
     }
 
     /**

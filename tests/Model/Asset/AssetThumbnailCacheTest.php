@@ -27,6 +27,7 @@ use ReflectionProperty;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AssetThumbnailCacheTest extends TestCase
 {
@@ -479,6 +480,25 @@ class AssetThumbnailCacheTest extends TestCase
         $this->assertNull(Asset\Service::getStreamedResponseByUri($uri));
     }
 
+    public function testThumbnailActionReturnsNotFoundForNonExistingAsset(): void
+    {
+        $nonExistingAssetId = 999999999;
+        $this->assertNull(Asset::getById($nonExistingAssetId));
+
+        $controller = new PublicServicesController();
+        $request = new Request(attributes: [
+            'assetId' => $nonExistingAssetId,
+            'thumbnailName' => $this->thumbnailName,
+            'filename' => 'image1.jpg',
+            'type' => 'image',
+            'prefix' => '',
+        ]);
+
+        //previously redirected to the placeholder image, masking the missing asset as a 200/302
+        $this->expectException(NotFoundHttpException::class);
+        $controller->thumbnailAction($request);
+    }
+
     public function testGetStreamInvalidatesStaleStatusCacheWhenFileMissingFromStorage(): void
     {
         $asset = $this->testAsset;
@@ -510,9 +530,8 @@ class AssetThumbnailCacheTest extends TestCase
         //the stale status cache entry got invalidated ...
         $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $filename));
 
-        //... so the next request (a fresh thumbnail instance) no longer reports the missing file
-        //as existing and regenerates it instead
-        $thumbnail = $asset->getThumbnail($thumbnailName);
+        //... and the memoized path reference discarded, so the very same instance regenerates
+        //the thumbnail on the next access instead of pointing at the file that is gone
         $this->assertFalse($thumbnail->exists());
 
         $stream = $thumbnail->getStream();
