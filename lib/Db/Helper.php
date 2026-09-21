@@ -67,7 +67,7 @@ class Helper
     }
 
     /**
-     * Updates the rows matching $keys, or inserts the row if none was changed.
+     * Updates the rows matching $keys, or inserts the row if none matched.
      *
      * The rows addressed are those of {@see self::upsert()} - $keys are the criteria of an
      * UPDATE ... WHERE, no other row is ever touched, no trigger runs on a row the criteria do

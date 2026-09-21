@@ -256,8 +256,14 @@ class Dao extends Model\Dao\AbstractDao
                     if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty(
                         $language
                     )) {
-                        // on an update the row exists and updateOrInsert() is a single UPDATE; a new row is a
-                        // plain insert either way
+                        // on an update the language row normally exists and updateOrInsert() is a single
+                        // UPDATE; a new object's rows are plain inserts either way. isUpdate describes the
+                        // object, not the language: a language written for the first time on an existing
+                        // object (added to the object, or configured after it was created) misses the UPDATE
+                        // and is inserted by the fallback - one extra UPDATE and one SELECT, once per object
+                        // and language. A per-language existence signal is not available here for objects
+                        // that come from the cache without a load(), and a SELECT per save would cost more
+                        // than that one-time miss.
                         if (!empty($params['isUpdate'])) {
                             Helper::updateOrInsert($this->db, $storeTable, $insertData, $this->getTableKeyColumns());
                         } else {
@@ -430,8 +436,8 @@ class Dao extends Model\Dao\AbstractDao
                     $queryTable = $this->getQueryTableName().'_'.$language;
 
                     try {
-                        // on an update the row exists and updateOrInsert() is a single UPDATE; a new row is a
-                        // plain insert either way
+                        // as for the store table above: the query row of a language written for the first
+                        // time on an existing object misses the UPDATE once and is inserted by the fallback
                         if (!empty($params['isUpdate'])) {
                             Helper::updateOrInsert($this->db, $queryTable, $data, $this->getQueryTableKeyColumns());
                         } else {
