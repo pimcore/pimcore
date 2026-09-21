@@ -1210,6 +1210,46 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertFalse($this->adapter->fileExists('C/d.jpg'), 'no other move onto the CURRENT target may land in this run');
         $this->assertSame('d', $this->adapter->read('D/d.jpg'), 'that move stays queued with its source untouched');
     }
+
+    public function testAFailedMoveDropsThePendingMoveSnapshotSoLaterDeletesSeeItsCurrentTarget(): void
+    {
+        // Later Deletes decide whether to wait based on the run-scoped pending-move snapshot. An
+        // earlier Delete primes that snapshot while the move still targets B; the move is then
+        // repointed to C and fails. A Delete of C must still be deferred: the failed move now holds
+        // content destined for C. If the snapshot were not dropped on failure, the Delete would
+        // consult the stale A -> B entry, find no overlap with C, and run.
+        for ($i = 1; $i <= 8; $i++) {
+            $this->writeWithMtime("A/file{$i}.jpg", "a{$i}", time() - 7200);
+        }
+        $this->writeWithMtime('unrelated/u.jpg', 'u', time() - 7200);
+        $this->addRow(StorageOperationType::Delete, 'unrelated', null);                             // #1 primes the snapshot
+        $this->addRow(StorageOperationType::Move, 'A', 'B', new DateTimeImmutable('+5 seconds'));  // #2 will be repointed to C
+        $this->addRow(StorageOperationType::Delete, 'C', null);                                     // #3 overlaps the CURRENT target only
+
+        $refusing = new CopyRefusingAdapterDecorator($this->adapter, 'A', false);
+        $mutating = new StorageOperationQueueProcessorTestMutatingAdapter(
+            $refusing,
+            4,
+            function () use ($refusing): void {
+                $this->repository->add(new StorageOperation(
+                    null, 'asset', StorageOperationType::Move, 'B', 'C', new DateTimeImmutable()
+                ));
+                $refusing->refusing = true;
+            }
+        );
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator($mutating),
+            $this->repository,
+            new NullLogger(),
+            3
+        );
+
+        $result = $processor->process(null, null, null, true); // continue past the failure
+
+        $this->assertSame(1, $result->getFailedRows());
+        $this->assertSame('C', $this->findRow(StorageOperationType::Move, 'A')?->getTargetPrefix(), 'precondition: repointed');
+        $this->assertNotNull($this->findRow(StorageOperationType::Delete, 'C'), 'the Delete of the current target waited for the failed move');
+    }
 }
 
 /**
