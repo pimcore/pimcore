@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Asset;
 
 use League\Flysystem\FilesystemOperator;
+use League\Flysystem\UnableToReadFile;
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\Controller\PublicServicesController;
 use Pimcore\Config;
@@ -478,6 +479,32 @@ class AssetThumbnailCacheTest extends TestCase
         // path reference ended in a TypeError from writeStream(null) on the thumbnail storage
         $uri = sprintf('/image-thumb__%d__%s/broken.jpg', $brokenAsset->getId(), $this->thumbnailName);
         $this->assertNull(Asset\Service::getStreamedResponseByUri($uri));
+    }
+
+    public function testGetStreamedResponseByUriReturnsNullWhenDirectDeliveryReadFails(): void
+    {
+        $asset = $this->testAsset;
+
+        /** @var Asset\Image $asset */
+        $thumbnail = $asset->getThumbnail($this->thumbnailName);
+
+        //generate the thumbnail so the delivery below takes the direct-delivery path
+        $thumbnail->getPath(['deferredAllowed' => false]);
+        $storagePath = $thumbnail->getPathReference(true)['storagePath'];
+        $uri = sprintf('/image-thumb__%d__%s/%s', $asset->getId(), $this->thumbnailName, basename($storagePath));
+
+        //the file is still on the storage but cannot be read, i.e. a storage fault rather than a
+        //cache miss, so getStreamedResponseForThumbnail() surfaces the UnableToReadFile
+        $storage = $this->createMock(FilesystemOperator::class);
+        $storage->method('fileExists')->willReturn(true);
+        $storage->method('readStream')->willThrowException(UnableToReadFile::fromLocation($storagePath));
+
+        $this->withThumbnailStorage($storage, function () use ($uri) {
+            //the public helper for custom asset delivery (see
+            //doc/02_Assets/02_Restricting_Public_Asset_Access.md) must keep its ?StreamedResponse
+            //contract and swallow the storage error rather than let it escape to project code
+            $this->assertNull(Asset\Service::getStreamedResponseByUri($uri));
+        });
     }
 
     public function testThumbnailActionReturnsNotFoundForNonExistingAsset(): void
