@@ -370,25 +370,6 @@ final class StorageOperationQueueProcessor
     }
 
     /**
-     * Reorders operations for processing: global id-ASC (FIFO) is preserved, except that Move
-     * rows sharing an IDENTICAL target_prefix are drained newest-first within their cluster, at
-     * the position of the cluster's first (oldest) member. Delete rows and Move rows with
-     * distinct targets are untouched and keep strict FIFO.
-     *
-     * Rationale: a re-move can flatten several rows onto the same final target (e.g. a pending
-     * A -> B move gets repointed to A -> C when B -> C is queued). If the source content was
-     * replaced with fresher bytes while pending, strict FIFO would drain the OLDER row first,
-     * landing stale bytes at the shared target; the newer row would then see the target already
-     * occupied and delete its own (fresher) source content - permanent data loss. Draining the
-     * newest row in the cluster first lands the freshest bytes at the target before any older,
-     * superseded row gets a chance to claim that key.
-     *
-     * Pure and side-effect-free so it can be unit-tested directly.
-     *
-     *
-     * @return StorageOperation[]
-     */
-    /**
      * Cluster identity for the newest-first drain: same target prefix, same storage, and the same
      * most recent blocking Delete (see moveBarriers()).
      *
@@ -489,6 +470,24 @@ final class StorageOperationQueueProcessor
         return $ancestors;
     }
 
+    /**
+     * Reorders operations for processing: global id-ASC (FIFO) is preserved, except that Move
+     * rows sharing an IDENTICAL target_prefix are drained newest-first within their cluster, at
+     * the position of the cluster's first (oldest) member. Delete rows and Move rows with
+     * distinct targets are untouched and keep strict FIFO.
+     *
+     * Rationale: a re-move can flatten several rows onto the same final target (e.g. a pending
+     * A -> B move gets repointed to A -> C when B -> C is queued). If the source content was
+     * replaced with fresher bytes while pending, strict FIFO would drain the OLDER row first,
+     * landing stale bytes at the shared target; the newer row would then see the target already
+     * occupied and delete its own (fresher) source content - permanent data loss. Draining the
+     * newest row in the cluster first lands the freshest bytes at the target before any older,
+     * superseded row gets a chance to claim that key.
+     *
+     * Pure and side-effect-free so it can be unit-tested directly.
+     *
+     * @return StorageOperation[]
+     */
     private function orderForProcessing(array $operations): array
     {
         // Deletes always keep strict FIFO, and a cluster is never drained across a Delete that
