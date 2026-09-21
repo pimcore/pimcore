@@ -150,6 +150,8 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
+            $nonInheritableColumns = [];
+
             foreach ($fieldDefinitions as $key => $fd) {
                 if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                     $method = 'get' . $key;
@@ -165,8 +167,12 @@ class Dao extends Model\Dao\AbstractDao
                         $data[$key] = $insertData;
                     }
 
+                    if (!$fd->supportsInheritance()) {
+                        $nonInheritableColumns = array_merge($nonInheritableColumns, $columnNames);
+                    }
+
                     // if the current value is empty and we have data from the parent, we just use it
-                    if ($isEmpty && $parentData) {
+                    if ($isEmpty && $parentData && $fd->supportsInheritance()) {
                         foreach ($columnNames as $columnName) {
                             if (array_key_exists($columnName, $parentData)) {
                                 $data[$columnName] = $parentData[$columnName];
@@ -181,7 +187,7 @@ class Dao extends Model\Dao\AbstractDao
 
                     if ($inheritanceEnabled) {
                         //get changed fields for inheritance
-                        if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
+                        if (!$fd->supportsInheritance()) {
                             // nothing to do, see https://github.com/pimcore/pimcore/issues/727
                             continue;
                         } elseif ($fd->isRelationType()) {
@@ -241,9 +247,12 @@ class Dao extends Model\Dao\AbstractDao
 
             if ($inheritanceEnabled) {
                 $this->inheritanceHelper->doUpdate($object->getId(), true,
-                    ['inheritanceRelationContext' => [
-                        'ownertype' => 'objectbrick',
-                    ]]);
+                    [
+                        'inheritanceRelationContext' => [
+                            'ownertype' => 'objectbrick',
+                        ],
+                        'nonInheritableColumns' => $nonInheritableColumns,
+                    ]);
             }
             $this->inheritanceHelper->resetFieldsToCheck();
         } finally {
@@ -304,11 +313,7 @@ class Dao extends Model\Dao\AbstractDao
                 if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                     //exclude untouchables if value is not an array - this means data has not been loaded
                     //get changed fields for inheritance
-                    if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
-                        continue;
-                    }
-
-                    if (!empty($oldData[$key])) {
+                    if ($fd->supportsInheritance() && !empty($oldData[$key])) {
                         if ($fd->isRelationType()) {
                             $this->inheritanceHelper->addRelationToCheck($key, $fd);
                         } else {
@@ -337,7 +342,8 @@ class Dao extends Model\Dao\AbstractDao
             $classId = $this->model->getObject()->getClassId();
         }
 
-        $params = [$field, $id, $field, $id, $field, $id];
+        $ownerName = $this->model->getFieldname();
+        $params = [$field, $ownerName, $id, $field, $ownerName, $id, $field, $ownerName, $id];
 
         $dest = 'dest_id';
         $src = 'src_id';
@@ -350,6 +356,7 @@ class Dao extends Model\Dao\AbstractDao
             FROM objects o, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
+            AND r.ownername = ?
             AND r." . $src . ' = ?
             AND o.id = r.' . $dest . "
             AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
@@ -359,6 +366,7 @@ class Dao extends Model\Dao\AbstractDao
             FROM assets a, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
+            AND r.ownername = ?
             AND r." . $src . ' = ?
             AND a.id = r.' . $dest . "
             AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
@@ -368,6 +376,7 @@ class Dao extends Model\Dao\AbstractDao
             FROM documents d, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
+            AND r.ownername = ?
             AND r." . $src . ' = ?
             AND d.id = r.' . $dest . "
             AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')

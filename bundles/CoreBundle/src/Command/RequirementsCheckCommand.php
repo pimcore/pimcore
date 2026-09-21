@@ -37,7 +37,11 @@ class RequirementsCheckCommand extends AbstractCommand
     protected function configure(): void
     {
         $this
-            ->addOption('min-level', 'l', InputOption::VALUE_OPTIONAL, "Minimum status level to report: 'warning' or 'error'");
+            ->addOption('min-level', 'l', InputOption::VALUE_OPTIONAL, "Minimum status level to report: 'warning' or 'error'")
+            ->setHelp(
+                'Reports the state of the PHP, MySQL, filesystem and external tool requirements.' . PHP_EOL .
+                'Run with <info>-v</info> to additionally show what each external tool is used for and what happens without it.'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -59,7 +63,7 @@ class RequirementsCheckCommand extends AbstractCommand
                 break;
         }
 
-        $allChecks = Requirements::checkAll(Db::get());
+        $allChecks = $this->loadChecks();
 
         $this->display($allChecks['checksPHP'], 'PHP');
         $this->display($allChecks['checksMySQL'], 'MySQL');
@@ -70,20 +74,38 @@ class RequirementsCheckCommand extends AbstractCommand
     }
 
     /**
+     * @return array<string, Requirements\Check[]>
+     */
+    protected function loadChecks(): array
+    {
+        return Requirements::checkAll(Db::get());
+    }
+
+    /**
      * @param Requirements\Check[] $checks
      */
     protected function display(array $checks, string $title = ''): void
     {
         $checksTab = [];
+        $showDescription = $this->output->isVerbose();
 
         foreach ($checks as $check) {
             if (in_array($check->getState(), $this->levelsToDisplay)) {
-                $checksTab[] = [$check->getName(), $this->displayState($check->getState())];
+                $row = [$check->getName(), $this->displayState($check->getState())];
+                if ($showDescription) {
+                    $row[] = $check->message ?? '';
+                }
+                $checksTab[] = $row;
             }
         }
 
         if (!empty($checksTab)) {
-            $this->io->table(["<options=bold>$title</>", ''], $checksTab);
+            $headers = ["<options=bold>$title</>", ''];
+            if ($showDescription) {
+                $headers[] = '';
+            }
+
+            $this->io->table($headers, $checksTab);
         }
     }
 

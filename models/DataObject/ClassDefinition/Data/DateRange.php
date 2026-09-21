@@ -80,11 +80,13 @@ class DateRange extends Data implements
         $startDateKey = $this->getName() . '__start_date';
         $endDateKey = $this->getName() . '__end_date';
 
-        if (isset($data[$startDateKey], $data[$endDateKey])) {
+        if (isset($data[$startDateKey])) {
             $startDate = $this->getDateFromTimestamp($data[$startDateKey]);
-            $endDate = $this->getDateFromTimestamp($data[$endDateKey]);
             $period = CarbonPeriod::create()->setStartDate($startDate);
-            $period->setEndDate($endDate);
+
+            if (isset($data[$endDateKey])) {
+                $period->setEndDate($this->getDateFromTimestamp($data[$endDateKey]));
+            }
 
             return $period;
         }

@@ -173,9 +173,7 @@ class Dao extends Model\DataObject\Listing\Dao
 CONDITION;
 
                 if (!empty($fc['fieldname'])) {
-                    $condition .= <<<CONDITION
- AND {$this->db->quoteIdentifier($name)}.fieldname = "{$fc['fieldname']}"
-CONDITION;
+                    $condition .= ' AND ' . $this->db->quoteIdentifier($name) . '.fieldname = ' . $this->db->quote((string) $fc['fieldname']);
                 }
 
                 // add join

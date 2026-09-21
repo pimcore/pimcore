@@ -29,6 +29,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
+use Pimcore\Model\DataObject\ClassDefinition\DefinitionFileCache;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
@@ -223,7 +224,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         }
 
         $class = (new ClassDefinition\Listing())
-            ->setForce(true)
+            ->setForce($force)
             ->setCondition('id = ?', [$id])
             ->current();
 
@@ -439,6 +440,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
         @unlink($this->getPhpListingClassFile());
         @rmdir(dirname($this->getPhpListingClassFile()));
         @unlink($this->getDefinitionFile());
+        DefinitionFileCache::clear($this->getDefinitionFile());
     }
 
     /**
@@ -930,8 +932,12 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
 
     public function getLinkGenerator(): ?ClassDefinition\LinkGeneratorInterface
     {
-        /** @var ClassDefinition\LinkGeneratorInterface|null $interface */
-        $interface = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
+        $interface = null;
+
+        if ($this->getLinkGeneratorReference()) {
+            /** @var ClassDefinition\LinkGeneratorInterface|null $interface */
+            $interface = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
+        }
 
         return $interface;
     }
@@ -995,8 +1001,10 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
     {
         $class = $this->getFieldDefinitions([]);
         foreach ($compositeIndices as $indexInd => $compositeIndex) {
+            $this->getDao()->assertValidIdentifier($compositeIndex['index_key'] ?? '');
             foreach ($compositeIndex['index_columns'] as $fieldInd => $fieldName) {
                 if (isset($class[$fieldName]) && $class[$fieldName] instanceof ManyToOneRelation) {
+                    $this->getDao()->assertValidIdentifier($fieldName);
                     $compositeIndices[$indexInd]['index_columns'][$fieldInd] = $fieldName . '__id';
                     $compositeIndices[$indexInd]['index_columns'][] = $fieldName . '__type';
                     $compositeIndices[$indexInd]['index_columns'] = array_unique($compositeIndices[$indexInd]['index_columns']);
@@ -1098,7 +1106,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
                 throw new Exception('Class definition with ID ' . $id . ' does not exist');
             }
             $definitionFile = $class->getDefinitionFile($name);
-            $class = @include $definitionFile;
+            $class = DefinitionFileCache::load($definitionFile);
 
             if (!$class instanceof self) {
                 throw new Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
@@ -1144,12 +1152,19 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             $this->setId((string) $maxId);
         }
 
-        if (!preg_match('/[a-zA-Z]\w+/', $this->getName())) {
-            throw new Exception(sprintf('Invalid name for class definition: %s', $this->getName()));
+        if (!preg_match('/^[a-zA-Z]\w+$/', $this->getName())) {
+            throw new Exception(sprintf(
+                'Invalid name for class definition: %s',
+                $this->getName()
+            ));
         }
 
-        if (!preg_match('/[a-zA-Z0-9]([a-zA-Z0-9_]+)?/', $this->getId())) {
-            throw new Exception(sprintf('Invalid ID `%s` for class definition %s', $this->getId(), $this->getName()));
+        if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_]*$/', $this->getId())) {
+            throw new Exception(sprintf(
+                'Invalid ID `%s` for class definition %s',
+                $this->getId(),
+                $this->getName()
+            ));
         }
 
         foreach (['parentClass', 'listingParentClass', 'useTraits', 'listingUseTraits'] as $propertyName) {
@@ -1246,6 +1261,7 @@ final class ClassDefinition extends Model\AbstractModel implements ClassDefiniti
             $data .= 'return '.$exportedClass.";\n";
 
             \Pimcore\File::putPhpFile($definitionFile, $data);
+            DefinitionFileCache::clear($definitionFile);
         }
     }
 }

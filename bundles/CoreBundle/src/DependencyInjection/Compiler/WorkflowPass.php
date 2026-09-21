@@ -167,7 +167,9 @@ final class WorkflowPass implements CompilerPassInterface
                 foreach ($workflowConfig['marking_store']['arguments'] ?? [] as $argument) {
                     $markingStoreDefinition->addArgument($argument);
                 }
-            } elseif (!is_null($markingStoreService)) {
+            } else {
+                // $markingStoreType being null implies a non-null $markingStoreService,
+                // because $markingStoreType is defaulted to 'state_table' when both are null
                 $markingStoreDefinition = new Reference($markingStoreService);
             }
 
@@ -175,9 +177,7 @@ final class WorkflowPass implements CompilerPassInterface
             $workflowId = sprintf('%s.%s', $type, $workflowName);
             $workflowDefinition = new ChildDefinition(sprintf('%s.abstract', $type));
             $workflowDefinition->replaceArgument(0, new Reference(sprintf('%s.definition', $workflowId)));
-            if (isset($markingStoreDefinition)) {
-                $workflowDefinition->replaceArgument(1, $markingStoreDefinition);
-            }
+            $workflowDefinition->replaceArgument(1, $markingStoreDefinition);
             $workflowDefinition->setPublic(true);
             $workflowDefinition->replaceArgument(3, $workflowName);
             $workflowDefinition->replaceArgument(4, $workflowConfig['events_to_dispatch'] ?? null);

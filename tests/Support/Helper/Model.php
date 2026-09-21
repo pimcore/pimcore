@@ -314,6 +314,30 @@ class Model extends AbstractDefinitionHelper
             $block->addChild($this->createDataChild('link', 'blocklink'));
             $block->addChild($this->createDataChild('hotspotimage', 'blockhotspotimage'));
 
+            $block->addChild($this->createDataChild('geopoint', 'blockgeopoint'));
+            $block->addChild($this->createDataChild('geobounds', 'blockgeobounds'));
+            $block->addChild($this->createDataChild('geopolygon', 'blockgeopolygon'));
+            $block->addChild($this->createDataChild('geopolyline', 'blockgeopolyline'));
+
+            // Child types whose block representation legitimately contains PHP objects, either
+            // because their block marshaller rebuilds a value object or because normalize() keeps
+            // one. Covered by BlockTest::testObjectValueTypesInsideBlock().
+            $block->addChild($this->createDataChild('externalImage', 'blockexternalImage'));
+            $block->addChild($this->createDataChild('consent', 'blockconsent'));
+            $block->addChild($this->createDataChild('date', 'blockdate'));
+            $block->addChild($this->createDataChild('datetime', 'blockdatetime'));
+            $block->addChild($this->createDataChild('dateRange', 'blockdateRange'));
+            $block->addChild($this->createDataChild('structuredTable', 'blockstructuredTable')
+                ->setCols([
+                    ['position' => 1, 'key' => 'col1', 'type' => 'number', 'label' => 'collabel1'],
+                    ['position' => 2, 'key' => 'col2', 'type' => 'text', 'label' => 'collabel2'],
+                ])
+                ->setRows([
+                    ['position' => 1, 'key' => 'row1', 'label' => 'rowlabel1'],
+                    ['position' => 2, 'key' => 'row2', 'label' => 'rowlabel2'],
+                ])
+            );
+
             $block->addChild($this->createDataChild('advancedManyToManyRelation', 'blockadvancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
@@ -330,6 +354,11 @@ class Model extends AbstractDefinitionHelper
             $lblock->addChild($this->createDataChild('input', 'lblockinput'));
             $lblock->addChild($this->createDataChild('link', 'lblocklink'));
             $lblock->addChild($this->createDataChild('hotspotimage', 'lblockhotspotimage'));
+
+            // Same object-carrying child types, nested one level deeper (block inside
+            // localizedfields), which routes through BlockDataMarshaller\Localizedfields.
+            $lblock->addChild($this->createDataChild('externalImage', 'lblockexternalImage'));
+            $lblock->addChild($this->createDataChild('date', 'lblockdate'));
 
             $lblock->addChild($this->createDataChild('advancedManyToManyRelation', 'lblockadvancedRelations')
                 ->setAllowMultipleAssignments(false)
@@ -619,9 +648,17 @@ class Model extends AbstractDefinitionHelper
             $lFields->addChild($this->createDataChild('input'));
             $lFields->addChild($this->createDataChild('textarea'));
             $lFields->addChild($this->createDataChild('wysiwyg'));
+            $lCalculatedInherited = $this->createDataChild('calculatedValue', 'lcalculatedinherited');
+            $lCalculatedInherited->setCalculatorClass('@test.calculatorservice');
+            $lFields->addChild($lCalculatedInherited);
+            $lFields->addChild($this->createDataChild('consent', 'lconsentinherited'));
 
             $otherPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('Layout');
             $otherPanel->addChild($this->createDataChild('input', 'normalinput'));
+            $calculatedInherited = $this->createDataChild('calculatedValue', 'calculatedinherited');
+            $calculatedInherited->setCalculatorClass('@test.calculatorservice');
+            $otherPanel->addChild($calculatedInherited);
+            $otherPanel->addChild($this->createDataChild('consent', 'consentinherited'));
             $otherPanel->addChild($this->createDataChild('image', 'yx'));
             $otherPanel->addChild($this->createDataChild('slider'));
             $otherPanel->addChild($this->createDataChild('manyToManyObjectRelation', 'relationobjects')
@@ -954,6 +991,11 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('input', 'brickinput'));
 
             $panel->addChild($this->createDataChild('input', 'brickinput2'));
+
+            $brickCalculated = $this->createDataChild('calculatedValue', 'brickcalculated');
+            $brickCalculated->setCalculatorClass('@test.calculatorservice');
+            $panel->addChild($brickCalculated);
+            $panel->addChild($this->createDataChild('consent', 'brickconsent'));
 
             $panel->addChild($this->createDataChild('manyToManyRelation', 'brickLazyRelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])

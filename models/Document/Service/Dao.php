@@ -26,12 +26,65 @@ class Dao extends Model\Dao\AbstractDao
 {
     public function getDocumentIdByPrettyUrlInSite(Site $site, string $path): int
     {
-        return (int) $this->db->fetchOne(
-            'SELECT documents.id FROM documents
+        $candidates = $this->db->fetchAllAssociative(
+            'SELECT documents.id, CONCAT(documents.`path`, documents.`key`) AS fullPath FROM documents
             LEFT JOIN documents_page ON documents.id = documents_page.id
-            WHERE documents.path LIKE ? AND documents_page.prettyUrl = ?',
-            [Helper::escapeLike($site->getRootPath()) . '/%', rtrim($path, '/')]
+            WHERE documents.path LIKE :sitePath AND documents_page.prettyUrl = :prettyUrl
+            ORDER BY documents.id',
+            [
+                'sitePath' => Helper::escapeLike($site->getRootPath()) . '/%',
+                'prettyUrl' => rtrim($path, '/'),
+            ]
         );
+
+        if ($candidates === []) {
+            return 0;
+        }
+
+        // documents living below the root of another site nested inside the given site belong
+        // to that nested site (nearest site root wins, see Tool\Frontend::getSiteIdForDocument())
+        // and must not be matched when resolving a pretty URL within the given site
+        $nestedSiteRootPaths = $this->getNestedSiteRootPaths($site);
+
+        foreach ($candidates as $candidate) {
+            if (!$this->isPathBelowAnyPath((string) $candidate['fullPath'], $nestedSiteRootPaths)) {
+                return (int) $candidate['id'];
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * Returns the root paths of all sites whose root document is located within the given site.
+     *
+     * @return string[]
+     */
+    private function getNestedSiteRootPaths(Site $site): array
+    {
+        return $this->db->fetchFirstColumn(
+            'SELECT CONCAT(documents.`path`, documents.`key`) FROM sites
+            INNER JOIN documents ON sites.rootId = documents.id
+            WHERE sites.id != :siteId AND documents.path LIKE :sitePath',
+            [
+                'siteId' => $site->getId(),
+                'sitePath' => Helper::escapeLike($site->getRootPath()) . '/%',
+            ]
+        );
+    }
+
+    /**
+     * @param string[] $parentPaths
+     */
+    private function isPathBelowAnyPath(string $path, array $parentPaths): bool
+    {
+        foreach ($parentPaths as $parentPath) {
+            if (str_starts_with($path . '/', $parentPath . '/')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getTranslationSourceId(Document $document): mixed

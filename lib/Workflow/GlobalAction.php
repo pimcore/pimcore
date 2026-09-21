@@ -95,4 +95,13 @@ class GlobalAction implements NotesAwareInterface
     {
         return $this->options['saveSubject'] ?? true;
     }
+
+    /**
+     * Open, task-agnostic config attached to this global action (e.g. by bundles) via the
+     * `custom_extensions` config key. Mirrors the workflow/transition/place `custom_extensions` slot.
+     */
+    public function getCustomExtensions(): array
+    {
+        return $this->options['custom_extensions'] ?? [];
+    }
 }

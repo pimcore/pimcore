@@ -25,7 +25,7 @@ final class Version
 
     private const PLATFORM_VERSION_PACKAGE_NAME = 'pimcore/platform-version';
 
-    private const MAJOR_VERSION = 12;
+    private const MAJOR_VERSION = 2026;
 
     public static function getMajorVersion(): int
     {

@@ -209,10 +209,10 @@ EOT;
             $width = $this->getCustomSetting('imageWidth');
             $height = $this->getCustomSetting('imageHeight');
 
-            if ($width && $height) {
+            if ($width && $height && is_numeric($width) && is_numeric($height)) {
                 return [
-                    'width' => $width,
-                    'height' => $height,
+                    'width' => (int) $width,
+                    'height' => (int) $height,
                 ];
             }
         }
@@ -225,48 +225,9 @@ EOT;
             return null;
         }
 
-        $dimensions = null;
-
-        //try to get the dimensions with getimagesize because it is much faster than e.g. the Imagick-Adapter
-        if (is_readable($path)) {
-            $imageSize = @getimagesize($path);
-            if ($imageSize && $imageSize[0] && $imageSize[1]) {
-                $dimensions = [
-                    'width' => $imageSize[0],
-                    'height' => $imageSize[1],
-                ];
-            }
-        }
-
-        if (!$dimensions) {
-            $image = self::getImageTransformInstance();
-
-            $status = $image->load($path, ['preserveColor' => true, 'asset' => $this]);
-            if ($status === false) {
-                return null;
-            }
-
-            $dimensions = [
-                'width' => $image->getWidth(),
-                'height' => $image->getHeight(),
-            ];
-        }
-
-        // EXIF orientation
-        if (function_exists('exif_read_data')) {
-            $exif = @exif_read_data($path);
-            if (is_array($exif)) {
-                if (array_key_exists('Orientation', $exif)) {
-                    $orientation = (int)$exif['Orientation'];
-                    if (in_array($orientation, [5, 6, 7, 8])) {
-                        // flip height & width
-                        $dimensions = [
-                            'width' => $dimensions['height'],
-                            'height' => $dimensions['width'],
-                        ];
-                    }
-                }
-            }
+        $dimensions = $this->getDimensionsFromFile($path);
+        if ($dimensions === null) {
+            return null;
         }
 
         if (($width = $dimensions['width']) && ($height = $dimensions['height'])) {
@@ -281,12 +242,80 @@ EOT;
         return $dimensions;
     }
 
+    /**
+     * Determines image dimensions without updating the asset or its database record.
+     *
+     * @internal
+     *
+     * @return array{width: int, height: int}|null
+     */
+    public function getDimensionsFromFile(string $path): ?array
+    {
+        $dimensions = null;
+        $dimensionPath = $path;
+
+        //try to get the dimensions with getimagesize because it is much faster than e.g. the Imagick-Adapter
+        if (is_readable($path)) {
+            $imageSize = @getimagesize($path);
+            if ($imageSize && $imageSize[0] && $imageSize[1]) {
+                $dimensions = [
+                    'width' => $imageSize[0],
+                    'height' => $imageSize[1],
+                ];
+            }
+        }
+
+        if (!$dimensions) {
+            // Flysystem commonly materializes remote streams as extensionless temporary files.
+            // Some ImageMagick delegates (notably SVG) require the source suffix to select a decoder.
+            // Reuse the already-downloaded bytes in a local suffixed file; this performs no additional storage read and does not mutate the asset.
+            $sourceExtension = pathinfo($this->getFilename(), PATHINFO_EXTENSION);
+            if (pathinfo($dimensionPath, PATHINFO_EXTENSION) === '' && $sourceExtension !== '') {
+                $suffixedPath = File::getLocalTempFilePath($sourceExtension);
+                if (@copy($dimensionPath, $suffixedPath)) {
+                    $dimensionPath = $suffixedPath;
+                }
+            }
+
+            $image = self::getImageTransformInstance();
+
+            $status = $image->load($dimensionPath, ['preserveColor' => true, 'asset' => $this]);
+            if ($status === false) {
+                return null;
+            }
+
+            $dimensions = [
+                'width' => $image->getWidth(),
+                'height' => $image->getHeight(),
+            ];
+        }
+
+        // EXIF orientation
+        if (function_exists('exif_read_data')) {
+            $exif = @exif_read_data($dimensionPath);
+            if (is_array($exif)) {
+                if (array_key_exists('Orientation', $exif)) {
+                    $orientation = (int)$exif['Orientation'];
+                    if (in_array($orientation, [5, 6, 7, 8])) {
+                        // flip height & width
+                        $dimensions = [
+                            'width' => $dimensions['height'],
+                            'height' => $dimensions['width'],
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $dimensions;
+    }
+
     public function getWidth(): int
     {
         $dimensions = $this->getDimensions();
 
         if ($dimensions) {
-            return $dimensions['width'];
+            return (int) $dimensions['width'];
         }
 
         return 0;
@@ -297,7 +326,7 @@ EOT;
         $dimensions = $this->getDimensions();
 
         if ($dimensions) {
-            return $dimensions['height'];
+            return (int) $dimensions['height'];
         }
 
         return 0;
@@ -323,6 +352,70 @@ EOT;
         }
 
         return false;
+    }
+
+    /**
+     * Classifies vector-sensitive transformations without image I/O.
+     * Conflicting filename and persisted MIME evidence is intentionally unknown so callers can fail closed and inspect the actual generated file.
+     *
+     * @internal
+     */
+    public function getVectorGraphicStateForDimensionEstimation(): ?bool
+    {
+        $extension = strtolower(pathinfo($this->getFilename(), PATHINFO_EXTENSION));
+        $extensionState = match (true) {
+            in_array($extension, ['svg', 'svgz', 'eps', 'pdf', 'ps', 'ai', 'indd'], true) => true,
+            in_array($extension, [
+                'avif',
+                'bmp',
+                'gif',
+                'heic',
+                'heif',
+                'jpeg',
+                'jpg',
+                'png',
+                'tif',
+                'tiff',
+                'webp',
+            ], true) => false,
+            default => null,
+        };
+
+        $mimeType = strtolower((string) $this->getMimeType());
+        $mimeState = match (true) {
+            in_array($mimeType, [
+                'application/illustrator',
+                'application/pdf',
+                'application/postscript',
+                'image/eps',
+                'image/svg+xml',
+                'image/x-eps',
+            ], true) => true,
+            in_array($mimeType, [
+                'image/avif',
+                'image/bmp',
+                'image/gif',
+                'image/heic',
+                'image/heif',
+                'image/jpeg',
+                'image/png',
+                'image/tiff',
+                'image/webp',
+            ], true) => false,
+            default => null,
+        };
+
+        // A persisted MIME type can be replaced by project event listeners and is not proof of the loaded image format.
+        // Unknown extensions therefore remain unknown for vector-sensitive estimation.
+        if ($extensionState === null) {
+            return null;
+        }
+
+        if ($mimeState !== null && $extensionState !== $mimeState) {
+            return null;
+        }
+
+        return $extensionState;
     }
 
     /**

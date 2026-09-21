@@ -28,13 +28,9 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
 
     public function setRestrictTo(array|string|null $restrictTo): void
     {
-        /**
-         * @extjs6
-         */
         if (is_array($restrictTo)) {
             $restrictTo = implode(',', $restrictTo);
         }
-
         $this->restrictTo = $restrictTo;
     }
 

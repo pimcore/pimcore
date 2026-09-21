@@ -7,13 +7,13 @@ on:
         -   cron: '0 3 * * *'
     pull_request_target:
         branches:
-            - "12.*"
+            - "2026.*"
         paths-ignore:
             - 'doc/**'
             - 'bundles/**/public/**'
     push:
         branches:
-            - "12.*"
+            - "2026.*"
             - "*_actions"
         paths-ignore:
             - 'doc/**'
@@ -39,21 +39,21 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - { php-version: "8.3", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.3", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
                     - { php-version: "8.4", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
                     - { php-version: "8.4", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.5", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.5", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
 
         steps:
             - name: Checkout PR head (only for pull_request_target)
               if: github.event_name == 'pull_request_target'
-              uses: "actions/checkout@v4"
+              uses: "actions/checkout@v5.0.1"
               with:
                 ref: "refs/pull/${{ github.event.pull_request.number }}/merge"
 
             - name: Checkout PR head (for push or other events)
               if: github.event_name != 'pull_request_target'
-              uses: "actions/checkout@v4"
+              uses: "actions/checkout@v5.0.1"
 
             - name: "Install PHP"
               uses: "shivammathur/setup-php@v2"

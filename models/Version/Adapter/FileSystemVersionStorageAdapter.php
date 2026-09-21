@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Version\Adapter;
 
 use League\Flysystem\FilesystemOperator;
+use League\Flysystem\UnableToDeleteFile;
 use League\Flysystem\UnableToReadFile;
 use Pimcore\Config;
 use Pimcore\File;
@@ -114,13 +115,26 @@ class FileSystemVersionStorageAdapter implements VersionStorageAdapterInterface
         $storageFileName = $this->getStorageFilename($version->getId(), $version->getCid(), $version->getCtype());
 
         $storagePath = dirname($storageFileName);
-        if ($this->storage->fileExists($storageFileName)) {
-            $this->storage->delete($storageFileName);
-            File::recursiveDeleteEmptyDirs($this->storage, $storagePath);
-        }
+        $this->deleteFileIfExists($storageFileName);
+        File::recursiveDeleteEmptyDirs($this->storage, $storagePath);
 
-        if ($this->storage->fileExists($binaryStoragePath) && !$isBinaryHashInUse) {
-            $this->storage->delete($binaryStoragePath);
+        if (!$isBinaryHashInUse) {
+            $this->deleteFileIfExists($binaryStoragePath);
+        }
+    }
+
+    private function deleteFileIfExists(string $path): void
+    {
+        try {
+            $this->storage->delete($path);
+        } catch (UnableToDeleteFile $e) {
+            // Tolerate races where the file was deleted concurrently between
+            // our intent to delete it and the actual unlink. If it is gone
+            // either way, treat the outcome as a successful deletion so the
+            // caller can still sweep empty parent directories.
+            if ($this->storage->fileExists($path)) {
+                throw $e;
+            }
         }
     }
 

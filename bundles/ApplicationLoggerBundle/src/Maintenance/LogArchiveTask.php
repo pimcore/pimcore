@@ -90,7 +90,7 @@ class LogArchiveTask implements TaskInterface
                        relatedobject BIGINT(20),
                        relatedobjecttype ENUM('object', 'document', 'asset'),
                        maintenanceChecked TINYINT(1)
-                    ) ENGINE = " . $storageEngine . ' ROW_FORMAT = DEFAULT;');
+                    ) ENGINE = " . $storageEngine . ' DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci ROW_FORMAT = DEFAULT;');
             }
             $db->executeQuery('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));
 

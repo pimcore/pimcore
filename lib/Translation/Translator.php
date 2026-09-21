@@ -32,8 +32,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     protected array $initializedCatalogues = [];
 
+    /**
+     * @deprecated since 2026.2
+     */
     protected string $adminPath = '';
 
+    /**
+     * @deprecated since 2026.2
+     */
     protected array $adminTranslationMapping = [];
 
     /**

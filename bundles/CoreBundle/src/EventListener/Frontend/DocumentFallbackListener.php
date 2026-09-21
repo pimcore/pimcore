@@ -138,7 +138,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
     public function onKernelController(ControllerEvent $event): void
     {
         $controller = $event->getController();
-        if (is_array($controller) && isset($controller[0]) && $controller[0] instanceof PublicServicesController) {
+        if (is_array($controller) && $controller[0] instanceof PublicServicesController) {
             // ignore PublicServicesController because this could lead to conflicts of Asset and Document paths, see #2704
             return;
         }

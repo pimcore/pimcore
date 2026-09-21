@@ -17,6 +17,8 @@ use Exception;
 use JsonSerializable;
 use Pimcore;
 use Pimcore\Model;
+use Pimcore\Model\User;
+use Pimcore\Security\User\User as UserProxy;
 use RuntimeException;
 use stdClass;
 
@@ -429,5 +431,29 @@ class Config extends Model\AbstractModel implements JsonSerializable
             $this->dao = clone $this->dao;
             $this->dao->setModel($this);
         }
+    }
+
+    public function isUserAllowed(User|UserProxy $user): bool
+    {
+        if ($user instanceof UserProxy) {
+            $user = $user->getUser();
+        }
+
+        if (!($user->isAdmin() || $this->getShareGlobally() || $user->isAllowed('reports_config'))) {
+            $sharedUserIds = $this->getSharedUserIds();
+            $sharedRoleIds = $this->getSharedRoleIds();
+
+            $hasUserAccess = $sharedUserIds &&
+                in_array($user->getId(), $sharedUserIds, true);
+
+            $hasRoleAccess = $sharedRoleIds &&
+                array_intersect($user->getRoles(), $sharedRoleIds);
+
+            if (!$hasUserAccess && !$hasRoleAccess) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

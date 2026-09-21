@@ -422,7 +422,14 @@ class Select extends Data implements
             $this->options = null;
         }
 
-        return parent::jsonSerialize();
+        $data = parent::jsonSerialize();
+
+        // Consumers of this API (e.g. the Studio class editor) expect "options" to always be an
+        // array. Internally, null still means "not configured / not yet resolved" (see getOptions(),
+        // checkValidity()), so only the serialized representation is normalized here.
+        $data['options'] ??= [];
+
+        return $data;
     }
 
     public function resolveBlockedVars(): array

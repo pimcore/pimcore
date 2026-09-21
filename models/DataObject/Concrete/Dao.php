@@ -294,7 +294,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                         }
 
                         // if the current value is empty and we have data from the parent, we just use it
-                        if ($isEmpty && $parentData) {
+                        if ($isEmpty && $parentData && $fd->supportsInheritance()) {
                             foreach ($columnNames as $columnName) {
                                 if (array_key_exists($columnName, $parentData)) {
                                     $data[$columnName] = $parentData[$columnName];
