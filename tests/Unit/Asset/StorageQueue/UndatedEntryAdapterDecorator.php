@@ -17,22 +17,17 @@ namespace Pimcore\Tests\Unit\Asset\StorageQueue;
 use League\Flysystem\Config;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemAdapter;
-use League\Flysystem\UnableToDeleteFile;
 
 /**
- * Refuses delete() for paths under a given prefix (or everywhere when none is given) by throwing
- * UnableToDeleteFile, so a test can make one Delete row fail while everything else on the adapter
- * keeps working. Toggle $refusing to lift the failure mid-test.
+ * Reports one entry without a modification time, both in listings and on direct lookup - a
+ * backend whose listing metadata is unusable for that object. The processor treats such an entry
+ * as undated and never destructive, which leaves a move over it incomplete without any error.
  */
-final class DeleteRefusingAdapterDecorator implements FilesystemAdapter
+final class UndatedEntryAdapterDecorator implements FilesystemAdapter
 {
-    /**
-     * @param string|null $onlyUnderPrefix refuse only deletes under this prefix; null refuses all
-     */
     public function __construct(
         private readonly FilesystemAdapter $inner,
-        private readonly ?string $onlyUnderPrefix = null,
-        public bool $refusing = true,
+        private readonly string $undatedPath,
     ) {
     }
 
@@ -73,14 +68,6 @@ final class DeleteRefusingAdapterDecorator implements FilesystemAdapter
 
     public function delete(string $path): void
     {
-        $applies = $this->onlyUnderPrefix === null
-            || $path === $this->onlyUnderPrefix
-            || str_starts_with($path, $this->onlyUnderPrefix . '/');
-
-        if ($this->refusing && $applies) {
-            throw UnableToDeleteFile::atLocation($path);
-        }
-
         $this->inner->delete($path);
     }
 
@@ -111,6 +98,10 @@ final class DeleteRefusingAdapterDecorator implements FilesystemAdapter
 
     public function lastModified(string $path): FileAttributes
     {
+        if ($path === $this->undatedPath) {
+            return new FileAttributes($path);
+        }
+
         return $this->inner->lastModified($path);
     }
 
@@ -121,7 +112,11 @@ final class DeleteRefusingAdapterDecorator implements FilesystemAdapter
 
     public function listContents(string $path, bool $deep): iterable
     {
-        return $this->inner->listContents($path, $deep);
+        foreach ($this->inner->listContents($path, $deep) as $item) {
+            yield $item->path() === $this->undatedPath && $item instanceof FileAttributes
+                ? new FileAttributes($item->path(), $item->fileSize(), $item->visibility(), null, $item->mimeType())
+                : $item;
+        }
     }
 
     public function move(string $source, string $destination, Config $config): void

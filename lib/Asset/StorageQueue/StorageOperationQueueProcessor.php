@@ -171,8 +171,8 @@ final class StorageOperationQueueProcessor
                     }
                 } elseif ($haltKey !== null) {
                     // incomplete, not failed: the bytes are still at the source, so the same
-                    // reasoning applies and the rest of the cluster waits too
-                    $haltedTargets[$haltKey] = true;
+                    // reasoning applies and every other move onto that target waits too
+                    $this->haltTargetsOf($operation, $haltedTargets);
                 }
                 if ($operation->getType() === StorageOperationType::Move) {
                     // The snapshot below is what later Deletes consult. A Move that just drained
@@ -187,7 +187,10 @@ final class StorageOperationQueueProcessor
             } catch (Exception $e) {
                 $failed++;
                 if ($haltKey !== null) {
-                    $haltedTargets[$haltKey] = true;
+                    $this->haltTargetsOf($operation, $haltedTargets);
+                    // the row may have been repointed, converted or removed under us - whatever
+                    // later Deletes consult must not be a copy taken before that happened
+                    $this->pendingMoves = null;
                 }
                 if ($operation->getType() === StorageOperationType::Delete) {
                     $failedDeletes[] = $operation;
@@ -256,6 +259,25 @@ final class StorageOperationQueueProcessor
             $heartbeat();
         } catch (Exception $e) {
             $this->logger->debug('Storage queue heartbeat failed', ['exception' => $e]);
+        }
+    }
+
+    /**
+     * Marks the storage + target of a Move that did not land as halted for the rest of the run.
+     *
+     * The row is re-read first: live traffic may have repointed it while it was draining, and the
+     * target that needs protecting is the one it has NOW, not the one this run started out with.
+     * Both are halted - holding a row back is never destructive.
+     *
+     * @param array<string, true> $haltedTargets
+     */
+    private function haltTargetsOf(StorageOperation $operation, array &$haltedTargets): void
+    {
+        $haltedTargets[$operation->getStorage() . "\0" . (string) $operation->getTargetPrefix()] = true;
+
+        $fresh = $this->repository->findById((int) $operation->getId());
+        if ($fresh !== null && $fresh->getType() === StorageOperationType::Move) {
+            $haltedTargets[$fresh->getStorage() . "\0" . (string) $fresh->getTargetPrefix()] = true;
         }
     }
 
