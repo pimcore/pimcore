@@ -45,11 +45,6 @@ final class StorageOperationQueueProcessor
      */
     private ?array $pendingMoves = null;
 
-    /**
-     * @var array<string, int>|null storage + target => newest pending Move id, maintained with $pendingMoves
-     */
-    private ?array $newestPendingMoveIdByTarget = null;
-
     private const COMPLETION_ATTEMPTS = 3;
 
     public function __construct(
@@ -78,8 +73,7 @@ final class StorageOperationQueueProcessor
         bool $continueOnError = false
     ): StorageQueueProcessingResult {
         $deadline = $maxRuntimeSeconds !== null ? time() + $maxRuntimeSeconds : null;
-        $this->pendingMoves = null;
-        $this->newestPendingMoveIdByTarget = null; // fresh snapshot per run
+        $this->pendingMoves = null; // fresh snapshot per run
         $stoppedOnError = false;
         $processed = 0;
         $failed = 0;
@@ -128,133 +122,99 @@ final class StorageOperationQueueProcessor
             $operations = $this->orderForProcessing($queued, $barriers);
         }
 
-        // Rows deferred because a newer same-target move was still pending get one more pass at
-        // the end of the run: by then that newer row has usually landed, so the older one can be
-        // applied (and superseded where the target is now taken) tonight rather than tomorrow.
-        $batch = $operations;
-        $retryPass = false;
-        do {
-            $deferredForNewer = [];
+        foreach ($operations as $operation) {
+            if ($deadline !== null && time() >= $deadline) {
+                $timedOut = true;
 
-            foreach ($batch as $operation) {
-                if ($deadline !== null && time() >= $deadline) {
-                    $timedOut = true;
+                break;
+            }
+
+            $this->invokeHeartbeat($heartbeat); // row boundary
+
+            // Keyed by storage + target, NOT by the barrier-aware cluster key. Barrier segments only
+            // decide which moves may be reordered past each other; a failed move must hold back every
+            // other move onto its target regardless of segment, or a later segment claims the target
+            // and the failed move deletes its own fresher source as superseded on the next run.
+            $haltKey = $operation->getType() === StorageOperationType::Move
+                ? $operation->getStorage() . "\0" . (string) $operation->getTargetPrefix()
+                : null;
+
+            // Same-target moves drain newest-first so the freshest bytes claim the target before
+            // any superseded row can. Once one of them has not landed, every other move onto that
+            // target must wait: an older row would otherwise put stale bytes there, and the row
+            // that failed would then find the target occupied, treat its own source as superseded
+            // and delete it. Moves onto other targets are unaffected - a single unprocessable row
+            // still must not hold up the queue.
+            if ($haltKey !== null && isset($haltedTargets[$haltKey])) {
+                continue; // stays queued for the next run
+            }
+
+            // The mirror of the rule above, for the other row type. FIFO says an earlier Delete
+            // sweeps its prefix before anything relocates out of it. When that Delete only
+            // FAILED, a later overlapping Move must wait too: it would otherwise carry the
+            // content elsewhere, the next run would find the source empty and complete the
+            // Delete, and content the user explicitly deleted would survive under the move
+            // target. Whether that happens must not hinge on a transient backend error. A
+            // DEFERRED Delete is deliberately not a barrier here - deferral is an ordered wait,
+            // not a failure, and the row it waits for has already had its turn.
+            if ($operation->getType() === StorageOperationType::Move
+                && $this->isBlockedByFailedDelete($operation, $failedDeletes)
+            ) {
+                continue; // stays queued for the next run
+            }
+
+            try {
+                if ($this->processOperation($operation, $deadline, $heartbeat)) {
+                    $processed++;
+                    if ($operation->getType() === StorageOperationType::Move && $operation->getStorage() === 'asset') {
+                        $clearedAssetMove = true;
+                    }
+                } elseif ($haltKey !== null) {
+                    // incomplete, not failed: the bytes are still at the source, so the same
+                    // reasoning applies and every other move onto that target waits too
+                    $this->haltTargetsOf($operation, $haltedTargets);
+                }
+                if ($operation->getType() === StorageOperationType::Move) {
+                    // The snapshot below is what later Deletes consult. A Move that just drained
+                    // no longer blocks anything, and one that ended incomplete may have been
+                    // repointed under us, so the cached copy is stale either way. Dropping it
+                    // costs one re-read per Move rather than per Delete, which is the ratio the
+                    // snapshot exists to protect.
+                    $this->pendingMoves = null;
+                }
+                // incomplete rows (deadline hit, undated entries, contested rows) stay queued
+                // for the next run - processOperation removes its own row on completion
+            } catch (Exception $e) {
+                $failed++;
+                if ($haltKey !== null) {
+                    $this->haltTargetsOf($operation, $haltedTargets);
+                    // the row may have been repointed, converted or removed under us - whatever
+                    // later Deletes consult must not be a copy taken before that happened
+                    $this->pendingMoves = null;
+                }
+                if ($operation->getType() === StorageOperationType::Delete) {
+                    $failedDeletes[] = $operation;
+                }
+                $errors[] = sprintf(
+                    '#%d %s %s: %s',
+                    $operation->getId(),
+                    $operation->getType()->value,
+                    $operation->getSourcePrefix(),
+                    $e->getMessage()
+                );
+                $this->logger->error('Storage queue operation failed', [
+                    'operation' => $operation->getId(),
+                    'storage' => $operation->getStorage(),
+                    'exception' => $e,
+                ]);
+
+                if (!$continueOnError) {
+                    $stoppedOnError = true;
 
                     break;
                 }
-
-                $this->invokeHeartbeat($heartbeat); // row boundary
-
-                // Keyed by storage + target, NOT by the barrier-aware cluster key. Barrier segments only
-                // decide which moves may be reordered past each other; a failed move must hold back every
-                // other move onto its target regardless of segment, or a later segment claims the target
-                // and the failed move deletes its own fresher source as superseded on the next run.
-                $haltKey = $operation->getType() === StorageOperationType::Move
-                    ? $operation->getStorage() . "\0" . (string) $operation->getTargetPrefix()
-                    : null;
-
-                // Same-target moves drain newest-first so the freshest bytes claim the target before
-                // any superseded row can. Once one of them has not landed, every other move onto that
-                // target must wait: an older row would otherwise put stale bytes there, and the row
-                // that failed would then find the target occupied, treat its own source as superseded
-                // and delete it. Moves onto other targets are unaffected - a single unprocessable row
-                // still must not hold up the queue.
-                if ($haltKey !== null && isset($haltedTargets[$haltKey])) {
-                    continue; // stays queued for the next run
-                }
-
-                // Same-target moves drain newest-first so the freshest bytes claim the target. That
-                // ordering is only applied within a barrier segment, though - a Delete overlapping just
-                // one of two same-target moves puts them into different segments, and the OLDER one then
-                // comes first in FIFO. It must wait instead: were it to claim the target, the newer move
-                // would find the key occupied and delete its own fresher source as superseded. Deferring
-                // is never destructive; the newer row lands first, on this run or the next.
-                if ($haltKey !== null && $barriers !== null && $this->hasNewerPendingMoveOntoSameTarget($operation)) {
-                    if ($retryPass) {
-                        $this->logger->info('Storage queue move deferred - a newer move onto the same target is still pending', [
-                            'move' => $operation->getId(),
-                            'storage' => $operation->getStorage(),
-                            'target' => $operation->getTargetPrefix(),
-                        ]);
-                    } else {
-                        $deferredForNewer[] = $operation;
-                    }
-
-                    continue; // stays queued (for the second pass, or for the next run)
-                }
-
-                // The mirror of the rule above, for the other row type. FIFO says an earlier Delete
-                // sweeps its prefix before anything relocates out of it. When that Delete only
-                // FAILED, a later overlapping Move must wait too: it would otherwise carry the
-                // content elsewhere, the next run would find the source empty and complete the
-                // Delete, and content the user explicitly deleted would survive under the move
-                // target. Whether that happens must not hinge on a transient backend error. A
-                // DEFERRED Delete is deliberately not a barrier here - deferral is an ordered wait,
-                // not a failure, and the row it waits for has already had its turn.
-                if ($operation->getType() === StorageOperationType::Move
-                    && $this->isBlockedByFailedDelete($operation, $failedDeletes)
-                ) {
-                    continue; // stays queued for the next run
-                }
-
-                try {
-                    if ($this->processOperation($operation, $deadline, $heartbeat)) {
-                        $processed++;
-                        if ($operation->getType() === StorageOperationType::Move && $operation->getStorage() === 'asset') {
-                            $clearedAssetMove = true;
-                        }
-                    } elseif ($haltKey !== null) {
-                        // incomplete, not failed: the bytes are still at the source, so the same
-                        // reasoning applies and every other move onto that target waits too
-                        $this->haltTargetsOf($operation, $haltedTargets);
-                    }
-                    if ($operation->getType() === StorageOperationType::Move) {
-                        // The snapshot below is what later Deletes consult. A Move that just drained
-                        // no longer blocks anything, and one that ended incomplete may have been
-                        // repointed under us, so the cached copy is stale either way. Dropping it
-                        // costs one re-read per Move rather than per Delete, which is the ratio the
-                        // snapshot exists to protect.
-                        $this->pendingMoves = null;
-                        $this->newestPendingMoveIdByTarget = null;
-                    }
-                    // incomplete rows (deadline hit, undated entries, contested rows) stay queued
-                    // for the next run - processOperation removes its own row on completion
-                } catch (Exception $e) {
-                    $failed++;
-                    if ($haltKey !== null) {
-                        $this->haltTargetsOf($operation, $haltedTargets);
-                        // the row may have been repointed, converted or removed under us - whatever
-                        // later Deletes consult must not be a copy taken before that happened
-                        $this->pendingMoves = null;
-                        $this->newestPendingMoveIdByTarget = null;
-                    }
-                    if ($operation->getType() === StorageOperationType::Delete) {
-                        $failedDeletes[] = $operation;
-                    }
-                    $errors[] = sprintf(
-                        '#%d %s %s: %s',
-                        $operation->getId(),
-                        $operation->getType()->value,
-                        $operation->getSourcePrefix(),
-                        $e->getMessage()
-                    );
-                    $this->logger->error('Storage queue operation failed', [
-                        'operation' => $operation->getId(),
-                        'storage' => $operation->getStorage(),
-                        'exception' => $e,
-                    ]);
-
-                    if (!$continueOnError) {
-                        $stoppedOnError = true;
-
-                        break;
-                    }
-                }
             }
-
-            $batch = $deferredForNewer;
-            $retryPass = true;
-        } while ($batch !== [] && !$timedOut && !$stoppedOnError);
+        }
 
         if ($clearedAssetMove) {
             Cache::clearTag('output'); // window-era physical URLs may sit in full-page cache
@@ -319,24 +279,6 @@ final class StorageOperationQueueProcessor
         if ($fresh !== null && $fresh->getType() === StorageOperationType::Move) {
             $haltedTargets[$fresh->getStorage() . "\0" . (string) $fresh->getTargetPrefix()] = true;
         }
-    }
-
-    /**
-     * Whether a newer Move onto this Move's target is still pending.
-     *
-     * Answered from an index over the run-scoped pending-move snapshot, so the common case - no
-     * other move onto this target at all - is one array lookup. That snapshot is not the listing
-     * the run started with: it is dropped after every processed Move and on every failure and
-     * rebuilt from the live queue on next use, so a move queued while this run was already going
-     * is seen from the next such point on. A candidate is then confirmed against the live queue,
-     * because the newer row may have drained earlier in this same pass.
-     */
-    private function hasNewerPendingMoveOntoSameTarget(StorageOperation $move): bool
-    {
-        $this->pendingMoves(); // makes sure the snapshot, and with it the index, exists
-        $newest = $this->newestPendingMoveIdByTarget[$move->getStorage() . "\0" . (string) $move->getTargetPrefix()] ?? 0;
-
-        return $newest > (int) $move->getId() && $this->findNewerSameTargetRow($move) !== null;
     }
 
     /**
@@ -519,13 +461,6 @@ final class StorageOperationQueueProcessor
         }
 
         $this->pendingMoves = $moves;
-
-        $index = [];
-        foreach ($moves as $move) {
-            $key = $move->getStorage() . "\0" . (string) $move->getTargetPrefix();
-            $index[$key] = max($index[$key] ?? 0, (int) $move->getId());
-        }
-        $this->newestPendingMoveIdByTarget = $index;
     }
 
     /**

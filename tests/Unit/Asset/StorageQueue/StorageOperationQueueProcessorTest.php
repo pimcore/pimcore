@@ -1171,31 +1171,6 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertFalse($this->adapter->fileExists('C/x.jpg'), 'and its source is not lost');
     }
 
-    public function testAnOlderMoveWaitsForANewerMoveOntoTheSameTargetAcrossADeleteBarrier(): void
-    {
-        // A re-move of a still-queued subtree: A -> B is pending, then B -> C is queued, which
-        // repoints the first row to A -> C. A Delete of B/sub queued in between overlaps only the
-        // later move's source, so the two moves onto C sit in different barrier segments and are
-        // not reordered. Strict FIFO then lets the OLDER move claim C/x first, and the newer move
-        // treats its fresher B/x as superseded and deletes it. The older move has to wait instead.
-        $this->writeWithMtime('A/x.jpg', 'stale', time() - 7200);
-        $this->writeWithMtime('B/x.jpg', 'fresh', time() - 7200);
-        $this->addRow(StorageOperationType::Move, 'A', 'B');            // #1
-        $this->addRow(StorageOperationType::Delete, 'B/sub', null);     // #2, overlaps only B -> C
-        $this->addRow(StorageOperationType::Move, 'B', 'C');            // #3, repoints #1 to A -> C
-
-        $this->assertSame('C', $this->findRow(StorageOperationType::Move, 'A')?->getTargetPrefix(), 'precondition: #1 was repointed');
-
-        $this->processor()->process();
-
-        $this->assertSame('fresh', $this->adapter->read('C/x.jpg'), 'the newer bytes must be what lands at the shared target');
-        $this->assertFalse($this->adapter->fileExists('B/x.jpg'), 'the newer move drained');
-        // the older move was deferred past the newer one and then, on the same run's second pass,
-        // found the target taken and superseded its own stale source
-        $this->assertFalse($this->adapter->fileExists('A/x.jpg'));
-        $this->assertSame([], $this->repository->all(), 'everything completed within one run');
-    }
-
     public function testAFailedMoveHaltsItsCurrentTargetAfterAMidDrainRepoint(): void
     {
         // Live traffic repoints A -> B to A -> C while #1 is draining, and the very next copy then
@@ -1234,46 +1209,6 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame('C', $this->findRow(StorageOperationType::Move, 'A')?->getTargetPrefix(), 'precondition: it now targets C');
         $this->assertFalse($this->adapter->fileExists('C/d.jpg'), 'no other move onto the CURRENT target may land in this run');
         $this->assertSame('d', $this->adapter->read('D/d.jpg'), 'that move stays queued with its source untouched');
-    }
-
-    public function testANewerSameTargetMoveInsertedMidRunStillDefersTheOlderOne(): void
-    {
-        // The guard must not trust a listing taken when the run began. While an unrelated row is
-        // draining, live traffic queues a NEWER move onto T. When the older move onto T comes up,
-        // that newer row is visible in the live queue and the older one has to wait for it.
-        for ($i = 1; $i <= 8; $i++) {
-            $this->writeWithMtime("X/f{$i}.jpg", "x{$i}", time() - 7200);
-        }
-        $this->writeWithMtime('A/x.jpg', 'a-stale', time() - 7200);
-        $this->writeWithMtime('B/x.jpg', 'b-fresh', time() - 7200);
-        $this->addRow(StorageOperationType::Move, 'X', 'Y', new DateTimeImmutable('+5 seconds')); // #1 unrelated, drains first
-        $this->addRow(StorageOperationType::Move, 'A', 'T', new DateTimeImmutable('+5 seconds')); // #2 older move onto T
-
-        $mutating = new StorageOperationQueueProcessorTestMutatingAdapter(
-            $this->adapter,
-            4,
-            function (): void {
-                // queued while #1 drains - after the run's initial listing was taken
-                $this->repository->add(new StorageOperation(
-                    null, 'asset', StorageOperationType::Move, 'B', 'T', new DateTimeImmutable('+5 seconds')
-                ));
-            }
-        );
-        $processor = new StorageOperationQueueProcessor(
-            new StorageOperationQueueProcessorTestAdapterLocator($mutating),
-            $this->repository,
-            new NullLogger(),
-            3
-        );
-
-        $processor->process();
-
-        $this->assertFalse(
-            $this->adapter->fileExists('T/x.jpg') && $this->adapter->read('T/x.jpg') === 'a-stale',
-            'the older move must not claim T while a newer move onto T is pending in the live queue'
-        );
-        $this->assertSame('b-fresh', $this->adapter->read('B/x.jpg'), 'the newer source is untouched');
-        $this->assertNotNull($this->findRow(StorageOperationType::Move, 'A'), 'the older move waits');
     }
 }
 
