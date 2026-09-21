@@ -77,6 +77,9 @@ final class StorageOperationQueueProcessor
         $timedOut = false;
         $errors = [];
         $clearedAssetMove = false;
+        /** @var array<int, int>|null $barriers */
+        $barriers = null;
+        $haltedClusters = [];
 
         if ($onlyId !== null) {
             $requested = $this->repository->findById($onlyId);
@@ -108,7 +111,9 @@ final class StorageOperationQueueProcessor
                 }
             }
         } else {
-            $operations = $this->orderForProcessing($this->repository->all());
+            $queued = $this->repository->all();
+            $barriers = $this->moveBarriers($queued);
+            $operations = $this->orderForProcessing($queued, $barriers);
         }
 
         foreach ($operations as $operation) {
@@ -120,12 +125,30 @@ final class StorageOperationQueueProcessor
 
             $this->invokeHeartbeat($heartbeat); // row boundary
 
+            $cluster = $operation->getType() === StorageOperationType::Move && $barriers !== null
+                ? $this->clusterKey($operation, $barriers)
+                : null;
+
+            // A same-target cluster drains newest-first so the freshest bytes claim the target
+            // before any superseded row can. Once a member has not landed, the rest of that
+            // cluster must wait: an older row would otherwise put stale bytes at the shared
+            // target, and the row that failed would then find it occupied, treat its own source
+            // as superseded and delete it. Rows outside the cluster are unaffected - a single
+            // unprocessable row still must not hold up the queue.
+            if ($cluster !== null && isset($haltedClusters[$cluster])) {
+                continue; // stays queued for the next run
+            }
+
             try {
                 if ($this->processOperation($operation, $deadline, $heartbeat)) {
                     $processed++;
                     if ($operation->getType() === StorageOperationType::Move && $operation->getStorage() === 'asset') {
                         $clearedAssetMove = true;
                     }
+                } elseif ($cluster !== null) {
+                    // incomplete, not failed: the bytes are still at the source, so the same
+                    // reasoning applies and the rest of the cluster waits too
+                    $haltedClusters[$cluster] = true;
                 }
                 if ($operation->getType() === StorageOperationType::Move) {
                     // The snapshot below is what later Deletes consult. A Move that just drained
@@ -139,6 +162,9 @@ final class StorageOperationQueueProcessor
                 // for the next run - processOperation removes its own row on completion
             } catch (Exception $e) {
                 $failed++;
+                if ($cluster !== null) {
+                    $haltedClusters[$cluster] = true;
+                }
                 $errors[] = sprintf(
                     '#%d %s %s: %s',
                     $operation->getId(),
@@ -488,14 +514,14 @@ final class StorageOperationQueueProcessor
      *
      * @return StorageOperation[]
      */
-    private function orderForProcessing(array $operations): array
+    private function orderForProcessing(array $operations, ?array $barriers = null): array
     {
         // Deletes always keep strict FIFO, and a cluster is never drained across a Delete that
         // overlaps it: the later Move could carry content out of the very prefix the Delete was
         // queued to remove, and the dependency check in processDelete() deliberately only
         // considers rows older than the Delete, so it would not cover a Move that jumped ahead
         // of it either. Unrelated Deletes do not split a cluster.
-        $barriers = $this->moveBarriers($operations);
+        $barriers ??= $this->moveBarriers($operations);
 
         $moveClusters = [];
         foreach ($operations as $operation) {

@@ -1070,6 +1070,37 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame('a', $this->adapter->read('B/a.jpg'), 'the move landed');
         $this->assertFalse($this->adapter->directoryExists('A'), 'the delete swept the drained source');
     }
+
+    public function testAFailedNewestClusterMemberDoesNotLetAnOlderOneClaimTheTarget(): void
+    {
+        // Same-target moves drain newest-first precisely so the freshest bytes claim the target
+        // before any superseded row can. If the newest member FAILS and the older one is still
+        // allowed to run, it lands stale bytes at the shared target - and on the next run the
+        // newest row sees an occupied target, treats its own source as superseded and deletes
+        // it. That is the exact data loss the ordering exists to prevent.
+        $this->writeWithMtime('A/x.jpg', 'stale', time() - 7200);
+        $this->writeWithMtime('B/x.jpg', 'fresh', time() - 7200);
+        $this->addRow(StorageOperationType::Move, 'A', 'T');
+        $this->addRow(StorageOperationType::Move, 'B', 'T'); // newer, drains first
+
+        $refusing = new CopyRefusingAdapterDecorator($this->adapter, 'B');
+        $locator = new StorageOperationQueueProcessorTestAdapterLocator($refusing);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger());
+
+        $processor->process();
+
+        $this->assertFalse(
+            $this->adapter->fileExists('T/x.jpg'),
+            'the older member must not claim the target while the newest one is failing'
+        );
+
+        // the backend recovers; the next run must land the FRESH bytes, not the stale ones
+        $refusing->refusing = false;
+        $processor->process();
+
+        $this->assertSame('fresh', $this->adapter->read('T/x.jpg'));
+        $this->assertSame([], $this->repository->all(), 'both rows drained');
+    }
 }
 
 /**
