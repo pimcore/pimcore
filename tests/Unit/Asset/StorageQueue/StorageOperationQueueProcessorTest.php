@@ -76,6 +76,17 @@ class StorageOperationQueueProcessorTest extends Unit
         // default cutoff is slightly in the FUTURE so freshly written test fixtures count as pre-cutoff
     }
 
+    private function findRow(StorageOperationType $type, string $sourcePrefix): ?StorageOperation
+    {
+        foreach ($this->repository->all() as $row) {
+            if ($row->getType() === $type && $row->getSourcePrefix() === $sourcePrefix) {
+                return $row;
+            }
+        }
+
+        return null;
+    }
+
     private function write(string $path, string $content): void
     {
         $this->adapter->write($path, $content, new Config());
@@ -124,6 +135,137 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame('new', $this->adapter->read('Trash/new.jpg'), 'post-cutoff content untouched');
         $this->assertTrue($this->adapter->directoryExists('Trash'), 'directory kept - post-cutoff files remain');
         $this->assertSame([], $this->repository->all(), 'row removed - no pre-cutoff entries left');
+    }
+
+    public function testDeleteInsideAPendingMoveSourceIsDeferred(): void
+    {
+        // Inverse overlap: the Delete sits INSIDE the prefix a pending Move still has to
+        // relocate, so sweeping it would punch a hole in content the Move has not copied yet.
+        $this->write('legacy/campaigns/a.jpg', 'a');
+        $this->addRow(StorageOperationType::Move, 'legacy', 'live');
+        $this->addRow(StorageOperationType::Delete, 'legacy/campaigns', null);
+
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator(new CopyRefusingAdapterDecorator($this->adapter)),
+            $this->repository,
+            new NullLogger()
+        );
+        $processor->process(null, null, null, true); // continue past the failure so the later row is reached
+
+        $this->assertSame('a', $this->adapter->read('legacy/campaigns/a.jpg'), 'content the move still needs survives');
+        $this->assertNotNull($this->findRow(StorageOperationType::Delete, 'legacy/campaigns'), 'the delete row itself is still queued');
+    }
+
+    public function testDeleteIsDeferredWhileAFailedMoveStillNeedsItsSource(): void
+    {
+        // The move cannot complete (the backend refuses to copy), so its source content must
+        // stay put - a Delete covering that source must not sweep it away in the same run.
+        $this->write('legacy/campaigns/a.jpg', 'a');
+        $this->addRow(StorageOperationType::Move, 'legacy/campaigns', 'live/campaigns');
+        $this->addRow(StorageOperationType::Delete, 'legacy', null);
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator(new CopyRefusingAdapterDecorator($this->adapter)),
+            $this->repository,
+            new NullLogger()
+        );
+
+        $result = $processor->process(null, null, null, true); // continue past the failure so the later row is reached
+
+        $this->assertSame('a', $this->adapter->read('legacy/campaigns/a.jpg'), 'source content preserved');
+        $this->assertGreaterThan(0, $result->getPendingRows(), 'rows stay queued for a later run');
+        $this->assertNotNull($this->findRow(StorageOperationType::Delete, 'legacy'), 'the delete row itself is still queued');
+    }
+
+    public function testDeleteOfAPendingMoveTargetIsNotSilentlyCompleted(): void
+    {
+        // Deleting a folder that only exists through a pending move: the adapter tombstones the
+        // LOGICAL path (B/sub) while the bytes are still at the move's source (A/sub). The row
+        // must not be dropped as "already complete" just because nothing sits at B/sub yet -
+        // otherwise the move later recreates exactly the subtree the user deleted.
+        $this->write('A/sub/a.jpg', 'a');
+        $this->addRow(StorageOperationType::Move, 'A', 'B');
+        $this->addRow(StorageOperationType::Delete, 'B/sub', null);
+
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator(new CopyRefusingAdapterDecorator($this->adapter)),
+            $this->repository,
+            new NullLogger()
+        );
+        $processor->process(null, null, null, true); // continue past the failure so the later row is reached
+
+        $this->assertNotNull(
+            $this->findRow(StorageOperationType::Delete, 'B/sub'),
+            'the delete stays queued until the move has materialised the content it refers to'
+        );
+    }
+
+    public function testDeleteIsNotDeferredByAMoveQueuedAfterIt(): void
+    {
+        // FIFO: a Move queued after the Delete must not rescue content out of the swept prefix -
+        // otherwise a deletion request could be undone by a later move.
+        $this->writeWithMtime('legacy/campaigns/a.jpg', 'a', time() - 7200);
+        $this->addRow(StorageOperationType::Delete, 'legacy', null, new DateTimeImmutable('-1 hour'));
+        $this->addRow(StorageOperationType::Move, 'legacy/campaigns', 'live/campaigns');
+
+        $this->processor()->process();
+
+        $this->assertFalse($this->adapter->fileExists('legacy/campaigns/a.jpg'), 'pre-cutoff content is still swept');
+        $this->assertNull($this->findRow(StorageOperationType::Delete, 'legacy'), 'the delete completed');
+    }
+
+    public function testTheRunHaltsAtTheFirstErrorByDefault(): void
+    {
+        // These operations are destructive and the command is meant to run unattended overnight.
+        // A failure usually means the backend is unhappy rather than one row being odd, so the run
+        // stops and asks for a human instead of working through thousands of rows in that state.
+        $this->write('Broken/a.jpg', 'a');
+        $this->write('Later/b.jpg', 'b');
+        $this->addRow(StorageOperationType::Move, 'Broken', 'BrokenTarget');
+        $this->addRow(StorageOperationType::Move, 'Later', 'LaterTarget');
+
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator(new CopyRefusingAdapterDecorator($this->adapter)),
+            $this->repository,
+            new NullLogger()
+        );
+        $result = $processor->process();
+
+        $this->assertSame(1, $result->getFailedRows());
+        $this->assertTrue($result->isStoppedOnError());
+        $this->assertSame('b', $this->adapter->read('Later/b.jpg'), 'the later row was not touched');
+        $this->assertNotNull($this->findRow(StorageOperationType::Move, 'Later'), 'the later row stays queued');
+    }
+
+    public function testFailuresCanBeIsolatedOnRequest(): void
+    {
+        // The opposite case, for an operator watching a large one-off migration who wants the
+        // bulk to proceed and will read the errors afterwards.
+        $this->write('Broken/a.jpg', 'a');
+        $this->write('Later/b.jpg', 'b');
+        $this->addRow(StorageOperationType::Move, 'Broken', 'BrokenTarget');
+        $this->addRow(StorageOperationType::Delete, 'Later', null);
+
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator(new CopyRefusingAdapterDecorator($this->adapter)),
+            $this->repository,
+            new NullLogger()
+        );
+        $result = $processor->process(null, null, null, true);
+
+        $this->assertFalse($result->isStoppedOnError());
+        $this->assertFalse($this->adapter->fileExists('Later/b.jpg'), 'unrelated rows keep draining after a failure');
+    }
+
+    public function testDeleteStillRunsWhenNoPendingMoveDependsOnIt(): void
+    {
+        $this->write('legacy/other/a.jpg', 'a');
+        $this->write('unrelated/campaigns/b.jpg', 'b');
+        $this->addRow(StorageOperationType::Move, 'unrelated/campaigns', 'live/campaigns');
+        $this->addRow(StorageOperationType::Delete, 'legacy', null);
+
+        $this->processor()->process();
+
+        $this->assertFalse($this->adapter->fileExists('legacy/other/a.jpg'), 'unrelated delete still executes');
     }
 
     public function testLiteralWinsTargetIsNeverOverwritten(): void
@@ -272,14 +414,15 @@ class StorageOperationQueueProcessorTest extends Unit
 
     public function testFailureIsolationContinuesWithNextRow(): void
     {
-        // a row for a storage the locator does not know -> exception -> failed, next row still runs
+        // a row for a storage the locator does not know -> exception -> failed. With
+        // --continue-on-error the next row still runs; by default the run would stop here.
         $this->repository->add(new StorageOperation(
             null, 'thumbnail', StorageOperationType::Move, 'Broken', 'Elsewhere/Broken', new DateTimeImmutable('+5 seconds')
         ));
         $this->write('Fine/a.jpg', 'ok');
         $this->addRow(StorageOperationType::Move, 'Fine', 'Moved/Fine');
 
-        $result = $this->processor()->process();
+        $result = $this->processor()->process(null, null, null, true);
 
         $this->assertSame(1, $result->getFailedRows());
         $this->assertSame(1, $result->getProcessedRows());
@@ -569,6 +712,172 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame(1, $result->getPendingRows(), 'older row untouched, stays queued');
     }
 
+    public function testSameTargetClusterIsNotReorderedAcrossADelete(): void
+    {
+        // Reordering a same-target Move across an intervening Delete would change which content
+        // that Delete sees: the newer Move could carry content out of the prefix the Delete was
+        // queued to remove, and the dependency guard (older rows only) would not cover it either.
+        $ops = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Delete, 'B', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'B', 'T', new DateTimeImmutable()),
+        ];
+
+        $processor = $this->processor();
+        $method = new ReflectionMethod($processor, 'orderForProcessing');
+        $method->setAccessible(true);
+
+        /** @var StorageOperation[] $ordered */
+        $ordered = $method->invoke($processor, $ops);
+
+        $this->assertSame(
+            [1, 2, 3],
+            array_map(static fn (StorageOperation $op) => $op->getId(), $ordered),
+            'the Delete keeps strict FIFO - the same-target cluster is not drained across it'
+        );
+    }
+
+    public function testUnrelatedDeleteDoesNotSplitASameTargetCluster(): void
+    {
+        // The Delete names a prefix neither Move touches, so reordering the cluster cannot change
+        // what it sweeps. Splitting the cluster here would drain the older row first and let it
+        // claim the shared target, so the newer row would then destroy its own fresher source.
+        $ops = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Delete, 'unrelated', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'B', 'T', new DateTimeImmutable()),
+        ];
+
+        $processor = $this->processor();
+        $method = new ReflectionMethod($processor, 'orderForProcessing');
+        $method->setAccessible(true);
+
+        /** @var StorageOperation[] $ordered */
+        $ordered = $method->invoke($processor, $ops);
+
+        $this->assertSame(
+            [3, 1, 2],
+            array_map(static fn (StorageOperation $op) => $op->getId(), $ordered),
+            'the cluster still drains newest-first; the unrelated Delete keeps its FIFO position'
+        );
+    }
+
+    public function testNestedDeleteSplitsTheClusterInBothDirections(): void
+    {
+        // The barrier index has to answer the same three overlap cases the pairwise scan did.
+        // Here the Delete is an ANCESTOR of the later Move's source, so it must still split.
+        $coveringDelete = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Delete, 'legacy', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'legacy/deep/B', 'T', new DateTimeImmutable()),
+        ];
+        // ...and here it sits INSIDE the later Move's source, which must also split.
+        $nestedDelete = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Delete, 'legacy/deep/B', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'legacy', 'T', new DateTimeImmutable()),
+        ];
+        // A sibling prefix that merely shares a leading substring is NOT an overlap.
+        $siblingDelete = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Delete, 'legacy-archive', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'legacy', 'T', new DateTimeImmutable()),
+        ];
+        // A Delete on a different storage never splits a cluster either.
+        $otherStorageDelete = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'thumbnail', StorageOperationType::Delete, 'legacy', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'legacy/B', 'T', new DateTimeImmutable()),
+        ];
+
+        $processor = $this->processor();
+        $method = new ReflectionMethod($processor, 'orderForProcessing');
+        $method->setAccessible(true);
+        $ids = static fn (array $ops) => array_map(
+            static fn (StorageOperation $op) => $op->getId(),
+            $method->invoke($processor, $ops)
+        );
+
+        $this->assertSame([1, 2, 3], $ids($coveringDelete), 'the delete covers the later move source');
+        $this->assertSame([1, 2, 3], $ids($nestedDelete), 'the delete sits inside the later move source');
+        $this->assertSame([3, 1, 2], $ids($siblingDelete), 'a shared substring is not an overlap');
+        $this->assertSame([3, 1, 2], $ids($otherStorageDelete), 'a delete on another storage is irrelevant');
+    }
+
+    public function testDeleteOfTheSharedTargetSplitsTheCluster(): void
+    {
+        // Here the Delete covers the cluster target, so the later Move must not jump ahead of it
+        // and land bytes in a prefix that is about to be swept.
+        $ops = [
+            new StorageOperation(1, 'asset', StorageOperationType::Move, 'A', 'T', new DateTimeImmutable()),
+            new StorageOperation(2, 'asset', StorageOperationType::Delete, 'T', null, new DateTimeImmutable()),
+            new StorageOperation(3, 'asset', StorageOperationType::Move, 'B', 'T', new DateTimeImmutable()),
+        ];
+
+        $processor = $this->processor();
+        $method = new ReflectionMethod($processor, 'orderForProcessing');
+        $method->setAccessible(true);
+
+        /** @var StorageOperation[] $ordered */
+        $ordered = $method->invoke($processor, $ops);
+
+        $this->assertSame(
+            [1, 2, 3],
+            array_map(static fn (StorageOperation $op) => $op->getId(), $ordered)
+        );
+    }
+
+    public function testDeleteAcrossASameTargetClusterKeepsItsOwnContentSemantics(): void
+    {
+        // End to end for the sequence above: the Delete runs before the later same-target Move,
+        // so it sweeps the content it was queued for, while content written into the reused
+        // namespace afterwards (post-cutoff) is spared and still relocated by that Move.
+        $this->writeWithMtime('B/old.jpg', 'old', time() - 7200);
+        $this->write('A/a.jpg', 'a');
+        $this->addRow(StorageOperationType::Move, 'A', 'T');
+        $this->addRow(StorageOperationType::Delete, 'B', null, new DateTimeImmutable('-1 hour'));
+        $this->addRow(StorageOperationType::Move, 'B', 'T');
+        $this->write('B/new.jpg', 'new'); // namespace reuse: written after the delete was queued
+
+        $this->processor()->process();
+
+        $this->assertFalse($this->adapter->fileExists('B/old.jpg'), 'pre-cutoff content is deleted as requested');
+        $this->assertSame('new', $this->adapter->read('T/new.jpg'), 'post-cutoff content is spared and moved');
+        $this->assertSame('a', $this->adapter->read('T/a.jpg'), 'the unrelated move still completed');
+    }
+
+    public function testIdRefusesAMoveThatWouldJumpAheadOfAnOlderOverlappingDelete(): void
+    {
+        // --id bypasses FIFO entirely. Running this Move alone would carry the content out of
+        // "legacy" before the older Delete ever sees it, so explicitly deleted content would
+        // survive under the move target.
+        $this->writeWithMtime('legacy/campaigns/a.jpg', 'a', time() - 7200);
+        $this->addRow(StorageOperationType::Delete, 'legacy', null, new DateTimeImmutable('-1 hour'));
+        $this->addRow(StorageOperationType::Move, 'legacy/campaigns', 'live/campaigns');
+        $moveId = (int) $this->findRow(StorageOperationType::Move, 'legacy/campaigns')?->getId();
+
+        $result = $this->processor()->process($moveId);
+
+        $this->assertSame(0, $result->getProcessedRows());
+        $this->assertSame(1, $result->getFailedRows());
+        $this->assertStringContainsString('refusing to process out of order', implode(' ', $result->getErrors()));
+        $this->assertSame('a', $this->adapter->read('legacy/campaigns/a.jpg'), 'nothing was relocated');
+        $this->assertFalse($this->adapter->fileExists('live/campaigns/a.jpg'));
+    }
+
+    public function testIdStillProcessesAMoveWithNoOverlappingDelete(): void
+    {
+        $this->write('other/a.jpg', 'a');
+        $this->addRow(StorageOperationType::Delete, 'legacy', null, new DateTimeImmutable('-1 hour'));
+        $this->addRow(StorageOperationType::Move, 'other', 'live/other');
+        $moveId = (int) $this->findRow(StorageOperationType::Move, 'other')?->getId();
+
+        $result = $this->processor()->process($moveId);
+
+        $this->assertSame(1, $result->getProcessedRows());
+        $this->assertSame('a', $this->adapter->read('live/other/a.jpg'));
+    }
+
     public function testOrderForProcessingKeepsFifoOtherwise(): void
     {
         $ops = [
@@ -744,6 +1053,122 @@ class StorageOperationQueueProcessorTest extends Unit
             $spy->copyConfigs[count($spy->copyConfigs) - 1],
             'the reconciliation copy that relocates to the final target uses them too'
         );
+    }
+
+    public function testADeleteIsNotDeferredByAMoveThatAlreadyDrainedInTheSameRun(): void
+    {
+        // The pending-move snapshot is taken once and consulted by every Delete. A Move that
+        // completes mid-run no longer blocks anything, so a later Delete over its source must
+        // still run in this pass rather than wait for the next one.
+        $this->writeWithMtime('unrelated/u.jpg', 'u', time() - 7200);
+        $this->writeWithMtime('A/a.jpg', 'a', time() - 7200);
+
+        $this->addRow(StorageOperationType::Delete, 'unrelated', null);   // primes the snapshot
+        $this->addRow(StorageOperationType::Move, 'A', 'B');              // drains during this run
+        $this->addRow(StorageOperationType::Delete, 'A', null);           // must not be deferred
+
+        $result = $this->processor()->process();
+
+        $this->assertSame(3, $result->getProcessedRows(), 'all three rows complete in one run');
+        $this->assertSame([], $this->repository->all(), 'nothing is left queued for a second run');
+        $this->assertSame('a', $this->adapter->read('B/a.jpg'), 'the move landed');
+        $this->assertFalse($this->adapter->directoryExists('A'), 'the delete swept the drained source');
+    }
+
+    public function testAFailedNewestClusterMemberDoesNotLetAnOlderOneClaimTheTarget(): void
+    {
+        // Same-target moves drain newest-first precisely so the freshest bytes claim the target
+        // before any superseded row can. If the newest member FAILS and the older one is still
+        // allowed to run, it lands stale bytes at the shared target - and on the next run the
+        // newest row sees an occupied target, treats its own source as superseded and deletes
+        // it. That is the exact data loss the ordering exists to prevent.
+        $this->writeWithMtime('A/x.jpg', 'stale', time() - 7200);
+        $this->writeWithMtime('B/x.jpg', 'fresh', time() - 7200);
+        $this->addRow(StorageOperationType::Move, 'A', 'T');
+        $this->addRow(StorageOperationType::Move, 'B', 'T'); // newer, drains first
+
+        $refusing = new CopyRefusingAdapterDecorator($this->adapter, 'B');
+        $locator = new StorageOperationQueueProcessorTestAdapterLocator($refusing);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger());
+
+        $processor->process(null, null, null, true); // continue past the failure so the later row is reached
+
+        $this->assertFalse(
+            $this->adapter->fileExists('T/x.jpg'),
+            'the older member must not claim the target while the newest one is failing'
+        );
+
+        // the backend recovers; the next run must land the FRESH bytes, not the stale ones
+        $refusing->refusing = false;
+        $processor->process();
+
+        $this->assertSame('fresh', $this->adapter->read('T/x.jpg'));
+        $this->assertSame([], $this->repository->all(), 'both rows drained');
+    }
+
+    public function testAFailedDeleteHoldsBackLaterMovesOverItsPrefix(): void
+    {
+        // FIFO says the delete sweeps "legacy" before anything relocates out of it. If the delete
+        // merely fails, a later overlapping move must not get to carry that content somewhere
+        // else - the next run would then find the source empty, complete the delete, and leave
+        // content the user explicitly deleted alive under the move target. Whether that happens
+        // must not depend on a transient backend error.
+        $this->writeWithMtime('legacy/campaigns/c.jpg', 'c', time() - 7200);
+        $this->addRow(StorageOperationType::Delete, 'legacy', null);
+        $this->addRow(StorageOperationType::Move, 'legacy/campaigns', 'live/campaigns');
+
+        $refusing = new DeleteRefusingAdapterDecorator($this->adapter, 'legacy');
+        $locator = new StorageOperationQueueProcessorTestAdapterLocator($refusing);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger());
+
+        $processor->process(null, null, null, true); // continue past the failure so the later row is reached
+
+        $this->assertFalse(
+            $this->adapter->fileExists('live/campaigns/c.jpg'),
+            'the move must not rescue content out of a prefix whose delete only failed'
+        );
+        $this->assertSame('c', $this->adapter->read('legacy/campaigns/c.jpg'), 'content untouched');
+
+        // once the backend recovers the delete completes, exactly as FIFO intended
+        $refusing->refusing = false;
+        $processor->process();
+
+        $this->assertFalse($this->adapter->fileExists('legacy/campaigns/c.jpg'), 'the delete swept it');
+        $this->assertFalse($this->adapter->fileExists('live/campaigns/c.jpg'), 'and nothing escaped');
+    }
+
+    public function testAFailedMoveHaltsEveryOtherMoveOntoItsTargetAcrossBarrierSegments(): void
+    {
+        // A Delete between same-target moves splits them into barrier segments so they are not
+        // reordered across it. Segments are an ordering concept only: a failed move must still hold
+        // back EVERY other move onto its target, whichever segment it sits in. Otherwise a later
+        // segment claims the target, and on the next run the failed move finds it occupied and
+        // deletes its own fresher source as superseded.
+        $this->writeWithMtime('A/x.jpg', 'a', time() - 7200);
+        $this->writeWithMtime('C/x.jpg', 'c-fresh', time() - 7200);
+        $this->addRow(StorageOperationType::Move, 'A', 'T');                                   // #1, segment 0
+        $this->addRow(StorageOperationType::Delete, 'B', null, new DateTimeImmutable('-1 hour')); // #2, the barrier
+        $this->write('B/x.jpg', 'b'); // written after the delete's cutoff, so the delete spares it
+        $this->addRow(StorageOperationType::Move, 'B', 'T');                                   // #3, segment 1
+        $this->addRow(StorageOperationType::Move, 'C', 'T');                                   // #4, segment 0, newest
+
+        $refusing = new CopyRefusingAdapterDecorator($this->adapter, 'C');
+        $locator = new StorageOperationQueueProcessorTestAdapterLocator($refusing);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger());
+
+        $processor->process(null, null, null, true); // continue past the failure so later rows are reached
+
+        $this->assertFalse(
+            $this->adapter->fileExists('T/x.jpg'),
+            'no move onto T may land while the newest move onto T is failing, whatever its segment'
+        );
+        $this->assertSame('b', $this->adapter->read('B/x.jpg'), 'the other segment\'s source is untouched');
+
+        $refusing->refusing = false;
+        $processor->process(null, null, null, true);
+
+        $this->assertSame('c-fresh', $this->adapter->read('T/x.jpg'), 'the newest bytes claim the target once it can copy');
+        $this->assertFalse($this->adapter->fileExists('C/x.jpg'), 'and its source is not lost');
     }
 }
 
