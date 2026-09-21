@@ -1136,6 +1136,40 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertFalse($this->adapter->fileExists('legacy/campaigns/c.jpg'), 'the delete swept it');
         $this->assertFalse($this->adapter->fileExists('live/campaigns/c.jpg'), 'and nothing escaped');
     }
+
+    public function testAFailedMoveHaltsEveryOtherMoveOntoItsTargetAcrossBarrierSegments(): void
+    {
+        // A Delete between same-target moves splits them into barrier segments so they are not
+        // reordered across it. Segments are an ordering concept only: a failed move must still hold
+        // back EVERY other move onto its target, whichever segment it sits in. Otherwise a later
+        // segment claims the target, and on the next run the failed move finds it occupied and
+        // deletes its own fresher source as superseded.
+        $this->writeWithMtime('A/x.jpg', 'a', time() - 7200);
+        $this->writeWithMtime('C/x.jpg', 'c-fresh', time() - 7200);
+        $this->addRow(StorageOperationType::Move, 'A', 'T');                                   // #1, segment 0
+        $this->addRow(StorageOperationType::Delete, 'B', null, new DateTimeImmutable('-1 hour')); // #2, the barrier
+        $this->write('B/x.jpg', 'b'); // written after the delete's cutoff, so the delete spares it
+        $this->addRow(StorageOperationType::Move, 'B', 'T');                                   // #3, segment 1
+        $this->addRow(StorageOperationType::Move, 'C', 'T');                                   // #4, segment 0, newest
+
+        $refusing = new CopyRefusingAdapterDecorator($this->adapter, 'C');
+        $locator = new StorageOperationQueueProcessorTestAdapterLocator($refusing);
+        $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger());
+
+        $processor->process(null, null, null, true); // continue past the failure so later rows are reached
+
+        $this->assertFalse(
+            $this->adapter->fileExists('T/x.jpg'),
+            'no move onto T may land while the newest move onto T is failing, whatever its segment'
+        );
+        $this->assertSame('b', $this->adapter->read('B/x.jpg'), 'the other segment\'s source is untouched');
+
+        $refusing->refusing = false;
+        $processor->process(null, null, null, true);
+
+        $this->assertSame('c-fresh', $this->adapter->read('T/x.jpg'), 'the newest bytes claim the target once it can copy');
+        $this->assertFalse($this->adapter->fileExists('C/x.jpg'), 'and its source is not lost');
+    }
 }
 
 /**

@@ -16,9 +16,11 @@ after it would fail the same way. Stopping turns thousands of identical errors i
 diagnosable failure, which suits a command that is meant to run unattended overnight.
 
 If you schedule this command, expect a run that used to finish "with failures" to now fail
-early instead; fix the cause and rerun. To keep the previous behaviour for a supervised
-one-off migration, pass the new `--continue-on-error` option. There was no option
-controlling this before, so no existing invocation needs to change.
+early instead; fix the cause and rerun. Existing invocations remain valid as written, but
+if yours relied on the rows *after* a failure still being processed in the same run, add
+the new `--continue-on-error` option to keep that behaviour. It is also the option to use
+for a supervised one-off migration where you want the bulk to proceed and read the errors
+afterwards. No option controlled this before, so nothing else in the command line changes.
 
 ## Pimcore 2026.2.10
 
