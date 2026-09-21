@@ -20,9 +20,9 @@ use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\UnableToDeleteFile;
 
 /**
- * Delegates everything to a real adapter, except copy(), which always fails - a backend whose
- * server-side copy is refused. A queued move then cannot complete, so its source content must
- * stay where it is.
+ * Refuses delete() for paths under a given prefix (or everywhere when none is given) by throwing
+ * UnableToDeleteFile, so a test can make one Delete row fail while everything else on the adapter
+ * keeps working. Toggle $refusing to lift the failure mid-test.
  */
 final class DeleteRefusingAdapterDecorator implements FilesystemAdapter
 {

@@ -1170,6 +1170,71 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame('c-fresh', $this->adapter->read('T/x.jpg'), 'the newest bytes claim the target once it can copy');
         $this->assertFalse($this->adapter->fileExists('C/x.jpg'), 'and its source is not lost');
     }
+
+    public function testAnOlderMoveWaitsForANewerMoveOntoTheSameTargetAcrossADeleteBarrier(): void
+    {
+        // A re-move of a still-queued subtree: A -> B is pending, then B -> C is queued, which
+        // repoints the first row to A -> C. A Delete of B/sub queued in between overlaps only the
+        // later move's source, so the two moves onto C sit in different barrier segments and are
+        // not reordered. Strict FIFO then lets the OLDER move claim C/x first, and the newer move
+        // treats its fresher B/x as superseded and deletes it. The older move has to wait instead.
+        $this->writeWithMtime('A/x.jpg', 'stale', time() - 7200);
+        $this->writeWithMtime('B/x.jpg', 'fresh', time() - 7200);
+        $this->addRow(StorageOperationType::Move, 'A', 'B');            // #1
+        $this->addRow(StorageOperationType::Delete, 'B/sub', null);     // #2, overlaps only B -> C
+        $this->addRow(StorageOperationType::Move, 'B', 'C');            // #3, repoints #1 to A -> C
+
+        $this->assertSame('C', $this->findRow(StorageOperationType::Move, 'A')?->getTargetPrefix(), 'precondition: #1 was repointed');
+
+        $this->processor()->process();
+
+        $this->assertSame('fresh', $this->adapter->read('C/x.jpg'), 'the newer bytes must be what lands at the shared target');
+        $this->assertFalse($this->adapter->fileExists('B/x.jpg'), 'the newer move drained');
+        // the older move was deferred past the newer one and then, on the same run's second pass,
+        // found the target taken and superseded its own stale source
+        $this->assertFalse($this->adapter->fileExists('A/x.jpg'));
+        $this->assertSame([], $this->repository->all(), 'everything completed within one run');
+    }
+
+    public function testAFailedMoveHaltsItsCurrentTargetAfterAMidDrainRepoint(): void
+    {
+        // Live traffic repoints A -> B to A -> C while #1 is draining, and the very next copy then
+        // fails. The halt bookkeeping must cover the CURRENT target C, not only the pre-drain B -
+        // otherwise a later queued move onto C claims it and the same-target barrier is defeated.
+        for ($i = 1; $i <= 8; $i++) {
+            $this->writeWithMtime("A/file{$i}.jpg", "a{$i}", time() - 7200);
+        }
+        $this->writeWithMtime('D/d.jpg', 'd', time() - 7200);
+        $this->addRow(StorageOperationType::Move, 'A', 'B', new DateTimeImmutable('+5 seconds')); // #1
+        $this->addRow(StorageOperationType::Move, 'D', 'C', new DateTimeImmutable('+5 seconds')); // #2
+
+        $refusing = new CopyRefusingAdapterDecorator($this->adapter, 'A', false);
+        $mutating = new StorageOperationQueueProcessorTestMutatingAdapter(
+            $refusing,
+            4,
+            function () use ($refusing): void {
+                // a live re-move B -> C repoints #1 to A -> C ...
+                $this->repository->add(new StorageOperation(
+                    null, 'asset', StorageOperationType::Move, 'B', 'C', new DateTimeImmutable()
+                ));
+                // ... and from here on the backend refuses copies out of A
+                $refusing->refusing = true;
+            }
+        );
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator($mutating),
+            $this->repository,
+            new NullLogger(),
+            3
+        );
+
+        $result = $processor->process(null, null, null, true); // continue past the failure
+
+        $this->assertSame(1, $result->getFailedRows(), 'the repointed move failed mid-drain');
+        $this->assertSame('C', $this->findRow(StorageOperationType::Move, 'A')?->getTargetPrefix(), 'precondition: it now targets C');
+        $this->assertFalse($this->adapter->fileExists('C/d.jpg'), 'no other move onto the CURRENT target may land in this run');
+        $this->assertSame('d', $this->adapter->read('D/d.jpg'), 'that move stays queued with its source untouched');
+    }
 }
 
 /**

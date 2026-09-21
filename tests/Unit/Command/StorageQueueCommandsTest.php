@@ -248,7 +248,7 @@ class StorageQueueCommandsTest extends Unit
 
         $tester->execute(['--continue-on-error' => true]);
 
-        $this->assertStringContainsString('2 failed', $tester->getDisplay(), 'both rows are attempted without the flag');
+        $this->assertStringContainsString('2 failed', $tester->getDisplay(), 'with --continue-on-error both rows are attempted and both stay queued');
         $this->assertStringNotContainsString('stopped at the first error', $tester->getDisplay());
     }
 
