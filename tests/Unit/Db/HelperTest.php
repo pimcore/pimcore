@@ -371,6 +371,8 @@ final class HelperTest extends TestCase
             );
             $this->fail('Expected UniqueConstraintViolationException was not thrown.');
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException) {
+            // the expected outcome, as with upsert(); what matters is verified below - neither row
+            // was written
         }
 
         $this->assertSame(2, $this->countRows(self::TABLE_AUTO_INCREMENT));
