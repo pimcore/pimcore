@@ -150,7 +150,7 @@ class StorageOperationQueueProcessorTest extends Unit
             $this->repository,
             new NullLogger()
         );
-        $processor->process();
+        $processor->process(null, null, null, true); // continue past the failure so the later row is reached
 
         $this->assertSame('a', $this->adapter->read('legacy/campaigns/a.jpg'), 'content the move still needs survives');
         $this->assertNotNull($this->findRow(StorageOperationType::Delete, 'legacy/campaigns'), 'the delete row itself is still queued');
@@ -169,7 +169,7 @@ class StorageOperationQueueProcessorTest extends Unit
             new NullLogger()
         );
 
-        $result = $processor->process();
+        $result = $processor->process(null, null, null, true); // continue past the failure so the later row is reached
 
         $this->assertSame('a', $this->adapter->read('legacy/campaigns/a.jpg'), 'source content preserved');
         $this->assertGreaterThan(0, $result->getPendingRows(), 'rows stay queued for a later run');
@@ -191,7 +191,7 @@ class StorageOperationQueueProcessorTest extends Unit
             $this->repository,
             new NullLogger()
         );
-        $processor->process();
+        $processor->process(null, null, null, true); // continue past the failure so the later row is reached
 
         $this->assertNotNull(
             $this->findRow(StorageOperationType::Delete, 'B/sub'),
@@ -1091,7 +1091,7 @@ class StorageOperationQueueProcessorTest extends Unit
         $locator = new StorageOperationQueueProcessorTestAdapterLocator($refusing);
         $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger());
 
-        $processor->process();
+        $processor->process(null, null, null, true); // continue past the failure so the later row is reached
 
         $this->assertFalse(
             $this->adapter->fileExists('T/x.jpg'),
@@ -1121,7 +1121,7 @@ class StorageOperationQueueProcessorTest extends Unit
         $locator = new StorageOperationQueueProcessorTestAdapterLocator($refusing);
         $processor = new StorageOperationQueueProcessor($locator, $this->repository, new NullLogger());
 
-        $processor->process();
+        $processor->process(null, null, null, true); // continue past the failure so the later row is reached
 
         $this->assertFalse(
             $this->adapter->fileExists('live/campaigns/c.jpg'),

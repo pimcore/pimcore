@@ -1,5 +1,25 @@
 # Upgrade Notes
 
+## Pimcore 2026.2.11
+
+### [Assets] Storage operation queue: `pimcore:assets:storage-queue:process` now stops at the first failing row
+
+The draining command of the opt-in asset storage operation queue used to log a failing
+row and carry on with the rest of the queue. It now **ends the run at the first error**:
+it exits non-zero, names the row it stopped on, and leaves every row it had not reached
+queued for the next run. Nothing is retried automatically.
+
+The reason is that rows are not independent. A folder move that could not complete still
+holds the content its later delete would sweep, and a failure in this job is rarely
+row-specific - credentials, a permission the endpoint does not serve, a quota - so the rows
+after it would fail the same way. Stopping turns thousands of identical errors into one
+diagnosable failure, which suits a command that is meant to run unattended overnight.
+
+If you schedule this command, expect a run that used to finish "with failures" to now fail
+early instead; fix the cause and rerun. To keep the previous behaviour for a supervised
+one-off migration, pass the new `--continue-on-error` option. There was no option
+controlling this before, so no existing invocation needs to change.
+
 ## Pimcore 2026.2.10
 
 ### [Notifications]
