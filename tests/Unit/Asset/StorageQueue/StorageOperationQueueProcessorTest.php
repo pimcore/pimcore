@@ -1250,6 +1250,46 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertSame('C', $this->findRow(StorageOperationType::Move, 'A')?->getTargetPrefix(), 'precondition: repointed');
         $this->assertNotNull($this->findRow(StorageOperationType::Delete, 'C'), 'the Delete of the current target waited for the failed move');
     }
+
+    public function testAMoveLeftIncompleteWithoutAnErrorAlsoHaltsItsCurrentTarget(): void
+    {
+        // The incomplete-but-not-failed path: an entry without a modification time is never
+        // touched, so the move ends the run with content still at the source and returns false
+        // without throwing. After a mid-drain repoint that move must halt its CURRENT target too,
+        // or a later move onto it claims the target while the incomplete move still holds bytes for
+        // it. (Unusable listing metadata is exactly what the incident backend produced.)
+        for ($i = 1; $i <= 8; $i++) {
+            $this->writeWithMtime("A/file{$i}.jpg", "a{$i}", time() - 7200);
+        }
+        $this->writeWithMtime('D/d.jpg', 'd', time() - 7200);
+        $this->addRow(StorageOperationType::Move, 'A', 'B', new DateTimeImmutable('+5 seconds')); // #1
+        $this->addRow(StorageOperationType::Move, 'D', 'C', new DateTimeImmutable('+5 seconds')); // #2
+
+        $undated = new UndatedEntryAdapterDecorator($this->adapter, 'A/file8.jpg');
+        $mutating = new StorageOperationQueueProcessorTestMutatingAdapter(
+            $undated,
+            4,
+            function (): void {
+                $this->repository->add(new StorageOperation(
+                    null, 'asset', StorageOperationType::Move, 'B', 'C', new DateTimeImmutable()
+                )); // repoints #1 to A -> C
+            }
+        );
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator($mutating),
+            $this->repository,
+            new NullLogger(),
+            3
+        );
+
+        $result = $processor->process();
+
+        $this->assertSame(0, $result->getFailedRows(), 'nothing threw');
+        $this->assertNotNull($this->findRow(StorageOperationType::Move, 'A'), 'the move stayed queued, incomplete');
+        $this->assertSame('C', $this->findRow(StorageOperationType::Move, 'A')?->getTargetPrefix(), 'precondition: repointed');
+        $this->assertFalse($this->adapter->fileExists('C/d.jpg'), 'no other move onto the CURRENT target may land');
+        $this->assertSame('d', $this->adapter->read('D/d.jpg'));
+    }
 }
 
 /**
