@@ -247,7 +247,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
             $tableName = 'object_store_' . $this->model->getClassId();
             if ($isUpdate) {
-                Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+                // the row exists on an update, so updateOrInsert() is a single UPDATE
+                Helper::updateOrInsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
             } else {
                 $this->db->insert('object_store_' . $this->model->getClassId(), Helper::quoteDataIdentifiers($this->db, $data));
             }
@@ -367,7 +368,13 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $data['oo_id'] = $this->model->getId();
 
             $tableName = 'object_query_' . $this->model->getClassId();
-            Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+            // on an update the row exists and updateOrInsert() is a single UPDATE; a new object's row
+            // is a plain insert either way
+            if ($isUpdate) {
+                Helper::updateOrInsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+            } else {
+                Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+            }
         } finally {
             DataObject::setGetInheritedValues($inheritedValues);
         }

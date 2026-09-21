@@ -112,7 +112,8 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        Helper::upsert($this->db, 'objects', $data, $this->getPrimaryKey('objects'));
+        // the row exists since create(), so updateOrInsert() is a single UPDATE
+        Helper::updateOrInsert($this->db, 'objects', $data, $this->getPrimaryKey('objects'));
 
         // tree_locks
         $this->db->delete('tree_locks', ['id' => $this->model->getId(), 'type' => 'object']);
