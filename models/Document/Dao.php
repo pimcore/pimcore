@@ -187,9 +187,9 @@ class Dao extends Model\Element\Dao
         Helper::updateOrInsert($this->db, 'documents', $dataDocument, $this->getPrimaryKey('documents'));
 
         if ($typeSpecificTable) {
-            // upsert(): the type-specific row does not exist before the first save, and a custom document
-            // type brings its own table, so nothing is known about the row here
-            Helper::upsert($this->db, $typeSpecificTable, $dataTypeSpecific, $this->getPrimaryKey($typeSpecificTable));
+            // the built-in types insert their type-specific row in create(), so this is a single UPDATE
+            // as well; a custom type whose row does not exist yet is inserted by the fallback
+            Helper::updateOrInsert($this->db, $typeSpecificTable, $dataTypeSpecific, $this->getPrimaryKey($typeSpecificTable));
         }
 
         $this->updateLocks();

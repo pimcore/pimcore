@@ -37,6 +37,8 @@ final class HelperTest extends TestCase
 
     private const TABLE_TRIGGER_LOG = 'test_upsert_trigger_log';
 
+    private const TABLE_LAST_INSERT_ID_LOG = 'test_upsert_last_insert_id_log';
+
     protected bool $cleanupDbInSetup = false;
 
     private Connection $db;
@@ -480,6 +482,77 @@ final class HelperTest extends TestCase
         $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
     }
 
+    public function testUpdateTriggersObserveTheMatchTokenInLastInsertId(): void
+    {
+        // the documented constraint: an update trigger reading LAST_INSERT_ID() sees the match
+        // token, not the id of an earlier insert. The log table has an auto-increment column, so
+        // each trigger's own INSERT changes LAST_INSERT_ID() while the trigger runs - the server
+        // restores it when the trigger ends, which is what keeps the match detection intact
+        $this->db->executeStatement(
+            'CREATE TABLE ' . self::TABLE_LAST_INSERT_ID_LOG . ' (
+                `n` int(11) NOT NULL AUTO_INCREMENT,
+                `event` varchar(20) NOT NULL,
+                `last_insert_id` bigint(20) unsigned NOT NULL,
+                PRIMARY KEY (`n`)
+            ) DEFAULT CHARSET=utf8mb4'
+        );
+        foreach (['before', 'after'] as $when) {
+            $this->db->executeStatement(
+                'CREATE TRIGGER test_upsert_' . $when . '_update ' . strtoupper($when) . ' UPDATE ON ' . self::TABLE_AUTO_INCREMENT
+                . ' FOR EACH ROW INSERT INTO ' . self::TABLE_LAST_INSERT_ID_LOG
+                . " (`event`, `last_insert_id`) VALUES ('" . $when . "_update', LAST_INSERT_ID())"
+            );
+        }
+
+        $id = (int) Helper::updateOrInsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => null, 'name' => 'first', 'value' => 'inserted'],
+            ['id']
+        );
+        $this->assertSame((string) $id, (string) $this->db->fetchOne('SELECT LAST_INSERT_ID()'));
+
+        $this->assertNull(Helper::updateOrInsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => $id, 'name' => 'first', 'value' => 'changed'],
+            ['id']
+        ));
+
+        $observed = $this->db->fetchAllKeyValue(
+            'SELECT `event`, `last_insert_id` FROM ' . self::TABLE_LAST_INSERT_ID_LOG . ' ORDER BY n'
+        );
+        $token = (string) $this->db->fetchOne('SELECT LAST_INSERT_ID()');
+        $this->assertSame(['before_update', 'after_update'], array_keys($observed));
+        $this->assertNotSame((string) $id, $token, 'The UPDATE replaces the last insert id with the match token.');
+        $this->assertSame(
+            $token,
+            (string) $observed['before_update'],
+            'A BEFORE UPDATE trigger sees the match token in LAST_INSERT_ID().'
+        );
+        $this->assertSame(
+            $token,
+            (string) $observed['after_update'],
+            'An AFTER UPDATE trigger sees it too: the value is restored after the BEFORE UPDATE trigger\'s own insert.'
+        );
+        $this->db->executeStatement('DELETE FROM ' . self::TABLE_LAST_INSERT_ID_LOG);
+
+        // an unchanged row: the triggers' own auto-increment inserts must not defeat the detection
+        $this->assertNull(Helper::updateOrInsert(
+            $this->db,
+            self::TABLE_AUTO_INCREMENT,
+            ['id' => $id, 'name' => 'first', 'value' => 'changed'],
+            ['id']
+        ));
+        $events = $this->db->fetchFirstColumn('SELECT `event` FROM ' . self::TABLE_LAST_INSERT_ID_LOG . ' ORDER BY n');
+        $this->assertCount(
+            1,
+            array_keys($events, 'before_update', true),
+            'The unchanged row was recognised as matched: its BEFORE UPDATE trigger ran once and no second UPDATE followed.'
+        );
+        $this->assertSame(1, $this->countRows(self::TABLE_AUTO_INCREMENT));
+    }
+
     public function testAppliesTheDataToARowInsertedConcurrently(): void
     {
         // the interleaving: the UPDATE matches no row, then a second connection inserts the
@@ -633,6 +706,7 @@ final class HelperTest extends TestCase
         $this->db->executeStatement('DROP TABLE IF EXISTS ' . self::TABLE_AUTO_INCREMENT);
         $this->db->executeStatement('DROP TABLE IF EXISTS ' . self::TABLE_COMPOSITE_KEY);
         $this->db->executeStatement('DROP TABLE IF EXISTS ' . self::TABLE_TRIGGER_LOG);
+        $this->db->executeStatement('DROP TABLE IF EXISTS ' . self::TABLE_LAST_INSERT_ID_LOG);
     }
 }
 

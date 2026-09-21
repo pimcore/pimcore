@@ -86,18 +86,25 @@ class Helper
      * matched row leaves the token in the connection's LAST_INSERT_ID(), read back with
      * one cheap SELECT only on this path. Matched means done, without touching the row (or its
      * triggers) a second time; not matched means missing, and the insert goes through upsert(),
-     * whose duplicate handling also covers a row inserted concurrently since the UPDATE. Note
-     * that this leaves the token as the connection's last insert id, which nothing reads after
-     * an UPDATE anyway.
+     * whose duplicate handling also covers a row inserted concurrently since the UPDATE.
      *
      * Where the row usually does not exist, upsert() is the better choice - a plain INSERT -
      * as the UPDATE would be a wasted round trip. A null or missing key value skips the UPDATE
      * and goes to upsert().
      *
-     * The one observable difference to upsert(): on the update path of a row whose values
+     * Two things differ from upsert(), both observable only by custom triggers or by reading
+     * the connection's last insert id after an update. On the update of a row whose values
      * change, upsert()'s INSERT failed on the duplicate and ran the table's BEFORE INSERT
      * triggers first (their effects rolled back with the failed statement); this method runs
-     * them only when it actually tries to insert.
+     * them only when it actually tries to insert. And the UPDATE sets LAST_INSERT_ID() to the
+     * token: the assignments are evaluated before the row's BEFORE UPDATE and AFTER UPDATE
+     * triggers run, so a trigger reading LAST_INSERT_ID() sees the token, and so does a
+     * lastInsertId() read after the update - which nothing in core does, the DAOs read it after
+     * their own INSERT in create(). upsert() left the value alone (the MySQL documentation
+     * calls it undefined after a failed statement). A trigger's own INSERT into a table with
+     * an auto-increment column does not disturb the detection: the server restores
+     * LAST_INSERT_ID() when a trigger ends. Custom update triggers must not rely on
+     * LAST_INSERT_ID() carrying the id of an earlier insert.
      *
      * @param string $table Used as given, exactly as upsert() and DBAL's insert()/update() use it:
      * $quoteIdentifiers applies to the column names in $data and $keys only. A table name that
