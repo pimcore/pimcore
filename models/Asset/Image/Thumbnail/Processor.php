@@ -503,11 +503,8 @@ class Processor
                     // positioning of a cover transformation. This has to happen outside of the loop
                     // above, as `positioning` is an optional argument that does not have to be part
                     // of the thumbnail configuration at all
-                    if ($transformation['method'] === 'cover' && $asset->getCustomSetting('focalPointX')) {
-                        $arguments[(int)array_search('positioning', $mapping, true)] = [
-                            'x' => $asset->getCustomSetting('focalPointX'),
-                            'y' => $asset->getCustomSetting('focalPointY'),
-                        ];
+                    if ($transformation['method'] === 'cover' && ($focalPoint = self::getFocalPoint($asset)) !== null) {
+                        $arguments[(int)array_search('positioning', $mapping, true)] = $focalPoint;
                     }
 
                     ksort($arguments);
@@ -554,6 +551,25 @@ class Processor
         return $sourceFormat === 'tiff'
             && !\Pimcore\Tool::isFrontendRequestByAdmin()
             && self::containsTransformationType($config, 'tifforiginal');
+    }
+
+    /**
+     * The focal point of an asset as percentage coordinates, null if it does not have one.
+     * Both coordinates are required and 0 is a valid one (left/top edge), so they must not
+     * be checked for truthiness.
+     *
+     * @return array{x: int|float|string, y: int|float|string}|null
+     */
+    private static function getFocalPoint(Asset $asset): ?array
+    {
+        $x = $asset->getCustomSetting('focalPointX');
+        $y = $asset->getCustomSetting('focalPointY');
+
+        if (!is_numeric($x) || !is_numeric($y)) {
+            return null;
+        }
+
+        return ['x' => $x, 'y' => $y];
     }
 
     private static function containsTransformationType(Config $config, string $transformationType): bool

@@ -135,6 +135,36 @@ class ProcessorFocalPointTest extends TestCase
         );
     }
 
+    public function testFocalPointOnTheEdgeIsApplied(): void
+    {
+        // A focal point on the left/top edge has the coordinate 0 - it is a focal point like any
+        // other and must not be mistaken for "no focal point" by a truthiness check.
+        $adapter = $this->adapter();
+        $config = $this->config(['width' => 400, 'height' => 400]);
+
+        $this->applyTransformations($adapter, $this->image(0.0, 0.0), $config);
+
+        self::assertSame(
+            [[400, 400, ['x' => 0.0, 'y' => 0.0], false]],
+            $adapter->coverCalls
+        );
+    }
+
+    public function testIncompleteFocalPointIsIgnored(): void
+    {
+        // Half a focal point is no focal point - injecting it would crop from the top edge
+        // instead of keeping the configured positioning.
+        $adapter = $this->adapter();
+        $config = $this->config(['width' => 400, 'height' => 400, 'positioning' => 'topright']);
+
+        $this->applyTransformations($adapter, $this->image(80.5, null), $config);
+
+        self::assertSame(
+            [[400, 400, 'topright', false]],
+            $adapter->coverCalls
+        );
+    }
+
     public function testConfiguredPositioningIsKeptWithoutFocalPoint(): void
     {
         $adapter = $this->adapter();
