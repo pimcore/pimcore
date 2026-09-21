@@ -213,10 +213,11 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertNull($this->findRow(StorageOperationType::Delete, 'legacy'), 'the delete completed');
     }
 
-    public function testStopOnErrorHaltsBeforeTheNextRow(): void
+    public function testTheRunHaltsAtTheFirstErrorByDefault(): void
     {
-        // Opt-in belt and braces for risky windows (migrations): the first failure ends the run
-        // instead of carrying on into rows the operator has not had a chance to look at yet.
+        // These operations are destructive and the command is meant to run unattended overnight.
+        // A failure usually means the backend is unhappy rather than one row being odd, so the run
+        // stops and asks for a human instead of working through thousands of rows in that state.
         $this->write('Broken/a.jpg', 'a');
         $this->write('Later/b.jpg', 'b');
         $this->addRow(StorageOperationType::Move, 'Broken', 'BrokenTarget');
@@ -227,7 +228,7 @@ class StorageOperationQueueProcessorTest extends Unit
             $this->repository,
             new NullLogger()
         );
-        $result = $processor->process(null, null, null, true);
+        $result = $processor->process();
 
         $this->assertSame(1, $result->getFailedRows());
         $this->assertTrue($result->isStoppedOnError());
@@ -235,8 +236,10 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertNotNull($this->findRow(StorageOperationType::Move, 'Later'), 'the later row stays queued');
     }
 
-    public function testFailuresStillIsolateByDefault(): void
+    public function testFailuresCanBeIsolatedOnRequest(): void
     {
+        // The opposite case, for an operator watching a large one-off migration who wants the
+        // bulk to proceed and will read the errors afterwards.
         $this->write('Broken/a.jpg', 'a');
         $this->write('Later/b.jpg', 'b');
         $this->addRow(StorageOperationType::Move, 'Broken', 'BrokenTarget');
@@ -247,7 +250,7 @@ class StorageOperationQueueProcessorTest extends Unit
             $this->repository,
             new NullLogger()
         );
-        $result = $processor->process();
+        $result = $processor->process(null, null, null, true);
 
         $this->assertFalse($result->isStoppedOnError());
         $this->assertFalse($this->adapter->fileExists('Later/b.jpg'), 'unrelated rows keep draining after a failure');
@@ -411,14 +414,15 @@ class StorageOperationQueueProcessorTest extends Unit
 
     public function testFailureIsolationContinuesWithNextRow(): void
     {
-        // a row for a storage the locator does not know -> exception -> failed, next row still runs
+        // a row for a storage the locator does not know -> exception -> failed. With
+        // --continue-on-error the next row still runs; by default the run would stop here.
         $this->repository->add(new StorageOperation(
             null, 'thumbnail', StorageOperationType::Move, 'Broken', 'Elsewhere/Broken', new DateTimeImmutable('+5 seconds')
         ));
         $this->write('Fine/a.jpg', 'ok');
         $this->addRow(StorageOperationType::Move, 'Fine', 'Moved/Fine');
 
-        $result = $this->processor()->process();
+        $result = $this->processor()->process(null, null, null, true);
 
         $this->assertSame(1, $result->getFailedRows());
         $this->assertSame(1, $result->getProcessedRows());

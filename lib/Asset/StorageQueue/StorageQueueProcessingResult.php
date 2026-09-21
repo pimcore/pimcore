@@ -48,7 +48,7 @@ final readonly class StorageQueueProcessingResult
     }
 
     /**
-     * Whether the run ended early because --stop-on-error was requested and a row failed.
+     * Whether the run ended early because a row failed and the run was not asked to continue.
      * The remaining rows were not attempted and stay queued.
      */
     public function isStoppedOnError(): bool

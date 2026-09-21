@@ -206,10 +206,10 @@ class StorageQueueCommandsTest extends Unit
         $this->assertCount(2, $this->repository->all(), 'both rows stay queued');
     }
 
-    public function testProcessStopsAtTheFirstErrorWhenAskedTo(): void
+    public function testProcessStopsAtTheFirstErrorByDefault(): void
     {
-        // Two rows that both fail (the locator resolves no storage). With --stop-on-error the run
-        // must end after the first one instead of attempting the second.
+        // Two rows that both fail (the locator resolves no storage). The run must end after the
+        // first one instead of attempting the second.
         $processor = new StorageOperationQueueProcessor(
             new StorageQueueCommandsTestStrictLocator(),
             $this->repository,
@@ -223,7 +223,7 @@ class StorageQueueCommandsTest extends Unit
         $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $processor);
         $tester = new CommandTester($command);
 
-        $exitCode = $tester->execute(['--stop-on-error' => true]);
+        $exitCode = $tester->execute([]);
 
         $this->assertSame(Command::FAILURE, $exitCode);
         $this->assertStringContainsString('1 failed', $tester->getDisplay());
@@ -231,7 +231,7 @@ class StorageQueueCommandsTest extends Unit
         $this->assertCount(2, $this->repository->all(), 'the second row was never attempted and stays queued');
     }
 
-    public function testProcessContinuesPastAFailureByDefault(): void
+    public function testProcessContinuesPastAFailureWhenAskedTo(): void
     {
         $processor = new StorageOperationQueueProcessor(
             new StorageQueueCommandsTestStrictLocator(),
@@ -246,7 +246,7 @@ class StorageQueueCommandsTest extends Unit
         $command = new StorageQueueProcessCommand($this->repository, $this->lockFactory(), $processor);
         $tester = new CommandTester($command);
 
-        $tester->execute([]);
+        $tester->execute(['--continue-on-error' => true]);
 
         $this->assertStringContainsString('2 failed', $tester->getDisplay(), 'both rows are attempted without the flag');
         $this->assertStringNotContainsString('stopped at the first error', $tester->getDisplay());

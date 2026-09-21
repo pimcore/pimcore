@@ -56,18 +56,21 @@ final class StorageOperationQueueProcessor
     }
 
     /**
-     * @param bool $stopOnError end the run at the first failing row instead of isolating it. By
-     *                          default the run carries on after a failure, so one unprocessable
-     *                          row does not stop the rest - though a Move that could not complete
-     *                          still keeps an overlapping Delete deferred, which is the whole
-     *                          point of the dependency guard. During a risky window (a large
-     *                          migration, say) an operator can ask for a hard stop instead.
+     * @param bool $continueOnError keep going after a failing row instead of ending the run.
+     *                              The default is to stop: these operations are destructive, the
+     *                              command is built to run unattended overnight, and a failure
+     *                              here is usually the backend being unhappy rather than one odd
+     *                              row - so the next thousand rows would fail the same way. One
+     *                              error naming one row is a better thing to wake someone with
+     *                              than a summary of several thousand. Pass true when an operator
+     *                              is watching a large one-off migration and would rather have the
+     *                              bulk proceed and read the errors afterwards.
      */
     public function process(
         ?int $onlyId = null,
         ?int $maxRuntimeSeconds = null,
         ?Closure $heartbeat = null,
-        bool $stopOnError = false
+        bool $continueOnError = false
     ): StorageQueueProcessingResult {
         $deadline = $maxRuntimeSeconds !== null ? time() + $maxRuntimeSeconds : null;
         $this->pendingMoves = null; // fresh snapshot per run
@@ -197,7 +200,7 @@ final class StorageOperationQueueProcessor
                     'exception' => $e,
                 ]);
 
-                if ($stopOnError) {
+                if (!$continueOnError) {
                     $stoppedOnError = true;
 
                     break;

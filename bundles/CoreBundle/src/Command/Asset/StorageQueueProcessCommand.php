@@ -51,13 +51,14 @@ final class StorageQueueProcessCommand extends AbstractCommand
             ->addOption('id', null, InputOption::VALUE_REQUIRED, 'Process only the given queue row')
             ->addOption('max-runtime', null, InputOption::VALUE_REQUIRED, 'Stop cleanly after this many seconds; unfinished rows stay queued')
             ->addOption(
-                'stop-on-error',
+                'continue-on-error',
                 null,
                 InputOption::VALUE_NONE,
-                'End the run at the first failing row instead of continuing with the remaining ones. '
-                . 'By default the run carries on after a failure, so one unprocessable row does not stop '
-                . 'the rest - though a move that could not complete still keeps an overlapping delete '
-                . 'deferred. Use this during a risky window, such as a large migration, to stop for review.'
+                'Keep going after a failing row instead of ending the run. The default is to stop at '
+                . 'the first error: these operations are destructive and this command normally runs '
+                . 'unattended, so a failure is worth a look before thousands more rows are attempted '
+                . 'in the same state. Use this when you are watching a large one-off migration and '
+                . 'would rather the bulk proceeded and read the errors afterwards.'
             );
     }
 
@@ -97,7 +98,7 @@ final class StorageQueueProcessCommand extends AbstractCommand
                     $id,
                     $maxRuntime,
                     static fn () => $lock->refresh(),
-                    (bool) $input->getOption('stop-on-error')
+                    (bool) $input->getOption('continue-on-error')
                 );
 
                 $output->writeln(sprintf(
@@ -134,7 +135,7 @@ final class StorageQueueProcessCommand extends AbstractCommand
     private function outcomeSuffix(StorageQueueProcessingResult $result): string
     {
         if ($result->isStoppedOnError()) {
-            return ' (stopped at the first error - remaining rows stay queued)';
+            return ' (stopped at the first error - remaining rows stay queued; --continue-on-error works through them)';
         }
 
         return $result->isTimedOut() ? ' (stopped at max-runtime)' : '';
