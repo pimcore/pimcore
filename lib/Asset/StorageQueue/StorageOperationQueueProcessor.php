@@ -45,6 +45,11 @@ final class StorageOperationQueueProcessor
      */
     private ?array $pendingMoves = null;
 
+    /**
+     * @var array<string, int>|null storage + target => newest pending Move id, maintained with $pendingMoves
+     */
+    private ?array $newestPendingMoveIdByTarget = null;
+
     private const COMPLETION_ATTEMPTS = 3;
 
     public function __construct(
@@ -73,7 +78,8 @@ final class StorageOperationQueueProcessor
         bool $continueOnError = false
     ): StorageQueueProcessingResult {
         $deadline = $maxRuntimeSeconds !== null ? time() + $maxRuntimeSeconds : null;
-        $this->pendingMoves = null; // fresh snapshot per run
+        $this->pendingMoves = null;
+        $this->newestPendingMoveIdByTarget = null; // fresh snapshot per run
         $stoppedOnError = false;
         $processed = 0;
         $failed = 0;
@@ -84,8 +90,6 @@ final class StorageOperationQueueProcessor
         $barriers = null;
         /** @var array<string, true> $haltedTargets storage + target of every Move that did not land this run */
         $haltedTargets = [];
-        /** @var StorageOperation[] $queued the run's initial listing; empty on the --id path */
-        $queued = [];
         /** @var list<StorageOperation> $failedDeletes */
         $failedDeletes = [];
 
@@ -165,7 +169,7 @@ final class StorageOperationQueueProcessor
                 // comes first in FIFO. It must wait instead: were it to claim the target, the newer move
                 // would find the key occupied and delete its own fresher source as superseded. Deferring
                 // is never destructive; the newer row lands first, on this run or the next.
-                if ($haltKey !== null && $barriers !== null && $this->hasNewerPendingMoveOntoSameTarget($operation, $queued)) {
+                if ($haltKey !== null && $barriers !== null && $this->hasNewerPendingMoveOntoSameTarget($operation)) {
                     if ($retryPass) {
                         $this->logger->info('Storage queue move deferred - a newer move onto the same target is still pending', [
                             'move' => $operation->getId(),
@@ -211,6 +215,7 @@ final class StorageOperationQueueProcessor
                         // costs one re-read per Move rather than per Delete, which is the ratio the
                         // snapshot exists to protect.
                         $this->pendingMoves = null;
+                        $this->newestPendingMoveIdByTarget = null;
                     }
                     // incomplete rows (deadline hit, undated entries, contested rows) stay queued
                     // for the next run - processOperation removes its own row on completion
@@ -221,6 +226,7 @@ final class StorageOperationQueueProcessor
                         // the row may have been repointed, converted or removed under us - whatever
                         // later Deletes consult must not be a copy taken before that happened
                         $this->pendingMoves = null;
+                        $this->newestPendingMoveIdByTarget = null;
                     }
                     if ($operation->getType() === StorageOperationType::Delete) {
                         $failedDeletes[] = $operation;
@@ -318,28 +324,19 @@ final class StorageOperationQueueProcessor
     /**
      * Whether a newer Move onto this Move's target is still pending.
      *
-     * The run's initial listing is checked first, in memory, so the common case - no other move onto
-     * this target at all - costs nothing. Only a candidate is confirmed against the live queue,
-     * because the newer row may already have drained earlier in this very run.
-     *
-     * @param StorageOperation[] $queued
+     * Answered from an index over the run-scoped pending-move snapshot, so the common case - no
+     * other move onto this target at all - is one array lookup. That snapshot is not the listing
+     * the run started with: it is dropped after every processed Move and on every failure and
+     * rebuilt from the live queue on next use, so a move queued while this run was already going
+     * is seen from the next such point on. A candidate is then confirmed against the live queue,
+     * because the newer row may have drained earlier in this same pass.
      */
-    private function hasNewerPendingMoveOntoSameTarget(StorageOperation $move, array $queued): bool
+    private function hasNewerPendingMoveOntoSameTarget(StorageOperation $move): bool
     {
-        $candidate = false;
-        foreach ($queued as $row) {
-            if ($row->getType() === StorageOperationType::Move
-                && $row->getStorage() === $move->getStorage()
-                && $row->getTargetPrefix() === $move->getTargetPrefix()
-                && (int) $row->getId() > (int) $move->getId()
-            ) {
-                $candidate = true;
+        $this->pendingMoves(); // makes sure the snapshot, and with it the index, exists
+        $newest = $this->newestPendingMoveIdByTarget[$move->getStorage() . "\0" . (string) $move->getTargetPrefix()] ?? 0;
 
-                break;
-            }
-        }
-
-        return $candidate && $this->findNewerSameTargetRow($move) !== null;
+        return $newest > (int) $move->getId() && $this->findNewerSameTargetRow($move) !== null;
     }
 
     /**
@@ -522,6 +519,13 @@ final class StorageOperationQueueProcessor
         }
 
         $this->pendingMoves = $moves;
+
+        $index = [];
+        foreach ($moves as $move) {
+            $key = $move->getStorage() . "\0" . (string) $move->getTargetPrefix();
+            $index[$key] = max($index[$key] ?? 0, (int) $move->getId());
+        }
+        $this->newestPendingMoveIdByTarget = $index;
     }
 
     /**

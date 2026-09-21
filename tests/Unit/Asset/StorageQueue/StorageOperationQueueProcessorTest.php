@@ -1235,6 +1235,46 @@ class StorageOperationQueueProcessorTest extends Unit
         $this->assertFalse($this->adapter->fileExists('C/d.jpg'), 'no other move onto the CURRENT target may land in this run');
         $this->assertSame('d', $this->adapter->read('D/d.jpg'), 'that move stays queued with its source untouched');
     }
+
+    public function testANewerSameTargetMoveInsertedMidRunStillDefersTheOlderOne(): void
+    {
+        // The guard must not trust a listing taken when the run began. While an unrelated row is
+        // draining, live traffic queues a NEWER move onto T. When the older move onto T comes up,
+        // that newer row is visible in the live queue and the older one has to wait for it.
+        for ($i = 1; $i <= 8; $i++) {
+            $this->writeWithMtime("X/f{$i}.jpg", "x{$i}", time() - 7200);
+        }
+        $this->writeWithMtime('A/x.jpg', 'a-stale', time() - 7200);
+        $this->writeWithMtime('B/x.jpg', 'b-fresh', time() - 7200);
+        $this->addRow(StorageOperationType::Move, 'X', 'Y', new DateTimeImmutable('+5 seconds')); // #1 unrelated, drains first
+        $this->addRow(StorageOperationType::Move, 'A', 'T', new DateTimeImmutable('+5 seconds')); // #2 older move onto T
+
+        $mutating = new StorageOperationQueueProcessorTestMutatingAdapter(
+            $this->adapter,
+            4,
+            function (): void {
+                // queued while #1 drains - after the run's initial listing was taken
+                $this->repository->add(new StorageOperation(
+                    null, 'asset', StorageOperationType::Move, 'B', 'T', new DateTimeImmutable('+5 seconds')
+                ));
+            }
+        );
+        $processor = new StorageOperationQueueProcessor(
+            new StorageOperationQueueProcessorTestAdapterLocator($mutating),
+            $this->repository,
+            new NullLogger(),
+            3
+        );
+
+        $processor->process();
+
+        $this->assertFalse(
+            $this->adapter->fileExists('T/x.jpg') && $this->adapter->read('T/x.jpg') === 'a-stale',
+            'the older move must not claim T while a newer move onto T is pending in the live queue'
+        );
+        $this->assertSame('b-fresh', $this->adapter->read('B/x.jpg'), 'the newer source is untouched');
+        $this->assertNotNull($this->findRow(StorageOperationType::Move, 'A'), 'the older move waits');
+    }
 }
 
 /**
