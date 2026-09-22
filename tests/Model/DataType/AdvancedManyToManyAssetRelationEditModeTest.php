@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType;
 
-use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -77,6 +76,50 @@ class AdvancedManyToManyAssetRelationEditModeTest extends ModelTestCase
         $this->assertSame('from-edit', $result[0]->getMeta1());
     }
 
+    public function testGetDataFromEditmodeInfersAssetTypeWhenMissing(): void
+    {
+        $asset = TestHelper::createImageAsset();
+
+        $fd = new DataObject\ClassDefinition\Data\AdvancedManyToManyAssetRelation();
+        $fd->setColumns([['position' => 1, 'key' => 'meta1', 'type' => 'text', 'label' => 'Meta 1']]);
+
+        // the diff editor hands back rows without a type; they are asset rows by definition
+        $result = $fd->getDataFromEditmode([
+            ['id' => $asset->getId(), 'meta1' => 'untyped'],
+        ]);
+
+        $this->assertCount(1, $result);
+        $this->assertInstanceOf(DataObject\Data\ElementMetadata::class, $result[0]);
+        $this->assertSame('asset', $result[0]->getElementType());
+        $this->assertSame($asset->getId(), $result[0]->getElement()->getId());
+        $this->assertSame('untyped', $result[0]->getMeta1());
+    }
+
+    public function testGetDataFromEditmodeIgnoresNonAssetRows(): void
+    {
+        $asset = TestHelper::createImageAsset();
+        $object = TestHelper::createEmptyObject();
+
+        $fd = new DataObject\ClassDefinition\Data\AdvancedManyToManyAssetRelation();
+        $fd->setColumns([['position' => 1, 'key' => 'meta1', 'type' => 'text', 'label' => 'Meta 1']]);
+
+        $result = $fd->getDataFromEditmode([
+            ['id' => $object->getId(), 'type' => 'object', 'meta1' => 'not-an-asset'],
+            ['id' => $asset->getId(), 'type' => 'asset', 'meta1' => 'an-asset'],
+        ]);
+
+        $this->assertCount(1, $result);
+        $this->assertSame('asset', $result[0]->getElementType());
+        $this->assertSame($asset->getId(), $result[0]->getElement()->getId());
+        $this->assertSame('an-asset', $result[0]->getMeta1());
+    }
+
+    public function testGetDataFromEditmodeReturnsNullForNullInput(): void
+    {
+        $fd = new DataObject\ClassDefinition\Data\AdvancedManyToManyAssetRelation();
+        $this->assertNull($fd->getDataFromEditmode(null));
+    }
+
     public function testNormalizeDenormalizeRoundtrip(): void
     {
         $asset = TestHelper::createImageAsset();
@@ -94,6 +137,8 @@ class AdvancedManyToManyAssetRelationEditModeTest extends ModelTestCase
 
         $denormalized = $fd->denormalize($normalized);
         $this->assertCount(1, $denormalized);
+        $this->assertInstanceOf(DataObject\Data\ElementMetadata::class, $denormalized[0]);
         $this->assertSame($asset->getId(), $denormalized[0]->getElement()->getId());
+        $this->assertSame('round-trip', $denormalized[0]->getMeta1(), 'denormalize() must restore the relation metadata, not just the element');
     }
 }

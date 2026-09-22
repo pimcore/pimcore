@@ -135,6 +135,34 @@ class AdvancedManyToManyAssetRelation extends AdvancedManyToManyRelation impleme
         return $return;
     }
 
+    /**
+     * The parent accepts object, document and asset rows and requires each row to name its `type`.
+     * This field only ever holds assets, so a row without a type is an asset row (the diff editor's
+     * rows, for instance, carry only `id`, `path` and the metadata columns), and a row that names
+     * another element type cannot be stored here and is dropped - the same rule denormalize() applies.
+     */
+    public function getDataFromEditmode(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?array
+    {
+        if (is_array($data)) {
+            $assetRows = [];
+            foreach ($data as $row) {
+                if (!is_array($row) || !isset($row['id'])) {
+                    continue;
+                }
+
+                $row['type'] ??= 'asset';
+                if ($row['type'] !== 'asset') {
+                    continue;
+                }
+
+                $assetRows[] = $row;
+            }
+            $data = $assetRows;
+        }
+
+        return parent::getDataFromEditmode($data, $object, $params);
+    }
+
     public function getDataForGrid(?array $data, ?Concrete $object = null, array $params = []): ?array
     {
         $gridData = $this->getDataForEditmode($data, $object, $params);

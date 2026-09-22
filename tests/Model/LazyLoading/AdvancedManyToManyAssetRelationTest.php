@@ -364,8 +364,8 @@ class AdvancedManyToManyAssetRelationTest extends AbstractLazyLoadingTest
         $object->save();
 
         $object = Concrete::getById($object->getId(), ['force' => true]);
-        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedAssetRelations('en')) > 0);
-        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedAssetRelations('de')) > 0);
+        $this->assertCount(self::RELATION_COUNT, $object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedAssetRelations('en'));
+        $this->assertCount(self::RELATION_COUNT, $object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedAssetRelations('de'));
 
         $object = Concrete::getById($object->getId(), ['force' => true]);
         array_pop($relations);
@@ -377,8 +377,9 @@ class AdvancedManyToManyAssetRelationTest extends AbstractLazyLoadingTest
         $object->save();
 
         $object = Concrete::getById($object->getId(), ['force' => true]);
-        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedAssetRelations('en')) > 0);
-        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedAssetRelations('de')) > 0);
+        $brick = $object->getBricks()->getLazyLoadingLocalizedTest();
+        $this->assertCount(self::RELATION_COUNT, $brick->getLadvancedAssetRelations('en'), 'saving de must not touch the en relations');
+        $this->assertCount(self::RELATION_COUNT - 1, $brick->getLadvancedAssetRelations('de'), 'the de relations must reflect the reduced list');
 
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
