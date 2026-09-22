@@ -161,16 +161,26 @@ class ManagerTest extends TestCase
 
     /**
      * getDeniedActionsInWorkflow() exists so a caller needing several permission types for one
-     * element resolves the workflow permissions once instead of once per type. It must answer
-     * exactly what isDeniedInWorkflow() answers for each type, including for a type no place
-     * config mentions.
+     * element resolves the workflow permissions once instead of once per type. It is the only
+     * public view of the workflow permissions, so it must answer exactly what isDeniedInWorkflow()
+     * answers for each type: denied only when a place config sets the type to false. A type no
+     * place config mentions is not denied, and neither are the language-scoped lEdit/lView
+     * entries, whose value is a language list rather than a bool.
      */
     public function testGetDeniedActionsInWorkflowMatchesTheSingleTypeCheck(): void
     {
         $element = self::createStub(Concrete::class);
-        $manager = $this->buildManagerWithPlacePermissions(['publish' => false, 'settings' => true]);
+        $manager = $this->buildManagerWithPlacePermissions([
+            'publish' => false,
+            'settings' => true,
+            'lEdit' => ['en', 'de'],
+            'lView' => [],
+        ]);
 
-        $denied = $manager->getDeniedActionsInWorkflow($element, ['publish', 'settings', 'rename']);
+        $denied = $manager->getDeniedActionsInWorkflow(
+            $element,
+            ['publish', 'settings', 'rename', 'lEdit', 'lView']
+        );
 
         $this->assertSame(
             [
@@ -178,6 +188,9 @@ class ManagerTest extends TestCase
                 'settings' => false,
                 // no place config mentions 'rename', which is not the same as denying it
                 'rename' => false,
+                // lEdit/lView scope by language; they never deny the permission as a whole
+                'lEdit' => false,
+                'lView' => false,
             ],
             $denied
         );
@@ -191,6 +204,32 @@ class ManagerTest extends TestCase
         }
     }
 
+    /**
+     * 'modify' expands to several element permissions; the batch result reports each of them.
+     */
+    public function testGetDeniedActionsInWorkflowExpandsModify(): void
+    {
+        $element = self::createStub(Concrete::class);
+        $manager = $this->buildManagerWithPlacePermissions(['modify' => false]);
+
+        $this->assertSame(
+            ['save' => true, 'delete' => true, 'settings' => false],
+            $manager->getDeniedActionsInWorkflow($element, ['save', 'delete', 'settings'])
+        );
+    }
+
+    public function testGetDeniedActionsInWorkflowDeniesNothingWithoutAWorkflow(): void
+    {
+        $element = self::createStub(Concrete::class);
+        $manager = $this->buildManagerWithPlacePermissions(null);
+
+        $this->assertSame(
+            ['publish' => false, 'save' => false],
+            $manager->getDeniedActionsInWorkflow($element, ['publish', 'save'])
+        );
+        $this->assertFalse($manager->isDeniedInWorkflow($element, 'publish'));
+    }
+
     public function testGetDeniedActionsInWorkflowReturnsAnEmptyMapForNoRequestedTypes(): void
     {
         $manager = $this->buildManagerWithPlacePermissions(['publish' => false]);
@@ -199,19 +238,13 @@ class ManagerTest extends TestCase
     }
 
     /**
-     * A Manager whose single workflow sits in a place carrying the given permissions.
+     * A Manager whose single workflow sits in a place carrying the given permissions, or a Manager
+     * with no workflow at all when null is given.
      */
-    private function buildManagerWithPlacePermissions(array $permissions): Manager
+    private function buildManagerWithPlacePermissions(?array $permissions): Manager
     {
         $eventDispatcher = new EventDispatcher();
-        $workflow = $this->createWorkflow(
-            $this->createImmediateMarkingStore(),
-            new PimcoreTransition('go', 'start', 'end', []),
-            $eventDispatcher
-        );
-
         $registry = new Registry();
-        $registry->addWorkflow($workflow, new InstanceOfSupportStrategy(Concrete::class));
 
         $manager = new Manager(
             $registry,
@@ -219,6 +252,18 @@ class ManagerTest extends TestCase
             self::createStub(ExpressionService::class),
             $eventDispatcher
         );
+
+        if ($permissions === null) {
+            return $manager;
+        }
+
+        $workflow = $this->createWorkflow(
+            $this->createImmediateMarkingStore(),
+            new PimcoreTransition('go', 'start', 'end', []),
+            $eventDispatcher
+        );
+        $registry->addWorkflow($workflow, new InstanceOfSupportStrategy(Concrete::class));
+
         $manager->registerWorkflow(self::WORKFLOW_NAME);
         // no 'condition' key, so the ExpressionService mock is never consulted
         $manager->addPlaceConfig(self::WORKFLOW_NAME, 'start', ['permissions' => [$permissions]]);

@@ -408,6 +408,12 @@ class Manager
         return $definition->getInitialPlaces();
     }
 
+    /**
+     * Returns whether the element's workflows deny the given permission type.
+     *
+     * A permission is denied only when a matching place config sets it to false; a type no place
+     * config mentions is not denied. The rule is defined once, in getDeniedActionsInWorkflow().
+     */
     public function isDeniedInWorkflow(ElementInterface $element, string $permissionType): bool
     {
         return $this->getDeniedActionsInWorkflow($element, [$permissionType])[$permissionType];
@@ -421,6 +427,10 @@ class Manager
      * each marking - a database read under StateTableMarkingStore - and evaluates the ordered
      * place configs, so asking for n types one at a time costs n full scans. Callers that need
      * several permission types for the same element should use this instead.
+     *
+     * A type is denied only when a matching place config sets it to false; a type no place config
+     * mentions is reported as not denied. This is the only public view of the workflow permissions;
+     * the merged raw map stays internal.
      *
      * @param string[] $permissionTypes
      *
@@ -441,16 +451,13 @@ class Manager
     /**
      * Returns the merged workflow user permissions for an element.
      *
-     * Public so that a caller needing more than one permission type for the same element can read
-     * the map once: isDeniedInWorkflow() calls this internally, so checking n types costs n full
-     * scans over every workflow, marking and place config.
-     *
-     * Values are the permission values as declared by the matching place configs - bool for the
-     * element permissions, a comma-joined string for lEdit/lView.
+     * Deliberately private: the values are heterogeneous - bool for the element permissions, a
+     * comma-joined string for lEdit/lView - and absence means "not denied", so the map is not a
+     * shape to expose. Callers go through isDeniedInWorkflow() or getDeniedActionsInWorkflow().
      *
      * @return array<string, mixed>
      */
-    public function getWorkflowUserPermissions(ElementInterface $element): array
+    private function getWorkflowUserPermissions(ElementInterface $element): array
     {
         $userPermissions = [];
         foreach ($this->getAllWorkflows() as $workflowName) {
