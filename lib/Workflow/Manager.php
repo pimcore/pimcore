@@ -438,6 +438,11 @@ class Manager
      */
     public function getDeniedActionsInWorkflow(ElementInterface $element, array $permissionTypes): array
     {
+        if ($permissionTypes === []) {
+            // nothing to answer, so don't pay for resolving the markings
+            return [];
+        }
+
         $userPermissions = $this->getWorkflowUserPermissions($element);
 
         $deniedActions = [];
