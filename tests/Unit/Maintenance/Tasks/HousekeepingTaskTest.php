@@ -49,14 +49,27 @@ final class HousekeepingTaskTest extends TestCase
         parent::tearDown();
     }
 
-    public function testRemovesStaleEmptyDirectoryTree(): void
+    public function testRemovesStaleEmptyDirectoryTreeOneLevelPerRun(): void
     {
         $this->makeDir('stale/a/b');
         $this->age();
 
         $this->runHousekeeping(seconds: 0, dirSeconds: 0);
 
-        $this->assertDirectoryDoesNotExist($this->root . '/stale', 'a stale empty tree should be pruned');
+        // Removing b is a mutation of a: its mtime/ctime now carry this run's own rmdir(),
+        // and the task never prunes a directory it mutated in the same run. So the tree
+        // collapses one level per run, deepest level first, rather than all at once.
+        $this->assertDirectoryDoesNotExist($this->root . '/stale/a/b', 'the stale leaf should be pruned');
+        $this->assertDirectoryExists($this->root . '/stale/a', 'a directory this run emptied must survive the run');
+
+        $this->age();
+        $this->runHousekeeping(seconds: 0, dirSeconds: 0);
+        $this->assertDirectoryDoesNotExist($this->root . '/stale/a');
+        $this->assertDirectoryExists($this->root . '/stale');
+
+        $this->age();
+        $this->runHousekeeping(seconds: 0, dirSeconds: 0);
+        $this->assertDirectoryDoesNotExist($this->root . '/stale', 'a stale empty tree should be gone once each level has aged out');
         $this->assertDirectoryExists($this->root, 'the folder being cleaned must never be removed');
     }
 
@@ -77,7 +90,7 @@ final class HousekeepingTaskTest extends TestCase
         $this->assertDirectoryExists($this->root . '/fresh', 'a directory created after the cutoff must survive');
     }
 
-    public function testPrunesDirectoryEmptiedByTheSameRun(): void
+    public function testKeepsDirectoryEmptiedByTheSameRun(): void
     {
         $this->makeDir('emptied');
         $this->makeFile('emptied/old.tmp');
@@ -86,12 +99,36 @@ final class HousekeepingTaskTest extends TestCase
 
         $this->runHousekeeping(seconds: 0, dirSeconds: 0);
 
-        // Deleting the files bumps the directory's mtime/ctime to "now". The directory time
-        // is captured in the filter callback before that happens, so the directory is still
-        // pruned in this run rather than waiting for the next one.
+        // Deleting the files bumps the directory's mtime/ctime to "now". A stat() taken
+        // after that cannot tell the task's own change apart from another process's, so
+        // the task does not try: a directory it mutated is never pruned in the same run.
+        $this->assertFileDoesNotExist($this->root . '/emptied/old.tmp');
+        $this->assertFileDoesNotExist($this->root . '/emptied/older.tmp');
+        $this->assertDirectoryExists(
+            $this->root . '/emptied',
+            'a directory emptied by this run must survive the run that emptied it'
+        );
+    }
+
+    public function testPrunesDirectoryEmptiedByAnEarlierRunOnceItHasAgedOut(): void
+    {
+        $this->makeDir('emptied');
+        $this->makeFile('emptied/old.tmp');
+        $this->age();
+
+        $this->runHousekeeping(seconds: 0, dirSeconds: 0);
+        $this->assertDirectoryExists($this->root . '/emptied');
+
+        // The retention applies to the directory itself, not to its former contents: the
+        // unlink() above moved its timestamps to "now", so it has to sit untouched for the
+        // retention before a later run removes it. Elapsed time is the only way to age a
+        // directory - touch() would back-date mtime but bump ctime (see age()).
+        $this->age();
+        $this->runHousekeeping(seconds: 0, dirSeconds: 0);
+
         $this->assertDirectoryDoesNotExist(
             $this->root . '/emptied',
-            'a stale directory emptied by this run should be pruned in the same run'
+            'a directory emptied by an earlier run should be pruned once it has aged past the cutoff'
         );
     }
 
@@ -123,14 +160,16 @@ final class HousekeepingTaskTest extends TestCase
         //
         // The directory has to straddle the two cutoffs for this to prove anything: it is
         // older than the file cutoff (0 seconds) but younger than the directory cutoff, so it
-        // survives only because the two retentions are tracked separately.
+        // survives only because the two retentions are tracked separately. It is left empty
+        // on purpose: with a stale file inside, deleting it would mark the directory as
+        // mutated by this run, and the directory would then survive for that reason instead.
+        // testRemovesStaleEmptyDirectoryTreeOneLevelPerRun shows the same directory is pruned
+        // when the directory cutoff is 0.
         $this->makeDir('working');
-        $this->makeFile('working/old.tmp', age: 7200);
         $this->age();
 
         $this->runHousekeeping(seconds: 0, dirSeconds: 86400);
 
-        $this->assertFileDoesNotExist($this->root . '/working/old.tmp', 'the stale file should still be deleted');
         $this->assertDirectoryExists(
             $this->root . '/working',
             'the directory is younger than the directory cutoff and must be kept'

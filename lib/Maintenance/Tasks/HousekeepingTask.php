@@ -103,10 +103,12 @@ class HousekeepingTask implements TaskInterface
             // touches whatever it points at.
             if ($pruneDirectories && $current->isDir() && !$current->isLink()) {
                 $path = $current->getPathname();
-                // Capture the directory time before its contents are deleted, so a
-                // directory that was already stale can be removed in the same run. The
-                // filter may run more than once per entry; keep the first (pre-deletion)
-                // value. stat() is served from the cache warmed by isFile() above.
+                // Capture the directory time as it stands before the walk touches its
+                // contents. It is only a cheap first cut - a directory that is already
+                // fresh here is dropped without another stat() - and the authoritative
+                // check is the re-stat immediately before rmdir() below. The filter may
+                // run more than once per entry; keep the first value. stat() is served
+                // from the cache warmed by isFile() above.
                 //
                 // max(mtime, ctime) is deliberate: mtime moves when an entry is added or
                 // removed, ctime when the inode changes (rename, chmod, link count). atime
@@ -122,9 +124,8 @@ class HousekeepingTask implements TaskInterface
                         'time' => max($stat['mtime'], $stat['ctime']),
                         'dev' => $stat['dev'],
                         'ino' => $stat['ino'],
-                        // max(mtime, ctime) as observed right after this run's own last
-                        // unlink()/rmdir() of an entry; null while this run has not touched it
-                        'selfTime' => null,
+                        // set once this run has unlink()ed or rmdir()ed an entry of it
+                        'mutated' => false,
                     ] : false;
                 }
             }
@@ -141,20 +142,17 @@ class HousekeepingTask implements TaskInterface
         // up on the next run.
         $iterator = new RecursiveIteratorIterator($filter, $mode, RecursiveIteratorIterator::CATCH_GET_CHILD);
 
-        // Record the parent's timestamp as it stands right after this run's own
-        // unlink()/rmdir() of one of its entries. The freshness re-check below waives
-        // exactly that value - and nothing later - so a change made by someone else
-        // after this run's last mutation still counts as activity. Overwritten on
-        // every mutation, so it always holds the last self-generated value.
-        $recordOwnChange = static function (string $path) use (&$dirTimes): void {
+        // Mark the parent of an entry this run just unlink()ed or rmdir()ed. That
+        // mutation moved the parent's mtime/ctime to "now", and a stat() taken afterwards
+        // cannot tell this run's own change apart from one another process made in the
+        // same window (a create/remove pair, a chmod) - a timestamp read after the fact
+        // does not establish who produced it. So no attempt is made to waive "our"
+        // timestamp: a directory this run mutated is simply never pruned in the same
+        // run. It ages out on a later run, once it has sat untouched for the retention.
+        $markMutated = static function (string $path) use (&$dirTimes): void {
             $parent = dirname($path);
-            if (!isset($dirTimes[$parent]) || !is_array($dirTimes[$parent])) {
-                return;
-            }
-            clearstatcache(true, $parent);
-            $stat = @stat($parent);
-            if ($stat) {
-                $dirTimes[$parent]['selfTime'] = max($stat['mtime'], $stat['ctime']);
+            if (isset($dirTimes[$parent]) && is_array($dirTimes[$parent])) {
+                $dirTimes[$parent]['mutated'] = true;
             }
         };
 
@@ -173,45 +171,41 @@ class HousekeepingTask implements TaskInterface
                     continue;
                 }
 
+                // Never prune a directory this run mutated (see $markMutated): its
+                // timestamps now carry this run's own unlink()/rmdir() and cannot be
+                // read as "untouched" by anyone. The retention therefore applies to
+                // the directory itself, not to its former contents: a directory this
+                // run empties is left standing and removed by a later run, once it has
+                // been untouched for the full retention. By the same rule a stale
+                // empty tree collapses one level per run, deepest level first.
+                if ($dir['mutated']) {
+                    continue;
+                }
+
                 // The recorded time was read while filtering, and the whole subtree walk
                 // sits between that and this point. Another process may have removed and
                 // recreated the path in that window; rmdir()'ing the replacement would
                 // bypass the retention and reopen the mkdir-before-write race this
-                // retention exists to close. So re-stat immediately before removing and
-                // require the same inode. Then re-apply the freshness rule:
-                //
-                //  - if this run never touched the directory (selfTime === null), it is
-                //    kept when its current time has reached the cutoff - something else
-                //    touched it in the window and it is in use;
-                //  - if this run did unlink()/rmdir() entries from it, the current time is
-                //    expected to be the one recorded right after the last of those, so
-                //    only a time *later* than that is treated as foreign activity. Waiving
-                //    the exact self-generated value rather than the whole check means a
-                //    chmod, or a create/remove pair, that lands after this run's last
-                //    mutation still keeps the directory.
-                //
-                // Limitation: timestamps are compared at the filesystem's granularity
-                // (one second on many filesystems), so a foreign change that lands in the
-                // same second as this run's own last mutation is indistinguishable from
-                // it and does not keep the directory. rmdir() still refuses a directory
-                // that is not empty, so only an empty directory can be lost to that.
+                // retention exists to close. So re-stat immediately before removing,
+                // require the same inode, and re-apply the freshness rule to the current
+                // timestamps: this run has not touched the directory, so any time at or
+                // past the cutoff is someone else's activity and the directory is in use.
                 clearstatcache(true, $path);
                 $fresh = @stat($path);
                 if (!$fresh || $fresh['dev'] !== $dir['dev'] || $fresh['ino'] !== $dir['ino']) {
                     continue;
                 }
-                $freshTime = max($fresh['mtime'], $fresh['ctime']);
-                if ($dir['selfTime'] === null ? $freshTime >= $dirCutoff : $freshTime > $dir['selfTime']) {
+                if (max($fresh['mtime'], $fresh['ctime']) >= $dirCutoff) {
                     continue;
                 }
 
                 // rmdir() is atomic: the kernel checks emptiness and removes in one
                 // operation, avoiding the TOCTOU race of a separate is_dir_empty() call.
                 if (@rmdir($path)) {
-                    $recordOwnChange($path);
+                    $markMutated($path);
                 }
             } elseif (@unlink($path)) {
-                $recordOwnChange($path);
+                $markMutated($path);
             }
         }
     }
