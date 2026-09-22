@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataType;
 
+use InvalidArgumentException;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Tests\Support\Util\TestHelper;
@@ -69,6 +70,23 @@ class ManyToManyAssetRelationEditModeTest extends ModelTestCase
         $this->assertSame($asset->getId(), $result[0]['id']);
     }
 
+    public function testGetDataForEditmodeReadsMetadataCollidingWithAssetGetter(): void
+    {
+        // Asset\Image::getThumbnail() exists; a visible field named "thumbnail" must still resolve to the
+        // metadata value and never invoke the getter (which on Asset\Video would even throw for lack of an argument)
+        $asset = TestHelper::createImageAsset();
+        $asset->addMetadata('thumbnail', 'input', 'metadata thumbnail value');
+        $asset->save();
+
+        $fd = new DataObject\ClassDefinition\Data\ManyToManyAssetRelation();
+        $fd->setVisibleFields('thumbnail');
+
+        $result = $fd->getDataForEditmode([$asset]);
+
+        $this->assertCount(1, $result);
+        $this->assertSame('metadata thumbnail value', $result[0]['thumbnail']);
+    }
+
     public function testGetDataFromEditmodeReturnsAssets(): void
     {
         $asset = TestHelper::createImageAsset();
@@ -93,5 +111,46 @@ class ManyToManyAssetRelationEditModeTest extends ModelTestCase
         $result = $fd->getDataFromEditmode([['id' => 999999999]]);
 
         $this->assertCount(0, $result);
+    }
+
+    public function testAddListingFilterAcceptsAssetAssetIdAndArray(): void
+    {
+        $asset = TestHelper::createImageAsset();
+
+        $fd = new DataObject\ClassDefinition\Data\ManyToManyAssetRelation();
+        $fd->setName('assetRelations');
+
+        foreach ([$asset, $asset->getId(), ['id' => $asset->getId()], ['id' => $asset->getId(), 'type' => 'asset']] as $data) {
+            $listing = new DataObject\Listing();
+            $fd->addListingFilter($listing, $data);
+
+            $conditionParams = $listing->getConditionParams();
+            $this->assertArrayHasKey('(`assetRelations` LIKE ?)', $conditionParams);
+            $this->assertSame('%,' . $asset->getId() . ',%', $conditionParams['(`assetRelations` LIKE ?)']['value']);
+        }
+    }
+
+    public function testAddListingFilterRejectsNonAssetElement(): void
+    {
+        $object = TestHelper::createEmptyObject();
+
+        $fd = new DataObject\ClassDefinition\Data\ManyToManyAssetRelation();
+        $fd->setName('assetRelations');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('does only support assets, object given');
+
+        $fd->addListingFilter(new DataObject\Listing(), $object);
+    }
+
+    public function testAddListingFilterRejectsNonAssetTypeInArray(): void
+    {
+        $fd = new DataObject\ClassDefinition\Data\ManyToManyAssetRelation();
+        $fd->setName('assetRelations');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('does only support assets, type "object" given');
+
+        $fd->addListingFilter(new DataObject\Listing(), ['id' => 1, 'type' => 'object']);
     }
 }

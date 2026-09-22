@@ -235,11 +235,13 @@ documents and objects are always disallowed and cannot be enabled in the class d
 assets, the generated getter is documented as returning assets, and setting anything other than assets fails
 validation. The allowed asset subtypes (image, video, document, ...) can still be restricted in the class definition.
 
-In addition, one or more **visible fields** can be configured. Each visible field is shown as a read-only column next to
-the related asset in the editor grid. A visible field is either an asset property (resolved through the asset's getter,
-e.g. `filename` or `mimetype`) or an asset metadata key (resolved through `$asset->getMetadata($key)`); for a
+In addition, one or more **visible fields** can be configured. Each visible field is an asset metadata key and is
+shown as a read-only column next to the related asset in the editor grid, resolved through
+`$asset->getMetadata($key)`; for a
 [predefined metadata](../../../02_Assets/04_Working_with_Assets_via_PHP_API.md#using-localized-asset-metadata) key, the column takes the predefined type
-(`input`, `textarea`, `checkbox`, `date` or `select`).
+(`input`, `textarea`, `checkbox`, `date` or `select`). The grid's own system columns (`id`, `fullpath`, `type`,
+`subtype`, `filename`, `creationDate`, `modificationDate`, `published`) always show the asset's own values, so a
+metadata key with one of those names is not displayed as a visible field.
 
 The PHP API is the same as for the Many-To-Many Relation, except that the getter and setter deal with assets only:
 
@@ -262,7 +264,8 @@ $assets = $object->getMyAssetRelations();
 The relations are stored in the same `object_relations_ID` table as any other relation type. In the `object_ID` query
 view the column holds a comma-separated list of asset IDs without a type prefix (`,350,351,`), so a listing condition
 on such a column is written as `myAssetRelations LIKE '%,350,%'`, or through the data type's `addListingFilter()`,
-which accepts an asset, an asset ID, or an array containing the key `id`.
+which accepts an asset, an asset ID, or an array containing the key `id` (and optionally `type` = `asset`); any other
+element or element type is rejected with an `InvalidArgumentException`.
 
 #### When to use it
 
