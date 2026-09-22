@@ -8,7 +8,33 @@
 -   Directories have a retention of their own, configured via the new `pimcore.maintenance.housekeeping.cleanup_tmp_directories_older_than` parameter (default 7 days), separate from `pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than` (which continues to govern files, default 1 day). A directory is removed only once it is both empty and untouched for that long, so a directory a request is still writing into is not pulled out from under it. The profiler directory is unaffected and keeps its existing single-retention behaviour.
 -   This reaches long-lived directories that a tool manages for itself, not only transient scratch directories. LibreOffice keeps its user profile under `var/tmp/libreoffice`, and empty subdirectories in it that nothing touches are pruned once they pass the retention; LibreOffice rebuilds whatever is missing on its next run. Code that creates a stable directory under `var/tmp` should create it immediately before writing into it, rather than ahead of a long-running operation - otherwise the directory can be pruned in between.
 
+## Pimcore 2026.2.11
+
+### [Assets] Storage operation queue: `pimcore:assets:storage-queue:process` now stops at the first failing row
+
+The draining command of the opt-in asset storage operation queue used to log a failing
+row and carry on with the rest of the queue. It now **ends the run at the first error**:
+it exits non-zero, names the row it stopped on, and leaves every row it had not reached
+queued for the next run. Nothing is retried automatically.
+
+The reason is that rows are not independent. A folder move that could not complete still
+holds the content its later delete would sweep, and a failure in this job is rarely
+row-specific - credentials, a permission the endpoint does not serve, a quota - so the rows
+after it would fail the same way. Stopping turns thousands of identical errors into one
+diagnosable failure, which suits a command that is meant to run unattended overnight.
+
+If you schedule this command, expect a run that used to finish "with failures" to now fail
+early instead; fix the cause and rerun. Existing invocations remain valid as written, but
+if yours relied on the rows *after* a failure still being processed in the same run, add
+the new `--continue-on-error` option to keep that behaviour. It is also the option to use
+for a supervised one-off migration where you want the bulk to proceed and read the errors
+afterwards. No option controlled this before, so nothing else in the command line changes.
+
 ## Pimcore 2026.2.10
+
+### [Assets]
+
+Image thumbnails using Pimcore's existing non-rasterized SVG source-output route now expose the original SVG consistently through `exists()`, `getStream()` and `getFileSize()`. These calls no longer generate an unused raster thumbnail or dispatch `AssetEvents::IMAGE_THUMBNAIL`; integrations that relied on those low-level side effects should be adjusted.
 
 ### [Notifications]
 

@@ -401,7 +401,7 @@ class Service extends Model\Element\Service
                 return null;
             }
 
-            if ($config['type'] === 'image' && strcasecmp($thumbnailConfig->getFormat(), 'SOURCE') === 0) {
+            if ($config['type'] === 'image' && ThumbnailConfig::isAutoFormat($thumbnailConfig->getFormat())) {
                 $formatOverride = $config['file_extension'];
                 if (in_array($config['file_extension'], ['jpg', 'jpeg'])) {
                     $formatOverride = 'pjpeg';
@@ -485,11 +485,21 @@ class Service extends Model\Element\Service
         $config['file_extension'] ??= strtolower(pathinfo($config['filename'], PATHINFO_EXTENSION));
 
         if ($config['type'] === 'image') {
+            $pathReference = $thumbnail->getPathReference();
+
+            if (($pathReference['type'] ?? '') === 'error') {
+                // failed generations have no stream to deliver; the metadata/copy operations
+                // below would fail on the storage for the placeholder path reference
+                return null;
+            }
+
             $thumbnailStream = $thumbnail->getStream();
+            if ($thumbnailStream === null) {
+                return null;
+            }
 
             $mime = $thumbnail->getMimeType();
             $fileSize = $thumbnail->getFileSize();
-            $pathReference = $thumbnail->getPathReference();
             $actualFileExtension = pathinfo($pathReference['src'], PATHINFO_EXTENSION);
 
             if ($actualFileExtension !== $config['file_extension']) {

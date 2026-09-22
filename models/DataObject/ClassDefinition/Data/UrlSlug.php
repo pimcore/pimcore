@@ -90,13 +90,14 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     {
         $result = [];
         if (is_array($data)) {
-            foreach ($data as $siteId => $item) {
-                $siteId = $item[0];
-                $slug = $item[1];
-                $slug = new Model\DataObject\Data\UrlSlug($slug, (int) $siteId);
+            foreach ($data as $item) {
+                $siteId = $item['siteId'] ?? $item[0] ?? 0;
+                $slugStr = $item['slug'] ?? $item[1] ?? '';
+                $slug = new Model\DataObject\Data\UrlSlug($slugStr, (int) $siteId);
 
-                if ($item[2]) {
-                    $slug->setPreviousSlug($item[2]);
+                $previousSlug = $item['previousSlug'] ?? $item[2] ?? null;
+                if ($previousSlug) {
+                    $slug->setPreviousSlug($previousSlug);
                 }
 
                 $result[] = $slug;

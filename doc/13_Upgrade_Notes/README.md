@@ -3,6 +3,16 @@
 ## Pimcore 2026.3.0
 
 ### [General]
+- [DataObject] Class definition files are now cached in-process by `Pimcore\Model\DataObject\ClassDefinition\DefinitionFileCache` (`@internal`), so clearing the runtime cache in long-running scripts no longer re-includes the definition file on every `ClassDefinition::getById()` call (previously very slow and eventually failing with "Too many open files"). The cache is validated against the definition file's modification time and is invalidated whenever Pimcore writes or deletes a definition file. Behavioral note: after `RuntimeCache::clear()` (or `Pimcore::collectGarbage()`), `getById()`/`getByName()` may now return the same `ClassDefinition` instance as before the clear (instead of a freshly included copy) as long as the definition file is unchanged — unsaved in-memory modifications of a class definition are therefore no longer discarded by a runtime cache clear. Use `ClassDefinition::getById($id, force: true)` to force a fresh include from disk.
+- [Legacy Admin UI] The legacy admin controllers of the bundled `ApplicationLogger`, `CustomReports` and `SEO` bundles have been **removed**, together with their `/admin/bundle/*` routes, those bundles' `config/pimcore/routing.yaml` files and the `controller.service_arguments` service registrations. They were only ever called by `pimcore/admin-ui-classic-bundle`, which is archived and requires `pimcore/pimcore: ^12.3`, so it cannot be installed on the 2026 line at all. All of their functionality is available through the Studio backend API (`pimcore/studio-backend-bundle`). This continues the removal of legacy admin controllers started in 2026.1.0.
+  - `Pimcore\Bundle\ApplicationLoggerBundle\Controller\LogController` (`/admin/bundle/applicationlogger/log/{show,priority-json,component-json,show-file-object}`) — replaced by `Pimcore\Bundle\StudioBackendBundle\Bundle\ApplicationLogger\Controller\{Collection,ListPriorities,ListComponents,FileObject}Controller`.
+  - `Pimcore\Bundle\CustomReportsBundle\Controller\Reports\CustomReportController` (`/admin/bundle/customreports/custom-report/*`) — replaced by `Pimcore\Bundle\StudioBackendBundle\Bundle\CustomReport\Controller\*`.
+  - `Pimcore\Bundle\SeoBundle\Controller\RedirectsController` (`/admin/bundle/seo/redirects/*`) — replaced by `Pimcore\Bundle\StudioBackendBundle\Bundle\Seo\Controller\Redirect\*`.
+  - `Pimcore\Bundle\SeoBundle\Controller\SettingsController` (`/admin/bundle/seo/robots-txt`) — replaced by `Pimcore\Bundle\StudioBackendBundle\Bundle\Seo\Controller\RobotsTxt\{Get,Update}Controller`.
+
+  Also removed: `Pimcore\Bundle\ApplicationLoggerBundle\Service\TranslationService` / `TranslationServiceInterface` and their service definition. They existed only to give `LogController` its log-level labels and translated into the legacy `admin` translation domain; Studio resolves those labels itself. If a project injected `TranslationServiceInterface` somewhere, drop the dependency — with `LogController` gone there is nothing left for it to serve.
+
+  With this, no bundled Pimcore controller is mounted under `/admin` any more, and none extends `Pimcore\Controller\UserAwareController` or uses `Pimcore\Controller\Traits\JsonHelperTrait`. Both, along with the services the removed controllers used (`Pimcore\Bundle\SeoBundle\Redirect\Csv`, `Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler`, `Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb`, …), are **kept** and remain available for custom controllers.
 - [Composer] Bumped minimum requirements of `scheb/2fa-bundle` and `scheb/2fa-google-authenticator` to `8.6.1` and of `phpdocumentor/reflection-docblock` to `5.6.7` (5.x line) / `6.0.3` (6.x line). These are floor raises within the majors already required since 2026.1.0 and carry no BC impact of their own (see the 2026.1.0 notes below for the major-version upgrade guidance).
 
 ### [Console]
@@ -25,13 +35,79 @@
 - [Renderlets] Custom renderlet configuration parameters are now passed to renderlet controllers as query parameters. Accessing these custom parameters via request attributes is deprecated and will be removed in Pimcore 2027. Update custom renderlet controllers from `$request->attributes->get('myParam')` to `$request->query->get('myParam')`.
 
 ### [DataObject]
+- [Deployment] `pimcore:deployment:classes-rebuild` now regenerates missing or outdated node-local PHP class files (`var/classes/DataObject/<Class>.php` and the corresponding `Listing.php`) even when the database is already up-to-date, so secondary nodes in a shared-database cluster no longer require `--force`. Affected classes are reported as `saved` instead of `skipped` in verbose output. `Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager` gained the public method `hasStalePhpClassFiles()`.
 - [Relations] The `ownername` column has been widened from `VARCHAR(70)` to `VARCHAR(190)` in the per-class relation tables (`object_relations_*`), the advanced-relation metadata tables (`object_metadata_*`) and `object_url_slugs`. The generated `ownername` for a localized field nested inside an object brick or field collection (e.g. `/objectbrick~<field>/<brickKey>/localizedfield~localizedfield`) can exceed 70 characters, which caused "Data too long for column 'ownername'" on save under strict SQL mode. Existing installations are updated automatically by the migration `Version20260721000000`; no code or configuration changes are required.
 
 ### [Database]
+- Added `Pimcore\Db\Helper::updateOrInsert()` next to `Helper::upsert()`, which itself is unchanged. It addresses exactly the rows `upsert()` does (an `UPDATE ... WHERE $keys`, no other row is ever touched, no trigger runs on a row the criteria do not match) and has the same return value (last insert id on insert, `null` on update), but runs the `UPDATE` first. That `UPDATE` also records whether it matched a row (through `LAST_INSERT_ID(<random token>)` in one of its assignments, read back only when no row changed), so a row that matched but did not change - it already holds the values, or a `BEFORE UPDATE` trigger reset them - is done after that one statement and its triggers run once; only a missing row goes through `upsert()`, whose duplicate handling also covers a row inserted concurrently. After such an `UPDATE` the connection's last insert id holds that token. The core DAOs use it wherever the row exists at save time: `objects`, `assets`, `documents`, `tags`, and the class store, query, localized and brick tables on an update; every other core write is a plain insert or a cold path and stays on `upsert()`. Two differences to `upsert()` are observable, both only by custom triggers: on the update of a row whose values change, `upsert()`'s `INSERT` failed on the duplicate and ran the table's `BEFORE INSERT` triggers first (rolled back with the failed statement), while `updateOrInsert()` runs them only when it actually tries to insert; and the `UPDATE` sets `LAST_INSERT_ID()` to the match token before the row's `BEFORE UPDATE` and `AFTER UPDATE` triggers run, so a trigger reading `LAST_INSERT_ID()` sees the token rather than the id of an earlier insert (a trigger's own inserts do not disturb the match detection, the server restores the value when a trigger ends). No upgrade changes are needed unless custom triggers rely on `BEFORE INSERT` being invoked for existing rows or on `LAST_INSERT_ID()` inside an update trigger.
 - Several columns using the deprecated, ambiguous `utf8`/`utf8_bin`/`utf8_general_ci` charset/collation names have been modernized in `install.sql`: `lock_keys`, `assets_image_thumbnail_cache.filename`, `search_backend_data.key`, `tags.name`, `properties.cpath` and `users_workspaces_asset/document/object.cpath` now use real `utf8mb4`. `assets.filename`/`path` and `documents.key`/`path` move to the explicit `utf8mb3` name instead (their composite `fullpath` index already uses the full 3072-byte InnoDB index-prefix budget at 3 bytes/char and would overflow it at 4 bytes/char) - note MySQL has deprecated `utf8mb3` itself too, so this remains a known limitation pending a future index/schema redesign, not a fully modernized state. Existing installations are updated automatically by the migration `Version20260729120000`; no code or configuration changes are required.
   - This migration only touches a column when its current collation and length still match the stock legacy definition; a column a project has already widened or otherwise customized is left untouched (a notice is logged) instead of being silently reset.
   - The migration is **irreversible** (`down()` throws) — reverting `utf8mb4` columns back to `utf8`/`utf8mb3` could silently replace stored 4-byte characters (e.g. emoji) with `?` given this application's intentionally permissive `sql_mode=''`. Restore from a backup if you need to roll back.
   - The `ALTER TABLE`/`CONVERT TO CHARACTER SET` statements rewrite the affected columns' storage and typically run as full table rebuilds, which can take time and hold locks on `assets`, `documents`, `objects` and `properties` on large installations — plan to run this migration during a maintenance window on such installs.
+
+## Pimcore 2026.2.14
+
+### [Assets]
+- [Thumbnails] `ImageThumbnailTrait::getStream()` (used by `Asset\Image\Thumbnail`, `Asset\Video\ImageThumbnail` and `Asset\Document\ImageThumbnail`) now returns `null` as documented instead of letting `League\Flysystem\UnableToReadFile` escape when the thumbnail file no longer exists on the thumbnail storage, e.g. because of a stale entry in the thumbnail status cache. The stale status cache entry is invalidated in that case, so the thumbnail is regenerated on the next request instead of failing again. A read failure for a file that still exists on the storage (or whose existence cannot be determined) is still thrown as before. `Asset\Service::getStreamedResponseFromImageThumbnail()` accordingly returns `null` for a missing stream and for a failed generation (previously a `TypeError` from writing a `null` stream to the storage) instead of throwing.
+
+### [Database]
+- [Doctrine] The shipped `doctrine.dbal.connections.default.default_table_options` used the key `collate`, which Doctrine DBAL 4 (in use since Pimcore 12.0) silently ignores in favour of `collation`. As a result, every table created through the Doctrine schema API - bundle installers and migrations working on the `Schema` object, the ORM schema tool - was created with `DEFAULT CHARSET=utf8mb4` but **without** a `COLLATE` clause, so MySQL/MariaDB applied the charset's built-in default collation (`utf8mb4_general_ci` on MariaDB / MySQL 5.7, `utf8mb4_0900_ai_ci` on MySQL 8) instead of the configured `utf8mb4_unicode_520_ci`. The key is now `collation`, so newly created tables get the configured collation again. The `webdav_locks` table in `install.sql` also received the missing `COLLATE` clause.
+  Existing tables are **not** changed automatically. Known affected tables on installations set up or upgraded since Pimcore 12.0 are the ones created by bundle installers, e.g. `bundle_studio_*` and `translations_studio` (Studio backend), `generic_execution_engine_*`, the Generic Data Index, Backend Power Tools and Portal Engine tables, as well as `webdav_locks`. A mismatch only matters when string columns of differently collated tables are compared directly (`Illegal mix of collations`) or when consistent sorting across tables is required; adapting existing tables is therefore optional. Use the detection queries from the [2026.1.0 "Tasks to Do Prior the Update"](#tasks-to-do-prior-the-update) section to list tables and columns still using the charset default collation, and the queries below to generate the `ALTER TABLE` statements. Do **not** convert columns that intentionally use a different collation (e.g. `utf8mb4_bin` for case-sensitive keys and JSON data - the Studio grid and saved-search configuration tables contain such columns); the generators below exclude them by only matching the default collations and by handling mixed tables column by column. Review the generated statements before running them in a maintenance window; `CONVERT TO` and `MODIFY` rewrite the table.
+    ```sql
+    -- 1) Table default collation (metadata only, affects columns added later)
+    SELECT CONCAT('ALTER TABLE `', TABLE_NAME, '` DEFAULT COLLATE utf8mb4_unicode_520_ci;')
+    FROM INFORMATION_SCHEMA.TABLES
+    WHERE TABLE_SCHEMA = 'your_database_name' AND TABLE_TYPE = 'BASE TABLE'
+      AND TABLE_COLLATION IN ('utf8mb4_general_ci', 'utf8mb4_0900_ai_ci')
+    ORDER BY TABLE_NAME;
+
+    -- 2) Whole-table conversion, only for tables where every string column uses a default collation
+    SELECT CONCAT('ALTER TABLE `', t.TABLE_NAME, '` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;')
+    FROM INFORMATION_SCHEMA.TABLES t
+    WHERE t.TABLE_SCHEMA = 'your_database_name' AND t.TABLE_TYPE = 'BASE TABLE'
+      AND t.TABLE_COLLATION IN ('utf8mb4_general_ci', 'utf8mb4_0900_ai_ci')
+      AND NOT EXISTS (
+          SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS c
+          WHERE c.TABLE_SCHEMA = t.TABLE_SCHEMA AND c.TABLE_NAME = t.TABLE_NAME
+            AND c.COLLATION_NAME IS NOT NULL
+            AND c.COLLATION_NAME NOT IN ('utf8mb4_general_ci', 'utf8mb4_0900_ai_ci')
+      )
+    ORDER BY t.TABLE_NAME;
+
+    -- 3) Column-level statements for the remaining tables that also contain intentionally different collations.
+    --    DEFAULT / ON UPDATE / COMMENT clauses are not reproduced: check COLUMN_DEFAULT and EXTRA and add them manually.
+    SELECT CONCAT('ALTER TABLE `', c.TABLE_NAME, '` MODIFY `', c.COLUMN_NAME, '` ', c.COLUMN_TYPE,
+                  ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci',
+                  IF(c.IS_NULLABLE = 'NO', ' NOT NULL', ' NULL'), ';') AS statement,
+           c.COLUMN_DEFAULT, c.EXTRA
+    FROM INFORMATION_SCHEMA.COLUMNS c
+    JOIN INFORMATION_SCHEMA.TABLES t ON t.TABLE_SCHEMA = c.TABLE_SCHEMA AND t.TABLE_NAME = c.TABLE_NAME AND t.TABLE_TYPE = 'BASE TABLE'
+    WHERE c.TABLE_SCHEMA = 'your_database_name'
+      AND c.COLLATION_NAME IN ('utf8mb4_general_ci', 'utf8mb4_0900_ai_ci')
+      AND EXISTS (
+          SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS o
+          WHERE o.TABLE_SCHEMA = c.TABLE_SCHEMA AND o.TABLE_NAME = c.TABLE_NAME
+            AND o.COLLATION_NAME IS NOT NULL
+            AND o.COLLATION_NAME NOT IN ('utf8mb4_general_ci', 'utf8mb4_0900_ai_ci')
+      )
+    ORDER BY c.TABLE_NAME, c.ORDINAL_POSITION;
+    ```
+
+## Pimcore 2026.2.12
+
+### [Documents]
+- [Areabricks] In editmode, areabrick names and descriptions are now translated via the `studio` translation domain whenever that domain is registered (i.e. Pimcore Studio is installed), so these UI labels show up in Studio's translations instead of the website's `messages` domain. Labels that were already translated in the `messages` domain keep working as a read-only fallback, but missing keys are no longer auto-created there - they are created in the `studio` domain instead. Installations without the `studio` domain keep translating them via `messages` as before.
+
+### [Routing]
+- [Pimcore Context] The `route` matcher is no longer accepted under `pimcore.context.<name>.routes` (e.g. `{ route: my_api }`); config using it now fails with `Unrecognized option "route" under "pimcore.context.<name>.routes.0". Available options are "host", "methods", "path".` Matching a Pimcore context by route name never actually worked: the context is resolved (and cached on the request) by several `kernel.request` listeners - `CustomAdminEntryPointCheckListener`, `RoutingListener`, `FullPageCacheListener` - that all run before Symfony's own `RouterListener` populates the request's `_route` attribute, so a `route:` entry could never match and the request silently fell back to the `default` context. If you have such a config, switch to a `path:` (optionally combined with `host:`/`methods:`) matcher instead:
+    ```yaml
+    pimcore:
+        context:
+            api:
+                routes:
+                    - { path: ^/my/api/ }
+    ```
+  This does not affect `pimcore.web_profiler.toolbar.excluded_routes`, which still supports `route:`.
 
 ## Pimcore 2026.2.5
 

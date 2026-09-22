@@ -14,12 +14,18 @@ declare(strict_types=1);
 namespace Pimcore\Model\Asset\Thumbnail;
 
 use Exception;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\UnableToReadFile;
 use Pimcore;
 use Pimcore\Config as PimcoreConfig;
+use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
+use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
+use Pimcore\Model\Asset\Image\Thumbnail\Processor;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Mime\MimeTypes;
@@ -86,6 +92,8 @@ trait ImageThumbnailTrait
 
     /**
      * @return null|resource
+     *
+     * @throws UnableToReadFile if the file exists but cannot be read, or if its existence cannot be determined
      */
     public function getStream()
     {
@@ -93,16 +101,77 @@ trait ImageThumbnailTrait
         if ($pathReference['type'] === 'asset') {
             return $this->asset->getStream();
         } elseif (isset($pathReference['storagePath'])) {
-            return Tool\Storage::get('thumbnail')->readStream($pathReference['storagePath']);
+            $storage = $this->getThumbnailStorage();
+
+            try {
+                return $storage->readStream($pathReference['storagePath']);
+            } catch (UnableToReadFile $e) {
+                if ($this->existsOnStorageAfterFailedRead($storage, $pathReference['storagePath'])) {
+                    // reading failed although the file still exists (e.g. permission, I/O or backend
+                    // availability problems) - not a stale reference, so keep the status cache intact
+                    throw $e;
+                }
+
+                Logger::warning($e->getMessage());
+
+                // the file is missing from the thumbnail storage although the path reference claims
+                // it exists, e.g. because of a stale entry in the thumbnail status cache. Invalidate
+                // the entry so the thumbnail is regenerated on the next request instead of failing again.
+                if (($cacheOwner = $this->getThumbnailStatusCacheOwner()) && $this->config) {
+                    $cacheOwner->getDao()->deleteFromThumbnailCache($this->config->getName(), basename($pathReference['storagePath']));
+                }
+            }
         }
 
         return null;
+    }
+
+    /**
+     * whether the file still exists on the storage after a failed read,
+     * treating an indeterminate result as existing (storage-side problem)
+     */
+    private function existsOnStorageAfterFailedRead(FilesystemOperator $storage, string $storagePath): bool
+    {
+        try {
+            return $storage->fileExists($storagePath);
+        } catch (FilesystemException) {
+            return true;
+        }
+    }
+
+    /**
+     * @internal
+     */
+    protected function getThumbnailStorage(): FilesystemOperator
+    {
+        return Storage::get('thumbnail');
+    }
+
+    /**
+     * The asset owning the thumbnail status cache entries for the current path reference.
+     * This can differ from the thumbnail's own asset when the path reference is delegated
+     * to another asset's thumbnail, e.g. custom video poster images.
+     *
+     * @internal
+     */
+    protected function getThumbnailStatusCacheOwner(): ?Asset
+    {
+        return $this->asset;
     }
 
     public function getPathReference(bool $deferredAllowed = false): array
     {
         if (!$deferredAllowed && (($this->pathReference['type'] ?? '') === 'deferred')) {
             $this->pathReference = [];
+        }
+
+        if (empty($this->pathReference)
+            && $this->asset instanceof Image
+            && $this->config?->usesOriginalSvgOutput($this->asset)) {
+            $this->pathReference = [
+                'src' => $this->asset->getRealFullPath(),
+                'type' => 'asset',
+            ];
         }
 
         if (empty($this->pathReference)) {
@@ -172,8 +241,29 @@ trait ImageThumbnailTrait
         if (in_array($pathReference['type'], ['thumbnail', 'asset'])) {
             try {
                 $localFile = $this->getLocalFile();
-                if (null !== $localFile && isset($pathReference['storagePath']) && $config = $this->getConfig()) {
-                    $asset = $this->getAsset();
+                $asset = $this->getAsset();
+                if (null !== $localFile && $pathReference['type'] === 'asset' && $asset instanceof Image) {
+                    $dimensions = $asset->getDimensionsFromFile($localFile) ?? [];
+
+                    // Pass-through output still exposes the configuration's logical dimensions.
+                    // Reapply the zero-I/O plan to the dimensions discovered by this single physical read.
+                    $config = $this->getConfig();
+                    if (isset($dimensions['width'], $dimensions['height'])
+                        && $config
+                        && ($config->usesOriginalSvgOutput($asset)
+                            || Processor::usesOriginalAssetOutput($asset, $config))) {
+                        $estimatedDimensions = $config->getEstimatedDimensionsForSource(
+                            $asset,
+                            $dimensions['width'],
+                            $dimensions['height']
+                        );
+                        if (isset($estimatedDimensions['width'], $estimatedDimensions['height'])
+                            && $estimatedDimensions['width'] > 0
+                            && $estimatedDimensions['height'] > 0) {
+                            $dimensions = $estimatedDimensions;
+                        }
+                    }
+                } elseif (null !== $localFile && isset($pathReference['storagePath']) && $config = $this->getConfig()) {
                     $filename = basename($pathReference['storagePath']);
                     $asset->addThumbnailFileToCache(
                         $localFile,
@@ -215,13 +305,14 @@ trait ImageThumbnailTrait
                 }
             }
 
-            if (empty($dimensions) && $this->exists()) {
-                $dimensions = $this->readDimensionsFromFile();
-            }
-
             // try to calculate the final dimensions based on the thumbnail configuration
             if (empty($dimensions) && $config && $asset instanceof Image) {
-                $dimensions = $config->getEstimatedDimensions($asset);
+                $estimatedDimensions = $config->getEstimatedDimensions($asset);
+                if (isset($estimatedDimensions['width'], $estimatedDimensions['height'])
+                    && $estimatedDimensions['width'] > 0
+                    && $estimatedDimensions['height'] > 0) {
+                    $dimensions = $estimatedDimensions;
+                }
             }
 
             if (empty($dimensions)) {
@@ -366,10 +457,51 @@ trait ImageThumbnailTrait
             return null;
         }
 
-        $localFile = self::getLocalFileFromStream($stream);
-        @fclose($stream);
+        if (is_resource($stream)) {
+            $pathReference = $this->getPathReference();
+            $sourcePath = (string) ($pathReference['storagePath'] ?? $pathReference['src'] ?? '');
+            $sourcePath = (string) (parse_url($sourcePath, PHP_URL_PATH) ?: $sourcePath);
+            $fileExtension = pathinfo($sourcePath, PATHINFO_EXTENSION);
+            if ($fileExtension === '' && $this->getAsset() instanceof Image) {
+                $fileExtension = pathinfo($this->getAsset()->getFilename(), PATHINFO_EXTENSION);
+            }
 
-        return $localFile;
+            $metadata = stream_get_meta_data($stream);
+            $streamUri = $metadata['uri'] ?? null;
+            if (is_string($streamUri) && stream_is_local($stream) && is_file($streamUri)) {
+                $streamPath = (string) (parse_url($streamUri, PHP_URL_PATH) ?: $streamUri);
+                $streamExtension = pathinfo($streamPath, PATHINFO_EXTENSION);
+                if ($fileExtension !== '' && strcasecmp($streamExtension, $fileExtension) === 0) {
+                    fclose($stream);
+
+                    return $streamUri;
+                }
+            }
+
+            $localFile = File::getLocalTempFilePath($fileExtension ?: null);
+            $destination = fopen($localFile, 'wb', false, File::getContext());
+            if ($destination === false) {
+                fclose($stream);
+
+                throw new Exception(sprintf('Unable to create temporary file in %s', $localFile));
+            }
+
+            try {
+                if ($metadata['seekable'] && !rewind($stream)) {
+                    throw new Exception('Unable to rewind thumbnail stream before copying');
+                }
+                if (stream_copy_to_stream($stream, $destination) === false) {
+                    throw new Exception(sprintf('Unable to copy thumbnail stream to %s', $localFile));
+                }
+            } finally {
+                fclose($destination);
+                fclose($stream);
+            }
+
+            return $localFile;
+        }
+
+        return null;
     }
 
     public function exists(): bool
@@ -469,10 +601,7 @@ trait ImageThumbnailTrait
     {
         $format = strtolower($format);
         if ($asset) {
-            if (
-                $format === 'original' ||
-                $format === 'source'
-            ) {
+            if ($format === 'original' || Config::isAutoFormat($format)) {
                 return true;
             }
 

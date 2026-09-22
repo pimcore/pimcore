@@ -446,6 +446,65 @@ class QueueAwareStorageAdapterTest extends Unit
         $this->assertSame('bytes', $adapter->read('Archive/Campaigns/img.jpg'));
     }
 
+    public function testPrefixMoveOnMarkerBackendQueuesARowInsteadOfMovingOnlyTheMarker(): void
+    {
+        // Backend divergence observed on marker-materializing gateways (PEES-1617): a
+        // zero-byte object sits at the bare directory key, so a native move() "succeeds"
+        // by relocating just that object. The adapter must not mistake that for a moved
+        // subtree - the operation has to be queued like on any non-renaming backend.
+        $marker = new MarkerSemanticsAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir));
+        $adapter = new QueueAwareStorageAdapter($marker, $this->repository, 'asset');
+        $adapter->write('Campaigns/img.jpg', 'bytes', new Config());
+        $marker->addMarker('Campaigns');
+
+        $adapter->move('Campaigns', 'Archive/Campaigns', new Config());
+
+        $this->assertTrue($marker->fileExists('Campaigns/img.jpg'), 'physical object untouched until the processor runs');
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations);
+        $this->assertSame('move', $operations[0]->getType()->value);
+        $this->assertSame('Campaigns', $operations[0]->getSourcePrefix());
+        $this->assertSame('Archive/Campaigns', $operations[0]->getTargetPrefix());
+        // and the logical view is already correct:
+        $this->assertSame('bytes', $adapter->read('Archive/Campaigns/img.jpg'));
+    }
+
+    public function testReMoveOfPendingSubtreeOnMarkerBackendRepointsInsteadOfMovingTheMarker(): void
+    {
+        // After a first queued move A -> B on a marker backend, the marker object sits
+        // physically at B while the children still sit under A. A second move B -> C must
+        // repoint the pending row (the mapped-directory branch), not treat B as a single
+        // file just because the relocated marker answers fileExists().
+        $marker = new MarkerSemanticsAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir));
+        $adapter = new QueueAwareStorageAdapter($marker, $this->repository, 'asset');
+        $adapter->write('A/img.jpg', 'bytes', new Config());
+        $marker->addMarker('A');
+        $adapter->move('A', 'B', new Config());
+
+        $adapter->move('B', 'C', new Config());
+
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations);
+        $this->assertSame('A', $operations[0]->getSourcePrefix());
+        $this->assertSame('C', $operations[0]->getTargetPrefix());
+        $this->assertSame('bytes', $adapter->read('C/img.jpg'));
+    }
+
+    public function testMarkerWithoutChildrenMovesAsASingleObject(): void
+    {
+        // a bare marker with no subtree behind it is just a zero-byte object - a plain
+        // single-object move, no queue row
+        $marker = new MarkerSemanticsAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir));
+        $adapter = new QueueAwareStorageAdapter($marker, $this->repository, 'asset');
+        $marker->addMarker('Empty');
+
+        $adapter->move('Empty', 'Renamed', new Config());
+
+        $this->assertFalse($marker->hasMarker('Empty'));
+        $this->assertTrue($marker->hasMarker('Renamed'));
+        $this->assertSame([], $this->repository->all(), 'no queue row for a single-object move');
+    }
+
     public function testMovingAnEmptyFolderThrowsAndQueuesNothing(): void
     {
         $adapter = $this->nonRenamingAdapter();
@@ -983,5 +1042,106 @@ class QueueAwareStorageAdapterTest extends Unit
             $this->fail('expected UnableToGenerateTemporaryUrl');
         } catch (UnableToGenerateTemporaryUrl) {
         }
+    }
+
+    public function testQueuedFolderMoveRecordsTheResolvedCopyOptions(): void
+    {
+        // Filesystem::move() resolves the storage's configuration before handing it down, so the
+        // decorator already holds the effective visibility settings. Recording them on the row is
+        // what lets the processor copy the same way a non-deferred move would.
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('Campaigns/a.jpg', 'a', new Config());
+
+        $adapter->move('Campaigns', 'Archive/Campaigns', new Config([
+            'visibility' => 'public',
+            'retain_visibility' => false,
+            'public_url' => 'https://cdn.example.com',
+        ]));
+
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations);
+        $this->assertSame(
+            ['visibility' => 'public', 'retain_visibility' => false],
+            $operations[0]->getCopyOptions(),
+            'only the copy-relevant keys are persisted'
+        );
+    }
+
+    public function testQueuedFolderMoveWithoutVisibilitySettingsRecordsNothing(): void
+    {
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('Campaigns/a.jpg', 'a', new Config());
+
+        $adapter->move('Campaigns', 'Archive/Campaigns', new Config());
+
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations);
+        $this->assertNull($operations[0]->getCopyOptions());
+    }
+
+    public function testPendingWindowMaterializationCopiesWithTheRecordedOptions(): void
+    {
+        // Writing into a prefix a pending move still covers first materializes the moved bytes at
+        // the target. That copy carries out part of the move, so it must use the move's options
+        // rather than the adapter's defaults.
+        $spy = new ConfigCapturingAdapterDecorator(new LocalFilesystemAdapter($this->tmpDir));
+        $adapter = new QueueAwareStorageAdapter($spy, $this->repository, 'asset');
+        $adapter->write('A/x.png', 'ORIGINAL', new Config());
+        $this->repository->add(new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Move,
+            'A',
+            'B',
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        ));
+
+        $adapter->write('A/x.png', 'NEW', new Config());
+
+        $this->assertSame('ORIGINAL', $adapter->read('B/x.png'), 'moved bytes materialized at the target');
+        $this->assertSame(
+            [['visibility' => 'public', 'retain_visibility' => false]],
+            $spy->copyConfigs,
+            'the materializing copy used the pending move options'
+        );
+    }
+
+    public function testRepointingAPendingMoveAdoptsTheLaterMovesCopyOptions(): void
+    {
+        // Re-moving a subtree that is still queued repoints the pending row instead of adding a
+        // second one, so the row also has to pick up the later move's options - it is that move
+        // which decides how the bytes land at their final target.
+        $adapter = $this->nonRenamingAdapter();
+        $adapter->write('A/x.png', 'bytes', new Config());
+        $adapter->move('A', 'B', new Config(['visibility' => 'public', 'retain_visibility' => false]));
+
+        $adapter->move('B', 'C', new Config(['visibility' => 'private', 'retain_visibility' => false]));
+
+        $operations = $this->repository->all();
+        $this->assertCount(1, $operations, 'the pending row was repointed, not duplicated');
+        $this->assertSame('A', $operations[0]->getSourcePrefix());
+        $this->assertSame('C', $operations[0]->getTargetPrefix());
+        $this->assertSame(
+            ['visibility' => 'private', 'retain_visibility' => false],
+            $operations[0]->getCopyOptions()
+        );
+    }
+
+    public function testADeleteNeverCarriesCopyOptions(): void
+    {
+        // A sweep has nothing to copy, so options on a delete are meaningless. They are dropped
+        // rather than rejected: a hand-edited row must not be able to stop the queue draining.
+        $operation = new StorageOperation(
+            null,
+            'asset',
+            StorageOperationType::Delete,
+            'Campaigns',
+            null,
+            new DateTimeImmutable(),
+            ['visibility' => 'public', 'retain_visibility' => false]
+        );
+
+        $this->assertNull($operation->getCopyOptions());
     }
 }
