@@ -153,13 +153,9 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
 
                     if (!empty($visibleFieldsArray)) {
                         foreach ($visibleFieldsArray as $field) {
+                            // the grid's system columns (id, fullpath, type, subtype, filename, ...) always
+                            // carry the asset's own values; every other visible field is an asset metadata key
                             if (array_key_exists($field, $row)) {
-                                continue;
-                            }
-
-                            $getter = 'get' . ucfirst($field);
-                            if (method_exists($asset, $getter)) {
-                                $row[$field] = $asset->{$getter}();
                                 continue;
                             }
 
@@ -379,9 +375,15 @@ class ManyToManyAssetRelation extends ManyToManyRelation implements LayoutDefini
 
     public function addListingFilter(DataObject\Listing $listing, float|array|int|string|Model\Element\ElementInterface $data, string $operator = '='): DataObject\Listing
     {
-        if ($data instanceof Asset) {
+        if ($data instanceof Element\ElementInterface) {
+            if (!$data instanceof Asset) {
+                throw new InvalidArgumentException('Filtering '.__CLASS__.' does only support assets, '.Element\Service::getElementType($data).' given.');
+            }
             $data = $data->getId();
         } elseif (is_array($data)) {
+            if (isset($data['type']) && $data['type'] !== 'asset') {
+                throw new InvalidArgumentException('Filtering '.__CLASS__.' does only support assets, type "'.$data['type'].'" given.');
+            }
             $data = $data['id'] ?? null;
         }
 
