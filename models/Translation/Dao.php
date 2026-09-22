@@ -14,6 +14,7 @@ namespace Pimcore\Model\Translation;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Exception;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -31,6 +32,14 @@ class Dao extends Model\Dao\AbstractDao
      * @var string
      */
     const TABLE_PREFIX = 'translations_';
+
+    /**
+     * A single, fixed RuntimeCache key holding a [domain => bool] map. Using one key for
+     * all domains - rather than concatenating the domain into the key - avoids colliding
+     * with Translation::getByKey()'s 'translation_<id>_<domain>' cache keys, which share
+     * the same global RuntimeCache namespace and can contain arbitrary translation keys.
+     */
+    private const VALID_DOMAINS_CACHE_KEY = self::class . '::validDomains';
 
     public function getDatabaseTableName(): string
     {
@@ -131,14 +140,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getAvailableLanguages(): array
     {
-        $l = $this->db->fetchAllAssociative('SELECT * FROM ' . $this->getDatabaseTableName()  . '  GROUP BY `language`;');
-        $languages = [];
-
-        foreach ($l as $values) {
-            $languages[] = $values['language'];
-        }
-
-        return $languages;
+        return $this->db->fetchFirstColumn('SELECT DISTINCT `language` FROM ' . $this->getDatabaseTableName() . ';');
     }
 
     /**
@@ -163,22 +165,47 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Returns boolean, if the domain table exists & domain registered in config
      *
-     *
+     * The result is memoized per domain via the RuntimeCache for the remainder of the
+     * request, since the underlying query is a "does this table exist" probe that is
+     * otherwise repeated on every translation lookup for domains without a table
+     * (e.g. the deprecated "admin" domain), see PEES-1281 / pimcore/service-operations#937.
      */
     public function isAValidDomain(string $domain): bool
     {
+        $validDomains = $this->getValidDomainsCache();
+
+        if (array_key_exists($domain, $validDomains)) {
+            return $validDomains[$domain];
+        }
+
+        $isValid = false;
+
         try {
             $translationDomains = $this->model->getRegisteredDomains();
-            if (!in_array($domain, $translationDomains)) {
-                return false;
+            if (in_array($domain, $translationDomains)) {
+                $this->db->fetchOne(sprintf('SELECT * FROM translations_%s LIMIT 1;', $domain));
+                $isValid = true;
             }
-
-            $this->db->fetchOne(sprintf('SELECT * FROM translations_%s LIMIT 1;', $domain));
-
-            return true;
         } catch (Exception $e) {
-            return false;
+            $isValid = false;
         }
+
+        $validDomains[$domain] = $isValid;
+        RuntimeCache::set(self::VALID_DOMAINS_CACHE_KEY, $validDomains);
+
+        return $isValid;
+    }
+
+    /**
+     * @return array<string, bool>
+     */
+    private function getValidDomainsCache(): array
+    {
+        if (RuntimeCache::isRegistered(self::VALID_DOMAINS_CACHE_KEY)) {
+            return RuntimeCache::get(self::VALID_DOMAINS_CACHE_KEY);
+        }
+
+        return [];
     }
 
     public function createOrUpdateTable(): void
@@ -200,7 +227,29 @@ class Dao extends Model\Dao\AbstractDao
                           `userModification` int(11) unsigned DEFAULT NULL,
                           PRIMARY KEY (`key`,`language`),
                           KEY `language` (`language`)
-                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;");
+
+        $this->resetValidDomainCache();
+    }
+
+    /**
+     * Clears the memoized isAValidDomain() result for this Dao's domain, so a domain
+     * that just had its table created is recognized as valid within the same request.
+     *
+     * Only a cached `false` can become stale here (a table is never dropped by
+     * createOrUpdateTable(), only created), so a cached `true` is left untouched -
+     * otherwise every save() to an already-valid domain would force a redundant
+     * re-query on the next isAValidDomain() call.
+     */
+    private function resetValidDomainCache(): void
+    {
+        $domain = $this->model->getDomain();
+        $validDomains = $this->getValidDomainsCache();
+
+        if (($validDomains[$domain] ?? null) === false) {
+            unset($validDomains[$domain]);
+            RuntimeCache::set(self::VALID_DOMAINS_CACHE_KEY, $validDomains);
+        }
     }
 
     protected function updateModificationInfos(): void

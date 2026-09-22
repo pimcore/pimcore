@@ -1,0 +1,71 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
+namespace Pimcore\Asset\StorageQueue;
+
+/**
+ * @internal
+ */
+final readonly class StorageQueueProcessingResult
+{
+    /**
+     * @param string[] $errors
+     */
+    public function __construct(
+        private int $processedRows,
+        private int $failedRows,
+        private int $pendingRows,
+        private bool $timedOut,
+        private array $errors,
+        private bool $stoppedOnError = false,
+    ) {
+    }
+
+    public function getProcessedRows(): int
+    {
+        return $this->processedRows;
+    }
+
+    public function getFailedRows(): int
+    {
+        return $this->failedRows;
+    }
+
+    public function getPendingRows(): int
+    {
+        return $this->pendingRows;
+    }
+
+    /**
+     * Whether the run ended early because a row failed and the run was not asked to continue.
+     * The remaining rows were not attempted and stay queued.
+     */
+    public function isStoppedOnError(): bool
+    {
+        return $this->stoppedOnError;
+    }
+
+    public function isTimedOut(): bool
+    {
+        return $this->timedOut;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+}

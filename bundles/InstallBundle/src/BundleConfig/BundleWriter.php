@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * This source file is available under the terms of the
@@ -15,21 +16,25 @@ namespace Pimcore\Bundle\InstallBundle\BundleConfig;
 use Pimcore\File;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
-class BundleWriter
+/**
+ * @internal
+ */
+final readonly class BundleWriter
 {
-    public function addBundlesToConfig(array $bundles, array $availableBundles): void
+    /**
+     * @param list<class-string> $bundles
+     */
+    public function addBundlesToConfig(array $bundles): void
     {
         $bundlesPhpFile = PIMCORE_PROJECT_ROOT . '/config/bundles.php';
 
         if (!file_exists($bundlesPhpFile)) {
             throw new FileNotFoundException("File \"$bundlesPhpFile\" not found!");
         }
+
         $bundlesToInstall = [];
         foreach ($bundles as $bundle) {
-            // check against available bundles since they can change
-            if (in_array($bundle, $availableBundles)) {
-                $bundlesToInstall[$bundle] = ['all' => true];
-            }
+            $bundlesToInstall[$bundle] = ['all' => true];
         }
 
         // get installed bundles, they have to stay in the bundles.php, but won't be installed a second time
@@ -42,6 +47,9 @@ class BundleWriter
         File::putPhpFile($bundlesPhpFile, $this->buildContents($bundlesToInstall));
     }
 
+    /**
+     * @param array<class-string, array<string, bool>> $bundles
+     */
     private function buildContents(array $bundles): string
     {
         $contents = "<?php\n\nreturn [\n";
@@ -51,7 +59,7 @@ class BundleWriter
                 $booleanValue = var_export($value, true);
                 $contents .= "'$env' => $booleanValue, ";
             }
-            $contents = substr($contents, 0, -2)."],\n";
+            $contents = substr($contents, 0, -2) . "],\n";
         }
         $contents .= "];\n";
 

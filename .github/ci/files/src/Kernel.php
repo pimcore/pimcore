@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace App;
 
-use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\Kernel as BaseKernel;
 

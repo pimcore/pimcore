@@ -18,6 +18,7 @@ use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Asset\Document\PdfScanner;
 
 /**
  * @method Dao getDao()
@@ -32,6 +33,7 @@ class Document extends Model\Asset
     {
         if ($this->getDataChanged()) {
             $this->removeCustomSetting('document_page_count');
+            $this->removeCustomSetting(self::CUSTOM_SETTING_PDF_SCAN_STATUS);
         }
 
         parent::update($params);
@@ -131,9 +133,17 @@ class Document extends Model\Asset
         return (string) $text;
     }
 
+    /**
+     * Returns whether a scan was performed (not whether JS was found). Use getScanStatus() for the result.
+     */
     public function checkIfPdfContainsJS(): bool
     {
         if (!$this->isPdfScanningEnabled()) {
+            return false;
+        }
+
+        $scanStatus = $this->getScanStatus();
+        if ($scanStatus === Model\Asset\Enum\PdfScanStatus::SAFE) {
             return false;
         }
 
@@ -142,24 +152,13 @@ class Document extends Model\Asset
             Model\Asset\Enum\PdfScanStatus::IN_PROGRESS->value
         );
 
-        $chunkSize = 1024;
-        $filePointer = $this->getStream();
+        if ((new PdfScanner())->containsJavaScript($this->getStream())) {
+            $this->setCustomSetting(
+                self::CUSTOM_SETTING_PDF_SCAN_STATUS,
+                Model\Asset\Enum\PdfScanStatus::UNSAFE->value
+            );
 
-        $tagLength = strlen('/JS');
-
-        while ($chunk = fread($filePointer, $chunkSize)) {
-            if (strlen($chunk) <= $tagLength) {
-                break;
-            }
-
-            if (str_contains($chunk, '/JS') || str_contains($chunk, '/JavaScript')) {
-                $this->setCustomSetting(
-                    self::CUSTOM_SETTING_PDF_SCAN_STATUS,
-                    Model\Asset\Enum\PdfScanStatus::UNSAFE->value
-                );
-
-                return true;
-            }
+            return true;
         }
 
         $this->setCustomSetting(

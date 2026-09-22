@@ -13,7 +13,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Exception;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Input;
+use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 
 /**
@@ -37,6 +42,19 @@ class ClassDefinitionTest extends ModelTestCase
         $this->assertEquals($expectedSetterCode, $setterCode);
     }
 
+    private function testGetterCode(string $fieldName, string $expectedGetterCode, bool $localizedField = false): void
+    {
+        $class = ClassDefinition::getByName('unittest');
+        if ($localizedField) {
+            $fd = $class->getFieldDefinition('localizedfields')->getFieldDefinition($fieldName);
+            $getterCode = $fd->getGetterCodeLocalizedfields($class);
+        } else {
+            $fd = $class->getFieldDefinition($fieldName);
+            $getterCode = $fd->getGetterCode($class);
+        }
+        $this->assertEquals($expectedGetterCode, $getterCode);
+    }
+
     /**
      * Verifies that the class definition gets renamed properly
      */
@@ -47,6 +65,106 @@ class ClassDefinitionTest extends ModelTestCase
 
         $renamedClass = ClassDefinition::getByName('unittest_renamed');
         $renamedClass->rename('unittest');
+    }
+
+    /**
+     * rename() deletes the class's PHP files and renames every persisted object's className via
+     * raw SQL before ever calling save() - the method where the candidate name is actually
+     * validated. A rejected rename must not leave either side effect applied.
+     */
+    public function testRenameToReservedWordLeavesClassAndObjectsUnchanged(): void
+    {
+        $class = ClassDefinition::getByName('unittest');
+
+        $object = new Unittest();
+        $object->setOmitMandatoryCheck(true);
+        $object->setParentId(1);
+        $object->setUserOwner(1);
+        $object->setKey('reserved-word-rename-test-' . uniqid());
+        $object->save();
+
+        try {
+            $class->rename('var');
+            $this->fail('Expected renaming a class to a reserved word to throw.');
+        } catch (Exception $exception) {
+            $this->assertStringContainsString('reserved word', $exception->getMessage());
+        }
+
+        $this->assertSame('unittest', ClassDefinition::getByName('unittest')?->getName());
+
+        $reloadedObject = Unittest::getById($object->getId(), ['force' => true]);
+        $this->assertInstanceOf(
+            Unittest::class,
+            $reloadedObject,
+            'The object must still resolve as Unittest - a rejected rename must not have renamed it in the database'
+        );
+
+        $object->delete();
+    }
+
+    /**
+     * PCRE `$` also matches immediately before a trailing newline, so a class name, id or parent
+     * class ending in "\n" passed the identifier checks in save() and reached the class-file
+     * generator, which emits them verbatim into PHP source and file paths (GHSA-g2vm-g4vq-qhwj).
+     *
+     * @dataProvider trailingNewlineIdentifierProvider
+     */
+    public function testSaveRejectsIdentifiersWithTrailingNewline(string $name, string $id, string $parentClass): void
+    {
+        $class = new ClassDefinition();
+        $class->setName($name);
+        $class->setId($id);
+        $class->setParentClass($parentClass);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('for class definition');
+
+        $class->save();
+    }
+
+    public static function trailingNewlineIdentifierProvider(): array
+    {
+        return [
+            'name' => ["TrailingNewlineName\n", 'TrailingNewlineName', ''],
+            'id' => ['TrailingNewlineId', "TrailingNewlineId\n", ''],
+            'parentClass' => ['TrailingNewlineParent', 'TrailingNewlineParent', "\\Pimcore\\Model\\DataObject\\Concrete\n"],
+        ];
+    }
+
+    /**
+     * A class name is emitted verbatim as the PHP class name in the generated class file, so a
+     * PHP reserved word (e.g. "var") must be rejected at save time instead of reaching the class
+     * file generator, where it produces a fatal syntax error only when an object of that class is
+     * first instantiated (pimcore/platform-version#291).
+     *
+     * The same applies to a class already living in the `Pimcore\Model\DataObject` namespace the
+     * generated class is emitted into - that one is shadowed by the generated file rather than
+     * producing a syntax error. ReservedWordsHelperTest guards the full list.
+     *
+     * @dataProvider reservedWordClassNameProvider
+     */
+    public function testSaveRejectsReservedWordAsClassName(string $name, string $id): void
+    {
+        $class = new ClassDefinition();
+        $class->setName($name);
+        $class->setId($id);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('reserved word');
+
+        $class->save();
+    }
+
+    public static function reservedWordClassNameProvider(): array
+    {
+        return [
+            'php keyword' => ['var', 'ReservedWordVar'],
+            'php keyword, mixed case' => ['Var', 'ReservedWordVarMixedCase'],
+            'pimcore reserved word' => ['Folder', 'ReservedWordFolder'],
+            'data object namespace class' => ['Service', 'ReservedWordService'],
+            'data object namespace class, lower case' => ['listing', 'ReservedWordListing'],
+            'data object namespace interface' => ['SelectOptionsInterface', 'ReservedWordSelectOptions'],
+        ];
     }
 
     /**
@@ -81,7 +199,7 @@ public function setInput(?string $input): static
         $expectedSetterCode =
             '/**
 * Set fieldcollection - fieldcollection
-* @param \Pimcore\Model\DataObject\Fieldcollection|null $fieldcollection
+* @param \Pimcore\Model\DataObject\Fieldcollection<\Pimcore\Model\DataObject\Fieldcollection\Data\Unittestfieldcollection>|null $fieldcollection
 * @return $this
 */
 public function setFieldcollection(?\Pimcore\Model\DataObject\Fieldcollection $fieldcollection): static
@@ -94,6 +212,20 @@ public function setFieldcollection(?\Pimcore\Model\DataObject\Fieldcollection $f
 
 ';
         $this->testSetterCode('fieldcollection', $expectedSetterCode);
+    }
+
+    public function testFieldCollectionPhpdocTypeWithoutAllowedTypes(): void
+    {
+        $fieldDefinition = new Fieldcollections();
+
+        $this->assertSame(
+            '\Pimcore\Model\DataObject\Fieldcollection|null',
+            $fieldDefinition->getPhpdocInputType()
+        );
+        $this->assertSame(
+            '\Pimcore\Model\DataObject\Fieldcollection|null',
+            $fieldDefinition->getPhpdocReturnType()
+        );
     }
 
     /**
@@ -165,5 +297,184 @@ public function setLinput(?string $linput): static
 
 ';
         $this->testSetterCode('linput', $expectedSetterCode, true);
+    }
+
+    /**
+     * Verifies that the getter code gets created properly and that the
+     * PreGetValueHook is called before actually getting the data
+     */
+    public function testLocalizedFieldGetterCode(): void
+    {
+        $expectedGetterCode =
+            '/**
+* Get linput - linput
+* @return string|null
+*/
+public function getLinput(?string $language = null): ?string
+{
+	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
+		$preValue = $this->preGetValue("linput");
+		if ($preValue !== null) {
+			return $preValue;
+		}
+	}
+
+	$data = $this->getLocalizedfields()->getLocalizedValue("linput", $language);
+	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
+		return $data->getPlain();
+	}
+
+	return $data;
+}
+
+';
+        $this->testGetterCode('linput', $expectedGetterCode, true);
+    }
+
+    /**
+     * Verifies that the getter code gets created properly and that the
+     * PreGetValueHook is called before actually getting the data
+     */
+    public function testLocalizedTableGetterCode(): void
+    {
+        $expectedGetterCode =
+            '/**
+* Get ltable - ltable
+* @return array
+*/
+public function getLtable (?string $language = null): array
+{
+	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
+		$preValue = $this->preGetValue("ltable");
+		if ($preValue !== null) {
+			return $preValue;
+		}
+	}
+
+	$data = $this->getLocalizedfields()->getLocalizedValue("ltable", $language);
+	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
+		return $data->getPlain() ?? [];
+	}
+	return $data ?? [];
+}
+
+';
+        $this->testGetterCode('ltable', $expectedGetterCode, true);
+    }
+
+    /**
+     * Verifies that the getter code gets created properly and that the
+     * PreGetValueHook is called before actually getting the data
+     * (i.e. before the object brick container is lazily initialized)
+     */
+    public function testBricksGetterCode(): void
+    {
+        $expectedGetterCode =
+            '/**
+* @return \Pimcore\Model\DataObject\Unittest\Mybricks
+*/
+public function getMybricks(): ?\Pimcore\Model\DataObject\Objectbrick
+{
+	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
+		$preValue = $this->preGetValue("mybricks");
+		if ($preValue !== null) {
+			return $preValue;
+		}
+	}
+
+	$data = $this->mybricks;
+	if (!$data) {
+		if (\Pimcore\Tool::classExists("\\\\Pimcore\\\\Model\\\\DataObject\\\\Unittest\\\\Mybricks")) {
+			$data = new \Pimcore\Model\DataObject\Unittest\Mybricks($this, "mybricks");
+			$this->mybricks = $data;
+		} else {
+			return null;
+		}
+	}
+	return $data;
+}
+
+';
+        $this->testGetterCode('mybricks', $expectedGetterCode);
+    }
+
+    /**
+     * Definition files are cached in-process (see DefinitionFileCache) so that long-running
+     * scripts clearing the runtime cache do not re-include them on every access. Saving a
+     * class definition must invalidate that cache, and a forced load must re-include the file.
+     */
+    public function testDefinitionChangeIsVisibleAfterRuntimeCacheClear(): void
+    {
+        $class = ClassDefinition::getByName('unittest');
+        $this->assertInstanceOf(ClassDefinition::class, $class);
+        $id = $class->getId();
+        $originalTitle = $class->getTitle();
+
+        // prime the runtime cache and the definition file cache
+        RuntimeCache::clear();
+        $this->assertInstanceOf(ClassDefinition::class, ClassDefinition::getById($id));
+
+        try {
+            $class->setTitle('definition file cache test');
+            $class->save();
+
+            RuntimeCache::clear();
+            $reloaded = ClassDefinition::getById($id);
+            $this->assertInstanceOf(ClassDefinition::class, $reloaded);
+            $this->assertSame('definition file cache test', $reloaded->getTitle());
+
+            $forced = ClassDefinition::getById($id, true);
+            $this->assertInstanceOf(ClassDefinition::class, $forced);
+            $this->assertNotSame($reloaded, $forced);
+            $this->assertSame('definition file cache test', $forced->getTitle());
+        } finally {
+            $class->setTitle($originalTitle);
+            $class->save();
+        }
+    }
+
+    public function testInputEmptyDefaultValueIsNormalizedToNullAfterImportAndReload(): void
+    {
+        $class = ClassDefinition::getByName('unittest');
+        $this->assertInstanceOf(ClassDefinition::class, $class);
+
+        $originalClassDefinition = ClassDefinition\Service::generateClassDefinitionJson($class);
+        $classDefinition = json_decode($originalClassDefinition, true, 512, JSON_THROW_ON_ERROR);
+        $this->assertTrue($this->setInputDefaultValueAndUnique($classDefinition['layoutDefinitions'], 'input'));
+
+        try {
+            $this->assertTrue(ClassDefinition\Service::importClassDefinitionFromJson($class, json_encode($classDefinition, JSON_THROW_ON_ERROR), true));
+
+            $reloadedClass = ClassDefinition::getById($class->getId(), true);
+            $this->assertInstanceOf(ClassDefinition::class, $reloadedClass);
+
+            $inputField = $reloadedClass->getFieldDefinition('input');
+            $this->assertInstanceOf(Input::class, $inputField);
+            $this->assertTrue($inputField->getUnique());
+            $this->assertNull($inputField->getDefaultValue());
+        } finally {
+            ClassDefinition\Service::importClassDefinitionFromJson($class, $originalClassDefinition, true);
+        }
+    }
+
+    private function setInputDefaultValueAndUnique(array &$layoutDefinition, string $fieldName): bool
+    {
+        if (($layoutDefinition['name'] ?? null) === $fieldName && ($layoutDefinition['fieldtype'] ?? null) === 'input') {
+            $layoutDefinition['unique'] = true;
+            $layoutDefinition['defaultValue'] = '';
+
+            return true;
+        }
+
+        if (isset($layoutDefinition['children']) && is_array($layoutDefinition['children'])) {
+            foreach ($layoutDefinition['children'] as &$child) {
+                if (is_array($child) && $this->setInputDefaultValueAndUnique($child, $fieldName)) {
+                    return true;
+                }
+            }
+            unset($child);
+        }
+
+        return false;
     }
 }

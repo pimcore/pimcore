@@ -239,6 +239,8 @@ class Block extends Model\Document\Editable implements BlockInterface
 
         $outerAttributes = [
             'key' => $this->indices[$this->current] ?? null,
+            // see Areablock::blockStart(): `data-key` is the robust mirror of `key`
+            'data-key' => $this->indices[$this->current] ?? null,
         ];
         $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
 

@@ -13,9 +13,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper;
 
-/**
- * Keep in sync with bundles/AdminBundle/public/js/pimcore/object/helpers/reservedWords.js
- */
 class ReservedWordsHelper
 {
     public const PHP_KEYWORDS = [
@@ -39,6 +36,25 @@ class ReservedWordsHelper
 
     public const PIMCORE = [
         'data', 'folder', 'permissions', 'dao', 'concrete', 'items',
+    ];
+
+    /**
+     * Classes and interfaces living directly in the `Pimcore\Model\DataObject` namespace, which is
+     * also where a generated DataObject class is emitted. A DataObject class named after one of
+     * them shadows the core class: the application's PSR-4 prefix `Pimcore\Model\DataObject\` =>
+     * `var/classes/DataObject` is longer than the core's `Pimcore\Model\` => `models`, so the
+     * generated file wins and the core class is never loaded.
+     *
+     * Keep in sync with the contents of `models/DataObject`. `concrete` and `folder` are covered by
+     * self::PIMCORE already. Exposed through self::getAllDataObjectClassReservedWords() rather than
+     * as a public constant, so the list stays consumable without becoming a BC commitment.
+     */
+    private const PIMCORE_DATA_OBJECT_CLASSES = [
+        'abstractobject', 'classdefinition', 'classdefinitioninterface', 'classificationstore',
+        'definitionmodifier', 'fieldcollection', 'importdataserviceinterface',
+        'lazyloadedfieldsinterface', 'listing', 'localizedfield', 'objectawarefieldinterface',
+        'objectbrick', 'ownerawarefieldinterface', 'pregetvaluehookinterface',
+        'selectoptionsinterface', 'service',
     ];
 
     /**
@@ -69,6 +85,33 @@ class ReservedWordsHelper
         return in_array(
             strtolower($word),
             $this->getAllReservedWords(),
+            true
+        );
+    }
+
+    /**
+     * Deliberately not folded into getAllReservedWords(): the names in
+     * self::PIMCORE_DATA_OBJECT_CLASSES only collide for a DataObject class name. Select options
+     * are generated into the `Pimcore\Model\DataObject\SelectOptions` sub-namespace, so adding
+     * them to the shared list would reject existing, harmless select-options configurations.
+     *
+     * @return string[]
+     */
+    public function getAllDataObjectClassReservedWords(): array
+    {
+        return [
+            ...$this->getAllReservedWords(),
+            // self:: rather than static::, unlike the public constants above: a private constant
+            // cannot be overridden, so late static binding would only be misleading here.
+            ...self::PIMCORE_DATA_OBJECT_CLASSES,
+        ];
+    }
+
+    public function isReservedDataObjectClassName(string $name): bool
+    {
+        return in_array(
+            strtolower($name),
+            $this->getAllDataObjectClassReservedWords(),
             true
         );
     }

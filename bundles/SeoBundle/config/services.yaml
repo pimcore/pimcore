@@ -11,13 +11,3 @@ services:
         public: true
         arguments:
             $bundle: "@=service('kernel').getBundle('PimcoreSeoBundle')"
-
-    #
-    # CONTROLLERS
-    #
-
-    # auto-register all controllers as services
-    Pimcore\Bundle\SeoBundle\Controller\:
-        resource: '../src/Controller'
-        public: true
-        tags: ['controller.service_arguments']

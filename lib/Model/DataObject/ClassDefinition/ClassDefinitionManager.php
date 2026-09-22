@@ -68,6 +68,29 @@ class ClassDefinitionManager
      */
     public function createOrUpdateClassDefinitions(bool $force = false): array
     {
+        return $this->createOrUpdateClassDefinitionsInternal($force, true);
+    }
+
+    /**
+     * Updates all classes from PIMCORE_CLASS_DEFINITION_DIRECTORY with more control over the saving process.
+     * Added as a separate method to avoid compatibility issues.
+     * TODO: Should be refactored in Pimcore 13 to avoid duplication with createOrUpdateClassDefinitions.
+     *
+     * @param bool $force whether to always update no matter if the model definition changed or not
+     * @param bool $dumpPHPClasses whether to write the PHP classes to the disk, if false, only the database will be updated
+     *
+     * @return list<array{string, string, string}>
+     */
+    public function dumpClassDefinitions(bool $force = false, bool $dumpPHPClasses = true): array
+    {
+        return $this->createOrUpdateClassDefinitionsInternal($force, $dumpPHPClasses);
+    }
+
+    /**
+     * @return list<array{string, string, string}>
+     */
+    private function createOrUpdateClassDefinitionsInternal(bool $force, bool $dumpPHPClasses): array
+    {
         $objectClassesFolders = array_filter(array_unique(array_map('realpath', [
             PIMCORE_CLASS_DEFINITION_DIRECTORY,
             PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY,
@@ -92,11 +115,11 @@ class ClassDefinitionManager
                     $existingClass = ClassDefinition::getByName($class->getName());
 
                     if ($existingClass instanceof ClassDefinitionInterface) {
-                        $classSaved = $this->saveClass($existingClass, false, $force);
+                        $classSaved = $this->dumpClass($existingClass, false, $dumpPHPClasses, $force);
                         $changes[] = [$existingClass->getName(), $existingClass->getId(), $classSaved ? self::SAVED : self::SKIPPED];
                     } else {
                         //when creating, it should always save like as forced
-                        $classSaved = $this->saveClass($class, false, true);
+                        $classSaved = $this->dumpClass($class, false, $dumpPHPClasses, true);
                         $changes[] = [$class->getName(), $class->getId(), $classSaved ? self::CREATED : self::SKIPPED];
                     }
                 }
@@ -107,7 +130,7 @@ class ClassDefinitionManager
     }
 
     /**
-     * @return bool whether the class was saved or not
+     * @return bool whether the class was saved (or its PHP class files were regenerated) or not
      *
      * @throws DefinitionWriteException     *
      * @throws Exception
@@ -121,11 +144,13 @@ class ClassDefinitionManager
      * Additional method that gives more control over the saving process. Added as a separate method to avoid compatibility issues.
      * TODO: Should be refactored in Pimcore 13 to avoid duplication with saveClass.
      *
+     * @return bool whether the class was saved (or its PHP class files were regenerated) or not
+     *
      * @throws Exception
      * @throws DefinitionWriteException
      */
     public function dumpClass(
-        ClassDefinition $class,
+        ClassDefinitionInterface $class,
         bool $saveDefinitionFile,
         bool $dumpPHPClasses,
         bool $force = false
@@ -143,6 +168,35 @@ class ClassDefinitionManager
         }
 
         return !$definitionModificationDate || $definitionModificationDate !== $class->getModificationDate();
+    }
+
+    /**
+     * Checks whether the generated PHP class files of a class definition are missing or outdated
+     * on the local filesystem. This can be the case even if the database is already up-to-date,
+     * e.g. when another node sharing the same database has performed a rebuild, while this
+     * node's filesystem was never updated.
+     */
+    public function hasStalePhpClassFiles(ClassDefinitionInterface $class): bool
+    {
+        $definitionModificationTime = (int) $class->getModificationDate();
+
+        $definitionFile = $class->getDefinitionFile();
+        if (is_file($definitionFile) && ($definitionFileModificationTime = filemtime($definitionFile)) !== false) {
+            $definitionModificationTime = max($definitionModificationTime, $definitionFileModificationTime);
+        }
+
+        foreach ([$class->getPhpClassFile(), $class->getPhpListingClassFile()] as $phpClassFile) {
+            if (!is_file($phpClassFile)) {
+                return true;
+            }
+
+            $phpClassFileModificationTime = filemtime($phpClassFile);
+            if ($phpClassFileModificationTime === false || $phpClassFileModificationTime < $definitionModificationTime) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -167,8 +221,19 @@ class ClassDefinitionManager
             } else {
                 $class->save($saveDefinitionFile);
             }
+
+            return true;
         }
 
-        return $shouldSave;
+        // the shared database may already be up-to-date (e.g. another node performed the rebuild first),
+        // while the PHP class files on this node are still missing or outdated - regenerate them
+        // locally without touching the database
+        if ($dumpPHPClasses && $this->hasStalePhpClassFiles($class)) {
+            $class->generateClassFiles(false);
+
+            return true;
+        }
+
+        return false;
     }
 }

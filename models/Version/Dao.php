@@ -121,11 +121,11 @@ class Dao extends Model\Dao\AbstractDao
                 $tmpVersionIds = $this->db->fetchFirstColumn(
                     'SELECT a.id as id FROM versions AS a
                     LEFT JOIN schedule_tasks ON a.id = schedule_tasks.version
-                    LEFT JOIN '. $elementType['elementType'] .'s AS element ON sub.cid = element.id
-                    WHERE ctype = ?
+                    LEFT JOIN '. $elementType['elementType'] .'s AS element ON a.cid = element.id
+                    WHERE a.ctype = ?
                     AND public = 0 AND autosave = 0
                     AND element.modificationDate >= a.`date`
-                    AND `date` < ? AND AND IFNULL(active,  0) = 0',
+                    AND a.`date` < ? AND IFNULL(active, 0) = 0',
                     [
                         $elementType['elementType'],
                         $deadline,
@@ -145,7 +145,7 @@ class Dao extends Model\Dao\AbstractDao
                     ) sub
                     LEFT JOIN schedule_tasks ON sub.id = schedule_tasks.version
                     LEFT JOIN '. $elementType['elementType'] .'s AS element ON sub.cid = element.id
-                    WHERE rownumber > ? AND IFNULL(active,  0) = 0 AND element.modificationDate >= sub.`date`
+                    WHERE rownumber > ? AND IFNULL(active, 0) = 0 AND element.modificationDate >= sub.`date`
                 ';
 
                 $iterator = $this->db->iterateAssociative(

@@ -236,9 +236,15 @@ class NumericRange extends Data implements
      */
     public function getDataFromResource(mixed $data, ?DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\NumericRange
     {
-        if (isset($data[$this->getName() . '__minimum'], $data[$this->getName() . '__maximum'])) {
-            $minimum = $data[$this->getName() . '__minimum'];
-            $maximum = $data[$this->getName() . '__maximum'];
+        $minimumKey = $this->getName() . '__minimum';
+        $maximumKey = $this->getName() . '__maximum';
+
+        if (array_key_exists($minimumKey, $data)
+            && array_key_exists($maximumKey, $data)
+            && !(is_null($data[$minimumKey]) && is_null($data[$maximumKey]))
+        ) {
+            $minimum = $data[$minimumKey];
+            $maximum = $data[$maximumKey];
 
             if (is_string($minimum)) {
                 $minimum = (float) $minimum;

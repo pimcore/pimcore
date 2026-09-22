@@ -1,0 +1,30 @@
+name: PR Policy
+
+# Thin caller — the policy logic lives in
+# pimcore/workflows-collection-public/.github/workflows/reusable-pr-policy.yml
+# and changes there apply automatically. Make the "PR Policy / Milestone assigned"
+# check required (repo ruleset / branch protection) so it actually blocks merging.
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+      - milestoned
+      - demilestoned
+      - labeled
+      - unlabeled
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-policy-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  pr-policy:
+    name: PR Policy
+    uses: pimcore/workflows-collection-public/.github/workflows/reusable-pr-policy.yml@main

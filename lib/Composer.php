@@ -15,6 +15,8 @@ namespace Pimcore;
 
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Installer\PackageEvent;
+use Composer\Json\JsonManipulator;
+use Composer\Package\Locker;
 use Composer\Script\Event;
 use RuntimeException;
 use Symfony\Component\Process\PhpExecutableFinder;
@@ -48,6 +50,7 @@ class Composer
     {
         $rootPath = self::getRootPath($event);
         self::parametersYmlCheck($rootPath);
+        self::removeComposerName($rootPath);
     }
 
     public static function postInstall(Event $event): void
@@ -286,5 +289,70 @@ class Composer
         }
 
         static::executeCommand($event, $consoleDir, $command);
+    }
+
+    /**
+     * Removes the "name" field from the project composer.json file
+     * and updates the content-hash in composer.lock to keep them in sync.
+     *
+     * @throws RuntimeException If the composer.json or composer.lock file cannot be written
+     */
+    private static function removeComposerName(string $rootPath): void
+    {
+        $composerJson = $rootPath . '/composer.json';
+
+        if (!file_exists($composerJson)) {
+            return;
+        }
+
+        $contents = file_get_contents($composerJson);
+        if ($contents === false) {
+            throw new RuntimeException(sprintf('Failed to read composer.json at "%s".', $composerJson));
+        }
+
+        $manipulator = new JsonManipulator($contents);
+        $manipulator->removeMainKey('name');
+        $jsonString = $manipulator->getContents();
+
+        if ($jsonString === $contents) {
+            return;
+        }
+
+        if (file_put_contents($composerJson, $jsonString) === false) {
+            throw new RuntimeException(sprintf('Failed to write composer.json at "%s".', $composerJson));
+        }
+
+        self::updateComposerLock($rootPath, $jsonString);
+    }
+
+    /**
+     * @throws RuntimeException If the composer.lock file cannot be written
+     */
+    private static function updateComposerLock(string $rootPath, string $composerJsonContents): void
+    {
+        $lockFile = $rootPath . '/composer.lock';
+
+        if (!file_exists($lockFile)) {
+            return;
+        }
+
+        $lockContents = file_get_contents($lockFile);
+        if ($lockContents === false) {
+            return;
+        }
+
+        $manipulator = new JsonManipulator($lockContents);
+        if (!$manipulator->addMainKey('content-hash', Locker::getContentHash($composerJsonContents))) {
+            return;
+        }
+
+        $newContents = $manipulator->getContents();
+        if ($newContents === $lockContents) {
+            return;
+        }
+
+        if (file_put_contents($lockFile, $newContents) === false) {
+            throw new RuntimeException(sprintf('Failed to write composer.lock at "%s".', $lockFile));
+        }
     }
 }

@@ -1,0 +1,28 @@
+name: Repo Guardrails
+
+# Thin, generic trigger for the REPO-level guardrails. All logic lives in the
+# central collection pimcore/workflows-collection-public. This file names no
+# guardrails, so it is identical across every repo and only needs editing if a
+# new event type or token is introduced there.
+#
+# Sibling of pr-guardrails.yml, which covers the pull-request guardrails.
+#
+# Managed centrally: this file is synced from
+# pimcore/workflows-collection-public (.github/sync-templates/repo-guardrails.yml).
+# Edit it there, not here.
+
+on:
+  issues:
+    types: [opened]
+
+concurrency:
+  # One lock per issue. Never cancel in progress: each run acts on a distinct
+  # issue, so a newer run must not abort an older one mid-decision.
+  group: repo-guardrails-issue-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  guardrails:
+    uses: pimcore/workflows-collection-public/.github/workflows/parent-repo-guardrails.yml@main
+    secrets:
+      MEMBERSHIP_GUARD_TOKEN: ${{ secrets.MEMBERSHIP_GUARD_TOKEN }}

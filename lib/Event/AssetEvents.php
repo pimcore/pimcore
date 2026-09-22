@@ -82,13 +82,6 @@ final class AssetEvents
     const POST_UPDATE_FAILURE = 'pimcore.asset.postUpdateFailure';
 
     /**
-     * @Event("Pimcore\Bundle\AdminBundle\Event\Model\AssetDeleteInfoEvent")
-     *
-     * @var string
-     */
-    const DELETE_INFO = 'pimcore.asset.deleteInfo';
-
-    /**
      * @Event("Pimcore\Event\Model\AssetEvent")
      *
      * @var string
@@ -189,4 +182,20 @@ final class AssetEvents
      * @var string
      */
     const RESOLVE_UPLOAD_TARGET = 'pimcore.asset.resolve-upload-target';
+
+    /**
+     * Fires after the MIME type has been guessed, before it is applied to the asset.
+     * Allows listeners to override the determined MIME type.
+     *
+     * Arguments:
+     *  - filename   | string | the asset filename
+     *  - mimeType   | string | the guessed MIME type — modify via setMimeType()
+     *  - asset      | Pimcore\Model\Asset|null | the asset instance (null during create())
+     *  - isNewAsset | bool | whether the asset is new (true for create/save, false for updates)
+     *
+     * @Event("Pimcore\Event\Model\Asset\ResolveMimeTypeEvent")
+     *
+     * @var string
+     */
+    const RESOLVE_MIME_TYPE = 'pimcore.asset.resolve-mime-type';
 }
