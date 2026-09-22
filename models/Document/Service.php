@@ -562,16 +562,31 @@ class Service extends Model\Element\Service
                 return false;
             }
             $im->scaleByWidth(800);
-            // Created here rather than before the conversion above: the directory is shared
-            // and long-lived, so mkdir() is a no-op that does not refresh its timestamps
-            // when it already exists. Creating it seconds before the write left a window in
-            // which anything reaping stale empty directories under var/tmp - housekeeping,
-            // systemd-tmpfiles, an operator - could remove it and make the save below fail.
-            // $tmpFile sits in the temp root, not in here, so the conversion does not need it.
-            $filesystem->mkdir(dirname($file), 0775);
-            $im->save($file, 'jpeg', 85);
 
+            // Rendered into the temp root and published with rename() rather than saved
+            // straight into the preview directory. That directory is shared and long-lived,
+            // so mkdir() is a no-op that does not refresh its timestamps when it already
+            // exists, and anything reaping stale empty directories under var/tmp -
+            // housekeeping, systemd-tmpfiles, an operator - can remove it between mkdir()
+            // and the write. A save into the vanished directory throws with Imagick and
+            // silently produces no file with GD; rename() fails visibly instead, so the
+            // directory is recreated and the move retried. The bound keeps a directory
+            // that genuinely cannot be written from turning into a loop.
+            $previewTmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.jpg';
+            $im->save($previewTmpFile, 'jpeg', 85);
             unlink($tmpFile);
+
+            $published = false;
+            for ($attempt = 0; $attempt < 3 && !$published; $attempt++) {
+                $filesystem->mkdir(dirname($file), 0775);
+                $published = @rename($previewTmpFile, $file);
+            }
+
+            if (!$published) {
+                @unlink($previewTmpFile);
+
+                return false;
+            }
 
             return true;
         }

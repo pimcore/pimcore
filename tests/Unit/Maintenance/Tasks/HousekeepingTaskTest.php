@@ -64,7 +64,12 @@ final class HousekeepingTaskTest extends TestCase
     {
         $this->makeDir('stale');
         $this->age();
-        $this->makeDir('fresh');
+        // Dated an hour ahead rather than left at "now": the cutoff is whole-second time()
+        // sampled inside the task, so a directory created in the same second could be
+        // read as older than the cutoff if the clock ticked over in between. Setting the
+        // mtime is an inode change, so ctime lands on "now" and max(mtime, ctime) is the
+        // future value either way.
+        touch($this->makeDir('fresh'), time() + 3600);
 
         $this->runHousekeeping(seconds: 0, dirSeconds: 0);
 
